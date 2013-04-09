@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,6 +150,12 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.1 - April 9th, 2013 =
+* Added: New ability to set the menu location of Custom Taxonomies (expose a Custom Taxonomy that isn't associated to a Post Type)
+* And 10 other bug fixes and enhancements
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3 - April 7th, 2013 =
 * Added: Custom Settings Pages - now you can add new settings pages with their own custom fields!
 * Added: Pods find() 'where' / 'having' parameters now accepts the standard WP_Query meta_query format! With the added ability to nest AND/OR 'relation' too!
@@ -188,9 +194,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Updated: Now enforcing maximum post type (20 chars) / taxonomy (32 chars) naming
 * Changed: Advanced Content Types have been split off into their own component which you can enable to be able to add new Advanced Content Types
 * Changed: Table-based storage for WordPress objects (Post Types, Taxonomies, Media, Users, and Comments) has been split off into it's own component which you can enable to add the table-based storage option to the Pods Add New interface
-* And many more bug fixes and enhancements, nearly 253 in total
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.2 - January 5th, 2013 =
 * Added: New 'Duplicate Field' option, that lets you copy a field's settings into a new field in the Pod editor

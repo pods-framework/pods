@@ -1433,10 +1433,22 @@ class PodsAPI {
         }
 
         if ( true === $db ) {
-            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ) ) )
-                add_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ), 100, 6 );
+            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) )
+                add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
+
+            $conflicted = false;
+
+            // Headway compatibility fix
+            if ( has_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 ) ) {
+                remove_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
+
+                $conflicted = true;
+            }
 
             $params->id = $this->save_wp_object( 'post', $post_data, $pod[ 'options' ], true, true );
+
+            if ( $conflicted )
+                add_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
 
             if ( false === $params->id )
                 return pods_error( __( 'Cannot save Pod', 'pods' ), $this );
@@ -2099,10 +2111,22 @@ class PodsAPI {
         }
 
         if ( true === $db ) {
-            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ) ) )
-                add_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ), 100, 6 );
+            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) )
+                add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
+
+            $conflicted = false;
+
+            // Headway compatibility fix
+            if ( has_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 ) ) {
+                remove_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
+
+                $conflicted = true;
+            }
 
             $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
+
+            if ( $conflicted )
+                add_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
 
             if ( false === $params->id )
                 return pods_error( __( 'Cannot save Field', 'pods' ), $this );
@@ -2134,14 +2158,14 @@ class PodsAPI {
                         $test = false;
 
                         if ( 0 < strlen( $old_definition ) )
-                            $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                            $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $old_name . "` {$definition}", false );
 
                         // If the old field doesn't exist, continue to add a new field
                         if ( false === $test )
                             pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     }
                     elseif ( null !== $old_definition && $definition != $old_definition ) {
-                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $old_name . "` {$definition}", false );
 
                         // If the old field doesn't exist, continue to add a new field
                         if ( false === $test )
@@ -2279,7 +2303,7 @@ class PodsAPI {
             return $field;
     }
 
-    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
+    public function save_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
         if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) ) {
             $slug = explode( '-', $slug );
             $slug = $slug[ 0 ];
@@ -3028,7 +3052,7 @@ class PodsAPI {
                     // Run save function for field type (where needed)
                     PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
 
-                    if ( 'pick' == $fields[ $field ][ 'type' ] && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
+                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
                         unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'related_field' ][ 'id' ] ] );
                         unset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] );
                     }

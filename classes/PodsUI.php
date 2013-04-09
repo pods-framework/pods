@@ -2430,7 +2430,6 @@ class PodsUI {
         </div>
 
         <?php
-        pods_debug( $this->filters );
             if ( !empty( $this->filters ) ) {
         ?>
             <div class="pods-ui-filter-bar-secondary">

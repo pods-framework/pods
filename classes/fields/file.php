@@ -221,6 +221,24 @@ class PodsField_File extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        if ( is_array( $value ) && !empty( $value ) ) {
+            if ( isset( $value[ 'ID' ] ) )
+                $value = wp_get_attachment_url( $value[ 'ID' ] );
+            else {
+                $attachments = $value;
+                $value = array();
+
+                foreach ( $attachments as $v ) {
+                    if ( !isset( $v[ 'ID' ] ) )
+                        continue;
+
+                    $value[] = wp_get_attachment_url( $v[ 'ID' ] );
+                }
+
+                $value = implode( ' ', $value );
+            }
+        }
+
         return $value;
     }
 
@@ -400,11 +418,35 @@ class PodsField_File extends PodsField {
         if ( !empty( $value ) && isset( $value[ 'ID' ] ) )
             $value = array( $value );
 
-        $image_size = apply_filters( 'pods_form_ui_field_file_display_image_size', 'thumbnail', $id, $value, $name, $options, $fields, $pod );
+        $image_size = apply_filters( 'pods_form_ui_field_file_ui_image_size', 'thumbnail', $id, $value, $name, $options, $pod );
+
+        return $this->images( $id, $value, $name, $options, $pod, $image_size );
+    }
+
+    /**
+     * Return image(s) markup
+     *
+     * @param int $id
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     * @param string $image_size
+     *
+     * @return string
+     * @since 2.3
+     */
+    public function images ( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
+        $images = '';
+
+        if ( empty( $value ) || !is_array( $value ) )
+            return $images;
 
         foreach ( $value as $v ) {
-            echo pods_image( $v, $image_size );
+            $images .= pods_image( $v, $image_size );
         }
+
+        return $images;
     }
 
     /**

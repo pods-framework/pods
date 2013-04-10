@@ -943,46 +943,34 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         if ( null !== $field_index && isset( $original_value[ $field_index ] ) )
             return $original_value[ $field_index ];
 
-        if ( 1 == count( $value ) ) {
-            if ( isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+        if ( null !== $field_index && isset( $value[ $field_index ] ) )
+            return $value[ $field_index ];
+        elseif ( !isset( $value[ 0 ] ) )
+            $value = array( $value );
 
-            if ( $simple && is_array( $field ) && !is_array( $value ) && !empty( $value ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $value, $field );
+        foreach ( $value as $k => $v ) {
+            if ( $simple && is_array( $field ) && !is_array( $v ) && !empty( $v ) )
+                $v = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $v, $field );
 
-            if ( is_array( $value ) ) {
-                if ( null !== $field_index && isset( $value[ $field_index ] ) )
-                    $value = $value[ $field_index ];
+            if ( is_array( $v ) ) {
+                if ( null !== $field_index && isset( $v[ $field_index ] ) )
+                    $v = $v[ $field_index ];
                 elseif ( $simple )
-                    $value = implode( ', ', $value );
-                else
-                    $value = '';
-            }
+                    $v = trim( implode( ', ', $v ), ', ' );
+                else {
+                    unset( $value[ $k ] );
 
-            $value = trim( $value, ', ' ) . apply_filters( 'pods_serial_comma', ', ', $value, $original_value, $field, $fields, $and, $field_index );
-        }
-        else {
-            if ( null !== $field_index && isset( $value[ $field_index ] ) )
-                return $value[ $field_index ];
-            elseif ( !isset( $value[ 0 ] ) )
-                $value = array( $value );
-
-            foreach ( $value as $k => &$v ) {
-                if ( $simple && is_array( $field ) && !is_array( $v ) && !empty( $v ) )
-                    $v = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $v, $field );
-
-                if ( is_array( $v ) ) {
-                    if ( null !== $field_index && isset( $v[ $field_index ] ) )
-                        $v = $v[ $field_index ];
-                    elseif ( $simple )
-                        $v = trim( implode( ', ', $v ), ', ' );
-                    else
-                        unset( $value[ $k ] );
+                    continue;
                 }
             }
 
-            $value = trim( implode( ', ', $value ), ', ' ) . apply_filters( 'pods_serial_comma', ', ', $value, $original_value, $field, $fields, $and, $field_index );
+            $value[ $k ] = $v;
         }
+
+        if ( 1 == count( $value ) )
+            $value = trim( implode( ', ', $value ), ', ' );
+        else
+            $value = trim( implode( ', ', $value ), ', ' ) . apply_filters( 'pods_serial_comma', ', ', $value, $original_value, $field, $fields, $and, $field_index );
 
         $value = trim( $value );
         $last = trim( $last );

@@ -675,9 +675,9 @@ class PodsForm {
         $tableless_field_types = self::tableless_field_types();
 
         if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
-            if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
-                foreach ( $value as &$display_value ) {
-                    $display_value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
+            if ( is_array( $value ) && !in_array( $type, $tableless_field_types ) ) {
+                foreach ( $value as $k => $display_value ) {
+                    $value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
                 }
             }
             else

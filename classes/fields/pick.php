@@ -344,7 +344,7 @@ class PodsField_Pick extends PodsField {
                 $post_type = get_post_type_object( $post_type );
 
                 self::$related_objects[ 'post_type-' . $post_type->name ] = array(
-                    'label' => $post_type->label,
+                    'label' => $post_type->label . ' (' . $post_type->name . ')',
                     'group' => __( 'Post Types', 'pods' )
                 );
             }
@@ -362,7 +362,7 @@ class PodsField_Pick extends PodsField {
                 $taxonomy = get_taxonomy( $taxonomy );
 
                 self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
-                    'label' => $taxonomy->label,
+                    'label' => $taxonomy->label . ' (' . $taxonomy->name . ')',
                     'group' => __( 'Taxonomies', 'pods' )
                 );
             }

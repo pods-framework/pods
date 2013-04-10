@@ -2570,7 +2570,7 @@ class PodsData {
                 $the_join = "
                     LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
                         `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
-                        AND `{$rel_alias}`.`item_id` = `{$traverse_recurse[ 'joined' ]}`.`id`
+                        AND `{$rel_alias}`.`item_id` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
 
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
@@ -2647,7 +2647,9 @@ class PodsData {
                 'pod' => $this->pod,
                 'fields' => $fields,
                 'params' => $params,
-                'last_table_info' => $this->pod_data
+                'last_table_info' => $this->pod_data,
+                'joined_id' => $this->pod_data[ 'field_id' ],
+                'joined_index' => $this->pod_data[ 'field_index' ]
             );
 
             if ( is_array( $field_group ) ) {

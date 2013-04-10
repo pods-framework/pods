@@ -3537,18 +3537,22 @@ class PodsAPI {
 
                     $related_pod = pods( pods_var_raw( 'pick_val', $field ), null, false );
 
-                    // If this isn't a Pod, return data exactly as Pods does normally
-                    if ( empty( $related_pod ) || ( 'pod' != $pick_object && $pick_object != $related_pod->pod_data[ 'type' ] ) )
+                    // If this isn't a Pod, return data exactly as Pods does normally$
+                    if ( empty( $related_pod ) || ( 'pod' != $pick_object && $pick_object != $related_pod->pod_data[ 'type' ] ) || $related_pod->pod == $pod->pod )
                         $related_data = $pod->field( $field[ 'name' ] );
                     else {
+                        $related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
+
+                        $related_fields = array_merge( $related_pod->fields, $related_object_fields );
+
+                        $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+
                         foreach ( $related_ids as $related_id ) {
-                            $related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
+                            if ( $related_pod->fetch( $related_id ) ) {
 
-                            $related_fields = array_merge( $related_pod->fields, $related_object_fields );
 
-                            $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
-
-                            $related_data = $this->do_hook( 'export_pod_item_level', $related_data, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                                $related_data = $this->do_hook( 'export_pod_item_level', $related_data, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                            }
                         }
                     }
                 }

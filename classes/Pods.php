@@ -292,23 +292,23 @@ class Pods {
      * @since 2.0
      */
     public function fields ( $field = null, $option = null ) {
-        $field_data = null;
-
         // No fields found
         if ( empty( $this->fields ) )
-            $field_data = false;
+            $field_data = array();
         // Return all fields
         elseif ( empty( $field ) )
             $field_data = (array) $this->fields;
         // Field not found
         elseif ( !isset( $this->fields[ $field ] ) )
-            $field_data = false;
+            $field_data = array();
         // Return all field data
         elseif ( empty( $option ) )
             $field_data = $this->fields[ $field ];
         else {
             // Merge options
             $options = array_merge( $this->fields[ $field ], $this->fields[ $field ][ 'options' ] );
+
+            $field_data = null;
 
             // Return option
             if ( isset( $options[ $option ] ) )

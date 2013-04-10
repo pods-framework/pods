@@ -593,6 +593,16 @@ class PodsAdmin {
                     $manage_new[ $manage_field ] = $pod->pod_data[ 'fields' ][ $manage_field ];
                 elseif ( isset( $pod->pod_data[ 'object_fields' ][ $manage_field ] ) )
                     $manage_new[ $manage_field ] = $pod->pod_data[ 'object_fields' ][ $manage_field ];
+                elseif ( $manage_field == $pod->pod_data[ 'field_id' ] ) {
+                    $field = array(
+                        'name' => $manage_field,
+                        'label' => 'ID',
+                        'type' => 'number',
+                        'width' => '8%'
+                    );
+
+                    $manage_new[ $manage_field ] = PodsForm::field_setup( $field, null, $field[ 'type' ] );
+                }
             }
 
             if ( !empty( $manage_new ) )
@@ -1394,10 +1404,10 @@ class PodsAdmin {
             );
 
             if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod, 'name' ) ] ) )
-                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][ ] = pods_var_raw( 'pod_index', $pod, 'name' );
+                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod, 'name' );
 
             if ( isset( $pod[ 'fields' ][ 'modified' ] ) )
-                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][ ] = 'modified';
+                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = 'modified';
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 $type = '';
@@ -1408,6 +1418,8 @@ class PodsAdmin {
                 $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
                 $options[ 'admin-ui' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
             }
+
+            $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ 'id' ] = 'ID';
         }
 
         $options = apply_filters( 'pods_admin_setup_edit_options', $options );

@@ -383,7 +383,7 @@ class Pods {
                     $this->fields[ $params->name ][ 'type' ],
                     $value,
                     $params->name,
-                    array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                    array_merge( $this->fields[ $params->name ], $this->fields[ $params->name ][ 'options' ] ),
                     $this->pod_data,
                     $this->id(),
                     $params
@@ -1033,7 +1033,7 @@ class Pods {
                         $field_data[ 'type' ],
                         $value,
                         $params->name,
-                        array_merge( $field_data[ 'options' ], $field_data ),
+                        array_merge( $field_data, $field_data[ 'options' ] ),
                         $this->pod_data,
                         $this->id()
                     );
@@ -1047,7 +1047,7 @@ class Pods {
                     $field_data[ 'type' ],
                     $value,
                     $params->name,
-                    array_merge( $field_data[ 'options' ], $field_data ),
+                    array_merge( $field_data, $field_data[ 'options' ] ),
                     $this->pod_data,
                     $this->id()
                 );

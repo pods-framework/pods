@@ -2828,7 +2828,7 @@ class PodsAPI {
                     return pods_error( $validate, $this );
             }
 
-            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $options, $field_data ), array_merge( $fields, $object_fields ), $pod, $params );
+            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $field_data, $options ), array_merge( $fields, $object_fields ), $pod, $params );
 
             $field_data[ 'value' ] = $value;
 
@@ -2844,7 +2844,7 @@ class PodsAPI {
 
                     $custom = pods_var_raw( 'pick_custom', $options, '' );
 
-                    $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $options, $field_data ), $pod, $params->id );
+                    $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $field_data, $options ), $pod, $params->id );
 
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
@@ -5866,7 +5866,7 @@ class PodsAPI {
             }
         }
 
-        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $id, $params );
+        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( $options, pods_var( 'options', $options, array() ) ), $fields, $pod, $id, $params );
 
         $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
 

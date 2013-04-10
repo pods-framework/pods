@@ -136,7 +136,7 @@ class PodsField_Loop extends PodsField {
      */
     public function simple_value ( $value, $options, $raw = false ) {
         if ( isset( $options[ 'options' ] ) ) {
-            $options = array_merge( $options[ 'options' ], $options );
+            $options = array_merge( $options, $options[ 'options' ] );
             unset( $options[ 'options' ] );
         }
 

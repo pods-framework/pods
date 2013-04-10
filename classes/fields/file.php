@@ -73,7 +73,7 @@ class PodsField_File extends PodsField {
         }
 
         $options = array(
-            'file_format_type' => array(
+            self::$type . '_format_type' => array(
                 'label' => __( 'File Type', 'pods' ),
                 'default' => 'single',
                 'type' => 'pick',
@@ -83,7 +83,7 @@ class PodsField_File extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'file_uploader' => array(
+            self::$type . '_uploader' => array(
                 'label' => __( 'File Uploader', 'pods' ),
                 'default' => 'attachment',
                 'type' => 'pick',
@@ -96,9 +96,9 @@ class PodsField_File extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'file_attachment_tab' => array(
+            self::$type . '_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
@@ -107,24 +107,24 @@ class PodsField_File extends PodsField {
                     'browse' => __( 'Media Library', 'pods' )
                 )
             ),
-            'file_edit_title' => array(
+            self::$type . '_edit_title' => array(
                 'label' => __( 'Editable Title', 'pods' ),
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            'file_limit' => array(
+            self::$type . '_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
-                'depends-on' => array( 'file_format_type' => 'multi' ),
+                'depends-on' => array( self::$type . '_format_type' => 'multi' ),
                 'default' => 0,
                 'type' => 'number'
             ),
-            'file_restrict_filesize' => array(
+            self::$type . '_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'plupload' ),
+                'depends-on' => array( self::$type . '_uploader' => 'plupload' ),
                 'default' => '10MB',
                 'type' => 'text'
             ),
-            'file_type' => array(
+            self::$type . '_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
                 'default' => 'images',
                 'type' => 'pick',
@@ -141,17 +141,17 @@ class PodsField_File extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'file_allowed_extensions' => array(
+            self::$type . '_allowed_extensions' => array(
                 'label' => __( 'Allowed File Extensions', 'pods' ),
                 'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
-                'depends-on' => array( 'file_type' => 'other' ),
+                'depends-on' => array( self::$type . '_type' => 'other' ),
                 'default' => '',
                 'type' => 'text'
             ),/*
-            'file_image_size' => array(
+            self::$type . '_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),
                 'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),
-                'depends-on' => array( 'file_type' => 'images' ),
+                'depends-on' => array( self::$type . '_type' => 'images' ),
                 'default' => 'images',
                 'type' => 'pick',
                 'pick_format_type' => 'multi',
@@ -161,31 +161,31 @@ class PodsField_File extends PodsField {
                     $image_sizes
                 )
             ),*/
-            'file_add_button' => array(
+            self::$type . '_add_button' => array(
                 'label' => __( 'Add Button Text', 'pods' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             ),
-            'file_modal_title' => array(
+            self::$type . '_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),
-            'file_modal_add_button' => array(
+            self::$type . '_modal_add_button' => array(
                 'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
         );
 
         if ( !pods_wp_version( '3.5' ) ) {
-            unset( $options[ 'file_modal_title' ] );
-            unset( $options[ 'file_modal_add_button' ] );
+            unset( $options[ self::$type . '_modal_title' ] );
+            unset( $options[ self::$type . '_modal_add_button' ] );
 
-            $options[ 'file_attachment_tab' ][ 'default' ] = 'type';
-            $options[ 'file_attachment_tab' ][ 'data' ] = array(
+            $options[ self::$type . '_attachment_tab' ][ 'default' ] = 'type';
+            $options[ self::$type . '_attachment_tab' ][ 'data' ] = array(
                 'type' => __( 'Upload File', 'pods' ),
                 'library' => __( 'Media Library', 'pods' )
             );
@@ -260,11 +260,11 @@ class PodsField_File extends PodsField {
         }
 
         // Use plupload if attachment isn't available
-        if ( 'attachment' == pods_var( 'file_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )
+        if ( 'attachment' == pods_var( self::$type . '_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )
             $field_type = 'plupload';
-        elseif ( 'plupload' == pods_var( 'file_uploader', $options ) )
+        elseif ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( 'file_uploader', $options ) ) {
+        elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
             if ( !pods_wp_version( '3.5' ) || !is_admin() ) // @todo test frontend media modal
                 $field_type = 'attachment';
             else
@@ -272,8 +272,8 @@ class PodsField_File extends PodsField {
         }
         else {
             // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_file_uploader_' . pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_file_uploader', pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader_' . pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader', pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 

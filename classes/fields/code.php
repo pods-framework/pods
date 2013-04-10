@@ -55,7 +55,7 @@ class PodsField_Code extends PodsField {
      */
     public function options () {
         $options = array(
-            'code_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -67,7 +67,7 @@ class PodsField_Code extends PodsField {
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'code_allow_shortcode' => array(
+                    self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -75,12 +75,12 @@ class PodsField_Code extends PodsField {
                     )
                 )
             ),
-            'code_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
             )/*,
-            'code_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -122,7 +122,7 @@ class PodsField_Code extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( 'code_allow_shortcode', $options, 0 ) )
+        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
         return $value;

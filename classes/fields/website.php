@@ -54,7 +54,7 @@ class PodsField_Website extends PodsField {
      */
     public function options () {
         $options = array(
-            'website_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -63,7 +63,7 @@ class PodsField_Website extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            'website_format' => array(
+            self::$type . '_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => 'normal',
                 'type' => 'pick',
@@ -76,18 +76,18 @@ class PodsField_Website extends PodsField {
                     'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
                 )
             ),
-            'website_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to 0 for no limit', 'pods' )
             ),
-            'website_html5' => array(
+            self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
             )/*,
-            'website_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -110,7 +110,7 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'website_max_length', $options, 255, null, true );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 255, null, true );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -218,28 +218,28 @@ class PodsField_Website extends PodsField {
 
             $url = array_merge( $defaults, $url );
 
-            if ( 'normal' == pods_var( 'website_format', $options ) )
+            if ( 'normal' == pods_var( self::$type . '_format', $options ) )
                 $value = $this->build_url( $url );
-            elseif ( 'no-www' == pods_var( 'website_format', $options ) ) {
+            elseif ( 'no-www' == pods_var( self::$type . '_format', $options ) ) {
                 if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
                 $value = $this->build_url( $url );
             }
-            elseif ( 'force-www' == pods_var( 'website_format', $options ) ) {
+            elseif ( 'force-www' == pods_var( self::$type . '_format', $options ) ) {
                 if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
                 $value = $this->build_url( $url );
             }
-            elseif ( 'no-http' == pods_var( 'website_format', $options ) ) {
+            elseif ( 'no-http' == pods_var( self::$type . '_format', $options ) ) {
                 $value = $this->build_url( $url );
                 $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
             }
-            elseif ( 'no-http-no-www' == pods_var( 'website_format', $options ) ) {
+            elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
                 if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
@@ -249,7 +249,7 @@ class PodsField_Website extends PodsField {
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
             }
-            elseif ( 'no-http-force-www' == pods_var( 'website_format', $options ) ) {
+            elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
                 if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
@@ -277,7 +277,7 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        if ( 'website' == pods_var( 'website_format_type', $options ) && 0 < strlen( pods_var( 'website_format', $options ) ) )
+        if ( 'website' == pods_var( self::$type . '_format_type', $options ) && 0 < strlen( pods_var( self::$type . '_format', $options ) ) )
             $value = make_clickable( $value );
 
         return $value;

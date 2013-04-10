@@ -55,13 +55,13 @@ class PodsField_Password extends PodsField {
      */
     public function options () {
         $options = array(
-            'password_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to 0 for no limit', 'pods' )
             )/*,
-            'password_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -85,7 +85,7 @@ class PodsField_Password extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'password_max_length', $options, 255, null, true );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 255, null, true );
 
         $schema = 'VARCHAR(' . $length . ')';
 

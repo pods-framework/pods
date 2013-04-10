@@ -53,7 +53,7 @@ class PodsField_Time extends PodsField {
      */
     public function options () {
         $options = array(
-            'time_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -62,7 +62,7 @@ class PodsField_Time extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            'time_type' => array(
+            self::$type . '_type' => array(
                 'label' => __( 'Time Format Type', 'pods' ),
                 'default' => '12',
                 'type' => 'pick',
@@ -72,9 +72,9 @@ class PodsField_Time extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'time_time_format' => array(
+            self::$type . '_time_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( 'time_time_type' => '12' ),
+                'depends-on' => array( self::$type . '_time_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
@@ -90,7 +90,7 @@ class PodsField_Time extends PodsField {
                     'hh_mm_ss' => date_i18n( 'h:i:s' )
                 )
             ),
-            'time_time_format_24' => array(
+            self::$type . '_time_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
                 'depends-on' => array( 'datetime_time_type' => '24' ),
                 'default' => 'hh_mm',
@@ -100,12 +100,12 @@ class PodsField_Time extends PodsField {
                     'hh_mm_ss' => date_i18n( 'H:i:s' )
                 )
             ),
-            'time_allow_empty' => array(
+            self::$type . '_allow_empty' => array(
                 'label' => __( 'Allow empty value?', 'pods' ),
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            'time_html5' => array(
+            self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
@@ -155,7 +155,7 @@ class PodsField_Time extends PodsField {
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
-        elseif ( 0 == pods_var( 'time_allow_empty', $options, 1 ) )
+        elseif ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
         else
             $value = '';
@@ -204,9 +204,9 @@ class PodsField_Time extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && ( 0 == pods_var( 'time_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = $this->convert_date( $value, 'H:i:s', $format );
-        elseif ( 1 == pods_var( 'time_allow_empty', $options, 1 ) )
+        elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = '00:00:00';
         else
             $value = date_i18n( 'H:i:s' );
@@ -229,7 +229,7 @@ class PodsField_Time extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( 'time_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -257,10 +257,10 @@ class PodsField_Time extends PodsField {
             'hh_mm_ss' => 'h:i:s'
         );
 
-        if ( 12 == pods_var( 'time_type', $options ) )
-            $format = $time_format[ pods_var( 'time_format', $options, 'hh_mm', null, true ) ];
+        if ( 12 == pods_var( self::$type . '_type', $options ) )
+            $format = $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ];
         else
-            $format = str_replace( array( 'h:', 'g:' ), 'H:', $time_format[ pods_var( 'time_format', $options, 'hh_mm', null, true ) ] );
+            $format = str_replace( array( 'h:', 'g:' ), 'H:', $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ] );
 
         return $format;
     }

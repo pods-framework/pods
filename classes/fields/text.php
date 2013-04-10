@@ -54,7 +54,7 @@ class PodsField_Text extends PodsField {
      */
     public function options () {
         $options = array(
-            'text_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -66,13 +66,13 @@ class PodsField_Text extends PodsField {
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'text_allow_shortcode' => array(
+                    self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
                         'dependency' => true
                     ),
-                    'text_allow_html' => array(
+                    self::$type . '_allow_html' => array(
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -80,19 +80,19 @@ class PodsField_Text extends PodsField {
                     )
                 )
             ),
-            'text_allowed_html_tags' => array(
+            self::$type . '_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( 'text_allow_html' => true ),
+                'depends-on' => array( self::$type . '_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
             ),
-            'text_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to 0 for no limit', 'pods' )
             )/*,
-            'text_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -116,7 +116,7 @@ class PodsField_Text extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'text_max_length', $options, 255, null, true );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 255, null, true );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -141,7 +141,7 @@ class PodsField_Text extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'text_allow_shortcode', $options ) )
+        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -238,7 +238,7 @@ class PodsField_Text extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 0 == pods_var( 'text_allow_html', $options, 0, null, true ) )
+        if ( 0 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) )
             $value = wp_trim_words( $value );
 
         return $value;
@@ -263,11 +263,11 @@ class PodsField_Text extends PodsField {
 
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'text_allow_html', $options, 0, null, true ) ) {
+        if ( 1 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) ) {
             $allowed_html_tags = '';
 
-            if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( 'text_allowed_html_tags', $options ) ) );
+            if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+                $allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
                 $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
             }
 

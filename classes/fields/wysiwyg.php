@@ -54,7 +54,7 @@ class PodsField_WYSIWYG extends PodsField {
      */
     public function options () {
         $options = array(
-            'wysiwyg_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -63,7 +63,7 @@ class PodsField_WYSIWYG extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            'wysiwyg_editor' => array(
+            self::$type . '_editor' => array(
                 'label' => __( 'Editor', 'pods' ),
                 'default' => 'tinymce',
                 'type' => 'pick',
@@ -78,9 +78,9 @@ class PodsField_WYSIWYG extends PodsField {
             ),
             'editor_options' => array(
                 'label' => __( 'Editor Options', 'pods' ),
-                'depends-on' => array( 'wysiwyg_editor' => 'tinymce' ),
+                'depends-on' => array( self::$type . '_editor' => 'tinymce' ),
                 'group' => array(
-                    'wysiwyg_media_buttons' => array(
+                    self::$type . '_media_buttons' => array(
                         'label' => __( 'Enable Media Buttons?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean'
@@ -90,7 +90,7 @@ class PodsField_WYSIWYG extends PodsField {
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'wysiwyg_oembed' => array(
+                    self::$type . '_oembed' => array(
                         'label' => __( 'Enable oEmbed?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -99,7 +99,7 @@ class PodsField_WYSIWYG extends PodsField {
                             'http://codex.wordpress.org/Embeds'
                         )
                     ),
-                    'wysiwyg_wptexturize' => array(
+                    self::$type . '_wptexturize' => array(
                         'label' => __( 'Enable wptexturize?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -108,7 +108,7 @@ class PodsField_WYSIWYG extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/wptexturize'
                         )
                     ),
-                    'wysiwyg_convert_chars' => array(
+                    self::$type . '_convert_chars' => array(
                         'label' => __( 'Enable convert_chars?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -117,7 +117,7 @@ class PodsField_WYSIWYG extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/convert_chars'
                         )
                     ),
-                    'wysiwyg_wpautop' => array(
+                    self::$type . '_wpautop' => array(
                         'label' => __( 'Enable wpautop?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -126,7 +126,7 @@ class PodsField_WYSIWYG extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/wpautop'
                         )
                     ),
-                    'wysiwyg_allow_shortcode' => array(
+                    self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -138,17 +138,17 @@ class PodsField_WYSIWYG extends PodsField {
                     )
                 )
             ),
-            'wysiwyg_allowed_html_tags' => array(
+            self::$type . '_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'default' => '',
                 'type' => 'text'
             ),/*
-            'wysiwyg_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
             ),
-            'wysiwyg_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -192,7 +192,7 @@ class PodsField_WYSIWYG extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'wysiwyg_oembed', $options, 0 ) ) {
+        if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
             $post_temp = false;
 
             // Workaround for WP_Embed since it needs a $post to work from
@@ -214,17 +214,17 @@ class PodsField_WYSIWYG extends PodsField {
                 $GLOBALS[ 'post' ] = null;
         }
 
-        if ( 1 == pods_var( 'wysiwyg_wptexturize', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_convert_chars', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) )
             $value = convert_chars( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
             $value = wpautop( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_allow_shortcode', $options, 0 ) ) {
-            if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
+            if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
                 $value = shortcode_unautop( $value );
 
             $value = do_shortcode( $value );
@@ -251,14 +251,14 @@ class PodsField_WYSIWYG extends PodsField {
         if ( is_array( $value ) )
             $value = implode( "\n", $value );
 
-        if ( 'tinymce' == pods_var( 'wysiwyg_editor', $options ) )
+        if ( 'tinymce' == pods_var( self::$type . '_editor', $options ) )
             $field_type = 'tinymce';
-        elseif ( 'cleditor' == pods_var( 'wysiwyg_editor', $options ) )
+        elseif ( 'cleditor' == pods_var( self::$type . '_editor', $options ) )
             $field_type = 'cleditor';
         else {
             // Support custom WYSIWYG integration
-            do_action( 'pods_form_ui_field_wysiwyg_' . pods_var( 'wysiwyg_editor', $options ), $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_wysiwyg', pods_var( 'wysiwyg_editor', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_wysiwyg_' . pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_wysiwyg', pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
 
             return;
         }
@@ -326,8 +326,8 @@ class PodsField_WYSIWYG extends PodsField {
 
         $allowed_html_tags = '';
 
-        if ( 0 < strlen( pods_var( 'wysiwyg_allowed_html_tags', $options ) ) ) {
-            $allowed_html_tags = explode( ' ', trim( pods_var( 'wysiwyg_allowed_html_tags', $options ) ) );
+        if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+            $allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
             $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
         }
 

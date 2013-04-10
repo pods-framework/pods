@@ -62,7 +62,7 @@ class PodsField_Avatar extends PodsField {
         }
 
         $options = array(
-            'avatar_uploader' => array(
+            self::$type . '_uploader' => array(
                 'label' => __( 'Avatar Uploader', 'pods' ),
                 'default' => 'attachment',
                 'type' => 'pick',
@@ -75,9 +75,9 @@ class PodsField_Avatar extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'avatar_attachment_tab' => array(
+            self::$type . '_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
@@ -86,37 +86,37 @@ class PodsField_Avatar extends PodsField {
                     'browse' => __( 'Media Library', 'pods' )
                 )
             ),
-            'avatar_restrict_filesize' => array(
+            self::$type . '_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'depends-on' => array( 'avatar_uploader' => 'plupload' ),
+                'depends-on' => array( self::$type . '_uploader' => 'plupload' ),
                 'default' => '10MB',
                 'type' => 'text'
             ),
-            'avatar_add_button' => array(
+            self::$type . '_add_button' => array(
                 'label' => __( 'Add Button Text', 'pods' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             ),
-            'avatar_modal_title' => array(
+            self::$type . '_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),
-            'avatar_modal_add_button' => array(
+            self::$type . '_modal_add_button' => array(
                 'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
         );
 
         if ( !pods_wp_version( '3.5' ) ) {
-            unset( $options[ 'avatar_modal_title' ] );
-            unset( $options[ 'avatar_modal_add_button' ] );
+            unset( $options[ self::$type . '_modal_title' ] );
+            unset( $options[ self::$type . '_modal_add_button' ] );
 
-            $options[ 'avatar_attachment_tab' ][ 'default' ] = 'type';
-            $options[ 'avatar_attachment_tab' ][ 'data' ] = array(
+            $options[ self::$type . '_attachment_tab' ][ 'default' ] = 'type';
+            $options[ self::$type . '_attachment_tab' ][ 'data' ] = array(
                 'type' => __( 'Upload File', 'pods' ),
                 'library' => __( 'Media Library', 'pods' )
             );
@@ -190,9 +190,9 @@ class PodsField_Avatar extends PodsField {
             return;
         }
 
-        if ( 'plupload' == pods_var( 'avatar_uploader', $options ) )
+        if ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( 'avatar_uploader', $options ) ) {
+        elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
             if ( !pods_wp_version( '3.5' ) || !is_admin() ) // @todo test frontend media modal
                 $field_type = 'attachment';
             else
@@ -200,8 +200,8 @@ class PodsField_Avatar extends PodsField {
         }
         else {
             // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_avatar_uploader_' . pods_var( 'avatar_uploader', $options ), $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_avatar_uploader', pods_var( 'avatar_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_avatar_uploader_' . pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_avatar_uploader', pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 

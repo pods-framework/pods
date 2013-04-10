@@ -54,7 +54,7 @@ class PodsField_Phone extends PodsField {
      */
     public function options () {
         $options = array(
-            'phone_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -63,7 +63,7 @@ class PodsField_Phone extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            'phone_format' => array(
+            self::$type . '_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => '999-999-9999 x999',
                 'type' => 'pick',
@@ -78,28 +78,28 @@ class PodsField_Phone extends PodsField {
                     )
                 )
             ),
-            'phone_options' => array(
+            self::$type . '_options' => array(
                 'label' => __( 'Phone Options', 'pods' ),
                 'group' => array(
-                    'phone_enable_phone_extension' => array(
+                    self::$type . '_enable_phone_extension' => array(
                         'label' => __( 'Enable Phone Extension?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean'
                     )
                 )
             ),
-            'phone_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 25,
                 'type' => 'number',
                 'help' => __( 'Set to 0 for no limit', 'pods' )
             ),
-            'phone_html5' => array(
+            self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
             )/*,
-            'phone_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -122,7 +122,7 @@ class PodsField_Phone extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'phone_max_length', $options, 25, null, true );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 25, null, true );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -205,7 +205,7 @@ class PodsField_Phone extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
-        if ( 'international' == pods_var( 'phone_format', $options ) ) {
+        if ( 'international' == pods_var( self::$type . '_format', $options ) ) {
             // no validation/changes
         }
         else {
@@ -238,19 +238,19 @@ class PodsField_Phone extends PodsField {
                 $numbers = array( $numbers[ 0 ], $numbers[ 1 ] );
 
             // Format number
-            if ( '(999) 999-9999 x999' == pods_var( 'phone_format', $options ) ) {
+            if ( '(999) 999-9999 x999' == pods_var( self::$type . '_format', $options ) ) {
                 if ( 2 == count( $numbers ) )
                     $value = implode( '-', $numbers );
                 else
                     $value = '(' . $numbers[ 0 ] . ') ' . $numbers[ 1 ] . '-' . $numbers[ 2 ];
             }
-            elseif ( '999.999.9999 x999' == pods_var( 'phone_format', $options ) )
+            elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) )
                 $value = implode( '.', $numbers );
-            else //if ( '999-999-9999 x999' == pods_var( 'phone_format', $options ) )
+            else //if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
                 $value = implode( '-', $numbers );
 
             // Add extension
-            if ( 1 == pods_var( 'phone_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
+            if ( 1 == pods_var( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
                 $value .= ' x' . $extension;
         }
 

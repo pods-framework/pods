@@ -54,7 +54,7 @@ class PodsField_Date extends PodsField {
      */
     public function options () {
         $options = array(
-            'date_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -63,7 +63,7 @@ class PodsField_Date extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            'date_format' => array(
+            self::$type . '_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
                 'default' => 'mdy',
                 'type' => 'pick',
@@ -84,12 +84,12 @@ class PodsField_Date extends PodsField {
                     'y' => date_i18n( 'Y' )
                 )
             ),
-            'date_allow_empty' => array(
+            self::$type . '_allow_empty' => array(
                 'label' => __( 'Allow empty value?', 'pods' ),
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            'date_html5' => array(
+            self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
@@ -138,7 +138,7 @@ class PodsField_Date extends PodsField {
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
-        elseif ( 0 == pods_var( 'date_allow_empty', $options, 1 ) )
+        elseif ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
         else
             $value = '';
@@ -187,9 +187,9 @@ class PodsField_Date extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && ( 0 == pods_var( 'date_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = $this->convert_date( $value, 'Y-m-d', $format );
-        elseif ( 1 == pods_var( 'date_allow_empty', $options, 1 ) )
+        elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = '0000-00-00';
         else
             $value = date_i18n( 'Y-m-d' );
@@ -213,7 +213,7 @@ class PodsField_Date extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( 'date_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -245,7 +245,7 @@ class PodsField_Date extends PodsField {
             'y' => 'Y'
         );
 
-        $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];
+        $format = $date_format[ pods_var( self::$type . '_format', $options, 'ymd_dash', null, true ) ];
 
         return $format;
     }

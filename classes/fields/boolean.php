@@ -48,7 +48,7 @@ class PodsField_Boolean extends PodsField {
      */
     public function options () {
         $options = array(
-            'boolean_format_type' => array(
+            self::$type . '_format_type' => array(
                 'label' => __( 'Input Type', 'pods' ),
                 'default' => 'checkbox',
                 'type' => 'pick',
@@ -59,12 +59,12 @@ class PodsField_Boolean extends PodsField {
                 ),
                 'dependency' => true
             ),
-            'boolean_yes_label' => array(
+            self::$type . '_yes_label' => array(
                 'label' => __( 'Yes Label', 'pods' ),
                 'default' => __( 'Yes', 'pods' ),
                 'type' => 'text'
             ),
-            'boolean_no_label' => array(
+            self::$type . '_no_label' => array(
                 'label' => __( 'No Label', 'pods' ),
                 'default' => __( 'No', 'pods' ),
                 'type' => 'text'
@@ -101,8 +101,8 @@ class PodsField_Boolean extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
-            1 => pods_var_raw( 'boolean_yes_label', $options ),
-            0 => pods_var_raw( 'boolean_no_label', $options )
+            1 => pods_var_raw( self::$type . '_yes_label', $options ),
+            0 => pods_var_raw( self::$type . '_no_label', $options )
         );
 
         // Deprecated handling for 1.x
@@ -132,9 +132,9 @@ class PodsField_Boolean extends PodsField {
 
         $field_type = 'checkbox';
 
-        if ( 'radio' == pods_var( 'boolean_format_type', $options ) )
+        if ( 'radio' == pods_var( self::$type . '_format_type', $options ) )
             $field_type = 'radio';
-        elseif ( 'dropdown' == pods_var( 'boolean_format_type', $options ) )
+        elseif ( 'dropdown' == pods_var( self::$type . '_format_type', $options ) )
             $field_type = 'select';
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
@@ -155,15 +155,15 @@ class PodsField_Boolean extends PodsField {
      * @since 2.0
      */
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-        if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
+        if ( 'checkbox' != pods_var( self::$type . '_format_type', $options ) ) {
             $data = array(
-                1 => pods_var_raw( 'boolean_yes_label', $options ),
-                0 => pods_var_raw( 'boolean_no_label', $options )
+                1 => pods_var_raw( self::$type . '_yes_label', $options ),
+                0 => pods_var_raw( self::$type . '_no_label', $options )
             );
         }
         else {
             $data = array(
-                1 => pods_var_raw( 'boolean_yes_label', $options )
+                1 => pods_var_raw( self::$type . '_yes_label', $options )
             );
         }
 
@@ -224,9 +224,9 @@ class PodsField_Boolean extends PodsField {
             $value = 1;
         elseif ( 'no' == strtolower( $value ) )
             $value = 0;
-        elseif ( strtolower( pods_var_raw( 'boolean_yes_label', $options, __( 'Yes', 'pods' ), null, true ) ) == strtolower( $value ) )
+        elseif ( strtolower( pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ) ) == strtolower( $value ) )
             $value = 1;
-        elseif ( strtolower( pods_var_raw( 'boolean_no_label', $options, __( 'No', 'pods' ), null, true ) ) == strtolower( $value ) )
+        elseif ( strtolower( pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true ) ) == strtolower( $value ) )
             $value = 0;
         else
             $value = ( 0 == (int) $value ? 0 : 1 );
@@ -248,8 +248,8 @@ class PodsField_Boolean extends PodsField {
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $yesno = array(
-            1 => pods_var_raw( 'boolean_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
-            0 => pods_var_raw( 'boolean_no_label', $options, __( 'No', 'pods' ), null, true )
+            1 => pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
+            0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true )
         );
 
         if ( isset( $yesno[ (int) $value ] ) )

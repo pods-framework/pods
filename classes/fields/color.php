@@ -45,7 +45,7 @@ class PodsField_Color extends PodsField {
      */
     public function options () {
         $options = array(
-            'color_repeatable' => array(
+            self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',

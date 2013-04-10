@@ -111,7 +111,6 @@
 
                                 $object = rtrim( $object, 's' );
 
-                                $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                                 $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';
 
                                 break;

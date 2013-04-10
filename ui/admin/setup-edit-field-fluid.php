@@ -176,7 +176,6 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                             if ( false !== strpos( $object, 'ies' ) )
                                 $object = str_replace( 'ies', 'y', $object );
 
-                            $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                             $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';
 
                             break;

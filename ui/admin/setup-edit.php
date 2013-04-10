@@ -954,7 +954,6 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 $object = '';
 
             foreach ( $object_label as $sub_object => $sub_object_label ) {
-                $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                 $pods_pick_objects[] = "'" . esc_js( $sub_object ) . "' : '" . esc_js( $sub_object_label ) . $object . "'";
             }
         }

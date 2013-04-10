@@ -2158,14 +2158,14 @@ class PodsAPI {
                         $test = false;
 
                         if ( 0 < strlen( $old_definition ) )
-                            $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $old_name . "` {$definition}", false );
+                            $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
                         // If the old field doesn't exist, continue to add a new field
                         if ( false === $test )
                             pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     }
                     elseif ( null !== $old_definition && $definition != $old_definition ) {
-                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $old_name . "` {$definition}", false );
+                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
                         // If the old field doesn't exist, continue to add a new field
                         if ( false === $test )

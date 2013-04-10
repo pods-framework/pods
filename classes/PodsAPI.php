@@ -3544,7 +3544,7 @@ class PodsAPI {
                         foreach ( $related_ids as $related_id ) {
                             $related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
 
-                            $related_fields = array_merge( $pod->fields, $related_object_fields );
+                            $related_fields = array_merge( $related_pod->fields, $related_object_fields );
 
                             $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
 

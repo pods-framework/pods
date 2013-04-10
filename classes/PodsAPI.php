@@ -3474,6 +3474,8 @@ class PodsAPI {
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+
         $export_fields = array();
 
         foreach ( $fields as $k => $field ) {
@@ -3540,9 +3542,9 @@ class PodsAPI {
                         $related_data = $pod->field( $field[ 'name' ] );
                     else {
                         foreach ( $related_ids as $related_id ) {
-                            $object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
+                            $related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
 
-                            $related_fields = array_merge( $pod->fields, $object_fields );
+                            $related_fields = array_merge( $pod->fields, $related_object_fields );
 
                             $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
 

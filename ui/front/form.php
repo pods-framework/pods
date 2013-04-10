@@ -88,8 +88,8 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     if ( 'undefined' == typeof pods_form_init ) {
         var pods_form_init = true;
 
-        if ( 'undefined' == typeof pods_ajaxurl ) {
-            var pods_ajaxurl = '<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>';
+        if ( 'undefined' == typeof ajaxurl ) {
+            var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
         }
 
         jQuery( function ( $ ) {

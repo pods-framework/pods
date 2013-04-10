@@ -166,7 +166,6 @@
         var $useCaseSelector = $( '#pods-use-case-selector' ),
                 $form = $( '#pods_shortcode_form_element' ),
                 $podSelector = $( '#pod_select' ),
-                pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>",
                 nonce = "<?php echo wp_create_nonce( 'pods-shortcode_load_fields' ); ?>";
 
         $useCaseSelector.change(function ( evt ) {

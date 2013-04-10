@@ -93,7 +93,7 @@ if ( 0 < $pod->id() ) {
 }
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
+<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
@@ -353,8 +353,8 @@ if ( 0 < $pod->id() ) {
 <!-- /#pods-record -->
 
 <script type="text/javascript">
-    if ( 'undefined' == typeof pods_ajaxurl ) {
-        var pods_ajaxurl = '<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>';
+    if ( 'undefined' == typeof ajaxurl ) {
+        var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
     }
 
     jQuery( function ( $ ) {

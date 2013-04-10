@@ -35,8 +35,8 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
 <script type="text/javascript">
     jQuery( function ( $ ) {
-        if ( 'undefined' == typeof pods_ajaxurl ) {
-            var pods_ajaxurl = '<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>';
+        if ( 'undefined' == typeof ajaxurl ) {
+            var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
         }
 
         function <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult ( item ) {
@@ -128,7 +128,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 if ( empty( $options[ 'data' ] ) || ( isset( $ajax ) && $ajax ) ) {
             ?>
                 ajax : {
-                    url : pods_ajaxurl,
+                    url : ajaxurl + '?pods_ajax=1',
                     type : 'POST',
                     dataType : 'json',
                     data : function ( term, page ) {

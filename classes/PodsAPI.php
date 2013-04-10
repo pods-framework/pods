@@ -3349,6 +3349,10 @@ class PodsAPI {
         $pod[ 'name' ] = $check_name;
         $pod[ 'label' ] = $new_label;
 
+        foreach ( $pod[ 'fields' ] as $field => $field_data ) {
+            unset( $pod[ 'fields' ][ $field ][ 'id' ] );
+        }
+
         return $this->save_pod( $pod );
     }
 

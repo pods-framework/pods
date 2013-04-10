@@ -987,6 +987,8 @@ class Pods {
 
                                     $value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
                                 }
+                                elseif ( false === $params->in_form && !empty( $value ) )
+                                    $value = array_values( $value );
 
                                 // Return a single column value
                                 if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && 1 == count( $value ) )

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,11 +150,15 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.1 - April 9th, 2013 =
-* Added: New ability to set the menu location of Custom Taxonomies (expose a Custom Taxonomy that isn't associated to a Post Type)
-* And 10 other bug fixes and enhancements
+= 2.3.2 - April 11th, 2013 =
+* Added: You can now select 'ID' from the list of available columns to show in Admin UI for Advanced Content Types
+* And 11 other bug fixes
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.1 - April 9th, 2013 =
+* Added: New ability to set the menu location of Custom Taxonomies (expose a Custom Taxonomy that isn't associated to a Post Type)
+* Various fixes that can be found on GitHub
 
 = 2.3 - April 7th, 2013 =
 * Added: Custom Settings Pages - now you can add new settings pages with their own custom fields!
@@ -194,12 +198,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Updated: Now enforcing maximum post type (20 chars) / taxonomy (32 chars) naming
 * Changed: Advanced Content Types have been split off into their own component which you can enable to be able to add new Advanced Content Types
 * Changed: Table-based storage for WordPress objects (Post Types, Taxonomies, Media, Users, and Comments) has been split off into it's own component which you can enable to add the table-based storage option to the Pods Add New interface
+* Various fixes that can be found on GitHub
 
 = 2.2 - January 5th, 2013 =
 * Added: New 'Duplicate Field' option, that lets you copy a field's settings into a new field in the Pod editor
 * Added: New iThemes Builder component - Adds four new modules available for use in Builder Layouts -- Field Value, Form, List Items, and Single Item
 * Updated: Split up the old Pods Admin > Setup menu into two separate items -- Edit Pods and Add New
 * Fixed: Upgrade from Pods 1.x to Pods 2.x now fixed, in Pods 2.1 the upgrade wizard was not shown
+* Various fixes that can be found on GitHub
 
 = 2.1 - December 7th, 2012 =
 * Pods is now WordPress 3.5 compatible as we've added a number of fixes for all the 3.5 media goodness! We're also working on some tighter integration with the new 3.5 media popups (thanks to the awesome work of @jchristopher) - watch for that in Pods 2.2 soon
@@ -212,6 +218,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Updated: Relationship 'where' option in Field editor now more robust and has all fields (including relationships, or meta like above) can be referenced
 * Updated: Relationship 'where' option in Field editor now supports {@user.ID} lookups which maps to pods_var( 'ID', 'user' ) to sanitize (ex. user.ID != '{@user.ID}' in the Pick WHERE will return all users not the current user); You can use any pods_var enabled option, documentation coming this month
 * Updated: Relationship saving has been optimized for both bi-directional relationships and regular relationships
+* Various fixes that can be found on GitHub
 
 = 2.0.5.1 - November 25th, 2012 =
 * Fixed: 'Edit' link wasn't appearing for Pod Pages / Templates / Helpers (you could click the title though)

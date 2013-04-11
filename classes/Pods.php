@@ -714,6 +714,7 @@ class Pods {
                     if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
                         $id = $this->id();
 
+                        // Support for WPML 'duplicated' translation handling
                         if ( function_exists( 'icl_get_languages' ) ) {
                             $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
 

@@ -903,9 +903,6 @@ class PodsData {
                         if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'number', 'decimal', 'currency', 'phone', 'password', 'boolean' ) ) )
                             continue;
 
-                        if ( in_array( $field, $params->filters ) )
-                            continue;
-
                         $fieldfield = '`' . $field . '`';
 
                         if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {

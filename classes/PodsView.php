@@ -330,15 +330,18 @@ class PodsView {
         $_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
         $_view = preg_replace( '/\/+/', '/', $_view );
 
+        if ( empty( $_view ) )
+            return false;
+
         $_real_view = realpath( $_view );
+
+        if ( empty( $_real_view ) )
+            $_real_view = $_view;
 
         $located = false;
 
-        if ( empty( $_view ) )
-            return false;
-        // Look for basic file includes
-        elseif ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
-            $_real_view = rtrim( $_real_view, '/' );
+        if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
+            $_real_view = trim( $_real_view, '/' );
 
             if ( empty( $_real_view ) )
                 return false;

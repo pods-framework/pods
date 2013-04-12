@@ -179,6 +179,10 @@
 
                                 if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                     pods_admin_submit_error_callback( err_msg, $submittable );
+                                else {
+                                    alert( 'Error: ' + err_msg );
+                                    if ( window.console ) console.log( err_msg );
+                                }
 
                                 $submitbutton.css( 'cursor', 'pointer' );
                                 $submitbutton.prop( 'disabled', false );
@@ -189,12 +193,18 @@
                                     $( '#pods-wizard-next' ).prop( 'disabled', false );
                                     $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
                                 }
-
-                                alert( 'Error: ' + err_msg );
-                                if ( window.console ) console.log( err_msg );
                             }
                         },
                         error : function () {
+                            var err_msg = 'Unable to process request, please try again.';
+
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                pods_admin_submit_error_callback( err_msg, $submittable );
+                            else {
+                                alert( 'Error: ' + err_msg );
+                                if ( window.console ) console.log( err_msg );
+                            }
+
                            $submitbutton.css( 'cursor', 'pointer' );
                            $submitbutton.prop( 'disabled', false );
                            $submitbutton.parent().find( '.waiting' ).fadeOut();
@@ -204,8 +214,6 @@
                                 $( '#pods-wizard-next' ).prop( 'disabled', false );
                                 $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
                             }
-
-                            alert( 'Unable to process request, please try again.' );
                         }
                     } );
                 } )// Handle submit button and show waiting image
@@ -285,21 +293,29 @@
 
                                 if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                     pods_admin_submit_error_callback( err_msg, $submittable );
+                                else {
+                                    alert( 'Error: ' + err_msg );
+                                    if ( window.console ) console.log( err_msg );
+                                }
 
                                 $submitbutton.css( 'cursor', 'pointer' );
                                 $submitbutton.prop( 'disabled', false );
                                 $submitbutton.parent().find( '.waiting' ).fadeOut();
-
-                                alert( 'Error: ' + err_msg );
-                                if ( window.console ) console.log( err_msg );
                             }
                         },
                         error : function () {
+                            var err_msg = 'Unable to process request, please try again.';
+
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                pods_admin_submit_error_callback( err_msg, $submittable );
+                            else {
+                                alert( 'Error: ' + err_msg );
+                                if ( window.console ) console.log( err_msg );
+                            }
+
                            $submitbutton.css( 'cursor', 'pointer' );
                            $submitbutton.prop( 'disabled', false );
                            $submitbutton.parent().find( '.waiting' ).fadeOut();
-
-                            alert( 'Unable to process request, please try again.' );
                         }
                     } );
                 } );

@@ -444,6 +444,8 @@ class Pods {
      * @link http://pods.io/docs/field/
      */
     public function field ( $name, $single = null, $raw = false ) {
+        global $sitepress;
+
         $defaults = array(
             'name' => $name,
             'orderby' => null,
@@ -715,7 +717,7 @@ class Pods {
                         $id = $this->id();
 
                         // Support for WPML 'duplicated' translation handling
-                        if ( function_exists( 'icl_get_languages' ) ) {
+                        if ( is_object( $sitepress ) ) {
                             $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
 
                             if ( 0 < $master_post_id )

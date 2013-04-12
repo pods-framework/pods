@@ -276,8 +276,6 @@ class PodsField_Currency extends PodsField {
         if ( is_array( $value ) )
             $value = implode( '', $value );
 
-        $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
-
         if ( 'slider' == pods_var( self::$type . '_format_type', $options, 'number' ) )
             $field_type = 'slider';
         else

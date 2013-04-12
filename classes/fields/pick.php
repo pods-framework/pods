@@ -1060,7 +1060,7 @@ class PodsField_Pick extends PodsField {
      * @return array|bool Object data
      */
     private function get_object_data ( $object_params = null ) {
-        global $wpdb, $polylang;
+        global $wpdb, $polylang, $sitepress;
 
         $object_params = array_merge(
             array(
@@ -1371,7 +1371,7 @@ class PodsField_Pick extends PodsField {
                             $object = $result[ 'taxonomy' ];
 
                         // WPML integration for Post Types and Taxonomies
-                        if ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
+                        if ( is_object( $sitepress ) && in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) ) {
                             $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
 
                             if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
@@ -1390,7 +1390,7 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                        elseif ( is_object( $polylang ) && in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && method_exists( $polylang, 'get_translation' ) ) {
                             $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
 
                             if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {

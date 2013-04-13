@@ -1663,8 +1663,13 @@ class PodsAPI {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $k => $field ) {
-                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) )
+                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
+                    // Iterative change handling for setup-edit.php
+                    if ( !is_array( $field ) && isset( $old_fields[ $k ] ) )
+                        $saved[ $old_fields[ $k ][ 'name' ] ] = true;
+
                     continue;
+                }
 
                 if ( !empty( $old_id ) )
                     $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
@@ -1688,7 +1693,6 @@ class PodsAPI {
 
                 $field = $this->save_field( $field, $field_table_operation, $sanitized, $db );
 
-
                 if ( true !== $db )
                     $pod[ 'fields' ][ $k ] = $field;
                 else {
@@ -1701,6 +1705,8 @@ class PodsAPI {
 
             if ( true === $db ) {
                 foreach ( $old_fields as $field ) {
+                    if ( $pod[ 'fields' ][ $field[ 'name' ] ] )
+
                     if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
                         if ( $field[ 'id' ] == $field_index_id )
                             $field_index_change = 'id';

@@ -725,10 +725,11 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
                 <?php
                     foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
                         $post_type = pods_str_replace( 'post_type-', '', $post_type, 1 );
+                        $label = str_replace( array( '(', ')' ), array( '<small>(', ')</small>' ), $label );
                 ?>
                     <li>
                         <div class="pods-field pods-boolean">
-                            <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var_raw( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label . ' <small>(' . $post_type . ')</small>' ) ); ?>
+                            <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var_raw( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
                         </div>
                     </li>
                 <?php

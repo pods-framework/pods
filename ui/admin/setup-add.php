@@ -75,7 +75,7 @@
                     <div id="pods-wizard-panel-2" class="pods-wizard-panel">
                         <div class="pods-wizard-option-content" id="pods-wizard-create">
                             <div class="pods-wizard-content">
-                                <p><?php _e( 'Creating a new Content Type allows you to control exactly what that content type does, acts like, the field it has, and the way you manage it.', 'pods' ); ?></p>
+                                <p><?php _e( 'Creating a new Content Type allows you to control exactly what that content type does, how it acts like, the fields it has, and the way you manage it.', 'pods' ); ?></p>
                             </div>
                             <div class="stuffbox">
                                 <h3><label for="link_name"><?php _e( 'Create a New Content Type', 'pods' ); ?></label></h3>

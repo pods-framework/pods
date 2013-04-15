@@ -680,7 +680,7 @@ function pods_shortcode_form ( $tags, $content = null ) {
  *
  * @since 1.10
  */
-function pods_compatibility () {
+function pods_compatibility_check () {
     $compatible = true;
 
     if ( !pods_version_check( 'wp', PODS_WP_VERSION_MINIMUM ) ) {

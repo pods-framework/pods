@@ -126,7 +126,7 @@ class PodsField_File extends PodsField {
             ),
             self::$type . '_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
-                'default' => 'images',
+                'default' => apply_filters( 'pods_form_ui_field_file_type_default', 'images' ),
                 'type' => 'pick',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_type_options',

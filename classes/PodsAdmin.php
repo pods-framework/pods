@@ -1050,12 +1050,6 @@ class PodsAdmin {
             );
 
             $options[ 'advanced' ] = array(
-                'description' => array(
-                    'label' => __( 'Post Type Description', 'pods' ),
-                    'help' => __( 'A short descriptive summary of what the post type is.', 'pods' ),
-                    'type' => 'text',
-                    'default' => ''
-                ),
                 'public' => array(
                     'label' => __( 'Public', 'pods' ),
                     'help' => __( 'help', 'pods' ),

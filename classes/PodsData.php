@@ -956,7 +956,7 @@ class PodsData {
                         if ( $params->meta_fields )
                             $fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
                         else
-                            $fieldfield = '`' . $params->pod_table_prefix . '`.' . $params->index . '`';
+                            $fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
                     }
                     elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $params->index ] ) )
                         $fieldfield = '`' . $params->index . '`.`meta_value`';

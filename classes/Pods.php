@@ -471,8 +471,6 @@ class Pods {
         if ( null !== $params->single )
             $params->single = (boolean) $params->single;
 
-        $single = $params->single;
-
         if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
 
@@ -733,7 +731,7 @@ class Pods {
 
                     // Handle Simple Relationships
                     if ( $simple ) {
-                        if ( null === $single )
+                        if ( null === $params->single )
                             $params->single = false;
 
                         $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
@@ -985,7 +983,7 @@ class Pods {
 
                                 // Handle Simple Relationships
                                 if ( $simple ) {
-                                    if ( null === $single )
+                                    if ( null === $params->single )
                                         $params->single = false;
 
                                     $value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
@@ -1013,7 +1011,7 @@ class Pods {
         else
             $this->row[ $params->name ] = $value;
 
-        if ( true === $params->single && is_array( $value ) && 1 == count( $value ) )
+        if ( $params->single && is_array( $value ) && 1 == count( $value ) )
             $value = current( $value );
 
         // @todo Expand this into traversed fields too

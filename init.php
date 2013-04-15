@@ -126,7 +126,7 @@ else {
             if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
                 require_once( PODS_DIR . 'deprecated/deprecated.php' );
 
-            if ( false !== pods_compatible() ) {
+            if ( false !== pods_compatibility_check() ) {
                 $pods_form = pods_form();
 
                 $pods_init = pods_init();

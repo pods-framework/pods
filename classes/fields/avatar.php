@@ -111,7 +111,7 @@ class PodsField_Avatar extends PodsField {
             )
         );
 
-        if ( !pods_wp_version( '3.5' ) ) {
+        if ( !pods_version_check( 'wp', '3.5' ) ) {
             unset( $options[ self::$type . '_modal_title' ] );
             unset( $options[ self::$type . '_modal_add_button' ] );
 
@@ -193,7 +193,7 @@ class PodsField_Avatar extends PodsField {
         if ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
-            if ( !pods_wp_version( '3.5' ) || !is_admin() ) // @todo test frontend media modal
+            if ( !pods_version_check( 'wp', '3.5' ) || !is_admin() ) // @todo test frontend media modal
                 $field_type = 'attachment';
             else
                 $field_type = 'media';

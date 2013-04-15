@@ -320,21 +320,28 @@ function pods_help ( $text, $url = null ) {
 }
 
 /**
- * Check whether or not WordPress is a specific version minimum and/or maximum
+ * Check whether or not something is a specific version minimum and/or maximum
  *
- * @param string $minimum_version Minimum WordPress version
+ * @param string $minimum_version Minimum version
  * @param string $comparison Comparison operator
- * @param string $maximum_version Maximum WordPress version
+ * @param string $maximum_version Maximum version
  *
  * @return bool
  */
-function pods_wp_version ( $minimum_version, $comparison = '<=', $maximum_version = null ) {
-    global $wp_version;
+function pods_version_check ( $what, $minimum_version, $comparison = '<=', $maximum_version = null ) {
+    global $wp_version, $wpdb;
 
-    if ( !empty( $minimum_version ) && !version_compare( $minimum_version, $wp_version, $comparison ) )
+    if ( 'php' == $what )
+        $version = phpversion();
+    elseif ( 'mysql' === $what )
+        $version = $wpdb->db_version();
+    else
+        $version = $wp_version;
+
+    if ( !empty( $minimum_version ) && !version_compare( $minimum_version, $version, $comparison ) )
         return false;
 
-    if ( !empty( $maximum_version ) && !version_compare( $wp_version, $maximum_version, $comparison ) )
+    if ( !empty( $maximum_version ) && !version_compare( $version, $maximum_version, $comparison ) )
         return false;
 
     return true;
@@ -669,74 +676,83 @@ function pods_shortcode_form ( $tags, $content = null ) {
 /**
  * Check if Pods is compatible with WP / PHP / MySQL or not
  *
- * @param string $wp (optional) Wordpress version
- * @param string $php (optional) PHP Version
- * @param string $mysql (optional) MySQL Version
- *
  * @return bool
  *
  * @since 1.10
  */
-function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
-    global $wp_version, $wpdb;
-
-    if ( null === $wp )
-        $wp = $wp_version;
-
-    if ( null === $php )
-        $php = phpversion();
-
-    if ( null === $mysql )
-        $mysql = $wpdb->db_version();
-
+function pods_compatibility () {
     $compatible = true;
 
-    if ( !version_compare( $wp, PODS_WP_VERSION_MINIMUM, '>=' ) ) {
+    if ( !pods_version_check( 'wp', PODS_WP_VERSION_MINIMUM ) ) {
         $compatible = false;
 
         add_action( 'admin_notices', 'pods_version_notice_wp' );
+    }
 
-        if ( !function_exists( 'pods_version_notice_php' ) ) {
-            function pods_version_notice_wp () {
-                global $wp_version;
+    if ( !pods_version_check( 'php', PODS_PHP_VERSION_MINIMUM ) ) {
+        $compatible = false;
+
+        add_action( 'admin_notices', 'pods_version_notice_php' );
+    }
+
+    if ( !pods_version_check( 'mysql', PODS_MYSQL_VERSION_MINIMUM ) ) {
+        $compatible = false;
+
+        add_action( 'admin_notices', 'pods_version_notice_mysql' );
+    }
+
+    return $compatible;
+}
+
+/**
+ * Show WP notice if WP version is incompatible
+ *
+ * @return void
+ *
+ * @since 1.10
+ */
+function pods_version_notice_wp () {
+    global $wp_version;
 ?>
     <div class="error fade">
-        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+        <p>
+            <strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
             <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
             <strong>WordPress <?php echo $wp_version; ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php
-            }
-        }
-    }
-    if ( !version_compare( $php, PODS_PHP_VERSION_MINIMUM, '>=' ) ) {
-        $compatible = false;
+}
 
-        add_action( 'admin_notices', 'pods_version_notice_php' );
-
-        if ( !function_exists( 'pods_version_notice_php' ) ) {
-            function pods_version_notice_php () {
+/**
+ * Show WP notice if PHP version is incompatible
+ *
+ * @return void
+ *
+ * @since 1.10
+ */
+function pods_version_notice_php () {
 ?>
     <div class="error fade">
-        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+        <p>
+            <strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
             <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
             <strong>PHP <?php echo phpversion(); ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php
-            }
-        }
-    }
-    if ( !@version_compare( $mysql, PODS_MYSQL_VERSION_MINIMUM, '>=' ) ) {
-        $compatible = false;
+}
 
-        add_action( 'admin_notices', 'pods_version_notice_mysql' );
-
-        if ( !function_exists( 'pods_version_notice_mysql' ) ) {
-            function pods_version_notice_mysql () {
-                global $wpdb;
-                $mysql = $wpdb->db_version();
+/**
+ * Show WP notice if MySQL version is incompatible
+ *
+ * @return void
+ *
+ * @since 1.10
+ */
+function pods_version_notice_mysql () {
+    global $wpdb;
+    $mysql = $wpdb->db_version();
 ?>
     <div class="error fade">
         <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
@@ -745,11 +761,6 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
         </p>
     </div>
 <?php
-            }
-        }
-    }
-
-    return $compatible;
 }
 
 /**

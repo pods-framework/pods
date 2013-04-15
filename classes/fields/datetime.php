@@ -71,14 +71,9 @@ class PodsField_DateTime extends PodsField {
                     'mdy' => date_i18n( 'm/d/Y' ),
                     'mdy_dash' => date_i18n( 'm-d-Y' ),
                     'mdy_dot' => date_i18n( 'm.d.Y' ),
-                    'dmy' => date_i18n( 'd/m/Y' ),
-                    'dmy_dash' => date_i18n( 'd-m-Y' ),
-                    'dmy_dot' => date_i18n( 'd.m.Y' ),
                     'ymd_slash' => date_i18n( 'Y/m/d' ),
                     'ymd_dash' => date_i18n( 'Y-m-d' ),
                     'ymd_dot' => date_i18n( 'Y.m.d' ),
-                    'dMd' => date_i18n( 'd/M/Y' ),
-                    'dMd_dash' => date_i18n( 'd-M-Y' ),
                     'fjy' => date_i18n( 'F j, Y' ),
                     'fjsy' => date_i18n( 'F jS, Y' )
                 )
@@ -132,6 +127,21 @@ class PodsField_DateTime extends PodsField {
                 'type' => 'boolean'
             )
         );
+
+        // Check if PHP DateTime::createFromFormat exists for additional supported formats
+        if ( method_exists( 'DateTime', 'createFromFormat' ) || apply_filters( 'pods_form_ui_field_datetime_custom_formatter', false ) ) {
+            $options[ self::$type . '_format' ] = array_merge(
+                $options[ self::$type . '_format' ],
+                array(
+                    'dmy' => date_i18n( 'd/m/Y' ),
+                    'dmy_dash' => date_i18n( 'd-m-Y' ),
+                    'dmy_dot' => date_i18n( 'd.m.Y' ),
+                    'dMd' => date_i18n( 'd/M/Y' ),
+                    'dMd_dash' => date_i18n( 'd-M-Y' )
+                )
+            );
+        }
+
         return $options;
     }
 
@@ -312,9 +322,11 @@ class PodsField_DateTime extends PodsField {
      */
     public function createFromFormat ( $format, $date ) {
         if ( method_exists( 'DateTime', 'createFromFormat' ) )
-            return DateTime::createFromFormat( $format, (string) $date );
+            $datetime = DateTime::createFromFormat( $format, (string) $date );
+        else
+            $datetime = new DateTime( date_i18n( 'Y-m-d', strtotime( (string) $date ) ) );
 
-        return new DateTime( date_i18n( 'Y-m-d H:i:s', strtotime( (string) $date ) ) );
+        return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );
     }
 
     /**

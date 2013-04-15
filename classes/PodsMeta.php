@@ -138,7 +138,7 @@ class PodsMeta {
         add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
         if ( !empty( self::$media ) ) {
-            if ( pods_wp_version( '3.5' ) ) {
+            if ( pods_version_check( 'wp', '3.5' ) ) {
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
                 add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
             }
@@ -521,7 +521,7 @@ class PodsMeta {
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
             if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
-                if ( pods_wp_version( '3.5' ) ) {
+                if ( pods_version_check( 'wp', '3.5' ) ) {
                     add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
                     add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
                 }

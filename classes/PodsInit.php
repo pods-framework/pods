@@ -427,7 +427,7 @@ class PodsInit {
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 
-                if ( !pods_wp_version( '3.5' ) )
+                if ( !pods_version_check( 'wp', '3.5' ) )
                     $cpt_supports = array( '_bug_fix_pre_35' );
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
@@ -435,7 +435,7 @@ class PodsInit {
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( empty( $cpt_supports ) && pods_wp_version( '3.5' ) )
+                if ( empty( $cpt_supports ) && pods_version_check( 'wp', '3.5' ) )
                     $cpt_supports = false;
 
                 // Rewrite

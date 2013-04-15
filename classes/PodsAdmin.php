@@ -1249,7 +1249,7 @@ class PodsAdmin {
                 )
             );
 
-            if ( pods_wp_version( '3.5' ) ) {
+            if ( pods_version_check( 'wp', '3.5' ) ) {
                 $options[ 'admin-ui' ][ 'show_admin_column' ] = array(
                     'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
                     'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),

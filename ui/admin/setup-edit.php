@@ -737,7 +737,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
                 ?>
 
                 <?php
-                    if ( pods_wp_version( '3.5' ) ) {
+                    if ( pods_version_check( 'wp', '3.5' ) ) {
                 ?>
                     <li>
                         <div class="pods-field pods-boolean">

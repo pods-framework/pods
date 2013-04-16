@@ -1955,7 +1955,7 @@ class PodsMeta {
             $field = $field[ 0 ];
         }
 
-        if ( empty( $object_id ) || empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
+        if ( empty( $object_id ) || empty( $object ) ) //|| empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
             return $_null;
 
         $no_conflict = pods_no_conflict_check( $meta_type );
@@ -1986,13 +1986,31 @@ class PodsMeta {
 
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
-                if ( isset( $pod->fields[ $meta_k ] ) )
+                if ( isset( $pod->fields[ $meta_k ] ) ) {
                     $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+
+                    if ( in_array( $pod->fields[ $meta_k ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+                        if ( empty( $meta_key ) && is_array( $meta_cache[ $meta_k ] ) && !isset( $meta_cache[ $meta_k ][ 0 ] ) )
+                            $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+
+                        if ( isset( $meta_cache[ '_pods_' . $meta_k ] ) )
+                            unset( $meta_cache[ '_pods_' . $meta_k ] );
+                    }
+                }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
                     $first = current( explode( '.', $meta_k ) );
 
-                    if ( isset( $pod->fields[ $first ] ) )
+                    if ( isset( $pod->fields[ $first ] ) ) {
                         $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+
+                        if ( in_array( $pod->fields[ $first ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+                            if ( empty( $meta_key ) && is_array( $meta_cache[ $meta_k ] ) && !isset( $meta_cache[ $meta_k ][ 0 ] ) )
+                                $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+
+                            if ( isset( $meta_cache[ '_pods_' . $first ] ) )
+                                unset( $meta_cache[ '_pods_' . $first ] );
+                        }
+                    }
                 }
             }
         }

@@ -1989,13 +1989,15 @@ class PodsMeta {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
                     $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
 
-                    if ( in_array( $pod->fields[ $meta_k ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-                        if ( empty( $meta_key ) && is_array( $meta_cache[ $meta_k ] ) && !isset( $meta_cache[ $meta_k ][ 0 ] ) )
-                            $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+                    if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
+                        if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
+                            $meta_cache[ $meta_k ] = '';
 
-                        if ( isset( $meta_cache[ '_pods_' . $meta_k ] ) )
-                            unset( $meta_cache[ '_pods_' . $meta_k ] );
+                        $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
                     }
+
+                    if ( in_array( $pod->fields[ $meta_k ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $meta_k ] ) )
+                        unset( $meta_cache[ '_pods_' . $meta_k ] );
                 }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
                     $first = current( explode( '.', $meta_k ) );
@@ -2003,13 +2005,15 @@ class PodsMeta {
                     if ( isset( $pod->fields[ $first ] ) ) {
                         $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
 
-                        if ( in_array( $pod->fields[ $first ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-                            if ( empty( $meta_key ) && is_array( $meta_cache[ $meta_k ] ) && !isset( $meta_cache[ $meta_k ][ 0 ] ) )
-                                $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+                        if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
+                            if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
+                                $meta_cache[ $meta_k ] = '';
 
-                            if ( isset( $meta_cache[ '_pods_' . $first ] ) )
-                                unset( $meta_cache[ '_pods_' . $first ] );
+                            $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
                         }
+
+                        if ( in_array( $pod->fields[ $first ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first ] ) )
+                            unset( $meta_cache[ '_pods_' . $first ] );
                     }
                 }
             }
@@ -2027,8 +2031,6 @@ class PodsMeta {
             return $meta_cache;
         elseif ( isset( $meta_cache[ $meta_key ] ) )
             $value = $meta_cache[ $meta_key ];
-        elseif ( !$single )
-            $value = array();
         else
             $value = '';
 
@@ -2038,17 +2040,9 @@ class PodsMeta {
             else
                 $value = array();
         }
-        // get_metadata requires $meta[ 0 ] to be set for first value to be retreived
+        // get_metadata requires $meta[ 0 ] to be set for first value to be retrieved
         elseif ( !is_array( $value ) )
             $value = array( $value );
-        elseif ( is_array( $value ) && !empty( $value ) ) {
-            $current = current( $value );
-
-            if ( !is_array( $current ) )
-                $value = array( $value );
-            else
-                $value = array_values( $value );
-        }
 
         return $value;
     }

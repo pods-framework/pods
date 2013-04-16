@@ -462,7 +462,7 @@ class Pods {
             $params = (object) $defaults;
 
         if ( null === $params->output )
-            $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
+            $params->output = $this->do_hook( 'field_related_output_type', 'objects', $this->row, $params );
 
         // Support old $orderby variable
         if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {
@@ -947,6 +947,8 @@ class Pods {
                                     }
                                     elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
                                         $item = $item->pod_item_index;
+                                    else // arrays
+                                        $item = get_object_vars( (object) $item );
 
                                     // Pass item data into $data
                                     $items[ $item_id ] = $item;
@@ -970,10 +972,6 @@ class Pods {
                             if ( empty( $data ) )
                                 $value = false;
                             else {
-                                foreach ( $data as $k => $item_value ) {
-                                    $data[ $k ] = get_object_vars( (object) $item_value );
-                                }
-
                                 $object_type = $table[ 'type' ];
 
                                 if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment' ) ) )
@@ -997,8 +995,10 @@ class Pods {
                                         $field = $table[ 'field_id' ];
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( isset( $item[ $field ] ) )
+                                        if ( is_array( $item ) && isset( $item[ $field ] ) )
                                             $value[] = $item[ $field ];
+                                        elseif ( is_object( $item ) && isset( $item->{$field} ) )
+                                            $value[] = $item->{$field};
                                         elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
                                             $value[] = get_metadata( $object_type, $item_id, $field, true );
                                         elseif ( 'settings' == $object_type )

@@ -1706,6 +1706,7 @@ class PodsAPI {
             if ( true === $db ) {
                 foreach ( $old_fields as $field ) {
                     if ( $pod[ 'fields' ][ $field[ 'name' ] ] )
+                        continue;
 
                     if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
                         if ( $field[ 'id' ] == $field_index_id )

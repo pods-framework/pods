@@ -452,6 +452,7 @@ class Pods {
             'single' => $single,
             'in_form' => false,
             'raw' => $raw,
+            'output' => null,
             'deprecated' => false
         );
 
@@ -459,6 +460,9 @@ class Pods {
             $params = (object) array_merge( $defaults, (array) $name );
         else
             $params = (object) $defaults;
+
+        if ( null === $params->output )
+            $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
 
         // Support old $orderby variable
         if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {
@@ -906,6 +910,12 @@ class Pods {
                                     'orderby' => $params->orderby
                                 );
 
+                                // Output types
+                                if ( in_array( $params->output, array( 'ids', 'objects' ) ) )
+                                    $sql[ 'select' ] = '`t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
+                                elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
+                                    $sql[ 'select' ] = '`t`.`' . $table[ 'field_index' ] . '` AS `pod_item_index`, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
+
                                 $item_data = pods_data()->select( $sql );
 
                                 $items = array();
@@ -919,6 +929,22 @@ class Pods {
 
                                     // Cleanup
                                     unset( $item->pod_item_id );
+
+                                    // Output types
+                                    if ( 'ids' == $params->output )
+                                        $item = $item_id;
+                                    elseif ( 'objects' == $params->output ) {
+                                        if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+                                            $item = get_post( $item_id );
+                                        elseif ( 'taxonomy' == $object_type )
+                                            $item = get_term( $item_id, $object );
+                                        elseif ( 'user' == $object_type )
+                                            $item = get_userdata( $item_id );
+                                        elseif ( 'comment' == $object_type )
+                                            $item = get_comment( $item_id );
+                                    }
+                                    elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
+                                        $item = $item->pod_item_index;
 
                                     // Pass item data into $data
                                     $items[ $item_id ] = $item;

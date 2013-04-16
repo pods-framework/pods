@@ -20,9 +20,9 @@
         pods_redirect( 'index.php' );
     }
     elseif ( 1 == pods_var( 'pods_reset' ) )
-        pods_ui_message( 'Pods 2.x settings and data have been reset.' );
+        pods_message( 'Pods 2.x settings and data have been reset.' );
     elseif ( 1 == pods_var( 'pods_cleanup_1x' ) )
-        pods_ui_message( 'Pods 1.x data has been deleted.' );
+        pods_message( 'Pods 1.x data has been deleted.' );
 
     $old_version = get_option( 'pods_version' );
 

@@ -7,7 +7,7 @@
         }
     }
     elseif ( 1 == pods_var( 'pods_clearcache' ) )
-        pods_ui_message( 'Pods transients and cache have been cleared.' );
+        pods_message( 'Pods transients and cache have been cleared.' );
 
     if ( PODS_GITHUB_UPDATE ) {
 ?>

@@ -1727,29 +1727,10 @@ class PodsAPI {
                 update_post_meta( $pod[ 'id' ], 'pod_index', $field_index_change );
         }
 
+        if ( !empty( $errors ) )
+            return pods_error( $errors, $this );
+
         $this->cache_flush_pods( $pod );
-
-        // Register Post Types / Taxonomies post-registration from PodsInit
-        if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {
-            global $pods_init;
-
-            $post_types = $taxonomies = array();
-
-            if ( 'post_type' == $pod[ 'type' ] ) {
-                $load_pod = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-
-                if ( !empty( $load_pod ) )
-                    $post_types[] = $load_pod;
-            }
-            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $load_pod = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-
-                if ( !empty( $load_pod ) )
-                    $taxonomies[] = $load_pod;
-            }
-
-            $pods_init->setup_content_types( $post_types, $taxonomies );
-        }
 
         if ( 'post_type' == $pod[ 'type' ] )
             PodsMeta::$post_types[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
@@ -1762,11 +1743,15 @@ class PodsAPI {
         elseif ( 'comment' == $pod[ 'type' ] )
             PodsMeta::$comment[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
 
-        if ( !empty( $errors ) )
-            return pods_error( $errors, $this );
+        // Register Post Types / Taxonomies post-registration from PodsInit
+        if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {
+            global $pods_init;
+
+            $pods_init->setup_content_types( true );
+        }
 
         if ( true === $db )
-            return $params->id;
+            return $pod[ 'id' ];
         else
             return $pod;
     }

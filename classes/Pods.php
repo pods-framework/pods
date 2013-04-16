@@ -1691,8 +1691,6 @@ class Pods {
 
         $this->do_hook( 'add_to', $field, $value, $id );
 
-        $id = $this->id();
-
         if ( !isset( $this->fields[ $field ] ) )
             return $id;
 

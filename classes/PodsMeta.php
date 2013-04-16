@@ -1987,7 +1987,7 @@ class PodsMeta {
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
-                    $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+                    $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
                     if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
                         if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
@@ -2003,7 +2003,7 @@ class PodsMeta {
                     $first = current( explode( '.', $meta_k ) );
 
                     if ( isset( $pod->fields[ $first ] ) ) {
-                        $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+                        $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
                         if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
                             if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )

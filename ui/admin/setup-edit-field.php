@@ -21,11 +21,15 @@
         }
     }
 
-    // Set pick object
-    $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+    $ignored_pick_objects = apply_filters( '', array( 'table' ) );
+
+    if ( !in_array( pods_var( 'pick_object', $field ), $ignored_pick_objects ) ) {
+        // Set pick object
+        $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+    }
 
     // Unset pick_val for the field to be used above
-    if ( isset( $field[ 'pick_val'  ] ) )
+    if ( isset( $field[ 'pick_val' ] ) )
         unset( $field[ 'pick_val' ] );
 
     // Remove weight as we're going to allow reordering here

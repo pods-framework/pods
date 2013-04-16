@@ -1317,20 +1317,22 @@ class PodsField_Pick extends PodsField {
 
                 $results = $search_data->select( $params );
 
-                if ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
-                    $ids = $value;
+                if ( $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
+                    if ( !empty( $value ) ) {
+                        $ids = $value;
 
-                    if ( is_array( $ids ) )
-                        $ids = implode( ', ', $ids );
+                        if ( is_array( $ids ) )
+                            $ids = implode( ', ', $ids );
 
-                    if ( is_array( $params[ 'where' ] ) )
-                        $params[ 'where' ] = implode( ' AND ', $params[ 'where' ] );
-                    if ( !empty( $params[ 'where' ] ) )
-                        $params[ 'where' ] .= ' AND ';
+                        if ( is_array( $params[ 'where' ] ) )
+                            $params[ 'where' ] = implode( ' AND ', $params[ 'where' ] );
+                        if ( !empty( $params[ 'where' ] ) )
+                            $params[ 'where' ] .= ' AND ';
 
-                    $params[ 'where' ] .= "`t`.`{$search_data->field_id}` IN ( " . $ids . " )";
+                        $params[ 'where' ] .= "`t`.`{$search_data->field_id}` IN ( " . $ids . " )";
 
-                    $results = $search_data->select( $params );
+                        $results = $search_data->select( $params );
+                    }
                 }
                 else
                     $autocomplete = false;

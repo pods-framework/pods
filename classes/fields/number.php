@@ -351,7 +351,7 @@ class PodsField_Number extends PodsField {
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 
-        $value = preg_replace( '/[^0-9\.]/', '', $value );
+        $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
         $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
 
@@ -368,7 +368,11 @@ class PodsField_Number extends PodsField {
         if ( $length < $decimals )
             $decimals = $length;
 
+        pods_debug( $value );
+
         $value = number_format( (float) $value, $decimals, '.', '' );
+
+        pods_debug( $value );
 
         return $value;
     }

@@ -422,7 +422,7 @@ class PodsField_Currency extends PodsField {
 
         $value = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
-        $value = preg_replace( '/[^0-9\.]/', '', $value );
+        $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
         $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
 

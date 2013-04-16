@@ -196,7 +196,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
     $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
 
     if ( !( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads[ 'error' ] ) )
-        return;
+        return 0;
 
     $filename = wp_unique_filename( $uploads[ 'path' ], $filename );
     $new_file = $uploads[ 'path' ] . '/' . $filename;
@@ -204,7 +204,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
     $file_data = @file_get_contents( $url );
 
     if ( !$file_data )
-        return;
+        return 0;
 
     file_put_contents( $new_file, $file_data );
 
@@ -215,7 +215,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
     $wp_filetype = wp_check_filetype( $filename );
 
     if ( !$wp_filetype[ 'type' ] || !$wp_filetype[ 'ext' ] )
-        return;
+        return 0;
 
     $attachment = array(
         'post_mime_type' => $wp_filetype[ 'type' ],
@@ -228,7 +228,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
     $attachment_id = wp_insert_attachment( $attachment, $wp_filetype[ 'file' ], $post_parent );
 
     if ( is_wp_error( $attachment_id ) )
-        return;
+        return 0;
 
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
@@ -236,6 +236,8 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
 
     if ( 0 < $post_parent && $featured )
         update_post_meta( $post_parent, '_thumbnail_id', $attachment_id );
+
+    return $attachment_id;
 }
 
 /**

@@ -942,6 +942,8 @@ class Pods {
                                             $item = get_userdata( $item_id );
                                         elseif ( 'comment' == $object_type )
                                             $item = get_comment( $item_id );
+                                        else
+                                            $item = (object) $item;
                                     }
                                     elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
                                         $item = $item->pod_item_index;

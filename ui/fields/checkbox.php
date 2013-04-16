@@ -29,7 +29,7 @@ if ( 0 < $data_count ) {
         $attributes[ 'type' ] = 'checkbox';
         $attributes[ 'tabindex' ] = 2;
 
-        if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
+        if ( ( !is_array( $value ) && (string) $val === (string) $value ) || ( is_array( $value ) && ( in_array( $val, $value ) || in_array( (string) $val, $value ) ) ) )
             $attributes[ 'checked' ] = 'CHECKED';
 
         $attributes[ 'value' ] = $val;

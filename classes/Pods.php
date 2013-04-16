@@ -932,7 +932,7 @@ class Pods {
 
                                     // Output types
                                     if ( 'ids' == $params->output )
-                                        $item = $item_id;
+                                        $item = (int) $item_id;
                                     elseif ( 'objects' == $params->output ) {
                                         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
                                             $item = get_post( $item_id );
@@ -1021,10 +1021,18 @@ class Pods {
                                             else
                                                 $value[] = '';
                                         }
-                                        elseif ( is_array( $item ) && isset( $item[ $field ] ) )
-                                            $value[] = $item[ $field ];
-                                        elseif ( is_object( $item ) && isset( $item->{$field} ) )
-                                            $value[] = $item->{$field};
+                                        elseif ( is_array( $item ) && isset( $item[ $field ] ) ) {
+                                            if ( $table[ 'field_id' ] == $field )
+                                                $value[] = (int) $item[ $field ];
+                                            else
+                                                $value[] = $item[ $field ];
+                                        }
+                                        elseif ( is_object( $item ) && isset( $item->{$field} ) ) {
+                                            if ( $table[ 'field_id' ] == $field )
+                                                $value[] = (int) $item->{$field};
+                                            else
+                                                $value[] = $item->{$field};
+                                        }
                                         elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
                                             $value[] = get_metadata( $object_type, $item_id, $field, true );
                                         elseif ( 'settings' == $object_type )

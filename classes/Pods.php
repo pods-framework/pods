@@ -462,7 +462,7 @@ class Pods {
             $params = (object) $defaults;
 
         if ( null === $params->output )
-            $params->output = $this->do_hook( 'field_related_output_type', 'objects', $this->row, $params );
+            $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
 
         // Support old $orderby variable
         if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {

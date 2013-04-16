@@ -974,7 +974,7 @@ class Pods {
                             else {
                                 $object_type = $table[ 'type' ];
 
-                                if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment' ) ) )
+                                if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment', 'media' ) ) )
                                     $object_type = 'post';
 
                                 if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) ) {
@@ -994,11 +994,23 @@ class Pods {
                                     if ( $params->in_form )
                                         $field = $table[ 'field_id' ];
 
+                                    $related_obj = false;
+
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( 'detail_url' == $field || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
-                                            /*if ( 0 < strlen( $this->detail_page ) )
-                                                $value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );*/
-                                            if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+                                        if ( 'detail_url' == $field || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
+                                            if ( 'pod' == $object_type ) {
+                                                if ( empty( $related_obj ) )
+                                                    $related_obj = pods( $object );
+
+                                                if ( is_object( $related_obj ) ) {
+                                                    $related_obj->fetch( $item_id );
+
+                                                    $value[] = $related_obj->field( 'detail_url' );
+                                                }
+                                                else
+                                                    $value[] = '';
+                                            }
+                                            if ( 'post' == $object_type )
                                                 $value[] = get_permalink( $item_id );
                                             elseif ( 'taxonomy' == $object_type )
                                                 $value[] = get_term_link( $item_id, $object );

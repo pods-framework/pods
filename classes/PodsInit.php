@@ -635,7 +635,7 @@ class PodsInit {
             if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
                 $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL taxonomy slug', 'pods' );
 
-            if ( 1 == pods_var( 'pods_debug_register' ) )
+            if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
                 pods_debug( array( $taxonomy, $ct_post_types, $options ) );
 
             register_taxonomy( $taxonomy, $ct_post_types, $options );
@@ -661,7 +661,7 @@ class PodsInit {
             if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
                 $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL slug', 'pods' );
 
-            if ( 1 == pods_var( 'pods_debug_register' ) )
+            if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
                 pods_debug( array( $post_type, $options ) );
 
             register_post_type( $post_type, $options );

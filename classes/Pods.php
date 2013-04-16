@@ -991,11 +991,25 @@ class Pods {
                                 else {
                                     $value = array();
 
-                                    if ( false !== $params->in_form )
+                                    if ( $params->in_form )
                                         $field = $table[ 'field_id' ];
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( is_array( $item ) && isset( $item[ $field ] ) )
+                                        if ( 'detail_url' == $field || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
+                                            /*if ( 0 < strlen( $this->detail_page ) )
+                                                $value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );*/
+                                            if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+                                                $value[] = get_permalink( $item_id );
+                                            elseif ( 'taxonomy' == $object_type )
+                                                $value[] = get_term_link( $item_id, $object );
+                                            elseif ( 'user' == $object_type )
+                                                $value[] = get_author_posts_url( $item_id );
+                                            elseif ( 'comment' == $object_type )
+                                                $value[] = get_comment_link( $item_id );
+                                            else
+                                                $value[] = '';
+                                        }
+                                        elseif ( is_array( $item ) && isset( $item[ $field ] ) )
                                             $value[] = $item[ $field ];
                                         elseif ( is_object( $item ) && isset( $item->{$field} ) )
                                             $value[] = $item->{$field};

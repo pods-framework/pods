@@ -195,6 +195,8 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
 function pods_attachment_import ( $url, $post_parent = null, $featured = false ) {
     $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
 
+    $title = substr( $filename, 0, ( strrpos( $filename, '.' ) ) );
+
     if ( !( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads[ 'error' ] ) )
         return 0;
 
@@ -219,13 +221,13 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
 
     $attachment = array(
         'post_mime_type' => $wp_filetype[ 'type' ],
-        'guid' => $uploads[ 'url' ] . '/' . $wp_filetype[ 'filename' ],
+        'guid' => $uploads[ 'url' ] . '/' . $filename,
         'post_parent' => null,
-        'post_title' => '',
+        'post_title' => $title,
         'post_content' => '',
     );
 
-    $attachment_id = wp_insert_attachment( $attachment, $wp_filetype[ 'file' ], $post_parent );
+    $attachment_id = wp_insert_attachment( $attachment, $new_file, $post_parent );
 
     if ( is_wp_error( $attachment_id ) )
         return 0;

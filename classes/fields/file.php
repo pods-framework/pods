@@ -701,7 +701,7 @@ class PodsField_File extends PodsField {
                     }
 
                     if ( !empty( $new_limit_types ) )
-                        $limit_types = implode( ', ', $new_limit_types );
+                        $limit_types = implode( ',', $new_limit_types );
                 }
             }
 

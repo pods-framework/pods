@@ -5283,16 +5283,8 @@ class PodsAPI {
      * @since 2.0
      */
     public function load_object ( $params, $strict = false ) {
-        if ( is_object( $params ) && isset( $params->post_name ) ) {
-            $type = str_replace( '_pods_', '', $params->post_type );
-
-            $object = pods_transient_get( 'pods_object_' . $type . '_' . pods_clean_name( $params->post_title, true ) );
-
-            if ( false !== $object )
-                return $object;
-
+        if ( is_object( $params ) && isset( $params->post_title ) )
             $_object = get_object_vars( $params );
-        }
         else {
             $params = (object) pods_sanitize( $params );
 
@@ -5307,35 +5299,13 @@ class PodsAPI {
              */
             global $wpdb;
 
-            if ( isset( $params->name ) ) {
-                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
-
-                if ( false !== $object )
-                    return $object;
-
-                $sql = "
-                        SELECT `ID`
-                        FROM `{$wpdb->posts}`
-                        WHERE
-                            `post_type` = %s
-                            AND `post_status` = 'publish'
-                            AND `post_title` = %s
-                        LIMIT 1
-                    ";
-
-                $object = $wpdb->get_var( $wpdb->prepare( $sql, '_pods_' . $params->type, $params->name) );
-
-                if ( empty( $object ) ) {
-                    if ( $strict )
-                        return pods_error( __( 'Object not found', 'pods' ), $this );
-
-                    return false;
-                }
-            }
-            else
+            if ( isset( $params->name ) )
+                $_object = get_page_by_title( $params->name, ARRAY_A, '_pods_' . $params->type );
+            else {
                 $object = $params->id;
 
-            $_object = get_post( $object );
+                $_object = get_post( $object, ARRAY_A );
+            }
 
             if ( empty( $_object ) ) {
                 if ( $strict )
@@ -5343,8 +5313,6 @@ class PodsAPI {
 
                 return false;
             }
-
-            $_object = get_object_vars( $_object );
         }
 
         $object = array(
@@ -5361,8 +5329,6 @@ class PodsAPI {
             if ( is_array( $value ) && 1 == count( $value ) )
                 $value = current( $value );
         }
-
-        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . pods_clean_name( $object[ 'name' ] ), $object );
 
         return $object;
     }

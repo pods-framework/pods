@@ -114,7 +114,7 @@ if ( pods_version_check( 'wp', '3.5' ) ) {
         }
 
         if ( !empty( $new_limit_types ) )
-            $limit_types = implode( ', ', $new_limit_types );
+            $limit_types = implode( ',', $new_limit_types );
     }
 }
 

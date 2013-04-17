@@ -154,7 +154,7 @@ input.pods-form-ui-field-type-color {
 .pods-form-ui-field-type-select2 {
     min-width: 20%;
     width: auto;
-    height: 28px;
+    min-height: 28px;
 }
 
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {

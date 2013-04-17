@@ -2381,6 +2381,7 @@ class PodsData {
 
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $file_field_types = PodsForm::file_field_types();
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
@@ -2456,6 +2457,8 @@ class PodsData {
             }
             elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
+            elseif ( in_array( $traverse[ 'type' ], $file_field_types ) )
+                $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
             else
                 $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );
         }

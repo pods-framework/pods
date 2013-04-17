@@ -4937,10 +4937,14 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
 
-                if ( false === $pod )
-                    return pods_error( __( 'Pod not found', 'pods' ), $this );
+                if ( false === $pod ) {
+                    if ( $strict )
+                        return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+                    return false;
+                }
             }
 
             $params->pod_id = $pod[ 'id' ];
@@ -4988,7 +4992,7 @@ class PodsAPI {
 
         if ( !isset( $pod[ 'name' ] ) && !isset( $_field[ 'pod' ] ) ) {
             if ( 0 < $_field[ 'post_parent' ] )
-                $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ) );
+                $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ), false );
 
             if ( empty( $pod ) ) {
                 if ( $strict )
@@ -5150,10 +5154,14 @@ class PodsAPI {
         $fields = array();
 
         if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
 
-            if ( false === $pod )
-                return pods_error( __( 'Pod not found', 'pods' ), $this );
+            if ( false === $pod ) {
+                if ( $strict )
+                    return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+                return $fields;
+            }
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
@@ -5211,9 +5219,10 @@ class PodsAPI {
             $_fields = get_posts( $args );
 
             foreach ( $_fields as $field ) {
-                $field = $this->load_field( $field );
+                $field = $this->load_field( $field, false );
 
-                $fields[ $field[ 'id' ] ] = $field;
+                if ( !empty( $field ) )
+                    $fields[ $field[ 'id' ] ] = $field;
             }
 
             pods_cache_set( md5( json_encode( $args ) ), $fields, 'pods_load_fields' );
@@ -5253,9 +5262,9 @@ class PodsAPI {
                         'id' => $field->ID,
                         'name' => $field->post_name,
                         'pod_id' => $field->post_parent
-                    ) );
+                    ), false );
 
-                    if ( empty( $params->type ) || in_array( $field[ 'type' ], $params->type ) )
+                    if ( !empty( $field ) && ( empty( $params->type ) || in_array( $field[ 'type' ], $params->type ) ) )
                         $fields[ $field[ 'id' ] ] = $field;
                 }
             }

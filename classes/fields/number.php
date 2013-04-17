@@ -368,11 +368,7 @@ class PodsField_Number extends PodsField {
         if ( $length < $decimals )
             $decimals = $length;
 
-        pods_debug( $value );
-
         $value = number_format( (float) $value, $decimals, '.', '' );
-
-        pods_debug( $value );
 
         return $value;
     }

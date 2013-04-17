@@ -215,13 +215,8 @@ class Pods_Helpers extends PodsComponent {
             $post = get_post( $post );
         }
 
-        if ( $this->object_type == $post->object_type ) {
-            if ( is_object( $old_post ) && $this->object_type == $old_post->object_type ) {
-                pods_transient_clear( 'pods_object_helper_' . $old_post->post_name );
-            }
-
-            pods_transient_clear( 'pods_object_helper_' . $post->post_name );
-        }
+        if ( $this->object_type == $post->object_type )
+            pods_transient_clear( 'pods_object_helpers' );
     }
 
     /**

@@ -2398,8 +2398,8 @@ class PodsAPI {
 
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
-        pods_transient_clear( 'pods_object_' . $params->type );
-        pods_transient_clear( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
+        pods_transient_clear( 'pods_objects_' . $params->type );
+        pods_transient_clear( 'pods_objects_' . $params->type . '_get' );
 
         return $params->id;
     }
@@ -3948,10 +3948,10 @@ class PodsAPI {
         if ( !$success )
             return pods_error( sprintf( __( "%s Object not deleted", 'pods' ), ucwords( $params->type ) ), $this );
 
-        pods_transient_clear( 'pods_object_' . $params->type );
+        pods_transient_clear( 'pods_objects_' . $params->type );
 
         if ( isset( $params->name ) )
-            pods_transient_clear( 'pods_object_' . $params->type . '_' . $object[ 'slug' ] );
+            pods_transient_clear( 'pods_object_' . $params->type . '_' . pods_clean_name( $object[ 'name' ], true ) );
 
         return true;
     }
@@ -5286,10 +5286,7 @@ class PodsAPI {
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $type = str_replace( '_pods_', '', $params->post_type );
 
-            if ( 'page' == $type )
-                $object = pods_transient_get( 'pods_object_' . $type . '_' . $params->post_title );
-            else
-                $object = pods_transient_get( 'pods_object_' . $type . '_' . $params->post_name );
+            $object = pods_transient_get( 'pods_object_' . $type . '_' . pods_clean_name( $params->post_title, true ) );
 
             if ( false !== $object )
                 return $object;
@@ -5311,10 +5308,7 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                if ( 'page' == $params->type )
-                    $object = pods_transient_get( 'pods_object_' . $params->type . '_' . $params->name );
-                else
-                    $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
+                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
 
                 if ( false !== $object )
                     return $object;
@@ -5368,10 +5362,7 @@ class PodsAPI {
                 $value = current( $value );
         }
 
-        if ( 'page' == $object[ 'type' ] )
-            pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'name' ], $object );
-        else
-            pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'slug' ], $object );
+        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . pods_clean_name( $object[ 'name' ] ), $object );
 
         return $object;
     }
@@ -5420,8 +5411,6 @@ class PodsAPI {
                     'compare' => 'IN'
                 );
             }
-
-            $cache_key = '';
         }
 
         if ( isset( $params->where ) && is_array( $params->where ) )
@@ -5446,12 +5435,9 @@ class PodsAPI {
         if ( empty( $ids ) )
             $ids = false;
 
-        if ( empty( $cache_key ) )
+        if ( empty( $meta_query ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) && empty( $ids ) ) {
             $cache_key = 'pods_objects_' . $params->type;
-        else
-            $cache_key = 'pods_objects_' . $params->type . '_get' . $cache_key;
 
-        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) && empty( $ids ) ) {
             $the_objects = pods_transient_get( $cache_key );
 
             if ( false !== $the_objects )
@@ -5476,7 +5462,7 @@ class PodsAPI {
             $the_objects[ $object[ 'name' ] ] = $object;
         }
 
-        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) && empty( $ids ) )
+        if ( !empty( $cache_key ) )
             pods_transient_set( $cache_key, $the_objects );
 
         return $the_objects;

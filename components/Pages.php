@@ -236,12 +236,11 @@ class Pods_Pages extends PodsComponent {
         }
 
         if ( $this->object_type == $post->post_type ) {
-            if ( is_object( $old_post ) && $this->object_type == $old_post->post_type ) {
-                pods_transient_clear( 'pods_object_page_' . $old_post->post_title );
-                pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
-            }
+            pods_transient_clear( 'pods_object_pages' );
 
-            pods_transient_clear( 'pods_object_page_' . $post->post_title );
+            if ( is_object( $old_post ) && $this->object_type == $old_post->post_type )
+                pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
+
             pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
         }
     }
@@ -521,29 +520,11 @@ class Pods_Pages extends PodsComponent {
         if ( false !== strpos( $uri, 'wp-admin' ) || false !== strpos( $uri, 'wp-includes' ) )
             return false;
 
-        $object = pods_transient_get( 'pods_object_page_' . $uri );
-
-        if ( false !== $object && $uri == pods_var( 'uri', $object ) )
-            return $object;
-
-        // See if the custom template exists
-        $sql = "
-                SELECT *
-                FROM `@wp_posts`
-                WHERE
-                    `post_type` = '_pods_page'
-                    AND `post_status` = 'publish'
-                    AND `post_title` = %s
-                LIMIT 1
-            ";
-
-        $sql = array( $sql, array( $uri ) );
-
-        $result = pods_query( $sql );
+        $object = get_page_by_title( $uri, ARRAY_A, '_pods_page' );
 
         $wildcard = false;
 
-        if ( empty( $result ) ) {
+        if ( empty( $object ) ) {
             $object = pods_cache_get( $uri, 'pods_object_page_wildcard' );
 
             if ( false !== $object )
@@ -556,9 +537,9 @@ class Pods_Pages extends PodsComponent {
                     WHERE
                         `post_type` = '_pods_page'
                         AND `post_status` = 'publish'
-                        AND %s LIKE REPLACE(`post_title`, '*', '%%')
-                        AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d
-                    ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC
+                        AND %s LIKE REPLACE( `post_title`, '*', '%%' )
+                        AND ( LENGTH( `post_title` ) - LENGTH( REPLACE( `post_title`, '/', '' ) ) ) = %d
+                    ORDER BY LENGTH( `post_title` ) DESC, `post_title` DESC
                     LIMIT 1
                 ";
 
@@ -566,35 +547,34 @@ class Pods_Pages extends PodsComponent {
 
             $result = pods_query( $sql );
 
+            if ( !empty( $result ) )
+                $object = get_object_vars( $result[ 0 ] );
+
             $wildcard = true;
         }
 
-        if ( !empty( $result ) ) {
-            $_object = get_object_vars( $result[ 0 ] );
-
+        if ( !empty( $object ) ) {
             $object = array(
-                'id' => $_object[ 'ID' ],
-                'uri' => $_object[ 'post_title' ],
-                'code' => $_object[ 'post_content' ],
-                'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
-                'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
-                'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
-                'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true ),
+                'id' => $object[ 'ID' ],
+                'uri' => $object[ 'post_title' ],
+                'code' => $object[ 'post_content' ],
+                'phpcode' => $object[ 'post_content' ], // phpcode is deprecated
+                'precode' => get_post_meta( $object[ 'ID' ], 'precode', true ),
+                'page_template' => get_post_meta( $object[ 'ID' ], 'page_template', true ),
+                'title' => get_post_meta( $object[ 'ID' ], 'page_title', true ),
                 'options' => array(
-                    'admin_only' => (boolean) get_post_meta( $_object[ 'ID' ], 'admin_only', true ),
-                    'restrict_role' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_role', true ),
-                    'restrict_capability' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_capability', true ),
-                    'roles_allowed' => get_post_meta( $_object[ 'ID' ], 'roles_allowed', true ),
-                    'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true ),
-                    'pod' => get_post_meta( $_object[ 'ID' ], 'pod', true ),
-                    'pod_slug' => get_post_meta( $_object[ 'ID' ], 'pod_slug', true ),
+                    'admin_only' => (boolean) get_post_meta( $object[ 'ID' ], 'admin_only', true ),
+                    'restrict_role' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_role', true ),
+                    'restrict_capability' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_capability', true ),
+                    'roles_allowed' => get_post_meta( $object[ 'ID' ], 'roles_allowed', true ),
+                    'capability_allowed' => get_post_meta( $object[ 'ID' ], 'capability_allowed', true ),
+                    'pod' => get_post_meta( $object[ 'ID' ], 'pod', true ),
+                    'pod_slug' => get_post_meta( $object[ 'ID' ], 'pod_slug', true ),
                 )
             );
 
             if ( $wildcard )
                 pods_cache_set( $uri, $object, 'pods_object_page_wildcard', 3600 );
-            else
-                pods_transient_set( 'pods_object_page_' . $uri, $object );
 
             return $object;
         }

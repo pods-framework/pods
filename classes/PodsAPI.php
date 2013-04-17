@@ -3950,9 +3950,6 @@ class PodsAPI {
 
         pods_transient_clear( 'pods_objects_' . $params->type );
 
-        if ( isset( $params->name ) )
-            pods_transient_clear( 'pods_object_' . $params->type . '_' . pods_clean_name( $object[ 'name' ], true ) );
-
         return true;
     }
 

@@ -2446,6 +2446,8 @@ class PodsData {
 
         if ( 'taxonomy' == $traverse[ 'type' ] )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'type' ], $traverse[ 'name' ] );
+        elseif ( in_array( $traverse[ 'type' ], $file_field_types ) )
+            $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
         elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
         elseif ( empty( $traverse[ 'table_info' ] ) ) {
@@ -2457,8 +2459,6 @@ class PodsData {
             }
             elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
-            elseif ( in_array( $traverse[ 'type' ], $file_field_types ) )
-                $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
             else
                 $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );
         }

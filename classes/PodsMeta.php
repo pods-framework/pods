@@ -2018,6 +2018,9 @@ class PodsMeta {
             }
         }
 
+        if ( !$no_conflict )
+            pods_no_conflict_off( $meta_type );
+
         if ( !$key_found )
             return $_null;
 
@@ -2025,9 +2028,6 @@ class PodsMeta {
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             wp_cache_set( $object_id, $meta_cache, $meta_type . '_meta' );
-
-        if ( !$no_conflict )
-            pods_no_conflict_off( $meta_type );
 
         if ( empty( $meta_key ) )
             return $meta_cache;

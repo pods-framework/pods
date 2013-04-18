@@ -1123,6 +1123,173 @@ class Pods {
     }
 
     /**
+     * Check if an item field has a specific value in it
+     *
+     * @param string $field Field name
+     * @param mixed $value Value to check
+     * @param int $id (optional) ID of the pod item to check
+     *
+     * @return bool Whether the value was found
+     *
+     * @since 2.3.3
+     */
+    public function has ( $field, $value, $id = null ) {
+        $pod =& $this;
+
+        if ( null === $id )
+            $id = $this->id();
+        elseif ( $id != $this->id() )
+            $pod = pods( $this->pod, $id );
+
+        $this->do_hook( 'has', $field, $value, $id );
+
+        if ( !isset( $this->fields[ $field ] ) )
+            return false;
+
+        // Tableless fields
+        if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+            if ( !is_array( $value ) )
+                $value = explode( ',', $value );
+
+            if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+                $current_value = $pod->raw( $field );
+
+                if ( !empty( $current_value ) )
+                    $current_value = (array) $current_value;
+
+                foreach ( $current_value as $v ) {
+                    if ( in_array( $v, $value ) )
+                        return true;
+                }
+            }
+            else {
+                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
+
+                foreach ( $value as $k => $v ) {
+                    $value[ $k ] = (int) $v;
+                }
+
+                foreach ( $related_ids as $v ) {
+                    if ( in_array( $v, $value ) )
+                        return true;
+                }
+            }
+        }
+        // Text fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
+            $current_value = $pod->raw( $field );
+
+            if ( 0 < strlen( $current_value ) )
+                return stripos( $current_value, $value );
+        }
+        // All other fields
+        else
+            return $this->is( $field, $value, $id );
+
+        return false;
+    }
+
+    /**
+     * Check if an item field is a specific value
+     *
+     * @param string $field Field name
+     * @param mixed $value Value to check
+     * @param int $id (optional) ID of the pod item to check
+     *
+     * @return bool Whether the value was found
+     *
+     * @since 2.3.3
+     */
+    public function is ( $field, $value, $id = null ) {
+        $pod =& $this;
+
+        if ( null === $id )
+            $id = $this->id();
+        elseif ( $id != $this->id() )
+            $pod = pods( $this->pod, $id );
+
+        $this->do_hook( 'is', $field, $value, $id );
+
+        if ( !isset( $this->fields[ $field ] ) )
+            return false;
+
+        // Tableless fields
+        if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+            if ( !is_array( $value ) )
+                $value = explode( ',', $value );
+
+            $current_value = array();
+
+            if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+                $current_value = $pod->raw( $field );
+
+                if ( !empty( $current_value ) )
+                    $current_value = (array) $current_value;
+
+                foreach ( $current_value as $v ) {
+                    if ( in_array( $v, $value ) )
+                        return true;
+                }
+            }
+            else {
+                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
+
+                foreach ( $value as $k => $v ) {
+                    $value[ $k ] = (int) $v;
+                }
+
+                foreach ( $related_ids as $v ) {
+                    if ( in_array( $v, $value ) )
+                        return true;
+                }
+            }
+
+            $current_value = array_filter( array_unique( $current_value ) );
+            $value = array_filter( array_unique( $value ) );
+
+            sort( $current_value );
+            sort( $value );
+
+            if ( $value === $current_value )
+                return true;
+        }
+        // Number fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+            $current_value = $pod->raw( $field );
+
+            if ( (float) $current_value === (float) $value )
+                return true;
+        }
+        // Date fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+            $current_value = $pod->raw( $field );
+
+            if ( 0 < strlen( $current_value ) ) {
+                if ( strtotime( $current_value ) == strtotime( $value ) )
+                    return true;
+            }
+            elseif ( empty( $value ) )
+                return true;
+        }
+        // Text fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
+            $current_value = $pod->raw( $field );
+
+            if ( (string) $current_value === (string) $value )
+                return true;
+        }
+        // All other fields
+        else {
+            $current_value = $pod->raw( $field );
+
+            if ( $current_value === $value )
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Return the item ID
      *
      * @return int
@@ -1720,8 +1887,12 @@ class Pods {
      * @since 2.3
      */
     public function add_to ( $field, $value, $id = null ) {
+        $pod =& $this;
+
         if ( null === $id )
             $id = $this->id();
+        elseif ( $id != $this->id() )
+            $pod = pods( $this->pod, $id );
 
         $this->do_hook( 'add_to', $field, $value, $id );
 
@@ -1734,7 +1905,7 @@ class Pods {
                 $value = explode( ',', $value );
 
             if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
-                $current_value = $this->raw( $field );
+                $current_value = $pod->raw( $field );
 
                 if ( !empty( $current_value ) )
                     $current_value = (array) $current_value;
@@ -1742,7 +1913,7 @@ class Pods {
                 $value = array_merge( $current_value, $value );
             }
             else {
-                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $this->id(), $this->fields[ $field ], $this->pod_data );
+                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
                     $value[ $k ] = (int) $v;
@@ -1758,22 +1929,22 @@ class Pods {
         }
         // Number fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
-            $current_value = (float) $this->raw( $field );
+            $current_value = (float) $pod->raw( $field );
 
             $value = ( $current_value + (float) $value );
         }
         // Date fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
-            $current_value = $this->raw( $field );
+            $current_value = $pod->raw( $field );
 
             if ( 0 < strlen( $current_value ) )
-                $value = strtotime( $value, $current_value );
+                $value = strtotime( $value, strtotime( $current_value ) );
             else
                 $value = strtotime( $value );
         }
         // Text fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
-            $current_value = $this->raw( $field );
+            $current_value = $pod->raw( $field );
 
             if ( 0 < strlen( $current_value ) )
                 $value = $current_value . $value;
@@ -1790,7 +1961,100 @@ class Pods {
         $id = $this->api->save_pod_item( $params );
 
         if ( 0 < $id )
-            $this->fetch( $id );
+            $pod->fetch( $id );
+
+        return $id;
+    }
+
+    /**
+     * Remove an item from the values of a relationship field, remove a value from a number field (field-1), remove time to a date field
+     *
+     * @see PodsAPI::save_pod_item
+     *
+     * @param string $field Field name
+     * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (-1 week), or string for text
+     * @param int $id (optional) ID of the pod item to update
+     *
+     * @return int The item ID
+     *
+     * @since 2.3.3
+     */
+    public function remove_from ( $field, $value, $id = null ) {
+        $pod =& $this;
+
+        if ( null === $id )
+            $id = $this->id();
+        elseif ( $id != $this->id() )
+            $pod = pods( $this->pod, $id );
+
+        $this->do_hook( 'remove_from', $field, $value, $id );
+
+        if ( !isset( $this->fields[ $field ] ) )
+            return $id;
+
+        // Tableless fields
+        if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+            if ( !is_array( $value ) )
+                $value = explode( ',', $value );
+
+            if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+                $current_value = $pod->raw( $field );
+
+                if ( !empty( $current_value ) )
+                    $current_value = (array) $current_value;
+
+                foreach ( $current_value as $k => $v ) {
+                    if ( in_array( $v, $value ) )
+                        unset( $current_value[ $k ] );
+                }
+
+                $value = $current_value;
+            }
+            else {
+                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
+
+                foreach ( $value as $k => $v ) {
+                    $value[ $k ] = (int) $v;
+                }
+
+                foreach ( $related_ids as $k => $v ) {
+                    if ( in_array( $v, $value ) )
+                        unset( $related_ids[ $k ] );
+                }
+
+                $value = $related_ids;
+            }
+
+            $value = array_filter( array_unique( $value ) );
+        }
+        // Number fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+            $current_value = (float) $pod->raw( $field );
+
+            $value = ( $current_value - (float) $value );
+        }
+        // Date fields
+        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+            $current_value = $pod->raw( $field );
+
+            if ( 0 < strlen( $current_value ) )
+                $value = strtotime( $value, strtotime( $current_value ) );
+            else
+                $value = strtotime( $value );
+        }
+
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $id,
+            'data' => array(
+                $field => $value
+            )
+        );
+
+        $id = $this->api->save_pod_item( $params );
+
+        if ( 0 < $id )
+            $pod->fetch( $id );
 
         return $id;
     }

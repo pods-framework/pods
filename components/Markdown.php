@@ -32,8 +32,8 @@ function pods_markdown_output ( $value, $name, $options, $pod, $id, $traverse ) 
 
     return $value;
 }
-add_filter( 'pods_form_display_wysiwyg', 'pods_markdown_output' );
-add_filter( 'pods_form_display_paragraph', 'pods_markdown_output' );
+add_filter( 'pods_form_display_wysiwyg', 'pods_markdown_output', 10, 6 );
+add_filter( 'pods_form_display_paragraph', 'pods_markdown_output', 10, 6 );
 
 if ( !function_exists( 'Markdown' ) ) :
 #

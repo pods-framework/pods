@@ -81,6 +81,8 @@ class Pods_Pages extends PodsComponent {
 
         register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
+        add_filter( 'post_type_link', array( $this, 'post_type_link' ), 10, 2 );
+
         if ( !is_admin() )
             add_action( 'load_textdomain', array( $this, 'page_check' ), 12 );
         else {
@@ -176,7 +178,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.1
      */
-    public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+    public function fix_filters ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         remove_filter( 'content_save_pre', 'balanceTags', 50 );
     }
 
@@ -266,6 +268,26 @@ class Pods_Pages extends PodsComponent {
             return;
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+    }
+
+    /**
+     * Filter permalinks and adjust for pod pages
+     *
+     * @param $post_link
+     * @param $post
+     *
+     * @return mixed
+     */
+    public function post_type_link ( $post_link, $post ) {
+        if ( empty( $post ) || $this->object_type != $post->post_type )
+            return $post_link;
+
+        $post_link = get_site_url() . '/';
+
+        if ( false === strpos( $post->post_title, '*' ) )
+            $post_link .= trim( $post->post_title, '/ ' ) . '/';
+
+        return $post_link;
     }
 
     /**

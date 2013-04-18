@@ -1419,12 +1419,14 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     $conflicted = false;
 
     foreach ( $no_conflict as $action_filter => $conflicts ) {
-        foreach ( $conflicts as $args ) {
+        foreach ( $conflicts as $k => $args ) {
             if ( call_user_func_array( 'has_' . $action_filter, array_slice( $args, 0, 2 ) ) ) {
                 call_user_func_array( 'remove_' . $action_filter, array_slice( $args, 0, 3 ) );
 
                 $conflicted = true;
             }
+            else
+                unset( $no_conflict[ $action_filter ][ $k ] );
         }
     }
 

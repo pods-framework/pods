@@ -1984,9 +1984,13 @@ class PodsMeta {
         if ( empty( $meta_key ) )
             $meta_keys = array_keys( $meta_cache );
 
+        $key_found = false;
+
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
+                    $key_found = true;
+
                     $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
                     if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
@@ -2000,6 +2004,8 @@ class PodsMeta {
                         unset( $meta_cache[ '_pods_' . $meta_k ] );
                 }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
+                    $key_found = true;
+
                     $first = current( explode( '.', $meta_k ) );
 
                     if ( isset( $pod->fields[ $first ] ) ) {
@@ -2018,6 +2024,9 @@ class PodsMeta {
                 }
             }
         }
+
+        if ( !$key_found )
+            return $_null;
 
         unset( $pod ); // memory clear
 

@@ -952,6 +952,21 @@ function is_pod_page ( $uri = null ) {
 }
 
 /**
+ * Get the current Pod Page URI
+ *
+ * @return string|bool
+ * @since 2.3.3
+ */
+function get_pod_page_uri () {
+    $pod_page = Pods_Pages::exists();
+
+    if ( !empty( $pod_page ) )
+        return $pod_page[ 'uri' ];
+
+    return false;
+}
+
+/**
  * Check to see if Pod Page exists and return data
  *
  * $uri not required, if NULL then returns REQUEST_URI matching Pod Page

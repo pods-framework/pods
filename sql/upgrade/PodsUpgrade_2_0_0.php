@@ -330,6 +330,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                 $weight = 4;
 
+                $found_fields = array();
+
                 foreach ( $field_rows as $row ) {
                     if ( 'name' == $row->name )
                         continue;
@@ -370,6 +372,11 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                             '_pods_1x_field_id' => $row->id
                         )
                     );
+
+                    if ( in_array( $field_params[ 'name' ], $found_fields ) )
+                        continue;
+
+                    $found_fields[] = $field_params[ 'name' ];
 
                     if ( 'pick' == $field_type ) {
                         $field_params[ 'pick_object' ] = 'pod-' . $row->pickval;

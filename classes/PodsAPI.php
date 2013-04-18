@@ -1462,7 +1462,14 @@ class PodsAPI {
         if ( 'table' != $pod[ 'type' ] && 'table' == $pod[ 'storage' ] && $old_storage != $pod[ 'storage' ] && $db ) {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
+            $defined_fields = array();
+
             foreach ( $pod[ 'fields' ] as $field ) {
+                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || in_array( $defined_fields, $field[ 'name' ] ) )
+                    continue;
+
+                $defined_fields[] = $field[ 'name' ];
+
                 if ( !in_array( $field[ 'type' ], $tableless_field_types ) || ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) ) {
                     $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, $field[ 'options' ] ) );
 

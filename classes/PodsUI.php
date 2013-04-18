@@ -1435,7 +1435,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            if ( $this->restricted( $this->action ) )
+            if ( $this->restricted( $this->action, $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 
             $label = $this->label[ 'edit' ];
@@ -3645,6 +3645,25 @@ class PodsUI {
                 elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
                     $okay = false;*/
 
+                if ( !$okay && !empty( $row ) ) {
+                    foreach ( $this->restrict[ 'author_restrict' ] as $key => $val ) {
+                        $author_restricted = $this->get_field( $key );
+
+                        if ( !empty( $author_restricted ) ) {
+                            if ( !is_array( $author_restricted ) )
+                                $author_restricted = (array) $author_restricted;
+
+                            if ( is_array( $val ) ) {
+                                foreach ( $val as $v ) {
+                                    if ( in_array( $v, $author_restricted ) )
+                                        $okay = true;
+                                }
+                            }
+                            elseif ( in_array( $val, $author_restricted ) )
+                                $okay = true;
+                        }
+                    }
+                }
             }
 
             if ( $okay )

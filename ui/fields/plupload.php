@@ -144,7 +144,10 @@ else
                                 continue;
 
                             $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
-
+                            
+                            if( is_ssl() )
+                                $thumb[ 0 ] = str_replace( 'http://', 'https://', $thumb[ 0 ] );
+                            
                             $title = $attachment->post_title;
 
                             if ( 0 == $title_editable )

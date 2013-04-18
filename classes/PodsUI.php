@@ -3638,7 +3638,7 @@ class PodsUI {
                 }
             }
 
-            if ( $author_restrict ) {
+            if ( !empty( $author_restrict ) ) {
                 if ( is_object( $this->pod ) && !current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
                     $okay = false;
                 /* @todo determine proper logic for non-pods capabilities

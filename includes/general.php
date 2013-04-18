@@ -1420,8 +1420,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 
     foreach ( $no_conflict as $action_filter => $conflicts ) {
         foreach ( $conflicts as $args ) {
-            if ( call_user_func_array( 'has_' . $action_filter, $args ) ) {
-                call_user_func_array( 'remove_' . $action_filter, $args );
+            if ( call_user_func_array( 'has_' . $action_filter, array_slice( $args, 0, 2 ) ) ) {
+                call_user_func_array( 'remove_' . $action_filter, array_slice( $args, 0, 3 ) );
 
                 $conflicted = true;
             }
@@ -1462,7 +1462,7 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
 
     foreach ( $no_conflict as $action_filter => $conflicts ) {
         foreach ( $conflicts as $args ) {
-            if ( !call_user_func_array( 'has_' . $action_filter, $args ) ) {
+            if ( !call_user_func_array( 'has_' . $action_filter, array_slice( $args, 0, 2 ) ) ) {
                 call_user_func_array( 'add_' . $action_filter, $args );
 
                 $conflicted = true;

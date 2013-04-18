@@ -1363,6 +1363,9 @@ class PodsField_Pick extends PodsField {
                     foreach ( $results as $result ) {
                         $result = get_object_vars( $result );
 
+                        if ( !isset( $result[ $search_data->field_id ] ) || !isset( $result[ $search_data->field_index ] ) )
+                            continue;
+
                         $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
 
                         $object = '';
@@ -1377,8 +1380,6 @@ class PodsField_Pick extends PodsField {
                             $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
 
                             if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                $search_data->field_id = $object_id;
-
                                 $text = $result[ $search_data->field_index ];
 
                                 if ( $result[ $search_data->field_id ] != $object_id ) {
@@ -1388,6 +1389,7 @@ class PodsField_Pick extends PodsField {
                                         $text = trim( get_term( $object_id, $object )->name );
                                 }
 
+                                $result[ $search_data->field_id ] = $object_id;
                                 $result[ $search_data->field_index ] = $text;
                             }
                         }
@@ -1396,8 +1398,6 @@ class PodsField_Pick extends PodsField {
                             $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
 
                             if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                $search_data->field_id = $object_id;
-
                                 $text = $result[ $search_data->field_index ];
 
                                 if ( $result[ $search_data->field_id ] != $object_id ) {
@@ -1407,6 +1407,7 @@ class PodsField_Pick extends PodsField {
                                         $text = trim( get_term( $object_id, $object )->name );
                                 }
 
+                                $result[ $search_data->field_id ] = $object_id;
                                 $result[ $search_data->field_index ] = $text;
                             }
                         }

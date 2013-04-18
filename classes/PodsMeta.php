@@ -1948,14 +1948,7 @@ class PodsMeta {
 
         $object = $this->get_object( $object_type, $object_id );
 
-        $field = $meta_key;
-
-        if ( false !== strpos( $field, '.' ) ) {
-            $field = explode( '.', $field );
-            $field = $field[ 0 ];
-        }
-
-        if ( empty( $object_id ) || empty( $object ) ) //|| empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
+        if ( empty( $object_id ) || empty( $object ) )
             return $_null;
 
         $no_conflict = pods_no_conflict_check( $meta_type );

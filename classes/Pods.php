@@ -347,15 +347,13 @@ class Pods {
      * @link http://pods.io/docs/display/
      */
     public function display ( $name, $single = null ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-        $repeatable_field_types = PodsForm::repeatable_field_types();
-
         $defaults = array(
             'name' => $name,
             'orderby' => null,
             'single' => $single,
             'args' => array(),
-            'in_form' => false
+            'in_form' => false,
+            'display' => true
         );
 
         if ( is_array( $name ) || is_object( $name ) )
@@ -369,27 +367,6 @@ class Pods {
         }
 
         $value = $this->field( $params );
-
-        if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
-            if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id() );
-            elseif ( in_array( $this->fields[ $params->name ][ 'type' ], $repeatable_field_types ) && 1 == pods_var( $this->fields[ $params->name ][ 'type' ] . '_repeatable', $this->fields[ $params->name ][ 'options' ] ) )
-                $value = PodsForm::field_method( $this->fields[ $params->name ][ 'type' ], 'value', $value, $this->fields[ $params->name ] );
-
-            if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
-                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value );
-            else {
-                $value = PodsForm::display(
-                    $this->fields[ $params->name ][ 'type' ],
-                    $value,
-                    $params->name,
-                    array_merge( $this->fields[ $params->name ], $this->fields[ $params->name ][ 'options' ] ),
-                    $this->pod_data,
-                    $this->id(),
-                    $params
-                );
-            }
-        }
 
         if ( is_array( $value ) )
             $value = pods_serial_comma( $value, $params->name, $this->fields );
@@ -452,6 +429,7 @@ class Pods {
             'single' => $single,
             'in_form' => false,
             'raw' => $raw,
+            'display' => false,
             'output' => null,
             'deprecated' => false
         );
@@ -1091,7 +1069,7 @@ class Pods {
 
                 if ( 0 < strlen( pods_var( 'display_filter', $field_data[ 'options' ] ) ) )
                     $value = apply_filters( pods_var( 'display_filter', $field_data[ 'options' ] ), $value );
-                elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) ) {
+                elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) || $params->display ) {
                     $value = PodsForm::display(
                         $field_data[ 'type' ],
                         $value,

@@ -3066,7 +3066,7 @@ class PodsUI {
                                             $actions[ 'view' ] = '<span class="view"><a href="' . $link . '" title="' . __( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
                                         }
 
-                                        if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) ) {
+                                        if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
                                             $link = pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                             if ( !empty( $this->action_links[ 'edit' ] ) )
@@ -3075,7 +3075,7 @@ class PodsUI {
                                             $actions[ 'edit' ] = '<span class="edit"><a href="' . $link . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
                                         }
 
-                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) ) {
+                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
                                             $link = pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                             if ( !empty( $this->action_links[ 'duplicate' ] ) )
@@ -3084,7 +3084,7 @@ class PodsUI {
                                             $actions[ 'duplicate' ] = '<span class="edit"><a href="' . $link . '" title="' . __( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
                                         }
 
-                                        if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) ) {
+                                        if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
                                             $link = pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                             if ( !empty( $this->action_links[ 'delete' ] ) )
@@ -3131,6 +3131,9 @@ class PodsUI {
 
                                                         if ( isset( $custom_data[ 'confirm' ] ) )
                                                             $confirm = ' onclick="if(confirm(\'' . $custom_data[ 'confirm' ] . '\')){return true;}return false;"';
+
+                                                        if ( $this->restricted( $custom_action, $row ) )
+                                                            continue;
 
                                                         $actions[ $custom_action ] = '<span class="edit action-' . $custom_action . '"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item"' . $confirm . '>' . $custom_data[ 'label' ] . '</a></span>';
                                                     }

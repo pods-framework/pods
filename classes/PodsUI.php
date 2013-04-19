@@ -3580,6 +3580,14 @@ class PodsUI {
 
                 if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
                     $restricted = false;
+                elseif ( 'manage' == $action ) {
+                    if ( !in_array( 'edit', $this->actions_disabled ) && current_user_can( 'pods_edit_' . $this->pod->pod ) && current_user_can( 'pods_edit_others_' . $this->pod->pod ) )
+                        $restricted = false;
+                    elseif ( !in_array( 'delete', $this->actions_disabled ) && current_user_can( 'pods_delete_' . $this->pod->pod ) && current_user_can( 'pods_delete_others_' . $this->pod->pod ) )
+                        $restricted = false;
+                    elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
+                        $restricted = false;
+                }
                 elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
                     $restricted = false;
             }
@@ -3727,6 +3735,10 @@ class PodsUI {
             }
 
             if ( !empty( $author_restrict ) ) {
+                if ( is_object( $this->pod ) && 'manage' == $action ) {
+                    if ( !in_array( 'edit', $this->actions_disabled ) && !current_user_can( 'pods_edit_' . $this->pod->pod ) && !in_array( 'delete', $this->actions_disabled ) && !current_user_can( 'pods_delete_' . $this->pod->pod ) )
+                        $okay = false;
+                }
                 if ( is_object( $this->pod ) && !current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
                     $okay = false;
                 /* @todo determine proper logic for non-pods capabilities

@@ -6971,6 +6971,7 @@ class PodsAPI {
 
         if ( null !== $pod && is_array( $pod ) ) {
             pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );
+            pods_cache_clear( $pod[ 'name' ], 'pods-class' );
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );

@@ -5605,14 +5605,14 @@ class PodsAPI {
         if ( !isset( $params->id ) || empty( $params->id ) )
             return pods_error( __( 'Item ID required', 'pods' ), $this );
 
-        $pod = pods_cache_get( $params->id, 'pods_items_' . $params->pod );
+        $pod = pods_cache_get( $params->id, 'pods_item_object_' . $params->pod );
 
         if ( false !== $pod )
             return $pod;
 
         $pod = pods( $params->pod, $params->id );
 
-        pods_cache_set( $params->id, $pod, 'pods_items_' . $params->pod );
+        pods_cache_set( $params->id, $pod, 'pods_item_object_' . $params->pod );
 
         return $pod;
     }

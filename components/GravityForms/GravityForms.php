@@ -644,7 +644,7 @@ class Pods_GravityForms extends PodsComponent {
             $related_strict = false;
             if ( empty( $id ) ) {
                 // create new record but only relate if $pod != $the_pod
-                $api = new PodAPI( $pod );
+                $api = new pods_api( $pod );
                 $api->snap = true;
                 $related_strict = true;
                 try {
@@ -726,7 +726,7 @@ class Pods_GravityForms extends PodsComponent {
                         $value = 0;
                     }
                 }
-                $api = new PodAPI( $the_pod );
+                $api = new pods_api( $the_pod );
                 $api->snap = true;
                 if ( !isset( $api->fields[ $map ] ) ) {
                     continue;
@@ -795,7 +795,7 @@ class Pods_GravityForms extends PodsComponent {
             }
             $ids = array();
             foreach ( $fields as $the_pod => $columns ) {
-                $api = new PodAPI( $the_pod );
+                $api = new pods_api( $the_pod );
                 $api->snap = true;
                 $params = array(
                     'datatype' => $the_pod,
@@ -822,7 +822,7 @@ class Pods_GravityForms extends PodsComponent {
                 }
             }
             if ( false !== $related && is_array( $related ) ) {
-                $api = new PodAPI( $pod );
+                $api = new pods_api( $pod );
                 $api->snap = true;
                 $params = array(
                     'datatype' => $pod,

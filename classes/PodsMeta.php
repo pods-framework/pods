@@ -97,13 +97,15 @@ class PodsMeta {
         add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
         add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 
-        // Handle *_post_meta
-        add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
+        if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+            // Handle *_post_meta
+            add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
 
-        if ( !pods_tableless() ) {
-            add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
-            add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
-            add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
+            if ( !pods_tableless() ) {
+                add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
+                add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
+                add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
+            }
         }
 
         add_action( 'delete_post', array( $this, 'delete_post' ), 10, 1 );
@@ -123,15 +125,16 @@ class PodsMeta {
             add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
             add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 
-            // Handle *_term_meta, LOL just kidding
-            /*
-            if ( !pods_tableless() ) {
+            if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
+                // Handle *_term_meta
                 add_filter( 'get_term_metadata', array( $this, 'get_term_meta' ), 10, 4 );
-                add_filter( 'add_term_metadata', array( $this, 'add_term_meta' ), 10, 5 );
-                add_filter( 'update_term_metadata', array( $this, 'update_term_meta' ), 10, 5 );
-                add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
+
+                if ( !pods_tableless() ) {
+                    add_filter( 'add_term_metadata', array( $this, 'add_term_meta' ), 10, 5 );
+                    add_filter( 'update_term_metadata', array( $this, 'update_term_meta' ), 10, 5 );
+                    add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
+                }
             }
-            */
         }
 
         // Handle Delete
@@ -148,14 +151,16 @@ class PodsMeta {
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
 
-            // Handle *_post_meta
-            if ( !has_filter( 'get_post_metadata', array( $this, 'get_post_meta' ) ) ) {
-                add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
+            if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
+                // Handle *_post_meta
+                if ( !has_filter( 'get_post_metadata', array( $this, 'get_post_meta' ) ) ) {
+                    add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
 
-                if ( !pods_tableless() ) {
-                    add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
-                    add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
-                    add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
+                    if ( !pods_tableless() ) {
+                        add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
+                        add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
+                        add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
+                    }
                 }
             }
         }
@@ -170,13 +175,15 @@ class PodsMeta {
             add_action( 'personal_options_update', array( $this, 'save_user' ) );
             add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
 
-            // Handle *_user_meta
-            add_filter( 'get_user_metadata', array( $this, 'get_user_meta' ), 10, 4 );
+            if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
+                // Handle *_user_meta
+                add_filter( 'get_user_metadata', array( $this, 'get_user_meta' ), 10, 4 );
 
-            if ( !pods_tableless() ) {
-                add_filter( 'add_user_metadata', array( $this, 'add_user_meta' ), 10, 5 );
-                add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
-                add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
+                if ( !pods_tableless() ) {
+                    add_filter( 'add_user_metadata', array( $this, 'add_user_meta' ), 10, 5 );
+                    add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
+                    add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
+                }
             }
         }
 
@@ -192,13 +199,15 @@ class PodsMeta {
             add_action( 'comment_post', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
 
-            // Handle *_comment_meta
-            add_filter( 'get_comment_metadata', array( $this, 'get_comment_meta' ), 10, 4 );
+            if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
+                // Handle *_comment_meta
+                add_filter( 'get_comment_metadata', array( $this, 'get_comment_meta' ), 10, 4 );
 
-            if ( !pods_tableless() ) {
-                add_filter( 'add_comment_metadata', array( $this, 'add_comment_meta' ), 10, 5 );
-                add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
-                add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
+                if ( !pods_tableless() ) {
+                    add_filter( 'add_comment_metadata', array( $this, 'add_comment_meta' ), 10, 5 );
+                    add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
+                    add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
+                }
             }
         }
 
@@ -1975,7 +1984,7 @@ class PodsMeta {
         if ( !$single && ( empty( $meta_cache ) || !is_array( $meta_cache ) ) )
             $meta_cache = array();
 
-        $pod = pods( $object[ 'name' ], $object_id );
+        $pod = pods( $object[ 'name' ] );
 
         $meta_keys = array( $meta_key );
 
@@ -1987,6 +1996,11 @@ class PodsMeta {
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
+                    if ( empty( $pod->id ) ) {
+                        $pod->fetch( $object_id );
+                        $pod->id = $object_id;
+                    }
+
                     $key_found = true;
 
                     $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
@@ -2002,6 +2016,11 @@ class PodsMeta {
                         unset( $meta_cache[ '_pods_' . $meta_k ] );
                 }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
+                    if ( empty( $pod->id ) ) {
+                        $pod->fetch( $object_id );
+                        $pod->id = $object_id;
+                    }
+
                     $key_found = true;
 
                     $first = current( explode( '.', $meta_k ) );
@@ -2026,10 +2045,10 @@ class PodsMeta {
         if ( !$no_conflict )
             pods_no_conflict_off( $meta_type );
 
+        unset( $pod ); // memory clear
+
         if ( !$key_found )
             return $_null;
-
-        unset( $pod ); // memory clear
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             wp_cache_set( $object_id, $meta_cache, $meta_type . '_meta' );
@@ -2068,11 +2087,6 @@ class PodsMeta {
         if ( pods_tableless() )
             return $_null;
 
-        $meta_type = $object_type;
-
-        if ( 'post_type' == $meta_type )
-            $meta_type = 'post';
-
         $object = $this->get_object( $object_type, $object_id );
 
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
@@ -2102,11 +2116,6 @@ class PodsMeta {
         if ( pods_tableless() )
             return $_null;
 
-        $meta_type = $object_type;
-
-        if ( 'post_type' == $meta_type )
-            $meta_type = 'post';
-
         $object = $this->get_object( $object_type, $object_id );
 
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
@@ -2130,11 +2139,6 @@ class PodsMeta {
     public function delete_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
         if ( pods_tableless() )
             return $_null;
-
-        $meta_type = $object_type;
-
-        if ( 'post_type' == $meta_type )
-            $meta_type = 'post';
 
         $object = $this->get_object( $object_type, $object_id );
 

@@ -1236,6 +1236,7 @@ class PodsAPI {
 
         $options_ignore = array(
             'object_type',
+            'object_name',
             'table',
             'meta_table',
             'pod_table',
@@ -4785,6 +4786,7 @@ class PodsAPI {
 
         $export_ignore = array(
             'object_type',
+            'object_name',
             'table',
             'meta_table',
             'pod_table',
@@ -6160,7 +6162,7 @@ class PodsAPI {
             //'select' => '`t`.*',
             'object_type' => $object_type,
             'type' => null,
-            'object' => '',
+            'object_name' => $object,
             'object_hierarchical' => false,
 
             'table' => $object,
@@ -6620,7 +6622,7 @@ class PodsAPI {
                 $info[ 'recurse' ] = true;
 
             $info[ 'type' ] = $object_type;
-            $info[ 'object' ] = $object;
+            $info[ 'object_name' ] = $object;
 
             if ( did_action( 'init' ) )
                 pods_transient_set( $transient, $info );

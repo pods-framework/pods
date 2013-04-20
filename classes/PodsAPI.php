@@ -1466,7 +1466,7 @@ class PodsAPI {
             $defined_fields = array();
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || in_array( $defined_fields, $field[ 'name' ] ) )
+                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || in_array( $field[ 'name' ], $defined_fields ) )
                     continue;
 
                 $defined_fields[] = $field[ 'name' ];

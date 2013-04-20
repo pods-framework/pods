@@ -1628,7 +1628,7 @@ class PodsData {
                     $this->id = $this->pod_data[ 'id' ];
                     $this->row[ 'option_id' ] = $this->id;
 
-                    pods_cache_set( $this->pod, $this->row, 0, 'pods_items_' . $this->pod );
+                    pods_cache_set( $this->pod, $this->row, 'pods_items_' . $this->pod, 0 );
                 }
             }
             elseif ( isset( $this->data[ $this->row_number ] ) )
@@ -1802,7 +1802,7 @@ class PodsData {
             }
 
             if ( !empty( $this->pod ) )
-                pods_cache_set( $id, $this->row, 0, 'pods_items_' . $this->pod );
+                pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
         }
 
         $this->row = $this->do_hook( 'fetch', $this->row, $id, $this->row_number );

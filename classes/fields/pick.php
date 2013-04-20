@@ -624,7 +624,7 @@ class PodsField_Pick extends PodsField {
      * @return array|bool
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 

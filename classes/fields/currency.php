@@ -340,7 +340,7 @@ class PodsField_Currency extends PodsField {
      * @return bool|mixed|void
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         global $wp_locale;
 
         if ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {

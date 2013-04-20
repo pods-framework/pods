@@ -165,7 +165,7 @@ class PodsField_Phone extends PodsField {
      *
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
         $label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );

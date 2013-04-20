@@ -238,7 +238,7 @@ class PodsField_Avatar extends PodsField {
      * @return bool
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
         // check file extensions
         return true;

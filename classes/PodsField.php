@@ -239,7 +239,7 @@ class PodsField {
      * @return bool
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 

@@ -5779,7 +5779,7 @@ class PodsAPI {
         $label = empty( $label ) ? $field : $label;
 
         // Verify required fields
-        if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) ) {
+        if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) && 'slug' != $type ) {
             if ( '' == $value || null === $value || array() === $value )
                 return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 
@@ -5802,8 +5802,9 @@ class PodsAPI {
 
         }
 
+        // @todo move this to after pre-save preparations
         // Verify unique fields
-        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) ) {
+        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) && 'slug' != $type ) {
             if ( empty( $pod ) )
                 return false;
 
@@ -5817,6 +5818,7 @@ class PodsAPI {
 
                 $check_value = pods_sanitize( $value );
 
+                // @todo handle meta-based fields
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
                     $check = pods_query( "SELECT `id` FROM `@wp_pods_" . $pod[ 'name' ] . "` WHERE `{$field}` = '{$check_value}' {$exclude} LIMIT 1", $this );

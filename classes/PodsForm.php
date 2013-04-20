@@ -753,7 +753,7 @@ class PodsForm {
      *
      * @since 2.0
      */
-    public static function validate ( $type, &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public static function validate ( $type, $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         self::field_loader( $type );
 
         $validate = true;

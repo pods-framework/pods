@@ -158,7 +158,7 @@ class PodsField_Email extends PodsField {
      * @return array|bool
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
         $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );

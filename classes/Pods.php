@@ -955,6 +955,8 @@ class Pods {
                                 if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment', 'media' ) ) )
                                     $object_type = 'post';
 
+                                $no_conflict = true;
+
                                 if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) ) {
                                     $no_conflict = pods_no_conflict_check( $object_type );
 
@@ -1010,6 +1012,17 @@ class Pods {
                                                 $value[] = (int) $item->{$field};
                                             else
                                                 $value[] = $item->{$field};
+                                        }
+                                        elseif ( 'post' == $object_type ) {
+                                            // Support for WPML 'duplicated' translation handling
+                                            if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
+                                                $master_post_id = (int) get_post_meta( $item_id, '_icl_lang_duplicate_of', true );
+
+                                                if ( 0 < $master_post_id )
+                                                    $item_id = $master_post_id;
+                                            }
+
+                                            $value[] = get_post_meta( $item_id, $field, true );
                                         }
                                         elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
                                             $value[] = get_metadata( $object_type, $item_id, $field, true );

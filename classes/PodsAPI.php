@@ -6160,6 +6160,7 @@ class PodsAPI {
             //'select' => '`t`.*',
             'object_type' => $object_type,
             'type' => null,
+            'object' => '',
             'object_hierarchical' => false,
 
             'table' => $object,
@@ -6619,6 +6620,7 @@ class PodsAPI {
                 $info[ 'recurse' ] = true;
 
             $info[ 'type' ] = $object_type;
+            $info[ 'object' ] = $object;
 
             if ( did_action( 'init' ) )
                 pods_transient_set( $transient, $info );

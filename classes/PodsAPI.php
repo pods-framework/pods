@@ -5804,7 +5804,7 @@ class PodsAPI {
 
         // @todo move this to after pre-save preparations
         // Verify unique fields
-        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) && 'slug' != $type ) {
+        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) && '' !== $value && null !== $value && array() !== $value && 0 !== $value && '0' !== $value ) {
             if ( empty( $pod ) )
                 return false;
 

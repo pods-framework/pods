@@ -214,7 +214,9 @@ class PodsInit {
         $this->register_pods();
 
         $avatar = PodsForm::field_loader( 'avatar' );
-        add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
+
+        if ( method_exists( $avatar, 'get_avatar' ) )
+            add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
     }
 
     /**

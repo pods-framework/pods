@@ -2702,7 +2702,7 @@ class PodsAPI {
                 if ( in_array( $field, $fields_active ) )
                     continue;
 
-                if ( 'save' == $params->from || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                if ( in_array( $params->from, array( 'save', 'process_form' ) ) || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
                     $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
 
                     if ( null !== $value && '' !== $value && false !== $value ) {

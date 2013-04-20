@@ -1368,47 +1368,73 @@ class PodsField_Pick extends PodsField {
 
                         $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
 
-                        $object = '';
+                        $object = $object_type = '';
 
-                        if ( $wpdb->posts == $search_data->table && isset( $result[ 'post_type' ] ) )
+                        if ( $wpdb->posts == $search_data->table && isset( $result[ 'post_type' ] ) ) {
                             $object = $result[ 'post_type' ];
-                        elseif ( $wpdb->terms == $search_data->table && isset( $result[ 'taxonomy' ] ) )
+                            $object_type = 'post_type';
+                        }
+                        elseif ( $wpdb->terms == $search_data->table && isset( $result[ 'taxonomy' ] ) ) {
                             $object = $result[ 'taxonomy' ];
+                            $object_type = 'taxonomy';
+                        }
 
                         // WPML integration for Post Types and Taxonomies
-                        if ( is_object( $sitepress ) && in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) ) {
-                            $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+                        if ( is_object( $sitepress ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
+                            $translated = false;
 
-                            if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                $text = $result[ $search_data->field_index ];
+                            if ( 'post_type' == $object_type && $sitepress->is_translated_post_type( $object ) )
+                                $translated = true;
+                            elseif ( 'taxonomy' == $object_type && $sitepress->is_translated_taxonomy( $object ) )
+                                $translated = true;
 
-                                if ( $result[ $search_data->field_id ] != $object_id ) {
-                                    if ( $wpdb->posts == $search_data->table )
-                                        $text = trim( get_the_title( $object_id ) );
-                                    elseif ( $wpdb->terms == $search_data->table )
-                                        $text = trim( get_term( $object_id, $object )->name );
+                            if ( $translated ) {
+                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+
+                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
+                                    $text = $result[ $search_data->field_index ];
+
+                                    if ( $result[ $search_data->field_id ] != $object_id ) {
+                                        if ( $wpdb->posts == $search_data->table )
+                                            $text = trim( get_the_title( $object_id ) );
+                                        elseif ( $wpdb->terms == $search_data->table )
+                                            $text = trim( get_term( $object_id, $object )->name );
+                                    }
+
+                                    $result[ $search_data->field_id ] = $object_id;
+                                    $result[ $search_data->field_index ] = $text;
                                 }
-
-                                $result[ $search_data->field_id ] = $object_id;
-                                $result[ $search_data->field_index ] = $text;
+                                else
+                                    continue;
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( is_object( $polylang ) && in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && method_exists( $polylang, 'get_translation' ) ) {
-                            $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+                        elseif ( is_object( $polylang ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) && method_exists( $polylang, 'get_translation' ) ) {
+                            $translated = false;
 
-                            if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                $text = $result[ $search_data->field_index ];
+                            if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
+                                $translated = true;
+                            elseif ( 'taxonomy' == $object_type && pll_is_translated_taxonomy( $object ) )
+                                $translated = true;
 
-                                if ( $result[ $search_data->field_id ] != $object_id ) {
-                                    if ( $wpdb->posts == $search_data->table )
-                                        $text = trim( get_the_title( $object_id ) );
-                                    elseif ( $wpdb->terms == $search_data->table )
-                                        $text = trim( get_term( $object_id, $object )->name );
+                            if ( $translated ) {
+                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+
+                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
+                                    $text = $result[ $search_data->field_index ];
+
+                                    if ( $result[ $search_data->field_id ] != $object_id ) {
+                                        if ( $wpdb->posts == $search_data->table )
+                                            $text = trim( get_the_title( $object_id ) );
+                                        elseif ( $wpdb->terms == $search_data->table )
+                                            $text = trim( get_term( $object_id, $object )->name );
+                                    }
+
+                                    $result[ $search_data->field_id ] = $object_id;
+                                    $result[ $search_data->field_index ] = $text;
                                 }
-
-                                $result[ $search_data->field_id ] = $object_id;
-                                $result[ $search_data->field_index ] = $text;
+                                else
+                                    continue;
                             }
                         }
 

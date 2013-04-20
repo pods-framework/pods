@@ -697,7 +697,7 @@ class Pods {
                         $id = $this->id();
 
                         // Support for WPML 'duplicated' translation handling
-                        if ( is_object( $sitepress ) ) {
+                        if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
                             $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
 
                             if ( 0 < $master_post_id )

@@ -3546,9 +3546,19 @@ class PodsUI {
         foreach ( $get as $k => $v ) {
             if ( in_array( $k, $exclude ) )
                 continue;
-            ?>
-        <input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" />
-        <?php
+
+            if ( is_array( $v ) ) {
+                foreach ( $v as $vk => $vv ) {
+?>
+    <input type="hidden" name="<?php echo $k; ?>[<?php echo $vk; ?>]" value="<?php echo $vv; ?>" />
+<?php
+               }
+            }
+            else {
+?>
+    <input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" />
+<?php
+            }
         }
     }
 

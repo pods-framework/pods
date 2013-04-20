@@ -586,6 +586,8 @@ class PodsData {
      * @since 2.0
      */
     public function select ( $params ) {
+        global $wpdb;
+
         $cache_key = $results = false;
 
         // Debug purposes
@@ -608,7 +610,7 @@ class PodsData {
 
             // Debug purposes
             if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
-                echo "<textarea cols='100' rows='24'>{$this->sql}</textarea>";
+                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) . '</textarea>';
 
             if ( empty( $this->sql ) )
                 return array();
@@ -1899,7 +1901,7 @@ class PodsData {
                 $params = array_merge( $params, $sql );
 
             if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
-                echo '<textarea cols="100" rows="24">' . $params->sql . '</textarea>';
+                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $params->sql ) . '</textarea>';
         }
 
         $params->sql = trim( $params->sql );
@@ -2693,13 +2695,15 @@ class PodsData {
      */
     public function get_sql ( $sql ) {
         global $wpdb;
+
         if ( empty( $sql ) )
             $sql = $this->sql;
 
-        $sql = str_replace( '@wp_users', $wpdb->users, $sql );
-        $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
+        $sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+
         $sql = str_replace( '{prefix}', '@wp_', $sql );
         $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
+
         return $sql;
     }
 }

@@ -536,7 +536,7 @@ class Pods_GravityForms extends PodsComponent {
      * @param int $field_id GF Field ID
      * @param string $pod_name Pod name
      * @param string $label_column_name Column name to use for label text
-     * @param array $params Additional parameters for findRecords
+     * @param array $params Additional parameters for find
      */
     public static function dynamic_select ( $form_id, $field_id, $pod_name, $label_column_name = 'name', $params = null ) {
         self::$dynamic_select = array(
@@ -560,7 +560,7 @@ class Pods_GravityForms extends PodsComponent {
      * @param int $field_id GF Field ID
      * @param string $pod_name Pod name
      * @param string $label_column_name Column name to use for label text
-     * @param array $params Additional parameters for findRecords
+     * @param array $params Additional parameters for find
      *
      * @return array
      */
@@ -598,7 +598,7 @@ class Pods_GravityForms extends PodsComponent {
         else
             $params = $defaults;
 
-        $pod = new Pod( $pod_name, $params );
+        $pod = pods( $pod_name, $params );
 
         foreach ( $form[ 'fields' ] as &$field ) {
             if ( $field_id == $field[ 'id' ] ) {
@@ -608,10 +608,10 @@ class Pods_GravityForms extends PodsComponent {
                     $field[ 'defaultValue' ] = $params[ 'defaultValue' ];
 
                 $choices = array();
-                while ( $pod->fetchRecord() ) {
+                while ( $pod->fetch() ) {
                     $choices[] = array(
-                        'text' => $pod->get_field( $label_column_name ),
-                        'value' => $pod->get_field( 'id' )
+                        'text' => $pod->field( $label_column_name ),
+                        'value' => $pod->id()
                     );
                 }
                 $field[ 'choices' ] = apply_filters( 'pods_gf_dynamic_select_choices', $choices, $field, $form, $pod, $label_column_name, $params );
@@ -644,7 +644,7 @@ class Pods_GravityForms extends PodsComponent {
             $related_strict = false;
             if ( empty( $id ) ) {
                 // create new record but only relate if $pod != $the_pod
-                $api = new PodAPI( $pod );
+                $api = pods( $pod );
                 $api->snap = true;
                 $related_strict = true;
                 try {
@@ -726,12 +726,14 @@ class Pods_GravityForms extends PodsComponent {
                         $value = 0;
                     }
                 }
-                $api = new PodAPI( $the_pod );
+
+                $api = pods_api( $the_pod );
                 $api->snap = true;
-                if ( !isset( $api->fields[ $map ] ) ) {
+
+                if ( !isset( $api->fields[ $map ] ) )
                     continue;
-                }
-                if ( 'pick' == $api->fields[ $map ][ 'coltype' ] && ( 'wp_user' != $api->fields[ $map ][ 'pickval' ] || !is_numeric( $value ) ) && ( !isset( $etc[ 'bypass_value_set' ] ) || false === $etc[ 'bypass_value_set' ] ) ) {
+
+                if ( 'pick' == $api->fields[ $map ][ 'type' ] && ( 'wp_user' != $api->fields[ $map ][ 'pickval' ] || !is_numeric( $value ) ) && ( !isset( $etc[ 'bypass_value_set' ] ) || false === $etc[ 'bypass_value_set' ] ) ) {
                     $values = explode( '|', $value );
                     $field_counter = 1;
                     while ( isset( $entry[ $field_id . '.' . $field_counter ] ) ) {
@@ -754,21 +756,21 @@ class Pods_GravityForms extends PodsComponent {
                             }
                         }
                         else {
-                            $lookup = new Pod( $api->fields[ $map ][ 'pickval' ] );
-                            $lookup->findRecords( array(
+                            $lookup = pods( $api->fields[ $map ][ 'pickval' ] );
+                            $lookup->find( array(
                                 'orderby' => '(t.name = "' . pods_sanitize( $v ) . '") DESC,(t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '") DESC,t.id',
                                 'limit' => 1,
                                 'where' => 't.name = "' . pods_sanitize( $v ) . '" OR t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '" OR t.name LIKE "%' . pods_sanitize( $v ) . '%" OR t.name LIKE "%' . pods_sanitize( trim( $v, '.' ) ) . '%" OR t.id = ' . intval( $v ),
                                 'search' => false,
                                 'page' => 1
                             ) );
-                            if ( $lookup->fetchRecord() ) {
-                                $values[ $k ] = $lookup->get_field( 'id' );
+                            if ( $lookup->fetch() ) {
+                                $values[ $k ] = $lookup->id();
                             }
                         }
                     }
                     try {
-                        $api->fields[ $map ] = $api->load_column( array( 'id' => $api->fields[ $map ][ 'id' ] ) );
+                        $api->fields[ $map ] = $api->load_field( array( 'id' => $api->fields[ $map ][ 'id' ] ) );
                     }
                     catch ( Exception $e ) {
                         return $e->getMessage();
@@ -780,7 +782,7 @@ class Pods_GravityForms extends PodsComponent {
                         $value = implode( ',', $values );
                     }
                 }
-                elseif ( 'num' == $api->fields[ $map ][ 'coltype' ] ) {
+                elseif ( 'num' == $api->fields[ $map ][ 'type' ] ) {
                     $value = (int) $value;
                 }
                 else {
@@ -795,7 +797,7 @@ class Pods_GravityForms extends PodsComponent {
             }
             $ids = array();
             foreach ( $fields as $the_pod => $columns ) {
-                $api = new PodAPI( $the_pod );
+                $api = pods_api( $the_pod );
                 $api->snap = true;
                 $params = array(
                     'datatype' => $the_pod,
@@ -822,7 +824,7 @@ class Pods_GravityForms extends PodsComponent {
                 }
             }
             if ( false !== $related && is_array( $related ) ) {
-                $api = new PodAPI( $pod );
+                $api = pods_api( $pod );
                 $api->snap = true;
                 $params = array(
                     'datatype' => $pod,

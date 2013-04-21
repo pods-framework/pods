@@ -3097,10 +3097,10 @@ class PodsAPI {
         }
 
         // Clear cache
-        pods_cache_clear( $params->id, 'pods_items_' . $params->pod );
+        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
 
         // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'taxonomy' ) ) ) {
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'user', 'comment' ) ) ) {
             $meta_type = $pod[ 'type' ];
 
             if ( 'post_type' == $meta_type )

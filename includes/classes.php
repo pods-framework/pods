@@ -20,17 +20,26 @@ function pods ( $type = null, $id = null, $strict = false ) {
 
     $pod = null;
 
-    if ( empty( $id ) && !is_array( $id ) && null !== $type )
+    if ( null !== $type && null === $id )
         $pod = pods_cache_get( (string) $type, 'pods-class' );
 
     if ( empty( $pod ) ) {
-        $pod = new Pods( $type, $id );
+        if ( null !== $type )
+            $pod = pods_cache_get( (string) $type, 'pods-class' );
+
+        if ( empty( $pod ) )
+            $pod = new Pods( $type );
 
         if ( true === $strict && null !== $type && !$pod->valid() )
             return false;
 
-        if ( empty( $id ) && !is_array( $id ) && null !== $type && $pod->valid() )
+        if ( null !== $type && $pod->valid() )
             pods_cache_set( (string) $type, $pod, 'pods-class' );
+
+        if ( is_array( $id ) )
+            $pod->find( $id );
+        elseif ( !empty( $id ) )
+            $pod->fetch( $id );
     }
 
     return $pod;

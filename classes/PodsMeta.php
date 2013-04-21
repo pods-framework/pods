@@ -2092,12 +2092,15 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        $pod = pods( $object[ 'name' ], $object_id );
+        $pod = pods( $object[ 'name' ] );
 
-        if ( in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) )
+        if ( in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+            $pod->fetch( $object_id );
+
             $pod->add_to( $meta_key, $meta_value );
+        }
         else
-            $pod->save( $meta_key, $meta_value );
+            $pod->save( $meta_key, $meta_value, $object_id );
 
         return $object_id;
     }
@@ -2121,7 +2124,9 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
+        $pod = pods( $object[ 'name' ] );
+
+        $pod->save( $meta_key, $meta_value, $object_id );
 
         return $object_id;
     }
@@ -2145,13 +2150,16 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        $fields = array(
-            $meta_key => null
-        );
+        $pod = pods( $object[ 'name' ] );
 
-        // @todo handle $meta_value (delete the field value only if it matches)
         // @todo handle $delete_all (delete the field values from all pod items)
-        pods( $object[ 'name' ], $object_id )->save( $fields );
+        if ( !empty( $meta_value ) && in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+            $pod->fetch( $object_id );
+
+            $pod->remove_from( $meta_key, $meta_value );
+        }
+        else
+            $pod->save( array( $meta_key => null ), null, $object_id );
 
         return $_null;
     }

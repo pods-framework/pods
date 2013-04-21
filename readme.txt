@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.3
+Stable tag: 2.3.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,6 +151,12 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.3.1 - April 21st, 2013 =
+* Fixed: Advanced Content Types were missing their 'Advanced' tab
+* Fixed: IE 8-10 issue with plupload implementation for the 'Add File' button
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.3 - April 21st, 2013 =
 * Added: Ability to change the output type of relationship fields with pods_field_related_output_type filter - Options are arrays (default), objects, ids, or names
 * Added: Traversal for detail_url (related_post.detail_url maps to get_permalink, same for Taxonomies, Users, or Comments)
@@ -160,9 +166,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Ability to change the default file upload type (default images) with the pods_form_ui_field_file_type_default filter
 * Improved: Pods class caching now better and utilized object caching for primary object init
 * Translated: Full pt_BR translation provided by [Luciana](https://github.com/yammye)
-* And 40+ other enhancements and bug fixes
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+* And 40+ other enhancements and bug fixes that can be found on GitHub
 
 = 2.3.2 - April 11th, 2013 =
 * Added: You can now select 'ID' from the list of available columns to show in Admin UI for Advanced Content Types

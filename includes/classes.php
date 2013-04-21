@@ -20,17 +20,11 @@ function pods ( $type = null, $id = null, $strict = false ) {
 
     $pod = null;
 
-    if ( null !== $type && null === $id )
-        $pod = pods_cache_get( (string) $type, 'pods-class' );
-
     if ( empty( $pod ) ) {
         $pod = new Pods( $type, $id );
 
         if ( true === $strict && null !== $type && !$pod->valid() )
             return false;
-
-        if ( null !== $type && null === $id && $pod->valid() )
-            pods_cache_set( (string) $type, $pod, 'pods-class' );
     }
 
     return $pod;

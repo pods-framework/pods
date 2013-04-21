@@ -32,6 +32,7 @@ if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' 
 
 $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
+    'container' => $css_id . '-container',
     'browse_button' => $css_id . '-upload',
     'url' => admin_url( 'admin-ajax.php', 'relative' ) . '?pods_ajax=1',
     'file_data_name' => 'Filedata',
@@ -135,7 +136,7 @@ else
     <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
-                <td>
+                <td id="<?php echo $css_id; ?>-container">
                     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                         foreach ( $value as $val ) {
                             $attachment = get_post( $val );

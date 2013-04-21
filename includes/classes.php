@@ -24,22 +24,13 @@ function pods ( $type = null, $id = null, $strict = false ) {
         $pod = pods_cache_get( (string) $type, 'pods-class' );
 
     if ( empty( $pod ) ) {
-        if ( null !== $type )
-            $pod = pods_cache_get( (string) $type, 'pods-class' );
-
-        if ( empty( $pod ) )
-            $pod = new Pods( $type );
+        $pod = new Pods( $type, $id );
 
         if ( true === $strict && null !== $type && !$pod->valid() )
             return false;
 
-        if ( null !== $type && $pod->valid() )
+        if ( null !== $type && null === $id && $pod->valid() )
             pods_cache_set( (string) $type, $pod, 'pods-class' );
-
-        if ( is_array( $id ) )
-            $pod->find( $id );
-        elseif ( !empty( $id ) )
-            $pod->fetch( $id );
     }
 
     return $pod;

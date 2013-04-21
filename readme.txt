@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.2
+Stable tag: 2.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,15 +146,27 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 * sk_SK (Slovak) - Branco Radenovich ([WebHostingGeeks.com](http://webhostinggeeks.com/blog/))
 * nl_NL (Dutch) - [Ramon van Belzen](http://www.ramoonus.nl/)
+* pt_BR (Portuguese) - [Luciana](https://github.com/yammye)
 * And more in progress! Join us in further translating the Pods interface at: http://translate.rocksta.rs/projects/pods-framework
 
 == Changelog ==
 
-= 2.3.2 - April 11th, 2013 =
-* Added: You can now select 'ID' from the list of available columns to show in Admin UI for Advanced Content Types
-* And 11 other bug fixes
+= 2.3.3 - April 21st, 2013 =
+* Added: Ability to change the output type of relationship fields with pods_field_related_output_type filter - Options are arrays (default), objects, ids, or names
+* Added: Traversal for detail_url (related_post.detail_url maps to get_permalink, same for Taxonomies, Users, or Comments)
+* Added: Pods::is( $field, $value ) to check if a field is a specific value
+* Added: Pods::has( $field, $value ) to check if a field has a specific value in it - Check for value(s) in related/file fields, get stripos for text-based fields, uses Pods::is for all other fields
+* Added: Pods::remove_from( $field, $value ) to remove a value for relationship (remove ID), file (remove ID), and number (subtract) and saves (see Pods::add_to for the reverse of this)
+* Added: Ability to change the default file upload type (default images) with the pods_form_ui_field_file_type_default filter
+* Improved: Pods class caching now better and utilized object caching for primary object init
+* Translated: Full pt_BR translation provided by [Luciana](https://github.com/yammye)
+* And 40+ other enhancements and bug fixes
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.2 - April 11th, 2013 =
+* Added: You can now select 'ID' from the list of available columns to show in Admin UI for Advanced Content Types
+* Various fixes that can be found on GitHub
 
 = 2.3.1 - April 9th, 2013 =
 * Added: New ability to set the menu location of Custom Taxonomies (expose a Custom Taxonomy that isn't associated to a Post Type)

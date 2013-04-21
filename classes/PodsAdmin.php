@@ -1414,6 +1414,11 @@ class PodsAdmin {
             }
 
             $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ 'id' ] = 'ID';
+
+            // @todo fill this in
+            $options[ 'advanced' ] = array(
+                'temporary' => 'This type has the fields hardcoded' // :(
+            );
         }
 
         $options = apply_filters( 'pods_admin_setup_edit_options', $options );

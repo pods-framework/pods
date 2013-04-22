@@ -32,7 +32,7 @@ if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' 
 
 $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
-    'container' => $css_id . '-container',
+    'container' => $css_id,
     'browse_button' => $css_id . '-upload',
     'url' => admin_url( 'admin-ajax.php', 'relative' ) . '?pods_ajax=1',
     'file_data_name' => 'Filedata',
@@ -133,38 +133,27 @@ else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
-    <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>">
-        <tbody>
-            <tr class="form-field">
-                <td id="<?php echo $css_id; ?>-container">
-                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
-                        foreach ( $value as $val ) {
-                            $attachment = get_post( $val );
+    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
+        foreach ( $value as $val ) {
+            $attachment = get_post( $val );
 
-                            if ( empty( $attachment ) )
-                                continue;
+            if ( empty( $attachment ) )
+                continue;
 
-                            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
-                            
-                            if( is_ssl() )
-                                $thumb[ 0 ] = str_replace( 'http://', 'https://', $thumb[ 0 ] );
-                            
-                            $title = $attachment->post_title;
+            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-                            if ( 0 == $title_editable )
-                                $title = basename( $attachment->guid );
+            $title = $attachment->post_title;
 
-                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
-                        }
-                        ?></ul>
+            if ( 0 == $title_editable )
+                $title = basename( $attachment->guid );
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+        }
+        ?></ul>
 
-                    <ul class="pods-files pods-files-queue"></ul>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+
+    <ul class="pods-files pods-files-queue"></ul>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">

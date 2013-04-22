@@ -73,30 +73,25 @@ else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
-    <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, $form_field_type, $options ); ?>>
-        <tbody>
-            <tr class="form-field">
-                <td>
-                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
-                        foreach ( $value as $val ) {
-                            $attachment = get_post( $val );
+    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
+        foreach ( $value as $val ) {
+            $attachment = get_post( $val );
 
-                            if ( empty( $attachment ) )
-                                continue;
+            if ( empty( $attachment ) )
+                continue;
 
-                            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-                            $title = $attachment->post_title;
+            $title = $attachment->post_title;
 
-                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
-                        }
-                        ?></ul>
+            if ( 0 == $title_editable )
+                $title = basename( $attachment->guid );
 
-                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+        }
+        ?></ul>
+
+    <a class="button pods-file-add pods-media-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">

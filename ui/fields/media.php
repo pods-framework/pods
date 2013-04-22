@@ -103,30 +103,22 @@ else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
-    <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>">
-        <tbody>
-            <tr class="form-field">
-                <td>
-                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
-                        foreach ( $value as $val ) {
-                            $attachment = get_post( $val );
+    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
+        foreach ( $value as $val ) {
+            $attachment = get_post( $val );
 
-                            if ( empty( $attachment ) )
-                                continue;
+            if ( empty( $attachment ) )
+                continue;
 
-                            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-                            $title = $attachment->post_title;
+            $title = $attachment->post_title;
 
-                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
-                        }
-                        ?></ul>
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+        }
+        ?></ul>
 
-                    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">

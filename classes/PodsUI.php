@@ -3395,6 +3395,11 @@ class PodsUI {
         $total_pages = ceil( $this->total_found / $this->limit );
         $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'filter_*', 'page' . $this->num ), $this->exclusion() );
 
+        $append = false;
+
+        if ( false !== strpos( $request_uri, '?' ) )
+            $append = true;
+
         if ( false !== $this->pagination_total ) {
             ?>
         <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ); ?> <?php echo _n( 'item', 'items', $this->total_found, 'pods' ); ?></span>
@@ -3404,8 +3409,8 @@ class PodsUI {
         if ( false !== $this->pagination ) {
             if ( 1 < $total_pages ) {
                 ?>
-            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri; ?>">&laquo;</a>
-            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
+            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=1'; ?>">&laquo;</a>
+            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
             <?php
                 if ( true == $header ) {
                     ?>
@@ -3430,8 +3435,8 @@ class PodsUI {
                 <?php
                 }
                 ?>
-            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
-            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo $total_pages; ?>">&raquo;</a>
+            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
+            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . $total_pages; ?>">&raquo;</a>
             <?php
             }
         }

@@ -1096,7 +1096,7 @@ class Pods {
                 if ( $post_temp )
                     $GLOBALS[ 'post' ] = null;
             }
-            else {
+            elseif ( !$params->raw && !$params->in_form ) {
                 $value = PodsForm::value(
                     $field_data[ 'type' ],
                     $value,

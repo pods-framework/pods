@@ -1069,7 +1069,7 @@ class Pods {
 
         // @todo Expand this into traversed fields too
         if ( !empty( $field_data ) ) {
-            if ( false === $params->raw && false === $params->in_form ) {
+            if ( $params->display ) {
                 $field_data[ 'options' ] = pods_var_raw( 'options', $field_data, array(), null, true );
 
                 $post_temp = false;
@@ -1082,7 +1082,7 @@ class Pods {
 
                 if ( 0 < strlen( pods_var( 'display_filter', $field_data[ 'options' ] ) ) )
                     $value = apply_filters( pods_var( 'display_filter', $field_data[ 'options' ] ), $value );
-                elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) || $params->display ) {
+                elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) ) {
                     $value = PodsForm::display(
                         $field_data[ 'type' ],
                         $value,

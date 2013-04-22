@@ -3037,14 +3037,22 @@ class PodsUI {
                                 $row[ $field ] = $this->do_hook( 'field_value', $row[ $field ], $field, $attributes, $row );
 
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
-                                    if ( !in_array( 'edit', $this->actions_disabled ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
+                                    if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
+                                        $link = pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+
+                                        if ( !empty( $this->action_links[ 'edit' ] ) )
+                                            $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() ); ?>" title="Edit &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
                                         <?php
                                     }
-                                    elseif ( !in_array( 'view', $this->actions_disabled ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
+                                    elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
+                                        $link = pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+
+                                        if ( !empty( $this->action_links[ 'view' ] ) )
+                                            $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() ); ?>" title="View &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
                                         <?php
                                     }
                                     else {

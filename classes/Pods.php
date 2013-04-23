@@ -1707,19 +1707,20 @@ class Pods {
      * @see PodsData::fetch
      *
      * @param int $id ID or slug of the item to fetch
+     * @param bool $explicit_set Whether to set explicitly (use false when in loop)
      *
      * @return array An array of fields from the row
      *
      * @since 2.0
      * @link http://pods.io/docs/fetch/
      */
-    public function fetch ( $id = null ) {
+    public function fetch ( $id = null, $explicit_set = true ) {
         $this->do_hook( 'fetch', $id );
 
         if ( !empty( $id ) )
             $this->params = array();
 
-        $this->data->fetch( $id );
+        $this->data->fetch( $id, $explicit_set );
 
         $this->sql = $this->data->sql;
 
@@ -1853,7 +1854,7 @@ class Pods {
         $data = (array) $this->do_hook( 'add', $data );
 
         if ( empty( $data ) )
-            return false;
+            return 0;
 
         $params = array(
             'pod' => $this->pod,
@@ -1880,8 +1881,13 @@ class Pods {
     public function add_to ( $field, $value, $id = null ) {
         $pod =& $this;
 
-        if ( null === $id )
+        $fetch = false;
+
+        if ( null === $id ) {
+            $fetch = true;
+
             $id = $this->id();
+        }
         elseif ( $id != $this->id() )
             $pod = pods( $this->pod, $id );
 
@@ -1951,8 +1957,8 @@ class Pods {
 
         $id = $this->api->save_pod_item( $params );
 
-        if ( 0 < $id )
-            $pod->fetch( $id );
+        if ( 0 < $id && $fetch )
+            $pod->fetch( $id, false );
 
         return $id;
     }
@@ -1973,8 +1979,13 @@ class Pods {
     public function remove_from ( $field, $value, $id = null ) {
         $pod =& $this;
 
-        if ( null === $id )
+        $fetch = false;
+
+        if ( null === $id ) {
+            $fetch = true;
+
             $id = $this->id();
+        }
         elseif ( $id != $this->id() )
             $pod = pods( $this->pod, $id );
 
@@ -2044,8 +2055,8 @@ class Pods {
 
         $id = $this->api->save_pod_item( $params );
 
-        if ( 0 < $id )
-            $pod->fetch( $id );
+        if ( 0 < $id && $fetch )
+            $pod->fetch( $id, false );
 
         return $id;
     }
@@ -2071,13 +2082,18 @@ class Pods {
         if ( null !== $value )
             $data = array( $data => $value );
 
-        if ( null === $id )
+        $fetch = false;
+
+        if ( null === $id ) {
+            $fetch = true;
+
             $id = $this->id();
+        }
 
         $data = (array) $this->do_hook( 'save', $data, $id );
 
         if ( empty( $data ) )
-            return false;
+            return $id;
 
         $params = array(
             'pod' => $this->pod,
@@ -2088,8 +2104,8 @@ class Pods {
 
         $id = $this->api->save_pod_item( $params );
 
-        if ( 0 < $id )
-            $this->fetch( $id );
+        if ( 0 < $id && $fetch )
+            $this->fetch( $id, false );
 
         return $id;
     }

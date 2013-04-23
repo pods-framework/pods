@@ -542,7 +542,7 @@ class Pods_Pages extends PodsComponent {
         if ( false !== strpos( $uri, 'wp-admin' ) || false !== strpos( $uri, 'wp-includes' ) )
             return false;
 
-        $object = get_page_by_title( $uri, ARRAY_A, '_pods_page' );
+        $object = pods_by_title( $uri, ARRAY_A, '_pods_page' );
 
         $wildcard = false;
 

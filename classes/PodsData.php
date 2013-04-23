@@ -1594,12 +1594,13 @@ class PodsData {
      * Fetch a new row for the current pod_data
      *
      * @param int $row Row number to fetch
+     * @param bool $explicit_set Whether to set explicitly (use false when in loop)
      *
      * @return mixed
      *
      * @since 2.0
      */
-    public function fetch ( $row = null ) {
+    public function fetch ( $row = null, $explicit_set = true ) {
         global $wpdb;
 
         $id = $row;
@@ -1637,7 +1638,8 @@ class PodsData {
                 $this->row = get_object_vars( $this->data[ $this->row_number ] );
         }
         else {
-            $this->row_number = -1;
+            if ( $explicit_set )
+                $this->row_number = -1;
 
             $mode = 'id';
             $id = pods_absint( $row );

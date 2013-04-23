@@ -909,6 +909,56 @@ function pods_permission ( $options ) {
 }
 
 /**
+ * A fork of get_page_by_title that excludes items unavailable via access rights (by status)
+ *
+ * @see get_page_by_title
+ *
+ * @param string $title Title of item to get
+ * @param string $output Optional. Output type. OBJECT, ARRAY_N, or ARRAY_A. Default OBJECT.
+ * @param string $type Post Type
+ * @param string|array $status Post statuses to include (default is what user has access to)
+ *
+ * @return WP_Post|null WP_Post on success or null on failure
+ *
+ * @since 2.3.4
+ */
+function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = null ) {
+    // @todo support Pod item lookups, not just Post Types
+
+    /**
+     * @var $wpdb WPDB
+     */
+    global $wpdb;
+
+    if ( empty( $status ) ) {
+        $status = array(
+            'publish'
+        );
+
+        if ( current_user_can( 'read_private_' . $type . 's') )
+            $status[] = 'private';
+
+        if ( current_user_can( 'edit_' . $type . 's' ) )
+            $status[] = 'draft';
+    }
+
+    $status = (array) $status;
+
+    $status_sql = ' AND `post_status` IN ( %s' . str_repeat( ', %s', count( $status ) -1 ) . ' )';
+
+    $orderby_sql = ' ORDER BY ( `post_status` = %s ) DESC"' . str_repeat( ', ( `post_status` = %s ) DESC', count( $status ) - 1 ) . ', `ID` DESC';
+
+    $prepared = array_merge( array( $title, $type ), $status, $status ); // once for WHERE, once for ORDER BY
+
+    $page = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
+
+    if ( $page )
+        return get_post( $page, $output );
+
+    return null;
+}
+
+/**
  * Get a field value from a Pod
  *
  * @param string $pod The pod name

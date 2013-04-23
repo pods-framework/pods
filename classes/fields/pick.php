@@ -1270,7 +1270,7 @@ class PodsField_Pick extends PodsField {
                         }
 
                         if ( !empty( $lookup_where ) )
-                            $params[ 'where' ][] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
+                            $params[ 'where' ][] = implode( ' OR ', $lookup_where );
 
                         $orderby = array();
                         $orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%' ) DESC";
@@ -1311,8 +1311,9 @@ class PodsField_Pick extends PodsField {
                             $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
                         }
 
-                        if ( !empty( $where ) )
-                            $params[ 'where' ][] = '( ' . implode( ' OR ', $where ) . ' )';
+                        if ( !empty( $where ) ) {
+                            $params[ 'where' ][] = implode( ' OR ', $where );
+                        }
                     }
                 }
 

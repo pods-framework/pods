@@ -873,7 +873,7 @@ class Pods {
                                 }
 
                                 if ( !empty( $where ) )
-                                    $where = array( '( ' . implode( ' OR ', $where ) . ' )' );
+                                    $where = array( implode( ' OR ', $where ) );
 
                                 if ( !empty( $table[ 'where' ] ) )
                                     $where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );

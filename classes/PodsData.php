@@ -973,10 +973,10 @@ class PodsData {
                 }
 
                 if ( !empty( $where ) )
-                    $params->where[] = '(' . implode( ' OR ', $where ) . ')';
+                    $params->where[] = implode( ' OR ', $where );
 
                 if ( !empty( $having ) )
-                    $params->having[] = '(' . implode( ' OR ', $having ) . ')';
+                    $params->having[] = implode( ' OR ', $where );
             }
 
             // Filter
@@ -1101,10 +1101,10 @@ class PodsData {
                 }
 
                 if ( !empty( $where ) )
-                    $params->where[] = '( ' . implode( ' AND ', $where ) . ' )';
+                    $params->where[] = implode( ' AND ', $where );
 
                 if ( !empty( $having ) )
-                    $params->having[] = '( ' . implode( ' AND ', $having ) . ' )';
+                    $params->having[] = implode( ' AND ', $having );
             }
         }
 
@@ -1206,9 +1206,9 @@ class PodsData {
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
                 " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
-                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? '( ' . implode( ' ) AND ( ', $params->where ) . ' )' : $params->where ) : '' ) . "
+                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . "
                 " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
-                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? '( ' . implode( ' ) AND ( ', $params->having ) . ' )' : $params->having ) : '' ) . "
+                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
                 " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
                 " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . "
             ";
@@ -1217,9 +1217,9 @@ class PodsData {
                 COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
                 FROM {$params->table} AS `t`
                 " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
-                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? '( ' . implode( ' ) AND ( ', $params->where ) . ' )' : $params->where ) : '' ) . "
+                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "
                 " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
-                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? '( ' . implode( ' ) AND ( ', $params->having ) . ' )' : $params->having ) : '' ) . "
+                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
             ";
         }
         // Rewrite
@@ -2091,8 +2091,12 @@ class PodsData {
             }
         }
 
-        if ( !empty( $query_fields ) )
-            $query_fields = '( ( ' . implode( ' ) ' . $relation . ' ( ', $query_fields ) . ' ) )';
+        if ( !empty( $query_fields ) ) {
+            if ( 1 < count( $query_fields ) )
+                $query_fields = '( ( ' . implode( ' ) ' . $relation . ' ( ', $query_fields ) . ' ) )';
+            else
+                $query_fields = '( ' . implode( ' ' . $relation . ' ', $query_fields ) . ' )';
+        }
         else
             $query_fields = null;
 

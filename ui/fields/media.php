@@ -102,7 +102,7 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
         foreach ( $value as $val ) {
             $attachment = get_post( $val );

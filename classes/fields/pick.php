@@ -1170,7 +1170,8 @@ class PodsField_Pick extends PodsField {
                     'table' => $search_data->table,
                     'where' => pods_var_raw( 'pick_where', $options, (array) $options[ 'table_info' ][ 'where_default' ], null, true ),
                     'orderby' => pods_var_raw( 'pick_orderby', $options, null, null, true ),
-                    'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true )
+                    'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true ),
+                    //'having' => pods_var_raw( 'pick_having', $options, null, null, true )
                 );
 
                 if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
@@ -1179,7 +1180,7 @@ class PodsField_Pick extends PodsField {
                 if ( !empty( $params[ 'where' ] ) && (array) $options[ 'table_info' ][ 'where_default' ] != $params[ 'where' ] )
                     $params[ 'where' ] = pods_evaluate_tags( $params[ 'where' ], true );
 
-                if ( empty( $params[ 'where' ] ) )
+                if ( empty( $params[ 'where' ] ) || ( !is_array( $params[ 'where' ] ) && strlen( trim( $params[ 'where' ] ) ) < 1 ) )
                     $params[ 'where' ] = array();
                 elseif ( !is_array( $params[ 'where' ] ) )
                     $params[ 'where' ] = (array) $params[ 'where' ];

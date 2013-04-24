@@ -145,6 +145,11 @@ class PodsField_Slug extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        $index = pods_var( 'pod_index', pods_var( 'options', $pod, $pod, null, true ), 'id', null, true );
+
+        if ( empty( $value ) && isset( $fields[ $index ] ) )
+            $value = $fields[ $index ][ 'value' ];
+
         $value = pods_unique_slug( $value, $name, $pod, 0, $params->id, null, false );
 
         return $value;

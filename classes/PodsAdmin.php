@@ -1094,7 +1094,7 @@ class PodsAdmin {
                     'label' => __( 'Additional User Capabilities', 'pods' ),
                     'help' => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
                     'type' => 'boolean',
-                    'default' => true,
+                    'default' => false,
                     'boolean_yes_label' => ''
                 ),
                 'has_archive' => array(

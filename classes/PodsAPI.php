@@ -2682,12 +2682,12 @@ class PodsAPI {
 
         if ( 'pod' == $pod[ 'type' ] ) {
             if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) ) {
-                $fields[ 'created' ][ 'value' ] = date_i18n( 'Y-m-d H:i:s' );
+                $fields[ 'created' ][ 'value' ] = current_time( 'mysql' );
                 $fields_active[] = 'created';
             }
 
             if ( !in_array( 'modified', $fields_active ) && isset( $fields[ 'modified' ] ) ) {
-                $fields[ 'modified' ][ 'value' ] = date_i18n( 'Y-m-d H:i:s' );
+                $fields[ 'modified' ][ 'value' ] = current_time( 'mysql' );
                 $fields_active[] = 'modified';
             }
 

@@ -239,7 +239,7 @@ class PodsField_DateTime extends PodsField {
         elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = '0000-00-00 00:00:00';
         else
-            $value = date_i18n( 'Y-m-d H:i:s' );
+            $value = current_time( 'mysql' );
 
         return $value;
     }

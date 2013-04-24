@@ -946,7 +946,7 @@ function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = nul
 
     $status_sql = ' AND `post_status` IN ( %s' . str_repeat( ', %s', count( $status ) -1 ) . ' )';
 
-    $orderby_sql = ' ORDER BY ( `post_status` = %s ) DESC"' . str_repeat( ', ( `post_status` = %s ) DESC', count( $status ) - 1 ) . ', `ID` DESC';
+    $orderby_sql = ' ORDER BY ( `post_status` = %s ) DESC' . str_repeat( ', ( `post_status` = %s ) DESC', count( $status ) - 1 ) . ', `ID` DESC';
 
     $prepared = array_merge( array( $title, $type ), $status, $status ); // once for WHERE, once for ORDER BY
 

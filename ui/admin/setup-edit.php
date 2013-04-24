@@ -996,20 +996,20 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     };
 
     var pods_sister_field = function ( $el ) {
-        if ( 'undefined' != typeof pods_sister_field_going[ $el.prop( 'id' ) ] )
+        var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
+
+        if ( 'undefined' != typeof pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] && true == pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] )
             return;
 
-        pods_sister_field_going[ $el.prop( 'id' ) ] = true;
-
-        var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
+        pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
         var default_select = '<?php echo addslashes( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
 
-        if ( 'custom-simple' == related_pod_name || 'post-status' == related_pod_name || 'role' == related_pod_name || 'post-types' == related_pod_name || 'taxonomies' == related_pod_name || '' == related_pod_name ) {
-            pods_sister_field_going[ $el.prop( 'id' ) ] = false;
+        if ( 0 != related_pod_name.indexOf( 'pods-' ) && 0 != related_pod_name.indexOf( 'post_type-' ) && 0 != related_pod_name.indexOf( 'taxonomy-' ) && 0 != related_pod_name.indexOf( 'user' ) && 0 != related_pod_name.indexOf( 'media' ) && 0 != related_pod_name.indexOf( 'comment' ) ) {
+            pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
 
             return;
         }
@@ -1067,20 +1067,20 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
                     jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
 
-                    pods_sister_field_going[ $el.prop( 'id' ) ] = false;
+                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
                 }
                 else {
                     // None found
                     $el.find( '.pods-sister-field' ).html( default_select );
 
-                    pods_sister_field_going[ $el.prop( 'id' ) ] = false;
+                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
                 }
             },
             error : function () {
                 // None found
                 $el.find( '.pods-sister-field' ).html( default_select );
 
-                pods_sister_field_going[ $el.prop( 'id' ) ] = false;
+                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
             }
         } );
     }

@@ -3107,6 +3107,7 @@ class PodsAPI {
                 $meta_type = 'post';
 
             wp_cache_delete( $params->id, $meta_type . '_meta' );
+            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
         }
 
         // Success! Return the id

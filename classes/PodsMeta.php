@@ -1973,15 +1973,19 @@ class PodsMeta {
         $meta_cache = array();
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
-            $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+            $meta_cache = wp_cache_get( $object_id, 'pods_' . $meta_type . '_meta' );
 
             if ( empty( $meta_cache ) ) {
-                $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
-                $meta_cache = $meta_cache[ $object_id ];
+                $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+
+                if ( empty( $meta_cache ) ) {
+                    $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+                    $meta_cache = $meta_cache[ $object_id ];
+                }
             }
         }
 
-        if ( !$single && ( empty( $meta_cache ) || !is_array( $meta_cache ) ) )
+        if ( empty( $meta_cache ) || !is_array( $meta_cache ) )
             $meta_cache = array();
 
         $pod = pods( $object[ 'name' ] );
@@ -2003,7 +2007,7 @@ class PodsMeta {
 
                     $key_found = true;
 
-                    $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true, 'display' => true ) );
+                    $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
                     if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
                         if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
@@ -2026,7 +2030,7 @@ class PodsMeta {
                     $first = current( explode( '.', $meta_k ) );
 
                     if ( isset( $pod->fields[ $first ] ) ) {
-                        $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true, 'display' => true ) );
+                        $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
                         if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
                             if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
@@ -2051,7 +2055,7 @@ class PodsMeta {
             return $_null;
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
-            wp_cache_set( $object_id, $meta_cache, $meta_type . '_meta' );
+            wp_cache_set( $object_id, $meta_cache, 'pods_' . $meta_type . '_meta' );
 
         if ( empty( $meta_key ) )
             return $meta_cache;

@@ -430,6 +430,7 @@ class Pods {
             'in_form' => false,
             'raw' => $raw,
             'display' => false,
+            'get_meta' => false,
             'output' => null,
             'deprecated' => false
         );
@@ -1068,8 +1069,8 @@ class Pods {
             $value = current( $value );
 
         // @todo Expand this into traversed fields too
-        if ( !empty( $field_data ) ) {
-            if ( $params->display ) {
+        if ( !empty( $field_data ) && !$params->raw && !$params->in_form ) {
+            if ( $params->display || ( $params->get_meta && !in_array( $field_data[ 'type' ], $tableless_field_types ) ) ) {
                 $field_data[ 'options' ] = pods_var_raw( 'options', $field_data, array(), null, true );
 
                 $post_temp = false;
@@ -1096,7 +1097,7 @@ class Pods {
                 if ( $post_temp )
                     $GLOBALS[ 'post' ] = null;
             }
-            elseif ( !$params->raw && !$params->in_form ) {
+            else {
                 $value = PodsForm::value(
                     $field_data[ 'type' ],
                     $value,

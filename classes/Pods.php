@@ -349,10 +349,7 @@ class Pods {
     public function display ( $name, $single = null ) {
         $defaults = array(
             'name' => $name,
-            'orderby' => null,
             'single' => $single,
-            'args' => array(),
-            'in_form' => false,
             'display' => true
         );
 
@@ -360,11 +357,6 @@ class Pods {
             $params = (object) array_merge( $defaults, (array) $name );
         else
             $params = (object) $defaults;
-
-        if ( is_array( $params->single ) ) {
-            $params->args = $params->single;
-            $params->single = null;
-        }
 
         $value = $this->field( $params );
 
@@ -389,9 +381,7 @@ class Pods {
     public function raw ( $name, $single = null ) {
         $defaults = array(
             'name' => $name,
-            'orderby' => null,
             'single' => $single,
-            'in_form' => false,
             'raw' => true
         );
 
@@ -432,7 +422,8 @@ class Pods {
             'display' => false,
             'get_meta' => false,
             'output' => null,
-            'deprecated' => false
+            'deprecated' => false,
+            'args' => array() // extra data to send to field handlers
         );
 
         if ( is_array( $name ) || is_object( $name ) )
@@ -978,7 +969,7 @@ class Pods {
                                     $related_obj = false;
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( 'detail_url' == $field || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
+                                        if ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
                                             if ( 'pod' == $object_type ) {
                                                 if ( empty( $related_obj ) )
                                                     $related_obj = pods( $object );
@@ -991,7 +982,7 @@ class Pods {
                                                 else
                                                     $value[] = '';
                                             }
-                                            if ( 'post' == $object_type )
+                                            elseif ( 'post' == $object_type )
                                                 $value[] = get_permalink( $item_id );
                                             elseif ( 'taxonomy' == $object_type )
                                                 $value[] = get_term_link( $item_id, $object );

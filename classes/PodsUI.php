@@ -3414,8 +3414,8 @@ class PodsUI {
         if ( false !== $this->pagination ) {
             if ( 1 < $total_pages ) {
                 ?>
-            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=1'; ?>">&laquo;</a>
-            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
+            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1'; ?>">&laquo;</a>
+            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
             <?php
                 if ( true == $header ) {
                     ?>
@@ -3440,8 +3440,8 @@ class PodsUI {
                 <?php
                 }
                 ?>
-            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
-            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri . ( $append ? '&' : ' ?' ) . 'pg' . $this->num . '=' . $total_pages; ?>">&raquo;</a>
+            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
+            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages; ?>">&raquo;</a>
             <?php
             }
         }

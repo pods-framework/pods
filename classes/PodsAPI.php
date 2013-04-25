@@ -141,7 +141,10 @@ class PodsAPI {
      * @param array $post_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $post_meta
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
      * @return mixed|void
+     *
+     * @since 2.0
      */
     public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
         pods_no_conflict_on( 'post' );
@@ -564,6 +567,8 @@ class PodsAPI {
      * @param boolean $refresh Whether to force refresh the information
      *
      * @return array Array of fields
+     *
+     * @since 2.0
      */
     public function get_wp_object_fields ( $object = 'post_type', $pod = null, $refresh = false ) {
         $pod_name = pods_var_raw( 'name', $pod );
@@ -2303,11 +2308,23 @@ class PodsAPI {
             return $field;
     }
 
+    /**
+     * Fix Pod / Field post_name to ensure they are exactly as saved (allow multiple posts w/ same post_name)
+     *
+     * @param string $slug Unique slug value
+     * @param int $post_ID Post ID
+     * @param string $post_status Post Status
+     * @param string $post_type Post Type
+     * @param int $post_parent Post Parent ID
+     * @param string $original_slug Original slug value
+     *
+     * @return string Final slug value
+     *
+     * @since 2.3.3
+     */
     public function save_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
-        if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) ) {
-            $slug = explode( '-', $slug );
-            $slug = $slug[ 0 ];
-        }
+        if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) )
+            $slug = $original_slug;
 
         return $slug;
     }
@@ -3470,6 +3487,8 @@ class PodsAPI {
      * @param int $current_depth Current depth level
      *
      * @return array Data array
+     *
+     * @since 2.3
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
         $tableless_field_types = PodsForm::tableless_field_types();
@@ -4175,6 +4194,8 @@ class PodsAPI {
      * @param string $name
      *
      * @return bool
+     *
+     * @since 2.3
      */
     public function delete_object_from_relationships ( $id, $object, $name = null ) {
         /**
@@ -4277,6 +4298,10 @@ class PodsAPI {
      * @param int|array $id ID or IDs to remove
      * @param array $related_pod Pod data
      * @param array $related_field Field data
+     *
+     * @return void
+     *
+     * @since 2.3
      */
     public function delete_relationships ( $related_id, $id, $related_pod, $related_field ) {
         if ( is_array( $related_id ) ) {
@@ -5483,7 +5508,10 @@ class PodsAPI {
      * $params['limit'] string Number of templates to return
      *
      * @param array $params (optional) An associative array of parameters
+     *
      * @return array
+     *
+     * @since 2.0
      */
     public function load_templates ( $params = null ) {
         if ( !class_exists( 'Pods_Templates' ) )
@@ -5505,6 +5533,7 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      *
      * @return array|bool
+     *
      * @since 1.7.9
      */
     public function load_page ( $params ) {
@@ -5531,7 +5560,10 @@ class PodsAPI {
      * $params['limit'] string Number of pages to return
      *
      * @param array $params (optional) An associative array of parameters
+     *
      * @return array
+     *
+     * @since 2.0
      */
     public function load_pages ( $params = null ) {
         if ( !class_exists( 'Pods_Pages' ) )
@@ -5553,6 +5585,7 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      *
      * @return array|bool
+     *
      * @since 1.7.9
      */
     public function load_helper ( $params ) {
@@ -5575,7 +5608,10 @@ class PodsAPI {
      * $params['limit'] string Number of pages to return
      *
      * @param array $params (optional) An associative array of parameters
+     *
      * @return array
+     *
+     * @since 2.0
      */
     public function load_helpers ( $params = null ) {
         if ( !class_exists( 'Pods_Helpers' ) )
@@ -5630,6 +5666,7 @@ class PodsAPI {
      * @param array $pod (optional) Array of Pod data to use (to avoid lookup)
      *
      * @return array|bool
+     *
      * @since 1.7.9
      *
      * @uses PodsAPI::load_pod
@@ -6966,6 +7003,10 @@ class PodsAPI {
      * Clear Pod-related cache
      *
      * @param array $pod
+     *
+     * @return void
+     *
+     * @since 2.0
      */
     public function cache_flush_pods ( $pod = null ) {
         /**
@@ -7007,6 +7048,8 @@ class PodsAPI {
      * @param string $thank_you URL to send to upon success
      *
      * @return mixed
+     *
+     * @since 2.0
      */
     public function process_form ( $params, $obj = null, $fields = null, $thank_you = null ) {
         $this->display_errors = false;

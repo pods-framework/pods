@@ -1501,6 +1501,8 @@ class PodsUI {
 
             $field[ 'name' ] = trim( $field[ 'name' ] );
 
+            $value = pods_var_raw( 'default', $field );
+
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
@@ -1510,6 +1512,9 @@ class PodsUI {
                 $fields[ $field[ 'name' ] ] = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
             elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) )
                 $fields[ $field[ 'name' ] ] = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+
+            if ( empty( $this->id ) && null !== $value )
+                $this->pod->row_override[ $field[ 'name' ] ] = $value;
         }
 
         unset( $form_fields ); // Cleanup

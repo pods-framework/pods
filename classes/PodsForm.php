@@ -79,6 +79,19 @@ class PodsForm {
      *
      * @since 2.0
      */
+
+    /**
+     * Output a field's label
+     *
+     * @param string $name Field name
+     * @param string $label Label text
+     * @param string $help Help text
+     * @param array $options Field options
+     *
+     * @return string Label HTML
+     *
+     * @since 2.0
+     */
     public static function label ( $name, $label, $help = '', $options = null ) {
         if ( is_array( $label ) ) {
             $options = $label;
@@ -115,6 +128,14 @@ class PodsForm {
 
     /**
      * Output a Field Comment Paragraph
+     *
+     * @param string $name Field name
+     * @param string $message Field comments
+     * @param array $options Field options
+     *
+     * @return string Comment HTML
+     *
+     * @since 2.0
      */
     public static function comment ( $name, $message = null, $options = null ) {
         $options = self::options( null, $options );
@@ -144,6 +165,15 @@ class PodsForm {
 
     /**
      * Output a field
+     *
+     * @param string $name Field name
+     * @param mixed $value Field value
+     * @param string $type Field type
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return string Field HTML
      *
      * @since 2.0
      */
@@ -221,6 +251,17 @@ class PodsForm {
 
     /**
      * Output a row (label, field, and comment)
+     *
+     * @param string $name Field name
+     * @param mixed $value Field value
+     * @param string $type Field type
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return string Row HTML
+     *
+     * @since 2.0
      */
     public static function row ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( null, $options );
@@ -1035,6 +1076,8 @@ class PodsForm {
      * @param string $type The new field type identifier
      * @param string $file The new field type class file location
      *
+     * @return array Field Type data
+     *
      * @since 2.3
      */
     public static function register_field_type ( $type, $file = null ) {
@@ -1059,7 +1102,7 @@ class PodsForm {
     /**
      * Get a list of all available field types and include
      *
-     * @return array
+     * @return array Registered Field Types data
      *
      * @since 2.3
      */
@@ -1127,36 +1170,78 @@ class PodsForm {
         return self::$field_types;
     }
 
+    /**
+     * Get list of available tableless field types
+     *
+     * @return array Tableless field types
+     *
+     * @since 2.3
+     */
     public static function tableless_field_types () {
         $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
 
         return apply_filters( 'pods_tableless_field_types', $field_types );
     }
 
+    /**
+     * Get list of available file field types
+     *
+     * @return array File field types
+     *
+     * @since 2.3
+     */
     public static function file_field_types () {
         $field_types = array( 'file', 'avatar' );
 
         return apply_filters( 'pods_file_field_types', $field_types );
     }
 
+    /**
+     * Get list of available repeatable field types
+     *
+     * @return array Repeatable field types
+     *
+     * @since 2.3
+     */
     public static function repeatable_field_types () {
         $field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
 
         return apply_filters( 'pods_repeatable_field_types', $field_types );
     }
 
+    /**
+     * Get list of available number field types
+     *
+     * @return array Number field types
+     *
+     * @since 2.3
+     */
     public static function number_field_types () {
         $field_types = array( 'currency', 'number' );
 
         return apply_filters( 'pods_tableless_field_types', $field_types );
     }
 
+    /**
+     * Get list of available date field types
+     *
+     * @return array Date field types
+     *
+     * @since 2.3
+     */
     public static function date_field_types () {
         $field_types = array( 'date', 'datetime', 'time' );
 
         return apply_filters( 'pods_tableless_field_types', $field_types );
     }
 
+    /**
+     * Get list of available text field types
+     *
+     * @return array Text field types
+     *
+     * @since 2.3
+     */
     public static function text_field_types () {
         $field_types = array( 'code', 'paragraph', 'slug','password', 'text', 'wysiwyg' );
 

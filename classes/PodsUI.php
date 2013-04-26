@@ -384,7 +384,7 @@ class PodsUI {
     public $actions_bulk = array(); // enabled bulk actions
 
     /**
-     * @var bool|string
+     * @var array
      */
     public $restrict = array(
         'manage' => null,
@@ -393,6 +393,13 @@ class PodsUI {
         'delete' => null,
         'reorder' => null,
         'author_restrict' => null
+    );
+
+    /**
+     * @var array
+     */
+    public $extra = array(
+        'total' => null
     );
 
     /**
@@ -953,6 +960,8 @@ class PodsUI {
         $options->validate( 'actions_disabled', $this->actions_disabled, 'array' );
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
+
+        $options->validate( 'extra', $this->extra, 'array_merge' );
 
         $options->validate( 'style', $this->style );
         $options->validate( 'icon', $this->icon );
@@ -3438,8 +3447,10 @@ class PodsUI {
             $append = true;
 
         if ( false !== $this->pagination_total ) {
+            $singular_label = strtolower( $this->item );
+            $plural_label = strtolower( $this->items );
             ?>
-        <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ); ?> <?php echo _n( 'item', 'items', $this->total_found, 'pods' ); ?></span>
+        <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ) . ' ' . _n( $singular_label, $plural_label, $this->total_found, 'pods' ) . $this->extra[ 'total' ] ?></span>
         <?php
         }
 

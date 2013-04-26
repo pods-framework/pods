@@ -809,7 +809,23 @@ class PodsAdmin {
 
         $pod_types_found = array();
 
-        foreach ( $pods as $k => &$pod ) {
+        $fields = array(
+            'label' => array( 'label' => __( 'Label', 'pods' ) ),
+            'name' => array( 'label' => __( 'Name', 'pods' ) ),
+            'type' => array( 'label' => __( 'Type', 'pods' ) ),
+            'storage' => array(
+                'label' => __( 'Storage Type', 'pods' ),
+                'width' => '10%'
+            ),
+            'field_count' => array(
+                'label' => __( 'Number of Fields', 'pods' ),
+                'width' => '8%'
+            )
+        );
+
+        $total_fields = 0;
+
+        foreach ( $pods as $k => $pod ) {
             if ( isset( $types[ $pod[ 'type' ] ] ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
                     if ( empty( $pod[ 'object' ] ) ) {
@@ -840,6 +856,19 @@ class PodsAdmin {
 
             if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) )
                 $row = $pod;
+
+            $pod = array(
+                'id' => $pod[ 'id' ],
+                'label' => pods_var_raw( 'label', $pod ),
+                'name' => pods_var_raw( 'name', $pod ),
+                'type' => pods_var_raw( 'type', $pod ),
+                'storage' => pods_var_raw( 'storage', $pod ),
+                'field_count' => count( $pod[ 'fields' ] )
+            );
+
+            $total_fields += $pod[ 'field_count' ];
+
+            $pods[ $k ] = $pod;
         }
 
         if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
@@ -858,12 +887,7 @@ class PodsAdmin {
             'items' => 'Pods',
             'item' => 'Pod',
             'fields' => array(
-                'manage' => array(
-                    'label' => array( 'label' => __( 'Label', 'pods' ) ),
-                    'name' => array( 'label' => __( 'Name', 'pods' ) ),
-                    'type' => array( 'label' => __( 'Type', 'pods' ) ),
-                    'storage' => array( 'label' => __( 'Storage Type', 'pods' ) )
-                )
+                'manage' => $fields
             ),
             'actions_disabled' => array( 'view', 'export' ),
             'actions_custom' => array(
@@ -883,7 +907,10 @@ class PodsAdmin {
             'search' => false,
             'searchable' => false,
             'sortable' => true,
-            'pagination' => false
+            'pagination' => false,
+            'extra' => array(
+                'total' => ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' )
+            )
         );
 
         if ( 1 < count( $pod_types_found ) ) {

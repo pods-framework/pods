@@ -2,7 +2,12 @@
 /**
  * @package Pods
  */
-class Pods {
+class Pods implements Iterator {
+
+    /**
+     * @var bool
+     */
+    private $iterator = false;
 
     /**
      * @var PodsAPI
@@ -23,6 +28,11 @@ class Pods {
      * @var array Current pod item array
      */
     public $row = array();
+
+    /**
+     * @var int
+     */
+    private $row_number = -1;
 
     /**
      * @var array Override pod item array
@@ -244,7 +254,108 @@ class Pods {
         if ( empty( $this->pod_id ) )
             return false;
 
+        if ( $this->iterator )
+            return isset( $this->rows[ $this->row_number ] );
+
         return true;
+    }
+
+    /**
+     * Check if in Iterator mode
+     *
+     * @return bool
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function is_iterator () {
+        return $this->iterator;
+    }
+
+    /**
+     * Turn off Iterator mode to off
+     *
+     * @return void
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function stop_iterator () {
+        $this->iterator = false;
+
+        return;
+    }
+
+    /**
+     * Rewind Iterator
+     *
+     * @return void|boolean
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function rewind () {
+        if ( $this->iterator ) {
+            $this->row_number = 0;
+
+            return;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get current Iterator row
+     *
+     * @return mixed|boolean
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function current () {
+        if ( $this->iterator && isset( $this->rows[ $this->row_number ] ) )
+            return get_object_vars( $this->rows[ $this->row_number ] );
+
+        return false;
+    }
+
+    /**
+     * Get current Iterator key
+     *
+     * @return int|boolean
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function key () {
+        if ( $this->iterator )
+            return $this->row_number;
+
+        return false;
+    }
+
+    /**
+     * Move onto the next Iterator row
+     *
+     * @return void|boolean
+     *
+     * @since 2.3.4
+     *
+     * @link http://www.php.net/manual/en/class.iterator.php
+     */
+    public function next () {
+        if ( $this->iterator ) {
+            $this->row_number++;
+
+            return;
+        }
+
+        return false;
     }
 
     /**

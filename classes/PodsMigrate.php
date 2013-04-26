@@ -625,8 +625,9 @@ class PodsMigrate {
             'post_mime_type' => ( !$wp_filetype[ 'type' ] ? 'text/' . $extension : $wp_filetype[ 'type' ] ),
             'guid' => $uploads[ 'url' ] . '/' . $filename,
             'post_parent' => null,
-            'post_title' => '',
+            'post_title' => 'Pods Export (' . $export_file . ')',
             'post_content' => '',
+            'post_status' => 'private'
         );
 
         // insert attachment

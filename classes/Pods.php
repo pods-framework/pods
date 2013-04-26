@@ -1005,6 +1005,10 @@ class Pods implements Iterator {
                                     if ( empty( $item->pod_item_id ) )
                                         continue;
 
+                                    // Bypass pass field
+                                    if ( isset( $item->user_pass ) )
+                                        unset( $item->user_pass );
+
                                     // Get Item ID
                                     $item_id = $item->pod_item_id;
 

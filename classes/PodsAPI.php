@@ -4620,9 +4620,19 @@ class PodsAPI {
                 $field->pod = $pod[ 'name' ];
                 $field->table_info = (boolean) pods_var_raw( 'table_info', $params, true );
 
-                $field = $this->load_field( $field );
+                if ( $load_fields ) {
+                    $field = $this->load_field( $field );
 
-                $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
+                    $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
+                }
+                else {
+                    $field = array(
+                        'id' => $field->ID,
+                        'name' => $field->post_name,
+                        'label' => $field->post_title,
+                        'type' => get_post_meta( $field->ID, 'type', true )
+                    );
+                }
 
                 $pod[ 'fields' ][ $field[ 'name' ] ] = $field;
             }
@@ -4842,6 +4852,8 @@ class PodsAPI {
             'excludes-on'
         );
 
+        $total_fields = 0;
+
         if ( isset( $params->count ) && $params->count )
             $the_pods = count( $_pods );
         else {
@@ -4857,7 +4869,7 @@ class PodsAPI {
                     $pod = $this->load_pod( $pod );
 
                     // Remove extra data not needed
-                    if ( pods_var( 'export', $params, false ) ) {
+                    if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
                         foreach ( $export_ignore as $ignore ) {
                             if ( isset( $pod[ $ignore ] ) )
                                 unset( $pod[ $ignore ] );
@@ -4869,6 +4881,8 @@ class PodsAPI {
                         }
                     }
 
+                    $total_fields += count( $pod[ 'fields' ] );
+
                     if ( isset( $params->key_names ) && $params->key_names )
                         $the_pods[ $pod[ 'name' ] ] = $pod;
                     else
@@ -4879,7 +4893,7 @@ class PodsAPI {
 
         if ( ( !function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             // Too many Pods can cause issues with the DB when caching is not enabled
-            if ( 15 < count( $the_pods ) ) {
+            if ( 15 < count( $the_pods ) || 75 < count( $total_fields ) ) {
                 pods_transient_clear( $cache_key );
 
                 if ( empty( $the_pods ) && ( !isset( $params->count ) || !$params->count ) )

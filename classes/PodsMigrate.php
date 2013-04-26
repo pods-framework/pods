@@ -32,7 +32,16 @@ class PodsMigrate {
     /**
      * @var null
      */
-    var $data;
+    var $data = array(
+        'items' => array(),
+        'columns' => array(),
+        'fields' => array()
+    );
+
+    /**
+     * @var null
+     */
+    var $input;
 
     /**
      * @var
@@ -64,7 +73,17 @@ class PodsMigrate {
             $this->delimiter = $delimiter;
 
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
+    }
+
+    function set_data ( $data ) {
+        $defaults = array(
+            'items' => array(),
+            'columns' => array(),
+            'fields' => array()
+        );
+
+        $this->data = array_merge( $defaults, (array) $data );
     }
 
     /**
@@ -76,7 +95,7 @@ class PodsMigrate {
      */
     function import ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
@@ -96,10 +115,12 @@ class PodsMigrate {
      */
     public function import_pod_items ( $data = null, $type = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
+
+        return false;
     }
 
     /**
@@ -110,7 +131,7 @@ class PodsMigrate {
      */
     public function parse ( $data = null, $type = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
@@ -118,7 +139,7 @@ class PodsMigrate {
         if ( method_exists( $this, "parse_{$this->type}" ) )
             call_user_func( array( $this, 'parse_' . $this->type ) );
 
-        return $this->data;
+        return $this->input;
     }
 
     /**
@@ -128,14 +149,18 @@ class PodsMigrate {
      */
     public function parse_json ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
-        $items = @json_decode( $this->data, true );
+        $items = @json_decode( $this->input, true );
 
         if ( !is_array( $items ) )
             return false;
 
-        $data = array( 'columns' => array(), 'items' => array() );
+        $data = array(
+            'columns' => array(),
+            'items' => array(),
+            'fields' => array()
+        );
 
         foreach ( $items as $key => $item ) {
             if ( !is_array( $item ) )
@@ -162,13 +187,13 @@ class PodsMigrate {
      */
     public function parse_sv ( $data = null, $delimiter = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
         if ( !empty( $delimiter ) )
             $this->delimiter = $delimiter;
 
 
-        $rows = @str_getcsv( $this->data, "\n" );
+        $rows = @str_getcsv( $this->input, "\n" );
 
         if ( empty( $rows ) || 2 > count( $rows ) )
             return false;
@@ -201,14 +226,20 @@ class PodsMigrate {
      */
     public function parse_xml ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
-        $xml = new SimpleXMLElement( $this->data );
+        $xml = new SimpleXMLElement( $this->input );
 
         if ( !isset( $xml->items ) )
             return false;
 
         $data = array( 'columns' => array(), 'items' => array() );
+
+        /**
+         * @var $child SimpleXMLElement
+         * @var $item_child SimpleXMLElement
+         * @var $data_child SimpleXMLElement
+         */
 
         if ( isset( $xml->columns ) ) {
             foreach ( $xml->columns->children() as $child ) {
@@ -216,8 +247,6 @@ class PodsMigrate {
 
                 if ( empty( $sub ) || 'column' != $sub )
                     continue;
-
-                $column = false;
 
                 if ( isset( $child->name ) ) {
                     if ( is_array( $child->name ) )
@@ -280,7 +309,7 @@ class PodsMigrate {
      */
     public function parse_sql ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->input = $data;
 
         $this->parsed = $data;
 
@@ -296,7 +325,7 @@ class PodsMigrate {
      */
     public function export ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
@@ -315,7 +344,7 @@ class PodsMigrate {
      */
     public function export_pod_items ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
     }
 
     /**
@@ -326,7 +355,7 @@ class PodsMigrate {
      */
     public function build ( $data = null, $type = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
@@ -344,7 +373,7 @@ class PodsMigrate {
      */
     public function build_json ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
@@ -397,7 +426,7 @@ class PodsMigrate {
      */
     public function build_sv ( $data = null, $delimiter = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         if ( !empty( $delimiter ) )
             $this->delimiter = $delimiter;
@@ -435,6 +464,9 @@ class PodsMigrate {
                     $value = $item[ $column ];
                 }
 
+                if ( is_array( $value ) || is_object( $value ) )
+                    $value = pods_serial_comma( $value, $column, pods_var_raw( $column, $this->data[ 'fields' ] ), '' );
+
                 $value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
 
                 $line .= '"' . $value . '"' . $this->delimiter;
@@ -458,7 +490,7 @@ class PodsMigrate {
      */
     public function build_xml ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
@@ -473,32 +505,7 @@ class PodsMigrate {
                 if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
                     $column = $label;
 
-                $value = '';
-
-                if ( is_object( $item ) ) {
-                    if ( !isset( $item->$column ) )
-                        $item->$column = '';
-
-                    $value = $item->$column;
-                }
-                elseif ( is_array( $item ) ) {
-                    if ( !isset( $item[ $column ] ) )
-                        $item[ $column ] = '';
-
-                    $value = $item[ $column ];
-                }
-
-                $line .= "\t\t<{$column}>";
-
-                if ( false !== strpos( $value, '<' ) ) {
-                    $value = str_replace( array( '<![CDATA[', ']]>' ), array( '&lt;![CDATA[', ']]&gt;' ), $value );
-
-                    $line .= "<![CDATA[" . $value . "]]>";
-                }
-                else
-                    $line .= $value;
-
-                $line .= "</{$column}>\r\n";
+                $line .= $this->build_xml_level( $item, $column );
             }
 
             $line .= "\t</item>\r\n";
@@ -512,6 +519,57 @@ class PodsMigrate {
         return $this->built;
     }
 
+    public function build_xml_level ( $item, $column, $level = 2, $column_name = '' ) {
+        $column = pods_clean_name( $column, false, false );
+
+        $line = '';
+
+        $value = '';
+
+        if ( is_object( $item ) ) {
+            if ( !isset( $item->$column ) )
+                $item->$column = '';
+
+            $value = $item->$column;
+        }
+        elseif ( is_array( $item ) ) {
+            if ( !isset( $item[ $column ] ) )
+                $item[ $column ] = '';
+
+            $value = $item[ $column ];
+        }
+
+        if ( !empty( $column_name ) )
+            $column = $column_name;
+
+        $tabs = str_repeat( "\t", $level );
+
+        $line .= $tabs . "<{$column}>";
+
+        if ( is_array( $value ) || is_object( $value ) ) {
+            if ( is_object( $value ) )
+                $value = get_object_vars( $value );
+
+            foreach ( $value as $k => $v ) {
+                if ( is_int( $k ) )
+                    $line .= $this->build_xml_level( $value, $k, $level + 1, 'value' );
+                else
+                    $line .= $this->build_xml_level( $value, $k, $level + 1 );
+            }
+        }
+        elseif ( false !== strpos( $value, '<' ) ) {
+            $value = str_replace( array( '<![CDATA[', ']]>' ), array( '&lt;![CDATA[', ']]&gt;' ), $value );
+
+            $line .= "<![CDATA[" . $value . "]]>";
+        }
+        else
+            $line .= $value;
+
+        $line .= "</{$column}>\r\n";
+
+        return $line;
+    }
+
     /**
      * @param array $data Array of data
      *
@@ -519,7 +577,7 @@ class PodsMigrate {
      */
     public function build_sql ( $data = null ) {
         if ( !empty( $data ) )
-            $this->data = $data;
+            $this->set_data( $data );
 
         $this->built = $data;
 

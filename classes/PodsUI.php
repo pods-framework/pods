@@ -1754,13 +1754,15 @@ class PodsUI {
     public function export () {
         $export_type = pods_var( 'export_type', 'get', 'csv' );
 
-        $type = 'sv';
+        $type = 'sv'; // covers csv + tsv
+
+        if ( in_array( $export_type, array( 'xml', 'json' ) ) )
+            $type = $export_type;
+
         $delimiter = ',';
 
         if ( 'tsv' == $export_type )
             $delimiter = "\t";
-        elseif ( in_array( $export_type, array( 'xml', 'json' ) ) )
-            $type = $export_type;
 
         $columns = array();
 
@@ -1776,11 +1778,21 @@ class PodsUI {
             $columns[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 
-        $items = $this->get_data( true, array_keys( $columns ) );
+        $params = array(
+            'full' => true,
+            'flatten' => true,
+            'fields' => array_keys( $columns ),
+            'type' => $type,
+            'delimiter' => $delimiter,
+            'columns' => $columns
+        );
+
+        $items = $this->get_data( $params );
 
         $data = array(
             'columns' => $columns,
-            'items' => $items
+            'items' => $items,
+            'fields' => $this->fields[ 'export' ]
         );
 
         $migrate = pods_migrate( $type, $delimiter, $data );
@@ -1789,7 +1801,7 @@ class PodsUI {
 
         $export_file = $migrate->save();
 
-        $this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, the download should begin in a few moments. If it doesn\'t, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
+        $this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
 
         //echo '<script type="text/javascript">window.open("' . esc_js( $export_file ) . '");</script>';
 
@@ -1826,8 +1838,18 @@ class PodsUI {
      *
      * @return bool
      */
-    public function get_data ( $full = false, $fields = null ) {
+    public function get_data ( $params = null ) {
         $action = $this->action;
+
+        $defaults = array(
+            'full' => false,
+            'flatten' => true,
+            'fields' => null,
+            'type' => ''
+        );
+
+        if ( !empty( $params ) && is_array( $params ) )
+            $params = (object) array_merge( $defaults, $params );
 
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';
@@ -1861,7 +1883,7 @@ class PodsUI {
                 }
             }
 
-            $params = array(
+            $find_params = array(
                 'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
@@ -1874,21 +1896,21 @@ class PodsUI {
                 'sql' => $sql
             );
 
-            if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
+                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
 
-            if ( $full )
-                $params[ 'limit' ] = -1;
+            if ( $params->full )
+                $find_params[ 'limit' ] = -1;
 
-            $params = array_merge( $params, (array) $this->params );
+            $find_params = array_merge( $find_params, (array) $this->params );
 
             // Debug purposes
             if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
-                pods_debug( $params );
+                pods_debug( $find_params );
 
-            $this->pod->find( $params );
+            $this->pod->find( $find_params );
 
-            if ( !$full ) {
+            if ( !$params->full ) {
                 $data = $this->pod->data();
 
                 $this->data = $data;
@@ -1902,8 +1924,18 @@ class PodsUI {
             else {
                 $this->data_full = array();
 
+                $export_params = array(
+                    'fields' => $params->fields,
+                    'flatten' => true
+                );
+
+                if ( in_array( $params->type, array( 'json', 'xml' ) ) )
+                    $export_params[ 'flatten' ] = false;
+
+                $export_params = $this->do_hook( 'export_options', $export_params, $params );
+
                 while ( $this->pod->fetch() ) {
-                    $this->data_full[ $this->pod->id() ] = $this->pod->export( array( 'fields' => $fields, 'flatten' => true ) );
+                    $this->data_full[ $this->pod->id() ] = $this->pod->export( $export_params );
                 }
 
                 $this->pod->reset();
@@ -1924,7 +1956,7 @@ class PodsUI {
                 $orderby = '`' . $this->orderby . '` '
                        . ( false === strpos( $this->orderby, ' ' ) ? strtoupper( $this->orderby_dir ) : '' );
 
-            $params = array(
+            $find_params = array(
                 'table' => $this->sql[ 'table' ],
                 'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
@@ -1935,19 +1967,19 @@ class PodsUI {
                 'fields' => $this->fields[ 'search' ]
             );
 
-            if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
+                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
 
-            if ( $full )
-                $params[ 'limit' ] = -1;
+            if ( $params->full )
+                $find_params[ 'limit' ] = -1;
 
             // Debug purposes
             if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
-                pods_debug( $params );
+                pods_debug( $find_params );
 
-            $this->pods_data->select( $params );
+            $this->pods_data->select( $find_params );
 
-            if ( !$full ) {
+            if ( !$params->full ) {
                 $this->data = $this->pods_data->data;
 
                 if ( !empty( $this->data ) )

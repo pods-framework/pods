@@ -3419,7 +3419,7 @@ class PodsAPI {
             if ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
                 $field = $field . '.ID';
 
-            $value = $pod->field( $field );
+            $value = $pod->field( array( 'name' => $field, 'output_type' => 'arrays' ) );
 
             if ( 0 < strlen( $value ) )
                 $params[ 'data' ][ $field[ 'name' ] ] = $value;
@@ -3543,12 +3543,12 @@ class PodsAPI {
         foreach ( $export_fields as $field ) {
             // Return IDs (or guid for files) if only one level deep
             if ( 1 == $depth )
-                $data[ $field[ 'name' ] ] = $pod->field( $field[ 'lookup_name' ] );
+                $data[ $field[ 'name' ] ] = $pod->field( array( 'name' => $field[ 'lookup_name' ], 'output_type' => 'arrays' ) );
             // Recurse depth levels for pick fields if $depth allows
             elseif ( ( -1 == $depth || $current_depth < $depth ) && 'pick' == $field[ 'type' ] && !in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
                 $related_data = array();
 
-                $related_ids = $pod->field( $field[ 'lookup_name' ] );
+                $related_ids = $pod->field( array( 'name' => $field[ 'lookup_name' ], 'output_type' => 'arrays' ) );
 
                 if ( !empty( $related_ids ) ) {
                     $related_ids = (array) $related_ids;
@@ -3559,19 +3559,19 @@ class PodsAPI {
 
                     // If this isn't a Pod, return data exactly as Pods does normally$
                     if ( empty( $related_pod ) || ( 'pod' != $pick_object && $pick_object != $related_pod->pod_data[ 'type' ] ) || $related_pod->pod == $pod->pod )
-                        $related_data = $pod->field( $field[ 'name' ] );
+                        $related_data = $pod->field( array( 'name' => $field[ 'name' ], 'output_type' => 'arrays' ) );
                     else {
                         $related_object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
 
                         $related_fields = array_merge( $related_pod->fields, $related_object_fields );
 
-                        $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                        $related_data = array();
 
                         foreach ( $related_ids as $related_id ) {
                             if ( $related_pod->fetch( $related_id ) ) {
+                                $related_item = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
 
-
-                                $related_data = $this->do_hook( 'export_pod_item_level', $related_data, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                                $related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
                             }
                         }
                     }
@@ -3581,7 +3581,7 @@ class PodsAPI {
             }
             // Return data exactly as Pods does normally
             else
-                $data[ $field[ 'name' ] ] = $pod->field( $field[ 'name' ] );
+                $data[ $field[ 'name' ] ] = $pod->field( array( 'name' => $field[ 'name' ], 'output_type' => 'arrays' ) );
 
             if ( $flatten && is_array( $data[ $field[ 'name' ] ] ) )
                 $data[ $field[ 'name' ] ] = pods_serial_comma( $data[ $field[ 'name' ] ], $field[ 'name' ], $export_fields );

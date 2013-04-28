@@ -629,15 +629,20 @@ class Pods_Pages extends PodsComponent {
 
             if ( !empty( $pod_page_rewrites ) ) {
                 foreach ( $pod_page_rewrites as $pod_page => $pod_page_id ) {
-                    $depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
-
                     if ( !apply_filters( 'pods_page_regex_matching', false ) ) {
+                        $depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
+
                         $pod_page = preg_quote( $pod_page, '/' );
 
                         $pod_page = str_replace( '\\*', '(.*)', $pod_page );
-                    }
 
-                    if ( $uri_depth == $depth_check && preg_match( '/' . $pod_page . '/', $uri ) ) {
+                        if ( $uri_depth == $depth_check && preg_match( '/' . $pod_page . '/', $uri ) ) {
+                            $found_rewrite_page_id = $pod_page_id;
+
+                            break;
+                        }
+                    }
+                    elseif ( preg_match( '/' . str_replace( '/', '\\/', $pod_page ) . '/', $uri ) ) {
                         $found_rewrite_page_id = $pod_page_id;
 
                         break;

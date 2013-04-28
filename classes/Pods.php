@@ -1175,7 +1175,7 @@ class Pods implements Iterator {
             $value = current( $value );
 
         // @todo Expand this into traversed fields too
-        if ( !empty( $field_data ) && !$params->raw && !$params->in_form ) {
+        if ( !empty( $field_data ) && ( $params->display || !$params->raw ) && !$params->in_form ) {
             if ( $params->display || ( $params->get_meta && !in_array( $field_data[ 'type' ], $tableless_field_types ) ) ) {
                 $field_data[ 'options' ] = pods_var_raw( 'options', $field_data, array(), null, true );
 

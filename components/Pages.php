@@ -15,6 +15,9 @@
  * @subpackage Pages
  */
 
+if ( class_exists( 'Pods_Pages' ) )
+    return;
+
 class Pods_Pages extends PodsComponent {
 
     /**
@@ -244,6 +247,8 @@ class Pods_Pages extends PodsComponent {
                 pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
 
             pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
+
+            self::flush_rewrites();
         }
     }
 
@@ -518,6 +523,40 @@ class Pods_Pages extends PodsComponent {
     }
 
     /**
+     * Flush Pod Page Rewrite cache
+     *
+     * @return array Pod Page Rewrites
+     *
+     * @since 2.3.4
+     */
+    public static function flush_rewrites () {
+        $args = array(
+            'post_type' => '_pods_page',
+            'nopaging' => true,
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+            'order' => 'ASC',
+            'orderby' => 'title'
+        );
+
+        $pod_pages = get_posts( $args );
+
+        $pod_page_rewrites = array();
+
+        foreach ( $pod_pages as $pod_page ) {
+            $pod_page_rewrites[ $pod_page->ID ] = $pod_page->post_title;
+        }
+
+        uksort( $pod_page_rewrites, 'pods_page_length_sort' );
+
+        pods_transient_set( 'pods_object_page_rewrites', $pod_page_rewrites );
+
+        $pod_page_rewrites = array_flip( $pod_page_rewrites );
+
+        return $pod_page_rewrites;
+    }
+
+    /**
      * Check to see if Pod Page exists and return data
      *
      * $uri not required, if NULL then returns REQUEST_URI matching Pod Page
@@ -530,49 +569,90 @@ class Pods_Pages extends PodsComponent {
         if ( null === $uri ) {
             $uri = parse_url( pods_current_url() );
             $uri = $uri[ 'path' ];
-            $home = parse_url( get_home_url() );
-
-            if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
-                $uri = substr( $uri, strlen( $home[ 'path' ] ) );
         }
+        else {
+            $uri = explode( '?', $uri );
+            $uri = explode( '#', $uri[ 0 ] );
+            $uri = $uri[ 0 ];
+        }
+
+        $home = parse_url( get_home_url() );
+
+        if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
+            $uri = substr( $uri, strlen( $home[ 'path' ] ) );
 
         $uri = trim( $uri, '/' );
         $uri_depth = count( array_filter( explode( '/', $uri ) ) ) - 1;
 
-        if ( false !== strpos( $uri, 'wp-admin' ) || false !== strpos( $uri, 'wp-includes' ) )
+        $pods_page_exclusions = array(
+            'wp-admin',
+            'wp-content',
+            'wp-includes',
+            'index.php',
+            'wp-login.php',
+            'wp-signup.php'
+        );
+
+        $pods_page_exclusions = apply_filters( 'pods_page_exclusions', $pods_page_exclusions );
+
+        if ( is_admin() || empty( $uri ) )
             return false;
 
-        $object = pods_by_title( $uri, ARRAY_A, '_pods_page' );
+        foreach ( $pods_page_exclusions as $exclusion ) {
+            if ( 0 === strpos( $uri, $exclusion ) )
+                return false;
+        }
+
+        $object = false;
+
+        if ( false === strpos( $uri, '*' ) )
+            $object = pods_by_title( $uri, ARRAY_A, '_pods_page' );
 
         $wildcard = false;
 
         if ( empty( $object ) ) {
-            $object = pods_cache_get( $uri, 'pods_object_page_wildcard' );
+            if ( false === strpos( $uri, '*' ) ) {
+                $object = pods_cache_get( $uri, 'pods_object_page_wildcard' );
 
-            if ( false !== $object )
-                return $object;
+                if ( !empty( $object ) )
+                    return $object;
+            }
 
-            // Find any wildcards
-            $sql = "
-                    SELECT *
-                    FROM `@wp_posts`
-                    WHERE
-                        `post_type` = '_pods_page'
-                        AND `post_status` = 'publish'
-                        AND %s LIKE REPLACE( `post_title`, '*', '%%' )
-                        AND ( LENGTH( `post_title` ) - LENGTH( REPLACE( `post_title`, '/', '' ) ) ) = %d
-                    ORDER BY LENGTH( `post_title` ) DESC, `post_title` DESC
-                    LIMIT 1
-                ";
+            $pod_page_rewrites = pods_transient_get( 'pods_object_page_rewrites' );
 
-            $sql = array( $sql, array( $uri, $uri_depth ) );
+            if ( empty( $pod_page_rewrites ) )
+                $pod_page_rewrites = self::flush_rewrites();
+            else
+                $pod_page_rewrites = array_flip( $pod_page_rewrites );
 
-            $result = pods_query( $sql );
+            $found_rewrite_page_id = 0;
 
-            if ( !empty( $result ) )
-                $object = get_object_vars( $result[ 0 ] );
+            if ( !empty( $pod_page_rewrites ) ) {
+                foreach ( $pod_page_rewrites as $pod_page => $pod_page_id ) {
+                    $depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
 
-            $wildcard = true;
+                    if ( !apply_filters( 'pods_page_regex_matching', false ) ) {
+                        $pod_page = preg_quote( $pod_page, '/' );
+
+                        $pod_page = str_replace( '\\*', '(.*)', $pod_page );
+                    }
+
+                    if ( $uri_depth == $depth_check && preg_match( '/' . $pod_page . '/', $uri ) ) {
+                        $found_rewrite_page_id = $pod_page_id;
+
+                        break;
+                    }
+                }
+
+                if ( !empty( $found_rewrite_page_id ) ) {
+                    $object = get_post( $found_rewrite_page_id, ARRAY_A );
+
+                    if ( empty( $object ) || '_pods_page' != $object[ 'post_type' ] )
+                        $object = false;
+                }
+
+                $wildcard = true;
+            }
         }
 
         if ( !empty( $object ) ) {
@@ -996,6 +1076,8 @@ function get_pod_page_uri () {
  * @param string $uri The Pod Page URI to check if exists
  *
  * @return array
+ *
+ * @since 1.7.5
  */
 function pod_page_exists ( $uri = null ) {
     return Pods_Pages::exists( $uri );
@@ -1007,9 +1089,36 @@ function pod_page_exists ( $uri = null ) {
  * @param bool $return Whether to return or not (default is to echo)
  *
  * @return string
+ *
+ * @since 1.7.0
  */
 function pods_content ( $return = false, $pods_page = false ) {
     return Pods_Pages::content( $return, $pods_page );
+}
+
+/**
+ * Sort an array by length of items, descending, for use with uksort()
+ *
+ * @param string $a First array item
+ * @param string $b Second array item
+ *
+ * @return int Length difference
+ *
+ * @since 2.3.4
+ */
+function pods_page_length_sort ( $a, $b ) {
+    return strlen( $a ) - strlen( $b );
+}
+
+/**
+ * Flush Pod Page Rewrite cache
+ *
+ * @return array Pod Page Rewrites
+ *
+ * @since 2.3.4
+ */
+function pods_page_flush_rewrites () {
+    return Pods_Pages::flush_rewrites();
 }
 
 /*

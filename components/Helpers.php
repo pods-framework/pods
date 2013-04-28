@@ -15,6 +15,9 @@
  * @subpackage Helpers
  */
 
+if ( class_exists( 'Pods_Helpers' ) )
+    return;
+
 class Pods_Helpers extends PodsComponent {
 
     /**

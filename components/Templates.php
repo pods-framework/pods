@@ -15,6 +15,9 @@
  * @subpackage Templates
  */
 
+if ( class_exists( 'Pods_Templates' ) )
+    return;
+
 class Pods_Templates extends PodsComponent {
 
     /**

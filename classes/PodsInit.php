@@ -992,7 +992,7 @@ class PodsInit {
 
         $api->cache_flush_pods();
 
-        delete_transient( 'pods_flush_rewrites' );
+        pods_transient_clear( 'pods_flush_rewrites' );
 
         self::$version = '';
 

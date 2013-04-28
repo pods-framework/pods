@@ -8,8 +8,14 @@ if ( !wp_script_is( 'pods', 'done' ) )
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field['options'], $fields, $pod, $pod->id() ) )
-        unset( $fields[ $k ] );
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
+        if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+            $field[ 'type' ] = 'hidden';
+        else
+            unset( $fields[ $k ] );
+    }
+    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+        $field[ 'type' ] = 'hidden';
 }
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );

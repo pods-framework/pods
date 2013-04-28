@@ -909,6 +909,27 @@ function pods_permission ( $options ) {
 }
 
 /**
+ * Check if permissions are restricted
+ *
+ * @param array $options
+ *
+ * @return bool Whether the permissions are restricted
+ *
+ * @since 2.3.4
+ */
+function pods_has_permissions ( $options ) {
+    $permission = false;
+
+    if ( isset( $options[ 'options' ] ) )
+        $options = $options[ 'options' ];
+
+    if ( 1 == pods_var( 'restrict_role', $options, 0 ) || 1 == pods_var( 'restrict_capability', $options, 0 ) || 1 == pods_var( 'admin_only', $options, 0 ) )
+        return true;
+
+    return false;
+}
+
+/**
  * A fork of get_page_by_title that excludes items unavailable via access rights (by status)
  *
  * @see get_page_by_title

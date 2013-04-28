@@ -2668,6 +2668,10 @@ class PodsAPI {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
                     }
+                    elseif ( !pods_has_permissions( $fields[ $field ][ 'options' ] ) && pods_var( 'hidden', $fields[ $field ][ 'options' ], false, null, true ) ) {
+                        $fields[ $field ][ 'value' ] = $value;
+                        $fields_active[] = $field;
+                    }
                 }
                 else {
                     $found = false;

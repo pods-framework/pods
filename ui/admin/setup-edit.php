@@ -100,7 +100,8 @@ $advanced_fields = array(
                     'label' => __( 'Restrict access to Admins?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
-                    'dependency' => true
+                    'dependency' => true,
+                    'help' => __( 'This field will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network', 'pods' )
                 ),
                 'restrict_role' => array(
                     'label' => __( 'Restrict access by Role?', 'pods' ),
@@ -113,6 +114,12 @@ $advanced_fields = array(
                     'default' => 0,
                     'type' => 'boolean',
                     'dependency' => true
+                ),
+                'hidden' => array(
+                    'label' => __( 'Hide field from UI', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'help' => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden.', 'pods' )
                 )
             )
         ),

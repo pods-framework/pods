@@ -41,7 +41,7 @@
                     if ( !slug || !slug.length ) {
                         errors.push( "Slug or ID" );
                     }
-                    if ( (!template || !template.length) && (!template_custom || !template_custom.length) ) {
+                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length) ) {
                         errors.push( "Template" );
                     }
                     break;
@@ -49,7 +49,7 @@
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
                     }
-                    if ( (!template || !template.length) && (!template_custom || !template_custom.length) ) {
+                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length) ) {
                         errors.push( "Template" );
                     }
                     break;
@@ -131,26 +131,29 @@
             if ( field.length )
                 shortcode += ' field="' + field + '"';
 
-            if ( fields.length || label.length || thank_you.length )
-                shortcode += ' form="1"';
+            if ( 'form' == use_case ) {
+                if ( fields.length || label.length || thank_you.length )}
+                    shortcode += ' form="1"';
 
-            if ( fields.length )
-                shortcode += ' fields="' + fields + '"';
+                if ( fields.length )
+                    shortcode += ' fields="' + fields + '"';
 
-            if ( label.length )
-                shortcode += ' label="' + label + '"';
+                if ( label.length )
+                    shortcode += ' label="' + label + '"';
 
-            if ( thank_you.length )
-                shortcode += ' thank-you="' + thank_you + '"';
+                if ( thank_you.length )
+                    shortcode += ' thank-you="' + thank_you + '"';
+            }
+            else if ( 'view' == use_case ) {
+                if ( view.length )
+                    shortcode += ' view="' + view + '"';
 
-            if ( view.length )
-                shortcode += ' view="' + view + '"';
+                if ( cache_mode.length && 'none' != cache_mode ) {
+                    shortcode += ' cache_mode="' + cache_mode + '"';
 
-            if ( cache_mode.length && 'none' != cache_mode ) {
-                shortcode += ' cache_mode="' + cache_mode + '"';
-
-                if ( expires.length )
-                    shortcode += ' expires="' + expires + '"';
+                    if ( expires.length )
+                        shortcode += ' expires="' + expires + '"';
+                }
             }
 
             shortcode += ']';
@@ -397,13 +400,13 @@
                     <input type="text" id="pod_thank_you" name="pod_thank_you" />
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_view"><?php _e( 'File to include', 'pods' ); ?></label>
 
                     <input type="text" name="pod_view" id="pod_view" />
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
 
                     <?php
@@ -425,7 +428,7 @@
                     </select>
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 
                     <input type="text" name="pod_expires" id="pod_expires" value="<?php echo ( 60 * 5 ); ?>" />

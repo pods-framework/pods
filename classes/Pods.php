@@ -1022,6 +1022,9 @@ class Pods implements Iterator {
                                 $items = array();
 
                                 foreach ( $item_data as $item ) {
+                                    if ( is_array( $item ) )
+                                        $item = (object) $item;
+
                                     if ( empty( $item->pod_item_id ) )
                                         continue;
 

@@ -985,7 +985,17 @@ class Pods implements Iterator {
                                     $where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );
                             }
 
-                            if ( !empty( $table[ 'table' ] ) ) {
+                            /**
+                             * @var $related_obj Pods
+                             */
+                            $related_obj = false;
+
+                            if ( 'pod' == $object_type )
+                                $related_obj = pods( $object, null, false );
+                            elseif ( isset( $table[ 'pod' ] ) && !empty( $table[ 'pod' ] ) )
+                                $related_obj = pods( $table[ 'pod' ][ 'name' ], null, false );
+
+                            if ( !empty( $table[ 'table' ] ) || !empty( $related_obj ) ) {
                                 $sql = array(
                                     'select' => '*, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`',
                                     'table' => $table[ 'table' ],
@@ -1004,7 +1014,10 @@ class Pods implements Iterator {
                                 if ( is_array( $params->params ) && !empty( $params->params ) )
                                     $sql = array_merge( $sql, $params->params );
 
-                                $item_data = pods_data()->select( $sql );
+                                if ( empty( $related_obj ) )
+                                    $item_data = pods_data()->select( $sql );
+                                else
+                                    $item_data = $related_obj->find( $sql )->data();
 
                                 $items = array();
 
@@ -1088,14 +1101,9 @@ class Pods implements Iterator {
                                     if ( $params->in_form )
                                         $field = $table[ 'field_id' ];
 
-                                    $related_obj = false;
-
                                     foreach ( $data as $item_id => $item ) {
                                         if ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
                                             if ( 'pod' == $object_type ) {
-                                                if ( empty( $related_obj ) )
-                                                    $related_obj = pods( $object );
-
                                                 if ( is_object( $related_obj ) ) {
                                                     $related_obj->fetch( $item_id );
 

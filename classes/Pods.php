@@ -238,6 +238,7 @@ class Pods implements Iterator {
         $this->id =& $this->data->id;
         $this->row =& $this->data->row;
         $this->rows =& $this->data->data;
+        $this->row_number =& $this->data->row_number;
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
@@ -317,8 +318,8 @@ class Pods implements Iterator {
      * @link http://www.php.net/manual/en/class.iterator.php
      */
     public function current () {
-        if ( $this->iterator && isset( $this->rows[ $this->row_number ] ) )
-            return get_object_vars( $this->rows[ $this->row_number ] );
+        if ( $this->iterator && $this->fetch() )
+            return $this;
 
         return false;
     }

@@ -2458,7 +2458,7 @@ class PodsData {
             $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
         elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
-        elseif ( empty( $traverse[ 'table_info' ] ) ) {
+        elseif ( empty( $traverse[ 'table_info' ] ) || ( in_array( $traverse[ 'pick_object' ], $simple_tableless_objects ) && !empty( $traverse_recurse[ 'last_table_info' ] ) ) ) {
             if ( in_array( $traverse[ 'pick_object' ], $simple_tableless_objects ) && !empty( $traverse_recurse[ 'last_table_info' ] ) ) {
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
 
@@ -2468,7 +2468,7 @@ class PodsData {
             elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
             else
-                $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );
+                $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ], null, $traverse[ 'pod' ], $traverse );
         }
 
         if ( isset( $this->traversal[ $traverse_recurse[ 'pod' ] ][ $traverse[ 'name' ] ] ) )
@@ -2487,6 +2487,10 @@ class PodsData {
             $traverse[ 'id' ] = $field;
 
         $table_info = $traverse[ 'table_info' ];
+
+        if ( 'gravity_form' == $field ) {
+            pods_debug( $table_info );
+        }
 
         $this->traversal[ $traverse_recurse[ 'pod' ] ][ $field ] = $traverse;
 
@@ -2611,7 +2615,7 @@ class PodsData {
         }
 
         $traverse_recursive = array(
-            'pod' => $table_info[ 'pod' ][ 'name' ],
+            'pod' => pods_var_raw( 'name', pods_var_raw( 'pod', $table_info ) ),
             'fields' => $traverse_recurse[ 'fields' ],
             'joined' => $field_joined,
             'depth' => ( $traverse_recurse[ 'depth' ] + 1 ),
@@ -2629,7 +2633,7 @@ class PodsData {
 
         $joins[ $traverse_recurse[ 'pod' ] . '_' . $traverse_recurse[ 'depth' ] . '_' . $traverse[ 'id' ] ] = $the_join;
 
-        if ( ( $traverse_recurse[ 'depth' ] + 1 ) < count( $traverse_recurse[ 'fields' ] ) && null !== $table_info[ 'pod' ] && false !== $table_info[ 'recurse' ] )
+        if ( ( $traverse_recurse[ 'depth' ] + 1 ) < count( $traverse_recurse[ 'fields' ] ) && !empty( $traverse_recurse[ 'pod' ] ) && false !== $table_info[ 'recurse' ] )
             $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recursive ) );
 
         return $joins;

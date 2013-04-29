@@ -2863,51 +2863,53 @@ class PodsAPI {
                 if ( $simple ) {
                     $value = (array) $value;
 
-                    $custom = pods_var_raw( 'pick_custom', $options, '' );
-
-                    $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $field_data, $options ), $pod, $params->id );
-
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
                     if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
                         $pick_limit = 1;
 
-                    if ( empty( $value ) || empty( $custom ) )
-                        $value = '';
-                    elseif ( !empty( $custom ) ) {
-                        if ( !is_array( $custom ) ) {
-                            $custom = explode( "\n", $custom );
+                    if ( 'custom-simple' == pods_var( 'pick_object', $field_data ) ) {
+                        $custom = pods_var_raw( 'pick_custom', $options, '' );
 
-                            $custom_values = array();
+                        $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $field_data, $options ), $pod, $params->id );
 
-                            foreach ( $custom as $c => $cv ) {
-                                if ( 0 < strlen( $cv ) ) {
-                                    $custom_label = explode( '|', $cv );
+                        if ( empty( $value ) || empty( $custom ) )
+                            $value = '';
+                        elseif ( !empty( $custom ) ) {
+                            if ( !is_array( $custom ) ) {
+                                $custom = explode( "\n", $custom );
 
-                                    if ( !isset( $custom_label[ 1 ] ) )
-                                        $custom_label[ 1 ] = $custom_label[ 0 ];
+                                $custom_values = array();
 
-                                    $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                foreach ( $custom as $c => $cv ) {
+                                    if ( 0 < strlen( $cv ) ) {
+                                        $custom_label = explode( '|', $cv );
+
+                                        if ( !isset( $custom_label[ 1 ] ) )
+                                            $custom_label[ 1 ] = $custom_label[ 0 ];
+
+                                        $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                    }
                                 }
                             }
+                            else
+                                $custom_values = $custom;
+
+                            $values = array();
+
+                            foreach ( $value as $k => $v ) {
+                                $v = pods_unsanitize( $v );
+
+                                if ( isset( $custom_values[ $v ] ) )
+                                    $values[ $k ] = $v;
+                            }
+
+                            $value = $values;
                         }
-                        else
-                            $custom_values = $custom;
-
-                        $values = array();
-
-                        foreach ( $value as $k => $v ) {
-                            $v = pods_unsanitize( $v );
-
-                            if ( isset( $custom_values[ $v ] ) )
-                                $values[ $k ] = $v;
-                        }
-
-                        $value = $values;
-
-                        if ( 0 < $pick_limit && !empty( $value ) )
-                            $value = array_slice( $value, 0, $pick_limit );
                     }
+
+                    if ( 0 < $pick_limit && !empty( $value ) )
+                        $value = array_slice( $value, 0, $pick_limit );
 
                     // Don't save an empty array, just make it an empty string
                     if ( empty( $value ) )
@@ -6652,6 +6654,7 @@ class PodsAPI {
                 $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . $info[ 'table' ];
 
                 if ( !empty( $field ) && is_array( $field ) ) {
+                    $info[ 'table' ] = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
                     $info[ 'field_id' ] = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
                     $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
                 }

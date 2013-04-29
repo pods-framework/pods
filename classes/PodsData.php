@@ -2488,10 +2488,6 @@ class PodsData {
 
         $table_info = $traverse[ 'table_info' ];
 
-        if ( 'gravity_form' == $field ) {
-            pods_debug( $table_info );
-        }
-
         $this->traversal[ $traverse_recurse[ 'pod' ] ][ $field ] = $traverse;
 
         $field_joined = $field;

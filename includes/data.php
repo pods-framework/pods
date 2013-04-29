@@ -899,7 +899,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
             elseif ( in_array( $field[ 'pick_object' ], $simple_tableless_objects ) )
                 $simple = true;
             else {
-                $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
+                $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ], null, null, $field );
 
                 if ( !empty( $table ) ) {
                     if ( null === $field_index )

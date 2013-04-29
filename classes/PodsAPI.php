@@ -6692,7 +6692,7 @@ class PodsAPI {
                 pods_transient_set( $transient . '_pre_init', $info );
         }
 
-        $info = $this->do_hook( 'get_table_info', $info, $object_type, $object );
+        $info = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
 
         return $info;
     }

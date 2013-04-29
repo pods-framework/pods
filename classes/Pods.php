@@ -529,7 +529,6 @@ class Pods implements Iterator {
             'name' => $name,
             'orderby' => null,
             'single' => $single,
-            'distinct' => true,
             'params' => null,
             'in_form' => false,
             'raw' => $raw,
@@ -549,7 +548,7 @@ class Pods implements Iterator {
             $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
 
         // Support old $orderby variable
-        if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {
+        if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
             pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 
             $params->orderby = $params->single;
@@ -1001,8 +1000,7 @@ class Pods implements Iterator {
                                     'table' => $table[ 'table' ],
                                     'join' => $join,
                                     'where' => $where,
-                                    'orderby' => $params->orderby,
-                                    'distinct' => $params->distinct
+                                    'orderby' => $params->orderby
                                 );
 
                                 // Output types

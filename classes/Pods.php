@@ -529,6 +529,7 @@ class Pods implements Iterator {
             'name' => $name,
             'orderby' => null,
             'single' => $single,
+            'distinct' => true,
             'in_form' => false,
             'raw' => $raw,
             'display' => false,
@@ -989,7 +990,8 @@ class Pods implements Iterator {
                                     'table' => $table[ 'table' ],
                                     'join' => $join,
                                     'where' => $where,
-                                    'orderby' => $params->orderby
+                                    'orderby' => $params->orderby,
+                                    'distinct' => $params->distinct
                                 );
 
                                 // Output types

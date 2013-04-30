@@ -56,31 +56,33 @@ class Pods_Migrate_Packages extends PodsComponent {
         if ( 'import' == $params->import_export ) {
             $data = trim( $params->import_package );
 
-            echo '<div class="pods-wizard-content">';
+            $content = '<div class="pods-wizard-content">';
 
             if ( !empty( $data ) ) {
                 $imported = $this->import( $data );
 
                 if ( !empty( $imported ) ) {
-                    echo '<p>Import Complete! The following items were imported:</p>';
+                    $content .= '<p>Import Complete! The following items were imported:</p>';
 
                     foreach ( $imported as $type => $import ) {
-                        echo '<h4>' . ucwords( $type ) . '</h4>';
+                        $content .= '<h4>' . ucwords( $type ) . '</h4>';
 
-                        echo '<ul class="normal">';
+                        $content .= '<ul class="normal">';
 
                         foreach ( $import as $k => $what ) {
-                            echo '<li>' . esc_html( $what ) . '</li>';
+                            $content .= '<li>' . esc_html( $what ) . '</li>';
                         }
 
-                        echo '</ul>';
+                        $content .= '</ul>';
                     }
                 }
             }
             else
-                echo '<p>Import Error: Invalid Package</p>';
+                $content .= '<p>Import Error: Invalid Package</p>';
 
-            echo '</div>';
+            $content .= '</div>';
+
+            echo $content;
         }
         elseif ( 'export' == $params->import_export ) {
             $params = get_object_vars( $params );
@@ -198,6 +200,8 @@ class Pods_Migrate_Packages extends PodsComponent {
                         )
                     );
 
+                    $found_fields = array();
+
                     if ( !empty( $pod_data[ 'fields' ] ) ) {
                         foreach ( $pod_data[ 'fields' ] as $k => $field ) {
                             $field_type = $field[ 'coltype' ];
@@ -230,8 +234,13 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 )
                             );
 
-                            if ( in_array( $new_field[ 'name' ], array( 'created', 'modified', 'author' ) ) )
-                                $new_field[ 'name' ] .= '2';
+                            if ( in_array( $new_field[ 'name' ], $found_fields ) ) {
+                                unset( $pod_data[ 'fields' ][ $k ] );
+
+                                continue;
+                            }
+
+                            $found_fields[] = $new_field[ 'name' ];
 
                             if ( 'pick' == $field_type ) {
                                 $new_field[ 'pick_object' ] = 'pod';

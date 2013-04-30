@@ -463,18 +463,29 @@ class Pods implements Iterator {
             'name' => $name,
             'single' => $single,
             'display' => true,
-            'and' => null
+            'serial_params' => null
         );
 
         if ( is_array( $name ) || is_object( $name ) )
-            $params = (object) array_merge( $defaults, (array) $name );
+            $params = array_merge( $defaults, (array) $name );
         else
-            $params = (object) $defaults;
+            $params = $defaults;
+
+        $params = (object) $params;
 
         $value = $this->field( $params );
 
-        if ( is_array( $value ) )
-            $value = pods_serial_comma( $value, $params->name, $this->fields, $params->and );
+        if ( is_array( $value ) ) {
+            $serial_params = array(
+                'field' => $params->name,
+                'fields' => $this->fields
+            );
+
+            if ( !empty( $params->serial_params ) && is_array( $params->serial_params ) )
+                $serial_params = array_merge( $serial_params, $params->serial_params );
+
+            $value = pods_serial_comma( $value, $serial_params );
+        }
 
         return $value;
     }
@@ -2836,7 +2847,7 @@ class Pods implements Iterator {
         $value = apply_filters( 'pods_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
 
         if ( is_array( $value ) )
-            $value = pods_serial_comma( $value, $field_name, $this->fields );
+            $value = pods_serial_comma( $value, array( 'field' => $field_name, 'fields' => $this->fields ) );
 
         if ( null !== $value && false !== $value )
             return $before . $value . $after;

@@ -3580,7 +3580,7 @@ class PodsAPI {
                         }
 
                         if ( $flatten && !empty( $related_data ) )
-                            $related_data = pods_serial_comma( array_values( $related_data ), null, null, '', $related_pod->pod_data[ 'field_index' ] );
+                            $related_data = pods_serial_comma( array_values( $related_data ), array( 'and' => '', 'field_index' => $related_pod->pod_data[ 'field_index' ] ) );
                     }
                 }
 
@@ -3591,7 +3591,7 @@ class PodsAPI {
                 $data[ $field[ 'name' ] ] = $pod->field( array( 'name' => $field[ 'name' ], 'output' => 'arrays' ) );
 
             if ( $flatten && is_array( $data[ $field[ 'name' ] ] ) )
-                $data[ $field[ 'name' ] ] = pods_serial_comma( $data[ $field[ 'name' ] ], $field[ 'name' ], $export_fields, '' );
+                $data[ $field[ 'name' ] ] = pods_serial_comma( $data[ $field[ 'name' ] ], array( 'field' => $field[ 'name' ], 'fields' => $export_fields, 'and' => '' ) );
         }
 
         return $data;

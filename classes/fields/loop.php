@@ -88,7 +88,7 @@ class PodsField_Loop extends PodsField {
         if ( is_object( $pod ) && isset( $pod->fields ) )
             $fields = $pod->fields;
 
-        return pods_serial_comma( $value, $name, $fields );
+        return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
     }
 
     /**

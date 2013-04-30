@@ -462,7 +462,8 @@ class Pods implements Iterator {
         $defaults = array(
             'name' => $name,
             'single' => $single,
-            'display' => true
+            'display' => true,
+            'and' => null
         );
 
         if ( is_array( $name ) || is_object( $name ) )
@@ -473,7 +474,7 @@ class Pods implements Iterator {
         $value = $this->field( $params );
 
         if ( is_array( $value ) )
-            $value = pods_serial_comma( $value, $params->name, $this->fields );
+            $value = pods_serial_comma( $value, $params->name, $this->fields, $params->and );
 
         return $value;
     }

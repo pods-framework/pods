@@ -1210,13 +1210,33 @@ class Pods implements Iterator {
                 $post_temp = false;
 
                 if ( 'post_type' == pods_var( 'type', $this->pod_data ) && 0 < $this->id() && ( !isset( $GLOBALS[ 'post' ] ) || empty( $GLOBALS[ 'post' ] ) ) ) {
+                    global $post_ID, $post;
+
                     $post_temp = true;
 
-                    $GLOBALS[ 'post' ] = get_post( $this->id() );
+                    $old_post = $GLOBALS[ 'post' ];
+                    $old_ID = $GLOBALS[ 'post_ID' ];
+
+                    $post = get_post( $this->id() );
+                    $post_ID = $this->id();
+
                 }
 
-                if ( 0 < strlen( pods_var( 'display_filter', $field_data[ 'options' ] ) ) )
-                    $value = apply_filters( pods_var( 'display_filter', $field_data[ 'options' ] ), $value );
+                $filter = pods_var_raw( 'display_filter', $field_data[ 'options' ] );
+
+                if ( 0 < strlen( $filter ) ) {
+                    $args = array(
+                        $filter,
+                        $value
+                    );
+
+                    $filter_args = pods_var_raw( 'display_filter_args', $field_data[ 'options' ] );
+
+                    if ( !empty( $filter_args ) )
+                        $args = array_merge( $args, compact( $filter_args ) );
+
+                    $value = call_user_func_array( 'apply_filters', $args );
+                }
                 elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) ) {
                     $value = PodsForm::display(
                         $field_data[ 'type' ],
@@ -1228,8 +1248,10 @@ class Pods implements Iterator {
                     );
                 }
 
-                if ( $post_temp )
-                    $GLOBALS[ 'post' ] = null;
+                if ( $post_temp ) {
+                    $post = $old_post;
+                    $post_ID = $old_ID;
+                }
             }
             else {
                 $value = PodsForm::value(

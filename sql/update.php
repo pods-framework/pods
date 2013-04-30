@@ -52,9 +52,9 @@ if ( version_compare( $pods_version, '2.3', '<' ) ) {
 }
 
 // Update to 2.3.4
-if ( version_compare( $pods_version, '2.3.4-b-3', '<' ) ) {
+if ( version_compare( $pods_version, '2.3.4', '<' ) ) {
     if ( function_exists( 'pods_page_flush_rewrites' ) )
         pods_page_flush_rewrites();
 
-    update_option( 'pods_framework_version', '2.3.4-b-3' );
+    update_option( 'pods_framework_version', '2.3.4' );
 }

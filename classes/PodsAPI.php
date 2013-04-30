@@ -5362,7 +5362,7 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) )
-                $_object = pods_by_title( $params->name, ARRAY_A, '_pods_' . $params->type );
+                $_object = pods_by_title( $params->name, ARRAY_A, '_pods_' . $params->type, 'publish' );
             else {
                 $object = $params->id;
 

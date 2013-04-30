@@ -606,7 +606,7 @@ class Pods_Pages extends PodsComponent {
         $object = false;
 
         if ( false === strpos( $uri, '*' ) && !apply_filters( 'pods_page_regex_matching', false ) )
-            $object = pods_by_title( $uri, ARRAY_A, '_pods_page' );
+            $object = pods_by_title( $uri, ARRAY_A, '_pods_page', 'publish' );
 
         $wildcard = false;
 

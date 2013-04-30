@@ -1021,8 +1021,14 @@ class Pods implements Iterator {
                                 elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
                                     $sql[ 'select' ] = '`t`.`' . $table[ 'field_index' ] . '` AS `pod_item_index`, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
 
-                                if ( is_array( $params->params ) && !empty( $params->params ) )
+                                if ( is_array( $params->params ) && !empty( $params->params ) ) {
+                                    $where = $sql[ 'where' ];
+
                                     $sql = array_merge( $sql, $params->params );
+
+                                    if ( isset( $params->params[ 'where' ] ) )
+                                        $sql[ 'where' ] = array_merge( (array) $where, (array) $params->params['where' ] );
+                                }
 
                                 if ( empty( $related_obj ) )
                                     $item_data = pods_data()->select( $sql );

@@ -153,6 +153,8 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 = 2.3.4 - April 29th, 2013 =
 * Added: Ability to iterate through the Pods object with `foreach ( $pod as $item ) { echo $item->display( 'name' ); }`
+* Added: Ability to override serial array parameters in Pods::display() `$pod->display( array( 'name' => 'field_name', 'serial_params' => array( 'and' => '' ) ) )`
+* Added: Ability to override related field parameters in Pods::field() to further filter related field arrays beyond the defaults `$pod->field( array( 'name' => 'related_field', 'params' => array( 'where' => 't.active = 1' ) ) )`
 * Added: Ability to use RegEx in Pod Page URI's, just filter 'pods_page_regex_matching' and return true (default is false, normal wildcard * handling)
 * Improved: Pod Page detection on URLs is cleaner and more performant, the tricky MySQL query from the days of Pods 1.x has been completely replaced with a process similar to WP Rewrites
 * And 15 other bug fixes that can be found on GitHub

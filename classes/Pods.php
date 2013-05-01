@@ -1121,7 +1121,17 @@ class Pods implements Iterator {
                                         $field = $table[ 'field_id' ];
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
+                                        if ( false !== strpos( $field, '_src' ) && in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+                                            $size = 'full';
+
+                                            if ( 5 < strlen( $field ) )
+                                                $size = substr( $field, 5 );
+
+                                            $value[] = pods_image_url( $item_id, $size );
+
+                                            $params->raw = true;
+                                        }
+                                        elseif ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
                                             if ( 'pod' == $object_type ) {
                                                 if ( is_object( $related_obj ) ) {
                                                     $related_obj->fetch( $item_id );
@@ -1141,6 +1151,8 @@ class Pods implements Iterator {
                                                 $value[] = get_comment_link( $item_id );
                                             else
                                                 $value[] = '';
+
+                                            $params->raw = true;
                                         }
                                         elseif ( is_array( $item ) && isset( $item[ $field ] ) ) {
                                             if ( $table[ 'field_id' ] == $field )

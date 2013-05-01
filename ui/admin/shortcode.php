@@ -166,6 +166,17 @@
 
         } );
 
+        $( '#pod_cache_mode' ).change( function () {
+            var $this = $( this );
+
+            if ( 'none' == $this.val() ) {
+                $( this ).closest( '.pods-section' ).addClass( 'hide' );
+            }
+            else {
+                $( this ).closest( '.pods-section' ).removeClass( 'hide' );
+            }
+        } );
+
         var $useCaseSelector = $( '#pods-use-case-selector' ),
                 $form = $( '#pods_shortcode_form_element' ),
                 $podSelector = $( '#pod_select' ),
@@ -417,7 +428,7 @@
                             'site-transient' => __( 'Site Transient', 'pods' )
                         );
 
-                        $default_cache_mode = 'transient';
+                        $default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
                     ?>
                     <select id="pod_cache_mode" name="pod_cache_mode">
                         <?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>

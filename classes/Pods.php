@@ -1121,7 +1121,7 @@ class Pods implements Iterator {
                                         $field = $table[ 'field_id' ];
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( false !== strpos( $field, '_src' ) && in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+                                        if ( ( ( false !== strpos( $field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
                                             $size = 'full';
 
                                             if ( 5 < strlen( $field ) )

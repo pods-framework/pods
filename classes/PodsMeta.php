@@ -2114,11 +2114,11 @@ class PodsMeta {
 
                     $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
-                    if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
-                        if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
-                            $meta_cache[ $meta_k ] = '';
-
-                        $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+                    if ( ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) ) {
+                        if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) && $single )
+                            $meta_cache[ $meta_k ] = array();
+                        else
+                            $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
                     }
 
                     if ( in_array( $pod->fields[ $meta_k ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $meta_k ] ) )
@@ -2137,11 +2137,11 @@ class PodsMeta {
                     if ( isset( $pod->fields[ $first ] ) ) {
                         $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
 
-                        if ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) {
-                            if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) )
-                                $meta_cache[ $meta_k ] = '';
-
-                            $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
+                        if ( ( !is_array( $meta_cache[ $meta_k ] ) || !isset( $meta_cache[ $meta_k ][ 0 ] ) ) && $single ) {
+                            if ( empty( $meta_cache[ $meta_k ] ) && !is_array( $meta_cache[ $meta_k ] ) && $single )
+                                $meta_cache[ $meta_k ] = array();
+                            else
+                                $meta_cache[ $meta_k ] = array( $meta_cache[ $meta_k ] );
                         }
 
                         if ( in_array( $pod->fields[ $first ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $first ] ) )

@@ -1225,7 +1225,6 @@ class Pods implements Iterator {
 
                     $post = get_post( $this->id() );
                     $post_ID = $this->id();
-
                 }
 
                 $filter = pods_var_raw( 'display_filter', $field_data[ 'options' ] );

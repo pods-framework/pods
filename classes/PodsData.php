@@ -1612,32 +1612,30 @@ class PodsData {
 
             $this->row = false;
 
-            if ( 'settings' == $this->pod_data[ 'type' ] ) {
-                if ( !empty( $this->pod ) )
-                    $row = pods_cache_get( $this->pod, 'pods_items_' . $this->pod );
+            if ( isset( $this->data[ $this->row_number ] ) ) {
+                $this->row = get_object_vars( $this->data[ $this->row_number ] );
 
-                if ( false !== $row && is_array( $row ) )
-                    $this->row = $row;
-                elseif ( empty( $this->fields ) )
-                    $this->row = false;
-                else {
-                    $this->row = array();
+                $current_row_id = false;
 
-                    foreach ( $this->fields as $field ) {
-                        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
-                    }
+                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+                    $current_row_id = pods_var_raw( 'ID', $this->row );
+                elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
+                    $current_row_id = pods_var_raw( 'term_id', $this->row );
+                elseif ( 'user' == $this->pod_data[ 'type' ] )
+                    $current_row_id = pods_var_raw( 'ID', $this->row );
+                elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                    $current_row_id = pods_var_raw( 'comment_ID', $this->row );
+                elseif ( 'settings' == $this->pod_data[ 'type' ] )
+                    $current_row_id = $this->pod_data[ 'id' ];
 
-                    $this->id = $this->pod_data[ 'id' ];
-                    $this->row[ 'option_id' ] = $this->id;
-
-                    pods_cache_set( $this->pod, $this->row, 'pods_items_' . $this->pod, 0 );
+                if ( 0 < $current_row_id ) {
+                    $explicit_set = false;
+                    $row = $current_row_id;
                 }
             }
-            elseif ( isset( $this->data[ $this->row_number ] ) )
-                $this->row = get_object_vars( $this->data[ $this->row_number ] );
         }
-        else {
+
+        if ( null !== $row ) {
             if ( $explicit_set )
                 $this->row_number = -1;
 
@@ -1654,8 +1652,8 @@ class PodsData {
             if ( !empty( $this->pod ) )
                 $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 
-            $get_table_data = false;
             $current_row_id = false;
+            $get_table_data = false;
 
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
@@ -1691,7 +1689,8 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
 
-                $current_row_id = $this->row['ID'];
+                $current_row_id = $this->row[ 'ID' ];
+
                 $get_table_data = true;
             }
             elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
@@ -1708,7 +1707,7 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
 
-                $current_row_id = $this->row['term_id'];
+                $current_row_id = $this->row[ 'term_id' ];
 
                 $get_table_data = true;
             }
@@ -1723,7 +1722,7 @@ class PodsData {
                 else
                     $this->row = get_object_vars( $this->row );
 
-                $current_row_id = $this->row['ID'];
+                $current_row_id = $this->row[ 'ID' ];
 
                 $get_table_data = true;
             }
@@ -1735,7 +1734,7 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
 
-                $current_row_id = $this->row['comment_ID'];
+                $current_row_id = $this->row[ 'comment_ID' ];
 
                 $get_table_data = true;
             }
@@ -1750,6 +1749,7 @@ class PodsData {
                             $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
                     }
 
+                    // Force ID
                     $this->id = $this->pod_data[ 'id' ];
                     $this->row[ 'option_id' ] = $this->id;
                 }

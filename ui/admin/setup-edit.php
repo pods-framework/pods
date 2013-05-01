@@ -209,6 +209,7 @@ $pick_object = PodsForm::field_method( 'pick', 'related_objects', true );
 
 $tableless_field_types = PodsForm::tableless_field_types();
 $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+$bidirectional_objects = PodsForm::field_method( 'pick', 'bidirectional_objects' );
 
 foreach ( $pod[ 'options' ] as $_option => $_value ) {
     $pod[ $_option ] = $_value;

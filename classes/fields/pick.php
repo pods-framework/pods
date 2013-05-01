@@ -266,6 +266,7 @@ class PodsField_Pick extends PodsField {
             'label' => $label,
             'group' => 'Custom Relationships',
             'simple' => true,
+            'bidirectional' => false,
             'data' => array(),
             'data_callback' => null
         );
@@ -319,7 +320,8 @@ class PodsField_Pick extends PodsField {
             foreach ( $pod_options as $pod => $label ) {
                 self::$related_objects[ 'pod-' . $pod ] = array(
                     'label' => $label,
-                    'group' => __( 'Pods', 'pods' )
+                    'group' => __( 'Pods', 'pods' ),
+                    'bidirectional' => true
                 );
             }
 
@@ -345,7 +347,8 @@ class PodsField_Pick extends PodsField {
 
                 self::$related_objects[ 'post_type-' . $post_type->name ] = array(
                     'label' => $post_type->label . ' (' . $post_type->name . ')',
-                    'group' => __( 'Post Types', 'pods' )
+                    'group' => __( 'Post Types', 'pods' ),
+                    'bidirectional' => true
                 );
             }
 
@@ -363,14 +366,16 @@ class PodsField_Pick extends PodsField {
 
                 self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
                     'label' => $taxonomy->label . ' (' . $taxonomy->name . ')',
-                    'group' => __( 'Taxonomies', 'pods' )
+                    'group' => __( 'Taxonomies', 'pods' ),
+                    'bidirectional' => true
                 );
             }
 
             // Other WP Objects
             self::$related_objects[ 'user' ] = array(
                 'label' => __( 'Users', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
+                'group' => __( 'Other WP Objects', 'pods' ),
+                'bidirectional' => true
             );
 
             self::$related_objects[ 'role' ] = array(
@@ -389,12 +394,14 @@ class PodsField_Pick extends PodsField {
 
             self::$related_objects[ 'media' ] = array(
                 'label' => __( 'Media', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
+                'group' => __( 'Other WP Objects', 'pods' ),
+                'bidirectional' => true
             );
 
             self::$related_objects[ 'comment' ] = array(
                 'label' => __( 'Comments', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
+                'group' => __( 'Other WP Objects', 'pods' ),
+                'bidirectional' => true
             );
 
             self::$related_objects[ 'image-size' ] = array(
@@ -490,6 +497,27 @@ class PodsField_Pick extends PodsField {
         }
 
         return (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+    }
+
+    /**
+     * Return available bidirectional object names
+     *
+     * @return array Bidirectional object names
+     * @since 2.3.4
+     */
+    public function bidirectional_objects () {
+        $this->setup_related_objects();
+
+        $bidirectional_objects = array();
+
+        foreach ( self::$related_objects as $object => $related_object ) {
+            if ( !isset( $related_object[ 'bidirectional' ] ) || !$related_object[ 'bidirectional' ] )
+                continue;
+
+            $bidirectional_objects[] = $object;
+        }
+
+        return (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
     }
 
     /**

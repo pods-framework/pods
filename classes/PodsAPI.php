@@ -926,6 +926,27 @@ class PodsAPI {
                     'alias' => array( 'parent' ),
                     'data' => array(),
                     'hidden' => true
+                ),
+                'term_taxonomy_id' => array(
+                    'name' => 'term_taxonomy_id',
+                    'label' => 'Term Taxonomy ID',
+                    'type' => 'number',
+                    'alias' => array( 'term_taxonomy_id' ),
+                    'hidden' => true
+                ),
+                'term_group' => array(
+                    'name' => 'term_group',
+                    'label' => 'Term Group',
+                    'type' => 'number',
+                    'alias' => array( 'term_group' ),
+                    'hidden' => true
+                ),
+                'count' => array(
+                    'name' => 'count',
+                    'label' => 'Count',
+                    'type' => 'number',
+                    'alias' => array( 'count' ),
+                    'hidden' => true
                 )
             );
         }

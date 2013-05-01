@@ -153,6 +153,13 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
 
         if ( !empty( $src ) )
             $url = $src[ 0 ];
+        // Handle non-images
+        else {
+            $attachment = get_post( $id );
+
+            if ( !preg_match( '!^image/!', get_post_mime_type( $attachment ) ) )
+                $url = wp_get_attachment_url( $id );
+        }
     }
 
     if ( empty( $url ) && 0 < $default ) {
@@ -176,6 +183,13 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
 
         if ( !empty( $src ) )
             $url = $src[ 0 ];
+        // Handle non-images
+        else {
+            $attachment = get_post( $default );
+
+            if ( !preg_match( '!^image/!', get_post_mime_type( $attachment ) ) )
+                $url = wp_get_attachment_url( $default );
+        }
     }
 
     return $url;
@@ -283,14 +297,17 @@ function pods_image_resize ( $attachment_id, $size ) {
 
     if ( $file && file_exists( $file ) ) {
  	    $metadata = wp_get_attachment_metadata( $attachment_id );
-        $editor = wp_get_image_editor( $file );
 
-        if ( !is_wp_error( $editor ) && !empty( $metadata ) && preg_match( '!^image/!', get_post_mime_type( $attachment ) ) && file_is_displayable_image( $file ) ) {
- 	        $metadata[ 'sizes' ] = array_merge( $metadata[ 'sizes' ], $editor->multi_resize( array( $size => $size_data ) ) );
+        if ( !empty( $metadata ) && preg_match( '!^image/!', get_post_mime_type( $attachment ) ) && file_is_displayable_image( $file ) ) {
+            $editor = wp_get_image_editor( $file );
 
-            wp_update_attachment_metadata( $attachment_id, $metadata );
+            if ( !is_wp_error( $editor ) ) {
+                $metadata[ 'sizes' ] = array_merge( $metadata[ 'sizes' ], $editor->multi_resize( array( $size => $size_data ) ) );
 
-            return true;
+                wp_update_attachment_metadata( $attachment_id, $metadata );
+
+                return true;
+            }
         }
     }
 

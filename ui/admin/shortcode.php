@@ -132,7 +132,7 @@
                 shortcode += ' field="' + field + '"';
 
             if ( 'form' == use_case ) {
-                if ( fields.length || label.length || thank_you.length )}
+                if ( fields.length || label.length || thank_you.length )
                     shortcode += ' form="1"';
 
                 if ( fields.length )

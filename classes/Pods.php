@@ -544,6 +544,7 @@ class Pods implements Iterator {
             'params' => null,
             'in_form' => false,
             'raw' => $raw,
+            'raw_display' => false,
             'display' => false,
             'get_meta' => false,
             'output' => null,
@@ -1129,7 +1130,7 @@ class Pods implements Iterator {
 
                                             $value[] = pods_image_url( $item_id, $size );
 
-                                            $params->raw = true;
+                                            $params->raw_display = true;
                                         }
                                         elseif ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
                                             if ( 'pod' == $object_type ) {
@@ -1152,7 +1153,7 @@ class Pods implements Iterator {
                                             else
                                                 $value[] = '';
 
-                                            $params->raw = true;
+                                            $params->raw_display = true;
                                         }
                                         elseif ( is_array( $item ) && isset( $item[ $field ] ) ) {
                                             if ( $table[ 'field_id' ] == $field )
@@ -1221,7 +1222,7 @@ class Pods implements Iterator {
             $value = current( $value );
 
         // @todo Expand this into traversed fields too
-        if ( !empty( $field_data ) && ( $params->display || !$params->raw ) && !$params->in_form ) {
+        if ( !empty( $field_data ) && ( $params->display || !$params->raw ) && !$params->in_form && !$params->raw_display ) {
             if ( $params->display || ( ( $params->get_meta || $params->deprecated ) && !in_array( $field_data[ 'type' ], $tableless_field_types ) ) ) {
                 $field_data[ 'options' ] = pods_var_raw( 'options', $field_data, array(), null, true );
 

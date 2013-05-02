@@ -229,10 +229,10 @@ class PodsField_File extends PodsField {
                 $value = array();
 
                 foreach ( $attachments as $v ) {
-                    if ( !isset( $v[ 'ID' ] ) )
-                        continue;
-
-                    $value[] = wp_get_attachment_url( $v[ 'ID' ] );
+                    if ( !is_array( $v ) )
+                        $values[] = $v;
+                    elseif ( isset( $v[ 'ID' ] ) )
+                        $value[] = wp_get_attachment_url( $v[ 'ID' ] );
                 }
 
                 $value = implode( ' ', $value );

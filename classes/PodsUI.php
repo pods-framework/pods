@@ -1860,6 +1860,8 @@ class PodsUI {
 
         if ( !empty( $params ) && is_array( $params ) )
             $params = (object) array_merge( $defaults, $params );
+        else
+            $params = (object) $defaults;
 
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';

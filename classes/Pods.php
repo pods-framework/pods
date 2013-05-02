@@ -1410,8 +1410,15 @@ class Pods implements Iterator {
                 }
             }
 
-            $current_value = array_filter( array_unique( $current_value ) );
-            $value = array_filter( array_unique( $value ) );
+            if ( !empty( $current_value ) )
+                $current_value = array_filter( array_unique( $current_value ) );
+            else
+                $current_value = array();
+
+            if ( !empty( $value ) )
+                $value = array_filter( array_unique( $value ) );
+            else
+                $value = array();
 
             sort( $current_value );
             sort( $value );
@@ -2079,8 +2086,10 @@ class Pods implements Iterator {
             if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
                 $current_value = $pod->raw( $field );
 
-                if ( !empty( $current_value ) )
+                if ( !empty( $current_value ) || ( !is_array( $current_value ) && 0 < strlen( $current_value ) ) )
                     $current_value = (array) $current_value;
+                else
+                    $current_value = array();
 
                 $value = array_merge( $current_value, $value );
             }
@@ -2094,7 +2103,10 @@ class Pods implements Iterator {
                 $value = array_merge( $related_ids, $value );
             }
 
-            $value = array_filter( array_unique( $value ) );
+            if ( !empty( $value ) )
+                $value = array_filter( array_unique( $value ) );
+            else
+                $value = array();
 
             if ( empty( $value ) )
                 return $id;
@@ -2202,7 +2214,10 @@ class Pods implements Iterator {
                 $value = $related_ids;
             }
 
-            $value = array_filter( array_unique( $value ) );
+            if ( !empty( $value ) )
+                $value = array_filter( array_unique( $value ) );
+            else
+                $value = array();
         }
         // Number fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {

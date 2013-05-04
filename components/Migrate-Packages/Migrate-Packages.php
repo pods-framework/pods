@@ -569,6 +569,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                 'meta_field_value',
                 'pod_field_id',
                 'pod_field_index',
+                'object_fields',
                 'join',
                 'where',
                 'where_default',

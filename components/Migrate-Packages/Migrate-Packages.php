@@ -150,6 +150,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                 $pod = $api->load_pod( array( 'name' => $pod_data[ 'name' ] ), false );
 
+                $existing_fields = array();
+
                 if ( !empty( $pod ) ) {
                     // Delete Pod if it exists
                     if ( $replace ) {
@@ -157,6 +159,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                         $pod = array( 'fields' => array() );
                     }
+                    else
+                        $existing_fields = $pod[ 'fields' ];
                 }
                 else
                     $pod = array( 'fields' => array() );
@@ -357,7 +361,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                 $pod = array_merge( $pod, $pod_data );
 
                 foreach ( $pod[ 'fields' ] as $k => $field ) {
-                    if ( isset( $field[ 'id' ] ) )
+                    if ( isset( $field[ 'id' ] ) && !isset( $existing_fields[ $field[ 'name' ] ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'id' ] );
 
                     if ( isset( $field[ 'pod_id' ] ) )

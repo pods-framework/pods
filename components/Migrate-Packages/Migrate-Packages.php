@@ -553,6 +553,53 @@ class Pods_Migrate_Packages extends PodsComponent {
                 $api_params[ 'ids' ] = (array) $pod_ids;
 
             $export[ 'pods' ] = $api->load_pods( $api_params );
+
+            $options_ignore = array(
+                'object_type',
+                'object_name',
+                'table',
+                'meta_table',
+                'pod_table',
+                'field_id',
+                'field_index',
+                'field_slug',
+                'field_type',
+                'meta_field_id',
+                'meta_field_index',
+                'meta_field_value',
+                'pod_field_id',
+                'pod_field_index',
+                'join',
+                'where',
+                'where_default',
+                'orderby',
+                'pod',
+                'recurse',
+                'table_info',
+                'attributes',
+                'group',
+                'grouped',
+                'developer_mode',
+                'dependency',
+                'depends-on',
+                'excludes-on'
+            );
+
+            foreach ( $export[ 'pods' ] as $k => $pod ) {
+                foreach ( $options_ignore as $ignore ) {
+                    if ( isset( $pod[ $ignore ] ) )
+                        unset( $export[ 'pods' ][ $k ][ $ignore ] );
+                }
+
+                if ( !empty( $pod[ 'fields' ] ) ) {
+                    foreach ( $pod[ 'fields' ] as $fk => $field ) {
+                        foreach ( $options_ignore as $ignore ) {
+                            if ( isset( $field[ $ignore ] ) )
+                                unset( $export[ 'pods' ][ $k ][ 'fields' ][ $fk ][ $ignore ] );
+                        }
+                    }
+                }
+            }
         }
 
         if ( !empty( $template_ids ) ) {

@@ -376,18 +376,17 @@ class PodsForm {
         return $attributes;
     }
 
-    /*
-     * Setup options for a field and store them for later use
-     *
-     * @since 2.0
-     */
     /**
-     * @static
+     * Setup options for a field and store them for later use
      *
      * @param $type
      * @param $options
      *
      * @return array
+     *
+     * @static
+     *
+     * @since 2.0
      */
     public static function options ( $type, $options ) {
         $options = (array) $options;
@@ -437,19 +436,18 @@ class PodsForm {
         return $options;
     }
 
-    /*
+    /**
      * Get options for a field type and setup defaults
      *
-     * @since 2.0
-     */
-    /**
      * @static
      *
      * @param $type
      *
      * @return array|null
+     *
+     * @since 2.0
      */
-    public static function options_setup ( $type = null ) {
+    public static function options_setup ( $type = null, $options = null ) {
         $core_defaults = array(
             'id' => 0,
             'name' => '',
@@ -469,29 +467,93 @@ class PodsForm {
             'options' => array()
         );
 
+        if ( !empty( $options ) && is_array( $options ) )
+            $core_defaults = array_merge( $core_defaults, $options );
+
         if ( null === $type )
             return $core_defaults;
         else
             self::field_loader( $type );
 
-        $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type, $core_defaults );
+        $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
 
-        return self::fields_setup( $options, $core_defaults );
+        $first_field = current( $options );
+
+        if ( !isset( $first_field ) ) {
+            $all_options = array();
+
+            foreach ( $options as $group => $group_options ) {
+                $all_options = array_merge( $all_options, self::fields_setup( $group_options, $core_defaults ) );
+            }
+
+            $options = $all_options;
+        }
+        else
+            $options = self::fields_setup( $options, $core_defaults );
+
+        return $options;
     }
 
-    /*
-     * Get options for a field and setup defaults
+    /**
+     * Get Admin options for a field type and setup defaults
+     *
+     * @static
+     *
+     * @param $type
+     *
+     * @return array|null
      *
      * @since 2.0
      */
+    public static function ui_options ( $type ) {
+        $core_defaults = array(
+            'id' => 0,
+            'name' => '',
+            'label' => '',
+            'description' => '',
+            'help' => '',
+            'default' => null,
+            'attributes' => array(),
+            'class' => '',
+            'type' => 'text',
+            'group' => 0,
+            'grouped' => 0,
+            'developer_mode' => false,
+            'dependency' => false,
+            'depends-on' => array(),
+            'excludes-on' => array(),
+            'options' => array()
+        );
+
+        self::field_loader( $type );
+
+        $options = apply_filters( 'pods_field_' . $type . '_ui_options', (array) self::$loaded[ $type ]->ui_options(), $type );
+
+        $first_field = current( $options );
+
+        if ( !isset( $first_field ) ) {
+            foreach ( $options as $group => $group_options ) {
+                $options[ $group ] = self::fields_setup( $group_options, $core_defaults );
+            }
+        }
+        else
+            $options = self::fields_setup( $options, $core_defaults );
+
+        return $options;
+    }
+
     /**
-     * @static
+     * Get options for a field and setup defaults
+     *
      *
      * @param null $fields
      * @param null $core_defaults
      * @param bool $single
      *
      * @return array|null
+     *
+     * @static
+     * @since 2.0
      */
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
         if ( empty( $core_defaults ) ) {

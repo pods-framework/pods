@@ -946,6 +946,11 @@ class PodsAdmin {
         pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
+    /**
+     * Get list of Pod option tabs
+     *
+     * @return array
+     */
     public function admin_setup_edit_tabs ( $pod ) {
         $fields = true;
         $labels = false;
@@ -998,7 +1003,7 @@ class PodsAdmin {
     }
 
     /**
-     * Build list of admin screen options
+     * Get list of Pod options
      *
      * @return array
      */
@@ -1448,7 +1453,213 @@ class PodsAdmin {
             );
         }
 
-        $options = apply_filters( 'pods_admin_setup_edit_options', $options );
+        $options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
+
+        return $options;
+    }
+
+    /**
+     * Get list of Pod field option tabs
+     *
+     * @return array
+     */
+    public function admin_setup_edit_field_tabs ( $pod ) {
+        $core_tabs = array(
+            'basic' => __( 'Basic', 'pods' ),
+            'additional-field' => __( 'Additional Field Options', 'pods' ),
+            'advanced' => __( 'Advanced', 'pods' )
+        );
+
+        $tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $pod );
+
+        $tabs = array_merge( $core_tabs, $tabs );
+
+        return $tabs;
+    }
+
+    /**
+     * Get list of Pod field options
+     *
+     * @return array
+     */
+    public function admin_setup_edit_field_options ( $pod, $field_types ) {
+        $options = array();
+
+        $options[ 'additional-field' ] = array();
+
+        foreach ( $field_types as $type => $field_type_data ) {
+            /**
+             * @var $field_type PodsField
+             */
+            $field_type = PodsForm::field_loader( $type, $field_type_data[ 'file' ] );
+
+            $field_type_vars = get_class_vars( get_class( $field_type ) );
+
+            if ( !isset( $field_type_vars[ 'pod_types' ] ) )
+                $field_type_vars[ 'pod_types' ] = true;
+
+            $options[ 'additional-field' ][ $type ] = array();
+
+            // Only show supported field types
+            if ( true !== $field_type_vars[ 'pod_types' ] ) {
+                if ( empty( $field_type_vars[ 'pod_types' ] ) )
+                    continue;
+                elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( pods_var( 'type', $pod ), $field_type_vars[ 'pod_types' ] ) )
+                    continue;
+                elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && pods_var( 'type', $pod ) != $field_type_vars[ 'pod_types' ] )
+                    continue;
+            }
+
+            $options[ 'additional-field' ][ $type ] = PodsForm::ui_options( $type );
+        }
+
+        $input_helpers = array(
+            '' => '-- Select --'
+        );
+
+        if ( class_exists( 'Pods_Helpers' ) ) {
+            $helpers = pods_api()->load_helpers( array( 'options' => array( 'helper_type' => 'input' ) ) );
+
+            foreach ( $helpers as $helper ) {
+                $input_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+            }
+        }
+
+        $options[ 'advanced' ] = array(
+            __( 'Visual', 'pods' ) => array(
+                'class' => array(
+                    'name' => 'class',
+                    'label' => __( 'Additional CSS Classes', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => ''
+                ),
+                'input_helper' => array(
+                    'name' => 'input_helper',
+                    'label' => __( 'Input Helper', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'pick',
+                    'default' => '',
+                    'data' => $input_helpers
+                )
+            ),
+            __( 'Values', 'pods' ) => array(
+                'default_value' => array(
+                    'name' => 'default_value',
+                    'label' => __( 'Default Value', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => ''
+                ),
+                'default_value_parameter' => array(
+                    'name' => 'default_value_parameter',
+                    'label' => __( 'Set Default Value via Parameter', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => ''
+                )
+            ),
+            __( 'Visibility', 'pods' ) => array(
+                'restrict_access' => array(
+                    'name' => 'restrict_access',
+                    'label' => __( 'Restrict Access', 'pods' ),
+                    'group' => array(
+                        'admin_only' => array(
+                            'name' => 'admin_only',
+                            'label' => __( 'Restrict access to Admins?', 'pods' ),
+                            'default' => 0,
+                            'type' => 'boolean',
+                            'dependency' => true,
+                            'help' => __( 'This field will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network', 'pods' )
+                        ),
+                        'restrict_role' => array(
+                            'name' => 'restrict_role',
+                            'label' => __( 'Restrict access by Role?', 'pods' ),
+                            'default' => 0,
+                            'type' => 'boolean',
+                            'dependency' => true
+                        ),
+                        'restrict_capability' => array(
+                            'name' => 'restrict_capability',
+                            'label' => __( 'Restrict access by Capability?', 'pods' ),
+                            'default' => 0,
+                            'type' => 'boolean',
+                            'dependency' => true
+                        ),
+                        'hidden' => array(
+                            'name' => 'hidden',
+                            'label' => __( 'Hide field from UI', 'pods' ),
+                            'default' => 0,
+                            'type' => 'boolean',
+                            'help' => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden.', 'pods' )
+                        )
+                    )
+                ),
+                'roles_allowed' => array(
+                    'name' => 'roles_allowed',
+                    'label' => __( 'Role(s) Allowed', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'pick',
+                    'pick_object' => 'role',
+                    'pick_format_type' => 'multi',
+                    'default' => 'administrator',
+                    'depends-on' => array(
+                        'restrict_role' => true
+                    )
+                ),
+                'capability_allowed' => array(
+                    'name' => 'capability_allowed',
+                    'label' => __( 'Capability Allowed', 'pods' ),
+                    'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array(
+                        'restrict_capability' => true
+                    )
+                )
+                /*,
+                        'search' => array(
+                            'label' => __( 'Include in searches', 'pods' ),
+                            'help' => __( 'help', 'pods' ),
+                            'default' => 1,
+                            'type' => 'boolean',
+                        )*/
+            )
+            /*,
+                __( 'Validation', 'pods' ) => array(
+                    'regex_validation' => array(
+                        'label' => __( 'RegEx Validation', 'pods' ),
+                        'help' => __( 'help', 'pods' ),
+                        'type' => 'text',
+                        'default' => ''
+                    ),
+                    'message_regex' => array(
+                        'label' => __( 'Message if field does not pass RegEx', 'pods' ),
+                        'help' => __( 'help', 'pods' ),
+                        'type' => 'text',
+                        'default' => ''
+                    ),
+                    'message_required' => array(
+                        'label' => __( 'Message if field is blank', 'pods' ),
+                        'help' => __( 'help', 'pods' ),
+                        'type' => 'text',
+                        'default' => '',
+                        'depends-on' => array( 'required' => true )
+                    ),
+                    'message_unique' => array(
+                        'label' => __( 'Message if field is not unique', 'pods' ),
+                        'help' => __( 'help', 'pods' ),
+                        'type' => 'text',
+                        'default' => '',
+                        'depends-on' => array( 'unique' => true )
+                    )
+                )*/
+        );
+
+        if ( !class_exists( 'Pods_Helpers' ) )
+            unset( $options[ 'advanced-options' ][ 'input_helper' ] );
+
+        $options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod );
 
         return $options;
     }

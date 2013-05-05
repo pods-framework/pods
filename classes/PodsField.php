@@ -69,6 +69,7 @@ class PodsField {
      * @return array $options
      *
      * @since 2.0
+     * @see PodsField::ui_options
      */
     public function options () {
         $options = array( /*
@@ -110,6 +111,18 @@ class PodsField {
         );
 
         return $options;
+    }
+
+    /**
+     * Options for the Admin area, defaults to $this->options()
+     *
+     * @return array $options
+     *
+     * @since 2.0
+     * @see PodsField::options
+     */
+    public function ui_options () {
+        return $this->options();
     }
 
     /**

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,6 +151,12 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.5 - May 5th, 2013 =
+* Added: Ability to add new global field options (separate from field types) and new field editor tabs
+* Various fixes that can be found on GitHub
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.4 - April 29th, 2013 =
 * Added: Ability to iterate through the Pods object with `foreach ( $pod as $item ) { echo $item->display( 'name' ); }`
 * Added: Ability to override serial array parameters in Pods::display() `$pod->display( array( 'name' => 'field_name', 'serial_params' => array( 'and' => '' ) ) )`
@@ -158,8 +164,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Ability to use RegEx in Pod Page URI's, just filter 'pods_page_regex_matching' and return true (default is false, normal wildcard * handling)
 * Improved: Pod Page detection on URLs is cleaner and more performant, the tricky MySQL query from the days of Pods 1.x has been completely replaced with a process similar to WP Rewrites
 * And 15 other bug fixes that can be found on GitHub
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.3.1 - April 21st, 2013 =
 * Fixed: Advanced Content Types were missing their 'Advanced' tab

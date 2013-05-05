@@ -1726,35 +1726,34 @@ class PodsAPI {
                 if ( $id_required )
                     $field[ 'id_required' ] = true;
 
-                $field = $this->save_field( $field, $field_table_operation, $sanitized, $db );
+                $field_data = $field;
+                $field = $this->save_field( $field_data, $field_table_operation, $sanitized, $db );
 
                 if ( true !== $db )
                     $pod[ 'fields' ][ $k ] = $field;
                 else {
                     if ( !empty( $field ) && 0 < $field )
-                        $saved[ $field ] = true;
+                        $saved[ $field_data[ 'name' ] ] = true;
                     else
-                        $errors[] = sprintf( __( 'Cannot save the %s field', 'pods' ), $field[ 'name' ] );
+                        $errors[] = sprintf( __( 'Cannot save the %s field', 'pods' ), $field_data[ 'name' ] );
                 }
             }
 
             if ( true === $db ) {
                 foreach ( $old_fields as $field ) {
-                    if ( $pod[ 'fields' ][ $field[ 'name' ] ] )
+                    if ( isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) || isset( $saved[ $field[ 'name' ] ] ) )
                         continue;
 
-                    if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
-                        if ( $field[ 'id' ] == $field_index_id )
-                            $field_index_change = 'id';
-                        elseif ( $field[ 'name' ] == $field_index )
-                            $field_index_change = 'id';
+                    if ( $field[ 'id' ] == $field_index_id )
+                        $field_index_change = 'id';
+                    elseif ( $field[ 'name' ] == $field_index )
+                        $field_index_change = 'id';
 
-                        $this->delete_field( array(
-                            'id' => (int) $field[ 'id' ],
-                            'name' => $field[ 'name' ],
-                            'pod' => $pod
-                        ), $field_table_operation );
-                    }
+                    $this->delete_field( array(
+                        'id' => (int) $field[ 'id' ],
+                        'name' => $field[ 'name' ],
+                        'pod' => $pod
+                    ), $field_table_operation );
                 }
             }
 
@@ -1812,7 +1811,7 @@ class PodsAPI {
      * @param bool $sanitized (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      * @param bool|int $db (optional) Whether to save into the DB or just return field array.
      *
-     * @return int The field ID
+     * @return int|array The field ID or field array (if !$db)
      * @since 1.7.9
      */
     public function save_field ( $params, $table_operation = true, $sanitized = false, $db = true ) {

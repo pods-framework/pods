@@ -2667,11 +2667,20 @@ class Pods implements Iterator {
             'deprecated' => false
         );
 
+        if ( class_exists( 'Pods_Templates' ) )
+            $params[ 'deprecated' ] = Pods_Templates::$deprecated;
+
         if ( is_array( $helper ) )
             $params = array_merge( $params, $helper );
 
         if ( class_exists( 'Pods_Helpers' ) )
-            return Pods_Helpers::helper( $params, $this );
+            $value = Pods_Helpers::helper( $params, $this );
+        elseif ( function_exists( $params[ 'helper' ] ) )
+            $value = call_user_func( $params[ 'helper' ], $value );
+        else
+            $value = apply_filters( $params[ 'helper' ], $value );
+
+        return $value;
     }
 
     /**
@@ -2883,22 +2892,12 @@ class Pods implements Iterator {
 
         $helper_name = $before = $after = '';
 
-        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && class_exists( 'Pods_Helpers' ) ) {
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
             $value = $this->field( $field_name );
 
             $helper_name = $tag[ 1 ];
 
-            $params = array(
-                'helper' => $helper_name,
-                'value' => $value,
-                'name' => $field_name,
-                'deprecated' => false
-            );
-
-            if ( class_exists( 'Pods_Templates' ) )
-                $params[ 'deprecated' ] = Pods_Templates::$deprecated;
-
-            $value = Pods_Helpers::helper( $params, $this );
+            $value = $this->helper( $helper_name, $value, $field_name );
         }
         else
             $value = $this->display( $field_name );

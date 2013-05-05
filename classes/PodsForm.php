@@ -479,7 +479,7 @@ class PodsForm {
 
         $first_field = current( $options );
 
-        if ( !isset( $first_field ) ) {
+        if ( !empty( $options ) && !isset( $first_field[ 'name' ] ) && !isset( $first_field[ 'label' ] ) ) {
             $all_options = array();
 
             foreach ( $options as $group => $group_options ) {
@@ -531,7 +531,7 @@ class PodsForm {
 
         $first_field = current( $options );
 
-        if ( !isset( $first_field ) ) {
+        if ( !empty( $options ) && !isset( $first_field[ 'name' ] ) && !isset( $first_field[ 'label' ] ) ) {
             foreach ( $options as $group => $group_options ) {
                 $options[ $group ] = self::fields_setup( $group_options, $core_defaults );
             }

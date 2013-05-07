@@ -1038,55 +1038,57 @@ class Pods implements Iterator {
 
                                 $items = array();
 
-                                foreach ( $item_data as $item ) {
-                                    if ( is_array( $item ) )
-                                        $item = (object) $item;
+                                if ( !empty( $item_data ) ) {
+                                    foreach ( $item_data as $item ) {
+                                        if ( is_array( $item ) )
+                                            $item = (object) $item;
 
-                                    if ( empty( $item->pod_item_id ) )
-                                        continue;
+                                        if ( empty( $item->pod_item_id ) )
+                                            continue;
 
-                                    // Bypass pass field
-                                    if ( isset( $item->user_pass ) )
-                                        unset( $item->user_pass );
+                                        // Bypass pass field
+                                        if ( isset( $item->user_pass ) )
+                                            unset( $item->user_pass );
 
-                                    // Get Item ID
-                                    $item_id = $item->pod_item_id;
+                                        // Get Item ID
+                                        $item_id = $item->pod_item_id;
+
+                                        // Cleanup
+                                        unset( $item->pod_item_id );
+
+                                        // Output types
+                                        if ( 'ids' == $params->output )
+                                            $item = (int) $item_id;
+                                        elseif ( 'objects' == $params->output ) {
+                                            if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+                                                $item = get_post( $item_id );
+                                            elseif ( 'taxonomy' == $object_type )
+                                                $item = get_term( $item_id, $object );
+                                            elseif ( 'user' == $object_type )
+                                                $item = get_userdata( $item_id );
+                                            elseif ( 'comment' == $object_type )
+                                                $item = get_comment( $item_id );
+                                            else
+                                                $item = (object) $item;
+                                        }
+                                        elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
+                                            $item = $item->pod_item_index;
+                                        else // arrays
+                                            $item = get_object_vars( (object) $item );
+
+                                        // Pass item data into $data
+                                        $items[ $item_id ] = $item;
+                                    }
 
                                     // Cleanup
-                                    unset( $item->pod_item_id );
+                                    unset( $item_data );
 
-                                    // Output types
-                                    if ( 'ids' == $params->output )
-                                        $item = (int) $item_id;
-                                    elseif ( 'objects' == $params->output ) {
-                                        if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
-                                            $item = get_post( $item_id );
-                                        elseif ( 'taxonomy' == $object_type )
-                                            $item = get_term( $item_id, $object );
-                                        elseif ( 'user' == $object_type )
-                                            $item = get_userdata( $item_id );
-                                        elseif ( 'comment' == $object_type )
-                                            $item = get_comment( $item_id );
-                                        else
-                                            $item = (object) $item;
-                                    }
-                                    elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
-                                        $item = $item->pod_item_index;
-                                    else // arrays
-                                        $item = get_object_vars( (object) $item );
-
-                                    // Pass item data into $data
-                                    $items[ $item_id ] = $item;
-                                }
-
-                                // Cleanup
-                                unset( $item_data );
-
-                                // Return all of the data in the order expected
-                                if ( empty( $params->orderby ) ) {
-                                    foreach ( $ids as $id ) {
-                                        if ( isset( $items[ $id ] ) )
-                                            $data[ $id ] = $items[ $id ];
+                                    // Return all of the data in the order expected
+                                    if ( empty( $params->orderby ) ) {
+                                        foreach ( $ids as $id ) {
+                                            if ( isset( $items[ $id ] ) )
+                                                $data[ $id ] = $items[ $id ];
+                                        }
                                     }
                                 }
                             }

@@ -347,6 +347,8 @@ class PodsInit {
                     continue;
                 elseif ( !empty( $post_type[ 'object' ] ) && isset( $existing_post_types[ $post_type[ 'object' ] ] ) )
                     continue;
+                elseif ( !$force && isset( $existing_post_types[ $post_type[ 'name' ] ] ) )
+                    continue;
 
                 $post_type[ 'options' ][ 'name' ] = $post_type[ 'name' ];
                 $post_type = array_merge( $post_type, (array) $post_type[ 'options' ] );
@@ -511,6 +513,8 @@ class PodsInit {
                 if ( isset( $pods_cpt_ct[ 'taxonomies' ][ $taxonomy[ 'name' ] ] ) )
                     continue;
                 elseif ( !empty( $taxonomy[ 'object' ] ) && isset( $existing_taxonomies[ $taxonomy[ 'object' ] ] ) )
+                    continue;
+                elseif ( !$force && isset( $existing_taxonomies[ $taxonomy[ 'name' ] ] ) )
                     continue;
 
                 $taxonomy[ 'options' ][ 'name' ] = $taxonomy[ 'name' ];

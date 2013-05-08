@@ -151,7 +151,7 @@ class PodsAdmin {
 
         $all_pods = $this->api->load_pods( array( 'count' => true ) );
 
-        if ( !PodsInit::$upgrade_needed || ( ( is_super_admin() || current_user_can( 'delete_users' ) ) && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
+        if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
             if ( !empty( $advanced_content_types ) ) {
                 $submenu = array();
 
@@ -160,7 +160,7 @@ class PodsAdmin {
                 foreach ( (array) $advanced_content_types as $pod ) {
                     if ( !isset( $pod[ 'name' ] ) || !isset( $pod[ 'options' ] ) || empty( $pod[ 'fields' ] ) )
                         continue;
-                    elseif ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) && !current_user_can( 'pods_delete_' . $pod[ 'name' ] ) )
+                    elseif ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod[ 'name' ], 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) )
                         continue;
 
                     if ( 1 == pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) ) {
@@ -184,7 +184,7 @@ class PodsAdmin {
 
                         $parent_page = null;
 
-                        if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) || current_user_can( 'pods_delete_' . $pod[ 'name' ] ) ) {
+                        if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) ) {
                             if ( !empty( $menu_location_custom ) ) {
                                 add_submenu_page( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
 
@@ -214,7 +214,7 @@ class PodsAdmin {
                             }
                         }
 
-                        if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_add_' . $pod[ 'name' ] ) ) {
+                        if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod[ 'name' ] ) ) ) {
                             $page = 'pods-add-new-' . $pod[ 'name' ];
 
                             if ( null === $parent_page ) {
@@ -247,7 +247,7 @@ class PodsAdmin {
                         $singular_label = pods_var_raw( 'label_singular', $item[ 'options' ], pods_var_raw( 'label', $item, ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                         $plural_label = pods_var_raw( 'label', $item, ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
 
-                        if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
+                        if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $item[ 'name' ], 'pods_delete_' . $item[ 'name' ] ) ) ) {
                             $page = 'pods-manage-' . $item[ 'name' ];
 
                             if ( null === $parent_page ) {
@@ -290,7 +290,7 @@ class PodsAdmin {
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
-                    if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -342,7 +342,7 @@ class PodsAdmin {
 
             if ( !empty( $settings ) ) {
                 foreach ( (array) $settings as $pod ) {
-                    if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -439,22 +439,8 @@ class PodsAdmin {
 
         if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
-                if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
-                    $access = (array) $menu_item[ 'access' ];
-
-                    $ok = false;
-
-                    foreach ( $access as $cap ) {
-                        if ( current_user_can( $cap ) ) {
-                            $ok = true;
-
-                            break;
-                        }
-                    }
-
-                    if ( !$ok )
-                        continue;
-                }
+                if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
+                    continue;
 
                 // Don't just show the help page
                 if ( false === $parent && 'pods-help' == $page )
@@ -547,7 +533,7 @@ class PodsAdmin {
         if ( isset( $pod->fields[ 'author' ] ) && 'pick' == $pod->fields[ 'author' ][ 'type' ] && 'user' == $pod->fields[ 'author' ][ 'pick_object' ] )
             $author_restrict = 'author.ID';
 
-        if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) ) {
+        if ( !pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
             if ( !current_user_can( 'pods_add_' . $pod_name ) ) {
                 $actions_disabled[ 'add' ] = 'add';
                 $default = 'manage';
@@ -2179,14 +2165,8 @@ class PodsAdmin {
             unset( $params->_wpnonce );
 
         // Check permissions (convert to array to support multiple)
-        if ( !empty( $method->priv ) && !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) ) {
-            if ( true !== $method->priv ) {
-                foreach ( (array) $method->priv as $priv_val ) {
-                    if ( !current_user_can( $priv_val ) )
-                        pods_error( __( 'Access denied', 'pods' ), $this );
-                }
-            }
-        }
+        if ( !empty( $method->priv ) && !pods_is_admin( array( 'pods' ) ) && true !== $method->priv && !pods_is_admin( $method->priv ) )
+            pods_error( __( 'Access denied', 'pods' ), $this );
 
         $params->method = $method->name;
 

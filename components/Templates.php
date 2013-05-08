@@ -68,7 +68,7 @@ class Pods_Templates extends PodsComponent {
             'menu_icon' => PODS_URL . 'ui/images/icon16.png'
         );
 
-        if ( !is_super_admin() )
+        if ( !pods_is_admin() )
             $args[ 'capability_type' ] = 'pods_template';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );

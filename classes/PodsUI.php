@@ -1917,7 +1917,7 @@ class PodsUI {
             $find_params = array_merge( $find_params, (array) $this->params );
 
             // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
                 pods_debug( $find_params );
 
             $this->pod->find( $find_params );
@@ -1986,7 +1986,7 @@ class PodsUI {
                 $find_params[ 'limit' ] = -1;
 
             // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
                 pods_debug( $find_params );
 
             $this->pods_data->select( $find_params );
@@ -3655,7 +3655,7 @@ class PodsUI {
             if ( is_object( $this->pod ) ) {
                 $restricted = true;
 
-                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+                if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
                     $restricted = false;
                 elseif ( 'manage' == $action ) {
                     if ( !in_array( 'edit', $this->actions_disabled ) && current_user_can( 'pods_edit_' . $this->pod->pod ) && current_user_can( 'pods_edit_others_' . $this->pod->pod ) )
@@ -3672,7 +3672,7 @@ class PodsUI {
             else {
                 $restricted = true;
 
-                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+                if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
                     $restricted = false;
                 elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
                     $restricted = false;

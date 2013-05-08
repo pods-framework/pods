@@ -120,7 +120,7 @@ class PodsComponents {
             if ( 0 < strlen( $component_data[ 'Capability' ] ) )
                 $capability = $component_data[ 'Capability' ];
 
-            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_components' ) && !current_user_can( $capability ) )
+            if ( !pods_is_admin( array( 'pods', 'pods_components', $capability ) ) )
                 continue;
 
             $menu_page = 'pods-component-' . $component;
@@ -244,7 +244,7 @@ class PodsComponents {
     public function get_components () {
         $components = pods_transient_get( 'pods_components' );
 
-        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             $components = array();
 
         if ( PodsInit::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
@@ -378,7 +378,7 @@ class PodsComponents {
             pods_transient_set( 'pods_components', $components );
         }
 
-        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $components );
 
         $this->components = $components;

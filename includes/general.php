@@ -28,7 +28,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
         $error = 'Database Error';
     }
 
-    if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) ) {
+    if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {
         $debug_sql = $sql;
 
         echo '<textarea cols="100" rows="24">';
@@ -205,6 +205,42 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
         die( $debug );
 
     echo $debug;
+}
+
+/**
+ * Determine if user has admin access
+ *
+ * @param string|array $cap Additional capabilities to check
+ *
+ * @return bool Whether user has admin access
+ *
+ * @since 2.3.5
+ */
+function pods_is_admin ( $cap = null ) {
+    if ( is_user_logged_in() ) {
+        $pods_admin_capabilities = array(
+            'delete_users' // default is_super_admin checks against this
+        );
+
+        $pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
+
+        if ( is_multisite() && is_super_admin() )
+            return apply_filters( 'pods_is_admin', true, $cap, null );
+
+        if ( empty( $cap ) )
+            $cap = array();
+        else
+            $cap = (array) $cap;
+
+        $cap = array_unique( array_filter( array_merge( $pods_admin_capabilities, $cap ) ) );
+
+        foreach ( $cap as $capability ) {
+            if ( current_user_can( $capability ) )
+                return apply_filters( 'pods_is_admin', true, $cap, $capability );
+        }
+    }
+
+    return apply_filters( 'pods_is_admin', false, $cap, null );
 }
 
 /**
@@ -437,7 +473,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     if ( !is_user_logged_in() )
         return false;
 
-    if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+    if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
         return true;
 
     // Store approved privs when using "AND"
@@ -856,7 +892,7 @@ function pods_permission ( $options ) {
     if ( isset( $options[ 'options' ] ) )
         $options = $options[ 'options' ];
 
-    if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
+    if ( pods_is_admin() )
         $permission = true;
     elseif ( 0 == pods_var( 'restrict_role', $options, 0 ) && 0 == pods_var( 'restrict_capability', $options, 0 ) && 0 == pods_var( 'admin_only', $options, 0 ) )
         $permission = true;

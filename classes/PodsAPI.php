@@ -2644,6 +2644,9 @@ class PodsAPI {
         if ( empty( $params->id ) )
             $is_new_item = true;
 
+        if ( isset( $params->is_new_item ) )
+            $is_new_item = $params->is_new_item;
+
         // Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
         $bypass_helpers = false;
 
@@ -2776,7 +2779,7 @@ class PodsAPI {
             if ( is_array( $hooked ) && !empty( $hooked ) )
                 extract( $hooked );
 
-            if ( false !== $is_new_item ) {
+            if ( $is_new_item ) {
                 $hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
 
                 if ( is_array( $hooked ) && !empty( $hooked ) )
@@ -3116,7 +3119,7 @@ class PodsAPI {
             $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item, $params->id );
             $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
 
-            if ( false !== $is_new_item ) {
+            if ( $is_new_item ) {
                 $this->do_hook( 'post_create_pod_item', $pieces, $params->id );
                 $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
             }

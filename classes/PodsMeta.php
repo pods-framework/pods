@@ -60,6 +60,11 @@ class PodsMeta {
     public static $groups = array();
 
     /**
+     * @var string
+     */
+    public static $old_post_status = '';
+
+    /**
      * @return \PodsMeta
      *
      * @since 2.0
@@ -95,6 +100,7 @@ class PodsMeta {
         */
 
         add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+        add_action( 'transition_post_status', array( $this, 'save_post_detect_new' ), 10, 3 );
         add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 
         if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
@@ -797,12 +803,29 @@ class PodsMeta {
     }
 
     /**
+     * @param $new_status
+     * @param $old_status
+     * @param $post
+     */
+    public function save_post_detect_new ( $new_status, $old_status, $post ) {
+        self::$old_post_status = $old_status;
+    }
+
+    /**
      * @param $post_id
      * @param $post
      *
      * @return mixed
      */
     public function save_post ( $post_id, $post ) {
+        $is_new_item = false;
+
+        if ( 'new' == self::$old_post_status )
+            $is_new_item = true;
+
+        // Reset to avoid manual new post issues
+        self::$old_post_status = '';
+
         $blacklisted_types = array(
             'revision',
             '_pods_pod',
@@ -869,8 +892,14 @@ class PodsMeta {
             }
         }
 
+        if ( $is_new_item ) {
+            do_action( 'pods_meta_create_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
+            do_action( "pods_meta_create_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+        }
+
         do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+
 
         pods_no_conflict_on( 'post' );
 
@@ -878,7 +907,7 @@ class PodsMeta {
             // Fix for Pods doing it's own sanitization
             $data = stripslashes_deep( $data );
 
-            $pod->save( $data );
+            $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
         }
         elseif ( !empty( $id ) ) {
             foreach ( $data as $field => $value ) {
@@ -887,6 +916,11 @@ class PodsMeta {
         }
 
         pods_no_conflict_off( 'post' );
+
+        if ( $is_new_item ) {
+            do_action( 'pods_meta_create_post', $data, $pod, $id, $groups, $post, $post->post_type );
+            do_action( "pods_meta_create_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+        }
 
         do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );

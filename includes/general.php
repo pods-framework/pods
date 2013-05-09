@@ -1456,6 +1456,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         }
 
         $no_conflict[ 'action' ] = array(
+            array( 'transition_post_status', array( PodsInit::$meta, 'save_post_detect_new' ), 10, 3 ),
             array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 )
         );
     }

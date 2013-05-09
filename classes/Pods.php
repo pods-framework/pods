@@ -2274,13 +2274,14 @@ class Pods implements Iterator {
      * @param array|string $data Either an associative array of field information or a field name
      * @param mixed $value (optional) Value of the field, if $data is a field name
      * @param int $id (optional) ID of the pod item to update
+     * @param array $params (optional) Additional params to send to save_pod_item
      *
      * @return int The item ID
      *
      * @since 2.0
      * @link http://pods.io/docs/save/
      */
-    public function save ( $data = null, $value = null, $id = null ) {
+    public function save ( $data = null, $value = null, $id = null, $params = null ) {
         if ( null !== $value )
             $data = array( $data => $value );
 
@@ -2297,12 +2298,20 @@ class Pods implements Iterator {
         if ( empty( $data ) )
             return $id;
 
+        $default = array();
+
+        if ( !empty( $params ) && is_array( $params ) )
+            $default = $params;
+
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
             'data' => $data,
             'allow_custom_fields' => true
         );
+
+        if ( !empty( $default ) )
+            $params = array_merge( $params, $default );
 
         $id = $this->api->save_pod_item( $params );
 

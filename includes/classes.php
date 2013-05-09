@@ -65,7 +65,7 @@ function pods_ui ( $obj, $deprecated = false ) {
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
 
-    return PodsData::init( $pod, $format );
+    return PodsAPI::init( $pod, $format );
 }
 
 /**

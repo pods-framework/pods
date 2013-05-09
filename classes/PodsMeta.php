@@ -2050,12 +2050,14 @@ class PodsMeta {
         if ( empty( $objects ) || !is_array( $objects ) )
             return false;
 
+        $object_name = null;
+
         if ( 'media' == $object_type )
-            return @current( self::$media );
+            return @current( $objects );
         elseif ( 'user' == $object_type )
-            return @current( self::$user );
+            return @current( $objects );
         elseif ( 'comment' == $object_type )
-            return @current( self::$comment );
+            return @current( $objects );
         elseif ( 'post_type' == $object_type ) {
             $object = get_post( $object_id );
 

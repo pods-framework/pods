@@ -42,7 +42,7 @@ class PodsComponents {
     /**
      * Singleton handling for a basic pods_components() request
      *
-     * @return \PodsAdmin
+     * @return \PodsComponents
      *
      * @since 2.3.5
      */

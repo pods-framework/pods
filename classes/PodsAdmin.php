@@ -55,14 +55,25 @@ class PodsAdmin {
      */
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
-        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) ) ) {
-            foreach ( $_POST as $key => $value ) {
-                if ( 'action' == $key )
-                    continue;
+        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) ) {
+            $pods_admin_ajax_actions = array(
+                'pods_admin',
+                'pods_relationship',
+                'pods_upload',
+                'pods_admin_components'
+            );
 
-                unset( $_POST[ $key ] );
+            $pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
-                $_POST[ '_podsfix_' . $key ] = $value;
+            if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
+                foreach ( $_POST as $key => $value ) {
+                    if ( 'action' == $key )
+                        continue;
+
+                    unset( $_POST[ $key ] );
+
+                    $_POST[ '_podsfix_' . $key ] = $value;
+                }
             }
         }
     }

@@ -139,6 +139,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             pod : '<?php echo (int) $pod->pod_id; ?>',
                             field : '<?php echo (int) $options[ 'id' ]; ?>',
                             uri : '<?php echo $uri_hash; ?>',
+                            id : '<?php echo (int) $id; ?>',
                             query : term<?php
                                 global $sitepress, $icl_adjust_id_url_filter_off;
 

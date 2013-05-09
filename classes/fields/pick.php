@@ -1561,6 +1561,7 @@ class PodsField_Pick extends PodsField {
 
         $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
         $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
+        $id = (int) $params->id;
 
         if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
             pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
@@ -1578,19 +1579,17 @@ class PodsField_Pick extends PodsField {
             'value' => null, // The value of the field
             'options' => array_merge( $field, $field[ 'options' ] ), // Field options
             'pod' => $pod, // Pod data
-            'id' => 0, // Item ID
+            'id' => $id, // Item ID
             'context' => 'admin_ajax_relationship', // Data context
             'data_params' => $params
         );
 
-        $pick_data = apply_filters( 'pods_field_pick_data_ajax', null, $field[ 'name' ], null, $field, $pod, 0 );
+        $pick_data = apply_filters( 'pods_field_pick_data_ajax', null, $field[ 'name' ], null, $field, $pod, $id );
 
         if ( null !== $pick_data )
             $items = $pick_data;
         else
             $items = $this->get_object_data( $object_params );
-
-        $items = apply_filters( 'pods_field_pick_data_ajax_items', $items, $field[ 'name' ], null, $field, $pod, 0 );
 
         if ( !empty( $items ) && isset( $items[ 0 ] ) && !is_array( $items[ 0 ] ) ) {
             $new_items = array();
@@ -1604,6 +1603,8 @@ class PodsField_Pick extends PodsField {
 
             $items = $new_items;
         }
+
+        $items = apply_filters( 'pods_field_pick_data_ajax_items', $items, $field[ 'name' ], null, $field, $pod, $id );
 
         $items = array(
             'results' => $items

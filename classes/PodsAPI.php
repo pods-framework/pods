@@ -5,6 +5,11 @@
 class PodsAPI {
 
     /**
+     * @var PodsAPI
+     */
+    static protected $instance = null;
+
+    /**
      * @var bool
      */
     public $display_errors = false;
@@ -39,6 +44,25 @@ class PodsAPI {
      * @var
      */
     private $deprecated;
+
+    /**
+     * Singleton handling for a basic pods_api() request
+     *
+     * @param string $pod (optional) The pod name
+     * @param string $format (deprecated) Format for import/export, "php" or "csv"
+     *
+     * @return \PodsAPI
+     *
+     * @since 2.3.5
+     */
+    public static function init ( $pod = null, $format = null ) {
+        if ( null !== $pod || null !== $format )
+            return new PodsAPI( $pod, $format );
+        elseif ( !is_object( self::$instance ) )
+            self::$instance = new PodsAPI();
+
+        return self::$instance;
+    }
 
     /**
      * Store and retrieve data programatically

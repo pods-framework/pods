@@ -7,6 +7,11 @@
 class PodsComponents {
 
     /**
+     * @var PodsComponents
+     */
+    static protected $instance = null;
+
+    /**
      * Root of Components directory
      *
      * @var string
@@ -33,6 +38,20 @@ class PodsComponents {
      * @since 2.0
      */
     public $settings = array();
+
+    /**
+     * Singleton handling for a basic pods_components() request
+     *
+     * @return \PodsAdmin
+     *
+     * @since 2.3.5
+     */
+    public static function init () {
+        if ( !is_object( self::$instance ) )
+            self::$instance = new PodsComponents();
+
+        return self::$instance;
+    }
 
     /**
      * Setup actions and get options

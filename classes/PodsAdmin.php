@@ -5,6 +5,11 @@
 class PodsAdmin {
 
     /**
+     * @var PodsAdmin
+     */
+    static protected $instance = null;
+
+    /**
      * @var PodsAPI
      */
     private $api;
@@ -15,6 +20,20 @@ class PodsAdmin {
     private $data;
 
     /**
+     * Singleton handling for a basic pods_admin() request
+     *
+     * @return \PodsAdmin
+     *
+     * @since 2.3.5
+     */
+    public static function init () {
+        if ( !is_object( self::$instance ) )
+            self::$instance = new PodsAdmin();
+
+        return self::$instance;
+    }
+
+    /**
      * Setup and Handle Admin functionality
      *
      * @return \PodsAdmin
@@ -23,9 +42,6 @@ class PodsAdmin {
      * @since 2.0
      */
     public function __construct () {
-        $this->api = pods_api();
-        $this->data = pods_data();
-
         // Scripts / Stylesheets
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
 
@@ -160,7 +176,7 @@ class PodsAdmin {
         $taxonomies = PodsMeta::$taxonomies;
         $settings = PodsMeta::$settings;
 
-        $all_pods = $this->api->load_pods( array( 'count' => true ) );
+        $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
         if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
             if ( !empty( $advanced_content_types ) ) {
@@ -774,7 +790,7 @@ class PodsAdmin {
      * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
-        $pods = $this->api->load_pods( array( 'fields' => false ) );
+        $pods = pods_api()->load_pods( array( 'fields' => false ) );
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
@@ -1670,7 +1686,7 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_duplicate ( &$obj ) {
-        $new_id = $this->api->duplicate_pod( array( 'id' => $obj->id ) );
+        $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
         if ( 0 < $new_id )
             pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
@@ -1685,12 +1701,12 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_reset ( &$obj, $id ) {
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+        $pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )
             return $obj->error( __( 'Pod not found.', 'pods' ) );
 
-        $this->api->reset_pod( array( 'id' => $id ) );
+        pods_api()->reset_pod( array( 'id' => $id ) );
 
         $obj->message( __( 'Pod reset successfully.', 'pods' ) );
 
@@ -1706,12 +1722,12 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_delete ( $id, &$obj ) {
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+        $pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )
             return $obj->error( __( 'Pod not found.', 'pods' ) );
 
-        $this->api->delete_pod( array( 'id' => $id ) );
+        pods_api()->delete_pod( array( 'id' => $id ) );
 
         unset( $obj->data[ $pod[ 'id' ] ] );
 
@@ -2037,7 +2053,7 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = $this->api->load_pods( array( 'type' => array( 'pod', 'table', 'post_type' ) ) );
+        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type' ) ) );
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';

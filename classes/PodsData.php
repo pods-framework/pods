@@ -4,7 +4,11 @@
  */
 class PodsData {
 
-    // base
+    /**
+     * @var PodsData
+     */
+    static protected $instance = null;
+
     /**
      * @var string
      */
@@ -219,6 +223,26 @@ class PodsData {
      * @var string
      */
     public $total_sql = false;
+
+    /**
+     * Singleton handling for a basic pods_data() request
+     *
+     * @param string $pod Pod name
+     * @param integer $id Pod Item ID
+     * @param bool $strict If true throws an error if a pod is not found.
+     *
+     * @return \PodsData
+     *
+     * @since 2.3.5
+     */
+    public static function init ( $pod = null, $id = 0, $strict = true ) {
+        if ( null !== $pod || 0 != $id )
+            return new PodsData( $pod, $id, $strict );
+        elseif ( !is_object( self::$instance ) )
+            self::$instance = new PodsData();
+
+        return self::$instance;
+    }
 
     /**
      * Data Abstraction Class for Pods
@@ -1603,6 +1627,9 @@ class PodsData {
     public function fetch ( $row = null, $explicit_set = true ) {
         global $wpdb;
 
+        if ( null === $row )
+            $explicit_set = false;
+
         $id = $row;
 
         $tableless_field_types = PodsForm::tableless_field_types();
@@ -1628,10 +1655,8 @@ class PodsData {
                 elseif ( 'settings' == $this->pod_data[ 'type' ] )
                     $current_row_id = $this->pod_data[ 'id' ];
 
-                if ( 0 < $current_row_id ) {
-                    $explicit_set = false;
+                if ( 0 < $current_row_id )
                     $row = $current_row_id;
-                }
             }
         }
 
@@ -1773,8 +1798,10 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
-                else
-                    $this->row = get_object_vars( (object) @current( (array) $this->row ) );
+                else {
+                    $current_row = (array) $this->row;
+                    $this->row = get_object_vars( (object) @current( $current_row ) );
+                }
             }
 
             if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
@@ -1793,10 +1820,11 @@ class PodsData {
                 else
                     $params[ 'table' ] .= $this->pod_data[ 'object' ];
 
-                $row = $this->select( $params );
+                $row = pods_data()->select( $params );
 
                 if ( !empty( $row ) ) {
-                    $row = get_object_vars( (object) @current( (array) $row ) );
+                    $current_row = (array) $row;
+                    $row = get_object_vars( (object) @current( $current_row ) );
 
                     if ( is_array( $this->row ) && !empty( $this->row ) )
                         $this->row = array_merge( $row, $this->row );

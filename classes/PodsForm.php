@@ -40,6 +40,20 @@ class PodsForm {
     static $form_counter = 0;
 
     /**
+     * Singleton handling for a basic pods_form() request
+     *
+     * @return \PodsForm
+     *
+     * @since 2.3.5
+     */
+    public static function init () {
+        if ( !is_object( self::$instance ) )
+            self::$instance = new PodsForm();
+
+        return self::$instance;
+    }
+
+    /**
      * Master handler for all field / form methods
      *
      * @return \PodsForm
@@ -58,20 +72,6 @@ class PodsForm {
      */
     private function __clone () {
         // Hulk smash
-    }
-
-    /**
-     * Setup / get PodsForm instance
-     *
-     * @return PodsForm
-     *
-     * @since 2.3
-     */
-    public static function instance () {
-        if ( empty( self::$instance ) )
-            self::$instance = new PodsForm;
-
-        return self::$instance;
     }
 
     /**

@@ -5,6 +5,11 @@
 class PodsInit {
 
     /**
+     * @var PodsInit
+     */
+    static protected $instance = null;
+
+    /**
      * @var array
      */
     static $no_conflict = array();
@@ -69,6 +74,20 @@ class PodsInit {
     static $upgrade_needed = false;
 
     /**
+     * Singleton handling for a basic pods_init() request
+     *
+     * @return \PodsInit
+     *
+     * @since 2.3.5
+     */
+    public static function init () {
+        if ( !is_object( self::$instance ) )
+            self::$instance = new PodsInit();
+
+        return self::$instance;
+    }
+
+    /**
      * Setup and Initiate Pods
      *
      * @return \PodsInit
@@ -120,7 +139,7 @@ class PodsInit {
 
             add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
 
-            add_action( 'init', array( $this, 'init' ), 11 );
+            add_action( 'init', array( $this, 'core' ), 11 );
 
             add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
@@ -163,13 +182,13 @@ class PodsInit {
      * Load Pods Meta
      */
     public function load_meta () {
-        self::$meta = pods_meta()->init();
+        self::$meta = pods_meta()->core();
     }
 
     /**
      * Set up the Pods core
      */
-    public function init () {
+    public function core () {
         // Session start
         if ( false === headers_sent() && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
             @session_start();

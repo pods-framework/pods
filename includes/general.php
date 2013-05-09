@@ -272,6 +272,23 @@ function pods_tableless () {
 }
 
 /**
+ * Determine if Strict Mode is enabled
+ *
+ * @return bool Whether Strict Mode is enabled
+ *
+ * @since 2.3.5
+ */
+function pods_strict () {
+    if ( defined( 'PODS_STRICT' ) && PODS_STRICT )
+        return true;
+    // @deprecated since 2.3.5
+    elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE )
+        return true;
+
+    return false;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used

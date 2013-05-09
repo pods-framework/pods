@@ -15,17 +15,16 @@
  * @since 2.0
  * @link http://pods.io/docs/pods/
  */
-function pods ( $type = null, $id = null, $strict = false ) {
+function pods ( $type = null, $id = null, $strict = null ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
-    $pod = null;
+    $pod = new Pods( $type, $id );
 
-    if ( empty( $pod ) ) {
-        $pod = new Pods( $type, $id );
+    if ( null === $strict )
+        $strict = pods_strict();
 
-        if ( true === $strict && null !== $type && !$pod->valid() )
-            return false;
-    }
+    if ( true === $strict && null !== $type && !$pod->valid() )
+        return false;
 
     return $pod;
 }

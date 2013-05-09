@@ -2199,10 +2199,12 @@ class PodsAdmin {
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
+        $api = pods_api();
+
         if ( 'upgrade' == $method->name )
             $output = (string) pods_upgrade( $params->version )->ajax( $params );
         else {
-            if ( !method_exists( $this->api, $method->name ) )
+            if ( !method_exists( $api, $method->name ) )
                 pods_error( 'API method does not exist', $this );
             elseif ( 'save_pod' == $method->name ) {
                 if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
@@ -2222,7 +2224,7 @@ class PodsAdmin {
             // Dynamically call the API method
             $params = (array) $params;
 
-            $output = call_user_func( array( $this->api, $method->name ), $params );
+            $output = call_user_func( array( $api, $method->name ), $params );
         }
 
         // Output in json format

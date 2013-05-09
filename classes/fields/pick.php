@@ -1590,6 +1590,8 @@ class PodsField_Pick extends PodsField {
         else
             $items = $this->get_object_data( $object_params );
 
+        $items = apply_filters( 'pods_field_pick_data_ajax_items', $items, $field[ 'name' ], null, $field, $pod, 0 );
+
         if ( !empty( $items ) && isset( $items[ 0 ] ) && !is_array( $items[ 0 ] ) ) {
             $new_items = array();
 

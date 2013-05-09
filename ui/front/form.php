@@ -47,6 +47,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 
         <ul class="pods-form-fields">
             <?php

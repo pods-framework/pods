@@ -10,16 +10,6 @@ class PodsAdmin {
     static protected $instance = null;
 
     /**
-     * @var PodsAPI
-     */
-    private $api;
-
-    /**
-     * @var PodsData
-     */
-    private $data;
-
-    /**
      * Singleton handling for a basic pods_admin() request
      *
      * @return \PodsAdmin

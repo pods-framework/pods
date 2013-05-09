@@ -3847,7 +3847,7 @@ class PodsUI {
                 $restricted = false;
         }
 
-        $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action );
+        $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action, $row );
 
         return $restricted;
     }

@@ -20,6 +20,11 @@ class Pods implements Iterator {
     public $data;
 
     /**
+     * @var PodsData
+     */
+    public $alt_data;
+
+    /**
      * @var array Array of pod item arrays
      */
     public $rows = array();
@@ -1031,8 +1036,12 @@ class Pods implements Iterator {
                                         $sql[ 'where' ] = array_merge( (array) $where, (array) $params->params['where' ] );
                                 }
 
-                                if ( empty( $related_obj ) )
-                                    $item_data = pods_data()->select( $sql );
+                                if ( empty( $related_obj ) ) {
+                                    if ( !is_object( $this->alt_data ) )
+                                        $this->alt_data = pods_data( null, 0, true, true );
+
+                                    $item_data = $this->alt_data->select( $sql );
+                                }
                                 else
                                     $item_data = $related_obj->find( $sql )->data();
 

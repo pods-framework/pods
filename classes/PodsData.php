@@ -7,7 +7,7 @@ class PodsData {
     /**
      * @var PodsData
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * @var string
@@ -240,6 +240,16 @@ class PodsData {
             return new PodsData( $pod, $id, $strict );
         elseif ( !is_object( self::$instance ) )
             self::$instance = new PodsData();
+        else {
+            $vars = get_class_vars( __CLASS__ );
+
+            foreach ( $vars as $var => $default ) {
+                if ( 'api' == $var )
+                    continue;
+
+                self::$instance->{$var} = $default;
+            }
+        }
 
         return self::$instance;
     }

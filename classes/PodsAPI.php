@@ -7,7 +7,7 @@ class PodsAPI {
     /**
      * @var PodsAPI
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * @var bool

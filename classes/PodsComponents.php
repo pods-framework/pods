@@ -9,7 +9,7 @@ class PodsComponents {
     /**
      * @var PodsComponents
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * Root of Components directory

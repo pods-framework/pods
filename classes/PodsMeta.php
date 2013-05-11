@@ -7,7 +7,7 @@ class PodsMeta {
     /**
      * @var PodsMeta
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * @var PodsAPI

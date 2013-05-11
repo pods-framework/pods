@@ -7,7 +7,7 @@ class PodsInit {
     /**
      * @var PodsInit
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * @var array

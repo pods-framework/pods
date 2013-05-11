@@ -7,7 +7,7 @@ class PodsAdmin {
     /**
      * @var PodsAdmin
      */
-    static protected $instance = null;
+    static $instance = null;
 
     /**
      * Singleton handling for a basic pods_admin() request

@@ -236,7 +236,7 @@ class PodsData {
      * @since 2.3.5
      */
     public static function init ( $pod = null, $id = 0, $strict = true ) {
-        if ( null !== $pod || 0 != $id )
+        if ( ( true !== $pod && null !== $pod ) || 0 != $id )
             return new PodsData( $pod, $id, $strict );
         elseif ( !is_object( self::$instance ) )
             self::$instance = new PodsData();

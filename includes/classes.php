@@ -82,10 +82,10 @@ function pods_api ( $pod = null, $format = null ) {
  *
  * @since 2.0
  */
-function pods_data ( $pod = null, $id = null, $strict = true, $unique = false ) {
+function pods_data ( $pod = null, $id = null, $strict = true, $unique = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
 
-    if ( $unique )
+    if ( $unique && false !== $pod )
         return new PodsData( $pod, $id, $strict );
 
     return PodsData::init( $pod, $id, $strict );

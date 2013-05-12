@@ -1122,6 +1122,9 @@ class PodsField_Pick extends PodsField {
         $data = apply_filters( 'pods_field_pick_object_data', null, $object_params );
         $items = array();
 
+        if ( !isset( $options[ 'pick_object' ] ) )
+            $data = pods_var_raw( 'data', $options, array(), null, true );
+
         if ( null === $data ) {
             $data = array();
 

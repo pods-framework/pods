@@ -1018,7 +1018,9 @@ class Pods implements Iterator {
                                     'table' => $table[ 'table' ],
                                     'join' => $join,
                                     'where' => $where,
-                                    'orderby' => $params->orderby
+                                    'orderby' => $params->orderby,
+                                    'pagination' => false,
+                                    'search' => false
                                 );
 
                                 // Output types

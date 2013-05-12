@@ -1020,7 +1020,8 @@ class Pods implements Iterator {
                                     'where' => $where,
                                     'orderby' => $params->orderby,
                                     'pagination' => false,
-                                    'search' => false
+                                    'search' => false,
+                                    'limit' => -1
                                 );
 
                                 // Output types

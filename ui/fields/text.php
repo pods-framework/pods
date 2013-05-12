@@ -1,4 +1,5 @@
 <?php
+$form_field_type = null;
 $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;

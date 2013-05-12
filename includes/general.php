@@ -282,8 +282,9 @@ function pods_tableless () {
 function pods_strict () {
     if ( defined( 'PODS_STRICT' ) && PODS_STRICT )
         return true;
-    // @deprecated since 2.3.5
-    elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE )
+    elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+        return true;
+    elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) // @deprecated since 2.3.5
         return true;
 
     return false;

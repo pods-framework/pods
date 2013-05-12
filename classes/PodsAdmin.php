@@ -1432,23 +1432,29 @@ class PodsAdmin {
                 )
             );
 
-            if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod, 'name' ) ] ) )
-                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod, 'name' );
+            if ( !empty( $pod[ 'fields' ] ) ) {
+                if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod, 'name' ) ] ) )
+                    $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod, 'name' );
 
-            if ( isset( $pod[ 'fields' ][ 'modified' ] ) )
-                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = 'modified';
+                if ( isset( $pod[ 'fields' ][ 'modified' ] ) )
+                    $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'default' ][] = 'modified';
 
-            foreach ( $pod[ 'fields' ] as $field ) {
-                $type = '';
+                foreach ( $pod[ 'fields' ] as $field ) {
+                    $type = '';
 
-                if ( isset( $field_types[ $field[ 'type' ] ] ) )
-                    $type = ' <small>(' . $field_types[ $field[ 'type' ] ][ 'label' ] . ')</small>';
+                    if ( isset( $field_types[ $field[ 'type' ] ] ) )
+                        $type = ' <small>(' . $field_types[ $field[ 'type' ] ][ 'label' ] . ')</small>';
 
-                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
-                $options[ 'admin-ui' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
+                    $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
+                    $options[ 'admin-ui' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
+                }
+
+                $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ 'id' ] = 'ID';
             }
-
-            $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ 'id' ] = 'ID';
+            else {
+                unset( $options[ 'admin-ui' ][ 'ui_fields_manage' ] );
+                unset( $options[ 'admin-ui' ][ 'ui_filters' ] );
+            }
 
             // @todo fill this in
             $options[ 'advanced' ] = array(

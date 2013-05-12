@@ -7034,6 +7034,7 @@ class PodsAPI {
         $data = str_replace( "\r\n", "\n", $data );
         $data = str_replace( "\r", "\n", $data );
 
+        // @todo preg_replace all \n within quotes before exploding, then replace back during line processing
         $lines = explode( "\n", $data );
 
         $field_names = array_shift( $lines );

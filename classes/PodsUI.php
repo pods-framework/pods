@@ -2765,9 +2765,12 @@ class PodsUI {
                                 if ( strlen( $value ) < 1 )
                                     $value = pods_var_raw( 'filter_default', $this->pod->fields[ $filter ] );
 
-                                $options = array();
-                                $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                                $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
+                                $options = array(
+                                    'input_helper' => pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true )
+                                );
+
+                                if ( empty( $options[ 'input_helper' ] ) && isset( $this->pod->fields[ $filter ][ 'options' ] ) && isset( $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ] ) )
+                                    $options[ 'input_helper' ] = $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ];
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>

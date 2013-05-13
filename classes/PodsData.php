@@ -1104,7 +1104,7 @@ class PodsData {
                     if ( !empty( $end_value ) )
                         $end = date_i18n( 'Y-m-d', strtotime( $end_value ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
 
-                    if ( true === $attributes[ 'date_ongoing' ] ) {
+                    if ( isset( $attributes[ 'date_ongoing' ] ) && true === $attributes[ 'date_ongoing' ] ) {
                         $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';
 
                         if ( isset( $this->aliases[ $date_ongoing ] ) )

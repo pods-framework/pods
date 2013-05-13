@@ -305,7 +305,7 @@ if ( 0 < $pod->id() ) {
                             }
                         }
 
-                        if ($more && 1 < count( $fields ) ) {
+                        if ( 0 < count( $fields ) ) {
                     ?>
 
                     <div id="normal-sortables" class="meta-box-sortables ui-sortable">

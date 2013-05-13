@@ -12,7 +12,8 @@
         'dMy' => 'dd/mmm/yy',
         'dMy_dash' => 'dd-mmm-yy',
         'fjy' => 'MM d, yy',
-        'fjsy' => 'MM d, yy'
+        'fjsy' => 'MM d, yy',
+        'c' => 'yy-mm-dd'
     );
 
     $time_format = array(
@@ -52,9 +53,11 @@
 
     $method = 'datetimepicker';
 
+    $format_value = pods_var( $form_field_type . '_format', $options, 'mdy', null, true );
+
     $args = array(
         'timeFormat' => $time_format[ pods_var( $form_field_type . '_time_format', $options, 'h_mma', null, true ) ],
-        'dateFormat' => $date_format[ pods_var( $form_field_type . '_format', $options, 'mdy', null, true ) ],
+        'dateFormat' => $date_format[ $format_value ],
         'changeMonth' => true,
         'changeYear' => true
     );
@@ -64,7 +67,21 @@
 
     $html5_format = 'Y-m-d\TH:i:s';
 
-    if ( 24 == pods_var( $form_field_type . '_time_type', $options, 12 ) ) {
+    if ( 'c' == $format_value ) {
+        $args[ 'ampm' ] = false;
+        $args[ 'separator' ] = 'T';
+        $args[ 'timeFormat' ] = 'HH:mm:ssz';
+        //$args[ 'showTimezone' ] = true;
+
+        $timezone = (int) get_option( 'gmt_offset' );
+        $timezone = $timezone * 60;
+
+        if ( 0 <= $timezone )
+            $timezone = '+' . (string) $timezone;
+
+        $args[ 'timezone' ] = (string) $timezone;
+    }
+    elseif ( 24 == pods_var( $form_field_type . '_time_type', $options, 12 ) ) {
         $args[ 'ampm' ] = false;
         $args[ 'timeFormat' ] = $time_format_24[ pods_var( $form_field_type . '_time_format_24', $options, 'hh_mm', null, true ) ];
     }

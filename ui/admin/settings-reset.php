@@ -1,9 +1,9 @@
 <?php
     global $pods_init;
 
-    $monday_mode = true;
+    $monday_mode = false;
 
-    if ( 1 == date_i18n( 'N' ) && 15 < (int) date_i18n( 'G' ) )
+    if ( 1 == date_i18n( 'N' ) && (int) date_i18n( 'G' ) < 15 )
         $monday_mode = true;
 
     if ( isset( $_POST[ 'cleanup_1x' ] ) ) {

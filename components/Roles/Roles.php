@@ -14,6 +14,9 @@
  * @subpackage Roles
  */
 
+if ( class_exists( 'Pods_Roles' ) )
+    return;
+
 class Pods_Roles extends PodsComponent {
 
     /**

@@ -14,6 +14,9 @@
  * @subpackage Advanced Content Types
  */
 
+if ( class_exists( 'Pods_Table_Storage' ) )
+    return;
+
 class Pods_Table_Storage extends PodsComponent {
 
     /**

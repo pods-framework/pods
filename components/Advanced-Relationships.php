@@ -14,6 +14,9 @@
  * @subpackage Advanced Relationships
  */
 
+if ( class_exists( 'Pods_Advanced_Relationships' ) )
+    return;
+
 class Pods_Advanced_Relationships extends PodsComponent {
 
     /**

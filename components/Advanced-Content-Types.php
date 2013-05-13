@@ -14,6 +14,9 @@
  * @subpackage Advanced Content Types
  */
 
+if ( class_exists( 'Pods_Advanced_Content_Types' ) )
+    return;
+
 class Pods_Advanced_Content_Types extends PodsComponent {
 
     /**

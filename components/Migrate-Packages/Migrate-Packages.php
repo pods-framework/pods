@@ -14,6 +14,9 @@
  * @subpackage Migrate-Packages
  */
 
+if ( class_exists( 'Pods_Migrate_Packages' ) )
+    return;
+
 class Pods_Migrate_Packages extends PodsComponent {
 
     /**

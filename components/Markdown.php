@@ -14,6 +14,9 @@
  * @subpackage Markdown
  */
 
+if ( function_exists( 'pods_markdown_output' ) )
+    return;
+
 function pods_markdown_add_option ( $options, $type ) {
     $options[ 'output_options' ][ 'group' ][ $type . '_allow_markdown' ] = array(
         'label' => __( 'Allow Markdown Syntax?', 'pods' ),

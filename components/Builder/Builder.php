@@ -14,6 +14,9 @@
  * @subpackage Builder
  */
 
+if ( function_exists( 'pods_builder_modules_init' ) )
+    return;
+
 function pods_builder_modules_init () {
     require_once( PODS_DIR . 'components/Builder/modules/field/PodsBuilderModuleField.php' );
     require_once( PODS_DIR . 'components/Builder/modules/form/PodsBuilderModuleForm.php' );

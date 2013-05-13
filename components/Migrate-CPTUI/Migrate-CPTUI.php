@@ -10,6 +10,8 @@
  *
  * Version: 1.0
  *
+ * Plugin: pods-migrate-custom-post-type-ui/pods-migrate-custom-post-type-ui.php
+ *
  * @package Pods\Components
  * @subpackage Migrate-Cptui
  */

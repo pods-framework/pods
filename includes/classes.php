@@ -132,6 +132,7 @@ function pods_init () {
  */
 function pods_components () {
     require_once( PODS_DIR . 'classes/PodsComponents.php' );
+    require_once( PODS_DIR . 'classes/PodsComponent.php' );
 
     return PodsComponents::init();
 }

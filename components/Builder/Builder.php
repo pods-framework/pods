@@ -10,6 +10,8 @@
  *
  * Theme Dependency: Builder|builder|http://ithemes.com/
  *
+ * Plugin: pods-builder/pods-builder.php
+ *
  * @package Pods\Components
  * @subpackage Builder
  */

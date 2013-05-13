@@ -10,6 +10,8 @@
  *
  * Category: Migration
  *
+ * Plugin: pods-migrate-packages/pods-migrate-packages.php
+ *
  * @package Pods\Components
  * @subpackage Migrate-Packages
  */

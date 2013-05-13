@@ -11,6 +11,8 @@
  * Menu Page: edit.php?post_type=_pods_helper
  * Menu Add Page: post-new.php?post_type=_pods_helper
  *
+ * External: pods-helpers/pods-helpers.php
+ *
  * @package Pods\Components
  * @subpackage Helpers
  */

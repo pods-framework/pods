@@ -1390,15 +1390,26 @@ function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority 
  * @since 2.0
  */
 function pods_is_plugin_active ( $plugin ) {
+    $active = false;
+
     if ( function_exists( 'is_plugin_active' ) )
-        return is_plugin_active( $plugin );
+        $active = is_plugin_active( $plugin );
 
-    $active_plugins = (array) get_option( 'active_plugins', array() );
+    if ( !$active ) {
+        $active_plugins = (array) get_option( 'active_plugins', array() );
 
-    if ( in_array( $plugin, $active_plugins ) )
-        return true;
+        if ( in_array( $plugin, $active_plugins ) )
+            $active = true;
 
-    return false;
+        if ( !$active && is_multisite() ) {
+            $plugins = get_site_option( 'active_sitewide_plugins' );
+
+            if ( isset( $plugins[ $plugin ] ) )
+                $active = true;
+        }
+    }
+
+    return $active;
 }
 
 /**

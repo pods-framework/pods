@@ -55,16 +55,47 @@ class PodsView {
 
         $view_key = realpath( $view_key );
 
-        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', PODS_DIR . 'components/', ABSPATH, WP_CONTENT_DIR, '.php', '/' ), array( 'ui-', 'ui-', 'custom-', 'custom-', '', '_' ), $view_key, 1 ) );
+        $pods_ui_dir = realpath( PODS_DIR . 'ui/' );
+        $pods_components_dir = realpath( PODS_DIR . 'components/' );
+        $content_dir = realpath( WP_CONTENT_DIR );
+        $plugins_dir = realpath( WP_PLUGIN_DIR );
+        $abspath_dir = realpath( ABSPATH );
+
+        $cache_key = sanitize_title(
+            pods_str_replace(
+                array(
+                    $pods_ui_dir,
+                    $pods_components_dir,
+                    $content_dir,
+                    $plugins_dir,
+                    $abspath_dir,
+                    '.php',
+                    '/'
+                ),
+                array(
+                    'ui-',
+                    'ui-',
+                    'custom-',
+                    'custom-',
+                    'custom-',
+                    '',
+                    '_'
+                ),
+                $view_key,
+                1
+            )
+        );
 
         $output = false;
 
-        if ( false !== $expires
-             && false === strpos( $view_key, realpath( PODS_DIR . 'ui/' ) )
-             && false === strpos( $view_key, realpath( PODS_DIR . 'components/' ) )
-             && false === strpos( $view_key, realpath( WP_CONTENT_DIR ) )
-             && false === strpos( $view_key, realpath( WP_PLUGIN_DIR ) )
-             && false === strpos( $view_key, realpath( ABSPATH ) ) ) {
+        if (
+            false !== $expires
+            && false === strpos( $view_key, $pods_ui_dir )
+            && false === strpos( $view_key, $pods_components_dir )
+            && false === strpos( $view_key, $content_dir )
+            && false === strpos( $view_key, $plugins_dir )
+            && false === strpos( $view_key, $abspath_dir )
+        ) {
             $output = self::get( 'pods-view-' . $cache_key, $cache_mode, 'pods_view' );
         }
 

@@ -1,6 +1,11 @@
 <?php
     global $pods_init;
 
+    $monday_mode = true;
+
+    if ( 1 == date_i18n( 'N' ) && 15 < (int) date_i18n( 'G' ) )
+        $monday_mode = true;
+
     if ( isset( $_POST[ 'cleanup_1x' ] ) ) {
         pods_upgrade( '2.0.0' )->cleanup();
 
@@ -23,6 +28,16 @@
         pods_message( 'Pods 2.x settings and data have been reset.' );
     elseif ( 1 == pods_var( 'pods_cleanup_1x' ) )
         pods_message( 'Pods 1.x data has been deleted.' );
+    elseif ( 0 !== pods_var( 'reset_weekend', 'post', 0, null, true ) ) {
+        if ( $monday_mode ) {
+            $html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+            pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
+        }
+        else {
+            $html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/xhrBDcQq2DM?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+            pods_error( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html );
+        }
+    }
 
     $old_version = get_option( 'pods_version' );
 
@@ -34,7 +49,7 @@
 
     <p class="submit">
         <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.", 'pods' ); ?>
-        <input type="submit" class="button button-primary" name="cleanup_1x" value="<?php esc_attr_e( 'Delete Pods 1.x settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="cleanup_1x" value=" <?php esc_attr_e( 'Delete Pods 1.x settings and data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
     <hr />
@@ -46,7 +61,7 @@
 
     <p class="submit">
         <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install.", 'pods' ); ?>
-        <input type="submit" class="button button-primary" name="reset" value="<?php esc_attr_e( 'Reset Pods 2.x settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="reset" value=" <?php esc_attr_e( 'Reset Pods 2.x settings and data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
     <hr />
@@ -58,7 +73,7 @@
 
     <p class="submit">
         <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back.", 'pods' ); ?>
-        <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php
     }
@@ -71,7 +86,7 @@
 
     <p class="submit">
         <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install.", 'pods' ); ?>
-        <input type="submit" class="button button-primary" name="reset" value="<?php esc_attr_e( 'Reset Pods settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="reset" value="<?php esc_attr_e( 'Reset Pods settings and data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
     <hr />
@@ -83,7 +98,23 @@
 
     <p class="submit">
         <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.", 'pods' ); ?>
-        <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+    </p>
+<?php
+    }
+
+    if ( $monday_mode ) {
+?>
+    <hr />
+
+    <h3>Reset Weekend</h3>
+
+    <p>This feature has been exclusively built for Pods to help developers suffering from "Monday", and allows them to reset the weekend.</p>
+    <p>By resetting the weekend, you will be sent back to Friday night and the weekend you've just spent will be erased. You will retain all of your memories of the weekend, and be able to relive it in any way you wish.</p>
+
+    <p class="submit">
+        <?php $confirm = "Are you sure you want to Reset your Weekend?\n\nThere is no going back, you cannot reclaim anything you've gained throughout your weekend.\n\nYou are about to be groundhoggin' it"; ?>
+        <input type="submit" class="button button-primary" name="reset_weekend" value=" reset_weekend( '<?php echo date_i18n( 'Y-m-d', strtotime( '-3 days' ) ); ?> 19:00:00' ); " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php
     }

@@ -229,6 +229,8 @@ class PodsView {
 
         if ( 'transient' == $cache_mode ) {
             if ( true === $key ) {
+                $group_key = like_escape( $group_key );
+
                 $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_{$group_key}%'" );
 
                 if ( $object_cache )
@@ -239,6 +241,8 @@ class PodsView {
         }
         elseif ( 'site-transient' == $cache_mode ) {
             if ( true === $key ) {
+                $group_key = like_escape( $group_key );
+
                 $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_{$group_key}%'" );
 
                 if ( $object_cache )

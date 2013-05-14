@@ -6836,8 +6836,11 @@ class PodsAPI {
         if ( null === $format && null !== $this->format )
             $format = $this->format;
 
-        if ( 'csv' == $format )
-            $import_data = $this->csv_to_php( $import_data );
+        if ( 'csv' == $format && !is_array( $import_data ) ) {
+            $data = pods_migrate( 'sv', ',', $import_data )->parse();
+
+            $import_data = $data[ 'items' ];
+        }
 
         pods_query( "SET NAMES utf8" );
         pods_query( "SET CHARACTER SET utf8" );
@@ -7027,48 +7030,15 @@ class PodsAPI {
      *
      * @return array
      * @since 1.7.1
+     *
+     * @deprecated 2.3.5
      */
     public function csv_to_php ( $data, $delimiter = ',' ) {
-        $expr = "/{$delimiter}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/";
+        pods_deprecated( "PodsAPI->csv_to_php", '2.3.5' );
 
-        $data = str_replace( "\r\n", "\n", $data );
-        $data = str_replace( "\r", "\n", $data );
+        $data = pods_migrate( 'sv', $delimiter, $data )->parse();
 
-        // @todo preg_replace all \n within quotes before exploding, then replace back during line processing
-        $lines = explode( "\n", $data );
-
-        $field_names = array_shift( $lines );
-
-        if ( function_exists( 'str_getcsv' ) )
-            $field_names = str_getcsv( $field_names, $delimiter );
-        else {
-            $field_names = explode( $delimiter, $field_names );
-            $field_names = preg_replace( "/^\"(.*)\"$/s", "$1", $field_names );
-        }
-
-        $out = array();
-
-        foreach ( $lines as $line ) {
-            // Skip the empty line
-            if ( strlen ( $line ) < 1 )
-                continue;
-
-            $row = array();
-
-            if ( function_exists( 'str_getcsv' ) )
-                $fields = str_getcsv( $line, $delimiter );
-            else {
-                $fields = preg_split( $expr, trim( $line ) );
-                $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );
-            }
-
-            foreach ( $field_names as $key => $field ) {
-                $row[ $field ] = $fields[ $key ];
-            }
-
-            $out[] = $row;
-        }
-        return $out;
+        return $data[ 'items' ];
     }
 
     /**

@@ -192,19 +192,21 @@ class PodsMigrate {
         if ( !empty( $delimiter ) )
             $this->delimiter = $delimiter;
 
-
-        $rows = @str_getcsv( $this->input, "\n" );
+        $rows = $this->str_getcsv( $this->input, "\n" );
 
         if ( empty( $rows ) || 2 > count( $rows ) )
             return false;
 
-        $data = array( 'columns' => array(), 'items' => array() );
+        $data = array(
+            'columns' => array(),
+            'items' => array()
+        );
 
         foreach ( $rows as $key => $row ) {
             if ( 0 == $key )
-                $data[ 'columns' ] = @str_getcsv( $row, $this->delimiter );
+                $data[ 'columns' ] = $this->str_getcsv( $row, $this->delimiter );
             else {
-                $row = @str_getcsv( $row, $this->delimiter );
+                $row = $this->str_getcsv( $row, $this->delimiter );
 
                 $data[ 'items' ][ $key ] = array();
 
@@ -217,6 +219,31 @@ class PodsMigrate {
         $this->parsed = $data;
 
         return $this->parsed;
+    }
+
+    /**
+     * Handle str_getcsv for cases where it's not set
+     *
+     * @param $line
+     * @param string $delimiter
+     * @param string $enclosure
+     * @param string $escape
+     *
+     * @return array|mixed
+     */
+    public function str_getcsv ( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
+        if ( function_exists( 'str_getcsv' ) )
+            return str_getcsv( $line, $delimiter, $enclosure, $escape );
+
+        $delimiter = preg_quote( $delimiter, '/' );
+        $enclosure = preg_quote( $enclosure, '/' );
+
+        $delimiter = "/{$delimiter}(?=(?:[^{$enclosure}]*{$enclosure}[^{$enclosure}]*{$enclosure})*(?![^{$enclosure}]*{$enclosure}))/";
+
+        $data = preg_split( $delimiter, trim( $line ) );
+        $data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", "$1", $data );
+
+        return $data;
     }
 
     /**

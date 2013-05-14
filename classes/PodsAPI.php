@@ -3122,10 +3122,15 @@ class PodsAPI {
 
                     // Run save function for field type (where needed)
                     PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                }
 
-                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
-                        unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'related_field' ][ 'id' ] ] );
-                        unset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] );
+                // Unset data no longer needed
+                if ( 'pick' == $type ) {
+                    foreach ( $data as $field => $values ) {
+                        if ( isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
+                            unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'related_field' ][ 'id' ] ] );
+                            unset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] );
+                        }
                     }
                 }
             }

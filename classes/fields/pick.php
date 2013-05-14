@@ -666,7 +666,10 @@ class PodsField_Pick extends PodsField {
         $related_val = pods_var( 'pick_val', $options, $related_object, null, true ); // pod name, post type name, taxonomy name, etc..
         $related_sister_id = (int) pods_var( 'sister_id', $options, 0 );
 
-        self::$related_data[ $options[ 'id' ] ] = array();
+        $options[ 'id' ] = (int) $options[ 'id' ];
+
+        if ( !isset( self::$related_data[ $options[ 'id' ] ] ) || empty( self::$related_data[ $options[ 'id' ] ] ) )
+            self::$related_data[ $options[ 'id' ] ] = array();
 
         if ( !empty( $related_sister_id ) && !in_array( $related_object, $simple_tableless_objects ) ) {
             $related_pod = self::$api->load_pod( array( 'name' => $related_val, 'table_info' => false ), false );
@@ -736,11 +739,15 @@ class PodsField_Pick extends PodsField {
             if ( 'single' == pods_var_raw( 'pick_format_type', $options[ 'options' ] ) )
                 $pick_limit = 1;
 
-            self::$related_data[ $related_field[ 'id' ] ] = array(
-                'related_pod' => $pod,
-                'related_field' => $options,
-                'related_pick_limit' => $pick_limit
-            );
+            $related_field[ 'id' ] = (int) $related_field[ 'id' ];
+
+            if ( !isset( self::$related_data[ $related_field[ 'id' ] ] ) || empty( self::$related_data[ $related_field[ 'id' ] ] ) ) {
+                self::$related_data[ $related_field[ 'id' ] ] = array(
+                    'related_pod' => $pod,
+                    'related_field' => $options,
+                    'related_pick_limit' => $pick_limit
+                );
+            }
         }
 
         return true;
@@ -763,6 +770,8 @@ class PodsField_Pick extends PodsField {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 
+        $options[ 'id' ] = (int) $options[ 'id' ];
+
         if ( !isset( self::$related_data[ $options[ 'id' ] ] ) )
             return;
 
@@ -781,11 +790,15 @@ class PodsField_Pick extends PodsField {
             if ( !$no_conflict )
                 pods_no_conflict_on( $related_pod[ 'type' ] );
 
+            $value = array_filter( $value );
+
             foreach ( $value as $related_id ) {
                 if ( isset( self::$related_data[ $options[ 'id' ] ][ 'related_ids_' . $related_id ] ) && !empty( self::$related_data[ $options[ 'id' ] ][ 'related_ids_' . $related_id ] ) )
                     $bidirectional_ids = self::$related_data[ $options[ 'id' ] ][ 'related_ids_' . $related_id ];
                 else
                     $bidirectional_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
+
+                $bidirectional_ids = array_filter( $bidirectional_ids );
 
                 if ( empty( $bidirectional_ids ) )
                     $bidirectional_ids = array();

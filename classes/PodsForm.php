@@ -1191,9 +1191,6 @@ class PodsForm {
             'slug'
         );
 
-        if ( pods_developer() && 1 == 0 ) // Disable for now
-            $field_types[] = 'loop';
-
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );
 
         $field_types = array_filter( array_unique( $field_types ) );

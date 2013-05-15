@@ -60,11 +60,11 @@ if ( version_compare( $pods_version, '2.3.4', '<' ) ) {
 }
 
 // Update to 2.3.5
-if ( version_compare( $pods_version, '2.3.5-rc-2', '<' ) ) {
+if ( version_compare( $pods_version, '2.3.5', '<' ) ) {
     global $wpdb;
 
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy' WHERE `meta_key` = IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd'" );
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy_dash' WHERE `meta_key` = IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd_dash'" );
 
-    update_option( 'pods_framework_version', '2.3.5-rc-2' );
+    update_option( 'pods_framework_version', '2.3.5' );
 }

@@ -80,7 +80,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
                 pods_image_resize( $id, $size );
         }
 
-        $html = wp_get_attachment_image( $id, $size, false, $attributes );
+        $html = wp_get_attachment_image( $id, $size, true, $attributes );
     }
 
     if ( empty( $html ) && 0 < $default ) {
@@ -92,7 +92,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
                 pods_image_resize( $default, $size );
         }
 
-        $html = wp_get_attachment_image( $default, $size, false, $attributes );
+        $html = wp_get_attachment_image( $default, $size, true, $attributes );
     }
 
     return $html;

@@ -260,6 +260,8 @@ function pods_image_resize ( $attachment_id, $size ) {
     if ( empty( $size_data ) )
         return false;
 
+    require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
     $attachment = get_post( $attachment_id );
     $file = get_attached_file( $attachment_id );
 

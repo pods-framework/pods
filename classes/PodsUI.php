@@ -1441,7 +1441,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 $this->get_row();
 
-            if ( empty( $this->row ) )
+            if ( empty( $this->row ) && ( !is_object( $this->pod ) || 'settings' != $this->pod->pod_data[ 'type' ] ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
             if ( $this->restricted( $this->action, $this->row ) )
@@ -1477,14 +1477,16 @@ class PodsUI {
         if ( isset( $this->fields[ $this->action ] ) )
             $fields = $this->fields[ $this->action ];
 
-        $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+        if ( is_object( $this->pod ) ) {
+            $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
 
-        if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) )
-            $object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
+            if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) )
+                $object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
 
-        if ( empty( $fields ) ) {
-            // Add core object fields if $fields is empty
-            $fields = array_merge( $object_fields, $this->pod->fields );
+            if ( empty( $fields ) ) {
+                // Add core object fields if $fields is empty
+                $fields = array_merge( $object_fields, $this->pod->fields );
+            }
         }
 
         $form_fields = $fields; // Temporary

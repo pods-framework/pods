@@ -1670,7 +1670,7 @@ class PodsData {
             }
         }
 
-        if ( null !== $row ) {
+        if ( null !== $row || 'settings' == $this->pod_data[ 'type' ] ) {
             if ( $explicit_set )
                 $this->row_number = -1;
 

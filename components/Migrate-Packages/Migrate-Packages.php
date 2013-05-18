@@ -564,8 +564,11 @@ class Pods_Migrate_Packages extends PodsComponent {
             $export[ 'pods' ] = $api->load_pods( $api_params );
 
             $options_ignore = array(
+                'pod_id',
+                'old_name',
                 'object_type',
                 'object_name',
+                'object_hierarchical',
                 'table',
                 'meta_table',
                 'pod_table',
@@ -595,17 +598,56 @@ class Pods_Migrate_Packages extends PodsComponent {
                 'excludes-on'
             );
 
-            foreach ( $export[ 'pods' ] as $k => $pod ) {
-                foreach ( $options_ignore as $ignore ) {
-                    if ( isset( $pod[ $ignore ] ) )
-                        unset( $export[ 'pods' ][ $k ][ $ignore ] );
+            $field_types = PodsForm::field_types();
+
+            $field_type_options = array();
+
+            foreach ( $field_types as $type => $field_type_data ) {
+                $field_type_options[ $type ] = PodsForm::ui_options( $type );
+            }
+
+            foreach ( $export[ 'pods' ] as &$pod ) {
+                if ( isset( $pod[ 'options' ] ) ) {
+                    $pod = array_merge( $pod, $pod[ 'options' ] );
+
+                    unset( $pod[ 'options' ] );
+                }
+
+                foreach ( $pod as $option => $option_value ) {
+                    if ( in_array( $option, $options_ignore ) || null === $option_value )
+                        unset( $pod[ $option ] );
                 }
 
                 if ( !empty( $pod[ 'fields' ] ) ) {
-                    foreach ( $pod[ 'fields' ] as $fk => $field ) {
-                        foreach ( $options_ignore as $ignore ) {
-                            if ( isset( $field[ $ignore ] ) )
-                                unset( $export[ 'pods' ][ $k ][ 'fields' ][ $fk ][ $ignore ] );
+                    foreach ( $pod[ 'fields' ] as &$field ) {
+                        if ( isset( $field[ 'options' ] ) ) {
+                            $field = array_merge( $field, $field[ 'options' ] );
+
+                            unset( $field[ 'options' ] );
+                        }
+
+                        foreach ( $field as $option => $option_value ) {
+                            if ( in_array( $option, $options_ignore ) || null === $option_value )
+                                unset( $field[ $option ] );
+                        }
+
+                        foreach ( $field_type_options as $type => $options ) {
+                            if ( $type == pods_var( 'type', $field ) )
+                                continue;
+
+                            foreach ( $options as $option_data ) {
+                                if ( isset( $option_data[ 'group' ] ) && is_array( $option_data[ 'group' ] ) && !empty( $option_data[ 'group' ] ) ) {
+                                    if ( isset( $field[ $option_data[ 'name' ] ] ) )
+                                        unset( $field[ $option_data[ 'name' ] ] );
+
+                                    foreach ( $option_data[ 'group' ] as $group_option_data ) {
+                                        if ( isset( $field[ $group_option_data[ 'name' ] ] ) )
+                                            unset( $field[ $group_option_data[ 'name' ] ] );
+                                    }
+                                }
+                                elseif ( isset( $field[ $option_data[ 'name' ] ] ) )
+                                    unset( $field[ $option_data[ 'name' ] ] );
+                            }
                         }
                     }
                 }

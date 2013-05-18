@@ -102,8 +102,12 @@
                         if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
                             var val = $el.val();
 
-                            if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
-                                val = 0;
+                            if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
+                                if ( 1 == val )
+                                    val = 0;
+                                else
+                                    return true; // This input isn't a boolean, continue the loop
+                            }
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 return true; // This input is not checked, continue the loop
 
@@ -1394,22 +1398,31 @@
                                 return;
 
                             if ( $el.is( 'input[type=checkbox]' ) && $el.is( '.pods-form-ui-field-type-pick' ) ) {
-                                field_found = jQuery.inArray( val, field_data[ field_name ] );
+                                if ( 'object' == typeof field_data[ field_name ] || 'array' == typeof field_data[ field_name ] ) {
+                                    field_found = jQuery.inArray( val, field_data[ field_name ] );
 
-                                if ( !$el.is( ':checked' ) ) {
-                                    if ( 'object' == typeof field_data[ field_name ] || 'array' == typeof field_data[ field_name ] ) {
-                                        if ( -1 < field_found )
+                                    if ( -1 < field_found ) {
+                                        if ( !$el.is( ':checked' ) )
                                             field_data[ field_name ].splice( field_found, 1 );
-
                                     }
-                                    else
-                                        field_data[ field_name ] = [];
-
-                                    return;
+                                    else if ( $el.is( ':checked' ) )
+                                        field_data[ field_name ].push( val );
                                 }
+                                else {
+                                    field_data[ field_name ] = [];
+
+                                    if ( $el.is( ':checked' ) )
+                                        field_data[ field_name ].push( val );
+                                }
+
+                                return;
                             }
-                            else if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
-                                val = 0;
+                            else if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
+                                if ( 1 == val )
+                                    val = 0;
+                                else
+                                    val = '';
+                            }
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 val = '';
 
@@ -1427,7 +1440,8 @@
                                     if ( 'object' != typeof field_data[ field_name ] && 'array' != typeof field_data[ field_name ] )
                                         field_data[ field_name ] = [];
 
-                                    field_data[ field_name ].push( val );
+                                    if ( '' != val )
+                                        field_data[ field_name ].push( val );
                                 }
                             }
                             else if ( 2 == field_array.length )

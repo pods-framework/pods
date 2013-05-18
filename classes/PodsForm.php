@@ -582,6 +582,9 @@ class PodsForm {
 
         foreach ( $fields as $f => $field ) {
             $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
+
+            if ( !$single && strlen( $fields[ $f ][ 'name' ] ) < 1 )
+                $fields[ $f ][ 'name' ] = $f;
         }
 
         if ( $single )
@@ -590,12 +593,9 @@ class PodsForm {
         return $fields;
     }
 
-    /*
+    /**
      * Get options for a field and setup defaults
      *
-     * @since 2.0
-     */
-    /**
      * @static
      *
      * @param null $field
@@ -603,6 +603,8 @@ class PodsForm {
      * @param null $type
      *
      * @return array|null
+     *
+     * @since 2.0
      */
     public static function field_setup ( $field = null, $core_defaults = null, $type = null ) {
         $options = array();
@@ -641,6 +643,9 @@ class PodsForm {
         if ( isset( $field[ 'group' ] ) && is_array( $field[ 'group' ] ) ) {
             foreach ( $field[ 'group' ] as $g => $group_option ) {
                 $field[ 'group' ][ $g ] = array_merge( $core_defaults, $group_option );
+
+                if ( strlen( $field[ 'group' ][ $g ][ 'name' ] ) < 1 )
+                    $field[ 'group' ][ $g ][ 'name' ] = $g;
             }
         }
 

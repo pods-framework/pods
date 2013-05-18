@@ -171,7 +171,10 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
-        pods_no_conflict_on( 'post' );
+        $conflicted = pods_no_conflict_check( 'post' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'post' );
 
         if ( !is_array( $post_data ) || empty( $post_data ) )
             $post_data = array( 'post_title' => '' );
@@ -190,7 +193,8 @@ class PodsAPI {
             wp_update_post( $post_data );
 
         if ( is_wp_error( $post_data[ 'ID' ] ) ) {
-            pods_no_conflict_off( 'post' );
+            if ( !$conflicted )
+                pods_no_conflict_off( 'post' );
 
             /**
              * @var $post_error WP_Error
@@ -202,7 +206,8 @@ class PodsAPI {
 
         $this->save_post_meta( $post_data[ 'ID' ], $post_meta, $strict );
 
-        pods_no_conflict_off( 'post' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'post' );
 
         return $post_data[ 'ID' ];
     }
@@ -219,7 +224,10 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_post_meta ( $id, $post_meta = null, $strict = false ) {
-        pods_no_conflict_on( 'post' );
+        $conflicted = pods_no_conflict_check( 'post' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'post' );
 
         if ( !is_array( $post_meta ) )
             $post_meta = array();
@@ -234,7 +242,7 @@ class PodsAPI {
         }
 
         foreach ( $post_meta as $meta_key => $meta_value ) {
-            if ( null === $meta_value ) {
+            if ( null === $meta_value || ( $strict && '' === $post_meta[ $meta_key ] ) ) {
                 $old_meta_value = '';
 
                 if ( isset( $meta[ $meta_key ] ) )
@@ -252,7 +260,9 @@ class PodsAPI {
                     delete_post_meta( $id, $meta_key, $meta_value );
             }
         }
-        pods_no_conflict_off( 'post' );
+
+        if ( !$conflicted )
+            pods_no_conflict_off( 'post' );
 
         return $id;
     }
@@ -273,7 +283,10 @@ class PodsAPI {
         if ( !is_array( $user_data ) || empty( $user_data ) )
             return pods_error( __( 'User data is required but is either invalid or empty', 'pods' ), $this );
 
-        pods_no_conflict_on( 'user' );
+        $conflicted = pods_no_conflict_check( 'user' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'user' );
 
         if ( !is_array( $user_meta ) )
             $user_meta = array();
@@ -289,7 +302,8 @@ class PodsAPI {
             wp_update_user( $user_data );
 
         if ( is_wp_error( $user_data[ 'ID' ] ) ) {
-            pods_no_conflict_off( 'user' );
+            if ( !$conflicted )
+                pods_no_conflict_off( 'user' );
 
             /**
              * @var $user_error WP_Error
@@ -301,7 +315,8 @@ class PodsAPI {
 
         $this->save_user_meta( $user_data[ 'ID' ], $user_meta, $strict );
 
-        pods_no_conflict_off( 'user' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'user' );
 
         return $user_data[ 'ID' ];
     }
@@ -319,7 +334,10 @@ class PodsAPI {
      *
      */
     public function save_user_meta ( $id, $user_meta = null, $strict = false ) {
-        pods_no_conflict_on( 'user' );
+        $conflicted = pods_no_conflict_check( 'user' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'user' );
 
         if ( !is_array( $user_meta ) )
             $user_meta = array();
@@ -348,7 +366,8 @@ class PodsAPI {
             }
         }
 
-        pods_no_conflict_off( 'user' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'user' );
 
         return $id;
     }
@@ -369,7 +388,10 @@ class PodsAPI {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
             return pods_error( __( 'Comment data is required but is either invalid or empty', 'pods' ), $this );
 
-        pods_no_conflict_on( 'comment' );
+        $conflicted = pods_no_conflict_check( 'comment' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'comment' );
 
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
@@ -385,7 +407,8 @@ class PodsAPI {
             wp_update_comment( $comment_data );
 
         if ( is_wp_error( $comment_data[ 'comment_ID' ] ) ) {
-            pods_no_conflict_off( 'comment' );
+            if ( !$conflicted )
+                pods_no_conflict_off( 'comment' );
 
             /**
              * @var $comment_error WP_Error
@@ -397,7 +420,8 @@ class PodsAPI {
 
         $this->save_comment_meta( $comment_data[ 'comment_ID' ], $comment_meta, $strict );
 
-        pods_no_conflict_off( 'comment' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'comment' );
 
         return $comment_data[ 'comment_ID' ];
     }
@@ -414,7 +438,10 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_comment_meta ( $id, $comment_meta = null, $strict = false ) {
-        pods_no_conflict_on( 'comment' );
+        $conflicted = pods_no_conflict_check( 'comment' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'comment' );
 
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
@@ -443,7 +470,8 @@ class PodsAPI {
             }
         }
 
-        pods_no_conflict_off( 'comment' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'comment' );
 
         return $id;
     }
@@ -462,7 +490,10 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
-        pods_no_conflict_on( 'taxonomy' );
+        $conflicted = pods_no_conflict_check( 'taxonomy' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'taxonomy' );
 
         if ( !is_array( $term_data ) )
             $term_data = array();
@@ -482,7 +513,8 @@ class PodsAPI {
                 $term_data[ 'term' ] = $term;
 
             if ( empty( $term_data ) ) {
-                pods_no_conflict_off( 'taxonomy' );
+                if ( !$conflicted )
+                    pods_no_conflict_off( 'taxonomy' );
 
                 return pods_error( __( 'Taxonomy term data is required but is either invalid or empty', 'pods' ), $this );
             }
@@ -491,14 +523,16 @@ class PodsAPI {
         }
 
         if ( is_wp_error( $term_ID ) ) {
-            pods_no_conflict_off( 'taxonomy' );
+            if ( !$conflicted )
+                pods_no_conflict_off( 'taxonomy' );
 
             return pods_error( $term_ID->get_error_message(), $this );
         }
         elseif ( is_array( $term_ID ) )
             $term_ID = $term_ID[ 'term_id' ];
 
-        pods_no_conflict_off( 'taxonomy' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'taxonomy' );
 
         return $term_ID;
     }
@@ -518,7 +552,10 @@ class PodsAPI {
         if ( !is_array( $option_data ) || empty( $option_data ) )
             return pods_error( __( 'Setting data is required but is either invalid or empty', 'pods' ), $this );
 
-        pods_no_conflict_on( 'settings' );
+        $conflicted = pods_no_conflict_check( 'settings' );
+
+        if ( !$conflicted )
+            pods_no_conflict_on( 'settings' );
 
         if ( $sanitized )
             $option_data = pods_unsanitize( $option_data );
@@ -530,7 +567,8 @@ class PodsAPI {
             update_option( $option, $value );
         }
 
-        pods_no_conflict_off( 'settings' );
+        if ( !$conflicted )
+            pods_no_conflict_off( 'settings' );
 
         return true;
     }

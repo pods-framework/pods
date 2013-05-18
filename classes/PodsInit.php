@@ -122,11 +122,13 @@ class PodsInit {
                 /*if ( '2.1.0' == $new_version && ( is_developer() ) )
                     continue;*/
 
-							if ( version_compare( self::$version_last, $old_version, '>=' )
-								&& version_compare( self::$version_last, $new_version, '<' )
-								&& version_compare( self::$version, $new_version, '>=' )
-								&& 1 != self::$upgraded )
-								self::$upgrade_needed = true;
+                if ( version_compare( self::$version_last, $old_version, '>=' )
+                    && version_compare( self::$version_last, $new_version, '<' )
+                    && version_compare( self::$version, $new_version, '>=' )
+                    && 1 != self::$upgraded
+                ) {
+                    self::$upgrade_needed = true;
+                }
             }
         }
 
@@ -837,8 +839,12 @@ class PodsInit {
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
 
-        if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) )
+        if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) || version_compare( self::$version, PODS_DB_VERSION, '<=' ) || self::$upgrade_needed )
             $this->setup();
+        elseif ( self::$version != PODS_VERSION ) {
+            delete_option( 'pods_framework_version' );
+            add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
+        }
     }
 
     /**
@@ -910,8 +916,8 @@ class PodsInit {
             }
         }
         // Update Pods and run any required DB updates
-        elseif ( !self::$upgrade_needed ) {
-            if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
+        elseif ( self::$upgrade_needed || version_compare( $pods_version, PODS_DB_VERSION, '<=' ) ) {
+            if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
                 // Update 2.0 alpha / beta sites

@@ -52,6 +52,7 @@ class PodsUI {
      * @var string
      */
     public $num = ''; // allows multiple co-existing PodsUI instances with separate functionality in URL
+
     /**
      * @var array
      */
@@ -2164,7 +2165,7 @@ class PodsUI {
                 $get = $_GET;
 
                 foreach ( $get as $k => $v ) {
-                    if ( in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
+                    if ( is_array( $v ) || in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
                         continue;
                     ?>
                     <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
@@ -2191,6 +2192,7 @@ class PodsUI {
                 <p class="search-box" align="right">
                     <?php
                     $excluded_filters = array( 'search' . $this->num, 'pg' . $this->num );
+
                     foreach ( $this->filters as $filter ) {
                         $excluded_filters[] = 'filter_' . $filter . '_start';
                         $excluded_filters[] = 'filter_' . $filter . '_end';
@@ -3637,8 +3639,8 @@ class PodsUI {
     public function exclusion () {
         $exclusion = self::$excluded;
 
-        foreach ( $exclusion as &$exclude ) {
-            $exclude = $exclude . $this->num;
+        foreach ( $exclusion as $k => $exclude ) {
+            $exclusion[ $k ] = $exclude . $this->num;
         }
 
         return $exclusion;

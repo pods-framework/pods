@@ -478,8 +478,12 @@ class PodsUI {
         $options = $this->do_hook( 'pre_init', $options );
         $this->setup( $options );
 
-        if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id && $this->id != $this->pods_data->id )
-            $this->row = $this->pods_data->fetch( $this->id );
+        if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id ) {
+            if ( $this->id != $this->pods_data->id )
+                $this->row = $this->pods_data->fetch( $this->id );
+            else
+                $this->row = $this->pods_data->row;
+        }
 
         if ( ( !is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql[ 'table' ] && false === $this->data ) {
             echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
@@ -2043,6 +2047,9 @@ class PodsUI {
      * @return array
      */
     public function get_row ( &$counter = 0 ) {
+        if ( !empty( $this->row ) && 0 < (int) $this->id )
+            return $this->row;
+
         if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
             $this->row = $this->pod->fetch();
         else {

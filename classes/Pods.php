@@ -834,7 +834,7 @@ class Pods implements Iterator {
                     elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) )
                         $value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
                     elseif ( 'settings' == $this->pod_data[ 'type' ] )
-                        $value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name );
+                        $value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name, null );
 
                     // Handle Simple Relationships
                     if ( $simple ) {

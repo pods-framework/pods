@@ -1786,7 +1786,7 @@ class PodsData {
                 else {
                     foreach ( $this->fields as $field ) {
                         if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ], null );
                     }
 
                     // Force ID

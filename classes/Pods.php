@@ -949,7 +949,7 @@ class Pods implements Iterator {
 
                             // No items found
                             if ( empty( $ids ) )
-                                return false;
+                                return false; // @todo This should return array() if not $params->single
                             elseif ( 0 < $last_limit )
                                 $ids = array_slice( $ids, 0, $last_limit );
 

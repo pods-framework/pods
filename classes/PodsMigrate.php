@@ -235,11 +235,11 @@ class PodsMigrate {
      * @return array|mixed
      */
     public function str_getcsv ( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
-        if ( '\n' != $delimiter && function_exists( 'str_getcsv' ) ) {
-            $line = str_replace( "\r\n", "\n", $line );
+        $line = str_replace( "\r\n", "\n", $line );
+        $line = str_replace( "\r", "\n", $line );
 
+        if ( '\n' != $delimiter && function_exists( 'str_getcsv' ) )
             return str_getcsv( $line, $delimiter, $enclosure, $escape );
-        }
 
         $delimiter = str_replace( '/', '\/', $delimiter );
         $enclosure = preg_quote( $enclosure, '/' );

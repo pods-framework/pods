@@ -863,6 +863,9 @@ class PodsData {
 
         $params->search = (boolean) $params->search;
 
+        if ( 1 == pods_var( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            pods_debug( $params );
+
         $params->field_table_alias = 't';
 
         // Get Aliases for future reference

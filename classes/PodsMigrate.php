@@ -58,7 +58,7 @@ class PodsMigrate {
      *
      * @param string $type Export Type (php, json, sv, xml)
      * @param string $delimiter Delimiter for export type 'sv'
-     * @param array $data Array of data
+     * @param array $data Array of data settings
      *
      * @return \PodsMigrate
      *
@@ -137,9 +137,9 @@ class PodsMigrate {
             $this->type = $type;
 
         if ( method_exists( $this, "parse_{$this->type}" ) )
-            call_user_func( array( $this, 'parse_' . $this->type ) );
+            return call_user_func( array( $this, 'parse_' . $this->type ) );
 
-        return $this->input;
+        return $this->parsed;
     }
 
     /**
@@ -192,7 +192,7 @@ class PodsMigrate {
         if ( !empty( $delimiter ) )
             $this->delimiter = $delimiter;
 
-        $rows = $this->str_getcsv( $this->input, "\n" );
+        $rows = $this->str_getcsv( $this->input, '\n' );
 
         if ( empty( $rows ) || 2 > count( $rows ) )
             return false;
@@ -212,6 +212,9 @@ class PodsMigrate {
 
                 foreach ( $data[ 'columns' ] as $ckey => $column ) {
                     $data[ 'items' ][ $key ][ $column ] = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
+
+                    if ( 'NULL' === $data[ 'items' ][ $key ][ $column ] )
+                        $data[ 'items' ][ $key ][ $column ] = null;
                 }
             }
         }
@@ -232,16 +235,21 @@ class PodsMigrate {
      * @return array|mixed
      */
     public function str_getcsv ( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
-        if ( function_exists( 'str_getcsv' ) )
-            return str_getcsv( $line, $delimiter, $enclosure, $escape );
+        if ( '\n' != $delimiter && function_exists( 'str_getcsv' ) ) {
+            $line = str_replace( "\r\n", "\n", $line );
 
-        $delimiter = preg_quote( $delimiter, '/' );
+            return str_getcsv( $line, $delimiter, $enclosure, $escape );
+        }
+
+        $delimiter = str_replace( '/', '\/', $delimiter );
         $enclosure = preg_quote( $enclosure, '/' );
 
-        $delimiter = "/{$delimiter}(?=(?:[^{$enclosure}]*{$enclosure}[^{$enclosure}]*{$enclosure})*(?![^{$enclosure}]*{$enclosure}))/";
+        $split = "/{$delimiter}(?=(?:[^{$enclosure}]*{$enclosure}[^{$enclosure}]*{$enclosure})*(?![^{$enclosure}]*{$enclosure}))/";
 
-        $data = preg_split( $delimiter, trim( $line ) );
-        $data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", "$1", $data );
+        $data = preg_split( $split, trim( $line ), -1, PREG_SPLIT_NO_EMPTY );
+
+        if ( '\n' != $delimiter )
+            $data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", "$1", $data );
 
         return $data;
     }

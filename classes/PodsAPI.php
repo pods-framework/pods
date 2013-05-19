@@ -6880,7 +6880,7 @@ class PodsAPI {
             $format = $this->format;
 
         if ( 'csv' == $format && !is_array( $import_data ) ) {
-            $data = pods_migrate( 'sv', ',', $import_data )->parse();
+            $data = pods_migrate( 'sv', ',' )->parse( $import_data );
 
             $import_data = $data[ 'items' ];
         }
@@ -6909,14 +6909,18 @@ class PodsAPI {
 
             // Loop through each field (use $fields so only valid fields get parsed)
             foreach ( $fields as $field_name => $field_data ) {
-                if ( !isset( $data_row[ $field_name ] ) )
+                if ( !isset( $data_row[ $field_name ] ) && !isset( $data_row[ $field_data[ 'label' ] ] ) )
                     continue;
 
                 $field_id = $field_data[ 'id' ];
                 $type = $field_data[ 'type' ];
                 $pick_object = isset( $field_data[ 'pick_object' ] ) ? $field_data[ 'pick_object' ] : '';
                 $pick_val = isset( $field_data[ 'pick_val' ] ) ?  $field_data[ 'pick_val' ] : '';
-                $field_value = $data_row[ $field_name ];
+
+                if ( isset( $data_row[ $field_name] ) )
+                    $field_value = $data_row[ $field_name ];
+                else
+                    $field_value = $data_row[ $field_data[ 'label' ] ];
 
                 if ( null !== $field_value && false !== $field_value && '' !== $field_value ) {
                     if ( 'pick' == $type || in_array( $type, PodsForm::file_field_types() ) ) {

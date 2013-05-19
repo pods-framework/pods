@@ -576,8 +576,10 @@ class Pods implements Iterator {
         if ( null !== $params->single )
             $params->single = (boolean) $params->single;
 
-        if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
+        if ( is_array( $params->name ) || strlen( trim( $params->name ) ) < 1 )
             return null;
+
+        $params->name = trim( $params->name );
 
         $value = null;
 

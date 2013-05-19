@@ -775,8 +775,10 @@ class PodsData {
         else
             $params->offset = $offset;
 
-        if ( !$params->pagination || -1 == $params->limit )
+        if ( !$params->pagination || -1 == $params->limit ) {
+            $params->page = 1;
             $params->offset = 0;
+        }
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
@@ -1804,7 +1806,7 @@ class PodsData {
                     $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }
 
-                $this->row = $this->select( $params );
+                $this->row = pods_data()->select( $params );
 
                 if ( empty( $this->row ) )
                     $this->row = false;

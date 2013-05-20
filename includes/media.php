@@ -73,42 +73,26 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
 
     if ( 0 < $id ) {
         if ( $force ) {
-            if ( is_array( $size ) ) {
-                $size_check = $size;
-                $size_check[ 0 ]++;
-                $size_check[ 1 ]++;
+            $full = wp_get_attachment_image_src( $id, 'full' );
+            $src = wp_get_attachment_image_src( $id, $size );
 
-                $check = wp_get_attachment_image_src( $id, $size_check );
-                $normal = wp_get_attachment_image_src( $id, $size );
-
-                if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
-                    pods_image_resize( $id, $size );
-            }
-            else
+            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
                 pods_image_resize( $id, $size );
         }
 
-        $html = wp_get_attachment_image( $id, $size, false, $attributes );
+        $html = wp_get_attachment_image( $id, $size, true, $attributes );
     }
 
     if ( empty( $html ) && 0 < $default ) {
         if ( $force ) {
-            if ( is_array( $size ) ) {
-                $size_check = $size;
-                $size_check[ 0 ]++;
-                $size_check[ 1 ]++;
+            $full = wp_get_attachment_image_src( $default, 'full' );
+            $src = wp_get_attachment_image_src( $default, $size );
 
-                $check = wp_get_attachment_image_src( $default, $size_check );
-                $normal = wp_get_attachment_image_src( $default, $size );
-
-                if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
-                    pods_image_resize( $default, $size );
-            }
-            else
+            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
                 pods_image_resize( $default, $size );
         }
 
-        $html = wp_get_attachment_image( $default, $size, false, $attributes );
+        $html = wp_get_attachment_image( $default, $size, true, $attributes );
     }
 
     return $html;
@@ -134,18 +118,10 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
 
     if ( 0 < $id ) {
         if ( $force ) {
-            if ( is_array( $size ) ) {
-                $size_check = $size;
-                $size_check[ 0 ]++;
-                $size_check[ 1 ]++;
+            $full = wp_get_attachment_image_src( $id, 'full' );
+            $src = wp_get_attachment_image_src( $id, $size );
 
-                $check = wp_get_attachment_image_src( $id, $size_check );
-                $normal = wp_get_attachment_image_src( $id, $size );
-
-                if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
-                    pods_image_resize( $id, $size );
-            }
-            else
+            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
                 pods_image_resize( $id, $size );
         }
 
@@ -164,18 +140,10 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
 
     if ( empty( $url ) && 0 < $default ) {
         if ( $force ) {
-            if ( is_array( $size ) ) {
-                $size_check = $size;
-                $size_check[ 0 ]++;
-                $size_check[ 1 ]++;
+            $full = wp_get_attachment_image_src( $default, 'full' );
+            $src = wp_get_attachment_image_src( $default, $size );
 
-                $check = wp_get_attachment_image_src( $default, $size_check );
-                $normal = wp_get_attachment_image_src( $default, $size );
-
-                if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
-                    pods_image_resize( $default, $size );
-            }
-            else
+            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
                 pods_image_resize( $default, $size );
         }
 
@@ -291,6 +259,8 @@ function pods_image_resize ( $attachment_id, $size ) {
 
     if ( empty( $size_data ) )
         return false;
+
+    require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
     $attachment = get_post( $attachment_id );
     $file = get_attached_file( $attachment_id );

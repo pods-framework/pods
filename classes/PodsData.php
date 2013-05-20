@@ -775,8 +775,10 @@ class PodsData {
         else
             $params->offset = $offset;
 
-        if ( !$params->pagination || -1 == $params->limit )
+        if ( !$params->pagination || -1 == $params->limit ) {
+            $params->page = 1;
             $params->offset = 0;
+        }
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
@@ -860,6 +862,9 @@ class PodsData {
             $this->search_mode = $params->search_mode;
 
         $params->search = (boolean) $params->search;
+
+        if ( 1 == pods_var( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            pods_debug( $params );
 
         $params->field_table_alias = 't';
 
@@ -1670,7 +1675,7 @@ class PodsData {
             }
         }
 
-        if ( null !== $row ) {
+        if ( null !== $row || 'settings' == $this->pod_data[ 'type' ] ) {
             if ( $explicit_set )
                 $this->row_number = -1;
 
@@ -1781,7 +1786,7 @@ class PodsData {
                 else {
                     foreach ( $this->fields as $field ) {
                         if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ], null );
                     }
 
                     // Force ID
@@ -1804,7 +1809,7 @@ class PodsData {
                     $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }
 
-                $this->row = $this->select( $params );
+                $this->row = pods_data()->select( $params );
 
                 if ( empty( $this->row ) )
                     $this->row = false;

@@ -151,7 +151,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.5 - May 5th, 2013 =
+= 2.3.5 - May 19th, 2013 =
 * Added: Ability to add new global field options (separate from field types) and new field editor tabs
 * Various fixes that can be found on GitHub
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/

@@ -52,6 +52,7 @@ class PodsUI {
      * @var string
      */
     public $num = ''; // allows multiple co-existing PodsUI instances with separate functionality in URL
+
     /**
      * @var array
      */
@@ -477,8 +478,12 @@ class PodsUI {
         $options = $this->do_hook( 'pre_init', $options );
         $this->setup( $options );
 
-        if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id && $this->id != $this->pods_data->id )
-            $this->row = $this->pods_data->fetch( $this->id );
+        if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id ) {
+            if ( $this->id != $this->pods_data->id )
+                $this->row = $this->pods_data->fetch( $this->id );
+            else
+                $this->row = $this->pods_data->row;
+        }
 
         if ( ( !is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql[ 'table' ] && false === $this->data ) {
             echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
@@ -1441,7 +1446,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 $this->get_row();
 
-            if ( empty( $this->row ) )
+            if ( empty( $this->row ) && ( !is_object( $this->pod ) || 'settings' != $this->pod->pod_data[ 'type' ] ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
             if ( $this->restricted( $this->action, $this->row ) )
@@ -1477,14 +1482,16 @@ class PodsUI {
         if ( isset( $this->fields[ $this->action ] ) )
             $fields = $this->fields[ $this->action ];
 
-        $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+        if ( is_object( $this->pod ) ) {
+            $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
 
-        if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) )
-            $object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
+            if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) )
+                $object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
 
-        if ( empty( $fields ) ) {
-            // Add core object fields if $fields is empty
-            $fields = array_merge( $object_fields, $this->pod->fields );
+            if ( empty( $fields ) ) {
+                // Add core object fields if $fields is empty
+                $fields = array_merge( $object_fields, $this->pod->fields );
+            }
         }
 
         $form_fields = $fields; // Temporary
@@ -1899,6 +1906,7 @@ class PodsUI {
                 'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
+                'pagination' => true,
                 'limit' => (int) $limit,
                 'search' => $this->searchable,
                 'search_query' => $this->search,
@@ -1973,6 +1981,7 @@ class PodsUI {
                 'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
+                'pagination' => true,
                 'limit' => (int) $this->limit,
                 'search' => $this->searchable,
                 'search_query' => $this->search,
@@ -2038,6 +2047,9 @@ class PodsUI {
      * @return array
      */
     public function get_row ( &$counter = 0 ) {
+        if ( !empty( $this->row ) && 0 < (int) $this->id )
+            return $this->row;
+
         if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
             $this->row = $this->pod->fetch();
         else {
@@ -2162,7 +2174,7 @@ class PodsUI {
                 $get = $_GET;
 
                 foreach ( $get as $k => $v ) {
-                    if ( in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
+                    if ( is_array( $v ) || in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
                         continue;
                     ?>
                     <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
@@ -2189,6 +2201,7 @@ class PodsUI {
                 <p class="search-box" align="right">
                     <?php
                     $excluded_filters = array( 'search' . $this->num, 'pg' . $this->num );
+
                     foreach ( $this->filters as $filter ) {
                         $excluded_filters[] = 'filter_' . $filter . '_start';
                         $excluded_filters[] = 'filter_' . $filter . '_end';
@@ -3635,8 +3648,8 @@ class PodsUI {
     public function exclusion () {
         $exclusion = self::$excluded;
 
-        foreach ( $exclusion as &$exclude ) {
-            $exclude = $exclude . $this->num;
+        foreach ( $exclusion as $k => $exclude ) {
+            $exclusion[ $k ] = $exclude . $this->num;
         }
 
         return $exclusion;

@@ -1113,7 +1113,8 @@ class PodsField_Pick extends PodsField {
                 'context' => '', // Data context
                 'data_params' => array(
                     'query' => ''
-                )
+                ),
+                'page' => 0
             ),
             $object_params
         );
@@ -1125,6 +1126,7 @@ class PodsField_Pick extends PodsField {
         $id = $object_params[ 'id' ];
         $context = $object_params[ 'context' ];
         $data_params = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
+        $page = min( 1, (int) $object_params[ 'page' ] );
 
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options, $options[ 'options' ] );
@@ -1285,6 +1287,7 @@ class PodsField_Pick extends PodsField {
 
                 if ( $autocomplete ) {
                     $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
+                    $params[ 'page' ] = $page;
 
                     if ( 'admin_ajax_relationship' == $context ) {
                         $lookup_where = array(
@@ -1510,7 +1513,8 @@ class PodsField_Pick extends PodsField {
                         if ( 'admin_ajax_relationship' == $context ) {
                             $items[] = array(
                                 'id' => $result[ $search_data->field_id ],
-                                'text' => $result[ $search_data->field_index ]
+                                'text' => $result[ $search_data->field_index ],
+                                'image' => ''
                             );
                         }
                         else
@@ -1527,7 +1531,8 @@ class PodsField_Pick extends PodsField {
                 foreach ( $data as $k => $v ) {
                     $items[] = array(
                         'id' => $k,
-                        'text' => $v
+                        'text' => $v,
+                        'image' => ''
                     );
                 }
             }
@@ -1579,6 +1584,16 @@ class PodsField_Pick extends PodsField {
         $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
         $id = (int) $params->id;
 
+        $limit = 15;
+
+        if ( isset( $params->limit ) )
+            $limit = (int) $params->limit;
+
+        $page = 1;
+
+        if ( isset( $params->page ) )
+            $page = (int) $params->page;
+
         if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
             pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
         elseif ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
@@ -1597,7 +1612,9 @@ class PodsField_Pick extends PodsField {
             'pod' => $pod, // Pod data
             'id' => $id, // Item ID
             'context' => 'admin_ajax_relationship', // Data context
-            'data_params' => $params
+            'data_params' => $params,
+            'page' => $page,
+            'limit' => $limit
         );
 
         $pick_data = apply_filters( 'pods_field_pick_data_ajax', null, $field[ 'name' ], null, $field, $pod, $id );
@@ -1613,7 +1630,8 @@ class PodsField_Pick extends PodsField {
             foreach ( $items as $id => $text ) {
                 $new_items[] = array(
                     'id' => $id,
-                    'text' => $text
+                    'text' => $text,
+                    'image' => ''
                 );
             }
 

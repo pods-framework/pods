@@ -576,8 +576,10 @@ class Pods implements Iterator {
         if ( null !== $params->single )
             $params->single = (boolean) $params->single;
 
-        if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
+        if ( is_array( $params->name ) || strlen( trim( $params->name ) ) < 1 )
             return null;
+
+        $params->name = trim( $params->name );
 
         $value = null;
 
@@ -832,7 +834,7 @@ class Pods implements Iterator {
                     elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) )
                         $value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
                     elseif ( 'settings' == $this->pod_data[ 'type' ] )
-                        $value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name );
+                        $value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name, null );
 
                     // Handle Simple Relationships
                     if ( $simple ) {
@@ -947,7 +949,7 @@ class Pods implements Iterator {
 
                             // No items found
                             if ( empty( $ids ) )
-                                return false;
+                                return false; // @todo This should return array() if not $params->single
                             elseif ( 0 < $last_limit )
                                 $ids = array_slice( $ids, 0, $last_limit );
 
@@ -1969,7 +1971,9 @@ class Pods implements Iterator {
     public function total () {
         $this->do_hook( 'total' );
 
-        $this->total =& $this->data->total();
+        $this->data->total();
+
+        $this->total =& $this->data->total;
 
         return $this->total;
     }
@@ -1988,7 +1992,9 @@ class Pods implements Iterator {
     public function total_found () {
         $this->do_hook( 'total_found' );
 
-        $this->total_found =& $this->data->total_found();
+        $this->data->total_found();
+
+        $this->total_found =& $this->data->total_found;
 
         return $this->total_found;
     }

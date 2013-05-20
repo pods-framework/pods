@@ -1491,10 +1491,12 @@ class PodsAdmin {
      *
      * @return array
      */
-    public function admin_setup_edit_field_options ( $pod, $field_types ) {
+    public function admin_setup_edit_field_options ( $pod ) {
         $options = array();
 
         $options[ 'additional-field' ] = array();
+
+        $field_types = PodsForm::field_types();
 
         foreach ( $field_types as $type => $field_type_data ) {
             /**

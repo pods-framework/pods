@@ -126,7 +126,7 @@ $tabs = PodsInit::$admin->admin_setup_edit_tabs( $pod );
 $tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
 
 $field_tabs = PodsInit::$admin->admin_setup_edit_field_tabs( $pod );
-$field_tab_options = PodsInit::$admin->admin_setup_edit_field_options( $pod, $field_types );
+$field_tab_options = PodsInit::$admin->admin_setup_edit_field_options( $pod );
 
 $no_advanced = array();
 

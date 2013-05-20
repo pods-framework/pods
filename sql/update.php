@@ -63,8 +63,16 @@ if ( version_compare( $pods_version, '2.3.4', '<' ) ) {
 if ( version_compare( $pods_version, '2.3.5', '<' ) ) {
     global $wpdb;
 
-    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy' WHERE `meta_key` = IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd'" );
-    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy_dash' WHERE `meta_key` = IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd_dash'" );
+    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy' WHERE `meta_key` IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd'" );
+    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy_dash' WHERE `meta_key` IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd_dash'" );
+
+    $pods_object_ids = $wpdb->get_col( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` IN ( '_pods_pod', '_pods_field', '_pods_page', '_pods_template', '_pods_page' )" );
+
+    if ( !empty( $pods_object_ids ) ) {
+        array_walk( $pods_object_ids, 'absint' );
+
+        $wpdb->query( "DELETE FROM `{$wpdb->postmeta}` WHERE `post_id` IN ( " . implode( ', ', $pods_object_ids ) . " ) AND `meta_value` = ''" );
+    }
 
     update_option( 'pods_framework_version', '2.3.5' );
 }

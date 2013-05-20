@@ -99,11 +99,9 @@ class PodsInit {
         self::$version = get_option( 'pods_framework_version' );
         self::$version_last = get_option( 'pods_framework_version_last' );
         self::$db_version = get_option( 'pods_framework_db_version' );
-        self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
+        self::$upgraded = (int) get_option( 'pods_framework_upgraded_1_x' );
 
         if ( empty( self::$version_last ) && 0 < strlen( get_option( 'pods_version' ) ) ) {
-            self::$upgrade_needed = true;
-
             $old_version = get_option( 'pods_version' );
 
             if ( !empty( $old_version ) ) {
@@ -115,7 +113,8 @@ class PodsInit {
                 self::$version_last = $old_version;
             }
         }
-        elseif ( !empty( self::$version ) ) {
+
+        if ( !empty( self::$version ) ) {
             self::$upgrade_needed = false;
 
             foreach ( self::$upgrades as $old_version => $new_version ) {

@@ -975,7 +975,7 @@ class Pods_Pages extends PodsComponent {
     public function template_redirect () {
         global $pods;
 
-        if ( false !== self::$exists && ( is_404() || apply_filters( 'pods_page_template_override', false ) ) ) {
+        if ( false !== self::$exists ) {
             /*
              * Create pods.php in your theme directory, and
              * style it to suit your needs. Some helpful functions:

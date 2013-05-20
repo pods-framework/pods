@@ -114,22 +114,7 @@ class PodsInit {
             }
         }
 
-        if ( !empty( self::$version ) ) {
-            self::$upgrade_needed = false;
-
-            foreach ( self::$upgrades as $old_version => $new_version ) {
-                /*if ( '2.1.0' == $new_version && ( is_developer() ) )
-                    continue;*/
-
-                if ( version_compare( self::$version_last, $old_version, '>=' )
-                    && version_compare( self::$version_last, $new_version, '<' )
-                    && version_compare( self::$version, $new_version, '>=' )
-                    && 1 != self::$upgraded
-                ) {
-                    self::$upgrade_needed = true;
-                }
-            }
-        }
+        self::$upgrade_needed = $this->needs_upgrade();
 
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
@@ -873,6 +858,38 @@ class PodsInit {
     }
 
     /**
+     *
+     */
+    public function needs_upgrade ( $current = null, $last = null ) {
+        if ( null === $current )
+            $current = self::$version;
+
+        if ( null === $last )
+            $last = self::$version_last;
+
+        $upgrade_needed = false;
+
+        if ( !empty( $current ) ) {
+            foreach ( self::$upgrades as $old_version => $new_version ) {
+                /*if ( '2.1.0' == $new_version && ( is_developer() ) )
+                    continue;*/
+
+                if ( version_compare( $last, $old_version, '>=' )
+                     && version_compare( $last, $new_version, '<' )
+                     && version_compare( $current, $new_version, '>=' )
+                     && 1 != self::$upgraded
+                ) {
+                    $upgrade_needed = true;
+
+                    break;
+                }
+            }
+        }
+
+        return $upgrade_needed;
+    }
+
+    /**
      * @param $_blog_id
      * @param $user_id
      * @param $domain
@@ -899,6 +916,7 @@ class PodsInit {
 
         // Setup DB tables
         $pods_version = get_option( 'pods_framework_version' );
+        $pods_version_last = get_option( 'pods_framework_version_last' );
 
         // Install Pods
         if ( empty( $pods_version ) ) {
@@ -915,6 +933,11 @@ class PodsInit {
 
                 self::$version_last = $old_version;
             }
+        }
+        // Upgrade Wizard needed
+        elseif ( $this->needs_upgrade( $pods_version, $pods_version_last ) ) {
+            // Do not do anything
+            return;
         }
         // Update Pods and run any required DB updates
         elseif ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) ) {

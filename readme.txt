@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.5
+Stable tag: 2.3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,11 +151,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.5.1 - May 20th, 2013 =
+* Fixed: Issue with the Upgrade wizard from 1.x to 2.x showing up properly
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.5 - May 19th, 2013 =
 * Added: Ability to add new global field options (separate from field types) and new field editor tabs
 * Various fixes that can be found on GitHub
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.4 - April 29th, 2013 =
 * Added: Ability to iterate through the Pods object with `foreach ( $pod as $item ) { echo $item->display( 'name' ); }`

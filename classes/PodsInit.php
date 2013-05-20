@@ -940,7 +940,7 @@ class PodsInit {
             return;
         }
         // Update Pods and run any required DB updates
-        elseif ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) ) {
+        elseif ( version_compare( $pods_version, PODS_VERSION, '<=' ) ) {
             if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 

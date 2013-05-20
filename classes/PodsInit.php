@@ -844,6 +844,8 @@ class PodsInit {
         elseif ( self::$version != PODS_VERSION ) {
             delete_option( 'pods_framework_version' );
             add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
+
+            pods_api()->cache_flush_pods();
         }
     }
 

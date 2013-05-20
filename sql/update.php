@@ -60,7 +60,7 @@ if ( version_compare( $pods_version, '2.3.4', '<' ) ) {
 }
 
 // Update to 2.3.5
-if ( version_compare( $pods_version, '2.3.5-rc-3', '<' ) ) {
+if ( version_compare( $pods_version, '2.3.5', '<' ) ) {
     global $wpdb;
 
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy' WHERE `meta_key` IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd'" );
@@ -74,5 +74,5 @@ if ( version_compare( $pods_version, '2.3.5-rc-3', '<' ) ) {
         $wpdb->query( "DELETE FROM `{$wpdb->postmeta}` WHERE `post_id` IN ( " . implode( ', ', $pods_object_ids ) . " ) AND `meta_value` = ''" );
     }
 
-    update_option( 'pods_framework_version', '2.3.5-rc-3' );
+    update_option( 'pods_framework_version', '2.3.5' );
 }

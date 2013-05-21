@@ -1561,7 +1561,7 @@ class PodsAPI {
                 $defined_fields[] = $field[ 'name' ];
 
                 if ( !in_array( $field[ 'type' ], $tableless_field_types ) || ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) ) {
-                    $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, $field[ 'options' ] ) );
+                    $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, pods_var_raw( 'options', $field, array() ) ) );
 
                     if ( 0 < strlen( $definition ) )
                         $definitions[] = "`{$field['name']}` " . $definition;

@@ -2046,8 +2046,8 @@ class PodsUI {
     /**
      * @return array
      */
-    public function get_row ( &$counter = 0 ) {
-        if ( !empty( $this->row ) && 0 < (int) $this->id )
+    public function get_row ( &$counter = 0, $method = null ) {
+        if ( !empty( $this->row ) && 0 < (int) $this->id && 'table' != $method )
             return $this->row;
 
         if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
@@ -3008,7 +3008,7 @@ class PodsUI {
                 if ( !empty( $this->data ) && is_array( $this->data ) ) {
                     $counter = 0;
 
-                    while ( $row = $this->get_row( $counter ) ) {
+                    while ( $row = $this->get_row( $counter, 'table' ) ) {
                         if ( is_object( $row ) )
                             $row = get_object_vars( (object) $row );
 

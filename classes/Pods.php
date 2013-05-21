@@ -149,6 +149,11 @@ class Pods implements Iterator {
     public $meta_extra = '';
 
     /**
+     * @var string Last SQL query used by a find()
+     */
+    public $sql;
+
+    /**
      * @var
      */
     public $deprecated;
@@ -156,8 +161,6 @@ class Pods implements Iterator {
     public $datatype;
 
     public $datatype_id;
-
-    public $sql;
 
     /**
      * Constructor - Pods Framework core
@@ -244,6 +247,7 @@ class Pods implements Iterator {
         $this->row =& $this->data->row;
         $this->rows =& $this->data->data;
         $this->row_number =& $this->data->row_number;
+        $this->sql =& $this->data->sql;
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
@@ -1901,8 +1905,6 @@ class Pods implements Iterator {
 
         $this->data->select( $params );
 
-        $this->sql = $this->data->sql;
-
         return $this;
     }
 
@@ -1930,8 +1932,6 @@ class Pods implements Iterator {
 
         $this->data->fetch( $id, $explicit_set );
 
-        $this->sql = $this->data->sql;
-
         return $this->row;
     }
 
@@ -1951,8 +1951,6 @@ class Pods implements Iterator {
         $this->do_hook( 'reset', $row );
 
         $this->data->reset( $row );
-
-        $this->sql = $this->data->sql;
 
         return $this;
     }

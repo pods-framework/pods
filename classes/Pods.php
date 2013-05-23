@@ -611,7 +611,7 @@ class Pods implements Iterator {
 
         $params->traverse = array();
 
-        if ( 'detail_url' == $params->name || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
+        if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
             if ( 0 < strlen( $this->detail_page ) )
                 $value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )

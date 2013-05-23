@@ -2162,6 +2162,8 @@ class Pods implements Iterator {
                 $value = $current_value . $value;
         }
 
+        // @todo handle object fields and taxonomies
+
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
@@ -2262,6 +2264,8 @@ class Pods implements Iterator {
             else
                 $value = strtotime( $value );
         }
+
+        // @todo handle object fields and taxonomies
 
         $params = array(
             'pod' => $this->pod,

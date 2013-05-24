@@ -428,9 +428,9 @@ function pods_var_raw ( $var = 'last', $type = 'get', $default = null, $allowed 
  * @param array|object $data
  * @param string $object_type Object type (post|user|comment|term)
  *
- * @return array|mixed|null
+ * @return mixed Option value
  */
-function pods_load_var( $option, &$data, $object_type = 'post' ) {
+function pods_load_var ( $option, &$data, $object_type = 'post' ) {
     $value = null;
 
     $id = 0;
@@ -472,6 +472,58 @@ function pods_load_var( $option, &$data, $object_type = 'post' ) {
     }
 
     return $value;
+}
+
+/**
+ * Load all variables from a object
+ *
+ * @param array|object $data
+ * @param string $object_type Object type (post|user|comment|term)
+ *
+ * @return boolean Whether the vars were loaded
+ */
+function pods_load_vars ( &$data, $object_type = 'post' ) {
+    $id = 0;
+
+    if ( is_array( $data ) ) {
+        if ( isset( $data[ 'ID' ] ) )
+            $id = (int) $data[ 'ID' ];
+        elseif ( isset( $data[ 'id' ] ) )
+            $id = (int) $data[ 'id' ];
+    }
+    elseif ( is_object( $data ) ) {
+        if ( isset( $data->ID ) )
+            $id = (int) $data->ID;
+        elseif ( isset( $data->id ) )
+            $id = (int) $data->id;
+    }
+
+    if ( 0 < $id ) {
+        $values = get_metadata( $object_type, $id );
+
+        foreach ( $values as $option => $value ) {
+            if ( is_array( $value ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( !is_array( $v ) )
+                        $value[ $k ] = maybe_unserialize( $v );
+                }
+
+                if ( 1 == count( $value ) )
+                    $value = current( $value );
+            }
+            else
+                $value = maybe_unserialize( $value );
+
+            if ( is_array( $data ) )
+                $data[ $option ] = $value;
+            elseif ( is_object( $data ) )
+                $data->{$option} = $value;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 /**

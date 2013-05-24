@@ -2743,7 +2743,7 @@ class Pods implements Iterator {
                     }
                 }
                 else
-                    echo $this->do_magic_tags( $code, $this );
+                    echo $this->do_magic_tags( $code );
             }
 
             $out = ob_get_clean();

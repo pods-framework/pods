@@ -1355,7 +1355,7 @@ class PodsField_Pick extends PodsField {
                             if ( empty( $role ) || ( pods_clean_name( $role ) != $role && sanitize_title( $role ) != $role ) )
                                 continue;
 
-                            $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                            $where[] = 'wp_' . ( ( is_multisite() && !is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
                         }
 
                         if ( !empty( $where ) ) {

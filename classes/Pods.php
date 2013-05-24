@@ -149,6 +149,11 @@ class Pods implements Iterator {
     public $meta_extra = '';
 
     /**
+     * @var string Last SQL query used by a find()
+     */
+    public $sql;
+
+    /**
      * @var
      */
     public $deprecated;
@@ -156,8 +161,6 @@ class Pods implements Iterator {
     public $datatype;
 
     public $datatype_id;
-
-    public $sql;
 
     /**
      * Constructor - Pods Framework core
@@ -244,6 +247,7 @@ class Pods implements Iterator {
         $this->row =& $this->data->row;
         $this->rows =& $this->data->data;
         $this->row_number =& $this->data->row_number;
+        $this->sql =& $this->data->sql;
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
@@ -607,7 +611,7 @@ class Pods implements Iterator {
 
         $params->traverse = array();
 
-        if ( 'detail_url' == $params->name || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
+        if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
             if ( 0 < strlen( $this->detail_page ) )
                 $value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
@@ -1901,8 +1905,6 @@ class Pods implements Iterator {
 
         $this->data->select( $params );
 
-        $this->sql = $this->data->sql;
-
         return $this;
     }
 
@@ -1930,8 +1932,6 @@ class Pods implements Iterator {
 
         $this->data->fetch( $id, $explicit_set );
 
-        $this->sql = $this->data->sql;
-
         return $this->row;
     }
 
@@ -1951,8 +1951,6 @@ class Pods implements Iterator {
         $this->do_hook( 'reset', $row );
 
         $this->data->reset( $row );
-
-        $this->sql = $this->data->sql;
 
         return $this;
     }
@@ -2164,6 +2162,8 @@ class Pods implements Iterator {
                 $value = $current_value . $value;
         }
 
+        // @todo handle object fields and taxonomies
+
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
@@ -2264,6 +2264,8 @@ class Pods implements Iterator {
             else
                 $value = strtotime( $value );
         }
+
+        // @todo handle object fields and taxonomies
 
         $params = array(
             'pod' => $this->pod,
@@ -2741,7 +2743,7 @@ class Pods implements Iterator {
                     }
                 }
                 else
-                    echo $this->do_magic_tags( $code, $this );
+                    echo $this->do_magic_tags( $code );
             }
 
             $out = ob_get_clean();

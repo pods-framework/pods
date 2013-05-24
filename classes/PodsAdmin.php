@@ -2051,7 +2051,7 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type' ) ) );
+        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'settings' ) ) );
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';

@@ -1561,7 +1561,7 @@ class PodsAPI {
                 $defined_fields[] = $field[ 'name' ];
 
                 if ( !in_array( $field[ 'type' ], $tableless_field_types ) || ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) ) {
-                    $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, $field[ 'options' ] ) );
+                    $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, pods_var_raw( 'options', $field, array() ) ) );
 
                     if ( 0 < strlen( $definition ) )
                         $definitions[] = "`{$field['name']}` " . $definition;
@@ -1759,6 +1759,8 @@ class PodsAPI {
 
             $weight = 0;
 
+            $saved_field_ids = array();
+
             foreach ( $pod[ 'fields' ] as $k => $field ) {
                 if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
                     // Iterative change handling for setup-edit.php
@@ -1791,11 +1793,15 @@ class PodsAPI {
                 $field_data = $field;
                 $field = $this->save_field( $field_data, $field_table_operation, $sanitized, $db );
 
-                if ( true !== $db )
+                if ( true !== $db ) {
                     $pod[ 'fields' ][ $k ] = $field;
+                    $saved_field_ids[] = $field[ 'id' ];
+                }
                 else {
-                    if ( !empty( $field ) && 0 < $field )
+                    if ( !empty( $field ) && 0 < $field ) {
                         $saved[ $field_data[ 'name' ] ] = true;
+                        $saved_field_ids[] = $field;
+                    }
                     else
                         $errors[] = sprintf( __( 'Cannot save the %s field', 'pods' ), $field_data[ 'name' ] );
                 }
@@ -1803,7 +1809,7 @@ class PodsAPI {
 
             if ( true === $db ) {
                 foreach ( $old_fields as $field ) {
-                    if ( isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) || isset( $saved[ $field[ 'name' ] ] ) )
+                    if ( isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) || isset( $saved[ $field[ 'name' ] ] ) || in_array( $field[ 'id' ], $saved_field_ids ) )
                         continue;
 
                     if ( $field[ 'id' ] == $field_index_id )

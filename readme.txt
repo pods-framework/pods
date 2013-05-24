@@ -65,7 +65,7 @@ Each of these field type have their own set of options, if those aren't enough t
 * Media
 * Comments
 
-And many others are also available including:
+And many other relationships are also available including:
 
 * Image Sizes
 * Navigation Menus

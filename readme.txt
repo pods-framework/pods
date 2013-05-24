@@ -151,7 +151,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.6 - May 21st, 2013 =
+= 2.3.6 - May 24th, 2013 =
 * Fixed: Issue with the Pod list when you delete or empty a Pod, it would repeat the same row in the list until you went back to the Edit Pods screen without the id=X in the URL
 * Fixed: Issue with renaming a field to another name would rename the field name and then delete it due to a missing ID validation check
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/

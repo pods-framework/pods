@@ -576,6 +576,8 @@ class Pods_Migrate_Packages extends PodsComponent {
                 'field_index',
                 'field_slug',
                 'field_type',
+                'field_parent',
+                'field_parent_select',
                 'meta_field_id',
                 'meta_field_index',
                 'meta_field_value',

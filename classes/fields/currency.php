@@ -61,6 +61,7 @@ class PodsField_Currency extends PodsField {
      * Add options and set defaults to
      *
      * @return array
+     *
      * @since 2.0
      */
     public function options () {
@@ -114,8 +115,9 @@ class PodsField_Currency extends PodsField {
                 'data' => array(
                     'i18n' => __( 'Localized Default', 'pods' ),
                     '9,999.99' => '1,234.00',
-                    '9999.99' => '1234.00',
                     '9.999,99' => '1.234,00',
+                    '9 999,99' => '1 234,00',
+                    '9999.99' => '1234.00',
                     '9999,99' => '1234,00'
                 )
             ),
@@ -299,16 +301,24 @@ class PodsField_Currency extends PodsField {
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
-        if ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ' ';
+            $dot = ',';
+        }
+        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = '.';
         }
         elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '';
-            $dot = ',';
-        }
-        elseif ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
-            $thousands = '.';
             $dot = ',';
         }
         else {
@@ -323,7 +333,7 @@ class PodsField_Currency extends PodsField {
 
         $currency_sign = self::$currencies[ $currency ];
 
-        return '\\' . $currency_sign .'*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
+        return '\-*\\' . $currency_sign .'*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
     }
 
     /**
@@ -343,15 +353,23 @@ class PodsField_Currency extends PodsField {
     public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         global $wp_locale;
 
-        if ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ' ';
+            $dot = ',';
+        }
+        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
         elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
-            $thousands = '.';
-            $dot = ',';
-        }
-        elseif ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -396,15 +414,23 @@ class PodsField_Currency extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         global $wp_locale;
 
-        if ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ' ';
+            $dot = ',';
+        }
+        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
         elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
-            $thousands = '.';
-            $dot = ',';
-        }
-        elseif ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -476,16 +502,24 @@ class PodsField_Currency extends PodsField {
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
-        if ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+            $thousands = ' ';
+            $dot = ',';
+        }
+        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = '.';
         }
         elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '';
-            $dot = ',';
-        }
-        elseif ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
-            $thousands = '.';
             $dot = ',';
         }
         else {
@@ -498,7 +532,7 @@ class PodsField_Currency extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( self::$type . '_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;

@@ -471,7 +471,7 @@
                         } );
                     }
                     else {
-                        $.when( $tabbed.find( '.pods-tab-group .pods-tab' ).not(tab_hash ).slideUp() ).done( function () {
+                        $.when( $tabbed.find( '.pods-tab-group .pods-tab' ).not( tab_hash ).slideUp() ).done( function () {
                             var $current_tab = $tabbed.find( '.pods-tab-group .pods-tab' + tab_hash );
 
                             $( '.pods-dependent-toggle', $current_tab ).each( function () {
@@ -525,7 +525,7 @@
                         } );
                     }
                     else {
-                        $tabbed.find( '.pods-nav-tab-group .pods-nav-tab' ).not(tab_hash ).each( function () {
+                        $tabbed.find( '.pods-nav-tab-group .pods-nav-tab' ).not( tab_hash ).each( function () {
                             $( this ).hide();
                         } );
 

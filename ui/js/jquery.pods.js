@@ -226,7 +226,7 @@
 
                     e.preventDefault();
 
-                    $( 'div#message' ).slideUp( 'fast', function() {
+                    $( 'div#message' ).slideUp( 'fast', function () {
                         $( this ).remove();
                     } );
 
@@ -474,7 +474,7 @@
                         $.when( $tabbed.find( '.pods-tab-group .pods-tab' ).not(tab_hash ).slideUp() ).done( function () {
                             var $current_tab = $tabbed.find( '.pods-tab-group .pods-tab' + tab_hash );
 
-                            $( '.pods-dependent-toggle', $current_tab ).each( function() {
+                            $( '.pods-dependent-toggle', $current_tab ).each( function () {
                                 methods[ 'setup_dependencies' ]( $( this ) );
                             } );
 

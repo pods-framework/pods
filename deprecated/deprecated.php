@@ -35,6 +35,25 @@ if ( !function_exists( 'wp_send_json' ) ) {
 }
 
 /**
+ * Get the full URL of the current page
+ *
+ * @return string
+ * @since 1.9.6
+ *
+ * @deprecated 2.3
+ */
+if ( !function_exists( 'get_current_url' ) ) {
+    /**
+     * @return mixed|void
+     */
+    function get_current_url() {
+        $url = pods_current_url();
+
+        return apply_filters( 'get_current_url', $url );
+    }
+}
+
+/**
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
  * @since 1.x

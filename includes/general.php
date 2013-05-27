@@ -419,25 +419,6 @@ function pods_helper ( $helper_name, $value = null, $name = null ) {
 /**
  * Get the full URL of the current page
  *
- * @return string
- * @since 1.9.6
- *
- * @deprecated 2.3
- */
-if ( !function_exists( 'get_current_url' ) ) {
-    /**
-     * @return mixed|void
-     */
-    function get_current_url () {
-        $url = pods_current_url();
-
-        return apply_filters( 'get_current_url', $url );
-    }
-}
-
-/**
- * Get the full URL of the current page
- *
  * @return string Full URL of the current page
  * @since 2.3
  */

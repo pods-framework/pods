@@ -1062,6 +1062,21 @@ function is_pod_page ( $uri = null ) {
 }
 
 /**
+ * Check for a specific page template for the current pod page
+ *
+ * @param string $template The theme template file
+ *
+ * @return bool
+ * @since 2.3.7
+ */
+function is_pod_page_template ( $template = null ) {
+    if ( false !== Pods_Pages::$exists && $template == Pods_Pages::$exists[ 'page_template' ] )
+        return true;
+
+    return false;
+}
+
+/**
  * Get the current Pod Page URI
  *
  * @return string|bool

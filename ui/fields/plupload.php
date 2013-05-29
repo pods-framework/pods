@@ -124,6 +124,8 @@ if ( !empty( $limit_types ) )
 
 if ( is_admin() && !empty( $post_ID ) )
     $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $post_ID;
+elseif ( is_object( $pod ) && in_array( $pod->pod_data[ 'type' ], array( 'post_type', 'media' ) ) && 0 < $id )
+    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $id;
 
 $plupload_init = apply_filters( 'plupload_init', $plupload_init );
 

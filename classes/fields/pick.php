@@ -988,10 +988,10 @@ class PodsField_Pick extends PodsField {
                 'context' => 'simple_value', // Data context
             );
 
-            if ( null !== $data )
-                $data = (array) $data;
-            else
+            if ( null === $data )
                 $data = $this->get_object_data( $object_params );
+
+            $data = (array) $data;
 
             $key = 0;
 

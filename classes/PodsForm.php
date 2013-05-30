@@ -1074,19 +1074,21 @@ class PodsForm {
         $class_name = ucfirst( $field_type );
         $class_name = "PodsField_{$class_name}";
 
+        $content_dir = realpath( WP_CONTENT_DIR );
+        $plugins_dir = realpath( WP_PLUGIN_DIR );
+        $abspath_dir = realpath( ABSPATH );
+
         if ( !class_exists( $class_name ) ) {
             if ( isset( self::$field_types[ $field_type ] ) && !empty( self::$field_types[ $field_type ][ 'file' ] ) )
-                $file = self::$field_types[ $field_type ][ 'file' ];
+                $file = realpath( self::$field_types[ $field_type ][ 'file' ] );
 
-            if ( !empty( $file ) && 0 < strlen( untrailingslashit( ABSPATH ) ) && 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
+            if ( !empty( $file ) && 0 === strpos( $file, $abspath_dir ) && file_exists( $file ) )
                 include_once $file;
             else {
                 $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
+                $file = realpath( $file );
 
-                if ( 0 < strlen( untrailingslashit( WP_CONTENT_DIR ) ) && 0 === strpos( $file, untrailingslashit( WP_CONTENT_DIR ) ) && file_exists( $file ) )
-                    include_once $file;
-
-                if ( 0 < strlen( untrailingslashit( ABSPATH ) ) && 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
+                if ( file_exists( $file ) && ( 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) )
                     include_once $file;
             }
         }

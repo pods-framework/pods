@@ -272,10 +272,7 @@ class Pods_Roles extends PodsComponent {
         if ( empty( $role_label ) )
             return pods_error( __( 'Role label is required', 'pods' ) );
 
-        if ( !isset( $wp_roles ) )
-            $wp_roles = new WP_Roles();
-
-        return $wp_roles->add_role( $role_name, $role_label, $capabilities );
+        return add_role( $role_name, $role_label, $capabilities );
     }
 
     /**
@@ -299,6 +296,9 @@ class Pods_Roles extends PodsComponent {
         if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
             return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
 
+        /**
+         * @var $role WP_Role
+         */
         $role = $wp_roles->role_objects[ $params->id ];
         $role_name = $params->id;
         $role_label = $wp_roles->role_names[ $params->id ];
@@ -330,7 +330,7 @@ class Pods_Roles extends PodsComponent {
         }
 
         foreach ( $role_capabilities as $capability => $x ) {
-            if ( !in_array( $capability, $new_capabilities ) )
+            if ( !in_array( $capability, $new_capabilities ) && false === strpos( $capability, 'level_' ) )
                 $role->remove_cap( $capability );
         }
 

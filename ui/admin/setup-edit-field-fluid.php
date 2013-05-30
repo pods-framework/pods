@@ -44,7 +44,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     $class = ' selected';
 
                                 if ( 'additional-field' == $tab )
-                                    $extra_classes = ' pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-' . implode( 'pods-excludes-on-field-data-type-', $no_advanced );
+                                    $extra_classes = ' pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-' . implode( ' pods-excludes-on-field-data-type-', $no_additional );
                         ?>
                             <li class="pods-tab<?php echo $extra_classes; ?>">
                                 <a href="#pods-<?php echo $tab; ?>-options-<?php echo $pods_i; ?>" class="pods-tab-link<?php echo $class; ?>">

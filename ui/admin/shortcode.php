@@ -1,25 +1,17 @@
 <script type="text/javascript">
+    var pods_shortcode_first = true;
+
     jQuery( function ( $ ) {
-        $( '#pods_insert_shortcode' ).click( function ( evt ) {
+        $( '#pods_insert_shortcode' ).on( 'click', function ( e ) {
             var form = $( '#pods_shortcode_form_element' ),
-                use_case = $( '#pods-use-case-selector' ).val(),
+                use_case = $( '#pods_use_case_selector' ).val(),
                 pod_select = $( '#pod_select' ).val(),
                 slug = $( '#pod_slug' ).val(),
                 orderby = $( '#pod_orderby' ).val(),
                 limit = $( '#pod_limit' ).val(),
                 where = $( '#pod_where' ).val(),
-                <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
-                    template = $( '#pod_template' ).val(),
-                <?php } else { ?>
-                    template = '',
-                <?php
-                    }
-                    if ( class_exists( 'Pods_Pages' ) ) {
-                ?>
-                    pods_page = $( '#pods_page' ).val(),
-                <?php } else { ?>
-                    pods_page = '',
-                <?php } ?>
+                template = '',
+                pods_page = '',
                 template_custom = $( '#pod_template_custom' ).val(),
                 field = $( '#pod_field' ).val(),
                 fields = $( '#pod_fields' ).val(),
@@ -27,12 +19,35 @@
                 thank_you = $( '#pod_thank_you' ).val(),
                 view = $( '#pod_view' ).val(),
                 cache_mode = $( '#pod_cache_mode' ).val(),
-                expires = $( '#pod_expires' ).val(),
-                shortcode = '[pods',
-                pods_shortcode_first = true;
+                expires = $( '#pod_expires' ).val();
+
+            <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
+                template = $( '#pod_template' ).val();
+            <?php } ?>
+
+            <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+                pods_page = $( '#pods_page' ).val();
+            <?php } ?>
+
+            // Slash and burn
+            pod_select = ( pod_select + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            slug = ( slug + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            orderby = ( orderby + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            limit = ( limit + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            where = ( where + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            template = ( template + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            pods_page = ( pods_page + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            field = ( field + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            cache_mode = ( cache_mode + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
             // Validate the form
             var errors = [];
+
             switch ( use_case ) {
                 case 'single':
                     if ( !pod_select || !pod_select.length ) {
@@ -45,6 +60,7 @@
                         errors.push( "Template" );
                     }
                     break;
+
                 case 'list':
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
@@ -53,6 +69,7 @@
                         errors.push( "Template" );
                     }
                     break;
+
                 case 'field':
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
@@ -64,74 +81,92 @@
                         errors.push( "Field" );
                     }
                     break;
+
                 case 'field-current':
                     if ( !field || !field.length ) {
                         errors.push( "Field" );
                     }
                     break;
+
                 case 'form':
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
                     }
                     break;
+
                 case 'view':
                     if ( !view || !view.length ) {
                         errors.push( "File to include" );
                     }
                     break;
+
+                case 'page':
+                    if ( !pods_page || !pods_page.length ) {
+                        errors.push( "Pod Page" );
+                    }
+                    break;
             }
 
             if ( errors.length ) {
-                var error_msg = "The following fields are required:\n";
-                error_msg += errors.join( "\n" );
-                alert( error_msg );
+                alert( "The following fields are required:\n" + errors.join( "\n" ) );
+
+                e.preventDefault();
+
                 return false;
             }
 
-            // Slash and burn
-            pod_select = ( pod_select + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            slug = ( slug + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            orderby = ( orderby + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            limit = ( limit + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            where = ( where + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            template = ( template + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            field = ( field + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            cache_mode = ( cache_mode + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            var shortcode = '[pods';
 
-            if ( pod_select.length )
-                shortcode += ' name="' + pod_select + '"';
+            if ( 'single' == use_case ) {
+                if ( pod_select.length )
+                    shortcode += ' name="' + pod_select + '"';
 
-            if ( slug.length )
-                shortcode += ' slug="' + slug + '"';
+                if ( slug.length )
+                    shortcode += ' slug="' + slug + '"';
 
-            if ( orderby.length )
-                shortcode += ' orderby="' + orderby + '"';
-
-            if ( limit.length )
-                shortcode += ' limit="' + limit + '"';
-
-            if ( where.length )
-                shortcode += ' where="' + where + '"';
-
-            <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
                 if ( template.length )
                     shortcode += ' template="' + template + '"';
-            <?php } ?>
+            }
+            else if ( 'list' == use_case ) {
+                if ( pod_select.length )
+                    shortcode += ' name="' + pod_select + '"';
 
-            <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
-                if ( pods_page.length )
-                    shortcode += ' pods_page="' + pods_page + '"';
-            <?php } ?>
+                if ( orderby.length )
+                    shortcode += ' orderby="' + orderby + '"';
 
-            if ( field.length )
-                shortcode += ' field="' + field + '"';
+                if ( limit.length )
+                    shortcode += ' limit="' + limit + '"';
 
-            if ( 'form' == use_case ) {
+                if ( where.length )
+                    shortcode += ' where="' + where + '"';
+
+                if ( template.length )
+                    shortcode += ' template="' + template + '"';
+
+            }
+            else if ( 'field' == use_case ) {
+                if ( pod_select.length )
+                    shortcode += ' name="' + pod_select + '"';
+
+                if ( slug.length )
+                    shortcode += ' slug="' + slug + '"';
+
+                if ( field.length )
+                    shortcode += ' field="' + field + '"';
+
+            }
+            else if ( 'field-current' == use_case ) {
+                if ( field.length )
+                    shortcode += ' field="' + field + '"';
+
+            }
+            else if ( 'form' == use_case ) {
+                if ( pod_select.length )
+                    shortcode += ' name="' + pod_select + '"';
+
+                if ( slug.length )
+                    shortcode += ' slug="' + slug + '"';
+
                 if ( fields.length || label.length || thank_you.length )
                     shortcode += ' form="1"';
 
@@ -143,6 +178,7 @@
 
                 if ( thank_you.length )
                     shortcode += ' thank-you="' + thank_you + '"';
+
             }
             else if ( 'view' == use_case ) {
                 if ( view.length )
@@ -155,18 +191,22 @@
                         shortcode += ' expires="' + expires + '"';
                 }
             }
+            else if ( 'page' == use_case ) {
+                if ( pods_page.length )
+                    shortcode += ' pods_page="' + pods_page + '"';
+            }
 
             shortcode += ']';
 
-            if ( template_custom && template_custom.length )
+            if ( ( 'single' == use_case || 'list' == use_case ) && template_custom && template_custom.length )
                 shortcode += '<br />' + template_custom.replace( /\n/g, '<br />' ) + '<br />[/pods]';
 
             window.send_to_editor( shortcode );
-            evt.preventDefault();
 
+            e.preventDefault();
         } );
 
-        $( '#pod_cache_mode' ).change( function () {
+        $( '#pod_cache_mode' ).on( 'change', function () {
             var $this = $( this );
 
             if ( 'none' == $this.val() ) {
@@ -177,12 +217,9 @@
             }
         } );
 
-        var $useCaseSelector = $( '#pods-use-case-selector' ),
-                $form = $( '#pods_shortcode_form_element' ),
-                $podSelector = $( '#pod_select' ),
-                nonce = "<?php echo wp_create_nonce( 'pods-shortcode_load_fields' ); ?>";
+        var $useCaseSelector = $( '#pods_use_case_selector' );
 
-        $useCaseSelector.change(function ( evt ) {
+        $useCaseSelector.on( 'change', function () {
             var val = $( this ).val();
 
             $( '.pods-section' ).addClass( 'hide' );
@@ -193,37 +230,43 @@
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 case 'list':
                     $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 case 'field':
                     $( '#pod_select, #pod_slug, #pod_field, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 case 'field-current':
                     $( '#pod_field, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 case 'form':
                     $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 case 'view':
                     $( '#pod_view, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+
                 <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
-                case 'page':
-                    $( '#pods_page, #pods_insert_shortcode' ).each( function () {
-                        $( this ).closest( '.pods-section' ).removeClass( 'hide' );
-                    } )
-                    break;
+                    case 'page':
+                        $( '#pods_page, #pods_insert_shortcode' ).each( function () {
+                            $( this ).closest( '.pods-section' ).removeClass( 'hide' );
+                        } )
+                        break;
                 <?php } ?>
             }
 
@@ -280,9 +323,9 @@
 
             <form id="pods_shortcode_form_element">
                 <div class="pods-select">
-                    <label for="pods-use-case-selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
+                    <label for="pods_use_case_selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
 
-                    <select id="pods-use-case-selector">
+                    <select id="pods_use_case_selector">
                         <option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
                         <option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
                         <option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
@@ -446,7 +489,7 @@
                 </div>
 
                 <div class="pods-section" style="text-align: right;">
-                    <a class="button-primary" id="pods_insert_shortcode" href="#"><?php _e( 'Insert', 'pods' ); ?></a>
+                    <a class="button-primary" id="pods_insert_shortcode" href="#insert-shortcode"><?php _e( 'Insert', 'pods' ); ?></a>
                 </div>
             </form>
         </div>

@@ -352,8 +352,12 @@ class PodsAdmin {
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
-                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) )
-                        $submenu_items[ $menu_location_custom ] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, '' );
+                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) ) {
+                        if ( !isset( $submenu_items[ $menu_location_custom ] ) )
+                            $submenu_items[ $menu_location_custom ] = array();
+
+                        $submenu_items[ $menu_location_custom ][] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, '' );
+                    }
                 }
             }
 
@@ -390,13 +394,19 @@ class PodsAdmin {
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
-                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) )
-                        $submenu_items[ $menu_location_custom ] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
+                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) ) {
+                        if ( !isset( $submenu_items[ $menu_location_custom ] ) )
+                            $submenu_items[ $menu_location_custom ] = array();
+
+                        $submenu_items[ $menu_location_custom ][] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
+                    }
                 }
             }
 
-            foreach ( $submenu_items as $item ) {
-                call_user_func_array( 'add_submenu_page', $item );
+            foreach ( $submenu_items as $items ) {
+                foreach ( $items as $item ) {
+                    call_user_func_array( 'add_submenu_page', $item );
+                }
             }
 
             $admin_menus = array(

@@ -128,11 +128,11 @@ $tab_options = PodsInit::$admin->admin_setup_edit_options( $pod );
 $field_tabs = PodsInit::$admin->admin_setup_edit_field_tabs( $pod );
 $field_tab_options = PodsInit::$admin->admin_setup_edit_field_options( $pod );
 
-$no_advanced = array();
+$no_additional = array();
 
 foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type_fields ) {
-    if ( empty( $field_tab_fields ) )
-        $no_advanced[] = $field_type;
+    if ( empty( $field_type_fields ) )
+        $no_additional[] = $field_type;
 }
 ?>
 <div class="wrap pods-admin">

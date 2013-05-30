@@ -177,136 +177,134 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = get_template_directory_uri();
         elseif ( 'stylesheet-url' == $type )
             $output = get_stylesheet_directory_uri();
-        elseif ( in_array( $type, array( 'site-url', 'home-url', 'admin-url', 'includes-url', 'content-url', 'plugins-url', 'network-site-url', 'network-home-url', 'network-admin-url', 'user-admin-url' ) ) ) {
-            if ( 'site-url' == $type ) {
+        elseif ( 'site-url' == $type ) {
                 $blog_id = $scheme = null;
                 $path = '';
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $blog_id = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $path = $var[ 1 ];
-                    elseif ( isset( $var[ 2 ] ) )
-                        $scheme = $var[ 2 ];
-                }
-                else
-                    $blog_id = $var;
-
-                $output = get_site_url( $blog_id, $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $blog_id = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $path = $var[ 1 ];
+                elseif ( isset( $var[ 2 ] ) )
+                    $scheme = $var[ 2 ];
             }
-            elseif ( 'home-url' == $type ) {
-                $blog_id = $scheme = null;
-                $path = '';
+            else
+                $blog_id = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $blog_id = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $path = $var[ 1 ];
-                    elseif ( isset( $var[ 2 ] ) )
-                        $scheme = $var[ 2 ];
-                }
-                else
-                    $blog_id = $var;
+            $output = get_site_url( $blog_id, $path, $scheme );
+        }
+        elseif ( 'home-url' == $type ) {
+            $blog_id = $scheme = null;
+            $path = '';
 
-                $output = get_home_url( $blog_id, $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $blog_id = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $path = $var[ 1 ];
+                elseif ( isset( $var[ 2 ] ) )
+                    $scheme = $var[ 2 ];
             }
-            elseif ( 'admin-url' == $type ) {
-                $blog_id = $scheme = null;
-                $path = '';
+            else
+                $blog_id = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $blog_id = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $path = $var[ 1 ];
-                    elseif ( isset( $var[ 2 ] ) )
-                        $scheme = $var[ 2 ];
-                }
-                else
-                    $blog_id = $var;
+            $output = get_home_url( $blog_id, $path, $scheme );
+        }
+        elseif ( 'admin-url' == $type ) {
+            $blog_id = $scheme = null;
+            $path = '';
 
-                $output = get_admin_url( $blog_id, $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $blog_id = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $path = $var[ 1 ];
+                elseif ( isset( $var[ 2 ] ) )
+                    $scheme = $var[ 2 ];
             }
-            elseif ( 'includes-url' == $type )
-                $output = includes_url( $var );
-            elseif ( 'content-url' == $type )
-                $output = content_url( $var );
-            elseif ( 'plugins-url' == $type ) {
-                $path = $plugin = '';
+            else
+                $blog_id = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $path = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $plugin = $var[ 1 ];
-                }
-                else
-                    $path = $var;
+            $output = get_admin_url( $blog_id, $path, $scheme );
+        }
+        elseif ( 'includes-url' == $type )
+            $output = includes_url( $var );
+        elseif ( 'content-url' == $type )
+            $output = content_url( $var );
+        elseif ( 'plugins-url' == $type ) {
+            $path = $plugin = '';
 
-                $output = plugins_url( $path, $plugin );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $path = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $plugin = $var[ 1 ];
             }
-            elseif ( 'network-site-url' == $type ) {
-                $path = '';
-                $scheme = null;
+            else
+                $path = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $path = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $scheme = $var[ 1 ];
-                }
-                else
-                    $path = $var;
+            $output = plugins_url( $path, $plugin );
+        }
+        elseif ( 'network-site-url' == $type ) {
+            $path = '';
+            $scheme = null;
 
-                $output = network_site_url( $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $path = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $scheme = $var[ 1 ];
             }
-            elseif ( 'network-home-url' == $type ) {
-                $path = '';
-                $scheme = null;
+            else
+                $path = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $path = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $scheme = $var[ 1 ];
-                }
-                else
-                    $path = $var;
+            $output = network_site_url( $path, $scheme );
+        }
+        elseif ( 'network-home-url' == $type ) {
+            $path = '';
+            $scheme = null;
 
-                $output = network_home_url( $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $path = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $scheme = $var[ 1 ];
             }
-            elseif ( 'network-admin-url' == $type ) {
-                $path = '';
-                $scheme = null;
+            else
+                $path = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $path = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $scheme = $var[ 1 ];
-                }
-                else
-                    $path = $var;
+            $output = network_home_url( $path, $scheme );
+        }
+        elseif ( 'network-admin-url' == $type ) {
+            $path = '';
+            $scheme = null;
 
-                $output = network_admin_url( $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $path = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $scheme = $var[ 1 ];
             }
-            elseif ( 'user-admin-url' == $type ) {
-                $path = '';
-                $scheme = null;
+            else
+                $path = $var;
 
-                if ( is_array( $var ) ) {
-                    if ( isset( $var[ 0 ] ) )
-                        $path = $var[ 0 ];
-                    elseif ( isset( $var[ 1 ] ) )
-                        $scheme = $var[ 1 ];
-                }
-                else
-                    $path = $var;
+            $output = network_admin_url( $path, $scheme );
+        }
+        elseif ( 'user-admin-url' == $type ) {
+            $path = '';
+            $scheme = null;
 
-                $output = user_admin_url( $path, $scheme );
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 0 ] ) )
+                    $path = $var[ 0 ];
+                elseif ( isset( $var[ 1 ] ) )
+                    $scheme = $var[ 1 ];
             }
+            else
+                $path = $var;
+
+            $output = user_admin_url( $path, $scheme );
         }
         elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
             $output = stripslashes_deep( $_POST[ $var ] );
@@ -370,12 +368,16 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             if ( !empty( $var ) )
                 $output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
         }
-        elseif ( 'pods' == $type ) {
+        elseif ( in_array( $type, array( 'pods', 'pods_display' ) ) ) {
             if ( isset( $GLOBALS[ 'pods' ] ) && 'Pods' == get_class( $GLOBALS[ 'pods' ] ) ) {
-                $output = $GLOBALS[ 'pods' ]->field( $var );
+                if ( 'pods' == $type ) {
+                    $output = $GLOBALS[ 'pods' ]->field( $var );
 
-                if ( is_array( $output ) )
-                    $output = pods_serial_comma( $output, array( 'field' => $var, 'fields' => $GLOBALS[ 'pods' ]->fields ) );
+                    if ( is_array( $output ) )
+                        $output = pods_serial_comma( $output, array( 'field' => $var, 'fields' => $GLOBALS[ 'pods' ]->fields ) );
+                }
+                elseif ( 'pods_display' == $type )
+                    $output = $GLOBALS[ 'pods' ]->display( $var );
             }
         }
         else
@@ -793,7 +795,7 @@ function pods_evaluate_tags ( $tags, $sanitize = false ) {
         return $tags;
     }
 
-    if ( $sanitize )
+    if ( true === $sanitize )
         return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag_sanitized', (string) $tags );
     else
         return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag', (string) $tags );

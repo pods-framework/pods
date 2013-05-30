@@ -4,7 +4,7 @@
     jQuery( function ( $ ) {
         $( '#pods_insert_shortcode' ).on( 'click', function ( e ) {
             var form = $( '#pods_shortcode_form_element' ),
-                use_case = $( '#pods-use-case-selector' ).val(),
+                use_case = $( '#pods_use_case_selector' ).val(),
                 pod_select = $( '#pod_select' ).val(),
                 slug = $( '#pod_slug' ).val(),
                 orderby = $( '#pod_orderby' ).val(),
@@ -217,7 +217,7 @@
             }
         } );
 
-        var $useCaseSelector = $( '#pods-use-case-selector' );
+        var $useCaseSelector = $( '#pods_use_case_selector' );
 
         $useCaseSelector.on( 'change', function () {
             var val = $( this ).val();
@@ -323,9 +323,9 @@
 
             <form id="pods_shortcode_form_element">
                 <div class="pods-select">
-                    <label for="pods-use-case-selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
+                    <label for="pods_use_case_selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
 
-                    <select id="pods-use-case-selector">
+                    <select id="pods_use_case_selector">
                         <option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
                         <option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
                         <option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>

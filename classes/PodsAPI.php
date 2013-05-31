@@ -2170,16 +2170,12 @@ class PodsAPI {
             );
         }
         else {
-            if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
-                return pods_error( sprintf( __( '%s is not editable', 'pods' ), $field[ 'name' ] ), $this );
-
-            foreach ( $object_fields as $object_field => $object_field_opt ) {
-                if ( $object_field == $field[ 'name' ] || in_array( $field[ 'name' ], $object_field_opt[ 'alias' ] ) )
+            if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) ) {
+                if ( null !== $old_name )
+                    return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
+                else
                     return pods_error( sprintf( __( '%s is not editable', 'pods' ), $field[ 'name' ] ), $this );
             }
-
-            if ( null !== $old_name && $field[ 'name' ] != $old_name && in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
-                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             if ( null !== $old_name && $field[ 'name' ] != $old_name && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && !in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
@@ -2188,8 +2184,13 @@ class PodsAPI {
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
-                if ( $object_field == $field[ 'name' ] || in_array( $field[ 'name' ], $object_field_opt[ 'alias' ] ) )
+                if ( $object_field != $field[ 'name' ] && !in_array( $field[ 'name' ], $object_field_opt[ 'alias' ] ) )
+                    continue;
+
+                if ( null !== $old_name )
                     return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
+                else
+                    return pods_error( sprintf( __( '%s is not editable', 'pods' ), $field[ 'name' ] ), $this );
             }
 
             $post_data = array(

@@ -275,14 +275,16 @@ function pods_tableless () {
 /**
  * Determine if Strict Mode is enabled
  *
+ * @param bool $include_debug Whether to include WP_DEBUG in strictness level
+ *
  * @return bool Whether Strict Mode is enabled
  *
  * @since 2.3.5
  */
-function pods_strict () {
+function pods_strict ( $include_debug = true ) {
     if ( defined( 'PODS_STRICT' ) && PODS_STRICT )
         return true;
-    elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+    elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG )
         return true;
     elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) // @deprecated since 2.3.5
         return true;

@@ -1749,7 +1749,7 @@ class Pods {
     public function total () {
         $this->do_hook( 'total' );
 
-        $this->total =& $this->data->total();
+        $this->total = $this->data->total();
 
         return $this->total;
     }
@@ -1768,7 +1768,7 @@ class Pods {
     public function total_found () {
         $this->do_hook( 'total_found' );
 
-        $this->total_found =& $this->data->total_found();
+        $this->total_found = $this->data->total_found();
 
         return $this->total_found;
     }

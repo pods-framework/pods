@@ -3663,9 +3663,41 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
+        if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
+            $where = pods_var_raw( $action, $this->where, null, null, true );
+
+            if ( !empty( $where ) ) {
+                $restricted = true;
+
+                $old_where = $this->where[ $action ];
+
+                $id = $this->row[ $this->sql[ 'field_id' ] ];
+
+                if ( is_array( $where ) ) {
+                    if ( 'OR' == pods_var( 'relation', $where ) )
+                        $where = array( $where );
+
+                    $where[] = "`t`.`" . $this->sql[ 'field_id' ] . "` = " . (int) $id;
+                }
+                else
+                    $where = "( {$where} ) AND `t`.`" . $this->sql[ 'field_id' ] . "` = " . (int) $id;
+
+                $this->where[ $action ] = $where;
+
+                $data = $this->get_data();
+
+                $this->where[ $action ] = $old_where;
+
+                if ( empty( $data ) )
+                    $restricted = true;
+            }
+        }
+
         $author_restrict = false;
 
-        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+        if ( empty( $where ) && !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+            $restricted = false;
+
             $author_restrict = true;
 
             if ( is_object( $this->pod ) ) {

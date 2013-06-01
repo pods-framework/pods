@@ -615,6 +615,9 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( !isset( $pod ) )
         $pod = pods( $tags[ 'name' ], $id );
 
+    if ( empty( $pod ) )
+        return '<p>Pod not found</p>';
+
     $found = 0;
 
     if ( !empty( $tags[ 'form' ] ) )

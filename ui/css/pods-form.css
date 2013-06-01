@@ -161,6 +161,11 @@ input.pods-form-ui-field-type-color {
     height: auto;
 }
 
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+    border-bottom: none;
+}
+
 .form-table tr.pods-field > td {
     line-height: inherit;
     padding: 10px 0;

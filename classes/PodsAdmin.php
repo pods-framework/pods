@@ -169,6 +169,8 @@ class PodsAdmin {
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
         if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
+            $submenu_items = array();
+
             if ( !empty( $advanced_content_types ) ) {
                 $submenu = array();
 
@@ -305,8 +307,6 @@ class PodsAdmin {
                     }
                 }
             }
-
-            $submenu_items = array();
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {

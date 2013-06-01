@@ -1314,29 +1314,34 @@ class PodsUI {
             return call_user_func_array( $this->actions_custom[ $this->action ], array( &$this, $this->id ) );
         elseif ( isset( $this->actions_custom[ $this->action ] ) && ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $this->action ][ 'callback' ] ) ) )
             return call_user_func_array( $this->actions_custom[ $this->action ][ 'callback' ], array( &$this, $this->id ) );
-        elseif ( !in_array( 'manage', $this->actions_disabled ) )
-            $this->manage();
+        elseif ( !in_array( 'manage', $this->actions_disabled ) ) {
+            // handle session / user persistent settings for show_per_page, orderby, search, and filters
+            $methods = array( 'session', 'user' );
 
-        // handle session / user persistent settings for show_per_page, orderby, search, and filters
-        $methods = array( 'session', 'user' );
-        foreach ( $methods as $method ) {
-            foreach ( $this->$method as $setting ) {
-                if ( 'show_per_page' == $setting )
-                    $value = $this->limit;
-                elseif ( 'orderby' == $setting ) {
-                    if ( empty( $this->orderby ) )
-                        $value = '';
-                    elseif ( isset( $this->orderby[ 'default' ] ) ) // save this if we have a default index set
-                        $value = $this->orderby[ 'default' ] . ' '
-                             . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+            // @todo fix this to set ($this) AND save (setting)
+            foreach ( $methods as $method ) {
+                foreach ( $this->$method as $setting ) {
+                    if ( 'show_per_page' == $setting )
+                        $value = $this->limit;
+                    elseif ( 'orderby' == $setting ) {
+                        if ( empty( $this->orderby ) )
+                            $value = '';
+                        // save this if we have a default index set
+                        elseif ( isset( $this->orderby[ 'default' ] ) ) {
+                            $value = $this->orderby[ 'default' ] . ' '
+                                     . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+                        }
+                        else
+                            $value = '';
+                    }
                     else
-                        $value = '';
-                }
-                else
-                    $value = $this->$setting;
+                        $value = $this->$setting;
 
-                pods_var_set( $value, $setting, $method );
+                    pods_var_set( $value, $setting, $method );
+                }
             }
+
+            $this->manage();
         }
     }
 

@@ -203,7 +203,10 @@ class PodsAdmin {
 
                         if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) ) {
                             if ( !empty( $menu_location_custom ) ) {
-                                add_submenu_page( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
+                                if ( !isset( $submenu_items[ $menu_location_custom ] ) )
+                                    $submenu_items[ $menu_location_custom ] = array();
+
+                                $submenu_items[ $menu_location_custom ][] = array( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
 
                                 continue;
                             }

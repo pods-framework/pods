@@ -3668,6 +3668,8 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
+        pods_debug( $action );
+
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
             $where = pods_var_raw( $action, $this->where, null, null, true );
 
@@ -3689,7 +3691,9 @@ class PodsUI {
 
                 $this->where[ $action ] = $where;
 
-                $data = $this->get_data();
+                $data = false;
+
+                //$data = $this->get_data();
 
                 $this->where[ $action ] = $old_where;
 

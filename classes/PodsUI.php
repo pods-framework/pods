@@ -232,9 +232,9 @@ class PodsUI {
      */
     public $where = array(
         'manage' => null,
-        'edit' => null,
+        /*'edit' => null,
         'duplicate' => null,
-        'delete' => null,
+        'delete' => null,*/
         'reorder' => null
     );
 
@@ -700,10 +700,10 @@ class PodsUI {
                 $options[ 'where' ] = array( 'manage' => $deprecated_options[ 'where' ] );
         }
         if ( isset( $deprecated_options[ 'edit_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'edit' ] = $deprecated_options[ 'edit_where' ];
             else
-                $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );
+                $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'edit' ] = (array) $deprecated_options[ 'edit_where' ];
@@ -711,10 +711,10 @@ class PodsUI {
                 $options[ 'restrict' ] = array( 'edit' => (array) $deprecated_options[ 'edit_where' ] );
         }
         if ( isset( $deprecated_options[ 'duplicate_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_where' ];
             else
-                $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );
+                $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'duplicate' ] = (array) $deprecated_options[ 'duplicate_where' ];
@@ -722,10 +722,10 @@ class PodsUI {
                 $options[ 'restrict' ] = array( 'duplicate' => (array) $deprecated_options[ 'duplicate_where' ] );
         }
         if ( isset( $deprecated_options[ 'delete_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'delete' ] = $deprecated_options[ 'delete_where' ];
             else
-                $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );
+                $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'delete' ] = (array) $deprecated_options[ 'delete_where' ];
@@ -3668,7 +3668,8 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
-        if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
+        // @todo Build 'edit', 'duplicate', 'delete' action support for 'where' which runs another find() query
+        /*if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
             $where = pods_var_raw( $action, $this->where, null, null, true );
 
             if ( !empty( $where ) ) {
@@ -3698,11 +3699,11 @@ class PodsUI {
                 if ( empty( $data ) )
                     $restricted = true;
             }
-        }
+        }*/
 
         $author_restrict = false;
 
-        if ( empty( $where ) && !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
             $restricted = false;
 
             $author_restrict = true;

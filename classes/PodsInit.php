@@ -127,6 +127,10 @@ class PodsInit {
 
             add_action( 'init', array( $this, 'core' ), 11 );
 
+            add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+            add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+            add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+
             add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
             add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
@@ -213,8 +217,6 @@ class PodsInit {
             if ( !defined( strtoupper( $security_setting ) ) )
                 define( strtoupper( $security_setting ), $setting );
         }
-
-        $this->register_assets();
 
         $this->register_pods();
 

@@ -33,7 +33,7 @@ class PodsAdmin {
      */
     public function __construct () {
         // Scripts / Stylesheets
-        add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ), 20 );
 
         // AJAX $_POST fix
         add_action( 'admin_init', array( $this, 'admin_init' ), 9 );

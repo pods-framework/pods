@@ -73,7 +73,7 @@ class PodsAdmin {
 
             if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
                 foreach ( $_POST as $key => $value ) {
-                    if ( 'action' == $key )
+                    if ( 'action' == $key || 0 === strpos( $key, '_podsfix_' ) )
                         continue;
 
                     unset( $_POST[ $key ] );

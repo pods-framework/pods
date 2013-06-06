@@ -1103,6 +1103,15 @@ class PodsField_Pick extends PodsField {
     private function get_object_data ( $object_params = null ) {
         global $wpdb, $polylang, $sitepress;
 
+        $current_language = false;
+
+        // WPML support
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+        // Polylang support
+        elseif ( function_exists( 'pll_current_language' ) )
+            $current_language = pll_current_language( 'slug' );
+
         $object_params = array_merge(
             array(
                 'name' => '', // The name of the field
@@ -1438,7 +1447,7 @@ class PodsField_Pick extends PodsField {
                                 $translated = true;
 
                             if ( $translated ) {
-                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false, $current_language );
 
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];
@@ -1467,7 +1476,7 @@ class PodsField_Pick extends PodsField {
                                 $translated = true;
 
                             if ( $translated ) {
-                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
 
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];

@@ -3711,6 +3711,9 @@ class PodsUI {
             if ( is_object( $this->pod ) ) {
                 $restricted = true;
 
+                if ( 'settings' == $this->pod->pod_data[ 'type' ] && 'add' == $action )
+                    $action = 'edit';
+
                 if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
                     $restricted = false;
                 elseif ( 'manage' == $action ) {

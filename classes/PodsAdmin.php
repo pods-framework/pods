@@ -2072,7 +2072,10 @@ class PodsAdmin {
         $capabilities[] = 'pods_components';
 
         foreach ( $pods as $pod ) {
-            if ( 'post_type' == $pod[ 'type' ] ) {
+            if ( 'settings' == $pod[ 'type' ] ) {
+                $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
+            }
+            elseif ( 'post_type' == $pod[ 'type' ] ) {
                 $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) );
 
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ] ) && 0 < strlen( $capability_type ) ) {

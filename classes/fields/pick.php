@@ -1143,7 +1143,7 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        $data = apply_filters( 'pods_field_pick_object_data', null, $object_params );
+        $data = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
         $items = array();
 
         if ( !isset( $options[ 'pick_object' ] ) )
@@ -1155,7 +1155,7 @@ class PodsField_Pick extends PodsField {
             if ( 'custom-simple' == $options[ 'pick_object' ] ) {
                 $custom = pods_var_raw( 'pick_custom', $options, '' );
 
-                $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
+                $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id, $object_params );
 
                 if ( !empty( $custom ) ) {
                     if ( !is_array( $custom ) ) {
@@ -1295,7 +1295,7 @@ class PodsField_Pick extends PodsField {
                     $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
                 if ( $autocomplete ) {
-                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
+                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id, $object_params );
                     $params[ 'page' ] = $page;
 
                     if ( 'admin_ajax_relationship' == $context ) {
@@ -1324,6 +1324,8 @@ class PodsField_Pick extends PodsField {
                             $lookup_where[ 'comment_author' ] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                             $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
+
+                        $lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $name, $value, $options, $pod, $id, $object_params );
 
                         if ( !empty( $lookup_where ) )
                             $params[ 'where' ][] = implode( ' OR ', $lookup_where );

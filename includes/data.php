@@ -333,7 +333,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
                 $value = '';
 
                 if ( !empty( $user->roles ) )
-                    $value = array_unshift( $user->roles );
+                    $value = array_shift( $user->roles );
             }
             else
                 $value = get_user_meta( $user->ID, $var );

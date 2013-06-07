@@ -756,12 +756,12 @@ class PodsMeta {
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
-                if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
                 else
                     continue;
             }
-            elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+            elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                 $field[ 'type' ] = 'hidden';
 
             $value = '';
@@ -900,7 +900,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -977,7 +977,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -1042,7 +1042,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -1137,12 +1137,12 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
                     else
                         continue;
                 }
-                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
 
                 $value = '';
@@ -1207,7 +1207,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -1265,12 +1265,12 @@ class PodsMeta {
             <?php
                 foreach ( $group[ 'fields' ] as $field ) {
                     if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                        if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                             $field[ 'type' ] = 'hidden';
                         else
                             continue;
                     }
-                    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
 
                     $value = '';
@@ -1340,7 +1340,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -1391,12 +1391,12 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
                     else
                         continue;
                 }
-                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
 
                 $value = '';
@@ -1445,12 +1445,12 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
                     else
                         continue;
                 }
-                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
 
                 $value = '';
@@ -1510,7 +1510,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], null, null ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field_found = true;
                     else
                         continue;
@@ -1553,12 +1553,12 @@ class PodsMeta {
 
             foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
                     else
                         continue;
                 }
-                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
 
                 $value = '';
@@ -1618,7 +1618,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 
@@ -1663,7 +1663,7 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
+                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
                 }
 

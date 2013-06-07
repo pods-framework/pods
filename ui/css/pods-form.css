@@ -1,3 +1,8 @@
+#post-body {
+    border: none;
+    background: none;
+}
+
 .pods-admin #navigation-actions .previous-item {
     display: block;
     text-align: left;
@@ -159,6 +164,11 @@ input.pods-form-ui-field-type-color {
 
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
+}
+
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+    border-bottom: none;
 }
 
 .form-table tr.pods-field > td {

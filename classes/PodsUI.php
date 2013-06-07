@@ -232,9 +232,9 @@ class PodsUI {
      */
     public $where = array(
         'manage' => null,
-        'edit' => null,
+        /*'edit' => null,
         'duplicate' => null,
-        'delete' => null,
+        'delete' => null,*/
         'reorder' => null
     );
 
@@ -700,10 +700,10 @@ class PodsUI {
                 $options[ 'where' ] = array( 'manage' => $deprecated_options[ 'where' ] );
         }
         if ( isset( $deprecated_options[ 'edit_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'edit' ] = $deprecated_options[ 'edit_where' ];
             else
-                $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );
+                $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'edit' ] = (array) $deprecated_options[ 'edit_where' ];
@@ -711,10 +711,10 @@ class PodsUI {
                 $options[ 'restrict' ] = array( 'edit' => (array) $deprecated_options[ 'edit_where' ] );
         }
         if ( isset( $deprecated_options[ 'duplicate_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_where' ];
             else
-                $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );
+                $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'duplicate' ] = (array) $deprecated_options[ 'duplicate_where' ];
@@ -722,10 +722,10 @@ class PodsUI {
                 $options[ 'restrict' ] = array( 'duplicate' => (array) $deprecated_options[ 'duplicate_where' ] );
         }
         if ( isset( $deprecated_options[ 'delete_where' ] ) ) {
-            if ( isset( $options[ 'where' ] ) )
+            /*if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'delete' ] = $deprecated_options[ 'delete_where' ];
             else
-                $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );
+                $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );*/
 
             if ( isset( $options[ 'restrict' ] ) )
                 $options[ 'restrict' ][ 'delete' ] = (array) $deprecated_options[ 'delete_where' ];
@@ -1314,29 +1314,34 @@ class PodsUI {
             return call_user_func_array( $this->actions_custom[ $this->action ], array( &$this, $this->id ) );
         elseif ( isset( $this->actions_custom[ $this->action ] ) && ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $this->action ][ 'callback' ] ) ) )
             return call_user_func_array( $this->actions_custom[ $this->action ][ 'callback' ], array( &$this, $this->id ) );
-        elseif ( !in_array( 'manage', $this->actions_disabled ) )
-            $this->manage();
+        elseif ( !in_array( 'manage', $this->actions_disabled ) ) {
+            // handle session / user persistent settings for show_per_page, orderby, search, and filters
+            $methods = array( 'session', 'user' );
 
-        // handle session / user persistent settings for show_per_page, orderby, search, and filters
-        $methods = array( 'session', 'user' );
-        foreach ( $methods as $method ) {
-            foreach ( $this->$method as $setting ) {
-                if ( 'show_per_page' == $setting )
-                    $value = $this->limit;
-                elseif ( 'orderby' == $setting ) {
-                    if ( empty( $this->orderby ) )
-                        $value = '';
-                    elseif ( isset( $this->orderby[ 'default' ] ) ) // save this if we have a default index set
-                        $value = $this->orderby[ 'default' ] . ' '
-                             . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+            // @todo fix this to set ($this) AND save (setting)
+            foreach ( $methods as $method ) {
+                foreach ( $this->$method as $setting ) {
+                    if ( 'show_per_page' == $setting )
+                        $value = $this->limit;
+                    elseif ( 'orderby' == $setting ) {
+                        if ( empty( $this->orderby ) )
+                            $value = '';
+                        // save this if we have a default index set
+                        elseif ( isset( $this->orderby[ 'default' ] ) ) {
+                            $value = $this->orderby[ 'default' ] . ' '
+                                     . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+                        }
+                        else
+                            $value = '';
+                    }
                     else
-                        $value = '';
-                }
-                else
-                    $value = $this->$setting;
+                        $value = $this->$setting;
 
-                pods_var_set( $value, $setting, $method );
+                    pods_var_set( $value, $setting, $method );
+                }
             }
+
+            $this->manage();
         }
     }
 
@@ -3663,13 +3668,51 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
+        // @todo Build 'edit', 'duplicate', 'delete' action support for 'where' which runs another find() query
+        /*if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
+            $where = pods_var_raw( $action, $this->where, null, null, true );
+
+            if ( !empty( $where ) ) {
+                $restricted = true;
+
+                $old_where = $this->where[ $action ];
+
+                $id = $this->row[ $this->sql[ 'field_id' ] ];
+
+                if ( is_array( $where ) ) {
+                    if ( 'OR' == pods_var( 'relation', $where ) )
+                        $where = array( $where );
+
+                    $where[] = "`t`.`" . $this->sql[ 'field_id' ] . "` = " . (int) $id;
+                }
+                else
+                    $where = "( {$where} ) AND `t`.`" . $this->sql[ 'field_id' ] . "` = " . (int) $id;
+
+                $this->where[ $action ] = $where;
+
+                $data = false;
+
+                //$data = $this->get_data();
+
+                $this->where[ $action ] = $old_where;
+
+                if ( empty( $data ) )
+                    $restricted = true;
+            }
+        }*/
+
         $author_restrict = false;
 
         if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+            $restricted = false;
+
             $author_restrict = true;
 
             if ( is_object( $this->pod ) ) {
                 $restricted = true;
+
+                if ( 'settings' == $this->pod->pod_data[ 'type' ] && 'add' == $action )
+                    $action = 'edit';
 
                 if ( pods_is_admin( array( 'pods', 'pods_content' ) ) )
                     $restricted = false;

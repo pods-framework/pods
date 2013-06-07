@@ -33,7 +33,7 @@ class PodsAdmin {
      */
     public function __construct () {
         // Scripts / Stylesheets
-        add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ), 20 );
 
         // AJAX $_POST fix
         add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
@@ -73,7 +73,7 @@ class PodsAdmin {
 
             if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
                 foreach ( $_POST as $key => $value ) {
-                    if ( 'action' == $key )
+                    if ( 'action' == $key || 0 === strpos( $key, '_podsfix_' ) )
                         continue;
 
                     unset( $_POST[ $key ] );
@@ -169,6 +169,8 @@ class PodsAdmin {
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
         if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
+            $submenu_items = array();
+
             if ( !empty( $advanced_content_types ) ) {
                 $submenu = array();
 
@@ -203,7 +205,10 @@ class PodsAdmin {
 
                         if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) ) {
                             if ( !empty( $menu_location_custom ) ) {
-                                add_submenu_page( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
+                                if ( !isset( $submenu_items[ $menu_location_custom ] ) )
+                                    $submenu_items[ $menu_location_custom ] = array();
+
+                                $submenu_items[ $menu_location_custom ][] = array( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
 
                                 continue;
                             }
@@ -302,8 +307,6 @@ class PodsAdmin {
                     }
                 }
             }
-
-            $submenu_items = array();
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
@@ -2069,7 +2072,10 @@ class PodsAdmin {
         $capabilities[] = 'pods_components';
 
         foreach ( $pods as $pod ) {
-            if ( 'post_type' == $pod[ 'type' ] ) {
+            if ( 'settings' == $pod[ 'type' ] ) {
+                $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
+            }
+            elseif ( 'post_type' == $pod[ 'type' ] ) {
                 $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) );
 
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ] ) && 0 < strlen( $capability_type ) ) {

@@ -1103,6 +1103,15 @@ class PodsField_Pick extends PodsField {
     private function get_object_data ( $object_params = null ) {
         global $wpdb, $polylang, $sitepress;
 
+        $current_language = false;
+
+        // WPML support
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+        // Polylang support
+        elseif ( function_exists( 'pll_current_language' ) )
+            $current_language = pll_current_language( 'slug' );
+
         $object_params = array_merge(
             array(
                 'name' => '', // The name of the field
@@ -1134,7 +1143,7 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        $data = apply_filters( 'pods_field_pick_object_data', null, $object_params );
+        $data = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
         $items = array();
 
         if ( !isset( $options[ 'pick_object' ] ) )
@@ -1146,7 +1155,7 @@ class PodsField_Pick extends PodsField {
             if ( 'custom-simple' == $options[ 'pick_object' ] ) {
                 $custom = pods_var_raw( 'pick_custom', $options, '' );
 
-                $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
+                $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id, $object_params );
 
                 if ( !empty( $custom ) ) {
                     if ( !is_array( $custom ) ) {
@@ -1286,7 +1295,7 @@ class PodsField_Pick extends PodsField {
                     $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
                 if ( $autocomplete ) {
-                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
+                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id, $object_params );
                     $params[ 'page' ] = $page;
 
                     if ( 'admin_ajax_relationship' == $context ) {
@@ -1315,6 +1324,8 @@ class PodsField_Pick extends PodsField {
                             $lookup_where[ 'comment_author' ] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                             $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
+
+                        $lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
                         if ( !empty( $lookup_where ) )
                             $params[ 'where' ][] = implode( ' OR ', $lookup_where );
@@ -1438,7 +1449,7 @@ class PodsField_Pick extends PodsField {
                                 $translated = true;
 
                             if ( $translated ) {
-                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false, $current_language );
 
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];
@@ -1467,7 +1478,7 @@ class PodsField_Pick extends PodsField {
                                 $translated = true;
 
                             if ( $translated ) {
-                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
 
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];

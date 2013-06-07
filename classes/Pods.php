@@ -189,7 +189,7 @@ class Pods implements Iterator {
         PodsData::$display_errors =& $this->display_errors;
 
         // Set up page variable
-        if ( pods_strict() ) {
+        if ( pods_strict( false ) ) {
             $this->page = 1;
             $this->pagination = false;
             $this->search = false;

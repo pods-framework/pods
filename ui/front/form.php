@@ -10,12 +10,12 @@ foreach ( $fields as $k => $field ) {
         unset( $fields[ $k ] );
     elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
         if ( pods_var( 'hidden', $field[ 'options' ], false ) )
-            $field[ 'type' ] = 'hidden';
+            $fields[ $k ][ 'type' ] = 'hidden';
         else
             unset( $fields[ $k ] );
     }
     elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
-        $field[ 'type' ] = 'hidden';
+        $fields[ $k ][ 'type' ] = 'hidden';
 }
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );

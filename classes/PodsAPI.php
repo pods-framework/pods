@@ -1864,17 +1864,17 @@ class PodsAPI {
     /**
      * Add or edit a field within a Pod
      *
-     * $params['id'] int The field ID
-     * $params['pod_id'] int The Pod ID
-     * $params['pod'] string The Pod name
-     * $params['name'] string The field name
-     * $params['label'] string The field label
-     * $params['type'] string The field type ("txt", "desc", "pick", etc)
-     * $params['pick_object'] string The related PICK object name
-     * $params['pick_val'] string The related PICK object value
-     * $params['sister_id'] int (optional) The related field ID
-     * $params['weight'] int The field weight
-     * $params['options'] array The field options
+     * $params['id'] int Field ID (id OR pod_id+pod+name required)
+     * $params['pod_id'] int Pod ID (id OR pod_id+pod+name required)
+     * $params['pod'] string Pod name (id OR pod_id+pod+name required)
+     * $params['name'] string Field name (id OR pod_id+pod+name required)
+     * $params['label'] string (optional) Field label
+     * $params['type'] string (optional) Field type (avatar, boolean, code, color, currency, date, datetime, email, file, number, paragraph, password, phone, pick, slug, text, time, website, wysiwyg)
+     * $params['pick_object'] string (optional) Related Object (for relationships)
+     * $params['pick_val'] string (optional) Related Object name (for relationships)
+     * $params['sister_id'] int (optional) Related Field ID (for bidirectional relationships)
+     * $params['weight'] int (optional) Order in which the field appears
+     * $params['options'] array (optional) Options
      *
      * @param array $params An associative array of parameters
      * @param bool $table_operation (optional) Whether or not to handle table operations
@@ -2716,7 +2716,7 @@ class PodsAPI {
             $is_new_item = true;
 
         if ( isset( $params->is_new_item ) )
-            $is_new_item = $params->is_new_item;
+            $is_new_item = (boolean) $params->is_new_item;
 
         // Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
         $bypass_helpers = false;
@@ -2763,7 +2763,7 @@ class PodsAPI {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
                     }
-                    elseif ( !pods_has_permissions( $fields[ $field ][ 'options' ] ) && pods_var( 'hidden', $fields[ $field ][ 'options' ], false, null, true ) ) {
+                    elseif ( !pods_has_permissions( $fields[ $field ][ 'options' ] ) && pods_var( 'hidden', $fields[ $field ][ 'options' ], false ) ) {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
                     }
@@ -4510,8 +4510,8 @@ class PodsAPI {
     /**
      * Check if a Pod exists
      *
-     * $params['id'] int The datatype ID
-     * $params['name'] string The datatype name
+     * $params['id'] int Pod ID
+     * $params['name'] string Pod name
      *
      * @param array $params An associative array of parameters
      *

@@ -1325,7 +1325,7 @@ class PodsField_Pick extends PodsField {
                             $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
 
-                        $lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params );
+                        $lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
                         if ( !empty( $lookup_where ) )
                             $params[ 'where' ][] = implode( ' OR ', $lookup_where );

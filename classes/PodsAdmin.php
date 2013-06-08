@@ -771,7 +771,11 @@ class PodsAdmin {
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
-        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
+        echo '<style>';
+        echo '.pod-media-icon { background:url(' . PODS_URL . 'ui/images/icon16.png) no-repeat top left; display: inline-block; height: 16px; margin: 0 2px 0 0; vertical-align: text-top; width: 16px; } .wp-core-ui a.pods-media-button { padding-left: 0.4em; }';
+        echo '</style>';
+
+        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox button pods-media-button" title="Embed Content"><span class="pod-media-icon"></span> Embed Content</a>';
     }
 
     /**

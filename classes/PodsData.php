@@ -1762,7 +1762,9 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
                 else
-                    $this->row = get_object_vars( $this->row );
+                    $this->row = get_object_vars( $this->row->data );
+
+                unset( $this->row[ 'user_pass' ] );
 
                 $current_row_id = $this->row[ 'ID' ];
 

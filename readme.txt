@@ -151,8 +151,16 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.7 - June 7th, 2013 =
+= 2.3.8 - June 8th, 2013 =
 * Important News! Lead Developer Scott Kingsley Clark and his wife are welcoming their second daughter over the next week or so, support time may be longer than usual during that period, we appreciate your patience.
+* Fixed: Hide field from UI option now works properly for admins
+* Fixed: User data handling for `pods( 'user' )`
+* Fixed: jpeg extension now included in built-in 'images' option for File field type
+* Fixed: iThemes Builder / Markdown components weren't loading properly (no errors, just didn't load)
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.7 - June 7th, 2013 =
 * Added: New filter to allow searching across different fields in autocomplete relationship fields: https://github.com/pods-framework/pods/issues/1464
 * Improved: JS performance used for the field manager drastically improved (props @pglewis)
 * Improved: PHP optimization tweaks for how we handle $_POST sanitization
@@ -160,8 +168,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: E_STRICT PHP notices
 * Fixed: Shortcode popup JS building logic
 * Fixed: Issue with find() queries using number decimals matching the relationship traversal regex rules
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.6 - May 24th, 2013 =
 * Fixed: Issue with the Pod list when you delete or empty a Pod, it would repeat the same row in the list until you went back to the Edit Pods screen without the id=X in the URL

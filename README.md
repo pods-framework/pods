@@ -8,4 +8,4 @@
 Check out <http://pods.io/> for our User Guide and many other resources to help you develop with Pods.
 
 ## GitHub Update Note
-~Current Version: 2.3.8-b-2~
+~Current Version: 2.3.8~

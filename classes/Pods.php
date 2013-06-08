@@ -1086,7 +1086,17 @@ class Pods implements Iterator {
                                                 $item = get_userdata( $item_id );
 
                                                 if ( !empty( $item ) ) {
+                                                    // Get other vars
+                                                    $roles = $item->roles;
+                                                    $caps = $item->caps;
+                                                    $allcaps = $item->allcaps;
+
                                                     $item = $item->data;
+
+                                                    // Set other vars
+                                                    $item->roles = $roles;
+                                                    $item->caps = $caps;
+                                                    $item->allcaps = $allcaps;
 
                                                     unset( $item->user_pass );
                                                 }

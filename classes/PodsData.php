@@ -1773,9 +1773,9 @@ class PodsData {
                     $this->row[ 'roles' ] = $roles;
                     $this->row[ 'caps' ] = $caps;
                     $this->row[ 'allcaps' ] = $allcaps;
-                }
 
-                unset( $this->row[ 'user_pass' ] );
+                    unset( $this->row[ 'user_pass' ] );
+                }
 
                 $current_row_id = $this->row[ 'ID' ];
 

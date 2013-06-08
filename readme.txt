@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.7
+Stable tag: 2.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

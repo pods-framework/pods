@@ -1761,8 +1761,21 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
-                else
-                    $this->row = get_object_vars( $this->row );
+                else {
+                    // Get other vars
+                    $roles = $this->row->roles;
+                    $caps = $this->row->caps;
+                    $allcaps = $this->row->allcaps;
+
+                    $this->row = get_object_vars( $this->row->data );
+
+                    // Set other vars
+                    $this->row[ 'roles' ] = $roles;
+                    $this->row[ 'caps' ] = $caps;
+                    $this->row[ 'allcaps' ] = $allcaps;
+
+                    unset( $this->row[ 'user_pass' ] );
+                }
 
                 $current_row_id = $this->row[ 'ID' ];
 

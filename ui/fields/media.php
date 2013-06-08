@@ -34,7 +34,7 @@ $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type ) {
     $limit_types = 'image';
-    $limit_extensions = 'jpg,png,gif';
+    $limit_extensions = 'jpg,jpeg,png,gif';
 }
 elseif ( 'video' == $limit_file_type ) {
     $limit_types = 'video';

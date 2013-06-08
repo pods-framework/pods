@@ -1082,8 +1082,25 @@ class Pods implements Iterator {
                                                 $item = get_post( $item_id );
                                             elseif ( 'taxonomy' == $object_type )
                                                 $item = get_term( $item_id, $object );
-                                            elseif ( 'user' == $object_type )
+                                            elseif ( 'user' == $object_type ) {
                                                 $item = get_userdata( $item_id );
+
+                                                if ( !empty( $item ) ) {
+                                                    // Get other vars
+                                                    $roles = $item->roles;
+                                                    $caps = $item->caps;
+                                                    $allcaps = $item->allcaps;
+
+                                                    $item = $item->data;
+
+                                                    // Set other vars
+                                                    $item->roles = $roles;
+                                                    $item->caps = $caps;
+                                                    $item->allcaps = $allcaps;
+
+                                                    unset( $item->user_pass );
+                                                }
+                                            }
                                             elseif ( 'comment' == $object_type )
                                                 $item = get_comment( $item_id );
                                             else

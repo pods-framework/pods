@@ -15,13 +15,13 @@ foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
     elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-        if ( pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
-            $field[ 'type' ] = 'hidden';
+        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'type' ] = 'hidden';
         else
             unset( $fields[ $k ] );
     }
-    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false, null, true ) )
-        $field[ 'type' ] = 'hidden';
+    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
+        $fields[ $k ][ 'type' ] = 'hidden';
 }
 
 if ( !isset( $thank_you_alt ) )

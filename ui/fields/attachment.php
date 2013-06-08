@@ -31,7 +31,7 @@ $limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type )
-    $limit_types = 'jpg,png,gif';
+    $limit_types = 'jpg,jpeg,png,gif';
 elseif ( 'video' == $limit_file_type )
     $limit_types = 'mpg,mov,flv,mp4';
 elseif ( 'audio' == $limit_file_type )

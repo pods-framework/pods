@@ -131,7 +131,7 @@ class PodsField_File extends PodsField {
                 'data' => apply_filters(
                     'pods_form_ui_field_file_type_options',
                     array(
-                        'images' => __( 'Images (jpg, png, gif, etc..)', 'pods' ),
+                        'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
                         'video' => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
                         'audio' => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
                         'text' => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
@@ -644,7 +644,7 @@ class PodsField_File extends PodsField {
             $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field[ 'options' ], 'images' );
 
             if ( 'images' == $limit_file_type )
-                $limit_types = 'jpg,png,gif';
+                $limit_types = 'jpg,jpeg,png,gif';
             elseif ( 'video' == $limit_file_type )
                 $limit_types = 'mpg,mov,flv,mp4';
             elseif ( 'audio' == $limit_file_type )

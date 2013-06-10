@@ -2284,7 +2284,7 @@ class PodsData {
             $field_string = '%d';
 
         // Restrict to supported comparisons
-        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'NOT EXISTS' ) ) )
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS' ) ) )
             $field_compare = '=';
 
         // Restrict to supported array comparisons

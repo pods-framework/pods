@@ -2468,36 +2468,42 @@ class Pods implements Iterator {
      * @since 2.0
      * @link http://pods.io/docs/export/
      */
-    public function export ( $fields = null, $id = null, $format = null ) {
+    public function export ( $fields = array(), $id = null, $format = null ) {
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
-            'fields' => null,
+            'fields' => array(),
             'depth' => 2,
             'flatten' => false
         );
 
-        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
+        if ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) {
             $params = array_merge( $params, $fields );
-        else
+        }
+        else {
             $params[ 'fields' ] = $fields;
+        }
 
-        if ( !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) )
+        if ( !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) ) {
             $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
+        }
 
-        if ( null === $params[ 'id' ] )
+        if ( null === $params[ 'id' ] ) {
             $params[ 'id' ] = $this->id();
+        }
 
         $params = (array) $this->do_hook( 'export', $params );
 
-        if ( empty( $params[ 'id' ] ) )
+        if ( empty( $params[ 'id' ] ) ) {
             return false;
+        }
 
         $data = $this->api->export_pod_item( $params );
 
         if ( !empty( $format ) ) {
-            if ( 'json' == $format )
+            if ( 'json' == $format ) {
                 $data = json_encode( (array) $data );
+            }
         }
 
         return $data;

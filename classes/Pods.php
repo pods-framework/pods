@@ -2468,11 +2468,11 @@ class Pods implements Iterator {
      * @since 2.0
      * @link http://pods.io/docs/export/
      */
-    public function export ( $fields = array(), $id = null, $format = null ) {
+    public function export ( $fields = null, $id = null, $format = null ) {
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
-            'fields' => array(),
+            'fields' => null,
             'depth' => 2,
             'flatten' => false
         );
@@ -2484,7 +2484,7 @@ class Pods implements Iterator {
             $params[ 'fields' ] = $fields;
         }
 
-        if ( !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) ) {
+        if ( is_array( $params[ 'fields' ] ) && !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) ) {
             $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
         }
 

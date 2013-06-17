@@ -2477,7 +2477,7 @@ class Pods implements Iterator {
             'flatten' => false
         );
 
-        if ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) {
+        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) ) {
             $params = array_merge( $params, $fields );
         }
         else {

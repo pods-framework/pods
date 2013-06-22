@@ -7051,8 +7051,10 @@ class PodsAPI {
      * @since 1.7.1
      */
     public function export ( $pod = null, $params = null ) {
-        if ( empty( $pod ) )
+
+        if ( empty( $pod ) ) {
             $pod = $this->pod;
+        }
 
         $find = array(
             'limit' => -1,
@@ -7067,8 +7069,9 @@ class PodsAPI {
 
             $pod = pods( $pod, $find );
         }
-        elseif ( !is_object( $pod ) )
+        elseif ( !is_object( $pod ) ) {
             $pod = pods( $pod, $find );
+        }
 
         $data = array();
 

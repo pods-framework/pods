@@ -2477,16 +2477,13 @@ class Pods implements Iterator {
             'flatten' => false
         );
 
-        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) ) {
-            $params = array_merge( $params, $fields );
-        }
-        else {
-            $params[ 'fields' ] = $fields;
-        }
+        if (is_array($fields) && ( isset($fields['fields']) || isset($fields['depth']) ))
+            $params = array_merge($params, $fields);
+        else
+            $params['fields'] = $fields;
 
-        if ( is_array( $params[ 'fields' ] ) && !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) ) {
-            $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
-        }
+        if (isset($params['fields']) && !in_array($this->pod_data['field_id'], $params['fields']))
+            $params['fields'] = (is_array($params['fields']) ? array_merge(array($this->pod_data['field_id']), $params['fields']) : array($this->pod_data['field_id']));
 
         if ( null === $params[ 'id' ] ) {
             $params[ 'id' ] = $this->id();

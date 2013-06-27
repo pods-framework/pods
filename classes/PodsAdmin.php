@@ -102,6 +102,8 @@ class PodsAdmin {
 
         wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
+        wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery.pods.migrate.js', array(), PODS_VERSION );
+
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
@@ -2179,7 +2181,8 @@ class PodsAdmin {
             'save_pod' => array( 'priv' => true ),
             'load_sister_fields' => array( 'priv' => true ),
             'process_form' => array( 'custom_nonce' => true ), // priv handled through nonce
-            'upgrade' => array( 'priv' => true )
+            'upgrade' => array( 'priv' => true ),
+            'migrate' => array( 'priv' => true )
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
@@ -2217,6 +2220,8 @@ class PodsAdmin {
 
         if ( 'upgrade' == $method->name )
             $output = (string) pods_upgrade( $params->version )->ajax( $params );
+        elseif ( 'migrate' == $method->name )
+            $output = (string) apply_filters( 'pods_api_migrate_run', $params );
         else {
             if ( !method_exists( $api, $method->name ) )
                 pods_error( 'API method does not exist', $this );

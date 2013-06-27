@@ -197,7 +197,7 @@ class PodsUpgrade {
     /**
      *
      */
-    public function cleanup() {
+    public function cleanup () {
         /**
          * @var $wpdb WPDB
          */

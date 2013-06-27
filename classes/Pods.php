@@ -2477,33 +2477,28 @@ class Pods implements Iterator {
             'flatten' => false
         );
 
-        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) ) {
+        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
             $params = array_merge( $params, $fields );
-        }
-        else {
+        else
             $params[ 'fields' ] = $fields;
-        }
 
-        if ( is_array( $params[ 'fields' ] ) && !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) ) {
+        if ( isset( $params[ 'fields' ] ) && is_array( $params[ 'fields' ] ) && !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) )
             $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
-        }
 
-        if ( null === $params[ 'id' ] ) {
+        if ( null === $params[ 'id' ] )
             $params[ 'id' ] = $this->id();
-        }
 
         $params = (array) $this->do_hook( 'export', $params );
 
-        if ( empty( $params[ 'id' ] ) ) {
+        if ( empty( $params[ 'id' ] ) )
             return false;
-        }
 
         $data = $this->api->export_pod_item( $params );
 
         if ( !empty( $format ) ) {
-            if ( 'json' == $format ) {
+            if ( 'json' == $format )
                 $data = json_encode( (array) $data );
-            }
+            // @todo more formats
         }
 
         return $data;

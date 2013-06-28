@@ -30,6 +30,9 @@
                 if ( 'undefined' != typeof $row.data( 'object' ) )
                     postdata[ 'object' ] = $row.data( 'object' );
 
+                var $step_3 = $( '#pods-wizard-panel-3 table tbody' ),
+                    $table = $row.parent();
+
                 $.ajax( {
                     type : 'POST',
                     url : pods_ajaxurl,
@@ -42,10 +45,14 @@
                             $row.find( 'td.pods-wizard-count' ).text( d );
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );
 
-                            if ( 'undefined' != typeof $row.data( 'object' ) )
-                                $row.parent().find( 'tr[data-object="' + $row.data( 'object' ) + '"] td.pods-wizard-count' ).text( d );
-                            else
-                                $row.parent().find( 'tr[data-migrate="' + $row.data( 'migrate' ) + '"] td.pods-wizard-count' ).text( d );
+                            if ( 'undefined' != typeof $row.data( 'object' ) ) {
+                                $table.find( 'tr[data-migrate="' + $row.data( 'migrate' ) + '"][data-object="' + $row.data( 'object' ) + '"] td.pods-wizard-count' ).text( d );
+                                $step_3.find( 'tr[data-migrate="' + $row.data( 'migrate' ) + '"][data-object="' + $row.data( 'object' ) + '"] td.pods-wizard-count' ).text( d );
+                            }
+                            else {
+                                $table.find( 'tr[data-migrate="' + $row.data( 'migrate' ) + '"] td.pods-wizard-count' ).text( d );
+                                $step_3.find( 'tr[data-migrate="' + $row.data( 'migrate' ) + '"] td.pods-wizard-count' ).text( d );
+                            }
                         }
                         else {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );

@@ -3122,6 +3122,30 @@ class PodsAPI {
                     continue;
 
                 foreach ( $data as $field => $values ) {
+                    $pick_val = pods_var( 'pick_val', $fields[ $field ][ 'options' ] );
+
+                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ][ 'options' ] ) )
+                        $pick_val = pods_var( 'pick_table', $fields[ $field ][ 'options' ], $pick_val, null, true );
+
+                    if ( '__current__' == $pick_val ) {
+                        if ( is_object( $pod ) )
+                            $pick_val = $pod->pod;
+                        elseif ( is_array( $pod ) )
+                            $pick_val = $pod[ 'name' ];
+                        elseif ( 0 < strlen( $pod ) )
+                            $pick_val = $pod;
+                    }
+
+                    $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ][ 'options' ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
+
+                    $search_data = pods_data();
+                    $search_data->table( $fields[ $field ][ 'options' ][ 'table_info' ] );
+
+                    if ( isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && !empty( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
+                        $search_data->pod = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ];
+                        $search_data->fields = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'fields' ];
+                    }
+
                     $related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ][ 'options' ], 0 );
 
                     if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) )
@@ -3132,8 +3156,27 @@ class PodsAPI {
 
                     foreach ( $values as $v ) {
                         if ( !empty( $v ) ) {
-                            if ( !is_array( $v ) )
-                                $v = (int) $v;
+                            if ( !is_array( $v ) ) {
+                                if ( !preg_match( '/[^0-9]*/', $v ) )
+                                    $v = (int) $v;
+                                // File handling
+                                elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
+                                    // Get ID from GUID
+                                    $v = pods_image_id_from_field( $v );
+
+                                    // If file not found, add it
+                                    if ( empty( $v ) )
+                                        $v = pods_attachment_import( $v );
+                                }
+                                // Reference by slug
+                                else {
+                                    $v_data = $search_data->fetch( $v );
+
+                                    if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) )
+                                        $v = (int) $v_data[ $search_data->field_id ];
+                                }
+                                // @todo Handle simple relationships eventually
+                            }
                             elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) )
                                 $v = (int) $v[ 'id' ];
                             else

@@ -1379,7 +1379,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $v ) {
@@ -1448,7 +1453,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $v ) {
@@ -2142,7 +2152,8 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
                 }
 
                 $value = array_merge( $related_ids, $value );
@@ -2250,7 +2261,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $k => $v ) {

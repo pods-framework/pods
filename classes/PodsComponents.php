@@ -436,8 +436,14 @@ class PodsComponents {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ][ 'object' ] ) && is_object( $this->components[ $component ][ 'object' ] ) ) {
+            // Component init
+            if ( method_exists( $this->components[ $component ][ 'object' ], 'init' ) )
+                $this->components[ $component ][ 'object' ]->init( $this->settings[ 'components' ][ $component ], $component );
+
+            // Component Admin handler
             if ( method_exists( $this->components[ $component ][ 'object' ], 'admin' ) )
                 $this->components[ $component ][ 'object' ]->admin( $this->settings[ 'components' ][ $component ], $component );
+            // Built-in Admin Handler
             elseif ( method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
                 $this->admin( $this->components[ $component ][ 'object' ]->options( $this->settings[ 'components' ][ $component ] ), $this->settings[ 'components' ][ $component ], $component );
         }
@@ -560,6 +566,10 @@ class PodsComponents {
         $params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
 
         $output = false;
+
+        // Component init
+        if ( isset( $this->components[ $component ][ 'object' ] ) && method_exists( $this->components[ $component ][ 'object' ], 'init' ) )
+            $this->components[ $component ][ 'object' ]->init( $this->settings[ 'components' ][ $component ], $component );
 
         // Handle internal methods
         if ( isset( $this->components[ $component ][ 'object' ] ) && !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) && method_exists( $this, 'admin_ajax_' . $method ) )

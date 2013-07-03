@@ -1164,8 +1164,22 @@ class Pods implements Iterator {
 
                                             if ( false !== strpos( $field, '_src.' ) && 5 < strlen( $field ) )
                                                 $size = substr( $field, 5 );
+                                            elseif ( false !== strpos( $field, '_src_relative.' ) && 14 < strlen( $field ) )
+                                                $size = substr( $field, 14 );
+                                            elseif ( false !== strpos( $field, '_src_schemeless.' ) && 16 < strlen( $field ) )
+                                                $size = substr( $field, 16 );
 
-                                            $value[] = pods_image_url( $item_id, $size );
+                                            $value_url = pods_image_url( $item_id, $size );
+
+                                            if ( false !== strpos( $field, '_src_relative' ) && !empty( $value_url ) ) {
+                                                $value_url_parsed = parse_url( $value_url );
+                                                $value_url = $value_url_parsed[ 'path' ];
+                                            }
+                                            elseif ( false !== strpos( $field, '_src_schemeless' ) && !empty( $value_url ) )
+                                                $value_url = str_replace( array( 'http://', 'https://' ), '//', $value_url );
+
+                                            if ( !empty( $value_url ) )
+                                                $value[] = $value_url;
 
                                             $params->raw_display = true;
                                         }

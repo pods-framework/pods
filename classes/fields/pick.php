@@ -616,6 +616,9 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) ) {
+            if ( !empty( $value ) && !is_array( $value ) )
+                $value = explode( ',', $value );
+
             if ( 'checkbox' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $field_type = 'checkbox';
             elseif ( 'multiselect' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )

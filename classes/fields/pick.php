@@ -1101,7 +1101,7 @@ class PodsField_Pick extends PodsField {
      * @return array|bool Object data
      */
     private function get_object_data ( $object_params = null ) {
-        global $wpdb, $polylang, $sitepress;
+        global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
         $current_language = false;
 

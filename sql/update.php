@@ -41,7 +41,7 @@ if ( version_compare( $pods_version, '2.3.5', '<' ) ) {
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy' WHERE `meta_key` IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd'" );
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_value` = 'dMy_dash' WHERE `meta_key` IN ( 'date_format', 'datetime_format' ) AND `meta_value` = 'dMd_dash'" );
 
-    $pods_object_ids = $wpdb->get_col( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` IN ( '_pods_pod', '_pods_field', '_pods_page', '_pods_template', '_pods_page' )" );
+    $pods_object_ids = $wpdb->get_col( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` IN ( '_pods_pod', '_pods_field', '_pods_page', '_pods_template', '_pods_helper' )" );
 
     if ( !empty( $pods_object_ids ) ) {
         array_walk( $pods_object_ids, 'absint' );

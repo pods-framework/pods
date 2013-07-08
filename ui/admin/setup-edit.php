@@ -518,7 +518,7 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
         <div class="pods-pick-values pods-pick-checkbox">
             <ul>
                 <?php
-                foreach ( (array) $field_settings[ 'pick_object' ][ 'Taxonomies' ] as $taxonomy => $label ) {
+                foreach ( (array) $field_settings[ 'pick_object' ][ __( 'Taxonomies', 'pods' ) ] as $taxonomy => $label ) {
                     $taxonomy = pods_str_replace( 'taxonomy-', '', $taxonomy, 1 );
                     ?>
                     <li>
@@ -599,7 +599,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <div class="pods-pick-values pods-pick-checkbox">
             <ul>
                 <?php
-                    foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
+                    foreach ( (array) $field_settings[ 'pick_object' ][ __( 'Post Types', 'pods' ) ] as $post_type => $label ) {
                         $post_type = pods_str_replace( 'post_type-', '', $post_type, 1 );
                         $label = str_replace( array( '(', ')' ), array( '<small>(', ')</small>' ), $label );
                 ?>

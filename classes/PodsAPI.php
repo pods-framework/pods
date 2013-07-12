@@ -298,7 +298,7 @@ class PodsAPI {
 
         if ( !isset( $user_data[ 'ID' ] ) || empty( $user_data[ 'ID' ] ) )
             $user_data[ 'ID' ] = wp_insert_user( $user_data );
-        else
+        elseif ( 1 < count( $user_data ) )
             wp_update_user( $user_data );
 
         if ( is_wp_error( $user_data[ 'ID' ] ) ) {
@@ -403,7 +403,7 @@ class PodsAPI {
 
         if ( !isset( $comment_data[ 'comment_ID' ] ) || empty( $comment_data[ 'comment_ID' ] ) )
             $comment_data[ 'comment_ID' ] = wp_insert_comment( $comment_data );
-        else
+        elseif ( 1 < count( $comment_data ) )
             wp_update_comment( $comment_data );
 
         if ( is_wp_error( $comment_data[ 'comment_ID' ] ) ) {

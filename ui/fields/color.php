@@ -20,6 +20,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
         var pods_wp_color_obj_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?> = jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).wpColorPicker();
 
+        pods_wp_color_obj_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?>.parents( '.wp-picker-container' ).find( '.iris-slider-offset' ).removeClass( 'ui-widget-content ui-slider-vertical' );
+        
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).on( 'focus blur', function () {
             jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).slideToggle();
         } );

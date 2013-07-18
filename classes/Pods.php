@@ -2617,7 +2617,7 @@ class Pods implements Iterator {
 
         $pagination = $params->type;
 
-        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate' ) ) )
+        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) )
             $pagination = 'advanced';
 
         ob_start();

@@ -1700,11 +1700,14 @@ class PodsData {
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                if ( 'post_type' == $this->pod_data[ 'type' ] ) {
-                    $post_type = $this->pod_data[ 'object' ];
 
-                    if ( empty( $post_type ) )
+                if ( 'post_type' == $this->pod_data[ 'type' ] ) {
+                    if ( empty( $this->pod_data[ 'object' ] ) ) {
                         $post_type = $this->pod_data[ 'name' ];
+                    }
+                    else {
+                        $post_type = $this->pod_data[ 'object' ];
+                    }
                 }
                 else
                     $post_type = 'attachment';

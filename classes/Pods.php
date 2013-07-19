@@ -1903,13 +1903,13 @@ class Pods implements Iterator {
 
             foreach ( $params->orderby as &$prefix_orderby ) {
                 if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-                    if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
-                        $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-                        $dir = 'ASC';
-                    }
-                    else {
+                    if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
                         $k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
                         $dir = 'DESC';
+                    }
+                    else {
+                        $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
+                        $dir = 'ASC';
                     }
 
                     $key = $k;

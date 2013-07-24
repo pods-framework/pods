@@ -345,14 +345,16 @@ class Pods_Pages extends PodsComponent {
 
         $page_templates[ __( '-- Page Template --', 'pods' ) ] = '';
 
+        $page_templates[ __( 'Custom (uses only Pod Page content)', 'pods' ) ] = '_custom';
+
         if ( !in_array( 'pods.php', $page_templates ) && locate_template( array( 'pods.php', false ) ) )
-            $page_templates[ 'Pods (Pods Default)' ] = 'pods.php';
+            $page_templates[ __( 'Pods (Pods Default)', 'pods' ) ] = 'pods.php';
 
         if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
-            $page_templates[ 'Page (WP Default)' ] = 'page.php';
+            $page_templates[ __( 'Page (WP Default)', 'pods' ) ] = 'page.php';
 
         if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
-            $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+            $page_templates[ __( 'Index (WP Fallback)', 'pods' ) ] = 'index.php';
 
         ksort( $page_templates );
 
@@ -1021,7 +1023,9 @@ class Pods_Pages extends PodsComponent {
 
             do_action( 'pods_page', $template, self::$exists );
 
-            if ( null !== $render_function && is_callable( $render_function ) )
+            if ( '_custom' == $template )
+                pods_content();
+            elseif ( null !== $render_function && is_callable( $render_function ) )
                 call_user_func( $render_function, $template, self::$exists );
             elseif ( ( !defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || !PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
                 $template = $pods->page_template;

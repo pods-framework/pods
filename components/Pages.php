@@ -62,6 +62,8 @@ class Pods_Pages extends PodsComponent {
      * @since 2.0
      */
     public function __construct () {
+        add_shortcode( 'pods-content', array( $this, 'shortcode' ) );
+
         $args = array(
             'label' => 'Pod Pages',
             'labels' => array( 'singular_name' => 'Pod Page' ),
@@ -107,6 +109,33 @@ class Pods_Pages extends PodsComponent {
         }
     }
 
+    /**
+     * Pod Page Content Shortcode support for use anywhere that supports WP Shortcodes
+     *
+     * @param array $tags An associative array of shortcode properties
+     * @param string $content Not currently used
+     *
+     * @return string
+     * @since 2.3.9
+     */
+    public function shortcode ( $tags, $content = null ) {
+        if ( !isset( $tags[ 'page' ] ) || empty( $tags[ 'page' ] ) )
+            $tags[ 'page' ] = null;
+
+        $pods_page = Pods_Pages::exists( $tags[ 'page' ] );
+
+        if ( empty( $pods_page ) )
+            return '<p>Pods Page not found</p>';
+
+        return Pods_Pages::content( true, $pods_page );
+    }
+
+    /**
+     * Disable this Post Type from appearing in the Builder layouts list
+     *
+     * @param array $post_types
+     * @return array
+     */
     public function disable_builder_layout ( $post_types ) {
         $post_types[] = $this->object_type;
 

@@ -713,8 +713,10 @@ class PodsMeta {
             $field_found = false;
 
             foreach ( $group[ 'fields' ] as $field ) {
-                if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) )
+                if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) ) {
                     $field_found = true;
+                    break;
+                }
             }
 
             if ( empty( $group[ 'label' ] ) )
@@ -1510,13 +1512,18 @@ class PodsMeta {
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], null, null ) ) {
-                    if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+                    if ( pods_var( 'hidden', $field[ 'options' ], false ) ) {
                         $field_found = true;
-                    else
+                        break;
+                    }
+                    else {
                         continue;
+                    }
                 }
-                else
+                else {
                     $field_found = true;
+                    break;
+                }
             }
 
             if ( $field_found ) {

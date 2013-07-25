@@ -444,11 +444,15 @@ function pods_current_url () {
  * @since 2.0
  */
 function is_pod ( $object = null ) {
-    global $pods;
+    global $pods, $post;
+
     if ( is_object( $object ) && isset( $object->pod ) && !empty( $object->pod ) )
         return true;
-    if ( is_object( $pods ) && isset( $pods->pod ) && !empty( $pods->pod ) )
+    elseif ( is_object( $pods ) && isset( $pods->pod ) && !empty( $pods->pod ) )
         return true;
+    elseif ( is_object( $post ) && isset( $post->post_type ) && pods_api()->pod_exists( $post->post_type, 'post_type' ) )
+        return true;
+
     return false;
 }
 

@@ -4562,7 +4562,10 @@ class PodsAPI {
      *
      * @since 1.12
      */
-    public function pod_exists ( $params ) {
+    public function pod_exists ( $params, $type = null ) {
+        if ( is_string( $params ) )
+            $params = array( 'name' => $params );
+
         $params = (object) pods_sanitize( $params );
 
         if ( !empty( $params->id ) || !empty( $params->name ) ) {
@@ -4576,7 +4579,7 @@ class PodsAPI {
                 ) );
             }
 
-            if ( !empty( $pod ) )
+            if ( !empty( $pod ) && ( empty( $type ) || $type == get_post_meta( $pod->ID, 'type', true ) ) )
                 return true;
         }
 

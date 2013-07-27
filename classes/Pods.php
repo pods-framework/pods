@@ -1164,8 +1164,22 @@ class Pods implements Iterator {
 
                                             if ( false !== strpos( $field, '_src.' ) && 5 < strlen( $field ) )
                                                 $size = substr( $field, 5 );
+                                            elseif ( false !== strpos( $field, '_src_relative.' ) && 14 < strlen( $field ) )
+                                                $size = substr( $field, 14 );
+                                            elseif ( false !== strpos( $field, '_src_schemeless.' ) && 16 < strlen( $field ) )
+                                                $size = substr( $field, 16 );
 
-                                            $value[] = pods_image_url( $item_id, $size );
+                                            $value_url = pods_image_url( $item_id, $size );
+
+                                            if ( false !== strpos( $field, '_src_relative' ) && !empty( $value_url ) ) {
+                                                $value_url_parsed = parse_url( $value_url );
+                                                $value_url = $value_url_parsed[ 'path' ];
+                                            }
+                                            elseif ( false !== strpos( $field, '_src_schemeless' ) && !empty( $value_url ) )
+                                                $value_url = str_replace( array( 'http://', 'https://' ), '//', $value_url );
+
+                                            if ( !empty( $value_url ) )
+                                                $value[] = $value_url;
 
                                             $params->raw_display = true;
                                         }
@@ -1379,7 +1393,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $v ) {
@@ -1448,7 +1467,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $v ) {
@@ -1879,13 +1903,13 @@ class Pods implements Iterator {
 
             foreach ( $params->orderby as &$prefix_orderby ) {
                 if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-                    if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
-                        $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-                        $dir = 'ASC';
-                    }
-                    else {
+                    if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
                         $k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
                         $dir = 'DESC';
+                    }
+                    else {
+                        $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
+                        $dir = 'ASC';
                     }
 
                     $key = $k;
@@ -2142,7 +2166,8 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
                 }
 
                 $value = array_merge( $related_ids, $value );
@@ -2250,7 +2275,12 @@ class Pods implements Iterator {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
                 foreach ( $value as $k => $v ) {
-                    $value[ $k ] = (int) $v;
+                    if ( !preg_match( '/[^0-9]*/', $v ) )
+                        $value[ $k ] = (int) $v;
+                    // @todo Convert slugs into IDs
+                    else {
+
+                    }
                 }
 
                 foreach ( $related_ids as $k => $v ) {
@@ -2482,7 +2512,7 @@ class Pods implements Iterator {
         else
             $params[ 'fields' ] = $fields;
 
-        if ( !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) )
+        if ( isset( $params[ 'fields' ] ) && is_array( $params[ 'fields' ] ) && !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) )
             $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
 
         if ( null === $params[ 'id' ] )
@@ -2498,6 +2528,7 @@ class Pods implements Iterator {
         if ( !empty( $format ) ) {
             if ( 'json' == $format )
                 $data = json_encode( (array) $data );
+            // @todo more formats
         }
 
         return $data;
@@ -2586,7 +2617,7 @@ class Pods implements Iterator {
 
         $pagination = $params->type;
 
-        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate' ) ) )
+        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) )
             $pagination = 'advanced';
 
         ob_start();

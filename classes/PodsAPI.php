@@ -298,7 +298,7 @@ class PodsAPI {
 
         if ( !isset( $user_data[ 'ID' ] ) || empty( $user_data[ 'ID' ] ) )
             $user_data[ 'ID' ] = wp_insert_user( $user_data );
-        else
+        elseif ( 1 < count( $user_data ) )
             wp_update_user( $user_data );
 
         if ( is_wp_error( $user_data[ 'ID' ] ) ) {
@@ -403,7 +403,7 @@ class PodsAPI {
 
         if ( !isset( $comment_data[ 'comment_ID' ] ) || empty( $comment_data[ 'comment_ID' ] ) )
             $comment_data[ 'comment_ID' ] = wp_insert_comment( $comment_data );
-        else
+        elseif ( 1 < count( $comment_data ) )
             wp_update_comment( $comment_data );
 
         if ( is_wp_error( $comment_data[ 'comment_ID' ] ) ) {
@@ -2105,7 +2105,7 @@ class PodsAPI {
             if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && !in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
-            if ( $table_operation && 'author' == $field[ 'name' ] && 'pick' == $field[ 'type' ] && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
+            if ( $table_operation && 'author' == $field[ 'name' ] && 'pick' != $field[ 'type' ] && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
@@ -3122,6 +3122,30 @@ class PodsAPI {
                     continue;
 
                 foreach ( $data as $field => $values ) {
+                    $pick_val = pods_var( 'pick_val', $fields[ $field ][ 'options' ] );
+
+                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ][ 'options' ] ) )
+                        $pick_val = pods_var( 'pick_table', $fields[ $field ][ 'options' ], $pick_val, null, true );
+
+                    if ( '__current__' == $pick_val ) {
+                        if ( is_object( $pod ) )
+                            $pick_val = $pod->pod;
+                        elseif ( is_array( $pod ) )
+                            $pick_val = $pod[ 'name' ];
+                        elseif ( 0 < strlen( $pod ) )
+                            $pick_val = $pod;
+                    }
+
+                    $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ][ 'options' ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
+
+                    $search_data = pods_data();
+                    $search_data->table( $fields[ $field ][ 'options' ][ 'table_info' ] );
+
+                    if ( isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && !empty( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
+                        $search_data->pod = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ];
+                        $search_data->fields = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'fields' ];
+                    }
+
                     $related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ][ 'options' ], 0 );
 
                     if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) )
@@ -3132,8 +3156,27 @@ class PodsAPI {
 
                     foreach ( $values as $v ) {
                         if ( !empty( $v ) ) {
-                            if ( !is_array( $v ) )
-                                $v = (int) $v;
+                            if ( !is_array( $v ) ) {
+                                if ( !preg_match( '/[^0-9]*/', $v ) )
+                                    $v = (int) $v;
+                                // File handling
+                                elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
+                                    // Get ID from GUID
+                                    $v = pods_image_id_from_field( $v );
+
+                                    // If file not found, add it
+                                    if ( empty( $v ) )
+                                        $v = pods_attachment_import( $v );
+                                }
+                                // Reference by slug
+                                else {
+                                    $v_data = $search_data->fetch( $v );
+
+                                    if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) )
+                                        $v = (int) $v_data[ $search_data->field_id ];
+                                }
+                                // @todo Handle simple relationships eventually
+                            }
                             elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) )
                                 $v = (int) $v[ 'id' ];
                             else
@@ -4519,7 +4562,10 @@ class PodsAPI {
      *
      * @since 1.12
      */
-    public function pod_exists ( $params ) {
+    public function pod_exists ( $params, $type = null ) {
+        if ( is_string( $params ) )
+            $params = array( 'name' => $params );
+
         $params = (object) pods_sanitize( $params );
 
         if ( !empty( $params->id ) || !empty( $params->name ) ) {
@@ -4533,7 +4579,7 @@ class PodsAPI {
                 ) );
             }
 
-            if ( !empty( $pod ) )
+            if ( !empty( $pod ) && ( empty( $type ) || $type == get_post_meta( $pod->ID, 'type', true ) ) )
                 return true;
         }
 
@@ -7051,8 +7097,10 @@ class PodsAPI {
      * @since 1.7.1
      */
     public function export ( $pod = null, $params = null ) {
-        if ( empty( $pod ) )
+
+        if ( empty( $pod ) ) {
             $pod = $this->pod;
+        }
 
         $find = array(
             'limit' => -1,
@@ -7067,8 +7115,9 @@ class PodsAPI {
 
             $pod = pods( $pod, $find );
         }
-        elseif ( !is_object( $pod ) )
+        elseif ( !is_object( $pod ) ) {
             $pod = pods( $pod, $find );
+        }
 
         $data = array();
 

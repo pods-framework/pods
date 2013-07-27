@@ -93,7 +93,8 @@ class PodsField_Currency extends PodsField {
                     array(
                         'usd' => '$ (USD)',
                         'cad' => '$ (CAD)',
-                        'euro' => '&euro; (Euro)'
+                        'euro' => '&euro; (Euro)',
+                        'gbp' => '&pound; (GBP)'
                     )
                 )
             ),

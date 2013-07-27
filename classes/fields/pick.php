@@ -616,6 +616,9 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) ) {
+            if ( !empty( $value ) && !is_array( $value ) )
+                $value = explode( ',', $value );
+
             if ( 'checkbox' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $field_type = 'checkbox';
             elseif ( 'multiselect' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
@@ -1101,7 +1104,7 @@ class PodsField_Pick extends PodsField {
      * @return array|bool Object data
      */
     private function get_object_data ( $object_params = null ) {
-        global $wpdb, $polylang, $sitepress;
+        global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
         $current_language = false;
 

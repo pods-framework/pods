@@ -1731,7 +1731,7 @@ class PodsData {
                         $this->row = get_object_vars( $find[ 0 ] );
                 }
 
-                if ( empty( $this->row ) )
+                if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
 
                 $current_row_id = $this->row[ 'ID' ];
@@ -1749,7 +1749,7 @@ class PodsData {
                 else
                     $this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 
-                if ( empty( $this->row ) )
+                if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
 
                 $current_row_id = $this->row[ 'term_id' ];
@@ -1762,7 +1762,7 @@ class PodsData {
                 else
                     $this->row = get_user_by( 'slug', $id );
 
-                if ( empty( $this->row ) )
+                if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
                 else {
                     // Get other vars
@@ -1789,7 +1789,7 @@ class PodsData {
 
                 // No slug handling here
 
-                if ( empty( $this->row ) )
+                if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
 
                 $current_row_id = $this->row[ 'comment_ID' ];

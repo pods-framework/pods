@@ -1700,7 +1700,6 @@ class PodsData {
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-
                 if ( 'post_type' == $this->pod_data[ 'type' ] ) {
                     if ( empty( $this->pod_data[ 'object' ] ) ) {
                         $post_type = $this->pod_data[ 'name' ];
@@ -1733,8 +1732,8 @@ class PodsData {
 
                 if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
-
-                $current_row_id = $this->row[ 'ID' ];
+                else
+                    $current_row_id = $this->row[ 'ID' ];
 
                 $get_table_data = true;
             }
@@ -1744,15 +1743,40 @@ class PodsData {
                 if ( empty( $taxonomy ) )
                     $taxonomy = $this->pod_data[ 'name' ];
 
-                if ( 'id' == $mode )
+                // Taxonomies are registered during init, so they aren't available before then
+                if ( !did_action( 'init' ) ) {
+                    // hackaround :(
+                    if ( 'id' == $mode )
+                        $term_where = 't.term_id = %d';
+                    else
+                        $term_where = 't.slug = %s';
+
+                    $filter = 'raw';
+                    $term = $id;
+
+                    if ( 'id' != $mode || !$_term = wp_cache_get( $term, $taxonomy ) ) {
+                        $_term = $wpdb->get_row( $wpdb->prepare( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND {$term_where} LIMIT 1", $taxonomy, $term ) );
+
+                        if ( $_term )
+                            wp_cache_add( $term, $_term, $taxonomy );
+                    }
+
+                    $_term = apply_filters( 'get_term', $_term, $taxonomy );
+                    $_term = apply_filters( "get_$taxonomy", $_term, $taxonomy );
+                    $_term = sanitize_term( $_term, $taxonomy, $filter );
+
+                    if ( is_object( $_term ) )
+                        $this->row = get_object_vars( $_term );
+                }
+                elseif ( 'id' == $mode )
                     $this->row = get_term( $id, $taxonomy, ARRAY_A );
                 else
                     $this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 
                 if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
-
-                $current_row_id = $this->row[ 'term_id' ];
+                else
+                    $current_row_id = $this->row[ 'term_id' ];
 
                 $get_table_data = true;
             }
@@ -1778,9 +1802,9 @@ class PodsData {
                     $this->row[ 'allcaps' ] = $allcaps;
 
                     unset( $this->row[ 'user_pass' ] );
-                }
 
-                $current_row_id = $this->row[ 'ID' ];
+                    $current_row_id = $this->row[ 'ID' ];
+                }
 
                 $get_table_data = true;
             }
@@ -1791,8 +1815,8 @@ class PodsData {
 
                 if ( is_wp_error( $this->row ) || empty( $this->row ) )
                     $this->row = false;
-
-                $current_row_id = $this->row[ 'comment_ID' ];
+                else
+                    $current_row_id = $this->row[ 'comment_ID' ];
 
                 $get_table_data = true;
             }

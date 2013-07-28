@@ -120,7 +120,7 @@ class PodsMeta {
 
         add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
         add_action( 'transition_post_status', array( $this, 'save_post_detect_new' ), 10, 3 );
-        add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+        add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
 
         if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
             // Handle *_post_meta
@@ -539,8 +539,8 @@ class PodsMeta {
             if ( !has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) )
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 
-            /*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
-                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );*/
+            /*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 3 ) )
+                add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );*/
         }
         elseif ( 'taxonomy' == $pod[ 'type' ] ) {
             if ( !has_action( $pod[ 'object' ] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
@@ -835,13 +835,16 @@ class PodsMeta {
     /**
      * @param $post_id
      * @param $post
+     * @param $update
      *
      * @return mixed
      */
-    public function save_post ( $post_id, $post ) {
+    public function save_post ( $post_id, $post, $update = null ) {
         $is_new_item = false;
 
-        if ( 'new' == self::$old_post_status )
+        if ( is_bool( $update ) )
+            $is_new_item = $update;
+        elseif ( 'new' == self::$old_post_status )
             $is_new_item = true;
 
         // Reset to avoid manual new post issues

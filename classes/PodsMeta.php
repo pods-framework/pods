@@ -745,6 +745,8 @@ class PodsMeta {
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
+        do_action( 'pods_' . __METHOD__, $post );
+
         $hidden_fields = array();
 ?>
     <table class="form-table pods-metabox pods-admin pods-dependency">
@@ -786,6 +788,8 @@ class PodsMeta {
             }
             else {
                 $depends = PodsForm::dependencies( $field, 'pods-meta-' );
+
+            do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
             <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
@@ -800,12 +804,15 @@ class PodsMeta {
                 </td>
             </tr>
         <?php
+                do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ] . '_post', $post, $field, $pod );
             }
         }
         ?>
     </table>
 
     <?php
+        do_action( 'pods_' . __METHOD__ . '_post', $post );
+
         foreach ( $hidden_fields as $hidden_field ) {
             $field = $hidden_field[ 'field' ];
 

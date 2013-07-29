@@ -3493,7 +3493,7 @@ class PodsUI {
                         var pageInput = $( 'input.current-page' );
                         var currentPage = pageInput.val();
                         pageInput.closest( 'form' ).submit( function ( e ) {
-                            if ( (1 > $( 'select[name="action"]' ).length || $( 'select[name="action"]' ).val() == -1) && (1 > $( 'select[name="action_bulk]' ).length || $( 'select[name="action_bulk"]' ).val() == -1) && pageInput.val() == currentPage ) {
+                            if ( (1 > $( 'select[name="action"]' ).length || $( 'select[name="action"]' ).val() == -1) && (1 > $( 'select[name="action_bulk"]' ).length || $( 'select[name="action_bulk"]' ).val() == -1) && pageInput.val() == currentPage ) {
                                 pageInput.val( '1' );
                             }
                         } );

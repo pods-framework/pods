@@ -753,7 +753,7 @@ class Pods_Pages extends PodsComponent {
                     add_filter( 'body_class', array( $this, 'body_class' ), 0, 1 );
                     add_filter( 'status_header', array( $this, 'status_header' ) );
                     add_action( 'after_setup_theme', array( $this, 'precode' ) );
-                    add_action( 'wp', array( $this, 'silence_404' ) );
+                    add_action( 'wp', array( $this, 'silence_404' ), 1 );
 
                     // Genesis theme integration
                     add_action( 'genesis_loop', 'pods_content', 11 );
@@ -867,7 +867,7 @@ class Pods_Pages extends PodsComponent {
                 remove_filter( 'wp_title', array( $this, 'wp_title' ) );
                 remove_filter( 'body_class', array( $this, 'body_class' ) );
                 remove_filter( 'status_header', array( $this, 'status_header' ) );
-                remove_action( 'wp', array( $this, 'silence_404' ) );
+                remove_action( 'wp', array( $this, 'silence_404' ), 1 );
             }
         }
     }

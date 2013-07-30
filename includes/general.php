@@ -293,6 +293,20 @@ function pods_strict ( $include_debug = true ) {
 }
 
 /**
+ * Determine if Pods API Caching is enabled
+ *
+ * @return bool Whether Pods API Caching is enabled
+ *
+ * @since 2.3.9
+ */
+function pods_api_cache () {
+    if ( defined( 'PODS_API_CACHE' ) && !PODS_API_CACHE )
+        return false;
+
+    return true;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used

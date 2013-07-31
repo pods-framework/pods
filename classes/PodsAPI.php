@@ -3573,7 +3573,7 @@ class PodsAPI {
 
             $value = $pod->field( array( 'name' => $field, 'output' => 'arrays' ) );
 
-            if ( 0 < strlen( $value ) )
+            if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )
                 $params[ 'data' ][ $field[ 'name' ] ] = $value;
         }
 

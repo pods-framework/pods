@@ -3564,19 +3564,7 @@ class PodsAPI {
         );
 
         foreach ( $fields as $field ) {
-            $field_name = $field[ 'name' ];
-
-            if ( 'pick' == $field[ 'type' ] ) {
-                $field_name = $field_name . '.id';
-
-                if ( 'taxonomy' == $field[ 'pick_object' ] )
-                    $field_name = $field_name . '.term_id';
-            }
-
-            if ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
-                $field_name = $field_name . '.ID';
-
-            $value = $pod->field( array( 'name' => $field_name, 'output' => 'arrays' ) );
+            $value = $pod->field( array( 'name' => $field[ 'name' ], 'output' => 'ids' ) );
 
             if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )
                 $save_params[ 'data' ][ $field[ 'name' ] ] = $value;

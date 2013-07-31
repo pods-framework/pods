@@ -3547,38 +3547,44 @@ class PodsAPI {
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
 
-        $fields = $pod[ 'fields' ];
-        $params->pod = $pod[ 'name' ];
-        $params->pod_id = $pod[ 'id' ];
-
         $pod = pods( $params->pod, $params->id );
 
-        $params = array(
+        $params->pod = $pod->pod;
+        $params->pod_id = $pod->pod_id;
+
+        $fields = (array) pods_var_raw( 'fields', $pod->pod_data, array(), null, true );
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+
+        if ( !empty( $object_fields ) )
+            $fields = array_merge( $object_fields, $fields );
+
+        $save_params = array(
             'pod' => $params->pod,
             'data' => array()
         );
 
         foreach ( $fields as $field ) {
-            $field = $field[ 'name' ];
+            $field_name = $field[ 'name' ];
 
             if ( 'pick' == $field[ 'type' ] ) {
-                $field = $field . '.id';
+                $field_name = $field_name . '.id';
 
                 if ( 'taxonomy' == $field[ 'pick_object' ] )
-                    $field = $field . '.term_id';
+                    $field_name = $field_name . '.term_id';
             }
 
             if ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
-                $field = $field . '.ID';
+                $field_name = $field_name . '.ID';
 
-            $value = $pod->field( array( 'name' => $field, 'output' => 'arrays' ) );
+            $value = $pod->field( array( 'name' => $field_name, 'output' => 'arrays' ) );
 
             if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )
-                $params[ 'data' ][ $field[ 'name' ] ] = $value;
+                $save_params[ 'data' ][ $field[ 'name' ] ] = $value;
         }
 
-        $params = $this->do_hook( 'duplicate_pod_item', $params, $pod->pod, $pod->field( 'id' ) );
-        $id = $this->save_pod_item( $params );
+        $save_params = $this->do_hook( 'duplicate_pod_item', $save_params, $pod->pod, $pod->id(), $params );
+
+        $id = $this->save_pod_item( $save_params );
 
         return $id;
     }

@@ -334,14 +334,20 @@ class PodsView {
      */
     private static function locate_template ( $_view ) {
         if ( is_array( $_view ) ) {
-            $_views = array();
+            if ( !empty( $_view ) ) {
+                if ( isset( $_view[ 0 ] ) && false === strpos( $_view[ 0 ], '.php' ) ) {
+                    $_views = array();
 
-            $_view_count = count( $_view );
+                    $_view_count = count( $_view );
 
-            for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
-                $_view_v = array_slice( $_view, 0, $_view_x );
+                    for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
+                        $_view_v = array_slice( $_view, 0, $_view_x );
 
-                $_views[] = implode( '-', $_view_v ) . '.php';
+                        $_views[] = implode( '-', $_view_v ) . '.php';
+                    }
+                }
+                else
+                    $_views = $_view;
             }
 
             $_view = false;

@@ -612,7 +612,7 @@ class PodsAPI {
             ) );
         }
         elseif ( 'settings' == $object_type ) {
-            pods_query( "UPDATE `{$wpdb->options}` SET `option_name` = REPLACE( `option_name`, %s, %s ) WHERE `option_name` LIKE '" . like_escape( $old_name ) . "_%'", array(
+            pods_query( "UPDATE `{$wpdb->options}` SET `option_name` = REPLACE( `option_name`, %s, %s ) WHERE `option_name` LIKE '" . pods_sanitize_like( $old_name ) . "_%'", array(
                 $new_name . '_',
                 $old_name . '_'
             ) );
@@ -1796,7 +1796,8 @@ class PodsAPI {
                     $field[ 'id_required' ] = true;
 
                 $field_data = $field;
-                $field = $this->save_field( $field_data, $field_table_operation, $sanitized, $db );
+
+                $field = $this->save_field( $field_data, $field_table_operation, true, $db );
 
                 if ( true !== $db ) {
                     $pod[ 'fields' ][ $k ] = $field;
@@ -7287,7 +7288,7 @@ class PodsAPI {
         if ( 0 < $id && !empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            die( '<script type="text/javascript">document.location = \'' . addslashes( $thank_you ) . '\';</script>' );
+            die( '<script type="text/javascript">document.location = \'' . pods_sanitize( $thank_you ) . '\';</script>' );
         }
 
         return $id;

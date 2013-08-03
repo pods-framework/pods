@@ -46,7 +46,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $action = __( 'duplicated', 'pods' );
 
     try {
-        $params = stripslashes_deep( (array) $_POST );
+        $params = pods_unslash( (array) $_POST );
         $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -384,8 +384,8 @@ if ( 0 < $pod->id() ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo addslashes( $thank_you ); ?>';
-        var thank_you_alt = '<?php echo addslashes( $thank_you_alt ); ?>';
+        var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
+        var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
 
         if ( 'NaN' == id )
             document.location = thank_you_alt.replace( 'X_ID_X', 0 );

@@ -141,7 +141,7 @@ if ( version_compare( $old_version, '1.5', '<' ) ) {
         $row = get_object_vars( $row );
 
         foreach ( $row as $key => $val ) {
-            ${$key} = esc_sql( trim( $val ) );
+            ${$key} = pods_sanitize( trim( $val ) );
         }
 
         $posts_to_delete[] = $post_id;

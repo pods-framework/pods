@@ -535,7 +535,7 @@ class PodsComponents {
         }
 
         // Sanitize input
-        $params = stripslashes_deep( (array) $_POST );
+        $params = pods_unslash( (array) $_POST );
 
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )

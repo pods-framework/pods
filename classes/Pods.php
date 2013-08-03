@@ -855,14 +855,20 @@ class Pods implements Iterator {
                     // Dot-traversal
                     $pod = $this->pod;
                     $ids = array( $this->id() );
-                    $all_fields = array(
-                        $this->pod => $this->fields
-                    );
+                    $all_fields = array();
 
                     $lookup = $params->traverse;
 
-                    if ( !empty( $lookup ) )
+                    if ( !empty( $lookup ) ) {
                         unset( $lookup[ 0 ] );
+
+                        foreach ( $this->fields as $field ) {
+                            if ( !in_array( $field[ 'type' ], $tableless_field_types ) || in_array( $field[ 'name' ], $lookup ) )
+                                continue;
+
+                            $lookup[] = $field[ 'name' ];
+                        }
+                    }
 
                     // Get fields matching traversal names
                     if ( !empty( $lookup ) ) {

@@ -1303,29 +1303,29 @@ class PodsField_Pick extends PodsField {
 
                     if ( 'admin_ajax_relationship' == $context ) {
                         $lookup_where = array(
-                            $search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'"
+                            $search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'"
                         );
 
                         // @todo Hook into WPML for each table
                         if ( $wpdb->users == $search_data->table ) {
-                            $lookup_where[ 'display_name' ] = "`t`.`display_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'user_login' ] = "`t`.`user_login` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'user_email' ] = "`t`.`user_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'display_name' ] = "`t`.`display_name` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'user_login' ] = "`t`.`user_login` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'user_email' ] = "`t`.`user_email` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
                         }
                         elseif ( $wpdb->posts == $search_data->table ) {
-                            $lookup_where[ 'post_title' ] = "`t`.`post_title` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'post_name' ] = "`t`.`post_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'post_content' ] = "`t`.`post_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'post_excerpt' ] = "`t`.`post_excerpt` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_title' ] = "`t`.`post_title` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_name' ] = "`t`.`post_name` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_content' ] = "`t`.`post_content` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_excerpt' ] = "`t`.`post_excerpt` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
                         }
                         elseif ( $wpdb->terms == $search_data->table ) {
-                            $lookup_where[ 'name' ] = "`t`.`name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'slug' ] = "`t`.`slug` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'name' ] = "`t`.`name` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'slug' ] = "`t`.`slug` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
                         }
                         elseif ( $wpdb->comments == $search_data->table ) {
-                            $lookup_where[ 'comment_content' ] = "`t`.`comment_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'comment_author' ] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_content' ] = "`t`.`comment_content` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_author' ] = "`t`.`comment_author` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%'";
                         }
 
                         $lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params, $search_data );
@@ -1334,7 +1334,7 @@ class PodsField_Pick extends PodsField {
                             $params[ 'where' ][] = implode( ' OR ', $lookup_where );
 
                         $orderby = array();
-                        $orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%' ) DESC";
+                        $orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%' ) DESC";
 
                         $pick_orderby = pods_var_raw( 'pick_orderby', $options, null, null, true );
 
@@ -1369,7 +1369,7 @@ class PodsField_Pick extends PodsField {
                             if ( empty( $role ) || ( pods_clean_name( $role ) != $role && sanitize_title( $role ) != $role ) )
                                 continue;
 
-                            $where[] = 'wp_' . ( ( is_multisite() && !is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                            $where[] = 'wp_' . ( ( is_multisite() && !is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
                         }
 
                         if ( !empty( $where ) ) {
@@ -1569,7 +1569,7 @@ class PodsField_Pick extends PodsField {
         }
 
         // Sanitize input
-        $params = stripslashes_deep( (array) $_POST );
+        $params = pods_unslash( (array) $_POST );
 
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )

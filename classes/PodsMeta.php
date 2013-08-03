@@ -936,7 +936,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
-            $data = stripslashes_deep( $data );
+            $data = pods_unslash( (array) $data );
 
             $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
         }
@@ -1069,7 +1069,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
-            $data = stripslashes_deep( $data );
+            $data = pods_unslash( (array) $data );
 
             $pod->save( $data );
         }
@@ -1235,7 +1235,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
-            $data = stripslashes_deep( $data );
+            $data = pods_unslash( (array) $data );
 
             $pod->save( $data );
         }
@@ -1365,7 +1365,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
-            $data = stripslashes_deep( $data );
+            $data = pods_unslash( (array) $data );
 
             $pod->save( $data );
         }
@@ -1695,7 +1695,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
-            $data = stripslashes_deep( $data );
+            $data = pods_unslash( (array) $data );
 
             $pod->save( $data );
         }

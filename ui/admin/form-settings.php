@@ -41,7 +41,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     $action = __( 'saved', 'pods' );
 
     try {
-        $params = stripslashes_deep( (array) $_POST );
+        $params = pods_unslash( (array) $_POST );
         $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -157,6 +157,6 @@ $do = 'save';
     } );
 
     var pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo addslashes( pods_var_update( array( 'do' => $do ) ) ); ?>';
+        document.location = '<?php echo pods_slash( pods_var_update( array( 'do' => $do ) ) ); ?>';
     }
 </script>

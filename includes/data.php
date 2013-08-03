@@ -30,11 +30,58 @@ function pods_sanitize ( $input, $nested = false ) {
             $output[ pods_sanitize( $key ) ] = pods_sanitize( $val, true );
         }
     }
+    // @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
     else
-        $output = esc_sql( $input );
+        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_slash( $input ) : esc_sql( $input ) );
 
     if ( false === $nested )
         $output = apply_filters( 'pods_sanitize', $output, $input );
+
+    return $output;
+}
+/**
+ * Filter input and return sanitized SQL LIKE output
+ *
+ * @param mixed $input The string, array, or object to sanitize
+ * @param bool $nested
+ *
+ * @return array|mixed|object|string|void
+ * @since 2.3.9
+ */
+function pods_sanitize_like ( $input, $nested = false ) {
+    return like_escape( pods_sanitize( $input ) );
+}
+
+/**
+ * Filter input and return slashed output
+ *
+ * @param mixed $input The string, array, or object to sanitize
+ * @param bool $nested
+ *
+ * @return array|mixed|object|string|void
+ * @since 2.3.9
+ */
+function pods_slash ( $input, $nested = false ) {
+    $output = array();
+
+    if ( empty( $input ) )
+        $output = $input;
+    elseif ( is_object( $input ) ) {
+        $input = get_object_vars( $input );
+
+        foreach ( $input as $key => $val ) {
+            $output[ $key ] = pods_slash( $val, true );
+        }
+
+        $output = (object) $output;
+    }
+    elseif ( is_array( $input ) ) {
+        foreach ( $input as $key => $val ) {
+            $output[ $key ] = pods_slash( $val, true );
+        }
+    }
+    else
+        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_slash( $input ) : addslashes( $input ) );
 
     return $output;
 }
@@ -67,11 +114,47 @@ function pods_unsanitize ( $input, $nested = false ) {
             $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, true );
         }
     }
+    // @todo Figure out what to do to unescape mysql_real_escape_string
     else
-        $output = stripslashes( $input );
+        $output = ( pods_version_check( 'wp', '3.6' ) ? stripslashes( $input ) : stripslashes( $input ) );
 
     if ( false === $nested )
         $output = apply_filters( 'pods_unsanitize', $output, $input );
+
+    return $output;
+}
+
+/**
+ * Filter input and return unslashed output
+ *
+ * @param mixed $input The string, array, or object to unsanitize
+ * @param bool $nested
+ *
+ * @return array|mixed|object|string|void
+ * @since 2.3.9
+ */
+function pods_unslash ( $input, $nested = false ) {
+    $output = array();
+
+    if ( empty( $input ) )
+        $output = $input;
+    elseif ( is_object( $input ) ) {
+        $input = get_object_vars( $input );
+
+        foreach ( $input as $key => $val ) {
+            $output[ $key ] = pods_unslash( $val, true );
+        }
+
+        $output = (object) $output;
+    }
+    elseif ( is_array( $input ) ) {
+        foreach ( $input as $key => $val ) {
+            $output[ $key ] = pods_unslash( $val, true );
+        }
+    }
+    // @todo Figure out what to do to unescape mysql_real_escape_string
+    else
+        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_unslash( $input ) : stripslashes( $input ) );
 
     return $output;
 }
@@ -140,7 +223,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         $type = strtolower( (string) $type );
 
         if ( 'get' == $type && isset( $_GET[ $var ] ) )
-            $output = stripslashes_deep( $_GET[ $var ] );
+            $output = pods_unslash( $_GET[ $var ] );
         elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
             $url = parse_url( pods_current_url() );
             $uri = trim( $url[ 'path' ], '/' );
@@ -307,21 +390,21 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = user_admin_url( $path, $scheme );
         }
         elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
-            $output = stripslashes_deep( $_POST[ $var ] );
+            $output = pods_unslash( $_POST[ $var ] );
         elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) )
-            $output = stripslashes_deep( $_REQUEST[ $var ] );
+            $output = pods_unslash( $_REQUEST[ $var ] );
         elseif ( 'server' == $type ) {
             if ( isset( $_SERVER[ $var ] ) )
-                $output = stripslashes_deep( $_SERVER[ $var ] );
+                $output = pods_unslash( $_SERVER[ $var ] );
             elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) )
-                $output = stripslashes_deep( $_SERVER[ strtoupper( $var ) ] );
+                $output = pods_unslash( $_SERVER[ strtoupper( $var ) ] );
         }
         elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) )
             $output = $_SESSION[ $var ];
         elseif ( in_array( $type, array( 'global', 'globals' ) ) && isset( $GLOBALS[ $var ] ) )
             $output = $GLOBALS[ $var ];
         elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) )
-            $output = stripslashes_deep( $_COOKIE[ $var ] );
+            $output = pods_unslash( $_COOKIE[ $var ] );
         elseif ( 'constant' == $type && defined( $var ) )
             $output = constant( $var );
         elseif ( 'user' == $type && is_user_logged_in() ) {

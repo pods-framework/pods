@@ -983,9 +983,9 @@ class PodsData {
                             $fieldfield = $attributes[ 'real_name' ];
 
                         if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                            $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                            $having[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
                         else
-                            $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                            $where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
                     }
                 }
                 elseif ( !empty( $params->index ) ) {
@@ -1006,9 +1006,9 @@ class PodsData {
                         $fieldfield = $attributes[ 'real_name' ];
 
                     if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
                     else
-                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
                 }
 
                 if ( !empty( $where ) )
@@ -1059,7 +1059,7 @@ class PodsData {
                     $filterfield = $attributes[ 'real_name' ];
 
                 if ( 'pick' == $attributes[ 'type' ] ) {
-                    $filter_value = pods_var( 'filter_' . $field, 'get' );
+                    $filter_value = pods_var_raw( 'filter_' . $field, 'get' );
 
                     if ( !is_array( $filter_value ) )
                         $filter_value = (array) $filter_value;
@@ -1070,12 +1070,12 @@ class PodsData {
                                 continue;
 
                             if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
-                                $having[] = "( {$filterfield} = '" . $filter_v . "'"
-                                             . " OR {$filterfield} LIKE '%\"" . $filter_v . "\"%' )";
+                                $having[] = "( {$filterfield} = '" . pods_sanitize( $filter_v ) . "'"
+                                             . " OR {$filterfield} LIKE '%\"" . pods_sanitize_like( $filter_v ) . "\"%' )";
                             }
                             else {
-                                $where[] = "( {$filterfield} = '" . $filter_v . "'"
-                                            . " OR {$filterfield} LIKE '%\"" . $filter_v . "\"%' )";
+                                $where[] = "( {$filterfield} = '" . pods_sanitize( $filter_v ) . "'"
+                                            . " OR {$filterfield} LIKE '%\"" . pods_sanitize_like( $filter_v ) . "\"%' )";
                             }
                         }
                         else {
@@ -1128,15 +1128,15 @@ class PodsData {
                     }
                 }
                 else {
-                    $filter_value = pods_var( 'filter_' . $field, 'get', '' );
+                    $filter_value = pods_var_raw( 'filter_' . $field, 'get', '' );
 
                     if ( strlen( $filter_value ) < 1 )
                         continue;
 
                     if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                        $having[] = "{$filterfield} LIKE '%" . $filter_value . "%'";
+                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize_like( $filter_value ) . "%'";
                     else
-                        $where[] = "{$filterfield} LIKE '%" . $filter_value . "%'";
+                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize_like( $filter_value ) . "%'";
                 }
 
                 if ( !empty( $where ) )
@@ -1847,7 +1847,7 @@ class PodsData {
                 );
 
                 if ( 'slug' == $mode && !empty( $this->field_slug ) ) {
-                    $id = esc_sql( $id );
+                    $id = pods_sanitize( $id );
                     $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }
 
@@ -2349,7 +2349,7 @@ class PodsData {
         if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=' ) ) )
             $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ' . $field_string, $field_value );
         elseif ( in_array( $field_compare, array( 'LIKE', 'NOT LIKE' ) ) )
-            $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ' . $field_string, $field_value );
+            $field_query = $field . ' ' . $field_compare . ' "%' . pods_sanitize_like( $field_value ) . '%"';
         elseif ( in_array( $field_compare, array( 'IN', 'NOT IN' ) ) )
             $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_string, count( $field_value ) ), 1 ) . ' )', $field_value );
         elseif ( in_array( $field_compare, array( 'BETWEEN', 'NOT BETWEEN' ) ) )
@@ -2598,7 +2598,7 @@ class PodsData {
                     $search = "`{$field_joined}`.`{$traverse[ 'name' ]}` = '{$val}'";
                 }
                 elseif ( 'text_like' == $this->search_mode ) {
-                    $val = pods_sanitize( like_escape( pods_var_raw( 'filter_' . $field_joined ) ) );
+                    $val = pods_sanitize( pods_sanitize_like( pods_var_raw( 'filter_' . $field_joined ) ) );
 
                     $search = "`{$field_joined}`.`{$traverse[ 'name' ]}` LIKE '%{$val}%'";
                 }

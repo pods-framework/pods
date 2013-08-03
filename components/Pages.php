@@ -528,7 +528,7 @@ class Pods_Pages extends PodsComponent {
             if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
-                    'post_content' => pods_sanitize( $meta_value )
+                    'post_content' => $meta_value
                 );
 
                 remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );

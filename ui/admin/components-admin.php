@@ -113,6 +113,6 @@
     } );
 
     var pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo addslashes( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
+        document.location = '<?php echo pods_slash( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
     }
 </script>

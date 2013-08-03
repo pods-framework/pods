@@ -2083,7 +2083,7 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'settings' ) ) );
+        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'taxonomy', 'settings' ) ) );
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';
@@ -2114,6 +2114,16 @@ class PodsAdmin {
                         $capabilities[] = 'delete_published_' . $capability_type . 's';
                         $capabilities[] = 'delete_others_' . $capability_type . 's';
                     }
+                }
+            }
+            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+                if ( 1 == pods_var( 'capabilities', $pod[ 'options' ], 0 ) ) {
+                    $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
+
+                    $capabilities[] = 'manage_' . $capability_type;
+                    $capabilities[] = 'edit_' . $capability_type;
+                    $capabilities[] = 'delete_' . $capability_type;
+                    $capabilities[] = 'assign_' . $capability_type;
                 }
             }
             else {

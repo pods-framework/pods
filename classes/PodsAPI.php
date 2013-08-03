@@ -1515,6 +1515,8 @@ class PodsAPI {
                     $pod[ 'options' ][ 'pod_index' ] = 'name';
             }
 
+            $pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );
+
             $field_table_operation = false;
         }
         else {

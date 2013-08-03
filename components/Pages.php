@@ -1047,6 +1047,7 @@ class Pods_Pages extends PodsComponent {
                     $file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
                     $sanitized = sanitize_title( $file_name );
 
+                    $default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
                     $default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
                 }
 

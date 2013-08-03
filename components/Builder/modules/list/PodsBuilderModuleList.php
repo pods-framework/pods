@@ -118,6 +118,18 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
         </tr>
     <?php
         }
+        else {
+    ?>
+        <tr>
+            <td valign="top">
+                <label for="template"><?php _e( 'Template', 'pods' ); ?></label>
+            </td>
+            <td>
+                <?php $form->add_text_box( 'template' ); ?>
+            </td>
+        </tr>
+    <?php
+        }
     ?>
 
     <tr>

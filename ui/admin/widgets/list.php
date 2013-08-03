@@ -40,7 +40,9 @@
         <?php endif; ?>
     </li>
 
-    <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
+    <?php
+        if ( class_exists( 'Pods_Templates' ) ) {
+    ?>
         <li>
             <?php
                 $all_templates = (array) $api->load_templates( array() );
@@ -49,7 +51,6 @@
 
             <select name="<?php echo $this->get_field_name( 'template' ); ?>" id="<?php echo $this->get_field_id( 'template' ); ?>">
                 <option value="">- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
-
                 <?php foreach ( $all_templates as $tpl ): ?>
                     <?php $selected = ( $tpl[ 'name' ] == $template ) ? 'selected' : ''; ?>
                     <option value="<?php echo $tpl[ 'name' ]; ?>" <?php echo $selected; ?>>
@@ -58,7 +59,18 @@
                 <?php endforeach; ?>
             </select>
         </li>
-    <?php } ?>
+    <?php
+        }
+        else {
+    ?>
+        <li>
+            <label for="<?php echo $this->get_field_id( 'template' ); ?>"> <?php _e( 'Template', 'pods' ); ?> </label>
+
+            <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>" value="<?php echo esc_attr( $template ); ?>" />
+        </li>
+    <?php
+        }
+    ?>
 
     <li>
         <label for="<?php echo $this->get_field_id( 'template_custom' ); ?>"> <?php _e( 'Custom Template', 'pods' ); ?></label>

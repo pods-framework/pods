@@ -2226,6 +2226,8 @@ class PodsUI {
 
                             // override default value
                             $this->pod->fields[ $filter ][ 'options' ][ 'default_value' ] = '';
+                            $this->pod->fields[ $filter ][ 'options' ][ $this->pod->fields[ $filter ][ 'type' ] . '_allow_empty' ] = 1;
+
 
                             if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                 $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
@@ -2691,6 +2693,7 @@ class PodsUI {
 
                                 // override default value
                                 $this->pod->fields[ $filter ][ 'options' ][ 'default_value' ] = '';
+                                $this->pod->fields[ $filter ][ 'options' ][ $this->pod->fields[ $filter ][ 'type' ] . '_allow_empty' ] = 1;
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );

@@ -1461,7 +1461,7 @@ class PodsAPI {
             if ( 'pod' == $pod[ 'type' ] && ( !is_array( $pod[ 'fields' ] ) || empty( $pod[ 'fields' ] ) ) ) {
                 $pod[ 'fields' ] = array();
 
-                $pod[ 'fields' ][] = array(
+                $pod[ 'fields' ][ 'name' ] = array(
                     'name' => 'name',
                     'label' => 'Name',
                     'type' => 'text',
@@ -1470,7 +1470,7 @@ class PodsAPI {
                     )
                 );
 
-                $pod[ 'fields' ][] = array(
+                $pod[ 'fields' ][ 'created' ] = array(
                     'name' => 'created',
                     'label' => 'Date Created',
                     'type' => 'datetime',
@@ -1481,7 +1481,7 @@ class PodsAPI {
                     )
                 );
 
-                $pod[ 'fields' ][] = array(
+                $pod[ 'fields' ][ 'modified' ] = array(
                     'name' => 'modified',
                     'label' => 'Date Modified',
                     'type' => 'datetime',
@@ -1492,7 +1492,7 @@ class PodsAPI {
                     )
                 );
 
-                $pod[ 'fields' ][] = array(
+                $pod[ 'fields' ][ 'author' ] = array(
                     'name' => 'author',
                     'label' => 'Author',
                     'type' => 'pick',
@@ -1504,7 +1504,7 @@ class PodsAPI {
                     )
                 );
 
-                $pod[ 'fields' ][] = array(
+                $pod[ 'fields' ][ 'permalink' ] = array(
                     'name' => 'permalink',
                     'label' => 'Permalink',
                     'type' => 'slug',

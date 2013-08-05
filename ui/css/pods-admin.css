@@ -327,6 +327,11 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     max-width: 300px;
 }
 
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
+    max-width: 100%;
+}
+
 .pods-manage-field .pods-field-option div select {
     float: none;
     width: 100%;

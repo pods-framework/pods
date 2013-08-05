@@ -242,10 +242,7 @@ if ( 0 < $pod->id() ) {
                                     ?>
                                         <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
                                             <span>&laquo;</span>
-                                            <?php
-                                                _e( 'Previous', 'pods' );
-                                                echo ' ' . $singular_label;
-                                            ?>
+                                            <?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
                                         </a>
                                     <?php
                                         }
@@ -253,10 +250,7 @@ if ( 0 < $pod->id() ) {
                                         if ( 0 < $next ) {
                                     ?>
                                         <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ); ?>">
-                                            <?php
-                                                _e( 'Next', 'pods' );
-                                                echo ' ' . $singular_label;
-                                            ?>
+                                            <?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
                                             <span>&raquo;</span>
                                         </a>
                                     <?php

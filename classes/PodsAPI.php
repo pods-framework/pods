@@ -2963,7 +2963,7 @@ class PodsAPI {
                 // Handle Simple Relationships
                 if ( $simple ) {
                     if ( !is_array( $value ) )
-                        $value = implode( ',', $value );
+                        $value = explode( ',', $value );
 
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 

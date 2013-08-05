@@ -1674,10 +1674,10 @@ class PodsUI {
         if ( $check ) {
             if ( 0 == $this->insert_id )
                 $this->insert_id = $wpdb->insert_id;
-            $this->message( __( "<strong>Success!</strong> {$this->item} {$action} successfully.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Success!</strong> %s %s successfully.", 'pods' ), $this->item, $action ) );
         }
         else
-            $this->error( __( "<strong>Error:</strong> {$this->item} has not been {$action}.", 'pods' ) );
+            $this->error( sprintf( __( "<strong>Error:</strong> %s has not been %s.", 'pods' ), $this->item, $action ) );
         $this->do_hook( 'post_save', $this->insert_id, $data, $insert );
     }
 
@@ -1709,9 +1709,9 @@ class PodsUI {
             $check = $this->pods_data->delete( $this->table, array( $this->data->field_id => $id ) );
 
         if ( $check )
-            $this->message( __( "<strong>Deleted:</strong> {$this->item} has been deleted.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Deleted:</strong> %s has been deleted.", 'pods' ), $this->item ) );
         else
-            $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+            $this->error( sprintf( __( "<strong>Error:</strong> %s has not been deleted.", 'pods' ), $this->item ) );
 
         $this->do_hook( 'post_delete', $id );
     }
@@ -1757,10 +1757,10 @@ class PodsUI {
             if ( $success )
                 pods_redirect( pods_var_update( array( 'action_bulk' => 'delete', 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
             else
-                $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+                $this->error( sprintf( __( "<strong>Error:</strong> %s has not been deleted.", 'pods' ), $this->item ) );
         }
         else {
-            $this->message( __( "<strong>Deleted:</strong> {$this->items} have been deleted.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Deleted:</strong> %s have been deleted.", 'pods' ), $this->items ) );
 
             unset( $_GET[ 'deleted_bulk' ] );
         }

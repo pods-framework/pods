@@ -1321,7 +1321,7 @@ function pods_register_type ( $type, $name, $object = null ) {
  *
  * @see PodsMeta::register_field
  *
- * @param string $pod The pod name
+ * @param string|array $pod The pod name or array of pod names
  * @param string $name The name of the Pod
  * @param array $object (optional) Pod array, including any 'fields' arrays
  *

@@ -1264,7 +1264,8 @@ class PodsAdmin {
                         'default' => __( 'Default - Add to associated Post Type(s) menus', 'pods' ),
                         'settings' => __( 'Add to Settings menu', 'pods' ),
                         'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'objects' => __( 'Make a menu item', 'pods' ),
+                        'objects' => __( 'Make a top-level menu item', 'pods' ),
+                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
                         'submenu' => __( 'Add a submenu item to another menu', 'pods' )
                     ),
                     'dependency' => true
@@ -1280,14 +1281,14 @@ class PodsAdmin {
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
                     'default' => 0,
-                    'depends-on' => array( 'menu_location' => 'top' )
+                    'depends-on' => array( 'menu_location' => array( 'objects', 'top' ) )
                 ),
                 'menu_icon' => array(
                     'label' => __( 'Menu Icon URL', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'depends-on' => array( 'menu_location' => 'top' )
+                    'depends-on' => array( 'menu_location' => array( 'objects', 'top' ) )
                 ),
                 'show_in_nav_menus' => array(
                     'label' => __( 'Show in Navigation Menus', 'pods' ),
@@ -1342,7 +1343,7 @@ class PodsAdmin {
                     'data' => array(
                         'settings' => __( 'Add to Settings menu', 'pods' ),
                         'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'top' => __( 'Make a new menu item below Settings', 'pods' ),
+                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
                         'submenu' => __( 'Add a submenu item to another menu', 'pods' )
                     ),
                     'dependency' => true

@@ -299,6 +299,16 @@ class PodsMeta {
         if ( !isset( self::$queue[ $type ] ) )
             self::$queue[ $type ] = array();
 
+        if ( is_array( $pod ) && !empty( $pod ) && !isset( $pod[ 'name' ] ) ) {
+            $data = array();
+
+            foreach ( $pod as $p ) {
+                $data[] = $this->register( $type, $p );
+            }
+
+            return $data;
+        }
+
         $pod[ 'type' ] = $pod_type;
         $pod = pods_api()->save_pod( $pod, false, self::$object_identifier );
 
@@ -314,6 +324,16 @@ class PodsMeta {
     }
 
     public function register_field ( $pod, $field ) {
+        if ( is_array( $pod ) && !empty( $pod ) && !isset( $pod[ 'name' ] ) ) {
+            $data = array();
+
+            foreach ( $pod as $p ) {
+                $data[] = $this->register_field( $p, $field );
+            }
+
+            return $data;
+        }
+
         $pod = pods_api()->load_pod( array( 'name' => $pod ), false );
 
         if ( !empty( $pod ) ) {
@@ -434,6 +454,14 @@ class PodsMeta {
      * @return mixed|void
      */
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
+        if ( is_array( $pod ) && !empty( $pod ) && !isset( $pod[ 'name' ] ) ) {
+            foreach ( $pod as $p ) {
+                $this->group_add( $pod, $label, $fields, $context, $priority );
+            }
+
+            return true;
+        }
+
         if ( !is_array( $pod ) ) {
             $_pod = pods_api()->load_pod( array( 'name' => $pod ), false );
 

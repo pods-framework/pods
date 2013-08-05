@@ -109,10 +109,27 @@ class PodsField_Color extends PodsField {
 
         // Farbtastic for below 3.5
         if ( pods_version_check( 'wp', '3.5', '>' ) )
-            pods_view( PODS_DIR . 'ui/fields/farbtastic.php', compact( array_keys( get_defined_vars() ) ) );
+            $field_type = 'farbtastic';
         // WP Color Picker for 3.5+
         else
-            pods_view( PODS_DIR . 'ui/fields/color.php', compact( array_keys( get_defined_vars() ) ) );
+            $field_type = 'color';
+
+        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'text';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'text';
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

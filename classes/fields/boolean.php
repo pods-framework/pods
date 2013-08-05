@@ -137,6 +137,15 @@ class PodsField_Boolean extends PodsField {
         elseif ( 'dropdown' == pods_var( self::$type . '_format_type', $options ) )
             $field_type = 'select';
 
+        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) )
+                $options[ 'readonly' ] = true;
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+            $options[ 'readonly' ] = true;
+
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 

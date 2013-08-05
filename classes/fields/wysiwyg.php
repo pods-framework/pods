@@ -251,7 +251,21 @@ class PodsField_WYSIWYG extends PodsField {
         if ( is_array( $value ) )
             $value = implode( "\n", $value );
 
-        if ( 'tinymce' == pods_var( self::$type . '_editor', $options ) )
+        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'textarea';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'textarea';
+        }
+        elseif ( 'tinymce' == pods_var( self::$type . '_editor', $options ) )
             $field_type = 'tinymce';
         elseif ( 'cleditor' == pods_var( self::$type . '_editor', $options ) )
             $field_type = 'cleditor';

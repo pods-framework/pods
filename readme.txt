@@ -1,10 +1,10 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, dan.stefan, mikedamage, logikal16, jchristopher
+Contributors: sc0ttkclark, pglewis, dan.stefan, desertsnowman, mikedamage, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.8
+Stable tag: 2.3.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -151,14 +151,27 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.9 - August 5th, 2013 =
+* A big welcome to the newest contributor to our team, David Cramer (@desertsnowman)!
+* Added: Theme-based Pod Templates now available, when using $pod->template( 'your-template' ) or other places a template can be used (shortcode, widget, etc), with $obj variable available for use like in a normal template -- this will automatically include your template file from the following locations, child-theme aware: pods/your-template.php, pods-your-template.php, or your-template.php -- Get the code out of the database and get rid of the need for the Templates component!
+* Added: When saving items via the API, relationship fields now accept slugs (previously only IDs)
+* Added: When saving items via the API, file fields now accept URLs or GUIDs (previously only IDs), if you provide a URL and it isn't already in WordPress, it will automatically import as a new WP attachment
+* Added: Read Only option for fields, works like Hidden option, under Advanced tab of field editor
+* Added: New '_src_relative' and '_src_schemeless' field options for returning an attachment field's URL that's schemeless (// instead of http://)
+* Added: New 'list' option for pagination, a clone of the 'paginate' option that's Bootstrap compatible
+* Added: Added Chinese translations
+* Fixed: Updated compatibility for WordPress 3.6 slashing changes while maintaining compatibility for WP 3.4+
+* Fixed: Custom Taxonomies now have their menu icon option available, previously hidden due to a bug
+* Fixed: Various PHP notices/warnings
+* Fixed: Translation tweaks and fixes
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.8 - June 8th, 2013 =
-* Important News! Lead Developer Scott Kingsley Clark and his wife are welcoming their second daughter over the next week or so, support time may be longer than usual during that period, we appreciate your patience.
 * Fixed: Hide field from UI option now works properly for admins
 * Fixed: User data handling for `pods( 'user' )`
 * Fixed: jpeg extension now included in built-in 'images' option for File field type
 * Fixed: iThemes Builder / Markdown components weren't loading properly (no errors, just didn't load)
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.7 - June 7th, 2013 =
 * Added: New filter to allow searching across different fields in autocomplete relationship fields: https://github.com/pods-framework/pods/issues/1464

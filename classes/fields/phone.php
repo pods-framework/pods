@@ -150,7 +150,24 @@ class PodsField_Phone extends PodsField {
         if ( is_array( $value ) )
             $value = implode( ' ', $value );
 
-        pods_view( PODS_DIR . 'ui/fields/phone.php', compact( array_keys( get_defined_vars() ) ) );
+        $field_type = 'phone';
+
+        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'text';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'text';
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

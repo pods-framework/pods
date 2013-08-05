@@ -177,7 +177,24 @@ class PodsField_Date extends PodsField {
         // Format Value
         $value = $this->display( $value, $name, $options, null, $pod, $id );
 
-        pods_view( PODS_DIR . 'ui/fields/date.php', compact( array_keys( get_defined_vars() ) ) );
+        $field_type = 'date';
+
+        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'text';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'text';
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

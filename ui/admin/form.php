@@ -17,11 +17,24 @@ foreach ( $fields as $k => $field ) {
     elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
         if ( pods_var( 'hidden', $field[ 'options' ], false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
+        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'readonly' ] = true;
         else
             unset( $fields[ $k ] );
     }
-    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
-        $fields[ $k ][ 'type' ] = 'hidden';
+    elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
+        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'type' ] = 'hidden';
+        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'readonly' ] = true;
+    }
+}
+
+$submittable_fields = $fields;
+
+foreach ( $submittable_fields as $k => $field ) {
+    if ( pods_var( 'readonly', $field, false ) )
+        unset( $submittable_fields[ $k ] );
 }
 
 if ( !isset( $thank_you_alt ) )

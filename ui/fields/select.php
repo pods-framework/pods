@@ -17,6 +17,13 @@ else
     $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
+if ( pods_var( 'readonly', $options, false ) ) {
+    $attributes[ 'readonly' ] = 'READONLY';
+
+    $attributes[ 'class' ] .= ' pods-form-ui-read-only';
+}
+
 $selection_made = false;
 ?>
 <select<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>>

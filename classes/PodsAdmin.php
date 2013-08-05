@@ -1636,6 +1636,31 @@ class PodsAdmin {
                             'default' => 0,
                             'type' => 'boolean',
                             'help' => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden.', 'pods' )
+                        ),
+                        'read_only' => array(
+                            'name' => 'read_only',
+                            'label' => __( 'Make field "Read Only" in UI', 'pods' ),
+                            'default' => 0,
+                            'type' => 'boolean',
+                            'help' => __( 'This option is overriden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.', 'pods' ),
+                            'depends-on' => array(
+                                'type' => array(
+                                    'boolean',
+                                    'color',
+                                    'currency',
+                                    'date',
+                                    'datetime',
+                                    'email',
+                                    'number',
+                                    'paragraph',
+                                    'password',
+                                    'phone',
+                                    'slug',
+                                    'text',
+                                    'time',
+                                    'website'
+                                )
+                            )
                         )
                     )
                 ),

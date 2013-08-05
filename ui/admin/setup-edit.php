@@ -147,22 +147,33 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 
     <h2>
         Edit Pod:
-        <span class="pods-sluggable">
-            <span class="pods-slug">
-                <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
-                <input type="button" class="edit-slug-button button" value="Edit" />
+        <?php
+            if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
+        ?>
+            <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
+        <?php
+        }
+            else {
+        ?>
+            <span class="pods-sluggable">
+                <span class="pods-slug">
+                    <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
+                    <input type="button" class="edit-slug-button button" value="Edit" />
+                </span>
+                <span class="pods-slug-edit">
+                    <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
+                    'attributes' => array(
+                        'maxlength' => $max_length_name,
+                        'size' => 25
+                    ),
+                    'class' => 'pods-validate pods-validate-required'
+                ) ); ?>
+                    <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+                </span>
             </span>
-            <span class="pods-slug-edit">
-                <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
-                'attributes' => array(
-                    'maxlength' => $max_length_name,
-                    'size' => 25
-                ),
-                'class' => 'pods-validate pods-validate-required'
-            ) ); ?>
-                <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
-            </span>
-        </span>
+        <?php
+            }
+        ?>
     </h2>
 
     <?php

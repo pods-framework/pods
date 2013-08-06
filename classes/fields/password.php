@@ -113,7 +113,7 @@ class PodsField_Password extends PodsField {
         if ( is_array( $value ) )
             $value = implode( ' ', $value );
 
-        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
             if ( pods_var( 'read_only', $options, false ) )
                 $options[ 'readonly' ] = true;
             else

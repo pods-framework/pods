@@ -95,7 +95,7 @@ class PodsField_Slug extends PodsField {
 
         $field_type = 'slug';
 
-        if ( false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
             if ( pods_var( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 

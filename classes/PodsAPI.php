@@ -624,7 +624,7 @@ class PodsAPI {
     /**
      * Get a list of core WP object fields for a specific object
      *
-     * @param string $object The post type to look for, possible values: post_type, user, comment, taxonomy
+     * @param string $object The pod type to look for, possible values: post_type, user, comment, taxonomy
      * @param array $pod Array of Pod data
      * @param boolean $refresh Whether to force refresh the information
      *

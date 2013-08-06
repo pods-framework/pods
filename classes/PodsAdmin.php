@@ -1234,6 +1234,13 @@ class PodsAdmin {
                     'type' => 'boolean',
                     'default' => true,
                     'boolean_yes_label' => ''
+                ),
+                'default_status' => array(
+                    'name' => 'post_status',
+                    'label' => 'Status',
+                    'type' => 'pick',
+                    'pick_object' => 'post-status',
+                    'default' => apply_filters( 'pods_api_default_status_' . pods_var_raw( 'name', $pod, 'post_type', null, true ), 'draft', $pod )
                 )
             );
         }

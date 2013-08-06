@@ -31,8 +31,10 @@ function pods_sanitize ( $input, $nested = false ) {
         }
     }
     // @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
+    elseif ( pods_version_check( 'wp', '3.6' ) && function_exists( 'wp_slash' ) )
+        $output = wp_slash( $input );
     else
-        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_slash( $input ) : esc_sql( $input ) );
+        $output = esc_sql( $input );
 
     if ( false === $nested )
         $output = apply_filters( 'pods_sanitize', $output, $input );
@@ -80,8 +82,10 @@ function pods_slash ( $input, $nested = false ) {
             $output[ $key ] = pods_slash( $val, true );
         }
     }
+    elseif ( pods_version_check( 'wp', '3.6' ) && function_exists( 'wp_slash' ) )
+        $output = wp_slash( $input );
     else
-        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_slash( $input ) : addslashes( $input ) );
+        $output = addslashes( $input );
 
     return $output;
 }

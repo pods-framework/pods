@@ -826,7 +826,18 @@ class PodsData {
             if ( empty( $params->where ) && !empty( $this->where_default ) )
                 $params->where = array_values( (array) $this->where_default );
 
-            $params->where = array_merge( (array) $params->where, array_values( (array) $this->where ) );
+            if ( is_array( $params->where ) && isset( $params->where[ 'relation' ] ) && 'OR' == strtoupper( $params->where[ 'relation' ] ) )
+                $params->where = array_merge( array( $params->where ), array_values( (array) $this->where ) );
+            else {
+                $params_where = array_values( (array) $this->where );
+
+                if ( !empty( $params->where ) ) {
+                    $params_where[ 'relation' ] = 'AND';
+                    $params_where[] = $params->where;
+                }
+
+                $params->where = $params_where;
+            }
         }
 
         // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax

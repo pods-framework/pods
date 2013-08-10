@@ -3027,6 +3027,8 @@ class Pods implements Iterator {
      * Generate UI for Data Management
      *
      * @param mixed $options Array or String containing Pod or Options to be used
+     *
+     * @since 2.3.10
      */
     public function ui ( $options ) {
         $this->ui = $options;

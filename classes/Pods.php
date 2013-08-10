@@ -3023,6 +3023,8 @@ class Pods implements Iterator {
      *
      * @param mixed $options Array or String containing Pod or Options to be used
      *
+     * @return PodsUI UI object
+     *
      * @since 2.3.10
      */
     public function ui ( $options ) {

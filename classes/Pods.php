@@ -140,11 +140,6 @@ class Pods implements Iterator {
     public $ui = array();
 
     /**
-     * @var PodsUI
-     */
-    public $pods_ui;
-
-    /**
      * @var mixed SEO related vars for Pod Pages
      */
     public $page_template;
@@ -3033,7 +3028,7 @@ class Pods implements Iterator {
     public function ui ( $options ) {
         $this->ui = $options;
 
-        $this->pods_ui = pods_ui( $this );
+        return pods_ui( $this );
     }
 
     /**

@@ -960,7 +960,7 @@ class PodsMeta {
         $is_new_item = false;
 
         if ( is_bool( $update ) )
-            $is_new_item = $update;
+            $is_new_item = !$update; // false is new item
         elseif ( 'new' == self::$old_post_status )
             $is_new_item = true;
 

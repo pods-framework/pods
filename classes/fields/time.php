@@ -289,10 +289,25 @@ class PodsField_Time extends PodsField {
      * @return DateTime
      */
     public function createFromFormat ( $format, $date ) {
-        if ( method_exists( 'DateTime', 'createFromFormat' ) )
-            return DateTime::createFromFormat( $format, (string) $date );
+        $datetime = false;
 
-        return new DateTime( date_i18n( 'H:i:s', strtotime( (string) $date ) ) );
+        if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
+            $timezone = get_option( 'timezone_string' );
+
+            if ( empty( $timezone ) )
+                $timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
+
+            if ( !empty( $timezone ) ) {
+                $datetimezone = new DateTimeZone( $timezone );
+
+                $datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+            }
+        }
+
+        if ( false === $datetime )
+            $datetime = new DateTime( date_i18n( 'H:i:s', strtotime( (string) $date ) ) );
+
+        return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );
     }
 
     /**

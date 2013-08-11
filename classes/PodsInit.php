@@ -462,6 +462,7 @@ class PodsInit {
                     'exclude_from_search' => (boolean) pods_var( 'exclude_from_search', $post_type, ( (boolean) pods_var( 'public', $post_type, true ) ? false : true ) ),
                     'show_ui' => (boolean) pods_var( 'show_ui', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'show_in_menu' => $show_in_menu,
+                    'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
                     'menu_position' => (int) pods_var( 'menu_position', $post_type, 0, null, true ),
                     'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),
@@ -475,8 +476,7 @@ class PodsInit {
                     'has_archive' => (boolean) pods_var( 'has_archive', $post_type, false ),
                     'rewrite' => $cpt_rewrite,
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ), null, true ) : false ),
-                    'can_export' => (boolean) pods_var( 'can_export', $post_type, true ),
-                    'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) )
+                    'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
 
                 if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )

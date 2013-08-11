@@ -4632,6 +4632,9 @@ class PodsAPI {
         if ( !$load_fields )
             $transient .= '_nofields';
 
+        if ( pods_var_raw( 'table_info', $params, false ) )
+            $transient .= '_tableinfo';
+
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $pod = false;
 
@@ -4951,6 +4954,10 @@ class PodsAPI {
 
         if ( isset( $params->fields ) && !$params->fields )
             $pre_key .= '_nofields';
+
+        if ( isset( $params->table_info ) && $params->table_info )
+            $pre_key .= '_tableinfo';
+
 
         $pre_key .= '_get';
 

@@ -705,11 +705,11 @@ function pods_create_slug ( $orig, $strict = true ) {
     $str = preg_replace( "/([_ \\/])/", "-", trim( $orig ) );
 
     if ( $strict )
-        $str = preg_replace( "/([^0-9a-z-])/", "", strtolower( $str ) );
+        $str = preg_replace( "/([^0-9a-z\-])/", "", strtolower( $str ) );
     else
         $str = urldecode( sanitize_title( strtolower( $str ) ) );
 
-    $str = preg_replace( "/(-){2,}/", "-", $str );
+    $str = preg_replace( "/(\-){2,}/", "-", $str );
     $str = trim( $str, '-' );
     $str = apply_filters( 'pods_create_slug', $str, $orig );
 
@@ -793,7 +793,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
  * @since 1.2.0
  */
 function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
-    $str = preg_replace( "/([- ])/", "_", trim( $orig ) );
+    $str = preg_replace( "/([\- ])/", "_", trim( $orig ) );
 
     if ( $lower )
         $str = strtolower( $str );

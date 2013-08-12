@@ -1008,7 +1008,7 @@ class PodsForm {
         if ( false !== $noarray )
             $input = preg_replace( '/\[\d*\]/', '-', $input );
         $output = str_replace( array( '[', ']' ), '-', strtolower( $input ) );
-        $output = preg_replace( '/([^a-z0-9-_])/', '', $output );
+        $output = preg_replace( '/([^a-z0-9\-_])/', '', $output );
         $output = trim( str_replace( array( '__', '_', '--' ), '-', $output ), '-' );
         $output = str_replace( '00000', '--1', $output );
         if ( false !== $db_field )

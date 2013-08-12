@@ -2801,7 +2801,7 @@ class Pods implements Iterator {
                 else
                     echo $this->do_magic_tags( $code );
             }
-            elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_-\/]/', '', $template_name ), ' /-' ) ) {
+            elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
                 $default_templates = array(
                     'pods/' . $template_name,
                     'pods-' . $template_name,

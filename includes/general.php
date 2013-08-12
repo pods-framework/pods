@@ -1472,6 +1472,8 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
 function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
+    elseif ( 'term' == $object_type )
+        $object_type = 'taxonomy';
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
@@ -1539,8 +1541,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'personal_options_update', array( PodsInit::$meta, 'save_user' ) ),
-            array( 'edit_user_profile_update', array( PodsInit::$meta, 'save_user' ) )
+            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
         );
     }
     elseif ( 'comment' == $object_type ) {

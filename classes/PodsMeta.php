@@ -207,8 +207,8 @@ class PodsMeta {
             // Handle User Editor
             add_action( 'show_user_profile', array( $this, 'meta_user' ) );
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-            add_action( 'personal_options_update', array( $this, 'save_user' ) );
-            add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
+            add_action( 'user_register', array( $this, 'save_user' ) );
+            add_action( 'profile_update', array( $this, 'save_user' ) );
 
             if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
                 // Handle *_user_meta
@@ -670,8 +670,8 @@ class PodsMeta {
             if ( !has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
                 add_action( 'show_user_profile', array( $this, 'meta_user' ) );
                 add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-                add_action( 'personal_options_update', array( $this, 'save_user' ) );
-                add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
+                add_action( 'user_register', array( $this, 'save_user' ) );
+                add_action( 'profile_update', array( $this, 'save_user' ) );
             }
         }
         elseif ( 'comment' == $pod[ 'type' ] ) {
@@ -1042,9 +1042,8 @@ class PodsMeta {
             do_action( "pods_meta_create_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
         }
 
-        do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
-        do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
-
+        do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
+        do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
 
         pods_no_conflict_on( 'post' );
 
@@ -1067,8 +1066,8 @@ class PodsMeta {
             do_action( "pods_meta_create_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
         }
 
-        do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
-        do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+        do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
+        do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
 
         return $post_id;
     }
@@ -1322,6 +1321,11 @@ class PodsMeta {
      * @param $taxonomy
      */
     public function save_taxonomy ( $term_id, $term_taxonomy_id, $taxonomy ) {
+        $is_new_item = false;
+
+        if ( 'create_term' == current_filter() )
+            $is_new_item = true;
+
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
         if ( empty( $groups ) )
@@ -1360,18 +1364,32 @@ class PodsMeta {
             }
         }
 
-        do_action( 'pods_meta_save_pre_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
-        do_action( "pods_meta_save_pre_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        if ( $is_new_item ) {
+            do_action( 'pods_meta_create_pre_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+            do_action( "pods_meta_create_pre_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        }
+
+        do_action( 'pods_meta_save_pre_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
+        do_action( "pods_meta_save_pre_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
+
+        pods_no_conflict_on( 'taxonomy' );
 
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
             $data = pods_unslash( (array) $data );
 
-            $pod->save( $data );
+            $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
         }
 
-        do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
-        do_action( "pods_meta_save_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        pods_no_conflict_off( 'taxonomy' );
+
+        if ( $is_new_item ) {
+            do_action( 'pods_meta_create_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+            do_action( "pods_meta_create_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        }
+
+        do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
+        do_action( "pods_meta_save_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
     }
 
     /**
@@ -1464,6 +1482,11 @@ class PodsMeta {
      * @param $user_id
      */
     public function save_user ( $user_id ) {
+        $is_new_item = false;
+
+        if ( 'user_register' == current_filter() )
+            $is_new_item = true;
+
         $groups = $this->groups_get( 'user', 'user' );
 
         if ( empty( $groups ) )
@@ -1501,23 +1524,31 @@ class PodsMeta {
             }
         }
 
+        if ( $is_new_item )
+            do_action( 'pods_meta_create_pre_user', $data, $pod, $id, $groups );
+
+        do_action( 'pods_meta_save_pre_user', $data, $pod, $id, $groups, $is_new_item );
+
+        pods_no_conflict_on( 'user' );
+
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
             $data = pods_unslash( (array) $data );
 
-            $pod->save( $data );
+            $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
         }
         elseif ( !empty( $id ) ) {
-            pods_no_conflict_on( 'user' );
-
             foreach ( $data as $field => $value ) {
                 update_user_meta( $id, $field, $value );
             }
-
-            pods_no_conflict_off( 'user' );
         }
 
-        do_action( 'pods_meta_save_user', $data, $pod, $id, $groups );
+        pods_no_conflict_off( 'user' );
+
+        if ( $is_new_item )
+            do_action( 'pods_meta_create_user', $data, $pod, $id, $groups );
+
+        do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
     }
 
     /**

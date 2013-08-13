@@ -384,7 +384,7 @@ class PodsMeta {
         add_filter( 'cac/meta_keys/storage_key=user', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/meta_keys/storage_key=comment', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
-        add_filter( 'cac/column/meta', array( $this, 'cpac_meta_value' ), 10, 3 );
+        add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
 
         // Codepress Admin Columns 1.x
         add_filter( 'cpac-get-meta-by-type', array( $this, 'cpac_meta_keys' ), 10, 2 );
@@ -453,7 +453,7 @@ class PodsMeta {
         $tableless_field_types = PodsForm::tableless_field_types();
 
         $object_type = 'post_type';
-        $object = $obj->key;
+        $object = $obj->storage_model->key;
 
         if ( in_array( $obj->storage_model->type, array( 'wp-links', 'link' ) ) )
             $object_type = $object = 'link';

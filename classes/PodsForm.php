@@ -1075,7 +1075,7 @@ class PodsForm {
         $class_name = "PodsField_{$class_name}";
 
         $content_dir = realpath( WP_CONTENT_DIR );
-        $plugins_dir = realpath( WP_PLUGIN_DIR );
+        $plugins_dir = ( 0 === strpos( PODS_DIR, WPMU_PLUGIN_DIR ) ) ? realpath( WPMU_PLUGIN_DIR ) : realpath( WP_PLUGIN_DIR );
         $abspath_dir = realpath( ABSPATH );
 
         if ( !class_exists( $class_name ) ) {

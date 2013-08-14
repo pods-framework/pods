@@ -59,6 +59,7 @@ class PodsView {
         $pods_components_dir = realpath( PODS_DIR . 'components/' );
         $content_dir = realpath( WP_CONTENT_DIR );
         $plugins_dir = realpath( WP_PLUGIN_DIR );
+        $muplugins_dir = realpath( WPMU_PLUGIN_DIR );
         $abspath_dir = realpath( ABSPATH );
 
         $cache_key = sanitize_title(
@@ -94,6 +95,7 @@ class PodsView {
             && false === strpos( $view_key, $pods_components_dir )
             && false === strpos( $view_key, $content_dir )
             && false === strpos( $view_key, $plugins_dir )
+            && false === strpos( $view_key, $muplugins_dir )
             && false === strpos( $view_key, $abspath_dir )
         ) {
             $output = self::get( 'pods-view-' . $cache_key, $cache_mode, 'pods_view' );

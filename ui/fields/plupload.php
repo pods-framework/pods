@@ -256,7 +256,7 @@ else
             else {
                 var json = response.match( /{.*}$/ );
 
-                if ( 0 < json.length )
+                if ( null !== json && 0 < json.length )
                     json = jQuery.parseJSON( json[ 0 ] );
                 else
                     json = {};

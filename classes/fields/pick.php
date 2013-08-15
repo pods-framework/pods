@@ -147,7 +147,6 @@ class PodsField_Pick extends PodsField {
 					'pick_format_type' => 'single',
 					'pick_format_single' => 'dropdown'
 				),
-                'required' => 1,
                 'default' => '',
                 'type' => 'text'
 			),

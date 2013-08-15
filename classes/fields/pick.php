@@ -140,6 +140,17 @@ class PodsField_Pick extends PodsField {
                 ),
                 'dependency' => true
             ),
+			'pick_select_text' => array(
+                'label' => __( 'Default Select Text', 'pods' ),
+                'help' => __( 'This is the text use for the default "no selection" dropdown item, if empty, it will default to "-- Select One --"', 'pods' ),
+                'depends-on' => array(
+					'pick_format_type' => 'single',
+					'pick_format_single' => 'dropdown'
+				),
+                'required' => 1,
+                'default' => '',
+                'type' => 'text'
+			),
             'pick_limit' => array(
                 'label' => __( 'Selection Limit', 'pods' ),
                 'help' => __( 'help', 'pods' ),

@@ -925,7 +925,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
                     var json = d.match( /{.*}$/ );
 
-                    if ( 0 < json.length )
+                    if ( null !== json && 0 < json.length )
                         json = jQuery.parseJSON( json[ 0 ] );
                     else
                         json = {};

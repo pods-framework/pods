@@ -2783,7 +2783,7 @@ class Pods implements Iterator {
      * @link http://pods.io/docs/template/
      */
     public function template ( $template_name, $code = null, $deprecated = false ) {
-        $output = null;
+        $out = null;
 
         if ( !empty( $code ) ) {
             $code = apply_filters( 'pods_templates_pre_template', $code, $template_name, $this );
@@ -2801,17 +2801,6 @@ class Pods implements Iterator {
                 else
                     echo $this->do_magic_tags( $code );
             }
-            elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
-                $default_templates = array(
-                    'pods/' . $template_name,
-                    'pods-' . $template_name,
-                    $template_name
-                );
-
-                $default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
-
-                pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
-            }
 
             $out = ob_get_clean();
 
@@ -2820,6 +2809,24 @@ class Pods implements Iterator {
         }
         elseif ( class_exists( 'Pods_Templates' ) )
             $out = Pods_Templates::template( $template_name, $code, $this, $deprecated );
+		elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+            ob_start();
+
+			$default_templates = array(
+				'pods/' . $template_name,
+				'pods-' . $template_name,
+				$template_name
+			);
+
+			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
+
+			pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+
+            $out = ob_get_clean();
+
+            $out = apply_filters( 'pods_templates_post_template', $out, $code, $template_name, $this );
+            $out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
+		}
 
         return $out;
     }

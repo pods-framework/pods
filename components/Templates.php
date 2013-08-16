@@ -400,10 +400,19 @@ class Pods_Templates extends PodsComponent {
         if ( empty( $obj ) || !is_object( $obj ) )
             return '';
 
-        if ( empty( $code ) && !empty( $template_name ) ) {
-            $template = $obj->api->load_template( array( 'name' => $template_name ) );
+		$template = array(
+			'id' => 0,
+			'slug' => $template_name,
+			'code' => $code,
+			'options' => array(),
+		);
 
-            if ( !empty( $template ) ) {
+        if ( empty( $code ) && !empty( $template_name ) ) {
+            $template_obj = $obj->api->load_template( array( 'name' => $template_name ) );
+
+            if ( !empty( $template_obj ) ) {
+				$template = $template_obj;
+
                 if ( !empty( $template[ 'code' ] ) )
                     $code = $template[ 'code' ];
 
@@ -414,14 +423,6 @@ class Pods_Templates extends PodsComponent {
                 if ( !$permission ) {
                     return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.', 'pods' ), $code, $template, $obj );
                 }
-            }
-            else {
-                $template = array(
-                    'id' => 0,
-                    'slug' => $template_name,
-                    'code' => '',
-                    'options' => array(),
-                );
             }
         }
 

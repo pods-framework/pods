@@ -450,7 +450,14 @@ class Pods_Templates extends PodsComponent {
 
             $default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
 
-            pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+            if ( empty( $obj->id ) ) {
+                while ( $obj->fetch() ) {
+            		pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+                }
+            }
+            else
+            	pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+
         }
 
         $out = ob_get_clean();

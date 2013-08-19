@@ -2785,7 +2785,11 @@ class Pods implements Iterator {
     public function template ( $template_name, $code = null, $deprecated = false ) {
         $out = null;
 
+		$obj =& $this;
+
         if ( !empty( $code ) ) {
+        	$code = str_replace( '$this->', '$obj->', $code ); // backwards compatibility
+
             $code = apply_filters( 'pods_templates_pre_template', $code, $template_name, $this );
             $code = apply_filters( "pods_templates_pre_template_{$template_name}", $code, $template_name, $this );
 
@@ -2820,7 +2824,14 @@ class Pods implements Iterator {
 
 			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
 
-			pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+			// Only detail templates need $this->id
+			if ( empty( $this->id ) ) {
+				while ( $this->fetch() ) {
+					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				}
+			}
+			else
+				pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
 
             $out = ob_get_clean();
 

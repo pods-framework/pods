@@ -226,7 +226,7 @@ function pods_is_admin ( $cap = null ) {
         $pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
         if ( is_multisite() && is_super_admin() )
-            return apply_filters( 'pods_is_admin', true, $cap, null );
+            return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
 
         if ( empty( $cap ) )
             $cap = array();

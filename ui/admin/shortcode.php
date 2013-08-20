@@ -20,10 +20,7 @@
                 view = $( '#pod_view' ).val(),
                 cache_mode = $( '#pod_cache_mode' ).val(),
                 expires = $( '#pod_expires' ).val();
-
-            <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
                 template = $( '#pod_template' ).val();
-            <?php } ?>
 
             <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
                 pods_page = $( '#pods_page' ).val();
@@ -380,7 +377,18 @@
                             <?php } ?>
                         </select>
                     </div>
-                <?php } ?>
+                <?php
+                    }
+                    else {
+                ?>
+                    <div class="pods-section hide">
+                        <label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+
+                        <input type="text" id="pod_template" name="pod_template" />
+                    </div>
+                <?php
+                    }
+                ?>
 
                 <div class="pods-section hide">
                     <label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>

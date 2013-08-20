@@ -855,14 +855,20 @@ class Pods implements Iterator {
                     // Dot-traversal
                     $pod = $this->pod;
                     $ids = array( $this->id() );
-                    $all_fields = array(
-                        $this->pod => $this->fields
-                    );
+                    $all_fields = array();
 
                     $lookup = $params->traverse;
 
-                    if ( !empty( $lookup ) )
+                    if ( !empty( $lookup ) ) {
                         unset( $lookup[ 0 ] );
+
+                        foreach ( $this->fields as $field ) {
+                            if ( !in_array( $field[ 'type' ], $tableless_field_types ) || in_array( $field[ 'name' ], $lookup ) )
+                                continue;
+
+                            $lookup[] = $field[ 'name' ];
+                        }
+                    }
 
                     // Get fields matching traversal names
                     if ( !empty( $lookup ) ) {
@@ -2776,10 +2782,16 @@ class Pods implements Iterator {
      * @since 2.0
      * @link http://pods.io/docs/template/
      */
-    public function template ( $template, $code = null, $deprecated = false ) {
+    public function template ( $template_name, $code = null, $deprecated = false ) {
+        $out = null;
+
+		$obj =& $this;
+
         if ( !empty( $code ) ) {
-            $code = apply_filters( 'pods_templates_pre_template', $code, $template, $this );
-            $code = apply_filters( "pods_templates_pre_template_{$template}", $code, $template, $this );
+        	$code = str_replace( '$this->', '$obj->', $code ); // backwards compatibility
+
+            $code = apply_filters( 'pods_templates_pre_template', $code, $template_name, $this );
+            $code = apply_filters( "pods_templates_pre_template_{$template_name}", $code, $template_name, $this );
 
             ob_start();
 
@@ -2796,13 +2808,38 @@ class Pods implements Iterator {
 
             $out = ob_get_clean();
 
-            $out = apply_filters( 'pods_templates_post_template', $out, $code, $template, $this );
-            $out = apply_filters( "pods_templates_post_template_{$template}", $out, $code, $template, $this );
-
-            return $out;
+            $out = apply_filters( 'pods_templates_post_template', $out, $code, $template_name, $this );
+            $out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
         }
         elseif ( class_exists( 'Pods_Templates' ) )
-            return Pods_Templates::template( $template, $code, $this, $deprecated );
+            $out = Pods_Templates::template( $template_name, $code, $this, $deprecated );
+		elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+            ob_start();
+
+			$default_templates = array(
+				'pods/' . $template_name,
+				'pods-' . $template_name,
+				$template_name
+			);
+
+			$default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
+
+			// Only detail templates need $this->id
+			if ( empty( $this->id ) ) {
+				while ( $this->fetch() ) {
+					pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+				}
+			}
+			else
+				pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+
+            $out = ob_get_clean();
+
+            $out = apply_filters( 'pods_templates_post_template', $out, $code, $template_name, $this );
+            $out = apply_filters( "pods_templates_post_template_{$template_name}", $out, $code, $template_name, $this );
+		}
+
+        return $out;
     }
 
     /**
@@ -2996,6 +3033,217 @@ class Pods implements Iterator {
             return $before . $value . $after;
 
         return '';
+    }
+
+    /**
+     *
+     * Generate UI for Data Management
+     *
+     * @param mixed $options Array or String containing Pod or Options to be used
+     * @param bool $amend Whether to amend the default UI options or replace entirely
+     *
+     * @return PodsUI|void UI object or void if custom UI used
+     *
+     * @since 2.3.10
+     */
+    public function ui ( $options = null, $amend = false ) {
+        if ( empty( $options ) )
+            $options = array();
+
+        if ( $this->id() != pods_var( 'id', 'get', null, null, true ) )
+            $this->fetch( pods_var( 'id', 'get', null, null, true ) );
+
+        if ( !empty( $options ) || 'custom' != pods_var( 'ui_style', $this->pod_data[ 'options' ], 'post_type', null, true ) ) {
+            $actions_enabled = pods_var_raw( 'ui_actions_enabled', $this->pod_data[ 'options' ] );
+
+            if ( !empty( $actions_enabled ) )
+                $actions_enabled = (array) $actions_enabled;
+            else
+                $actions_enabled = array();
+
+            $available_actions = array(
+                'add',
+                'edit',
+                'duplicate',
+                'delete',
+                'reorder',
+                'export'
+            );
+
+            if ( !empty( $actions_enabled ) ) {
+                $actions_disabled = array(
+                    'view' => 'view'
+                );
+
+                foreach ( $available_actions as $action ) {
+                    if ( !in_array( $action, $actions_enabled ) )
+                        $actions_disabled[ $action ] = $action;
+                }
+            }
+            else {
+                $actions_disabled = array(
+                    'duplicate' => 'duplicate',
+                    'view' => 'view',
+                    'export' => 'export'
+                );
+
+                if ( 1 == pods_var( 'ui_export', $this->pod_data[ 'options' ], 0 ) )
+                    unset( $actions_disabled[ 'export' ] );
+            }
+
+            $author_restrict = false;
+
+            if ( isset( $this->fields[ 'author' ] ) && 'pick' == $this->fields[ 'author' ][ 'type' ] && 'user' == $this->fields[ 'author' ][ 'pick_object' ] )
+                $author_restrict = 'author.ID';
+
+            if ( !pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
+                if ( !current_user_can( 'pods_add_' . $this->pod ) ) {
+                    $actions_disabled[ 'add' ] = 'add';
+
+                    if ( 'add' == pods_var( 'action', 'get' ) )
+                        $_GET[ 'action' ] = 'manage';
+                }
+
+                if ( !$author_restrict && !current_user_can( 'pods_edit_' . $this->pod ) && !current_user_can( 'pods_edit_others_' . $this->pod ) )
+                    $actions_disabled[ 'edit' ] = 'edit';
+
+                if ( !$author_restrict && !current_user_can( 'pods_delete_' . $this->pod ) && !current_user_can( 'pods_delete_others_' . $this->pod ) )
+                    $actions_disabled[ 'delete' ] = 'delete';
+
+                if ( !current_user_can( 'pods_reorder_' . $this->pod ) )
+                    $actions_disabled[ 'reorder' ] = 'reorder';
+
+                if ( !current_user_can( 'pods_export_' . $this->pod ) )
+                    $actions_disabled[ 'export' ] = 'export';
+            }
+
+            $_GET[ 'action' ] = pods_var( 'action', 'get', 'manage' );
+
+            $index = $this->pod_data[ 'field_id' ];
+            $label = __( 'ID', 'pods' );
+
+            if ( isset( $this->pod_data[ 'fields' ][ $this->pod_data[ 'field_index' ] ] ) ) {
+                $index = $this->pod_data[ 'field_index' ];
+                $label = $this->pod_data[ 'fields' ][ $this->pod_data[ 'field_index' ] ];
+            }
+
+            $manage = array(
+                $index => $label
+            );
+
+            if ( isset( $this->pod_data[ 'fields' ][ 'modified' ] ) )
+                $manage[ 'modified' ] = $this->pod_data[ 'fields' ][ 'modified' ][ 'label' ];
+
+            $manage_fields = pods_var_raw( 'ui_fields_manage', $this->pod_data[ 'options' ] );
+
+            if ( !empty( $manage_fields ) ) {
+                $manage_new = array();
+
+                foreach ( $manage_fields as $manage_field ) {
+                    if ( isset( $this->pod_data[ 'fields' ][ $manage_field ] ) )
+                        $manage_new[ $manage_field ] = $this->pod_data[ 'fields' ][ $manage_field ];
+                    elseif ( isset( $this->pod_data[ 'object_fields' ][ $manage_field ] ) )
+                        $manage_new[ $manage_field ] = $this->pod_data[ 'object_fields' ][ $manage_field ];
+                    elseif ( $manage_field == $this->pod_data[ 'field_id' ] ) {
+                        $field = array(
+                            'name' => $manage_field,
+                            'label' => 'ID',
+                            'type' => 'number',
+                            'width' => '8%'
+                        );
+
+                        $manage_new[ $manage_field ] = PodsForm::field_setup( $field, null, $field[ 'type' ] );
+                    }
+                }
+
+                if ( !empty( $manage_new ) )
+                    $manage = $manage_new;
+            }
+
+            $manage = apply_filters( 'pods_admin_ui_fields_' . $this->pod, apply_filters( 'pods_admin_ui_fields', $manage, $this->pod, $this ), $this->pod, $this );
+
+            $icon = pods_var_raw( 'ui_icon', $this->pod_data[ 'options' ] );
+
+            if ( !empty( $icon ) )
+                $icon = pods_image_url( $icon, '32x32' );
+
+            $filters = pods_var_raw( 'ui_filters', $this->pod_data[ 'options' ] );
+
+            if ( !empty( $filters ) ) {
+                $filters_new = array();
+
+                foreach ( $filters as $filter_field ) {
+                    if ( isset( $this->pod_data[ 'fields' ][ $filter_field ] ) )
+                        $filters_new[ $filter_field ] = $this->pod_data[ 'fields' ][ $filter_field ];
+                    elseif ( isset( $this->pod_data[ 'object_fields' ][ $filter_field ] ) )
+                        $filters_new[ $filter_field ] = $this->pod_data[ 'object_fields' ][ $filter_field ];
+                }
+
+                $filters = $filters_new;
+            }
+
+            $ui = array(
+                'fields' => array(
+                    'manage' => $manage,
+                    'add' => $this->pod_data[ 'fields' ],
+                    'edit' => $this->pod_data[ 'fields' ],
+                    'duplicate' => $this->pod_data[ 'fields' ]
+                ),
+                'icon' => $icon,
+                'actions_disabled' => $actions_disabled
+            );
+
+            if ( !empty( $filters ) ) {
+                $ui[ 'fields' ][ 'search' ] = $filters;
+                $ui[ 'filters' ] = array_keys( $filters );
+                $ui[ 'filters_enhanced' ] = true;
+            }
+
+            $reorder_field = pods_var_raw( 'ui_reorder_field', $this->pod_data[ 'options' ] );
+
+            if ( in_array( 'reorder', $actions_enabled ) && !in_array( 'reorder', $actions_disabled ) && !empty( $reorder_field ) && ( ( !empty( $this->pod_data[ 'object_fields' ] ) && isset( $this->pod_data[ 'object_fields' ][ $reorder_field ] ) ) || isset( $this->pod_data[ 'fields' ][ $reorder_field ] ) ) ) {
+                $ui[ 'reorder' ] = array( 'on' => $reorder_field );
+                $ui[ 'orderby' ] = $reorder_field;
+                $ui[ 'orderby_dir' ] = 'ASC';
+            }
+
+            if ( !empty( $author_restrict ) )
+                $ui[ 'restrict' ] = array( 'author_restrict' => $author_restrict );
+
+            if ( !in_array( 'delete', $ui[ 'actions_disabled' ] ) ) {
+                $ui[ 'actions_bulk' ] = array(
+                    'delete' => array(
+                        'label' => __( 'Delete', 'pods' )
+                        // callback not needed, Pods has this built-in for delete
+                    )
+                );
+            }
+
+            if ( strlen( pods_var( 'detail_url', $this->pod_data ) ) < 1 ) {
+                $ui[ 'actions_custom' ] = array(
+                    'view_url' => array(
+                        'label' => 'View',
+                        'link' => get_site_url() . '/' . pods_var( 'detail_url', $this->pod_data[ 'options' ] )
+                    )
+                );
+            }
+
+            // @todo Customize the Add New / Manage links to point to their correct menu items
+
+            $ui = apply_filters( 'pods_admin_ui_' . $this->pod, apply_filters( 'pods_admin_ui', $ui, $this->pod, $this ), $this->pod, $this );
+
+            // Override UI options
+            foreach ( $options as $option => $value ) {
+                $ui[ $option ] = $value;
+            }
+
+            $this->ui = $ui;
+
+            return pods_ui( $this );
+        }
+
+        do_action( 'pods_admin_ui_custom', $this );
+        do_action( 'pods_admin_ui_custom_' . $this->pod, $this );
     }
 
     /**

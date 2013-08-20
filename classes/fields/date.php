@@ -177,7 +177,24 @@ class PodsField_Date extends PodsField {
         // Format Value
         $value = $this->display( $value, $name, $options, null, $pod, $id );
 
-        pods_view( PODS_DIR . 'ui/fields/date.php', compact( array_keys( get_defined_vars() ) ) );
+        $field_type = 'date';
+
+        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'text';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'text';
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -267,12 +284,25 @@ class PodsField_Date extends PodsField {
      * @return DateTime
      */
     public function createFromFormat ( $format, $date ) {
-        if ( method_exists( 'DateTime', 'createFromFormat' ) )
-            $datetime = DateTime::createFromFormat( $format, (string) $date );
-        else
+        $datetime = false;
+
+        if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
+            $timezone = get_option( 'timezone_string' );
+
+            if ( empty( $timezone ) )
+                $timezone = timezone_name_from_abbr( '', get_option( 'gmt_offset' ) * HOUR_IN_SECONDS, 0 );
+
+            if ( !empty( $timezone ) ) {
+                $datetimezone = new DateTimeZone( $timezone );
+
+                $datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+            }
+        }
+
+        if ( false === $datetime )
             $datetime = new DateTime( date_i18n( 'Y-m-d', strtotime( (string) $date ) ) );
 
-        return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );
+        return apply_filters( 'pods_form_ui_field_date_formatter', $datetime, $format, $date );
     }
 
     /**

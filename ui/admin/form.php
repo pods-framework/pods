@@ -17,18 +17,31 @@ foreach ( $fields as $k => $field ) {
     elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
         if ( pods_var( 'hidden', $field[ 'options' ], false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
+        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'readonly' ] = true;
         else
             unset( $fields[ $k ] );
     }
-    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
-        $fields[ $k ][ 'type' ] = 'hidden';
+    elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
+        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'type' ] = 'hidden';
+        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+            $fields[ $k ][ 'readonly' ] = true;
+    }
+}
+
+$submittable_fields = $fields;
+
+foreach ( $submittable_fields as $k => $field ) {
+    if ( pods_var( 'readonly', $field, false ) )
+        unset( $submittable_fields[ $k ] );
 }
 
 if ( !isset( $thank_you_alt ) )
     $thank_you_alt = $thank_you;
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
 $uid = @session_id();
 
@@ -46,7 +59,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $action = __( 'duplicated', 'pods' );
 
     try {
-        $params = stripslashes_deep( (array) $_POST );
+        $params = pods_unslash( (array) $_POST );
         $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -229,10 +242,7 @@ if ( 0 < $pod->id() ) {
                                     ?>
                                         <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
                                             <span>&laquo;</span>
-                                            <?php
-                                                _e( 'Previous', 'pods' );
-                                                echo ' ' . $singular_label;
-                                            ?>
+                                            <?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
                                         </a>
                                     <?php
                                         }
@@ -240,10 +250,7 @@ if ( 0 < $pod->id() ) {
                                         if ( 0 < $next ) {
                                     ?>
                                         <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ); ?>">
-                                            <?php
-                                                _e( 'Next', 'pods' );
-                                                echo ' ' . $singular_label;
-                                            ?>
+                                            <?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
                                             <span>&raquo;</span>
                                         </a>
                                     <?php
@@ -384,8 +391,8 @@ if ( 0 < $pod->id() ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo addslashes( $thank_you ); ?>';
-        var thank_you_alt = '<?php echo addslashes( $thank_you_alt ); ?>';
+        var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
+        var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
 
         if ( 'NaN' == id )
             document.location = thank_you_alt.replace( 'X_ID_X', 0 );

@@ -226,7 +226,7 @@ function pods_is_admin ( $cap = null ) {
         $pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
         if ( is_multisite() && is_super_admin() )
-            return apply_filters( 'pods_is_admin', true, $cap, null );
+            return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
 
         if ( empty( $cap ) )
             $cap = array();
@@ -290,6 +290,20 @@ function pods_strict ( $include_debug = true ) {
         return true;
 
     return false;
+}
+
+/**
+ * Determine if Pods API Caching is enabled
+ *
+ * @return bool Whether Pods API Caching is enabled
+ *
+ * @since 2.3.9
+ */
+function pods_api_cache () {
+    if ( defined( 'PODS_API_CACHE' ) && !PODS_API_CACHE )
+        return false;
+
+    return true;
 }
 
 /**
@@ -1257,6 +1271,30 @@ function pods_transient_clear ( $key = true ) {
 }
 
 /**
+ * Scope variables and include a template like get_template_part that's child-theme aware
+ *
+ * @see get_template_part
+ *
+ * @param string|array $template Template names (see get_template_part)
+ * @param array $data Data to scope to the include
+ * @param bool $return Whether to return the output (echo by default)
+ * @return string|null Template output
+ *
+ * @since 2.3.9
+ */
+function pods_template_part ( $template, $data = null, $return = false ) {
+    $part = PodsView::get_template_part( $template, $data );
+
+    if ( !$return ) {
+        echo $part;
+
+        return null;
+    }
+
+    return $part;
+}
+
+/**
  * Add a new Pod outside of the DB
  *
  * @see PodsMeta::register
@@ -1283,7 +1321,7 @@ function pods_register_type ( $type, $name, $object = null ) {
  *
  * @see PodsMeta::register_field
  *
- * @param string $pod The pod name
+ * @param string|array $pod The pod name or array of pod names
  * @param string $name The name of the Pod
  * @param array $object (optional) Pod array, including any 'fields' arrays
  *
@@ -1434,6 +1472,8 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
 function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
+    elseif ( 'term' == $object_type )
+        $object_type = 'taxonomy';
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
@@ -1501,8 +1541,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'personal_options_update', array( PodsInit::$meta, 'save_user' ) ),
-            array( 'edit_user_profile_update', array( PodsInit::$meta, 'save_user' ) )
+            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
         );
     }
     elseif ( 'comment' == $object_type ) {

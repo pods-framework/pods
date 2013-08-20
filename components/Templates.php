@@ -289,6 +289,10 @@ class Pods_Templates extends PodsComponent {
             array(
                 'name' => 'restrict_capability',
                 'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'help' => array(
+                    __( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+                    'http://codex.wordpress.org/Roles_and_Capabilities'
+                ),
                 'default' => 0,
                 'type' => 'boolean',
                 'dependency' => true
@@ -296,10 +300,15 @@ class Pods_Templates extends PodsComponent {
             array(
                 'name' => 'capability_allowed',
                 'label' => __( 'Capability Allowed', 'pods' ),
-                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
-                'type' => 'text',
+                'type' => 'pick',
+                'pick_object' => 'capability',
+                'pick_format_type' => 'multi',
+                'pick_format_multi' => 'autocomplete',
+                'pick_ajax' => false,
                 'default' => '',
-                'depends-on' => array( 'restrict_capability' => true )
+                'depends-on' => array(
+                    'restrict_capability' => true
+                )
             )
         );
 
@@ -344,7 +353,7 @@ class Pods_Templates extends PodsComponent {
             if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
-                    'post_content' => pods_sanitize( $meta_value )
+                    'post_content' => $meta_value
                 );
 
                 remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
@@ -357,7 +366,7 @@ class Pods_Templates extends PodsComponent {
                     $revisions = true;
                 }
 
-                wp_update_post( $postdata );
+                wp_update_post( (object) $postdata ); // objects will be automatically sanitized
 
                 if ( $revisions )
                     add_action( 'pre_post_update', 'wp_save_post_revision' );
@@ -372,7 +381,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Display the page template
      *
-     * @param string $template The template name
+     * @param string $template_name The template name
      * @param string $code Custom template code to use instead
      * @param object $obj The Pods object
      * @param bool $deprecated Whether to use deprecated functionality based on old function usage
@@ -380,7 +389,7 @@ class Pods_Templates extends PodsComponent {
      * @return mixed|string|void
      * @since 2.0
      */
-    public static function template ( $template, $code = null, $obj = null, $deprecated = false ) {
+    public static function template ( $template_name, $code = null, $obj = null, $deprecated = false ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else
@@ -391,10 +400,19 @@ class Pods_Templates extends PodsComponent {
         if ( empty( $obj ) || !is_object( $obj ) )
             return '';
 
-        if ( empty( $code ) && !empty( $template ) ) {
-            $template = $obj->api->load_template( array( 'name' => $template ) );
+		$template = array(
+			'id' => 0,
+			'slug' => $template_name,
+			'code' => $code,
+			'options' => array(),
+		);
 
-            if ( !empty( $template ) ) {
+        if ( empty( $code ) && !empty( $template_name ) ) {
+            $template_obj = $obj->api->load_template( array( 'name' => $template_name ) );
+
+            if ( !empty( $template_obj ) ) {
+				$template = $template_obj;
+
                 if ( !empty( $template[ 'code' ] ) )
                     $code = $template[ 'code' ];
 
@@ -422,6 +440,24 @@ class Pods_Templates extends PodsComponent {
             }
             else
                 echo self::do_template( $code, $obj );
+        }
+        elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+            $default_templates = array(
+                'pods/' . $template_name,
+                'pods-' . $template_name,
+                $template_name
+            );
+
+            $default_templates = apply_filters( 'pods_template_default_templates', $default_templates );
+
+            if ( empty( $obj->id ) ) {
+                while ( $obj->fetch() ) {
+            		pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+                }
+            }
+            else
+            	pods_template_part( $default_templates, compact( array_keys( get_defined_vars() ) ) );
+
         }
 
         $out = ob_get_clean();

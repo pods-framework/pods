@@ -1674,10 +1674,10 @@ class PodsUI {
         if ( $check ) {
             if ( 0 == $this->insert_id )
                 $this->insert_id = $wpdb->insert_id;
-            $this->message( __( "<strong>Success!</strong> {$this->item} {$action} successfully.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Success!</strong> %s %s successfully.", 'pods' ), $this->item, $action ) );
         }
         else
-            $this->error( __( "<strong>Error:</strong> {$this->item} has not been {$action}.", 'pods' ) );
+            $this->error( sprintf( __( "<strong>Error:</strong> %s has not been %s.", 'pods' ), $this->item, $action ) );
         $this->do_hook( 'post_save', $this->insert_id, $data, $insert );
     }
 
@@ -1709,9 +1709,9 @@ class PodsUI {
             $check = $this->pods_data->delete( $this->table, array( $this->data->field_id => $id ) );
 
         if ( $check )
-            $this->message( __( "<strong>Deleted:</strong> {$this->item} has been deleted.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Deleted:</strong> %s has been deleted.", 'pods' ), $this->item ) );
         else
-            $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+            $this->error( sprintf( __( "<strong>Error:</strong> %s has not been deleted.", 'pods' ), $this->item ) );
 
         $this->do_hook( 'post_delete', $id );
     }
@@ -1757,10 +1757,10 @@ class PodsUI {
             if ( $success )
                 pods_redirect( pods_var_update( array( 'action_bulk' => 'delete', 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
             else
-                $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+                $this->error( sprintf( __( "<strong>Error:</strong> %s has not been deleted.", 'pods' ), $this->item ) );
         }
         else {
-            $this->message( __( "<strong>Deleted:</strong> {$this->items} have been deleted.", 'pods' ) );
+            $this->message( sprintf( __( "<strong>Deleted:</strong> %s have been deleted.", 'pods' ), $this->items ) );
 
             unset( $_GET[ 'deleted_bulk' ] );
         }
@@ -2226,6 +2226,8 @@ class PodsUI {
 
                             // override default value
                             $this->pod->fields[ $filter ][ 'options' ][ 'default_value' ] = '';
+                            $this->pod->fields[ $filter ][ 'options' ][ $this->pod->fields[ $filter ][ 'type' ] . '_allow_empty' ] = 1;
+
 
                             if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                 $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
@@ -2691,6 +2693,7 @@ class PodsUI {
 
                                 // override default value
                                 $this->pod->fields[ $filter ][ 'options' ][ 'default_value' ] = '';
+                                $this->pod->fields[ $filter ][ 'options' ][ $this->pod->fields[ $filter ][ 'type' ] . '_allow_empty' ] = 1;
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
@@ -3493,7 +3496,7 @@ class PodsUI {
                         var pageInput = $( 'input.current-page' );
                         var currentPage = pageInput.val();
                         pageInput.closest( 'form' ).submit( function ( e ) {
-                            if ( (1 > $( 'select[name="action"]' ).length || $( 'select[name="action"]' ).val() == -1) && (1 > $( 'select[name="action_bulk]' ).length || $( 'select[name="action_bulk"]' ).val() == -1) && pageInput.val() == currentPage ) {
+                            if ( (1 > $( 'select[name="action"]' ).length || $( 'select[name="action"]' ).val() == -1) && (1 > $( 'select[name="action_bulk"]' ).length || $( 'select[name="action_bulk"]' ).val() == -1) && pageInput.val() == currentPage ) {
                                 pageInput.val( '1' );
                             }
                         } );

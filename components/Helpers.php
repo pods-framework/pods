@@ -324,7 +324,7 @@ class Pods_Helpers extends PodsComponent {
             if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
-                    'post_content' => pods_sanitize( $meta_value )
+                    'post_content' => $meta_value
                 );
 
                 remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
@@ -337,7 +337,7 @@ class Pods_Helpers extends PodsComponent {
                     $revisions = true;
                 }
 
-                wp_update_post( $postdata );
+                wp_update_post( (object) $postdata ); // objects will be automatically sanitized
 
                 if ( $revisions )
                     add_action( 'pre_post_update', 'wp_save_post_revision' );

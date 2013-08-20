@@ -147,22 +147,33 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 
     <h2>
         Edit Pod:
-        <span class="pods-sluggable">
-            <span class="pods-slug">
-                <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
-                <input type="button" class="edit-slug-button button" value="Edit" />
+        <?php
+            if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
+        ?>
+            <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
+        <?php
+        }
+            else {
+        ?>
+            <span class="pods-sluggable">
+                <span class="pods-slug">
+                    <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
+                    <input type="button" class="edit-slug-button button" value="Edit" />
+                </span>
+                <span class="pods-slug-edit">
+                    <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
+                    'attributes' => array(
+                        'maxlength' => $max_length_name,
+                        'size' => 25
+                    ),
+                    'class' => 'pods-validate pods-validate-required'
+                ) ); ?>
+                    <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+                </span>
             </span>
-            <span class="pods-slug-edit">
-                <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
-                'attributes' => array(
-                    'maxlength' => $max_length_name,
-                    'size' => 25
-                ),
-                'class' => 'pods-validate pods-validate-required'
-            ) ); ?>
-                <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
-            </span>
-        </span>
+        <?php
+            }
+        ?>
     </h2>
 
     <?php
@@ -862,7 +873,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo addslashes( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
+        var thank_you = '<?php echo pods_slash( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
     }
@@ -879,7 +890,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
-        var default_select = '<?php echo addslashes( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
@@ -914,7 +925,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
                     var json = d.match( /{.*}$/ );
 
-                    if ( 0 < json.length )
+                    if ( null !== json && 0 < json.length )
                         json = jQuery.parseJSON( json[ 0 ] );
                     else
                         json = {};

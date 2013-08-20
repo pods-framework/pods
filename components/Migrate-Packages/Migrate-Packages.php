@@ -126,7 +126,7 @@ class Pods_Migrate_Packages extends PodsComponent {
             $json_data = @json_decode( $data, true );
 
             if ( !is_array( $json_data ) )
-                $json_data = @json_decode( stripslashes( $data ), true );
+                $json_data = @json_decode( pods_unslash( $data ), true );
 
             $data = $json_data;
         }

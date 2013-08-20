@@ -80,7 +80,7 @@ if (!empty($filters)) {
     }
 }
 // Display the search box and submit button
-$search = empty($_GET[$this->search_var]) ? '' : stripslashes($_GET[$this->search_var]);
+$search = empty($_GET[$this->search_var]) ? '' : pods_unslash($_GET[$this->search_var]);
 if (false !== $show_textbox) {
 ?>
         <input type="text" class="pod_search" name="<?php echo esc_attr($this->search_var); ?>" value="<?php echo esc_attr($search); ?>" />

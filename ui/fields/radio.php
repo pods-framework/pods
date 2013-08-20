@@ -47,6 +47,12 @@ foreach ( $options[ 'data' ] as $val => $label ) {
         $indent = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
     }
 
+    if ( pods_var( 'readonly', $options, false ) ) {
+        $attributes[ 'readonly' ] = 'READONLY';
+
+        $attributes[ 'class' ] .= ' pods-form-ui-read-only';
+    }
+
     if ( 1 < count( $options[ 'data' ] ) )
         $attributes[ 'id' ] = $primary_id . $counter;
 

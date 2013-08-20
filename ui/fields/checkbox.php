@@ -55,6 +55,12 @@ if ( 0 < $data_count ) {
         if ( strlen( $label ) < 1 )
             $attributes[ 'class' ] .= ' pods-form-ui-no-label';
 
+        if ( pods_var( 'readonly', $options, false ) ) {
+            $attributes[ 'readonly' ] = 'READONLY';
+
+            $attributes[ 'class' ] .= ' pods-form-ui-read-only';
+        }
+
         if ( 1 < $data_count )
             $attributes[ 'id' ] = $primary_id . $counter;
 

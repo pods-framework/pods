@@ -1285,7 +1285,7 @@ class PodsUI {
             $this->ui_page[] = 'form';
             if ( 'save' == $this->do && $this->save && !empty( $_POST ) )
                 $this->save();
-            $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? 1 : 0 );
+            $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? true : false );
         }
         elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) {
             $this->delete( $this->id );

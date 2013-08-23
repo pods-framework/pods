@@ -141,7 +141,8 @@ class PodsField_WYSIWYG extends PodsField {
             self::$type . '_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'default' => '',
-                'type' => 'text'
+                'type' => 'text',
+				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
             ),/*
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
@@ -341,11 +342,17 @@ class PodsField_WYSIWYG extends PodsField {
         $allowed_html_tags = '';
 
         if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-            $allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
-            $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+			$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+            $allowed_tags = explode( ' ', $allowed_tags );
+			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+			if ( !empty( $allowed_tags ) ) {
+            	$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+			}
         }
 
-        if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+        if ( !empty( $allowed_html_tags ) )
             $value = strip_tags( $value, $allowed_html_tags );
 
         return $value;

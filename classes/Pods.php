@@ -569,6 +569,9 @@ class Pods implements Iterator {
         if ( null === $params->output )
             $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
 
+		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ) ) )
+			$params->output .= 's';
+
         // Support old $orderby variable
         if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
             pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
@@ -1037,7 +1040,7 @@ class Pods implements Iterator {
                                 );
 
                                 // Output types
-                                if ( in_array( $params->output, array( 'ids', 'objects' ) ) )
+                                if ( in_array( $params->output, array( 'ids', 'objects', 'pods' ) ) )
                                     $sql[ 'select' ] = '`t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
                                 elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
                                     $sql[ 'select' ] = '`t`.`' . $table[ 'field_index' ] . '` AS `pod_item_index`, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
@@ -1083,6 +1086,8 @@ class Pods implements Iterator {
                                         // Output types
                                         if ( 'ids' == $params->output )
                                             $item = (int) $item_id;
+                                        elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
+                                            $item = $item->pod_item_index;
                                         elseif ( 'objects' == $params->output ) {
                                             if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
                                                 $item = get_post( $item_id );
@@ -1112,8 +1117,9 @@ class Pods implements Iterator {
                                             else
                                                 $item = (object) $item;
                                         }
-                                        elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
-                                            $item = $item->pod_item_index;
+										elseif ( 'pods' == $params->output ) {
+											$item = pods( $object, (int) $item_id );
+										}
                                         else // arrays
                                             $item = get_object_vars( (object) $item );
 

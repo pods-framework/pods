@@ -95,6 +95,11 @@ class Pods implements Iterator {
     public $limit = 15;
 
     /**
+     * @var int
+     */
+    public $offset = 0;
+
+    /**
      * @var string
      */
     public $page_var = 'pg';
@@ -1822,7 +1827,8 @@ class Pods implements Iterator {
         if ( 0 == $params->limit )
             $params->limit = -1;
 
-        $this->limit = $params->limit;
+        $this->limit = (int) $params->limit;
+        $this->offset = (int) $params->offset;
         $this->page = (int) $params->page;
         $this->page_var = $params->page_var;
         $this->pagination = (boolean) $params->pagination;
@@ -2609,6 +2615,7 @@ class Pods implements Iterator {
             'prev_next' => true,
             'first_last' => true,
             'limit' => (int) $this->limit,
+			'offset' => (int) $this->offset,
             'page' => max( 1, (int) $this->page ),
             'mid_size' => 2,
             'end_size' => 1,
@@ -2622,9 +2629,9 @@ class Pods implements Iterator {
 
         $params = (object) array_merge( $defaults, $params );
 
-        $params->total = ceil( $params->total_found / $params->limit );
+        $params->total = ceil( ( $params->total_found - $params->offset ) / $params->limit );
 
-        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total )
+        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total || $params->total_found <= $params->offset )
             return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
 
         $pagination = $params->type;

@@ -416,6 +416,11 @@ class PodsInit {
                     $cpt_supported[ 'genesis-simple-sidebars' ] = (boolean) pods_var( 'supports_genesis_simple_sidebars', $post_type, false );
                 }
 
+				// YARPP Support
+				if ( defined( 'YARPP_VERSION' ) ) {
+                    $cpt_supported[ 'yarpp_support' ] = (boolean) pods_var( 'supports_yarpp_support', $post_type, false );
+				}
+
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 

@@ -571,8 +571,12 @@ class Pods implements Iterator {
         else
             $params = (object) $defaults;
 
-        if ( null === $params->output )
+		if ( $params->in_form ) {
+			$params->output = 'ids';
+		}
+		elseif ( null === $params->output ) {
             $params->output = $this->do_hook( 'field_related_output_type', 'arrays', $this->row, $params );
+		}
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ) ) )
 			$params->output .= 's';
@@ -663,15 +667,28 @@ class Pods implements Iterator {
             }
         }
 
-        if ( empty( $value ) && isset( $this->row[ $params->name ] ) ) {
-            if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) || in_array( $field_data[ 'type' ], $tableless_field_types ) )
+		if ( empty( $value ) && in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
+			$params->raw = true;
+
+			$value = false;
+
+			if ( 'arrays' != $params->output && isset( $this->row[ '_' . $params->output . '_' . $params->name ] ) ) {
+            	$value = $this->row[ '_' . $params->output . '_' . $params->name ];
+			}
+			elseif ( 'arrays' == $params->output && isset( $this->row[ $params->name ] ) ) {
+				$value = $this->row[ $params->name ];
+			}
+
+            if ( false !== $value && !is_array( $value ) && 'pick' == $field_data[ 'type' ] && in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) )
+                $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
+		}
+
+        if ( empty( $value ) && isset( $this->row[ $params->name ] ) && !in_array( $field_data[ 'type' ], $tableless_field_types ) && 'arrays' != $params->output ) {
+            if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
                 $params->raw = true;
 
             $value = $this->row[ $params->name ];
-
-            if ( !is_array( $value ) && 'pick' == $field_data[ 'type' ] && in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
-        }
+		}
         elseif ( empty( $value ) ) {
             $object_field_found = false;
 
@@ -1166,14 +1183,11 @@ class Pods implements Iterator {
                                 }
 
                                 // Return entire array
-                                if ( false === $params->in_form && false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) )
+                                if ( false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) )
                                     $value = $data;
                                 // Return an array of single column values
                                 else {
                                     $value = array();
-
-                                    if ( $params->in_form )
-                                        $field = $table[ 'field_id' ];
 
                                     foreach ( $data as $item_id => $item ) {
                                         if ( ( ( false !== strpos( $field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
@@ -1293,8 +1307,12 @@ class Pods implements Iterator {
 
             $this->row[ $field_names ] = $value;
         }
-        else
+        elseif ( 'arrays' != $params->output && in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
+            $this->row[ '_' . $params->output . '_' . $params->name ] = $value;
+		}
+        elseif ( 'arrays' == $params->output || !in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
             $this->row[ $params->name ] = $value;
+		}
 
         if ( $params->single && is_array( $value ) && 1 == count( $value ) )
             $value = current( $value );

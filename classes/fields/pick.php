@@ -1394,6 +1394,12 @@ class PodsField_Pick extends PodsField {
                     if ( !empty( $value ) ) {
                         $ids = $value;
 
+						if ( is_array( $ids ) && isset( $ids[ 0 ] ) && is_array( $ids[ 0 ] ) ) {
+							$ids = wp_list_pluck( $ids, $search_data->field_id );
+
+							$debug = true;
+						}
+
                         if ( is_array( $ids ) )
                             $ids = implode( ', ', $ids );
 
@@ -1563,6 +1569,9 @@ class PodsField_Pick extends PodsField {
 
             return $items;
         }
+						if ( isset( $debug ) ) {
+							pods_debug( $data );
+						}
 
         return $data;
     }

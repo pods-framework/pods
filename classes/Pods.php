@@ -1192,6 +1192,8 @@ class Pods implements Iterator {
                                     foreach ( $data as $item_id => $item ) {
                                         if ( ( ( false !== strpos( $field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
                                             $size = 'full';
+                                            
+                                            $field = implode( '.', array_splice( $params->traverse, $key ) );
 
                                             if ( false !== strpos( $field, '_src.' ) && 5 < strlen( $field ) )
                                                 $size = substr( $field, 5 );
@@ -1216,6 +1218,8 @@ class Pods implements Iterator {
                                         }
                                         elseif ( false !== strpos( $field, '_img' ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) {
                                             $size = 'full';
+
+                                            $field = implode( '.', array_splice( $params->traverse, $key ) );
 
                                             if ( false !== strpos( $field, '_img.' ) && 5 < strlen( $field ) )
                                                 $size = substr( $field, 5 );

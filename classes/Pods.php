@@ -1190,25 +1190,26 @@ class Pods implements Iterator {
                                     $value = array();
 
                                     foreach ( $data as $item_id => $item ) {
-                                        if ( ( ( false !== strpos( $field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
-                                            $size = 'full';
-                                            
-                                            $field = implode( '.', array_splice( $params->traverse, $key ) );
+										// $field is 123x123, needs to be _src.123x123
+                                        $full_field = implode( '.', array_splice( $params->traverse, $key ) );
 
-                                            if ( false !== strpos( $field, '_src.' ) && 5 < strlen( $field ) )
-                                                $size = substr( $field, 5 );
-                                            elseif ( false !== strpos( $field, '_src_relative.' ) && 14 < strlen( $field ) )
-                                                $size = substr( $field, 14 );
-                                            elseif ( false !== strpos( $field, '_src_schemeless.' ) && 16 < strlen( $field ) )
-                                                $size = substr( $field, 16 );
+                                        if ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+                                            $size = 'full';
+
+                                            if ( false !== strpos( $full_field, '_src.' ) && 5 < strlen( $full_field ) )
+                                                $size = substr( $full_field, 5 );
+                                            elseif ( false !== strpos( $full_field, '_src_relative.' ) && 14 < strlen( $full_field ) )
+                                                $size = substr( $full_field, 14 );
+                                            elseif ( false !== strpos( $full_field, '_src_schemeless.' ) && 16 < strlen( $full_field ) )
+                                                $size = substr( $full_field, 16 );
 
                                             $value_url = pods_image_url( $item_id, $size );
 
-                                            if ( false !== strpos( $field, '_src_relative' ) && !empty( $value_url ) ) {
+                                            if ( false !== strpos( $full_field, '_src_relative' ) && !empty( $value_url ) ) {
                                                 $value_url_parsed = parse_url( $value_url );
                                                 $value_url = $value_url_parsed[ 'path' ];
                                             }
-                                            elseif ( false !== strpos( $field, '_src_schemeless' ) && !empty( $value_url ) )
+                                            elseif ( false !== strpos( $full_field, '_src_schemeless' ) && !empty( $value_url ) )
                                                 $value_url = str_replace( array( 'http://', 'https://' ), '//', $value_url );
 
                                             if ( !empty( $value_url ) )
@@ -1216,13 +1217,11 @@ class Pods implements Iterator {
 
                                             $params->raw_display = true;
                                         }
-                                        elseif ( false !== strpos( $field, '_img' ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+                                        elseif ( false !== strpos( $full_field, '_img' ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) {
                                             $size = 'full';
 
-                                            $field = implode( '.', array_splice( $params->traverse, $key ) );
-
-                                            if ( false !== strpos( $field, '_img.' ) && 5 < strlen( $field ) )
-                                                $size = substr( $field, 5 );
+                                            if ( false !== strpos( $full_field, '_img.' ) && 5 < strlen( $full_field ) )
+                                                $size = substr( $full_field, 5 );
 
                                             $value[] = pods_image( $item_id, $size );
 

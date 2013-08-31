@@ -699,6 +699,7 @@ class Pods implements Iterator {
                     $value = $this->row[ $first_field ];
                 elseif ( in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
                     $this->fields[ $first_field ] = $field_data;
+
                     $object_field_found = false;
                 }
                 else
@@ -951,8 +952,7 @@ class Pods implements Iterator {
 
                             if ( 'table' == $pick_object )
                                 $pick_val = pods_var( 'pick_table', $all_fields[ $pod ][ $field ][ 'options' ], $pick_val, null, true );
-
-                            if ( '__current__' == $pick_val )
+							elseif ( '__current__' == $pick_val )
                                 $pick_val = $pod;
 
                             $last_limit = 0;

@@ -845,8 +845,13 @@ class PodsAPI {
                         'name' => $taxonomy->name,
                         'label' => $taxonomy->labels->name,
                         'type' => 'taxonomy',
+						'pick_object' => 'taxonomy',
+						'pick_val' => $taxonomy->name,
                         'alias' => array(),
-                        'hidden' => true
+                        'hidden' => true,
+						'options' => array(
+							'taxonomy_format_type' => 'multi'
+						)
                     );
                 }
             }
@@ -5383,7 +5388,7 @@ class PodsAPI {
         $fields = array();
 
         if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => true ), false );
 
             if ( false === $pod ) {
                 if ( $strict )
@@ -5392,11 +5397,12 @@ class PodsAPI {
                 return $fields;
             }
 
+			$pod[ 'fields' ] = array_merge( pods_var_raw( 'object_fields', $pod, array() ), $pod[ 'fields' ] );
+
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
                     $fields[ $field[ 'name' ] ] = $field;
-
-                if ( in_array( $fields[ 'name' ], $params->name ) || in_array( $fields[ 'id' ], $params->id ) || in_array( $fields[ 'type' ], $params->type ) )
+				elseif ( in_array( $fields[ 'name' ], $params->name ) || in_array( $fields[ 'id' ], $params->id ) || in_array( $fields[ 'type' ], $params->type ) )
                     $fields[ $field[ 'name' ] ] = $field;
             }
         }
@@ -6111,10 +6117,16 @@ class PodsAPI {
 
         $tableless_field_types = PodsForm::tableless_field_types();
 
-        if ( empty( $ids ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
+		$field_type = pods_var( 'type', $field );
+
+        if ( empty( $ids ) || !in_array( $field_type, $tableless_field_types ) )
             return array();
 
         $related_pick_limit = 0;
+
+		if ( empty( $field ) ) {
+			$field = $this->load_field( array( 'id' => $field_id ) );
+		}
 
         if ( !empty( $field ) ) {
             $options = (array) pods_var_raw( 'options', $field, $field, null, true );
@@ -6128,7 +6140,14 @@ class PodsAPI {
             $related_pick_limit = $related_pick_limit * count( $ids );
         }
 
-        if ( !pods_tableless() ) {
+		if ( 'taxonomy' == $field_type ) {
+			$related = wp_get_object_terms( $ids, pods_var( 'name', $field ), array( 'fields' => 'ids' ) );
+
+			if ( !is_wp_error( $related ) ) {
+				$related_ids = $related;
+			}
+		}
+		elseif ( !pods_tableless() ) {
             $ids = implode( ', ', $ids );
 
             $field_id = (int) $field_id;

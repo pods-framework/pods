@@ -1166,7 +1166,16 @@ function pods_content ( $return = false, $pods_page = false ) {
  * @since 2.3.4
  */
 function pods_page_length_sort ( $a, $b ) {
-    return strlen( $a ) - strlen( $b );
+	$comp = -1;
+
+	if ( strlen( $a ) == strlen( $b ) ) {
+		$comp = 0;
+	}
+	elseif ( strlen( $a ) > strlen( $b ) ) {
+		$comp = 1;
+	}
+
+	return $comp;
 }
 
 /**

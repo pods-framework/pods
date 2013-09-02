@@ -917,6 +917,8 @@ function pods_evaluate_tag_sanitized ( $tag ) {
  * @version 2.1
  */
 function pods_evaluate_tag ( $tag, $sanitize = false ) {
+	global $wpdb;
+
     // Handle pods_evaluate_tags
     if ( is_array( $tag ) ) {
         if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
@@ -955,8 +957,16 @@ function pods_evaluate_tag ( $tag, $sanitize = false ) {
 
     $value = apply_filters( 'pods_evaluate_tag', $value, $tag );
 
-    if ( $sanitize )
-        $value = pods_sanitize( $value );
+	if ( is_array( $value ) && 1 == count( $value ) ) {
+		$value = current( $value );
+	}
+
+	if ( is_array( $value ) ) {
+		$value = trim( $wpdb->prepare( str_repeat( '%s, ', count( $value ) ), $value ), ' ,' );
+	}
+    elseif ( $sanitize ) {
+		$value = pods_sanitize( $value );
+	}
 
     return $value;
 }

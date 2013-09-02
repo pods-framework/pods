@@ -3081,13 +3081,27 @@ class Pods implements Iterator {
      * @since 2.3.10
      */
     public function ui ( $options = null, $amend = false ) {
+		$num = '';
+
         if ( empty( $options ) )
             $options = array();
+		else {
+			$num = pods_var( 'num', $options, '' );
 
-        if ( $this->id() != pods_var( 'id', 'get', null, null, true ) )
-            $this->fetch( pods_var( 'id', 'get', null, null, true ) );
+			if ( empty( $num ) ) {
+				$num = '';
+			}
+		}
 
-        if ( !empty( $options ) || 'custom' != pods_var( 'ui_style', $this->pod_data[ 'options' ], 'post_type', null, true ) ) {
+        if ( $this->id() != pods_var( 'id' . $num, 'get', null, null, true ) )
+            $this->fetch( pods_var( 'id' . $num, 'get', null, null, true ) );
+
+		if ( !empty( $options ) && !$amend ) {
+			$this->ui = $options;
+
+            return pods_ui( $this );
+		}
+        elseif ( !empty( $options ) || 'custom' != pods_var( 'ui_style', $this->pod_data[ 'options' ], 'post_type', null, true ) ) {
             $actions_enabled = pods_var_raw( 'ui_actions_enabled', $this->pod_data[ 'options' ] );
 
             if ( !empty( $actions_enabled ) )
@@ -3125,33 +3139,35 @@ class Pods implements Iterator {
                     unset( $actions_disabled[ 'export' ] );
             }
 
-            $author_restrict = false;
+			if ( empty( $options ) ) {
+				$author_restrict = false;
 
-            if ( isset( $this->fields[ 'author' ] ) && 'pick' == $this->fields[ 'author' ][ 'type' ] && 'user' == $this->fields[ 'author' ][ 'pick_object' ] )
-                $author_restrict = 'author.ID';
+				if ( isset( $this->fields[ 'author' ] ) && 'pick' == $this->fields[ 'author' ][ 'type' ] && 'user' == $this->fields[ 'author' ][ 'pick_object' ] )
+					$author_restrict = 'author.ID';
 
-            if ( !pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
-                if ( !current_user_can( 'pods_add_' . $this->pod ) ) {
-                    $actions_disabled[ 'add' ] = 'add';
+				if ( !pods_is_admin( array( 'pods', 'pods_content' ) ) ) {
+					if ( !current_user_can( 'pods_add_' . $this->pod ) ) {
+						$actions_disabled[ 'add' ] = 'add';
 
-                    if ( 'add' == pods_var( 'action', 'get' ) )
-                        $_GET[ 'action' ] = 'manage';
-                }
+						if ( 'add' == pods_var( 'action' . $num, 'get' ) )
+							$_GET[ 'action' . $num ] = 'manage';
+					}
 
-                if ( !$author_restrict && !current_user_can( 'pods_edit_' . $this->pod ) && !current_user_can( 'pods_edit_others_' . $this->pod ) )
-                    $actions_disabled[ 'edit' ] = 'edit';
+					if ( !$author_restrict && !current_user_can( 'pods_edit_' . $this->pod ) && !current_user_can( 'pods_edit_others_' . $this->pod ) )
+						$actions_disabled[ 'edit' ] = 'edit';
 
-                if ( !$author_restrict && !current_user_can( 'pods_delete_' . $this->pod ) && !current_user_can( 'pods_delete_others_' . $this->pod ) )
-                    $actions_disabled[ 'delete' ] = 'delete';
+					if ( !$author_restrict && !current_user_can( 'pods_delete_' . $this->pod ) && !current_user_can( 'pods_delete_others_' . $this->pod ) )
+						$actions_disabled[ 'delete' ] = 'delete';
 
-                if ( !current_user_can( 'pods_reorder_' . $this->pod ) )
-                    $actions_disabled[ 'reorder' ] = 'reorder';
+					if ( !current_user_can( 'pods_reorder_' . $this->pod ) )
+						$actions_disabled[ 'reorder' ] = 'reorder';
 
-                if ( !current_user_can( 'pods_export_' . $this->pod ) )
-                    $actions_disabled[ 'export' ] = 'export';
-            }
+					if ( !current_user_can( 'pods_export_' . $this->pod ) )
+						$actions_disabled[ 'export' ] = 'export';
+				}
+			}
 
-            $_GET[ 'action' ] = pods_var( 'action', 'get', 'manage' );
+            $_GET[ 'action' . $num ] = pods_var( 'action' . $num, 'get', pods_var( 'action', $options, 'manage' ) );
 
             $index = $this->pod_data[ 'field_id' ];
             $label = __( 'ID', 'pods' );

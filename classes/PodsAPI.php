@@ -6006,7 +6006,7 @@ class PodsAPI {
      * @param string $field Field to use for validation
      * @param array $object_fields Fields of the object we're validating
      * @param array $fields Array of all fields data
-     * @param array $pod Array of pod data
+     * @param array|Pods $pod Array of pod data (or Pods object)
      * @param array|object $params Extra parameters to pass to the validation function of the field.
      *
      * @return array|bool

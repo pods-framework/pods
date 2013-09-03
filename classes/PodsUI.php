@@ -966,6 +966,32 @@ class PodsUI {
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
 
+		if ( !empty( $options->actions_disabled ) ) {
+			if ( !empty( $options->actions_bulk ) ) {
+				$actions_bulk = $options->actions_bulk;
+
+				foreach ( $actions_bulk as $action => $action_opt ) {
+					if ( in_array( $action, $options->actions_disabled ) ) {
+						unset( $actions_bulk[ $action ] );
+					}
+				}
+
+				$options->actions_bulk = $actions_bulk;
+			}
+
+			if ( !empty( $options->actions_custom ) ) {
+				$actions_custom = $options->actions_custom;
+
+				foreach ( $actions_custom as $action => $action_opt ) {
+					if ( in_array( $action, $options->actions_disabled ) ) {
+						unset( $actions_custom[ $action ] );
+					}
+				}
+
+				$options->actions_custom = $actions_custom;
+			}
+		}
+
         $options->validate( 'extra', $this->extra, 'array_merge' );
 
         $options->validate( 'style', $this->style );
@@ -3473,7 +3499,7 @@ class PodsUI {
         if ( false !== strpos( $request_uri, '?' ) )
             $append = true;
 
-        if ( false !== $this->pagination_total ) {
+        if ( false !== $this->pagination_total && ( $header || 1 != $this->total_found ) ) {
             $singular_label = strtolower( $this->item );
             $plural_label = strtolower( $this->items );
             ?>

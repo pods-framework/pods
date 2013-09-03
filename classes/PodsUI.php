@@ -1379,7 +1379,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'add' ] ) && is_callable( $this->actions_custom[ 'add' ] ) )
             return call_user_func_array( $this->actions_custom[ 'add' ], array( &$this ) );
         ?>
-    <div class="wrap">
+    <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -1417,7 +1417,7 @@ class PodsUI {
         elseif ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
         ?>
-    <div class="wrap">
+    <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -2138,7 +2138,7 @@ class PodsUI {
         if ( true === $reorder )
             wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
-    <div class="wrap pods-admin">
+    <div class="wrap pods-admin pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -2485,6 +2485,8 @@ class PodsUI {
     }
 
     public function filters () {
+		include_once ABSPATH . 'wp-admin/includes/template.php';
+
         wp_enqueue_script( 'thickbox' );
         wp_enqueue_style( 'pods-ui-list-table', PODS_URL . 'ui/css/pods-ui-list-table.css', array( 'thickbox' ), PODS_VERSION );
 

@@ -515,10 +515,7 @@ class PodsField_File extends PodsField {
      * @since 2.3
      */
     public function admin_ajax_upload () {
-        if ( false === headers_sent() ) {
-            if ( '' == session_id() )
-                @session_start();
-        }
+		pods_session_start();
 
         // Sanitize input
         $params = pods_unslash( (array) $_POST );

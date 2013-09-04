@@ -1648,3 +1648,17 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
 
     return false;
 }
+
+/**
+ * Safely start a new session (without whitescreening on certain hosts,
+ * which have no session path or isn't writable)
+ *
+ * @since 2.3.10
+ */
+function pods_session_start() {
+	$save_path = session_save_path();
+
+	if ( ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) && !empty( $save_path ) && file_exists( $save_path ) && is_writable( $save_path ) && false === headers_sent() && '' == session_id() ) {
+		@session_start();
+	}
+}

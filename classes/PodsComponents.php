@@ -528,8 +528,7 @@ class PodsComponents {
      */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
-            if ( '' == session_id() )
-                @session_start();
+			pods_session_start();
 
             header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
         }

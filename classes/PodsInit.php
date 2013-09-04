@@ -180,8 +180,7 @@ class PodsInit {
      */
     public function core () {
         // Session start
-        if ( false === headers_sent() && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
-            @session_start();
+		pods_session_start();
 
         add_shortcode( 'pods', 'pods_shortcode' );
         add_shortcode( 'pods-form', 'pods_shortcode_form' );

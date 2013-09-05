@@ -1266,7 +1266,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( ! is_object( $this->current_pod_data ) || empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;

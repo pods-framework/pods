@@ -633,7 +633,12 @@ class PodsAPI {
      * @since 2.0
      */
     public function get_wp_object_fields ( $object = 'post_type', $pod = null, $refresh = false ) {
-        $pod_name = pods_var_raw( 'name', $pod );
+        $pod_name = pods_var_raw( 'name', $pod, $object, null, true );
+
+		if ( 'media' == $pod_name ) {
+			$object = 'post_type';
+			$pod_name = 'attachment';
+		}
 
         $fields = false;
 
@@ -710,7 +715,7 @@ class PodsAPI {
                     'label' => 'Status',
                     'type' => 'pick',
                     'pick_object' => 'post-status',
-                    'default' => $this->do_hook( 'default_status_' . pods_var_raw( 'name', $pod, $object, null, true ), pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
+                    'default' => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
                     'alias' => array( 'status' )
                 ),
                 'comment_status' => array(
@@ -838,7 +843,7 @@ class PodsAPI {
             );
 
             if ( !empty( $pod ) ) {
-                $taxonomies = get_object_taxonomies( pods_var_raw( 'name', $pod ), 'objects' );
+                $taxonomies = get_object_taxonomies( $pod_name, 'objects' );
 
                 foreach ( $taxonomies as $taxonomy ) {
                     $fields[ $taxonomy->name ] = array(

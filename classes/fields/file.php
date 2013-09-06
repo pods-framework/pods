@@ -34,7 +34,7 @@ class PodsField_File extends PodsField {
      * @var \PodsAPI
      * @since 2.3
      */
-    private static $api = false;
+    protected static $api = false;
 
     /**
      * Do things like register/enqueue scripts and stylesheets

@@ -66,7 +66,7 @@ class PodsField_Pick extends PodsField {
      * @var \PodsAPI
      * @since 2.3
      */
-    private static $api = false;
+    protected static $api = false;
 
     /**
      * Setup related objects list
@@ -1113,7 +1113,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array|bool Object data
      */
-    private function get_object_data ( $object_params = null ) {
+    protected function get_object_data ( $object_params = null ) {
         global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
         $current_language = false;

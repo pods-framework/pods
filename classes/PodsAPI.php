@@ -6799,7 +6799,9 @@ class PodsAPI {
 
                 $info[ 'where' ] = array(
                     'comment_approved' => '`t`.`comment_approved` = 1',
-                    'comment_type' => '`t`.`' . $info[ 'field_type' ] . '` = "' . ( empty( $object ) ? $name : $object ) . '"'
+	                'comment_type' =>
+		                '(' . '`t`.`' . $info[ 'field_type' ] . '` = "' . ( empty( $object ) ? $name : $object ) . '"'
+		                . ( $object == 'comment' ? ' OR `t`.`' . $info[ 'field_type' ] . '` = ""' : '' )  . ')'
                 );
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';

@@ -900,7 +900,10 @@ class PodsMeta {
                 $depends = PodsForm::dependencies( $field, 'pods-meta-' );
 
             do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ], $post, $field, $pod );
+            
+            $current_page_template = get_post_meta(get_the_ID(),'_wp_page_template',true);
         ?>
+            <?php if(empty($field['options']['input_helper_template']) || $field['options']['input_helper_template'] == $current_page_template) { ?>
             <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
@@ -913,6 +916,7 @@ class PodsMeta {
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                 </td>
             </tr>
+            <?php } ?>
         <?php
                 do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ] . '_post', $post, $field, $pod );
             }

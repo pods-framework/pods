@@ -1382,7 +1382,14 @@ class PodsAdmin {
         $input_helpers = array(
             '' => '-- Select --'
         );
-
+        
+        $page_templates = array(
+            '' => '-- Select --'
+        );
+        foreach(get_page_templates() as $k=>$v){
+            $page_templates[$v] = $v;
+        }
+        
         if ( class_exists( 'Pods_Helpers' ) ) {
             $helpers = pods_api()->load_helpers( array( 'options' => array( 'helper_type' => 'input' ) ) );
 
@@ -1407,6 +1414,14 @@ class PodsAdmin {
                     'type' => 'pick',
                     'default' => '',
                     'data' => $input_helpers
+                ),
+                'input_helper_template' => array( 
+                    'name' => 'input_helper_template',
+                    'label' => __( 'Page Template', 'pods' ),
+                    'help' => __( 'Specify the template where you want the field to be displayed. By default it will be shown on every template' ),
+                    'type' => 'pick',
+                    'default' => '',
+                    'data' => $page_templates
                 )
             ),
             __( 'Values', 'pods' ) => array(

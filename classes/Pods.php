@@ -683,7 +683,7 @@ class Pods implements Iterator {
                 $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
 		}
 
-        if ( empty( $value ) && isset( $this->row[ $params->name ] ) && !in_array( $field_data[ 'type' ], $tableless_field_types ) && 'arrays' != $params->output ) {
+        if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( !in_array( $field_data[ 'type' ], $tableless_field_types ) || 'arrays' == $params->output ) ) {
             if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
                 $params->raw = true;
 

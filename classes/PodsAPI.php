@@ -2856,7 +2856,15 @@ class PodsAPI {
         $pre_save_helpers = $post_save_helpers = array();
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod', 'fields_active', 'object_fields' );
+			$pieces = array(
+				'fields',
+				'params',
+				'pod',
+				'fields_active',
+				'object_fields',
+				'custom_fields',
+				'custom_data'
+			);
 
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
@@ -3250,7 +3258,15 @@ class PodsAPI {
             pods_no_conflict_off( $pod[ 'type' ] );
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod', 'fields_active', 'object_fields' );
+			$pieces = array(
+				'fields',
+				'params',
+				'pod',
+				'fields_active',
+				'object_fields',
+				'custom_fields',
+				'custom_data'
+			);
 
             $pieces = compact( $pieces );
 

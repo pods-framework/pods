@@ -1115,7 +1115,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array An array of available items from a relationship field
 	 */
-	protected function get_field_data( $field, $options = array(), $object_params = array() ) {
+	public function get_field_data( $field, $options = array(), $object_params = array() ) {
 
 		// Handle field array overrides
 		if ( is_array( $field ) ) {
@@ -1165,7 +1165,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array|bool Object data
      */
-    protected function get_object_data ( $object_params = null ) {
+    public function get_object_data ( $object_params = null ) {
         global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
         $current_language = false;

@@ -6431,6 +6431,8 @@ class PodsAPI {
          */
         global $wpdb, $sitepress, $icl_adjust_id_url_filter_off, $polylang;
 
+		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
+
         $info = array(
             //'select' => '`t`.*',
             'object_type' => $object_type,

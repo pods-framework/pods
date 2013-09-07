@@ -136,7 +136,7 @@ class PodsField_Pick extends PodsField {
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() ) // Disable for now
                 ),
                 'dependency' => true
             ),
@@ -1106,6 +1106,58 @@ class PodsField_Pick extends PodsField {
         return $labels;
     }
 
+	/**
+	 * Get available items from a relationship field
+	 *
+	 * @param array|string $field Field array or field name
+	 * @param array $options [optional] Field options array overrides
+	 * @param array $object_params [optional] Additional get_object_data options
+	 *
+	 * @return array An array of available items from a relationship field
+	 */
+	protected function get_field_data( $field, $options = array(), $object_params = array() ) {
+
+		// Handle field array overrides
+		if ( is_array( $field ) ) {
+			$options = array_merge( $field, $options );
+		}
+
+		// Get field name from array
+		$field = pods_var_raw( 'name', $options, $field, null, true );
+
+		// Field name or options not set
+		if ( empty( $field ) || empty( $options ) ) {
+			return array();
+		}
+
+		// Options normalization
+		$options = array_merge( $options, pods_var_raw( 'options', $options, array(), null, true ) );
+
+		// Setup object params
+        $object_params = array_merge(
+			array(
+				'name' => $field, // The name of the field
+				'options' => $options, // Field options
+			),
+			$object_params
+        );
+
+		// Get data override
+        $data = pods_var_raw( 'data', $options, null, null, true );
+
+		// Return data override
+        if ( null !== $data ) {
+            $data = (array) $data;
+		}
+		// Get object data
+        else {
+            $data = $this->get_object_data( $object_params );
+		}
+
+		return $data;
+
+	}
+
     /**
      * Get data from relationship objects
      *
@@ -1134,9 +1186,10 @@ class PodsField_Pick extends PodsField {
                 'id' => '', // Item ID
                 'context' => '', // Data context
                 'data_params' => array(
-                    'query' => ''
+                    'query' => '' // Query being searched
                 ),
-                'page' => 0
+                'page' => 1, // Page number of results to get
+				'limit' => 0 // How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override)
             ),
             $object_params
         );
@@ -1149,6 +1202,7 @@ class PodsField_Pick extends PodsField {
         $context = $object_params[ 'context' ];
         $data_params = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
         $page = min( 1, (int) $object_params[ 'page' ] );
+        $limit = (int) $object_params[ 'limit' ];
 
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options, $options[ 'options' ] );
@@ -1239,7 +1293,9 @@ class PodsField_Pick extends PodsField {
                     'where' => pods_var_raw( 'pick_where', $options, (array) $options[ 'table_info' ][ 'where_default' ], null, true ),
                     'orderby' => pods_var_raw( 'pick_orderby', $options, null, null, true ),
                     'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true ),
-                    //'having' => pods_var_raw( 'pick_having', $options, null, null, true )
+                    //'having' => pods_var_raw( 'pick_having', $options, null, null, true ),
+					'pagination' => false,
+					'search' => false
                 );
 
                 if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
@@ -1308,7 +1364,11 @@ class PodsField_Pick extends PodsField {
                     $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
                 if ( $autocomplete ) {
-                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id, $object_params );
+					if ( 0 == $limit ) {
+						$limit = 30;
+					}
+
+                    $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
                     $params[ 'page' ] = $page;
 
                     if ( 'admin_ajax_relationship' == $context ) {
@@ -1357,6 +1417,10 @@ class PodsField_Pick extends PodsField {
                         $params[ 'orderby' ] = $orderby;
                     }
                 }
+				elseif ( 0 < $limit ) {
+                    $params[ 'limit' ] = $limit;
+                    $params[ 'page' ] = $page;
+				}
 
                 $extra = '';
 
@@ -1396,8 +1460,6 @@ class PodsField_Pick extends PodsField {
 
 						if ( is_array( $ids ) && isset( $ids[ 0 ] ) && is_array( $ids[ 0 ] ) ) {
 							$ids = wp_list_pluck( $ids, $search_data->field_id );
-
-							$debug = true;
 						}
 
                         if ( is_array( $ids ) )
@@ -1569,9 +1631,6 @@ class PodsField_Pick extends PodsField {
 
             return $items;
         }
-						if ( isset( $debug ) ) {
-							pods_debug( $data );
-						}
 
         return $data;
     }

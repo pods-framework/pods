@@ -2424,6 +2424,19 @@ class Pods implements Iterator {
         if ( 0 < $id && $fetch )
             $this->fetch( $id, false );
 
+		if ( !empty( $this->pod_data[ 'field_slug' ] ) ) {
+			if ( 0 < $id && $fetch ) {
+				$slug = $this->field( $this->pod_data[ 'field_slug' ] );
+			}
+			else {
+				$slug = pods( $this->pod, $id )->field( $this->pod_data[ 'field_slug' ] );
+			}
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $this->pod );
+			}
+		}
+
         return $id;
     }
 

@@ -454,6 +454,20 @@ class PodsField_Pick extends PodsField {
                 'data_callback' => array( $this, 'data_us_states' )
             );
 
+            self::$related_objects[ 'days_of_week' ] = array(
+                'label' => __( 'Calendar - Days of Week', 'pods' ),
+                'group' => __( 'Predefined Lists', 'pods' ),
+                'simple' => true,
+                'data_callback' => array( $this, 'data_days_of_week' )
+            );
+
+            self::$related_objects[ 'months_of_year' ] = array(
+                'label' => __( 'Calendar - Months of Year', 'pods' ),
+                'group' => __( 'Predefined Lists', 'pods' ),
+                'simple' => true,
+                'data_callback' => array( $this, 'data_months_of_year' )
+            );
+
             do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
 
             if ( did_action( 'init' ) )
@@ -2268,5 +2282,53 @@ class PodsField_Pick extends PodsField {
         );
 
         return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+    }
+
+    /**
+     * Data callback for US States
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return array
+     *
+     * @since 2.3
+     */
+    public function data_days_of_week ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		/**
+		 * @var WP_Locale
+		 */
+		global $wp_locale;
+
+		return $wp_locale->weekday;
+
+    }
+
+    /**
+     * Data callback for US States
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return array
+     *
+     * @since 2.3
+     */
+    public function data_months_of_year ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		/**
+		 * @var WP_Locale
+		 */
+		global $wp_locale;
+
+		return $wp_locale->month;
+
     }
 }

@@ -580,7 +580,13 @@ class PodsInit {
                 );
 
                 if ( is_array( $ct_rewrite ) && !$pods_taxonomies[ pods_var( 'name', $taxonomy ) ][ 'query_var' ] )
-                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ] ['query_var'] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
+                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ]['query_var'] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
+
+				// Integration for Single Value Taxonomy UI
+				if ( function_exists( 'tax_single_value_meta_box' ) ) {
+					$pods_taxonomies[ 'single_value' ] = (boolean) pods_var( 'single_value', $taxonomy, false );
+					$pods_taxonomies[ 'required' ] = (boolean) pods_var( 'single_value_required', $taxonomy, false );
+				}
 
                 // Post Types
                 $ct_post_types = array();
@@ -641,7 +647,8 @@ class PodsInit {
             $ct_post_types = $options[ 'post_types' ];
             $options = $options[ 'options' ];
 
-            $options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options );
+            $options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy );
+            $options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy );
 
             $options = self::object_label_fix( $options, 'taxonomy' );
 
@@ -667,7 +674,8 @@ class PodsInit {
             if ( isset( self::$content_types_registered[ 'post_types' ] ) && in_array( $post_type, self::$content_types_registered[ 'post_types' ] ) )
                 continue;
 
-            $options = apply_filters( 'pods_register_post_type_' . $post_type, $options );
+            $options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
+            $options = apply_filters( 'pods_register_post_type', $options, $post_type );
 
             $options = self::object_label_fix( $options, 'post_type' );
 

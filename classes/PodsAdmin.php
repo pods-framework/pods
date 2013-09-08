@@ -836,7 +836,11 @@ class PodsAdmin {
         if ( 'taxonomy' == pods_var( 'type', $pod ) && !$fields )
             $tabs[ 'extra-fields' ] = __( 'Extra Fields', 'pods' );
 
-        $tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) ) );
+		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
+
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $tabs, $pod, $addtl_args );
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ], $tabs, $pod, $addtl_args );
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
 
         return $tabs;
     }
@@ -1138,6 +1142,25 @@ class PodsAdmin {
                 );
             }
 
+			// Integration for Single Value Taxonomy UI
+			if ( function_exists( 'tax_single_value_meta_box' ) ) {
+                $options[ 'admin-ui' ][ 'single_value' ] = array(
+                    'label' => __( 'Single Value Taxonomy', 'pods' ),
+                    'help' => __( 'Use a drop-down for the input instead of the WordPress default', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                );
+
+                $options[ 'admin-ui' ][ 'single_value_required' ] = array(
+                    'label' => __( 'Single Value Taxonomy - Required', 'pods' ),
+                    'help' => __( 'A term will be selected by default in the Post Editor, not optional', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                );
+			}
+
             // @todo fill this in
             $options[ 'advanced' ] = array(
                 'temporary' => 'This type has the fields hardcoded' // :(
@@ -1317,6 +1340,8 @@ class PodsAdmin {
             );
         }
 
+        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $options, $pod );
+        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ], $options, $pod );
         $options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
 
         return $options;

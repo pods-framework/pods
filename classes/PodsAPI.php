@@ -3301,6 +3301,14 @@ class PodsAPI {
         // Clear cache
         pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
 
+		if ( 'form' == $params->from && !empty( $pod[ 'field_slug' ] ) ) {
+			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
+			}
+		}
+
         // Clear WP meta cache
         if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'user', 'comment' ) ) ) {
             $meta_type = $pod[ 'type' ];

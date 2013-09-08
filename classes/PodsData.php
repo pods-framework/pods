@@ -1893,8 +1893,9 @@ class PodsData {
                 }
             }
 
-            if ( !empty( $this->pod ) )
+            if ( !empty( $this->pod ) ) {
                 pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
+			}
         }
 
         $this->row = $this->do_hook( 'fetch', $this->row, $id, $this->row_number );

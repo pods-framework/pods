@@ -2714,6 +2714,10 @@ class PodsAPI {
         if ( !isset( $params->from ) )
             $params->from = 'save';
 
+		if ( !isset( $params->clear_slug_cache ) ) {
+			$params->clear_slug_cache = true;
+		}
+
         // Support for bulk edit
         if ( isset( $params->id ) && !empty( $params->id ) && is_array( $params->id ) ) {
             $ids = array();
@@ -3301,7 +3305,7 @@ class PodsAPI {
         // Clear cache
         pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
 
-		if ( 'process_form' == $params->from && !empty( $pod[ 'field_slug' ] ) ) {
+		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
 			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
 
 			if ( 0 < strlen( $slug ) ) {

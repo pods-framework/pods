@@ -2413,7 +2413,8 @@ class Pods implements Iterator {
             'pod' => $this->pod,
             'id' => $id,
             'data' => $data,
-            'allow_custom_fields' => true
+            'allow_custom_fields' => true,
+			'clear_slug_cache' => false
         );
 
         if ( !empty( $default ) )

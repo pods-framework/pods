@@ -296,6 +296,13 @@ class PodsAPI {
             $user_meta = pods_unsanitize( $user_meta );
         }
 
+		// Set role
+		if ( isset( $user_meta[ 'role' ] ) ) {
+			$user_data[ 'role' ] = $user_meta[ 'role' ];
+
+			unset( $user_meta[ 'role' ] );
+		}
+
         if ( !isset( $user_data[ 'ID' ] ) || empty( $user_data[ 'ID' ] ) )
             $user_data[ 'ID' ] = wp_insert_user( $user_data );
         elseif ( 1 < count( $user_data ) )
@@ -7363,7 +7370,7 @@ class PodsAPI {
         if ( 0 < $id && !empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            die( '<script type="text/javascript">document.location = \'' . pods_sanitize( $thank_you ) . '\';</script>' );
+            pods_redirect( $thank_you );
         }
 
         return $id;

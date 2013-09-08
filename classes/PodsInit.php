@@ -531,6 +531,8 @@ class PodsInit {
                 $taxonomy[ 'options' ][ 'name' ] = $taxonomy[ 'name' ];
                 $taxonomy = array_merge( $taxonomy, (array) $taxonomy[ 'options' ] );
 
+				$taxonomy_name = pods_var( 'name', $taxonomy );
+
                 // Labels
                 $ct_label = esc_html( pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $taxonomy ) ) ), null, true ) );
                 $ct_singular = esc_html( pods_var_raw( 'label_singular', $taxonomy, ucwords( str_replace( '_', ' ', pods_var_raw( 'label', $taxonomy, pods_var_raw( 'name', $taxonomy ), null, true ) ) ), null, true ) );
@@ -555,7 +557,7 @@ class PodsInit {
                 // Rewrite
                 $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ),
+                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', $taxonomy_name ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
                     'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) )
                 );
@@ -564,7 +566,7 @@ class PodsInit {
                     $ct_rewrite = $ct_rewrite_array;
 
                 // Register Taxonomy
-                $pods_taxonomies[ pods_var( 'name', $taxonomy ) ] = array(
+                $pods_taxonomies[ $taxonomy_name ] = array(
                     'label' => $ct_label,
                     'labels' => $ct_labels,
                     'public' => (boolean) pods_var( 'public', $taxonomy, true ),
@@ -573,19 +575,19 @@ class PodsInit {
                     'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
                     'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
                     'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
-                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) : false ),
+                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
                     'rewrite' => $ct_rewrite,
                     'show_admin_column' => (boolean) pods_var( 'show_admin_column', $taxonomy, false ),
                     'sort' => (boolean) pods_var( 'sort', $taxonomy, false )
                 );
 
-                if ( is_array( $ct_rewrite ) && !$pods_taxonomies[ pods_var( 'name', $taxonomy ) ][ 'query_var' ] )
-                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ]['query_var'] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
+                if ( is_array( $ct_rewrite ) && !$pods_taxonomies[ $taxonomy_name ][ 'query_var' ] )
+                    $pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true );
 
 				// Integration for Single Value Taxonomy UI
 				if ( function_exists( 'tax_single_value_meta_box' ) ) {
-					$pods_taxonomies[ 'single_value' ] = (boolean) pods_var( 'single_value', $taxonomy, false );
-					$pods_taxonomies[ 'required' ] = (boolean) pods_var( 'single_value_required', $taxonomy, false );
+					$pods_taxonomies[ $taxonomy_name ][ 'single_value' ] = (boolean) pods_var( 'single_value', $taxonomy, false );
+					$pods_taxonomies[ $taxonomy_name ][ 'required' ] = (boolean) pods_var( 'single_value_required', $taxonomy, false );
 				}
 
                 // Post Types
@@ -601,15 +603,15 @@ class PodsInit {
                     if ( false !== (boolean) pods_var( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
                         $ct_post_types[] = $post_type;
 
-                        if ( isset( $supported_taxonomies[ $post_type ] ) && !in_array( pods_var( 'name', $taxonomy ), $supported_taxonomies[ $post_type ] ) )
-                            $supported_taxonomies[ $post_type ][] = pods_var( 'name', $taxonomy );
+                        if ( isset( $supported_taxonomies[ $post_type ] ) && !in_array( $taxonomy_name, $supported_taxonomies[ $post_type ] ) )
+                            $supported_taxonomies[ $post_type ][] = $taxonomy_name;
                     }
                 }
 
-                if ( isset( $supported_post_types[ pods_var( 'name', $taxonomy ) ] ) )
-                    $supported_post_types[ pods_var( 'name', $taxonomy ) ] = array_merge( $supported_post_types[ pods_var( 'name', $taxonomy ) ], $ct_post_types );
+                if ( isset( $supported_post_types[ $taxonomy_name ] ) )
+                    $supported_post_types[ $taxonomy_name ] = array_merge( $supported_post_types[ $taxonomy_name ], $ct_post_types );
                 else
-                    $supported_post_types[ pods_var( 'name', $taxonomy ) ] = $ct_post_types;
+                    $supported_post_types[ $taxonomy_name ] = $ct_post_types;
             }
 
             $pods_post_types = apply_filters( 'pods_wp_post_types', $pods_post_types );

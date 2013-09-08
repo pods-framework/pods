@@ -2261,113 +2261,145 @@ class Pods implements Iterator {
         return $id;
     }
 
-    /**
-     * Remove an item from the values of a relationship field, remove a value from a number field (field-1), remove time to a date field
-     *
-     * @see PodsAPI::save_pod_item
-     *
-     * @param string $field Field name
-     * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (-1 week), or string for text
-     * @param int $id (optional) ID of the pod item to update
-     *
-     * @return int The item ID
-     *
-     * @since 2.3.3
-     */
-    public function remove_from ( $field, $value, $id = null ) {
-        $pod =& $this;
+	/**
+	 * Remove an item from the values of a relationship field, remove a value from a number field (field-1), remove time to a date field
+	 *
+	 * @see PodsAPI::save_pod_item
+	 *
+	 * @param string $field Field name
+	 * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (-1 week), or string for text
+	 * @param int $id (optional) ID of the pod item to update
+	 *
+	 * @return int The item ID
+	 *
+	 * @since 2.3.3
+	 */
+	public function remove_from( $field, $value = null, $id = null ) {
 
-        $fetch = false;
+		$pod =& $this;
 
-        if ( null === $id ) {
-            $fetch = true;
+		$fetch = false;
 
-            $id = $this->id();
-        }
-        elseif ( $id != $this->id() )
-            $pod = pods( $this->pod, $id );
+		if ( null === $id ) {
+			$fetch = true;
 
-        $this->do_hook( 'remove_from', $field, $value, $id );
+			$id = $this->id();
+		}
+		elseif ( $id != $this->id() ) {
+			$pod = pods( $this->pod, $id );
+		}
 
-        if ( !isset( $this->fields[ $field ] ) )
-            return $id;
+		$this->do_hook( 'remove_from', $field, $value, $id );
 
-        // Tableless fields
-        if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-            if ( !is_array( $value ) )
-                $value = explode( ',', $value );
+		if ( !isset( $this->fields[ $field ] ) ) {
+			return $id;
+		}
 
-            if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
-                $current_value = $pod->raw( $field );
+		// Tableless fields
+		if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+			if ( empty( $value ) ) {
+				$value = array();
+			}
 
-                if ( !empty( $current_value ) )
-                    $current_value = (array) $current_value;
+			if ( !empty( $value ) ) {
+				if ( !is_array( $value ) ) {
+					$value = explode( ',', $value );
+				}
 
-                foreach ( $current_value as $k => $v ) {
-                    if ( in_array( $v, $value ) )
-                        unset( $current_value[ $k ] );
-                }
+				if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+					$current_value = $pod->raw( $field );
 
-                $value = $current_value;
-            }
-            else {
-                $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
+					if ( !empty( $current_value ) ) {
+						$current_value = (array) $current_value;
+					}
 
-                foreach ( $value as $k => $v ) {
-                    if ( !preg_match( '/[^0-9]*/', $v ) )
-                        $value[ $k ] = (int) $v;
-                    // @todo Convert slugs into IDs
-                    else {
+					foreach ( $current_value as $k => $v ) {
+						if ( in_array( $v, $value ) ) {
+							unset( $current_value[ $k ] );
+						}
+					}
 
-                    }
-                }
+					$value = $current_value;
+				}
+				else {
+					$related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
-                foreach ( $related_ids as $k => $v ) {
-                    if ( in_array( $v, $value ) )
-                        unset( $related_ids[ $k ] );
-                }
+					foreach ( $value as $k => $v ) {
+						if ( !preg_match( '/[^0-9]*/', $v ) ) {
+							$value[ $k ] = (int) $v;
+						}
+						// @todo Convert slugs into IDs
+						else {
 
-                $value = $related_ids;
-            }
+						}
+					}
 
-            if ( !empty( $value ) )
-                $value = array_filter( array_unique( $value ) );
-            else
-                $value = array();
-        }
-        // Number fields
-        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
-            $current_value = (float) $pod->raw( $field );
+					foreach ( $related_ids as $k => $v ) {
+						if ( in_array( $v, $value ) ) {
+							unset( $related_ids[ $k ] );
+						}
+					}
 
-            $value = ( $current_value - (float) $value );
-        }
-        // Date fields
-        elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
-            $current_value = $pod->raw( $field );
+					$value = $related_ids;
+				}
 
-            if ( 0 < strlen( $current_value ) )
-                $value = strtotime( $value, strtotime( $current_value ) );
-            else
-                $value = strtotime( $value );
-        }
+				if ( !empty( $value ) ) {
+					$value = array_filter( array_unique( $value ) );
+				}
+				else {
+					$value = array();
+				}
+			}
+		}
+		// Number fields
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+			// Date fields don't support empty for removing
+			if ( empty( $value ) ) {
+				return $id;
+			}
 
-        // @todo handle object fields and taxonomies
+			$current_value = (float) $pod->raw( $field );
 
-        $params = array(
-            'pod' => $this->pod,
-            'id' => $id,
-            'data' => array(
-                $field => $value
-            )
-        );
+			$value = ( $current_value - (float) $value );
+		}
+		// Date fields
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+			// Date fields don't support empty for removing
+			if ( empty( $value ) ) {
+				return $id;
+			}
 
-        $id = $this->api->save_pod_item( $params );
+			$current_value = $pod->raw( $field );
 
-        if ( 0 < $id && $fetch )
-            $pod->fetch( $id, false );
+			if ( 0 < strlen( $current_value ) ) {
+				$value = strtotime( $value, strtotime( $current_value ) );
+			}
+			else {
+				$value = strtotime( $value );
+			}
 
-        return $id;
-    }
+			$value = date_i18n( 'Y-m-d h:i:s', $value );
+		}
+
+		// @todo handle object fields and taxonomies
+
+		$params = array(
+			'pod' => $this->pod,
+			'id' => $id,
+			'data' => array(
+				$field => $value
+			)
+		);
+
+		$id = $this->api->save_pod_item( $params );
+
+		if ( 0 < $id && $fetch ) {
+			$pod->fetch( $id, false );
+		}
+
+		return $id;
+
+	}
 
     /**
      * Save an item by giving an array of field data or set a specific field to a specific value.

@@ -1615,14 +1615,20 @@ class PodsAPI {
          */
         global $wpdb;
 
-        if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name && $db )
-            $this->rename_wp_object_type( 'post', $old_name, $params->name );
-        elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name && $db )
-            $this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
-        elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name && $db )
-            $this->rename_wp_object_type( 'comment', $old_name, $params->name );
-        elseif ( 'settings' == $pod[ 'type' ] && null !== $old_name && $old_name != $params->name && $db )
-            $this->rename_wp_object_type( 'settings', $old_name, $params->name );
+		if ( null !== $old_name && $old_name != $params->name && $db ) {
+			if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
+				$this->rename_wp_object_type( 'post', $old_name, $params->name );
+			}
+			elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
+				$this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
+			}
+			elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
+				$this->rename_wp_object_type( 'comment', $old_name, $params->name );
+			}
+			elseif ( 'settings' == $pod[ 'type' ] ) {
+				$this->rename_wp_object_type( 'settings', $old_name, $params->name );
+			}
+		}
 
         // Sync any related fields if the name has changed
         if ( null !== $old_name && $old_name != $params->name && $db ) {
@@ -1634,7 +1640,10 @@ class PodsAPI {
                 WHERE
                     `p`.`post_type` = '_pods_field'
                     AND `pm`.`meta_key` = 'pick_object'
-                    AND `pm`.`meta_value` = 'pod'
+                    AND (
+                    	`pm`.`meta_value` = 'pod'
+                    	OR `pm`.`meta_value` = '" . $pod[ 'type' ] . "'
+					)
                     AND `pm2`.`meta_key` = 'pick_val'
                     AND `pm2`.`meta_value` = '{$old_name}'
             " );

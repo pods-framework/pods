@@ -90,7 +90,7 @@ class PodsField_Text extends PodsField {
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number',
-                'help' => __( 'Set to 0 for no limit', 'pods' )
+                'help' => __( 'Set to -1 for no limit', 'pods' )
             )/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
@@ -116,7 +116,7 @@ class PodsField_Text extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 255, null, true );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
         $schema = 'VARCHAR(' . $length . ')';
 

@@ -112,7 +112,8 @@ class PodsField_Number extends PodsField {
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 12,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to -1 for no limit', 'pods' )
             )/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),

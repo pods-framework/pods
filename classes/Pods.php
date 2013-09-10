@@ -407,6 +407,41 @@ class Pods implements Iterator {
         return (array) $this->rows;
     }
 
+	/**
+	 * Return a field input for a specific field
+	 *
+	 * @param string|array $field Field name or Field data array
+	 *
+	 * @return string Field Input HTML
+	 */
+	public function input( $field, $input_name = null ) {
+
+		// Field data override
+		if ( is_array( $field ) ) {
+			$field_data = $field;
+			$field = pods_var_raw( 'name', $field );
+		}
+		// Get field data from field name
+		else {
+			$field_data = $this->fields( $field );
+		}
+
+		if ( !empty( $field_data ) ) {
+			$field_type = pods_var_raw( 'type', $field_data );
+
+			if ( empty( $input_name ) ) {
+				$input_name = $field;
+			}
+
+			$value = $this->field( array( 'name' => $field, 'in_form' => true ) );
+
+			return PodsForm::field( $input_name, $value, $field_type, $field_data, $this, $this->id() );
+		}
+
+		return '';
+
+	}
+
     /**
      * Return field array from a Pod, a field's data, or a field option
      *

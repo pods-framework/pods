@@ -411,12 +411,14 @@ class Pods implements Iterator {
 	 * Return a field input for a specific field
 	 *
 	 * @param string|array $field Field name or Field data array
+	 * @param string $field Input field name to use (overrides default name)
+	 * @param mixed $value Current value to use
 	 *
 	 * @return string Field Input HTML
 	 *
 	 * @since 2.3.10
 	 */
-	public function input( $field, $input_name = null ) {
+	public function input( $field, $input_name = null, $value = '__null' ) {
 
 		// Field data override
 		if ( is_array( $field ) ) {
@@ -435,7 +437,9 @@ class Pods implements Iterator {
 				$input_name = $field;
 			}
 
-			$value = $this->field( array( 'name' => $field, 'in_form' => true ) );
+			if ( '__null' != $value ) {
+				$value = $this->field( array( 'name' => $field, 'in_form' => true ) );
+			}
 
 			return PodsForm::field( $input_name, $value, $field_type, $field_data, $this, $this->id() );
 		}

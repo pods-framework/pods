@@ -413,6 +413,8 @@ class Pods implements Iterator {
 	 * @param string|array $field Field name or Field data array
 	 *
 	 * @return string Field Input HTML
+	 *
+	 * @since 2.3.10
 	 */
 	public function input( $field, $input_name = null ) {
 

@@ -436,9 +436,14 @@ class Pods implements Iterator {
 
             $field_data = null;
 
+			// Get a list of available items from a relationship field
+			if ( 'data' == $option && in_array( pods_var_raw( 'type', $options ), PodsForm::tableless_field_types() ) ) {
+				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $options );
+			}
             // Return option
-            if ( isset( $options[ $option ] ) )
+            elseif ( isset( $options[ $option ] ) ) {
                 $field_data = $options[ $option ];
+			}
         }
 
         return $this->do_hook( 'fields', $field_data, $field, $option );

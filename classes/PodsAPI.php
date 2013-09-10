@@ -5552,7 +5552,7 @@ class PodsAPI {
 
             if ( !empty( $result ) ) {
                 foreach ( $result as $field ) {
-                    $field = $this->load_field( array(
+					$field = $this->load_field( array(
                         'id' => $field->ID,
                         'name' => $field->post_name,
                         'pod_id' => $field->post_parent

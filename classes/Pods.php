@@ -946,7 +946,8 @@ class Pods implements Iterator {
                     if ( !empty( $lookup ) ) {
                         $fields = $this->api->load_fields( array(
                             'name' => $lookup,
-                            'type' => $tableless_field_types
+                            'type' => $tableless_field_types,
+							'object_fields' => true // @todo support object fields too
                         ) );
 
                         if ( !empty( $fields ) ) {
@@ -959,6 +960,14 @@ class Pods implements Iterator {
                                 }
                             }
                         }
+
+						if ( isset( $this->pod_data[ 'object_fields' ] ) && !empty( $this->pod_data[ 'object_fields' ] ) ) {
+							foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+								if ( in_array( $object_field_opt[ 'type' ], $tableless_field_types ) ) {
+									$all_fields[ $this->pod ][ $object_field ] = $object_field_opt;
+								}
+							}
+						}
                     }
 
                     $last_type = $last_object = $last_pick_val = '';

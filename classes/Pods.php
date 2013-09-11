@@ -713,6 +713,11 @@ class Pods implements Iterator {
             }
         }
 
+		// Simple fields have no other output options
+		if ( 'pick' == $field_data[ 'type' ] && in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) ) {
+			$params->output = 'arrays';
+		}
+
 		if ( empty( $value ) && in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
 			$params->raw = true;
 

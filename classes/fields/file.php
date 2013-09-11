@@ -74,12 +74,12 @@ class PodsField_File extends PodsField {
 
         $options = array(
             self::$type . '_format_type' => array(
-                'label' => __( 'File Type', 'pods' ),
+                'label' => __( 'Upload Limit', 'pods' ),
                 'default' => 'single',
                 'type' => 'pick',
                 'data' => array(
-                    'single' => __( 'Single Select', 'pods' ),
-                    'multi' => __( 'Multiple Select', 'pods' )
+                    'single' => __( 'Single File', 'pods' ),
+                    'multi' => __( 'Multiple Files', 'pods' )
                 ),
                 'dependency' => true
             ),
@@ -113,7 +113,7 @@ class PodsField_File extends PodsField {
                 'type' => 'boolean'
             ),
             self::$type . '_limit' => array(
-                'label' => __( 'File Limit', 'pods' ),
+                'label' => __( 'Max Number of Files', 'pods' ),
                 'depends-on' => array( self::$type . '_format_type' => 'multi' ),
                 'default' => 0,
                 'type' => 'number'

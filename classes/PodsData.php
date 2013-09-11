@@ -2536,6 +2536,10 @@ class PodsData {
                 return $joins;
         }
 
+		if ( isset( $pod_data[ 'object_fields' ] ) ) {
+			$pod_data[ 'fields' ] = array_merge( $pod_data[ 'fields' ], $pod_data[ 'object_fields' ] );
+		}
+
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
         $file_field_types = PodsForm::file_field_types();
@@ -2563,10 +2567,19 @@ class PodsData {
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) && 'd' == $field && isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ] ) ) {
             $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ];
 
+			$field_type = 'pick';
+
+			if ( isset( $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'fields' ][ $field ] ) ) {
+				$field_type = $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'fields' ][ $field ][ 'type' ];
+			}
+			elseif ( isset( $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'object_fields' ][ $field ] ) ) {
+				$field_type = $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'object_fields' ][ $field ][ 'type' ];
+			}
+
             $pod_data[ 'fields' ][ $field ] = array(
                 'id' => 0,
                 'name' => $field,
-                'type' => 'pick',
+                'type' => $field_type,
                 'pick_object' => $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'type' ],
                 'pick_val' => $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'name' ]
             );
@@ -2697,6 +2710,9 @@ class PodsData {
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`
                 ";
+
+				// Override $rel_alias
+				$rel_alias = $field_joined;
 
                 $joined_id = $table_info[ 'field_id' ];
                 $joined_index = $table_info[ 'field_index' ];

@@ -3,38 +3,38 @@
  * @package Pods\Global\Functions\Classes
  */
 /**
- * Include and Init the PodsPod class
+ * Include and Init the PodsObject class
  *
  * @param string $name Get the Pod by Name
  * @param int $id Get the Pod by ID (overrides $name)
  * @param bool $live Set to true to automatically save values in the DB when you $pod['option']='value'
  *
- * @return PodsPod
+ * @return PodsObject
  *
  * @since 2.3.10
  */
-function podspod( $name, $id = 0, $live = false ) {
-    require_once( PODS_DIR . 'classes/PodsPod.php' );
+function pods_object( $name, $id = 0, $live = false ) {
+    require_once( PODS_DIR . 'classes/PodsObject.php' );
 
-    return new PodsPod( $name, $id, $live );
+    return new PodsObject( $name, $id, $live );
 }
 
 /**
- * Include and Init the PodsPod class
+ * Include and Init the PodsObjectField class
  *
- * @param PodsPod|WP_Post|int|string $pod
- * @param string $name Get the Field by Name
+ * @param int|string|array|PodsObject $pod int/string/array/PodsObject of Pod
+ * @param string|array|WP_Post $name Get the Field by Name, or pass an array/WP_Post of field
  * @param int $id Get the Field by ID (overrides $name)
  * @param bool $live Set to true to automatically save values in the DB when you $field['option']='value'
  *
- * @return PodsPodField
+ * @return PodsObjectField
  *
  * @since 2.3.10
  */
-function podspodfield( $pod, $name = null, $id = 0, $live = false ) {
-    require_once( PODS_DIR . 'classes/PodsPodField.php' );
+function pods_object_field( $pod, $name = null, $id = 0, $live = false ) {
+    require_once( PODS_DIR . 'classes/PodsObjectField.php' );
 
-    return new PodsPodField( $pod, $name, $id, $live );
+    return new PodsObjectField( $pod, $name, $id, $live );
 }
 
 /**

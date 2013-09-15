@@ -2,9 +2,9 @@
 /**
  * @package Pods
  *
- * Class PodsPod
+ * Class PodsObject
  */
-class PodsPod implements ArrayAccess {
+class PodsObject implements ArrayAccess {
 
 	/**
 	 * @var array Pod data
@@ -27,9 +27,9 @@ class PodsPod implements ArrayAccess {
 	private $_live = false;
 
 	/**
-	 * @var string Meta key prefix for internal values
+	 * @var string Post type / meta key prefix for internal values
 	 */
-	private $_meta_prefix = '_pods_';
+	private $_post_type = '_pods_pod';
 
 	/**
 	 * Get the Pod
@@ -73,16 +73,16 @@ class PodsPod implements ArrayAccess {
 			$_pod = get_post( $dummy = (int) $id, ARRAY_A );
 
 			// Fallback to pod name
-			if ( empty( $_pod ) || '_pods_pod' != $_pod->post_type ) {
+			if ( empty( $_pod ) || $this->_post_type != $_pod->post_type ) {
 				return $this->init( $name, 0 );
 			}
 		}
 		// WP_Post of Pod data passed
-		elseif ( is_object( $name ) && 'WP_Post' == get_class( $name ) && '_pods_pod' == $name->post_type ) {
+		elseif ( is_object( $name ) && 'WP_Post' == get_class( $name ) && $this->_post_type == $name->post_type ) {
 			$_pod = get_object_vars( $name );
 		}
 		// Fallback for pre-WP_Post
-		elseif ( is_object( $name ) && isset( $name->post_type ) && '_pods_pod' == $name->post_type ) {
+		elseif ( is_object( $name ) && isset( $name->post_type ) && $this->_post_type == $name->post_type ) {
 			$_pod = get_post( $dummy = (int) $name->ID, ARRAY_A );
 		}
 		// Handle custom arrays
@@ -111,7 +111,7 @@ class PodsPod implements ArrayAccess {
 		else {
 			$find_args = array(
 				'name' => $name,
-				'post_type' => '_pods_pod',
+				'post_type' => $this->_post_type,
 				'posts_per_page' => 1,
 				'post_parent' => 0
 			);
@@ -261,16 +261,16 @@ class PodsPod implements ArrayAccess {
 		}
 
 		// @todo For 2.4 enable internal prefix
-		if ( 1 == 0 && $internal && 0 !== strpos( $meta_key, $this->_meta_prefix ) ) {
-			$meta_key = $this->_meta_prefix . $meta_key;
+		if ( 1 == 0 && $internal && 0 !== strpos( $meta_key, $this->_post_type . '_' ) ) {
+			$meta_key = $this->_post_type . '_' . $meta_key;
 		}
 
 		$value = get_post_meta( $id, $meta_key );
 
 		// @todo For 2.4 enable fallback
 		if ( 1 == 0 && pods_allow_deprecated() && is_array( $value ) && empty( $value ) ) {
-			if ( 0 === strpos( $meta_key, $this->_meta_prefix ) ) {
-				$meta_key = substr( $meta_key, strlen( $this->_meta_prefix ) );
+			if ( 0 === strpos( $meta_key, $this->_post_type . '_' ) ) {
+				$meta_key = substr( $meta_key, strlen( $this->_post_type . '_' ) );
 			}
 
 			$value = get_post_meta( $id, $meta_key );
@@ -317,7 +317,7 @@ class PodsPod implements ArrayAccess {
 			if ( $this->is_custom() ) {
 				if ( isset( $this->_pod[ '_fields' ] ) && !empty( $this->_pod[ '_fields' ] ) ) {
 					foreach ( $this->_pod[ '_fields' ] as $field ) {
-						$field = podspodfield( $this->_pod[ 'id' ], $field, 0, $this->_live );
+						$field = pods_object_field( $this->_pod[ 'id' ], $field, 0, $this->_live );
 
 						if ( $field->is_valid() ) {
 							$this->_pod[ 'fields' ][ $field[ 'name' ] ] = $field;
@@ -341,7 +341,7 @@ class PodsPod implements ArrayAccess {
 
 				if ( !empty( $fields ) ) {
 					foreach ( $fields as $field ) {
-						$field = podspodfield( $this->_pod[ 'id' ], $field, 0, $this->_live );
+						$field = pods_object_field( $this->_pod[ 'id' ], $field, 0, $this->_live );
 
 						if ( $field->is_valid() ) {
 							$this->_pod[ 'fields' ][ $field[ 'name' ] ] = $field;
@@ -371,7 +371,7 @@ class PodsPod implements ArrayAccess {
 			if ( $this->is_custom() ) {
 				if ( isset( $this->_pod[ '_object_fields' ] ) && !empty( $this->_pod[ '_object_fields' ] ) ) {
 					foreach ( $this->_pod[ '_object_fields' ] as $field ) {
-						$this->_pod[ 'object_fields' ] = podspodfield( $this->_pod[ 'id' ], $field, 0, $this->_live );
+						$this->_pod[ 'object_fields' ] = pods_object_field( $this->_pod[ 'id' ], $field, 0, $this->_live );
 					}
 				}
 			}
@@ -527,7 +527,7 @@ class PodsPod implements ArrayAccess {
 
 		$params[ 'id' ] = $this->_pod[ 'id' ];
 
-		// @todo Move API logic into PodsPod
+		// @todo Move API logic into PodsObject
 		$id = pods_api()->save_pod( $params );
 
 		// Refresh object
@@ -579,7 +579,7 @@ class PodsPod implements ArrayAccess {
 		$params[ 'id' ] = $this->_pod[ 'id' ];
 		$params[ 'name' ] = $this->_pod[ 'name' ];
 
-		// @todo Move API logic into PodsPod
+		// @todo Move API logic into PodsObject
 		$id = pods_api()->duplicate_pod( $params );
 
 		if ( $replace ) {
@@ -608,7 +608,7 @@ class PodsPod implements ArrayAccess {
 		$success = false;
 
 		if ( 0 < $params[ 'id' ] ) {
-			// @todo Move API logic into PodsPod
+			// @todo Move API logic into PodsObject
 			$success = pods_api()->delete_pod( $params );
 		}
 

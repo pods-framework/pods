@@ -281,15 +281,43 @@ function pods_tableless () {
  *
  * @since 2.3.5
  */
-function pods_strict ( $include_debug = true ) {
-    if ( defined( 'PODS_STRICT' ) && PODS_STRICT )
-        return true;
-    elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG )
-        return true;
-    elseif ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) // @deprecated since 2.3.5
-        return true;
+function pods_strict( $include_debug = true ) {
 
-    return false;
+	if ( defined( 'PODS_STRICT' ) && PODS_STRICT ) {
+		return true;
+	}
+	// @deprecated PODS_STRICT_MODE since 2.3.5
+	elseif ( pods_allow_deprecated( false ) && defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
+		return true;
+	}
+	elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		return true;
+	}
+
+	return false;
+
+}
+
+/**
+ * Determine if Deprecated Mode is enabled
+ *
+ * @param bool $include_debug Whether to include strict mode
+ *
+ * @return bool Whether Deprecated Mode is enabled
+ *
+ * @since 2.3.10
+ */
+function pods_allow_deprecated( $strict = true ) {
+
+	if ( $strict && pods_strict() ) {
+		return false;
+	}
+	elseif ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) {
+		return true;
+	}
+
+	return false;
+
 }
 
 /**

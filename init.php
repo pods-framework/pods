@@ -128,8 +128,9 @@ else {
         }
 
         if ( !defined( 'SHORTINIT' ) || !SHORTINIT ) {
-            if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
+            if ( pods_allow_deprecated() ) {
                 require_once( PODS_DIR . 'deprecated/deprecated.php' );
+			}
 
             if ( false !== pods_compatibility_check() ) {
                 $pods_form = pods_form();

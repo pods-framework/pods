@@ -311,6 +311,9 @@ class PodsField_Pick extends PodsField {
             // Pods
             $pod_options = array();
 
+			// Include PodsMeta if not already included
+			pods_meta();
+
             // Advanced Content Types
             $_pods = PodsMeta::$advanced_content_types;
 

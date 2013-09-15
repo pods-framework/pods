@@ -313,6 +313,9 @@ class PodsField_Avatar extends PodsField {
                 $_user_ID = (int) $_user->ID;
         }
 
+		// Include PodsMeta if not already included
+		pods_meta();
+
         if ( 0 < $_user_ID && !empty( PodsMeta::$user ) ) {
             $avatar_cached = pods_cache_get( $_user_ID . '-' . $size, 'pods_avatars' );
 

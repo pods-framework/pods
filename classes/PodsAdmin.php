@@ -1055,8 +1055,8 @@ class PodsAdmin {
                     'boolean_yes_label' => ''
                 ),
                 'default_status' => array(
-                    'name' => 'post_status',
-                    'label' => 'Status',
+                    'label' => __( 'Default Status', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
                     'type' => 'pick',
                     'pick_object' => 'post-status',
                     'default' => apply_filters( 'pods_api_default_status_' . pods_var_raw( 'name', $pod, 'post_type', null, true ), 'draft', $pod )

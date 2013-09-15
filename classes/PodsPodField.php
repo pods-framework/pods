@@ -2,17 +2,22 @@
 /**
  * @package Pods
  *
- * Class PodsPod
+ * Class PodsPodField
  */
-class PodsPod implements ArrayAccess {
+class PodsPodField implements ArrayAccess {
 
 	/**
-	 * @var array Pod data
+	 * @var array Field data
 	 */
-	private $_pod = array();
+	private $_field = array();
 
 	/**
-	 * @var array Table info for Pod
+	 * @var array Additional Field data
+	 */
+	private $_addtl = array();
+
+	/**
+	 * @var array Table info for Pod field
 	 */
 	private $_table_info = array();
 
@@ -22,137 +27,204 @@ class PodsPod implements ArrayAccess {
 	private $_live = false;
 
 	/**
-	 * Get the Pod
-	 *
-	 * @param string $pod_name Get the Pod by Name
-	 * @param int $pod_id Get the Pod by ID (overrides $pod_name)
-	 * @param bool $live Set to true to automatically save values in the DB when you $pod['option']='value'
+	 * @var string Meta key prefix for internal values
 	 */
-	public function __construct( $pod_name, $pod_id = 0, $live = false ) {
+	private $_meta_prefix = '_pods_field_';
 
-		$_pod = $pod = false;
+	/**
+	 * Get the Pod Field
+	 *
+	 * @param PodsPod|WP_Post|int|string $pod PodsPod/int/string of Pod, or WP_Post object for field
+	 * @param string $name Get the Field by Name
+	 * @param int $id Get the Field by ID (overrides $name)
+	 * @param bool $live Set to true to automatically save values in the DB when you $field['option']='value'
+	 *
+	 * @since 2.3.10
+	 */
+	public function __construct( $pod, $name = null, $id = 0, $live = false ) {
 
-		// Get meta from DB for the Pod
-		$meta = true;
+		$id = $this->init( $pod, $name, $id );
 
-		$api = pods_api();
-
-		if ( 0 < $pod_id ) {
-			$_pod = get_post( $dummy = (int) $pod_id, ARRAY_A );
+		if ( 0 < $id ) {
+			$this->_live = $live;
 		}
-		elseif ( '_pods_pod' == $pod_name ) {
-			$pod = array(
-				'name' => '_pods_pod',
-				'label' => __( 'Pods', 'pods' ),
-				'label_singular' => __( 'Pod', 'pods' ),
-				'show_in_menu' => 0
+
+	}
+
+	/**
+	 * Init the object
+	 *
+	 * @param PodsPod|WP_Post|int|string $pod PodsPod/int/string of Pod, or WP_Post object for field
+	 * @param string $name Get the Field by Name
+	 * @param int $id Get the Field by ID (overrides $name)
+	 * @param bool $live Set to true to automatically save values in the DB when you $field['option']='value'
+	 *
+	 * @return int|bool $id The Field ID or false if Field not found
+	 */
+	public function init( $pod = null, $name = null, $id = 0 ) {
+
+		$_field = $field = false;
+
+		// Allow for refresh of object
+		if ( null === $pod && null === $name && 0 == $id && $this->is_valid() ) {
+			$id = $this->_field[ 'id' ];
+
+			$this->destroy();
+		}
+
+		// Pod ID passed
+		$pod_id = $pod;
+
+		// Pod object passed
+		if ( is_object( $pod_id ) && isset( $pod_id->id ) ) {
+			$pod_id = $pod_id->id;
+		}
+		// Pod array passed
+		elseif ( is_array( $pod_id ) && isset( $pod_id[ 'id' ] ) ) {
+			$pod_id = $pod_id[ 'id' ];
+		}
+
+		// Field ID passed
+		if ( 0 < $id ) {
+			$_field = get_post( $dummy = (int) $id, ARRAY_A );
+
+			// Fallback to pod and field name
+			if ( empty( $_field ) || '_pods_field' != $_field->post_type ) {
+				return $this->init( $pod_id, $name, 0 );
+			}
+		}
+		// WP_Post of Field data passed
+		elseif ( is_object( $name ) && 'WP_Post' == get_class( $name ) && '_pods_field' == $name->post_type ) {
+			$_field = get_object_vars( $name );
+		}
+		// Fallback for pre-WP_Post
+		elseif ( is_object( $name ) && isset( $name->post_type ) && '_pods_field' == $name->post_type ) {
+			$_field = get_post( $dummy = (int) $name->ID, ARRAY_A );
+		}
+		// Handle custom arrays
+		elseif ( is_array( $name ) ) {
+			$field = $name;
+		}
+		// Find Field by name
+		elseif ( 0 < $pod_id ) {
+			$find_args = array(
+				'name' => $name,
+				'post_type' => '_pods_field',
+				'posts_per_page' => 1,
+				'post_parent' => $pod_id
 			);
 
-			$meta = false;
-		}
-		else {
-			$pod = get_posts( array(
-								   'name' => $pod_name,
-								   'post_type' => '_pods_pod',
-								   'posts_per_page' => 1
-							  ) );
+			$field = get_posts( $find_args );
 
-			if ( !empty( $pod ) && is_array( $pod ) ) {
-				$_pod = $pod[ 0 ];
+			if ( !empty( $field ) && is_array( $field ) ) {
+				$_field = $field[ 0 ];
 			}
 
-			$pod = false;
+			$field = false;
 		}
 
-		if ( !empty( $_pod ) || !empty( $pod ) ) {
+		if ( !empty( $_field ) || !empty( $field ) ) {
 			$defaults = array(
 				'id' => 0,
 				'name' => '',
 				'label' => '',
-				'label_singular' => '',
 				'description' => '',
-				'type' => 'post_type',
-				'storage' => 'meta',
-				'object' => '',
-				'alias' => '',
-				'show_in_menu' => 1
+				'type' => 'text',
+				'weight' => 0,
+				'pod_id' => $pod_id
 			);
 
-			if ( empty( $pod ) ) {
-				$pod = array(
-					'id' => $_pod[ 'ID' ],
-					'name' => $_pod[ 'post_name' ],
-					'label' => $_pod[ 'post_title' ],
-					'description' => $_pod[ 'post_content' ]
+			if ( empty( $field ) ) {
+				$field = array(
+					'id' => $_field[ 'ID' ],
+					'name' => $_field[ 'post_name' ],
+					'label' => $_field[ 'post_title' ],
+					'description' => $_field[ 'post_content' ],
+					'weight' => $_field[ 'menu_order' ],
+					'pod_id' => $_field[ 'post_parent' ],
+					'type' => 'text'
 				);
 			}
 
-			$pod = array_merge( $defaults, $pod );
+			$field = array_merge( $defaults, $field );
 
-			if ( strlen( $pod[ 'label' ] ) < 1 ) {
-				$pod[ 'label' ] = $pod[ 'name' ];
+			if ( strlen( $field[ 'label' ] ) < 1 ) {
+				$field[ 'label' ] = $field[ 'name' ];
 			}
 
-			if ( strlen( $pod[ 'label_singular' ] ) < 1 ) {
-				$pod[ 'label_singular' ] = $pod[ 'label' ];
-			}
+			$tableless_meta = array(
+				'pick_object',
+				'pick_val',
+				'sister_id'
+			);
 
-			if ( $meta ) {
-				$meta = get_post_meta( $pod[ 'id' ] );
+			if ( 0 < $field[ 'id' ] ) {
+				$meta = array(
+					'type'
+				);
 
-				foreach ( $meta as $option => $value ) {
-					if ( is_array( $value ) ) {
-						foreach ( $value as $k => $v ) {
-							if ( !is_array( $v ) ) {
-								$value[ $k ] = maybe_unserialize( $v );
-							}
-						}
+				foreach ( $meta as $meta_key ) {
+					$value = $this->_meta( $meta_key, $field[ 'id' ], true );
 
-						if ( 1 == count( $value ) ) {
-							$value = current( $value );
-						}
+					if ( null !== $value ) {
+						$field[ $meta_key ] = $value;
 					}
-					else {
-						$value = maybe_unserialize( $value );
-					}
-
-					$meta[ $option ] = $value;
 				}
 
-				$pod = array_merge( $meta, $pod );
-			}
+				if ( empty( $field[ 'type' ] ) ) {
+					$field[ 'type' ] = 'text';
+				}
 
-			$pod[ 'fields' ] = array();
+				if ( in_array( $field[ 'type' ], PodsForm::tableless_field_types() ) ) {
+					foreach ( $tableless_meta as $meta_key ) {
+						$value = $this->_meta( $meta_key, $field[ 'id' ], true );
 
-			$pod[ 'object_fields' ] = array();
+						if ( null !== $value ) {
+							$field[ $meta_key ] = $value;
+						}
+					}
 
-			if ( 'pod' != $pod[ 'type' ] ) {
-				$pod[ 'object_fields' ] = $api->get_wp_object_fields( $pod[ 'type' ], $pod );
-			}
+					// Backwards compatibility
+					if ( pods_allow_deprecated() && !isset( $field[ 'sister_id' ] ) ) {
+						$meta_key = 'sister_field_id';
 
-			$fields = get_posts( array(
-									  'post_type' => '_pods_field',
-									  'posts_per_page' => -1,
-									  'nopaging' => true,
-									  'post_parent' => $pod[ 'id' ],
-									  'orderby' => 'menu_order',
-									  'order' => 'ASC'
-								 ) );
+						$value = $this->_meta( $meta_key, $field[ 'id' ] );
 
-			if ( !empty( $fields ) ) {
-				foreach ( $fields as $field ) {
-					$field->pod = $pod[ 'name' ];
-
-					$field = $api->load_field( $field );
-
-					$pod[ 'fields' ][ $field[ 'name' ] ] =& $field;
+						if ( null !== $value ) {
+							$field[ $meta_key ] = $value;
+						}
+					}
+				}
+				else {
+					foreach ( $tableless_meta as $meta_key ) {
+						$field[ $meta_key ] = '';
+					}
 				}
 			}
+
+			if ( in_array( $field[ 'type' ], PodsForm::tableless_field_types() ) ) {
+				if ( $field[ 'id' ] < 1 ) {
+					// Backwards compatibility
+					if ( pods_allow_deprecated() && !isset( $field[ 'sister_id' ] ) && isset( $field[ 'sister_field_id' ] ) ) {
+						$field[ 'sister_id' ] = $field[ 'sister_field_id' ];
+
+						unset( $field[ 'sister_field_id' ] );
+					}
+				}
+
+				foreach ( $tableless_meta as $meta_key ) {
+					if ( !isset( $tableless_meta[ $meta_key ] ) || empty( $field[ 'pick_object' ] ) ) {
+						$field[ $meta_key ] = '';
+					}
+				}
+			}
+
+			$this->_field = $field;
+
+			return $this->_pod[ 'id' ];
 		}
 
-		if ( !empty( $this->_pod ) ) {
-			$this->_live = $live;
-		}
+		return false;
 
 	}
 
@@ -161,9 +233,9 @@ class PodsPod implements ArrayAccess {
 	 *
 	 * @return bool
 	 */
-	public function valid() {
+	public function is_valid() {
 
-		if ( !empty( $this->_pod ) ) {
+		if ( !empty( $this->_field ) ) {
 			return true;
 		}
 
@@ -172,131 +244,95 @@ class PodsPod implements ArrayAccess {
 	}
 
 	/**
-	 * Return field array from Pod, a field's data, or a field option
+	 * Check if the pod is a valid
 	 *
-	 * @param string|null $object_field Object Field name
-	 * @param string|null $option Field option
-	 *
-	 * @return array|mixed
-	 *
-	 * @since 2.3.10
+	 * @return bool
 	 */
-	public function fields( $field = null, $option = null ) {
+	public function is_custom() {
 
-		if ( !isset( $this->_pod[ 'fields' ] ) ) {
-			$this->_pod[ 'fields' ] = pods_api()->get_wp_object_fields( $this->_pod[ 'type' ], $this->_pod );
+		if ( !empty( $this->_field ) && 0 < $this->_field[ 'id' ] ) {
+			return true;
 		}
 
-		return $this->_fields( 'fields', $field, $option );
+		return false;
 
 	}
 
 	/**
-	 * Return object field array from Pod, a object field's data, or a object field option
-	 *
-	 * @param string|null $object_field Object Field name
-	 * @param string|null $option Field option
-	 *
-	 * @return array|mixed
-	 *
-	 * @since 2.3.10
+	 * Destroy this pod object and invalidate it
 	 */
-	public function object_fields( $object_field = null, $option = null ) {
+	public function destroy() {
 
-		if ( !isset( $this->_pod[ 'fields' ] ) ) {
-			$this->_pod[ 'object_fields' ] = pods_api()->get_wp_object_fields( $this->_pod[ 'type' ], $this->_pod );
-		}
+		$this->_field = array();
+		$this->_addtl = array();
+		$this->_table_info = array();
 
-		return $this->_fields( 'object_fields', $object_field, $option );
+		$this->_live = false;
 
 	}
 
 	/**
-	 * Return field array from $fields, a field's data, or a field option
+	 * Get meta from the object
 	 *
-	 * @param string $fields Field key name
-	 * @param string|null $field Field name
-	 * @param string|null $option Field option
-	 * @param bool $alt Set to true to check alternate fields array
+	 * @param string $meta_key Meta key name
+	 * @param null|int $id Object ID
+	 * @param bool $internal If this is an internal meta value
 	 *
-	 * @return bool|mixed
-	 *
-	 * @since 2.3.10
+	 * @return array|mixed|null
 	 */
-	private function _fields( $fields, $field = null, $option = null, $alt = true ) {
+	private function _meta( $meta_key, $id = null, $internal = false ) {
 
-		$alt_fields = 'object_fields';
-
-		if ( 'object_fields' == $fields ) {
-			$alt_fields = 'fields';
+		if ( !$this->is_valid() && null === $id ) {
+			return null;
 		}
 
-		// No fields found
-		if ( empty( $this->_pod[ 'fields' ] ) ) {
-			$field_data = array();
-
-			// No fields and field not found, get alt field data
-			if ( !empty( $field ) && $alt ) {
-				$field_data = $this->_fields( $alt_fields, $field, $option, false );
+		if ( null === $id ) {
+			if ( !empty( $this->_field ) ) {
+				$id = $this->_field[ 'id' ];
+			}
+			else {
+				return null;
 			}
 		}
-		// Return all fields
-		elseif ( empty( $field ) ) {
-			$field_data = (array) $this->_pod[ 'fields' ];
 
-			if ( !$this->_live ) {
-				foreach ( $field_data as $field_name => $fields ) {
-					foreach ( $fields as $field_option => $field_value ) {
-						// i18n plugin integration
-						if ( 'label' == $field_option || 0 === strpos( $field_option, 'label_' ) ) {
-							$field_data[ $field_name ][ $field_option ] = __( $field_value );
-						}
+		// @todo For 2.4 enable internal prefix
+		if ( 1 == 0 && $internal && 0 !== strpos( $meta_key, $this->_meta_prefix ) ) {
+			$meta_key = $this->_meta_prefix . $meta_key;
+		}
+
+		$value = get_post_meta( $id, $meta_key );
+
+		// @todo For 2.4 enable fallback
+		if ( 1 == 0 && pods_allow_deprecated() && is_array( $value ) && empty( $value ) ) {
+			if ( 0 === strpos( $meta_key, $this->_meta_prefix ) ) {
+				$meta_key = substr( $meta_key, strlen( $this->_meta_prefix ) );
+			}
+
+			$value = get_post_meta( $id, $meta_key );
+		}
+
+		if ( is_array( $value ) ) {
+			// Field not found
+			if ( empty( $value ) ) {
+				$value = null;
+			}
+			else {
+				foreach ( $value as $k => $v ) {
+					if ( !is_array( $v ) ) {
+						$value[ $k ] = maybe_unserialize( $v );
 					}
+				}
+
+				if ( 1 == count( $value ) ) {
+					$value = current( $value );
 				}
 			}
 		}
-		// Field not found
-		elseif ( !isset( $this->_pod[ 'fields' ][ $field ] ) ) {
-			$field_data = array();
-
-			// Field not found, get alt field data
-			if ( $alt ) {
-				$field_data = $this->_fields( $alt_fields, $field, $option, false );
-			}
-		}
-		// Return all field data
-		elseif ( empty( $option ) ) {
-			$field_data = $this->_pod[ 'fields' ][ $field ];
-
-			if ( !$this->_live ) {
-				foreach ( $field_data as $field_option => $field_value ) {
-					// i18n plugin integration
-					if ( 'label' == $field_option || 0 === strpos( $field_option, 'label_' ) ) {
-						$field_data[ $field_option ] = __( $field_value );
-					}
-				}
-			}
-		}
-		// Get an option from a field
 		else {
-			$field_data = null;
-
-			// Get a list of available items from a relationship field
-			if ( 'data' == $option && in_array( pods_var_raw( 'type', $this->_pod[ $fields ][ $field ] ), PodsForm::tableless_field_types() ) ) {
-				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $this->_pod[ $fields ][ $field ] );
-			}
-			// Return option
-			elseif ( isset( $this->_pod[ $fields ][ $field ][ $option ] ) ) {
-				$field_data = $this->_pod[ $fields ][ $field ][ $option ];
-
-				// i18n plugin integration
-				if ( 'label' == $option || 0 === strpos( $option, 'label_' ) ) {
-					$field_data = __( $field_data );
-				}
-			}
+			$value = maybe_unserialize( $value );
 		}
 
-		return $field_data;
+		return $value;
 
 	}
 
@@ -307,11 +343,138 @@ class PodsPod implements ArrayAccess {
 	 */
 	public function table_info() {
 
+		if ( !$this->is_valid() || !in_array( $this->_field[ 'type' ], PodsForm::tableless_field_types() ) ) {
+			return array();
+		}
+
 		if ( empty( $this->_table_info ) ) {
-			$this->table_info = pods_api()->get_table_info( $this->_pod[ 'type' ], $this->_pod[ 'object' ], $this->_pod[ 'name' ], $this->_pod );
+			$this->table_info = pods_api()->get_table_info( $this->_field[ 'pick_object' ], $this->_field[ 'pick_val' ], null, null, $this->_field );
 		}
 
 		return $this->_table_info;
+
+	}
+
+	/**
+     * Save a Field by giving an array of option data or set a specific option to a specific value.
+     *
+     * @param array|string $options Either an associative array of option information or a option name
+     * @param mixed $value (optional) Value of the option, if $data is a option name
+	 * @param bool $refresh (optional) Refresh the current object
+     *
+     * @return int|bool The Field ID or false if failed
+     *
+     * @since 2.3.10
+	 */
+	public function save( $options = null, $value = null, $refresh = true ) {
+
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
+		if ( null !== $value || !is_array( $options ) ) {
+			$options = array(
+				$options => $value
+			);
+		}
+
+		if ( empty( $options ) ) {
+			return $this->_field[ 'id' ];
+		}
+
+		$params = $options;
+
+		$params[ 'id' ] = $this->_field[ 'id' ];
+
+		// @todo Move API logic into PodsPodField
+		$id = pods_api()->save_field( $params );
+
+		// Refresh object
+		if ( $refresh ) {
+			$this->init( null, $id );
+		}
+		// Just update options
+		else {
+			foreach ( $params as $option => $value ) {
+				if ( 'id' != $option ) {
+					$this->offsetSet( $option, $value );
+				}
+			}
+		}
+
+		return $id;
+
+	}
+
+    /**
+     * Duplicate a Field, optionally giving an array of option data or set a specific option to a specific value.
+     *
+     * @param array|string $options (optional) Either an associative array of option information or a option name
+     * @param mixed $value (optional) Value of the option, if $data is a option name
+	 * @param bool $replace (optional) Replace the current object
+     *
+     * @return int|bool The new Field ID or false if failed
+     *
+     * @since 2.3.10
+	 */
+	public function duplicate( $options = null, $value = null, $replace = false ) {
+
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
+		if ( null !== $value && !is_array( $options ) ) {
+			$options = array(
+				$options => $value
+			);
+		}
+
+		if ( empty( $options ) ) {
+			return $this->_pod[ 'id' ];
+		}
+
+		$params = $options;
+
+		$params[ 'id' ] = $this->_pod[ 'id' ];
+		$params[ 'name' ] = $this->_pod[ 'name' ];
+
+		// @todo Move API logic into PodsPodField
+		$id = pods_api()->duplicate_field( $params );
+
+		if ( $replace ) {
+			// Replace object
+			$this->init( null, $id );
+		}
+
+		return $id;
+
+	}
+
+    /**
+     * Delete the Field
+     *
+     * @return bool Whether the field was successfully deleted
+     *
+     * @since 2.3.10
+     */
+	public function delete() {
+
+		$params = array(
+			'id' => $this->_field[ 'id' ],
+			'name' => $this->_field[ 'name' ]
+		);
+
+		$success = false;
+
+		if ( 0 < $params[ 'id' ] ) {
+			// @todo Move API logic into PodsPodField
+			$success = pods_api()->delete_field( $params );
+		}
+
+		// Can't destroy object, so let's destroy the data and invalidate the object
+		$this->destroy();
+
+		return $success;
 
 	}
 
@@ -320,16 +483,18 @@ class PodsPod implements ArrayAccess {
 	 *
 	 * @param mixed $offset Used to set index of Array or Variable name on Object
 	 * @param mixed $value Value to be set
+	 * @param bool $live Set to false to override current live object saving
 	 *
 	 * @return mixed|void
 	 * @since 2.3.10
 	 */
-	public function offsetSet( $offset, $value ) {
+	public function offsetSet( $offset, $value, $live = true ) {
 
-		$this->_pod[ $offset ] = $value;
-
-		if ( $this->_live ) {
-			pods_api()->save_pod( array( 'name' => $this->_pod[ 'name' ], $offset => $value ) );
+		if ( $live && $this->_live ) {
+			$this->save( $offset, $value );
+		}
+		else {
+			$this->_pod[ $offset ] = $value;
 		}
 
 	}
@@ -344,29 +509,66 @@ class PodsPod implements ArrayAccess {
 	 */
 	public function offsetGet( $offset ) {
 
-		$value = null;
-
 		// Keys that are methods
 		$methods = array(
-			'fields',
-			'object_fields',
 			'table_info'
+		);
+
+		// Deprecated keys and their correct keys
+		$deprecated_keys = array(
+			'sister_field_id' => 'sister_id',
+			'ID' => 'id',
+			'post_title' => 'label',
+			'post_name' => 'name',
+			'post_content' => 'description'
 		);
 
 		if ( in_array( $offset, $methods ) ) {
 			$value = call_user_func( $this, $offset );
 		}
 		elseif ( 'options' == $offset ) {
-			$value = $this->_pod;
+			$value = null;
+
+			if ( pods_allow_deprecated() ) {
+				$value = $this->_field;
+			}
 		}
-		elseif ( isset( $this->_pod[ $offset ] ) ) {
-			$value = $this->_pod[ $offset ];
+		elseif ( isset( $this->_field[ $offset ] ) ) {
+			$value = $this->_field[ $offset ];
 
 			if ( !$this->_live ) {
 				// i18n plugin integration
 				if ( 'label' == $offset || 0 === strpos( $offset, 'label_' ) ) {
 					$value = __( $value );
 				}
+			}
+		}
+		elseif ( isset( $this->_addtl[ $offset ] ) ) {
+			$value = $this->_addtl[ $offset ];
+
+			if ( !$this->_live ) {
+				// i18n plugin integration
+				if ( 'label' == $offset || 0 === strpos( $offset, 'label_' ) ) {
+					$value = __( $value );
+				}
+			}
+		}
+		// Deprecated keys
+		elseif ( isset( $deprecated_keys[ $offset ] ) ) {
+			$value = null;
+
+			if ( pods_allow_deprecated() ) {
+				$value = $this->offsetGet( $deprecated_keys[ $offset ] );
+			}
+			else {
+				pods_deprecated( '$field[\'' . $offset .'\']', '2.0', '$field[\'' . $deprecated_keys[ $offset ] . '\']' );
+			}
+		}
+		else {
+			$value = $this->_meta( $offset );
+
+			if ( null !== $value ) {
+				$this->_addtl[ $offset ] = $value;
 			}
 		}
 
@@ -384,7 +586,11 @@ class PodsPod implements ArrayAccess {
 	 */
 	public function offsetExists( $offset ) {
 
-		return isset( $this->_pod[ $offset ] );
+		if ( null !== $this->offsetGet( $offset ) ) {
+			return true;
+		}
+
+		return false;
 
 	}
 
@@ -392,18 +598,34 @@ class PodsPod implements ArrayAccess {
 	 * Get value from array usage $object['offset'];
 	 *
 	 * @param mixed $offset Used to unset index of Array
+	 * @param bool $live Set to false to override current live object saving
+	 *
+	 * @since 2.3.10
+	 */
+	public function _offsetUnset( $offset, $live = true ) {
+
+		if ( isset( $this->_pod[ $offset ] ) ) {
+			if ( $live && $this->_live ) {
+				$this->save( $offset, null );
+			}
+			else {
+				unset( $this->_field[ $offset ] );
+			}
+		}
+
+	}
+
+	/**
+	 * Get value from array usage $object['offset'];
+	 *
+	 * @param mixed $offset Used to unset index of Array
+	 * @param bool $live Set to false to override current live object saving
 	 *
 	 * @since 2.3.10
 	 */
 	public function offsetUnset( $offset ) {
 
-		if ( isset( $this->_pod[ $offset ] ) ) {
-			unset( $this->_pod[ $offset ] );
-
-			if ( $this->_live ) {
-				pods_api()->save_pod( array( 'name' => $this->_pod[ 'name' ], $offset => null ) );
-			}
-		}
+		$this->_offsetUnset( $offset );
 
 	}
 

@@ -3,6 +3,41 @@
  * @package Pods\Global\Functions\Classes
  */
 /**
+ * Include and Init the PodsPod class
+ *
+ * @param string $name Get the Pod by Name
+ * @param int $id Get the Pod by ID (overrides $name)
+ * @param bool $live Set to true to automatically save values in the DB when you $pod['option']='value'
+ *
+ * @return PodsPod
+ *
+ * @since 2.3.10
+ */
+function podspod( $name, $id = 0, $live = false ) {
+    require_once( PODS_DIR . 'classes/PodsPod.php' );
+
+    return new PodsPod( $name, $id, $live );
+}
+
+/**
+ * Include and Init the PodsPod class
+ *
+ * @param PodsPod|WP_Post|int|string $pod
+ * @param string $name Get the Field by Name
+ * @param int $id Get the Field by ID (overrides $name)
+ * @param bool $live Set to true to automatically save values in the DB when you $field['option']='value'
+ *
+ * @return PodsPodField
+ *
+ * @since 2.3.10
+ */
+function podspodfield( $pod, $name = null, $id = 0, $live = false ) {
+    require_once( PODS_DIR . 'classes/PodsPodField.php' );
+
+    return new PodsPodField( $pod, $name, $id, $live );
+}
+
+/**
  * Include and Init the Pods class
  *
  * @see Pods

@@ -4720,7 +4720,33 @@ class PodsAPI {
             if ( isset( $params->name ) ) {
                 $pod = false;
 
-                if ( pods_api_cache() )
+				if ( '_pods_pod' == $params->name ) {
+					$pod = array(
+						'id' => 0,
+						'name' => $params->name,
+						'label' => __( 'Pods', 'pods' ),
+						'type' => 'post_type',
+						'storage' => 'meta',
+						'options' => array(
+							'label_singular' => __( 'Pod', 'pods' )
+						),
+						'fields' => array()
+					);
+				}
+				elseif ( '_pods_field' == $params->name ) {
+					$pod = array(
+						'id' => 0,
+						'name' => $params->name,
+						'label' => __( 'Pod Fields', 'pods' ),
+						'type' => 'post_type',
+						'storage' => 'meta',
+						'options' => array(
+							'label_singular' => __( 'Pod Field', 'pods' )
+						),
+						'fields' => array()
+					);
+				}
+                elseif ( pods_api_cache() )
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
                 if ( false !== $pod && ( pods_var_raw( 'table_info', $params, false ) || isset( $pod[ 'table' ] ) ) ) {

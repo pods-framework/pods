@@ -56,10 +56,12 @@ class PodsAPI {
      * @since 2.3.5
      */
     public static function init ( $pod = null, $format = null ) {
-        if ( null !== $pod || null !== $format )
+        if ( null !== $pod || null !== $format ) {
             return new PodsAPI( $pod, $format );
-        elseif ( !is_object( self::$instance ) )
+		}
+        elseif ( !is_object( self::$instance ) ) {
             self::$instance = new PodsAPI();
+		}
 
         return self::$instance;
     }
@@ -3586,6 +3588,71 @@ class PodsAPI {
 
         return $this->save_pod( $pod );
     }
+
+    /**
+     * Duplicate a Field
+     *
+     * $params['pod_id'] int The Pod ID
+     * $params['pod'] string The Pod name
+     * $params['id'] int The Field ID
+     * $params['name'] string The Field name
+     * $params['new_name'] string The new Field name
+     *
+     * @param array $params An associative array of parameters
+     * @param bool $strict (optional) Makes sure a field exists, if it doesn't throws an error
+     *
+     * @return int New Field ID
+     * @since 2.3.10
+     */
+	public function duplicate_field( $params, $strict = false ) {
+
+		if ( !is_object( $params ) && !is_array( $params ) ) {
+			if ( is_numeric( $params ) ) {
+				$params = array( 'id' => $params );
+			}
+			else {
+				$params = array( 'name' => $params );
+			}
+		}
+
+		$params = (object) pods_sanitize( $params );
+
+		$params->table_info = false;
+
+		$field = $this->load_field( $params, $strict );
+
+		if ( empty( $field ) ) {
+			if ( false !== $strict ) {
+				return pods_error( __( 'Field not found', 'pods' ), $this );
+			}
+
+			return false;
+		}
+
+		unset( $field[ 'id' ] );
+
+		if ( isset( $params->new_name ) ) {
+			$field[ 'name' ] = $params->new_name;
+		}
+
+		$try = 1;
+
+		$check_name = $field[ 'name' ];
+		$new_label = $field[ 'label' ];
+
+		while ( $this->load_field( array( 'pod_id' => $field[ 'pod_id' ], 'name' => $check_name, 'table_info' => false ), false ) ) {
+			$try++;
+
+			$check_name = $field[ 'name' ] . $try;
+			$new_label = $field[ 'label' ] . $try;
+		}
+
+		$field[ 'name' ] = $check_name;
+		$field[ 'label' ] = $new_label;
+
+		return $this->save_field( $field );
+
+	}
 
     /**
      * @see PodsAPI::save_pod_item

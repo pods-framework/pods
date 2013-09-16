@@ -99,7 +99,7 @@
                         var $el = $( this );
                         var field_name = $el.prop( 'name' );
 
-                        if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
+                        if ( 'undefined' != typeof field_name && null !== field_name && '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
                             var val = $el.val();
 
                             if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {

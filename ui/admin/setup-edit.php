@@ -245,6 +245,8 @@ if ( isset( $_GET[ 'do' ] ) ) {
     <?php
         if ( !empty( $tabs ) )
             echo '<h2>' . __( 'Manage Fields', 'pods' ) . '</h2>';
+
+		do_action( 'pods_admin_ui_setup_edit_fields', $pod, $obj );
     ?>
 
     <!-- pods table -->

@@ -180,7 +180,7 @@ class Pods_Templates extends PodsComponent {
     function remove_row_actions ( $actions, $post ) {
         global $current_screen;
 
-        if ( $this->object_type != $current_screen->post_type )
+        if ( !is_object( $current_screen ) || $this->object_type != $current_screen->post_type )
             return $actions;
 
         if ( isset( $actions[ 'view' ] ) )

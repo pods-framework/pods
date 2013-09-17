@@ -1435,6 +1435,24 @@ class PodsAPI {
 
         $pod[ 'options' ] = array_merge( $pod[ 'options' ], $options );
 
+		/**
+		 * @var WP_Query
+		 */
+		global $wp_query;
+
+		$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+
+		if ( isset( $pod[ 'options' ][ 'query_var_string' ] ) ) {
+			if ( in_array( $pod[ 'options' ][ 'query_var_string' ], $reserved_query_vars ) ) {
+				$pod[ 'options' ][ 'query_var_string' ] = $pod[ 'options' ][ 'type' ] . '_' . $pod[ 'options' ][ 'query_var_string' ];
+			}
+		}
+		elseif ( isset( $pod[ 'options' ][ 'query_var' ] ) ) {
+			if ( in_array( $pod[ 'options' ][ 'query_var' ], $reserved_query_vars ) ) {
+				$pod[ 'options' ][ 'query_var' ] = $pod[ 'options' ][ 'type' ] . '_' . $pod[ 'options' ][ 'query_var' ];
+			}
+		}
+
         if ( strlen( $pod[ 'label' ] ) < 1 )
             $pod[ 'label' ] = $pod[ 'name' ];
 

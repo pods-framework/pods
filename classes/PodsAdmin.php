@@ -1042,7 +1042,7 @@ class PodsAdmin {
                 ),
                 'query_var' => array(
                     'label' => __( 'Query Var', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href="http://codex.wordpress.org/WordPress_Query_Vars">WordPress Query Vars</a> from the WordPress Codex.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'boolean_yes_label' => ''

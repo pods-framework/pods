@@ -589,8 +589,11 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
         $ret = $_SERVER[ $key ] = $value;
     elseif ( 'session' == $type )
         $ret = $_SESSION[ $key ] = $value;
-    elseif ( 'cookie' == $type )
-        $ret = $_COOKIE[ $key ] = $value;
+    elseif ( 'cookie' == $type ) {
+		setcookie( $key, $value, time() + 10 * DAY_IN_SECONDS, COOKIEPATH );
+
+		$ret = $value;
+	}
     elseif ( 'constant' == $type && !defined( $key ) ) {
         define( $key, $value );
 

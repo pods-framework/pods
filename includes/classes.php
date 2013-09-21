@@ -5,15 +5,16 @@
 /**
  * Include and Init the PodsObject class
  *
- * @param string $name Get the Pod by Name
- * @param int $id Get the Pod by ID (overrides $name)
- * @param bool $live Set to true to automatically save values in the DB when you $pod['option']='value'
+ * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int $id Get the Object by ID (overrides $name)
+ * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed $parent Parent Object or ID
  *
  * @return PodsObject
  *
  * @since 2.3.10
  */
-function pods_object( $name, $id = 0, $live = false ) {
+function pods_object( $name, $id = 0, $live = false, $parent = null ) {
     require_once( PODS_DIR . 'classes/PodsObject.php' );
 
     return new PodsObject( $name, $id, $live );
@@ -22,19 +23,19 @@ function pods_object( $name, $id = 0, $live = false ) {
 /**
  * Include and Init the PodsObjectField class
  *
- * @param int|string|array|PodsObject $pod int/string/array/PodsObject of Pod
- * @param string|array|WP_Post $name Get the Field by Name, or pass an array/WP_Post of field
- * @param int $id Get the Field by ID (overrides $name)
- * @param bool $live Set to true to automatically save values in the DB when you $field['option']='value'
+ * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int $id Get the Object by ID (overrides $name)
+ * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed $parent Parent Object or ID
  *
  * @return PodsObjectField
  *
  * @since 2.3.10
  */
-function pods_object_field( $pod, $name = null, $id = 0, $live = false ) {
+function pods_object_field( $name = null, $id = 0, $live = false, $parent = null ) {
     require_once( PODS_DIR . 'classes/PodsObjectField.php' );
 
-    return new PodsObjectField( $pod, $name, $id, $live );
+    return new PodsObjectField( $name, $id, $live, $parent );
 }
 
 /**

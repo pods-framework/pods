@@ -35,11 +35,34 @@ class PodsObject implements ArrayAccess {
 	protected $_live = false;
 
 	/**
+	 * Array of actions and their associated methods / number of args for safely running actions on
+	 *
+	 * @var array
+	 */
+	protected $_live_actions = array(
+		'pods_object_save' => array(
+			'method' => '_update',
+			'args' => 3
+		),
+		'pods_object_delete' => array(
+			'method' => '_delete',
+			'args' => 3
+		)
+	);
+
+	/**
 	 * Post type / meta key prefix for internal values
 	 *
 	 * @var string
 	 */
 	protected $_post_type;
+
+	/**
+	 * Action type for internal actions/filters
+	 *
+	 * @var string
+	 */
+	protected $_action_type;
 
 	/**
 	 * Deprecated keys / options
@@ -84,6 +107,12 @@ class PodsObject implements ArrayAccess {
 		}
 
 		add_action( 'switch_blog', array( $this, 'table_info_clear' ) );
+
+		$this->_action_type = str_replace( '_pods_', '', $this->_post_type );
+
+		foreach ( $this->_live_actions as $action => $_options ) {
+			add_action( $action . '_' . $this->_action_type, array( $this, $_options[ 'method' ] ), 10, $_options[ 'args' ] );
+		}
 
 	}
 
@@ -225,11 +254,17 @@ class PodsObject implements ArrayAccess {
 	 */
 	public function is_custom() {
 
-		if ( !empty( $this->_object ) && 0 < $this->_object[ 'id' ] ) {
-			return true;
+		$custom = false;
+
+		if ( $this->is_valid() ) {
+			$custom = true;
+
+			if ( 0 < $this->_object[ 'id' ] ) {
+				$custom = false;
+			}
 		}
 
-		return false;
+		return $custom;
 
 	}
 
@@ -245,6 +280,86 @@ class PodsObject implements ArrayAccess {
 		$this->_table_info = array();
 
 		$this->_live = false;
+
+	}
+
+	/**
+	 * Safely perform an action for multiple object instances
+	 *
+	 * @param $action
+	 */
+	protected function _action( $action ) {
+
+		$args = func_get_args();
+		$args[ 0 ] = $action . '_' . $this->_action_type;
+
+		$_live_action = false;
+
+		if ( isset( $this->_live_actions[ $action ] ) ) {
+			$_live_action = $this->_live_actions[ $action ];
+		}
+
+		if ( !empty( $_live_action ) ) {
+			remove_action( $args[ 0 ], array( $this, $_live_action[ 'method' ] ), 10 );
+		}
+
+		call_user_func_array( 'do_action', $args );
+
+		if ( !empty( $_live_action ) ) {
+			add_action( $args[ 0 ], array( $this, $_live_action[ 'method' ] ), 10, $_live_action[ 'args' ] );
+		}
+
+	}
+
+	/**
+	 * Update object if in live mode, and other object was updated
+	 *
+	 * @param int $id Object ID
+	 * @param string $name Object name
+	 * @param int $parent Object Parent ID
+	 */
+	protected function _update( $id, $name, $parent ) {
+
+		if ( $this->is_valid() && $this->_live ) {
+			if ( 0 < $id ) {
+				if ( $id == $this->_object[ 'id' ] ) {
+					$this->destroy();
+
+					$this->init( null, $id );
+				}
+			}
+			elseif ( 0 < strlen( $name ) ) {
+				if ( $name == $this->_object[ 'name' ] && $parent == $this->_object[ 'parent' ] ) {
+					$this->destroy();
+
+					$this->init( $name );
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Update object if in live mode, and other object was deleted
+	 *
+	 * @param int $id Object ID
+	 * @param string $name Object name
+	 * @param int $parent Object Parent ID
+	 */
+	protected function _delete( $id, $name, $parent ) {
+
+		if ( $this->is_valid() && $this->_live ) {
+			if ( 0 < $id ) {
+				if ( $id == $this->_object[ 'id' ] ) {
+					$this->destroy();
+				}
+			}
+			elseif ( 0 < strlen( $name ) ) {
+				if ( $name == $this->_object[ 'name' ] && $parent == $this->_object[ 'parent' ] ) {
+					$this->destroy();
+				}
+			}
+		}
 
 	}
 
@@ -585,6 +700,11 @@ class PodsObject implements ArrayAccess {
 
 		$params[ 'id' ] = $this->_object[ 'id' ];
 
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $_object );
+
 		// @todo Handle generalized saving
 		$id = $params[ 'id' ];
 
@@ -599,6 +719,10 @@ class PodsObject implements ArrayAccess {
 					$this->offsetSet( $option, $value );
 				}
 			}
+		}
+
+		if ( 0 < $id ) {
+			$this->_action( 'pods_object_save', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		return $id;
@@ -637,12 +761,21 @@ class PodsObject implements ArrayAccess {
 		$params[ 'id' ] = $this->_object[ 'id' ];
 		$params[ 'name' ] = $this->_object[ 'name' ];
 
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $_object );
+
 		// @todo Handle generalized duplicating
 		$id = $params[ 'id' ];
 
 		if ( $replace ) {
 			// Replace object
 			$id = $this->init( null, $id );
+		}
+
+		if ( 0 < $id ) {
+			$this->_action( 'pods_object_duplicate', $id, $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		return $id;
@@ -658,16 +791,29 @@ class PodsObject implements ArrayAccess {
      */
 	public function delete() {
 
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
 		$params = array(
 			'id' => $this->_object[ 'id' ],
 			'name' => $this->_object[ 'name' ]
 		);
+
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $_object );
 
 		$success = false;
 
 		if ( 0 < $params[ 'id' ] ) {
 			// @todo Handle generalized deleting
 			$success = true;
+		}
+
+		if ( $success ) {
+			$this->_action( 'pods_object_delete', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		// Can't destroy object, so let's destroy the data and invalidate the object

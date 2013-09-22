@@ -46,15 +46,9 @@ class PodsObject_Field extends PodsObject {
 	 * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
 	 * @param mixed $parent Parent Object or ID
 	 */
-	public function __construct( $name, $id = 0, $live = false, $parent = null ) {
+	public function __construct( $name = null, $id = 0, $live = false, $parent = null ) {
 
-		$id = $this->init( $name, $id, $parent );
-
-		if ( 0 < $id ) {
-			$this->_live = $live;
-		}
-
-		add_action( 'switch_blog', array( $this, 'table_info_clear' ) );
+		parent::__construct( $name, $id, $live, $parent );
 
 	}
 
@@ -325,6 +319,11 @@ class PodsObject_Field extends PodsObject {
 
 		$params[ 'id' ] = $this->_object[ 'id' ];
 
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $_object );
+
 		// @todo Move API logic into PodsObjectField
 		$id = pods_api()->save_field( $params );
 
@@ -339,6 +338,10 @@ class PodsObject_Field extends PodsObject {
 					$this->offsetSet( $option, $value );
 				}
 			}
+		}
+
+		if ( 0 < $id ) {
+			$this->_action( 'pods_object_save', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		return $id;
@@ -377,12 +380,21 @@ class PodsObject_Field extends PodsObject {
 		$params[ 'id' ] = $this->_object[ 'id' ];
 		$params[ 'name' ] = $this->_object[ 'name' ];
 
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $_object );
+
 		// @todo Move API logic into PodsObjectField
 		$id = pods_api()->duplicate_field( $params );
 
 		if ( $replace ) {
 			// Replace object
 			$id = $this->init( null, $id );
+		}
+
+		if ( 0 < $id ) {
+			$this->_action( 'pods_object_duplicate', $id, $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		return $id;
@@ -398,16 +410,29 @@ class PodsObject_Field extends PodsObject {
      */
 	public function delete() {
 
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
 		$params = array(
 			'id' => $this->_object[ 'id' ],
 			'name' => $this->_object[ 'name' ]
 		);
+
+		// For use later in actions
+		$_object = $this->_object;
+
+		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $_object );
 
 		$success = false;
 
 		if ( 0 < $params[ 'id' ] ) {
 			// @todo Move API logic into PodsObjectField
 			$success = pods_api()->delete_field( $params );
+		}
+
+		if ( $success ) {
+			$this->_action( 'pods_object_delete', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
 		}
 
 		// Can't destroy object, so let's destroy the data and invalidate the object

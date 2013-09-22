@@ -17,25 +17,45 @@
 function pods_object( $name, $id = 0, $live = false, $parent = null ) {
     require_once( PODS_DIR . 'classes/PodsObject.php' );
 
-    return new PodsObject( $name, $id, $live );
+    return new PodsObject( $name, $id, $live, $parent );
 }
 
 /**
- * Include and Init the PodsObjectField class
+ * Include and Init the PodsObject_Pod class
  *
  * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
  * @param int $id Get the Object by ID (overrides $name)
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObjectField
+ * @return PodsObject_Pod
+ *
+ * @since 2.3.10
+ */
+function pods_object_pod( $name, $id = 0, $live = false, $parent = null ) {
+    require_once( PODS_DIR . 'classes/PodsObject.php' );
+    require_once( PODS_DIR . 'classes/PodsObject_Pod.php' );
+
+    return new PodsObject_Pod( $name, $id, $live, $parent );
+}
+
+/**
+ * Include and Init the PodsObject_Field class
+ *
+ * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int $id Get the Object by ID (overrides $name)
+ * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed $parent Parent Object or ID
+ *
+ * @return PodsObject_Field
  *
  * @since 2.3.10
  */
 function pods_object_field( $name = null, $id = 0, $live = false, $parent = null ) {
-    require_once( PODS_DIR . 'classes/PodsObjectField.php' );
+    require_once( PODS_DIR . 'classes/PodsObject.php' );
+    require_once( PODS_DIR . 'classes/PodsObject_Field.php' );
 
-    return new PodsObjectField( $name, $id, $live, $parent );
+    return new PodsObject_Field( $name, $id, $live, $parent );
 }
 
 /**

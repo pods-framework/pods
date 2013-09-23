@@ -10,14 +10,18 @@
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject
+ * @return PodsObject|null
  *
  * @since 2.3.10
  */
-function pods_object( $name, $id = 0, $live = false, $parent = null ) {
+function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
     require_once( PODS_DIR . 'classes/PodsObject.php' );
 
-    return new PodsObject( $name, $id, $live, $parent );
+	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
+    	return new PodsObject( $name, $id, $live, $parent );
+	}
+
+	return null;
 }
 
 /**
@@ -28,15 +32,19 @@ function pods_object( $name, $id = 0, $live = false, $parent = null ) {
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Pod
+ * @return PodsObject_Pod|null
  *
  * @since 2.3.10
  */
-function pods_object_pod( $name, $id = 0, $live = false, $parent = null ) {
+function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null ) {
     require_once( PODS_DIR . 'classes/PodsObject.php' );
     require_once( PODS_DIR . 'classes/PodsObject_Pod.php' );
 
-    return new PodsObject_Pod( $name, $id, $live, $parent );
+	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
+    	return new PodsObject_Pod( $name, $id, $live, $parent );
+	}
+
+	return null;
 }
 
 /**
@@ -47,7 +55,7 @@ function pods_object_pod( $name, $id = 0, $live = false, $parent = null ) {
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Field
+ * @return PodsObject_Field|null
  *
  * @since 2.3.10
  */
@@ -55,7 +63,11 @@ function pods_object_field( $name = null, $id = 0, $live = false, $parent = null
     require_once( PODS_DIR . 'classes/PodsObject.php' );
     require_once( PODS_DIR . 'classes/PodsObject_Field.php' );
 
-    return new PodsObject_Field( $name, $id, $live, $parent );
+	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
+    	return new PodsObject_Field( $name, $id, $live, $parent );
+	}
+
+	return null;
 }
 
 /**
@@ -66,7 +78,7 @@ function pods_object_field( $name = null, $id = 0, $live = false, $parent = null
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Group
+ * @return PodsObject_Group|null
  *
  * @since 2.3.10
  */
@@ -74,7 +86,11 @@ function pods_object_group( $name = null, $id = 0, $live = false, $parent = null
     require_once( PODS_DIR . 'classes/PodsObject.php' );
     require_once( PODS_DIR . 'classes/PodsObject_Group.php' );
 
-    return new PodsObject_Group( $name, $id, $live, $parent );
+	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
+    	return new PodsObject_Group( $name, $id, $live, $parent );
+	}
+
+	return null;
 }
 
 /**

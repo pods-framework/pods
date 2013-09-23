@@ -39,21 +39,7 @@ class PodsObject_Field extends PodsObject {
 	);
 
 	/**
-	 * Get the Object
-	 *
-	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
-	 * @param int $id Get the Object by ID (overrides $name)
-	 * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
-	 * @param mixed $parent Parent Object or ID
-	 */
-	public function __construct( $name = null, $id = 0, $live = false, $parent = null ) {
-
-		parent::__construct( $name, $id, $live, $parent );
-
-	}
-
-	/**
-	 * Init the object
+	 * Load the object
 	 *
 	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
 	 * @param int $id Get the Object by ID (overrides $name)
@@ -61,7 +47,7 @@ class PodsObject_Field extends PodsObject {
 	 *
 	 * @return int|bool $id The Object ID or false if Object not found
 	 */
-	public function init( $name = null, $id = 0, $parent = null ) {
+	public function load( $name = null, $id = 0, $parent = null ) {
 
 		// Post Object
 		$_object = false;
@@ -95,8 +81,8 @@ class PodsObject_Field extends PodsObject {
 			$_object = get_post( $dummy = (int) $id, ARRAY_A );
 
 			// Fallback to Object name
-			if ( empty( $_object ) || $this->_post_type != $_object->post_type ) {
-				return $this->init( $name, 0 );
+			if ( empty( $_object ) || $this->_post_type != $_object[ 'post_type' ] ) {
+				return $this->load( $name, 0 );
 			}
 		}
 		// WP_Post of Object data passed
@@ -125,6 +111,13 @@ class PodsObject_Field extends PodsObject {
 			// Object found
 			if ( !empty( $find_object ) && is_array( $find_object ) ) {
 				$_object = $find_object[ 0 ];
+
+				if ( 'WP_Post' == get_class( $_object ) ) {
+					$_object = $_object->to_array();
+				}
+				else {
+					$_object = get_object_vars( $_object );
+				}
 			}
 		}
 
@@ -329,7 +322,7 @@ class PodsObject_Field extends PodsObject {
 
 		// Refresh object
 		if ( $refresh ) {
-			$id = $this->init( null, $id );
+			$id = $this->load( null, $id );
 		}
 		// Just update options
 		else {
@@ -390,7 +383,7 @@ class PodsObject_Field extends PodsObject {
 
 		if ( $replace ) {
 			// Replace object
-			$id = $this->init( null, $id );
+			$id = $this->load( null, $id );
 		}
 
 		if ( 0 < $id ) {

@@ -36,20 +36,6 @@ class PodsObject_Group extends PodsObject {
 	);
 
 	/**
-	 * Get the Object
-	 *
-	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
-	 * @param int $id Get the Object by ID (overrides $name)
-	 * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
-	 * @param mixed $parent Parent Object or ID
-	 */
-	public function __construct( $name = null, $id = 0, $live = false, $parent = null ) {
-
-		parent::__construct( $name, $id, $live, $parent );
-
-	}
-
-	/**
 	 * Return field array from Object, a field's data, or a field option
 	 *
 	 * @param string|null $object_field Object Field name
@@ -65,7 +51,7 @@ class PodsObject_Group extends PodsObject {
 			if ( $this->is_custom() ) {
 				if ( isset( $this->_object[ '_fields' ] ) && !empty( $this->_object[ '_fields' ] ) ) {
 					foreach ( $this->_object[ '_fields' ] as $field ) {
-						$field = pods_object_field( $this->_object[ 'id' ], $field, 0, $this->_live );
+						$field = pods_object_field( $field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $field->is_valid() ) {
 							$this->_object[ 'fields' ][ $field[ 'name' ] ] = $field;
@@ -89,7 +75,7 @@ class PodsObject_Group extends PodsObject {
 
 				if ( !empty( $fields ) ) {
 					foreach ( $fields as $field ) {
-						$field = pods_object_field( $this->_object[ 'id' ], $field, 0, $this->_live );
+						$field = pods_object_field( $field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $field->is_valid() ) {
 							$this->_object[ 'fields' ][ $field[ 'name' ] ] = $field;
@@ -144,7 +130,7 @@ class PodsObject_Group extends PodsObject {
 
 		// Refresh object
 		if ( $refresh ) {
-			$id = $this->init( null, $id );
+			$id = $this->load( null, $id );
 		}
 		// Just update options
 		else {
@@ -205,7 +191,7 @@ class PodsObject_Group extends PodsObject {
 
 		if ( $replace ) {
 			// Replace object
-			$id = $this->init( null, $id );
+			$id = $this->load( null, $id );
 		}
 
 		if ( 0 < $id ) {

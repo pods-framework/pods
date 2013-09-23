@@ -4744,7 +4744,7 @@ class PodsAPI {
      */
     public function load_pod ( $params, $strict = true ) {
 
-		if ( pods_developer() ) {
+		if ( 1 == 0 && pods_developer() ) {
 			// Debug override for strict
 			$strict = ( !$strict ? pods_strict( true ) : $strict );
 

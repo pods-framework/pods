@@ -158,7 +158,7 @@ class PodsObject implements ArrayAccess, Serializable {
 
 		// Object ID passed
 		if ( 0 < $id ) {
-			$_object = get_post( $dummy = (int) $id, ARRAY_A );
+			$_object = get_post( (int) $id, ARRAY_A );
 
 			// Fallback to Object name
 			if ( empty( $_object ) || $this->_post_type != $_object[ 'post_type' ] ) {
@@ -171,7 +171,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		// Fallback for pre-WP_Post
 		elseif ( is_object( $name ) && isset( $name->post_type ) && $this->_post_type == $name->post_type ) {
-			$_object = get_post( $dummy = (int) $name->ID, ARRAY_A );
+			$_object = get_post( (int) $name->ID, ARRAY_A );
 		}
 		// Handle custom arrays
 		elseif ( is_array( $name ) ) {
@@ -193,6 +193,10 @@ class PodsObject implements ArrayAccess, Serializable {
 				$_object = $find_object[ 0 ];
 
 				if ( 'WP_Post' == get_class( $_object ) ) {
+
+					/**
+					 * @var WP_Post $_object
+					 */
 					$_object = $_object->to_array();
 				}
 				else {
@@ -546,7 +550,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		// @todo Pull in custom meta keys
 
 		foreach ( $this->_methods as $method ) {
-			call_user_func( $this, $method );
+			call_user_func( array( $this, $method ) );
 		}
 
 	}
@@ -565,7 +569,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		$export = array_merge( $this->_addtl, $this->_object );
 
 		foreach ( $this->_methods as $method ) {
-			$export[ $method ] = call_user_func( $this, $method );
+			$export[ $method ] = call_user_func( array( $this, $method ) );
 		}
 
 		return $export;
@@ -575,7 +579,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Return field array from Object, a field's data, or a field option
 	 *
-	 * @param string|null $object_field Object Field name
+	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
 	 *
 	 * @return array|mixed
@@ -972,7 +976,6 @@ class PodsObject implements ArrayAccess, Serializable {
 	 * Get value from array usage $object['offset'];
 	 *
 	 * @param mixed $offset Used to unset index of Array
-	 * @param bool $live Set to false to override current live object saving
 	 *
 	 * @since 2.3.10
 	 */

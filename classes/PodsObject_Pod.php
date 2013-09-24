@@ -77,7 +77,7 @@ class PodsObject_Pod extends PodsObject {
 
 		// Object ID passed
 		if ( 0 < $id ) {
-			$_object = get_post( $dummy = (int) $id, ARRAY_A );
+			$_object = get_post( (int) $id, ARRAY_A );
 
 			// Fallback to Object name
 			if ( empty( $_object ) || $this->_post_type != $_object[ 'post_type' ] ) {
@@ -90,7 +90,7 @@ class PodsObject_Pod extends PodsObject {
 		}
 		// Fallback for pre-WP_Post
 		elseif ( is_object( $name ) && isset( $name->post_type ) && $this->_post_type == $name->post_type ) {
-			$_object = get_post( $dummy = (int) $name->ID, ARRAY_A );
+			$_object = get_post( (int) $name->ID, ARRAY_A );
 		}
 		// Handle custom arrays
 		elseif ( is_array( $name ) ) {
@@ -112,6 +112,10 @@ class PodsObject_Pod extends PodsObject {
 				$_object = $find_object[ 0 ];
 
 				if ( 'WP_Post' == get_class( $_object ) ) {
+
+					/**
+					 * @var WP_Post $_object
+					 */
 					$_object = $_object->to_array();
 				}
 				else {

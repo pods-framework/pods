@@ -78,7 +78,7 @@ class PodsObject_Field extends PodsObject {
 
 		// Object ID passed
 		if ( 0 < $id ) {
-			$_object = get_post( $dummy = (int) $id, ARRAY_A );
+			$_object = get_post( (int) $id, ARRAY_A );
 
 			// Fallback to Object name
 			if ( empty( $_object ) || $this->_post_type != $_object[ 'post_type' ] ) {
@@ -91,7 +91,7 @@ class PodsObject_Field extends PodsObject {
 		}
 		// Fallback for pre-WP_Post
 		elseif ( is_object( $name ) && isset( $name->post_type ) && $this->_post_type == $name->post_type ) {
-			$_object = get_post( $dummy = (int) $name->ID, ARRAY_A );
+			$_object = get_post( (int) $name->ID, ARRAY_A );
 		}
 		// Handle custom arrays
 		elseif ( is_array( $name ) ) {
@@ -110,6 +110,10 @@ class PodsObject_Field extends PodsObject {
 
 			// Object found
 			if ( !empty( $find_object ) && is_array( $find_object ) ) {
+
+				/**
+				 * @var WP_Post $_object
+				 */
 				$_object = $find_object[ 0 ];
 
 				if ( 'WP_Post' == get_class( $_object ) ) {
@@ -247,9 +251,12 @@ class PodsObject_Field extends PodsObject {
 	/**
 	 * Return a field input for a specific field
 	 *
-	 * @param string|array $field Field name or Field data array
-	 * @param string $field Input field name to use (overrides default name)
+	 * @param array|string $field Input field name to use (overrides default name)
+	 * @param null $input_name
 	 * @param mixed $value Current value to use
+	 * @param array $options
+	 * @param null $pod
+	 * @param null $id
 	 *
 	 * @return string Field Input HTML
 	 *

@@ -38,7 +38,7 @@ class PodsObject_Group extends PodsObject {
 	/**
 	 * Return field array from Object, a field's data, or a field option
 	 *
-	 * @param string|null $object_field Object Field name
+	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
 	 *
 	 * @return array|mixed

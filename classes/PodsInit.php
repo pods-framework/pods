@@ -478,7 +478,7 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
                     'menu_position' => (int) pods_var( 'menu_position', $post_type, 0, null, true ),
-                    'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),
+                    'menu_icon' => pods_evaluate_tags( pods_var( 'menu_icon', $post_type, null, null, true ) ),
                     'capability_type' => $capability_type,
                     //'capabilities' => $cpt_capabilities,
                     'map_meta_cap' => (boolean) pods_var( 'capability_type_extra', $post_type, true ),

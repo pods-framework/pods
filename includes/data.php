@@ -919,46 +919,69 @@ function pods_evaluate_tag_sanitized ( $tag ) {
  * @return string
  * @version 2.1
  */
-function pods_evaluate_tag ( $tag, $sanitize = false ) {
+function pods_evaluate_tag( $tag, $sanitize = false ) {
+
 	global $wpdb;
 
-    // Handle pods_evaluate_tags
-    if ( is_array( $tag ) ) {
-        if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
-            return;
+	// Handle pods_evaluate_tags
+	if ( is_array( $tag ) ) {
+		if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 ) {
+			return '';
+		}
 
-        $tag = $tag[ 2 ];
-    }
+		$tag = $tag[ 2 ];
+	}
 
-    $tag = trim( $tag, ' {@}' );
-    $tag = explode( '.', $tag );
+	$tag = trim( $tag, ' {@}' );
+	$tag = explode( '.', $tag );
 
-    if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
-        return;
+	if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 ) {
+		return '';
+	}
 
-    // Fix formatting that may be after the first .
-    if ( 2 < count( $tag ) ) {
-        $first_tag = $tag[ 0 ];
-        unset( $tag[ 0 ] );
+	// Fix formatting that may be after the first .
+	if ( 2 < count( $tag ) ) {
+		$first_tag = $tag[ 0 ];
+		unset( $tag[ 0 ] );
 
-        $tag = array(
-            $first_tag,
-            implode( '.', $tag )
-        );
-    }
+		$tag = array(
+			$first_tag,
+			implode( '.', $tag )
+		);
+	}
 
-    foreach ( $tag as $k => $v ) {
-        $tag[ $k ] = trim( $v );
-    }
+	foreach ( $tag as $k => $v ) {
+		$tag[ $k ] = trim( $v );
+	}
 
-    $value = '';
+	$value = '';
 
-    if ( 1 == count( $tag ) )
-        $value = pods_var_raw( $tag[ 0 ], 'get', '', null, true );
-    elseif ( 2 == count( $tag ) )
-        $value = pods_var_raw( $tag[ 1 ], $tag[ 0 ], '', null, true );
+	$single_supported = array(
+		'template-url',
+		'stylesheet-url',
+		'site-url',
+		'home-url',
+		'admin-url',
+		'includes-url',
+		'content-url',
+		'plugins-url',
+		'network-site-url',
+		'network-home-url',
+		'network-admin-url',
+		'user-admin-url'
+	);
 
-    $value = apply_filters( 'pods_evaluate_tag', $value, $tag );
+	if ( in_array( $tag[ 0 ], $single_supported ) ) {
+		$value = pods_var_raw( '', $tag[ 0 ], '', null, true );
+	}
+	elseif ( 1 == count( $tag ) ) {
+		$value = pods_var_raw( $tag[ 0 ], 'get', '', null, true );
+	}
+	elseif ( 2 == count( $tag ) ) {
+		$value = pods_var_raw( $tag[ 1 ], $tag[ 0 ], '', null, true );
+	}
+
+	$value = apply_filters( 'pods_evaluate_tag', $value, $tag );
 
 	if ( is_array( $value ) && 1 == count( $value ) ) {
 		$value = current( $value );
@@ -967,11 +990,12 @@ function pods_evaluate_tag ( $tag, $sanitize = false ) {
 	if ( is_array( $value ) ) {
 		$value = trim( $wpdb->prepare( str_repeat( '%s, ', count( $value ) ), $value ), ' ,' );
 	}
-    elseif ( $sanitize ) {
+	elseif ( $sanitize ) {
 		$value = pods_sanitize( $value );
 	}
 
-    return $value;
+	return $value;
+
 }
 
 /**

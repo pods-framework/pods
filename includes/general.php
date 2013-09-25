@@ -1309,6 +1309,54 @@ function pods_transient_clear ( $key = true ) {
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
  * @param int $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
+ *
+ * @return bool|mixed|null|string|void
+ *
+ * @since 2.3.10
+ */
+function pods_site_transient_set ( $key, $value, $expires = 0 ) {
+    return pods_view_set( $key, $value, $expires, 'site-transient' );
+}
+
+/**
+ * Get a cached value
+ *
+ * @see PodsView::get
+ *
+ * @param string $key Key for the cache
+ * @param string $callback (optional) Callback function to run to set the value if not cached
+ *
+ * @return bool|mixed|null|void
+ *
+ * @since 2.3.10
+ */
+function pods_site_transient_get ( $key, $callback = null ) {
+    return pods_view_get( $key, 'site-transient', '', $callback );
+}
+
+/**
+ * Clear a cached value
+ *
+ * @see PodsView::clear
+ *
+ * @param string|bool $key Key for the cache
+ *
+ * @return bool
+ *
+ * @since 2.3.10
+ */
+function pods_site_transient_clear ( $key = true ) {
+    return pods_view_clear( $key, 'site-transient' );
+}
+
+/**
+ * Set a cached value
+ *
+ * @see PodsView::set
+ *
+ * @param string $key Key for the cache
+ * @param mixed $value Value to add to the cache
+ * @param int $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
  * @param string $group (optional) Key for the group
  *
  * @return bool|mixed|null|string|void

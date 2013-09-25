@@ -6855,13 +6855,15 @@ class PodsAPI {
                 if ( is_object( $post_type_object ) && $post_type_object->hierarchical )
                     $info[ 'object_hierarchical' ] = true;
 
+        		$post_stati = $this->do_hook( 'get_table_info_default_post_status', array( 'publish' ), $post_type, $info, $object_type, $object, $name, $pod, $field );
+
                 $info[ 'where' ] = array(
                     //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
                     'post_type' => '`t`.`' . $info[ 'field_type' ] . '` = "' . $post_type . '"'
                 );
 
                 if ( 'post_type' == $object_type )
-                    $info[ 'where_default' ] = '`t`.`post_status` = "publish"';
+                    $info[ 'where_default' ] = '`t`.`post_status` IN ( "' . implode( '", "', $post_stati ) . '" )';
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 

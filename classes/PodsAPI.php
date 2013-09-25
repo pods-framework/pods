@@ -2973,7 +2973,7 @@ class PodsAPI {
         if ( 'comment' == $object_type )
             $object_ID = 'comment_ID';
 
-        $object_data = $object_meta = array();
+        $object_data = $object_meta = $post_term_data = array();
 
         if ( 'settings' == $object_type )
             $object_data[ 'option_id' ] = $pod[ 'name' ];
@@ -3015,8 +3015,14 @@ class PodsAPI {
 
             $field_data[ 'value' ] = $value;
 
-            if ( isset( $object_fields[ $field ] ) )
-                $object_data[ $field ] = $value;
+            if ( isset( $object_fields[ $field ] ) ) {
+				if ( 'taxonomy' == $object_fields[ $field ][ 'type' ] ) {
+					$post_term_data[ $field ] = $value;
+				}
+				else {
+                	$object_data[ $field ] = $value;
+				}
+			}
             else {
                 $simple = ( 'pick' == $type && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
                 $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
@@ -3176,6 +3182,13 @@ class PodsAPI {
         }
 
         $params->id = (int) $params->id;
+
+		// Save terms for taxonomies associated to a post type
+        if ( 0 < $params->id && 'post_type' == $pod[ 'type' ] && !empty( $post_term_data ) ) {
+			foreach ( $post_term_data as $post_taxonomy => $post_terms ) {
+				wp_set_object_terms( $params->id, $post_terms, $post_taxonomy );
+			}
+		}
 
         $no_conflict = pods_no_conflict_check( $pod[ 'type' ] );
 

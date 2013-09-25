@@ -125,41 +125,61 @@ class PodsView {
      *
      * @since 2.0
      */
-    public static function get ( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
-        $object_cache = false;
+	public static function get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
-        if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
-            $object_cache = true;
+		$object_cache = false;
 
-        if ( !in_array( $cache_mode, self::$cache_modes ) )
-            $cache_mode = 'cache';
+		if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+			$object_cache = true;
+		}
 
-        $group_key = '';
+		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+			$cache_mode = 'cache';
+		}
 
-        if ( !empty( $group ) )
-            $group_key = $group . '_';
+		$group_key = '';
 
-        $original_key = $key;
+		if ( !empty( $group ) ) {
+			$group_key = $group . '_';
+		}
 
-        // Patch for limitations in DB
-        if ( 44 < strlen( $group_key . $key ) ) {
-            $key = md5( $key );
+		$original_key = $key;
 
-            if ( empty( $group_key ) )
-                $group_key = 'pods_';
-        }
+		// Patch for limitations in DB
+		if ( 44 < strlen( $group_key . $key ) ) {
+			$key = md5( $key );
 
-        $value = null;
+			if ( empty( $group_key ) ) {
+				$group_key = 'pods_';
+			}
+		}
+
+		$value = null;
 
 		$called = false;
 
-        if ( 'transient' == $cache_mode )
-            $value = get_transient( $group_key . $key );
-        elseif ( 'site-transient' == $cache_mode )
-            $value = get_site_transient( $group_key . $key );
-        elseif ( 'cache' == $cache_mode && $object_cache )
-            $value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
-		elseif ( 'option-cache' == $cache_mode ) {
+		$pods_nocache = pods_var_raw( 'pods_nocache' );
+		$nocache = array();
+
+		if ( pods_is_admin() && null !== $pods_nocache ) {
+			if ( 1 < strlen( $pods_nocache ) ) {
+				$nocache = explode( ',', $pods_nocache );
+			}
+			else {
+				$nocache = self::$cache_modes;
+			}
+		}
+
+		if ( 'transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+			$value = get_transient( $group_key . $key );
+		}
+		elseif ( 'site-transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+			$value = get_site_transient( $group_key . $key );
+		}
+		elseif ( 'cache' == $cache_mode && $object_cache && !in_array( $cache_mode, $nocache ) ) {
+			$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
+		}
+		elseif ( 'option-cache' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
 			global $_wp_using_ext_object_cache;
 
 			$pre = apply_filters( 'pre_transient_' . $key, false );
@@ -221,6 +241,9 @@ class PodsView {
 				$value = apply_filters( 'transient_' . $key, $value );
 			}
 		}
+		else {
+			$value = false;
+		}
 
 		if ( false === $value && is_callable( $callback ) && !$called ) {
 			// Callback function should do it's own set/update for cache
@@ -231,10 +254,10 @@ class PodsView {
 			}
 		}
 
-        $value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
+		$value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
 
-        return $value;
-    }
+		return $value;
+	}
 
     /**
      * @static

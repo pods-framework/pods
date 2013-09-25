@@ -1,10 +1,10 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, dan.stefan, Desertsnowman, mikedamage, logikal16, jchristopher
+Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, mikedamage, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 2.3.9
+Stable tag: 2.3.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,6 +74,8 @@ And many other relationships are also available including:
 * Sidebars
 * Countries (predefined)
 * US States (predefined)
+* Days of Week (predefined)
+* Months of Year (predefined)
 
 = Easily display your content =
 There are several ways to get Pods data to show up throughout your site, but with any WP object type you create or extend with Pods, you can use all of the functions and methods you're already used to with the core WordPress API / Loop -- out of the box!

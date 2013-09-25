@@ -237,12 +237,27 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
 function pods_image_resize ( $attachment_id, $size ) {
     $size_data = array();
 
+	// Basic image size string
     if ( !is_array( $size ) ) {
         global $wp_image_sizes;
 
+		// Registered image size
         if ( isset( $wp_image_sizes[ $size ] ) && !empty( $wp_image_sizes[ $size ] ) )
             $size_data = $wp_image_sizes[ $size ];
+		// Custom on-the-fly image size
+		elseif ( preg_match( '/[0-9]+x[0-9]+/', $size ) || preg_match( '/[0-9]+x[0-9]+x[0-1]/', $size ) ) {
+			$size = explode( 'x', $size );
+
+            $size_data = array(
+                'width' => (int) $size[ 0 ],
+                'height' => (int) $size[ 1 ],
+                'crop' => (int) ( isset( $size[ 2 ] ) ? $size[ 2 ] : 1 ),
+            );
+
+        	$size = $size_data[ 'width' ] . 'x' . $size_data[ 'height' ];
+		}
     }
+	// Image size array
     elseif ( 2 <= count( $size ) ) {
         if ( isset( $size[ 'width' ] ) )
             $size_data = $size;

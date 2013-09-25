@@ -15,26 +15,31 @@
  */
 
 if ( !function_exists( 'pods_markdown_output' ) ) {
-    function pods_markdown_add_option ( $options, $type ) {
-        $options[ 'output_options' ][ 'group' ][ $type . '_allow_markdown' ] = array(
-            'label' => __( 'Allow Markdown Syntax?', 'pods' ),
-            'default' => 0,
-            'type' => 'boolean'
-        );
+	function pods_markdown_add_option( $options, $type ) {
 
-        return $options;
-    }
-    add_filter( 'pods_field_wysiwyg_options', 'pods_markdown_add_option', 10, 2 );
-    add_filter( 'pods_field_paragraph_options', 'pods_markdown_add_option', 10, 2 );
+		$options[ 'output_options' ][ 'group' ][ $type . '_allow_markdown' ] = array(
+			'label' => __( 'Allow Markdown Syntax?', 'pods' ),
+			'default' => 0,
+			'type' => 'boolean'
+		);
 
-    function pods_markdown_output ( $value, $name, $options, $pod, $id, $traverse ) {
-        if ( 1 == $options[ $options[ 'type' ] . '_allow_markdown' ] )
-            $value = Markdown( $value );
+		return $options;
 
-        return $value;
-    }
-    add_filter( 'pods_form_display_wysiwyg', 'pods_markdown_output', 10, 6 );
-    add_filter( 'pods_form_display_paragraph', 'pods_markdown_output', 10, 6 );
+	}
+	add_filter( 'pods_field_wysiwyg_options', 'pods_markdown_add_option', 10, 2 );
+	add_filter( 'pods_field_paragraph_options', 'pods_markdown_add_option', 10, 2 );
+
+	function pods_markdown_output( $value, $name, $options, $pod, $id, $traverse ) {
+
+		if ( 1 == pods_var( $options[ 'type' ] . '_allow_markdown', $options ) ) {
+			$value = Markdown( $value );
+		}
+
+		return $value;
+
+	}
+	add_filter( 'pods_form_display_wysiwyg', 'pods_markdown_output', 10, 6 );
+	add_filter( 'pods_form_display_paragraph', 'pods_markdown_output', 10, 6 );
 }
 
 if ( !function_exists( 'Markdown' ) ) :

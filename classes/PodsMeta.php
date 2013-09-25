@@ -852,7 +852,7 @@ class PodsMeta {
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
-        do_action( 'pods_' . __METHOD__, $post );
+        do_action( 'pods_meta_' . __FUNCTION__, $post );
 
         $hidden_fields = array();
 ?>
@@ -899,7 +899,7 @@ class PodsMeta {
             else {
                 $depends = PodsForm::dependencies( $field, 'pods-meta-' );
 
-            do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ], $post, $field, $pod );
+            do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
             <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
@@ -914,14 +914,14 @@ class PodsMeta {
                 </td>
             </tr>
         <?php
-                do_action( 'pods_' . __METHOD__ . '_' . $field[ 'name' ] . '_post', $post, $field, $pod );
+                do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ] . '_post', $post, $field, $pod );
             }
         }
         ?>
     </table>
 
     <?php
-        do_action( 'pods_' . __METHOD__ . '_post', $post );
+        do_action( 'pods_meta_' . __FUNCTION__ . '_post', $post );
 
         foreach ( $hidden_fields as $hidden_field ) {
             $field = $hidden_field[ 'field' ];
@@ -1131,6 +1131,8 @@ class PodsMeta {
             }
         }
 
+        $form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
+
         return $form_fields;
     }
 
@@ -1247,6 +1249,8 @@ class PodsMeta {
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
         wp_enqueue_style( 'pods-form' );
 
+        do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
+
         $taxonomy_name = $taxonomy;
 
         if ( !is_object( $tag ) )
@@ -1266,7 +1270,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( ! is_object( $this->current_pod_data ) || empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1313,6 +1317,8 @@ class PodsMeta {
                 }
             }
         }
+
+        do_action( 'pods_meta_' . __FUNCTION__ . '_post', $tag, $taxonomy );
     }
 
     /**
@@ -1398,6 +1404,8 @@ class PodsMeta {
     public function meta_user ( $user_id ) {
         wp_enqueue_style( 'pods-form' );
 
+        do_action( 'pods_meta_' . __FUNCTION__, $user_id );
+
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
@@ -1476,6 +1484,8 @@ class PodsMeta {
                 echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
             }
         }
+
+        do_action( 'pods_meta_' . __FUNCTION__ . '_post', $user_id );
     }
 
     /**
@@ -1558,6 +1568,8 @@ class PodsMeta {
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form' );
 
+        do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
+
         $groups = $this->groups_get( 'comment', 'comment' );
 
         $id = null;
@@ -1606,6 +1618,8 @@ class PodsMeta {
             <?php
             }
         }
+
+        do_action( 'pods_meta_' . __FUNCTION__ . '_post', $commenter, $user_identity );
     }
 
     /**
@@ -1667,6 +1681,8 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
             }
         }
+
+        $form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
 
         return $form_fields;
     }
@@ -1734,6 +1750,8 @@ class PodsMeta {
     public function meta_comment ( $comment, $metabox ) {
         wp_enqueue_style( 'pods-form' );
 
+        do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
+
         $hidden_fields = array();
 ?>
     <table class="form-table editcomment pods-metabox">
@@ -1789,6 +1807,8 @@ class PodsMeta {
 
             echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
         }
+
+        do_action( 'pods_meta_' . __FUNCTION__ . '_post', $comment, $metabox );
     }
 
     /**

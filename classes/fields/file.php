@@ -34,7 +34,7 @@ class PodsField_File extends PodsField {
      * @var \PodsAPI
      * @since 2.3
      */
-    private static $api = false;
+    protected static $api = false;
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -74,12 +74,12 @@ class PodsField_File extends PodsField {
 
         $options = array(
             self::$type . '_format_type' => array(
-                'label' => __( 'File Type', 'pods' ),
+                'label' => __( 'Upload Limit', 'pods' ),
                 'default' => 'single',
                 'type' => 'pick',
                 'data' => array(
-                    'single' => __( 'Single Select', 'pods' ),
-                    'multi' => __( 'Multiple Select', 'pods' )
+                    'single' => __( 'Single File', 'pods' ),
+                    'multi' => __( 'Multiple Files', 'pods' )
                 ),
                 'dependency' => true
             ),
@@ -113,7 +113,7 @@ class PodsField_File extends PodsField {
                 'type' => 'boolean'
             ),
             self::$type . '_limit' => array(
-                'label' => __( 'File Limit', 'pods' ),
+                'label' => __( 'Max Number of Files', 'pods' ),
                 'depends-on' => array( self::$type . '_format_type' => 'multi' ),
                 'default' => 0,
                 'type' => 'number'
@@ -515,10 +515,7 @@ class PodsField_File extends PodsField {
      * @since 2.3
      */
     public function admin_ajax_upload () {
-        if ( false === headers_sent() ) {
-            if ( '' == session_id() )
-                @session_start();
-        }
+		pods_session_start();
 
         // Sanitize input
         $params = pods_unslash( (array) $_POST );

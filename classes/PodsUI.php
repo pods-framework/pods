@@ -966,6 +966,32 @@ class PodsUI {
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
 
+		if ( !empty( $options->actions_disabled ) ) {
+			if ( !empty( $options->actions_bulk ) ) {
+				$actions_bulk = $options->actions_bulk;
+
+				foreach ( $actions_bulk as $action => $action_opt ) {
+					if ( in_array( $action, $options->actions_disabled ) ) {
+						unset( $actions_bulk[ $action ] );
+					}
+				}
+
+				$options->actions_bulk = $actions_bulk;
+			}
+
+			if ( !empty( $options->actions_custom ) ) {
+				$actions_custom = $options->actions_custom;
+
+				foreach ( $actions_custom as $action => $action_opt ) {
+					if ( in_array( $action, $options->actions_disabled ) ) {
+						unset( $actions_custom[ $action ] );
+					}
+				}
+
+				$options->actions_custom = $actions_custom;
+			}
+		}
+
         $options->validate( 'extra', $this->extra, 'array_merge' );
 
         $options->validate( 'style', $this->style );
@@ -1285,7 +1311,7 @@ class PodsUI {
             $this->ui_page[] = 'form';
             if ( 'save' == $this->do && $this->save && !empty( $_POST ) )
                 $this->save();
-            $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? 1 : 0 );
+            $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? true : false );
         }
         elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) {
             $this->delete( $this->id );
@@ -1353,7 +1379,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'add' ] ) && is_callable( $this->actions_custom[ 'add' ] ) )
             return call_user_func_array( $this->actions_custom[ 'add' ], array( &$this ) );
         ?>
-    <div class="wrap">
+    <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -1391,7 +1417,7 @@ class PodsUI {
         elseif ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
         ?>
-    <div class="wrap">
+    <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -2112,7 +2138,7 @@ class PodsUI {
         if ( true === $reorder )
             wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
-    <div class="wrap pods-admin">
+    <div class="wrap pods-admin pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -2459,6 +2485,8 @@ class PodsUI {
     }
 
     public function filters () {
+		include_once ABSPATH . 'wp-admin/includes/template.php';
+
         wp_enqueue_script( 'thickbox' );
         wp_enqueue_style( 'pods-ui-list-table', PODS_URL . 'ui/css/pods-ui-list-table.css', array( 'thickbox' ), PODS_VERSION );
 
@@ -3473,7 +3501,7 @@ class PodsUI {
         if ( false !== strpos( $request_uri, '?' ) )
             $append = true;
 
-        if ( false !== $this->pagination_total ) {
+        if ( false !== $this->pagination_total && ( $header || 1 != $this->total_found ) ) {
             $singular_label = strtolower( $this->item );
             $plural_label = strtolower( $this->items );
             ?>

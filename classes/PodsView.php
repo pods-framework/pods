@@ -7,7 +7,7 @@ class PodsView {
     /**
      * @var array $cache_modes Array of available cache modes
      */
-    static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache' );
+    static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'option-cache' );
 
     /**
      * @return \PodsView
@@ -20,7 +20,7 @@ class PodsView {
      *
      * @param string $view Path of the view file
      * @param array|null $data (optional) Data to pass on to the template
-     * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
      * @param string $cache_mode (optional) Decides the caching method to use for the view.
      *
      * @return bool|mixed|null|string|void
@@ -119,48 +119,145 @@ class PodsView {
      * @param string $key Key for the cache
      * @param string $cache_mode (optional) Decides the caching method to use for the view.
      * @param string $group (optional) Set the group of the value.
+	 * @param string $callback (optional) Callback function to run to set the value if not cached.
      *
      * @return bool|mixed|null|void
      *
      * @since 2.0
      */
-    public static function get ( $key, $cache_mode = 'cache', $group = '' ) {
-        $object_cache = false;
+	public static function get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
-        if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
-            $object_cache = true;
+		$object_cache = false;
 
-        if ( !in_array( $cache_mode, self::$cache_modes ) )
-            $cache_mode = 'cache';
+		if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+			$object_cache = true;
+		}
 
-        $group_key = '';
+		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+			$cache_mode = 'cache';
+		}
 
-        if ( !empty( $group ) )
-            $group_key = $group . '_';
+		$group_key = '';
 
-        $original_key = $key;
+		if ( !empty( $group ) ) {
+			$group_key = $group . '_';
+		}
 
-        // Patch for limitations in DB
-        if ( 44 < strlen( $group_key . $key ) ) {
-            $key = md5( $key );
+		$original_key = $key;
 
-            if ( empty( $group_key ) )
-                $group_key = 'pods_';
-        }
+		// Patch for limitations in DB
+		if ( 44 < strlen( $group_key . $key ) ) {
+			$key = md5( $key );
 
-        $value = null;
+			if ( empty( $group_key ) ) {
+				$group_key = 'pods_';
+			}
+		}
 
-        if ( 'transient' == $cache_mode )
-            $value = get_transient( $group_key . $key );
-        elseif ( 'site-transient' == $cache_mode )
-            $value = get_site_transient( $group_key . $key );
-        elseif ( 'cache' == $cache_mode && $object_cache )
-            $value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
+		$value = null;
 
-        $value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
+		$called = false;
 
-        return $value;
-    }
+		$pods_nocache = pods_var_raw( 'pods_nocache' );
+		$nocache = array();
+
+		if ( pods_is_admin() && null !== $pods_nocache ) {
+			if ( 1 < strlen( $pods_nocache ) ) {
+				$nocache = explode( ',', $pods_nocache );
+			}
+			else {
+				$nocache = self::$cache_modes;
+			}
+		}
+
+		if ( 'transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+			$value = get_transient( $group_key . $key );
+		}
+		elseif ( 'site-transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+			$value = get_site_transient( $group_key . $key );
+		}
+		elseif ( 'cache' == $cache_mode && $object_cache && !in_array( $cache_mode, $nocache ) ) {
+			$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
+		}
+		elseif ( 'option-cache' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+			global $_wp_using_ext_object_cache;
+
+			$pre = apply_filters( 'pre_transient_' . $key, false );
+
+			if ( false !== $pre ) {
+				$value = $pre;
+			}
+			elseif ( $_wp_using_ext_object_cache ) {
+				$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+				$timeout = wp_cache_get( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+
+				if ( !empty( $timeout ) && $timeout < time() ) {
+					if ( is_callable( $callback ) ) {
+						// Callback function should do it's own set/update for cache
+						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
+
+						if ( null !== $callback_value && false !== $callback_value ) {
+							$value = $callback_value;
+						}
+
+						$called = true;
+					}
+					else {
+						$value = false;
+
+						wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+						wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+					}
+				}
+			}
+			else {
+				$transient_option = '_pods_option_' . $key;
+				$transient_timeout = '_pods_option_timeout_' . $key;
+
+				$value = get_option( $transient_option );
+				$timeout = get_option( $transient_timeout );
+
+				if ( !empty( $timeout ) && $timeout < time() ) {
+					if ( is_callable( $callback ) ) {
+						// Callback function should do it's own set/update for cache
+						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
+
+						if ( null !== $callback_value && false !== $callback_value ) {
+							$value = $callback_value;
+						}
+
+						$called = true;
+					}
+					else {
+						$value = false;
+
+						delete_option( $transient_option );
+						delete_option( $transient_timeout );
+					}
+				}
+			}
+
+			if ( false !== $value ) {
+				$value = apply_filters( 'transient_' . $key, $value );
+			}
+		}
+		else {
+			$value = false;
+		}
+
+		if ( false === $value && is_callable( $callback ) && !$called ) {
+			// Callback function should do it's own set/update for cache
+			$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
+
+			if ( null !== $callback_value && false !== $callback_value ) {
+				$value = $callback_value;
+			}
+		}
+
+		$value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
+
+		return $value;
+	}
 
     /**
      * @static
@@ -169,7 +266,7 @@ class PodsView {
      *
      * @param string $key Key for the cache
      * @param mixed $value Value to add to the cache
-     * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param int $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
      * @param string $cache_mode (optional) Decides the caching method to use for the view.
      * @param string $group (optional) Set the group of the value.
      *
@@ -210,6 +307,43 @@ class PodsView {
             set_site_transient( $group_key . $key, $value, $expires );
         elseif ( 'cache' == $cache_mode && $object_cache )
             wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
+		elseif ( 'option-cache' == $cache_mode ) {
+			global $_wp_using_ext_object_cache;
+
+			$value = apply_filters( 'pre_set_transient_' . $key, $value );
+
+			if ( $_wp_using_ext_object_cache ) {
+				$result = wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+
+				if ( $expires ) {
+					$result = wp_cache_set( '_timeout_' . $key, $expires, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+				}
+			}
+			else {
+				$transient_timeout = '_pods_option_timeout_' . $key;
+				$key = '_pods_option_' . $key;
+
+				if ( false === get_option( $key ) ) {
+					if ( $expires ) {
+						add_option( $transient_timeout, time() + $expires, '', 'no' );
+					}
+
+					$result = add_option( $key, $value, '', 'no' );
+				}
+				else {
+					if ( $expires ) {
+						update_option( $transient_timeout, time() + $expires );
+					}
+
+					$result = update_option( $key, $value );
+				}
+			}
+
+			if ( $result ) {
+				do_action( 'set_transient_' . $key );
+				do_action( 'setted_transient', $key );
+			}
+		}
 
         do_action( 'pods_view_set_' . $cache_mode, $original_key, $value, $expires, $group );
 
@@ -285,6 +419,31 @@ class PodsView {
             else
                 wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), 'pods_view' );
         }
+		elseif ( 'option-cache' == $cache_mode ) {
+			global $_wp_using_ext_object_cache;
+
+			do_action( 'delete_transient_' . $key, $key );
+
+			if ( $_wp_using_ext_object_cache ) {
+				$result = wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+
+				wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+			}
+			else {
+				$option_timeout = '_pods_option_timeout_' . $key;
+				$option = '_pods_option_' . $key;
+
+				$result = delete_option( $option );
+
+				if ( $result ) {
+					delete_option( $option_timeout );
+				}
+			}
+
+			if ( $result ) {
+				do_action( 'deleted_transient', $key );
+			}
+		}
 
         do_action( 'pods_view_clear_' . $cache_mode, $original_key, $group );
 

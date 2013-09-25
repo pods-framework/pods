@@ -840,7 +840,11 @@ class PodsAdmin {
         if ( 'taxonomy' == pods_var( 'type', $pod ) && !$fields )
             $tabs[ 'extra-fields' ] = __( 'Extra Fields', 'pods' );
 
-        $tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) ) );
+		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
+
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $tabs, $pod, $addtl_args );
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ], $tabs, $pod, $addtl_args );
+        $tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
 
         return $tabs;
     }
@@ -1042,7 +1046,7 @@ class PodsAdmin {
                 ),
                 'query_var' => array(
                     'label' => __( 'Query Var', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href="http://codex.wordpress.org/WordPress_Query_Vars">WordPress Query Vars</a> from the WordPress Codex.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'boolean_yes_label' => ''
@@ -1055,8 +1059,8 @@ class PodsAdmin {
                     'boolean_yes_label' => ''
                 ),
                 'default_status' => array(
-                    'name' => 'post_status',
-                    'label' => 'Status',
+                    'label' => __( 'Default Status', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
                     'type' => 'pick',
                     'pick_object' => 'post-status',
                     'default' => apply_filters( 'pods_api_default_status_' . pods_var_raw( 'name', $pod, 'post_type', null, true ), 'draft', $pod )
@@ -1141,6 +1145,25 @@ class PodsAdmin {
                     'boolean_yes_label' => ''
                 );
             }
+
+			// Integration for Single Value Taxonomy UI
+			if ( function_exists( 'tax_single_value_meta_box' ) ) {
+                $options[ 'admin-ui' ][ 'single_value' ] = array(
+                    'label' => __( 'Single Value Taxonomy', 'pods' ),
+                    'help' => __( 'Use a drop-down for the input instead of the WordPress default', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                );
+
+                $options[ 'admin-ui' ][ 'single_value_required' ] = array(
+                    'label' => __( 'Single Value Taxonomy - Required', 'pods' ),
+                    'help' => __( 'A term will be selected by default in the Post Editor, not optional', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                );
+			}
 
             // @todo fill this in
             $options[ 'advanced' ] = array(
@@ -1321,6 +1344,8 @@ class PodsAdmin {
             );
         }
 
+        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $options, $pod );
+        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ], $options, $pod );
         $options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
 
         return $options;
@@ -2035,8 +2060,7 @@ class PodsAdmin {
      */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
-            if ( '' == session_id() )
-                @session_start();
+			pods_session_start();
 
             header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
         }

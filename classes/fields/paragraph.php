@@ -124,12 +124,14 @@ class PodsField_Paragraph extends PodsField {
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'depends-on' => array( self::$type . '_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
-                'type' => 'text'
+                'type' => 'text',
+				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
             )/*,
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to -1 for no limit', 'pods' )
             ),
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
@@ -293,13 +295,19 @@ class PodsField_Paragraph extends PodsField {
         if ( 1 == pods_var( self::$type . '_allow_html', $options ) ) {
             $allowed_html_tags = '';
 
-            if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
-                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-            }
+			if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+				$allowed_tags = explode( ' ', $allowed_tags );
+				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
-            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
-                $value = strip_tags( $value, $allowed_html_tags );
+				if ( !empty( $allowed_tags ) ) {
+					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				}
+			}
+
+			if ( !empty( $allowed_html_tags ) )
+				$value = strip_tags( $value, $allowed_html_tags );
         }
         else
             $value = strip_tags( $value );

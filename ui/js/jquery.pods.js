@@ -99,7 +99,7 @@
                         var $el = $( this );
                         var field_name = $el.prop( 'name' );
 
-                        if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
+                        if ( 'undefined' != typeof field_name && null !== field_name && '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
                             var val = $el.val();
 
                             if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
@@ -759,16 +759,21 @@
                 $( '.pods-wizard .pods-wizard-step' ).hide();
                 $( '.pods-wizard .pods-wizard-step:first' ).show();
             },
-            setup_dependencies : function( $obj ) {
-                var $el = $obj;
-                var $current = $el.closest( '.pods-dependency' );
-                var $field = $el;
+            setup_dependencies : function( $el ) {
+                var $current = $el.closest( '.pods-dependency' ),
+					$field = $el,
+					val = $el.val();
 
-                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var dependent_specific = dependent_flag + '-' + $el.val().replace( /\_/gi, '-' );
+				if ( null === val ) {
+					val = '';
+				}
+
+                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' ),
+					dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( dependent_flag ).each( function () {
-                    var $dependent_el = $( this );
+                    var $dependent_el = $( this ),
+						dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -786,7 +791,7 @@
                                 } );
 
                                 if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                     dependency_trigger = window[ dependency_trigger ];
 
@@ -814,7 +819,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 
@@ -840,7 +845,7 @@
                                 } );
 
                                 if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                     dependency_trigger = window[ dependency_trigger ];
 
@@ -860,7 +865,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 
@@ -873,10 +878,11 @@
                 } );
 
                 var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var exclude_specific = exclude_flag + '-' + $el.val().replace( /\_/gi, '-' );
+                var exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( exclude_flag ).each( function () {
-                    var $dependent_el = $( this );
+                    var $dependent_el = $( this ),
+						dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -900,7 +906,7 @@
                                 } );
 
                                 if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                     dependency_trigger = window[ dependency_trigger ];
 
@@ -928,7 +934,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 
@@ -950,7 +956,7 @@
                                 } );
 
                                 if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                     dependency_trigger = window[ dependency_trigger ];
 
@@ -970,7 +976,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 
@@ -981,11 +987,12 @@
                 } );
 
                 var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var wildcard_value = $el.val().replace( /\_/gi, '-' );
+                var wildcard_value = val.replace( /\_/gi, '-' );
 
                 $current.find( wildcard_flag ).each( function () {
-                    var $dependent_el = $( this );
-                    var wildcard = $dependent_el.data( 'wildcard' );
+                    var $dependent_el = $( this ),
+						wildcard = $dependent_el.data( 'wildcard' ),
+						dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( null !== wildcard_value.match( wildcard ) ) {
@@ -1003,7 +1010,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 
@@ -1029,7 +1036,7 @@
                             } );
 
                             if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
                                 dependency_trigger = window[ dependency_trigger ];
 

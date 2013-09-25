@@ -180,7 +180,7 @@ class Pods_Templates extends PodsComponent {
     function remove_row_actions ( $actions, $post ) {
         global $current_screen;
 
-        if ( $this->object_type != $current_screen->post_type )
+        if ( !is_object( $current_screen ) || $this->object_type != $current_screen->post_type )
             return $actions;
 
         if ( isset( $actions[ 'view' ] ) )
@@ -485,15 +485,19 @@ class Pods_Templates extends PodsComponent {
         if ( empty( $obj ) || !is_object( $obj ) )
             return '';
 
-        $code = str_replace( '$this->', '$obj->', $code );
+		$code = trim( $code );
 
-        if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
+		if ( false !== strpos( $code, '<?' ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+			pods_deprecated( 'Pod Template PHP code has been deprecated, please use WP Templates instead of embedding PHP.', '2.3' );
+
+        	$code = str_replace( '$this->', '$obj->', $code );
+
             ob_start();
 
             eval( "?>$code" );
 
             $out = ob_get_clean();
-        }
+		}
         else
             $out = $code;
 

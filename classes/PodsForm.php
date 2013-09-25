@@ -178,6 +178,19 @@ class PodsForm {
      * @since 2.0
      */
     public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
+		// Take a field array
+		if ( is_array( $name ) ) {
+			$options = $name;
+
+			if ( is_object( $type ) ) {
+				$pod = $type;
+				$id = $options;
+			}
+
+			$name = pods_var_raw( 'name', $options );
+			$type = pods_var_raw( 'type', $options );
+		}
+
         $options = self::options( $type, $options );
 
         if ( null === $value || ( '' === $value && 'boolean' == $type ) || ( !empty( $pod ) && empty( $id ) ) )
@@ -1199,6 +1212,10 @@ class PodsForm {
             'slug'
         );
 
+		if ( pods_developer() ) {
+			$field_types[] = 'html';
+		}
+
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );
 
         $field_types = array_filter( array_unique( $field_types ) );
@@ -1313,5 +1330,18 @@ class PodsForm {
         $field_types = array( 'code', 'paragraph', 'slug','password', 'text', 'wysiwyg' );
 
         return apply_filters( 'pods_text_field_types', $field_types );
+    }
+
+    /**
+     * Get list of available text field types
+     *
+     * @return array Text field types
+     *
+     * @since 2.3
+     */
+    public static function block_field_types () {
+        $field_types = array( 'html', 'section' );
+
+        return apply_filters( 'pods_block_field_types', $field_types );
     }
 }

@@ -793,18 +793,20 @@ class Pods_Pages extends PodsComponent {
                 $pods =& $GLOBALS[ 'pods' ];
 
             if ( 0 < strlen( trim( $pods_page[ 'code' ] ) ) )
-                $content = $pods_page[ 'code' ];
+                $content = trim( $pods_page[ 'code' ] );
 
             ob_start();
 
             do_action( 'pods_content_pre', $pods_page, $content );
 
             if ( 0 < strlen( $content ) ) {
-                if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
-                    pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1' );
+                if ( false !== strpos( $content, '<?' ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+                    pods_deprecated( 'Pod Page PHP code has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
                     eval( "?>$content" );
                 }
+				elseif ( is_object( $pods ) && !empty( $pods->id ) )
+					echo $pods->do_magic_tags( $content );
                 else
                     echo $content;
             }
@@ -852,7 +854,7 @@ class Pods_Pages extends PodsComponent {
                     $content = self::$exists[ 'precode' ];
 
                 if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
-                    pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1' );
+                    pods_deprecated( 'Pod Page Precode has been deprecated, please use WP Page Templates or hook into the pods_content filter instead of embedding PHP.', '2.1' );
 
                     eval( "?>$content" );
                 }
@@ -1164,7 +1166,7 @@ function pods_content ( $return = false, $pods_page = false ) {
  * @since 2.3.4
  */
 function pods_page_length_sort ( $a, $b ) {
-    return strlen( $a ) - strlen( $b );
+	return strlen( $b ) - strlen( $a );
 }
 
 /**

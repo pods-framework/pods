@@ -245,6 +245,8 @@ if ( isset( $_GET[ 'do' ] ) ) {
     <?php
         if ( !empty( $tabs ) )
             echo '<h2>' . __( 'Manage Fields', 'pods' ) . '</h2>';
+
+		do_action( 'pods_admin_ui_setup_edit_fields', $pod, $obj );
     ?>
 
     <!-- pods table -->
@@ -514,6 +516,14 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
                         </div>
                     </li>
                 <?php } ?>
+
+				<?php if ( defined( 'YARPP_VERSION' ) ) { ?>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_yarpp_support', pods_var_raw( 'supports_yarpp_support', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'YARPP Support', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+				<?php } ?>
             </ul>
         </div>
     </div>

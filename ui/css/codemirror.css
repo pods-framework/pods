@@ -6,6 +6,8 @@
   position: relative;
   /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
   overflow: hidden;
+
+  max-width: 100%;
 }
 
 .CodeMirror-scroll {

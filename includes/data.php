@@ -6,161 +6,270 @@
  * Filter input and return sanitized output
  *
  * @param mixed $input The string, array, or object to sanitize
- * @param bool $nested
+ * @param array $params Additional options
  *
  * @return array|mixed|object|string|void
+ *
  * @since 1.2.0
+ *
+ * @see wp_slash
  */
-function pods_sanitize ( $input, $nested = false ) {
-    $output = array();
+function pods_sanitize( $input, $params = array() ) {
 
-    if ( empty( $input ) )
-        $output = $input;
-    elseif ( is_object( $input ) ) {
-        $input = get_object_vars( $input );
+	$output = array();
 
-        foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val, true );
-        }
+	$defaults = array(
+		'nested' => false,
+		'type' => null // %s %d %f etc
+	);
 
-        $output = (object) $output;
-    }
-    elseif ( is_array( $input ) ) {
-        foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val, true );
-        }
-    }
-    // @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
-    elseif ( function_exists( 'wp_slash' ) )
-        $output = wp_slash( $input );
-    else
-        $output = esc_sql( $input );
+	if ( !is_array( $params ) ) {
+		$defaults[ 'type' ] = $params;
 
-    if ( false === $nested )
-        $output = apply_filters( 'pods_sanitize', $output, $input );
+		$params = $defaults;
+	}
+	else {
+		$params = array_merge( $defaults, (array) $params );
+	}
 
-    return $output;
+	if ( empty( $input ) ) {
+		$output = $input;
+	}
+	elseif ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
+
+		$n_params = $params;
+		$n_params[ 'nested' ] = true;
+
+		foreach ( $input as $key => $val ) {
+			$output[ pods_sanitize( $key ) ] = pods_sanitize( $val, $n_params );
+		}
+
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		$n_params = $params;
+		$n_params[ 'nested' ] = true;
+
+		foreach ( $input as $key => $val ) {
+			$output[ pods_sanitize( $key ) ] = pods_sanitize( $val, $n_params );
+		}
+	}
+	elseif ( !empty( $params[ 'type' ] ) && false !== strpos( $params[ 'type' ], '%' ) ) {
+		/**
+		 * @var $wpdb wpdb
+		 */
+		global $wpdb;
+
+		$output = $wpdb->prepare( $params[ 'type' ], $output );
+	}
+	// @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
+	elseif ( function_exists( 'wp_slash' ) ) {
+		$output = wp_slash( $input );
+	}
+	else {
+		$output = esc_sql( $input );
+	}
+
+	if ( false === $params[ 'nested' ] ) {
+		$output = apply_filters( 'pods_sanitize', $output, $input );
+	}
+
+	return $output;
+
 }
+
 /**
  * Filter input and return sanitized SQL LIKE output
  *
  * @param mixed $input The string, array, or object to sanitize
- * @param bool $nested
  *
  * @return array|mixed|object|string|void
+ *
  * @since 2.3.9
+ *
+ * @see like_escape
  */
-function pods_sanitize_like ( $input, $nested = false ) {
-    return like_escape( pods_sanitize( $input ) );
+function pods_sanitize_like( $input ) {
+
+	$output = array();
+
+	if ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
+
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_sanitize_like( $val );
+		}
+
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_sanitize_like( $val );
+		}
+	}
+	else {
+		$output = like_escape( pods_sanitize( $input ) );
+	}
+
+	return $output;
+
 }
 
 /**
  * Filter input and return slashed output
  *
  * @param mixed $input The string, array, or object to sanitize
- * @param bool $nested
+ * @param array $params Additional options
  *
  * @return array|mixed|object|string|void
+ *
  * @since 2.3.9
+ *
+ * @see wp_slash
  */
-function pods_slash ( $input, $nested = false ) {
-    $output = array();
+function pods_slash( $input, $params = array() ) {
 
-    if ( empty( $input ) )
-        $output = $input;
-    elseif ( is_object( $input ) ) {
-        $input = get_object_vars( $input );
+	$output = array();
 
-        foreach ( $input as $key => $val ) {
-            $output[ $key ] = pods_slash( $val, true );
-        }
+	$defaults = array(
+		'type' => null // %s %d %f etc
+	);
 
-        $output = (object) $output;
-    }
-    elseif ( is_array( $input ) ) {
-        foreach ( $input as $key => $val ) {
-            $output[ $key ] = pods_slash( $val, true );
-        }
-    }
-    elseif ( function_exists( 'wp_slash' ) )
-        $output = wp_slash( $input );
-    else
-        $output = addslashes( $input );
+	if ( !is_array( $params ) ) {
+		$defaults[ 'type' ] = $params;
 
-    return $output;
+		$params = $defaults;
+	}
+	else {
+		$params = array_merge( $defaults, (array) $params );
+	}
+
+	if ( empty( $input ) ) {
+		$output = $input;
+	}
+	elseif ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
+
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_slash( $val, $params );
+		}
+
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_slash( $val, $params );
+		}
+	}
+	elseif ( !empty( $params[ 'type' ] ) && false !== strpos( $params[ 'type' ], '%' ) ) {
+		/**
+		 * @var $wpdb wpdb
+		 */
+		global $wpdb;
+
+		$output = $wpdb->prepare( $params[ 'type' ], $output );
+	}
+	elseif ( function_exists( 'wp_slash' ) ) {
+		$output = wp_slash( $input );
+	}
+	else {
+		$output = addslashes( $input );
+	}
+
+	return $output;
+
 }
 
 /**
  * Filter input and return unsanitized output
  *
  * @param mixed $input The string, array, or object to unsanitize
- * @param bool $nested
+ * @param array $params Additional options
  *
  * @return array|mixed|object|string|void
+ *
  * @since 1.2.0
  */
-function pods_unsanitize ( $input, $nested = false ) {
-    $output = array();
+function pods_unsanitize( $input, $params = array() ) {
 
-    if ( empty( $input ) )
-        $output = $input;
-    elseif ( is_object( $input ) ) {
-        $input = get_object_vars( $input );
+	$output = array();
 
-        foreach ( $input as $key => $val ) {
-            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, true );
-        }
+	if ( empty( $input ) ) {
+		$output = $input;
+	}
+	elseif ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
 
-        $output = (object) $output;
-    }
-    elseif ( is_array( $input ) ) {
-        foreach ( $input as $key => $val ) {
-            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, true );
-        }
-    }
-    // @todo Figure out what to do to unescape mysql_real_escape_string
-    else
-        $output = ( pods_version_check( 'wp', '3.6' ) ? stripslashes( $input ) : stripslashes( $input ) );
+		$n_params = (array) $params;
+		$n_params[ 'nested' ] = true;
 
-    if ( false === $nested )
-        $output = apply_filters( 'pods_unsanitize', $output, $input );
+		foreach ( $input as $key => $val ) {
+			$output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, $n_params );
+		}
 
-    return $output;
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		$n_params = (array) $params;
+		$n_params[ 'nested' ] = true;
+
+		foreach ( $input as $key => $val ) {
+			$output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, $n_params );
+		}
+	}
+	// @todo Figure out what to do to unescape mysql_real_escape_string
+	else {
+		$output = ( pods_version_check( 'wp', '3.6' ) ? stripslashes( $input ) : stripslashes( $input ) );
+	}
+
+	if ( !is_array( $params ) || !isset( $params[ 'nested' ] ) || false === $params[ 'nested' ] ) {
+		$output = apply_filters( 'pods_unsanitize', $output, $input );
+	}
+
+	return $output;
+
 }
 
 /**
  * Filter input and return unslashed output
  *
  * @param mixed $input The string, array, or object to unsanitize
- * @param bool $nested
  *
  * @return array|mixed|object|string|void
+ *
  * @since 2.3.9
+ *
+ * @see wp_unslash
  */
-function pods_unslash ( $input, $nested = false ) {
-    $output = array();
+function pods_unslash( $input ) {
 
-    if ( empty( $input ) )
-        $output = $input;
-    elseif ( is_object( $input ) ) {
-        $input = get_object_vars( $input );
+	$output = array();
 
-        foreach ( $input as $key => $val ) {
-            $output[ $key ] = pods_unslash( $val, true );
-        }
+	if ( empty( $input ) ) {
+		$output = $input;
+	}
+	elseif ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
 
-        $output = (object) $output;
-    }
-    elseif ( is_array( $input ) ) {
-        foreach ( $input as $key => $val ) {
-            $output[ $key ] = pods_unslash( $val, true );
-        }
-    }
-    // @todo Figure out what to do to unescape mysql_real_escape_string
-    else
-        $output = ( pods_version_check( 'wp', '3.6' ) ? wp_unslash( $input ) : stripslashes( $input ) );
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_unslash( $val );
+		}
 
-    return $output;
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		foreach ( $input as $key => $val ) {
+			$output[ $key ] = pods_unslash( $val );
+		}
+	}
+	// @todo Figure out what to do to unescape mysql_real_escape_string
+	else {
+		$output = ( pods_version_check( 'wp', '3.6' ) ? wp_unslash( $input ) : stripslashes( $input ) );
+	}
+
+	return $output;
+
 }
 
 /**
@@ -705,11 +814,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
  *
  * @see pods_v
  */
-function pods_v_sanitized( $var = null, $type = 'get', $default = null, $params ) {
+function pods_v_sanitized( $var = null, $type = 'get', $default = null, $params = array() ) {
 
 	$output = pods_v( $var, $type, $default, $params );
 
-	$output = pods_sanitize( $output );
+	$output = pods_sanitize( $output, $params );
 
 	return $output;
 

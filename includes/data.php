@@ -174,39 +174,691 @@ function pods_unslash ( $input, $nested = false ) {
  * @since 1.2.0
  */
 function pods_trim ( $input, $charlist = null, $lr = null ) {
-    $output = array();
 
-    if ( is_object( $input ) ) {
-        $input = get_object_vars( $input );
+	$output = array();
 
-        foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
-        }
+	if ( is_object( $input ) ) {
+		$input = get_object_vars( $input );
 
-        $output = (object) $output;
-    }
-    elseif ( is_array( $input ) ) {
-        foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
-        }
-    }
-    else {
-        if ( 'l' == $lr )
-            $output = ltrim( $input, $charlist );
-        elseif ( 'r' == $lr )
-            $output = rtrim( $input, $charlist );
-        else
-            $output = trim( $input, $charlist );
-    }
+		foreach ( $input as $key => $val ) {
+			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+		}
 
-    return $output;
+		$output = (object) $output;
+	}
+	elseif ( is_array( $input ) ) {
+		foreach ( $input as $key => $val ) {
+			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+		}
+	}
+	else {
+		if ( 'l' == $lr ) {
+			$output = ltrim( $input, $charlist );
+		}
+		elseif ( 'r' == $lr ) {
+			$output = rtrim( $input, $charlist );
+		}
+		else {
+			$output = trim( $input, $charlist );
+		}
+	}
+
+	return $output;
+
+}
+
+/**
+ * Return a variable (if exists)
+ *
+ * @param mixed $var The variable name, can also be a modifier for specific types
+ * @param string|array|object $type (optional) Super globals, url/url-relative, constants, globals, options, transients, cache, user data, Pod field values, dates
+ * @param mixed $default (optional) The default value to set if variable doesn't exist
+ * @param bool $strict (optional) Only allow values (must not be empty)
+ * @param array $params (optional) Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
+ *
+ * @return mixed The variable (if exists), or default value
+ * @since 2.3.10
+ */
+function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
+
+	$defaults = array(
+		'casting' => false,
+		'allowed' => null
+	);
+
+	$params = (object) array_merge( $defaults, (array) $params );
+
+	$output = null;
+
+	if ( null === $type || '' === $type ) {
+		// Invalid $type
+	}
+	elseif ( is_array( $type ) ) {
+		if ( isset( $type[ $var ] ) ) {
+			$output = $type[ $var ];
+		}
+	}
+	elseif ( is_object( $type ) ) {
+		if ( isset( $type->{$var} ) ) {
+			$output = $type->{$var};
+		}
+	}
+	else {
+		$type = strtolower( (string) $type );
+
+		if ( 'get' == $type && isset( $_GET[ $var ] ) ) {
+			$output = pods_unslash( $_GET[ $var ] );
+		}
+		elseif ( 'post' == $type && isset( $_POST[ $var ] ) ) {
+			$output = pods_unslash( $_POST[ $var ] );
+		}
+		elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) ) {
+			$output = pods_unslash( $_REQUEST[ $var ] );
+		}
+		elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
+			$url = parse_url( pods_current_url() );
+			$uri = trim( $url[ 'path' ], '/' );
+			$uri = array_filter( explode( '/', $uri ) );
+
+			if ( 'first' == $var ) {
+				$var = 0;
+			}
+			elseif ( 'last' == $var ) {
+				$var = -1;
+			}
+
+			if ( is_numeric( $var ) ) {
+				$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
+			}
+		}
+		elseif ( 'url-relative' == $type ) {
+			$url_raw = pods_current_url();
+			$prefix = get_site_url();
+
+			if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix ) {
+				$url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
+			}
+
+			$url = parse_url( $url_raw );
+			$uri = trim( $url[ 'path' ], '/' );
+			$uri = array_filter( explode( '/', $uri ) );
+
+			if ( 'first' == $var ) {
+				$var = 0;
+			}
+			elseif ( 'last' == $var ) {
+				$var = -1;
+			}
+
+			if ( is_numeric( $var ) ) {
+				$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
+			}
+		}
+		elseif ( 'template-url' == $type ) {
+			$output = get_template_directory_uri();
+		}
+		elseif ( 'stylesheet-url' == $type ) {
+			$output = get_stylesheet_directory_uri();
+		}
+		elseif ( 'site-url' == $type ) {
+			$blog_id = $scheme = null;
+			$path = '';
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$blog_id = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$path = $var[ 1 ];
+				}
+				elseif ( isset( $var[ 2 ] ) ) {
+					$scheme = $var[ 2 ];
+				}
+			}
+			else {
+				$blog_id = $var;
+			}
+
+			$output = get_site_url( $blog_id, $path, $scheme );
+		}
+		elseif ( 'home-url' == $type ) {
+			$blog_id = $scheme = null;
+			$path = '';
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$blog_id = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$path = $var[ 1 ];
+				}
+				elseif ( isset( $var[ 2 ] ) ) {
+					$scheme = $var[ 2 ];
+				}
+			}
+			else {
+				$blog_id = $var;
+			}
+
+			$output = get_home_url( $blog_id, $path, $scheme );
+		}
+		elseif ( 'admin-url' == $type ) {
+			$blog_id = $scheme = null;
+			$path = '';
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$blog_id = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$path = $var[ 1 ];
+				}
+				elseif ( isset( $var[ 2 ] ) ) {
+					$scheme = $var[ 2 ];
+				}
+			}
+			else {
+				$blog_id = $var;
+			}
+
+			$output = get_admin_url( $blog_id, $path, $scheme );
+		}
+		elseif ( 'includes-url' == $type ) {
+			$output = includes_url( $var );
+		}
+		elseif ( 'content-url' == $type ) {
+			$output = content_url( $var );
+		}
+		elseif ( 'plugins-url' == $type ) {
+			$path = $plugin = '';
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$path = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$plugin = $var[ 1 ];
+				}
+			}
+			else {
+				$path = $var;
+			}
+
+			$output = plugins_url( $path, $plugin );
+		}
+		elseif ( 'network-site-url' == $type ) {
+			$path = '';
+			$scheme = null;
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$path = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$scheme = $var[ 1 ];
+				}
+			}
+			else {
+				$path = $var;
+			}
+
+			$output = network_site_url( $path, $scheme );
+		}
+		elseif ( 'network-home-url' == $type ) {
+			$path = '';
+			$scheme = null;
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$path = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$scheme = $var[ 1 ];
+				}
+			}
+			else {
+				$path = $var;
+			}
+
+			$output = network_home_url( $path, $scheme );
+		}
+		elseif ( 'network-admin-url' == $type ) {
+			$path = '';
+			$scheme = null;
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$path = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$scheme = $var[ 1 ];
+				}
+			}
+			else {
+				$path = $var;
+			}
+
+			$output = network_admin_url( $path, $scheme );
+		}
+		elseif ( 'user-admin-url' == $type ) {
+			$path = '';
+			$scheme = null;
+
+			if ( is_array( $var ) ) {
+				if ( isset( $var[ 0 ] ) ) {
+					$path = $var[ 0 ];
+				}
+				elseif ( isset( $var[ 1 ] ) ) {
+					$scheme = $var[ 1 ];
+				}
+			}
+			else {
+				$path = $var;
+			}
+
+			$output = user_admin_url( $path, $scheme );
+		}
+		elseif ( 'prefix' == $type ) {
+			global $wpdb;
+
+			$output = $wpdb->prefix;
+		}
+		elseif ( 'server' == $type && !pods_strict() ) {
+			if ( isset( $_SERVER[ $var ] ) ) {
+				$output = pods_unslash( $_SERVER[ $var ] );
+			}
+			elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) ) {
+				$output = pods_unslash( $_SERVER[ strtoupper( $var ) ] );
+			}
+		}
+		elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) ) {
+			$output = $_SESSION[ $var ];
+		}
+		elseif ( in_array( $type, array( 'global', 'globals' ) ) && isset( $GLOBALS[ $var ] ) ) {
+			$output = $GLOBALS[ $var ];
+		}
+		elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) ) {
+			$output = pods_unslash( $_COOKIE[ $var ] );
+		}
+		elseif ( 'constant' == $type && defined( $var ) ) {
+			$output = constant( $var );
+		}
+		elseif ( 'user' == $type && is_user_logged_in() ) {
+			$user = get_userdata( get_current_user_id() );
+
+			if ( isset( $user->{$var} ) ) {
+				$value = $user->{$var};
+			}
+			elseif ( 'role' == $var ) {
+				$value = '';
+
+				if ( !empty( $user->roles ) ) {
+					$value = array_shift( $user->roles );
+				}
+			}
+			else {
+				$value = get_user_meta( $user->ID, $var );
+			}
+
+			if ( is_array( $value ) && !empty( $value ) ) {
+				$output = $value;
+			}
+			elseif ( !is_array( $value ) && 0 < strlen( $value ) ) {
+				$output = $value;
+			}
+		}
+		elseif ( 'option' == $type ) {
+			$output = get_option( $var, $default );
+		}
+		elseif ( 'site-option' == $type ) {
+			$output = get_site_option( $var, $default );
+		}
+		elseif ( 'transient' == $type ) {
+			$output = get_transient( $var );
+		}
+		elseif ( 'site-transient' == $type ) {
+			$output = get_site_transient( $var );
+		}
+		elseif ( 'cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+			$group = 'default';
+			$force = false;
+
+			if ( !is_array( $var ) ) {
+				$var = explode( '|', $var );
+			}
+
+			if ( isset( $var[ 0 ] ) ) {
+				if ( isset( $var[ 1 ] ) ) {
+					$group = $var[ 1 ];
+				}
+
+				if ( isset( $var[ 2 ] ) ) {
+					$force = $var[ 2 ];
+				}
+
+				$var = $var[ 0 ];
+
+				$output = wp_cache_get( $var, $group, $force );
+			}
+		}
+		elseif ( 'pods-transient' == $type ) {
+			$callback = null;
+
+			if ( !is_array( $var ) ) {
+				$var = explode( '|', $var );
+			}
+
+			if ( isset( $var[ 0 ] ) ) {
+				if ( isset( $var[ 1 ] ) ) {
+					$callback = $var[ 1 ];
+				}
+
+				$var = $var[ 0 ];
+
+				$output = pods_transient_get( $var, $callback );
+			}
+		}
+		elseif ( 'pods-site-transient' == $type ) {
+			$callback = null;
+
+			if ( !is_array( $var ) ) {
+				$var = explode( '|', $var );
+			}
+
+			if ( isset( $var[ 0 ] ) ) {
+				if ( isset( $var[ 1 ] ) ) {
+					$callback = $var[ 1 ];
+				}
+
+				$var = $var[ 0 ];
+
+				$output = pods_site_transient_get( $var, $callback );
+			}
+		}
+		elseif ( 'pods-cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+			$group = 'default';
+			$callback = null;
+
+			if ( !is_array( $var ) ) {
+				$var = explode( '|', $var );
+			}
+
+			if ( isset( $var[ 0 ] ) ) {
+				if ( isset( $var[ 1 ] ) ) {
+					$group = $var[ 1 ];
+				}
+
+				if ( isset( $var[ 2 ] ) ) {
+					$callback = $var[ 2 ];
+				}
+
+				$var = $var[ 0 ];
+
+				$output = pods_cache_get( $var, $group, $callback );
+			}
+		}
+		elseif ( 'pods-option-cache' == $type ) {
+			$group = 'default';
+			$callback = null;
+
+			if ( !is_array( $var ) ) {
+				$var = explode( '|', $var );
+			}
+
+			if ( isset( $var[ 0 ] ) ) {
+				if ( isset( $var[ 1 ] ) ) {
+					$group = $var[ 1 ];
+				}
+
+				if ( isset( $var[ 2 ] ) ) {
+					$callback = $var[ 2 ];
+				}
+
+				$var = $var[ 0 ];
+
+				$output = pods_option_cache_get( $var, $group, $callback );
+			}
+		}
+		elseif ( 'date' == $type ) {
+			$var = explode( '|', $var );
+
+			if ( !empty( $var ) ) {
+				$output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
+			}
+		}
+		elseif ( in_array( $type, array( 'pods', 'pods_display' ) ) ) {
+			/**
+			 * @var $pods Pods
+			 */
+			global $pods;
+
+			if ( is_object( $pods ) && 'Pods' == get_class( $pods ) ) {
+				if ( 'pods' == $type ) {
+					$output = $pods->field( $var );
+
+					if ( is_array( $output ) ) {
+						$options = array(
+							'field' => $var,
+							'fields' => $pods->fields
+						);
+
+						$output = pods_serial_comma( $output, $options );
+					}
+				}
+				elseif ( 'pods_display' == $type ) {
+					$output = $pods->display( $var );
+				}
+			}
+		}
+		else {
+			$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
+		}
+	}
+
+	if ( null !== $default ) {
+		// Set default
+		if ( null === $output ) {
+			$output = $default;
+		}
+
+		// Casting
+		if ( true === $params->casting ) {
+			$output = pods_cast( $output, $default );
+		}
+	}
+
+	// Strict defaults for empty values
+	if ( true === $strict ) {
+		if ( empty( $output ) ) {
+			$output = $default;
+		}
+	}
+
+	// Allowed values
+	if ( null !== $params->allowed ) {
+		if ( is_array( $params->allowed ) ) {
+			// Not in array and is not the same array
+			if ( !in_array( $output, $params->allowed ) && ( !is_array( $output ) || $output !== $params->allowed ) ) {
+				$output = $default;
+			}
+		}
+		// Value doesn't match
+		elseif ( $output !== $params->allowed ) {
+			$output = $default;
+		}
+	}
+
+	return $output;
+}
+
+/**
+ * Return a sanitized variable (if exists)
+ *
+ * @param mixed $var The variable name, can also be a modifier for specific types
+ * @param string|array|object $type (optional) Super globals, url/url-relative, constants, globals, options, transients, cache, user data, Pod field values, dates
+ * @param mixed $default (optional) The default value to set if variable doesn't exist
+ * @param bool $strict (optional) Only allow values (must not be empty)
+ * @param array $params (optional) Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
+ *
+ * @return mixed The variable (if exists), or default value
+ * @since 2.3.10
+ *
+ * @see pods_v
+ */
+function pods_v_sanitized( $var = null, $type = 'get', $default = null, $params ) {
+
+	$output = pods_v( $var, $type, $default, $params );
+
+	$output = pods_sanitize( $output );
+
+	return $output;
+
+}
+
+/**
+ * Set a variable
+ *
+ * @param mixed $value The value to be set
+ * @param mixed $var The variable name, or URI segment position / query var name (if $type is 'url')
+ * @param string|array|object $type (optional) Super globals, url/url-relative, constants, globals, user data, Pod field values
+ *
+ * @return mixed Updated URL (if $type is 'url'), $value (if $type is 'constant'), Item ID (if $type is 'pods'), $type, or false if not set
+ * @since 2.3.10
+ */
+function pods_v_set( $value, $var, $type = 'get' ) {
+
+	$ret = false;
+
+	if ( null === $var || '' === $var ) {
+		// Invalid $var
+	}
+	elseif ( null === $type || '' === $type ) {
+		// Invalid $type
+	}
+	elseif ( is_array( $type ) ) {
+		$type[ $var ] = $value;
+
+		$ret = $type;
+	}
+	elseif ( is_object( $type ) ) {
+		$type->{$var} = $value;
+
+		$ret = $type;
+	}
+	else {
+		$type = strtolower( $type );
+
+		if ( 'get' == $type ) {
+			$_GET[ $var ] = $value;
+
+			$ret = $_GET;
+		}
+		elseif ( 'post' == $type ) {
+			$_POST[ $var ] = $value;
+
+			$ret = $_POST;
+		}
+		elseif ( 'request' == $type ) {
+			$_REQUEST[ $var ] = $value;
+
+			$ret = $_REQUEST;
+		}
+		elseif ( 'url' == $type ) {
+			if ( is_numeric( $var ) && function_exists( 'http_build_url' ) ) {
+				$url = parse_url( pods_current_url() );
+				$uri = trim( $url[ 'path' ], '/' );
+				$uri = array_filter( explode( '/', $uri ) );
+
+				if ( 'first' == $var ) {
+					$var = 0;
+				}
+				elseif ( 'last' == $var ) {
+					$var = -1;
+				}
+
+				if ( $var < 0 ) {
+					$uri[ count( $uri ) + $var ] = $value;
+				}
+				else {
+					$uri[ $var ] = $value;
+				}
+
+				$url[ 'path' ] = '/' . implode( '/', $uri ) . '/';
+				$url[ 'path' ] = trim( $url[ 'path' ], '/' );
+
+				$ret = http_build_url( $url );
+			}
+			else {
+				$ret = add_query_arg( array( $var => $value ) );
+			}
+		}
+		elseif ( 'server' == $type ) {
+			$_SERVER[ $var ] = $value;
+
+			$ret = $_SERVER;
+		}
+		elseif ( in_array( $type, array( 'global', 'globals' ) ) ) {
+			$GLOBALS[ $var ] = $value;
+
+			$ret = $GLOBALS;
+		}
+		elseif ( 'session' == $type ) {
+			// Session start
+			pods_session_start();
+
+			$_SESSION[ $var ] = $value;
+
+			$ret = $_SESSION;
+		}
+		elseif ( 'cookie' == $type && !headers_sent() ) {
+			setcookie( $var, $value, time() + 10 * DAY_IN_SECONDS, COOKIEPATH );
+
+			$ret = $_COOKIE;
+		}
+		elseif ( 'constant' == $type && !defined( $var ) && ( is_scalar( $value ) || null === $value ) ) {
+			define( $var, $value );
+
+			$ret = constant( $var );
+		}
+		elseif ( 'user' == $type && is_user_logged_in() ) {
+			$user = get_userdata( get_current_user_id() );
+
+			if ( isset( $user->{$var} ) ) {
+				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
+			}
+			elseif ( 'role' == $var ) {
+				$user->set_role( $value );
+			}
+			else {
+				update_user_meta( $user->ID, $var, $value );
+			}
+
+			$ret = get_userdata( $user->ID );
+		}
+		elseif ( 'pods' == $type ) {
+			/**
+			 * @var $pods Pods
+			 */
+			global $pods;
+
+			if ( is_object( $pods ) && 'Pods' == get_class( $pods ) && $pods->exists() ) {
+				$ret = $pods->save( $var, $value );
+			}
+		}
+		else {
+			$ret = apply_filters( 'pods_var_set_' . $type, $value, $var );
+		}
+	}
+
+	return $ret;
+
 }
 
 /**
  * Return a variable (if exists)
  *
  * @param mixed $var The variable name or URI segment position
- * @param string $type (optional) get|url|post|request|server|session|cookie|constant|globals|user|option|site-option|transient|site-transient|cache|date|pods
+ * @param string $type (optional) Super globals, url/url-relative, constants, globals, options, transients, cache, user data, Pod field values, dates
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
@@ -215,295 +867,28 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  *
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
+ *
+ * @deprecated 2.4
+ * @see pods_v_sanitized
  */
-function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
-    $output = null;
+function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
 
-    if ( is_array( $type ) )
-        $output = isset( $type[ $var ] ) ? $type[ $var ] : $default;
-    elseif ( is_object( $type ) )
-        $output = isset( $type->$var ) ? $type->$var : $default;
-    else {
-        $type = strtolower( (string) $type );
-
-        if ( 'get' == $type && isset( $_GET[ $var ] ) )
-            $output = pods_unslash( $_GET[ $var ] );
-        elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
-            $url = parse_url( pods_current_url() );
-            $uri = trim( $url[ 'path' ], '/' );
-            $uri = array_filter( explode( '/', $uri ) );
-
-            if ( 'first' == $var )
-                $var = 0;
-            elseif ( 'last' == $var )
-                $var = -1;
-
-            if ( is_numeric( $var ) )
-                $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
-        }
-        elseif ( 'url-relative' == $type ) {
-            $url_raw = pods_current_url();
-            $prefix = get_site_url();
-
-            if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix )
-                $url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
-
-            $url = parse_url( $url_raw );
-            $uri = trim( $url[ 'path' ], '/' );
-            $uri = array_filter( explode( '/', $uri ) );
-
-            if ( 'first' == $var )
-                $var = 0;
-            elseif ( 'last' == $var )
-                $var = -1;
-
-            if ( is_numeric( $var ) )
-                $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
-        }
-        elseif ( 'template-url' == $type )
-            $output = get_template_directory_uri();
-        elseif ( 'stylesheet-url' == $type )
-            $output = get_stylesheet_directory_uri();
-        elseif ( 'site-url' == $type ) {
-                $blog_id = $scheme = null;
-                $path = '';
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $blog_id = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $path = $var[ 1 ];
-                elseif ( isset( $var[ 2 ] ) )
-                    $scheme = $var[ 2 ];
-            }
-            else
-                $blog_id = $var;
-
-            $output = get_site_url( $blog_id, $path, $scheme );
-        }
-        elseif ( 'home-url' == $type ) {
-            $blog_id = $scheme = null;
-            $path = '';
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $blog_id = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $path = $var[ 1 ];
-                elseif ( isset( $var[ 2 ] ) )
-                    $scheme = $var[ 2 ];
-            }
-            else
-                $blog_id = $var;
-
-            $output = get_home_url( $blog_id, $path, $scheme );
-        }
-        elseif ( 'admin-url' == $type ) {
-            $blog_id = $scheme = null;
-            $path = '';
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $blog_id = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $path = $var[ 1 ];
-                elseif ( isset( $var[ 2 ] ) )
-                    $scheme = $var[ 2 ];
-            }
-            else
-                $blog_id = $var;
-
-            $output = get_admin_url( $blog_id, $path, $scheme );
-        }
-        elseif ( 'includes-url' == $type )
-            $output = includes_url( $var );
-        elseif ( 'content-url' == $type )
-            $output = content_url( $var );
-        elseif ( 'plugins-url' == $type ) {
-            $path = $plugin = '';
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $path = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $plugin = $var[ 1 ];
-            }
-            else
-                $path = $var;
-
-            $output = plugins_url( $path, $plugin );
-        }
-        elseif ( 'network-site-url' == $type ) {
-            $path = '';
-            $scheme = null;
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $path = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $scheme = $var[ 1 ];
-            }
-            else
-                $path = $var;
-
-            $output = network_site_url( $path, $scheme );
-        }
-        elseif ( 'network-home-url' == $type ) {
-            $path = '';
-            $scheme = null;
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $path = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $scheme = $var[ 1 ];
-            }
-            else
-                $path = $var;
-
-            $output = network_home_url( $path, $scheme );
-        }
-        elseif ( 'network-admin-url' == $type ) {
-            $path = '';
-            $scheme = null;
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $path = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $scheme = $var[ 1 ];
-            }
-            else
-                $path = $var;
-
-            $output = network_admin_url( $path, $scheme );
-        }
-        elseif ( 'user-admin-url' == $type ) {
-            $path = '';
-            $scheme = null;
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 0 ] ) )
-                    $path = $var[ 0 ];
-                elseif ( isset( $var[ 1 ] ) )
-                    $scheme = $var[ 1 ];
-            }
-            else
-                $path = $var;
-
-            $output = user_admin_url( $path, $scheme );
-        }
-        elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
-            $output = pods_unslash( $_POST[ $var ] );
-        elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) )
-            $output = pods_unslash( $_REQUEST[ $var ] );
-        elseif ( 'server' == $type ) {
-            if ( isset( $_SERVER[ $var ] ) )
-                $output = pods_unslash( $_SERVER[ $var ] );
-            elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) )
-                $output = pods_unslash( $_SERVER[ strtoupper( $var ) ] );
-        }
-        elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) )
-            $output = $_SESSION[ $var ];
-        elseif ( in_array( $type, array( 'global', 'globals' ) ) && isset( $GLOBALS[ $var ] ) )
-            $output = $GLOBALS[ $var ];
-        elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) )
-            $output = pods_unslash( $_COOKIE[ $var ] );
-        elseif ( 'constant' == $type && defined( $var ) )
-            $output = constant( $var );
-        elseif ( 'user' == $type && is_user_logged_in() ) {
-            $user = get_userdata( get_current_user_id() );
-
-            if ( isset( $user->{$var} ) )
-                $value = $user->{$var};
-            elseif ( 'role' == $var ) {
-                $value = '';
-
-                if ( !empty( $user->roles ) )
-                    $value = array_shift( $user->roles );
-            }
-            else
-                $value = get_user_meta( $user->ID, $var );
-
-            if ( is_array( $value ) && !empty( $value ) )
-                $output = $value;
-            elseif ( !is_array( $value ) && 0 < strlen( $value ) )
-                $output = $value;
-        }
-        elseif ( 'option' == $type )
-            $output = get_option( $var, $default );
-        elseif ( 'site-option' == $type )
-            $output = get_site_option( $var, $default );
-        elseif ( 'transient' == $type )
-            $output = get_transient( $var );
-        elseif ( 'site-transient' == $type )
-            $output = get_site_transient( $var );
-        elseif ( 'cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
-            $group = 'default';
-            $force = false;
-
-            if ( is_array( $var ) ) {
-                if ( isset( $var[ 1 ] ) )
-                    $group = $var[ 1 ];
-
-                if ( isset( $var[ 2 ] ) )
-                    $force = $var[ 2 ];
-
-                if ( isset( $var[ 0 ] ) )
-                    $var = $var[ 0 ];
-            }
-
-            $output = wp_cache_get( $var, $group, $force );
-        }
-        elseif ( 'date' == $type ) {
-            $var = explode( '|', $var );
-
-            if ( !empty( $var ) )
-                $output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
-        }
-        elseif ( in_array( $type, array( 'pods', 'pods_display' ) ) ) {
-            if ( isset( $GLOBALS[ 'pods' ] ) && 'Pods' == get_class( $GLOBALS[ 'pods' ] ) ) {
-                if ( 'pods' == $type ) {
-                    $output = $GLOBALS[ 'pods' ]->field( $var );
-
-                    if ( is_array( $output ) )
-                        $output = pods_serial_comma( $output, array( 'field' => $var, 'fields' => $GLOBALS[ 'pods' ]->fields ) );
-                }
-                elseif ( 'pods_display' == $type )
-                    $output = $GLOBALS[ 'pods' ]->display( $var );
-            }
-        }
-        else
-            $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict, $casting, $context );
-    }
-
-    if ( null !== $allowed ) {
-        if ( is_array( $allowed ) ) {
-            if ( !in_array( $output, $allowed ) )
-                $output = $default;
-        }
-        elseif ( $allowed !== $output )
-            $output = $default;
-    }
-
-    if ( true === $strict ) {
-        if ( empty( $output ) )
-            $output = $default;
-        elseif ( true === $casting )
-            $output = pods_cast( $output, $default );
-    }
-
-    if ( 'raw' != $context )
-        $output = pods_sanitize( $output );
+	if ( 'raw' == $context ) {
+		$output = pods_v( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
+	}
+	else {
+		$output = pods_v_sanitized( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
+	}
 
     return $output;
+
 }
 
 /**
  * Return a variable's raw value (if exists)
  *
  * @param mixed $var The variable name or URI segment position
- * @param string $type (optional) get|url|post|request|server|session|cookie|constant|user|option|site-option|transient|site-transient|cache
+ * @param string $type (optional) Super globals, url/url-relative, constants, globals, options, transients, cache, user data, Pod field values, dates
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
@@ -511,105 +896,124 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
  *
  * @return mixed The variable (if exists), or default value
  * @since 2.0
+ *
+ * @deprecated 2.4
+ * @see pods_v
  */
-function pods_var_raw ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
-    return pods_var( $var, $type, $default, $allowed, $strict, $casting, 'raw' );
-}
+function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
 
-/**
- * Cast a variable as a specific type
- *
- * @param $var
- * @param null $default
- *
- * @return bool
- *
- * @since 2.0
- */
-function pods_cast ( $var, $default = null ) {
-    if ( is_object( $var ) && is_array( $default ) )
-        $var = get_object_vars( $var );
-    else
-        settype( $var, gettype( $default ) );
+    return pods_v( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
 
-    return $var;
 }
 
 /**
  * Set a variable
  *
  * @param mixed $value The value to be set
- * @param mixed $key The variable name or URI segment position
+ * @param mixed $var The variable name or URI segment position
  * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
  *
  * @return mixed $value (if set), $type (if $type is array or object), or $url (if $type is 'url')
  * @since 1.10.6
+ *
+ * @deprecated 2.4
+ * @see pods_v_set
  */
-function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
-    $type = strtolower( $type );
-    $ret = false;
+function pods_var_set( $value, $var = 'last', $type = 'url' ) {
 
-    if ( is_array( $type ) ) {
-        $type[ $key ] = $value;
-        $ret = $type;
-    }
-    elseif ( is_object( $type ) ) {
-        $type->$key = $value;
-        $ret = $type;
-    }
-    elseif ( 'url' == $type ) {
-        $url = parse_url( pods_current_url() );
-        $uri = trim( $url[ 'path' ], '/' );
-        $uri = array_filter( explode( '/', $uri ) );
+	return pods_v_set( $value, $var, $type );
 
-        if ( 'first' == $key )
-            $key = 0;
-        elseif ( 'last' == $key )
-            $key = -1;
+}
 
-        if ( is_numeric( $key ) ) {
-            if ( $key < 0 )
-                $uri[ count( $uri ) + $key ] = $value;
-            else
-                $uri[ $key ] = $value;
-        }
+/**
+ * Create a new URL off of the current one, with updated parameters
+ *
+ * @param array $array Parameters to be set (empty will remove it)
+ * @param array $allowed Parameters to keep (if empty, all are kept)
+ * @param array $excluded Parameters to always remove
+ * @param string $url URL to base update off of
+ *
+ * @return mixed
+ *
+ * @since 2.3.10
+ *
+ * @see add_query_arg
+ */
+function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url = null ) {
 
-        $url[ 'path' ] = '/' . implode( '/', $uri ) . '/';
-        $url[ 'path' ] = trim( $url[ 'path' ], '/' );
+	$array = (array) $array;
+	$allowed = (array) $allowed;
+	$excluded = (array) $excluded;
 
-        $ret = http_build_url( $url );
-    }
-    elseif ( 'get' == $type )
-        $ret = $_GET[ $key ] = $value;
-    elseif ( 'post' == $type )
-        $ret = $_POST[ $key ] = $value;
-    elseif ( 'request' == $type )
-        $ret = $_REQUEST[ $key ] = $value;
-    elseif ( 'server' == $type )
-        $ret = $_SERVER[ $key ] = $value;
-    elseif ( 'session' == $type )
-        $ret = $_SESSION[ $key ] = $value;
-    elseif ( 'cookie' == $type ) {
-		setcookie( $key, $value, time() + 10 * DAY_IN_SECONDS, COOKIEPATH );
-
-		$ret = $value;
+	if ( !isset( $_GET ) ) {
+		$query_args = array();
 	}
-    elseif ( 'constant' == $type && !defined( $key ) ) {
-        define( $key, $value );
+	else {
+		$query_args = pods_unsanitize( $_GET );
+	}
 
-        $ret = constant( $key );
-    }
-    elseif ( 'user' == $type && is_user_logged_in() ) {
-        global $user_ID;
+	foreach ( $query_args as $key => $val ) {
+		if ( is_array( $val ) && empty( $val ) ) {
+			$query_args[ $key ] = false;
+		}
+		elseif ( !is_array( $val ) && strlen( $val ) < 1 ) {
+			$query_args[ $key ] = false;
+		}
+		elseif ( !empty( $allowed ) ) {
+			$allow_it = false;
 
-        get_currentuserinfo();
+			foreach ( $allowed as $allow ) {
+				if ( $allow == $key ) {
+					$allow_it = true;
+				}
+				elseif ( false !== strpos( $allow, '*' ) && 0 === strpos( $key, trim( $allow, '*' ) ) ) {
+					$allow_it = true;
+				}
+			}
 
-        update_user_meta( $user_ID, $key, $value );
+			if ( !$allow_it ) {
+				$query_args[ $key ] = false;
+			}
+		}
+	}
 
-        $ret = $value;
-    }
+	if ( !empty( $excluded ) ) {
+		foreach ( $excluded as $exclusion ) {
+			if ( isset( $query_args[ $exclusion ] ) && !in_array( $exclusion, $allowed ) ) {
+				$query_args[ $exclusion ] = false;
+			}
+		}
+	}
 
-    return apply_filters( 'pods_var_set', $ret, $value, $key, $type );
+	if ( !empty( $array ) ) {
+		foreach ( $array as $key => $val ) {
+			if ( null !== $val || false === strpos( $key, '*' ) ) {
+				if ( is_array( $val ) && !empty( $val ) ) {
+					$query_args[ $key ] = $val;
+				}
+				elseif ( !is_array( $val ) && 0 < strlen( $val ) ) {
+					$query_args[ $key ] = $val;
+				}
+				elseif ( isset( $query_args[ $key ] ) ) {
+					$query_args[ $key ] = false;
+				}
+			}
+			else {
+				$key = str_replace( '*', '', $key );
+
+				foreach ( $query_args as $k => $v ) {
+					if ( false !== strpos( $k, $key ) ) {
+						$query_args[ $k ] = false;
+					}
+				}
+			}
+		}
+	}
+
+	$url = add_query_arg( $query_args, null, $url );
+
+	return $url;
+
 }
 
 /**
@@ -623,76 +1027,42 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
  * @return mixed
  *
  * @since 2.0
+ *
+ * @deprecated 2.4
+ * @see pods_query_arg
  */
-function pods_var_update ( $array = null, $allowed = null, $excluded = null, $url = null ) {
-    $array = (array) $array;
-    $allowed = (array) $allowed;
-    $excluded = (array) $excluded;
+function pods_var_update( $array = null, $allowed = null, $excluded = null, $url = null ) {
 
-    if ( empty( $url ) )
-        $url = $_SERVER[ 'REQUEST_URI' ];
+	return pods_query_arg( $array, $allowed, $excluded, $url );
 
-    if ( !isset( $_GET ) )
-        $get = array();
-    else
-        $get = $_GET;
+}
 
-    $get = pods_unsanitize( $get );
+/**
+ * Cast a value as a specific type
+ *
+ * @param mixed $value
+ * @param mixed $cast_from
+ *
+ * @return bool
+ *
+ * @since 2.0
+ */
+function pods_cast( $value, $cast_from = null ) {
 
-    foreach ( $get as $key => $val ) {
-        if ( is_array( $val ) && empty( $val ) )
-            unset( $get[ $key ] );
-        elseif ( !is_array( $val ) && strlen( $val ) < 1 )
-            unset( $get[ $key ] );
-        elseif ( !empty( $allowed ) ) {
-            $allow_it = false;
+	if ( null !== $cast_from ) {
+		if ( is_object( $value ) && is_array( $cast_from ) ) {
+			$value = get_object_vars( $value );
+		}
+		elseif ( is_array( $value ) && is_object( $cast_from ) ) {
+			$value = (object) $value;
+		}
+		else {
+			settype( $value, gettype( $cast_from ) );
+		}
+	}
 
-            foreach ( $allowed as $allow ) {
-                if ( $allow == $key )
-                    $allow_it = true;
-                elseif ( false !== strpos( $allow, '*' ) && 0 === strpos( $key, trim( $allow, '*' ) ) )
-                    $allow_it = true;
-            }
+	return $value;
 
-            if ( !$allow_it )
-                unset( $get[ $key ] );
-        }
-    }
-
-    if ( !empty( $excluded ) ) {
-        foreach ( $excluded as $exclusion ) {
-            if ( isset( $get[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
-                unset( $get[ $exclusion ] );
-        }
-    }
-
-    if ( !empty( $array ) ) {
-        foreach ( $array as $key => $val ) {
-            if ( null !== $val || false === strpos( $key, '*' ) ) {
-                if ( is_array( $val ) && !empty( $val ) )
-                    $get[ $key ] = $val;
-                elseif ( !is_array( $val ) && 0 < strlen( $val ) )
-                    $get[ $key ] = $val;
-                elseif ( isset( $get[ $key ] ) )
-                    unset( $get[ $key ] );
-            }
-            else {
-                $key = str_replace( '*', '', $key );
-
-                foreach ( $get as $k => $v ) {
-                    if ( false !== strpos( $k, $key ) )
-                        unset( $get[ $k ] );
-                }
-            }
-        }
-    }
-
-    $url = current( explode( '#', current( explode( '?', $url ) ) ) );
-
-    if ( !empty( $get ) )
-        $url = $url . '?' . http_build_query( $get );
-
-    return $url;
 }
 
 /**
@@ -739,8 +1109,8 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
 
     if ( is_array( $pod ) ) {
         $pod_data = $pod;
-        $pod_id = pods_var( 'id', $pod_data, 0 );
-        $pod = pods_var( 'name', $pod_data );
+        $pod_id = pods_v_sanitized( 'id', $pod_data, 0 );
+        $pod = pods_v_sanitized( 'name', $pod_data );
     }
 
     $pod_id = absint( $pod_id );
@@ -876,47 +1246,71 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
 /**
  * Evaluate tags like magic tags but through pods_var
  *
- * @param string|array $tags String to be evaluated
+ * @param string|array|object $tags String to be evaluated
  * @param bool $sanitize Whether to sanitize tags
  *
  * @return string
- * @version 2.1
- */
-function pods_evaluate_tags ( $tags, $sanitize = false ) {
-    if ( is_array( $tags ) ) {
-        foreach ( $tags as $k => $tag ) {
-            $tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
-        }
-
-        return $tags;
-    }
-
-    if ( true === $sanitize )
-        return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag_sanitized', (string) $tags );
-    else
-        return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag', (string) $tags );
-}
-
-/**
- * Evaluate tag like magic tag but through pods_var_raw and sanitized
  *
- * @param string|array $tag
- *
- * @return string
  * @version 2.1
+ *
  * @see pods_evaluate_tag
  */
-function pods_evaluate_tag_sanitized ( $tag ) {
-    return pods_evaluate_tag( $tag, true );
+function pods_evaluate_tags ( $tags, $sanitize = false ) {
+
+	if ( is_array( $tags ) ) {
+		foreach ( $tags as $k => $tag ) {
+			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
+		}
+
+		return $tags;
+	}
+	elseif ( is_object( $tags ) ) {
+		$tags = get_object_vars( $tags );
+
+		foreach ( $tags as $k => $tag ) {
+			$tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
+		}
+
+		$tags = (object) $tags;
+
+		return $tags;
+	}
+
+	$callback = 'pods_evaluate_tag';
+
+	if ( true === $sanitize ) {
+		$callback = 'pods_evaluate_tag_sanitized';
+	}
+
+	return preg_replace_callback( '/({@(.*?)})/m', $callback, (string) $tags );
+
 }
 
 /**
- * Evaluate tag like magic tag but through pods_var_raw
+ * Evaluate tag like magic tag but mapped through pods_v_sanitized
+ *
+ * @param string|array $tag
+ *
+ * @return string
+ *
+ * @version 2.1
+ *
+ * @see pods_evaluate_tag
+ */
+function pods_evaluate_tag_sanitized( $tag ) {
+
+	return pods_evaluate_tag( $tag, true );
+
+}
+
+/**
+ * Evaluate tag like magic tag but mapped through pods_v
  *
  * @param string|array $tag
  * @param bool $sanitize Whether to sanitize tags
  *
  * @return string
+ *
  * @version 2.1
  */
 function pods_evaluate_tag( $tag, $sanitize = false ) {
@@ -968,17 +1362,18 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		'network-site-url',
 		'network-home-url',
 		'network-admin-url',
-		'user-admin-url'
+		'user-admin-url',
+		'prefix'
 	);
 
 	if ( in_array( $tag[ 0 ], $single_supported ) ) {
-		$value = pods_var_raw( '', $tag[ 0 ], '', null, true );
+		$value = pods_v( '', $tag[ 0 ], '', true );
 	}
 	elseif ( 1 == count( $tag ) ) {
-		$value = pods_var_raw( $tag[ 0 ], 'get', '', null, true );
+		$value = pods_v( $tag[ 0 ], 'get', '', true );
 	}
 	elseif ( 2 == count( $tag ) ) {
-		$value = pods_var_raw( $tag[ 1 ], $tag[ 0 ], '', null, true );
+		$value = pods_v( $tag[ 1 ], $tag[ 0 ], '', true );
 	}
 
 	$value = apply_filters( 'pods_evaluate_tag', $value, $tag );
@@ -988,9 +1383,10 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 	}
 
 	if ( is_array( $value ) ) {
-		$value = trim( $wpdb->prepare( str_repeat( '%s, ', count( $value ) ), $value ), ' ,' );
+		$value = pods_serial_comma( $value );
 	}
-	elseif ( $sanitize ) {
+
+	if ( $sanitize ) {
 		$value = pods_sanitize( $value );
 	}
 
@@ -1236,7 +1632,7 @@ function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
 
     foreach ( $list as $k => $list_item ) {
         if ( is_object( $list_item ) && isset( $list_item->{$args[ 'id' ]} ) ) {
-            $list_item->{$args[ 'parent' ]} = (int) pods_var_raw( $args[ 'parent' ], $list_item );
+            $list_item->{$args[ 'parent' ]} = (int) pods_v( $args[ 'parent' ], $list_item );
 
             if ( is_array( $list_item->{$args[ 'parent' ]} ) && isset( $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] ) && $parent == $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] )
                 $list_item->{$args[ 'children' ]} = pods_hierarchical_list_recurse( $list_item->{$args[ 'id' ]}, $list, $args );
@@ -1248,7 +1644,7 @@ function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
             $args[ 'found' ][ $k ] = $list_item;
         }
         elseif ( is_array( $list_item ) && isset( $list_item[ $args[ 'id' ] ] ) ) {
-            $list_item[ $args[ 'parent' ] ] = (int) pods_var_raw( $args[ 'parent' ], $list_item );
+            $list_item[ $args[ 'parent' ] ] = (int) pods_v( $args[ 'parent' ], $list_item );
 
             if ( is_array( $list_item[ $args[ 'parent' ] ] ) && isset( $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] ) && $parent == $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] )
                 $list_item[ $args[ 'children' ] ] = pods_hierarchical_list_recurse( $list_item[ $args[ 'id' ] ], $list, $args );

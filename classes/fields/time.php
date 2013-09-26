@@ -72,9 +72,9 @@ class PodsField_Time extends PodsField {
                 ),
                 'dependency' => true
             ),
-            self::$type . '_time_format' => array(
+            self::$type . '_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( self::$type . '_time_type' => '12' ),
+                'depends-on' => array( self::$type . '_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
@@ -90,9 +90,9 @@ class PodsField_Time extends PodsField {
                     'hh_mm_ss' => date_i18n( 'h:i:s' )
                 )
             ),
-            self::$type . '_time_format_24' => array(
+            self::$type . '_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( 'datetime_time_type' => '24' ),
+                'depends-on' => array( self::$type . '_type' => '24' ),
                 'default' => 'hh_mm',
                 'type' => 'pick',
                 'data' => array(
@@ -241,6 +241,7 @@ class PodsField_Time extends PodsField {
      * @param array $fields
      * @param array $pod
      *
+     * @return mixed|null|string
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {

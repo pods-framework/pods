@@ -326,6 +326,11 @@ class PodsField_DateTime extends PodsField {
             'hh_mm_ss' => 'h:i:s'
         );
 
+        $time_format_24 = array(
+			'hh_mm' => 'H:i',
+			'hh_mm_ss' => 'H:i:s'
+        );
+
         $format_value = pods_var( self::$type . '_format', $options, 'ymd_dash', null, true );
 
         $format = $date_format[ $format_value ];
@@ -334,7 +339,7 @@ class PodsField_DateTime extends PodsField {
             if ( 12 == pods_var( self::$type . '_time_type', $options ) )
                 $format .= ' ' . $time_format[ pods_var( self::$type . '_time_format', $options, 'hh_mm', null, true ) ];
             else
-                $format .= ' ' . str_replace( array( 'h:', 'g:' ), 'H:', $time_format[ pods_var( self::$type . '_time_format', $options, 'hh_mm', null, true ) ] );
+                $format .= ' ' . $time_format_24[ pods_var( self::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
         }
 
         return $format;

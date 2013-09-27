@@ -275,10 +275,15 @@ class PodsField_Time extends PodsField {
             'hh_mm_ss' => 'h:i:s'
         );
 
+        $time_format_24 = array(
+			'hh_mm' => 'H:i',
+			'hh_mm_ss' => 'H:i:s'
+        );
+
         if ( 12 == pods_var( self::$type . '_type', $options ) )
             $format = $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ];
         else
-            $format = str_replace( array( 'h:', 'g:' ), 'H:', $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ] );
+            $format = $time_format_24[ pods_var( self::$type . '_format_24', $options, 'hh_mm', null, true ) ];
 
         return $format;
     }

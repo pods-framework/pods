@@ -15,17 +15,17 @@ foreach ( $fields as $k => $field ) {
 	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
 		unset( $fields[ $k ] );
 	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'readonly' ] = true;
 		else
 			unset( $fields[ $k ] );
 	}
 	elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'readonly' ] = true;
 	}
 }
@@ -33,7 +33,7 @@ foreach ( $fields as $k => $field ) {
 $submittable_fields = $fields;
 
 foreach ( $submittable_fields as $k => $field ) {
-	if ( pods_var( 'readonly', $field, false ) )
+	if ( pods_v_sanitized( 'readonly', $field, false ) )
 		unset( $submittable_fields[ $k ] );
 }
 
@@ -53,9 +53,9 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $dupli
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 	$action = __( 'saved', 'pods' );
 
-	if ( 'create' == pods_var_raw( 'do', 'post', 'save' ) )
+	if ( 'create' == pods_v( 'do', 'post', 'save' ) )
 		$action = __( 'created', 'pods' );
-	elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+	elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
 		$action = __( 'duplicated', 'pods' );
 
 	try {
@@ -64,7 +64,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
 		$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-		if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
 			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
 		$error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -81,14 +81,14 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 elseif ( isset( $_GET[ 'do' ] ) ) {
 	$action = __( 'saved', 'pods' );
 
-	if ( 'create' == pods_var_raw( 'do', 'get', 'save' ) )
+	if ( 'create' == pods_v( 'do', 'get', 'save' ) )
 		$action = __( 'created', 'pods' );
-	elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+	elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
 		$action = __( 'duplicated', 'pods' );
 
 	$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-	if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
 		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
 	$error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
@@ -143,11 +143,11 @@ foreach ( $fields as $field ) {
 			<div class="inside">
 				<div class="submitbox" id="submitpost">
 					<?php
-					if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) ) {
+					if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) ) {
 						?>
 						<div id="minor-publishing">
 							<?php
-							if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
+							if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
 								?>
 								<div id="minor-publishing-actions">
 									<div id="preview-action">
@@ -197,7 +197,7 @@ foreach ( $fields as $field ) {
 						if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
 							?>
 							<div id="delete-action">
-								<a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+								<a class="submitdelete deletion" href="<?php echo pods_query_arg( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
 							</div>
 							<!-- /#delete-action -->
 						<?php } ?>
@@ -218,12 +218,12 @@ foreach ( $fields as $field ) {
 		</div>
 		<!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
 		<?php
-		if ( pods_var_raw( 'action' ) == 'edit' && !$duplicate && !in_array( 'navigate', $obj->actions_disabled ) && !in_array( 'navigate', $obj->actions_hidden ) ) {
+		if ( pods_v( 'action' ) == 'edit' && !$duplicate && !in_array( 'navigate', $obj->actions_disabled ) && !in_array( 'navigate', $obj->actions_hidden ) ) {
 			if ( !isset( $singular_label ) )
 				$singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 
-			$singular_label = pods_var_raw( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
-			$singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
+			$singular_label = pods_v( 'label', $pod->pod_data[ 'options' ], $singular_label, true );
+			$singular_label = pods_v( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, true );
 
 			$prev = $pod->prev_id();
 			$next = $pod->next_id();
@@ -240,7 +240,7 @@ foreach ( $fields as $field ) {
 								<?php
 								if ( 0 < $prev ) {
 									?>
-									<a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
+									<a class="previous-item" href="<?php echo pods_query_arg( array( 'id' => $prev ), null, 'do' ); ?>">
 										<span>&laquo;</span>
 										<?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
 									</a>
@@ -249,7 +249,7 @@ foreach ( $fields as $field ) {
 
 								if ( 0 < $next ) {
 									?>
-									<a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ); ?>">
+									<a class="next-item" href="<?php echo pods_query_arg( array( 'id' => $next ), null, 'do' ); ?>">
 										<?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
 										<span>&raquo;</span>
 									</a>
@@ -287,7 +287,7 @@ foreach ( $fields as $field ) {
 				$more = true;
 				$extra = '';
 
-				$max_length = (int) pods_var( 'maxlength', $field[ 'options' ], pods_var( $field[ 'type' ] . '_max_length', $field[ 'options' ], 0 ), null, true );
+				$max_length = (int) pods_v_sanitized( 'maxlength', $field[ 'options' ], pods_v_sanitized( $field[ 'type' ] . '_max_length', $field[ 'options' ], 0 ), true );
 
 				if ( 0 < $max_length )
 					$extra .= ' maxlength="' . $max_length . '"';

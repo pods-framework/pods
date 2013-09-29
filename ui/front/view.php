@@ -9,17 +9,17 @@ foreach ( $fields as $k => $field ) {
 	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
 		unset( $fields[ $k ] );
 	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'readonly' ] = true;
 		else
 			unset( $fields[ $k ] );
 	}
 	elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-		if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
 			$fields[ $k ][ 'readonly' ] = true;
 	}
 }
@@ -27,7 +27,7 @@ foreach ( $fields as $k => $field ) {
 $submittable_fields = $fields;
 
 foreach ( $submittable_fields as $k => $field ) {
-	if ( pods_var( 'readonly', $field, false ) )
+	if ( pods_v_sanitized( 'readonly', $field, false ) )
 		unset( $submittable_fields[ $k ] );
 }
 

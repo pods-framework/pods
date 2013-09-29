@@ -3102,6 +3102,122 @@ class Pods implements Iterator {
         return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
     }
 
+	/**
+	 * @param array $params (optional) Fields to show on the form, defaults to all fields
+	 * @param string $label (optional) Save button label, defaults to "Save Changes"
+	 * @param string $thank_you (optional) Thank you URL to send to upon success
+	 *
+	 * @return bool|mixed
+	 * @since 2.3.10
+	 * @link http://pods.io/docs/form/
+	 */
+	public function view ( $params = null, $label = null, $thank_you = null ) {
+		$defaults = array(
+			'fields' => $params,
+			'label' => $label,
+			'thank_you' => $thank_you
+		);
+
+		if ( is_array( $params ) )
+			$params = array_merge( $defaults, $params );
+		else
+			$params = $defaults;
+
+		$pod =& $this;
+
+		$params = $this->do_hook( 'form_params', $params );
+
+		$fields = $params[ 'fields' ];
+
+		if ( null !== $fields && !is_array( $fields ) && 0 < strlen( $fields ) )
+			$fields = explode( ',', $fields );
+
+		$object_fields = (array) pods_var_raw( 'object_fields', $this->pod_data, array(), null, true );
+
+		if ( empty( $fields ) ) {
+			// Add core object fields if $fields is empty
+			$fields = array_merge( $object_fields, $this->fields );
+		}
+
+		$form_fields = $fields; // Temporary
+
+		$fields = array();
+
+		foreach ( $form_fields as $k => $field ) {
+			$name = $k;
+
+			$defaults = array(
+				'name' => $name
+			);
+
+			if ( !is_array( $field ) ) {
+				$name = $field;
+
+				$field = array(
+					'name' => $name
+				);
+			}
+
+			$field = array_merge( $defaults, $field );
+
+			$field[ 'name' ] = trim( $field[ 'name' ] );
+
+			$value = pods_var_raw( 'default', $field );
+
+			if ( empty( $field[ 'name' ] ) )
+				$field[ 'name' ] = trim( $name );
+
+			if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+				$field[ 'type' ] = 'hidden';
+
+			if ( isset( $object_fields[ $field[ 'name' ] ] ) )
+				$fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+			elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+				$fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+
+			if ( empty( $this->id ) && null !== $value )
+				$this->row_override[ $field[ 'name' ] ] = $value;
+		}
+
+		unset( $form_fields ); // Cleanup
+
+		$fields = $this->do_hook( 'form_fields', $fields, $params );
+
+		$label = $params[ 'label' ];
+
+		if ( empty( $label ) )
+			$label = __( 'Save Changes', 'pods' );
+
+		$thank_you = $params[ 'thank_you' ];
+
+		PodsForm::$form_counter++;
+
+		ob_start();
+
+		if ( empty( $thank_you ) ) {
+			$success = 'success';
+
+			if ( 1 < PodsForm::$form_counter )
+				$success .= PodsForm::$form_counter;
+
+			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
+
+			if ( 1 == pods_var( $success, 'get', 0 ) ) {
+				echo '<div id="message" class="pods-form-front-success">'
+					 . __( 'Form submitted successfully', 'pods' ) . '</div>';
+			}
+		}
+
+		pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
+
+		$output = ob_get_clean();
+
+		if ( empty( $this->id ) )
+			$this->row_override = array();
+
+		return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
+	}
+
     /**
      * Replace magic tags with their values
      *

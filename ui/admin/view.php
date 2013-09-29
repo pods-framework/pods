@@ -2,6 +2,11 @@
 wp_enqueue_script( 'pods' );
 wp_enqueue_style( 'pods-form' );
 
+/**
+ * @var array $fields
+ * @var PodsUI $obj
+ * @var string $thank_you
+ */
 if ( empty( $fields ) || !is_array( $fields ) )
 	$fields = $obj->pod->fields;
 
@@ -69,10 +74,12 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
 		$error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-		if ( 0 < $id )
-			echo $obj->message( $message );
-		else
+		if ( 0 < $id ) {
+			$obj->message( $message );
+		}
+		else{
 			echo $obj->error( $error );
+		}
 	}
 	catch ( Exception $e ) {
 		echo $obj->error( $e->getMessage() );
@@ -93,10 +100,12 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
 	$error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
 
-	if ( 0 < $pod->id() )
-		echo $obj->message( $message );
-	else
+	if ( 0 < $pod->id() ){
+		$obj->message( $message );
+	}
+	else{
 		echo $obj->error( $error );
+	}
 }
 
 if ( !isset( $label ) )

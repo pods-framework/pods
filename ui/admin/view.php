@@ -5,123 +5,42 @@ wp_enqueue_style( 'pods-form' );
 /**
  * @var array $fields
  * @var PodsUI $obj
- * @var string $thank_you
  */
-if ( empty( $fields ) || !is_array( $fields ) )
+if ( empty( $fields ) || !is_array( $fields ) ) {
 	$fields = $obj->pod->fields;
-
-if ( !isset( $duplicate ) )
-	$duplicate = false;
-else
-	$duplicate = (boolean) $duplicate;
+}
 
 // unset fields
 foreach ( $fields as $k => $field ) {
-	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
+	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {
 		unset( $fields[ $k ] );
+	}
 	elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) ) {
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
+		}
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
 			$fields[ $k ][ 'readonly' ] = true;
-		else
+		}
+		else {
 			unset( $fields[ $k ] );
+		}
 	}
 	elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
+		if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) ) {
 			$fields[ $k ][ 'type' ] = 'hidden';
-		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) )
+		}
+		elseif ( pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
 			$fields[ $k ][ 'readonly' ] = true;
-	}
-}
-
-$submittable_fields = $fields;
-
-foreach ( $submittable_fields as $k => $field ) {
-	if ( pods_v_sanitized( 'readonly', $field, false ) )
-		unset( $submittable_fields[ $k ] );
-}
-
-if ( !isset( $thank_you_alt ) )
-	$thank_you_alt = $thank_you;
-
-$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
-
-$uid = @session_id();
-
-if ( is_user_logged_in() )
-	$uid = 'user_' . get_current_user_id();
-
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $pod->id() ) . '_' . $uri_hash . '_' . $field_hash );
-
-if ( isset( $_POST[ '_pods_nonce' ] ) ) {
-	$action = __( 'saved', 'pods' );
-
-	if ( 'create' == pods_v( 'do', 'post', 'save' ) )
-		$action = __( 'created', 'pods' );
-	elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
-		$action = __( 'duplicated', 'pods' );
-
-	try {
-		$params = pods_unslash( (array) $_POST );
-		$id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
-
-		$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-
-		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
-			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
-
-		$error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-
-		if ( 0 < $id ) {
-			$obj->message( $message );
-		}
-		else{
-			echo $obj->error( $error );
 		}
 	}
-	catch ( Exception $e ) {
-		echo $obj->error( $e->getMessage() );
-	}
-}
-elseif ( isset( $_GET[ 'do' ] ) ) {
-	$action = __( 'saved', 'pods' );
-
-	if ( 'create' == pods_v( 'do', 'get', 'save' ) )
-		$action = __( 'created', 'pods' );
-	elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
-		$action = __( 'duplicated', 'pods' );
-
-	$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-
-	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
-		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
-
-	$error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
-
-	if ( 0 < $pod->id() ){
-		$obj->message( $message );
-	}
-	else{
-		echo $obj->error( $error );
-	}
 }
 
-if ( !isset( $label ) )
+if ( !isset( $label ) ) {
 	$label = __( 'Save', 'pods' );
-
-$do = 'create';
-
-if ( 0 < $pod->id() ) {
-	if ( $duplicate )
-		$do = 'duplicate';
-	else
-		$do = 'save';
 }
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax">
 <div class="pods-submittable-fields">
 <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
 <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
@@ -382,30 +301,4 @@ foreach ( $fields as $field ) {
 </div>
 <!-- /#poststuff -->
 </div>
-</form>
 <!-- /#pods-record -->
-
-<script type="text/javascript">
-	if ( 'undefined' == typeof ajaxurl ) {
-		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
-	}
-
-	jQuery( function ( $ ) {
-		$( document ).Pods( 'validate' );
-		$( document ).Pods( 'submit' );
-		$( document ).Pods( 'dependency' );
-		$( document ).Pods( 'confirm' );
-		$( document ).Pods( 'exit_confirm' );
-	} );
-
-	var pods_admin_submit_callback = function ( id ) {
-		id = parseInt( id );
-		var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
-		var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
-
-		if ( 'NaN' == id )
-			document.location = thank_you_alt.replace( 'X_ID_X', 0 );
-		else
-			document.location = thank_you.replace( 'X_ID_X', id );
-	}
-</script>

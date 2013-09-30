@@ -1584,44 +1584,33 @@ class PodsUI {
 
     /**
      * @return bool|mixed
+	 * @since 2.3.10
      */
     public function view () {
+
         $this->do_hook( 'view' );
-        if ( isset( $this->actions_custom[ 'view' ] ) && is_callable( $this->actions_custom[ 'view' ] ) )
+
+		if ( isset( $this->actions_custom[ 'view' ] ) && is_callable( $this->actions_custom[ 'view' ] ) ) {
             return call_user_func_array( $this->actions_custom[ 'view' ], array( &$this ) );
-        if ( empty( $this->row ) )
+		}
+        if ( empty( $this->row ) ) {
             $this->get_row();
-        if ( empty( $this->row ) )
+		}
+        if ( empty( $this->row ) ) {
             return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
+		}
         $id = $this->row[ $this->sql[ 'field_id' ] ];
 
-        // HOOK INTO FORM CLASS HERE FOR VIEW
-
 		// ToDo: Code copied over from the edit() method below, marry it all
-		if ( in_array( 'duplicate', $this->actions_disabled ) )
-			$duplicate = false;
-
-		if ( empty( $this->row ) )
-			$this->get_row();
-
-		$this->do_hook( 'edit', $duplicate );
-
-		if ( $duplicate )
-			$this->do_hook( 'duplicate' );
-
-		if ( $duplicate && isset( $this->actions_custom[ 'duplicate' ] ) && is_callable( $this->actions_custom[ 'duplicate' ] ) )
-			return call_user_func_array( $this->actions_custom[ 'duplicate' ], array( &$this ) );
-		elseif ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
-			return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
 		?>
 		<div class="wrap pods-ui">
 			<div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
 			<h2>
 				<?php
-				echo ( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
+				echo $this->header[ 'edit' ];
 
 				if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
-					$link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
+					$link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
 
 					if ( !empty( $this->action_links[ 'add' ] ) )
 						$link = $this->action_links[ 'add' ];
@@ -1630,15 +1619,15 @@ class PodsUI {
 				<?php
 				}
 				elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
-					$link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+					$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
 					?>
 					<a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
 				<?php
 				}
+				pods_view( PODS_DIR . 'ui/admin/view.php', compact( array_keys( get_defined_vars() ) ) );
 				?>
-			</h2>
 
-			<?php $this->form( false, $duplicate ); ?>
+			</h2>
 		</div>
 	<?php
 	}

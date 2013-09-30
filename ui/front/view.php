@@ -1,13 +1,8 @@
 <?php
 wp_enqueue_style( 'pods-form', false, array(), false, true );
 
-if ( !wp_script_is( 'pods', 'done' ) ) {
-	wp_print_scripts( 'pods' );
-}
-
 /**
  * @var array $fields
- * @var string $label
  * @var Pods $pod
  */
 // unset fields

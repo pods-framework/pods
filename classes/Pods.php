@@ -3103,32 +3103,16 @@ class Pods implements Iterator {
     }
 
 	/**
-	 * @param array $params (optional) Fields to show on the form, defaults to all fields
-	 * @param string $label (optional) Save button label, defaults to "Save Changes"
+	 * @param array $fields (optional) Fields to show in the view, defaults to all fields
 	 *
 	 * @return bool|mixed
 	 * @since 2.3.10
 	 */
-	public function view ( $params = null, $label = null) {
-		$defaults = array(
-			'fields' => $params,
-			'label' => $label,
-		);
-
-		if ( is_array( $params ) ) {
-			$params = array_merge( $defaults, $params );
-		}
-		else {
-			$params = $defaults;
-		}
+	public function view ( $fields = null ) {
 
 		$pod =& $this;
 
-		//$params = $this->do_hook( 'form_params', $params );
-
-		$fields = $params[ 'fields' ];
-
-		// Comma separated list of fields?
+		// Convert comma separated list of fields to an array
 		if ( null !== $fields && !is_array( $fields ) && 0 < strlen( $fields ) ) {
 			$fields = explode( ',', $fields );
 		}
@@ -3140,12 +3124,11 @@ class Pods implements Iterator {
 			$fields = array_merge( $object_fields, $this->fields );
 		}
 
-		$form_fields = $fields; // Temporary
+		$view_fields = $fields; // Temporary
 
 		$fields = array();
 
-		foreach ( $form_fields as $k => $field ) {
-			$name = $k;
+		foreach ( $view_fields as $name => $field ) {
 
 			$defaults = array(
 				'name' => $name
@@ -3163,8 +3146,6 @@ class Pods implements Iterator {
 
 			$field[ 'name' ] = trim( $field[ 'name' ] );
 
-			$value = pods_v( 'default', $field );
-
 			if ( empty( $field[ 'name' ] ) ) {
 				$field[ 'name' ] = trim( $name );
 			}
@@ -3179,32 +3160,15 @@ class Pods implements Iterator {
 			elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
 				$fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
 			}
-
-			if ( empty( $this->id ) && null !== $value ) {
-				$this->row_override[ $field[ 'name' ] ] = $value;
-			}
 		}
 
-		unset( $form_fields ); // Cleanup
+		unset( $view_fields ); // Cleanup
 
 		//$fields = $this->do_hook( 'form_fields', $fields, $params );
 
-		$label = $params[ 'label' ];
-
-		if ( empty( $label ) )
-			$label = __( 'Save Changes', 'pods' );
-
-		PodsForm::$form_counter++;
-
 		ob_start();
-
 		pods_view( PODS_DIR . 'ui/front/view.php', compact( array_keys( get_defined_vars() ) ) );
-
 		$output = ob_get_clean();
-
-		if ( empty( $this->id ) ) {
-			$this->row_override = array();
-		}
 
 		//return $this->do_hook( 'form', $output, $fields, $label, $this, $this->id() );
 		return $output;

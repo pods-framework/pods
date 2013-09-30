@@ -3105,10 +3105,10 @@ class Pods implements Iterator {
 	/**
 	 * @param array $fields (optional) Fields to show in the view, defaults to all fields
 	 *
-	 * @return bool|mixed
+	 * @return mixed
 	 * @since 2.3.10
 	 */
-	public function view ( $fields = null ) {
+	public function view( $fields = null ) {
 
 		$pod =& $this;
 
@@ -3150,8 +3150,14 @@ class Pods implements Iterator {
 				$field[ 'name' ] = trim( $name );
 			}
 
-			if ( pods_v( 'hidden', $field, false, null, true ) ) {
-				$field[ 'type' ] = 'hidden';
+			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
+				continue;
+			}
+			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) && !pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
+				continue;
+			}
+			elseif ( !pods_has_permissions( $field[ 'options' ] ) && !pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
+				continue;
 			}
 
 			if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
@@ -3164,14 +3170,10 @@ class Pods implements Iterator {
 
 		unset( $view_fields ); // Cleanup
 
-		//$fields = $this->do_hook( 'form_fields', $fields, $params );
+		$output = pods_view( PODS_DIR . 'ui/front/view.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
 
-		ob_start();
-		pods_view( PODS_DIR . 'ui/front/view.php', compact( array_keys( get_defined_vars() ) ) );
-		$output = ob_get_clean();
+		return $this->do_hook( 'view', $output, $fields, $this->id() );
 
-		//return $this->do_hook( 'form', $output, $fields, $label, $this, $this->id() );
-		return $output;
 	}
 
     /**

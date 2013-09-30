@@ -196,13 +196,19 @@ wp_enqueue_style( 'pods-form' );
 						<table class="form-table pods-metabox">
 							<?php
 								foreach ( $fields as $field ) {
+									if ( isset( $field[ 'custom_display' ] ) && is_callable( $field[ 'custom_display' ] ) ) {
+										$value = call_user_func_array( $field[ 'custom_display' ], array( $pod->row(), $obj, $pod->field( $field[ 'name' ] ), $field[ 'name' ], $field ) );
+									}
+									else {
+										$value = $pod->display( $field[ 'name' ] );
+									}
 							?>
-								<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
+								<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
 									<th scope="row" valign="top">
 										<strong><?php echo $field[ 'label' ]; ?></strong>
 									</th>
 									<td>
-										<?php echo $pod->display( $field[ 'name' ] ); ?>
+										<?php echo $value; ?>
 									</td>
 								</tr>
 							<?php

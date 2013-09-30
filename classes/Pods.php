@@ -3051,13 +3051,15 @@ class Pods implements Iterator {
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+
             if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                 $field[ 'type' ] = 'hidden';
 
-            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
-            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+			$fields[ $field[ 'name' ] ] = $field;
 
             if ( empty( $this->id ) && null !== $value )
                 $this->row_override[ $field[ 'name' ] ] = $value;
@@ -3150,22 +3152,19 @@ class Pods implements Iterator {
 				$field[ 'name' ] = trim( $name );
 			}
 
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
 				continue;
 			}
-			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) && !pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
-				continue;
-			}
-			elseif ( !pods_has_permissions( $field[ 'options' ] ) && !pods_v_sanitized( 'read_only', $field[ 'options' ], false ) ) {
+			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
 				continue;
 			}
 
-			if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
-				$fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
-			}
-			elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
-				$fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
-			}
+			$fields[ $field[ 'name' ] ] = $field;
 		}
 
 		unset( $view_fields ); // Cleanup

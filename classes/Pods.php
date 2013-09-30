@@ -3207,6 +3207,7 @@ class Pods implements Iterator {
 		}
 
 		//return $this->do_hook( 'form', $output, $fields, $label, $this, $this->id() );
+		return $output;
 	}
 
     /**

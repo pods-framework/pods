@@ -42,22 +42,10 @@ if ( !isset( $label ) ) {
 ?>
 
 <div class="pods-submittable-fields">
-<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-<?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
-<?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
-
 <?php
 foreach ( $fields as $field ) {
 	if ( 'hidden' != $field[ 'type' ] )
 		continue;
-
-	echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
 }
 ?>
 <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->

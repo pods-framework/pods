@@ -17,6 +17,9 @@
         'hh_mm_ss' => 'HH:mm:ss'
     );
 
+	$time_format = apply_filters( 'pods_form_ui_field_time_js_formats', $time_format );
+	$time_format_24 = apply_filters( 'pods_form_ui_field_time_js_formats_24', $time_format_24 );
+
     wp_enqueue_script( 'jquery-ui-datepicker' );
     wp_enqueue_script( 'jquery-ui-timepicker' );
     wp_enqueue_style( 'jquery-ui' );

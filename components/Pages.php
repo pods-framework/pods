@@ -847,8 +847,21 @@ class Pods_Pages extends PodsComponent {
             if ( $permission ) {
                 $content = false;
 
-                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists[ 'options' ] ) ) )
-                    $pods = pods( pods_var( 'pod', self::$exists[ 'options' ] ), pods_evaluate_tags( pods_var_raw( 'pod_slug', self::$exists[ 'options' ], null, null, true ), true ) );
+                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists[ 'options' ] ) ) ) {
+					$slug = pods_var_raw( 'pod_slug', self::$exists[ 'options' ], null, null, true );
+
+					// Handle special magic tags
+					if ( 0 < strlen( $slug ) ) {
+						$slug = pods_evaluate_tags( $slug, true );
+					}
+
+                    $pods = pods( pods_var( 'pod', self::$exists[ 'options' ] ), $slug );
+
+					// Auto 404 handling if item doesn't exist
+					if ( 0 < strlen( $slug ) && !$pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
+						$pods = 404;
+					}
+				}
 
                 if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
                     $content = self::$exists[ 'precode' ];

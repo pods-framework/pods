@@ -526,8 +526,14 @@ class Pods implements Iterator {
             'serial_params' => null
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
-            $params = array_merge( $defaults, (array) $name );
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
+            $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
         else
             $params = $defaults;
 
@@ -569,8 +575,14 @@ class Pods implements Iterator {
             'raw' => true
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
             $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
         else
             $params = (object) $defaults;
 

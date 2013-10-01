@@ -1588,7 +1588,7 @@ class PodsAdmin {
      *
      * @return mixed
      */
-    public function admin_setup_duplicate ( &$obj ) {
+    public function admin_setup_duplicate ( $obj ) {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
         if ( 0 < $new_id )
@@ -1603,7 +1603,7 @@ class PodsAdmin {
      *
      * @return mixed
      */
-    public function admin_setup_reset ( &$obj, $id ) {
+    public function admin_setup_reset ( $id, $obj ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )
@@ -1624,7 +1624,7 @@ class PodsAdmin {
      *
      * @return mixed
      */
-    public function admin_setup_delete ( $id, &$obj ) {
+    public function admin_setup_delete ( $id, $obj ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )

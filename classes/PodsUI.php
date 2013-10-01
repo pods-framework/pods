@@ -438,7 +438,7 @@ class PodsUI {
             }
 
             if ( is_object( $object ) && ( 'Pods' == get_class( $object ) || 'Pod' == get_class( $object ) ) )
-                $this->pod = &$object;
+                $this->pod =& $object;
         }
 
         if ( !is_array( $options ) ) {

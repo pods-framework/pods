@@ -599,8 +599,8 @@ class Pods implements Iterator {
      * This function will return arrays for relationship and file fields.
      *
      * @param string|array $name The field name, or an associative array of parameters
-     * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
-     * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method
+     * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item, or an associative array of parameters
+     * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method, or an associative array of parameters
      *
      * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0
@@ -631,6 +631,10 @@ class Pods implements Iterator {
 		elseif ( is_array( $single ) || is_object( $single ) ) {
 			$defaults[ 'single' ] = null;
             $params = (object) array_merge( $defaults, (array) $single );
+		}
+		elseif ( is_array( $raw ) || is_object( $raw ) ) {
+			$defaults[ 'raw' ] = false;
+            $params = (object) array_merge( $defaults, (array) $raw );
 		}
         else
             $params = (object) $defaults;

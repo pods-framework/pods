@@ -612,8 +612,14 @@ class Pods implements Iterator {
             'args' => array() // extra data to send to field handlers
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
             $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
         else
             $params = (object) $defaults;
 

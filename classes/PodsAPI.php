@@ -3970,7 +3970,7 @@ class PodsAPI {
     public function reset_pod ( $params, $pod = false ) {
         $params = (object) pods_sanitize( $params );
 
-        $params->table_info = false;
+        $params->table_info = true;
 
         if ( empty( $pod ) )
             $pod = $this->load_pod( $params );

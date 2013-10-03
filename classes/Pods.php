@@ -3470,11 +3470,13 @@ class Pods implements Iterator {
                 );
             }
 
-            if ( strlen( pods_var( 'detail_url', $this->pod_data ) ) < 1 ) {
+			$detail_url = pods_var( 'detail_url', $this->pod_data[ 'options' ] );
+
+            if ( 0 < strlen( $detail_url ) ) {
                 $ui[ 'actions_custom' ] = array(
                     'view_url' => array(
                         'label' => 'View',
-                        'link' => get_site_url() . '/' . pods_var( 'detail_url', $this->pod_data[ 'options' ] )
+                        'link' => get_site_url() . '/' . $detail_url
                     )
                 );
             }

@@ -7291,7 +7291,7 @@ class PodsAPI {
                                 $related_pod = false;
 
                                 if ( 'pod' == $pick_object )
-                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), false );
+                                    $related_pod = $this->load_pod( array( 'name' => $pick_val, 'table_info' => true ), false );
 
                                 if ( empty( $related_pod ) ) {
                                     $related_pod = array(

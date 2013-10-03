@@ -2335,7 +2335,7 @@ class PodsData {
 		}
 
         // Restrict to supported comparisons
-        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS' ) ) )
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) )
             $field_compare = '=';
 
         // Restrict to supported array comparisons
@@ -2386,7 +2386,7 @@ class PodsData {
 		);
 
         // Make the query
-        if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=' ) ) ) {
+        if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) ) {
 			if ( $field_sanitize ) {
             	$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format, $field_value );
 			}

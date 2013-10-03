@@ -74,7 +74,8 @@ class PodsUI {
         'export_delimiter',
         'remove_export',
         'updated',
-        'duplicate'
+        'duplicate',
+		'message'
     ); // used in var_update
 
     static $allowed = array(
@@ -1336,44 +1337,68 @@ class PodsUI {
         }
         elseif ( 'view' == $this->action && !in_array( $this->action, $this->actions_disabled ) )
             $this->view();
-        elseif ( false !== $this->callback( $this->action, $this->id ) )
-            return null;
-        elseif ( !in_array( 'manage', $this->actions_disabled ) ) {
-            // handle session / user persistent settings for show_per_page, orderby, search, and filters
-            $methods = array( 'session', 'user' );
+		else {
+			if ( isset( $this->actions_custom[ $this->action ] ) ) {
+				$more_args = false;
 
-            // @todo fix this to set ($this) AND save (setting)
-            foreach ( $methods as $method ) {
-                foreach ( $this->$method as $setting ) {
-                    if ( 'show_per_page' == $setting )
-                        $value = $this->limit;
-                    elseif ( 'orderby' == $setting ) {
-                        if ( empty( $this->orderby ) )
-                            $value = '';
-                        // save this if we have a default index set
-                        elseif ( isset( $this->orderby[ 'default' ] ) ) {
-                            $value = $this->orderby[ 'default' ] . ' '
-                                     . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
-                        }
-                        else
-                            $value = '';
-                    }
-                    else
-                        $value = $this->$setting;
+				if ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'more_args' ] ) ) {
+					$more_args = $this->actions_custom[ $this->action ][ 'more_args' ];
+				}
 
-                    pods_var_set( $value, $setting, $method );
-                }
-            }
+				$row = $this->row;
 
-            $this->manage();
-        }
+				if ( empty( $row ) ) {
+					$row = $this->get_row();
+				}
+
+				if ( $this->restricted( $this->action, $row ) ) {
+					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
+				}
+				elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
+					return null;
+				}
+				elseif ( false !== $this->callback_action( true, $this->action, $this->id ) ) {
+					return null;
+				}
+			}
+
+			if ( !in_array( 'manage', $this->actions_disabled ) ) {
+				// handle session / user persistent settings for show_per_page, orderby, search, and filters
+				$methods = array( 'session', 'user' );
+
+				// @todo fix this to set ($this) AND save (setting)
+				foreach ( $methods as $method ) {
+					foreach ( $this->$method as $setting ) {
+						if ( 'show_per_page' == $setting )
+							$value = $this->limit;
+						elseif ( 'orderby' == $setting ) {
+							if ( empty( $this->orderby ) )
+								$value = '';
+							// save this if we have a default index set
+							elseif ( isset( $this->orderby[ 'default' ] ) ) {
+								$value = $this->orderby[ 'default' ] . ' '
+										 . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+							}
+							else
+								$value = '';
+						}
+						else
+							$value = $this->$setting;
+
+						pods_var_set( $value, $setting, $method );
+					}
+				}
+
+				$this->manage();
+			}
+		}
     }
 
     /**
      * @return mixed
      */
     public function add () {
-		if ( false !== $this->callback( 'add' ) ) {
+		if ( false !== $this->callback_action( 'add' ) ) {
 			return null;
 		}
         ?>
@@ -1405,10 +1430,10 @@ class PodsUI {
         if ( empty( $this->row ) )
             $this->get_row();
 
-		if ( $duplicate && false !== $this->callback( 'duplicate' ) ) {
+		if ( $duplicate && false !== $this->callback_action( 'duplicate' ) ) {
 			return null;
 		}
-		elseif ( false !== $this->callback( 'edit', $duplicate ) ) {
+		elseif ( false !== $this->callback_action( 'edit', $duplicate ) ) {
 			return null;
 		}
         ?>
@@ -1416,7 +1441,7 @@ class PodsUI {
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
-            echo ( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
+            echo $this->do_template( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
 
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
@@ -1477,7 +1502,7 @@ class PodsUI {
             if ( $this->restricted( $this->action, $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 
-            $label = $this->label[ 'edit' ];
+            $label = $this->do_template( $this->label[ 'edit' ] );
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],
@@ -1490,7 +1515,7 @@ class PodsUI {
             unset( $alt_vars[ 'id' ] );
 
             if ( $duplicate ) {
-                $label = $this->label[ 'duplicate' ];
+                $label = $this->do_template( $this->label[ 'duplicate' ] );
                 $id = null;
                 $vars = array(
                     'action' . $this->num => $this->action_after[ 'duplicate' ],
@@ -1586,7 +1611,7 @@ class PodsUI {
      */
     public function view () {
 
-		if ( false !== $this->callback( 'view' ) ) {
+		if ( false !== $this->callback_action( 'view' ) ) {
             return null;
 		}
 
@@ -1685,7 +1710,7 @@ class PodsUI {
 			<div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
 			<h2>
 				<?php
-					echo $this->header[ 'view' ];
+					echo $this->do_template( $this->header[ 'view' ] );
 
 					if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
 						$link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
@@ -1834,7 +1859,7 @@ class PodsUI {
     public function delete ( $id = null ) {
         $this->do_hook( 'pre_delete', $id );
 
-		if ( false !== $this->callback( 'delete', $id ) ) {
+		if ( false !== $this->callback_action( 'delete', $id ) ) {
 			return null;
 		}
 
@@ -1987,8 +2012,9 @@ class PodsUI {
 			return $callback;
 		}
 
-        if ( isset( $this->row[ $field ] ) )
+        if ( isset( $this->row[ $field ] ) ) {
             $value = $this->row[ $field ];
+		}
         elseif ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             if ( 'Pod' == get_class( $this->pod ) )
                 $value = $this->pod->get_field( $field );
@@ -2237,7 +2263,7 @@ class PodsUI {
      * @return mixed|null
      */
     public function manage ( $reorder = false ) {
-		if ( false !== $this->callback( 'manage', $reorder ) ) {
+		if ( false !== $this->callback_action( 'manage', $reorder ) ) {
 			return null;
 		}
 
@@ -3349,7 +3375,7 @@ class PodsUI {
                                                                 $vars[ 'toggled' ] = 1;
                                                             }
 
-                                                            $custom_data[ 'link' ] = pods_var_update( $vars );
+                                                            $custom_data[ 'link' ] = pods_var_update( $vars, self::$allowed, $this->exclusion() );
 
                                                             if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) )
                                                                 $custom_data[ 'link' ] = $this->do_template( $this->action_links[ $custom_action ], $row );
@@ -3850,7 +3876,7 @@ class PodsUI {
 
         $author_restrict = false;
 
-        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict === $this->restrict[ 'author_restrict' ] ) {
             $restricted = false;
 
             $author_restrict = true;
@@ -4077,6 +4103,7 @@ class PodsUI {
 		$callback_args = $args;
 		array_unshift( $callback_args, null );
 		array_unshift( $callback_args, $action );
+
 		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
 
 		if ( null === $callback ) {
@@ -4084,6 +4111,60 @@ class PodsUI {
 		}
 
 		$args[] = $this;
+
+		if ( isset( $this->actions_custom[ $action ] ) ) {
+			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'callback' ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ][ 'callback' ], $args );
+			}
+			elseif ( is_callable( $this->actions_custom[ $action ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ], $args );
+			}
+		}
+
+		return $callback;
+
+	}
+
+	/**
+	 * Check for a custom action callback and run it (deprecated reverse arg order)
+	 *
+	 * @return bool|mixed
+	 */
+	public function callback_action() {
+
+		$args = func_get_args();
+
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$action = array_shift( $args );
+
+		$deprecated = false;
+
+		if ( is_bool( $action ) ) {
+			$deprecated = $action;
+
+			$action = array_shift( $args );
+		}
+
+		// Do hook
+		$callback_args = $args;
+		array_unshift( $callback_args, null );
+		array_unshift( $callback_args, 'action_' . $action );
+
+		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
+
+		if ( null === $callback ) {
+			$callback = false;
+		}
+
+		$args[] = $this;
+
+		// Deprecated reverse arg order
+		if ( $deprecated ) {
+			$args = array_reverse( $args );
+		}
 
 		if ( isset( $this->actions_custom[ $action ] ) ) {
 			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'callback' ] ) ) {

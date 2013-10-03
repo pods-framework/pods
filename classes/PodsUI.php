@@ -4188,31 +4188,41 @@ class PodsUI {
 
 		$args = func_get_args();
 
+		if ( empty( $args ) ) {
+			return false;
+		}
+
 		$action = array_shift( $args );
+
+		$deprecated = false;
+
+		if ( is_bool( $action ) ) {
+			$deprecated = $action;
+
+			$action = array_shift( $args );
+		}
 
 		// Do hook
 		$callback_args = $args;
 		array_unshift( $callback_args, null );
-		array_unshift( $callback_args, 'bulk_' . $action );
+		array_unshift( $callback_args, 'bulk_action_' . $action );
+
 		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
 
 		if ( null === $callback ) {
 			$callback = false;
 		}
 
-		if ( empty( $args ) ) {
-			return $callback;
+		$args[] = $this;
+
+		// Deprecated reverse arg order
+		if ( $deprecated ) {
+			$args = array_reverse( $args );
 		}
 
-		$action = array_shift( $args );
-
-		array_unshift( $args, $this );
-
 		if ( isset( $this->actions_bulk[ $action ] ) ) {
-			if ( is_array( $this->actions_bulk[ $action ] ) ) {
-				if ( isset( $this->actions_bulk[ $action ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $action ][ 'callback' ] ) ) {
-		            $callback = call_user_func_array( $this->actions_bulk[ $action ][ 'callback' ], $args );
-				}
+			if ( is_array( $this->actions_bulk[ $action ] ) && isset( $this->actions_bulk[ $action ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $action ][ 'callback' ] ) ) {
+				$callback = call_user_func_array( $this->actions_bulk[ $action ][ 'callback' ], $args );
 			}
 			elseif ( is_callable( $this->actions_bulk[ $action ] ) ) {
 				$callback = call_user_func_array( $this->actions_bulk[ $action ], $args );

@@ -465,6 +465,12 @@ class PodsInit {
                 if ( $show_in_menu && 0 < strlen( pods_var_raw( 'menu_location_custom', $post_type ) ) )
                     $show_in_menu = pods_var_raw( 'menu_location_custom', $post_type );
 
+				$menu_icon = pods_var( 'menu_icon', $post_type, null, null, true );
+
+				if ( !empty( $menu_icon ) ) {
+					$menu_icon = pods_evaluate_tags( $menu_icon );
+				}
+
                 // Register Post Type
                 $pods_post_types[ $post_type_name ] = array(
                     'label' => $cpt_label,
@@ -478,7 +484,7 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
                     'menu_position' => (int) pods_var( 'menu_position', $post_type, 0, null, true ),
-                    'menu_icon' => pods_evaluate_tags( pods_var( 'menu_icon', $post_type, null, null, true ) ),
+                    'menu_icon' => $menu_icon,
                     'capability_type' => $capability_type,
                     //'capabilities' => $cpt_capabilities,
                     'map_meta_cap' => (boolean) pods_var( 'capability_type_extra', $post_type, true ),

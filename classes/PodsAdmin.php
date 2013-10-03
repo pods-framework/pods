@@ -1598,12 +1598,11 @@ class PodsAdmin {
     /**
      * Reset a pod
      *
-     * @param $id
      * @param $obj
      *
      * @return mixed
      */
-    public function admin_setup_reset ( $id, $obj ) {
+    public function admin_setup_reset ( $obj, $id ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )

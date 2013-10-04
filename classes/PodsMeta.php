@@ -320,7 +320,7 @@ class PodsMeta {
         }
 
         $pod[ 'type' ] = $pod_type;
-        $pod = pods_api()->save_pod( $pod, false, self::$object_identifier );
+        $pod = pods_api()->save_pod( $pod, false, false );
 
         if ( !empty( $pod ) ) {
             self::$object_identifier--;

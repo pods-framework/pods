@@ -544,7 +544,7 @@ class PodsAdmin {
 
             $_GET[ 'action' ] = 'edit';
 
-            $page_title = pods_var_raw( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
+            $page_title = pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
 
             $ui = array(
                 'pod' => $pod,

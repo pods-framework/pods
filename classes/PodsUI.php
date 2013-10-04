@@ -3329,7 +3329,7 @@ class PodsUI {
                                             $actions[ 'edit' ] = '<span class="edit"><a href="' . $link . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
                                         }
 
-                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
+                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) && !$this->restricted( 'duplicate', $row ) ) {
                                             $link = pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                             if ( !empty( $this->action_links[ 'duplicate' ] ) )
@@ -4078,6 +4078,10 @@ class PodsUI {
             if ( $okay )
                 $restricted = false;
         }
+
+		if ( isset( $this->actions_custom[ $action ] ) && is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'restrict_callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'restrict_callback' ] ) ) {
+			$restricted = call_user_func( $this->actions_custom[ $action ][ 'restrict_callback' ], $restricted, $restrict, $action, $row, $this );
+		}
 
         $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action, $row );
 

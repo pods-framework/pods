@@ -686,6 +686,7 @@ class PodsAdmin {
                     continue;
                 }
 
+				$pod[ 'real_type' ] = $pod[ 'type' ];
                 $pod[ 'type' ] = $types[ $pod[ 'type' ] ];
             }
             elseif ( 'all' != $view )
@@ -700,7 +701,9 @@ class PodsAdmin {
                 'id' => $pod[ 'id' ],
                 'label' => pods_var_raw( 'label', $pod ),
                 'name' => pods_var_raw( 'name', $pod ),
+                'object' => pods_var_raw( 'object', $pod ),
                 'type' => pods_var_raw( 'type', $pod ),
+                'real_type' => pods_var_raw( 'real_type', $pod ),
                 'storage' => pods_var_raw( 'storage', $pod ),
                 'field_count' => count( $pod[ 'fields' ] )
             );
@@ -732,11 +735,15 @@ class PodsAdmin {
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
                 'edit' => array( $this, 'admin_setup_edit' ),
-                'duplicate' => array( $this, 'admin_setup_duplicate' ),
+                'duplicate' => array(
+					'callback' => array( $this, 'admin_setup_duplicate' ),
+					'restrict_callback' => array( $this, 'admin_setup_duplicate_restrict' )
+				),
                 'reset' => array(
                     'label' => __( 'Delete All Items', 'pods' ),
                     'confirm' => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
-                    'callback' => array( $this, 'admin_setup_reset' )
+                    'callback' => array( $this, 'admin_setup_reset' ),
+					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' )
                 ),
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
@@ -1595,6 +1602,27 @@ class PodsAdmin {
             pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
     }
 
+	/**
+	 * Restrict Duplicate action to custom types, not extended
+	 *
+	 * @param bool $restricted
+	 * @param array $restrict
+	 * @param string $action
+	 * @param array $row
+	 * @param PodsUI $obj
+	 *
+	 * @since 2.3.10
+	 */
+	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
+
+		if ( in_array( $row[ 'real_type' ], array( 'user', 'media', 'comment' ) ) ) {
+			$restricted = true;
+		}
+
+		return $restricted;
+
+	}
+
     /**
      * Reset a pod
      *
@@ -1614,6 +1642,27 @@ class PodsAdmin {
 
         $obj->manage();
     }
+
+	/**
+	 * Restrict Reset action from users and media
+	 *
+	 * @param bool $restricted
+	 * @param array $restrict
+	 * @param string $action
+	 * @param array $row
+	 * @param PodsUI $obj
+	 *
+	 * @since 2.3.10
+	 */
+	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
+
+		if ( in_array( $row[ 'real_type' ], array( 'user', 'media' ) ) ) {
+			$restricted = true;
+		}
+
+		return $restricted;
+
+	}
 
     /**
      * Delete a pod

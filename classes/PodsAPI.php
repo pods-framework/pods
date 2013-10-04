@@ -3571,10 +3571,7 @@ class PodsAPI {
             return false;
         }
         elseif ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && 0 < strlen( $pod[ 'object' ] ) ) {
-            if ( false !== $strict )
-                return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ), $this );
-
-            return false;
+			$pod[ 'object' ] = '';
         }
 
         unset( $pod[ 'id' ] );

@@ -2245,7 +2245,7 @@ class PodsData {
 						$value = str_replace( '`', '', $value );
 						$value = explode( '.', $value );
 
-						if ( ( 'post_status' == $value[ 0 ] && 1 == count( $value ) ) || ( 2 == count( $value ) && 't' == $value[ 0 ] && 'post_status' == $value[ 1 ] ) {
+						if ( ( 'post_status' == $value[ 0 ] && 1 == count( $value ) ) || ( 2 == count( $value ) && 't' == $value[ 0 ] && 'post_status' == $value[ 1 ] ) ) {
 							$post_status_found = true;
 
 							break;

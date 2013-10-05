@@ -2241,6 +2241,8 @@ class PodsData {
 
 					preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
+					$found = (array) @current( $found );
+
 					foreach ( $found as $value ) {
 						$value = str_replace( '`', '', $value );
 						$value = explode( '.', $value );

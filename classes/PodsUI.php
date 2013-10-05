@@ -1195,6 +1195,8 @@ class PodsUI {
                     $attributes[ 'custom_relate' ] = false;
                 if ( !isset( $attributes[ 'custom_form_display' ] ) )
                     $attributes[ 'custom_form_display' ] = false;
+                if ( !isset( $attributes[ 'css_values' ] ) )
+                    $attributes[ 'css_values' ] = true;
                 if ( 'search_columns' == $which && !$attributes[ 'options' ][ 'search' ] )
                     continue;
 
@@ -3214,28 +3216,31 @@ class PodsUI {
                                 if ( false === $attributes[ 'display' ] )
                                     continue;
 
-                                if ( !isset( $row[ $field ] ) )
+                                if ( !isset( $row[ $field ] ) ) {
                                     $row[ $field ] = $this->get_field( $field );
+								}
+
+								$row_value = $row[ $field ];
 
                                 if ( !empty( $attributes[ 'custom_display' ] ) ) {
                                     if ( is_callable( $attributes[ 'custom_display' ] ) )
-                                        $row[ $field ] = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row[ $field ], $field, $attributes ) );
+                                        $row_value = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row_value, $field, $attributes ) );
                                     elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) )
-                                        $row[ $field ] = $this->pod->helper( $attributes[ 'custom_display' ], $row[ $field ], $field );
+                                        $row_value = $this->pod->helper( $attributes[ 'custom_display' ], $row_value, $field );
                                 }
                                 else {
                                     ob_start();
 
-                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
+                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
 
                                     $field_output = trim( (string) ob_get_clean() );
 
                                     if ( false === $field_value )
-                                        $row[ $field ] = '';
+                                        $row_value = '';
                                     elseif ( 0 < strlen( trim( (string) $field_value ) ) )
-                                        $row[ $field ] = trim( (string) $field_value );
+                                        $row_value = trim( (string) $field_value );
                                     elseif ( 0 < strlen( $field_output ) )
-                                        $row[ $field ] = $field_output;
+                                        $row_value = $field_output;
                                 }
 
                                 if ( false !== $attributes[ 'custom_relate' ] ) {
@@ -3273,14 +3278,33 @@ class PodsUI {
                                                 $val[] = $value[ $wha ];
                                         }
                                         if ( !empty( $val ) )
-                                            $row[ $field ] = implode( ' ', $val );
+                                            $row_value = implode( ' ', $val );
                                     }
                                 }
 
-                                if ( is_object( $this->pod ) )
-                                    $row[ $field ] = $this->do_hook( $this->pod->pod . '_field_value', $row[ $field ], $field, $attributes, $row );
+								$css_classes = ' pods-ui-col-field-' . sanitize_title( $field );
 
-                                $row[ $field ] = $this->do_hook( 'field_value', $row[ $field ], $field, $attributes, $row );
+								if ( $attributes[ 'css_values' ] ) {
+									$css_field_value = $row[ $field ];
+
+									if ( is_object( $css_field_value ) ) {
+										$css_field_value = get_object_vars( $css_field_value );
+									}
+
+									if ( is_array( $css_field_value ) ) {
+										foreach ( $css_field_value as $css_field_val ) {
+											$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
+										}
+									}
+									else {
+										$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_value ) ) );
+									}
+								}
+
+                                if ( is_object( $this->pod ) )
+                                    $row_value = $this->do_hook( $this->pod->pod . '_field_value', $row_value, $field, $attributes, $row );
+
+                                $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
                                     if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
@@ -3289,7 +3313,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
@@ -3298,12 +3322,12 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
                                         ?>
-                <td class="post-title page-title column-title<?php echo ( 1 == $reorder && $this->reorder ) ? ' dragme' : ''; ?>"><strong><?php echo $row[ $field ]; ?></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?><?php echo ( 1 == $reorder && $this->reorder ) ? ' dragme' : ''; ?>"><strong><?php echo $row_value; ?></strong>
                                         <?php
                                     }
 
@@ -3329,7 +3353,7 @@ class PodsUI {
                                             $actions[ 'edit' ] = '<span class="edit"><a href="' . $link . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
                                         }
 
-                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) && !$this->restricted( 'duplicate', $row ) ) {
+                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
                                             $link = pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                             if ( !empty( $this->action_links[ 'duplicate' ] ) )
@@ -3423,12 +3447,12 @@ class PodsUI {
                                 }
                                 elseif ( 'date' == $attributes[ 'type' ] ) {
                                     ?>
-                                    <td class="date column-date"><abbr title="<?php echo esc_attr( $row[ $field ] ); ?>"><?php echo $row[ $field ]; ?></abbr></td>
+                                    <td class="date column-date<?php echo $css_classes; ?>"><abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo $row_value; ?></abbr></td>
                                     <?php
                                 }
                                 else {
                                     ?>
-                                    <td class="author"><?php echo $row[ $field ]; ?></td>
+                                    <td class="author<?php echo $css_classes; ?>"><span><?php echo $row_value; ?></span></td>
                                     <?php
                                 }
                             }

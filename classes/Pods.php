@@ -2159,6 +2159,38 @@ class Pods implements Iterator {
         return $this->total_found;
     }
 
+	/**
+	 * Fetch the total number of pages, based on total rows found and the last find() limit
+	 *
+	 * @param null|int $limit Rows per page
+	 * @param null|int $offset Offset of rows
+	 * @param null|int $total Total rows
+	 *
+	 * @return int Number of pages
+	 * @since 2.3.10
+	 */
+	public function total_pages( $limit = null, $offset = null, $total = null ) {
+
+		$this->do_hook( 'total_pages' );
+
+		if ( null === $limit ) {
+			$limit = $this->limit;
+		}
+
+		if ( null === $offset ) {
+			$offset = $this->offset;
+		}
+
+		if ( null === $total ) {
+			$total = $this->total_found();
+		}
+
+		$total_pages = ceil( ( $total - $offset ) / $limit );
+
+		return $total_pages;
+
+	}
+
     /**
      * Fetch the zebra switch
      *
@@ -2727,75 +2759,82 @@ class Pods implements Iterator {
         return $this->api->export( $this, $params );
     }
 
-    /**
-     * Display the pagination controls, types supported by default
-     * are simple, paginate and advanced. The base and format parameters
-     * are used only for the paginate view.
-     *
-     * @var array $params Associative array of parameters
-     *
-     * @return string Pagination HTML
-     * @since 2.0
-     * @link http://pods.io/docs/pagination/
-     */
-    public function pagination ( $params = null ) {
-        if ( empty( $params ) )
-            $params = array();
-        elseif ( !is_array( $params ) )
-            $params = array( 'label' => $params );
+	/**
+	 * Display the pagination controls, types supported by default
+	 * are simple, paginate and advanced. The base and format parameters
+	 * are used only for the paginate view.
+	 *
+	 * @var array $params Associative array of parameters
+	 *
+	 * @return string Pagination HTML
+	 * @since 2.0
+	 * @link http://pods.io/docs/pagination/
+	 */
+	public function pagination( $params = null ) {
 
-        $this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
+		if ( empty( $params ) ) {
+			$params = array();
+		}
+		elseif ( !is_array( $params ) ) {
+			$params = array( 'label' => $params );
+		}
 
-        $url = pods_var_update( null, null, $this->page_var );
+		$this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
 
-        $append = '?';
+		$url = pods_var_update( null, null, $this->page_var );
 
-        if ( false !== strpos( $url, '?' ) )
-            $append = '&';
+		$append = '?';
 
-        $defaults = array(
-            'type' => 'advanced',
-            'label' => __( 'Go to page:', 'pods' ),
-            'show_label' => true,
-            'first_text' => __( '&laquo; First', 'pods' ),
-            'prev_text' => __( '&lsaquo; Previous', 'pods' ),
-            'next_text' => __( 'Next &rsaquo;', 'pods' ),
-            'last_text' => __( 'Last &raquo;', 'pods' ),
-            'prev_next' => true,
-            'first_last' => true,
-            'limit' => (int) $this->limit,
+		if ( false !== strpos( $url, '?' ) ) {
+			$append = '&';
+		}
+
+		$defaults = array(
+			'type' => 'advanced',
+			'label' => __( 'Go to page:', 'pods' ),
+			'show_label' => true,
+			'first_text' => __( '&laquo; First', 'pods' ),
+			'prev_text' => __( '&lsaquo; Previous', 'pods' ),
+			'next_text' => __( 'Next &rsaquo;', 'pods' ),
+			'last_text' => __( 'Last &raquo;', 'pods' ),
+			'prev_next' => true,
+			'first_last' => true,
+			'limit' => (int) $this->limit,
 			'offset' => (int) $this->offset,
-            'page' => max( 1, (int) $this->page ),
-            'mid_size' => 2,
-            'end_size' => 1,
-            'total_found' => $this->total_found(),
-            'page_var' => $this->page_var,
-            'base' => "{$url}{$append}%_%",
-            'format' => "{$this->page_var}=%#%",
-            'class' => "",
-            'link_class'
-        );
+			'page' => max( 1, (int) $this->page ),
+			'mid_size' => 2,
+			'end_size' => 1,
+			'total_found' => $this->total_found(),
+			'page_var' => $this->page_var,
+			'base' => "{$url}{$append}%_%",
+			'format' => "{$this->page_var}=%#%",
+			'class' => '',
+			'link_class' => ''
+		);
 
-        $params = (object) array_merge( $defaults, $params );
+		$params = (object) array_merge( $defaults, $params );
 
-        $params->total = ceil( ( $params->total_found - $params->offset ) / $params->limit );
+		$params->total = $this->total_pages( $params->limit, $params->offset, $params->total_found );
 
-        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total || $params->total_found <= $params->offset )
-            return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
+		if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total || $params->total_found <= $params->offset ) {
+			return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
+		}
 
-        $pagination = $params->type;
+		$pagination = $params->type;
 
-        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) )
-            $pagination = 'advanced';
+		if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) ) {
+			$pagination = 'advanced';
+		}
 
-        ob_start();
+		ob_start();
 
-        pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );
+		pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );
 
-        $output = ob_get_clean();
+		$output = ob_get_clean();
 
-        return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
-    }
+		return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
+
+	}
 
     /**
      * Return a filter form for searching a Pod

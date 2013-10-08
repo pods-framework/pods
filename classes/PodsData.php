@@ -1759,7 +1759,7 @@ class PodsData {
 
                 $get_table_data = true;
             }
-            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+            elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
                 $taxonomy = $this->pod_data[ 'object' ];
 
                 if ( empty( $taxonomy ) )

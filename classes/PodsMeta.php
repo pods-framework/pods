@@ -344,7 +344,7 @@ class PodsMeta {
             return $data;
         }
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
             $this->current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 
         $pod = $this->current_pod_data;
@@ -412,7 +412,7 @@ class PodsMeta {
         elseif ( in_array( $cac_key, array( 'wp-comments', 'comment' ) ) )
             $object_type = $object = 'comment';
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
             $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
         $pod = $this->current_pod_data;
@@ -467,7 +467,7 @@ class PodsMeta {
         $field = substr( $obj->options->field, 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->options->field ) : $obj->options->field;
         $field_type = $obj->options->field_type;
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
             $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
         $pod = $this->current_pod_data;
@@ -495,7 +495,7 @@ class PodsMeta {
         elseif ( 'wp-comments' == $type )
             $object = 'comment';
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
             $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
         $pod = $this->current_pod_data;
@@ -534,7 +534,7 @@ class PodsMeta {
         }
 
         if ( !is_array( $pod ) ) {
-            if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
                 $this->current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 
             if ( !empty( $this->current_pod_data ) )
@@ -700,7 +700,7 @@ class PodsMeta {
         if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $pod = $object[ $name ];
         else {
-            if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
                 $this->current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
 
             $pod = $this->current_pod_data;
@@ -759,7 +759,7 @@ class PodsMeta {
         if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
-            if ( empty( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
                 $this->current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
 
             $pod = $this->current_pod_data;
@@ -863,7 +863,7 @@ class PodsMeta {
         if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php?' ) )
             $id = $post->ID;
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
             $this->current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         $pod = $this->current_pod;
@@ -1018,7 +1018,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1098,7 +1098,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1169,7 +1169,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1270,7 +1270,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( ! is_object( $this->current_pod_data ) || empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1351,7 +1351,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1424,7 +1424,7 @@ class PodsMeta {
             $hidden_fields = array();
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1515,7 +1515,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1580,7 +1580,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1640,7 +1640,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1761,7 +1761,7 @@ class PodsMeta {
             if ( is_object( $comment ) )
                 $id = $comment->comment_ID;
 
-            if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                 $this->current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
             $pod = $this->current_pod;
@@ -1831,7 +1831,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -1880,7 +1880,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
+                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
                     $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
                 $pod = $this->current_pod;
@@ -2373,7 +2373,7 @@ class PodsMeta {
         if ( empty( $meta_cache ) || !is_array( $meta_cache ) )
             $meta_cache = array();
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
             $this->current_pod = pods( $object[ 'name' ], $object_id );
 
         $pod = $this->current_pod;
@@ -2485,7 +2485,7 @@ class PodsMeta {
             return $_null;
 
         if ( in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-            if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
                 $this->current_pod = pods( $object[ 'name' ], $object_id );
 
             $pod = $this->current_pod;
@@ -2493,7 +2493,7 @@ class PodsMeta {
             $pod->add_to( $meta_key, $meta_value );
         }
         else {
-            if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
                 $this->current_pod = pods( $object[ 'name' ] );
 
             $pod = $this->current_pod;
@@ -2523,7 +2523,7 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
             $this->current_pod = pods( $object[ 'name' ] );
 
         $pod = $this->current_pod;
@@ -2552,14 +2552,14 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
+        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
             $this->current_pod = pods( $object[ 'name' ], $object_id );
 
         $pod = $this->current_pod;
 
         // @todo handle $delete_all (delete the field values from all pod items)
         if ( !empty( $meta_value ) && in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-            if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
                 $this->current_pod = pods( $object[ 'name' ], $object_id );
 
             $pod = $this->current_pod;
@@ -2567,7 +2567,7 @@ class PodsMeta {
             $pod->remove_from( $meta_key, $meta_value );
         }
         else {
-            if ( empty( $this->current_pod_data ) || $this->current_pod->pod != $object[ 'name' ] )
+            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
                 $this->current_pod = pods( $object[ 'name' ] );
 
             $pod = $this->current_pod;

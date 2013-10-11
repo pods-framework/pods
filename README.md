@@ -9,6 +9,7 @@
 Check out <http://pods.io/> for our User Guide and many other resources to help you develop with Pods.
 
 ## GitHub Update Note
+~Current Version: 2.4~
 ~Current Release: [https://github.com/pods-framework/pods/releases/tag/2.4](2.4)~
 
 ~Development Branch: [3.0-unstable](https://github.com/pods-framework/pods/tree/3.0-unstable)~

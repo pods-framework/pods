@@ -100,54 +100,6 @@ else
 
 <script type="text/javascript">
     jQuery( function ( $ ) {
-        // init sortable
-        $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' )
-            .sortable( {
-                containment : 'parent',
-                axis : 'y',
-                scrollSensitivity : 40,
-                tolerance : 'pointer',
-                opacity : 0.6
-            } );
-
-        // hook delete links
-        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
-            var podsfile = $( this ).parent().parent();
-            podsfile.slideUp( function () {
-
-                // check to see if this was the only entry
-                if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
-                    podsfile.parent().hide();
-                }
-
-                // remove the entry
-                $( this ).remove();
-
-            } );
-        } );
-
-        var maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
-
-        // hook the add link
-        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'a.pods-file-add', function ( e ) {
-            e.preventDefault();
-            var trigger = $( this );
-            var href = trigger.attr( 'href' ), width = $( window ).width(), H = $( window ).height(), W = ( 720 < width ) ? 720 : width;
-            if ( !href ) {
-                return;
-            }
-            href = href.replace( /&width=[0-9]+/g, '' );
-            href = href.replace( /&height=[0-9]+/g, '' );
-            trigger.attr( 'href', href + '&width=' + ( W - 80 ) + '&height=' + ( H - 85 ) );
-
-            pods_file_context = trigger.parent().find( 'ul.pods-files' );
-            pods_file_thickbox_modder = setInterval( function () {
-                if ( pods_file_context )
-                    pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> );
-            }, 500 );
-
-            tb_show( 'Attach a file', e.target.href, false );
-            return false;
-        } );
+        $( '#<?php echo esc_js( $css_id ); ?>' ).PodsForm( 'attachment', { max_limit: <?php echo esc_js( $file_limit ); ?> } );
     } );
 </script>

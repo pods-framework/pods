@@ -127,6 +127,7 @@ else
 
 <script type="text/javascript">
     jQuery( function( $ ){
+        //$( '#<?php echo esc_js( $css_id ); ?>' ).PodsForm( 'media', { max_limit: <?php echo esc_js( $file_limit ); ?> } );
 
         var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo $css_id; ?>' ),
             $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),

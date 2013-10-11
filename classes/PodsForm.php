@@ -1213,6 +1213,7 @@ class PodsForm {
         );
 
 		if ( pods_developer() ) {
+			$field_types[] = 'loop';
 			$field_types[] = 'html';
 		}
 

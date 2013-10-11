@@ -484,7 +484,34 @@ class Pods_Pages extends PodsComponent {
                 'depends-on' => array(
                     'restrict_capability' => true
                 )
-            )
+            ),
+            array(
+                'name' => 'restrict_redirect',
+                'label' => __( 'Redirect if Restricted?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_redirect_login',
+                'label' => __( 'Redirect to WP Login page', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true,
+                'depends-on' => array(
+                    'restrict_redirect' => true
+                )
+            ),
+            array(
+                'name' => 'restrict_redirect_url',
+                'label' => __( 'Redirect to a Custom URL', 'pods' ),
+                'default' => '',
+                'type' => 'text',
+                'depends-on' => array(
+                    'restrict_redirect' => true,
+                    'restrict_redirect_login' => false
+                )
+            ),
         );
 
         pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
@@ -709,6 +736,9 @@ class Pods_Pages extends PodsComponent {
                     'restrict_capability' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_capability', true ),
                     'roles_allowed' => get_post_meta( $object[ 'ID' ], 'roles_allowed', true ),
                     'capability_allowed' => get_post_meta( $object[ 'ID' ], 'capability_allowed', true ),
+                    'restrict_redirect' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_redirect', true ),
+                    'restrict_redirect_login' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_redirect_login', true ),
+                    'restrict_redirect_url' => get_post_meta( $object[ 'ID' ], 'restrict_redirect_url', true ),
                     'pod' => get_post_meta( $object[ 'ID' ], 'pod', true ),
                     'pod_slug' => get_post_meta( $object[ 'ID' ], 'pod_slug', true ),
                 )
@@ -874,6 +904,21 @@ class Pods_Pages extends PodsComponent {
 
                 do_action( 'pods_page_precode', self::$exists, $pods, $content );
             }
+			elseif ( self::$exists[ 'restrict_redirect' ] ) {
+				$redirect_url = '';
+
+				if ( self::$exists[ 'restrict_redirect_login' ] ) {
+					$redirect_url = wp_login_url( pods_current_url() );
+				}
+				elseif ( !empty( self::$exists[ 'restrict_redirect_url' ] ) ) {
+					$redirect_url = self::$exists[ 'restrict_redirect_url' ];
+				}
+
+				if ( !empty( $redirect_url ) ) {
+					wp_redirect( $redirect_url );
+					die();
+				}
+			}
 
             if ( !$permission || ( !is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) ) {
                 remove_action( 'template_redirect', array( $this, 'template_redirect' ) );

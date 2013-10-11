@@ -3112,10 +3112,12 @@ class Pods implements Iterator {
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
-            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
-            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
+                $field = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+			}
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
                 $field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+			}
 
             if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                 $field[ 'type' ] = 'hidden';

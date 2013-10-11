@@ -57,7 +57,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @since 2.0
  * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
-function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
+function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
     // Add filter name
     array_unshift( $args, "pods_{$scope}_{$name}" );
 

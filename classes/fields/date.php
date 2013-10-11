@@ -105,6 +105,9 @@ class PodsField_Date extends PodsField {
             );
         }
 
+		$options[ self::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_date_format_options', $options[ self::$type . '_format' ][ 'data' ] );
+		$options[ self::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_date_format_default', $options[ self::$type . '_format' ][ 'default' ] );
+
         return $options;
     }
 
@@ -271,6 +274,8 @@ class PodsField_Date extends PodsField {
             'fjsy' => 'F jS, Y',
             'y' => 'Y'
         );
+
+		$date_format = apply_filters( 'pods_form_ui_field_date_formats', $date_format );
 
         $format = $date_format[ pods_var( self::$type . '_format', $options, 'ymd_dash', null, true ) ];
 

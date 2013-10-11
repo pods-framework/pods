@@ -16,6 +16,8 @@
         'y' => 'yy'
     );
 
+	$date_format = apply_filters( 'pods_form_ui_field_date_js_formats', $date_format );
+
     wp_enqueue_script( 'jquery-ui-datepicker' );
     wp_enqueue_style( 'jquery-ui' );
 

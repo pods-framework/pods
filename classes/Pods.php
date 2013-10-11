@@ -526,8 +526,14 @@ class Pods implements Iterator {
             'serial_params' => null
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
-            $params = array_merge( $defaults, (array) $name );
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
+            $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
         else
             $params = $defaults;
 
@@ -569,8 +575,14 @@ class Pods implements Iterator {
             'raw' => true
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
             $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
         else
             $params = (object) $defaults;
 
@@ -587,8 +599,8 @@ class Pods implements Iterator {
      * This function will return arrays for relationship and file fields.
      *
      * @param string|array $name The field name, or an associative array of parameters
-     * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
-     * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method
+     * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item, or an associative array of parameters
+     * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method, or an associative array of parameters
      *
      * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0
@@ -612,8 +624,18 @@ class Pods implements Iterator {
             'args' => array() // extra data to send to field handlers
         );
 
-        if ( is_array( $name ) || is_object( $name ) )
+        if ( is_array( $name ) || is_object( $name ) ) {
+			$defaults[ 'name' ] = null;
             $params = (object) array_merge( $defaults, (array) $name );
+		}
+		elseif ( is_array( $single ) || is_object( $single ) ) {
+			$defaults[ 'single' ] = null;
+            $params = (object) array_merge( $defaults, (array) $single );
+		}
+		elseif ( is_array( $raw ) || is_object( $raw ) ) {
+			$defaults[ 'raw' ] = false;
+            $params = (object) array_merge( $defaults, (array) $raw );
+		}
         else
             $params = (object) $defaults;
 
@@ -2137,6 +2159,38 @@ class Pods implements Iterator {
         return $this->total_found;
     }
 
+	/**
+	 * Fetch the total number of pages, based on total rows found and the last find() limit
+	 *
+	 * @param null|int $limit Rows per page
+	 * @param null|int $offset Offset of rows
+	 * @param null|int $total Total rows
+	 *
+	 * @return int Number of pages
+	 * @since 2.3.10
+	 */
+	public function total_pages( $limit = null, $offset = null, $total = null ) {
+
+		$this->do_hook( 'total_pages' );
+
+		if ( null === $limit ) {
+			$limit = $this->limit;
+		}
+
+		if ( null === $offset ) {
+			$offset = $this->offset;
+		}
+
+		if ( null === $total ) {
+			$total = $this->total_found();
+		}
+
+		$total_pages = ceil( ( $total - $offset ) / $limit );
+
+		return $total_pages;
+
+	}
+
     /**
      * Fetch the zebra switch
      *
@@ -2705,75 +2759,82 @@ class Pods implements Iterator {
         return $this->api->export( $this, $params );
     }
 
-    /**
-     * Display the pagination controls, types supported by default
-     * are simple, paginate and advanced. The base and format parameters
-     * are used only for the paginate view.
-     *
-     * @var array $params Associative array of parameters
-     *
-     * @return string Pagination HTML
-     * @since 2.0
-     * @link http://pods.io/docs/pagination/
-     */
-    public function pagination ( $params = null ) {
-        if ( empty( $params ) )
-            $params = array();
-        elseif ( !is_array( $params ) )
-            $params = array( 'label' => $params );
+	/**
+	 * Display the pagination controls, types supported by default
+	 * are simple, paginate and advanced. The base and format parameters
+	 * are used only for the paginate view.
+	 *
+	 * @var array $params Associative array of parameters
+	 *
+	 * @return string Pagination HTML
+	 * @since 2.0
+	 * @link http://pods.io/docs/pagination/
+	 */
+	public function pagination( $params = null ) {
 
-        $this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
+		if ( empty( $params ) ) {
+			$params = array();
+		}
+		elseif ( !is_array( $params ) ) {
+			$params = array( 'label' => $params );
+		}
 
-        $url = pods_var_update( null, null, $this->page_var );
+		$this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
 
-        $append = '?';
+		$url = pods_var_update( null, null, $this->page_var );
 
-        if ( false !== strpos( $url, '?' ) )
-            $append = '&';
+		$append = '?';
 
-        $defaults = array(
-            'type' => 'advanced',
-            'label' => __( 'Go to page:', 'pods' ),
-            'show_label' => true,
-            'first_text' => __( '&laquo; First', 'pods' ),
-            'prev_text' => __( '&lsaquo; Previous', 'pods' ),
-            'next_text' => __( 'Next &rsaquo;', 'pods' ),
-            'last_text' => __( 'Last &raquo;', 'pods' ),
-            'prev_next' => true,
-            'first_last' => true,
-            'limit' => (int) $this->limit,
+		if ( false !== strpos( $url, '?' ) ) {
+			$append = '&';
+		}
+
+		$defaults = array(
+			'type' => 'advanced',
+			'label' => __( 'Go to page:', 'pods' ),
+			'show_label' => true,
+			'first_text' => __( '&laquo; First', 'pods' ),
+			'prev_text' => __( '&lsaquo; Previous', 'pods' ),
+			'next_text' => __( 'Next &rsaquo;', 'pods' ),
+			'last_text' => __( 'Last &raquo;', 'pods' ),
+			'prev_next' => true,
+			'first_last' => true,
+			'limit' => (int) $this->limit,
 			'offset' => (int) $this->offset,
-            'page' => max( 1, (int) $this->page ),
-            'mid_size' => 2,
-            'end_size' => 1,
-            'total_found' => $this->total_found(),
-            'page_var' => $this->page_var,
-            'base' => "{$url}{$append}%_%",
-            'format' => "{$this->page_var}=%#%",
-            'class' => "",
-            'link_class'
-        );
+			'page' => max( 1, (int) $this->page ),
+			'mid_size' => 2,
+			'end_size' => 1,
+			'total_found' => $this->total_found(),
+			'page_var' => $this->page_var,
+			'base' => "{$url}{$append}%_%",
+			'format' => "{$this->page_var}=%#%",
+			'class' => '',
+			'link_class' => ''
+		);
 
-        $params = (object) array_merge( $defaults, $params );
+		$params = (object) array_merge( $defaults, $params );
 
-        $params->total = ceil( ( $params->total_found - $params->offset ) / $params->limit );
+		$params->total = $this->total_pages( $params->limit, $params->offset, $params->total_found );
 
-        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total || $params->total_found <= $params->offset )
-            return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
+		if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total || $params->total_found <= $params->offset ) {
+			return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
+		}
 
-        $pagination = $params->type;
+		$pagination = $params->type;
 
-        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) )
-            $pagination = 'advanced';
+		if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate', 'list' ) ) ) {
+			$pagination = 'advanced';
+		}
 
-        ob_start();
+		ob_start();
 
-        pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );
+		pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );
 
-        $output = ob_get_clean();
+		$output = ob_get_clean();
 
-        return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
-    }
+		return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
+
+	}
 
     /**
      * Return a filter form for searching a Pod
@@ -3051,13 +3112,17 @@ class Pods implements Iterator {
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
+                $field = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+			}
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
+                $field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+			}
+
             if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                 $field[ 'type' ] = 'hidden';
 
-            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
-            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+			$fields[ $field[ 'name' ] ] = $field;
 
             if ( empty( $this->id ) && null !== $value )
                 $this->row_override[ $field[ 'name' ] ] = $value;
@@ -3101,6 +3166,77 @@ class Pods implements Iterator {
 
         return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
     }
+
+	/**
+	 * @param array $fields (optional) Fields to show in the view, defaults to all fields
+	 *
+	 * @return mixed
+	 * @since 2.3.10
+	 */
+	public function view( $fields = null ) {
+
+		$pod =& $this;
+
+		// Convert comma separated list of fields to an array
+		if ( null !== $fields && !is_array( $fields ) && 0 < strlen( $fields ) ) {
+			$fields = explode( ',', $fields );
+		}
+
+		$object_fields = (array) pods_v( 'object_fields', $this->pod_data, array(), true );
+
+		if ( empty( $fields ) ) {
+			// Add core object fields if $fields is empty
+			$fields = array_merge( $object_fields, $this->fields );
+		}
+
+		$view_fields = $fields; // Temporary
+
+		$fields = array();
+
+		foreach ( $view_fields as $name => $field ) {
+
+			$defaults = array(
+				'name' => $name
+			);
+
+			if ( !is_array( $field ) ) {
+				$name = $field;
+
+				$field = array(
+					'name' => $name
+				);
+			}
+
+			$field = array_merge( $defaults, $field );
+
+			$field[ 'name' ] = trim( $field[ 'name' ] );
+
+			if ( empty( $field[ 'name' ] ) ) {
+				$field[ 'name' ] = trim( $name );
+			}
+
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+
+			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
+				continue;
+			}
+			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
+				continue;
+			}
+
+			$fields[ $field[ 'name' ] ] = $field;
+		}
+
+		unset( $view_fields ); // Cleanup
+
+		$output = pods_view( PODS_DIR . 'ui/front/view.php', compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+
+		return $this->do_hook( 'view', $output, $fields, $this->id() );
+
+	}
 
     /**
      * Replace magic tags with their values
@@ -3375,11 +3511,13 @@ class Pods implements Iterator {
                 );
             }
 
-            if ( strlen( pods_var( 'detail_url', $this->pod_data ) ) < 1 ) {
+			$detail_url = pods_var( 'detail_url', $this->pod_data[ 'options' ] );
+
+            if ( 0 < strlen( $detail_url ) ) {
                 $ui[ 'actions_custom' ] = array(
                     'view_url' => array(
                         'label' => 'View',
-                        'link' => get_site_url() . '/' . pods_var( 'detail_url', $this->pod_data[ 'options' ] )
+                        'link' => get_site_url() . '/' . $detail_url
                     )
                 );
             }

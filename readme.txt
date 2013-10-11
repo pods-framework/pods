@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, mik
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
-Tested up to: 3.6
+Tested up to: 3.7
 Stable tag: 2.3.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -107,12 +107,13 @@ Using another solution? We've built additional components to help you transition
 = Plays well with others =
 We also do our best to integrate and play nicely with other projects:
 
-* Plugins
- * [Tabify Edit Screen](http://wordpress.org/extend/plugins/tabify-edit-screen/)
- * [Codepress Admin Columns](http://wordpress.org/extend/plugins/codepress-admin-columns/)
- * [Polylang](http://wordpress.org/extend/plugins/polylang/)
+* Plugins we've integrated with
+ * [Tabify Edit Screen](http://wordpress.org/plugins/tabify-edit-screen/)
+ * [Codepress Admin Columns](http://wordpress.org/plugins/codepress-admin-columns/)
+ * [Polylang](http://wordpress.org/plugins/polylang/)
+ * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
  * [WPML](http://wpml.org/)
-* Themes
+* Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
 
@@ -153,6 +154,27 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.10 - October 11th, 2013 =
+* We've been working hard on Pods 2.3.10 to bring you a number of enhancements and stability fixes, but be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
+* Added: Ability to set 'output' type in Pods::field() to 'pods' for Relationship fields related to a Pod, which will return an array of fully functional 'pods' objects for further advanced code
+* Added: Pod Pages now have an option to redirect to the login page or a custom URL if the user does not have permission to view it (based on restrict settings on the Pod Page itself)
+* Added: Ability to set Taxonomy terms for a Post Type item through the normal Pods 'add' / 'save' / etc methods
+* Added: Ability to set User 'role' for a User through the normal Pods 'add' / 'save' methods
+* Added: Taxonomy-specific capabilities added to the Pods Roles component
+* Added: New Days of Week and Months in Year pre-defined relationships added for simplistic date-oriented fields
+* Added: Support for $offset handling in Pods::pagination()
+* Added: YARPP integration for Post Types
+* Added: Default Select Text customization for Relationship fields that are set to a Dropdown input
+* Added: Default Post Status to use for Custom Post Types created by Pods, when utilizing the Pods 'add' method
+* Added: mu-plugins support for Pods as a Must-Use plugin on WordPress Multisite installations (props @studioanino)
+* Improved: Smarter handling of post_status for Post Types, easier to override to show other post statuses, and if you don't provide it in the 'where', it will fall back to the default(s)
+* Improved: Pods::remove_from() now removes all values if you provide no 'value' for a specific field
+* Fixed: Comment queries using comment_type should allow for a blank string (props @sirbeagle)
+* Fixed: Date / Time saving for 24 hour formats
+* Fixed: Timezone notices on certain configurations
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.9 - August 5th, 2013 =
 * A big welcome to the newest contributor to our team, David Cramer (@desertsnowman)!
 * Added: Theme-based Pod Templates now available, when using $pod->template( 'your-template' ) or other places a template can be used (shortcode, widget, etc), with $obj variable available for use like in a normal template -- this will automatically include your template file from the following locations, child-theme aware: pods/your-template.php, pods-your-template.php, or your-template.php -- Get the code out of the database and get rid of the need for the Templates component!
@@ -166,8 +188,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Custom Taxonomies now have their menu icon option available, previously hidden due to a bug
 * Fixed: Various PHP notices/warnings
 * Fixed: Translation tweaks and fixes
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.8 - June 8th, 2013 =
 * Fixed: Hide field from UI option now works properly for admins
@@ -385,7 +405,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 = 1.12.3 - February 19, 2012 =
 * Added: Pods UI findRecords parameters array now goes through a new filter called "pods_ui_findrecords"
 * Fixed: Forcing boolean check if true in bypass_helpers in PodAPI
-* Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories); Props @chrisbliss18
+* Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories) (props @chrisbliss18)
 * Fixed: nicEdit JS "A.createRange()||document.createRange()" fix for JS errors on certain browsers / uses
 * Fixed: Pagination page_var usage (was forcing 'pg' var name no matter what), and fixed query array handling; Props to @thangaswamyarun for finding this one so we could fix it!
 * Fixed: Pods UI search settings set correctly now (had to flip a true/false check and not have search_across take the bool value of search)

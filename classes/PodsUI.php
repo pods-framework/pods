@@ -74,7 +74,8 @@ class PodsUI {
         'export_delimiter',
         'remove_export',
         'updated',
-        'duplicate'
+        'duplicate',
+		'message'
     ); // used in var_update
 
     static $allowed = array(
@@ -438,7 +439,7 @@ class PodsUI {
             }
 
             if ( is_object( $object ) && ( 'Pods' == get_class( $object ) || 'Pod' == get_class( $object ) ) )
-                $this->pod = &$object;
+                $this->pod =& $object;
         }
 
         if ( !is_array( $options ) ) {
@@ -1194,6 +1195,8 @@ class PodsUI {
                     $attributes[ 'custom_relate' ] = false;
                 if ( !isset( $attributes[ 'custom_form_display' ] ) )
                     $attributes[ 'custom_form_display' ] = false;
+                if ( !isset( $attributes[ 'css_values' ] ) )
+                    $attributes[ 'css_values' ] = true;
                 if ( 'search_columns' == $which && !$attributes[ 'options' ][ 'search' ] )
                     continue;
 
@@ -1336,48 +1339,70 @@ class PodsUI {
         }
         elseif ( 'view' == $this->action && !in_array( $this->action, $this->actions_disabled ) )
             $this->view();
-        elseif ( isset( $this->actions_custom[ $this->action ] ) && is_callable( $this->actions_custom[ $this->action ] ) )
-            return call_user_func_array( $this->actions_custom[ $this->action ], array( &$this, $this->id ) );
-        elseif ( isset( $this->actions_custom[ $this->action ] ) && ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $this->action ][ 'callback' ] ) ) )
-            return call_user_func_array( $this->actions_custom[ $this->action ][ 'callback' ], array( &$this, $this->id ) );
-        elseif ( !in_array( 'manage', $this->actions_disabled ) ) {
-            // handle session / user persistent settings for show_per_page, orderby, search, and filters
-            $methods = array( 'session', 'user' );
+		else {
+			if ( isset( $this->actions_custom[ $this->action ] ) ) {
+				$more_args = false;
 
-            // @todo fix this to set ($this) AND save (setting)
-            foreach ( $methods as $method ) {
-                foreach ( $this->$method as $setting ) {
-                    if ( 'show_per_page' == $setting )
-                        $value = $this->limit;
-                    elseif ( 'orderby' == $setting ) {
-                        if ( empty( $this->orderby ) )
-                            $value = '';
-                        // save this if we have a default index set
-                        elseif ( isset( $this->orderby[ 'default' ] ) ) {
-                            $value = $this->orderby[ 'default' ] . ' '
-                                     . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
-                        }
-                        else
-                            $value = '';
-                    }
-                    else
-                        $value = $this->$setting;
+				if ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'more_args' ] ) ) {
+					$more_args = $this->actions_custom[ $this->action ][ 'more_args' ];
+				}
 
-                    pods_var_set( $value, $setting, $method );
-                }
-            }
+				$row = $this->row;
 
-            $this->manage();
-        }
+				if ( empty( $row ) ) {
+					$row = $this->get_row();
+				}
+
+				if ( $this->restricted( $this->action, $row ) ) {
+					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
+				}
+				elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
+					return null;
+				}
+				elseif ( false !== $this->callback_action( true, $this->action, $this->id ) ) {
+					return null;
+				}
+			}
+
+			if ( !in_array( 'manage', $this->actions_disabled ) ) {
+				// handle session / user persistent settings for show_per_page, orderby, search, and filters
+				$methods = array( 'session', 'user' );
+
+				// @todo fix this to set ($this) AND save (setting)
+				foreach ( $methods as $method ) {
+					foreach ( $this->$method as $setting ) {
+						if ( 'show_per_page' == $setting )
+							$value = $this->limit;
+						elseif ( 'orderby' == $setting ) {
+							if ( empty( $this->orderby ) )
+								$value = '';
+							// save this if we have a default index set
+							elseif ( isset( $this->orderby[ 'default' ] ) ) {
+								$value = $this->orderby[ 'default' ] . ' '
+										 . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+							}
+							else
+								$value = '';
+						}
+						else
+							$value = $this->$setting;
+
+						pods_var_set( $value, $setting, $method );
+					}
+				}
+
+				$this->manage();
+			}
+		}
     }
 
     /**
      * @return mixed
      */
     public function add () {
-        $this->do_hook( 'add' );
-        if ( isset( $this->actions_custom[ 'add' ] ) && is_callable( $this->actions_custom[ 'add' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'add' ], array( &$this ) );
+		if ( false !== $this->callback_action( 'add' ) ) {
+			return null;
+		}
         ?>
     <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
@@ -1407,21 +1432,18 @@ class PodsUI {
         if ( empty( $this->row ) )
             $this->get_row();
 
-        $this->do_hook( 'edit', $duplicate );
-
-        if ( $duplicate )
-            $this->do_hook( 'duplicate' );
-
-        if ( $duplicate && isset( $this->actions_custom[ 'duplicate' ] ) && is_callable( $this->actions_custom[ 'duplicate' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'duplicate' ], array( &$this ) );
-        elseif ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
+		if ( $duplicate && false !== $this->callback_action( 'duplicate' ) ) {
+			return null;
+		}
+		elseif ( false !== $this->callback_action( 'edit', $duplicate ) ) {
+			return null;
+		}
         ?>
     <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
-            echo ( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
+            echo $this->do_template( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
 
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
@@ -1456,10 +1478,9 @@ class PodsUI {
         if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
 
-        $this->do_hook( 'form' );
-
-        if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'form' ], array( &$this ) );
+		if ( false !== $this->callback( 'form' ) ) {
+			return null;
+		}
 
         $label = $this->label[ 'add' ];
         $id = null;
@@ -1483,7 +1504,7 @@ class PodsUI {
             if ( $this->restricted( $this->action, $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 
-            $label = $this->label[ 'edit' ];
+            $label = $this->do_template( $this->label[ 'edit' ] );
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],
@@ -1496,7 +1517,7 @@ class PodsUI {
             unset( $alt_vars[ 'id' ] );
 
             if ( $duplicate ) {
-                $label = $this->label[ 'duplicate' ];
+                $label = $this->do_template( $this->label[ 'duplicate' ] );
                 $id = null;
                 $vars = array(
                     'action' . $this->num => $this->action_after[ 'duplicate' ],
@@ -1509,6 +1530,8 @@ class PodsUI {
                 unset( $alt_vars[ 'id' ] );
             }
         }
+
+		$fields = array();
 
         if ( isset( $this->fields[ $this->action ] ) )
             $fields = $this->fields[ $this->action ];
@@ -1553,13 +1576,15 @@ class PodsUI {
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+            elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) )
+                $field = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+
             if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                 $field[ 'type' ] = 'hidden';
 
-            elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
-            elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) )
-                $fields[ $field[ 'name' ] ] = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+			$fields[ $field[ 'name' ] ] = $field;
 
             if ( empty( $this->id ) && null !== $value )
                 $this->pod->row_override[ $field[ 'name' ] ] = $value;
@@ -1584,18 +1609,136 @@ class PodsUI {
 
     /**
      * @return bool|mixed
+	 * @since 2.3.10
      */
     public function view () {
-        $this->do_hook( 'view' );
-        if ( isset( $this->actions_custom[ 'view' ] ) && is_callable( $this->actions_custom[ 'view' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'view' ], array( &$this ) );
-        if ( empty( $this->row ) )
+
+		if ( false !== $this->callback_action( 'view' ) ) {
+            return null;
+		}
+
+        if ( empty( $this->row ) ) {
             $this->get_row();
-        if ( empty( $this->row ) )
+		}
+
+        if ( empty( $this->row ) ) {
             return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
-        $id = $this->row[ $this->sql[ 'field_id' ] ];
-        // HOOK INTO FORM CLASS HERE FOR VIEW
-    }
+		}
+
+		$pod =& $this->pod;
+
+		$fields = array();
+
+		if ( isset( $this->fields[ $this->action ] ) ) {
+			$fields = $this->fields[ $this->action ];
+		}
+
+		if ( is_object( $this->pod ) ) {
+			$object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+
+			$object_field_objects = array(
+				'post_type',
+				'taxonomy',
+				'media',
+				'user',
+				'comment'
+			);
+
+			if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], $object_field_objects ) ) {
+				$object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
+			}
+
+			if ( empty( $fields ) ) {
+				// Add core object fields if $fields is empty
+				$fields = array_merge( $object_fields, $this->pod->fields );
+			}
+		}
+
+		$view_fields = $fields; // Temporary
+
+		$fields = array();
+
+		foreach ( $view_fields as $k => $field ) {
+			$name = $k;
+
+			$defaults = array(
+				'name' => $name,
+				'type' => 'text',
+				'options' => 'text'
+			);
+
+			if ( !is_array( $field ) ) {
+				$name = $field;
+
+				$field = array(
+					'name' => $name
+				);
+			}
+
+			$field = array_merge( $defaults, $field );
+
+			$field[ 'name' ] = trim( $field[ 'name' ] );
+
+			$value = pods_var_raw( 'default', $field );
+
+			if ( empty( $field[ 'name' ] ) ) {
+				$field[ 'name' ] = trim( $name );
+			}
+
+			if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
+				$field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+			}
+			elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) ) {
+				$field = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+			}
+
+			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
+				continue;
+			}
+			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
+				continue;
+			}
+
+			$fields[ $field[ 'name' ] ] = $field;
+
+			if ( empty( $this->id ) && null !== $value ) {
+				$this->pod->row_override[ $field[ 'name' ] ] = $value;
+			}
+		}
+
+		unset( $view_fields ); // Cleanup
+		?>
+		<div class="wrap pods-ui">
+			<div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
+			<h2>
+				<?php
+					echo $this->do_template( $this->header[ 'view' ] );
+
+					if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
+						$link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
+
+						if ( !empty( $this->action_links[ 'add' ] ) ) {
+							$link = $this->action_links[ 'add' ];
+						}
+				?>
+					<a href="<?php echo $link; ?>" class="add-new-h2"><?php echo $this->heading[ 'add' ]; ?></a>
+				<?php
+					}
+					elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
+						$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+				?>
+					<a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+				<?php
+					}
+
+					pods_view( PODS_DIR . 'ui/admin/view.php', compact( array_keys( get_defined_vars() ) ) );
+				?>
+
+			</h2>
+		</div>
+	<?php
+	}
+
 
     /**
      * Reorder data
@@ -1625,8 +1768,11 @@ class PodsUI {
      */
     public function save ( $insert = false ) {
         $this->do_hook( 'pre_save', $insert );
-        if ( isset( $this->actions_custom[ 'save' ] ) && is_callable( $this->actions_custom[ 'save' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'save' ], array( $insert, &$this ) );
+
+        if ( $this->callback( 'save', $insert ) ) {
+			return null;
+		}
+
         global $wpdb;
         $action = __( 'saved', 'pods' );
         if ( true === $insert )
@@ -1681,10 +1827,10 @@ class PodsUI {
                 else
                     $value = pods_var( $field, 'post', '' );
             }
-            if ( isset( $this->actions_custom[ 'save' ] ) && is_callable( $this->actions_custom[ 'save' ] ) )
-                return call_user_func_array( $this->actions_custom[ 'save' ], array( $insert, &$this ) );
+
             if ( isset( $attributes[ 'custom_save' ] ) && false !== $attributes[ 'custom_save' ] && is_callable( $attributes[ 'custom_save' ] ) )
                 $value = call_user_func_array( $attributes[ 'custom_save' ], array( $value, $field, $attributes, &$this ) );
+
             $field_sql[] = "`$field`=$vartype";
             $values[] = $value;
             $data[ $field ] = $value;
@@ -1715,8 +1861,9 @@ class PodsUI {
     public function delete ( $id = null ) {
         $this->do_hook( 'pre_delete', $id );
 
-        if ( isset( $this->actions_custom[ 'delete' ] ) && is_callable( $this->actions_custom[ 'delete' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'delete' ], array( $id, &$this ) );
+		if ( false !== $this->callback_action( 'delete', $id ) ) {
+			return null;
+		}
 
         $id = pods_absint( $id );
 
@@ -1764,12 +1911,9 @@ class PodsUI {
                     if ( empty( $id ) )
                         continue;
 
-                    if ( isset( $this->actions_custom[ 'delete' ] ) && is_callable( $this->actions_custom[ 'delete' ] ) ) {
-                        $check = call_user_func_array( $this->actions_custom[ 'delete' ], array( $id, &$this ) );
-
-                        if ( false !== $check )
-                            $check = true;
-                    }
+					if ( $callback = $this->callback( 'delete', $id ) ) {
+						$check = $callback;
+					}
                     elseif ( is_object( $this->pod ) )
                         $check = $this->pod->delete( $id );
                     else
@@ -1866,11 +2010,13 @@ class PodsUI {
 
         // use PodsData to get field
 
-        if ( isset( $this->actions_custom[ 'get_field' ] ) && is_callable( $this->actions_custom[ 'get_field' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'get_field' ], array( $field, &$this ) );
+		if ( $callback = $this->callback( 'get_field', $field ) ) {
+			return $callback;
+		}
 
-        if ( isset( $this->row[ $field ] ) )
+        if ( isset( $this->row[ $field ] ) ) {
             $value = $this->row[ $field ];
+		}
         elseif ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             if ( 'Pod' == get_class( $this->pod ) )
                 $value = $this->pod->get_field( $field );
@@ -2116,21 +2262,20 @@ class PodsUI {
     /**
      * @param bool $reorder
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function manage ( $reorder = false ) {
-        $this->do_hook( 'manage', $reorder );
-
-        if ( isset( $this->actions_custom[ 'manage' ] ) && is_callable( $this->actions_custom[ 'manage' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'manage' ], array( $reorder, &$this ) );
+		if ( false !== $this->callback_action( 'manage', $reorder ) ) {
+			return null;
+		}
 
         if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && !empty( $this->bulk ) ) {
-            if ( is_callable( $this->actions_bulk[ $this->action_bulk ] ) )
-                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ], array( &$this, $this->bulk ) );
-            elseif ( isset( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) )
-                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ][ 'callback' ], array( &$this, $this->bulk ) );
-            elseif ( 'delete' == $this->action_bulk )
+			if ( false !== $this->callback_bulk( $this->action_bulk, $this->bulk ) ) {
+				return null;
+			}
+            elseif ( 'delete' == $this->action_bulk ) {
                 return $this->delete_bulk();
+			}
         }
 
         $this->screen_meta();
@@ -2213,8 +2358,9 @@ class PodsUI {
                 }
             }
 
-            if ( isset( $this->actions_custom[ 'header' ] ) && is_callable( $this->actions_custom[ 'header' ] ) )
-                return call_user_func_array( $this->actions_custom[ 'header' ], array( $reorder, &$this ) );
+			if ( false !== $this->callback( 'header', $reorder ) ) {
+				return null;
+			}
 
             if ( false === $this->data )
                 $this->get_data();
@@ -2335,7 +2481,7 @@ class PodsUI {
 
                             $options = array();
                             $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
+                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $options[ 'input_helper' ], null, true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
@@ -2692,6 +2838,8 @@ class PodsUI {
                     );
 
                     foreach ( $filters as $filter ) {
+                        $excluded_filters[] = 'filters_relation';
+                        $excluded_filters[] = 'filters_compare_' . $filter;
                         $excluded_filters[] = 'filter_' . $filter . '_start';
                         $excluded_filters[] = 'filter_' . $filter . '_end';
                         $excluded_filters[] = 'filter_' . $filter;
@@ -2895,9 +3043,10 @@ class PodsUI {
      * @return bool|mixed
      */
     public function table ( $reorder = false ) {
-        $this->do_hook( 'table', $reorder );
-        if ( isset( $this->actions_custom[ 'table' ] ) && is_callable( $this->actions_custom[ 'table' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'table' ], array( $reorder, &$this ) );
+		if ( false !== $this->callback( 'table', $reorder ) ) {
+			return null;
+		}
+
         if ( empty( $this->data ) ) {
             ?>
         <p><?php echo sprintf( __( 'No %s found', 'pods' ), $this->items ); ?></p>
@@ -3069,28 +3218,31 @@ class PodsUI {
                                 if ( false === $attributes[ 'display' ] )
                                     continue;
 
-                                if ( !isset( $row[ $field ] ) )
+                                if ( !isset( $row[ $field ] ) ) {
                                     $row[ $field ] = $this->get_field( $field );
+								}
+
+								$row_value = $row[ $field ];
 
                                 if ( !empty( $attributes[ 'custom_display' ] ) ) {
                                     if ( is_callable( $attributes[ 'custom_display' ] ) )
-                                        $row[ $field ] = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row[ $field ], $field, $attributes ) );
+                                        $row_value = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row_value, $field, $attributes ) );
                                     elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) )
-                                        $row[ $field ] = $this->pod->helper( $attributes[ 'custom_display' ], $row[ $field ], $field );
+                                        $row_value = $this->pod->helper( $attributes[ 'custom_display' ], $row_value, $field );
                                 }
                                 else {
                                     ob_start();
 
-                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
+                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
 
                                     $field_output = trim( (string) ob_get_clean() );
 
                                     if ( false === $field_value )
-                                        $row[ $field ] = '';
+                                        $row_value = '';
                                     elseif ( 0 < strlen( trim( (string) $field_value ) ) )
-                                        $row[ $field ] = trim( (string) $field_value );
+                                        $row_value = trim( (string) $field_value );
                                     elseif ( 0 < strlen( $field_output ) )
-                                        $row[ $field ] = $field_output;
+                                        $row_value = $field_output;
                                 }
 
                                 if ( false !== $attributes[ 'custom_relate' ] ) {
@@ -3128,14 +3280,33 @@ class PodsUI {
                                                 $val[] = $value[ $wha ];
                                         }
                                         if ( !empty( $val ) )
-                                            $row[ $field ] = implode( ' ', $val );
+                                            $row_value = implode( ' ', $val );
                                     }
                                 }
 
-                                if ( is_object( $this->pod ) )
-                                    $row[ $field ] = $this->do_hook( $this->pod->pod . '_field_value', $row[ $field ], $field, $attributes, $row );
+								$css_classes = ' pods-ui-col-field-' . sanitize_title( $field );
 
-                                $row[ $field ] = $this->do_hook( 'field_value', $row[ $field ], $field, $attributes, $row );
+								if ( $attributes[ 'css_values' ] ) {
+									$css_field_value = $row[ $field ];
+
+									if ( is_object( $css_field_value ) ) {
+										$css_field_value = get_object_vars( $css_field_value );
+									}
+
+									if ( is_array( $css_field_value ) ) {
+										foreach ( $css_field_value as $css_field_val ) {
+											$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
+										}
+									}
+									else {
+										$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_value ) ) );
+									}
+								}
+
+                                if ( is_object( $this->pod ) )
+                                    $row_value = $this->do_hook( $this->pod->pod . '_field_value', $row_value, $field, $attributes, $row );
+
+                                $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
                                     if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
@@ -3144,7 +3315,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
@@ -3153,12 +3324,12 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
                                         ?>
-                <td class="post-title page-title column-title<?php echo ( 1 == $reorder && $this->reorder ) ? ' dragme' : ''; ?>"><strong><?php echo $row[ $field ]; ?></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?><?php echo ( 1 == $reorder && $this->reorder ) ? ' dragme' : ''; ?>"><strong><?php echo $row_value; ?></strong>
                                         <?php
                                     }
 
@@ -3204,7 +3375,7 @@ class PodsUI {
 
                                         if ( is_array( $this->actions_custom ) ) {
                                             foreach ( $this->actions_custom as $custom_action => $custom_data ) {
-                                                if ( is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) && !in_array( $custom_action, $this->actions_disabled ) && !in_array( $custom_action, $this->actions_hidden ) ) {
+												if ( 'add' != $custom_action && is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) && !in_array( $custom_action, $this->actions_disabled ) && !in_array( $custom_action, $this->actions_hidden ) ) {
                                                     if ( !in_array( $custom_action, array( 'add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder', 'manage', 'table' ) ) ) {
                                                         if ( 'toggle' == $custom_action ) {
                                                             $toggle = true;
@@ -3230,7 +3401,7 @@ class PodsUI {
                                                                 $vars[ 'toggled' ] = 1;
                                                             }
 
-                                                            $custom_data[ 'link' ] = pods_var_update( $vars );
+                                                            $custom_data[ 'link' ] = pods_var_update( $vars, self::$allowed, $this->exclusion() );
 
                                                             if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) )
                                                                 $custom_data[ 'link' ] = $this->do_template( $this->action_links[ $custom_action ], $row );
@@ -3241,8 +3412,9 @@ class PodsUI {
                                                         if ( isset( $custom_data[ 'confirm' ] ) )
                                                             $confirm = ' onclick="if(confirm(\'' . $custom_data[ 'confirm' ] . '\')){return true;}return false;"';
 
-                                                        if ( $this->restricted( $custom_action, $row ) )
+                                                        if ( $this->restricted( $custom_action, $row ) ) {
                                                             continue;
+														}
 
                                                         $actions[ $custom_action ] = '<span class="edit action-' . $custom_action . '"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item"' . $confirm . '>' . $custom_data[ 'label' ] . '</a></span>';
                                                     }
@@ -3256,13 +3428,11 @@ class PodsUI {
                                             ?>
                                             <div class="row-actions<?php echo ( $toggle ? ' row-actions-toggle' : '' ); ?>">
                                                 <?php
-                                                if ( isset( $this->actions_custom[ 'actions_start' ] ) && is_callable( $this->actions_custom[ 'actions_start' ] ) )
-                                                    call_user_func_array( $this->actions_custom[ 'actions_start' ], array( $row, $actions, &$this ) );
+													$this->callback( 'actions_start', $row, $actions );
 
-                                                echo implode( ' | ', $actions );
+													echo implode( ' | ', $actions );
 
-                                                if ( isset( $this->actions_custom[ 'actions_end' ] ) && is_callable( $this->actions_custom[ 'actions_end' ] ) )
-                                                    call_user_func_array( $this->actions_custom[ 'actions_end' ], array( $row, $actions, &$this ) );
+													$this->callback( 'actions_end', $row, $actions );
                                                 ?>
                                             </div>
                                             <?php
@@ -3279,12 +3449,12 @@ class PodsUI {
                                 }
                                 elseif ( 'date' == $attributes[ 'type' ] ) {
                                     ?>
-                                    <td class="date column-date"><abbr title="<?php echo esc_attr( $row[ $field ] ); ?>"><?php echo $row[ $field ]; ?></abbr></td>
+                                    <td class="date column-date<?php echo $css_classes; ?>"><abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo $row_value; ?></abbr></td>
                                     <?php
                                 }
                                 else {
                                     ?>
-                                    <td class="author"><?php echo $row[ $field ]; ?></td>
+                                    <td class="author<?php echo $css_classes; ?>"><span><?php echo $row_value; ?></span></td>
                                     <?php
                                 }
                             }
@@ -3488,10 +3658,9 @@ class PodsUI {
      * @return mixed
      */
     public function pagination ( $header = false ) {
-        $this->do_hook( 'pagination', $header );
-
-        if ( isset( $this->actions_custom[ 'pagination' ] ) && is_callable( $this->actions_custom[ 'pagination' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'pagination' ], array( $header, &$this ) );
+		if ( false !== $this->callback( 'pagination', $header ) ) {
+			return null;
+		}
 
         $total_pages = ceil( $this->total_found / $this->limit );
         $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'filter_*', 'page' . $this->num ), $this->exclusion() );
@@ -3551,10 +3720,9 @@ class PodsUI {
      * @return mixed
      */
     public function limit ( $options = false ) {
-        $this->do_hook( 'limit', $options );
-
-        if ( isset( $this->actions_custom[ 'limit' ] ) && is_callable( $this->actions_custom[ 'limit' ] ) )
-            return call_user_func_array( $this->actions_custom[ 'limit' ], array( $options, &$this ) );
+		if ( false !== $this->callback( 'limit', $options ) ) {
+			return null;
+		}
 
         if ( false === $options || !is_array( $options ) || empty( $options ) )
             $options = array( 10, 25, 50, 100, 200 );
@@ -3613,7 +3781,7 @@ class PodsUI {
         $tag = explode( ',', $tag );
 
         if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
-            return;
+            return null;
 
         foreach ( $tag as $k => $v ) {
             $tag[ $k ] = trim( $v );
@@ -3637,7 +3805,7 @@ class PodsUI {
         if ( 0 < strlen( $value ) )
             return $before . $value . $after;
 
-        return;
+        return null;
     }
 
     /**
@@ -3734,7 +3902,7 @@ class PodsUI {
 
         $author_restrict = false;
 
-        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict === $this->restrict[ 'author_restrict' ] ) {
             $restricted = false;
 
             $author_restrict = true;
@@ -3937,10 +4105,163 @@ class PodsUI {
                 $restricted = false;
         }
 
+		if ( isset( $this->actions_custom[ $action ] ) && is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'restrict_callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'restrict_callback' ] ) ) {
+			$restricted = call_user_func( $this->actions_custom[ $action ][ 'restrict_callback' ], $restricted, $restrict, $action, $row, $this );
+		}
+
         $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action, $row );
 
         return $restricted;
     }
+
+	/**
+	 * Check for a custom action callback and run it
+	 *
+	 * @return bool|mixed
+	 */
+	public function callback() {
+
+		$args = func_get_args();
+
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$action = array_shift( $args );
+
+		// Do hook
+		$callback_args = $args;
+		array_unshift( $callback_args, null );
+		array_unshift( $callback_args, $action );
+
+		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
+
+		if ( null === $callback ) {
+			$callback = false;
+		}
+
+		$args[] = $this;
+
+		if ( isset( $this->actions_custom[ $action ] ) ) {
+			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'callback' ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ][ 'callback' ], $args );
+			}
+			elseif ( is_callable( $this->actions_custom[ $action ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ], $args );
+			}
+		}
+
+		return $callback;
+
+	}
+
+	/**
+	 * Check for a custom action callback and run it (deprecated reverse arg order)
+	 *
+	 * @return bool|mixed
+	 */
+	public function callback_action() {
+
+		$args = func_get_args();
+
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$action = array_shift( $args );
+
+		$deprecated = false;
+
+		if ( is_bool( $action ) ) {
+			$deprecated = $action;
+
+			$action = array_shift( $args );
+		}
+
+		// Do hook
+		$callback_args = $args;
+		array_unshift( $callback_args, null );
+		array_unshift( $callback_args, 'action_' . $action );
+
+		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
+
+		if ( null === $callback ) {
+			$callback = false;
+		}
+
+		$args[] = $this;
+
+		// Deprecated reverse arg order
+		if ( $deprecated ) {
+			$args = array_reverse( $args );
+		}
+
+		if ( isset( $this->actions_custom[ $action ] ) ) {
+			if ( is_array( $this->actions_custom[ $action ] ) && isset( $this->actions_custom[ $action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $action ][ 'callback' ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ][ 'callback' ], $args );
+			}
+			elseif ( is_callable( $this->actions_custom[ $action ] ) ) {
+				$callback = call_user_func_array( $this->actions_custom[ $action ], $args );
+			}
+		}
+
+		return $callback;
+
+	}
+
+	/**
+	 * Check for a bulk action callback and run it
+	 *
+	 * @return bool|mixed Callback result
+	 */
+	public function callback_bulk() {
+
+		$args = func_get_args();
+
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$action = array_shift( $args );
+
+		$deprecated = false;
+
+		if ( is_bool( $action ) ) {
+			$deprecated = $action;
+
+			$action = array_shift( $args );
+		}
+
+		// Do hook
+		$callback_args = $args;
+		array_unshift( $callback_args, null );
+		array_unshift( $callback_args, 'bulk_action_' . $action );
+
+		$callback = call_user_func_array( array( $this, 'do_hook' ), $callback_args );
+
+		if ( null === $callback ) {
+			$callback = false;
+		}
+
+		$args[] = $this;
+
+		// Deprecated reverse arg order
+		if ( $deprecated ) {
+			$args = array_reverse( $args );
+		}
+
+		if ( isset( $this->actions_bulk[ $action ] ) ) {
+			if ( is_array( $this->actions_bulk[ $action ] ) && isset( $this->actions_bulk[ $action ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $action ][ 'callback' ] ) ) {
+				$callback = call_user_func_array( $this->actions_bulk[ $action ][ 'callback' ], $args );
+			}
+			elseif ( is_callable( $this->actions_bulk[ $action ] ) ) {
+				$callback = call_user_func_array( $this->actions_bulk[ $action ], $args );
+			}
+		}
+
+		return $callback;
+
+	}
 
     /*
         // Example code for use with $this->do_hook
@@ -3956,11 +4277,15 @@ class PodsUI {
     /**
      * @return array|bool|mixed|null
      */
-    private function do_hook () {
-        $args = func_get_args();
-        if ( empty( $args ) )
-            return false;
-        $name = array_shift( $args );
-        return pods_do_hook( "ui", $name, $args, $this );
-    }
+	private function do_hook() {
+
+		$args = func_get_args();
+		if ( empty( $args ) ) {
+			return false;
+		}
+		$name = array_shift( $args );
+
+		return pods_do_hook( "ui", $name, $args, $this );
+
+	}
 }

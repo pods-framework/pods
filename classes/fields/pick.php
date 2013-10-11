@@ -1233,6 +1233,8 @@ class PodsField_Pick extends PodsField {
         if ( !isset( $options[ 'pick_object' ] ) )
             $data = pods_var_raw( 'data', $options, array(), null, true );
 
+		$simple = false;
+
         if ( null === $data ) {
             $data = array();
 
@@ -1265,15 +1267,22 @@ class PodsField_Pick extends PodsField {
                     }
                     else
                         $data = $custom;
+
+					$simple = true;
                 }
             }
-            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) ) {
                 $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+
+				$simple = true;
+			}
             elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
                 $data = call_user_func_array(
                     self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
                     array( $name, $value, $options, $pod, $id )
                 );
+
+				$simple = true;
 
                 // Cache data from callback
                 if ( !empty( $data ) )
@@ -1633,6 +1642,18 @@ class PodsField_Pick extends PodsField {
                     }
                 }
             }
+
+			if ( $simple && 'admin_ajax_relationship' == $context ) {
+				$found_data = array();
+
+				foreach ( $data as $k => $v ) {
+					if ( false !== stripos( $v, $data_params[ 'query' ] ) || false !== stripos( $k, $data_params[ 'query' ] ) ) {
+						$found_data[ $k ] = $v;
+					}
+				}
+
+				$data = $found_data;
+			}
         }
 
         if ( 'admin_ajax_relationship' == $context ) {

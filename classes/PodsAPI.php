@@ -1636,6 +1636,7 @@ class PodsAPI {
         global $wpdb;
 
 		if ( null !== $old_name && $old_name != $params->name && $db ) {
+        	// Rename items in the DB pointed at the old WP Object names
 			if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
 				$this->rename_wp_object_type( 'post', $old_name, $params->name );
 			}
@@ -1648,10 +1649,8 @@ class PodsAPI {
 			elseif ( 'settings' == $pod[ 'type' ] ) {
 				$this->rename_wp_object_type( 'settings', $old_name, $params->name );
 			}
-		}
 
-        // Sync any related fields if the name has changed
-        if ( null !== $old_name && $old_name != $params->name && $db ) {
+        	// Sync any related fields if the name has changed
             $fields = pods_query( "
                 SELECT `p`.`ID`
                 FROM `{$wpdb->posts}` AS `p`
@@ -1670,6 +1669,7 @@ class PodsAPI {
 
             if ( !empty( $fields ) ) {
                 foreach ( $fields as $field ) {
+                    update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
                     update_post_meta( $field->ID, 'pick_val', $params->name );
                 }
             }
@@ -1681,32 +1681,16 @@ class PodsAPI {
                 WHERE
                     `p`.`post_type` = '_pods_field'
                     AND `pm`.`meta_key` = 'pick_object'
-                    AND `pm`.`meta_value` = 'pod-{$old_name}'
+                    AND (
+                    	`pm`.`meta_value` = 'pod-{$old_name}'
+                    	OR `pm`.`meta_value` = '" . $pod[ 'type' ] . "-{$old_name}'
+					)
             " );
 
             if ( !empty( $fields ) ) {
                 foreach ( $fields as $field ) {
-                    update_post_meta( $field->ID, 'pick_object', 'pod' );
+                    update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
                     update_post_meta( $field->ID, 'pick_val', $params->name );
-                }
-            }
-
-            if ( 'pod' != $pod[ 'type' ] ) {
-                $fields = pods_query( "
-                    SELECT `p`.`ID`
-                    FROM `{$wpdb->posts}` AS `p`
-                    LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-                    WHERE
-                        `p`.`post_type` = '_pods_field'
-                        AND `pm`.`meta_key` = 'pick_object'
-                        AND `pm`.`meta_value` = '{$pod['type']}-{$old_name}'
-                " );
-
-                if ( !empty( $fields ) ) {
-                    foreach ( $fields as $field ) {
-                        update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
-                        update_post_meta( $field->ID, 'pick_val', $params->name );
-                    }
                 }
             }
         }
@@ -3587,10 +3571,7 @@ class PodsAPI {
             return false;
         }
         elseif ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && 0 < strlen( $pod[ 'object' ] ) ) {
-            if ( false !== $strict )
-                return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ), $this );
-
-            return false;
+			$pod[ 'object' ] = '';
         }
 
         unset( $pod[ 'id' ] );
@@ -3970,7 +3951,7 @@ class PodsAPI {
     public function reset_pod ( $params, $pod = false ) {
         $params = (object) pods_sanitize( $params );
 
-        $params->table_info = false;
+        $params->table_info = true;
 
         if ( empty( $pod ) )
             $pod = $this->load_pod( $params );
@@ -7291,7 +7272,7 @@ class PodsAPI {
                                 $related_pod = false;
 
                                 if ( 'pod' == $pick_object )
-                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), false );
+                                    $related_pod = $this->load_pod( array( 'name' => $pick_val, 'table_info' => true ), false );
 
                                 if ( empty( $related_pod ) ) {
                                     $related_pod = array(

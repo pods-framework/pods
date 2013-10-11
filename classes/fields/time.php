@@ -72,9 +72,9 @@ class PodsField_Time extends PodsField {
                 ),
                 'dependency' => true
             ),
-            self::$type . '_time_format' => array(
+            self::$type . '_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( self::$type . '_time_type' => '12' ),
+                'depends-on' => array( self::$type . '_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
@@ -90,9 +90,9 @@ class PodsField_Time extends PodsField {
                     'hh_mm_ss' => date_i18n( 'h:i:s' )
                 )
             ),
-            self::$type . '_time_format_24' => array(
+            self::$type . '_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( 'datetime_time_type' => '24' ),
+                'depends-on' => array( self::$type . '_type' => '24' ),
                 'default' => 'hh_mm',
                 'type' => 'pick',
                 'data' => array(
@@ -111,6 +111,12 @@ class PodsField_Time extends PodsField {
                 'type' => 'boolean'
             )
         );
+
+		$options[ self::$type . '_type' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_type_default', $options[ self::$type . '_type' ][ 'default' ] );
+		$options[ self::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_options', $options[ self::$type . '_format' ][ 'data' ] );
+		$options[ self::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_default', $options[ self::$type . '_format' ][ 'default' ] );
+		$options[ self::$type . '_format_24' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_24_options', $options[ self::$type . '_format_24' ][ 'data' ] );
+		$options[ self::$type . '_format_24' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_24_default', $options[ self::$type . '_format_24' ][ 'default' ] );
 
         return $options;
     }
@@ -241,6 +247,7 @@ class PodsField_Time extends PodsField {
      * @param array $fields
      * @param array $pod
      *
+     * @return mixed|null|string
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
@@ -274,10 +281,18 @@ class PodsField_Time extends PodsField {
             'hh_mm_ss' => 'h:i:s'
         );
 
+        $time_format_24 = array(
+			'hh_mm' => 'H:i',
+			'hh_mm_ss' => 'H:i:s'
+        );
+
+		$time_format = apply_filters( 'pods_form_ui_field_time_formats', $time_format );
+		$time_format_24 = apply_filters( 'pods_form_ui_field_time_formats_24', $time_format_24 );
+
         if ( 12 == pods_var( self::$type . '_type', $options ) )
             $format = $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ];
         else
-            $format = str_replace( array( 'h:', 'g:' ), 'H:', $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ] );
+            $format = $time_format_24[ pods_var( self::$type . '_format_24', $options, 'hh_mm', null, true ) ];
 
         return $format;
     }

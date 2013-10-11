@@ -753,6 +753,12 @@ class PodsData {
         if ( 0 < strlen( $params->sql ) )
             return $params->sql;
 
+		$pod = false;
+
+		if ( is_array( $this->pod_data ) ) {
+			$pod = $this->pod_data;
+		}
+
         // Validate
         $params->page = pods_absint( $params->page );
 
@@ -780,11 +786,11 @@ class PodsData {
             $params->offset = 0;
         }
 
-        if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
+        if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && !empty( $pod ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
 
-        if ( ( empty( $params->object_fields ) || !is_array( $params->object_fields ) ) && is_array( $this->pod_data ) && isset( $this->pod_data[ 'object_fields' ] ) && !empty( $this->pod_data[ 'object_fields' ] ) )
-            $params->object_fields = $this->pod_data[ 'object_fields' ];
+        if ( ( empty( $params->object_fields ) || !is_array( $params->object_fields ) ) && !empty( $pod ) && isset( $pod[ 'object_fields' ] ) && !empty( $pod[ 'object_fields' ] ) )
+            $params->object_fields = $pod[ 'object_fields' ];
 
         if ( empty( $params->filters ) && $params->search )
             $params->filters = array_keys( $params->fields );
@@ -797,18 +803,18 @@ class PodsData {
         if ( empty( $params->id ) )
             $params->id = $this->field_id;
 
-        if ( empty( $params->table ) && is_array( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
+        if ( empty( $params->table ) && !empty( $pod ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
         if ( empty( $params->pod_table_prefix ) )
             $params->pod_table_prefix = 't';
 
-        if ( is_array( $this->pod_data ) && !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] )
+        if ( !empty( $pod ) && !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $pod[ 'storage' ] )
             $params->pod_table_prefix = 'd';
 
         $params->meta_fields = false;
 
-        if ( is_array( $this->pod_data ) && !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table', 'taxonomy' ) ) && 'meta' == $this->pod_data[ 'storage' ] )
+        if ( !empty( $pod ) && !in_array( $pod[ 'type' ], array( 'pod', 'table', 'taxonomy' ) ) && 'meta' == $pod[ 'storage' ] )
             $params->meta_fields = true;
 
         if ( empty( $params->table ) )
@@ -822,26 +828,39 @@ class PodsData {
         elseif ( false === $params->strict )
             $params->join = $this->join;
 
-        if ( false === $params->strict && !empty( $this->where ) ) {
-            if ( empty( $params->where ) && !empty( $this->where_default ) )
-                $params->where = array_values( (array) $this->where_default );
+		$params->where_defaulted = false;
+		$params->where_default = $this->where_default;
 
-            if ( is_array( $params->where ) && isset( $params->where[ 'relation' ] ) && 'OR' == strtoupper( $params->where[ 'relation' ] ) )
-                $params->where = array_merge( array( $params->where ), array_values( (array) $this->where ) );
-            else
-                $params->where = array_merge( (array) $params->where, array_values( (array) $this->where ) );
-        }
+		if ( false === $params->strict ) {
+			// Set default where
+            if ( !empty( $this->where_default ) && empty( $params->where ) ) {
+				$params->where = array_values( (array) $this->where_default );
+
+				$params->where_defaulted = true;
+			}
+
+			if ( !empty( $this->where ) ) {
+				if ( is_array( $params->where ) && isset( $params->where[ 'relation' ] ) && 'OR' == strtoupper( $params->where[ 'relation' ] ) ) {
+					$params->where = array_merge( array( $params->where ), array_values( (array) $this->where ) );
+				}
+				else {
+					$params->where = array_merge( (array) $params->where, array_values( (array) $this->where ) );
+				}
+			}
+		}
 
         // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
-        $params->where = $this->query_fields( (array) $params->where, $this->pod_data );
+        $params->where = $this->query_fields( (array) $params->where, $pod, $params );
 
-        if ( empty( $params->where ) )
+        if ( empty( $params->where ) ) {
             $params->where = array();
-        else
+		}
+        else {
             $params->where = (array) $params->where;
+		}
 
         // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
-        $params->having = $this->query_fields( (array) $params->having, $this->pod_data );
+        $params->having = $this->query_fields( (array) $params->having, $pod );
 
         if ( empty( $params->having ) )
             $params->having = array();
@@ -2147,14 +2166,35 @@ class PodsData {
      *
      * @param array $fields Array of field matches for querying
      * @param array $pod Related Pod
+	 * @param object $params Parameters passed from select()
      *
      * @return string|null Query string for WHERE/HAVING
      *
      * @static
      * @since 2.3
      */
-    public static function query_fields ( $fields, $pod = null ) {
+    public static function query_fields ( $fields, $pod = null, &$params = null ) {
         $query_fields = array();
+
+		if ( !is_object( $params ) ) {
+			$params = new stdClass();
+		}
+
+		if ( !isset( $params->query_field_level ) || 0 == $params->query_field_level ) {
+			$params->query_fields = array();
+			$params->query_field_syntax = false;
+			$params->query_field_level = 1;
+
+			if ( !isset( $params->where_default ) ) {
+				$params->where_default = array();
+			}
+
+			if ( !isset( $params->where_defaulted ) ) {
+				$params->where_defaulted = false;
+			}
+		}
+
+		$current_level = $params->query_field_level;
 
         $relation = 'AND';
 
@@ -2169,20 +2209,60 @@ class PodsData {
 
         foreach ( $fields as $field => $match ) {
             if ( is_array( $match ) && isset( $match[ 'relation' ] ) ) {
-                $query_field = self::query_fields( $match, $pod );
+				$params->query_field_level = $current_level + 1;
 
-                if ( !empty( $query_field ) )
+                $query_field = self::query_fields( $match, $pod, $params );
+
+				$params->query_field_level = $current_level;
+
+                if ( !empty( $query_field ) ) {
                     $query_fields[] = $query_field;
+				}
             }
             else {
-                $query_field = self::query_field( $field, $match, $pod );
+                $query_field = self::query_field( $field, $match, $pod, $params );
 
-                if ( !empty( $query_field ) )
+                if ( !empty( $query_field ) ) {
                     $query_fields[] = $query_field;
+				}
             }
         }
 
         if ( !empty( $query_fields ) ) {
+			// If post_status not sent, detect it
+			if ( !empty( $pod ) && 'post_type' == $pod[ 'type' ] && !$params->where_defaulted && !empty( $params->where_default ) ) {
+				$post_status_found = false;
+
+				if ( !$params->query_field_syntax ) {
+					$haystack = implode( ' ', (array) $query_fields );
+					$haystack = preg_replace( '/\s/', ' ', $haystack );
+					$haystack = preg_replace( '/\w\(/', ' ', $haystack );
+					$haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
+
+					preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
+
+					$found = (array) @current( $found );
+
+					foreach ( $found as $value ) {
+						$value = str_replace( '`', '', $value );
+						$value = explode( '.', $value );
+
+						if ( ( 'post_status' == $value[ 0 ] && 1 == count( $value ) ) || ( 2 == count( $value ) && 't' == $value[ 0 ] && 'post_status' == $value[ 1 ] ) ) {
+							$post_status_found = true;
+
+							break;
+						}
+					}
+				}
+				elseif ( !empty( $params->query_fields ) && in_array( 'post_status', $params->query_fields ) ) {
+					$post_status_found = true;
+				}
+
+				if ( !$post_status_found ) {
+					$query_fields[] = $params->where_default;
+				}
+			}
+
             if ( 1 < count( $query_fields ) )
                 $query_fields = '( ( ' . implode( ' ) ' . $relation . ' ( ', $query_fields ) . ' ) )';
             else
@@ -2190,6 +2270,11 @@ class PodsData {
         }
         else
             $query_fields = null;
+
+		// query_fields level complete
+		if ( 1 == $params->query_field_level ) {
+			$params->query_field_level = 0;
+		}
 
         return $query_fields;
     }
@@ -2200,6 +2285,7 @@ class PodsData {
      * @param string|int $field Field name or array index
      * @param array|string $q Query array (meta_query) or string for matching
      * @param array $pod Related Pod
+	 * @param object $params Parameters passed from select()
      *
      * @return string|null Query field string
      *
@@ -2207,7 +2293,7 @@ class PodsData {
      * @static
      * @since 2.3
      */
-    public static function query_field ( $field, $q, $pod = null ) {
+    public static function query_field ( $field, $q, $pod = null, &$params = null ) {
         global $wpdb;
 
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
@@ -2215,8 +2301,9 @@ class PodsData {
         $field_query = null;
 
         // Plain queries
-        if ( is_numeric( $field ) && !is_array( $q ) )
+        if ( is_numeric( $field ) && !is_array( $q ) ) {
             return $q;
+		}
         // key => value queries (backwards compatibility)
         elseif ( !is_numeric( $field ) && ( !is_array( $q ) || ( !isset( $q[ 'key' ] ) && !isset( $q[ 'field' ] ) ) ) ) {
             $new_q = array(
@@ -2246,6 +2333,11 @@ class PodsData {
 		$field_sanitize = (boolean) pods_var( 'sanitize', $q, true );
         $field_sanitize_format = pods_var_raw( 'sanitize_format', $q, null, null, true );
 		$field_cast = pods_var_raw( 'cast', $q, null, null, true );
+
+		if ( is_object( $params ) ) {
+			$params->meta_query_syntax = true;
+			$params->query_fields[] = $field_name;
+		}
 
         // Deprecated WP type
         if ( 'NUMERIC' == $field_type )
@@ -2335,7 +2427,7 @@ class PodsData {
 		}
 
         // Restrict to supported comparisons
-        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS' ) ) )
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) )
             $field_compare = '=';
 
         // Restrict to supported array comparisons
@@ -2386,7 +2478,7 @@ class PodsData {
 		);
 
         // Make the query
-        if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=' ) ) ) {
+        if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) ) {
 			if ( $field_sanitize ) {
             	$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ' . $field_sanitize_format, $field_value );
 			}

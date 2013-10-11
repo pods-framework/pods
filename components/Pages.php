@@ -904,14 +904,14 @@ class Pods_Pages extends PodsComponent {
 
                 do_action( 'pods_page_precode', self::$exists, $pods, $content );
             }
-			elseif ( self::$exists[ 'restrict_redirect' ] ) {
+			elseif ( self::$exists[ 'options' ][ 'restrict_redirect' ] ) {
 				$redirect_url = '';
 
-				if ( self::$exists[ 'restrict_redirect_login' ] ) {
+				if ( self::$exists[ 'options' ][ 'restrict_redirect_login' ] ) {
 					$redirect_url = wp_login_url( pods_current_url() );
 				}
-				elseif ( !empty( self::$exists[ 'restrict_redirect_url' ] ) ) {
-					$redirect_url = self::$exists[ 'restrict_redirect_url' ];
+				elseif ( !empty( self::$exists[ 'options' ][ 'restrict_redirect_url' ] ) ) {
+					$redirect_url = self::$exists[ 'options' ][ 'restrict_redirect_url' ];
 				}
 
 				if ( !empty( $redirect_url ) ) {

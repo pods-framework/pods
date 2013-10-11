@@ -166,12 +166,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: YARPP integration for Post Types
 * Added: Default Select Text customization for Relationship fields that are set to a Dropdown input
 * Added: Default Post Status to use for Custom Post Types created by Pods, when utilizing the Pods 'add' method
-* Added: mu-plugins support for Pods as a Must-Use plugin on WordPress Multisite installations, props @studioanino
+* Added: mu-plugins support for Pods as a Must-Use plugin on WordPress Multisite installations (props @studioanino)
 * Improved: Smarter handling of post_status for Post Types, easier to override to show other post statuses, and if you don't provide it in the 'where', it will fall back to the default(s)
 * Improved: Pods::remove_from() now removes all values if you provide no 'value' for a specific field
-* Fixed: Comment queries using comment_type should allow for a blank string, props @sirbeagle
+* Fixed: Comment queries using comment_type should allow for a blank string (props @sirbeagle)
 * Fixed: Date / Time saving for 24 hour formats
 * Fixed: Timezone notices on certain configurations
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.9 - August 5th, 2013 =
 * A big welcome to the newest contributor to our team, David Cramer (@desertsnowman)!
@@ -186,8 +188,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Custom Taxonomies now have their menu icon option available, previously hidden due to a bug
 * Fixed: Various PHP notices/warnings
 * Fixed: Translation tweaks and fixes
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.8 - June 8th, 2013 =
 * Fixed: Hide field from UI option now works properly for admins
@@ -405,7 +405,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 = 1.12.3 - February 19, 2012 =
 * Added: Pods UI findRecords parameters array now goes through a new filter called "pods_ui_findrecords"
 * Fixed: Forcing boolean check if true in bypass_helpers in PodAPI
-* Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories); Props @chrisbliss18
+* Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories) (props @chrisbliss18)
 * Fixed: nicEdit JS "A.createRange()||document.createRange()" fix for JS errors on certain browsers / uses
 * Fixed: Pagination page_var usage (was forcing 'pg' var name no matter what), and fixed query array handling; Props to @thangaswamyarun for finding this one so we could fix it!
 * Fixed: Pods UI search settings set correctly now (had to flip a true/false check and not have search_across take the bool value of search)

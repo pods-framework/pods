@@ -2838,6 +2838,8 @@ class PodsUI {
                     );
 
                     foreach ( $filters as $filter ) {
+                        $excluded_filters[] = 'filters_relation';
+                        $excluded_filters[] = 'filters_compare_' . $filter;
                         $excluded_filters[] = 'filter_' . $filter . '_start';
                         $excluded_filters[] = 'filter_' . $filter . '_end';
                         $excluded_filters[] = 'filter_' . $filter;

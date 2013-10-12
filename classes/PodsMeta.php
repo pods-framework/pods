@@ -932,8 +932,6 @@ class PodsMeta {
         }
     ?>
 
-    <input type="hidden" name="pods_metasave" value="1" />
-
     <script type="text/javascript">
         jQuery( function ( $ ) {
             $( document ).Pods( 'dependency', true );
@@ -967,7 +965,10 @@ class PodsMeta {
 			$is_new_item = true;
 		}
 
-		if ( !$is_new_item && !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_post' ) ) {
+		if ( empty( $_POST ) ) {
+			return $post_id;
+		}
+		elseif ( !$is_new_item && !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_post' ) ) {
 			return $post_id;
 		}
 
@@ -981,9 +982,6 @@ class PodsMeta {
 		);
 
 		$blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
-
-		if ( empty( $_POST ) || 1 != pods_var( 'pods_metasave', 'post' ) )
-			return $post_id;
 
 		// @todo Figure out how to hook into autosave for saving meta
 
@@ -1101,6 +1099,8 @@ class PodsMeta {
 
         $pod = null;
 
+		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
+
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
@@ -1133,7 +1133,7 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
                     'input' => 'html',
-                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ) . PodsForm::field( 'pods_metasave', 1, 'hidden' ),
+                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ) . $meta_nonce,
                     'helps' => PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field )
                 );
             }
@@ -1158,8 +1158,9 @@ class PodsMeta {
 
         $post_id = $attachment;
 
-        if ( empty( $_POST ) || 1 != pods_var( 'pods_metasave', 'post' ) )
+        if ( empty( $_POST ) || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_media' ) ) {
             return $post;
+		}
 
         if ( is_array( $post ) && !empty( $post ) && isset( $post[ 'ID' ] ) && 'attachment' == $post[ 'post_type' ] )
             $post_id = $post[ 'ID' ];
@@ -1273,6 +1274,8 @@ class PodsMeta {
 
         $pod = null;
 
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_taxonomy' ), 'hidden' );
+
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
@@ -1340,10 +1343,14 @@ class PodsMeta {
         if ( 'create_term' == current_filter() )
             $is_new_item = true;
 
+        if ( empty( $_POST ) || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_taxonomy' ) ) {
+            return $term_id;
+		}
+
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
         if ( empty( $groups ) )
-            return;
+            return $term_id;
 
         $term = get_term( $term_id, $taxonomy );
 
@@ -1404,6 +1411,8 @@ class PodsMeta {
 
         do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
         do_action( "pods_meta_save_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy, $is_new_item );
+
+		return $term_id;
     }
 
     /**
@@ -1508,7 +1517,11 @@ class PodsMeta {
 		if ( 'user_register' == current_filter() ) {
 			$is_new_item = true;
 		}
-		elseif ( !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
+
+		if ( empty( $_POST ) ) {
+			return $user_id;
+		}
+		elseif ( !$is_new_item && !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
 			return $user_id;
 		}
 
@@ -1526,8 +1539,6 @@ class PodsMeta {
 
 		$id = $user_id;
 		$pod = null;
-
-		$found = false;
 
 		foreach ( $groups as $group ) {
 			if ( empty( $group[ 'fields' ] ) ) {
@@ -1553,41 +1564,37 @@ class PodsMeta {
 
 				if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) ) {
 					$data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
-
-					$found = true;
 				}
 			}
 		}
 
-		if ( $found ) {
-			if ( $is_new_item ) {
-				do_action( 'pods_meta_create_pre_user', $data, $pod, $id, $groups );
-			}
-
-			do_action( 'pods_meta_save_pre_user', $data, $pod, $id, $groups, $is_new_item );
-
-			pods_no_conflict_on( 'user' );
-
-			if ( !empty( $pod ) ) {
-				// Fix for Pods doing it's own sanitization
-				$data = pods_unslash( (array) $data );
-
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
-			}
-			elseif ( !empty( $id ) ) {
-				foreach ( $data as $field => $value ) {
-					update_user_meta( $id, $field, $value );
-				}
-			}
-
-			pods_no_conflict_off( 'user' );
-
-			if ( $is_new_item ) {
-				do_action( 'pods_meta_create_user', $data, $pod, $id, $groups );
-			}
-
-			do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
+		if ( $is_new_item ) {
+			do_action( 'pods_meta_create_pre_user', $data, $pod, $id, $groups );
 		}
+
+		do_action( 'pods_meta_save_pre_user', $data, $pod, $id, $groups, $is_new_item );
+
+		pods_no_conflict_on( 'user' );
+
+		if ( !empty( $pod ) ) {
+			// Fix for Pods doing it's own sanitization
+			$data = pods_unslash( (array) $data );
+
+			$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+		}
+		elseif ( !empty( $id ) ) {
+			foreach ( $data as $field => $value ) {
+				update_user_meta( $id, $field, $value );
+			}
+		}
+
+		pods_no_conflict_off( 'user' );
+
+		if ( $is_new_item ) {
+			do_action( 'pods_meta_create_user', $data, $pod, $id, $groups );
+		}
+
+		do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
 
 		return $user_id;
 
@@ -1606,6 +1613,8 @@ class PodsMeta {
 
         $id = null;
         $pod = null;
+
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
@@ -1666,6 +1675,8 @@ class PodsMeta {
 
         $id = null;
         $pod = null;
+
+		$form_fields[ 'pods_meta' ] = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
@@ -1785,6 +1796,8 @@ class PodsMeta {
         do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
 
         $hidden_fields = array();
+
+		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 ?>
     <table class="form-table editcomment pods-metabox">
         <?php
@@ -1899,8 +1912,15 @@ class PodsMeta {
     public function save_comment ( $comment_id ) {
         $groups = $this->groups_get( 'comment', 'comment' );
 
-        if ( empty( $groups ) )
+        if ( empty( $groups ) ) {
             return $comment_id;
+		}
+		elseif ( empty( $_POST ) ) {
+			return $comment_id;
+		}
+		elseif ( !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_comment' ) ) {
+			return $comment_id;
+		}
 
         $data = array();
 

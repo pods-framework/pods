@@ -437,7 +437,7 @@ class Pods implements Iterator {
 				$input_name = $field;
 			}
 
-			if ( '__null' != $value ) {
+			if ( '__null' == $value ) {
 				$value = $this->field( array( 'name' => $field, 'in_form' => true ) );
 			}
 

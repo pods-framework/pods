@@ -932,12 +932,17 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 		elseif ( 'user' == $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
-			if ( isset( $user->{$var} ) ) {
+			$user_data = $user->to_array();
+
+			// Core field
+			if ( isset( $user_data[ $var ] ) ) {
 				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
 			}
+			// Role
 			elseif ( 'role' == $var ) {
 				$user->set_role( $value );
 			}
+			// Meta field
 			else {
 				update_user_meta( $user->ID, $var, $value );
 			}

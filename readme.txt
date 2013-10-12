@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.7
-Stable tag: 2.3.10
+Stable tag: 2.3.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,8 +154,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.3.11 - October 12th, 2013 =
+* Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
+* Fixed: User / Post field value saving with better nonce handling
+* Fixed: pods_v_set saving for user meta
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.3.10 - October 11th, 2013 =
-* We've been working hard on Pods 2.3.10 to bring you a number of enhancements and stability fixes, but be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
 * Added: Ability to set 'output' type in Pods::field() to 'pods' for Relationship fields related to a Pod, which will return an array of fully functional 'pods' objects for further advanced code
 * Added: Pod Pages now have an option to redirect to the login page or a custom URL if the user does not have permission to view it (based on restrict settings on the Pod Page itself)
 * Added: Ability to set Taxonomy terms for a Post Type item through the normal Pods 'add' / 'save' / etc methods
@@ -172,8 +178,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Comment queries using comment_type should allow for a blank string (props @sirbeagle)
 * Fixed: Date / Time saving for 24 hour formats
 * Fixed: Timezone notices on certain configurations
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.9 - August 5th, 2013 =
 * A big welcome to the newest contributor to our team, David Cramer (@desertsnowman)!

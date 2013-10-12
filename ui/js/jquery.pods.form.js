@@ -116,7 +116,9 @@
 
 			// CLEditor
 			cleditor: function() {
-
+				$el.cleditor( {
+					width : $el.outerWidth()
+				} );
 			},
 
 			// Color

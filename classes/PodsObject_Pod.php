@@ -97,7 +97,7 @@ class PodsObject_Pod extends PodsObject {
 			$object = $name;
 		}
 		// Find Object by name
-		else {
+		elseif ( !is_object( $name ) ) {
 			$find_args = array(
 				'name' => $name,
 				'post_type' => $this->_post_type,
@@ -112,7 +112,6 @@ class PodsObject_Pod extends PodsObject {
 				$_object = $find_object[ 0 ];
 
 				if ( 'WP_Post' == get_class( $_object ) ) {
-
 					/**
 					 * @var WP_Post $_object
 					 */
@@ -154,7 +153,7 @@ class PodsObject_Pod extends PodsObject {
 			else {
 				$post_type = get_post_type_object( $name );
 
-				if ( empty( $post_type ) && 0 !== strpos( $name, 'post_type_' ) ) {
+				if ( empty( $post_type ) && 0 === strpos( $name, 'post_type_' ) ) {
 					$name = str_replace( 'post_type_', '', $name );
 
 					$post_type = get_post_type_object( $name );
@@ -183,7 +182,7 @@ class PodsObject_Pod extends PodsObject {
 				if ( empty( $object ) ) {
 					$taxonomy = get_taxonomy( $name );
 
-					if ( empty( $taxonomy ) && 0 !== strpos( $name, 'taxonomy_' ) ) {
+					if ( empty( $taxonomy ) && 0 === strpos( $name, 'taxonomy_' ) ) {
 						$name = str_replace( 'taxonomy_', '', $name );
 
 						$taxonomy = get_taxonomy( $name );
@@ -212,14 +211,14 @@ class PodsObject_Pod extends PodsObject {
 				}
 
 				// @todo For now, only support comment_{$comment_type}
-				if ( empty( $object ) && 0 !== strpos( $name, 'comment_' ) ) {
+				if ( empty( $object ) && 0 === strpos( $name, 'comment_' ) ) {
 					// @todo For now, only support comment_{$comment_type}
 					$name = str_replace( 'comment_', '', $name );
 
 					// @todo Eventually support the comment type objects when this function gets made
 					//$comment = get_comment_object( $name );
 
-					/*if ( empty( $comment ) && 0 !== strpos( $name, 'comment_' ) ) {
+					/*if ( empty( $comment ) && 0 === strpos( $name, 'comment_' ) ) {
 						$name = str_replace( 'comment_', '', $name );
 
 						// @todo Eventually support the comment type objects when this function gets made
@@ -308,6 +307,10 @@ class PodsObject_Pod extends PodsObject {
 
 				if ( empty( $object[ 'storage' ] ) ) {
 					$object[ 'storage' ] = 'meta';
+
+					if ( 'taxonomy' == $object[ 'type' ] ) {
+						$object[ 'storage' ] = 'none';
+					}
 				}
 			}
 
@@ -332,21 +335,21 @@ class PodsObject_Pod extends PodsObject {
 	 */
 	public function object_fields( $field = null, $option = null ) {
 
-		if ( !isset( $this->_object[ 'object_fields' ] ) ) {
-			if ( $this->is_custom() && isset( $this->_object[ '_object_fields' ] ) && !empty( $this->_object[ '_object_fields' ] ) ) {
-				$object_fields = $this->_object[ '_object_fields' ];
+		if ( empty( $this->_object_fields ) ) {
+			if ( $this->is_custom() && isset( $this->_object[ 'object_fields' ] ) && !empty( $this->_object[ 'object_fields' ] ) ) {
+				$object_fields = $this->_object[ 'object_fields' ];
 			}
 			else {
 				$object_fields = pods_api()->get_wp_object_fields( $this->_object[ 'type' ], $this->_object );
 			}
 
-			$this->_object[ 'object_fields' ] = array();
+			$this->_object_fields = array();
 
 			foreach ( $object_fields as $object_field ) {
 				$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 				if ( $object_field->is_valid() ) {
-					$this->_object[ 'object_fields' ][ $object_field[ 'name' ] ] = $object_field;
+					$this->_object_fields[ $object_field[ 'name' ] ] = $object_field;
 				}
 			}
 		}

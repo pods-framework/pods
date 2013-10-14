@@ -98,7 +98,7 @@ class PodsObject_Field extends PodsObject {
 			$object = $name;
 		}
 		// Find Object by name
-		else {
+		elseif ( !is_object( $name ) ) {
 			$find_args = array(
 				'name' => $name,
 				'post_type' => $this->_post_type,
@@ -236,12 +236,12 @@ class PodsObject_Field extends PodsObject {
 	 */
 	public function table_info() {
 
-		if ( !$this->is_valid() || !in_array( $this->_field[ 'type' ], PodsForm::tableless_field_types() ) ) {
+		if ( !$this->is_valid() || !in_array( $this->_object[ 'type' ], PodsForm::tableless_field_types() ) ) {
 			return array();
 		}
 
-		if ( empty( $this->_table_info ) ) {
-			$this->_table_info = pods_api()->get_table_info( $this->_field[ 'pick_object' ], $this->_field[ 'pick_val' ], null, null, $this->_field );
+		if ( empty( $this->_table_info ) && !empty( $this->_object[ 'pick_object' ] ) ) {
+			$this->_table_info = pods_api()->get_table_info( $this->_object[ 'pick_object' ], $this->_object[ 'pick_val' ], null, null, $this->_object );
 		}
 
 		return $this->_table_info;

@@ -620,12 +620,11 @@ class PodsAdmin {
      * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
-		$all_pods = pods( '_pods_pod' );
-		$all_pods->find( array( 'limit' => -1 ) );
+        $all_pods = pods_api()->load_pods();
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
-        if ( !$all_pods->total_found() && !isset( $_GET[ 'action' ] ) )
+        if ( empty( $all_pods ) && !isset( $_GET[ 'action' ] ) )
             $_GET[ 'action' ] = 'add';
 
         if ( 'pods-add-new' == $_GET[ 'page' ] ) {
@@ -671,26 +670,17 @@ class PodsAdmin {
 
 		$data = array();
 
-		while ( $all_pods->fetch() ) {
+		foreach ( $all_pods as $the_pod ) {
 			$pod = array(
-                'id' => $all_pods->field( 'id' ),
-                'label' => $all_pods->field( 'label' ),
-                'name' => $all_pods->field( 'name' ),
-                'object' => $all_pods->field( 'object' ),
-                'type' => $all_pods->field( 'type' ),
-                'real_type' => $all_pods->field( 'type' ),
-                'storage' => $all_pods->field( 'storage' ),
-                'field_count' => count( $all_pods->field( 'fields' ) )
+                'id' => $the_pod[ 'id' ],
+                'label' => $the_pod[ 'label' ],
+                'name' => $the_pod[ 'name' ],
+                'object' => $the_pod[ 'object' ],
+                'type' => $the_pod[ 'type' ],
+                'real_type' => $the_pod[ 'type' ],
+                'storage' => $the_pod[ 'storage' ],
+                'field_count' => count( $the_pod[ 'fields' ] )
 			);
-
-			/*echo '<pre>';
-			pods_debug( $pod );
-			echo '</pre>';*/
-
-			if ( 'user' == $pod[ 'type' ] ) {
-				//pods_debug( count( $all_pods->field( 'fields' ) ) );
-				//pods_debug( count( $total = $all_pods->field( 'fields' )->export() ) );
-			}
 
             if ( isset( $types[ $pod[ 'type' ] ] ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
@@ -720,7 +710,7 @@ class PodsAdmin {
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
 
             if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
-                $row = $all_pods->row();
+                $row = $pod;
 			}
 
             $total_fields += $pod[ 'field_count' ];

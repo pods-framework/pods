@@ -28,6 +28,20 @@ class PodsObject implements ArrayAccess, Serializable {
 	protected $_override = array();
 
 	/**
+	 * Object fields
+	 *
+	 * @var array
+	 */
+	protected $_fields = array();
+
+	/**
+	 * Object fields for WP objects
+	 *
+	 * @var array
+	 */
+	protected $_object_fields = array();
+
+	/**
 	 * Table info for Object
 	 *
 	 * @var array
@@ -185,7 +199,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			$object = $name;
 		}
 		// Find Object by name
-		else {
+		elseif ( !is_object( $name ) ) {
 			$find_args = array(
 				'name' => $name,
 				'post_type' => $this->_post_type,
@@ -357,7 +371,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param $action
 	 */
-	protected function _action( $action ) {
+	public function _action( $action ) {
 
 		$args = func_get_args();
 		$args[ 0 ] = $action . '_' . $this->_action_type;
@@ -387,7 +401,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 * @param string $name Object name
 	 * @param int $parent Object Parent ID
 	 */
-	protected function _update( $id, $name, $parent ) {
+	public function _update( $id, $name, $parent ) {
 
 		if ( $this->is_valid( true ) && $this->_live ) {
 			if ( 0 < $id ) {
@@ -415,7 +429,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 * @param string $name Object name
 	 * @param int $parent Object Parent ID
 	 */
-	protected function _delete( $id, $name, $parent ) {
+	public function _delete( $id, $name, $parent ) {
 
 		if ( $this->is_valid( true ) && $this->_live ) {
 			if ( 0 < $id ) {
@@ -438,14 +452,15 @@ class PodsObject implements ArrayAccess, Serializable {
 	 * @param string $meta_key Meta key name
 	 * @param null|int $id Object ID
 	 * @param bool $internal If this is an internal meta value
+	 * @param bool $strict Whether to enforce null returns for more cases
 	 *
 	 * @return array|mixed|null
 	 *
 	 * @since 2.3.10
 	 */
-	protected function _meta( $meta_key, $id = null, $internal = false ) {
+	public function _meta( $meta_key, $id = null, $internal = false, $strict = false ) {
 
-		if ( null === $id ) {
+		if ( (int) $id < 1 ) {
 			if ( !$this->is_valid() ) {
 				return null;
 			}
@@ -454,7 +469,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 
-		if ( null === $id ) {
+		if ( (int) $id < 1 ) {
 			$id = $this->_object[ 'id' ];
 		}
 
@@ -476,7 +491,7 @@ class PodsObject implements ArrayAccess, Serializable {
 
 		if ( is_array( $value ) ) {
 			// Field not found
-			if ( empty( $value ) ) {
+			if ( empty( $value ) || ( $strict && 1 == count( $value ) && '' === $value[ 0 ] ) ) {
 				$value = null;
 			}
 			else {
@@ -490,6 +505,10 @@ class PodsObject implements ArrayAccess, Serializable {
 					$value = current( $value );
 				}
 			}
+		}
+		// Field not found
+		elseif ( $strict && false === $value ) {
+			$value = null;
 		}
 		else {
 			$value = maybe_unserialize( $value );
@@ -511,7 +530,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @since 2.3.10
 	 */
-	protected function _fields( $fields, $field = null, $option = null, $alt = true ) {
+	public function _fields( $fields, $field = null, $option = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
 			if ( null === $field || null === $option ) {
@@ -601,7 +620,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @since 2.3.10
 	 */
-	protected function _fill() {
+	public function _fill() {
 
 		// @todo Fill in all built-in fields
 
@@ -616,22 +635,51 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Export the object data into a normal array
 	 *
+	 * @param string $export_type Export type: all|data|fields|table_info
+	 *
 	 * @return array Exported array of all object data
 	 *
 	 * @since 2.3.10
 	 */
-	public function export() {
+	public function export( $export_type = 'all' ) {
 
-		$this->_fill();
+		$export = array();
 
-		$export = array_merge( $this->_meta, $this->_object );
+		if ( in_array( $export_type, array( 'all', 'data' ) ) ) {
+			$export = array_merge( $this->_object, $this->_meta );
+		}
 
-		foreach ( $this->_methods as $method ) {
-			if ( method_exists( $this, $method . '_export' ) ) {
-				$export[ $method ] = call_user_func( array( $this, $method . '_export' ) );
+		if ( in_array( $export_type, array( 'all', 'fields', 'table_info' ) ) ) {
+			foreach ( $this->_methods as $method ) {
+				if ( 'all' != $export_type ) {
+					if ( 'fields' == $export_type ) {
+						if ( !in_array( $method, array( 'fields', 'object_fields' ) ) ) {
+							continue;
+						}
+					}
+					elseif ( $export_type != $method ) {
+						continue;
+					}
+				}
+
+				if ( method_exists( $this, $method . '_export' ) ) {
+					$export[ $method ] = call_user_func( array( $this, $method . '_export' ) );
+				}
+				else {
+					$export[ $method ] = call_user_func( array( $this, $method ) );
+				}
+
+				if ( null === $export[ $method ] && !in_array( $method, array( 'fields', 'object_fields' ) ) ) {
+					unset( $export[ $method ] );
+				}
 			}
-			else {
-				$export[ $method ] = call_user_func( array( $this, $method ) );
+		}
+
+		if ( 'all' != $export_type ) {
+			if ( 'fields' != $export_type ) {
+				if ( isset( $export[ $export_type ] ) ) {
+					$export = $export[ $export_type ];
+				}
 			}
 		}
 
@@ -649,6 +697,10 @@ class PodsObject implements ArrayAccess, Serializable {
 	public function fields_export() {
 
 		$fields = $this->fields( null, null );
+
+		if ( empty( $fields ) ) {
+			return null;
+		}
 
 		foreach ( $fields as $field => $field_object ) {
 			if ( is_object( $field_object ) ) {
@@ -669,15 +721,58 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function object_fields_export() {
 
-		$fields = $this->object_fields( null, null );
+		$object_fields = $this->object_fields( null, null );
 
-		foreach ( $fields as $field => $field_object ) {
+		if ( empty( $object_fields ) ) {
+			return null;
+		}
+
+		foreach ( $object_fields as $field => $field_object ) {
 			if ( is_object( $field_object ) ) {
-				$fields[ $field ] = $field_object->export();
+				$object_fields[ $field ] = $field_object->export();
 			}
 		}
 
-		return $fields;
+		return $object_fields;
+
+	}
+
+	/**
+	 * Export object field array from Object
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 2.4
+	 */
+	public function table_info_export() {
+
+		$table_info = $this->table_info();
+
+		if ( empty( $table_info ) ) {
+			return null;
+		}
+
+		$exportable = array(
+			'pod',
+			'object_fields'
+		);
+
+		foreach ( $exportable as $key ) {
+			if ( isset( $table_info[ $key ] ) ) {
+				if ( is_array( $table_info[ $key ] ) ) {
+					foreach ( $table_info[ $key ] as $field => $field_data ) {
+						if ( is_object( $field_data ) ) {
+							$table_info[ $key ][ $field ] = $field_data->export();
+						}
+					}
+				}
+				elseif ( is_object( $table_info[ $key ] ) ) {
+					 $table_info[ $key ] = $table_info[ $key ]->export();
+				}
+			}
+		}
+
+		return $table_info;
 
 	}
 
@@ -697,16 +792,16 @@ class PodsObject implements ArrayAccess, Serializable {
 			return array();
 		}
 
-		if ( !isset( $this->_object[ 'fields' ] ) ) {
-			$this->_object[ 'fields' ] = array();
+		if ( empty( $this->_fields ) ) {
+			$this->_fields = array();
 
 			if ( $this->is_custom() ) {
-				if ( isset( $this->_object[ '_fields' ] ) && !empty( $this->_object[ '_fields' ] ) ) {
-					foreach ( $this->_object[ '_fields' ] as $object_field ) {
+				if ( isset( $this->_object[ 'fields' ] ) && !empty( $this->_object[ 'fields' ] ) ) {
+					foreach ( $this->_object[ 'fields' ] as $object_field ) {
 						$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $object_field->is_valid() ) {
-							$this->_object[ 'fields' ][ $object_field[ 'name' ] ] = $object_field;
+							$this->_fields[ $object_field[ 'name' ] ] = $object_field;
 						}
 					}
 				}
@@ -723,14 +818,14 @@ class PodsObject implements ArrayAccess, Serializable {
 
 				$fields = get_posts( $find_args );
 
-				$this->_object[ 'fields' ] = array();
+				$this->_fields = array();
 
 				if ( !empty( $fields ) ) {
 					foreach ( $fields as $object_field ) {
 						$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $object_field->is_valid() ) {
-							$this->_object[ 'fields' ][ $object_field[ 'name' ] ] = $object_field;
+							$this->_fields[ $object_field[ 'name' ] ] = $object_field;
 						}
 					}
 				}
@@ -757,20 +852,20 @@ class PodsObject implements ArrayAccess, Serializable {
 			return array();
 		}
 
-		if ( !isset( $this->_object[ 'object_fields' ] ) ) {
+		if ( empty( $this->_object_fields ) ) {
 			$object_fields = array();
 
-			if ( $this->is_custom() && isset( $this->_object[ '_object_fields' ] ) && !empty( $this->_object[ '_object_fields' ] ) ) {
-				$object_fields = $this->_object[ '_object_fields' ];
+			if ( $this->is_custom() && isset( $this->_object[ 'object_fields' ] ) && !empty( $this->_object[ 'object_fields' ] ) ) {
+				$object_fields = $this->_object[ 'object_fields' ];
 			}
 
-			$this->_object[ 'object_fields' ] = array();
+			$this->_object_fields = array();
 
 			foreach ( $object_fields as $object_field ) {
 				$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 				if ( $object_field->is_valid() ) {
-					$this->_object[ 'object_fields' ][ $object_field[ 'name' ] ] = $object_field;
+					$this->_object_fields[ $object_field[ 'name' ] ] = $object_field;
 				}
 			}
 		}
@@ -977,8 +1072,21 @@ class PodsObject implements ArrayAccess, Serializable {
 		if ( $live && $this->_live ) {
 			$this->save( $offset, $value );
 		}
-		else {
+		elseif ( 'fields' == $offset ) {
+			$this->_fields = $value;
+		}
+		elseif ( 'object_fields' == $offset ) {
+			$this->_object_fields = $value;
+		}
+		elseif ( isset( $this->_object[ $offset ] ) ) {
 			$this->_object[ $offset ] = $value;
+		}
+		elseif ( isset( $this->_meta[ $offset ] ) ) {
+			$this->_meta[ $offset ] = $value;
+		}
+
+		if ( isset( $this->_override[ $offset ] ) ) {
+			unset( $this->_override[ $offset ] );
 		}
 
 	}
@@ -992,7 +1100,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @since 2.3.10
 	 */
-	public function offsetGet( $offset ) {
+	public function offsetGet( $offset, $strict = false ) {
 
 		if ( !empty( $this->_methods ) && in_array( $offset, $this->_methods ) ) {
 			$value = call_user_func( array( $this, $offset ) );
@@ -1005,7 +1113,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 		elseif ( isset( $this->_override[ $offset ] ) ) {
-			$value = $this->_meta[ $offset ];
+			$value = $this->_override[ $offset ];
 
 			if ( !$this->_live ) {
 				// i18n plugin integration
@@ -1039,14 +1147,14 @@ class PodsObject implements ArrayAccess, Serializable {
 			$value = null;
 
 			if ( pods_allow_deprecated() ) {
-				$value = $this->offsetGet( $this->_deprecated_keys[ $offset ] );
+				$value = $this->offsetGet( $this->_deprecated_keys[ $offset ], $strict );
 			}
 			else {
 				pods_deprecated( '$object[\'' . $offset .'\']', '2.0', '$object[\'' . $this->_deprecated_keys[ $offset ] . '\']' );
 			}
 		}
 		else {
-			$value = $this->_meta( $offset );
+			$value = $this->_meta( $offset, null, false, $strict );
 
 			if ( null !== $value ) {
 				$this->_meta[ $offset ] = $value;
@@ -1068,7 +1176,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function offsetExists( $offset ) {
 
-		if ( null !== $this->offsetGet( $offset ) ) {
+		if ( null !== $this->offsetGet( $offset, true ) ) {
 			return true;
 		}
 
@@ -1174,7 +1282,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
-	 * Serialize the object
+	 * Serialize PodsObject
 	 *
 	 * @return string Serialized string
 	 *
@@ -1185,7 +1293,9 @@ class PodsObject implements ArrayAccess, Serializable {
 
 		$array = array(
 			'_object' => $this->_object,
-			'_meta' => $this->_meta
+			'_meta' => $this->_meta,
+			'_fields' => $this->_fields,
+			'_object_fields' => $this->_object_fields
 		);
 
 		return serialize( $array );
@@ -1193,7 +1303,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
-	 * Unserialize the object
+	 * Unserialize PodsObject
 	 *
 	 * @param string $data Serialized string
 	 *
@@ -1202,10 +1312,27 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function unserialize( $data ) {
 
-		$data = unserialize( $data );
+		$data = @unserialize( $data );
 
-		$this->_object = $data->_object;
-		$this->_meta = $data->_meta;
+		if ( !empty( $data ) ) {
+			$data = (object) $data;
+
+			if ( isset( $data->_object ) ) {
+				$this->_object = $data->_object;
+			}
+
+			if ( isset( $data->_meta ) ) {
+				$this->_meta = $data->_meta;
+			}
+
+			if ( isset( $data->_fields ) ) {
+				$this->_fields = $data->_fields;
+			}
+
+			if ( isset( $data->_object_fields ) ) {
+				$this->_object_fields = $data->_object_fields;
+			}
+		}
 
 	}
 

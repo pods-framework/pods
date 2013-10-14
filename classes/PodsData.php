@@ -281,7 +281,7 @@ class PodsData {
         if ( !empty( $pod ) ) {
             $this->pod_data =& $this->api->pod_data;
 
-            if ( false === $this->pod_data ) {
+            if ( empty( $this->pod_data ) ) {
                 if ( true === $strict )
                     return pods_error( 'Pod not found', $this );
                 else
@@ -292,35 +292,37 @@ class PodsData {
             $this->pod = $this->pod_data[ 'name' ];
             $this->fields = $this->pod_data[ 'fields' ];
 
-            if ( isset( $this->pod_data[ 'options' ][ 'detail_url' ] ) )
-                $this->detail_page = $this->pod_data[ 'options' ][ 'detail_url' ];
+            if ( isset( $this->pod_data[ 'detail_url' ] ) )
+                $this->detail_page = $this->pod_data[ 'detail_url' ];
 
-            if ( isset( $this->pod_data[ 'select' ] ) )
-                $this->select = $this->pod_data[ 'select' ];
+			$table_info = $this->pod_data[ 'table_info' ];
 
-            if ( isset( $this->pod_data[ 'table' ] ) )
-                $this->table = $this->pod_data[ 'table' ];
+            if ( isset( $table_info[ 'select' ] ) )
+                $this->select = $table_info[ 'select' ];
 
-            if ( isset( $this->pod_data[ 'join' ] ) )
-                $this->join = $this->pod_data[ 'join' ];
+            if ( isset( $table_info[ 'table' ] ) )
+                $this->table = $table_info[ 'table' ];
 
-            if ( isset( $this->pod_data[ 'field_id' ] ) )
-                $this->field_id = $this->pod_data[ 'field_id' ];
+            if ( isset( $table_info[ 'join' ] ) )
+                $this->join = $table_info[ 'join' ];
 
-            if ( isset( $this->pod_data[ 'field_index' ] ) )
-                $this->field_index = $this->pod_data[ 'field_index' ];
+            if ( isset( $table_info[ 'field_id' ] ) )
+                $this->field_id = $table_info[ 'field_id' ];
 
-            if ( isset( $this->pod_data[ 'field_slug' ] ) )
-                $this->field_slug = $this->pod_data[ 'field_slug' ];
+            if ( isset( $table_info[ 'field_index' ] ) )
+                $this->field_index = $table_info[ 'field_index' ];
 
-            if ( isset( $this->pod_data[ 'where' ] ) )
-                $this->where = $this->pod_data[ 'where' ];
+            if ( isset( $table_info[ 'field_slug' ] ) )
+                $this->field_slug = $table_info[ 'field_slug' ];
 
-            if ( isset( $this->pod_data[ 'where_default' ] ) )
-                $this->where_default = $this->pod_data[ 'where_default' ];
+            if ( isset( $table_info[ 'where' ] ) )
+                $this->where = $table_info[ 'where' ];
 
-            if ( isset( $this->pod_data[ 'orderby' ] ) )
-                $this->orderby = $this->pod_data[ 'orderby' ];
+            if ( isset( $table_info[ 'where_default' ] ) )
+                $this->where_default = $table_info[ 'where_default' ];
+
+            if ( isset( $table_info[ 'orderby' ] ) )
+                $this->orderby = $table_info[ 'orderby' ];
 
             if ( 'settings' == $this->pod_data[ 'type' ] ) {
                 $this->id = $this->pod_data[ 'id' ];
@@ -960,7 +962,7 @@ class PodsData {
                             );
                         }
 
-                        if ( isset( $attributes[ 'options' ][ 'search' ] ) && !$attributes[ 'options' ][ 'search' ] )
+                        if ( isset( $attributes[ 'search' ] ) && !$attributes[ 'search' ] )
                             continue;
 
                         if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'number', 'decimal', 'currency', 'phone', 'password', 'boolean' ) ) )
@@ -1679,23 +1681,23 @@ class PodsData {
             $this->row = false;
 
             if ( isset( $this->data[ $this->row_number ] ) ) {
-                $this->row = get_object_vars( $this->data[ $this->row_number ] );
+				$this->row = get_object_vars( $this->data[ $this->row_number ] );
 
-                $current_row_id = false;
+				$current_row_id = false;
 
-                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
-                    $current_row_id = pods_var_raw( 'ID', $this->row );
-                elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
-                    $current_row_id = pods_var_raw( 'term_id', $this->row );
-                elseif ( 'user' == $this->pod_data[ 'type' ] )
-                    $current_row_id = pods_var_raw( 'ID', $this->row );
-                elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                    $current_row_id = pods_var_raw( 'comment_ID', $this->row );
-                elseif ( 'settings' == $this->pod_data[ 'type' ] )
-                    $current_row_id = $this->pod_data[ 'id' ];
+				if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+					$current_row_id = pods_var_raw( 'ID', $this->row );
+				elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
+					$current_row_id = pods_var_raw( 'term_id', $this->row );
+				elseif ( 'user' == $this->pod_data[ 'type' ] )
+					$current_row_id = pods_var_raw( 'ID', $this->row );
+				elseif ( 'comment' == $this->pod_data[ 'type' ] )
+					$current_row_id = pods_var_raw( 'comment_ID', $this->row );
+				elseif ( 'settings' == $this->pod_data[ 'type' ] )
+					$current_row_id = $this->pod_data[ 'id' ];
 
-                if ( 0 < $current_row_id )
-                    $row = $current_row_id;
+				if ( 0 < $current_row_id )
+					$row = $current_row_id;
             }
         }
 
@@ -1711,209 +1713,226 @@ class PodsData {
                 $id = $row;
             }
 
-            $row = false;
+			if ( 0 === strpos( $this->pod, '_pods_' ) ) {
+				if ( 'slug' == $mode ) {
+					$this->row = pods_object_get( $this->pod, $id );
+				}
+				else {
+					$this->row = pods_object_get( $this->pod, null, $id );
+				}
+			}
+			else {
+				$row = false;
 
-            if ( !empty( $this->pod ) )
-                $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
+				if ( !empty( $this->pod ) ) {
+					$row = pods_cache_get( $id, 'pods_items_' . $this->pod );
+				}
 
-            $current_row_id = false;
-            $get_table_data = false;
+				$current_row_id = false;
+				$get_table_data = false;
 
-            if ( false !== $row && is_array( $row ) )
-                $this->row = $row;
-            elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                if ( 'post_type' == $this->pod_data[ 'type' ] ) {
-                    if ( empty( $this->pod_data[ 'object' ] ) ) {
-                        $post_type = $this->pod_data[ 'name' ];
-                    }
-                    else {
-                        $post_type = $this->pod_data[ 'object' ];
-                    }
-                }
-                else
-                    $post_type = 'attachment';
+				if ( false !== $row && is_array( $row ) )
+					$this->row = $row;
+				elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+					if ( 'post_type' == $this->pod_data[ 'type' ] ) {
+						if ( empty( $this->pod_data[ 'object' ] ) ) {
+							$post_type = $this->pod_data[ 'name' ];
+						}
+						else {
+							$post_type = $this->pod_data[ 'object' ];
+						}
+					}
+					else
+						$post_type = 'attachment';
 
-                if ( 'id' == $mode ) {
-                    $this->row = get_post( $id, ARRAY_A );
+					if ( 'id' == $mode ) {
+						$this->row = get_post( $id, ARRAY_A );
 
-                    if ( is_array( $this->row ) && $this->row[ 'post_type' ] != $post_type )
-                        $this->row = false;
-                }
-                else {
-                    $args = array(
-                        'post_type' => $post_type,
-                        'name' => $id,
-                        'numberposts' => 5
-                    );
+						if ( is_array( $this->row ) && $this->row[ 'post_type' ] != $post_type )
+							$this->row = false;
+					}
+					else {
+						$args = array(
+							'post_type' => $post_type,
+							'name' => $id,
+							'numberposts' => 5
+						);
 
-                    $find = get_posts( $args );
+						$find = get_posts( $args );
 
-                    if ( !empty( $find ) )
-                        $this->row = get_object_vars( $find[ 0 ] );
-                }
+						if ( !empty( $find ) )
+							$this->row = get_object_vars( $find[ 0 ] );
+					}
 
-                if ( is_wp_error( $this->row ) || empty( $this->row ) )
-                    $this->row = false;
-                else
-                    $current_row_id = $this->row[ 'ID' ];
+					if ( is_wp_error( $this->row ) || empty( $this->row ) )
+						$this->row = false;
+					else
+						$current_row_id = $this->row[ 'ID' ];
 
-                $get_table_data = true;
-            }
-            elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
-                $taxonomy = $this->pod_data[ 'object' ];
+					$get_table_data = true;
+				}
+				elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
+					$taxonomy = $this->pod_data[ 'object' ];
 
-                if ( empty( $taxonomy ) )
-                    $taxonomy = $this->pod_data[ 'name' ];
+					if ( empty( $taxonomy ) )
+						$taxonomy = $this->pod_data[ 'name' ];
 
-                // Taxonomies are registered during init, so they aren't available before then
-                if ( !did_action( 'init' ) ) {
-                    // hackaround :(
-                    if ( 'id' == $mode )
-                        $term_where = 't.term_id = %d';
-                    else
-                        $term_where = 't.slug = %s';
+					// Taxonomies are registered during init, so they aren't available before then
+					if ( !did_action( 'init' ) ) {
+						// hackaround :(
+						if ( 'id' == $mode )
+							$term_where = 't.term_id = %d';
+						else
+							$term_where = 't.slug = %s';
 
-                    $filter = 'raw';
-                    $term = $id;
+						$filter = 'raw';
+						$term = $id;
 
-                    if ( 'id' != $mode || !$_term = wp_cache_get( $term, $taxonomy ) ) {
-                        $_term = $wpdb->get_row( $wpdb->prepare( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND {$term_where} LIMIT 1", $taxonomy, $term ) );
+						if ( 'id' != $mode || !$_term = wp_cache_get( $term, $taxonomy ) ) {
+							$_term = $wpdb->get_row( $wpdb->prepare( "
+								SELECT t.*, tt.*
+								FROM $wpdb->terms AS t
+								INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id
+								WHERE tt.taxonomy = %s AND {$term_where}
+								LIMIT 1
+							", $taxonomy, $term ) );
 
-                        if ( $_term )
-                            wp_cache_add( $term, $_term, $taxonomy );
-                    }
+							if ( $_term )
+								wp_cache_add( $term, $_term, $taxonomy );
+						}
 
-                    $_term = apply_filters( 'get_term', $_term, $taxonomy );
-                    $_term = apply_filters( "get_$taxonomy", $_term, $taxonomy );
-                    $_term = sanitize_term( $_term, $taxonomy, $filter );
+						$_term = apply_filters( 'get_term', $_term, $taxonomy );
+						$_term = apply_filters( "get_$taxonomy", $_term, $taxonomy );
+						$_term = sanitize_term( $_term, $taxonomy, $filter );
 
-                    if ( is_object( $_term ) )
-                        $this->row = get_object_vars( $_term );
-                }
-                elseif ( 'id' == $mode )
-                    $this->row = get_term( $id, $taxonomy, ARRAY_A );
-                else
-                    $this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
+						if ( is_object( $_term ) )
+							$this->row = get_object_vars( $_term );
+					}
+					elseif ( 'id' == $mode )
+						$this->row = get_term( $id, $taxonomy, ARRAY_A );
+					else
+						$this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 
-                if ( is_wp_error( $this->row ) || empty( $this->row ) )
-                    $this->row = false;
-                else
-                    $current_row_id = $this->row[ 'term_id' ];
+					if ( is_wp_error( $this->row ) || empty( $this->row ) )
+						$this->row = false;
+					else
+						$current_row_id = $this->row[ 'term_id' ];
 
-                $get_table_data = true;
-            }
-            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
-                if ( 'id' == $mode )
-                    $this->row = get_userdata( $id );
-                else
-                    $this->row = get_user_by( 'slug', $id );
+					$get_table_data = true;
+				}
+				elseif ( 'user' == $this->pod_data[ 'type' ] ) {
+					if ( 'id' == $mode )
+						$this->row = get_userdata( $id );
+					else
+						$this->row = get_user_by( 'slug', $id );
 
-                if ( is_wp_error( $this->row ) || empty( $this->row ) )
-                    $this->row = false;
-                else {
-                    // Get other vars
-                    $roles = $this->row->roles;
-                    $caps = $this->row->caps;
-                    $allcaps = $this->row->allcaps;
+					if ( is_wp_error( $this->row ) || empty( $this->row ) )
+						$this->row = false;
+					else {
+						// Get other vars
+						$roles = $this->row->roles;
+						$caps = $this->row->caps;
+						$allcaps = $this->row->allcaps;
 
-                    $this->row = get_object_vars( $this->row->data );
+						$this->row = get_object_vars( $this->row->data );
 
-                    // Set other vars
-                    $this->row[ 'roles' ] = $roles;
-                    $this->row[ 'caps' ] = $caps;
-                    $this->row[ 'allcaps' ] = $allcaps;
+						// Set other vars
+						$this->row[ 'roles' ] = $roles;
+						$this->row[ 'caps' ] = $caps;
+						$this->row[ 'allcaps' ] = $allcaps;
 
-                    unset( $this->row[ 'user_pass' ] );
+						unset( $this->row[ 'user_pass' ] );
 
-                    $current_row_id = $this->row[ 'ID' ];
-                }
+						$current_row_id = $this->row[ 'ID' ];
+					}
 
-                $get_table_data = true;
-            }
-            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
-                $this->row = get_comment( $id, ARRAY_A );
+					$get_table_data = true;
+				}
+				elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
+					$this->row = get_comment( $id, ARRAY_A );
 
-                // No slug handling here
+					// No slug handling here
 
-                if ( is_wp_error( $this->row ) || empty( $this->row ) )
-                    $this->row = false;
-                else
-                    $current_row_id = $this->row[ 'comment_ID' ];
+					if ( is_wp_error( $this->row ) || empty( $this->row ) )
+						$this->row = false;
+					else
+						$current_row_id = $this->row[ 'comment_ID' ];
 
-                $get_table_data = true;
-            }
-            elseif ( 'settings' == $this->pod_data[ 'type' ] ) {
-                $this->row = array();
+					$get_table_data = true;
+				}
+				elseif ( 'settings' == $this->pod_data[ 'type' ] ) {
+					$this->row = array();
 
-                if ( empty( $this->fields ) )
-                    $this->row = false;
-                else {
-                    foreach ( $this->fields as $field ) {
-                        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ], null );
-                    }
+					if ( empty( $this->fields ) )
+						$this->row = false;
+					else {
+						foreach ( $this->fields as $field ) {
+							if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+								$this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ], null );
+						}
 
-                    // Force ID
-                    $this->id = $this->pod_data[ 'id' ];
-                    $this->row[ 'option_id' ] = $this->id;
-                }
-            }
-            else {
-                $params = array(
-                    'table' => $this->table,
-                    'where' => "`t`.`{$this->field_id}` = " . (int) $id,
-                    'orderby' => "`t`.`{$this->field_id}` DESC",
-                    'page' => 1,
-                    'limit' => 1,
-                    'search' => false
-                );
+						// Force ID
+						$this->id = $this->pod_data[ 'id' ];
+						$this->row[ 'option_id' ] = $this->id;
+					}
+				}
+				else {
+					$params = array(
+						'table' => $this->table,
+						'where' => "`t`.`{$this->field_id}` = " . (int) $id,
+						'orderby' => "`t`.`{$this->field_id}` DESC",
+						'page' => 1,
+						'limit' => 1,
+						'search' => false
+					);
 
-                if ( 'slug' == $mode && !empty( $this->field_slug ) ) {
-                    $id = pods_sanitize( $id );
-                    $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
-                }
+					if ( 'slug' == $mode && !empty( $this->field_slug ) ) {
+						$id = pods_sanitize( $id );
+						$params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
+					}
 
-                $this->row = pods_data()->select( $params );
+					$this->row = pods_data()->select( $params );
 
-                if ( empty( $this->row ) )
-                    $this->row = false;
-                else {
-                    $current_row = (array) $this->row;
-                    $this->row = get_object_vars( (object) @current( $current_row ) );
-                }
-            }
+					if ( empty( $this->row ) )
+						$this->row = false;
+					else {
+						$current_row = (array) $this->row;
+						$this->row = get_object_vars( (object) @current( $current_row ) );
+					}
+				}
 
-            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
-                $params = array(
-                    'table' => $wpdb->prefix . "pods_",
-                    'where' => "`t`.`id` = {$current_row_id}",
-                    'orderby' => "`t`.`id` DESC",
-                    'page' => 1,
-                    'limit' => 1,
-                    'search' => false,
-                    'strict' => true
-                );
+				if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
+					$params = array(
+						'table' => $wpdb->prefix . "pods_",
+						'where' => "`t`.`id` = {$current_row_id}",
+						'orderby' => "`t`.`id` DESC",
+						'page' => 1,
+						'limit' => 1,
+						'search' => false,
+						'strict' => true
+					);
 
-                if ( empty( $this->pod_data[ 'object' ] ) )
-                    $params[ 'table' ] .= $this->pod_data[ 'name' ];
-                else
-                    $params[ 'table' ] .= $this->pod_data[ 'object' ];
+					if ( empty( $this->pod_data[ 'object' ] ) )
+						$params[ 'table' ] .= $this->pod_data[ 'name' ];
+					else
+						$params[ 'table' ] .= $this->pod_data[ 'object' ];
 
-                $row = pods_data()->select( $params );
+					$row = pods_data()->select( $params );
 
-                if ( !empty( $row ) ) {
-                    $current_row = (array) $row;
-                    $row = get_object_vars( (object) @current( $current_row ) );
+					if ( !empty( $row ) ) {
+						$current_row = (array) $row;
+						$row = get_object_vars( (object) @current( $current_row ) );
 
-                    if ( is_array( $this->row ) && !empty( $this->row ) )
-                        $this->row = array_merge( $row, $this->row );
-                    else
-                        $this->row = $row;
-                }
-            }
+						if ( is_array( $this->row ) && !empty( $this->row ) )
+							$this->row = array_merge( $row, $this->row );
+						else
+							$this->row = $row;
+					}
+				}
 
-            if ( !empty( $this->pod ) ) {
-                pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
+				if ( !empty( $this->pod ) ) {
+					pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
+				}
 			}
         }
 

@@ -620,11 +620,12 @@ class PodsAdmin {
      * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
-        $pods = pods_api()->load_pods( array( 'fields' => false ) );
+		$all_pods = pods( '_pods_pod' );
+		$all_pods->find( array( 'limit' => -1 ) );
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
-        if ( empty( $pods ) && !isset( $_GET[ 'action' ] ) )
+        if ( !$all_pods->total_found() && !isset( $_GET[ 'action' ] ) )
             $_GET[ 'action' ] = 'add';
 
         if ( 'pods-add-new' == $_GET[ 'page' ] ) {
@@ -668,7 +669,29 @@ class PodsAdmin {
 
         $total_fields = 0;
 
-        foreach ( $pods as $k => $pod ) {
+		$data = array();
+
+		while ( $all_pods->fetch() ) {
+			$pod = array(
+                'id' => $all_pods->field( 'id' ),
+                'label' => $all_pods->field( 'label' ),
+                'name' => $all_pods->field( 'name' ),
+                'object' => $all_pods->field( 'object' ),
+                'type' => $all_pods->field( 'type' ),
+                'real_type' => $all_pods->field( 'type' ),
+                'storage' => $all_pods->field( 'storage' ),
+                'field_count' => count( $all_pods->field( 'fields' ) )
+			);
+
+			/*echo '<pre>';
+			pods_debug( $pod );
+			echo '</pre>';*/
+
+			if ( 'user' == $pod[ 'type' ] ) {
+				//pods_debug( count( $all_pods->field( 'fields' ) ) );
+				//pods_debug( count( $total = $all_pods->field( 'fields' )->export() ) );
+			}
+
             if ( isset( $types[ $pod[ 'type' ] ] ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
                     if ( empty( $pod[ 'object' ] ) ) {
@@ -685,36 +708,24 @@ class PodsAdmin {
                     $pod_types_found[ $pod[ 'type' ] ]++;
 
                 if ( 'all' != $view && $view != $pod[ 'type' ] ) {
-                    unset( $pods[ $k ] );
-
                     continue;
                 }
 
-				$pod[ 'real_type' ] = $pod[ 'type' ];
                 $pod[ 'type' ] = $types[ $pod[ 'type' ] ];
             }
-            elseif ( 'all' != $view )
+            elseif ( 'all' != $view ) {
                 continue;
+			}
 
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
 
-            if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) )
-                $row = $pod;
-
-            $pod = array(
-                'id' => $pod[ 'id' ],
-                'label' => pods_var_raw( 'label', $pod ),
-                'name' => pods_var_raw( 'name', $pod ),
-                'object' => pods_var_raw( 'object', $pod ),
-                'type' => pods_var_raw( 'type', $pod ),
-                'real_type' => pods_var_raw( 'real_type', $pod ),
-                'storage' => pods_var_raw( 'storage', $pod ),
-                'field_count' => count( $pod[ 'fields' ] )
-            );
+            if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
+                $row = $all_pods->row();
+			}
 
             $total_fields += $pod[ 'field_count' ];
 
-            $pods[ $k ] = $pod;
+			$data[ $pod[ 'id' ] ] = $pod;
         }
 
         if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
@@ -725,10 +736,10 @@ class PodsAdmin {
         }
 
         $ui = array(
-            'data' => $pods,
+            'data' => $data,
             'row' => $row,
-            'total' => count( $pods ),
-            'total_found' => count( $pods ),
+            'total' => count( $data ),
+            'total_found' => count( $data ),
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Pods',
             'item' => 'Pod',

@@ -71,18 +71,6 @@ $tableless_field_types = PodsForm::tableless_field_types();
 $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 $bidirectional_objects = PodsForm::field_method( 'pick', 'bidirectional_objects' );
 
-foreach ( $pod[ 'options' ] as $_option => $_value ) {
-    $pod[ $_option ] = $_value;
-}
-
-foreach ( $pod[ 'fields' ] as $_field => $_data ) {
-    $_data[ 'options' ] = (array) $_data[ 'options' ];
-
-    foreach ( $_data[ 'options' ] as $_option => $_value ) {
-        $pod[ 'fields' ][ $_field ][ $_option ] = $_value;
-    }
-}
-
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
 
 $pick_table = pods_transient_get( 'pods_tables' );
@@ -679,7 +667,7 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         $hierarchical_fields = array();
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_var( 'pick_object', $field ) && $pod[ 'name' ] == pods_var( 'pick_val', $field ) && 'single' == pods_var( 'pick_format_type', $field[ 'options' ] ) )
+            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_var( 'pick_object', $field ) && $pod[ 'name' ] == pods_var( 'pick_val', $field ) && 'single' == pods_var( 'pick_format_type', $field ) )
                 $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 

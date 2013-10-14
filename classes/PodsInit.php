@@ -365,9 +365,6 @@ class PodsInit {
                 elseif ( !$force && isset( $existing_post_types[ $post_type[ 'name' ] ] ) )
                     continue;
 
-                $post_type[ 'options' ][ 'name' ] = $post_type[ 'name' ];
-                $post_type = array_merge( $post_type, (array) $post_type[ 'options' ] );
-
 				$post_type_name = pods_var( 'name', $post_type );
 
                 // Labels
@@ -549,9 +546,6 @@ class PodsInit {
                     continue;
                 elseif ( !$force && isset( $existing_taxonomies[ $taxonomy[ 'name' ] ] ) )
                     continue;
-
-                $taxonomy[ 'options' ][ 'name' ] = $taxonomy[ 'name' ];
-                $taxonomy = array_merge( $taxonomy, (array) $taxonomy[ 'options' ] );
 
 				$taxonomy_name = pods_var( 'name', $taxonomy );
 
@@ -1227,20 +1221,21 @@ class PodsInit {
     public function admin_bar_links () {
         global $wp_admin_bar, $pods;
 
-        if ( !is_user_logged_in() || !is_admin_bar_showing() )
+        if ( !is_user_logged_in() || !is_admin_bar_showing() ) {
             return;
+		}
 
-        $all_pods = pods_api()->load_pods( array( 'type' => 'pod', 'fields' => false ) );
+        $all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 
         // Add New item links for all pods
         foreach ( $all_pods as $pod ) {
-            if ( 0 == $pod[ 'options' ][ 'show_in_menu' ] )
+            if ( 0 == $pod[ 'show_in_menu' ] )
                 continue;
 
             if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod[ 'name' ] ) ) )
                 continue;
 
-            $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
+            $singular_label = pods_var_raw( 'label_singular', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
 
             $wp_admin_bar->add_node( array(
                 'id' => 'new-pod-' . $pod[ 'name' ],
@@ -1255,7 +1250,7 @@ class PodsInit {
             $pod = $pods->pod_data;
 
             if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) ) {
-                $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
+                $singular_label = pods_var_raw( 'label_singular', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
 
                 $wp_admin_bar->add_node( array(
                     'title' => sprintf( __( 'Edit %s', 'pods' ), $singular_label ),

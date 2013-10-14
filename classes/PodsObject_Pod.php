@@ -171,7 +171,7 @@ class PodsObject_Pod extends PodsObject {
 					);
 
 					// Add labels
-					$object = array_merge( $object, get_object_vars( $post_type->labels ) );
+					$object = array_merge( get_object_vars( $post_type->labels ), $object );
 
 					// @todo Import object settings and match up to Pod options
 					/*unset( $post_type->name );
@@ -332,7 +332,7 @@ class PodsObject_Pod extends PodsObject {
 	 */
 	public function object_fields( $field = null, $option = null ) {
 
-		if ( !isset( $this->_object[ 'fields' ] ) ) {
+		if ( !isset( $this->_object[ 'object_fields' ] ) ) {
 			if ( $this->is_custom() && isset( $this->_object[ '_object_fields' ] ) && !empty( $this->_object[ '_object_fields' ] ) ) {
 				$object_fields = $this->_object[ '_object_fields' ];
 			}
@@ -340,7 +340,7 @@ class PodsObject_Pod extends PodsObject {
 				$object_fields = pods_api()->get_wp_object_fields( $this->_object[ 'type' ], $this->_object );
 			}
 
-			$this->_object[ '_object_fields' ] = array();
+			$this->_object[ 'object_fields' ] = array();
 
 			foreach ( $object_fields as $object_field ) {
 				$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );

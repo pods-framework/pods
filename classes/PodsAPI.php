@@ -4465,88 +4465,95 @@ class PodsAPI {
     }
 
     /**
-     * Delete an object from tableless fields
-     *
-     * @param int $id
-     * @param string $type
-     * @param string $name
-     *
-     * @return bool
-     *
-     * @since 2.3
-     */
-    public function delete_object_from_relationships ( $id, $object, $name = null ) {
-        /**
-         * @var $pods_init \PodsInit
-         */
-        global $pods_init;
+	 * Delete an object from tableless fields
+	 *
+	 * @param int $id
+	 * @param string $type
+	 * @param string $name
+	 *
+	 * @return bool
+	 *
+	 * @since 2.3
+	 */
+	public function delete_object_from_relationships( $id, $object, $name = null ) {
 
-        $pod = false;
+		/**
+		 * @var $pods_init \PodsInit
+		 */
+		global $pods_init;
 
-        // Run any bidirectional delete operations
-        if ( is_array( $object ) )
-            $pod = $object;
-        elseif ( is_object( $pods_init ) )
-            $pod = PodsInit::$meta->get_object( $object, $name );
+		$pod = false;
 
-        if ( !empty( $pod ) ) {
-            $object = $pod[ 'type' ];
-            $name = $pod[ 'name' ];
+		// Run any bidirectional delete operations
+		if ( is_array( $object ) ) {
+			$pod = $object;
+		}
+		elseif ( is_object( $object ) && 0 === strpos( get_class( $object ), 'PodsObject' ) ) {
+			$pod = $object;
+		}
+		elseif ( is_object( $pods_init ) ) {
+			$pod = PodsInit::$meta->get_object( $object, $name );
+		}
 
-            foreach ( $pod[ 'fields' ] as $field ) {
-                PodsForm::delete( $field[ 'type' ], $id, $field[ 'name' ], $field, $pod );
-            }
-        }
+		if ( !empty( $pod ) ) {
+			$object = $pod[ 'type' ];
+			$name = $pod[ 'name' ];
 
-        // Lookup related fields (non-bidirectional)
-        $params = array(
-            'where' => array(
-                array(
-                    'key' => 'type',
-                    'value' => 'pick'
-                ),
-                array(
-                    'key' => 'pick_object',
-                    'value' => $object
-                )
-            )
-        );
+			foreach ( $pod[ 'fields' ] as $field ) {
+				PodsForm::delete( $field[ 'type' ], $id, $field[ 'name' ], $field, $pod );
+			}
+		}
 
-        if ( !empty( $name ) && $name != $object ) {
-            $params[ 'where' ][] = array(
-                'key' => 'pick_val',
-                'value' => $name
-            );
-        }
+		// Lookup related fields (non-bidirectional)
+		$params = array(
+			'where' => array(
+				array(
+					'key' => 'type',
+					'value' => 'pick'
+				),
+				array(
+					'key' => 'pick_object',
+					'value' => $object
+				)
+			)
+		);
 
-        $fields = $this->load_fields( $params, false );
+		if ( !empty( $name ) && $name != $object ) {
+			$params[ 'where' ][ ] = array(
+				'key' => 'pick_val',
+				'value' => $name
+			);
+		}
 
-        if ( !empty( $pod ) && 'media' == $pod[ 'type' ] ) {
-            $params[ 'where' ] = array(
-                array(
-                    'key' => 'type',
-                    'value' => 'file'
-                )
-            );
+		$fields = $this->load_fields( $params, false );
 
-            $fields = array_merge( $fields, $this->load_fields( $params, false ) );
-        }
+		if ( !empty( $pod ) && 'media' == $pod[ 'type' ] ) {
+			$params[ 'where' ] = array(
+				array(
+					'key' => 'type',
+					'value' => 'file'
+				)
+			);
 
-        if ( is_array( $fields ) && !empty( $fields ) ) {
-            foreach ( $fields as $related_field ) {
-                $related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ], 'fields' => false ), false );
+			$fields = array_merge( $fields, $this->load_fields( $params, false ) );
+		}
 
-                if ( empty( $related_pod ) )
-                    continue;
+		if ( is_array( $fields ) && !empty( $fields ) ) {
+			foreach ( $fields as $related_field ) {
+				$related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ], 'fields' => false ), false );
 
-                $related_from = $this->lookup_related_items_from( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
+				if ( empty( $related_pod ) ) {
+					continue;
+				}
 
-                $this->delete_relationships( $related_from, $id, $related_pod, $related_field );
-            }
-        }
+				$related_from = $this->lookup_related_items_from( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
 
-        if ( !empty( $pod ) && !pods_tableless() ) {
-            pods_query( "
+				$this->delete_relationships( $related_from, $id, $related_pod, $related_field );
+			}
+		}
+
+		if ( !empty( $pod ) && !pods_tableless() ) {
+			pods_query( "
                 DELETE FROM `@wp_podsrel`
                 WHERE
                 (
@@ -4558,16 +4565,16 @@ class PodsAPI {
                     AND `related_item_id` = %d
                 )
             ", array(
-                $pod[ 'id' ],
-                $id,
+					$pod[ 'id' ],
+					$id,
+					$pod[ 'id' ],
+					$id
+				)
+			);
+		}
 
-                $pod[ 'id' ],
-                $id
-            ) );
-        }
-
-        return true;
-    }
+		return true;
+	}
 
     /**
      * Delete relationships

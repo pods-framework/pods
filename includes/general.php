@@ -55,7 +55,6 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  *
  * @return mixed
  * @since 2.0
- * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
     // Add filter name
@@ -217,31 +216,39 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
  *
  * @since 2.3.5
  */
-function pods_is_admin ( $cap = null ) {
-    if ( is_user_logged_in() ) {
-        $pods_admin_capabilities = array(
-            'delete_users' // default is_super_admin checks against this
-        );
+function pods_is_admin( $cap = null ) {
 
-        $pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
+	if ( is_user_logged_in() ) {
+		$pods_admin_capabilities = array(
+			'delete_users' // default is_super_admin checks against this
+		);
 
-        if ( is_multisite() && is_super_admin() )
-            return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
+		$pods_admin_capabilities = apply_filters( 'pods_admin_capabilities', $pods_admin_capabilities, $cap );
 
-        if ( empty( $cap ) )
-            $cap = array();
-        else
-            $cap = (array) $cap;
+		if ( is_multisite() && is_super_admin() ) {
+			return apply_filters( 'pods_is_admin', true, $cap, '_super_admin' );
+		}
 
-        $cap = array_unique( array_filter( array_merge( $pods_admin_capabilities, $cap ) ) );
+		if ( empty( $cap ) ) {
+			$cap = array();
+		}
+		else {
+			$cap = (array) $cap;
+		}
 
-        foreach ( $cap as $capability ) {
-            if ( current_user_can( $capability ) )
-                return apply_filters( 'pods_is_admin', true, $cap, $capability );
-        }
-    }
+		$cap = array_unique( array_filter( array_merge( $pods_admin_capabilities, $cap ) ) );
 
-    return apply_filters( 'pods_is_admin', false, $cap, null );
+		foreach ( $cap as $capability ) {
+			if ( current_user_can( $capability ) ) {
+				return apply_filters( 'pods_is_admin', true, $cap, $capability );
+			}
+		}
+
+		return apply_filters( 'pods_is_admin', false, $cap, null );
+	}
+
+	return false;
+
 }
 
 /**
@@ -251,11 +258,16 @@ function pods_is_admin ( $cap = null ) {
  *
  * @since 2.3
  */
-function pods_developer () {
-    if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
-        return true;
+function pods_developer() {
 
-    return false;
+	$developer = false;
+
+	if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
+		$developer = true;
+	}
+
+	return apply_filters( 'pods_developer', $developer );
+
 }
 
 /**
@@ -265,11 +277,16 @@ function pods_developer () {
  *
  * @since 2.3
  */
-function pods_tableless () {
-    if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
-        return true;
+function pods_tableless() {
 
-    return false;
+	$tableless = false;
+
+	if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+		$tableless = true;
+	}
+
+	return apply_filters( 'pods_tableless', $tableless );
+
 }
 
 /**
@@ -283,18 +300,20 @@ function pods_tableless () {
  */
 function pods_strict( $include_debug = true ) {
 
+	$strict = false;
+
 	if ( defined( 'PODS_STRICT' ) && PODS_STRICT ) {
-		return true;
+		$strict = true;
 	}
 	// @deprecated PODS_STRICT_MODE since 2.3.5
 	elseif ( pods_allow_deprecated( false ) && defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
-		return true;
+		$strict = true;
 	}
 	elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-		return true;
+		$strict = true;
 	}
 
-	return false;
+	return apply_filters( 'pods_strict', $strict, __FUNCTION__ );
 
 }
 
@@ -309,14 +328,13 @@ function pods_strict( $include_debug = true ) {
  */
 function pods_allow_deprecated( $strict = true ) {
 
-	if ( $strict && pods_strict() ) {
-		return false;
-	}
-	elseif ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) {
-		return true;
+	$deprecated = false;
+
+	if ( ( !$strict || pods_strict() ) && ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) ) {
+		$deprecated = true;
 	}
 
-	return false;
+	return apply_filters( 'pods_allow_deprecated', $deprecated );
 
 }
 
@@ -327,11 +345,16 @@ function pods_allow_deprecated( $strict = true ) {
  *
  * @since 2.3.9
  */
-function pods_api_cache () {
-    if ( defined( 'PODS_API_CACHE' ) && !PODS_API_CACHE )
-        return false;
+function pods_api_cache() {
 
-    return true;
+	$api_cache = true;
+
+	if ( defined( 'PODS_API_CACHE' ) && !PODS_API_CACHE ) {
+		$api_cache = false;
+	}
+
+	return apply_filters( 'pods_api_cache', $api_cache );
+
 }
 
 /**
@@ -356,21 +379,30 @@ function pods_api_cache () {
  *
  * @since 2.0
  */
-function pods_deprecated ( $function, $version, $replacement = null ) {
-    if ( !version_compare( $version, PODS_VERSION, '<=' ) && !version_compare( $version . '-a-0', PODS_VERSION, '<=' ) )
-        return;
+function pods_deprecated( $function, $version, $replacement = null ) {
 
-    do_action( 'deprecated_function_run', $function, $replacement, $version );
+	if ( !version_compare( $version, PODS_VERSION, '<=' ) && !version_compare( $version . '-a-0', PODS_VERSION, '<=' ) ) {
+		return;
+	}
 
-    // Allow plugin to filter the output error trigger
-    if ( WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true ) ) {
-        if ( !is_null( $replacement ) )
-            $error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.', 'pods' );
-        else
-            $error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' );
+	do_action( 'deprecated_function_run', $function, $replacement, $version );
 
-        trigger_error( sprintf( $error, $function, $version, $replacement ) );
-    }
+	if ( !is_null( $replacement ) ) {
+		$error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.', 'pods' );
+	}
+	else {
+		$error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' );
+	}
+
+	$error = sprintf( $error, $function, $version, $replacement );
+
+	// Allow plugin to filter the output error trigger
+	if ( WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true ) ) {
+		trigger_error( $error );
+	}
+
+	do_action( 'pods_deprecated_error', $error, $function, $replacement, $version );
+
 }
 
 /**

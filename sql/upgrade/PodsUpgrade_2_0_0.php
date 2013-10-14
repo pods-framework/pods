@@ -614,7 +614,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                         $related_field_id = $related_field[ 'id' ];
                     }
                     elseif ( 'pod' == $field[ 'pick_object' ] && 0 < strlen( $field[ 'pick_val' ] ) ) {
-                        $related_pod = $this->api->load_pod( array( 'name' => $field[ 'pick_val' ] ), false );
+                        $related_pod = $this->api->load_pod( array( 'name' => $field[ 'pick_val' ] ), __METHOD__ );
 
                         if ( empty( $related_pod ) )
                             continue;
@@ -852,7 +852,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         if ( true === $this->check_progress( __FUNCTION__, $pod ) )
             return '1';
 
-        $pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
+        $pod_data = $this->api->load_pod( array( 'name' => $pod ), __METHOD__ );
 
         if ( empty( $pod_data ) )
             return pods_error( sprintf( __( 'Pod <strong>%s</strong> not found, items cannot be migrated', 'pods' ), $pod ) );

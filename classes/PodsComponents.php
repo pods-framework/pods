@@ -471,11 +471,11 @@ class PodsComponents {
         $toggle = null;
 
         if ( isset( $this->components[ $component ] ) ) {
-            if ( 1 == pods_var( 'toggle', 'get' ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) ) {
+            if ( 1 == pods_v( 'toggle' ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) ) {
                 $this->settings[ 'components' ][ $component ] = array();
                 $toggle = true;
             }
-            elseif ( 0 == pods_var( 'toggle', 'get' ) ) {
+            elseif ( 0 == pods_v( 'toggle' ) ) {
                 $this->settings[ 'components' ][ $component ] = 0;
                 $toggle = false;
             }

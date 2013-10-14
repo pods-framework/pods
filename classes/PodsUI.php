@@ -1027,7 +1027,7 @@ class PodsUI {
             }
         }
 
-        $unique_identifier = pods_var( 'page', 'get' ); // wp-admin page
+        $unique_identifier = pods_v( 'page' ); // wp-admin page
         if ( is_object( $this->pod ) && isset( $this->pod->pod ) )
             $unique_identifier = '_' . $this->pod->pod;
         elseif ( 0 < strlen( $this->sql[ 'table' ] ) )

@@ -24,9 +24,9 @@
 
         pods_redirect( 'index.php' );
     }
-    elseif ( 1 == pods_var( 'pods_reset_success' ) )
+    elseif ( 1 == pods_v( 'pods_reset_success' ) )
         pods_message( 'Pods 2.x settings and data have been reset.' );
-    elseif ( 1 == pods_var( 'pods_cleanup_1x_success' ) )
+    elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) )
         pods_message( 'Pods 1.x data has been deleted.' );
     elseif ( pods_var( 'pods_reset_weekend', 'post', pods_var( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
         if ( $monday_mode ) {

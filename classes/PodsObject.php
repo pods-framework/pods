@@ -28,6 +28,13 @@ class PodsObject implements ArrayAccess, Serializable {
 	protected $_override = array();
 
 	/**
+	 * Keys that have changed
+	 *
+	 * @var array
+	 */
+	protected $_changed = array();
+
+	/**
 	 * Object fields
 	 *
 	 * @var array
@@ -96,6 +103,19 @@ class PodsObject implements ArrayAccess, Serializable {
 		'post_name' => 'name',
 		'post_content' => 'description',
 		'post_parent' => 'parent_id'
+	);
+
+	/**
+	 * List of core fields utilized for Post Type
+	 *
+	 * @var array
+	 */
+	protected $_core_fields = array(
+		'ID',
+		'post_title',
+		'post_name',
+		'post_content',
+		'post_parent'
 	);
 
 	/**
@@ -261,6 +281,29 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
+	 * Check if the object exists
+	 *
+	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+	 * @param int $id Get the Object by ID (overrides $name)
+	 * @param mixed $parent Parent Object or ID
+	 *
+	 * @return int|bool $id The Object ID or false if Object not found
+	 *
+	 * @since 2.4
+	 */
+	public function exists( $name = null, $id = 0, $parent = null ) {
+
+		$pod = pods_object_pod( $name, $id, false, $parent );
+
+		if ( !empty( $pod ) ) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Check if the Object is a valid
 	 *
 	 * @return bool
@@ -312,6 +355,25 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
+	 * Get a list of all meta keys that have changed
+	 *
+	 * @param array|object|PodsObject $data Data override
+	 *
+	 * @since 2.4
+	 */
+	public function changed() {
+
+		$changed = array();
+
+		foreach ( $this->_changed as $field ) {
+			$changed[ $field ] = $this->offsetGet( $field );
+		}
+
+		return $changed;
+
+	}
+
+	/**
 	 * Merge overrides of options for Objects
 	 *
 	 * @param array|object|PodsObject $data Data override
@@ -330,7 +392,30 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		foreach ( $data as $field => $field_data ) {
-			$this->_override[ $field ] = $field_data;
+			if ( $this->offsetGet( $field ) != $field_data ) {
+				if ( !in_array( $field, $this->_core_fields ) && !in_array( $field, $this->_deprecated_keys ) && !in_array( $field, $this->_changed ) ) {
+					$this->_changed[] = $field;
+				}
+
+				$this->_override[ $field ] = $field_data;
+			}
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * Save overrides of options for Objects
+	 *
+	 * @since 2.4
+	 */
+	public function override_save() {
+
+		foreach ( $this->_override as $field => $field_data ) {
+			unset( $this->_override[ $field ] );
+
+			$this->offsetSet( $field, $field_data );
 		}
 
 		return $this;
@@ -356,7 +441,11 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		foreach ( $data as $field => $field_data ) {
-			if ( !isset( $this->_object[ $field ] ) && !isset( $this->_meta[ $field ] ) ) {
+			if ( !isset( $this->_object[ $field ] ) && !isset( $this->_meta[ $field ] ) && null === $this->offsetGet( $field ) ) {
+				if ( !in_array( $field, $this->_changed ) ) {
+					$this->_changed[] = $field;
+				}
+
 				$this->_override[ $field ] = $field_data;
 			}
 
@@ -469,6 +558,13 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 
+		if ( 'post_type' == $meta_key ) {
+			return $this->_post_type;
+		}
+		elseif ( isset( $this->_object[ $meta_key ] ) && 0 < strlen( $this->_object[ $meta_key ] ) ) {
+			return $this->_object[ $meta_key ];
+		}
+
 		if ( (int) $id < 1 ) {
 			$id = $this->_object[ 'id' ];
 		}
@@ -541,13 +637,15 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		$alt_fields = 'object_fields';
+		$all_fields =& $this->_fields;
 
 		if ( 'object_fields' == $fields ) {
 			$alt_fields = 'fields';
+			$all_fields =& $this->_object_fields;
 		}
 
 		// No fields found
-		if ( !isset( $this->_object[ 'fields' ] ) || empty( $this->_object[ 'fields' ] ) ) {
+		if ( empty( $all_fields ) ) {
 			$field_data = array();
 
 			// No fields and field not found, get alt field data
@@ -557,7 +655,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		// Return all fields
 		elseif ( empty( $field ) ) {
-			$field_data =& $this->_object[ 'fields' ];
+			$field_data =& $all_fields;
 
 			if ( !$this->_live ) {
 				foreach ( $field_data as $field_name => $fields ) {
@@ -571,7 +669,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 		// Field not found
-		elseif ( !isset( $this->_object[ 'fields' ][ $field ] ) ) {
+		elseif ( !isset( $all_fields[ $field ] ) ) {
 			$field_data = array();
 
 			// Field not found, get alt field data
@@ -581,7 +679,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		// Return all field data
 		elseif ( empty( $option ) ) {
-			$field_data =& $this->_object[ 'fields' ][ $field ];
+			$field_data =& $all_fields[ $field ];
 
 			if ( !$this->_live ) {
 				foreach ( $field_data as $field_option => $field_value ) {
@@ -635,7 +733,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Export the object data into a normal array
 	 *
-	 * @param string $export_type Export type: all|data|fields|table_info
+	 * @param string $export_type Export type: all|data|fields|object_fields|table_info
 	 *
 	 * @return array Exported array of all object data
 	 *
@@ -646,10 +744,10 @@ class PodsObject implements ArrayAccess, Serializable {
 		$export = array();
 
 		if ( in_array( $export_type, array( 'all', 'data' ) ) ) {
-			$export = array_merge( $this->_object, $this->_meta );
+			$export = array_merge( $this->_object, $this->_meta, $this->_override );
 		}
 
-		if ( in_array( $export_type, array( 'all', 'fields', 'table_info' ) ) ) {
+		if ( in_array( $export_type, array( 'all', 'fields', 'object_fields', 'table_info' ) ) ) {
 			foreach ( $this->_methods as $method ) {
 				if ( 'all' != $export_type ) {
 					if ( 'fields' == $export_type ) {
@@ -669,17 +767,15 @@ class PodsObject implements ArrayAccess, Serializable {
 					$export[ $method ] = call_user_func( array( $this, $method ) );
 				}
 
-				if ( null === $export[ $method ] && !in_array( $method, array( 'fields', 'object_fields' ) ) ) {
+				if ( null === $export[ $method ] ) {
 					unset( $export[ $method ] );
 				}
 			}
 		}
 
 		if ( 'all' != $export_type ) {
-			if ( 'fields' != $export_type ) {
-				if ( isset( $export[ $export_type ] ) ) {
-					$export = $export[ $export_type ];
-				}
+			if ( isset( $export[ $export_type ] ) ) {
+				$export = $export[ $export_type ];
 			}
 		}
 
@@ -697,10 +793,6 @@ class PodsObject implements ArrayAccess, Serializable {
 	public function fields_export() {
 
 		$fields = $this->fields( null, null );
-
-		if ( empty( $fields ) ) {
-			return null;
-		}
 
 		foreach ( $fields as $field => $field_object ) {
 			if ( is_object( $field_object ) ) {
@@ -722,10 +814,6 @@ class PodsObject implements ArrayAccess, Serializable {
 	public function object_fields_export() {
 
 		$object_fields = $this->object_fields( null, null );
-
-		if ( empty( $object_fields ) ) {
-			return null;
-		}
 
 		foreach ( $object_fields as $field => $field_object ) {
 			if ( is_object( $field_object ) ) {
@@ -1078,10 +1166,30 @@ class PodsObject implements ArrayAccess, Serializable {
 		elseif ( 'object_fields' == $offset ) {
 			$this->_object_fields = $value;
 		}
+		elseif ( isset( $this->_deprecated_keys[ $offset] ) ) {
+			if ( pods_allow_deprecated() ) {
+				if ( !in_array( $offset, $this->_core_fields ) && !in_array( $this->_deprecated_keys[ $offset ], $this->_changed ) && $this->_object[ $this->_deprecated_keys[ $offset ] ] != $value ) {
+					$this->_changed[] = $this->_deprecated_keys[ $offset ];
+				}
+
+				$this->_object[ $this->_deprecated_keys[ $offset ] ] = $value;
+			}
+			else {
+				pods_deprecated( '$object[\'' . $offset .'\']', '2.0', '$object[\'' . $this->_deprecated_keys[ $offset ] . '\']' );
+			}
+		}
 		elseif ( isset( $this->_object[ $offset ] ) ) {
+			if ( !in_array( $offset, $this->_core_fields ) && !in_array( $offset, $this->_changed ) && $this->_object[ $offset ] != $value ) {
+				$this->_changed[] = $offset;
+			}
+
 			$this->_object[ $offset ] = $value;
 		}
-		elseif ( isset( $this->_meta[ $offset ] ) ) {
+		else {
+			if ( !in_array( $offset, $this->_changed ) && $this->offsetGet( $offset ) != $value ) {
+				$this->_changed[] = $offset;
+			}
+
 			$this->_meta[ $offset ] = $value;
 		}
 
@@ -1102,9 +1210,11 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function offsetGet( $offset, $strict = false ) {
 
+		// Special methods (fields, object_fields, table_info, etc)
 		if ( !empty( $this->_methods ) && in_array( $offset, $this->_methods ) ) {
 			$value = call_user_func( array( $this, $offset ) );
 		}
+		// @deprecated Options (pre Pods 2.4 style)
 		elseif ( 'options' == $offset ) {
 			$value = null;
 
@@ -1112,6 +1222,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				$value = $this->export();
 			}
 		}
+		// Overrides
 		elseif ( isset( $this->_override[ $offset ] ) ) {
 			$value = $this->_override[ $offset ];
 
@@ -1122,6 +1233,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				}
 			}
 		}
+		// Object fields
 		elseif ( isset( $this->_object[ $offset ] ) ) {
 			$value = $this->_object[ $offset ];
 
@@ -1132,6 +1244,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				}
 			}
 		}
+		// Meta fields
 		elseif ( isset( $this->_meta[ $offset ] ) ) {
 			$value = $this->_meta[ $offset ];
 
@@ -1142,7 +1255,18 @@ class PodsObject implements ArrayAccess, Serializable {
 				}
 			}
 		}
-		// Deprecated keys
+		// Table info fields
+		elseif ( $this->table_info() && isset( $this->_table_info[ $offset ] ) ) {
+			$value = $this->_table_info[ $offset ];
+
+			if ( !$this->_live ) {
+				// i18n plugin integration
+				if ( 'label' == $offset || 0 === strpos( $offset, 'label_' ) ) {
+					$value = __( $value );
+				}
+			}
+		}
+		// @deprecated Deprecated keys
 		elseif ( isset( $this->_deprecated_keys[ $offset ] ) ) {
 			$value = null;
 
@@ -1153,6 +1277,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				pods_deprecated( '$object[\'' . $offset .'\']', '2.0', '$object[\'' . $this->_deprecated_keys[ $offset ] . '\']' );
 			}
 		}
+		// Fallback to fetch from meta
 		else {
 			$value = $this->_meta( $offset, null, false, $strict );
 

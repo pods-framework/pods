@@ -2616,7 +2616,7 @@ class PodsData {
                 $pod_data = array();
 
                 if ( in_array( $traverse_recurse[ 'pod' ], array( 'user', 'comment' ) ) ) {
-                    $pod = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ], 'table_info' => true ) );
+                    $pod = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ) );
 
                     if ( !empty( $pod ) && $pod[ 'type' ] == $pod )
                         $pod_data = $pod;
@@ -2641,7 +2641,7 @@ class PodsData {
                 return $joins;
         }
         else {
-            $pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ], 'table_info' => true ), false );
+            $pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ), __METHOD__ );
 
             if ( empty( $pod_data ) )
                 return $joins;

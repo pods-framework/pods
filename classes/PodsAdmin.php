@@ -71,7 +71,7 @@ class PodsAdmin {
 
             $pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
-            if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
+            if ( in_array( pods_v( 'action' ), $pods_admin_ajax_actions ) || in_array( pods_v( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
                 foreach ( $_POST as $key => $value ) {
                     if ( 'action' == $key || 0 === strpos( $key, '_podsfix_' ) )
                         continue;
@@ -170,7 +170,7 @@ class PodsAdmin {
 
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
-        if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
+        if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_v( 'pods_upgrade_bypass' ) ) ) {
             $submenu_items = array();
 
             if ( !empty( $advanced_content_types ) ) {
@@ -227,7 +227,7 @@ class PodsAdmin {
                                 $all_title = $plural_label;
                                 $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
 
-                                if ( $page == pods_var( 'page', 'get' ) ) {
+                                if ( $page == pods_v( 'page' ) ) {
                                     if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
                                         $all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
                                     elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
@@ -283,7 +283,7 @@ class PodsAdmin {
                             $all_title = $plural_label;
                             $all_label = __( 'Manage', 'pods' ) . ' ' . $plural_label;
 
-                            if ( $page == pods_var( 'page', 'get' ) ) {
+                            if ( $page == pods_v( 'page' ) ) {
                                 if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
                                     $all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
                                 elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
@@ -605,7 +605,7 @@ class PodsAdmin {
      * Enqueue assets for Media Library Popup
      */
     public function register_media_assets () {
-        if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
+        if ( 'pods_media_attachment' == pods_v( 'inlineId' ) )
             wp_enqueue_style( 'pods-attach' );
     }
 
@@ -709,7 +709,7 @@ class PodsAdmin {
 
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
 
-            if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
+            if ( $pod[ 'id' ] == pods_v( 'id' ) && 'delete' != pods_v( 'action' ) ) {
                 $row = $pod;
 			}
 
@@ -718,7 +718,7 @@ class PodsAdmin {
 			$data[ $pod[ 'id' ] ] = $pod;
         }
 
-        if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
+        if ( false === $row && 0 < pods_v( 'id' ) && 'delete' != pods_v( 'action' ) ) {
             pods_message( 'Pod not found', 'error' );
 
             unset( $_GET[ 'id' ] );
@@ -1636,7 +1636,7 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_reset ( $obj, $id ) {
-        $pod = pods_api()->load_pod( array( 'id' => $id ), false );
+        $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
             return $obj->error( __( 'Pod not found.', 'pods' ) );
@@ -1678,7 +1678,7 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_delete ( $id, $obj ) {
-        $pod = pods_api()->load_pod( array( 'id' => $id ), false );
+        $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
             return $obj->error( __( 'Pod not found.', 'pods' ) );
@@ -1929,7 +1929,7 @@ class PodsAdmin {
             return;
         }
 
-        if ( 1 == pods_var( 'toggled' ) ) {
+        if ( 1 == pods_v( 'toggled' ) ) {
             $toggle = PodsInit::$components->toggle( $component );
 
             if ( true === $toggle )
@@ -1971,7 +1971,7 @@ class PodsAdmin {
 
             pods_redirect( $url );
         }
-        elseif ( 1 == pods_var( 'toggle' ) )
+        elseif ( 1 == pods_v( 'toggle' ) )
             $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
         else
             $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );

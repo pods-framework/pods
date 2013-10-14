@@ -6,7 +6,7 @@
             pods_redirect( pods_var_update( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
         }
     }
-    elseif ( 1 == pods_var( 'pods_clearcache' ) )
+    elseif ( 1 == pods_v( 'pods_clearcache' ) )
         pods_message( 'Pods transients and cache have been cleared.' );
 
     if ( PODS_GITHUB_UPDATE ) {

@@ -89,7 +89,7 @@ else {
 
             if ( is_admin() &&
                  ( isset( $_GET[ 'pods_force_refresh' ] ) ||
-                   ( 'update-selected' == pods_var( 'action' ) &&
+                   ( 'update-selected' == pods_v( 'action' ) &&
                      ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) ||
                        false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) ) {
 
@@ -107,7 +107,7 @@ else {
                 if ( isset( $_GET[ 'pods_force_refresh' ] ) )
                     $version = '0.1';
 
-                if ( 'update-selected' == pods_var( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
+                if ( 'update-selected' == pods_v( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
                     $version = '0.1';
 
                 $config = array(

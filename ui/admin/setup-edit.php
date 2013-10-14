@@ -5,7 +5,7 @@ $api = pods_api();
 
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
-if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_var( 'enable_extra_fields', 'get' ) ) {
+if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields' ) ) {
     $api->save_pod( array( 'id' => $obj->id, 'storage' => 'table' ) );
 
     $pod = $api->load_pod( array( 'id' => $obj->id ) );
@@ -793,6 +793,55 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">
+						<div id="minor-publishing">
+							<div id="misc-publishing-actions">
+								<div class="misc-pub-section">
+									<span><?php _e( 'Name', 'pods' ); ?>: <b><?php echo $pod[ 'name' ]; ?></b></span>
+								</div>
+
+								<div class="misc-pub-section">
+									<span><?php _e( 'ID', 'pods' ); ?>: <b><?php echo $pod[ 'id' ]; ?></b></span>
+								</div>
+
+								<?php
+									$types = array(
+										'post_type' => __( 'Post Type (extended)', 'pods' ),
+										'taxonomy' => __( 'Taxonomy (extended)', 'pods' ),
+										'cpt' => __( 'Custom Post Type', 'pods' ),
+										'ct' => __( 'Custom Taxonomy', 'pods' ),
+										'user' => __( 'User (extended)', 'pods' ),
+										'media' => __( 'Media (extended)', 'pods' ),
+										'comment' => __( 'Comments (extended)', 'pods' ),
+										'pod' => __( 'Advanced Content Type', 'pods' ),
+										'settings' => __( 'Custom Settings Page', 'pods' )
+									);
+
+									$type = $pod[ 'type' ];
+
+									if ( isset( $types[ $type ] ) ) {
+										if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+											if ( empty( $pod[ 'object' ] ) ) {
+												if ( 'post_type' == $type )
+													$type = 'cpt';
+												else
+													$type = 'ct';
+											}
+										}
+
+										$type = $types[ $type ];
+									}
+								?>
+								<div class="misc-pub-section">
+									<span><?php _e( 'Type', 'pods' ); ?>: <b><?php echo $type; ?></b></span>
+								</div>
+
+								<div class="misc-pub-section">
+									<span><?php _e( 'Storage Type', 'pods' ); ?>: <b><?php echo ucwords( $pod[ 'storage' ] ); ?></b></span>
+								</div>
+							</div>
+						</div>
+						<!-- /#minor-publishing -->
+
                         <div id="major-publishing-actions">
                             <div id="delete-action">
                                 <a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'delete' ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>"> Delete Pod </a>

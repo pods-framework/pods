@@ -110,7 +110,6 @@ class PodsObject_Field extends PodsObject {
 
 			// Object found
 			if ( !empty( $find_object ) && is_array( $find_object ) ) {
-
 				/**
 				 * @var WP_Post $_object
 				 */
@@ -133,7 +132,9 @@ class PodsObject_Field extends PodsObject {
 				'description' => '',
 				'type' => 'text',
 				'weight' => 0,
-				'parent_id' => $parent_id
+				'parent_id' => $parent_id,
+				'pod' => '',
+				'group' => ''
 			);
 
 			if ( !empty( $_object ) ) {
@@ -148,6 +149,25 @@ class PodsObject_Field extends PodsObject {
 			}
 
 			$object = array_merge( $defaults, $object );
+
+			if ( !empty( $object[ 'parent_id' ] ) ) {
+				$parent = get_post( $object[ 'parent_id' ] );
+
+				if ( !empty( $parent ) ) {
+					if ( '_pods_group' == $parent->post_type ) {
+						$object[ 'group' ] = $parent->post_name;
+
+						$group_pod = get_post( $parent->post_parent );
+
+						if ( !empty( $group_pod ) && '_pods_pod' == $group_pod->post_type ) {
+							$object[ 'pod' ] = $group_pod->post_name;
+						}
+					}
+					elseif ( '_pods_pod' == $parent->post_type ) {
+						$object[ 'pod' ] = $parent->post_name;
+					}
+				}
+			}
 
 			if ( strlen( $object[ 'label' ] ) < 1 ) {
 				$object[ 'label' ] = $object[ 'name' ];

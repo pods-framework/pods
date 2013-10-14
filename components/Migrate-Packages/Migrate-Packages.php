@@ -153,7 +153,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                 if ( isset( $pod_data[ 'id' ] ) )
                     unset( $pod_data[ 'id' ] );
 
-                $pod = $api->load_pod( array( 'name' => $pod_data[ 'name' ] ), false );
+                $pod = $api->load_pod( array( 'name' => $pod_data[ 'name' ] ), __METHOD__ );
 
                 $existing_fields = array();
 

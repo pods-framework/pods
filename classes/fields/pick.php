@@ -702,7 +702,7 @@ class PodsField_Pick extends PodsField {
             self::$related_data[ $options[ 'id' ] ] = array();
 
         if ( !empty( $related_sister_id ) && !in_array( $related_object, $simple_tableless_objects ) ) {
-            $related_pod = self::$api->load_pod( array( 'name' => $related_val, 'table_info' => false ), false );
+            $related_pod = self::$api->load_pod( array( 'name' => $related_val ), __METHOD__ );
 
             if ( false !== $related_pod && ( 'pod' == $related_object || $related_object == $related_pod[ 'type' ] ) ) {
                 $related_field = false;
@@ -884,7 +884,7 @@ class PodsField_Pick extends PodsField {
         $related_sister_id = (int) pods_var( 'sister_id', $options, 0 );
 
         if ( !empty( $related_sister_id ) && !in_array( $related_object, $simple_tableless_objects ) ) {
-            $related_pod = self::$api->load_pod( array( 'name' => $related_val, 'table_info' => false ), false );
+            $related_pod = self::$api->load_pod( array( 'name' => $related_val ), __METHOD__ );
 
             if ( false !== $related_pod && ( 'pod' == $related_object || $related_object == $related_pod[ 'type' ] ) ) {
                 $related_field = false;
@@ -1708,7 +1708,7 @@ class PodsField_Pick extends PodsField {
         $api = pods_api();
 
         $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
-        $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
+        $field = $api->load_field( array( 'id' => (int) $params->field ) );
         $id = (int) $params->id;
 
         $limit = 15;

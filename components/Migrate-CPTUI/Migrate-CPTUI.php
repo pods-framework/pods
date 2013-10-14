@@ -183,7 +183,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         if ( !is_object( $this->api ) )
             $this->api = pods_api();
 
-        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), __METHOD__ );
 
         if ( !empty( $pod ) )
             return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
@@ -193,7 +193,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         if ( empty( $id ) )
             return false;
 
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+        $pod = $this->api->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
             return false;
@@ -249,7 +249,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         if ( !is_object( $this->api ) )
             $this->api = pods_api();
 
-        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), __METHOD__ );
 
         if ( !empty( $pod ) )
             return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
@@ -259,7 +259,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         if ( empty( $id ) )
             return false;
 
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+        $pod = $this->api->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
             return false;

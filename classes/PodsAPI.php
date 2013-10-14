@@ -1263,8 +1263,6 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod ( $params, $sanitized = false, $db = true ) {
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $load_params = (object) $params;
 
@@ -1274,625 +1272,23 @@ class PodsAPI {
         if ( isset( $load_params->old_name ) )
             $load_params->name = $load_params->old_name;
 
-        $pod = $this->load_pod( $load_params, 'save_pod' );
+        $pod = $this->load_pod( $load_params, __METHOD__ );
 
         $params = (object) $params;
+		$params->db = $db;
 
-        if ( false === $sanitized )
-            $params = pods_sanitize( $params );
-
-        $old_id = $old_name = $old_storage = null;
-
-        $old_fields = $old_options = array();
-
-        if ( isset( $params->name ) )
-            $params->name = pods_clean_name( $params->name );
-
-        if ( !empty( $pod ) ) {
-            if ( isset( $params->id ) && 0 < $params->id )
-                $old_id = $params->id;
-
-            $params->id = $pod[ 'id' ];
-
-            $old_name = $pod[ 'name' ];
-            $old_storage = $pod[ 'storage' ];
-            $old_options = $pod->export();
-            $old_fields = $old_options[ 'fields' ];
-
-            if ( !isset( $params->name ) && empty( $params->name ) )
-                $params->name = $pod[ 'name' ];
-
-            if ( $old_name != $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) )
-                return pods_error( sprintf( __( 'Pod %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
-
-            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'user', 'comment', 'media' ) ) && in_array( $pod[ 'object' ], array( 'user', 'comment', 'media' ) ) )
-                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
-
-            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) && $pod[ 'object' ] == $old_name )
-                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
-
-            if ( $old_id != $params->id ) {
-                if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'object' ] )
-                    return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ), $this );
-                else
-                    return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
-            }
-        }
-		elseif ( in_array( $params->name, array( 'order','orderby','post_type' ) ) && 'post_type' == pods_var( 'type', $params ) ) {
-			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ), $this );
-		}
-        else {
-            $pod = pods_object_pod( array(
-                'id' => 0,
-                'name' => $params->name,
-                'label' => $params->name,
-                'description' => '',
-                'type' => 'pod',
-                'storage' => 'table',
-                'object' => '',
-                'alias' => ''
-            ) );
-        }
-
-        // Blank out fields and options for AJAX calls (everything should be sent to it for a full overwrite)
-		// @todo Does this still work with pods_object_pod?
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            $pod[ 'fields' ] = array();
-        }
-
-        // Setup options
-        $options = get_object_vars( $params );
-
-        if ( isset( $options[ 'method' ] ) )
-            unset( $options[ 'method' ] );
-
-        $options_ignore = array(
-            'object_type',
-            'object_name',
-            'table',
-            'meta_table',
-            'pod_table',
-            'field_id',
-            'field_index',
-            'field_slug',
-            'field_type',
-            'field_parent',
-            'field_parent_select',
-            'meta_field_id',
-            'meta_field_index',
-            'meta_field_value',
-            'pod_field_id',
-            'pod_field_index',
-            'object_fields',
-            'join',
-            'where',
-            'where_default',
-            'orderby',
-            'pod',
-            'recurse',
-            'table_info',
-            'attributes',
-            'group',
-            'grouped',
-            'developer_mode',
-            'dependency',
-            'depends-on',
-            'excludes-on'
-        );
-
-        foreach ( $options_ignore as $ignore ) {
-            if ( isset( $options[ $ignore ] ) )
-                unset( $options[ $ignore ] );
-        }
-
-        $exclude = array(
-            'id',
-            'name',
-            'label',
-            'description',
-            'type',
-            'storage',
-            'object',
-            'alias',
-            'options',
-            'fields'
-        );
-
-        foreach ( $exclude as $k => $exclude_field ) {
-            $aliases = array( $exclude_field );
-
-            if ( is_array( $exclude_field ) ) {
-                $aliases = array_merge( array( $k ), $exclude_field );
-                $exclude_field = $k;
-            }
-
-            foreach ( $aliases as $alias ) {
-                if ( isset( $options[ $alias ] ) ) {
-                    $pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
-
-                    unset( $options[ $alias ] );
-                }
-            }
-        }
-
-        if ( pods_tableless() && !in_array( $pod[ 'type' ], array( 'settings', 'table' ) ) ) {
-            if ( 'pod' == $pod[ 'type' ] )
-                $pod[ 'type' ] = 'post_type';
-
-            if ( 'table' == $pod[ 'storage' ] ) {
-                if ( 'taxonomy' == $pod[ 'type' ] )
-                    $pod[ 'storage' ] = 'none';
-                else
-                    $pod[ 'storage' ] = 'meta';
-            }
-        }
-
-        $pod->override( $options );
-
-		/**
-		 * @var WP_Query
-		 */
-		global $wp_query;
-
-		$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
-
-		if ( isset( $pod[ 'query_var_string' ] ) ) {
-			if ( in_array( $pod[ 'query_var_string' ], $reserved_query_vars ) ) {
-				$pod[ 'query_var_string' ] = $pod[ 'type' ] . '_' . $pod[ 'query_var_string' ];
-			}
-		}
-		elseif ( isset( $pod[ 'query_var' ] ) ) {
-			if ( in_array( $pod[ 'query_var' ], $reserved_query_vars ) ) {
-				$pod[ 'query_var' ] = $pod[ 'type' ] . '_' . $pod[ 'query_var' ];
-			}
+		if ( empty( $pod ) ) {
+			$pod = pods_object_pod();
 		}
 
-        if ( strlen( $pod[ 'label' ] ) < 1 )
-            $pod[ 'label' ] = $pod[ 'name' ];
+		$id = $pod->save( $params );
 
-        if ( 'post_type' == $pod[ 'type' ] ) {
-            // Max length for post types are 20 characters
-            $pod[ 'name' ] = substr( $pod[ 'name' ], 0, 20 );
-        }
-        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-            // Max length for taxonomies are 32 characters
-            $pod[ 'name' ] = substr( $pod[ 'name' ], 0, 32 );
-        }
+		if ( $db ) {
+			return $id;
+		}
 
-        $params->id = $pod[ 'id' ];
-        $params->name = $pod[ 'name' ];
+		return $pod;
 
-        if ( null !== $old_name && $old_name != $params->name && empty( $pod[ 'object' ] ) ) {
-            if ( 'post_type' == $pod[ 'type' ] ) {
-                $check = get_post_type_object( $params->name );
-
-                if ( !empty( $check ) )
-                    return pods_error( sprintf( __( 'Post Type %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
-            }
-            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $check = get_taxonomy( $params->name );
-
-                if ( !empty( $check ) )
-                    return pods_error( sprintf( __( 'Taxonomy %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
-            }
-        }
-
-        $field_table_operation = true;
-
-        // Add new pod
-        if ( empty( $params->id ) ) {
-            if ( strlen( $params->name ) < 1 )
-                return pods_error( __( 'Pod name cannot be empty', 'pods' ), $this );
-
-            $post_data = array(
-                'post_name' => $pod[ 'name' ],
-                'post_title' => $pod[ 'label' ],
-                'post_content' => $pod[ 'description' ],
-                'post_type' => '_pods_pod',
-                'post_status' => 'publish'
-            );
-
-            if ( 'pod' == $pod[ 'type' ] && ( !is_array( $pod[ 'fields' ] ) || empty( $pod[ 'fields' ] ) ) ) {
-                $pod[ 'fields' ] = array();
-
-                $pod[ 'fields' ][ 'name' ] = array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                    'type' => 'text',
-                    'options' => array(
-                        'required' => '1'
-                    )
-                );
-
-                $pod[ 'fields' ][ 'created' ] = array(
-                    'name' => 'created',
-                    'label' => 'Date Created',
-                    'type' => 'datetime',
-                    'options' => array(
-                        'datetime_format' => 'ymd_slash',
-                        'datetime_time_type' => '12',
-                        'datetime_time_format' => 'h_mm_ss_A'
-                    )
-                );
-
-                $pod[ 'fields' ][ 'modified' ] = array(
-                    'name' => 'modified',
-                    'label' => 'Date Modified',
-                    'type' => 'datetime',
-                    'options' => array(
-                        'datetime_format' => 'ymd_slash',
-                        'datetime_time_type' => '12',
-                        'datetime_time_format' => 'h_mm_ss_A'
-                    )
-                );
-
-                $pod[ 'fields' ][ 'author' ] = array(
-                    'name' => 'author',
-                    'label' => 'Author',
-                    'type' => 'pick',
-                    'pick_object' => 'user',
-                    'options' => array(
-                        'pick_format_type' => 'single',
-                        'pick_format_single' => 'autocomplete',
-                        'default_value' => '{@user.ID}'
-                    )
-                );
-
-                $pod[ 'fields' ][ 'permalink' ] = array(
-                    'name' => 'permalink',
-                    'label' => 'Permalink',
-                    'type' => 'slug',
-                    'description' => 'Leave blank to auto-generate from Name'
-                );
-
-                if ( !isset( $pod[ 'pod_index' ] ) ) {
-                    $pod[ 'pod_index' ] = 'name';
-				}
-            }
-
-            $pod = $this->do_hook( 'save_pod_default_pod', $pod, $params, $sanitized, $db );
-
-            $field_table_operation = false;
-        }
-        else {
-            $post_data = array(
-                'ID' => $pod[ 'id' ],
-                'post_name' => $pod[ 'name' ],
-                'post_title' => $pod[ 'label' ],
-                'post_content' => $pod[ 'description' ],
-                'post_status' => 'publish'
-            );
-        }
-
-        if ( true === $db ) {
-            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) )
-                add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
-
-            $conflicted = false;
-
-            // Headway compatibility fix
-            if ( has_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 ) ) {
-                remove_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
-
-                $conflicted = true;
-            }
-
-            $params->id = $this->save_wp_object( 'post', $post_data, $pod->export( 'data' ), true, true );
-
-            if ( $conflicted )
-                add_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );
-
-            if ( false === $params->id )
-                return pods_error( __( 'Cannot save Pod', 'pods' ), $this );
-        }
-        elseif ( empty( $params->id ) )
-            $params->id = (int) $db;
-
-        $pod[ 'id' ] = $params->id;
-
-        // Setup / update tables
-        if ( 'table' != $pod[ 'type' ] && 'table' == $pod[ 'storage' ] && $old_storage != $pod[ 'storage' ] && $db ) {
-            $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
-
-            $defined_fields = array();
-
-            foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || in_array( $field[ 'name' ], $defined_fields ) )
-                    continue;
-
-                $defined_fields[] = $field[ 'name' ];
-
-                if ( !in_array( $field[ 'type' ], $tableless_field_types ) || ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) ) {
-                    $definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, pods_var_raw( 'options', $field, array() ) ) );
-
-                    if ( 0 < strlen( $definition ) )
-                        $definitions[] = "`{$field['name']}` " . $definition;
-                }
-            }
-
-            pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
-
-            $result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
-
-            if ( empty( $result ) )
-                return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
-
-        }
-        elseif ( 'table' != $pod[ 'type' ] && 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name && $db ) {
-            $result = pods_query( "ALTER TABLE `@wp_pods_{$old_name}` RENAME `@wp_pods_{$params->name}`", $this );
-
-            if ( empty( $result ) )
-                return pods_error( __( 'Cannot update Database Table for Pod', 'pods' ), $this );
-        }
-
-        /**
-         * @var $wpdb wpdb
-         */
-        global $wpdb;
-
-		if ( null !== $old_name && $old_name != $params->name && $db ) {
-        	// Rename items in the DB pointed at the old WP Object names
-			if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
-				$this->rename_wp_object_type( 'post', $old_name, $params->name );
-			}
-			elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
-				$this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
-			}
-			elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) ) {
-				$this->rename_wp_object_type( 'comment', $old_name, $params->name );
-			}
-			elseif ( 'settings' == $pod[ 'type' ] ) {
-				$this->rename_wp_object_type( 'settings', $old_name, $params->name );
-			}
-
-        	// Sync any related fields if the name has changed
-            $fields = pods_query( "
-                SELECT `p`.`ID`
-                FROM `{$wpdb->posts}` AS `p`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm2` ON `pm2`.`post_id` = `p`.`ID`
-                WHERE
-                    `p`.`post_type` = '_pods_field'
-                    AND `pm`.`meta_key` = 'pick_object'
-                    AND (
-                    	`pm`.`meta_value` = 'pod'
-                    	OR `pm`.`meta_value` = '" . $pod[ 'type' ] . "'
-					)
-                    AND `pm2`.`meta_key` = 'pick_val'
-                    AND `pm2`.`meta_value` = '{$old_name}'
-            " );
-
-            if ( !empty( $fields ) ) {
-                foreach ( $fields as $field ) {
-                    update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
-                    update_post_meta( $field->ID, 'pick_val', $params->name );
-                }
-            }
-
-            $fields = pods_query( "
-                SELECT `p`.`ID`
-                FROM `{$wpdb->posts}` AS `p`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-                WHERE
-                    `p`.`post_type` = '_pods_field'
-                    AND `pm`.`meta_key` = 'pick_object'
-                    AND (
-                    	`pm`.`meta_value` = 'pod-{$old_name}'
-                    	OR `pm`.`meta_value` = '" . $pod[ 'type' ] . "-{$old_name}'
-					)
-            " );
-
-            if ( !empty( $fields ) ) {
-                foreach ( $fields as $field ) {
-                    update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
-                    update_post_meta( $field->ID, 'pick_val', $params->name );
-                }
-            }
-        }
-
-        // Sync built-in options for post types and taxonomies
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) && $db ) {
-            // Build list of 'built_in' for later
-            $built_in = array();
-
-            foreach ( $pod as $key => $val ) {
-                if ( false === strpos( $key, 'built_in_' ) )
-                    continue;
-                elseif ( false !== strpos( $key, 'built_in_post_types_' ) )
-                    $built_in_type = 'post_type';
-                elseif ( false !== strpos( $key, 'built_in_taxonomies_' ) )
-                    $built_in_type = 'taxonomy';
-                else
-                    continue;
-
-                if ( $built_in_type == $pod[ 'type' ] )
-                    continue;
-
-                if ( !isset( $built_in[ $built_in_type ] ) )
-                    $built_in[ $built_in_type ] = array();
-
-                $built_in_object = str_replace( array( 'built_in_post_types_', 'built_in_taxonomies_' ), '', $key );
-
-                $built_in[ $built_in_type ][ $built_in_object ] = (int) $val;
-            }
-
-            $lookup_option = $lookup_built_in = false;
-
-            $lookup_name = $pod[ 'name' ];
-
-            if ( 'post_type' == $pod[ 'type' ] ) {
-                $lookup_option = 'built_in_post_types_' . $lookup_name;
-                $lookup_built_in = 'taxonomy';
-            }
-            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $lookup_option = 'built_in_taxonomies_' . $lookup_name;
-                $lookup_built_in = 'post_type';
-            }
-
-            if ( !empty( $lookup_option ) && !empty( $lookup_built_in ) && isset( $built_in[ $lookup_built_in ] ) ) {
-                foreach ( $built_in[ $lookup_built_in ] as $built_in_object => $val ) {
-                    $search_val = 1;
-
-                    if ( 1 == $val )
-                        $search_val = 0;
-
-                    $query = "SELECT p.ID FROM {$wpdb->posts} AS p
-                                LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = '{$lookup_option}'
-                                LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = '{$lookup_built_in}'
-                                LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
-                                WHERE p.post_type = '_pods_pod' AND p.post_name = '{$built_in_object}'
-                                    AND pm2.meta_id IS NOT NULL
-                                    AND ( pm.meta_id IS NULL OR pm.meta_value = {$search_val} )";
-
-                    $results = pods_query( $query );
-
-                    if ( !empty( $results ) ) {
-                        foreach ( $results as $the_pod ) {
-                            delete_post_meta( $the_pod->ID, $lookup_option );
-
-                            add_post_meta( $the_pod->ID, $lookup_option, $val );
-                        }
-                    }
-                }
-            }
-        }
-
-        $saved = array();
-        $errors = array();
-
-        $field_index_change = false;
-        $field_index_id = 0;
-
-        $id_required = false;
-
-        $field_index = pods_var( 'pod_index', $pod, 'id', null, true );
-
-        if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field_index ] ) )
-            $field_index_id = $pod[ 'fields' ][ $field_index ];
-
-        if ( isset( $params->fields ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-            $fields = array();
-
-            if ( isset( $params->fields ) ) {
-                $params->fields = (array) $params->fields;
-
-                $weight = 0;
-
-                foreach ( $params->fields as $field ) {
-                    if ( !is_array( $field ) || !isset( $field[ 'name' ] ) )
-                        continue;
-
-                    if ( !isset( $field[ 'weight' ] ) ) {
-                        $field[ 'weight' ] = $weight;
-
-                        $weight++;
-                    }
-
-                    $fields[ $field[ 'name' ] ] = $field;
-                }
-            }
-
-            $weight = 0;
-
-            $saved_field_ids = array();
-
-            foreach ( $pod[ 'fields' ] as $k => $field ) {
-                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
-                    // Iterative change handling for setup-edit.php
-                    if ( !is_array( $field ) && isset( $old_fields[ $k ] ) )
-                        $saved[ $old_fields[ $k ][ 'name' ] ] = true;
-
-                    continue;
-                }
-
-                if ( !empty( $old_id ) )
-                    $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
-
-                $field[ 'pod' ] = $pod;
-
-                if ( !isset( $field[ 'weight' ] ) ) {
-                    $field[ 'weight' ] = $weight;
-
-                    $weight++;
-                }
-
-                if ( 0 < $field_index_id && pods_var( 'id', $field ) == $field_index_id )
-                    $field_index_change = $field[ 'name' ];
-
-                if ( 0 < pods_var( 'id', $field ) )
-                    $id_required = true;
-
-                if ( $id_required )
-                    $field[ 'id_required' ] = true;
-
-                $field_data = $field;
-
-                $field = $this->save_field( $field_data, $field_table_operation, true, $db );
-
-                if ( true !== $db ) {
-                    $pod[ 'fields' ][ $k ] = $field;
-                    $saved_field_ids[] = $field[ 'id' ];
-                }
-                else {
-                    if ( !empty( $field ) && 0 < $field ) {
-                        $saved[ $field_data[ 'name' ] ] = true;
-                        $saved_field_ids[] = $field;
-                    }
-                    else
-                        $errors[] = sprintf( __( 'Cannot save the %s field', 'pods' ), $field_data[ 'name' ] );
-                }
-            }
-
-            if ( true === $db ) {
-                foreach ( $old_fields as $field ) {
-                    if ( isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) || isset( $saved[ $field[ 'name' ] ] ) || in_array( $field[ 'id' ], $saved_field_ids ) )
-                        continue;
-
-                    if ( $field[ 'id' ] == $field_index_id )
-                        $field_index_change = 'id';
-                    elseif ( $field[ 'name' ] == $field_index )
-                        $field_index_change = 'id';
-
-                    $this->delete_field( array(
-                        'id' => (int) $field[ 'id' ],
-                        'name' => $field[ 'name' ],
-                        'pod' => $pod
-                    ), $field_table_operation );
-                }
-            }
-
-            // Update field index if the name has changed or the field has been removed
-            if ( false !== $field_index_change && true === $db )
-                update_post_meta( $pod[ 'id' ], 'pod_index', $field_index_change );
-        }
-
-        if ( !empty( $errors ) )
-            return pods_error( $errors, $this );
-
-        $this->cache_flush_pods( $pod );
-
-        if ( 'post_type' == $pod[ 'type' ] )
-            PodsMeta::$post_types[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'taxonomy' == $pod[ 'type' ] )
-            PodsMeta::$taxonomies[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'media' == $pod[ 'type' ] )
-            PodsMeta::$media[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'user' == $pod[ 'type' ] )
-            PodsMeta::$user[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'comment' == $pod[ 'type' ] )
-            PodsMeta::$comment[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-
-        // Register Post Types / Taxonomies post-registration from PodsInit
-        if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {
-            global $pods_init;
-
-            $pods_init->setup_content_types( true );
-        }
-
-        if ( true === $db )
-            return $pod[ 'id' ];
-        else
-            return $pod;
     }
 
     /**
@@ -1954,7 +1350,7 @@ class PodsAPI {
         if ( ( !isset( $params->pod ) || empty( $params->pod ) ) && ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) )
             return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
 
-        if ( isset( $params->pod ) && is_array( $params->pod ) ) {
+        if ( isset( $params->pod ) && ( is_array( $params->pod ) || is_object( $params->pod ) ) ) {
             $pod = $params->pod;
 
             $save_pod = true;
@@ -1991,7 +1387,7 @@ class PodsAPI {
             $old_id = pods_var( 'id', $field );
             $old_name = pods_clean_name( $field[ 'name' ], true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
             $old_type = $field[ 'type' ];
-            $old_options = $field;
+            $old_options = $field->export();
             $old_sister_id = (int) pods_var( 'sister_id', $old_options, 0 );
 
             $old_simple = ( 'pick' == $old_type && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
@@ -2009,14 +1405,14 @@ class PodsAPI {
                 $params->id = $old_id;
 
             if ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) {
-                $definition = $this->get_field_definition( $old_type, array_merge( $field, $old_options ) );
+                $definition = $this->get_field_definition( $old_type, $old_options );
 
                 if ( 0 < strlen( $definition ) )
                     $old_definition = "`{$old_name}` " . $definition;
             }
         }
         else {
-            $field = array(
+            $field = pods_object_field( array(
                 'id' => 0,
                 'pod_id' => $params->pod_id,
                 'name' => $params->name,
@@ -2028,7 +1424,7 @@ class PodsAPI {
                 'sister_id' => '',
                 'weight' => null,
                 'options' => array()
-            );
+            ) );
         }
 
         // Setup options
@@ -2123,7 +1519,7 @@ class PodsAPI {
                 unset( $field[ 'sister_id' ] );
         }
 
-        $field = array_merge( $field, $options );
+        $field->override( $options );
 
         $object_fields = $pod[ 'object_fields' ];
 
@@ -2268,7 +1664,7 @@ class PodsAPI {
         $definition = false;
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) {
-            $field_definition = $this->get_field_definition( $field[ 'type' ], array_merge( $field, $field ) );
+            $field_definition = $this->get_field_definition( $field[ 'type' ], $field );
 
             if ( 0 < strlen( $field_definition ) )
                 $definition = '`' . $field[ 'name' ] . '` ' . $field_definition;
@@ -2765,7 +2161,7 @@ class PodsAPI {
             $allow_custom_fields = true;
 
         // Get array of Pods
-        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => true ) );
+        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -3539,20 +2935,13 @@ class PodsAPI {
                 $params = array( 'id' => $params );
             else
                 $params = array( 'name' => $params );
-
-            $params = (object) pods_sanitize( $params );
         }
-        else
-            $params = (object) pods_sanitize( $params );
 
-        $params->table_info = false;
+		$params = (object) $params;
 
-        $pod = $this->load_pod( $params, 'duplicate_pod' );
+        $pod = $this->load_pod( $params, $strict );
 
         if ( empty( $pod ) ) {
-            if ( false !== $strict )
-                return pods_error( __( 'Pod not found', 'pods' ), $this );
-
             return false;
         }
         elseif ( in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
@@ -3565,6 +2954,8 @@ class PodsAPI {
 			$pod[ 'object' ] = '';
         }
 
+		$pod = $pod->export();
+
         unset( $pod[ 'id' ] );
 
         if ( isset( $params->new_name ) )
@@ -3575,7 +2966,7 @@ class PodsAPI {
         $check_name = $pod[ 'name' ];
         $new_label = $pod[ 'label' ];
 
-        while ( $this->load_pod( array( 'name' => $check_name, 'table_info' => false ), false ) ) {
+        while ( $this->load_pod( array( 'name' => $check_name ), __METHOD__ ) ) {
             $try++;
 
             $check_name = $pod[ 'name' ] . $try;
@@ -3590,6 +2981,7 @@ class PodsAPI {
         }
 
         return $this->save_pod( $pod );
+
     }
 
     /**
@@ -3643,7 +3035,7 @@ class PodsAPI {
 		$check_name = $field[ 'name' ];
 		$new_label = $field[ 'label' ];
 
-		while ( $this->load_field( array( 'pod_id' => $field[ 'pod_id' ], 'name' => $check_name, 'table_info' => false ), false ) ) {
+		while ( $this->load_field( array( 'pod_id' => $field[ 'pod_id' ], 'name' => $check_name ), false ) ) {
 			$try++;
 
 			$check_name = $field[ 'name' ] . $try;
@@ -3673,7 +3065,7 @@ class PodsAPI {
     public function duplicate_pod_item ( $params ) {
         $params = (object) pods_sanitize( $params );
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -3899,7 +3291,7 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => true ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod ) );
 
         $params->name = $pod[ 'name' ];
 
@@ -4176,7 +3568,7 @@ class PodsAPI {
         $save_pod = false;
 
         if ( !is_array( $pod ) )
-            $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id, 'table_info' => false ) );
+            $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id ) );
         else
             $save_pod = true;
 
@@ -4377,7 +3769,7 @@ class PodsAPI {
         if ( !isset( $params->pod_id ) )
             $params->pod_id = 0;
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -4491,8 +3883,8 @@ class PodsAPI {
 		elseif ( is_object( $object ) && 0 === strpos( get_class( $object ), 'PodsObject' ) ) {
 			$pod = $object;
 		}
-		elseif ( is_object( $pods_init ) ) {
-			$pod = PodsInit::$meta->get_object( $object, $name );
+		elseif ( !empty( $name ) ) {
+			$pod = pods_object_pod( $name );
 		}
 
 		if ( !empty( $pod ) ) {
@@ -4519,7 +3911,7 @@ class PodsAPI {
 		);
 
 		if ( !empty( $name ) && $name != $object ) {
-			$params[ 'where' ][ ] = array(
+			$params[ 'where' ][] = array(
 				'key' => 'pick_val',
 				'value' => $name
 			);
@@ -4540,7 +3932,7 @@ class PodsAPI {
 
 		if ( is_array( $fields ) && !empty( $fields ) ) {
 			foreach ( $fields as $related_field ) {
-				$related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ], 'fields' => false ), false );
+				$related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ] ), __METHOD__ );
 
 				if ( empty( $related_pod ) ) {
 					continue;
@@ -4741,17 +4133,25 @@ class PodsAPI {
 
 		// Debug override for strict
 		if ( !is_bool( $strict ) ) {
-			$strict = false;
+			$strict = apply_filters( 'pods_strict', false, __FUNCTION__, $strict );
 		}
 		else {
 			$strict = ( !$strict ? pods_strict( true ) : $strict );
 		}
 
 		if ( is_object( $params ) && isset( $params->post_name ) ) {
+			if ( pods_api_cache() ) {
+				$pod = pods_transient_get( 'pods_pod_' . $params->post_name );
+
+				if ( is_object( $pod ) ) {
+					return $pod;
+				}
+			}
+
 			$pod = pods_object_pod( $params );
 		}
 		else {
-			$params = (object) pods_sanitize( $params );
+			$params = (object) $params;
 
 			if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
 				if ( $strict ) {
@@ -4762,6 +4162,14 @@ class PodsAPI {
 			}
 
 			if ( isset( $params->name ) ) {
+				if ( pods_api_cache() ) {
+					$pod = pods_transient_get( 'pods_pod_' . $params->name );
+
+					if ( is_object( $pod ) ) {
+						return $pod;
+					}
+				}
+
 				$pod = pods_object_pod( $params->name );
 			}
 			else {
@@ -4775,6 +4183,10 @@ class PodsAPI {
 			}
 
 			return false;
+		}
+
+		if ( pods_api_cache() ) {
+			pods_transient_set( 'pods_pod_' . $pod[ 'name' ], $pod );
 		}
 
 		return $pod;
@@ -4926,7 +4338,6 @@ class PodsAPI {
 
         if ( isset( $params->key_names ) && $params->key_names )
             $pre_key .= '_namekeys';
-
 
         $pre_key .= '_get';
 
@@ -5120,7 +4531,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ), __METHOD__ );
 
                 if ( false === $pod ) {
                     if ( $strict )
@@ -5174,11 +4585,10 @@ class PodsAPI {
             return false;
         }
 
-        $_field = get_object_vars( $_field );
-
-        if ( !isset( $pod[ 'name' ] ) && !isset( $_field[ 'pod' ] ) ) {
-            if ( 0 < $_field[ 'post_parent' ] )
-                $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ), false );
+        if ( !isset( $pod[ 'name' ] ) && 'WP_Post' == get_class( $_field ) ) {
+            if ( 0 < $_field->post_parent ) {
+                $pod = $this->load_pod( array( 'id' => $_field->post_parent ), false );
+			}
 
             if ( empty( $pod ) ) {
                 if ( $strict )
@@ -5189,93 +4599,8 @@ class PodsAPI {
         }
 
         if ( empty( $field ) ) {
-            if ( pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
-                $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $_field[ 'post_name' ] );
-
-            if ( empty( $field ) ) {
-                $defaults = array(
-                    'type' => 'text'
-                );
-
-                $field = array(
-                    'id' => $_field[ 'ID' ],
-                    'name' => $_field[ 'post_name' ],
-                    'label' => $_field[ 'post_title' ],
-                    'description' => $_field[ 'post_content' ],
-                    'weight' => $_field[ 'menu_order' ],
-                    'pod_id' => $_field[ 'post_parent' ],
-                    'pick_object' => '',
-                    'pick_val' => '',
-                    'sister_id' => '',
-                    'table_info' => array()
-                );
-
-                if ( isset( $pod[ 'name' ] ) )
-                    $field[ 'pod' ] = $pod[ 'name' ];
-                elseif ( isset( $_field[ 'pod' ] ) )
-                    $field[ 'pod' ] = $_field[ 'pod' ];
-
-                $field = get_post_meta( $field[ 'id' ] );
-
-                $options_ignore = array(
-                    'method',
-                    'table_info',
-                    'attributes',
-                    'group',
-                    'grouped',
-                    'developer_mode',
-                    'dependency',
-                    'depends-on',
-                    'excludes-on'
-                );
-
-                foreach ( $options_ignore as $ignore ) {
-                    if ( isset( $field[ $ignore ] ) )
-                        unset( $field[ $ignore ] );
-                }
-
-                foreach ( $field as $option => $value ) {
-                    if ( is_array( $value ) ) {
-                        foreach ( $value as $k => $v ) {
-                            if ( !is_array( $v ) )
-                                $value[ $k ] = maybe_unserialize( $v );
-                        }
-
-                        if ( 1 == count( $value ) )
-                            $value = current( $value );
-                    }
-                    else
-                        $value = maybe_unserialize( $value );
-
-                    $field[ $option ] = $value;
-                }
-
-                $field = array_merge( $defaults, $field );
-
-                if ( isset( $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_object' ] = $field[ 'pick_object' ];
-                }
-
-                if ( isset( $field[ 'pick_val' ] ) ) {
-                    $field[ 'pick_val' ] = $field[ 'pick_val' ];
-                }
-
-                if ( isset( $field[ 'sister_id' ] ) ) {
-                    $field[ 'sister_id' ] = $field[ 'sister_id' ];
-                }
-
-                if ( isset( $field[ 'sister_field_id' ] ) )
-                    unset( $field[ 'sister_field_id' ] );
-
-                if ( pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
-                    pods_transient_set( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $field[ 'name' ], $field );
-            }
+			$field = pods_object_field( $_field );
         }
-
-        $field[ 'table_info' ] = array();
-
-        if ( 'pick' == $field[ 'type' ] && $params->table_info )
-            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ], null, null, $field );
 
         return $field;
     }
@@ -5334,7 +4659,7 @@ class PodsAPI {
         $fields = array();
 
         if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => true ), false );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ), __METHOD__ );
 
             if ( false === $pod ) {
                 if ( $strict )
@@ -5833,7 +5158,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         if ( empty( $pod ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ), false );
+            $pod = $this->load_pod( array( 'name' => $params->pod ), __METHOD__ );
 
             if ( false === $pod )
                 return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -5857,7 +5182,7 @@ class PodsAPI {
             $type = 'taxonomy';
         }
 
-        $related_pod = $this->load_pod( array( 'name' => $params->related_pod, 'table_info' => false ), false );
+        $related_pod = $this->load_pod( array( 'name' => $params->related_pod ), __METHOD__ );
 
         if ( false === $related_pod || ( false !== $type && 'pod' != $type && $type != $related_pod[ 'type' ] ) )
             return pods_error( __( 'Related Pod not found', 'pods' ), $this );
@@ -6125,7 +5450,7 @@ class PodsAPI {
         }
         else {
             if ( !is_array( $pod ) )
-                $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
+                $pod = $this->load_pod( array( 'id' => $pod_id ), __METHOD__ );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
                 $meta_type = $pod[ 'type' ];
@@ -6274,7 +5599,7 @@ class PodsAPI {
             return false;
 
             if ( !is_array( $pod ) )
-                $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
+                $pod = $this->load_pod( array( 'id' => $pod_id ), __METHOD__ );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
                 $related_ids = array();
@@ -7019,7 +6344,7 @@ class PodsAPI {
                                 $related_pod = false;
 
                                 if ( 'pod' == $pick_object )
-                                    $related_pod = $this->load_pod( array( 'name' => $pick_val, 'table_info' => true ), false );
+                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), __METHOD__ );
 
                                 if ( empty( $related_pod ) ) {
                                     $related_pod = array(
@@ -7184,13 +6509,12 @@ class PodsAPI {
         pods_transient_clear( 'pods' );
         pods_transient_clear( 'pods_components' );
 
-        if ( null !== $pod && is_array( $pod ) ) {
-            pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );
-            pods_cache_clear( $pod[ 'name' ], 'pods-class' );
+        if ( null !== $pod && ( is_array( $pod ) || is_object( $pod ) ) ) {
+			if ( pods_api_cache() ) {
+            	pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );
+			}
 
-            foreach ( $pod[ 'fields' ] as $field ) {
-                pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );
-            }
+            pods_cache_clear( $pod[ 'name' ], 'pods-class' );
 
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
                 pods_transient_clear( 'pods_wp_cpt_ct' );
@@ -7202,6 +6526,10 @@ class PodsAPI {
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
         pods_cache_clear( true );
+
+		if ( null !== $pod && is_object( $pod ) ) {
+			pods_transient_set( 'pods_pod_' . $pod[ 'name' ], $pod );
+		}
 
         pods_transient_set( 'pods_flush_rewrites', 1 );
     }

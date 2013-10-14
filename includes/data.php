@@ -1231,7 +1231,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
     $id = absint( $id );
 
     if ( empty( $pod_data ) )
-        $pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ), false );
+        $pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ), __METHOD__ );
 
     if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) )
         return $slug;

@@ -1,0 +1,95 @@
+/// REPEATING FIELDS ///
+// this is the repeating fields which can be text/anything
+.pods-form-ui-row-type-repeat{
+
+	.pods-repeating-field{
+		background:#FFF;
+		.round-corners(3px);
+		border:1px solid @border-color;
+		margin:0 0 15px 0; padding:8px 0;
+		overflow:hidden;
+		min-width:390px;
+
+		.pods-single-repeat{
+			display:block; clear:both;
+			overflow:hidden;
+			border-bottom:1px solid #EFEFEF;
+			margin:5px 0; padding:5px 10px;
+
+			&:last-of-type{
+				border-bottom:0 none;
+				padding-bottom:0; margin-bottom:0;
+			} // &:last-of-type
+
+			&:first-of-type{padding-top:0; margin-top:0;}
+
+		/// mods for specific field types ///
+
+			// code field types makes the editor match width of other items
+			.CodeMirror{width:100% !important;}
+
+			textarea{width:100%;}
+
+			select{margin-top:5px;}
+
+		} // .pods-single-repeat
+
+		.pods-repeat-handle{
+			width:30px; height:30px;
+			float:left;
+			white-space:nowrap;
+			overflow:hidden;
+			display:inline-block;
+			cursor:move;
+			font-size:25px;
+			margin-top:2px;
+			.pods-grey-hover;
+		} // .pods-repeat-handle
+
+		.pods-repeat-name{
+			width:85%;
+			float:left;
+		} // .pods-repeat-name
+
+		.pods-repeat-delete{
+			width:25px; height:25px;
+			float:right;
+			margin-top:5px;
+			.pods-red-hover;
+			font-size:25px;
+
+			&:hover{cursor:pointer;}
+		} // .pods-repeat-delete
+
+	} // .pods-repeating-field
+
+	.pods-collapse{
+		max-height:80px;
+		overflow:hidden;
+		display:block;
+	} // &.pods-collapse
+
+	.pods-field-add{
+		margin-top:15px;
+	} // .pods-field-add
+
+} // .pods-form-ui-row-type-repeat
+
+.pods-more-controls{
+	position:relative;
+
+	a{
+		width:100%;
+		position:absolute; top:-20px;
+		display:block;
+		width:100%;
+		padding:5px 0;
+		text-align:center;
+
+		&.pods-no-show{visibility:hidden;}
+
+		.more,
+		.less{margin-top:3px;}
+	} // a
+
+} // .pods-more-controls

@@ -1,0 +1,109 @@
+@import 'mixins';
+.pods-float-right{text-align:right;}
+.pods-loop-row-save{float:right; display:inline-block;}
+.pods-loop-row-delete{display:inline-block;}
+.pods-loop-row-expanded>.pods-loop-row-name{display:none;}
+
+.pods-loop-table{
+	&.pods-loop-description{margin-left:3px;}
+	&.pods-loop-title{
+		font-size:16px; font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+		font-weight:normal;
+		text-shadow:#FFF 0 1px 0;
+		color:#464646;
+		margin-bottom:5px; margin-left:3px;
+	} // &.title
+
+	.default-text{display:none;}
+	&.no-rows > tbody > .default-text{display:table-row;}
+
+	.pods-icon{margin-bottom:-3px;}
+
+	.pods-loop-row{
+
+		.pods-loop-row-wrapper{
+			padding:10px 10px 15px 10px;
+			margin-right:-7px; margin-bottom:-2px;
+
+			.form-table{background:@form-background;}
+
+			.wp_themeSkin table .mceIframeContainer{background:white !important;}
+
+		} // .pods-loop-row-wrapper
+
+		&:hover{
+			background:@edit-background;
+
+			.row-actions{visibility:hidden !important;}
+
+			> td > .row-actions{visibility:visible !important;}
+
+		} // &:hover
+
+		&.nohover{
+			background:@form-background !important;
+
+			> .pods-loop-row-label > .pods-loop-row-actions{display:none !important;}
+
+		}
+
+		&.pods-loop-row-expanded .pods-loop-row-expanded > .pods-loop-row-label .pods-loop-row-actions{display:none;}
+		&.pods-loop-row-expanded .pods-loop-row-expanded.current-hover > .pods-loop-row-label > .pods-loop-row-actions{display:block;}
+
+		label{font-family:sans-serif; font-size:12px;}
+		td > input{
+			&.pods-form-ui-field-type-text{
+				width:100%;
+			}
+		} // input
+
+		.pods-loop-row-add{margin-top:10px;}
+
+		.pods-loop-row-actions{
+			display:none;
+			float:right;
+			margin-right:13px;
+
+			div{float:left;}
+
+			.pods-genericon{font-size:30px; font-weight:bold; height:25px; width:20px; padding-right:9px;}
+
+			.deletion{.pods-red-hover;}
+			.cancel{.pods-grey-hover;}
+
+		} // .pods-loop-row-actions
+
+		&.pods-loop-row-expanded{
+			> .pods-loop-row-label > .pods-loop-row-actions{display:block;}
+		} // &.pods-loop-row-expanded
+
+	} // .pods-loop-row
+
+	.form-table{margin-bottom:5px;}
+
+} // .loop-table
+
+/// Edit taxonomy items ///
+.edit-tags-php{
+
+	.pods-loop-table,
+	.pods-metabox{margin-bottom:10px; clear:none;}
+	.pods-loop-table{
+		position:relative;
+		width:100%;
+		-webkit-transition:width 1s ease; // supporting safari and older chrome
+		transition:width 1s ease;
+	} // .pods-loop-table
+
+	#col-left{overflow:visible;}
+
+	&.pods-loop-form-expanded{
+		.pods-loop-wrapper > .pods-loop-table,
+		.pods-loop-row-add{
+			position:relative;
+			width:200%;
+			-webkit-transition:width 1s ease; // supporting safari and older chrome
+			transition:width 1s ease;
+		}
+	} // &.pods-loop-form-expanded
+} // .edit-tags-php

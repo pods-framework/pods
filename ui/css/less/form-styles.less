@@ -1,0 +1,75 @@
+.pods-field-option{
+	overflow:hidden;
+	clear:both;
+	display:block;
+	padding:10px 10px 10px 10px;
+	border-bottom:1px solid @admin-border;
+	min-height:26px;
+
+	@form-hover: #f8f8f8;
+	&:hover{background:@form-hover;}
+	&:nth-child(even){background:#FCFCFC;
+		&:hover{background:@form-hover;}
+	} // &:nth-child(odd) does the striping of rows
+	&:first-child{margin-top:-5px;} // makes the first item hit the top properly
+
+	label{
+		width:30%;
+		float:left;
+		font-size:14px !important;
+		color:black;
+		margin-top:7px;
+	} // label
+
+	input{
+		font-size:14px;
+		width:65%;
+		float:right;
+		border-color: ( @edit-background / 1.2 );
+
+		&[type="checkbox"]{
+		}
+	} // input
+
+	.pods-checkbox-wrapper{
+		float:left;
+		margin:8px 5px 0 30px;
+
+		.pods-single-checkbox{
+			float:left;
+			margin-bottom:5px;
+
+			&.pods-checkbox-column-one{
+				width:100%;
+			} // &.pods-checkbox-column-one
+
+			&.pods-checkbox-column-two{
+				width:50%;
+			} // &.pods-checkbox-column-two
+
+			&.pods-checkbox-column-three{
+				width:33%;
+			} // &.pods-checkbox-column-three
+
+			&.pods-checkbox-column-four{
+				width:25%;
+			} // &.pods-checkbox-column-four
+
+		} // .pods-single-checkbox
+
+		input[type="checkbox"]{
+			width:10px;
+			float:left;
+			margin:8px 5px 0 0;
+		}
+	} // .pods-checkbox-wrapper
+
+	select{
+		width:65%;
+		float:right;
+		font-size:13px;
+	} // select
+
+	small{font-size:12px; margin-top:6px; display:inline-block;}
+
+} // .pods-field-option

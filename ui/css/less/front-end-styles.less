@@ -1,0 +1,63 @@
+/// BUTTONS ///
+// we need the buttons from the WP admin here for our loop styles
+@import 'buttons';
+
+/// Tables ///
+// table styles out of the WordPress admin
+@import 'admin-tables';
+
+/// LOOP STYLES ///
+// our custom loop styles that override some of the main table styles
+@import 'loop-styles';
+
+/// FRONTEND LOOP OVERRIDES ///
+// this is stuff that overrides the styles in themes so we look right
+.pods-loop-wrapper{
+
+	.pods-loop-table{
+		thead th{border-top:#DFDFDF !important;}
+	} // .pods-loop-table
+
+	.loop{
+		&.title{margin-bottom:5px;}
+		&.description{font-size:14px;}
+	} // .loop
+
+	.pods-loop-row-add{margin-top:10px;}
+
+	label{text-transform:none;}
+
+	input{
+		&[type="text"]{max-width:100% !important;}
+	} // input
+
+	.pods-loop-row-label{
+		.row-label{
+			color:#21759B;
+			text-decoration:none;
+
+			&:hover{text-decoration:none; color:#D54E21;}
+		} // .row-label
+	} // .pods-loop-row-label
+
+	.row-actions a{
+		color:#21759B;
+		text-decoration:none;
+
+		&:hover{text-decoration:none; color:#D54E21;}
+	} // .row-actions a
+
+	th{text-transform:none;}
+	.pods-icon{margin-bottom:0;}
+
+	th.field-label{min-width:100px;}
+	td.pods-loop-row-label{min-width:130px;}
+
+	.pods-loop-row-wrapper{clear:both;}
+
+	.form-table{
+		th{min-width:100px;}
+		td{padding:10px 5px;}
+	} // .form-table
+
+} // .pods-loop-wrapper

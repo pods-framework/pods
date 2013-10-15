@@ -4738,43 +4738,6 @@ class PodsAPI {
      */
     public function load_pod ( $params, $strict = true ) {
 
-		if ( 1 == 0 && pods_developer() ) {
-			// Debug override for strict
-			$strict = ( !$strict ? pods_strict( true ) : $strict );
-
-			if ( is_object( $params ) && isset( $params->post_name ) ) {
-				$pod = pods_object_pod( $params );
-			}
-			else {
-				$params = (object) pods_sanitize( $params );
-
-				if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
-					if ( $strict ) {
-						return pods_error( 'Either Pod ID or Name are required', $this );
-					}
-
-					return false;
-				}
-
-				if ( isset( $params->name ) ) {
-					$pod = pods_object_pod( $params->name );
-				}
-				else {
-					$pod = pods_object_pod( null, $params->id );
-				}
-			}
-
-			if ( empty( $pod ) || !$pod->is_valid() ) {
-				if ( $strict ) {
-					return pods_error( __( 'Pod not found', 'pods' ), $this );
-				}
-
-				return false;
-			}
-
-			return $pod;
-		}
-
         /**
          * @var $sitepress SitePress
          */
@@ -5034,9 +4997,6 @@ class PodsAPI {
      * @since 2.0
      */
     public function load_pods ( $params = null ) {
-
-		// Include dependencies for caching
-		pods_object_pod();
 
         /**
          * @var $sitepress SitePress

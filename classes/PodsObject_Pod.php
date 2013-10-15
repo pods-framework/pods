@@ -102,9 +102,12 @@ class PodsObject_Pod extends PodsObject {
 			$object = $name;
 		}
 		// Handle code-registered types
+		// ToDo [PGL] Can't call PodsMeta->get_object or we'll be stuck in an infinite loop.  Commented out for now
+		/*
 		elseif ( is_object( $pods_init ) && PodsInit::$meta->get_object( null, $name ) ) {
 			return PodsInit::$meta->get_object( null, $name );
 		}
+		*/
 		// Find Object by name
 		elseif ( !is_object( $name ) ) {
 			$find_args = array(
@@ -228,12 +231,14 @@ class PodsObject_Pod extends PodsObject {
 					// @todo Eventually support the comment type objects when this function gets made
 					//$comment = get_comment_object( $name );
 
-					/*if ( empty( $comment ) && 0 === strpos( $name, 'comment_' ) ) {
+					/*
+					 if ( empty( $comment ) && 0 === strpos( $name, 'comment_' ) ) {
 						$name = str_replace( 'comment_', '', $name );
 
 						// @todo Eventually support the comment type objects when this function gets made
 						//$comment = get_comment_object( $name );
-					}*/
+					}
+					*/
 
 					// Fallback for core WP Comment type
 					//if ( !empty( $comment ) ) {
@@ -679,9 +684,10 @@ class PodsObject_Pod extends PodsObject {
             }
 
 			// @deprecated hook
-            $pod = pods_do_hook( 'pods_api_save_pod_default_pod', $pod, $params );
+			// ToDo [PGL]: $pod is set to this object instance; can't pass that as $name to pods_do_hook()
+            //$pod = pods_do_hook( 'pods_api_save_pod_default_pod', $pod, $params );
 
-            $pod = pods_do_hook( 'pods_object_save_pod_default_pod', $pod, $params );
+            //$pod = pods_do_hook( 'pods_object_save_pod_default_pod', $pod, $params );
 
             $field_table_operation = false;
         }

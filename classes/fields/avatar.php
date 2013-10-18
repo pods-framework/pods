@@ -366,4 +366,37 @@ class PodsField_Avatar extends PodsField {
 
         return $avatar;
     }
+
+	/**
+	 * @param $value
+	 * @param $params
+	 * @param $item_id
+	 * @param $avatar_dir
+	 * @param $css_id
+	 * @param $html_width
+	 * @param $html_height
+	 * @param $avatar_folder_url
+	 * @param $avatar_folder_dir
+	 */
+	public function bp_core_fetch_avatar ( $value, $params, $item_id, $avatar_dir, $css_id, $html_width, $html_height, $avatar_folder_url, $avatar_folder_dir ) {
+
+		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
+		$avatar_url = pods_image_url ( pods( 'user', $item_id )->field( $avatar_field ) );
+
+		// Todo: check that an avatar actually exists before overriding
+		return '<img src="' . $avatar_url . '" class="' . esc_attr( $params[ 'class' ] ) . '"' . $css_id . $html_width . $html_height . $params[ 'alt' ] . $params[ 'title'] . ' />';
+	}
+
+	/**
+	 * @param $value
+	 * @param $params
+	 */
+	public function bp_core_fetch_avatar_url ( $value, $params ) {
+
+		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
+
+		// Todo: check that an avatar actually exists before overriding
+		return pods_image_url ( pods( 'user', $params[ 'item_id' ] )->field( $avatar_field ) );
+	}
+
 }

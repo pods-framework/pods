@@ -223,6 +223,10 @@ class PodsInit {
 
         if ( method_exists( $avatar, 'get_avatar' ) )
             add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
+
+		// BuddyPress avatar hooks
+		add_filter( 'bp_core_fetch_avatar', array( $avatar, 'bp_core_fetch_avatar'), 10, 9 );
+		add_filter( 'bp_core_fetch_avatar_url', array( $avatar, 'bp_core_fetch_avatar_url'), 10, 2 );
     }
 
     /**

@@ -380,6 +380,10 @@ class PodsField_Avatar extends PodsField {
 	 */
 	public function bp_core_fetch_avatar ( $value, $params, $item_id, $avatar_dir, $css_id, $html_width, $html_height, $avatar_folder_url, $avatar_folder_dir ) {
 
+		if ( strtolower( $params[ 'object' ] ) != 'user' ) {
+			return $value;
+		}
+
 		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
 		$avatar_url = pods_image_url ( pods( 'user', $item_id )->field( $avatar_field ) );
 
@@ -392,6 +396,10 @@ class PodsField_Avatar extends PodsField {
 	 * @param $params
 	 */
 	public function bp_core_fetch_avatar_url ( $value, $params ) {
+
+		if ( strtolower( $params[ 'object' ] ) != 'user' ) {
+			return $value;
+		}
 
 		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
 

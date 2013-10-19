@@ -14,7 +14,13 @@ a.button {
 	white-space: nowrap;
 	line-height: 15px;
 	padding: 3px 10px;
-	background: #f2f2f2 url(../../../../../wp-admin/images/white-grad.png) repeat-x scroll left top;
+	background: #f3f3f3;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#f4f4f4));
+	background-image: -webkit-linear-gradient(top, #fefefe, #f4f4f4);
+	background-image:    -moz-linear-gradient(top, #fefefe, #f4f4f4);
+	background-image:      -o-linear-gradient(top, #fefefe, #f4f4f4);
+	background-image:   linear-gradient(to bottom, #fefefe, #f4f4f4);
+	text-shadow: 0 1px 0 #fff;
 	border: 1px solid #bbb;
 	font-size: 12px;
 	color: #464646;
@@ -27,7 +33,19 @@ a.button:hover {
 }
 
 a.button:active {
-	background: #eee url(../../../../../wp-admin/images/white-grad-active.png) repeat-x scroll left top;
+	background: #eee;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#fefefe));
+	background-image: -webkit-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:    -moz-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:     -ms-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:      -o-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:   linear-gradient(to bottom, #f4f4f4, #fefefe);
+	border-color: #999;
+	color: #333;
+	text-shadow: 0 -1px 0 #fff;
+	-webkit-box-shadow: inset 0 2px 5px -3px rgba( 0, 0, 0, 0.5 );
+	box-shadow: inset 0 2px 5px -3px rgba( 0, 0, 0, 0.5 );
+	text-decoration: none;
 }
 
 .button-primary {
@@ -41,7 +59,18 @@ a.button:active {
 	line-height: 15px;
 	padding: 3px 8px;
 	border: 1px solid #298CBA;
-	background: #21759B url(../../../../../wp-admin/images/button-grad.png) repeat-x scroll left top;
+	background-color: #21759b;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#2a95c5), to(#21759b));
+	background-image: -webkit-linear-gradient(top, #2a95c5, #21759b);
+	background-image:    -moz-linear-gradient(top, #2a95c5, #21759b);
+	background-image:     -ms-linear-gradient(top, #2a95c5, #21759b);
+	background-image:      -o-linear-gradient(top, #2a95c5, #21759b);
+	background-image:   linear-gradient(to bottom, #2a95c5, #21759b);
+	border-bottom-color: #1e6a8d;
+	-webkit-box-shadow: inset 0 1px 0 rgba(120,200,230,0.5);
+	box-shadow: inset 0 1px 0 rgba(120,200,230,0.5);
+	text-decoration: none;
+	text-shadow: 0 1px 0 rgba(0,0,0,0.1);
 	font-size: 12px;
 	font-weight: bold;
 	color: #fff;
@@ -56,7 +85,13 @@ a.button:active {
 .button-primary:active {
 	border-color: #298CBA;
 	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
-	background: #21759B url(../../../../../wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+	background: #eee;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#fefefe));
+	background-image: -webkit-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:    -moz-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:     -ms-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:      -o-linear-gradient(top, #f4f4f4, #fefefe);
+	background-image:   linear-gradient(to bottom, #f4f4f4, #fefefe);
 	text-decoration: none;
 }
 

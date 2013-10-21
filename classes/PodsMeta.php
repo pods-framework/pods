@@ -2303,10 +2303,11 @@ class PodsMeta {
 	 * @param string $object_type
 	 * @param string|int $object_id
 	 * @param string $object_name
+	 * @param bool $strict
 	 *
 	 * @return bool|mixed
 	 */
-	public function get_object( $object_type = null, $object_id = null, $object_name = null ) {
+	public function get_object( $object_type = null, $object_id = null, $object_name = null, $strict = false ) {
 
 		$objects = false;
 
@@ -2373,7 +2374,7 @@ class PodsMeta {
 		if ( empty( $object_name ) ) {
 			return false;
 		}
-		elseif ( 0 === strpos( $object_name, '_pods_' ) ) {
+		elseif ( !$strict && 0 === strpos( $object_name, '_pods_' ) ) {
 			return pods_object_pod( $object_name );
 		}
 		elseif ( empty( $objects ) ) {

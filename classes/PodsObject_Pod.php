@@ -102,12 +102,9 @@ class PodsObject_Pod extends PodsObject {
 			$object = $name;
 		}
 		// Handle code-registered types
-		// ToDo [PGL] Can't call PodsMeta->get_object or we'll be stuck in an infinite loop.  Commented out for now
-		/*
 		elseif ( is_object( $pods_init ) && PodsInit::$meta->get_object( null, $name ) ) {
-			return PodsInit::$meta->get_object( null, $name );
+			return PodsInit::$meta->get_object( null, $name, null, true );
 		}
-		*/
 		// Find Object by name
 		elseif ( !is_object( $name ) ) {
 			$find_args = array(
@@ -166,8 +163,8 @@ class PodsObject_Pod extends PodsObject {
 			else {
 				$post_type = get_post_type_object( $name );
 
-				if ( empty( $post_type ) && 0 === strpos( $name, 'post_type_' ) ) {
-					$name = str_replace( 'post_type_', '', $name );
+				if ( empty( $post_type ) && 0 === strpos( $name, '_post_type_' ) ) {
+					$name = str_replace( '_post_type_', '', $name );
 
 					$post_type = get_post_type_object( $name );
 				}
@@ -195,8 +192,8 @@ class PodsObject_Pod extends PodsObject {
 				if ( empty( $object ) ) {
 					$taxonomy = get_taxonomy( $name );
 
-					if ( empty( $taxonomy ) && 0 === strpos( $name, 'taxonomy_' ) ) {
-						$name = str_replace( 'taxonomy_', '', $name );
+					if ( empty( $taxonomy ) && 0 === strpos( $name, '_taxonomy_' ) ) {
+						$name = str_replace( '_taxonomy_', '', $name );
 
 						$taxonomy = get_taxonomy( $name );
 					}
@@ -223,20 +220,18 @@ class PodsObject_Pod extends PodsObject {
 					}
 				}
 
-				// @todo For now, only support comment_{$comment_type}
-				if ( empty( $object ) && 0 === strpos( $name, 'comment_' ) ) {
-					// @todo For now, only support comment_{$comment_type}
-					$name = str_replace( 'comment_', '', $name );
+				if ( empty( $object ) && 0 === strpos( $name, '_comment_' ) ) { // if ( empty( $object ) ) {
+					$name = str_replace( '_comment_', '', $name ); // @todo Remove this when comment type objects are available
 
 					// @todo Eventually support the comment type objects when this function gets made
-					//$comment = get_comment_object( $name );
+					//$comment = get_comment_type( $name );
 
 					/*
-					 if ( empty( $comment ) && 0 === strpos( $name, 'comment_' ) ) {
-						$name = str_replace( 'comment_', '', $name );
+					 if ( empty( $comment ) && 0 === strpos( $name, '_comment_' ) ) {
+						$name = str_replace( '_comment_', '', $name );
 
 						// @todo Eventually support the comment type objects when this function gets made
-						//$comment = get_comment_object( $name );
+						//$comment = get_comment_type( $name );
 					}
 					*/
 
@@ -683,11 +678,14 @@ class PodsObject_Pod extends PodsObject {
 				}
             }
 
-			// @deprecated hook
-			// ToDo [PGL]: $pod is set to this object instance; can't pass that as $name to pods_do_hook()
-            //$pod = pods_do_hook( 'pods_api_save_pod_default_pod', $pod, $params );
+			$override = $pod->export( 'data' );
 
-            //$pod = pods_do_hook( 'pods_object_save_pod_default_pod', $pod, $params );
+			// @deprecated hook
+			$override = pods_do_hook( 'pods_api_save_pod_default_pod', $override, $params, $pod );
+
+            $override = pods_do_hook( 'pods_object_save_pod_default_pod', $override, $params, $pod );
+
+			$pod->override( $override );
 
             $field_table_operation = false;
         }

@@ -218,7 +218,7 @@ if ( 0 < $pod->id() ) {
                     </div>
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
                     <?php
-                        if ( pods_var_raw( 'action' ) == 'edit' && !$duplicate && !in_array( 'navigate', $obj->actions_disabled ) && !in_array( 'navigate', $obj->actions_hidden ) ) {
+                        if ( 'settings' != $pod->pod_data[ 'type' ] && 'edit' == pods_v( 'action' ) && !$duplicate && !in_array( 'navigate', $obj->actions_disabled ) && !in_array( 'navigate', $obj->actions_hidden ) ) {
                             if ( !isset( $singular_label ) )
                                 $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 

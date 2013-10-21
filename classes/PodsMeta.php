@@ -422,6 +422,7 @@ class PodsMeta {
 
     public function cpac_meta_value ( $meta, $id, $obj ) {
         $tableless_field_types = PodsForm::tableless_field_types();
+        $repeatable_field_types = PodsForm::repeatable_field_types();
 
         $object_type = 'post_type';
         $object = $obj->storage_model->key;
@@ -445,8 +446,11 @@ class PodsMeta {
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
+			// Multi only for tableless/repeatable fields
+			$multi = ( !in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) && !in_array( $pod[ 'fields' ][ $field ][ 'type' ], $repeatable_field_types ) );
+
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) )
-                $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, true );
+                $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, $multi );
 
             $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
         }

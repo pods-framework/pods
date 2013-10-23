@@ -103,7 +103,7 @@ $field_settings = array(
 
 $field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
 
-$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
+//$pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
 
 global $wpdb;
 $max_length_name = 64;
@@ -283,7 +283,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     'type' => 'text'
                 );
 
-                include PODS_DIR . 'ui/admin/setup-edit-field-fluid.php';
+                //include PODS_DIR . 'ui/admin/setup-edit-field-fluid.php';
 
                 $pods_i = 1;
 

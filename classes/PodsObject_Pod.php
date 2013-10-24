@@ -1149,7 +1149,7 @@ class PodsObject_Pod extends PodsObject {
     /**
      * Delete the Object
 	 *
-	 * @param bool $delete_all (optional) Whether to delete all content from a WP object
+	 * @param bool $delete_all (optional) Whether to delete all content
      *
      * @return bool Whether the Object was successfully deleted
      *

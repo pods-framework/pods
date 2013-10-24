@@ -423,12 +423,14 @@ class PodsObject_Field extends PodsObject {
 
     /**
      * Delete the Object
+	 *
+	 * @param bool $delete_all (optional) Whether to delete all content
      *
      * @return bool Whether the Object was successfully deleted
      *
      * @since 2.3.10
      */
-	public function delete() {
+	public function delete( $delete_all = false ) {
 
 		if ( !$this->is_valid() ) {
 			return false;

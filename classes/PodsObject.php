@@ -733,49 +733,60 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Export the object data into a normal array
 	 *
-	 * @param string $export_type Export type: all|data|fields|object_fields|table_info
+	 * @param array|string $export_types Export type: all|data|fields|object_fields|table_info
 	 *
 	 * @return array Exported array of all object data
 	 *
 	 * @since 2.3.10
 	 */
-	public function export( $export_type = 'all' ) {
+	public function export( $export_types = 'all' ) {
 
 		$export = array();
 
-		if ( in_array( $export_type, array( 'all', 'data' ) ) ) {
+		if ( 'all' == $export_types ) {
+			$export_types = array(
+				'data',
+				'fields',
+				'object_fields',
+				'table_info'
+			);
+
+			$export_types = array_merge( $export_types, $this->_methods );
+			$export_types = array_unique( $export_types );
+		}
+		else {
+			$export_types = (array) $export_types;
+		}
+
+		if ( in_array( 'data', $export_types ) ) {
 			$export = array_merge( $this->_object, $this->_meta, $this->_override );
 		}
 
-		if ( in_array( $export_type, array( 'all', 'fields', 'object_fields', 'table_info' ) ) ) {
-			foreach ( $this->_methods as $method ) {
-				if ( 'all' != $export_type ) {
-					if ( 'fields' == $export_type ) {
-						if ( !in_array( $method, array( 'fields', 'object_fields' ) ) ) {
-							continue;
-						}
-					}
-					elseif ( $export_type != $method ) {
-						continue;
-					}
-				}
+		foreach ( $this->_methods as $method ) {
+			if ( !in_array( $method, $export_types ) ) {
+				continue;
+			}
 
-				if ( method_exists( $this, $method . '_export' ) ) {
-					$export[ $method ] = call_user_func( array( $this, $method . '_export' ) );
-				}
-				else {
-					$export[ $method ] = call_user_func( array( $this, $method ) );
-				}
+			if ( method_exists( $this, $method . '_export' ) ) {
+				$export[ $method ] = call_user_func( array( $this, $method . '_export' ) );
+			}
+			else {
+				$export[ $method ] = call_user_func( array( $this, $method ) );
+			}
 
-				if ( null === $export[ $method ] ) {
-					unset( $export[ $method ] );
-				}
+			if ( null === $export[ $method ] ) {
+				unset( $export[ $method ] );
 			}
 		}
 
-		if ( 'all' != $export_type ) {
+		if ( 1 == count( $export_types ) ) {
+			$export_type = current( $export_types );
+
 			if ( isset( $export[ $export_type ] ) ) {
 				$export = $export[ $export_type ];
+			}
+			else {
+				$export = array();
 			}
 		}
 
@@ -1017,17 +1028,14 @@ class PodsObject implements ArrayAccess, Serializable {
 			return $this->_object[ 'id' ];
 		}
 
-		$params = $options;
+		$params = (object) $options;
 
-		$params[ 'id' ] = $this->_object[ 'id' ];
+		$params->id = $this->_object[ 'id' ];
 
-		// For use later in actions
-		$_object = $this->_object;
-
-		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $_object );
+		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $this );
 
 		// @todo Handle generalized saving
-		$id = $params[ 'id' ];
+		$id = $params->id;
 
 		// Refresh object
 		if ( $refresh ) {
@@ -1035,7 +1043,9 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		// Just update options
 		else {
-			foreach ( $params as $option => $value ) {
+			$options = get_object_vars( $params );
+
+			foreach ( $options as $option => $value ) {
 				if ( 'id' != $option ) {
 					$this->offsetSet( $option, $value );
 				}
@@ -1043,7 +1053,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_save', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
+			$this->_action( 'pods_object_save_' . $this->_action_type, $id, $this, $params );
 		}
 
 		return $id;
@@ -1067,28 +1077,71 @@ class PodsObject implements ArrayAccess, Serializable {
 			return false;
 		}
 
-		if ( null !== $value && !is_array( $options ) ) {
+		if ( is_object( $options ) ) {
+			$options = get_object_vars( $options );
+		}
+		elseif ( null !== $value && !is_array( $options ) ) {
 			$options = array(
 				$options => $value
 			);
 		}
-
-		if ( empty( $options ) ) {
-			return $this->_object[ 'id' ];
+		elseif ( empty( $options ) || !is_array( $options ) ) {
+			$options = array();
 		}
 
-		$params = $options;
+		// Must duplicate from the original Pod object
+		if ( isset( $options[ 'id' ] ) && 0 < $options[ 'id' ] ) {
+			return false;
+		}
 
-		$params[ 'id' ] = $this->_object[ 'id' ];
-		$params[ 'name' ] = $this->_object[ 'name' ];
+		$built_in = array(
+			'name' => '',
+			'new_name' => ''
+		);
 
-		// For use later in actions
-		$_object = $this->_object;
+		$custom_options = array_diff( $options, $built_in );
 
-		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $_object );
+		$params = (object) $options;
+		$params->name = $this->_object[ 'name' ];
 
-		// @todo Handle generalized duplicating
-		$id = $params[ 'id' ];
+		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $this );
+
+		$object = clone $this;
+
+		$object->override( $custom_options );
+
+		$object = $object->export();
+
+		unset( $object[ 'id' ] );
+
+		if ( isset( $object[ 'object_fields' ] ) ) {
+			unset( $object[ 'object_fields' ] );
+		}
+
+		if ( isset( $params->new_name ) ) {
+			$pod[ 'name' ] = $params->new_name;
+		}
+
+		$try = 2;
+
+		$check_name = $object[ 'name' ] . $try;
+		$new_label = $object[ 'label' ] . $try;
+
+		while ( pods_object( $check_name )->is_valid() ) {
+			$try++;
+
+			$check_name = $object[ 'name' ] . $try;
+			$new_label = $object[ 'label' ] . $try;
+		}
+
+		$object[ 'name' ] = $check_name;
+		$object[ 'label' ] = $new_label;
+
+		foreach ( $object[ 'fields' ] as $field => $field_data ) {
+			unset( $object[ 'fields' ][ $field ][ 'id' ] );
+		}
+
+		$id = $this->save( $object );
 
 		if ( $replace ) {
 			// Replace object
@@ -1096,7 +1149,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_duplicate', $id, $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
+			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $object, $params );
 		}
 
 		return $id;
@@ -1105,26 +1158,25 @@ class PodsObject implements ArrayAccess, Serializable {
 
     /**
      * Delete the Object
+	 *
+	 * @param bool $delete_all (optional) Whether to delete all content
      *
      * @return bool Whether the Object was successfully deleted
      *
      * @since 2.3.10
      */
-	public function delete() {
+	public function delete( $delete_all = false ) {
 
 		if ( !$this->is_valid() ) {
 			return false;
 		}
 
-		$params = array(
+		$params = (object) array(
 			'id' => $this->_object[ 'id' ],
 			'name' => $this->_object[ 'name' ]
 		);
 
-		// For use later in actions
-		$_object = $this->_object;
-
-		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $_object );
+		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $this, $delete_all );
 
 		$success = false;
 
@@ -1134,13 +1186,30 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( $success ) {
-			$this->_action( 'pods_object_delete', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
+			$this->_action( 'pods_object_delete_' . $this->_action_type, $params, $this, $delete_all );
+
+			// Can't destroy object, so let's destroy the data and invalidate the object
+			$this->destroy();
 		}
 
-		// Can't destroy object, so let's destroy the data and invalidate the object
-		$this->destroy();
-
 		return $success;
+
+	}
+
+    /**
+     * Delete all content
+     *
+     * @return bool Whether the Content was successfully deleted
+     *
+     * @since 2.4
+     */
+	public function reset() {
+
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
+		return false;
 
 	}
 

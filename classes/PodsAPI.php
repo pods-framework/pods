@@ -1060,222 +1060,241 @@ class PodsAPI {
     }
 
     /**
-     *
-     * @see PodsAPI::save_pod
-     *
-     * Add a Pod via the Wizard
-     *
-     * $params['create_extend'] string Create or Extend a Content Type
-     * $params['create_pod_type'] string Pod Type (for Creating)
-     * $params['create_name'] string Pod Name (for Creating)
-     * $params['create_label_plural'] string Plural Label (for Creating)
-     * $params['create_label_singular'] string Singular Label (for Creating)
-     * $params['create_storage'] string Storage Type (for Creating Post Types)
-     * $params['create_storage_taxonomy'] string Storage Type (for Creating Taxonomies)
-     * $params['extend_pod_type'] string Pod Type (for Extending)
-     * $params['extend_post_type'] string Post Type (for Extending Post Types)
-     * $params['extend_taxonomy'] string Taxonomy (for Extending Taxonomies)
-     * $params['extend_storage'] string Storage Type (for Extending Post Types / Users / Comments)
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return bool|int Pod ID
-     * @since 2.0
-     */
-    public function add_pod ( $params ) {
-        $defaults = array(
-            'create_extend' => 'create',
-            'create_pod_type' => 'post_type',
+	 *
+	 * @see PodsAPI::save_pod
+	 *
+	 * Add a Pod via the Wizard
+	 *
+	 * $params['create_extend'] string Create or Extend a Content Type
+	 * $params['create_pod_type'] string Pod Type (for Creating)
+	 * $params['create_name'] string Pod Name (for Creating)
+	 * $params['create_label_plural'] string Plural Label (for Creating)
+	 * $params['create_label_singular'] string Singular Label (for Creating)
+	 * $params['create_storage'] string Storage Type (for Creating Post Types)
+	 * $params['create_storage_taxonomy'] string Storage Type (for Creating Taxonomies)
+	 * $params['extend_pod_type'] string Pod Type (for Extending)
+	 * $params['extend_post_type'] string Post Type (for Extending Post Types)
+	 * $params['extend_taxonomy'] string Taxonomy (for Extending Taxonomies)
+	 * $params['extend_storage'] string Storage Type (for Extending Post Types / Users / Comments)
+	 *
+	 * @param array $params An associative array of parameters
+	 *
+	 * @return bool|int Pod ID
+	 * @since 2.0
+	 */
+	public function add_pod( $params ) {
 
-            'create_name' => '',
-            'create_label_singular' => '',
-            'create_label_plural' => '',
-            'create_storage' => 'meta',
-            'create_storage_taxonomy' => 'none',
+		$defaults = array(
+			'create_extend' => 'create',
+			'create_pod_type' => 'post_type',
+			'create_name' => '',
+			'create_label_singular' => '',
+			'create_label_plural' => '',
+			'create_storage' => 'meta',
+			'create_storage_taxonomy' => 'none',
+			'create_setting_name' => '',
+			'create_label_title' => '',
+			'create_label_menu' => '',
+			'create_menu_location' => 'settings',
+			'extend_pod_type' => 'post_type',
+			'extend_post_type' => 'post',
+			'extend_taxonomy' => 'category',
+			'extend_table' => '',
+			'extend_storage_taxonomy' => 'table',
+			'extend_storage' => 'meta'
+		);
 
-            'create_setting_name' => '',
-            'create_label_title' => '',
-            'create_label_menu' => '',
-            'create_menu_location' => 'settings',
+		$params = (object) array_merge( $defaults, (array) $params );
 
-            'extend_pod_type' => 'post_type',
-            'extend_post_type' => 'post',
-            'extend_taxonomy' => 'category',
-            'extend_table' => '',
-            'extend_storage_taxonomy' => 'table',
-            'extend_storage' => 'meta'
-        );
+		if ( empty( $params->create_extend ) || !in_array( $params->create_extend, array( 'create', 'extend' ) ) ) {
+			return pods_error( __( 'Please choose whether to Create or Extend a Content Type', 'pods' ), $this );
+		}
 
-        $params = (object) array_merge( $defaults, (array) $params );
+		$pod_params = array(
+			'name' => '',
+			'label' => '',
+			'type' => '',
+			'storage' => 'table',
+			'object' => '',
+			'options' => array()
+		);
 
-        if ( empty( $params->create_extend ) || !in_array( $params->create_extend, array( 'create', 'extend' ) ) )
-            return pods_error( __( 'Please choose whether to Create or Extend a Content Type', 'pods' ), $this );
+		if ( 'create' == $params->create_extend ) {
+			$label = ucwords( str_replace( '_', ' ', $params->create_name ) );
 
-        $pod_params = array(
-            'name' => '',
-            'label' => '',
-            'type' => '',
-            'storage' => 'table',
-            'object' => '',
-            'options' => array()
-        );
+			if ( !empty( $params->create_label_singular ) ) {
+				$label = $params->create_label_singular;
+			}
 
-        if ( 'create' == $params->create_extend ) {
-            $label = ucwords( str_replace( '_', ' ', $params->create_name ) );
-
-            if ( !empty( $params->create_label_singular ) )
-                $label = $params->create_label_singular;
-
-            $pod_params = array(
+			$pod_params = array(
 				'name' => $params->create_name,
 				'label' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : $label ),
 				'type' => $params->create_pod_type,
-                'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : $pod_params[ 'label' ] ),
-                'public' => 1,
-                'show_ui' => 1
-            );
+				'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : $pod_params[ 'label' ] ),
+				'public' => 1,
+				'show_ui' => 1
+			);
 
-            // Auto-generate name if not provided
-            if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'label_singular' ] ) )
-                $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'label_singular' ] );
+			// Auto-generate name if not provided
+			if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'label_singular' ] ) ) {
+				$pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'label_singular' ] );
+			}
 
-            if ( 'post_type' == $pod_params[ 'type' ] ) {
-                if ( empty(  $pod_params[ 'name' ] ) )
-                    return pods_error( 'Please enter a Name for this Pod', $this );
+			if ( 'post_type' == $pod_params[ 'type' ] ) {
+				if ( empty( $pod_params[ 'name' ] ) ) {
+					return pods_error( 'Please enter a Name for this Pod', $this );
+				}
 
-                $pod_params[ 'storage' ] = $params->create_storage;
+				$pod_params[ 'storage' ] = $params->create_storage;
 
-                if ( pods_tableless() )
-                    $pod_params[ 'storage' ] = 'meta';
-            }
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                if ( empty(  $pod_params[ 'name' ] ) )
-                    return pods_error( 'Please enter a Name for this Pod', $this );
+				if ( pods_tableless() ) {
+					$pod_params[ 'storage' ] = 'meta';
+				}
+			}
+			elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+				if ( empty( $pod_params[ 'name' ] ) ) {
+					return pods_error( 'Please enter a Name for this Pod', $this );
+				}
 
-                $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
+				$pod_params[ 'storage' ] = $params->create_storage_taxonomy;
 
-                if ( pods_tableless() )
-                    $pod_params[ 'storage' ] = 'none';
-            }
-            elseif ( 'pod' == $pod_params[ 'type' ] ) {
-                if ( empty(  $pod_params[ 'name' ] ) )
-                    return pods_error( 'Please enter a Name for this Pod', $this );
+				if ( pods_tableless() ) {
+					$pod_params[ 'storage' ] = 'none';
+				}
+			}
+			elseif ( 'pod' == $pod_params[ 'type' ] ) {
+				if ( empty( $pod_params[ 'name' ] ) ) {
+					return pods_error( 'Please enter a Name for this Pod', $this );
+				}
 
-                if ( pods_tableless() ) {
-                    $pod_params[ 'type' ] = 'post_type';
-                    $pod_params[ 'storage' ] = 'meta';
-                }
-            }
-            elseif ( 'settings' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'name' ] = $params->create_setting_name;
-                $pod_params[ 'label' ] = ( !empty( $params->create_label_title ) ? $params->create_label_title : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
+				if ( pods_tableless() ) {
+					$pod_params[ 'type' ] = 'post_type';
+					$pod_params[ 'storage' ] = 'meta';
+				}
+			}
+			elseif ( 'settings' == $pod_params[ 'type' ] ) {
+				$pod_params[ 'name' ] = $params->create_setting_name;
+				$pod_params[ 'label' ] = ( !empty( $params->create_label_title ) ? $params->create_label_title : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
 				$pod_params[ 'menu_name' ] = ( !empty( $params->create_label_menu ) ? $params->create_label_menu : $pod_params[ 'label' ] );
 				$pod_params[ 'menu_location' ] = $params->create_menu_location;
-                $pod_params[ 'storage' ] = 'none';
+				$pod_params[ 'storage' ] = 'none';
 
-                // Auto-generate name if not provided
-                if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'label' ] ) )
-                    $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'label' ] );
+				// Auto-generate name if not provided
+				if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'label' ] ) ) {
+					$pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'label' ] );
+				}
 
-                if ( empty( $pod_params[ 'name' ] ) )
-                    return pods_error( 'Please enter a Name for this Pod', $this );
-            }
-        }
-        elseif ( 'extend' == $params->create_extend ) {
-            $pod_params[ 'type' ] = $params->extend_pod_type;
+				if ( empty( $pod_params[ 'name' ] ) ) {
+					return pods_error( 'Please enter a Name for this Pod', $this );
+				}
+			}
+		}
+		elseif ( 'extend' == $params->create_extend ) {
+			$pod_params[ 'type' ] = $params->extend_pod_type;
 
-            if ( 'post_type' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = $params->extend_storage;
+			if ( 'post_type' == $pod_params[ 'type' ] ) {
+				$pod_params[ 'storage' ] = $params->extend_storage;
 
-                if ( pods_tableless() )
-                    $pod_params[ 'storage' ] = 'meta';
+				if ( pods_tableless() ) {
+					$pod_params[ 'storage' ] = 'meta';
+				}
 
-                $pod_params[ 'name' ] = $params->extend_post_type;
-            }
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
+				$pod_params[ 'name' ] = $params->extend_post_type;
+			}
+			elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+				$pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
 
-                if ( pods_tableless() )
-                    $pod_params[ 'storage' ] = 'none';
+				if ( pods_tableless() ) {
+					$pod_params[ 'storage' ] = 'none';
+				}
 
-                $pod_params[ 'name' ] = $params->extend_taxonomy;
-            }
-            elseif ( 'table' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = 'table';
-                $pod_params[ 'name' ] = $params->extend_table;
-            }
-            else {
-                $pod_params[ 'storage' ] = $params->extend_storage;
+				$pod_params[ 'name' ] = $params->extend_taxonomy;
+			}
+			elseif ( 'table' == $pod_params[ 'type' ] ) {
+				$pod_params[ 'storage' ] = 'table';
+				$pod_params[ 'name' ] = $params->extend_table;
+			}
+			else {
+				$pod_params[ 'storage' ] = $params->extend_storage;
 
-                if ( pods_tableless() )
-                    $pod_params[ 'storage' ] = 'meta';
+				if ( pods_tableless() ) {
+					$pod_params[ 'storage' ] = 'meta';
+				}
 
-                $pod_params[ 'name' ] = $params->extend_pod_type;
-            }
+				$pod_params[ 'name' ] = $params->extend_pod_type;
+			}
 
-            $pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
-            $pod_params[ 'object' ] = $pod_params[ 'name' ];
-        }
+			$pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
+			$pod_params[ 'object' ] = $pod_params[ 'name' ];
+		}
 
-        if ( empty( $pod_params[ 'object' ] ) ) {
-            if ( 'post_type' == $pod_params[ 'type' ] ) {
-                $check = get_post_type_object( $pod_params[ 'name' ] );
+		if ( empty( $pod_params[ 'object' ] ) ) {
+			if ( 'post_type' == $pod_params[ 'type' ] ) {
+				$check = get_post_type_object( $pod_params[ 'name' ] );
 
-                if ( !empty( $check ) )
-                    return pods_error( sprintf( __( 'Post Type %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+				if ( !empty( $check ) ) {
+					return pods_error( sprintf( __( 'Post Type %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+				}
 
-                $pod_params[ 'supports_title' ] = 1;
-                $pod_params[ 'supports_editor' ] = 1;
-            }
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $check = get_taxonomy( $pod_params[ 'name' ] );
+				$pod_params[ 'supports_title' ] = 1;
+				$pod_params[ 'supports_editor' ] = 1;
+			}
+			elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+				$check = get_taxonomy( $pod_params[ 'name' ] );
 
-                if ( !empty( $check ) )
-                    return pods_error( sprintf( __( 'Taxonomy %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
-            }
-        }
+				if ( !empty( $check ) ) {
+					return pods_error( sprintf( __( 'Taxonomy %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+				}
+			}
+		}
 
-        if ( !empty( $pod_params ) ) {
+		if ( !empty( $pod_params ) ) {
 			$pod = pods_object_pod( '_pods_pod' );
 
 			return $pod->save( $pod_params );
 		}
 
-        return false;
-    }
+		return false;
+
+	}
 
     /**
-     * Add or edit a Pod
-     *
-     * $params['id'] int The Pod ID
-     * $params['name'] string The Pod name
-     * $params['label'] string The Pod label
-     * $params['type'] string The Pod type
-     * $params['object'] string The object being extended (if any)
-     * $params['storage'] string The Pod storage
-     * $params['options'] array Options
-     *
-     * @param array $params An associative array of parameters
-     * @param bool $sanitized (optional) Decides whether the params have been sanitized before being passed, will sanitize them if false.
-     * @param bool|int $db (optional) Whether to save into the DB or just return Pod array.
-     *
-     * @return int Pod ID
-     * @since 1.7.9
-     */
-    public function save_pod ( $params, $sanitized = false, $db = true ) {
+	 * Add or edit a Pod
+	 *
+	 * $params['id'] int The Pod ID
+	 * $params['name'] string The Pod name
+	 * $params['label'] string The Pod label
+	 * $params['type'] string The Pod type
+	 * $params['object'] string The object being extended (if any)
+	 * $params['storage'] string The Pod storage
+	 * $params['options'] array Options
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param bool $sanitized (deprecated)
+	 * @param bool|int $db (optional) Whether to save into the DB or just return Pod array.
+	 *
+	 * @return int Pod ID
+	 * @since 1.7.9
+	 */
+	public function save_pod( $params, $sanitized = false, $db = true ) {
 
-        $load_params = (object) $params;
+		$load_params = (object) $params;
 
-        if ( isset( $load_params->id ) && 0 < $load_params->id && isset( $load_params->name ) )
-            unset( $load_params->name );
+		if ( isset( $load_params->id ) && 0 < $load_params->id && isset( $load_params->name ) ) {
+			unset( $load_params->name );
+		}
 
-        if ( isset( $load_params->old_name ) )
-            $load_params->name = $load_params->old_name;
+		if ( isset( $load_params->old_name ) ) {
+			$load_params->name = $load_params->old_name;
+		}
 
-        $pod = $this->load_pod( $load_params, __METHOD__ );
+		$pod = $this->load_pod( $load_params, __METHOD__ );
 
-        $params = (object) $params;
-		$params->db = $db;
+		$params = (object) $params;
+
+		if ( !isset( $params->db ) ) {
+			$params->db = $db;
+		}
 
 		if ( empty( $pod ) ) {
 			$pod = pods_object_pod();
@@ -1289,7 +1308,7 @@ class PodsAPI {
 
 		return $pod;
 
-    }
+	}
 
     /**
      * Add or edit a field within a Pod
@@ -2916,73 +2935,53 @@ class PodsAPI {
         }
     }
 
-    /**
-     * Duplicate a Pod
-     *
-     * $params['id'] int The Pod ID
-     * $params['name'] string The Pod name
-     * $params['new_name'] string The new Pod name
-     *
-     * @param array $params An associative array of parameters
-     * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
-     *
-     * @return int New Pod ID
-     * @since 2.3
-     */
-    public function duplicate_pod ( $params, $strict = false ) {
-        if ( !is_object( $params ) && !is_array( $params ) ) {
-            if ( is_numeric( $params ) )
-                $params = array( 'id' => $params );
-            else
-                $params = array( 'name' => $params );
-        }
+	/**
+	 * Duplicate a Pod
+	 *
+	 * $params['id'] int The Pod ID
+	 * $params['name'] string The Pod name
+	 * $params['new_name'] string The new Pod name
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
+	 *
+	 * @return int New Pod ID
+	 * @since 2.3
+	 */
+	public function duplicate_pod( $params, $strict = false ) {
+
+		if ( !is_object( $params ) && !is_array( $params ) ) {
+			if ( is_numeric( $params ) ) {
+				$params = array(
+					'id' => $params
+				);
+			}
+			else {
+				$params = array(
+					'name' => $params
+				);
+			}
+		}
 
 		$params = (object) $params;
 
-        $pod = $this->load_pod( $params, $strict );
+		if ( !isset( $params->strict ) ) {
+			$params->strict = $strict;
+		}
 
-        if ( empty( $pod ) ) {
-            return false;
-        }
-        elseif ( in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
-            if ( false !== $strict )
-                return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ), $this );
+		$pod = $this->load_pod( $params, $strict );
 
-            return false;
-        }
-        elseif ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && 0 < strlen( $pod[ 'object' ] ) ) {
-			$pod[ 'object' ] = '';
-        }
+		if ( empty( $pod ) ) {
+			return false;
+		}
 
-		$pod = $pod->export();
+		if ( isset( $params->id ) ) {
+			unset( $params->id );
+		}
 
-        unset( $pod[ 'id' ] );
+		return $pod->duplicate( $params );
 
-        if ( isset( $params->new_name ) )
-            $pod[ 'name' ] = $params->new_name;
-
-        $try = 1;
-
-        $check_name = $pod[ 'name' ];
-        $new_label = $pod[ 'label' ];
-
-        while ( $this->load_pod( array( 'name' => $check_name ), __METHOD__ ) ) {
-            $try++;
-
-            $check_name = $pod[ 'name' ] . $try;
-            $new_label = $pod[ 'label' ] . $try;
-        }
-
-        $pod[ 'name' ] = $check_name;
-        $pod[ 'label' ] = $new_label;
-
-        foreach ( $pod[ 'fields' ] as $field => $field_data ) {
-            unset( $pod[ 'fields' ][ $field ][ 'id' ] );
-        }
-
-        return $this->save_pod( $pod );
-
-    }
+	}
 
     /**
      * Duplicate a Field
@@ -3315,16 +3314,15 @@ class PodsAPI {
     }
 
     /**
-     *
      * Delete all content for a Pod
      *
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters
-     * @param array $pod Pod data
+     * @param array $pod (optional) Pod data
      *
-     * @return bool
+     * @return bool Whether the Content was successfully deleted
      *
      * @uses pods_query
      * @uses pods_cache_clear
@@ -3332,201 +3330,86 @@ class PodsAPI {
      * @since 1.9.0
      */
     public function reset_pod ( $params, $pod = false ) {
-        $params = (object) pods_sanitize( $params );
-
-        $params->table_info = true;
-
-        if ( empty( $pod ) )
-            $pod = $this->load_pod( $params );
-
-        if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
-
-        $params->id = $pod[ 'id' ];
-        $params->name = $pod[ 'name' ];
-
-        if ( !pods_tableless() ) {
-            if ( 'table' == $pod[ 'storage' ] ) {
-                try {
-                    pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
-                }
-                catch ( Exception $e ) {
-                    // Allow pod to be reset if the table doesn't exist
-                    if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
-                        return pods_error( $e->getMessage(), $this );
-                }
-            }
-
-            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
-        }
-
-        // @todo Delete relationships from tableless relationships
-
-        // Delete all posts/revisions from this post type
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) ) {
-            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
-
-            $sql = "
-                DELETE `t`, `r`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                LEFT JOIN `{$pod['table']}` AS `r`
-                    ON `r`.`post_parent` = `t`.`{$pod['field_id']}` AND `r`.`post_status` = 'inherit'
-                WHERE `t`.`{$pod['field_type']}` = '{$type}'
-            ";
-
-            pods_query( $sql, false );
-        }
-        // Delete all terms from this taxonomy
-        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
-
-            $sql = "
-                DELETE FROM `{$pod['table']}` AS `t`
-                " . $pod['join']['tt'] . "
-                WHERE " . implode( ' AND ', $pod['where'] ) . "
-            ";
-
-            pods_query( $sql, false );
-        }
-        // Delete all users except the current one
-        elseif ( 'user' == $pod[ 'type' ] ) {
-            $sql = "
-                DELETE `t`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                WHERE `t`.`{$pod['field_id']}` != " . (int) get_current_user_id() . "
-            ";
-
-            pods_query( $sql, false );
-        }
-        // Delete all comments
-        elseif ( 'comment' == $pod[ 'type' ] ) {
-            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
-
-            $sql = "
-                DELETE `t`, `m`
-                FROM `{$pod['table']}` AS `t`
-                LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
-                WHERE `t`.`{$pod['field_type']}` = '{$type}'
-            ";
-
-            pods_query( $sql, false );
-        }
-
-        pods_cache_clear( true ); // only way to reliably clear out cached data across an entire group
-
-        return true;
-    }
-
-    /**
-     * Delete a Pod and all its content
-     *
-     * $params['id'] int The Pod ID
-     * $params['name'] string The Pod name
-     *
-     * @param array $params An associative array of parameters
-     * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
-     * @param bool $delete_all (optional) Whether to delete all content from a WP object
-     *
-     * @uses PodsAPI::load_pod
-     * @uses wp_delete_post
-     * @uses pods_query
-     *
-     * @return bool
-     * @since 1.7.9
-     */
-    public function delete_pod ( $params, $strict = false, $delete_all = false ) {
-        /**
-         * @var $wpdb wpdb
-         */
-        global $wpdb;
-
-        if ( !is_object( $params ) && !is_array( $params ) ) {
-            if ( is_numeric( $params ) )
-                $params = array( 'id' => $params );
-            else
-                $params = array( 'name' => $params );
-
-            $params = (object) pods_sanitize( $params );
-        }
-        else
-            $params = (object) pods_sanitize( $params );
-
-        $params->table_info = false;
-
-        $pod = $this->load_pod( $params, $strict );
 
         if ( empty( $pod ) ) {
-            if ( false !== $strict )
-                return pods_error( __( 'Pod not found', 'pods' ), $this );
+            $pod = $this->load_pod( $params );
+		}
+		elseif ( !is_object( $pod ) && is_array( $pod ) ) {
+			$params = false;
 
-            return false;
-        }
+			if ( isset( $pod[ 'id' ] ) && 0 < $pod[ 'id' ] ) {
+				$params = array(
+					'id' => $pod[ 'id' ]
+				);
+			}
+			elseif ( isset( $pod[ 'name' ] ) ) {
+				$params = array(
+					'name' =>  $pod[ 'name' ]
+				);
+			}
 
-        $params->id = (int) $pod[ 'id' ];
-        $params->name = $pod[ 'name' ];
+			if ( !empty( $params ) ) {
+				$pod = $this->load_pod( $params );
+			}
+			else {
+				$pod = false;
+			}
+		}
+		else {
+			$pod = false;
+		}
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            $field[ 'pod' ] = $pod;
+		if ( empty( $pod ) ) {
+			return pods_error( __( 'Pod not found', 'pods' ), $this );
+		}
 
-            $this->delete_field( $field, false );
-        }
+        return $pod->reset();
 
-        // Only delete the post once the fields are taken care of, it's not required anymore
-        $success = wp_delete_post( $params->id );
-
-        if ( !$success )
-            return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
-
-        // Reset content
-        if ( $delete_all )
-            $this->reset_pod( $params, $pod );
-
-        if ( !pods_tableless() ) {
-            if ( 'table' == $pod[ 'storage' ] ) {
-                try {
-                    pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
-                }
-                catch ( Exception $e ) {
-                    // Allow pod to be deleted if the table doesn't exist
-                    if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
-                        return pods_error( $e->getMessage(), $this );
-                }
-            }
-
-            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
-        }
-
-        // @todo Delete relationships from tableless relationships
-
-        // Delete any relationship references
-        $sql = "
-            DELETE `pm`
-            FROM `{$wpdb->postmeta}` AS `pm`
-            LEFT JOIN `{$wpdb->posts}` AS `p`
-                ON `p`.`post_type` = '_pods_field'
-                    AND `p`.`ID` = `pm`.`post_id`
-            LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
-                ON `pm2`.`meta_key` = 'pick_object'
-                    AND `pm2`.`meta_value` = 'pod'
-                    AND `pm2`.`post_id` = `pm`.`post_id`
-            WHERE
-                `p`.`ID` IS NOT NULL
-                AND `pm2`.`meta_id` IS NOT NULL
-                AND `pm`.`meta_key` = 'pick_val'
-                AND `pm`.`meta_value` = '{$params->name}'
-        ";
-
-        pods_query( $sql );
-
-        $this->cache_flush_pods( $pod );
-
-        return true;
     }
+
+	/**
+	 * Delete a Pod and all its content
+	 *
+	 * $params['id'] int The Pod ID
+	 * $params['name'] string The Pod name
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param bool $strict (deprecated)
+	 * @param bool $delete_all (optional) Whether to delete all content from a WP object
+	 *
+	 * @uses PodsAPI::load_pod
+	 * @uses wp_delete_post
+	 * @uses pods_query
+	 *
+	 * @return bool
+	 * @since 1.7.9
+	 */
+	public function delete_pod( $params, $strict = false, $delete_all = false ) {
+
+		/**
+		 * @var $wpdb wpdb
+		 */
+		global $wpdb;
+
+		$params = (object) $params;
+
+		if ( isset( $params->id ) && 0 < $params->id && isset( $params->name ) ) {
+			unset( $params->name );
+		}
+
+		if ( isset( $params->old_name ) ) {
+			$params->name = $params->old_name;
+		}
+
+		$pod = $this->load_pod( $params, __METHOD__ );
+
+		if ( empty( $pod ) ) {
+			return false;
+		}
+
+		return $pod->delete( $delete_all );
+
+	}
 
     /**
      * Drop a field within a Pod

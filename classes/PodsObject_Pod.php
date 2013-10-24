@@ -414,6 +414,9 @@ class PodsObject_Pod extends PodsObject {
 		if ( empty( $options ) ) {
 			return $this->_object[ 'id' ];
 		}
+		elseif ( !is_array( $options ) && !is_object( $options ) ) {
+			return false;
+		}
 
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
@@ -430,7 +433,7 @@ class PodsObject_Pod extends PodsObject {
 		$pod =& $this;
 		$pod_fields = $pod[ 'fields' ];
 
-		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $pod );
+		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $this );
 
         $old_id = $old_name = $old_storage = null;
 
@@ -1029,7 +1032,7 @@ class PodsObject_Pod extends PodsObject {
 		$id = $pod[ 'id' ];
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_save', $pod[ 'id' ], $pod[ 'name' ], $pod[ 'parent' ], $pod );
+			$this->_action( 'pods_object_save_' . $this->_action_type, $id, $this, $params );
 		}
 
 		return $id;
@@ -1037,15 +1040,15 @@ class PodsObject_Pod extends PodsObject {
 	}
 
     /**
-     * Duplicate a Object, optionally giving an array of option data or set a specific option to a specific value.
-     *
-     * @param array|string $options (optional) Either an associative array of option information or a option name
-     * @param mixed $value (optional) Value of the option, if $data is a option name
+	 * Duplicate a Object, optionally giving an array of option data or set a specific option to a specific value.
+	 *
+	 * @param array|string $options (optional) Either an associative array of option information or a option name
+	 * @param mixed $value (optional) Value of the option, if $data is a option name
 	 * @param bool $replace (optional) Replace the current object
-     *
-     * @return int|bool The new Object ID or false if failed
-     *
-     * @since 2.3.10
+	 *
+	 * @return int|bool The new Object ID or false if failed
+	 *
+	 * @since 2.3.10
 	 */
 	public function duplicate( $options = null, $value = null, $replace = false ) {
 
@@ -1053,28 +1056,82 @@ class PodsObject_Pod extends PodsObject {
 			return false;
 		}
 
-		if ( null !== $value && !is_array( $options ) ) {
+		if ( is_object( $options ) ) {
+			$options = get_object_vars( $options );
+		}
+		elseif ( null !== $value && !is_array( $options ) ) {
 			$options = array(
 				$options => $value
 			);
 		}
-
-		if ( empty( $options ) ) {
-			return $this->_object[ 'id' ];
+		elseif ( empty( $options ) || !is_array( $options ) ) {
+			$options = array();
 		}
 
-		$params = $options;
+		// Must duplicate from the original Pod object
+		if ( isset( $options[ 'id' ] ) && 0 < $options[ 'id' ] ) {
+			return false;
+		}
 
-		$params[ 'id' ] = $this->_object[ 'id' ];
-		$params[ 'name' ] = $this->_object[ 'name' ];
+		$built_in = array(
+			'name' => '',
+			'new_name' => ''
+		);
 
-		// For use later in actions
-		$_object = $this->_object;
+		$custom_options = array_diff( $options, $built_in );
 
-		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $_object );
+		$params = (object) $options;
 
-		// @todo Move API logic into PodsObject
-		$id = pods_api()->duplicate_pod( $params );
+		if ( !isset( $params->strict ) ) {
+			$params->strict = pods_strict();
+		}
+
+		$params->name = $this->_object[ 'name' ];
+
+		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $this );
+
+		$pod = clone $this;
+
+		if ( in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
+			if ( false !== $params->strict ) {
+				return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ) );
+			}
+
+			return false;
+		}
+
+		$pod->override( $custom_options );
+
+		$pod = $pod->export();
+		$pod[ 'object' ] = '';
+
+		unset( $pod[ 'id' ] );
+		unset( $pod[ 'object_fields' ] );
+
+		if ( isset( $params->new_name ) ) {
+			$pod[ 'name' ] = $params->new_name;
+		}
+
+		$try = 2;
+
+		$check_name = $pod[ 'name' ] . $try;
+		$new_label = $pod[ 'label' ] . $try;
+
+		while ( pods_object_pod( $check_name )->is_valid() ) {
+			$try++;
+
+			$check_name = $pod[ 'name' ] . $try;
+			$new_label = $pod[ 'label' ] . $try;
+		}
+
+		$pod[ 'name' ] = $check_name;
+		$pod[ 'label' ] = $new_label;
+
+		foreach ( $pod[ 'fields' ] as $field => $field_data ) {
+			unset( $pod[ 'fields' ][ $field ][ 'id' ] );
+		}
+
+		$id = $this->save( $pod );
 
 		if ( $replace ) {
 			// Replace object
@@ -1082,7 +1139,7 @@ class PodsObject_Pod extends PodsObject {
 		}
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_duplicate', $id, $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
+			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $pod, $params );
 		}
 
 		return $id;
@@ -1091,42 +1148,219 @@ class PodsObject_Pod extends PodsObject {
 
     /**
      * Delete the Object
+	 *
+	 * @param bool $delete_all (optional) Whether to delete all content from a WP object
      *
      * @return bool Whether the Object was successfully deleted
      *
      * @since 2.3.10
      */
-	public function delete() {
+	public function delete( $delete_all = false ) {
+
+		global $wpdb;
 
 		if ( !$this->is_valid() ) {
 			return false;
 		}
 
-		$params = array(
+		$params = (object) array(
 			'id' => $this->_object[ 'id' ],
 			'name' => $this->_object[ 'name' ]
 		);
 
-		// For use later in actions
-		$_object = $this->_object;
-
-		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $_object );
+		$params = apply_filters( 'pods_object_pre_delete_' . $this->_action_type, $params, $this, $delete_all );
 
 		$success = false;
 
-		if ( 0 < $params[ 'id' ] ) {
-			// @todo Move API logic into PodsObject
-			$success = pods_api()->delete_pod( $params );
+		if ( 0 < $params->id ) {
+			$fields = $this->fields();
+
+			/**
+			 * @var $field PodsObject_Field
+			 */
+			foreach ( $fields as $field ) {
+				$field->delete();
+			}
+
+			// Only delete the post once the fields are taken care of, it's not required anymore
+			$success = wp_delete_post( $params->id );
+
+			if ( !$success ) {
+				return pods_error( __( 'Pod unable to be deleted', 'pods' ) );
+			}
+
+			// Reset content
+			if ( $delete_all ) {
+				$this->reset();
+			}
+
+			if ( !pods_tableless() ) {
+				if ( 'table' == $this->_object[ 'storage' ] ) {
+					try {
+						pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
+					}
+					catch ( Exception $e ) {
+						// Allow pod to be deleted if the table doesn't exist
+						if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
+							return pods_error( $e->getMessage() );
+						}
+					}
+				}
+
+				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+			}
+
+			// @todo Delete relationships from tableless relationships
+
+			// Delete any relationship references
+			$sql = "
+				DELETE `pm`
+				FROM `{$wpdb->postmeta}` AS `pm`
+				LEFT JOIN `{$wpdb->posts}` AS `p`
+					ON `p`.`post_type` = '_pods_field'
+						AND `p`.`ID` = `pm`.`post_id`
+				LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
+					ON `pm2`.`meta_key` = 'pick_object'
+						AND `pm2`.`meta_value` = 'pod'
+						AND `pm2`.`post_id` = `pm`.`post_id`
+				WHERE
+					`p`.`ID` IS NOT NULL
+					AND `pm2`.`meta_id` IS NOT NULL
+					AND `pm`.`meta_key` = 'pick_val'
+					AND `pm`.`meta_value` = '{$params->name}'
+			";
+
+			pods_query( $sql );
+
+			pods_api()->cache_flush_pods( $this );
+
+			$success = true;
 		}
 
 		if ( $success ) {
-			$this->_action( 'pods_object_delete', $_object[ 'id' ], $_object[ 'name' ], $_object[ 'parent' ], $_object );
+			$this->_action( 'pods_object_delete_' . $this->_action_type, $params, $this, $delete_all );
+
+			// Can't destroy object, so let's destroy the data and invalidate the object
+			$this->destroy();
 		}
 
-		// Can't destroy object, so let's destroy the data and invalidate the object
-		$this->destroy();
-
 		return $success;
+
+	}
+
+    /**
+     * Delete all content
+     *
+     * @return bool Whether the Content was successfully deleted
+     *
+     * @since 2.4
+     */
+	public function reset() {
+
+		if ( !$this->is_valid() ) {
+			return false;
+		}
+
+		$params = (object) array(
+			'id' => $this->_object[ 'id' ],
+			'name' => $this->_object[ 'name' ]
+		);
+
+		$params = apply_filters( 'pods_object_pre_reset_' . $this->_action_type, $params, $this );
+
+		$table_info = $this->table_info();
+
+        if ( !pods_tableless() ) {
+            if ( 'table' == $this->_object[ 'storage' ] ) {
+                try {
+                    pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
+                }
+                catch ( Exception $e ) {
+                    // Allow pod to be reset if the table doesn't exist
+                    if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
+                        return pods_error( $e->getMessage(), $this );
+                }
+            }
+
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+        }
+
+        // @todo Delete relationships from tableless relationships
+
+        // Delete all posts/revisions from this post type
+        if ( in_array( $this->_object[ 'type' ], array( 'post_type', 'media' ) ) ) {
+            $type = $this->_object[ 'object' ];
+
+			if ( empty( $type ) ) {
+				$type = $this->_object[ 'name' ];
+			}
+
+            $sql = "
+                DELETE `t`, `r`, `m`
+                FROM `{$table_info['table']}` AS `t`
+                LEFT JOIN `{$table_info['meta_table']}` AS `m`
+                    ON `m`.`{$table_info['meta_field_id']}` = `t`.`{$table_info['field_id']}`
+                LEFT JOIN `{$table_info['table']}` AS `r`
+                    ON `r`.`post_parent` = `t`.`{$table_info['field_id']}` AND `r`.`post_status` = 'inherit'
+                WHERE `t`.`{$table_info['field_type']}` = '{$type}'
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all terms from this taxonomy
+        elseif ( 'taxonomy' == $this->_object[ 'type' ] ) {
+            $sql = "
+                DELETE FROM `{$table_info['table']}` AS `t`
+                " . $table_info['join']['tt'] . "
+                WHERE " . implode( ' AND ', $table_info['where'] ) . "
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all users except the current one
+        elseif ( 'user' == $this->_object[ 'type' ] ) {
+            $sql = "
+                DELETE `t`, `m`
+                FROM `{$table_info['table']}` AS `t`
+                LEFT JOIN `{$table_info['meta_table']}` AS `m`
+                    ON `m`.`{$table_info['meta_field_id']}` = `t`.`{$table_info['field_id']}`
+                WHERE `t`.`{$table_info['field_id']}` != " . (int) get_current_user_id() . "
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all comments
+        elseif ( 'comment' == $this->_object[ 'type' ] ) {
+            $type = $this->_object[ 'object' ];
+
+			if ( empty( $type ) ) {
+				$type = $this->_object[ 'name' ];
+			}
+
+			$where = array(
+				"`t`.`{$table_info['field_type']}` = '{$type}'"
+			);
+
+			if ( 'comment' == $type ) {
+				$where[] = "`t`.`{$table_info['field_type']}` = ''";
+			}
+
+            $sql = "
+                DELETE `t`, `m`
+                FROM `{$table_info['table']}` AS `t`
+                LEFT JOIN `{$table_info['meta_table']}` AS `m`
+                    ON `m`.`{$table_info['meta_field_id']}` = `t`.`{$table_info['field_id']}`
+                WHERE " . implode( ' AND ', $where ) . "
+            ";
+
+            pods_query( $sql, false );
+        }
+
+        pods_cache_clear( true ); // only way to reliably clear out cached data across an entire group
+
+		$this->_action( 'pods_object_reset_' . $this->_action_type, $params, $this );
+
+        return true;
 
 	}
 }

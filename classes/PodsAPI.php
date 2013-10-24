@@ -2969,7 +2969,7 @@ class PodsAPI {
 			$params->strict = $strict;
 		}
 
-		$pod = $this->load_pod( $params, $strict );
+		$pod = $this->load_pod( $params, $params->strict );
 
 		if ( empty( $pod ) ) {
 			return false;
@@ -2983,37 +2983,45 @@ class PodsAPI {
 
 	}
 
-    /**
-     * Duplicate a Field
-     *
-     * $params['pod_id'] int The Pod ID
-     * $params['pod'] string The Pod name
-     * $params['id'] int The Field ID
-     * $params['name'] string The Field name
-     * $params['new_name'] string The new Field name
-     *
-     * @param array $params An associative array of parameters
-     * @param bool $strict (optional) Makes sure a field exists, if it doesn't throws an error
-     *
-     * @return int New Field ID
-     * @since 2.3.10
-     */
+	/**
+	 * Duplicate a Field
+	 *
+	 * $params['pod_id'] int The Pod ID
+	 * $params['pod'] string The Pod name
+	 * $params['id'] int The Field ID
+	 * $params['name'] string The Field name
+	 * $params['new_name'] string The new Field name
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param bool $strict (optional) Makes sure a field exists, if it doesn't throws an error
+	 *
+	 * @return int New Field ID
+	 * @since 2.3.10
+	 */
 	public function duplicate_field( $params, $strict = false ) {
 
 		if ( !is_object( $params ) && !is_array( $params ) ) {
 			if ( is_numeric( $params ) ) {
-				$params = array( 'id' => $params );
+				$params = array(
+					'id' => $params
+				);
 			}
 			else {
-				$params = array( 'name' => $params );
+				if ( false !== $strict ) {
+					return pods_error( __( 'Field not found', 'pods' ), $this );
+				}
+
+				return false;
 			}
 		}
 
-		$params = (object) pods_sanitize( $params );
+		$params = (object) $params;
 
-		$params->table_info = false;
+		if ( !isset( $params->strict ) ) {
+			$params->strict = $strict;
+		}
 
-		$field = $this->load_field( $params, $strict );
+		$field = $this->load_field( $params, false );
 
 		if ( empty( $field ) ) {
 			if ( false !== $strict ) {
@@ -3023,28 +3031,11 @@ class PodsAPI {
 			return false;
 		}
 
-		unset( $field[ 'id' ] );
-
-		if ( isset( $params->new_name ) ) {
-			$field[ 'name' ] = $params->new_name;
+		if ( isset( $params->id ) ) {
+			unset( $params->id );
 		}
 
-		$try = 1;
-
-		$check_name = $field[ 'name' ];
-		$new_label = $field[ 'label' ];
-
-		while ( $this->load_field( array( 'pod_id' => $field[ 'pod_id' ], 'name' => $check_name ), false ) ) {
-			$try++;
-
-			$check_name = $field[ 'name' ] . $try;
-			$new_label = $field[ 'label' ] . $try;
-		}
-
-		$field[ 'name' ] = $check_name;
-		$field[ 'label' ] = $new_label;
-
-		return $this->save_field( $field );
+		return $field->duplicate( $params );
 
 	}
 
@@ -3996,20 +3987,20 @@ class PodsAPI {
         return false;
     }
 
-    /**
-     * Load a Pod and all of its fields
-     *
-     * $params['id'] int The Pod ID
-     * $params['name'] string The Pod name
-     * $params['fields'] bool Whether to load fields (default is true)
-     *
-     * @param array|object $params An associative array of parameters or pod name as a string
-     * @param bool|string $strict Makes sure the pod exists, throws an error if it doesn't work
-     *
-     * @return array|bool|mixed|void
-     * @since 1.7.9
-     */
-    public function load_pod ( $params, $strict = true ) {
+	/**
+	 * Load a Pod and all of its fields
+	 *
+	 * $params['id'] int The Pod ID
+	 * $params['name'] string The Pod name
+	 * $params['fields'] bool Whether to load fields (default is true)
+	 *
+	 * @param array|object $params An associative array of parameters or pod name as a string
+	 * @param bool|string $strict Makes sure the pod exists, throws an error if it doesn't work
+	 *
+	 * @return PodsObject_Pod|bool|mixed|void
+	 * @since 1.7.9
+	 */
+	public function load_pod( $params, $strict = true ) {
 
 		// Include dependencies for caching
 		pods_object_pod();
@@ -4074,7 +4065,7 @@ class PodsAPI {
 
 		return $pod;
 
-    }
+	}
 
     /**
      * Load a list of Pods based on filters specified.
@@ -4372,121 +4363,87 @@ class PodsAPI {
         return false;
     }
 
-    /**
-     * Load a field
-     *
-     * $params['pod_id'] int The Pod ID
-     * $params['pod'] string The Pod name
-     * $params['id'] int The field ID
-     * $params['name'] string The field name
-     * $params['table_info'] boolean Whether to lookup a pick field's table info
-     *
-     * @param array $params An associative array of parameters
-     * @param boolean $strict Whether to require a field exist or not when loading the info
-     *
-     * @return array|bool Array with field data, false if field not found
-     * @since 1.7.9
-     */
-    public function load_field ( $params, $strict = false ) {
+	/**
+	 * Load a field
+	 *
+	 * $params['pod_id'] int The Pod ID
+	 * $params['pod'] string The Pod name
+	 * $params['id'] int The field ID
+	 * $params['name'] string The field name
+	 * $params['table_info'] boolean Whether to lookup a pick field's table info
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param boolean $strict Whether to require a field exist or not when loading the info
+	 *
+	 * @return PodsObject_Field|bool Array with field data, false if field not found
+	 * @since 1.7.9
+	 */
+	public function load_field( $params, $strict = false ) {
 
-		// Include dependencies for caching
-		pods_object_field();
+		// Debug override for strict
+		if ( !is_bool( $strict ) ) {
+			$strict = apply_filters( 'pods_strict', false, __FUNCTION__, $strict );
+		}
+		else {
+			$strict = ( !$strict ? pods_strict( true ) : $strict );
+		}
 
-        $params = (object) $params;
+		if ( is_object( $params ) && isset( $params->post_name ) ) {
+			$field = pods_object_field( $params );
+		}
+		else {
+			$params = (object) $params;
 
-        if ( !isset( $params->table_info ) )
-            $params->table_info = false;
+			if ( isset( $params->name ) ) {
+				if ( !isset( $params->pod ) ) {
+					$params->pod = '';
+				}
 
-        $pod = array();
-        $field = array();
+				if ( !isset( $params->pod_id ) ) {
+					$params->pod_id = 0;
+				}
 
-        if ( isset( $params->post_title ) )
-            $_field = $params;
-        elseif ( isset( $params->id ) && !empty( $params->id ) )
-            $_field = get_post( $dumb = (int) $params->id );
-        else {
-            if ( !isset( $params->pod ) )
-                $params->pod = '';
+				if ( isset( $params->pod_data ) ) {
+					$pod = $params->pod_data;
+				}
+				else {
+					$pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ), __METHOD__ );
 
-            if ( !isset( $params->pod_id ) )
-                $params->pod_id = 0;
+					if ( false === $pod ) {
+						if ( $strict ) {
+							return pods_error( __( 'Pod not found', 'pods' ), $this );
+						}
 
-            if ( isset( $params->pod_data ) )
-                $pod = $params->pod_data;
-            else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ), __METHOD__ );
+						return false;
+					}
+				}
 
-                if ( false === $pod ) {
-                    if ( $strict )
-                        return pods_error( __( 'Pod not found', 'pods' ), $this );
+				$params->pod_id = $pod[ 'id' ];
+				$params->pod = $pod[ 'name' ];
 
-                    return false;
-                }
-            }
-
-            $params->pod_id = $pod[ 'id' ];
-            $params->pod = $pod[ 'name' ];
-
-            if ( empty( $params->name ) && empty( $params->pod ) && empty( $params->pod_id ) )
-                return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
-
-            $params->name = pods_clean_name( $params->name, true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
-
-            if ( isset( $pod[ 'fields' ][ $params->name ] ) && isset( $pod[ 'fields' ][ $params->name ][ 'id' ] ) )
-                return $pod[ 'fields' ][ $params->name ];
-
-            $field = false;
-
-            if ( pods_api_cache() )
-                $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
-
-            if ( empty( $field ) ) {
-                $field = get_posts( array(
-                    'name' => $params->name,
-                    'post_type' => '_pods_field',
-                    'posts_per_page' => 1,
-                    'post_parent' => $params->pod_id
-                ) );
-
-                if ( empty( $field ) ) {
-                    if ( $strict )
-                        return pods_error( __( 'Field not found', 'pods' ), $this );
-
-                    return false;
-                }
-
-                $_field = $field[ 0 ];
-
-                $field = array();
-            }
-        }
-
-        if ( empty( $_field ) ) {
-            if ( $strict )
-                return pods_error( __( 'Field not found', 'pods' ), $this );
-
-            return false;
-        }
-
-        if ( !isset( $pod[ 'name' ] ) && 'WP_Post' == get_class( $_field ) ) {
-            if ( 0 < $_field->post_parent ) {
-                $pod = $this->load_pod( array( 'id' => $_field->post_parent ), false );
+				if ( empty( $params->name ) && empty( $params->pod ) && empty( $params->pod_id ) ) {
+					return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
+				}
+			}
+			else {
+				$pod = pods_object_pod( null, $params->pod_id );
 			}
 
-            if ( empty( $pod ) ) {
-                if ( $strict )
-                    return pods_error( __( 'Pod for field not found', 'pods' ), $this );
+			$params->name = pods_clean_name( $params->name, true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
 
-                return false;
-            }
-        }
+			$field = pods_object_field( $params->name, 0, false, $params->pod_id );
+		}
 
-        if ( empty( $field ) ) {
-			$field = pods_object_field( $_field );
-        }
+		if ( empty( $field ) || !$field->is_valid() ) {
+			if ( $strict ) {
+				return pods_error( __( 'Field not found', 'pods' ), $this );
+			}
 
-        return $field;
-    }
+			return false;
+		}
+
+		return $field;
+	}
 
     /**
      * Load fields by Pod, ID, Name, and/or Type

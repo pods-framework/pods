@@ -1100,6 +1100,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		$built_in = array(
+			'id' => '',
 			'name' => '',
 			'new_name' => ''
 		);
@@ -1132,7 +1133,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		$check_name = $object[ 'name' ] . $try;
 		$new_label = $object[ 'label' ] . $try;
 
-		while ( pods_object( $check_name )->is_valid() ) {
+		while ( $this->exists( $check_name ) ) {
 			$try++;
 
 			$check_name = $object[ 'name' ] . $try;

@@ -122,7 +122,6 @@ class PodsObject_Pod extends PodsObject {
 
 			$find_object = get_posts( $find_args );
 
-
 			// Object found
 			if ( !empty( $find_object ) && is_array( $find_object ) ) {
 				$_object = $find_object[ 0 ];
@@ -355,7 +354,7 @@ class PodsObject_Pod extends PodsObject {
 
 		$pod = pods_object_pod( $name, $id, false, $parent );
 
-		if ( !empty( $pod ) ) {
+		if ( !empty( $pod ) && $pod->is_valid() ) {
 			return true;
 		}
 
@@ -1116,6 +1115,7 @@ class PodsObject_Pod extends PodsObject {
 		}
 
 		$built_in = array(
+			'id' => '',
 			'name' => '',
 			'new_name' => ''
 		);
@@ -1158,7 +1158,7 @@ class PodsObject_Pod extends PodsObject {
 		$check_name = $pod[ 'name' ] . $try;
 		$new_label = $pod[ 'label' ] . $try;
 
-		while ( pods_object_pod( $check_name )->is_valid() ) {
+		while ( $this->exists( $check_name ) ) {
 			$try++;
 
 			$check_name = $pod[ 'name' ] . $try;

@@ -15,13 +15,15 @@
  * @since 2.3.10
  */
 function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
-    require_once( PODS_DIR . 'classes/PodsObject.php' );
 
-	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
-    	return new PodsObject( $name, $id, $live, $parent );
+	require_once( PODS_DIR . 'classes/PodsObject.php' );
+
+	if ( false === $name ) {
+		return null;
 	}
 
-	return null;
+	return new PodsObject( $name, $id, $live, $parent );
+
 }
 
 /**
@@ -37,14 +39,16 @@ function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
  * @since 2.3.10
  */
 function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null ) {
-    require_once( PODS_DIR . 'classes/PodsObject.php' );
-    require_once( PODS_DIR . 'classes/PodsObject_Pod.php' );
 
-	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
-    	return new PodsObject_Pod( $name, $id, $live, $parent );
+	require_once( PODS_DIR . 'classes/PodsObject.php' );
+	require_once( PODS_DIR . 'classes/PodsObject_Pod.php' );
+
+	if ( false === $name ) {
+		return null;
 	}
 
-	return null;
+	return new PodsObject_Pod( $name, $id, $live, $parent );
+
 }
 
 /**
@@ -60,14 +64,16 @@ function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null )
  * @since 2.3.10
  */
 function pods_object_field( $name = null, $id = 0, $live = false, $parent = null ) {
-    require_once( PODS_DIR . 'classes/PodsObject.php' );
-    require_once( PODS_DIR . 'classes/PodsObject_Field.php' );
 
-	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
-    	return new PodsObject_Field( $name, $id, $live, $parent );
+	require_once( PODS_DIR . 'classes/PodsObject.php' );
+	require_once( PODS_DIR . 'classes/PodsObject_Field.php' );
+
+	if ( false === $name ) {
+		return null;
 	}
 
-	return null;
+	return new PodsObject_Field( $name, $id, $live, $parent );
+
 }
 
 /**
@@ -83,14 +89,16 @@ function pods_object_field( $name = null, $id = 0, $live = false, $parent = null
  * @since 2.3.10
  */
 function pods_object_group( $name = null, $id = 0, $live = false, $parent = null ) {
-    require_once( PODS_DIR . 'classes/PodsObject.php' );
-    require_once( PODS_DIR . 'classes/PodsObject_Group.php' );
 
-	if ( null !== $name || 0 !== $id || false !== $live || null !== $parent ) {
-    	return new PodsObject_Group( $name, $id, $live, $parent );
+	require_once( PODS_DIR . 'classes/PodsObject.php' );
+	require_once( PODS_DIR . 'classes/PodsObject_Group.php' );
+
+	if ( false === $name ) {
+		return null;
 	}
 
-	return null;
+	return new PodsObject_Group( $name, $id, $live, $parent );
+
 }
 
 /**

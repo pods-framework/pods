@@ -1596,15 +1596,21 @@ class PodsAdmin {
      * Duplicate a pod
      *
      * @param $id
-     * @param $obj
+     * @param PodsUI $obj
      *
      * @return mixed
      */
     public function admin_setup_duplicate ( $obj ) {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
-        if ( 0 < $new_id )
+        if ( 0 < $new_id ) {
             pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
+		}
+		else {
+			pods_message( 'Pod could not be duplicated', 'error' );
+
+			$obj->manage();
+		}
     }
 
 	/**

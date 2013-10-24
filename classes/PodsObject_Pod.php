@@ -59,11 +59,17 @@ class PodsObject_Pod extends PodsObject {
 		// Custom Object
 		$object = false;
 
-		// Allow for refresh of object
-		if ( null === $name && 0 == $id && null === $parent && $this->is_valid() ) {
-			$id = $this->_object[ 'id' ];
+		if ( null === $name && 0 == $id && null === $parent ) {
+			// Allow for refresh of object
+			if ( $this->is_valid() ) {
+				$id = $this->_object[ 'id' ];
 
-			$this->destroy();
+				$this->destroy();
+			}
+			// Empty object
+			else {
+				return false;
+			}
 		}
 
 		// Parent ID passed
@@ -102,11 +108,11 @@ class PodsObject_Pod extends PodsObject {
 			$object = $name;
 		}
 		// Handle code-registered types
-		elseif ( is_object( $pods_init ) && PodsInit::$meta->get_object( null, $name ) ) {
-			return PodsInit::$meta->get_object( null, $name, null, true );
+		elseif ( is_object( $pods_init ) && is_object( PodsInit::$meta ) && $meta_object = PodsInit::$meta->get_object( null, $name, null, true ) ) {
+			$object = get_object_vars( $meta_object );
 		}
 		// Find Object by name
-		elseif ( !is_object( $name ) ) {
+		elseif ( !is_object( $name ) && 0 < strlen( $name ) ) {
 			$find_args = array(
 				'name' => $name,
 				'post_type' => $this->_post_type,
@@ -335,6 +341,29 @@ class PodsObject_Pod extends PodsObject {
 	}
 
 	/**
+	 * Check if the object exists
+	 *
+	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+	 * @param int $id Get the Object by ID (overrides $name)
+	 * @param mixed $parent Parent Object or ID
+	 *
+	 * @return int|bool $id The Object ID or false if Object not found
+	 *
+	 * @since 2.4
+	 */
+	public function exists( $name = null, $id = 0, $parent = null ) {
+
+		$pod = pods_object_pod( $name, $id, false, $parent );
+
+		if ( !empty( $pod ) ) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Return object field array from Pod, a object field's data, or a object field option
 	 *
 	 * @param string|null $field Object Field name
@@ -401,10 +430,6 @@ class PodsObject_Pod extends PodsObject {
 	 */
 	public function save( $options = null, $value = null, $refresh = true ) {
 
-		if ( !$this->is_valid() ) {
-			return false;
-		}
-
 		if ( null !== $value && !is_array( $options ) && !is_object( $options ) ) {
 			$options = array(
 				$options => $value
@@ -412,7 +437,11 @@ class PodsObject_Pod extends PodsObject {
 		}
 
 		if ( empty( $options ) ) {
-			return $this->_object[ 'id' ];
+			if ( $this->is_valid() ) {
+				return $this->_object[ 'id' ];
+			}
+
+			return false;
 		}
 		elseif ( !is_array( $options ) && !is_object( $options ) ) {
 			return false;
@@ -422,7 +451,13 @@ class PodsObject_Pod extends PodsObject {
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
 		$params = (object) $options;
-		$params->id = $this->_object[ 'id' ];
+
+		if ( $this->is_valid() ) {
+			$params->id = $this->_object[ 'id' ];
+		}
+		elseif ( !isset( $params->id ) ) {
+			$params->id = 0;
+		}
 
 		if ( !isset( $params->db ) ) {
 			$params->db = true;
@@ -430,8 +465,7 @@ class PodsObject_Pod extends PodsObject {
 
 		$api = pods_api();
 
-		$pod =& $this;
-		$pod_fields = $pod[ 'fields' ];
+		$pod_fields = $this->fields();
 
 		$params = apply_filters( 'pods_object_pre_save_' . $this->_action_type, $params, $this );
 
@@ -443,35 +477,43 @@ class PodsObject_Pod extends PodsObject {
             $params->name = pods_clean_name( $params->name, true, false );
 		}
 
-        if ( !$this->is_custom() ) {
-            if ( isset( $params->id ) && 0 < $params->id )
+		$old_pod = pods_object_pod( $params->name );
+
+        if ( $old_pod->is_valid() ) {
+			if ( $old_pod->is_custom() ) {
+				return pods_error( sprintf( __( 'Pod %s was registered through code, you cannot modify it.', 'pods' ), $params->name ) );
+			}
+
+            if ( isset( $params->id ) && 0 < $params->id ) {
                 $old_id = $params->id;
+			}
 
-            $params->id = $pod[ 'id' ];
+            $params->id = $old_pod[ 'id' ];
 
-            $old_name = $pod[ 'name' ];
-            $old_storage = $pod[ 'storage' ];
-            $old_options = $pod->export();
-            $old_fields = $old_options[ 'fields' ];
+            $old_name = $old_pod[ 'name' ];
+            $old_storage = $old_pod[ 'storage' ];
+            $old_fields = $old_pod->fields();
 
             if ( !isset( $params->name ) && empty( $params->name ) )
-                $params->name = $pod[ 'name' ];
+                $params->name = $old_pod[ 'name' ];
 
-            if ( $old_name != $params->name && false !== $this->exists( $params->name ) )
-                return pods_error( sprintf( __( 'Pod %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ) );
+			if ( $old_name != $params->name && false !== $this->exists( $params->name ) )
+				return pods_error( sprintf( __( 'Pod %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ) );
 
-            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'user', 'comment', 'media' ) ) && in_array( $pod[ 'object' ], array( 'user', 'comment', 'media' ) ) )
-                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
+			if ( $old_name != $params->name && in_array( $old_pod[ 'type' ], array( 'user', 'comment', 'media' ) ) && in_array( $old_pod[ 'object' ], array( 'user', 'comment', 'media' ) ) )
+				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
 
-            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) && $pod[ 'object' ] == $old_name )
-                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
+			if ( $old_name != $params->name && in_array( $old_pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $old_pod[ 'object' ] ) && $old_pod[ 'object' ] == $old_name )
+				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
 
-            if ( $old_id != $params->id ) {
-                if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'object' ] )
-                    return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ) );
-                else
-                    return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ) );
-            }
+			if ( $old_id != $params->id ) {
+				if ( $params->type == $old_pod[ 'type' ] && isset( $params->object ) && $params->object == $old_pod[ 'object' ] )
+					return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ) );
+				else
+					return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ) );
+			}
+
+			$pod =& $this;
         }
 		elseif ( in_array( $params->name, array( 'order','orderby','post_type' ) ) && 'post_type' == pods_var( 'type', $params ) ) {
 			return pods_error( sprintf( 'There are certain names that a Custom Post Types cannot be named and unfortunately, %s is one of them.', $params->name ) );
@@ -684,9 +726,9 @@ class PodsObject_Pod extends PodsObject {
 			$override = $pod->export( 'data' );
 
 			// @deprecated hook
-			$override = pods_do_hook( 'pods_api_save_pod_default_pod', $override, $params, $pod );
+			$override = apply_filters( 'pods_api_save_pod_default_pod', $override, $params, $pod );
 
-            $override = pods_do_hook( 'pods_object_save_pod_default_pod', $override, $params, $pod );
+            $override = apply_filters( 'pods_object_save_pod_default_pod', $override, $params, $pod );
 
 			$pod->override( $override );
 
@@ -1090,7 +1132,7 @@ class PodsObject_Pod extends PodsObject {
 
 		$params = apply_filters( 'pods_object_pre_duplicate_' . $this->_action_type, $params, $this );
 
-		$pod = clone $this;
+		$pod = $this->export();
 
 		if ( in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
 			if ( false !== $params->strict ) {
@@ -1100,10 +1142,9 @@ class PodsObject_Pod extends PodsObject {
 			return false;
 		}
 
-		$pod->override( $custom_options );
-
-		$pod = $pod->export();
 		$pod[ 'object' ] = '';
+
+		$pod = array_merge( $pod, $custom_options );
 
 		unset( $pod[ 'id' ] );
 		unset( $pod[ 'object_fields' ] );
@@ -1131,15 +1172,17 @@ class PodsObject_Pod extends PodsObject {
 			unset( $pod[ 'fields' ][ $field ][ 'id' ] );
 		}
 
-		$id = $this->save( $pod );
+		$new_pod = pods_object_pod();
 
-		if ( $replace ) {
-			// Replace object
-			$id = $this->load( null, $id );
-		}
+		$id = $new_pod->save( $pod );
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $pod, $params );
+			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $new_pod, $params );
+
+			if ( $replace) {
+				// Replace object
+				$id = $this->load( null, $id );
+			}
 		}
 
 		return $id;

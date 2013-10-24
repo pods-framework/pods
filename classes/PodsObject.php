@@ -183,6 +183,11 @@ class PodsObject implements ArrayAccess, Serializable {
 			$this->destroy();
 		}
 
+		// Empty object
+		if ( null === $name && 0 == $id && null === $parent ) {
+			return false;
+		}
+
 		// Parent ID passed
 		$parent_id = $parent;
 
@@ -219,7 +224,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			$object = $name;
 		}
 		// Find Object by name
-		elseif ( !is_object( $name ) ) {
+		elseif ( !is_object( $name ) && 0 < strlen( $name ) ) {
 			$find_args = array(
 				'name' => $name,
 				'post_type' => $this->_post_type,
@@ -293,7 +298,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function exists( $name = null, $id = 0, $parent = null ) {
 
-		$pod = pods_object_pod( $name, $id, false, $parent );
+		$pod = pods_object( $name, $id, false, $parent );
 
 		if ( !empty( $pod ) ) {
 			return true;
@@ -1141,7 +1146,9 @@ class PodsObject implements ArrayAccess, Serializable {
 			unset( $object[ 'fields' ][ $field ][ 'id' ] );
 		}
 
-		$id = $this->save( $object );
+		$new_object = pods_object();
+
+		$id = $new_object->save( $object );
 
 		if ( $replace ) {
 			// Replace object
@@ -1149,7 +1156,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( 0 < $id ) {
-			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $object, $params );
+			$this->_action( 'pods_object_duplicate_' . $this->_action_type, $id, $this, $new_object, $params );
 		}
 
 		return $id;

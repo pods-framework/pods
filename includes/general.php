@@ -207,6 +207,65 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     echo $debug;
 }
 
+function pods_debug_backtrace() {
+
+	$debug_backtrace = debug_backtrace();
+
+	$backtrace = array();
+
+	$last_file = null;
+
+	foreach ( $debug_backtrace as $debug_backtrace_level ) {
+		if ( !isset( $debug_backtrace_level[ 'file' ] ) ) {
+			$debug_backtrace_level[ 'file' ] = $last_file;
+		}
+
+		$last_file = $debug_backtrace_level[ 'file' ];
+
+		$backtrace_level = array(
+			'file' => str_replace( ABSPATH, '', $debug_backtrace_level[ 'file' ] )
+		);
+
+		if ( isset( $debug_backtrace_level[ 'line' ] ) ) {
+			$backtrace_level[ 'line' ] = $debug_backtrace_level[ 'line' ];
+		}
+
+		if ( isset( $debug_backtrace_level[ 'function' ] ) ) {
+			$backtrace_level[ 'function' ] = $debug_backtrace_level[ 'function' ];
+
+			if ( isset( $debug_backtrace_level[ 'class' ] ) ) {
+				$type = '::';
+
+				if ( isset( $debug_backtrace_level[ 'type' ] ) ) {
+					$type = $debug_backtrace_level[ 'type' ];
+				}
+
+				$backtrace_level[ 'function' ] = $debug_backtrace_level[ 'class' ] . $type . $backtrace_level[ 'function' ];
+			}
+		}
+
+		if ( isset( $debug_backtrace_level[ 'args' ] ) && !empty( $debug_backtrace_level[ 'args' ] ) ) {
+			$backtrace_level[ 'args' ] = array();
+
+			foreach( $debug_backtrace_level[ 'args' ] as $arg ) {
+				if ( is_object( $arg ) ) {
+					$arg = 'CLASS: ' . get_class( $arg );
+				}
+				elseif( is_callable( $arg ) && is_array( $arg ) ) {
+					$arg = 'CALLABLE: ' . get_class( $arg[ 0 ] ) . '::' . $arg[ 1 ];
+				}
+
+				$backtrace_level[ 'args' ][] = $arg;
+			}
+		}
+
+		$backtrace[] = $backtrace_level;
+	}
+
+	pods_debug( $backtrace );
+
+}
+
 /**
  * Determine if user has admin access
  *

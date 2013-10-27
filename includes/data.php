@@ -1152,6 +1152,96 @@ function pods_var_update( $array = null, $allowed = null, $excluded = null, $url
 }
 
 /**
+ * Insert an array of items before a specific key in another array
+ *
+ * @param array $insert_array Array to insert
+ * @param mixed $before_key Key to insert array before
+ * @param array $in_array Array to insert into
+ *
+ * @return array Array with inserted items
+ *
+ * @since 2.4
+ */
+function pods_array_insert_before( $insert_array, $before_key, $in_array ) {
+
+	if ( !is_array( $in_array ) ) {
+		$in_array = array();
+	}
+
+	if ( !is_array( $insert_array ) ) {
+		return $in_array;
+	}
+
+	if ( isset( $in_array[ $before_key ] ) ) {
+		$new_array = array();
+
+		foreach ( $in_array as $key => $value ) {
+			if ( $before_key === $key ) {
+				$new_array = array_merge( $new_array, $insert_array, $in_array );
+
+				return $new_array;
+			}
+
+			$new_array[ $key ] = $value;
+
+			unset( $in_array[ $key ] );
+		}
+
+		return $new_array;
+	}
+
+	$new_array = array_merge( $insert_array, $in_array );
+
+	return $new_array;
+
+}
+
+/**
+ * Insert an array of items after a specific key in another array
+ *
+ * @param array $insert_array Array to insert
+ * @param mixed $after_key Key to insert array after
+ * @param array $in_array Array to insert into
+ *
+ * @return array Array with inserted items
+ *
+ * @since 2.4
+ */
+function pods_array_insert_after( $insert_array, $after_key, $in_array ) {
+
+	if ( !is_array( $in_array ) ) {
+		$in_array = array();
+	}
+
+	if ( !is_array( $insert_array ) ) {
+		return $in_array;
+	}
+
+	if ( isset( $in_array[ $after_key ] ) ) {
+		$new_array = array();
+
+		foreach ( $in_array as $key => $value ) {
+			$new_array[ $key ] = $value;
+
+			unset( $in_array[ $key ] );
+
+			if ( $after_key === $key ) {
+				$new_array = array_merge( $new_array, $insert_array, $in_array );
+
+				return $new_array;
+			}
+		}
+
+		return $new_array;
+	}
+
+	$new_array = array_merge( $in_array, $insert_array );
+
+	return $new_array;
+
+}
+
+/**
  * Cast a value as a specific type
  *
  * @param mixed $value

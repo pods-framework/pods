@@ -600,6 +600,12 @@ class PodsInit {
                 if ( false !== $ct_rewrite )
                     $ct_rewrite = $ct_rewrite_array;
 
+				$meta_box_cb = null;
+
+				if ( 1 == (int) pods_v( 'hide_metabox', $taxonomy, 0 ) ) {
+					$meta_box_cb = false;
+				}
+
                 // Register Taxonomy
                 $pods_taxonomies[ $taxonomy_name ] = array(
                     'label' => $ct_label,
@@ -613,6 +619,7 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
                     'rewrite' => $ct_rewrite,
                     'show_admin_column' => (boolean) pods_var( 'show_admin_column', $taxonomy, false ),
+					'meta_box_cb' => $meta_box_cb,
                     'sort' => (boolean) pods_var( 'sort', $taxonomy, false )
                 );
 

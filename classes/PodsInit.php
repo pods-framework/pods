@@ -334,26 +334,39 @@ class PodsInit {
 
         $post_types = $api->load_pods( array( 'type' => 'post_type' ) );
         $taxonomies = $api->load_pods( array( 'type' => 'taxonomy' ) );
+		$comment_types = array();
+
+		if ( function_exists( 'get_comment_types' ) ) {
+        	$comment_types = $api->load_pods( array( 'type' => 'comment' ) );
+		}
 
 		if ( empty( self::$content_types_registered ) || $force ) {
 			self::$content_types_registered = array(
 				'post_types' => array(),
 				'taxonomies' => array(),
+				'comments' => array()
 			);
 		}
 
         $existing_post_types = get_post_types();
         $existing_taxonomies = get_taxonomies();
+		$existing_comments = array();
+
+		if ( function_exists( 'get_comment_types' ) ) {
+			$existing_comments = get_comment_types();
+		}
 
         $pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
-        $cpt_positions = array();
+        $cpt_positions = $ct_positions = array();
 
         if ( empty( $pods_cpt_ct ) && ( !empty( $post_types ) || !empty( $taxonomies ) ) )
             $force = true;
         elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'post_types' ] ) && !empty( $post_types ) )
             $force = true;
         elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'taxonomies' ] ) && !empty( $taxonomies ) )
+            $force = true;
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'comments' ] ) && !empty( $comments ) )
             $force = true;
 
         if ( false === $pods_cpt_ct || $force ) {
@@ -366,11 +379,12 @@ class PodsInit {
 
             $pods_cpt_ct = array(
                 'post_types' => array(),
-                'taxonomies' => array()
+                'taxonomies' => array(),
+                'comments' => array()
             );
 
-            $pods_post_types = $pods_taxonomies = array();
-            $supported_post_types = $supported_taxonomies = array();
+            $pods_post_types = $pods_taxonomies = $pods_comment_types = array();
+            $supported_post_types = $supported_taxonomies = $supported_comment_post_types = array();
 
             foreach ( $post_types as $post_type ) {
 				// Post Type exists already
@@ -686,6 +700,92 @@ class PodsInit {
                 $pods_cpt_ct[ 'post_types' ][ $post_type ] = $options;
             }
 
+            foreach ( $comment_types as $comment_type ) {
+				// Comment Type exists already
+				if ( isset( $pods_cpt_ct[ 'comment_types' ][ $comment_type[ 'name' ] ] ) ) {
+					continue;
+				}
+				elseif ( !empty( $comment_type[ 'object' ] ) && isset( $existing_comment_types[ $comment_type[ 'object' ] ] ) ) {
+					continue;
+				}
+				elseif ( !$force && isset( $existing_comment_types[ $comment_type[ 'name' ] ] ) ) {
+					continue;
+				}
+
+				$comment_type_name = pods_var( 'name', $comment_type );
+
+                // Labels
+                $ct_label = esc_html( pods_var_raw( 'label', $comment_type, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $comment_type ) ) ), null, true ) );
+                $ct_singular = esc_html( pods_var_raw( 'label_singular', $comment_type, ucwords( str_replace( '_', ' ', pods_var_raw( 'label', $comment_type, $comment_type_name, null, true ) ) ), null, true ) );
+
+                $ct_labels = array();
+                $ct_labels[ 'name' ] = $ct_label;
+                $ct_labels[ 'singular_name' ] = $ct_singular;
+                $ct_labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $comment_type, '', null, true );
+                $ct_labels[ 'add_new' ] = pods_var_raw( 'label_add_new', $comment_type, '', null, true );
+                $ct_labels[ 'add_new_item' ] = pods_var_raw( 'label_add_new_item', $comment_type, '', null, true );
+                $ct_labels[ 'new_item' ] = pods_var_raw( 'label_new_item', $comment_type, '', null, true );
+                $ct_labels[ 'edit' ] = pods_var_raw( 'label_edit', $comment_type, '', null, true );
+                $ct_labels[ 'edit_item' ] = pods_var_raw( 'label_edit_item', $comment_type, '', null, true );
+                $ct_labels[ 'view' ] = pods_var_raw( 'label_view', $comment_type, '', null, true );
+                $ct_labels[ 'view_item' ] = pods_var_raw( 'label_view_item', $comment_type, '', null, true );
+                $ct_labels[ 'all_items' ] = pods_var_raw( 'label_all_items', $comment_type, '', null, true );
+                $ct_labels[ 'search_items' ] = pods_var_raw( 'label_search_items', $comment_type, '', null, true );
+                $ct_labels[ 'not_found' ] = pods_var_raw( 'label_not_found', $comment_type, '', null, true );
+                $ct_labels[ 'not_found_in_trash' ] = pods_var_raw( 'label_not_found_in_trash', $comment_type, '', null, true );
+                $ct_labels[ 'parent' ] = pods_var_raw( 'label_parent', $comment_type, '', null, true );
+                $ct_labels[ 'parent_item_colon' ] = pods_var_raw( 'label_parent_item_colon', $comment_type, '', null, true );
+
+                $capability_type = pods_var( 'capability_type', $comment_type, 'comment' );
+
+                if ( 'custom' == $capability_type )
+                    $capability_type = pods_var( 'capability_type_custom', $comment_type, 'comment' );
+
+                $show_in_menu = (boolean) pods_var( 'show_in_menu', $comment_type, true );
+
+                if ( $show_in_menu && 0 < strlen( pods_var_raw( 'menu_location_custom', $comment_type ) ) )
+                    $show_in_menu = pods_var_raw( 'menu_location_custom', $comment_type );
+
+				$menu_icon = pods_var( 'menu_icon', $comment_type, null, null, true );
+
+				if ( !empty( $menu_icon ) ) {
+					$menu_icon = pods_evaluate_tags( $menu_icon );
+				}
+
+                // Register Comment Type
+                $pods_comment_types[ $comment_type_name ] = array(
+                    'label' => $ct_label,
+                    'labels' => $ct_labels,
+                    'description' => esc_html( pods_var_raw( 'description', $comment_type ) ),
+                    'public' => (boolean) pods_var( 'public', $comment_type, true ),
+                    'publicly_queryable' => (boolean) pods_var( 'publicly_queryable', $comment_type, (boolean) pods_var( 'public', $comment_type, true ) ),
+                    'exclude_from_search' => (boolean) pods_var( 'exclude_from_search', $comment_type, ( (boolean) pods_var( 'public', $comment_type, true ) ? false : true ) ),
+                    'show_ui' => (boolean) pods_var( 'show_ui', $comment_type, (boolean) pods_var( 'public', $comment_type, true ) ),
+                    'show_in_menu' => $show_in_menu,
+                    'menu_position' => (int) pods_var( 'menu_position', $comment_type, 0, null, true ),
+                    'menu_icon' => $menu_icon,
+                    'capability_type' => $capability_type,
+                    //'capabilities' => $ct_capabilities,
+                    'map_meta_cap' => (boolean) pods_var( 'capability_type_extra', $comment_type, true ),
+                    'hierarchical' => (boolean) pods_var( 'hierarchical', $comment_type, false ),
+                    'can_export' => (boolean) pods_var( 'can_export', $comment_type, true )
+                );
+
+                if ( 25 == $pods_comment_types[ $comment_type_name ][ 'menu_position' ] )
+                    $pods_comment_types[ $comment_type_name ][ 'menu_position' ]++;
+
+                if ( $pods_comment_types[ $comment_type_name ][ 'menu_position' ] < 1 || in_array( $pods_comment_types[ $comment_type_name ][ 'menu_position' ], $ct_positions ) )
+                    unset( $pods_comment_types[ $comment_type_name ][ 'menu_position' ] );
+                else {
+                    $ct_positions[] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ];
+
+                    // This would be nice if WP supported floats in menu_position
+                    // $pods_comment_types[ $comment_type_name ][ 'menu_position' ] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ] . '.1';
+                }
+
+				// @todo supported comment post types
+            }
+
             pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
         }
 
@@ -738,6 +838,30 @@ class PodsInit {
             register_post_type( $post_type, $options );
 
             self::$content_types_registered[ 'post_types' ][] = $post_type;
+        }
+
+        foreach ( $pods_cpt_ct[ 'comment_types' ] as $comment_type => $options ) {
+            if ( in_array( $comment_type, self::$content_types_registered[ 'comment_types' ] ) )
+                continue;
+
+            $options = apply_filters( 'pods_register_comment_type_' . $comment_type, $options, $comment_type );
+            $options = apply_filters( 'pods_register_comment_type', $options, $comment_type );
+
+            $options = self::object_label_fix( $options, 'comment_type' );
+
+            // Max length for post types are 20 characters
+            $comment_type = substr( $comment_type, 0, 20 );
+
+            // i18n compatibility for plugins that override it
+            if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
+                $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL slug', 'pods' );
+
+            if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+                pods_debug( array( $comment_type, $options ) );
+
+            register_comment_type( $comment_type, $options );
+
+            self::$content_types_registered[ 'comment_types' ][] = $comment_type;
         }
 
         $flush = pods_transient_get( 'pods_flush_rewrites' );

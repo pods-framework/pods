@@ -276,45 +276,65 @@ class PodsInit {
     }
 
     /**
-     * Register internal Post Types
-     */
-    public function register_pods () {
-        $args = array(
-            'label' => 'Pods',
-            'labels' => array( 'singular_name' => 'Pod' ),
-            'public' => false,
-            'can_export' => false,
-            'query_var' => false,
-            'rewrite' => false,
-            'capability_type' => 'pods_pod',
-            'has_archive' => false,
-            'hierarchical' => false,
-            'supports' => array( 'title', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
-        );
+	 * Register internal Post Types
+	 */
+	public function register_pods() {
 
-        $args = self::object_label_fix( $args, 'post_type' );
+		$args = array(
+			'label' => 'Pods',
+			'labels' => array( 'singular_name' => 'Pod' ),
+			'public' => false,
+			'can_export' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'capability_type' => 'pods_pod',
+			'has_archive' => false,
+			'hierarchical' => false,
+			'supports' => array( 'title', 'author' ),
+			'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+		);
 
-        register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
+		$args = self::object_label_fix( $args, 'post_type' );
 
-        $args = array(
-            'label' => 'Pod Fields',
-            'labels' => array( 'singular_name' => 'Pod Field' ),
-            'public' => false,
-            'can_export' => false,
-            'query_var' => false,
-            'rewrite' => false,
-            'capability_type' => 'pods_pod',
-            'has_archive' => false,
-            'hierarchical' => true,
-            'supports' => array( 'title', 'editor', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
-        );
+		register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
-        $args = self::object_label_fix( $args, 'post_type' );
+		$args = array(
+			'label' => 'Pod Fields',
+			'labels' => array( 'singular_name' => 'Pod Field' ),
+			'public' => false,
+			'can_export' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'capability_type' => 'pods_pod',
+			'has_archive' => false,
+			'hierarchical' => true,
+			'supports' => array( 'title', 'editor', 'author' ),
+			'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+		);
 
-        register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
-    }
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+		$args = array(
+			'label' => 'Field Groups',
+			'labels' => array( 'singular_name' => 'Field Group' ),
+			'public' => false,
+			'can_export' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'capability_type' => 'pods_pod',
+			'has_archive' => false,
+			'hierarchical' => true,
+			'supports' => array( 'title', 'editor', 'author' ),
+			'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+		);
+
+		$args = self::object_label_fix( $args, 'post_type' );
+
+		register_post_type( '_pods_group', apply_filters( 'pods_internal_register_post_type_group', $args ) );
+
+	}
 
     /**
      * Include Admin

@@ -344,7 +344,7 @@ class PodsInit {
 			self::$content_types_registered = array(
 				'post_types' => array(),
 				'taxonomies' => array(),
-				'comments' => array()
+				'comment_types' => array()
 			);
 		}
 
@@ -366,7 +366,7 @@ class PodsInit {
             $force = true;
         elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'taxonomies' ] ) && !empty( $taxonomies ) )
             $force = true;
-        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'comments' ] ) && !empty( $comments ) )
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'comment_types' ] ) && !empty( $comments ) )
             $force = true;
 
         if ( false === $pods_cpt_ct || $force ) {
@@ -380,7 +380,7 @@ class PodsInit {
             $pods_cpt_ct = array(
                 'post_types' => array(),
                 'taxonomies' => array(),
-                'comments' => array()
+                'comment_types' => array()
             );
 
             $pods_post_types = $pods_taxonomies = $pods_comment_types = array();
@@ -675,31 +675,6 @@ class PodsInit {
                     $supported_post_types[ $taxonomy_name ] = $ct_post_types;
             }
 
-            $pods_post_types = apply_filters( 'pods_wp_post_types', $pods_post_types );
-            $pods_taxonomies = apply_filters( 'pods_wp_taxonomies', $pods_taxonomies );
-
-            $supported_post_types = apply_filters( 'pods_wp_supported_post_types', $supported_post_types );
-            $supported_taxonomies = apply_filters( 'pods_wp_supported_taxonomies', $supported_taxonomies );
-
-            foreach ( $pods_taxonomies as $taxonomy => $options ) {
-                $ct_post_types = null;
-
-                if ( isset( $supported_post_types[ $taxonomy ] ) && !empty( $supported_post_types[ $taxonomy ] ) )
-                    $ct_post_types = $supported_post_types[ $taxonomy ];
-
-                $pods_cpt_ct[ 'taxonomies' ][ $taxonomy ] = array(
-                    'post_types' => $ct_post_types,
-                    'options' => $options
-                );
-            }
-
-            foreach ( $pods_post_types as $post_type => $options ) {
-                if ( isset( $supported_taxonomies[ $post_type ] ) && !empty( $supported_taxonomies[ $post_type ] ) )
-                    $options[ 'taxonomies' ] = $supported_taxonomies[ $post_type ];
-
-                $pods_cpt_ct[ 'post_types' ][ $post_type ] = $options;
-            }
-
             foreach ( $comment_types as $comment_type ) {
 				// Comment Type exists already
 				if ( isset( $pods_cpt_ct[ 'comment_types' ][ $comment_type[ 'name' ] ] ) ) {
@@ -786,6 +761,40 @@ class PodsInit {
 				// @todo supported comment post types
             }
 
+            $pods_post_types = apply_filters( 'pods_wp_post_types', $pods_post_types );
+            $pods_taxonomies = apply_filters( 'pods_wp_taxonomies', $pods_taxonomies );
+            $pods_comment_types = apply_filters( 'pods_wp_comment_types', $pods_comment_types );
+
+            $supported_post_types = apply_filters( 'pods_wp_supported_post_types', $supported_post_types );
+            $supported_taxonomies = apply_filters( 'pods_wp_supported_taxonomies', $supported_taxonomies );
+            $supported_comment_post_types = apply_filters( 'pods_wp_supported_comment_post_types', $supported_comment_post_types );
+
+            foreach ( $pods_taxonomies as $taxonomy => $options ) {
+                $ct_post_types = null;
+
+                if ( isset( $supported_post_types[ $taxonomy ] ) && !empty( $supported_post_types[ $taxonomy ] ) )
+                    $ct_post_types = $supported_post_types[ $taxonomy ];
+
+                $pods_cpt_ct[ 'taxonomies' ][ $taxonomy ] = array(
+                    'post_types' => $ct_post_types,
+                    'options' => $options
+                );
+            }
+
+            foreach ( $pods_post_types as $post_type => $options ) {
+                if ( isset( $supported_taxonomies[ $post_type ] ) && !empty( $supported_taxonomies[ $post_type ] ) )
+                    $options[ 'taxonomies' ] = $supported_taxonomies[ $post_type ];
+
+                $pods_cpt_ct[ 'post_types' ][ $post_type ] = $options;
+            }
+
+            foreach ( $pods_comment_types as $comment_type => $options ) {
+                if ( isset( $supported_comment_post_types[ $comment_type ] ) && !empty( $supported_comment_post_types[ $comment_type ] ) )
+                    $options[ 'comment_types' ] = $supported_comment_post_types[ $comment_type ];
+
+                $pods_cpt_ct[ 'comment_types' ][ $comment_type ] = $options;
+            }
+
             pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
         }
 
@@ -840,29 +849,31 @@ class PodsInit {
             self::$content_types_registered[ 'post_types' ][] = $post_type;
         }
 
-        foreach ( $pods_cpt_ct[ 'comment_types' ] as $comment_type => $options ) {
-            if ( in_array( $comment_type, self::$content_types_registered[ 'comment_types' ] ) )
-                continue;
+		if ( function_exists( 'register_comment_type' ) ) {
+			foreach ( $pods_cpt_ct[ 'comment_types' ] as $comment_type => $options ) {
+				if ( in_array( $comment_type, self::$content_types_registered[ 'comment_types' ] ) )
+					continue;
 
-            $options = apply_filters( 'pods_register_comment_type_' . $comment_type, $options, $comment_type );
-            $options = apply_filters( 'pods_register_comment_type', $options, $comment_type );
+				$options = apply_filters( 'pods_register_comment_type_' . $comment_type, $options, $comment_type );
+				$options = apply_filters( 'pods_register_comment_type', $options, $comment_type );
 
-            $options = self::object_label_fix( $options, 'comment_type' );
+				$options = self::object_label_fix( $options, 'comment_type' );
 
-            // Max length for post types are 20 characters
-            $comment_type = substr( $comment_type, 0, 20 );
+				// Max length for post types are 20 characters
+				$comment_type = substr( $comment_type, 0, 20 );
 
-            // i18n compatibility for plugins that override it
-            if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
-                $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL slug', 'pods' );
+				// i18n compatibility for plugins that override it
+				if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
+					$options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL slug', 'pods' );
 
-            if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                pods_debug( array( $comment_type, $options ) );
+				if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+					pods_debug( array( $comment_type, $options ) );
 
-            register_comment_type( $comment_type, $options );
+				register_comment_type( $comment_type, $options );
 
-            self::$content_types_registered[ 'comment_types' ][] = $comment_type;
-        }
+				self::$content_types_registered[ 'comment_types' ][] = $comment_type;
+			}
+		}
 
         $flush = pods_transient_get( 'pods_flush_rewrites' );
 
@@ -988,6 +999,22 @@ class PodsInit {
             $labels[ 'separate_items_with_commas' ] = pods_var_raw( 'separate_items_with_commas', $labels, sprintf( __( 'Separate %s with commas', 'pods' ), $label ), null, true );
             $labels[ 'add_or_remove_items' ] = pods_var_raw( 'add_or_remove_items', $labels, sprintf( __( 'Add or remove %s', 'pods' ), $label ), null, true );
             $labels[ 'choose_from_most_used' ] = pods_var_raw( 'choose_from_most_used', $labels, sprintf( __( 'Choose from the most used %s', 'pods' ), $label ), null, true );
+        }
+        elseif ( 'comment_type' == $type ) {
+            $labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $labels, $label, null, true );
+            $labels[ 'add_new' ] = pods_var_raw( 'add_new', $labels, __( 'Add New', 'pods' ), null, true );
+            $labels[ 'add_new_item' ] = pods_var_raw( 'add_new_item', $labels, sprintf( __( 'Add New %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'new_item' ] = pods_var_raw( 'new_item', $labels, sprintf( __( 'New %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'edit' ] = pods_var_raw( 'edit', $labels, __( 'Edit', 'pods' ), null, true );
+            $labels[ 'edit_item' ] = pods_var_raw( 'edit_item', $labels, sprintf( __( 'Edit %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'view' ] = pods_var_raw( 'view', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'view_item' ] = pods_var_raw( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'all_items' ] = pods_var_raw( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), null, true );
+            $labels[ 'search_items' ] = pods_var_raw( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), null, true );
+            $labels[ 'not_found' ] = pods_var_raw( 'not_found', $labels, sprintf( __( 'No %s Found', 'pods' ), $label ), null, true );
+            $labels[ 'not_found_in_trash' ] = pods_var_raw( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), null, true );
+            $labels[ 'parent' ] = pods_var_raw( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'parent_item_colon' ] = pods_var_raw( 'parent_item_colon', $labels, sprintf( __( 'Parent %s:', 'pods' ), $singular_label ), null, true );
         }
 
         $args[ 'labels' ] = $labels;

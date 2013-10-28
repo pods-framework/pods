@@ -88,9 +88,14 @@
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
+                                                'comment' => __( 'Custom Comment Type (like Comments or Pingbacks)', 'pods' ),
                                                 'settings' => __( 'Custom Settings Page', 'pods' ),
                                                 'pod' => '' // component will fill this in if it's enabled (this exists for placement)
                                             );
+
+											if ( !function_exists( 'register_comment_type' ) ) {
+												unset( $data[ 'comment' ] );
+											}
 
                                             $data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
 
@@ -193,7 +198,7 @@
                                         <?php
                                             if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_storage', false ) ) {
                                         ?>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type">
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type pods-depends-on-create-pod-type-comment">
                                                 <?php
                                                     echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
 
@@ -239,7 +244,7 @@
                                             if ( isset( $all_pods[ 'user' ] ) && 'user' == $all_pods[ 'user' ][ 'type' ] )
                                                 unset( $data[ 'user' ] );
 
-                                            if ( isset( $all_pods[ 'comment' ] ) && 'comment' == $all_pods[ 'comment' ][ 'type' ] )
+                                            if ( !function_exists( 'register_comment_type' ) && isset( $all_pods[ 'comment' ] ) && 'comment' == $all_pods[ 'comment' ][ 'type' ] )
                                                 unset( $data[ 'comment' ] );
 
                                             $data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
@@ -270,7 +275,7 @@
                                             }
 
                                             echo PodsForm::label( 'extend_post_type', __( 'Post Type', 'pods' ), array( __( '<h6>Post Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type.', 'pods' ), 'http://codex.wordpress.org/Post_Types' ) );
-                                            echo PodsForm::field( 'extend_post_type', pods_var_raw( 'extend_post_type', 'post', 'table', null, true ), 'pick', array( 'data' => $post_types ) );
+                                            echo PodsForm::field( 'extend_post_type', pods_var_raw( 'extend_post_type', 'post' ), 'pick', array( 'data' => $post_types ) );
                                         ?>
                                     </div>
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
@@ -296,6 +301,35 @@
                                             echo PodsForm::field( 'extend_taxonomy', pods_var_raw( 'extend_taxonomy', 'post' ), 'pick', array( 'data' => $taxonomies ) );
                                         ?>
                                     </div>
+
+									<?php
+										if ( function_exists( 'get_comment_types' ) ) {
+									?>
+										<div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-comment">
+											<?php
+												$comment_types = get_comment_types();
+
+												foreach ( $comment_types as $comment_type => $label ) {
+													if ( empty( $comment_type ) || 0 === strpos( $comment_type, '_pods_' ) ) {
+														unset( $comment_types[ $comment_type ] );
+														continue;
+													}
+													elseif ( isset( $all_pods[ $comment_type ] ) && 'comment' == $all_pods[ $comment_type ][ 'type' ] ) {
+														unset( $comment_types[ $comment_type ] );
+														continue;
+													}
+
+													$comment_type = get_comment_type_object( $comment_type );
+													$comment_types[ $comment_type->name ] = $comment_type->label;
+												}
+
+												echo PodsForm::label( 'extend_comment_type', __( 'Comment Type', 'pods' ), array( __( '<h6>Comment Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_comments table. These are differentiated by a column called comment_type.', 'pods' ), 'http://codex.wordpress.org/Comment_Types' ) );
+												echo PodsForm::field( 'extend_comment_type', pods_var_raw( 'extend_comment_type', 'post' ), 'pick', array( 'data' => $comment_types ) );
+											?>
+										</div>
+									<?php
+										}
+									?>
 
                                     <?php
                                         if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) ) {

@@ -3119,7 +3119,8 @@ class Pods implements Iterator {
 			'fields' => $params,
 			'label' => '',
 			'action' => '',
-			'search' => ''
+			'search' => '',
+			'placeholder' => ''
 		);
 
 		if ( is_array( $params ) ) {
@@ -3199,6 +3200,8 @@ class Pods implements Iterator {
 		if ( strlen( $search ) < 1 ) {
 			$search = pods_v( $pod->search_var, 'get', '' );
 		}
+		
+		$placeholder = $params[ 'placeholder' ];
 
 		ob_start();
 

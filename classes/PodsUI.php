@@ -79,6 +79,8 @@ class PodsUI {
     ); // used in var_update
 
     static $allowed = array(
+		'action',
+		'id',
         'page',
         'post_type'
     );
@@ -795,10 +797,13 @@ class PodsUI {
     public function setup ( $options ) {
         $options = pods_array( $options );
 
-        $options->validate( 'num', '', 'absint' );
+        $options->validate( 'num', '' );
 
         if ( empty( $options->num ) )
             $options->num = '';
+		elseif ( !is_numeric( $options->num ) && 0 !== strpos( $options->num, '_' ) ) {
+			$options->num = '_' . $options->num;
+		}
 
         $options->validate( 'id', pods_var( 'id' . $options->num, 'get', $this->id ) );
 
@@ -1404,7 +1409,7 @@ class PodsUI {
 			return null;
 		}
         ?>
-    <div class="wrap pods-ui">
+    <div class="wrap<?php echo esc_attr( $this->num ); ?> pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -1439,7 +1444,7 @@ class PodsUI {
 			return null;
 		}
         ?>
-    <div class="wrap pods-ui">
+    <div class="wrap<?php echo esc_attr( $this->num ); ?> pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
@@ -1559,7 +1564,7 @@ class PodsUI {
                 'name' => $name
             );
 
-            if ( !is_array( $field ) ) {
+            if ( !is_array( $field ) && !is_object( $field ) ) {
                 $name = $field;
 
                 $field = array(
@@ -1567,19 +1572,41 @@ class PodsUI {
                 );
             }
 
-            $field = array_merge( $defaults, $field );
+			if ( !is_object( $field ) ) {
+				$field = array_merge( $defaults, $field );
 
-            $field[ 'name' ] = trim( $field[ 'name' ] );
+				$field[ 'name' ] = trim( $field[ 'name' ] );
+			}
 
             $value = pods_var_raw( 'default', $field );
 
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
-            if ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                $field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
-            elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) )
-                $field = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+            if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
+				if ( is_object( $field ) ) {
+					$field = $field->override( $object_fields[ $field[ 'name' ] ] );
+				}
+				elseif ( is_object( $field ) ) {
+					$field->defaults( $object_fields[ $field[ 'name' ] ] );
+				}
+				else {
+                	$field = array_merge( $field, $object_fields[ $field[ 'name' ] ] );
+				}
+			}
+            elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) ) {
+				if ( is_object( $this->pod->fields[ $field[ 'name' ] ] ) ) {
+					$this->pod->fields[ $field[ 'name' ] ]->override( $field );
+
+					$field = $this->pod->fields[ $field[ 'name' ] ];
+				}
+				elseif ( is_object( $field ) ) {
+					$field->defaults( $this->pod->fields[ $field[ 'name' ] ] );
+				}
+				else {
+                	$field = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+				}
+			}
 
             if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                 $field[ 'type' ] = 'hidden';
@@ -1708,7 +1735,7 @@ class PodsUI {
 
 		unset( $view_fields ); // Cleanup
 		?>
-		<div class="wrap pods-ui">
+		<div class="wrap<?php echo esc_attr( $this->num ); ?> pods-ui">
 			<div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
 			<h2>
 				<?php
@@ -2283,7 +2310,7 @@ class PodsUI {
         if ( true === $reorder )
             wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
-    <div class="wrap pods-admin pods-ui">
+    <div class="wrap<?php echo esc_attr( $this->num ); ?> pods-admin pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php

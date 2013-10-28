@@ -3652,6 +3652,10 @@ class Pods implements Iterator {
 		if ( !empty( $options ) && !$amend ) {
 			$this->ui = $options;
 
+			if ( pods_is_admin() && 1 == pods_v( 'pods_debug_ui' ) ) {
+				pods_debug( $options );
+			}
+
 			return pods_ui( $this );
 		}
 		elseif ( !empty( $options ) || 'custom' != $this->pod_data[ 'ui_style' ] ) {
@@ -3861,6 +3865,10 @@ class Pods implements Iterator {
 			}
 
 			$this->ui = $ui;
+
+			if ( pods_is_admin() && 1 == pods_v( 'pods_debug_ui' ) ) {
+				pods_debug( $ui );
+			}
 
 			return pods_ui( $this );
 		}

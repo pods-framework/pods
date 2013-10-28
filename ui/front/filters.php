@@ -15,7 +15,7 @@
             }
         ?>
 
-        <input type="text" class="pods-form-filters-search" name="<?php echo esc_attr( $pod->search_var ); ?>" value="<?php echo esc_attr( $search ); ?>" />
+        <input type="text" class="pods-form-filters-search" name="<?php echo esc_attr( $pod->search_var ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" value="<?php echo esc_attr( $search ); ?>" />
 
         <input type="submit" class="pods-form-filters-submit" value="<?php echo esc_attr( $label ); ?>" />
     </form>

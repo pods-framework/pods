@@ -120,10 +120,8 @@ class PodsObject_Pod extends PodsObject {
 				'post_parent' => $parent_id
 			);
 
-			$find_object = get_posts( $find_args );
-
 			// Object found
-			if ( !empty( $find_object ) && is_array( $find_object ) ) {
+			if ( 0 !== strpos( $name, '_pods_' ) && $find_object = get_posts( $find_args ) && !empty( $find_object ) && is_array( $find_object ) ) {
 				$_object = $find_object[ 0 ];
 
 				if ( 'WP_Post' == get_class( $_object ) ) {

@@ -150,16 +150,21 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * sk_SK (Slovak) - Branco Radenovich ([WebHostingGeeks.com](http://webhostinggeeks.com/blog/))
 * nl_NL (Dutch) - [Ramon van Belzen](http://www.ramoonus.nl/)
 * pt_BR (Portuguese) - [Luciana](https://github.com/yammye)
-* And more in progress! Join us in further translating the Pods interface at: http://translate.rocksta.rs/projects/pods-framework
+* And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
 
-= 2.3.12 - October 15th, 2013 =
+= 2.3.14 - October 29th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
-* Improved: Meta object caching now improved
-* Fixed: Some users experienced an issue with a reference error
+* Fixed: Some users experienced and issue with user registration when there were required fields
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.13 - N/A =
+
+= 2.3.12 - October 15th, 2013 =
+* Improved: Meta object caching improved
+* Fixed: Some users experienced an issue with a reference error
 
 = 2.3.11 - October 12th, 2013 =
 * Fixed: User / Post field value saving with better nonce handling

@@ -1671,7 +1671,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            //array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
             array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
         );
     }

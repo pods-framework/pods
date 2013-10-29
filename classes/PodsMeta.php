@@ -207,7 +207,7 @@ class PodsMeta {
             // Handle User Editor
             add_action( 'show_user_profile', array( $this, 'meta_user' ) );
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-            add_action( 'user_register', array( $this, 'save_user' ) );
+            //add_action( 'user_register', array( $this, 'save_user' ) );
             add_action( 'profile_update', array( $this, 'save_user' ) );
 
             if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
@@ -670,7 +670,7 @@ class PodsMeta {
             if ( !has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
                 add_action( 'show_user_profile', array( $this, 'meta_user' ) );
                 add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-                add_action( 'user_register', array( $this, 'save_user' ) );
+                //add_action( 'user_register', array( $this, 'save_user' ) );
                 add_action( 'profile_update', array( $this, 'save_user' ) );
             }
         }
@@ -1535,7 +1535,7 @@ class PodsMeta {
 		if ( empty( $_POST ) ) {
 			return $user_id;
 		}
-		elseif ( !$is_new_item && !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
+		elseif ( !$is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
 			return $user_id;
 		}
 

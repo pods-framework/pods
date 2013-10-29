@@ -13,6 +13,8 @@
         'dMy_dash' => 'dd-M-yy',
         'fjy' => 'MM d, yy',
         'fjsy' => 'MM d, yy',
+        'Dfjy' => 'DD MM d, yy',
+        'lfjsy' => 'D MM d, yy',
         'y' => 'yy'
     );
 

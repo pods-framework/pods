@@ -76,6 +76,8 @@ class PodsField_Date extends PodsField {
                     'ymd_dot' => date_i18n( 'Y.m.d' ),
                     'fjy' => date_i18n( 'F j, Y' ),
                     'fjsy' => date_i18n( 'F jS, Y' ),
+					'Dfjy' => date_i18n( 'D F j, Y' ),
+					'lfjsy' => date_i18n( 'l F jS, Y' ),
                     'y' => date_i18n( 'Y' )
                 )
             ),
@@ -272,6 +274,8 @@ class PodsField_Date extends PodsField {
             'dMy_dash' => 'd-M-Y',
             'fjy' => 'F j, Y',
             'fjsy' => 'F jS, Y',
+            'Dfjy' => 'D F j, Y',
+            'lfjsy' => 'l F jS, Y',
             'y' => 'Y'
         );
 

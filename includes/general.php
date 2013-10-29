@@ -1024,66 +1024,73 @@ function pods_redirect ( $location, $status = 302 ) {
  *
  * @since 2.0.5
  */
-function pods_permission ( $options ) {
-    global $current_user;
+function pods_permission( $options ) {
 
-    get_currentuserinfo();
+	global $current_user;
 
-    $permission = false;
+	get_currentuserinfo();
 
-    if ( isset( $options[ 'options' ] ) )
-        $options = $options[ 'options' ];
+	$permission = false;
 
-    if ( pods_is_admin() )
-        $permission = true;
-    elseif ( 0 == pods_var( 'restrict_role', $options, 0 ) && 0 == pods_var( 'restrict_capability', $options, 0 ) && 0 == pods_var( 'admin_only', $options, 0 ) )
-        $permission = true;
+	if ( isset( $options[ 'options' ] ) ) {
+		$options = $options[ 'options' ];
+	}
 
-    if ( !$permission && 1 == pods_var( 'restrict_role', $options, 0 ) ) {
-        $roles = pods_var( 'roles_allowed', $options );
-        $roles = array_unique( array_filter( $roles ) );
+	if ( pods_is_admin() ) {
+		$permission = true;
+	}
+	elseif ( 0 == pods_var( 'restrict_role', $options, 0 ) && 0 == pods_var( 'restrict_capability', $options, 0 ) && 0 == pods_var( 'admin_only', $options, 0 ) ) {
+		$permission = true;
+	}
 
+	if ( is_user_logged_in() ) {
+		if ( !$permission && 1 == pods_var( 'restrict_role', $options, 0 ) ) {
+			$roles = pods_var( 'roles_allowed', $options );
+			$roles = array_unique( array_filter( $roles ) );
 
-        foreach( $roles as $role ) {
-            if ( is_user_logged_in() && in_array( $role, $current_user->roles ) ) {
-                $permission = true;
+			foreach ( $roles as $role ) {
+				if ( in_array( $role, $current_user->roles ) ) {
+					$permission = true;
 
-                break;
-            }
-        }
-    }
+					break;
+				}
+			}
+		}
 
-    if ( !$permission && 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
-        $capabilities = pods_var( 'capability_allowed', $options );
+		if ( !$permission && 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
+			$capabilities = pods_var( 'capability_allowed', $options );
 
-        if ( !is_array( $capabilities ) )
-            $capabilities = explode( ',', $capabilities );
+			if ( !is_array( $capabilities ) ) {
+				$capabilities = explode( ',', $capabilities );
+			}
 
-        $capabilities = array_unique( array_filter( $capabilities ) );
+			$capabilities = array_unique( array_filter( $capabilities ) );
 
-        foreach( $capabilities as $capability ) {
-            $must_have_capabilities = explode( '&&', $capability );
-            $must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
+			foreach ( $capabilities as $capability ) {
+				$must_have_capabilities = explode( '&&', $capability );
+				$must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
 
-            $must_have_permission = true;
+				$must_have_permission = true;
 
-            foreach ( $must_have_capabilities as $must_have_capability ) {
-                if ( !current_user_can( $must_have_capability ) ) {
-                    $must_have_permission = false;
+				foreach ( $must_have_capabilities as $must_have_capability ) {
+					if ( !current_user_can( $must_have_capability ) ) {
+						$must_have_permission = false;
 
-                    break;
-                }
-            }
+						break;
+					}
+				}
 
-            if ( $must_have_permission && is_user_logged_in() ) {
-                $permission = true;
+				if ( $must_have_permission ) {
+					$permission = true;
 
-                break;
-            }
-        }
-    }
+					break;
+				}
+			}
+		}
+	}
 
-    return $permission;
+	return $permission;
+
 }
 
 /**
@@ -1095,16 +1102,20 @@ function pods_permission ( $options ) {
  *
  * @since 2.3.4
  */
-function pods_has_permissions ( $options ) {
-    $permission = false;
+function pods_has_permissions( $options ) {
 
-    if ( isset( $options[ 'options' ] ) )
-        $options = $options[ 'options' ];
+	$permission = false;
 
-    if ( 1 == pods_var( 'restrict_role', $options, 0 ) || 1 == pods_var( 'restrict_capability', $options, 0 ) || 1 == pods_var( 'admin_only', $options, 0 ) )
-        return true;
+	if ( isset( $options[ 'options' ] ) ) {
+		$options = $options[ 'options' ];
+	}
 
-    return false;
+	if ( 1 == pods_var( 'restrict_role', $options, 0 ) || 1 == pods_var( 'restrict_capability', $options, 0 ) || 1 == pods_var( 'admin_only', $options, 0 ) ) {
+		return true;
+	}
+
+	return false;
+
 }
 
 /**

@@ -462,6 +462,14 @@ class PodsForm {
                 $attributes[ 'class' ] = $classes;
         }
 
+        if ( isset( $options[ 'placeholder' ] ) && !empty( $options[ 'placeholder' ] ) ) {
+            if ( is_array( $options[ 'placeholder' ] ) )
+                $options[ 'placeholder' ] = implode( ' ', $options[ 'placeholder' ] );
+
+            $options[ 'placeholder' ] = (string) $options[ 'placeholder' ];
+			$attributes[ 'placeholder' ] = trim( $options[ 'placeholder' ] );
+        }
+
         if ( 1 == pods_var( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
 

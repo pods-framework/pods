@@ -1233,6 +1233,30 @@ class PodsObject_Pod extends PodsObject {
 					'type' => 'text',
 					'default' => ''
 				),
+				'placeholder' => array(
+					'name' => 'placeholder',
+					'label' => __( 'Placeholder text', 'pods' ),
+					'help' => __( 'Placeholders are used by HTML5 compliant browsers to display text in empty fields in ways that help describe what kind of value a field might contain, or for describing the field itself.', 'pods' ),
+					'type' => 'text',
+					'default' => '',
+					'depends-on' => array(
+						'type' => array(
+							'color',
+							'currency',
+							'date',
+							'datetime',
+							'email',
+							'number',
+							'paragraph',
+							'password',
+							'phone',
+							'slug',
+							'text',
+							'time',
+							'website'
+						)
+					)
+				),
 				'input_helper' => array(
 					'name' => 'input_helper',
 					'label' => __( 'Input Helper', 'pods' ),

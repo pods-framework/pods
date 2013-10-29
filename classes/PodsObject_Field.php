@@ -182,6 +182,7 @@ class PodsObject_Field extends PodsObject {
 			$tableless_meta = array(
 				'pick_object',
 				'pick_val',
+				'pick_simple',
 				'sister_id'
 			);
 

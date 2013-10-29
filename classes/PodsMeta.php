@@ -1415,9 +1415,6 @@ class PodsMeta {
 
         $groups = $this->groups_get( 'user', 'user' );
 
-        if ( is_object( $user_id ) )
-            $user_id = $user_id->ID;
-
         $id = $user_id;
         $pod = null;
 

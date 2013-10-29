@@ -789,7 +789,7 @@ class Pods implements Iterator {
 		}
 
 		// Simple fields have no other output options
-		if ( 'pick' == $field_data[ 'type' ] && in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) ) {
+		if ( 'pick' == $field_data[ 'type' ] && ( in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) || 1 == $field_data[ 'pick_simple' ] ) ) {
 			$params->output = 'arrays';
 		}
 
@@ -805,7 +805,7 @@ class Pods implements Iterator {
 				$value = $this->row[ $params->name ];
 			}
 
-			if ( false !== $value && !is_array( $value ) && 'pick' == $field_data[ 'type' ] && in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) ) {
+			if ( false !== $value && !is_array( $value ) && 'pick' == $field_data[ 'type' ] && ( in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) || 1 == $field_data[ 'pick_simple' ] ) ) {
 				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
 			}
 		}
@@ -969,7 +969,7 @@ class Pods implements Iterator {
 					if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
 						$params->raw = true;
 
-						if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) ) {
+						if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && ( in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) || 1 == $this->fields[ $params->name ][ 'pick_simple' ] ) ) {
 							$simple = true;
 							$params->single = true;
 						}
@@ -1106,7 +1106,7 @@ class Pods implements Iterator {
 						$simple = false;
 						$last_options = array();
 
-						if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && in_array( $all_fields[ $pod ][ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
+						if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && ( in_array( $all_fields[ $pod ][ $field ][ 'pick_object' ], $simple_tableless_objects ) || 1 == $all_fields[ $pod ][ $field ][ 'pick_simple' ] ) ) {
 							$simple = true;
 							$last_options = $all_fields[ $pod ][ $field ];
 						}
@@ -1638,7 +1638,7 @@ class Pods implements Iterator {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) ) {
@@ -1723,7 +1723,7 @@ class Pods implements Iterator {
 
 			$current_value = array();
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) ) {
@@ -2152,7 +2152,7 @@ class Pods implements Iterator {
 					}
 
 					if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
-						if ( in_array( $this->fields[ $k ][ 'pick_object' ], $simple_tableless_objects ) ) {
+						if ( in_array( $this->fields[ $k ][ 'pick_object' ], $simple_tableless_objects ) || 1 == $this->fields[ $k ][ 'pick_simple' ] ) {
 							if ( 'table' == $this->pod_data[ 'storage' ] ) {
 								if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
 									$key = "`d`.`{$k}`";
@@ -2538,7 +2538,7 @@ class Pods implements Iterator {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) || ( !is_array( $current_value ) && 0 < strlen( $current_value ) ) ) {
@@ -2663,7 +2663,7 @@ class Pods implements Iterator {
 					$value = explode( ',', $value );
 				}
 
-				if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+				if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 					$current_value = $pod->raw( $field );
 
 					if ( !empty( $current_value ) ) {
@@ -3200,7 +3200,7 @@ class Pods implements Iterator {
 		if ( strlen( $search ) < 1 ) {
 			$search = pods_v( $pod->search_var, 'get', '' );
 		}
-		
+
 		$placeholder = $params[ 'placeholder' ];
 
 		ob_start();

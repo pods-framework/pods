@@ -344,7 +344,7 @@ class PodsField_WYSIWYG extends PodsField {
 
         if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
 			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
-			$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+			$allowed_tags = trim( str_replace( array( '<', '>', ',', '/' ), ' ', $allowed_tags ) );
             $allowed_tags = explode( ' ', $allowed_tags );
 			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 

@@ -203,7 +203,31 @@ class PodsField_Pick extends PodsField {
                 'pick_object' => 'site',
                 'pick_format_type' => 'multi'
             ),*/
-            'pick_where' => array(
+            'pick_select' => array(
+                'label' => __( 'Customized <em>SELECT</em>', 'pods' ),
+                'help' => __( 'The default is to select the ID and the Title/Index field of the related object. This will *ammend* that select.', 'pods' ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+                ),
+                'default' => '',
+                'type' => 'text'
+            ),
+            'pick_join' => array(
+                'label' => __( 'Customized <em>JOIN</em>', 'pods' ),
+                'help' => __( 'Sometimes you need to be able to join data from other tables to reference in a WHERE, this is where you will do that.', 'pods' ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+                ),
+                'default' => '',
+                'type' => 'text'
+            ),
+			'pick_where' => array(
                 'label' => __( 'Customized <em>WHERE</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
                 'excludes-on' => array(
@@ -1314,8 +1338,9 @@ class PodsField_Pick extends PodsField {
                 }
 
                 $params = array(
-                    'select' => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
+					'select' => pods_var_raw( 'pick_join', $options, "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`", null, true ),
                     'table' => $search_data->table,
+					'join' => pods_var_raw( 'pick_join', $options, null, null, true ),
                     'where' => pods_var_raw( 'pick_where', $options, (array) $options[ 'table_info' ][ 'where_default' ], null, true ),
                     'orderby' => pods_var_raw( 'pick_orderby', $options, null, null, true ),
                     'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true ),

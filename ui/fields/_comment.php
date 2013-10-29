@@ -1,3 +1,10 @@
 <p<?php PodsForm::attributes( $attributes, $name, $type, $options ); ?>>
-    <?php echo $message; ?>
+	<?php
+		if ( apply_filters( 'pods_form_ui_comment_allow_html', true, $options ) ) {
+			echo $message;
+		}
+		else {
+			echo esc_html( $message );
+		}
+	?>
 </p>

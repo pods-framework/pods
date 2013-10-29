@@ -1,6 +1,11 @@
 <label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
 	<?php
-		echo $label;
+		if ( apply_filters( 'pods_form_ui_label_allow_html', true, $options ) ) {
+			echo $label;
+		}
+		else {
+			echo esc_html( $label );
+		}
 
 		if ( 1 == pods_var( 'required', $options, pods_var( 'options', $options, $options ) ) ) {
 			echo ' <abbr title="required" class="required">*</abbr>';

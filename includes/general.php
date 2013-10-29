@@ -950,8 +950,11 @@ function pods_permission ( $options ) {
 
     if ( !$permission && 1 == pods_var( 'restrict_role', $options, 0 ) ) {
         $roles = pods_var( 'roles_allowed', $options );
-        $roles = array_unique( array_filter( $roles ) );
 
+        if ( !is_array( $roles ) )
+            $roles = explode( ',', $roles );
+
+        $roles = array_unique( array_filter( $roles ) );
 
         foreach( $roles as $role ) {
             if ( is_user_logged_in() && in_array( $role, $current_user->roles ) ) {

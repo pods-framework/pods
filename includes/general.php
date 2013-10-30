@@ -600,7 +600,8 @@ function pods_shortcode ( $tags, $content = null ) {
         'thank_you' => null,
         'view' => null,
         'cache_mode' => 'none',
-        'expires' => 0
+        'expires' => 0,
+		'shortcodes' => false
     );
 
     if ( !empty( $tags ) )
@@ -613,8 +614,15 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $content ) )
         $content = null;
 
-    if ( 0 < strlen( $tags[ 'view' ] ) )
-        return pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+    if ( 0 < strlen( $tags[ 'view' ] ) ) {
+        $return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
 
     if ( empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
@@ -711,11 +719,15 @@ function pods_shortcode ( $tags, $content = null ) {
     }
     elseif ( !empty( $tags[ 'field' ] ) ) {
         if ( empty( $tags[ 'helper' ] ) )
-            $val = $pod->display( $tags[ 'field' ] );
+            $return = $pod->display( $tags[ 'field' ] );
         else
-            $val = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
+            $return = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
-        return $val;
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
     }
     elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
         $pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
@@ -723,7 +735,13 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( empty( $pods_page ) )
             return '<p>Pods Page not found</p>';
 
-        return Pods_Pages::content( true, $pods_page );
+        $return = Pods_Pages::content( true, $pods_page );
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
     }
 
     ob_start();
@@ -742,7 +760,13 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
-    return ob_get_clean();
+	$return = ob_get_clean();
+
+	if ( $tags[ 'shortcodes' ] ) {
+		$return = do_shortcode( $return );
+	}
+
+	return $return;
 }
 
 /**

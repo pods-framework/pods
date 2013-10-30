@@ -714,6 +714,7 @@ class PodsData {
 
         $defaults = array(
             'select' => '*',
+			'calc_rows' => false,
             'distinct' => true,
             'table' => null,
             'join' => null,
@@ -1265,6 +1266,7 @@ class PodsData {
         if ( null === $params->sql ) {
             $sql = "
                 SELECT
+                " . ( $params->calc_rows ? 'SQL_CALC_FOUND_ROWS' : '' ) . "
                 " . ( $params->distinct ? 'DISTINCT' : '' ) . "
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
@@ -1275,15 +1277,18 @@ class PodsData {
                 " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
                 " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . "
             ";
-            $this->total_sql = "
-                SELECT
-                COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
-                FROM {$params->table} AS `t`
-                " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
-                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "
-                " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
-                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
-            ";
+
+			if ( !$params->calc_rows ) {
+				$this->total_sql = "
+					SELECT
+					COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
+					FROM {$params->table} AS `t`
+					" . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
+					" . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "
+					" . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
+					" . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
+				";
+			}
         }
         // Rewrite
         else {
@@ -1719,6 +1724,8 @@ class PodsData {
             $current_row_id = false;
             $get_table_data = false;
 
+			$old_row = $this->row;
+
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
@@ -1882,6 +1889,10 @@ class PodsData {
                     $this->row = get_object_vars( (object) @current( $current_row ) );
                 }
             }
+
+			if ( is_array( $this->row ) && !empty( $this->row ) && !empty( $old_row ) ) {
+				$this->row = array_merge( $old_row, $this->row );
+			}
 
             if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
                 $params = array(

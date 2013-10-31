@@ -1357,6 +1357,11 @@ class PodsMeta {
             return $term_id;
 		}
 
+		// Block Quick Edits / Bulk Edits
+		if ( 'inline-save-tax' == pods_var( 'action', 'post' ) || null != pods_var( 'delete_tags', 'post' ) ) {
+            return $term_id;
+		}
+
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
         if ( empty( $groups ) )

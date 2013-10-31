@@ -1535,7 +1535,7 @@ class PodsMeta {
 		if ( empty( $_POST ) ) {
 			return $user_id;
 		}
-		elseif ( !$is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
+		elseif ( $is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
 			return $user_id;
 		}
 

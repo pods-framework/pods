@@ -704,6 +704,7 @@ class Pods implements Iterator {
 		}
 
 		$params->name = trim( $params->name );
+		$params->full_name = $params->name;
 
 		$value = null;
 
@@ -1145,7 +1146,12 @@ class Pods implements Iterator {
 
 							// Get related IDs
 							if (isset($all_fields[ $pod ][ $field ][ 'id' ]) && isset($all_fields[ $pod ][ $field ][ 'pod_id' ])) {
-								$ids = $this->api->lookup_related_items( $all_fields[ $pod ][ $field ][ 'id' ], $all_fields[ $pod ][ $field ][ 'pod_id' ], $ids, $all_fields[ $pod ][ $field ] );
+								$ids = $this->api->lookup_related_items(
+									$all_fields[ $pod ][ $field ][ 'id' ],
+									$all_fields[ $pod ][ $field ][ 'pod_id' ],
+									$ids,
+									$all_fields[ $pod ][ $field ]
+								);
 							}
 
 							// No items found
@@ -1544,10 +1550,10 @@ class Pods implements Iterator {
 			$this->row[ $field_names ] = $value;
 		}
 		elseif ( 'arrays' != $params->output && in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
-			$this->row[ '_' . $params->output . '_' . $params->name ] = $value;
+			$this->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
 		}
 		elseif ( 'arrays' == $params->output || !in_array( $field_data[ 'type' ], $tableless_field_types ) ) {
-			$this->row[ $params->name ] = $value;
+			$this->row[ $params->full_name ] = $value;
 		}
 
 		if ( $params->single && is_array( $value ) && 1 == count( $value ) ) {
@@ -1843,7 +1849,7 @@ class Pods implements Iterator {
 	public function prev_id( $id = null, $params_override = null ) {
 
 		if ( null === $id ) {
-			$id = $this->field( 'id' );
+			$id = $this->id();
 		}
 
 		$id = (int) $id;
@@ -1863,17 +1869,48 @@ class Pods implements Iterator {
 				$params = $this->params;
 			}
 
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
+			}
+
 			if ( 0 < $id ) {
-				$params[ 'where' ] = "`t`.`{$this->data->field_id}` < {$id}";
+				if ( isset( $params[ 'where' ] ) && !empty( $params[ 'where' ] ) ) {
+					$params[ 'where' ] = (array) $params[ 'where' ];
+                	$params[ 'where' ][] = "`t`.`{$this->data->field_id}` < {$id}";
+				}
+				else {
+					$params[ 'where' ] = "`t`.`{$this->data->field_id}` < {$id}";
+				}
 			}
-			elseif ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] ) {
+			elseif ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] )
 				$params[ 'offset' ] -= 1;
-			}
-			elseif ( !isset( $params[ 'offset' ] ) && !empty( $this->params ) && 0 < $this->row ) {
-				$params[ 'offset' ] = $this->row - 1;
-			}
-			else {
+			elseif ( !isset( $params[ 'offset' ] ) && !empty( $this->params ) && 0 < $this->row_number )
+				$params[ 'offset' ] = $this->row_number - 1;
+			else
 				return 0;
+
+			if ( isset( $params[ 'orderby' ] ) && !empty( $params[ 'orderby' ] ) ) {
+				if ( is_array( $params[ 'orderby' ] ) ) {
+					foreach ( $params[ 'orderby' ] as $orderby => $dir ) {
+						$dir = strtoupper( $dir );
+
+						if ( !in_array( $dir, array( 'ASC', 'DESC' ) ) ) {
+							continue;
+						}
+
+						if ( 'ASC' == $dir ) {
+							$params[ 'orderby' ][ $orderby ] = 'DESC';
+						}
+						else {
+							$params[ 'orderby' ][ $orderby ] = 'ASC';
+						}
+					}
+
+					$params[ 'orderby' ][ $this->data->field_id ] = 'DESC';
+				}
+				elseif ( "`t`.`{$this->data->field_id}` DESC" != $params[ 'orderby' ] ) {
+					$params[ 'orderby' ] .= ", `t`.`{$this->data->field_id}` DESC";
+				}
 			}
 
 			$params[ 'select' ] = "`t`.`{$this->data->field_id}`";
@@ -1905,7 +1942,7 @@ class Pods implements Iterator {
 	public function next_id( $id = null, $params_override = null ) {
 
 		if ( null === $id ) {
-			$id = $this->field( 'id' );
+			$id = $this->id();
 		}
 
 		$id = (int) $id;
@@ -1925,20 +1962,27 @@ class Pods implements Iterator {
 				$params = $this->params;
 			}
 
-			if ( 0 < $id ) {
-				$params[ 'where' ] = "{$id} < `t`.`{$this->data->field_id}`";
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
 			}
-			elseif ( !isset( $params[ 'offset' ] ) ) {
-				if ( !empty( $this->params ) && -1 < $this->row ) {
-					$params[ 'offset' ] = $this->row + 1;
+
+			if ( 0 < $id ) {
+				if ( isset( $params[ 'where' ] ) && !empty( $params[ 'where' ] ) ) {
+					$params[ 'where' ] = (array) $params[ 'where' ];
+					$params[ 'where' ][] = "{$id} < `t`.`{$this->data->field_id}`";
 				}
 				else {
-					$params[ 'offset' ] = 1;
+					$params[ 'where' ] = "{$id} < `t`.`{$this->data->field_id}`";
 				}
 			}
-			else {
-				$params[ 'offset' ] += 1;
+			elseif ( !isset( $params[ 'offset' ] ) ) {
+				if ( !empty( $this->params ) && -1 < $this->row_number )
+					$params[ 'offset' ] = $this->row_number + 1;
+				else
+					$params[ 'offset' ] = 1;
 			}
+			else
+				$params[ 'offset' ] += 1;
 
 			$params[ 'select' ] = "`t`.`{$this->data->field_id}`";
 			$params[ 'limit' ] = 1;
@@ -1979,6 +2023,10 @@ class Pods implements Iterator {
 			}
 			elseif ( !empty( $this->params ) ) {
 				$params = $this->params;
+			}
+
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
 			}
 
 			$params[ 'select' ] = "`t`.`{$this->data->field_id}`";
@@ -2023,11 +2071,37 @@ class Pods implements Iterator {
 				$params = $this->params;
 			}
 
-			if ( isset( $params[ 'total_found' ] ) ) {
-				$params[ 'offset' ] = $params[ 'total_found' ] - 1;
+			if ( is_object( $params ) ) {
+				$params = get_object_vars( $params );
 			}
-			else {
+
+			if ( isset( $params[ 'total_found' ] ) )
+				$params[ 'offset' ] = $params[ 'total_found' ] - 1;
+			else
 				$params[ 'offset' ] = $this->total_found() - 1;
+
+			if ( isset( $params[ 'orderby' ] ) && !empty( $params[ 'orderby' ] ) ) {
+				if ( is_array( $params[ 'orderby' ] ) ) {
+					foreach ( $params[ 'orderby' ] as $orderby => $dir ) {
+						$dir = strtoupper( $dir );
+
+						if ( !in_array( $dir, array( 'ASC', 'DESC' ) ) ) {
+							continue;
+						}
+
+						if ( 'ASC' == $dir ) {
+							$params[ 'orderby' ][ $orderby ] = 'DESC';
+						}
+						else {
+							$params[ 'orderby' ][ $orderby ] = 'ASC';
+						}
+					}
+
+					$params[ 'orderby' ][ $this->data->field_id ] = 'DESC';
+				}
+				elseif ( "`t`.`{$this->data->field_id}` DESC" != $params[ 'orderby' ] ) {
+					$params[ 'orderby' ] .= ", `t`.`{$this->data->field_id}` DESC";
+				}
 			}
 
 			$params[ 'select' ] = "`t`.`{$this->data->field_id}`";
@@ -2073,6 +2147,8 @@ class Pods implements Iterator {
 		$tableless_field_types = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
+        $this->params = $params;
+
 		$select = '`t`.*';
 
 		if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] ) {
@@ -2087,15 +2163,18 @@ class Pods implements Iterator {
 			'table' => $this->data->table,
 			'select' => $select,
 			'join' => null,
+
 			'where' => $where,
 			'groupby' => null,
 			'having' => null,
 			'orderby' => null,
+
 			'limit' => (int) $limit,
 			'offset' => null,
 			'page' => (int) $this->page,
 			'page_var' => $this->page_var,
 			'pagination' => (boolean) $this->pagination,
+
 			'search' => (boolean) $this->search,
 			'search_var' => $this->search_var,
 			'search_query' => null,
@@ -2103,8 +2182,10 @@ class Pods implements Iterator {
 			'search_across' => false,
 			'search_across_picks' => false,
 			'search_across_files' => false,
+
 			'filters' => $this->filters,
 			'sql' => $sql,
+
 			'expires' => null,
 			'cache_mode' => 'cache'
 		);
@@ -2282,8 +2363,6 @@ class Pods implements Iterator {
 				}
 			}
 		}
-
-		$this->params = $params;
 
 		$this->data->select( $params );
 

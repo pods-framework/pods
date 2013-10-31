@@ -1332,6 +1332,11 @@ class PodsMeta {
             return $term_id;
 		}
 
+		// Block Quick Edits / Bulk Edits
+		if ( 'inline-save-tax' == pods_var( 'action', 'post' ) || null != pods_var( 'delete_tags', 'post' ) ) {
+            return $term_id;
+		}
+
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
         if ( empty( $groups ) )
@@ -1507,7 +1512,7 @@ class PodsMeta {
 		if ( empty( $_POST ) ) {
 			return $user_id;
 		}
-		elseif ( !$is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
+		elseif ( $is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
 			return $user_id;
 		}
 

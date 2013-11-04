@@ -852,12 +852,18 @@ class PodsMeta {
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
+		$pod_type = 'post';
+
+		if ( 'attachment' == $post->post_type ) {
+			$pod_type = 'media';
+		}
+
         do_action( 'pods_meta_' . __FUNCTION__, $post );
 
         $hidden_fields = array();
 ?>
     <table class="form-table pods-metabox pods-admin pods-dependency">
-		<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_post' ), 'hidden' ); ?>
+		<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' ); ?>
 
         <?php
         $id = null;

@@ -2839,6 +2839,35 @@ class PodsAPI {
             unset( $params->data );
         }
 
+		/* // @todo for issue #1832
+		 * if ( !empty( $object_fields ) ) {
+			foreach ( $object_fields as $field => $field_data ) {
+				if ( in_array( $field, $fields_active ) ) {
+					continue;
+				}
+				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+					continue;
+				}
+
+				$object_fields[ $field ][ 'value' ] = $field_data[ 'default' ];
+				$fields_active[] = $field;
+			}
+		}
+
+		if ( !empty( $fields ) ) {
+			foreach ( $fields as $field => $field_data ) {
+				if ( in_array( $field, $fields_active ) ) {
+					continue;
+				}
+				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+					continue;
+				}
+
+				$fields[ $field ][ 'value' ] = $field_data[ 'default' ];
+				$fields_active[] = $field;
+			}
+		}*/
+
         if ( 'pod' == $pod[ 'type' ] ) {
             if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) ) {
                 $fields[ 'created' ][ 'value' ] = current_time( 'mysql' );

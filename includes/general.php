@@ -1813,9 +1813,33 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
  * @since 2.3.10
  */
 function pods_session_start() {
+
 	$save_path = session_save_path();
 
-	if ( ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) && !empty( $save_path ) && file_exists( $save_path ) && is_writable( $save_path ) && false === headers_sent() && '' == session_id() ) {
-		@session_start();
+	// Check if headers were sent
+	if ( false !== headers_sent() ) {
+		return false;
 	}
+	// Allow for bypassing Pods session autostarting
+	elseif ( defined( 'PODS_SESSION_AUTO_START' ) && !PODS_SESSION_AUTO_START ) {
+		return false;
+	}
+	// Allow for non-file based sessions, like Memcache
+	elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+		// This is OK, but we don't want to check if file_exists on next statement
+	}
+	// Check if session path exists and can be written to, avoiding PHP fatal errors
+	elseif ( empty( $save_path ) || !file_exists( $save_path ) || !is_writable( $save_path ) ) {
+		return false;
+	}
+	// Check if session ID is already set
+	elseif ( '' != session_id() ) {
+		return false;
+	}
+
+	// Start session
+	@session_start();
+
+	return true;
+
 }

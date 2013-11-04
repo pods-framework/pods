@@ -2843,35 +2843,6 @@ class PodsAPI {
             unset( $params->data );
         }
 
-		/* // @todo for issue #1832
-		 * if ( !empty( $object_fields ) ) {
-			foreach ( $object_fields as $field => $field_data ) {
-				if ( in_array( $field, $fields_active ) ) {
-					continue;
-				}
-				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
-					continue;
-				}
-
-				$object_fields[ $field ][ 'value' ] = $field_data[ 'default' ];
-				$fields_active[] = $field;
-			}
-		}
-
-		if ( !empty( $fields ) ) {
-			foreach ( $fields as $field => $field_data ) {
-				if ( in_array( $field, $fields_active ) ) {
-					continue;
-				}
-				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
-					continue;
-				}
-
-				$fields[ $field ][ 'value' ] = $field_data[ 'default' ];
-				$fields_active[] = $field;
-			}
-		}*/
-
         if ( 'pod' == $pod[ 'type' ] ) {
             if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) ) {
                 $fields[ 'created' ][ 'value' ] = current_time( 'mysql' );
@@ -2904,6 +2875,42 @@ class PodsAPI {
                     }
                 }
             }
+
+			// Set default field values for object fields
+			if ( !empty( $object_fields ) ) {
+				foreach ( $object_fields as $field => $field_data ) {
+					if ( in_array( $field, $fields_active ) ) {
+						continue;
+					}
+					elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+						continue;
+					}
+
+                    $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
+
+                    if ( null !== $value && '' !== $value && false !== $value ) {
+                        $object_fields[ $field ][ 'value' ] = $value;
+                        $fields_active[] = $field;
+                    }
+				}
+			}
+
+			// Set default field values for Pod fields
+			foreach ( $fields as $field => $field_data ) {
+				if ( in_array( $field, $fields_active ) ) {
+					continue;
+				}
+				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+					continue;
+				}
+
+				$value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
+
+				if ( null !== $value && '' !== $value && false !== $value ) {
+					$fields[ $field ][ 'value' ] = $value;
+					$fields_active[] = $field;
+				}
+			}
         }
 
         $columns =& $fields; // @deprecated 2.0

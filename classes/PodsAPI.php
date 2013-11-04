@@ -2118,8 +2118,12 @@ class PodsAPI {
                 $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_table' ];
                 $field[ 'pick_object' ] = 'table';
             }
-            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) )
+            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) ) {
                 $field[ 'pick_val' ] = '';
+			}
+			elseif ( 'custom-simple' == $field[ 'pick_object' ] ) {
+                $field[ 'pick_val' ] = '';
+			}
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
@@ -2287,10 +2291,10 @@ class PodsAPI {
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && !pods_tableless() ) {
             if ( !empty( $old_id ) ) {
-                if ( $field[ 'type' ] != $old_type && empty( $definition ) )
+                if ( ( $field[ 'type' ] != $old_type || $old_simple != $simple ) && empty( $definition ) )
                     pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
                 elseif ( 0 < strlen( $definition ) ) {
-                    if ( $old_name != $field[ 'name' ] ) {
+                    if ( $old_name != $field[ 'name' ] || $old_simple != $simple ) {
                         $test = false;
 
                         if ( 0 < strlen( $old_definition ) )

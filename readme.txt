@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.7.1
-Stable tag: 2.3.15
+Stable tag: 2.3.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,8 +154,16 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.15 - October 31st, 2013 =
+= 2.3.16 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
+* Fixed: PodsMeta pod caching is now different between meta calls and the form methods, avoiding potential issues with functions used that call their own meta (TinyMCE)
+* Fixed: Properly add/drop column for table-based Pods when switching between a custom simple relationship and a normal relationship
+* Fixed: Session starting for memcache-based sessions and other tcp:// configs improved
+* Fixed: Media saving bug, where the custom fields were not saving when going to Media Library > Edit
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.15 - October 31st, 2013 =
 * Added: New 'calc_rows' option in Pods::find, this allows for SQL_CALC_FOUND_ROWS to be run selectively (default is off, since we run a separate count query on demand by default)
 * Added: You can now override the 'manage' action link in PodsUI 'action_links'
 * Added: `shortcodes="1"` attribute for the Pods shortcode will allow for running of shortcodes output through templates or fields included
@@ -163,8 +171,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: 2.3.14 introduced a regression bug that would not save fields in the user profile, so values never changed
 * Fixed: Quick Edit on terms could potentially save empty values for the custom fields
 * Fixed: Traversal handling of Pods::field for related_item.ID would cache into object as related_item, so a subsequent lookup of related_item would come back as the ID and return the wrong value
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.14 - October 29th, 2013 =
 * Fixed: Some users experienced and issue with user registration when there were required fields

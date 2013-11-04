@@ -2490,11 +2490,6 @@ class PodsMeta {
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
-                    if ( empty( $pod->id ) ) {
-                        $pod->fetch( $object_id );
-                        $pod->id = $object_id;
-                    }
-
                     $key_found = true;
 
                     $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
@@ -2510,11 +2505,6 @@ class PodsMeta {
                         unset( $meta_cache[ '_pods_' . $meta_k ] );
                 }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
-                    if ( empty( $pod->id ) ) {
-                        $pod->fetch( $object_id );
-                        $pod->id = $object_id;
-                    }
-
                     $key_found = true;
 
                     $first = current( explode( '.', $meta_k ) );

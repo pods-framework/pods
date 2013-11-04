@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.7.1
-Stable tag: 2.3.16
+Stable tag: 2.3.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,13 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+
+= 2.3.17 - November 4th, 2013 =
+* Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
+* Fixed: PodsData item caching now disabled for WP objects, relying on core WP caching entirely
+* Fixed: PodsAPI::save_pod_item default value handling for new items no goes through all fields, even if not included in form
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.16 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields

@@ -465,7 +465,9 @@ class PodsObject_Field extends PodsObject {
 
 		$old_field = pods_object_field( $params->name, 0, false, $params->pod_id );
 
-		$old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = $old_sister_id = null;
+		$old_id = $old_name = $old_type = $old_definition = $old_options = $old_sister_id = null;
+
+		$old_simple = false;
 
 		if ( $old_field->is_valid() ) {
 			if ( $old_field->is_custom() ) {
@@ -577,6 +579,9 @@ class PodsObject_Field extends PodsObject {
 			}
 			elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) ) {
 				$field[ 'pick_val' ] = '';
+			}
+			elseif ( 'custom-simple' == $field[ 'pick_object' ] ) {
+                $field[ 'pick_val' ] = '';
 			}
 
 			$field[ 'sister_id' ] = (int) $field[ 'sister_id' ];
@@ -765,11 +770,11 @@ class PodsObject_Field extends PodsObject {
 
 		if ( $params->table_operation && 'table' == $pod[ 'storage' ] && !pods_tableless() ) {
 			if ( !empty( $old_id ) ) {
-				if ( $field[ 'type' ] != $old_type && empty( $definition ) ) {
+				if ( ( $field[ 'type' ] != $old_type || $old_simple != $simple ) && empty( $definition ) ) {
 					pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
 				}
 				elseif ( 0 < strlen( $definition ) ) {
-					if ( $old_name != $field[ 'name' ] ) {
+					if ( $old_name != $field[ 'name' ] || $old_simple != $simple ) {
 						$test = false;
 
 						if ( 0 < strlen( $old_definition ) ) {

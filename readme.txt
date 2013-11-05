@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.7.1
-Stable tag: 2.3.17
+Stable tag: 2.3.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,12 +154,15 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.17 - November 4th, 2013 =
+= 2.3.18 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
-* Fixed: PodsData item caching now disabled for WP objects, relying on core WP caching entirely
-* Fixed: PodsAPI::save_pod_item default value handling for new items no goes through all fields, even if not included in form
+* Fixed: PodsData row handling during fetch loop, thanks to a number of users who helped find this one
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.17 - November 4th, 2013 =
+* Fixed: PodsData item caching now disabled for WP objects, relying on core WP caching entirely
+* Fixed: PodsAPI::save_pod_item default value handling for new items no goes through all fields, even if not included in form
 
 = 2.3.16 - November 4th, 2013 =
 * Fixed: PodsMeta pod caching is now different between meta calls and the form methods, avoiding potential issues with functions used that call their own meta (TinyMCE)

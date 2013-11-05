@@ -1892,7 +1892,7 @@ class PodsData {
                 }
             }
 
-			if ( is_array( $this->row ) && !empty( $this->row ) && !empty( $old_row ) ) {
+			if ( !$explicit_set && is_array( $this->row ) && !empty( $this->row ) && !empty( $old_row ) ) {
 				$this->row = array_merge( $old_row, $this->row );
 			}
 

@@ -228,13 +228,10 @@ if ( isset( $_GET[ 'do' ] ) ) {
 ?>
 <div id="pods-manage-groups" class="pods-nav-tab">
     <?php
-		$field_groups = pods( '_pods_group' );
-
-		$options = array(
-			'num' => 'group'
-		);
-
-		$field_groups->ui( $options, true );
+		/**
+		 * @var $pods_admin PodsAdmin
+		 */
+		$pods_admin->admin_setup_groups();
 	?>
 </div>
 <?php

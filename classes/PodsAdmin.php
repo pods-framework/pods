@@ -9,6 +9,11 @@ class PodsAdmin {
      */
     static $instance = null;
 
+	/**
+	 * @var bool
+	 */
+	static $admin_row = false;
+
     /**
      * Singleton handling for a basic pods_admin() request
      *
@@ -441,6 +446,16 @@ class PodsAdmin {
 
             if ( empty( $all_pods ) )
                 unset( $admin_menus[ 'pods' ] );
+			elseif ( 'pods' == pods_v( 'page' ) ) {
+				$admin_menus[ 'pods' ][ 'title' ] = __( 'Edit Pod', 'pods' );
+
+				if ( 'add' == pods_v( 'action_group' ) ) {
+					$admin_menus[ 'pods' ][ 'title' ] = __( 'Add Field Group', 'pods' );
+				}
+				elseif ( 'edit' == pods_v( 'action_group' ) ) {
+					$admin_menus[ 'pods' ][ 'title' ] = __( 'Edit Field Group', 'pods' );
+				}
+			}
         }
         else {
             $admin_menus = array(
@@ -482,15 +497,21 @@ class PodsAdmin {
                 if ( false === $parent ) {
                     $parent = $page;
 
-                    $menu = __( 'Pods Admin', 'pods' );
+                    $menu_title = __( 'Pods Admin', 'pods' );
 
                     if ( 'pods-upgrade' == $parent )
-                        $menu = __( 'Pods Upgrade', 'pods' );
+                        $menu_title = __( 'Pods Upgrade', 'pods' );
 
-                    add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
+                    add_menu_page( $menu_title, $menu_title, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
                 }
 
-                add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
+				$menu_title = $page_title = $menu_item[ 'label' ];
+
+				if ( isset( $menu_item[ 'title' ] ) ) {
+					$page_title = $menu_item[ 'title' ];
+				}
+
+                add_submenu_page( $parent, $page_title, $menu_title, 'read', $page, $menu_item[ 'function' ] );
 
                 if ( 'pods-components' == $page )
                     PodsInit::$components->menu( $parent );
@@ -723,6 +744,14 @@ class PodsAdmin {
             unset( $_GET[ 'action' ] );
         }
 
+		self::$admin_row = $row;
+
+		if ( false !== $row && 'manage' != pods_v( 'action_group', 'get', 'manage' ) ) {
+			$this->admin_setup_groups();
+
+			return;
+		}
+
         $ui = array(
             'data' => $data,
             'row' => $row,
@@ -792,7 +821,11 @@ class PodsAdmin {
      * @param $obj
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
+
+		$pods_admin =& $this;
+
         pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
+
     }
 
     /**
@@ -887,6 +920,120 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_delete ( $id, $obj ) {
+        $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
+
+        if ( empty( $pod ) )
+            return $obj->error( __( 'Pod not found.', 'pods' ) );
+
+        pods_api()->delete_pod( array( 'id' => $id ) );
+
+        unset( $obj->data[ $pod[ 'id' ] ] );
+
+        $obj->total = count( $obj->data );
+        $obj->total_found = count( $obj->data );
+
+        $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+    }
+
+    /**
+     * Handle main Pods Setup area for managing Pods and Fields
+     */
+    public function admin_setup_groups () {
+
+		$field_groups = pods( '_pods_group' );
+
+        $fields = array(
+            'label' => array( 'label' => __( 'Label', 'pods' ) ),
+            'name' => array( 'label' => __( 'Name', 'pods' ) ),
+            'type' => array( 'label' => __( 'Type', 'pods' ) ),
+            'storage' => array(
+                'label' => __( 'Storage Type', 'pods' ),
+                'width' => '10%'
+            ),
+            'field_count' => array(
+                'label' => __( 'Number of Fields', 'pods' ),
+                'width' => '8%'
+            )
+        );
+
+        $ui = array(
+			'num' => 'group',
+            'icon' => PODS_URL . 'ui/images/icon32.png',
+            'items' => 'Field Groups',
+            'item' => 'Field Group',
+            'fields' => array(
+                'manage' => $fields
+            ),
+            'actions_disabled' => array( 'view', 'export' ),
+            'actions_custom' => array(
+                'add' => array( $this, 'admin_setup_groups_add' ),
+                'edit' => array( $this, 'admin_setup_groups_edit' ),
+                'duplicate' => array( $this, 'admin_setup_groups_duplicate' ),
+                'delete' => array( $this, 'admin_setup_groups_delete' )
+            ),
+            'search' => false,
+            'searchable' => false,
+            'sortable' => true,
+            'pagination' => false
+        );
+
+		$field_groups->ui( $ui, true );
+
+    }
+
+    /**
+     * Get the add page of an object
+     *
+     * @param $obj
+     */
+    public function admin_setup_groups_add ( $obj ) {
+
+        pods_view( PODS_DIR . 'ui/admin/setup-add-group.php', compact( array_keys( get_defined_vars() ) ) );
+
+    }
+
+    /**
+     * Get the edit page of an object
+     *
+     * @param $duplicate
+     * @param $obj
+     */
+    public function admin_setup_groups_edit ( $duplicate, $obj ) {
+
+        pods_view( PODS_DIR . 'ui/admin/setup-edit-group.php', compact( array_keys( get_defined_vars() ) ) );
+
+    }
+
+    /**
+     * Duplicate a pod
+     *
+     * @param $id
+     * @param PodsUI $obj
+     *
+     * @return mixed
+     */
+    public function admin_setup_groups_duplicate ( $obj ) {
+        $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
+
+        if ( 0 < $new_id ) {
+            pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
+		}
+		else {
+			pods_message( 'Pod could not be duplicated', 'error' );
+
+			$obj->manage();
+		}
+    }
+
+    /**
+     * Delete a pod
+     *
+     * @param $id
+     * @param $obj
+     *
+     * @return mixed
+     */
+    public function admin_setup_groups_delete ( $id, $obj ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )

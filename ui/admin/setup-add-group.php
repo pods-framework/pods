@@ -9,8 +9,6 @@ $api = pods_api();
 
 $pod = $api->load_pod( array( 'id' => PodsAdmin::$admin_row[ 'id' ] ) );
 
-$group = pods_object_group( null, $obj->id );
-
 if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields' ) ) {
     $api->save_pod( array( 'id' => PodsAdmin::$admin_row[ 'id' ], 'storage' => 'table' ) );
 

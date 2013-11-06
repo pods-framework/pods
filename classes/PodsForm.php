@@ -569,8 +569,7 @@ class PodsForm {
             'developer_mode' => false,
             'dependency' => false,
             'depends-on' => array(),
-            'excludes-on' => array(),
-            'options' => array()
+            'excludes-on' => array()
         );
 
         if ( !empty( $options ) && is_array( $options ) )
@@ -627,8 +626,7 @@ class PodsForm {
             'developer_mode' => false,
             'dependency' => false,
             'depends-on' => array(),
-            'excludes-on' => array(),
-            'options' => array()
+            'excludes-on' => array()
         );
 
         self::field_loader( $type );
@@ -678,8 +676,7 @@ class PodsForm {
                 'developer_mode' => false,
                 'dependency' => false,
                 'depends-on' => array(),
-                'excludes-on' => array(),
-                'options' => array()
+                'excludes-on' => array()
             );
         }
 
@@ -731,8 +728,7 @@ class PodsForm {
                 'developer_mode' => false,
                 'dependency' => false,
                 'depends-on' => array(),
-                'excludes-on' => array(),
-                'options' => array()
+                'excludes-on' => array()
             );
 
             if ( null !== $type ) {
@@ -763,8 +759,8 @@ class PodsForm {
             if ( isset( $settings[ 'default' ] ) )
                 $v = $settings[ 'default' ];
 
-            if ( !isset( $field[ 'options' ][ $option ] ) )
-                $field[ 'options' ][ $option ] = $v;
+            if ( !isset( $field[ $option ] ) )
+                $field[ $option ] = $v;
         }
 
         return $field;

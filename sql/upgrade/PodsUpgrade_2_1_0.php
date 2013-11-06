@@ -51,10 +51,10 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
                 continue;
 
             // Only target multi-select relationships
-            $single_multi = pods_var( $field[ 'type' ] . '_format_type', $field[ 'options' ], 'single' );
+            $single_multi = pods_var( $field[ 'type' ] . '_format_type', $field, 'single' );
 
             if ( 'multi' == $single_multi )
-                $limit = (int) pods_var( $field[ 'type' ] . '_limit', $field[ 'options' ], 0 );
+                $limit = (int) pods_var( $field[ 'type' ] . '_limit', $field, 0 );
             else
                 $limit = 1;
 

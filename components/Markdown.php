@@ -42,7 +42,7 @@ if ( !function_exists( 'pods_markdown_output' ) ) {
 	add_filter( 'pods_form_display_paragraph', 'pods_markdown_output', 10, 6 );
 }
 
-if ( !function_exists( 'Markdown' ) ) :
+if ( !function_exists( 'Markdown' ) && !defined( 'MARKDOWN_VERSION' ) ) :
 #
 # Markdown  -  A text-to-HTML conversion tool for web writers
 #

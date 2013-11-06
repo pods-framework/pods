@@ -19,11 +19,11 @@ wp_enqueue_style( 'pods-form' );
 			<div class="inside">
 				<div class="submitbox" id="submitpost">
 					<?php
-						if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
+						if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data ) ) ) {
 					?>
 						<div id="minor-publishing">
 							<?php
-								if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
+								if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data ) ) ) {
 							?>
 								<div id="minor-publishing-actions">
 									<div id="preview-action">
@@ -92,8 +92,8 @@ wp_enqueue_style( 'pods-form' );
 				if ( !isset( $singular_label ) )
 					$singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 
-				$singular_label = pods_v( 'label', $pod->pod_data[ 'options' ], $singular_label, true );
-				$singular_label = pods_v( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, true );
+				$singular_label = pods_v( 'label', $pod->pod_data, $singular_label, true );
+				$singular_label = pods_v( 'label_singular', $pod->pod_data, $singular_label, true );
 
 				$prev = $pod->prev_id();
 				$next = $pod->next_id();
@@ -157,7 +157,7 @@ wp_enqueue_style( 'pods-form' );
 					$more = true;
 					$extra = '';
 
-					$max_length = (int) pods_v_sanitized( 'maxlength', $field[ 'options' ], pods_v_sanitized( $field[ 'type' ] . '_max_length', $field[ 'options' ], 0 ), true );
+					$max_length = (int) pods_v_sanitized( 'maxlength', $field, pods_v_sanitized( $field[ 'type' ] . '_max_length', $field, 0 ), true );
 
 					if ( 0 < $max_length )
 						$extra .= ' maxlength="' . $max_length . '"';

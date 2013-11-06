@@ -8,18 +8,18 @@ if ( !wp_script_is( 'pods', 'done' ) )
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
+        if ( pods_var( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
-        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+        elseif ( pods_var( 'read_only', $field, false ) )
             $fields[ $k ][ 'readonly' ] = true;
         else
             unset( $fields[ $k ] );
     }
-    elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+    elseif ( !pods_has_permissions( $field ) ) {
+        if ( pods_var( 'hidden', $field, false ) )
         $fields[ $k ][ 'type' ] = 'hidden';
-        elseif ( pods_var( 'read_only', $field[ 'options' ], false ) )
+        elseif ( pods_var( 'read_only', $field, false ) )
             $fields[ $k ][ 'readonly' ] = true;
     }
 }

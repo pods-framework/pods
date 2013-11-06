@@ -267,32 +267,32 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 // This won't work if the field doesn't exist
                                 // $new_field[ 'sister_id' ] = $field[ 'sister_field_id' ];
 
-                                $new_field[ 'options' ][ 'pick_filter' ] = $field[ 'pick_filter' ];
-                                $new_field[ 'options' ][ 'pick_orderby' ] = $field[ 'pick_orderby' ];
-                                $new_field[ 'options' ][ 'pick_display' ] = '';
-                                $new_field[ 'options' ][ 'pick_size' ] = 'medium';
+                                $new_field[ 'pick_filter' ] = $field[ 'pick_filter' ];
+                                $new_field[ 'pick_orderby' ] = $field[ 'pick_orderby' ];
+                                $new_field[ 'pick_display' ] = '';
+                                $new_field[ 'pick_size' ] = 'medium';
 
                                 if ( 1 == $multiple ) {
-                                    $new_field[ 'options' ][ 'pick_format_type' ] = 'multi';
-                                    $new_field[ 'options' ][ 'pick_format_multi' ] = 'checkbox';
-                                    $new_field[ 'options' ][ 'pick_limit' ] = 0;
+                                    $new_field[ 'pick_format_type' ] = 'multi';
+                                    $new_field[ 'pick_format_multi' ] = 'checkbox';
+                                    $new_field[ 'pick_limit' ] = 0;
                                 }
                                 else {
-                                    $new_field[ 'options' ][ 'pick_format_type' ] = 'single';
-                                    $new_field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
-                                    $new_field[ 'options' ][ 'pick_limit' ] = 1;
+                                    $new_field[ 'pick_format_type' ] = 'single';
+                                    $new_field[ 'pick_format_single' ] = 'dropdown';
+                                    $new_field[ 'pick_limit' ] = 1;
                                 }
                             }
                             elseif ( 'file' == $field_type ) {
-                                $new_field[ 'options' ][ 'file_format_type' ] = 'multi';
-                                $new_field[ 'options' ][ 'file_type' ] = 'any';
+                                $new_field[ 'file_format_type' ] = 'multi';
+                                $new_field[ 'file_type' ] = 'any';
                             }
                             elseif ( 'number' == $field_type )
-                                $new_field[ 'options' ][ 'number_decimals' ] = 2;
+                                $new_field[ 'number_decimals' ] = 2;
                             elseif ( 'desc' == $field[ 'coltype' ] )
-                                $new_field[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
+                                $new_field[ 'wysiwyg_editor' ] = 'tinymce';
                             elseif ( 'text' == $field_type )
-                                $new_field[ 'options' ][ 'text_max_length' ] = 128;
+                                $new_field[ 'text_max_length' ] = 128;
 
                             if ( isset( $pod[ 'fields' ][ $new_field[ 'name' ] ] ) )
                                 $new_field = array_merge( $pod[ 'fields' ][ $new_field[ 'name' ] ], $new_field );
@@ -608,13 +608,8 @@ class Pods_Migrate_Packages extends PodsComponent {
                 $field_type_options[ $type ] = PodsForm::ui_options( $type );
             }
 
+			// @todo special attention for $pod option looping here
             foreach ( $export[ 'pods' ] as &$pod ) {
-                if ( isset( $pod[ 'options' ] ) ) {
-                    $pod = array_merge( $pod, $pod[ 'options' ] );
-
-                    unset( $pod[ 'options' ] );
-                }
-
                 foreach ( $pod as $option => $option_value ) {
                     if ( in_array( $option, $options_ignore ) || null === $option_value )
                         unset( $pod[ $option ] );
@@ -622,10 +617,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                 if ( !empty( $pod[ 'fields' ] ) ) {
                     foreach ( $pod[ 'fields' ] as &$field ) {
-                        if ( isset( $field[ 'options' ] ) ) {
-                            $field = array_merge( $field, $field[ 'options' ] );
+                        if ( isset( $field ) ) {
+                            $field = array_merge( $field, $field );
 
-                            unset( $field[ 'options' ] );
+                            unset( $field );
                         }
 
                         foreach ( $field as $option => $option_value ) {

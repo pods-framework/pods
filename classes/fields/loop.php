@@ -135,11 +135,8 @@ class PodsField_Loop extends PodsField {
      * @param boolean $raw Whether to return the raw list of keys (true) or convert to key=>value (false)
      */
     public function simple_value ( $value, $options, $raw = false ) {
-        if ( isset( $options[ 'options' ] ) ) {
-            $options = array_merge( $options, $options[ 'options' ] );
-            unset( $options[ 'options' ] );
-        }
 
         return $value;
+
     }
 }

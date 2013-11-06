@@ -610,7 +610,7 @@ class PodsField_File extends PodsField {
         if ( 'upload' == $method ) {
             $file = $_FILES[ 'Filedata' ];
 
-            $limit_size = pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] );
+            $limit_size = pods_var( $field[ 'type' ] . '_restrict_filesize', $field );
 
             if ( !empty( $limit_size ) ) {
                 if ( false !== stripos( $limit_size, 'MB' ) ) {
@@ -632,13 +632,13 @@ class PodsField_File extends PodsField {
 
                 if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
                     $error = __( 'File size too large, max size is %s', 'pods' );
-                    $error = sprintf( $error, pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] ) );
+                    $error = sprintf( $error, pods_var( $field[ 'type' ] . '_restrict_filesize', $field ) );
 
                     pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
                 }
             }
 
-            $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field[ 'options' ], 'images' );
+            $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field, 'images' );
 
             if ( 'images' == $limit_file_type )
                 $limit_types = 'jpg,jpeg,png,gif';
@@ -651,7 +651,7 @@ class PodsField_File extends PodsField {
             elseif ( 'any' == $limit_file_type )
                 $limit_types = '';
             else
-                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field[ 'options' ], '', null, true );
+                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field, '', null, true );
 
             $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 

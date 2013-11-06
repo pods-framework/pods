@@ -958,8 +958,7 @@ class PodsData {
                         }
                         else {
                             $attributes = array(
-                                'type' => '',
-                                'options' => array()
+                                'type' => ''
                             );
                         }
 

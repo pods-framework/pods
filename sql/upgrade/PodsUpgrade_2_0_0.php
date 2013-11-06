@@ -393,34 +393,34 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                         $field_params[ 'sister_id' ] = $row->sister_field_id;
 
                         $sister_ids[ $row->id ] = $row->sister_field_id; // Old Sister Field ID
-                        $field_params[ 'options' ][ '_pods_1x_sister_id' ] = $row->sister_field_id;
+                        $field_params[ '_pods_1x_sister_id' ] = $row->sister_field_id;
 
-                        $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
-                        $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
-                        $field_params[ 'options' ][ 'pick_display' ] = '';
-                        $field_params[ 'options' ][ 'pick_size' ] = 'medium';
+                        $field_params[ 'pick_filter' ] = $row->pick_filter;
+                        $field_params[ 'pick_orderby' ] = $row->pick_orderby;
+                        $field_params[ 'pick_display' ] = '';
+                        $field_params[ 'pick_size' ] = 'medium';
 
                         if ( 1 == $row->multiple ) {
-                            $field_params[ 'options' ][ 'pick_format_type' ] = 'multi';
-                            $field_params[ 'options' ][ 'pick_format_multi' ] = 'checkbox';
-                            $field_params[ 'options' ][ 'pick_limit' ] = 0;
+                            $field_params[ 'pick_format_type' ] = 'multi';
+                            $field_params[ 'pick_format_multi' ] = 'checkbox';
+                            $field_params[ 'pick_limit' ] = 0;
                         }
                         else {
-                            $field_params[ 'options' ][ 'pick_format_type' ] = 'single';
-                            $field_params[ 'options' ][ 'pick_format_single' ] = 'dropdown';
-                            $field_params[ 'options' ][ 'pick_limit' ] = 1;
+                            $field_params[ 'pick_format_type' ] = 'single';
+                            $field_params[ 'pick_format_single' ] = 'dropdown';
+                            $field_params[ 'pick_limit' ] = 1;
                         }
                     }
                     elseif ( 'file' == $field_type ) {
-                        $field_params[ 'options' ][ 'file_format_type' ] = 'multi';
-                        $field_params[ 'options' ][ 'file_type' ] = 'any';
+                        $field_params[ 'file_format_type' ] = 'multi';
+                        $field_params[ 'file_type' ] = 'any';
                     }
                     elseif ( 'number' == $field_type )
-                        $field_params[ 'options' ][ 'number_decimals' ] = 2;
+                        $field_params[ 'number_decimals' ] = 2;
                     elseif ( 'desc' == $row->coltype )
-                        $field_params[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
+                        $field_params[ 'wysiwyg_editor' ] = 'tinymce';
                     elseif ( 'text' == $field_type )
-                        $field_params[ 'options' ][ 'text_max_length' ] = 128;
+                        $field_params[ 'text_max_length' ] = 128;
 
                     $fields[] = $field_params;
 
@@ -586,7 +586,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                 $related_item_id = $r->tbl_row_id;
 
                 if ( 'pick' == $field[ 'type' ] ) {
-                    $old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field[ 'options' ], 0 );
+                    $old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field, 0 );
 
                     if ( 0 < $old_sister_id ) {
                         $sql = "
@@ -863,7 +863,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         foreach ( $pod_data[ 'fields' ] as $field ) {
             if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
                 $columns[] = pods_sanitize( $field[ 'name' ] );
-                $old_columns[] = pods_var( '_pods_1x_field_name', $field[ 'options' ], $field[ 'name' ], null, false );
+                $old_columns[] = pods_var( '_pods_1x_field_name', $field, $field[ 'name' ], null, false );
             }
         }
 

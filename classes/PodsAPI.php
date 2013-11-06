@@ -670,33 +670,27 @@ class PodsAPI {
                     'label' => 'Title',
                     'type' => 'text',
                     'alias' => array( 'title', 'name' ),
-                    'options' => array(
-                        'display_filter' => 'the_title',
-                        'display_filter_args' => array( 'post_ID' )
-                    )
+					'display_filter' => 'the_title',
+					'display_filter_args' => array( 'post_ID' )
                 ),
                 'post_content' => array(
                     'name' => 'post_content',
                     'label' => 'Content',
                     'type' => 'wysiwyg',
                     'alias' => array( 'content' ),
-                    'options' => array(
-                        'wysiwyg_allowed_html_tags' => '',
-                        'display_filter' => 'the_content',
-                        'pre_save' => 0
-                    )
+					'wysiwyg_allowed_html_tags' => '',
+					'display_filter' => 'the_content',
+					'pre_save' => 0
                 ),
                 'post_excerpt' => array(
                     'name' => 'post_excerpt',
                     'label' => 'Excerpt',
                     'type' => 'paragraph',
                     'alias' => array( 'excerpt' ),
-                    'options' => array(
-                        'paragraph_allow_html' => 1,
-                        'paragraph_allowed_html_tags' => '',
-                        'display_filter' => 'the_excerpt',
-                        'pre_save' => 0
-                    )
+					'paragraph_allow_html' => 1,
+					'paragraph_allowed_html_tags' => '',
+					'display_filter' => 'the_excerpt',
+					'pre_save' => 0
                 ),
                 'post_author' => array(
                     'name' => 'post_author',
@@ -704,11 +698,9 @@ class PodsAPI {
                     'type' => 'pick',
                     'alias' => array( 'author' ),
                     'pick_object' => 'user',
-                    'options' => array(
-                        'pick_format_type' => 'single',
-                        'pick_format_single' => 'autocomplete',
-                        'default_value' => '{@user.ID}'
-                    )
+					'pick_format_type' => 'single',
+					'pick_format_single' => 'autocomplete',
+					'default_value' => '{@user.ID}'
                 ),
                 'post_date' => array(
                     'name' => 'post_date',
@@ -799,15 +791,13 @@ class PodsAPI {
                     'type' => 'paragraph',
                     'alias' => array(),
                     'hidden' => true,
-                    'options' => array(
-                        'paragraph_allow_html' => 1,
-                        'paragraph_oembed' => 1,
-                        'paragraph_wptexturize' => 1,
-                        'paragraph_convert_chars' => 1,
-                        'paragraph_wpautop' => 1,
-                        'paragraph_allow_shortcode' => 1,
-                        'paragraph_allowed_html_tags' => ''
-                    )
+					'paragraph_allow_html' => 1,
+					'paragraph_oembed' => 1,
+					'paragraph_wptexturize' => 1,
+					'paragraph_convert_chars' => 1,
+					'paragraph_wpautop' => 1,
+					'paragraph_allow_shortcode' => 1,
+					'paragraph_allowed_html_tags' => ''
                 ),
                 'post_parent' => array(
                     'name' => 'post_parent',
@@ -867,9 +857,7 @@ class PodsAPI {
 						'pick_val' => $taxonomy->name,
                         'alias' => array(),
                         'hidden' => true,
-						'options' => array(
-							'taxonomy_format_type' => 'multi'
-						)
+						'taxonomy_format_type' => 'multi'
                     );
                 }
             }
@@ -881,9 +869,7 @@ class PodsAPI {
                     'label' => 'Title',
                     'type' => 'text',
                     'alias' => array( 'login' ),
-                    'options' => array(
-                        'required' => 1
-                    )
+					'required' => 1
                 ),
                 'user_nicename' => array(
                     'name' => 'user_nicename',
@@ -902,40 +888,32 @@ class PodsAPI {
                     'label' => 'Password',
                     'type' => 'text',
                     'alias' => array( 'password', 'pass' ),
-                    'options' => array(
-                        'required' => 1,
-                        'text_format_type' => 'password'
-                    )
+					'required' => 1,
+					'text_format_type' => 'password'
                 ),
                 'user_email' => array(
                     'name' => 'user_email',
                     'label' => 'E-mail',
                     'type' => 'text',
                     'alias' => array( 'email' ),
-                    'options' => array(
-                        'required' => 1,
-                        'text_format_type' => 'email'
-                    )
+					'required' => 1,
+					'text_format_type' => 'email'
                 ),
                 'user_url' => array(
                     'name' => 'user_url',
                     'label' => 'URL',
                     'type' => 'text',
                     'alias' => array( 'url', 'website' ),
-                    'options' => array(
-                        'required' => 1,
-                        'text_format_type' => 'website',
-                        'text_format_website' => 'normal'
-                    )
+					'required' => 1,
+					'text_format_type' => 'website',
+					'text_format_website' => 'normal'
                 ),
                 'user_registered' => array(
                     'name' => 'user_registered',
                     'label' => 'Registration Date',
                     'type' => 'date',
                     'alias' => array( 'created', 'date', 'registered' ),
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+					'date_format_type' => 'datetime'
                 )
             );
         }
@@ -973,9 +951,7 @@ class PodsAPI {
                     'label' => 'Date',
                     'type' => 'date',
                     'alias' => array( 'created', 'date' ),
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+					'date_format_type' => 'datetime'
                 )
             );
         }
@@ -1115,8 +1091,7 @@ class PodsAPI {
 			'label' => '',
 			'type' => '',
 			'storage' => 'table',
-			'object' => '',
-			'options' => array()
+			'object' => ''
 		);
 
 		if ( 'create' == $params->create_extend ) {
@@ -1439,8 +1414,7 @@ class PodsAPI {
 			'id' => 0,
 			'name' => $params->name,
 			'type' => $params->type,
-			'code' => '',
-			'options' => array()
+			'code' => ''
 		);
 
 		// Setup options

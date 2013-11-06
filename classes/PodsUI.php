@@ -906,7 +906,7 @@ class PodsUI {
         $items = __( 'Items', 'pods' );
 
         if ( is_object( $this->pod ) ) {
-            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
+            $item = pods_var_raw( 'label_singular', $this->pod->pod_data, pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
             $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
         }
 
@@ -1104,7 +1104,15 @@ class PodsUI {
             }
 
             foreach ( $fields as $field => $attributes ) {
-                if ( !is_array( $attributes ) ) {
+				if ( is_object( $attributes ) ) {
+                	if ( 'search_columns' == $which && !$attributes[ 'search' ] )
+                    	continue;
+
+					$new_fields[ $field ] = $attributes;
+
+					continue;
+				}
+                elseif ( !is_array( $attributes ) ) {
                     if ( is_int( $field ) ) {
                         $field = $attributes;
                         $attributes = array();
@@ -1119,16 +1127,14 @@ class PodsUI {
                 if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
                     $attributes = array_merge( $this->pod->fields[ $attributes[ 'real_name' ] ], $attributes );
 
-                if ( !isset( $attributes[ 'options' ] ) )
-                    $attributes[ 'options' ] = array();
                 if ( !isset( $attributes[ 'id' ] ) )
                     $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'label' ] ) )
                     $attributes[ 'label' ] = ucwords( str_replace( '_', ' ', $field ) );
                 if ( !isset( $attributes[ 'type' ] ) )
                     $attributes[ 'type' ] = 'text';
-                if ( !isset( $attributes[ 'options' ][ 'date_format_type' ] ) )
-                    $attributes[ 'options' ][ 'date_format_type' ] = 'date';
+                if ( !isset( $attributes[ 'date_format_type' ] ) )
+                    $attributes[ 'date_format_type' ] = 'date';
                 if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related' ] ) )
                     $attributes[ 'related' ] = false;
                 if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_id' ] ) )
@@ -1167,19 +1173,19 @@ class PodsUI {
                     $attributes[ 'hidden' ] = false;
                 if ( !isset( $attributes[ 'sortable' ] ) || false === $this->sortable )
                     $attributes[ 'sortable' ] = $this->sortable;
-                if ( !isset( $attributes[ 'options' ][ 'search' ] ) || false === $this->searchable )
-                    $attributes[ 'options' ][ 'search' ] = $this->searchable;
-                if ( !isset( $attributes[ 'options' ][ 'filter' ] ) || false === $this->searchable )
-                    $attributes[ 'options' ][ 'filter' ] = $this->searchable;
-                /*if ( false !== $attributes[ 'options' ][ 'filter' ] && false !== $filterable )
+                if ( !isset( $attributes[ 'search' ] ) || false === $this->searchable )
+                    $attributes[ 'search' ] = $this->searchable;
+                if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
+                    $attributes[ 'filter' ] = $this->searchable;
+                /*if ( false !== $attributes[ 'filter' ] && false !== $filterable )
                     $this->filters[] = $field;*/
-                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_label' ] = $attributes[ 'label' ];
-                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_default' ] = false;
-                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing' ] = false;
-                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing_default' ] = false;
                 if ( !isset( $attributes[ 'export' ] ) )
                     $attributes[ 'export' ] = true;
@@ -1203,7 +1209,7 @@ class PodsUI {
                     $attributes[ 'custom_form_display' ] = false;
                 if ( !isset( $attributes[ 'css_values' ] ) )
                     $attributes[ 'css_values' ] = true;
-                if ( 'search_columns' == $which && !$attributes[ 'options' ][ 'search' ] )
+                if ( 'search_columns' == $which && !$attributes[ 'search' ] )
                     continue;
 
                 $attributes = PodsForm::field_setup( $attributes, null, $attributes[ 'type' ] );
@@ -1698,8 +1704,7 @@ class PodsUI {
 
 			$defaults = array(
 				'name' => $name,
-				'type' => 'text',
-				'options' => 'text'
+				'type' => 'text'
 			);
 
 			if ( !is_array( $field ) ) {
@@ -1730,7 +1735,7 @@ class PodsUI {
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
 				continue;
 			}
-			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
+			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
 				continue;
 			}
 
@@ -2459,8 +2464,8 @@ class PodsUI {
                             $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $filter_field, '', null, true ), null, true );
 
                             // override default value
-                            $filter_field[ 'options' ][ 'default_value' ] = '';
-                            $filter_field[ 'options' ][ $filter_field[ 'type' ] . '_allow_empty' ] = 1;
+                            $filter_field[ 'default_value' ] = '';
+                            $filter_field[ $filter_field[ 'type' ] . '_allow_empty' ] = 1;
 
 
                             if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
@@ -2487,21 +2492,19 @@ class PodsUI {
                                 $value = pods_var_raw( 'filter_default', $filter_field );
 
                             // override default value
-                            $filter_field[ 'options' ][ 'default_value' ] = '';
+                            $filter_field[ 'default_value' ] = '';
 
-                            $filter_field[ 'options' ][ 'pick_format_type' ] = 'single';
-                            $filter_field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                            $filter_field[ 'pick_format_type' ] = 'single';
+                            $filter_field[ 'pick_format_single' ] = 'dropdown';
 
-                            $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field[ 'options' ], $filter_field[ 'options' ][ 'input_helper' ], null, true );
-
-                            $options = array_merge( $filter_field, $filter_field[ 'options' ] );
+                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
+                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         elseif ( 'boolean' == $filter_field[ 'type' ] ) {
                             $value = pods_var_raw( 'filter_' . $filter, 'get', '' );
@@ -2510,27 +2513,25 @@ class PodsUI {
                                 $value = pods_var_raw( 'filter_default', $filter_field );
 
                             // override default value
-                            $filter_field[ 'options' ][ 'default_value' ] = '';
+                            $filter_field[ 'default_value' ] = '';
 
-                            $filter_field[ 'options' ][ 'pick_format_type' ] = 'single';
-                            $filter_field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                            $filter_field[ 'pick_format_type' ] = 'single';
+                            $filter_field[ 'pick_format_single' ] = 'dropdown';
 
-                            $filter_field[ 'options' ][ 'pick_object' ] = 'custom-simple';
-                            $filter_field[ 'options' ][ 'pick_custom' ] = array(
-                                '1' => pods_var_raw( 'boolean_yes_label', $filter_field[ 'options' ], __( 'Yes', 'pods' ), null, true ),
-                                '0' => pods_var_raw( 'boolean_no_label', $filter_field[ 'options' ], __( 'No', 'pods' ), null, true )
+                            $filter_field[ 'pick_object' ] = 'custom-simple';
+                            $filter_field[ 'pick_custom' ] = array(
+                                '1' => pods_var_raw( 'boolean_yes_label', $filter_field, __( 'Yes', 'pods' ), null, true ),
+                                '0' => pods_var_raw( 'boolean_no_label', $filter_field, __( 'No', 'pods' ), null, true )
                             );
 
-                            $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field[ 'options' ], $filter_field[ 'options' ][ 'input_helper' ], null, true );
-
-                            $options = array_merge( $filter_field, $filter_field[ 'options' ] );
+                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
+                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         else {
                             $value = pods_var_raw( 'filter_' . $filter, 'get' );
@@ -2539,11 +2540,11 @@ class PodsUI {
                                 $value = pods_var_raw( 'filter_default', $filter_field );
 
                             // override default value
-                            $filter_field[ 'options' ][ 'default_value' ] = '';
+                            $filter_field[ 'default_value' ] = '';
 
                             $options = array();
                             $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $filter_field[ 'options' ][ 'input_helper' ], null, true );
+                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $filter_field[ 'input_helper' ], null, true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
@@ -2866,8 +2867,8 @@ class PodsUI {
                                 $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $filter_field, $this->pod->pod_data, null ) );
                             elseif ( 'boolean' == $filter_field[ 'type' ] ) {
                                 $yesno_options = array(
-                                    '1' => pods_var_raw( 'boolean_yes_label', $filter_field[ 'options' ], __( 'Yes', 'pods' ), null, true ),
-                                    '0' => pods_var_raw( 'boolean_no_label', $filter_field[ 'options' ], __( 'No', 'pods' ), null, true )
+                                    '1' => pods_var_raw( 'boolean_yes_label', $filter_field, __( 'Yes', 'pods' ), null, true ),
+                                    '0' => pods_var_raw( 'boolean_no_label', $filter_field, __( 'No', 'pods' ), null, true )
                                 );
 
                                 if ( isset( $yesno_options[ (string) $value ] ) )
@@ -2984,8 +2985,8 @@ class PodsUI {
                                 $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $filter_field, '', null, true ), null, true );
 
                                 // override default value
-                                $filter_field[ 'options' ][ 'default_value' ] = '';
-                                $filter_field[ 'options' ][ $filter_field[ 'type' ] . '_allow_empty' ] = 1;
+                                $filter_field[ 'default_value' ] = '';
+                                $filter_field[ $filter_field[ 'type' ] . '_allow_empty' ] = 1;
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $start = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
@@ -3015,15 +3016,13 @@ class PodsUI {
                                     $value = pods_var_raw( 'filter_default', $filter_field );
 
                                 // override default value
-                                $filter_field[ 'options' ][ 'default_value' ] = '';
+                                $filter_field[ 'default_value' ] = '';
 
-                                $filter_field[ 'options' ][ 'pick_format_type' ] = 'single';
-                                $filter_field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                                $filter_field[ 'pick_format_type' ] = 'single';
+                                $filter_field[ 'pick_format_single' ] = 'dropdown';
 
-                                $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                                $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field[ 'options' ], $filter_field[ 'options' ][ 'input_helper' ], null, true );
-
-                                $options = array_merge( $filter_field, $filter_field[ 'options' ] );
+                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3033,7 +3032,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
                             </span>
                         <?php
                             }
@@ -3044,21 +3043,19 @@ class PodsUI {
                                     $value = pods_var_raw( 'filter_default', $filter_field );
 
                                 // override default value
-                                $filter_field[ 'options' ][ 'default_value' ] = '';
+                                $filter_field[ 'default_value' ] = '';
 
-                                $filter_field[ 'options' ][ 'pick_format_type' ] = 'single';
-                                $filter_field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                                $filter_field[ 'pick_format_type' ] = 'single';
+                                $filter_field[ 'pick_format_single' ] = 'dropdown';
 
-                                $filter_field[ 'options' ][ 'pick_object' ] = 'custom-simple';
-                                $filter_field[ 'options' ][ 'pick_custom' ] = array(
-                                    '1' => pods_var_raw( 'boolean_yes_label', $filter_field[ 'options' ], __( 'Yes', 'pods' ), null, true ),
-                                    '0' => pods_var_raw( 'boolean_no_label', $filter_field[ 'options' ], __( 'No', 'pods' ), null, true )
+                                $filter_field[ 'pick_object' ] = 'custom-simple';
+                                $filter_field[ 'pick_custom' ] = array(
+                                    '1' => pods_var_raw( 'boolean_yes_label', $filter_field, __( 'Yes', 'pods' ), null, true ),
+                                    '0' => pods_var_raw( 'boolean_no_label', $filter_field, __( 'No', 'pods' ), null, true )
                                 );
 
-                                $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                                $filter_field[ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field[ 'options' ], $filter_field[ 'options' ][ 'input_helper' ], null, true );
-
-                                $options = array_merge( $filter_field, $filter_field[ 'options' ] );
+                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3068,7 +3065,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
                             </span>
                         <?php
                             }
@@ -3082,8 +3079,8 @@ class PodsUI {
                                     'input_helper' => pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true )
                                 );
 
-                                if ( empty( $options[ 'input_helper' ] ) && isset( $filter_field[ 'options' ] ) && isset( $filter_field[ 'options' ][ 'input_helper' ] ) )
-                                    $options[ 'input_helper' ] = $filter_field[ 'options' ][ 'input_helper' ];
+                                if ( empty( $options[ 'input_helper' ] ) && isset( $filter_field ) && isset( $filter_field[ 'input_helper' ] ) )
+                                    $options[ 'input_helper' ] = $filter_field[ 'input_helper' ];
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>

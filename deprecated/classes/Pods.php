@@ -94,7 +94,7 @@ class Pods_Deprecated
                 continue;
 
             // Pass options so they can be manipulated via form
-            $field = array_merge( $field[ 'options' ], $field );
+            $field = array_merge( $field, $field );
 
             // Replace field attributes with public form attributes
             if ( !empty( $attributes ) && is_array( $attributes[ $key ] ) )
@@ -219,8 +219,8 @@ class Pods_Deprecated
                     }
                 }
 
-                if ( !empty( $field[ 'options' ][ 'pick_filter' ] ) )
-                    $pick_where .= ' AND ' . $field[ 'options' ][ 'pick_filter' ];
+                if ( !empty( $field[ 'pick_filter' ] ) )
+                    $pick_where .= ' AND ' . $field[ 'pick_filter' ];
 
                 $params = array(
                     'exclude' => $exclude,
@@ -229,7 +229,7 @@ class Pods_Deprecated
                     'field_id' => $pick_field_id,
                     'field_name' => $pick_field_name,
                     'join' => $pick_join,
-                    'orderby' => $field[ 'options' ][ 'pick_orderby' ],
+                    'orderby' => $field[ 'pick_orderby' ],
                     'where' => $pick_where
                 );
 

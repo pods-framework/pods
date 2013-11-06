@@ -870,22 +870,22 @@ class Pods_Pages extends PodsComponent {
             $pods =& $GLOBALS[ 'pods' ];
 
         if ( false !== self::$exists ) {
-            $permission = pods_permission( self::$exists[ 'options' ] );
+            $permission = pods_permission( self::$exists );
 
             $permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
             if ( $permission ) {
                 $content = false;
 
-                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists[ 'options' ] ) ) ) {
-					$slug = pods_var_raw( 'pod_slug', self::$exists[ 'options' ], null, null, true );
+                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists ) ) ) {
+					$slug = pods_var_raw( 'pod_slug', self::$exists, null, null, true );
 
 					// Handle special magic tags
 					if ( 0 < strlen( $slug ) ) {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
-                    $pods = pods( pods_var( 'pod', self::$exists[ 'options' ] ), $slug );
+                    $pods = pods( pods_var( 'pod', self::$exists ), $slug );
 
 					// Auto 404 handling if item doesn't exist
 					if ( 0 < strlen( $slug ) && !$pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {
@@ -904,14 +904,14 @@ class Pods_Pages extends PodsComponent {
 
                 do_action( 'pods_page_precode', self::$exists, $pods, $content );
             }
-			elseif ( self::$exists[ 'options' ][ 'restrict_redirect' ] ) {
+			elseif ( self::$exists[ 'restrict_redirect' ] ) {
 				$redirect_url = '';
 
-				if ( self::$exists[ 'options' ][ 'restrict_redirect_login' ] ) {
+				if ( self::$exists[ 'restrict_redirect_login' ] ) {
 					$redirect_url = wp_login_url( pods_current_url() );
 				}
-				elseif ( !empty( self::$exists[ 'options' ][ 'restrict_redirect_url' ] ) ) {
-					$redirect_url = self::$exists[ 'options' ][ 'restrict_redirect_url' ];
+				elseif ( !empty( self::$exists[ 'restrict_redirect_url' ] ) ) {
+					$redirect_url = self::$exists[ 'restrict_redirect_url' ];
 				}
 
 				if ( !empty( $redirect_url ) ) {

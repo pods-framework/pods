@@ -756,10 +756,10 @@ class PodsField_Pick extends PodsField {
                     // Get ids to remove
                     $remove_ids = array_diff( $current_ids, $value_ids );
 
-                    $related_required = (boolean) pods_var( 'required', $related_field[ 'options' ], 0 );
-                    $related_pick_limit = (int) pods_var( 'pick_limit', $related_field[ 'options' ], 0 );
+                    $related_required = (boolean) pods_var( 'required', $related_field, 0 );
+                    $related_pick_limit = (int) pods_var( 'pick_limit', $related_field, 0 );
 
-                    if ( 'single' == pods_var_raw( 'pick_format_type', $related_field[ 'options' ] ) )
+                    if ( 'single' == pods_var_raw( 'pick_format_type', $related_field ) )
                         $related_pick_limit = 1;
 
                     // Validate Required
@@ -788,9 +788,9 @@ class PodsField_Pick extends PodsField {
             self::$related_data[ $options[ 'id' ] ][ 'related_field' ] = $related_field;
             self::$related_data[ $options[ 'id' ] ][ 'related_pick_limit' ] = $related_pick_limit;
 
-            $pick_limit = (int) pods_var( 'pick_limit', $options[ 'options' ], 0 );
+            $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
-            if ( 'single' == pods_var_raw( 'pick_format_type', $options[ 'options' ] ) )
+            if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
                 $pick_limit = 1;
 
             $related_field[ 'id' ] = (int) $related_field[ 'id' ];
@@ -974,11 +974,6 @@ class PodsField_Pick extends PodsField {
      * @since 2.0
      */
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-        if ( isset( $options[ 'options' ] ) ) {
-            $options = array_merge( $options, $options[ 'options' ] );
-
-            unset( $options[ 'options' ] );
-        }
 
         $data = pods_var_raw( 'data', $options, null, null, true );
 
@@ -1018,11 +1013,6 @@ class PodsField_Pick extends PodsField {
      */
     public function simple_value ( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
         if ( in_array( pods_var( 'pick_object', $options ), self::simple_objects() ) ) {
-            if ( isset( $options[ 'options' ] ) ) {
-                $options = array_merge( $options, $options[ 'options' ] );
-
-                unset( $options[ 'options' ] );
-            }
 
             if ( !is_array( $value ) && 0 < strlen( $value ) ) {
                 $simple = @json_decode( $value, true );
@@ -1111,11 +1101,6 @@ class PodsField_Pick extends PodsField {
      * @since 2.2
      */
     public function value_to_label ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        if ( isset( $options[ 'options' ] ) ) {
-            $options = array_merge( $options, $options[ 'options' ] );
-
-            unset( $options[ 'options' ] );
-        }
 
         $data = pods_var_raw( 'data', $options, null, null, true );
 
@@ -1237,19 +1222,13 @@ class PodsField_Pick extends PodsField {
 
         $name = $object_params[ 'name' ];
         $value = $object_params[ 'value' ];
-        $options = $object_params[ 'options' ] = (array) $object_params[ 'options' ];
+        $options = $object_params[ 'options' ];
         $pod = $object_params[ 'pod' ];
         $id = $object_params[ 'id' ];
         $context = $object_params[ 'context' ];
         $data_params = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
         $page = min( 1, (int) $object_params[ 'page' ] );
         $limit = (int) $object_params[ 'limit' ];
-
-        if ( isset( $options[ 'options' ] ) ) {
-            $options = array_merge( $options, $options[ 'options' ] );
-
-            unset( $options[ 'options' ] );
-        }
 
         $data = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
         $items = array();
@@ -1760,7 +1739,7 @@ class PodsField_Pick extends PodsField {
         $object_params = array(
             'name' => $field[ 'name' ], // The name of the field
             'value' => null, // The value of the field
-            'options' => array_merge( $field, $field[ 'options' ] ), // Field options
+            'options' => array_merge( $field, $field ), // Field options
             'pod' => $pod, // Pod data
             'id' => $id, // Item ID
             'context' => 'admin_ajax_relationship', // Data context

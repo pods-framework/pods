@@ -563,7 +563,16 @@ function pods_current_url () {
     if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )
         $url = 'https';
 
-    $url .= '://' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ];
+	$url .= '://';
+
+	if ( isset( $_SERVER[ 'HTTP_HOST' ] ) ) {
+    	$url .= $_SERVER[ 'HTTP_HOST' ];
+	}
+	else {
+		$url .= 'local.dev';
+	}
+
+	$url .= $_SERVER[ 'REQUEST_URI' ];
 
     return apply_filters( 'pods_current_url', $url );
 }
@@ -1056,10 +1065,6 @@ function pods_permission( $options ) {
 
 	$permission = false;
 
-	if ( isset( $options[ 'options' ] ) ) {
-		$options = $options[ 'options' ];
-	}
-
 	if ( pods_is_admin() ) {
 		$permission = true;
 	}
@@ -1132,12 +1137,6 @@ function pods_permission( $options ) {
  * @since 2.3.4
  */
 function pods_has_permissions ( $options ) {
-
-        $options = $options[ 'options' ];
-
-	if ( isset( $options[ 'options' ] ) ) {
-		$options = $options[ 'options' ];
-	}
 
 	if ( 1 == pods_var( 'restrict_role', $options, 0 ) || 1 == pods_var( 'restrict_capability', $options, 0 ) || 1 == pods_var( 'admin_only', $options, 0 ) ) {
 		return true;

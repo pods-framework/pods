@@ -145,7 +145,7 @@ class PodsObject_Group extends PodsObject {
 			'advanced' => array()
 		);
 
-		if ( 'post_type' == $pod[ 'type' ] ) {
+		if ( 'settings' != $pod[ 'type' ] ) {
 			$options[ 'rules' ][ 'rules_new_old' ] = array(
 				'label' => __( 'Show Group based on Editor', 'pods' ),
 				'help' => __( 'help', 'pods' ),
@@ -157,7 +157,9 @@ class PodsObject_Group extends PodsObject {
 				),
 				'pick_format_type' => 'single'
 			);
+		}
 
+		if ( 'post_type' == $pod[ 'type' ] ) {
 			$options[ 'rules' ][ 'rules_post_status' ] = array(
 				'label' => __( 'Show Group based on Post Status', 'pods' ),
 				'help' => __( 'help', 'pods' ),

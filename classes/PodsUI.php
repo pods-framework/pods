@@ -1126,7 +1126,7 @@ class PodsUI {
                     $attributes[ 'real_name' ] = pods_var( 'name', $attributes, $field );
 
                 if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
-                    $attributes = array_merge( $this->pod->fields[ $attributes[ 'real_name' ] ], $attributes );
+                    $attributes = $this->pod->fields[ $attributes[ 'real_name' ] ]->override( $attributes );
 
                 if ( !isset( $attributes[ 'id' ] ) )
                     $attributes[ 'id' ] = '';

@@ -866,11 +866,13 @@ class PodsObject implements ArrayAccess, Serializable {
 		if ( 1 == count( $export_types ) ) {
 			$export_type = current( array_values( $export_types ) );
 
-			if ( isset( $export[ $export_type ] ) ) {
-				$export = $export[ $export_type ];
-			}
-			else {
-				$export = array();
+			if ( 'data' != $export_type ) {
+				if ( isset( $export[ $export_type ] ) ) {
+					$export = $export[ $export_type ];
+				}
+				else {
+					$export = array();
+				}
 			}
 		}
 

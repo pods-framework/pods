@@ -735,8 +735,10 @@ class PodsMeta {
             $object = self::$user;
         elseif ( 'comment' == $type )
             $object = self::$comment;
+        elseif ( 'pod' == $type )
+            $object = self::$advanced_content_types;
 
-        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
+        if ( !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
             if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )

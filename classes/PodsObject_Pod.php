@@ -1517,9 +1517,15 @@ class PodsObject_Pod extends PodsObject {
 				$conflicted = true;
 			}
 
-			//$post_meta = $pod->export( 'data' );
-			$changed_meta = $pod->changed();
-			$pod->override_save();
+			if ( !empty( $params->id ) ) {
+				$changed_meta = $pod->changed();
+				$pod->override_save();
+			}
+			else {
+				$changed_meta = $pod->export( 'data' );
+			}
+
+			$changed_meta = array_diff_key( $changed_meta, array( 'id' => '', 'name' => '', 'label' => '', 'description' => '' ) );
 
 			$params->id = $api->save_wp_object( 'post', $post_data, $changed_meta );
 

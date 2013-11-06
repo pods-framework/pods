@@ -2,6 +2,8 @@
 wp_enqueue_script( 'pods' );
 wp_enqueue_style( 'pods-form' );
 
+$id = $pod->id();
+
 if ( empty( $fields ) || !is_array( $fields ) )
     $fields = $obj->pod->fields;
 
@@ -14,7 +16,7 @@ else
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $id ) ) {
         if ( pods_var( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
         elseif ( pods_var( 'read_only', $field, false ) )
@@ -48,7 +50,7 @@ $uid = @session_id();
 if ( is_user_logged_in() )
     $uid = 'user_' . get_current_user_id();
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $pod->id() ) . '_' . $uri_hash . '_' . $field_hash );
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $id ) . '_' . $uri_hash . '_' . $field_hash );
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     $action = __( 'saved', 'pods' );
@@ -93,7 +95,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
     $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
 
-    if ( 0 < $pod->id() )
+    if ( 0 < $id )
         echo $obj->message( $message );
     else
         echo $obj->error( $error );
@@ -104,7 +106,7 @@ if ( !isset( $label ) )
 
 $do = 'create';
 
-if ( 0 < $pod->id() ) {
+if ( 0 < $id ) {
     if ( $duplicate )
         $do = 'duplicate';
     else
@@ -119,7 +121,7 @@ if ( 0 < $pod->id() ) {
         <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $id ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
@@ -143,7 +145,7 @@ if ( 0 < $pod->id() ) {
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
                                 <?php
-                                    if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) ) ) {
+                                    if ( 0 < $id && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) ) ) {
                                 ?>
                                     <div id="minor-publishing">
                                         <?php
@@ -194,7 +196,7 @@ if ( 0 < $pod->id() ) {
 
                                 <div id="major-publishing-actions">
                                     <?php
-                                        if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
+                                        if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && null !== $id && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
                                     ?>
                                         <div id="delete-action">
                                             <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
@@ -312,51 +314,78 @@ if ( 0 < $pod->id() ) {
                             }
                         }
 
-                        if ( 0 < count( $fields ) ) {
+						$groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[ 'name' ] );
+
+                        if ( 0 < count( $groups ) ) {
+							foreach ( $groups as $group ) {
+								if ( empty( $group[ 'fields' ] ) )
+									continue;
+
+								$hidden_fields = array();
+					?>
+						<div id="normal-sortables" class="meta-box-sortables ui-sortable">
+							<div id="pods-meta-box" class="postbox" style="">
+								<div class="handlediv" title="Click to toggle"><br /></div>
+								<h3 class="hndle">
+									<span>
+										<?php echo $group[ 'label' ]; ?>
+									</span>
+								</h3>
+
+								<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_pod' ), 'hidden' ); ?>
+
+								<div class="inside">
+									<table class="form-table pods-metabox">
+										<tbody>
+											<?php
+												foreach ( $group[ 'fields' ] as $field ) {
+													if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
+														if ( pods_var( 'hidden', $field, false ) )
+															$field[ 'type' ] = 'hidden';
+														else
+															continue;
+													}
+													elseif ( !pods_has_permissions( $field ) && pods_var( 'hidden', $field, false ) )
+														$field[ 'type' ] = 'hidden';
+
+													$value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+
+													if ( 'hidden' == $field[ 'type' ] ) {
+														$hidden_fields[] = array(
+															'field' => $field,
+															'value' => $value
+														);
+
+														continue;
+													}
+											?>
+												<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+													<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
+													<td>
+														<?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+														<?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+													</td>
+												</tr>
+											<?php
+												}
+											?>
+										</tbody>
+									</table>
+								</div>
+								<!-- /.inside -->
+							</div>
+							<!-- /#pods-meta-box -->
+						</div>
+						<!-- /#normal-sortables -->
+					<?php
+								foreach ( $hidden_fields as $hidden_field ) {
+									$field = $hidden_field[ 'field' ];
+
+									echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+								}
+							}
+						}
                     ?>
-
-                    <div id="normal-sortables" class="meta-box-sortables ui-sortable">
-                        <div id="pods-meta-box" class="postbox" style="">
-                            <div class="handlediv" title="Click to toggle"><br /></div>
-                            <h3 class="hndle">
-                                <span>
-                                    <?php
-                                    if ( $more )
-                                        $title = __( 'More Fields', 'pods' );
-                                    else
-                                        $title = __( 'Fields', 'pods' );
-
-                                    echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields );
-                                    ?>
-                                </span>
-                            </h3>
-
-                            <div class="inside">
-                                <table class="form-table pods-metabox">
-                                    <?php
-                                        foreach ( $fields as $field ) {
-                                            if ( 'hidden' == $field[ 'type' ] )
-                                                continue;
-                                    ?>
-                                        <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
-                                            <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
-                                            <td>
-                                                <?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
-                                                <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-                                            </td>
-                                        </tr>
-                                    <?php
-                                        }
-                                    ?>
-                                </table>
-                            </div>
-                            <!-- /.inside -->
-                        </div>
-                        <!-- /#pods-meta-box -->
-                    </div>
-                    <!-- /#normal-sortables -->
-
-                    <?php } ?>
 
                     <!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
                     </div>

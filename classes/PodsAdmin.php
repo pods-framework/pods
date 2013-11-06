@@ -169,9 +169,10 @@ class PodsAdmin {
      * @since 2.0
      */
     public function admin_menu () {
-        $advanced_content_types = PodsMeta::$advanced_content_types;
         $taxonomies = PodsMeta::$taxonomies;
-        $settings = PodsMeta::$settings;
+
+        $advanced_content_types = PodsMeta::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
+        $settings = PodsMeta::$settings = pods_api()->load_pods( array( 'type' => 'settings' ) );
 
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 

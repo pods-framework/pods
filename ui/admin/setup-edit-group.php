@@ -10,7 +10,7 @@ if ( !$pod->is_valid() ) {
 }
 
 if ( !empty( $obj->id ) ) {
-	$group = pods_object_group( null, $obj->id );
+	$group = pods_object_group( null, $obj->id, false, $pod[ 'id' ] );
 
 	if ( !$group->is_valid() ) {
 		return pods_error( __( 'Field Group not found', 'pods' ) );

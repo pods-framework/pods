@@ -141,7 +141,7 @@ class PodsObject_Field extends PodsObject {
 				'parent_id' => $parent_id,
 				'pod' => '',
 				'pod_id' => '',
-				'group' => ''
+				'group_id' => ''
 			);
 
 			if ( !empty( $_object ) ) {
@@ -162,7 +162,7 @@ class PodsObject_Field extends PodsObject {
 
 				if ( !empty( $parent ) ) {
 					if ( '_pods_group' == $parent->post_type ) {
-						$object[ 'group' ] = $parent->post_name;
+						$object[ 'group_id' ] = $parent->post_parent;
 
 						$group_pod = get_post( $parent->post_parent );
 
@@ -192,7 +192,7 @@ class PodsObject_Field extends PodsObject {
 			if ( 0 < $object[ 'id' ] ) {
 				$meta = array(
 					'type',
-					'group'
+					'group_id'
 				);
 
 				foreach ( $meta as $meta_key ) {
@@ -233,7 +233,7 @@ class PodsObject_Field extends PodsObject {
 					}
 				}
 
-				$object[ 'group' ] = (int) $object[ 'group' ];
+				$object[ 'group_id' ] = (int) $object[ 'group_id' ];
 			}
 
 			if ( in_array( $object[ 'type' ], PodsForm::tableless_field_types() ) ) {
@@ -408,6 +408,10 @@ class PodsObject_Field extends PodsObject {
 
 		if ( isset( $params->pod_id ) ) {
 			$params->pod_id = pods_absint( $params->pod_id );
+		}
+
+		if ( isset( $params->group_id ) ) {
+			$params->group_id = pods_absint( $params->group_id );
 		}
 
 		$pod = null;
@@ -757,7 +761,10 @@ class PodsObject_Field extends PodsObject {
 				$conflicted = true;
 			}
 
-			$params->id = $api->save_wp_object( 'post', $post_data, $field, true, true );
+			$changed_meta = $field->changed();
+			$field->override_save();
+
+			$params->id = $api->save_wp_object( 'post', $post_data, $changed_meta );
 
 			if ( $conflicted ) {
 				add_filter( 'wp_insert_post_data', 'headway_clean_slug', 0 );

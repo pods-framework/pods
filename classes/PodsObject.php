@@ -49,6 +49,15 @@ class PodsObject implements ArrayAccess, Serializable {
 	protected $_object_fields = array();
 
 	/**
+	 * Object Groups
+	 *
+	 * @var array
+	 */
+	protected $_groups = array(
+
+	);
+
+	/**
 	 * Table info for Object
 	 *
 	 * @var array
@@ -711,6 +720,10 @@ class PodsObject implements ArrayAccess, Serializable {
 			$alt_fields = 'fields';
 			$all_fields =& $this->_object_fields;
 		}
+		elseif ( 'groups' == $fields ) {
+			$alt_fields = 'groups';
+			$all_fields =& $this->_groups;
+		}
 
 		// No fields found
 		if ( empty( $all_fields ) ) {
@@ -816,7 +829,8 @@ class PodsObject implements ArrayAccess, Serializable {
 				'data',
 				'fields',
 				'object_fields',
-				'table_info'
+				'table_info',
+				'groups'
 			);
 
 			$export_types = array_merge( $export_types, $this->_methods );
@@ -946,6 +960,27 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
+	 * Export group array from Object
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 2.4
+	 */
+	public function groups_export() {
+
+		$groups = $this->groups();
+
+		foreach ( $groups as $group => $group_object ) {
+			if ( is_object( $group_object ) ) {
+				$groups[ $group ] = $group_object->export();
+			}
+		}
+
+		return $groups;
+
+	}
+
+	/**
 	 * Return field array from Object, a field's data, or a field option
 	 *
 	 * @param string|null $field Object Field name
@@ -965,8 +1000,8 @@ class PodsObject implements ArrayAccess, Serializable {
 			$this->_fields = array();
 
 			if ( $this->is_custom() ) {
-				if ( isset( $this->_object[ 'fields' ] ) && !empty( $this->_object[ 'fields' ] ) ) {
-					foreach ( $this->_object[ 'fields' ] as $object_field ) {
+				if ( isset( $this->_object[ '_fields' ] ) && !empty( $this->_object[ '_fields' ] ) ) {
+					foreach ( $this->_object[ '_fields' ] as $object_field ) {
 						$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $object_field->is_valid() ) {
@@ -1040,6 +1075,65 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		return $this->_fields( 'object_fields', $field, $option );
+
+	}
+
+	/**
+	 * Return group array from Object, or a group's object
+	 *
+	 * @param string|null $group Object Group name
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 2.4
+	 */
+	public function groups( $group = null ) {
+
+		if ( !$this->is_valid() ) {
+			return array();
+		}
+
+		if ( empty( $this->_groups ) ) {
+			if ( $this->is_custom() ) {
+				if ( isset( $this->_object[ '_groups' ] ) && !empty( $this->_object[ '_groups' ] ) ) {
+					$this->_groups = array();
+
+					foreach ( $this->_object[ '_groups' ] as $object_group ) {
+						$object_group = pods_object_group( $object_group, 0, $this->_live, $this->_object[ 'id' ] );
+
+						if ( $object_group->is_valid() ) {
+							$this->_groups[ $object_group[ 'name' ] ] = $object_group;
+						}
+					}
+				}
+			}
+			else {
+				$find_args = array(
+					'post_type' => '_pods_group',
+					'posts_per_page' => -1,
+					'nopaging' => true,
+					'post_parent' => $this->_object[ 'id' ],
+					'orderby' => 'menu_order',
+					'order' => 'ASC'
+				);
+
+				$groups = get_posts( $find_args );
+
+				$this->_groups = array();
+
+				if ( !empty( $groups ) ) {
+					foreach ( $groups as $object_group ) {
+						$object_group = pods_object_group( $object_group, 0, $this->_live, $this->_object[ 'id' ] );
+
+						if ( $object_group->is_valid() ) {
+							$this->_groups[ $object_group[ 'name' ] ] = $object_group;
+						}
+					}
+				}
+			}
+		}
+
+		return $this->_fields( 'groups', $group );
 
 	}
 

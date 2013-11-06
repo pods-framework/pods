@@ -47,14 +47,20 @@ class PodsObject_Group extends PodsObject {
 	 */
 	public function fields( $field = null, $option = null ) {
 
-		if ( !isset( $this->_object[ 'fields' ] ) ) {
+		if ( !$this->is_valid() ) {
+			return array();
+		}
+
+		if ( empty( $this->_fields ) ) {
 			if ( $this->is_custom() ) {
 				if ( isset( $this->_object[ '_fields' ] ) && !empty( $this->_object[ '_fields' ] ) ) {
+					$this->_fields = array();
+
 					foreach ( $this->_object[ '_fields' ] as $object_field ) {
 						$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object[ 'id' ] );
 
 						if ( $object_field->is_valid() ) {
-							$this->_object[ 'fields' ][ $object_field[ 'name' ] ] = $object_field;
+							$this->_fields[ $object_field[ 'name' ] ] = $object_field;
 						}
 					}
 				}
@@ -67,7 +73,7 @@ class PodsObject_Group extends PodsObject {
 					'post_parent' => $this->_object[ 'parent_id' ],
 					'meta_query' => array(
 						array(
-							'key' => 'group',
+							'key' => 'group_id',
 							'value' => $this->_object[ 'id' ]
 						)
 					),
@@ -113,6 +119,7 @@ class PodsObject_Group extends PodsObject {
 		}
 
 		$tabs[ 'rules' ] = __( 'Visibility Rules', 'pods' );
+		$tabs[ 'advanced' ] = __( 'Advanced', 'pods' );
 
 		$tabs = apply_filters( 'pods_admin_setup_edit_group_tabs_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $tabs, $pod, $group );
 		$tabs = apply_filters( 'pods_admin_setup_edit_group_tabs_' . $pod[ 'type' ], $tabs, $pod, $group );
@@ -134,7 +141,8 @@ class PodsObject_Group extends PodsObject {
 		$pod = pods_object_pod( null, $this->_object[ 'parent_id' ] );
 
 		$options = array(
-			'rules' => array()
+			'rules' => array(),
+			'advanced' => array()
 		);
 
 		if ( 'post_type' == $pod[ 'type' ] ) {
@@ -196,6 +204,31 @@ class PodsObject_Group extends PodsObject {
 					);
 				}
 			}
+
+			$options[ 'advanced' ][ 'context' ] = array(
+				'label' => __( 'Meta Box Context', 'pods' ),
+				'help' => __( 'The context within the editor where the group should show', 'pods' ),
+				'type' => 'pick',
+				'data' => array(
+					'normal' => __( 'Normal', 'pods' ),
+					'advanced' => __( 'Advanced', 'pods' )
+				),
+				'pick_format_type' => 'single',
+				'default' => 'normal'
+			);
+
+			$options[ 'advanced' ][ 'priority' ] = array(
+				'label' => __( 'Meta Box Priority', 'pods' ),
+				'help' => __( 'The priority within the context where the group should show', 'pods' ),
+				'type' => 'pick',
+				'data' => array(
+					'default' => __( 'Default', 'pods' ),
+					'low' => __( 'Low', 'pods' ),
+					'high' => __( 'High', 'pods' )
+				),
+				'pick_format_type' => 'single',
+				'default' => 'default'
+			);
 		}
 
 		$options = apply_filters( 'pods_admin_setup_edit_group_options_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $options, $pod, $group );
@@ -805,7 +838,7 @@ class PodsObject_Group extends PodsObject {
 				}
 
 				$field[ 'pod' ] = $pod;
-				$field[ 'group' ] = $group;
+				$field[ 'group_id' ] = $group[ 'id' ];
 
 				if ( !isset( $field[ 'weight' ] ) ) {
 					$field[ 'weight' ] = $weight;

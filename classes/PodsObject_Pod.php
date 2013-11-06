@@ -34,7 +34,8 @@ class PodsObject_Pod extends PodsObject {
 	protected $_methods = array(
 		'fields',
 		'object_fields',
-		'table_info'
+		'table_info',
+		'groups'
 	);
 
 	/**

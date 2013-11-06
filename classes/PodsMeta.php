@@ -754,7 +754,12 @@ class PodsMeta {
             'type' => 'post_type'
         );
 
-        $pod = array_merge( $defaults, (array) $pod );
+		if ( is_object( $pod ) ) {
+			$pod->defaults( $defaults );
+		}
+		else {
+        	$pod = array_merge( $defaults, (array) $pod );
+		}
 
         if ( empty( $pod[ 'name' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
@@ -764,18 +769,31 @@ class PodsMeta {
         if ( $pod[ 'type' ] != $type )
             return array();
 
-        $groups = array(
-            array(
-                'pod' => $pod,
-                'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
-                'fields' => $fields,
-                'context' => 'normal',
-                'priority' => 'default'
-            )
-        );
+		$groups = array();
 
-        if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) )
+        if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) ) {
             $groups = self::$groups[ $type ][ $name ];
+		}
+		else {
+			if ( is_object( $pod ) ) {
+				$groups = $pod->groups();
+			}
+
+			if ( empty( $groups ) ) {
+				$groups = array(
+					array(
+						'pod' => $pod,
+						'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
+						'fields' => $fields,
+						'context' => 'normal',
+						'priority' => 'default'
+					)
+				);
+			}
+		}
+
+		$groups = apply_filters( 'pods_meta_get_groups_' . $pod[ 'name' ], $groups, $pod, $fields, $type, $name );
+		$groups = apply_filters( 'pods_meta_get_groups', $groups, $pod, $fields, $type, $name );
 
         return $groups;
     }
@@ -851,7 +869,7 @@ class PodsMeta {
         if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php?' ) )
             $id = $post->ID;
 
-        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod ) || self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] )
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod ) || ( is_array( $metabox[ 'args' ][ 'group' ][ 'pod' ] ) && self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] ) || ( !is_array( $metabox[ 'args' ][ 'group' ][ 'pod' ] ) && !empty( $metabox[ 'args' ][ 'group' ][ 'pod' ] ) && self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ] ) )
             self::$current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 		elseif ( self::$current_pod->id() != $id )
 			self::$current_pod->fetch( $id );

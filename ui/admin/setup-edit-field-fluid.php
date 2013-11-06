@@ -137,9 +137,9 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                             <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo sanitize_title( $field_type ); ?>">
                                         <?php
                                             if ( !isset( $first_field[ 'name' ] ) && !isset( $first_field[ 'label' ] ) ) {
-                                                foreach ( $field_type_fields as $group => $group_fields ) {
+                                                foreach ( $field_type_fields as $group_name => $group_fields ) {
                                                 ?>
-                                                    <h4><?php echo $group; ?></h4>
+                                                    <h4><?php echo $group_name; ?></h4>
                                                 <?php
                                                     $field_options = PodsForm::fields_setup( $group_fields );
 
@@ -160,9 +160,9 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                         $first_field = current( $field_tab_fields );
 
                                         if ( !isset( $first_field[ 'name' ] ) && !isset( $first_field[ 'label' ] ) ) {
-                                            foreach ( $field_tab_fields as $group => $group_fields ) {
+                                            foreach ( $field_tab_fields as $group_name => $group_fields ) {
                                             ?>
-                                                <h4><?php echo $group; ?></h4>
+                                                <h4><?php echo $group_name; ?></h4>
                                             <?php
                                                 $field_options = PodsForm::fields_setup( $group_fields );
 

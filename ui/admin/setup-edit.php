@@ -112,16 +112,6 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
 $tabs = $pod->admin_tabs();
 $tab_options = $pod->admin_options();
-
-$field_tabs = $pod->admin_field_tabs();
-$field_tab_options = $pod->admin_field_options();
-
-$no_additional = array();
-
-foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type_fields ) {
-    if ( empty( $field_type_fields ) )
-        $no_additional[] = $field_type;
-}
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
@@ -630,7 +620,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
     <div id="side-info-field" class="inner-sidebar">
         <div id="side-sortables">
             <div id="submitdiv" class="postbox pods-no-toggle">
-                <h3><span>Manage <small>(<a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
+                <h3><span>Manage <small>(<a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)</small>
                 </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">

@@ -20,7 +20,12 @@ $uid = @session_id();
 if ( is_user_logged_in() )
     $uid = 'user_' . get_current_user_id();
 
-$field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
+if ( is_object( $pod ) ) {
+	$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod->pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
+}
+else {
+	$field_nonce = wp_create_nonce( 'pods_relationship_0_' . $uid . '_' . $uri_hash . '_' . json_encode( $options ) );
+}
 
 $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
@@ -136,8 +141,21 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             _wpnonce : '<?php echo $field_nonce; ?>',
                             action : 'pods_relationship',
                             method : 'select2',
-                            pod : '<?php echo (int) $pod->pod_id; ?>',
-                            field : '<?php echo (int) $options[ 'id' ]; ?>',
+							<?php
+								if ( is_object( $pod ) ) {
+							?>
+								pod : '<?php echo (int) $pod->pod_id; ?>',
+								field : '<?php echo (int) $options[ 'id' ]; ?>',
+							<?php
+								}
+								else {
+							?>
+								pod : '0',
+								field : '0',
+								field_data : '<?php echo esc_js( json_encode( $options ) ); ?>',
+							<?php
+								}
+							?>
                             uri : '<?php echo $uri_hash; ?>',
                             id : '<?php echo (int) $id; ?>',
                             query : term<?php

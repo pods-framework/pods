@@ -56,6 +56,13 @@ class PodsObject implements ArrayAccess, Serializable {
 	protected $_table_info = array();
 
 	/**
+	 * Options for Object
+	 *
+	 * @var array
+	 */
+	protected $_options = array();
+
+	/**
 	 * Set to true to automatically save values in the DB when you $object['option']='value'
 	 *
 	 * @var bool
@@ -552,7 +559,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @since 2.3.10
 	 */
-	public function _meta( $meta_key, $id = null, $internal = false, $strict = false ) {
+	public function _meta( $meta_key = null, $id = null, $internal = false, $strict = false ) {
 
 		if ( (int) $id < 1 ) {
 			if ( !$this->is_valid() ) {
@@ -572,6 +579,50 @@ class PodsObject implements ArrayAccess, Serializable {
 
 		if ( (int) $id < 1 ) {
 			$id = $this->_object[ 'id' ];
+		}
+
+		if ( null === $meta_key ) {
+			$values = get_post_meta( $id );
+
+			if ( !empty( $values ) ) {
+				foreach ( $values as $key => $value ) {
+					if ( !isset( $this->_object[ $key ] ) && !isset( $this->_meta[ $key ] ) ) {
+						// Field not found
+						if ( empty( $value ) || ( $strict && 1 == count( $value ) && '' === $value[ 0 ] ) ) {
+							$value = null;
+						}
+						else {
+							foreach ( $value as $k => $v ) {
+								if ( !is_array( $v ) ) {
+									$value[ $k ] = maybe_unserialize( $v );
+								}
+							}
+
+							if ( 1 == count( $value ) ) {
+								$value = current( array_values( $value ) );
+							}
+						}
+
+						if ( null !== $value ) {
+							if ( isset( $this->_options[ $key ] ) ) {
+								$tableless_field_types = PodsForm::tableless_field_types();
+
+								if ( in_array( $this->_options[ $key ][ 'type' ], $tableless_field_types ) ) {
+									$this->_options[ $key ][ 'pick_simple' ] = 1;
+
+									$value = PodsForm::field_method( 'pick', 'simple_value', $key, $value, $this->_options[ $key ], null, 0, true );
+								}
+
+								$value = PodsForm::value( $this->_options[ $key ][ 'type' ], $value, $key, $this->_options[ $key ], null, 0 );
+							}
+
+							$this->_meta[ $key ] = $value;
+						}
+					}
+				}
+			}
+
+			return $this->_meta;
 		}
 
 		// @todo For 2.4 enable internal prefix
@@ -603,7 +654,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				}
 
 				if ( 1 == count( $value ) ) {
-					$value = current( $value );
+					$value = current( array_values( $value ) );
 				}
 			}
 		}
@@ -613,6 +664,18 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		else {
 			$value = maybe_unserialize( $value );
+		}
+
+		if ( isset( $this->_options[ $meta_key ] ) ) {
+			$tableless_field_types = PodsForm::tableless_field_types();
+
+			if ( in_array( $this->_options[ $meta_key ][ 'type' ], $tableless_field_types ) ) {
+				$this->_options[ $meta_key ][ 'pick_simple' ] = 1;
+
+				$value = PodsForm::field_method( 'pick', 'simple_value', $meta_key, $value, $this->_options[ $meta_key ], null, 0, true );
+			}
+
+			$value = PodsForm::value( $this->_options[ $meta_key ][ 'type' ], $value, $meta_key, $this->_options[ $meta_key ], null, 0 );
 		}
 
 		return $value;
@@ -764,6 +827,8 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( in_array( 'data', $export_types ) ) {
+			$this->_meta( null, null, false, true );
+
 			$export = array_merge( $this->_object, $this->_meta, $this->_override );
 		}
 
@@ -785,7 +850,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		if ( 1 == count( $export_types ) ) {
-			$export_type = current( $export_types );
+			$export_type = current( array_values( $export_types ) );
 
 			if ( isset( $export[ $export_type ] ) ) {
 				$export = $export[ $export_type ];
@@ -1347,7 +1412,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		elseif ( isset( $this->_deprecated_keys[ $offset ] ) ) {
 			$value = null;
 
-			if ( pods_allow_deprecated() ) {
+			if ( pods_allow_deprecated() || isset( $this->_core_fields[ $offset ] ) ) {
 				$value = $this->offsetGet( $this->_deprecated_keys[ $offset ], $strict );
 			}
 			else {

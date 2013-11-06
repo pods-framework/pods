@@ -140,6 +140,7 @@ class PodsObject_Field extends PodsObject {
 				'weight' => 0,
 				'parent_id' => $parent_id,
 				'pod' => '',
+				'pod_id' => '',
 				'group' => ''
 			);
 
@@ -167,10 +168,12 @@ class PodsObject_Field extends PodsObject {
 
 						if ( !empty( $group_pod ) && '_pods_pod' == $group_pod->post_type ) {
 							$object[ 'pod' ] = $group_pod->post_name;
+							$object[ 'pod_id' ] = $group_pod->ID;
 						}
 					}
 					elseif ( '_pods_pod' == $parent->post_type ) {
 						$object[ 'pod' ] = $parent->post_name;
+						$object[ 'pod_id' ] = $parent->ID;
 					}
 				}
 			}
@@ -188,7 +191,8 @@ class PodsObject_Field extends PodsObject {
 
 			if ( 0 < $object[ 'id' ] ) {
 				$meta = array(
-					'type'
+					'type',
+					'group'
 				);
 
 				foreach ( $meta as $meta_key ) {
@@ -228,6 +232,8 @@ class PodsObject_Field extends PodsObject {
 						$object[ $meta_key ] = '';
 					}
 				}
+
+				$object[ 'group' ] = (int) $object[ 'group' ];
 			}
 
 			if ( in_array( $object[ 'type' ], PodsForm::tableless_field_types() ) ) {
@@ -241,7 +247,7 @@ class PodsObject_Field extends PodsObject {
 				}
 
 				foreach ( $tableless_meta as $meta_key ) {
-					if ( !isset( $tableless_meta[ $meta_key ] ) || empty( $object[ 'pick_object' ] ) ) {
+					if ( !isset( $object[ $meta_key ] ) || empty( $object[ 'pick_object' ] ) ) {
 						$object[ $meta_key ] = '';
 					}
 				}
@@ -453,7 +459,19 @@ class PodsObject_Field extends PodsObject {
 		$params->pod_id = $pod[ 'id' ];
 		$params->pod = $pod[ 'name' ];
 
+		if ( !isset( $params->name ) && isset( $params->label ) ) {
+			$params->name = $params->label;
+		}
+
+		if ( !isset( $params->name ) ) {
+			return pods_error( 'Pod field name is required', $this );
+		}
+
 		$params->name = pods_clean_name( $params->name, true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
+
+		if ( !isset( $params->label ) ) {
+			$params->label = $params->name;
+		}
 
 		if ( !isset( $params->id ) ) {
 			$params->id = 0;
@@ -515,7 +533,7 @@ class PodsObject_Field extends PodsObject {
 		else {
 			$field = array(
 				 'id' => 0,
-				 'pod_id' => $params->pod_id,
+				 'parent_id' => $params->pod_id,
 				 'name' => $params->name,
 				 'label' => $params->name,
 				 'type' => 'text'
@@ -672,8 +690,8 @@ class PodsObject_Field extends PodsObject {
 				'post_name' => $field[ 'name' ],
 				'post_title' => $field[ 'label' ],
 				'post_content' => $field[ 'description' ],
-				'post_type' => '_pods_field',
 				'post_parent' => $field[ 'pod_id' ],
+				'post_type' => '_pods_field',
 				'post_status' => 'publish',
 				'menu_order' => $field[ 'weight' ]
 			);
@@ -714,7 +732,8 @@ class PodsObject_Field extends PodsObject {
 				'ID' => $field[ 'id' ],
 				'post_name' => $field[ 'name' ],
 				'post_title' => $field[ 'label' ],
-				'post_content' => $field[ 'description' ]
+				'post_content' => $field[ 'description' ],
+				'post_parent' => $field[ 'parent_id' ]
 			);
 
 			if ( null !== $field[ 'weight' ] ) {
@@ -725,8 +744,8 @@ class PodsObject_Field extends PodsObject {
 		}
 
 		if ( true === $params->db ) {
-			if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ) ) ) {
-				add_filter( 'wp_unique_post_slug', array( $this, 'save_slug_fix' ), 100, 6 );
+			if ( !has_filter( 'wp_unique_post_slug', array( $api, 'save_slug_fix' ) ) ) {
+				add_filter( 'wp_unique_post_slug', array( $api, 'save_slug_fix' ), 100, 6 );
 			}
 
 			$conflicted = false;

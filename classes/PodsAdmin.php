@@ -10,7 +10,7 @@ class PodsAdmin {
     static $instance = null;
 
 	/**
-	 * @var bool
+	 * @var bool|PodsObject_Pod
 	 */
 	static $admin_row = false;
 
@@ -730,6 +730,8 @@ class PodsAdmin {
 
             if ( $pod[ 'id' ] == pods_v( 'id' ) && 'delete' != pods_v( 'action' ) ) {
                 $row = $pod;
+
+				self::$admin_row = $the_pod;
 			}
 
             $total_fields += $pod[ 'field_count' ];
@@ -743,8 +745,6 @@ class PodsAdmin {
             unset( $_GET[ 'id' ] );
             unset( $_GET[ 'action' ] );
         }
-
-		self::$admin_row = $row;
 
 		if ( false !== $row && 'manage' != pods_v( 'action_group', 'get', 'manage' ) ) {
 			$this->admin_setup_groups();
@@ -763,7 +763,7 @@ class PodsAdmin {
             'fields' => array(
                 'manage' => $fields
             ),
-            'actions_disabled' => array( 'view', 'export' ),
+            'actions_disabled' => array( 'view', 'export', 'bulk_delete' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
                 'edit' => array( $this, 'admin_setup_edit' ),
@@ -808,7 +808,7 @@ class PodsAdmin {
     /**
      * Get the add page of an object
      *
-     * @param $obj
+     * @param PodsUI $obj
      */
     public function admin_setup_add ( $obj ) {
         pods_view( PODS_DIR . 'ui/admin/setup-add.php', compact( array_keys( get_defined_vars() ) ) );
@@ -817,8 +817,8 @@ class PodsAdmin {
     /**
      * Get the edit page of an object
      *
-     * @param $duplicate
-     * @param $obj
+     * @param bool $duplicate
+     * @param PodsUI $obj
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
 
@@ -831,7 +831,7 @@ class PodsAdmin {
     /**
      * Duplicate a pod
      *
-     * @param $id
+     * @param int $id
      * @param PodsUI $obj
      *
      * @return mixed
@@ -873,7 +873,7 @@ class PodsAdmin {
     /**
      * Reset a pod
      *
-     * @param $obj
+     * @param PodsUI $obj
      *
      * @return mixed
      */
@@ -914,8 +914,8 @@ class PodsAdmin {
     /**
      * Delete a pod
      *
-     * @param $id
-     * @param $obj
+     * @param int $id
+     * @param PodsUI $obj
      *
      * @return mixed
      */
@@ -943,18 +943,22 @@ class PodsAdmin {
 		$field_groups = pods( '_pods_group' );
 
         $fields = array(
-            'label' => array( 'label' => __( 'Label', 'pods' ) ),
-            'name' => array( 'label' => __( 'Name', 'pods' ) ),
-            'type' => array( 'label' => __( 'Type', 'pods' ) ),
-            'storage' => array(
-                'label' => __( 'Storage Type', 'pods' ),
-                'width' => '10%'
+            'post_title' => array(
+				'label' => __( 'Group title', 'pods' )
+			),
+            'rules' => array(
+                'label' => __( 'Rules', 'pods' ),
+				'custom_display' => array( $this, 'admin_setup_groups_field_rules' ),
+                'width' => '40%'
             ),
             'field_count' => array(
                 'label' => __( 'Number of Fields', 'pods' ),
-                'width' => '8%'
+				'custom_display' => array( $this, 'admin_setup_groups_field_count' ),
+                'width' => '15%'
             )
         );
+
+		$total_fields = count( self::$admin_row->fields() );
 
         $ui = array(
 			'num' => 'group',
@@ -964,17 +968,23 @@ class PodsAdmin {
             'fields' => array(
                 'manage' => $fields
             ),
-            'actions_disabled' => array( 'view', 'export' ),
+            'actions_disabled' => array( 'view', 'export', 'bulk_delete', 'duplicate' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_groups_add' ),
                 'edit' => array( $this, 'admin_setup_groups_edit' ),
                 'duplicate' => array( $this, 'admin_setup_groups_duplicate' ),
                 'delete' => array( $this, 'admin_setup_groups_delete' )
             ),
+			'params' => array(
+				'where' => 't.post_parent = ' . self::$admin_row[ 'id' ]
+			),
             'search' => false,
             'searchable' => false,
             'sortable' => true,
-            'pagination' => false
+            'pagination' => false,
+            'extra' => array(
+                'total' => ', ' . number_format_i18n( $total_fields ) . ' ' . _n( 'field', 'fields', $total_fields, 'pods' )
+            )
         );
 
 		$field_groups->ui( $ui, true );
@@ -982,21 +992,90 @@ class PodsAdmin {
     }
 
     /**
+     * Custom value handler for 'Rules' in the Groups PodsUI
+     *
+     * @param array|PodsObject|PodsObject_Group $row Row data
+     * @param PodsUI $obj PodsUI object
+     * @param mixed $row_value Row value
+     * @param string $field Field name
+     * @param array|PodsObject|PodsObject_Field $attributes Field options
+     * @param array $fields Fields
+     */
+	public function admin_setup_groups_field_rules( $row, $obj, $row_value, $field, $attributes, $fields ) {
+
+		$options = $row->admin_options();
+
+		$rules = array();
+
+		foreach ( $options[ 'rules' ] as $option => $option_data ) {
+			if ( 'rules_taxonomy' == $option ) {
+				continue;
+			}
+
+			$value = $row[ $option ];
+
+			if ( !empty( $value ) ) {
+				$value = PodsForm::field_method( 'pick', 'value_to_label', $option, $value, $option_data, $obj->pod->pod_data, $obj->id );
+
+				if ( !empty( $value ) ) {
+					$rule_label = $option_data[ 'label' ];
+					$rule_label = str_replace( __( 'Show Group based on', 'pods' ) . ' ', '', $rule_label );
+
+					$rules[ $rule_label ] = pods_serial_comma( $value );
+				}
+			}
+		}
+
+		$row_value = __( 'No rules set.', 'pods' );
+
+		if ( !empty( $rules ) ) {
+			$row_value = '<ul>';
+
+			foreach ( $rules as $rule => $value ) {
+				$row_value .= '<li><strong>' . esc_html( $rule ) . ':</strong> ' . esc_html( $value );
+			}
+
+			$row_value .= '</ul>';
+		}
+
+		return $row_value;
+
+	}
+
+    /**
+     * Custom value handler for 'Field Count' in the Groups PodsUI
+     *
+     * @param array|PodsObject|PodsObject_Group $row Row data
+     * @param PodsUI $obj PodsUI object
+     * @param mixed $row_value Row value
+     * @param string $field Field name
+     * @param array|PodsObject|PodsObject_Field $attributes Field options
+     * @param array $fields Fields
+     */
+	public function admin_setup_groups_field_count( $row, $obj, $row_value, $field, $attributes, $fields ) {
+
+		$field_count = count( $row->fields() );
+
+		return $field_count;
+
+	}
+
+    /**
      * Get the add page of an object
      *
-     * @param $obj
+     * @param PodsUI $obj
      */
     public function admin_setup_groups_add ( $obj ) {
 
-        pods_view( PODS_DIR . 'ui/admin/setup-add-group.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'ui/admin/setup-edit-group.php', compact( array_keys( get_defined_vars() ) ) );
 
     }
 
     /**
      * Get the edit page of an object
      *
-     * @param $duplicate
-     * @param $obj
+     * @param bool $duplicate
+     * @param PodsUI $obj
      */
     public function admin_setup_groups_edit ( $duplicate, $obj ) {
 
@@ -1007,19 +1086,25 @@ class PodsAdmin {
     /**
      * Duplicate a pod
      *
-     * @param $id
+     * @param int $id
      * @param PodsUI $obj
      *
      * @return mixed
      */
     public function admin_setup_groups_duplicate ( $obj ) {
-        $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
+
+		$group = pods_object_group( null, $obj->id );
+
+        if ( !$group->is_valid() )
+            return $obj->error( __( 'Field Group not found.', 'pods' ) );
+
+		$new_id = $group->duplicate();
 
         if ( 0 < $new_id ) {
-            pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
+            pods_redirect( pods_var_update( array( 'action' . $obj->num => 'edit', 'id' . $obj->num => $new_id, 'do' . $obj->num => 'duplicate' ) ) );
 		}
 		else {
-			pods_message( 'Pod could not be duplicated', 'error' );
+			pods_message( 'Field Group could not be duplicated', 'error' );
 
 			$obj->manage();
 		}
@@ -1028,25 +1113,26 @@ class PodsAdmin {
     /**
      * Delete a pod
      *
-     * @param $id
-     * @param $obj
+     * @param int $id
+     * @param PodsUI $obj
      *
      * @return mixed
      */
     public function admin_setup_groups_delete ( $id, $obj ) {
-        $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
-        if ( empty( $pod ) )
-            return $obj->error( __( 'Pod not found.', 'pods' ) );
+		$group = pods_object_group( null, $obj->id );
 
-        pods_api()->delete_pod( array( 'id' => $id ) );
+        if ( !$group->is_valid() )
+            return $obj->error( __( 'Field Group not found.', 'pods' ) );
 
-        unset( $obj->data[ $pod[ 'id' ] ] );
+		$group->delete();
+
+        unset( $obj->data[ $obj->id ] );
 
         $obj->total = count( $obj->data );
         $obj->total_found = count( $obj->data );
 
-        $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+        $obj->message( __( 'Field Group deleted successfully.', 'pods' ) );
     }
 
     /**
@@ -1481,6 +1567,7 @@ class PodsAdmin {
         $methods = array(
             'add_pod' => array( 'priv' => true ),
             'save_pod' => array( 'priv' => true ),
+            'save_pod_group' => array( 'priv' => true ),
             'load_sister_fields' => array( 'priv' => true ),
             'process_form' => array( 'custom_nonce' => true ), // priv handled through nonce
             'upgrade' => array( 'priv' => true ),
@@ -1527,7 +1614,7 @@ class PodsAdmin {
         else {
             if ( !method_exists( $api, $method->name ) )
                 pods_error( 'API method does not exist', $this );
-            elseif ( 'save_pod' == $method->name ) {
+            elseif ( 'save_pod_group' == $method->name ) {
                 if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
                     $params->fields = $params->field_data_json;
 

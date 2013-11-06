@@ -978,7 +978,7 @@ class PodsUI {
 				$actions_bulk = $options->actions_bulk;
 
 				foreach ( $actions_bulk as $action => $action_opt ) {
-					if ( in_array( $action, $options->actions_disabled ) ) {
+					if ( in_array( $action, $options->actions_disabled ) || in_array( 'bulk_' . $action, $options->actions_disabled ) ) {
 						unset( $actions_bulk[ $action ] );
 					}
 				}
@@ -1040,8 +1040,9 @@ class PodsUI {
             $unique_identifier = '_' . $this->sql[ 'table' ];
 
         $unique_identifier .= '_' . $this->page;
+
         if ( 0 < strlen( $this->num ) )
-            $unique_identifier .= '_' . $this->num;
+            $unique_identifier .= '_' . trim( $this->num, '_' );
 
         $this->unique_identifier = 'pods_ui_' . md5( $unique_identifier );
 
@@ -3307,7 +3308,7 @@ class PodsUI {
                     $counter = 0;
 
                     while ( $row = $this->get_row( $counter, 'table' ) ) {
-                        if ( is_object( $row ) )
+                        if ( is_object( $row ) && 0 !== strpos( get_class( $row ), 'PodsObject' ) )
                             $row = get_object_vars( (object) $row );
 
                         $toggle_class = '';
@@ -3339,14 +3340,14 @@ class PodsUI {
 
                                 if ( !empty( $attributes[ 'custom_display' ] ) ) {
                                     if ( is_callable( $attributes[ 'custom_display' ] ) )
-                                        $row_value = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row_value, $field, $attributes ) );
+                                        $row_value = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row_value, $field, $attributes, $fields ) );
                                     elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) )
                                         $row_value = $this->pod->helper( $attributes[ 'custom_display' ], $row_value, $field );
                                 }
                                 else {
                                     ob_start();
 
-                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, array_merge( $attributes, pods_var_raw( 'options', $attributes, array(), null, true ) ), $fields, $this->pod );
+                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, $attributes, $fields, $this->pod );
 
                                     $field_output = trim( (string) ob_get_clean() );
 

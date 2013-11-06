@@ -461,3 +461,20 @@ div.row-actions.row-actions-toggle {
 .pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label{
     background: #ffffcc;
 }
+
+.pods-manage-field .pods-select2 {
+    display: block;
+    float: left;
+    margin-left: 22px;
+	width: 65%;
+}
+
+.pods-manage-field .pods-form-ui-field-type-select2 {
+    min-width: 30%;
+    width: auto;
+    min-height: 28px;
+}
+
+.pods-manage-field .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
+    height: auto;
+}

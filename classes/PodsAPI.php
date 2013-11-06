@@ -1286,6 +1286,63 @@ class PodsAPI {
 	}
 
     /**
+	 * Add or edit a Pod Group
+	 *
+	 * $params['id'] int The Group ID
+	 * $params['name'] string The Group name
+	 * $params['label'] string The Group label
+	 * $params['pod'] string The Pod name
+	 * $params['pod_id'] string The Pod ID
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param bool|int $db (optional) Whether to save into the DB or just return Pod array.
+	 *
+	 * @return int Pod ID
+	 * @since 1.7.9
+	 */
+	public function save_pod_group( $params, $db = true ) {
+
+		$load_params = (object) $params;
+
+		if ( isset( $load_params->id ) && 0 < $load_params->id ) {
+			$group = pods_object_group( null, $load_params->id );
+		}
+		else {
+			$pod = false;
+
+			if ( isset( $load_params->pod_id ) && !empty( $load_params->pod_id ) ) {
+				$pod = $this->load_pod( array( 'id' => $load_params->pod_id ), __METHOD__ );
+			}
+			elseif ( isset( $load_params->pod ) && !empty( $load_params->pod ) ) {
+				$pod = $this->load_pod( array( 'name' => $load_params->pod ), __METHOD__ );
+			}
+
+			if ( empty( $pod ) ) {
+				return pods_error( __( 'Pod not found', 'pod' ), $this );
+			}
+
+			if ( isset( $load_params->old_name ) ) {
+				$group = pods_object_group( $load_params->old_name, 0, false, $pod[ 'id' ] );
+			}
+			elseif ( isset( $load_params->name ) ) {
+				$group = pods_object_group( $load_params->name, 0, false, $pod[ 'id' ] );
+			}
+			else {
+				$group = pods_object_group( null, 0, false, $pod[ 'id' ] );
+			}
+		}
+
+		$id = $group->save( $params );
+
+		if ( $db ) {
+			return $id;
+		}
+
+		return $group;
+
+	}
+
+    /**
 	 * Add or edit a field within a Pod
 	 *
 	 * $params['id'] int Field ID (id OR pod_id+pod+name required)
@@ -3884,6 +3941,9 @@ class PodsAPI {
 		else {
 			$params = (object) $params;
 
+			$field = false;
+			$pod = false;
+
 			if ( isset( $params->name ) ) {
 				if ( !isset( $params->pod ) ) {
 					$params->pod = '';
@@ -3918,13 +3978,26 @@ class PodsAPI {
 					return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
 				}
 			}
-			else {
+			elseif ( isset( $params->pod_id ) ) {
 				$pod = pods_object_pod( null, $params->pod_id );
 			}
+			elseif ( isset( $params->pod ) ) {
+				$pod = pods_object_pod( $params->pod );
+			}
+			elseif ( isset( $params->id ) ) {
+				$field = pods_object_field( null, $params->id );
+			}
 
-			$params->name = pods_clean_name( $params->name, true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
+			if ( empty( $field ) ) {
+				if ( isset( $params->name ) ) {
+					$params->name = pods_clean_name( $params->name, true, ( 'meta' == pods_v( 'storage', $pod, 'meta' ) ? false : true ) );
 
-			$field = pods_object_field( $params->name, 0, false, $params->pod_id );
+					$field = pods_object_field( $params->name, 0, false, $params->pod_id );
+				}
+				elseif ( isset( $params->id ) ) {
+					$field = pods_object_field( null, $params->id, false, $params->pod_id );
+				}
+			}
 		}
 
 		if ( empty( $field ) || !$field->is_valid() ) {
@@ -5079,8 +5152,9 @@ class PodsAPI {
 
         $field_name = $field;
 
-        if ( is_array( $field_name ) )
-            $field_name = pods_var_raw( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), null, true );
+        if ( is_array( $field_name ) || is_object( $field_name ) ) {
+            $field_name = pods_var_raw( 'name', $field_name, '', null, true );
+		}
 
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 

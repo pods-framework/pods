@@ -1057,8 +1057,6 @@ class PodsObject_Group extends PodsObject {
      */
 	public function delete( $delete_all = false ) {
 
-		global $wpdb;
-
 		if ( !$this->is_valid() ) {
 			return false;
 		}
@@ -1088,49 +1086,6 @@ class PodsObject_Group extends PodsObject {
 			if ( !$success ) {
 				return pods_error( __( 'Pod unable to be deleted', 'pods' ) );
 			}
-
-			// Reset content
-			if ( $delete_all ) {
-				$this->reset();
-			}
-
-			if ( !pods_tableless() ) {
-				if ( 'table' == $this->_object[ 'storage' ] ) {
-					try {
-						pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
-					}
-					catch ( Exception $e ) {
-						// Allow pod to be deleted if the table doesn't exist
-						if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
-							return pods_error( $e->getMessage() );
-						}
-					}
-				}
-
-				pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
-			}
-
-			// @todo Delete relationships from tableless relationships
-
-			// Delete any relationship references
-			$sql = "
-				DELETE `pm`
-				FROM `{$wpdb->postmeta}` AS `pm`
-				LEFT JOIN `{$wpdb->posts}` AS `p`
-					ON `p`.`post_type` = '_pods_field'
-						AND `p`.`ID` = `pm`.`post_id`
-				LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
-					ON `pm2`.`meta_key` = 'pick_object'
-						AND `pm2`.`meta_value` = 'pod'
-						AND `pm2`.`post_id` = `pm`.`post_id`
-				WHERE
-					`p`.`ID` IS NOT NULL
-					AND `pm2`.`meta_id` IS NOT NULL
-					AND `pm`.`meta_key` = 'pick_val'
-					AND `pm`.`meta_value` = '{$params->name}'
-			";
-
-			pods_query( $sql );
 
 			pods_api()->cache_flush_pods( $this );
 

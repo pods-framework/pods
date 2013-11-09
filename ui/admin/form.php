@@ -66,7 +66,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-        if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) )
+        if ( 0 < strlen( $pod->pod_data[ 'detail_url' ] ) )
             $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
         $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -90,7 +90,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-    if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) )
+    if ( 0 < strlen( $pod->pod_data[ 'detail_url' ] ) )
         $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
     $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
@@ -145,11 +145,11 @@ if ( 0 < $id ) {
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
                                 <?php
-                                    if ( 0 < $id && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) ) ) {
+                                    if ( 0 < $id && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( $pod->pod_data[ 'detail_url' ] ) ) ) {
                                 ?>
                                     <div id="minor-publishing">
                                         <?php
-                                            if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data ) ) ) {
+                                            if ( 0 < strlen( $pod->pod_data[ 'detail_url' ] ) ) {
                                         ?>
                                             <div id="minor-publishing-actions">
                                                 <div id="preview-action">
@@ -281,9 +281,11 @@ if ( 0 < $id ) {
                     <?php
                         $more = false;
 
-                        if ( $pod->pod_data[ 'field_index' ] != $pod->pod_data[ 'field_id' ] ) {
+						$table_info = $pod->pod_data[ 'table_info' ];
+
+                        if ( $table_info[ 'field_index' ] != $table_info[ 'field_id' ] ) {
                             foreach ( $fields as $k => $field ) {
-                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
+                                if ( $table_info[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
                                     continue;
 
                                 $more = true;
@@ -297,7 +299,7 @@ if ( 0 < $id ) {
                                 <div id="titlediv">
                                     <div id="titlewrap">
                                         <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
-                                        <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
+                                        <input type="text" name="pods_field_<?php echo $table_info[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $table_info[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $table_info[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
                                     </div>
                                     <!-- /#titlewrap -->
 

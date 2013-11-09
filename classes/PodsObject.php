@@ -1675,25 +1675,25 @@ class PodsObject implements ArrayAccess, Serializable {
 	 */
 	public function unserialize( $data ) {
 
-		$data = @unserialize( $data );
+		$object = @unserialize( $data );
 
-		if ( !empty( $data ) ) {
-			$data = (object) $data;
+		if ( !empty( $object ) ) {
+			$object = (object) $object;
 
-			if ( isset( $data->_object ) ) {
-				$this->_object = $data->_object;
+			if ( isset( $object->_object ) ) {
+				$this->_object = $object->_object;
 			}
 
-			if ( isset( $data->_meta ) ) {
-				$this->_meta = $data->_meta;
+			if ( isset( $object->_meta ) ) {
+				$this->_meta = $object->_meta;
 			}
 
-			if ( isset( $data->_fields ) ) {
-				$this->_fields = $data->_fields;
+			if ( isset( $object->_fields ) ) {
+				$this->_fields = $object->_fields;
 			}
 
-			if ( isset( $data->_object_fields ) ) {
-				$this->_object_fields = $data->_object_fields;
+			if ( isset( $object->_object_fields ) ) {
+				$this->_object_fields = $object->_object_fields;
 			}
 		}
 

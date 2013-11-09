@@ -297,7 +297,7 @@ class PodsObject_Field extends PodsObject {
 		}
 
 		if ( empty( $this->_table_info ) && !empty( $this->_object[ 'pick_object' ] ) ) {
-			$this->_table_info = pods_api()->get_table_info( $this->_object[ 'pick_object' ], $this->_object[ 'pick_val' ], null, null, $this->_object );
+			$this->_table_info = pods_api()->get_table_info( $this->_object[ 'pick_object' ], $this->_object[ 'pick_val' ], null, null, $this );
 		}
 
 		return $this->_table_info;

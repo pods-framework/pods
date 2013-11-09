@@ -2618,7 +2618,7 @@ class PodsUI {
                             ?>
                         </select>
 
-                        <input type="submit" id="doaction_bulk<?php echo $this->num; ?>" class="button-secondary action" value="<?php _e( 'Apply', 'pods' ); ?>">
+                        <input type="submit" id="doaction_bulk<?php echo $this->num; ?>" class="button-secondary action" value="<?php esc_attr_e( 'Apply', 'pods' ); ?>">
                     </div>
                 <?php
                     }
@@ -2638,8 +2638,8 @@ class PodsUI {
 							$link = $this->action_links[ 'manage' ];
 						}
                         ?>
-                        <input type="button" value="<?php _e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
-                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo esc_attr( $link ); ?>';" />
+                        <input type="button" value="<?php esc_attr_e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
+                        <input type="button" value="<?php esc_attr_e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo esc_attr( $link ); ?>';" />
                         <?php
                     }
                     /*
@@ -2649,7 +2649,7 @@ class PodsUI {
                         <select name="action">
                             <option value="-1" selected="selected"><?php _e('Bulk Actions', 'pods'); ?></option>
                             <option value="delete"><?php _e('Delete', 'pods'); ?></option>
-                        </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
+                        </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php esc_attr_e('Apply', 'pods'); ?>">
                     </div>
         <?php
                     }*/
@@ -3435,7 +3435,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'view' == $default_action ) {
@@ -3444,7 +3444,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
@@ -3701,7 +3701,7 @@ class PodsUI {
                                 }
                                 $this->do_hook( 'screen_meta_screen_submit' );
                                 ?>
-                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="<?php _e( 'Apply', 'pods' ); ?>">
+                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="<?php esc_attr_e( 'Apply', 'pods' ); ?>">
                                 <input type="hidden" name="wp_screen_options[option]" value="<?php echo $this->unique_identifier; ?>_per_page">
                                 <?php wp_nonce_field( 'screen-options-nonce', 'screenoptionnonce', false ); ?>
                             </div>
@@ -3801,12 +3801,12 @@ class PodsUI {
         if ( false !== $this->pagination ) {
             if ( 1 < $total_pages ) {
                 ?>
-            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1'; ?>">&laquo;</a>
-            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
+            <a class="first-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1'; ?>">&laquo;</a>
+            <a class="prev-page<?php echo ( 1 < $this->page ) ? '' : ' disabled'; ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ); ?>">&lsaquo;</a>
             <?php
                 if ( true == $header ) {
                     ?>
-                <span class="paging-input"><input class="current-page" title="<?php _e( 'Current page', 'pods' ); ?>" type="text" name="pg<?php echo $this->num; ?>" value="<?php echo $this->page; ?>" size="<?php echo strlen( $total_pages ); ?>"> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
+                <span class="paging-input"><input class="current-page" title="<?php esc_attr_e( 'Current page', 'pods' ); ?>" type="text" name="pg<?php echo $this->num; ?>" value="<?php echo $this->page; ?>" size="<?php echo strlen( $total_pages ); ?>"> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
                 <script>
 
                     jQuery( document ).ready( function ( $ ) {
@@ -3827,8 +3827,8 @@ class PodsUI {
                 <?php
                 }
                 ?>
-            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
-            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages; ?>">&raquo;</a>
+            <a class="next-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ); ?>">&rsaquo;</a>
+            <a class="last-page<?php echo ( $this->page < $total_pages ) ? '' : ' disabled'; ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages; ?>">&raquo;</a>
             <?php
             }
         }

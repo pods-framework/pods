@@ -720,7 +720,7 @@ class PodsAPI {
                     'label' => 'Status',
                     'type' => 'pick',
                     'pick_object' => 'post-status',
-                    'default' => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
+                    'default' => $this->do_hook( 'default_status_' . $pod_name, pods_var( 'default_status', $pod, 'draft', null, true ), $pod ),
                     'alias' => array( 'status' )
                 ),
                 'comment_status' => array(
@@ -3556,6 +3556,7 @@ class PodsAPI {
 
 		// Include dependencies for caching
 		pods_object_pod();
+		pods_object_field();
 
 		// Debug override for strict
 		if ( !is_bool( $strict ) ) {
@@ -3646,6 +3647,7 @@ class PodsAPI {
 
 		// Include dependencies for caching
 		pods_object_pod();
+		pods_object_field();
 
         /**
          * @var $sitepress SitePress
@@ -5147,7 +5149,7 @@ class PodsAPI {
 
         $pod_name = $pod;
 
-        if ( is_array( $pod_name ) )
+        if ( is_array( $pod_name ) || is_object( $pod_name ) )
             $pod_name = pods_var_raw( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), null, true );
 
         $field_name = $field;

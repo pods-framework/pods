@@ -410,7 +410,7 @@ class PodsObject_Pod extends PodsObject {
 		}
 
 		if ( empty( $this->_table_info ) ) {
-			$this->_table_info = pods_api()->get_table_info( $this->_object[ 'type' ], $this->_object[ 'object' ], $this->_object[ 'name' ], $this->_object );
+			$this->_table_info = pods_api()->get_table_info( $this->_object[ 'type' ], $this->_object[ 'object' ], $this->_object[ 'name' ], $this );
 		}
 
 		return $this->_table_info;

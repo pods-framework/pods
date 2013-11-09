@@ -747,7 +747,7 @@ class PodsAdmin {
             unset( $_GET[ 'action' ] );
         }
 
-		if ( false !== $row && 'manage' != pods_v( 'action_group', 'get', 'manage' ) ) {
+		if ( false !== $row && !in_array( pods_v( 'action_group', 'get', 'manage' ), array( 'manage', 'delete' ) ) ) {
 			$this->admin_setup_groups();
 
 			return;

@@ -12,6 +12,8 @@ if ( !isset( $duplicate ) )
 else
     $duplicate = (boolean) $duplicate;
 
+$block_field_types = PodsForm::block_field_types();
+
 // unset fields
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
@@ -360,15 +362,27 @@ if ( 0 < $id ) {
 
 														continue;
 													}
+
+													if ( in_array( $field[ 'type' ], $block_field_types ) ) {
 											?>
 												<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
-													<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
-													<td>
-														<?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
-														<?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+													<td colspan="2">
+														<?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
 													</td>
 												</tr>
 											<?php
+													}
+													else {
+											?>
+												<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+													<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
+													<td>
+														<?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+														<?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+													</td>
+												</tr>
+											<?php
+													}
 												}
 											?>
 										</tbody>

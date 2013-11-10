@@ -254,7 +254,8 @@ class PodsObject_Field extends PodsObject {
 
 			$this->_object = $object;
 
-			$options = apply_filters( 'pods_field_' . $type . '_options', (array) PodsForm::field_method( $type, 'options' ), $type );
+			// @todo Move this from PodsForm::options_setup and PodsForm::options
+			//$options = apply_filters( 'pods_field_' . $type . '_options', (array) PodsForm::field_method( $type, 'options' ), $type );
 
 			return $this->_object[ 'id' ];
 		}

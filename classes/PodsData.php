@@ -952,8 +952,9 @@ class PodsData {
 
                 if ( false !== $params->search_across ) {
                     foreach ( $params->fields as $key => $field ) {
-                        if ( is_array( $field ) ) {
+                        if ( is_array( $field ) || is_object( $field ) ) {
                             $attributes = $field;
+
                             $field = pods_var( 'name', $field, $key, null, true );
                         }
                         else {

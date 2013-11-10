@@ -112,7 +112,7 @@ function pods_object_group( $name = null, $id = 0, $live = false, $parent = null
  *
  * @return PodsObject_Pod|PodsObject_Field|PodsObject_Group|PodsObject|null
  *
- * @since 2.4
+ * @since 3.0
  */
 function pods_object_get( $object, $name = null, $id = 0, $live = false, $parent = null ) {
 

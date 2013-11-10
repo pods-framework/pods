@@ -1704,19 +1704,23 @@ class PodsUI {
 			$name = $k;
 
 			$defaults = array(
-				'name' => $name,
-				'type' => 'text'
+				'name' => $name
 			);
 
-			if ( !is_array( $field ) ) {
+			if ( !is_array( $field ) && !is_object( $field ) ) {
 				$name = $field;
 
 				$field = array(
 					'name' => $name
 				);
+
+				$field = pods_object_field( $field );
+			}
+			elseif ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field->defaults( $defaults );
 
 			$field[ 'name' ] = trim( $field[ 'name' ] );
 

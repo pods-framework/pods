@@ -982,7 +982,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  *
- * @deprecated 2.4 Use pods_v() or pods_v_sanitized() instead.
+ * @deprecated 3.0 Use pods_v() or pods_v_sanitized() instead.
  * @see pods_v_sanitized
  */
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
@@ -1011,7 +1011,7 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  * @return mixed The variable (if exists), or default value
  * @since 2.0
  *
- * @deprecated 2.4 Use pods_v() instead.
+ * @deprecated 3.0 Use pods_v() instead.
  * @see pods_v
  */
 function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
@@ -1030,7 +1030,7 @@ function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed =
  * @return mixed $value (if set), $type (if $type is array or object), or $url (if $type is 'url')
  * @since 1.10.6
  *
- * @deprecated 2.4 Use pods_v_set() instead.
+ * @deprecated 3.0 Use pods_v_set() instead.
  * @see pods_v_set
  */
 function pods_var_set( $value, $var = 'last', $type = 'url' ) {
@@ -1142,7 +1142,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
  *
  * @since 2.0
  *
- * @deprecated 2.4 Use pods_query_arg() instead.
+ * @deprecated 3.0 Use pods_query_arg() instead.
  * @see pods_query_arg
  */
 function pods_var_update( $array = null, $allowed = null, $excluded = null, $url = null ) {
@@ -1160,7 +1160,7 @@ function pods_var_update( $array = null, $allowed = null, $excluded = null, $url
  *
  * @return array Array with inserted items
  *
- * @since 2.4
+ * @since 3.0
  */
 function pods_array_insert_before( $insert_array, $before_key, $in_array ) {
 
@@ -1205,7 +1205,7 @@ function pods_array_insert_before( $insert_array, $before_key, $in_array ) {
  *
  * @return array Array with inserted items
  *
- * @since 2.4
+ * @since 3.0
  */
 function pods_array_insert_after( $insert_array, $after_key, $in_array ) {
 
@@ -1311,7 +1311,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
 
     $pod_data = array();
 
-    if ( is_array( $pod ) ) {
+    if ( is_array( $pod ) || is_object( $pod ) ) {
         $pod_data = $pod;
         $pod_id = pods_v_sanitized( 'id', $pod_data, 0 );
         $pod = pods_v_sanitized( 'name', $pod_data );

@@ -447,7 +447,7 @@ class Pods implements Iterator {
 	public function input( $field, $input_name = null, $value = '__null' ) {
 
 		// Field data override
-		if ( is_array( $field ) ) {
+		if ( is_array( $field ) || is_object( $field ) ) {
 			$field_data = $field;
 			$field = pods_v( 'name', $field );
 		}
@@ -3239,15 +3239,20 @@ class Pods implements Iterator {
 					'name' => $name
 				);
 
-				if ( !is_array( $field ) ) {
+				if ( !is_array( $field ) && !is_object( $field ) ) {
 					$name = $field;
 
 					$field = array(
 						'name' => $name
 					);
+
+					$field = pods_object_field( $field );
+				}
+				elseif ( is_array( $field ) ) {
+					$field = pods_object_field( $field );
 				}
 
-				$field = array_merge( $defaults, $field );
+				$field->defaults( $defaults );
 
 				$field[ 'name' ] = trim( $field[ 'name' ] );
 
@@ -3256,10 +3261,14 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
-					$fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+					$field->defaults( $object_fields[ $field[ 'name' ] ] );
+
+					$fields[ $field[ 'name' ] ] = $field;
 				}
 				elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
-					$fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+					$field->defaults( $this->fields[ $field[ 'name' ] ] );
+
+					$fields[ $field[ 'name' ] ] = $field;
 				}
 			}
 
@@ -3471,15 +3480,20 @@ class Pods implements Iterator {
 				'name' => $name
 			);
 
-			if ( !is_array( $field ) ) {
+			if ( !is_array( $field ) && !is_object( $field ) ) {
 				$name = $field;
 
 				$field = array(
 					'name' => $name
 				);
+
+				$field = pods_object_field( $field );
+			}
+			elseif ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field->defaults( $defaults );
 
 			$field[ 'name' ] = trim( $field[ 'name' ] );
 
@@ -3490,10 +3504,10 @@ class Pods implements Iterator {
 			}
 
 			if ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
-				$field = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+				$field->defaults( $object_fields[ $field[ 'name' ] ] );
 			}
 			elseif ( isset( $this->fields[ $field[ 'name' ] ] ) ) {
-				$field = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+				$field->defaults( $this->fields[ $field[ 'name' ] ] );
 			}
 
 			if ( pods_v( 'hidden', $field, false, null, true ) ) {
@@ -3580,15 +3594,20 @@ class Pods implements Iterator {
 				'name' => $name
 			);
 
-			if ( !is_array( $field ) ) {
+			if ( !is_array( $field ) && !is_object( $field ) ) {
 				$name = $field;
 
 				$field = array(
 					'name' => $name
 				);
+
+				$field = pods_object_field( $field );
+			}
+			elseif ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
 			}
 
-			$field = array_merge( $defaults, $field );
+			$field->defaults( $defaults );
 
 			$field[ 'name' ] = trim( $field[ 'name' ] );
 

@@ -1664,6 +1664,7 @@ class PodsAPI {
 
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
+        $block_field_types = PodsForm::block_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         // @deprecated 2.0
@@ -1790,10 +1791,18 @@ class PodsAPI {
 
             foreach ( $params->data as $field => $value ) {
                 if ( isset( $object_fields[ $field ] ) ) {
+					if ( in_array( $object_fields[ $field ][ 'type' ], $block_field_types ) ) {
+						continue;
+					}
+
                     $object_fields[ $field ][ 'value' ] = $value;
                     $fields_active[] = $field;
                 }
                 elseif ( isset( $fields[ $field ] ) ) {
+					if ( in_array( $fields[ $field ][ 'type' ], $block_field_types ) ) {
+						continue;
+					}
+
                     if ( 'save' == $params->from || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
@@ -1808,10 +1817,14 @@ class PodsAPI {
 
                     foreach ( $object_fields as $object_field => $object_field_opt ) {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
+                            $found = true;
+
+							if ( in_array( $object_fields[ $object_field ][ 'type' ], $block_field_types ) ) {
+								break;
+							}
+
                             $object_fields[ $object_field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
-
-                            $found = true;
 
                             break;
                         }
@@ -1928,7 +1941,7 @@ class PodsAPI {
 
             // Call any pre-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
-                if ( !empty( $pod ) && is_array( $pod ) ) {
+                if ( !empty( $pod ) && ( is_array( $pod ) || is_object( $pod ) ) ) {
                     $helpers = array( 'pre_save_helpers', 'post_save_helpers' );
 
                     foreach ( $helpers as $helper ) {
@@ -2197,7 +2210,7 @@ class PodsAPI {
                     if ( '__current__' == $pick_val ) {
                         if ( is_object( $pod ) )
                             $pick_val = $pod->pod;
-                        elseif ( is_array( $pod ) )
+                        elseif ( is_array( $pod ) || is_object( $pod ) )
                             $pick_val = $pod[ 'name' ];
                         elseif ( 0 < strlen( $pod ) )
                             $pick_val = $pod;
@@ -2754,12 +2767,18 @@ class PodsAPI {
         $export_fields = array();
 
         foreach ( $fields as $k => $field ) {
-            if ( !is_array( $field ) ) {
-                $field = array(
-                    'id' => 0,
-                    'name' => $field
-                );
-            }
+			if ( !is_array( $field ) && !is_object( $field ) ) {
+				$name = $field;
+
+				$field = array(
+					'name' => $name
+				);
+
+				$field = pods_object_field( $field );
+			}
+			elseif ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
+			}
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
                 $field = $pod->fields[ $field[ 'name' ] ];
@@ -2886,7 +2905,7 @@ class PodsAPI {
 
         foreach ( $params->order as $order => $id ) {
             if ( isset( $pod[ 'fields' ][ $params->field ] ) || isset( $pod[ 'object_fields' ][ $params->field ] ) ) {
-                if ( 'table' == $pod[ 'storage' ] && ( !pods_tableless() ) ) {
+                if ( 'table' == $pod[ 'storage' ] && !pods_tableless() ) {
                     if ( isset( $pod[ 'fields' ][ $params->field ] ) )
                         pods_query( "UPDATE `@wp_pods_{$params->name}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
                     else
@@ -2921,7 +2940,7 @@ class PodsAPI {
         if ( empty( $pod ) ) {
             $pod = $this->load_pod( $params );
 		}
-		elseif ( !is_object( $pod ) && is_array( $pod ) ) {
+		elseif ( is_array( $pod ) || is_object( $pod ) ) {
 			$params = false;
 
 			if ( isset( $pod[ 'id' ] ) && 0 < $pod[ 'id' ] ) {
@@ -3218,7 +3237,7 @@ class PodsAPI {
 
             // Call any pre-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
-                if ( !empty( $pod ) && is_array( $pod ) ) {
+                if ( !empty( $pod ) && ( is_array( $pod ) || is_object( $pod ) ) ) {
                     $helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
 
                     foreach ( $helpers as $helper ) {
@@ -4760,9 +4779,9 @@ class PodsAPI {
             }
         }
 
-        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( $options, pods_var( 'options', $options, array() ) ), $fields, $pod, $id, $params );
+        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, $options, $fields, $pod, $id, $params );
 
-        $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
+        $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params, $options );
 
         return $validate;
     }
@@ -4808,11 +4827,9 @@ class PodsAPI {
 		}
 
         if ( !empty( $field ) ) {
-            $options = (array) pods_var_raw( 'options', $field, $field, null, true );
+            $related_pick_limit = (int) pods_var( pods_var( 'type', $field ) . '_limit', $field, 0 );
 
-            $related_pick_limit = (int) pods_var( pods_var( 'type', $field ) . '_limit', $options, 0 );
-
-            if ( 'single' == pods_var_raw( pods_var( 'type', $field ) . '_format_type', $options ) )
+            if ( 'single' == pods_var_raw( pods_var( 'type', $field ) . '_format_type', $field ) )
                 $related_pick_limit = 1;
 
             // Temporary hack until there's some better handling here
@@ -4857,7 +4874,7 @@ class PodsAPI {
             }
         }
         else {
-            if ( !is_array( $pod ) )
+            if ( !is_array( $pod ) && !is_object( $pod ) )
                 $pod = $this->load_pod( array( 'id' => $pod_id ), __METHOD__ );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
@@ -5006,7 +5023,7 @@ class PodsAPI {
             // @todo handle meta-based lookups
             return false;
 
-            if ( !is_array( $pod ) )
+            if ( !is_array( $pod ) && !is_object( $pod ) )
                 $pod = $this->load_pod( array( 'id' => $pod_id ), __METHOD__ );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
@@ -5138,7 +5155,6 @@ class PodsAPI {
 
             'orderby' => null,
 
-            'pod' => null,
             'recurse' => false
         );
 
@@ -5208,9 +5224,10 @@ class PodsAPI {
                     $object_type = $pod[ 'type' ];
                     $name = $pod[ 'name' ];
                     $object = $pod[ 'object' ];
-
-                    $info[ 'pod' ] = $pod;
                 }
+				else {
+					$pod = null;
+				}
             }
             elseif ( null === $pod ) {
                 if ( empty( $name ) ) {
@@ -5231,13 +5248,12 @@ class PodsAPI {
                         $object_type = $pod[ 'type' ];
                         $name = $pod[ 'name' ];
                         $object = $pod[ 'object' ];
-
-                        $info[ 'pod' ] = $pod;
                     }
+					else {
+						$pod = null;
+					}
                 }
             }
-            elseif ( !empty( $pod ) )
-                $info[ 'pod' ] = $pod;
 
             if ( 0 === strpos( $object_type, 'pod' ) ) {
                 if ( empty( $name ) ) {
@@ -5250,16 +5266,16 @@ class PodsAPI {
 
                 $object_type = 'pod';
 
-                $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
+                $info[ 'table' ] = $info[ 'meta_table' ] = $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
-                if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_var( 'type', $info[ 'pod' ] ) ) {
-                    $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $info[ 'pod' ], 'id', null, true );
+                if ( !empty( $pod ) && 'pod' == $pod[ 'type' ] ) {
+                    $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_v( 'pod_index', $pod, 'id', true );
 
                     $slug_field = get_posts( array(
                         'post_type' => '_pods_field',
                         'posts_per_page' => 1,
                         'nopaging' => true,
-                        'post_parent' => $info[ 'pod' ][ 'id' ],
+                        'post_parent' => $pod[ 'id' ],
                         'orderby' => 'menu_order',
                         'order' => 'ASC',
                         'meta_query' => array(
@@ -5276,10 +5292,10 @@ class PodsAPI {
                         $info[ 'field_slug' ] = $info[ 'pod_field_slug' ] = $slug_field->post_name;
                     }
 
-                    if ( 1 == pods_var( 'hierarchical', $info[ 'pod' ], 0 ) ) {
-                        $parent_field = pods_var( 'pod_parent', $info[ 'pod' ], 'id', null, true );
+                    if ( 1 == pods_var( 'hierarchical', $pod, 0 ) ) {
+                        $parent_field = pods_var( 'pod_parent', $pod, 'id', null, true );
 
-                        if ( !empty( $parent_field ) && isset( $info[ 'pod' ][ 'fields' ][ $parent_field ] ) ) {
+                        if ( !empty( $parent_field ) && $pod->fields( $parent_field ) ) {
                             $info[ 'object_hierarchical' ] = true;
 
                             $info[ 'pod_field_parent' ] = $info[ 'field_parent' ] = $parent_field . '_select';
@@ -5289,7 +5305,7 @@ class PodsAPI {
                 }
             }
 
-            if ( 0 === strpos( $object_type, 'post_type' ) || 'media' == $object_type || in_array( pods_var_raw( 'type', $info[ 'pod' ] ), array( 'post_type', 'media' ) ) ) {
+            if ( 0 === strpos( $object_type, 'post_type' ) || 'media' == $object_type || ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
                 $info[ 'table' ] = $wpdb->posts;
                 $info[ 'meta_table' ] = $wpdb->postmeta;
 
@@ -5369,9 +5385,9 @@ class PodsAPI {
                     $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`object_id` IS NOT NULL";
                 }
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
-            elseif ( 0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, array( 'nav_menu', 'post_format' ) ) || 'taxonomy' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
+            elseif ( 0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, array( 'nav_menu', 'post_format' ) ) || ( !empty( $pod ) && 'taxonomy' == $pod[ 'type' ] ) ) {
                 $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->terms;
 
                 $info[ 'join' ][ 'tt' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
@@ -5438,9 +5454,9 @@ class PodsAPI {
                     $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`term_id` IS NOT NULL";
                 }
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
-            elseif ( 'user' == $object_type || 'user' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
+            elseif ( 'user' == $object_type || ( !empty( $pod ) && 'user' == $pod[ 'type' ] ) ) {
                 $info[ 'table' ] = $wpdb->users;
                 $info[ 'meta_table' ] = $wpdb->usermeta;
                 $info[ 'pod_table' ] = $wpdb->prefix . 'pods_user';
@@ -5457,9 +5473,9 @@ class PodsAPI {
                     'user_status' => '`t`.`user_status` = 0'
                 );
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
-            elseif ( 'comment' == $object_type || 'comment' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
+            elseif ( 'comment' == $object_type || ( !empty( $pod ) && 'comment' == $pod[ 'type' ] ) ) {
                 //$info[ 'object_hierarchical' ] = true;
 
                 $info[ 'table' ] = $wpdb->comments;
@@ -5493,7 +5509,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
             }
-            elseif ( in_array( $object_type, array( 'option', 'settings' ) ) || 'settings' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
+            elseif ( in_array( $object_type, array( 'option', 'settings' ) ) || ( !empty( $pod ) && 'settings' == $pod[ 'type' ] ) ) {
                 $info[ 'table' ] = $wpdb->options;
                 $info[ 'meta_table' ] = $wpdb->options;
 
@@ -5506,7 +5522,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC';
             }
-            elseif ( is_multisite() && ( in_array( $object_type, array( 'site_option', 'site_settings' ) ) || 'site_settings' == pods_var_raw( 'type', $info[ 'pod' ] ) ) ) {
+            elseif ( is_multisite() && ( in_array( $object_type, array( 'site_option', 'site_settings' ) ) || ( !empty( $pod ) && 'site_settings' == $pod[ 'type' ] ) ) ) {
                 $info[ 'table' ] = $wpdb->sitemeta;
                 $info[ 'meta_table' ] = $wpdb->sitemeta;
 
@@ -5548,14 +5564,20 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC, `t`.`path` ASC, `t`.`' . $info[ 'field_id' ] . '`';
             }
-            elseif ( 'table' == $object_type || 'table' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
+            elseif ( 'table' == $object_type || ( !empty( $pod ) && 'table' == $pod[ 'type' ] ) ) {
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );
                 $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . $info[ 'table' ];
 
-                if ( !empty( $field ) && is_array( $field ) ) {
-                    $info[ 'table' ] = pods_var_raw( 'pick_table', pods_var_raw( 'options', $field, $field ) );
-                    $info[ 'field_id' ] = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
-                    $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
+                if ( !empty( $field ) ) {
+					$info[ 'table' ] = $field[ 'pick_table' ];
+
+					if ( !empty( $field[ 'pick_table_id' ] ) ) {
+                    	$info[ 'field_id' ] = $field[ 'pick_table_id' ];
+					}
+
+					if ( !empty( $field[ 'pick_table_index' ] ) ) {
+                    	$info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = $field[ 'pick_table_index' ];
+					}
                 }
             }
 
@@ -5574,12 +5596,12 @@ class PodsAPI {
             if ( empty( $info[ 'orderby' ] ) )
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
 
-            if ( 'table' == pods_var_raw( 'storage', $info[ 'pod' ] ) && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
+            if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
                 $info[ 'join' ][ 'd' ] = 'LEFT JOIN `' . $info[ 'pod_table' ] . '` AS `d` ON `d`.`id` = `t`.`' . $info[ 'field_id' ] . '`';
                 //$info[ 'select' ] .= ', `d`.*';
             }
 
-            if ( !empty( $info[ 'pod' ] ) && is_array( $info[ 'pod' ] ) )
+            if ( !empty( $pod ) )
                 $info[ 'recurse' ] = true;
 
             $info[ 'type' ] = $object_type;
@@ -5594,6 +5616,10 @@ class PodsAPI {
         }
 
         $info = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
+
+		if ( isset( $info[ 'pod' ] ) && !empty( $pod ) ) {
+			unset( $info[ 'pod' ] );
+		}
 
         return $info;
     }

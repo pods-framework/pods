@@ -93,7 +93,7 @@ class PodsForm {
      * @since 2.0
      */
     public static function label ( $name, $label, $help = '', $options = null ) {
-        if ( is_array( $label ) ) {
+        if ( is_array( $label ) || is_object( $label ) ) {
             $options = $label;
             $label = $options[ 'label' ];
 
@@ -179,7 +179,7 @@ class PodsForm {
      */
     public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
 		// Take a field array
-		if ( is_array( $name ) ) {
+		if ( is_array( $name ) || is_object( $name ) ) {
 			$options = $name;
 
 			if ( is_object( $type ) ) {
@@ -279,7 +279,7 @@ class PodsForm {
 	 *                     Defaults to no other attributes. Other attributes can also be provided as a
 	 *                     string such as 'tabindex="1"', though the array format is typically cleaner.
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public static function submit_button( $text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null ) {
 
@@ -1303,6 +1303,7 @@ class PodsForm {
 
 		if ( pods_developer() ) {
 			$field_types[] = 'loop';
+			$field_types[] = 'heading';
 			$field_types[] = 'html';
 		}
 
@@ -1430,7 +1431,7 @@ class PodsForm {
      * @since 2.3
      */
     public static function block_field_types () {
-        $field_types = array( 'html', 'section' );
+        $field_types = array( 'heading', 'html' );
 
         return apply_filters( 'pods_block_field_types', $field_types );
     }

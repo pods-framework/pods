@@ -72,6 +72,26 @@ class PodsObject implements ArrayAccess, Serializable {
 	protected $_options = array();
 
 	/**
+	 * Options for PodsForm
+	 *
+	 * @var array
+	 */
+	protected $_form_options = array(
+		'default' => null,
+
+		'attributes' => array(),
+
+		'group' => 0,
+		'grouped' => 0,
+
+		'dependency' => false,
+		'depends-on' => array(),
+		'excludes-on' => array(),
+
+		'developer_mode' => false
+	);
+
+	/**
 	 * Set to true to automatically save values in the DB when you $object['option']='value'
 	 *
 	 * @var bool
@@ -310,7 +330,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @return int|bool $id The Object ID or false if Object not found
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function exists( $name = null, $id = 0, $parent = null ) {
 
@@ -380,7 +400,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param array|object|PodsObject $data Data override
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function changed() {
 
@@ -399,7 +419,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param array|object|PodsObject $data Data override
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function override( $data ) {
 
@@ -429,7 +449,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Save overrides of options for Objects
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function override_save() {
 
@@ -448,7 +468,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param array|object|PodsObject $data Data override
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function defaults( $data ) {
 
@@ -634,14 +654,14 @@ class PodsObject implements ArrayAccess, Serializable {
 			return $this->_meta;
 		}
 
-		// @todo For 2.4 enable internal prefix
+		// @todo For 3.0 enable internal prefix
 		if ( 1 == 0 && $internal && 0 !== strpos( $meta_key, '_pods_' ) ) {
 			$meta_key = '_pods_' . $meta_key;
 		}
 
 		$value = get_post_meta( $id, $meta_key );
 
-		// @todo For 2.4 enable fallback
+		// @todo For 3.0 enable fallback
 		if ( 1 == 0 && pods_allow_deprecated() && is_array( $value ) && empty( $value ) ) {
 			if ( 0 === strpos( $meta_key, '_pods_' ) ) {
 				$meta_key = substr( $meta_key, strlen( '_pods_' ) );
@@ -706,23 +726,23 @@ class PodsObject implements ArrayAccess, Serializable {
 	public function _fields( $fields, $field = null, $option = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
-			if ( null === $field || null === $option ) {
+			if ( null === $field && null === $option ) {
 				return array();
 			}
 
 			return false;
 		}
 
-		$alt_fields = 'object_fields';
 		$all_fields =& $this->_fields;
+		$alt_fields = 'object_fields';
 
 		if ( 'object_fields' == $fields ) {
-			$alt_fields = 'fields';
 			$all_fields =& $this->_object_fields;
+			$alt_fields = 'fields';
 		}
 		elseif ( 'groups' == $fields ) {
-			$alt_fields = 'groups';
 			$all_fields =& $this->_groups;
+			$alt_fields = null;
 		}
 
 		// No fields found
@@ -730,7 +750,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			$field_data = array();
 
 			// No fields and field not found, get alt field data
-			if ( !empty( $field ) && $alt ) {
+			if ( !empty( $field ) && $alt && !empty( $alt_fields ) ) {
 				$field_data = $this->_fields( $alt_fields, $field, $option, false );
 			}
 		}
@@ -751,10 +771,10 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 		// Field not found
 		elseif ( !isset( $all_fields[ $field ] ) ) {
-			$field_data = array();
+			$field_data = false;
 
 			// Field not found, get alt field data
-			if ( $alt ) {
+			if ( $alt && !empty( $alt_fields ) ) {
 				$field_data = $this->_fields( $alt_fields, $field, $option, false );
 			}
 		}
@@ -829,7 +849,7 @@ class PodsObject implements ArrayAccess, Serializable {
 				'data',
 				'fields',
 				'object_fields',
-				'table_info',
+				//'table_info',
 				'groups'
 			);
 
@@ -885,7 +905,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function fields_export() {
 
@@ -906,7 +926,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function object_fields_export() {
 
@@ -927,7 +947,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function table_info_export() {
 
@@ -938,8 +958,8 @@ class PodsObject implements ArrayAccess, Serializable {
 		}
 
 		$exportable = array(
-			'pod',
-			'object_fields'
+			//'pod',
+			//'object_fields'
 		);
 
 		foreach ( $exportable as $key ) {
@@ -966,7 +986,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function groups_export() {
 
@@ -987,12 +1007,13 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
+	 * @param bool $alt Set to true to check alternate fields array
 	 *
 	 * @return array|mixed
 	 *
 	 * @since 2.3.10
 	 */
-	public function fields( $field = null, $option = null ) {
+	public function fields( $field = null, $option = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
 			return array();
@@ -1038,7 +1059,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 
-		return $this->_fields( 'fields', $field, $option );
+		return $this->_fields( 'fields', $field, $option, $alt );
 
 	}
 
@@ -1047,12 +1068,13 @@ class PodsObject implements ArrayAccess, Serializable {
 	 *
 	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
+	 * @param bool $alt Set to true to check alternate fields array
 	 *
 	 * @return array|mixed
 	 *
 	 * @since 2.3.10
 	 */
-	public function object_fields( $field = null, $option = null ) {
+	public function object_fields( $field = null, $option = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
 			return array();
@@ -1076,7 +1098,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 
-		return $this->_fields( 'object_fields', $field, $option );
+		return $this->_fields( 'object_fields', $field, $option, $alt );
 
 	}
 
@@ -1084,12 +1106,13 @@ class PodsObject implements ArrayAccess, Serializable {
 	 * Return group array from Object, or a group's object
 	 *
 	 * @param string|null $group Object Group name
+	 * @param bool $alt Set to true to check alternate fields array
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
-	public function groups( $group = null ) {
+	public function groups( $group = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
 			return array();
@@ -1135,7 +1158,7 @@ class PodsObject implements ArrayAccess, Serializable {
 			}
 		}
 
-		return $this->_fields( 'groups', $group );
+		return $this->_fields( 'groups', $group, null, $alt );
 
 	}
 
@@ -1370,7 +1393,7 @@ class PodsObject implements ArrayAccess, Serializable {
      *
      * @return bool Whether the Content was successfully deleted
      *
-     * @since 2.4
+     * @since 3.0
      */
 	public function reset() {
 
@@ -1452,7 +1475,7 @@ class PodsObject implements ArrayAccess, Serializable {
 		if ( !empty( $this->_methods ) && in_array( $offset, $this->_methods ) ) {
 			$value = call_user_func( array( $this, $offset ) );
 		}
-		// @deprecated Options (pre Pods 2.4 style)
+		// @deprecated Options (pre Pods 3.0 style)
 		elseif ( 'options' == $offset ) {
 			$value = null;
 
@@ -1492,6 +1515,10 @@ class PodsObject implements ArrayAccess, Serializable {
 					$value = __( $value );
 				}
 			}
+		}
+		// Form fields
+		elseif ( isset( $this->_form_options[ $offset ] ) ) {
+			$value = $this->_form_options[ $offset ];
 		}
 		// Table info fields
 		elseif ( $this->table_info() && isset( $this->_table_info[ $offset ] ) ) {

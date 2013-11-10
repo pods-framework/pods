@@ -1658,7 +1658,7 @@ function pods_require_component ( $component ) {
  * @link http://pods.io/docs/pods-group-add/
  */
 function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
-    if ( !is_array( $pod ) && null !== $type ) {
+    if ( !is_array( $pod ) && !is_object( $pod ) && null !== $type ) {
         $pod = array(
             'name' => $pod,
             'type' => $type

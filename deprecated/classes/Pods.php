@@ -90,7 +90,7 @@ class Pods_Deprecated
         do_action( 'pods_showform_pre', $pod_id, $public_fields, $label, $this );
 
         foreach ( $fields as $key => $field ) {
-            if ( !is_array( $field ) || in_array( $key, array( 'created', 'modified' ) ) )
+            if ( ( !is_array( $field ) && !is_object( $field ) ) || in_array( $key, array( 'created', 'modified' ) ) )
                 continue;
 
             // Pass options so they can be manipulated via form
@@ -348,7 +348,7 @@ class Pods_Deprecated
             foreach ( $fields as $k => $field ) {
                 $name = $k;
 
-                if ( !is_array( $field ) ) {
+                if ( !is_array( $field ) && !is_object( $field ) ) {
                     $name = $field;
                     $field = array();
                 }

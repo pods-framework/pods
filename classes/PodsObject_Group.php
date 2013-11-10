@@ -826,7 +826,7 @@ class PodsObject_Group extends PodsObject {
 			$saved_field_ids = array();
 
 			foreach ( $group_fields as $k => $field ) {
-				if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
+				if ( !empty( $old_id ) && ( ( !is_array( $field ) && !is_object( $field ) ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
 					// Iterative change handling for setup-edit.php
 					if ( !is_array( $field ) && isset( $old_fields[ $k ] ) ) {
 						$saved[ $old_fields[ $k ][ 'name' ] ] = true;

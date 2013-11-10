@@ -136,6 +136,7 @@ class PodsObject_Field extends PodsObject {
 				'name' => '',
 				'label' => '',
 				'description' => '',
+				'help' => '',
 				'type' => 'text',
 				'weight' => 0,
 				'parent_id' => $parent_id,
@@ -192,7 +193,8 @@ class PodsObject_Field extends PodsObject {
 			if ( 0 < $object[ 'id' ] ) {
 				$meta = array(
 					'type',
-					'group_id'
+					'group_id',
+					'default_value'
 				);
 
 				foreach ( $meta as $meta_key ) {
@@ -201,10 +203,6 @@ class PodsObject_Field extends PodsObject {
 					if ( null !== $value ) {
 						$object[ $meta_key ] = $value;
 					}
-				}
-
-				if ( empty( $object[ 'type' ] ) ) {
-					$object[ 'type' ] = 'text';
 				}
 
 				if ( in_array( $object[ 'type' ], PodsForm::tableless_field_types() ) ) {
@@ -218,32 +216,33 @@ class PodsObject_Field extends PodsObject {
 
 					// Backwards compatibility
 					if ( pods_allow_deprecated() && !isset( $object[ 'sister_id' ] ) ) {
-						$meta_key = 'sister_field_id';
-
-						$value = $this->_meta( $meta_key, $object[ 'id' ] );
+						$value = $this->_meta( 'sister_field_id', $object[ 'id' ] );
 
 						if ( null !== $value ) {
-							$object[ $meta_key ] = $value;
+							$object[ 'sister_id' ] = $value;
 						}
 					}
 				}
-				else {
-					foreach ( $tableless_meta as $meta_key ) {
-						$object[ $meta_key ] = '';
-					}
-				}
-
-				$object[ 'group_id' ] = (int) $object[ 'group_id' ];
 			}
 
-			if ( in_array( $object[ 'type' ], PodsForm::tableless_field_types() ) ) {
-				if ( $object[ 'id' ] < 1 ) {
-					// Backwards compatibility
-					if ( pods_allow_deprecated() && !isset( $object[ 'sister_id' ] ) && isset( $object[ 'sister_field_id' ] ) ) {
-						$object[ 'sister_id' ] = $object[ 'sister_field_id' ];
+			// Force field type
+			if ( empty( $object[ 'type' ] ) ) {
+				$object[ 'type' ] = 'text';
+			}
 
-						unset( $object[ 'sister_field_id' ] );
+			$object[ 'group_id' ] = (int) $object[ 'group_id' ];
+
+			if ( in_array( $object[ 'type' ], PodsForm::tableless_field_types() ) ) {
+				// Backwards compatibility
+				if ( pods_allow_deprecated() && isset( $object[ 'sister_field_id' ] ) ) {
+					if ( isset( $object[ 'sister_id' ] ) ) {
+						$object[ 'sister_id' ] = $object[ 'sister_field_id' ];
 					}
+					else {
+						$object[ 'sister_id' ] = '';
+					}
+
+					unset( $object[ 'sister_field_id' ] );
 				}
 
 				foreach ( $tableless_meta as $meta_key ) {
@@ -254,6 +253,8 @@ class PodsObject_Field extends PodsObject {
 			}
 
 			$this->_object = $object;
+
+			$options = apply_filters( 'pods_field_' . $type . '_options', (array) PodsForm::field_method( $type, 'options' ), $type );
 
 			return $this->_object[ 'id' ];
 		}
@@ -271,7 +272,7 @@ class PodsObject_Field extends PodsObject {
 	 *
 	 * @return int|bool $id The Object ID or false if Object not found
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function exists( $name = null, $id = 0, $parent = null ) {
 
@@ -322,7 +323,7 @@ class PodsObject_Field extends PodsObject {
 
 		// Field data override
 		if ( is_array( $field ) ) {
-			$field_data = $field;
+			$field_data = pods_object_field( $field, 0, false, $this->_object[ 'paren_id' ] );
 			$field = pods_var_raw( 'name', $field );
 		}
 		// Get field data from field name
@@ -892,7 +893,7 @@ class PodsObject_Field extends PodsObject {
 		elseif ( 0 < $sister_id ) {
 			update_post_meta( $sister_id, 'sister_id', $params->id );
 
-			if ( true === $params->db && ( !pods_tableless() ) ) {
+			if ( true === $params->db && !pods_tableless() ) {
 				pods_query( "
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = %d
@@ -906,7 +907,7 @@ class PodsObject_Field extends PodsObject {
 		elseif ( 0 < $old_sister_id ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );
 
-			if ( true === $params->db && ( !pods_tableless() ) ) {
+			if ( true === $params->db && !pods_tableless() ) {
 				pods_query( "
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = 0
@@ -1154,11 +1155,9 @@ class PodsObject_Field extends PodsObject {
 					ON p.post_type = '_pods_field' AND p.ID = pm.post_id
 				WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-			if ( ( !pods_tableless() ) && $table_operation ) {
+			if ( !pods_tableless() && $table_operation ) {
 				pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
 			}
-
-			// @todo Delete tableless relationship meta
 
 			if ( !$save_pod ) {
 				$api->cache_flush_pods( $pod );
@@ -1179,11 +1178,11 @@ class PodsObject_Field extends PodsObject {
 	}
 
     /**
-     * Delete all content
+     * Delete all content and relationships for a field
      *
      * @return bool Whether the Content was successfully deleted
      *
-     * @since 2.4
+     * @since 3.0
      */
 	public function reset() {
 
@@ -1198,13 +1197,52 @@ class PodsObject_Field extends PodsObject {
 
 		$params = apply_filters( 'pods_object_pre_reset_' . $this->_action_type, $params, $this );
 
-		// @todo Get pod table info
-		$table_info = $this->table_info();
+		$pod = pods_object_pod( null, $this->_object[ 'pod_id' ] );
 
-		// @Todo Use Pod types / object to get proper meta table
+		// @todo Get pod table info
+		$table_info = $pod->table_info();
+
+		$default = '';
+
+		// Delete content
+		if ( 'meta' == $pod[ 'storage' ] ) {
+			if ( $pod->object_fields( $params->name, null, false ) ) {
+				$sql = "
+					UPDATE `{$table_info['table']}`
+					SET `{$params->name}` = %s
+				";
+
+				pods_query( $sql, array( $default ) );
+			}
+			else {
+				$sql = "
+					DELETE FROM `{$table_info['meta_table']}`
+					WHERE `{$table_info['meta_field_index']}` = %s
+				";
+
+				pods_query( $sql, array( $params->name ) );
+			}
+		}
+		elseif ( 'table' == $pod[ 'storage' ] ) {
+			$sql = "
+				UPDATE `{$table_info['pod_table']}`
+				SET `{$params->name}` = %s
+			";
+
+			if ( $pod->object_fields( $params->name, null, false ) ) {
+				$sql = "
+					UPDATE `{$table_info['table']}`
+					SET `{$params->name}` = %s
+				";
+			}
+
+            pods_query( $sql, array( $default ) );
+		}
+
+		// Delete Relationships
 
         // Delete all posts/revisions from this post type
-        if ( in_array( $this->_object[ 'type' ], array( 'post_type', 'media' ) ) ) {
+        if ( in_array( $this->_object[ 'storage' ], array( 'post_type', 'media' ) ) ) {
             $type = $this->_object[ 'object' ];
 
 			if ( empty( $type ) ) {

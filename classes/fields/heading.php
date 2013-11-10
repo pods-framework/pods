@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_HTML extends PodsField {
+class PodsField_Heading extends PodsField {
 
     /**
      * Field Type Group
@@ -18,7 +18,7 @@ class PodsField_HTML extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $type = 'html';
+    public static $type = 'heading';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_HTML extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $label = 'Custom HTML';
+    public static $label = 'Custom Heading';
 
     /**
      * Field Type Preparation
@@ -57,15 +57,6 @@ class PodsField_HTML extends PodsField {
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    self::$type . '_oembed' => array(
-                        'label' => __( 'Enable oEmbed?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Embed videos, images, tweets, and other content.', 'pods' ),
-                            'http://codex.wordpress.org/Embeds'
-                        )
-                    ),
                     self::$type . '_wptexturize' => array(
                         'label' => __( 'Enable wptexturize?', 'pods' ),
                         'default' => 1,
@@ -84,15 +75,6 @@ class PodsField_HTML extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/convert_chars'
                         )
                     ),
-                    self::$type . '_wpautop' => array(
-                        'label' => __( 'Enable wpautop?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'help' => array(
-                            __( 'Changes double line-breaks in the text into HTML htmls', 'pods' ),
-                            'http://codex.wordpress.org/Function_Reference/wpautop'
-                        )
-                    ),
                     self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
@@ -106,9 +88,9 @@ class PodsField_HTML extends PodsField {
                 )
             ),
             self::$type . '_content' => array(
-                'label' => __( 'Custom HTML Content', 'pods' ),
+                'label' => __( 'Custom Heading Content', 'pods' ),
                 'default' => '',
-                'type' => 'paragraph'
+                'type' => 'text'
             )
         );
 
@@ -142,20 +124,11 @@ class PodsField_HTML extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
-            $embed = $GLOBALS[ 'wp_embed' ];
-            $value = $embed->run_shortcode( $value );
-            $value = $embed->autoembed( $value );
-        }
-
         if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
         if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) )
             $value = convert_chars( $value );
-
-        if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
-            $value = wpautop( $value );
 
         if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
             if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
@@ -179,7 +152,14 @@ class PodsField_HTML extends PodsField {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		echo '<div class="pods-form-ui-' . PodsForm::clean( $name ) . ' pods-form-html">' . $this->display( $value, $name, $options, $pod, $id ) . '</div>';
+        $options = (array) $options;
+        $form_field_type = PodsForm::$field_type;
+
+		$field_type = 'heading';
+
+		$value = $this->display( $value, $name, $options, $pod, $id );
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

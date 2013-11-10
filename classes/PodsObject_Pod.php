@@ -39,6 +39,13 @@ class PodsObject_Pod extends PodsObject {
 	);
 
 	/**
+	 * Whether the Object is a fallback or not
+	 *
+	 * @var bool
+	 */
+	protected $_is_fallback = false;
+
+	/**
 	 * Load the object
 	 *
 	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
@@ -143,6 +150,8 @@ class PodsObject_Pod extends PodsObject {
 					'label_singular' => __( 'User', 'pods' ),
 					'type' => $name
 				);
+
+				$this->_is_fallback = true;
 			}
 			// Fallback for core WP Media object
 			elseif ( 'media' == $name ) {
@@ -152,6 +161,8 @@ class PodsObject_Pod extends PodsObject {
 					'label_singular' => __( 'Media', 'pods' ),
 					'type' => $name
 				);
+
+				$this->_is_fallback = true;
 			}
 			// Fallback for core WP Comment object
 			elseif ( 'comment' == $name ) {
@@ -162,6 +173,8 @@ class PodsObject_Pod extends PodsObject {
 					'object' => $name,
 					'type' => $name
 				);
+
+				$this->_is_fallback = true;
 			}
 			// Fallback for core WP Post Type / Taxonomy
 			else {
@@ -182,6 +195,8 @@ class PodsObject_Pod extends PodsObject {
 						'object' => $name,
 						'type' => 'post_type'
 					);
+
+					$this->_is_fallback = true;
 
 					// Add labels
 					$object = array_merge( get_object_vars( $post_type->labels ), $object );
@@ -212,6 +227,8 @@ class PodsObject_Pod extends PodsObject {
 							'type' => 'taxonomy',
 							'storage' => 'none'
 						);
+
+						$this->_is_fallback = true;
 
 						// Add labels
 						$object = array_merge( $object, get_object_vars( $taxonomy->labels ) );
@@ -250,6 +267,8 @@ class PodsObject_Pod extends PodsObject {
 							'object' => $name,
 							'type' => 'comment'
 						);
+
+						$this->_is_fallback = true;
 
 						if ( !empty( $comment ) ) {
 							// Add labels
@@ -317,17 +336,25 @@ class PodsObject_Pod extends PodsObject {
 						$object[ $meta_key ] = $value;
 					}
 				}
+			}
 
-				if ( empty( $object[ 'type' ] ) ) {
-					$object[ 'type' ] = 'post_type';
+			// Force pod type
+			if ( empty( $object[ 'type' ] ) ) {
+				$object[ 'type' ] = 'post_type';
+			}
+
+			// Force pod storage
+			if ( empty( $object[ 'storage' ] ) ) {
+				$object[ 'storage' ] = 'none';
+
+				if ( in_array( $object[ 'type' ], array( 'taxonomy', 'settings' ) ) ) {
+					$object[ 'storage' ] = 'none';
 				}
-
-				if ( empty( $object[ 'storage' ] ) ) {
+				elseif ( in_array( $object[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
 					$object[ 'storage' ] = 'meta';
-
-					if ( 'taxonomy' == $object[ 'type' ] ) {
-						$object[ 'storage' ] = 'none';
-					}
+				}
+				else {
+					$object[ 'storage' ] = 'table';
 				}
 			}
 
@@ -341,6 +368,19 @@ class PodsObject_Pod extends PodsObject {
 	}
 
 	/**
+	 * Check if the object is a fallback or not
+	 *
+	 * @return bool Whether the object is a fallback or not
+	 *
+	 * @since 3.0
+	 */
+	public function is_fallback() {
+
+		return $this->_is_fallback;
+
+	}
+
+	/**
 	 * Check if the object exists
 	 *
 	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
@@ -349,7 +389,7 @@ class PodsObject_Pod extends PodsObject {
 	 *
 	 * @return int|bool $id The Object ID or false if Object not found
 	 *
-	 * @since 2.4
+	 * @since 3.0
 	 */
 	public function exists( $name = null, $id = 0, $parent = null ) {
 
@@ -1220,8 +1260,7 @@ class PodsObject_Pod extends PodsObject {
 		$old_pod = pods_object_pod( $params->name );
 
 		if ( $old_pod->is_valid() ) {
-			if ( $old_pod->is_custom() ) {
-				pods_debug( $old_pod );
+			if ( $old_pod->is_custom() && !$old_pod->is_fallback() ) {
 				return pods_error( sprintf( __( 'Pod %s was registered through code, you cannot modify it.', 'pods' ), $params->name ) );
 			}
 
@@ -1550,7 +1589,7 @@ class PodsObject_Pod extends PodsObject {
 			$defined_fields = array();
 
 			foreach ( $pod_fields as $field ) {
-				if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || in_array( $field[ 'name' ], $defined_fields ) ) {
+				if ( ( !is_array( $field ) && !is_object( $field ) ) || !isset( $field[ 'name' ] ) || in_array( $field[ 'name' ], $defined_fields ) ) {
 					continue;
 				}
 
@@ -1746,7 +1785,7 @@ class PodsObject_Pod extends PodsObject {
 				$weight = 0;
 
 				foreach ( $params->fields as $field ) {
-					if ( !is_array( $field ) || !isset( $field[ 'name' ] ) ) {
+					if ( ( !is_array( $field ) && !is_object( $field ) ) || !isset( $field[ 'name' ] ) ) {
 						continue;
 					}
 
@@ -1765,9 +1804,9 @@ class PodsObject_Pod extends PodsObject {
 			$saved_field_ids = array();
 
 			foreach ( $pod_fields as $k => $field ) {
-				if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
+				if ( !empty( $old_id ) && ( ( !is_array( $field ) && !is_object( $field ) ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) ) {
 					// Iterative change handling for setup-edit.php
-					if ( !is_array( $field ) && isset( $old_fields[ $k ] ) ) {
+					if ( ( !is_array( $field ) && !is_object( $field ) ) && isset( $old_fields[ $k ] ) ) {
 						$saved[ $old_fields[ $k ][ 'name' ] ] = true;
 					}
 
@@ -2098,7 +2137,7 @@ class PodsObject_Pod extends PodsObject {
      *
      * @return bool Whether the Content was successfully deleted
      *
-     * @since 2.4
+     * @since 3.0
      */
 	public function reset() {
 

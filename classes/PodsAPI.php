@@ -5121,6 +5121,8 @@ class PodsAPI {
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 
+		$original_pod = $pod;
+
         $info = array(
             //'select' => '`t`.*',
             'object_type' => $object_type,
@@ -5615,9 +5617,13 @@ class PodsAPI {
             }
         }
 
+		if ( empty( $original_pod ) ) {
+			$info[ 'pod' ] = $pod;
+		}
+
         $info = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
 
-		if ( isset( $info[ 'pod' ] ) && !empty( $pod ) ) {
+		if ( isset( $info[ 'pod' ] ) && !empty( $original_pod ) ) {
 			unset( $info[ 'pod' ] );
 		}
 

@@ -98,6 +98,7 @@ class PodsField_Website extends PodsField {
                 )
             )*/
         );
+
         return $options;
     }
 

@@ -116,12 +116,18 @@ class PodsField_Text extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
-        $schema = 'VARCHAR(' . $length . ')';
+        $schema = 'LONGTEXT';
 
-        if ( 255 < $length || $length < 1 )
-            $schema = 'LONGTEXT';
+		if ( 0 < $length ) {
+			if ( $length <= 255 ) {
+				$schema = 'VARCHAR(' . (int) $length . ')';
+			}
+			elseif ( $length <= 16777215  ) {
+				$schema = 'MEDIUMTEXT';
+			}
+		}
 
         return $schema;
     }
@@ -227,6 +233,12 @@ class PodsField_Text extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
+
+        $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+
+		if ( 0 < $length ) {
+			$value = substr( $value, 0, $length );
+		}
 
         return $value;
     }

@@ -70,6 +70,7 @@ class PodsField_Boolean extends PodsField {
                 'type' => 'text'
             )
         );
+
         return $options;
     }
 

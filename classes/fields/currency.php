@@ -125,7 +125,8 @@ class PodsField_Currency extends PodsField {
             self::$type . '_decimals' => array(
                 'label' => __( 'Decimals', 'pods' ),
                 'default' => 2,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Maximum allowed is 30 decimals', 'pods' )
             ),
             self::$type . '_step' => array(
                 'label' => __( 'Slider Increment (Step)', 'pods' ),
@@ -149,7 +150,7 @@ class PodsField_Currency extends PodsField {
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 12,
                 'type' => 'number',
-                'help' => __( 'Set to -1 for no limit', 'pods' )
+                'help' => __( 'Maximum allowed is 64 digits', 'pods' )
             )/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
@@ -162,6 +163,7 @@ class PodsField_Currency extends PodsField {
                 )
             )*/
         );
+
         return $options;
     }
 

@@ -110,6 +110,7 @@ class PodsField_Phone extends PodsField {
                 )
             )*/
         );
+
         return $options;
     }
 

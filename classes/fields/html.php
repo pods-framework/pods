@@ -112,8 +112,6 @@ class PodsField_HTML extends PodsField {
             )
         );
 
-        $options = apply_filters( 'pods_field_' . self::$type . '_options', $options, self::$type );
-
         return $options;
     }
 

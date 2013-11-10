@@ -607,7 +607,7 @@ class PodsField_Pick extends PodsField {
 
         if ( is_object( $pod ) && isset( $pod->fields ) )
             $fields = $pod->fields;
-        elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) )
+        elseif ( ( is_array( $pod ) || is_object( $pod ) ) && isset( $pod[ 'fields' ] ) )
             $fields = $pod[ 'fields' ];
 
         return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
@@ -1135,41 +1135,35 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Get available items from a relationship field
 	 *
-	 * @param array|string $field Field array or field name
-	 * @param array $options [optional] Field options array overrides
+	 * @param array|string $field_name Field array or field name
+	 * @param array $override [optional] Field options array overrides
 	 * @param array $object_params [optional] Additional get_object_data options
 	 *
 	 * @return array An array of available items from a relationship field
 	 */
-	public function get_field_data( $field, $options = array(), $object_params = array() ) {
+	public function get_field_data( $field, $override = array(), $object_params = array() ) {
 
 		// Handle field array overrides
-		if ( is_array( $field ) ) {
-			$options = array_merge( $field, $options );
+		if ( is_array( $field ) || is_object( $field ) ) {
+			if ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
+			}
+
+			if ( !empty( $override ) ) {
+				$field->override( $override );
+			}
 		}
 
 		// Get field name from array
-		$field = pods_var_raw( 'name', $options, $field, null, true );
+		$field_name = pods_v( 'name', $field, $field, true );
 
 		// Field name or options not set
-		if ( empty( $field ) || empty( $options ) ) {
+		if ( empty( $field_name ) || is_array( $field_name ) || is_object( $field_name ) ) {
 			return array();
 		}
 
-		// Options normalization
-		$options = array_merge( $options, pods_var_raw( 'options', $options, array(), null, true ) );
-
-		// Setup object params
-        $object_params = array_merge(
-			array(
-				'name' => $field, // The name of the field
-				'options' => $options, // Field options
-			),
-			$object_params
-        );
-
 		// Get data override
-        $data = pods_var_raw( 'data', $options, null, null, true );
+        $data = pods_v( 'data', $field, null, true );
 
 		// Return data override
         if ( null !== $data ) {
@@ -1177,6 +1171,15 @@ class PodsField_Pick extends PodsField {
 		}
 		// Get object data
         else {
+			// Setup object params
+			$object_params = array_merge(
+				array(
+					'name' => $field_name, // The name of the field
+					'options' => $field, // Field options
+				),
+				$object_params
+			);
+
             $data = $this->get_object_data( $object_params );
 		}
 
@@ -1300,7 +1303,7 @@ class PodsField_Pick extends PodsField {
                 if ( '__current__' == $pick_val ) {
                     if ( is_object( $pod ) )
                         $pick_val = $pod->pod;
-                    elseif ( is_array( $pod ) )
+                    elseif ( is_array( $pod ) || is_object( $pod ) )
                         $pick_val = $pod[ 'name' ];
                     elseif ( 0 < strlen( $pod ) )
                         $pick_val = $pod;

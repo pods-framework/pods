@@ -9,6 +9,12 @@
 
         $attributes[ 'class' ] .= ' pods-form-ui-read-only';
     }
+
+	$rows = (int) pods_v( 'paragraph_rows', $options, 0 );
+
+	if ( 0 < $rows ) {
+		$attributes[ 'rows' ] = $rows;
+	}
 ?>
     <textarea<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
 <?php

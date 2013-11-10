@@ -11,6 +11,12 @@ if (
     $settings[ 'media_buttons' ] = (boolean) pods_var( 'wysiwyg_media_buttons', $options, true );
 }
 
+$rows = (int) pods_v( 'wysiwyg_rows', $options, 0 );
+
+if ( 0 < $rows ) {
+	$settings[ 'textarea_rows' ] = $rows;
+}
+
 if ( isset( $options[ 'settings' ] ) )
     $settings = array_merge( $settings, $options[ 'settings' ] );
 

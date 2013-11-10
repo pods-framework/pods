@@ -77,7 +77,7 @@ class PodsField_Code extends PodsField {
             ),
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 0,
+                'default' => -1,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
             )/*,
@@ -105,7 +105,18 @@ class PodsField_Code extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+			if ( $length <= 255 ) {
+				$schema = 'VARCHAR(' . (int) $length . ')';
+			}
+			elseif ( $length <= 16777215  ) {
+				$schema = 'MEDIUMTEXT';
+			}
+		}
 
         return $schema;
     }
@@ -169,6 +180,12 @@ class PodsField_Code extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
+
+		if ( 0 < $length ) {
+			$value = substr( $value, 0, $length );
+		}
+
         return $value;
     }
 }

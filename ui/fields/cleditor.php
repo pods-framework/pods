@@ -15,7 +15,16 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
         var $textarea = $( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
         var editorWidth = $textarea.outerWidth();
         $textarea.cleditor( {
-            width : editorWidth
+            width : editorWidth<?php
+				$rows = (int) pods_v( 'wysiwyg_rows', $options, 0 );
+
+				if ( 0 < $rows ) {
+			?>,
+			height: <?php echo ( $rows * 20 ); ?>
+			<?php
+				}
+
+			?>
         } );
     } );
 </script>

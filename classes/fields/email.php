@@ -85,6 +85,7 @@ class PodsField_Email extends PodsField {
                 )
             )*/
         );
+
         return $options;
     }
 

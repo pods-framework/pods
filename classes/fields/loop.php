@@ -53,6 +53,7 @@ class PodsField_Loop extends PodsField {
                 'type' => 'number'
             )
         );
+
         return $options;
     }
 

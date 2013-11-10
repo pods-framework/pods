@@ -143,23 +143,19 @@ class PodsField_WYSIWYG extends PodsField {
                 'default' => '',
                 'type' => 'text',
 				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
-            ),/*
+            ),
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 0,
+                'default' => -1,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
             ),
-            self::$type . '_size' => array(
-                'label' => __( 'Field Size', 'pods' ),
-                'default' => 'medium',
-                'type' => 'pick',
-                'data' => array(
-                    'small' => __( 'Small', 'pods' ),
-                    'medium' => __( 'Medium', 'pods' ),
-                    'large' => __( 'Large', 'pods' )
-                )
-            )*/
+            self::$type . '_rows' => array(
+                'label' => __( 'Rows', 'pods' ),
+                'default' => 0,
+                'type' => 'number',
+                'help' => __( 'Customize how many rows the editor will have.', 'pods' )
+            )
         );
 
         return $options;
@@ -174,7 +170,18 @@ class PodsField_WYSIWYG extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+			if ( $length <= 255 ) {
+				$schema = 'VARCHAR(' . (int) $length . ')';
+			}
+			elseif ( $length <= 16777215  ) {
+				$schema = 'MEDIUMTEXT';
+			}
+		}
 
         return $schema;
     }
@@ -297,6 +304,12 @@ class PodsField_WYSIWYG extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
+
+        $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
+
+		if ( 0 < $length ) {
+			$value = substr( $value, 0, $length );
+		}
 
         return $value;
     }

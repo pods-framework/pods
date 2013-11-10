@@ -513,7 +513,7 @@ class PodsMeta {
             return true;
         }
 
-        if ( !is_array( $pod ) ) {
+        if ( !is_array( $pod ) && !is_object( $pod ) ) {
             if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $pod )
                 self::$current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 
@@ -532,13 +532,8 @@ class PodsMeta {
             }
         }
 
-        if ( is_array( $pod ) && !isset( $pod[ 'id' ] ) ) {
-            $defaults = array(
-                'name' => '',
-                'type' => 'post_type'
-            );
-
-            $pod = array_merge( $defaults, $pod );
+        if ( is_array( $pod ) && !is_object( $pod ) && !isset( $pod[ 'id' ] ) ) {
+            $pod = pods_object_pod( $pod );
         }
 
         if ( 'post' == $pod[ 'type' ] )
@@ -577,21 +572,27 @@ class PodsMeta {
                 'type' => 'text'
             );
 
-            if ( !is_array( $field ) ) {
+			if ( !is_array( $field ) && !is_object( $field ) ) {
                 $name = trim( $field );
 
                 $field = array(
                     'name' => $name,
                     'label' => $name
                 );
-            }
 
-            $field = array_merge( $defaults, $field );
+				$field = pods_object_field( $field );
+			}
+			elseif ( is_array( $field ) ) {
+				$field = pods_object_field( $field );
+			}
+
+			$field->defaults( $defaults );
 
             $field[ 'name' ] = trim( $field[ 'name' ] );
 
-            if ( isset( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
-                $field = array_merge( $field, $pod[ 'fields' ][ $field[ 'name' ] ] );
+            if ( isset( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) ) {
+				$field->override( $pod[ 'fields' ][ $field[ 'name' ] ] );
+			}
 
             $_fields[ $k ] = $field;
         }
@@ -695,7 +696,12 @@ class PodsMeta {
             'type' => 'post_type'
         );
 
-        $pod = array_merge( $defaults, (array) $pod );
+		if ( is_object( $pod ) ) {
+			$pod->defaults( $defaults );
+		}
+		else {
+        	$pod = array_merge( $defaults, (array) $pod );
+		}
 
         if ( empty( $pod[ 'name' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
@@ -860,6 +866,8 @@ class PodsMeta {
 
         do_action( 'pods_meta_' . __FUNCTION__, $post );
 
+		$block_field_types = PodsForm::block_field_types();
+
         $hidden_fields = array();
 ?>
     <table class="form-table pods-metabox pods-admin pods-dependency">
@@ -909,21 +917,34 @@ class PodsMeta {
             else {
                 $depends = PodsForm::dependencies( $field, 'pods-meta-' );
 
-            do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
-        ?>
-            <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
-                <td>
-                    <?php
-                        // Remove any extra ? help icons
-                        if ( isset( $field[ 'help' ] ) )
-                            unset( $field[ 'help' ] );
-                    ?>
-                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
-                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-                </td>
-            </tr>
-        <?php
+				do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
+
+				if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+		?>
+			<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
+				<td colspan="2">
+					<?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+				</td>
+			</tr>
+		<?php
+				}
+				else {
+		?>
+			<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
+				<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
+				<td>
+					<?php
+						// Remove any extra ? help icons
+						if ( isset( $field[ 'help' ] ) )
+							unset( $field[ 'help' ] );
+					?>
+					<?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+					<?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+				</td>
+			</tr>
+		<?php
+				}
+
                 do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ] . '_post', $post, $field, $pod );
             }
         }
@@ -1109,6 +1130,8 @@ class PodsMeta {
 
         $pod = null;
 
+		$block_field_types = PodsForm::block_field_types();
+
 		$meta_nonce = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_media' ), 'hidden' );
 
         foreach ( $groups as $group ) {
@@ -1129,6 +1152,10 @@ class PodsMeta {
                     if ( !pods_var( 'hidden', $field, false ) )
                         continue;
                 }
+
+				if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+					continue;
+				}
 
                 $value = '';
 
@@ -1288,6 +1315,8 @@ class PodsMeta {
 
         $pod = null;
 
+		$block_field_types = PodsForm::block_field_types();
+
 		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_taxonomy' ), 'hidden' );
 
         foreach ( $groups as $group ) {
@@ -1319,6 +1348,16 @@ class PodsMeta {
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 if ( !is_object( $tag ) ) {
+					if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+			?>
+                <div class="form-field pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                    <?php
+                        echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
+                    ?>
+                </div>
+			<?php
+					}
+					else {
             ?>
                 <div class="form-field pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                     <?php
@@ -1328,8 +1367,21 @@ class PodsMeta {
                     ?>
                 </div>
             <?php
+					}
                 }
                 else {
+					if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+            ?>
+                <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                    <td colspan="2">
+                        <?php
+                            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
+                        ?>
+                    </td>
+                </tr>
+            <?php
+					}
+					else {
             ?>
                 <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
@@ -1341,6 +1393,7 @@ class PodsMeta {
                     </td>
                 </tr>
             <?php
+					}
                 }
             }
         }
@@ -1454,6 +1507,8 @@ class PodsMeta {
         $id = $user_id;
         $pod = null;
 
+		$block_field_types = PodsForm::block_field_types();
+
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
@@ -1505,6 +1560,16 @@ class PodsMeta {
                         );
                     }
                     else {
+						if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+            ?>
+                <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                    <td colspan="2">
+                        <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+                    </td>
+                </tr>
+            <?php
+						}
+						else {
             ?>
                 <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
@@ -1514,6 +1579,7 @@ class PodsMeta {
                     </td>
                 </tr>
             <?php
+						}
                     }
                 }
             ?>
@@ -1640,6 +1706,8 @@ class PodsMeta {
         $id = null;
         $pod = null;
 
+		$block_field_types = PodsForm::block_field_types();
+
 		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 
         foreach ( $groups as $group ) {
@@ -1676,6 +1744,17 @@ class PodsMeta {
 
                     pods_no_conflict_off( 'comment' );
                 }
+
+				if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+                ?>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>  pods-field"<?php echo ( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <?php
+                    echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
+                ?>
+            </p>
+            <?php
+				}
+				else {
                 ?>
             <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>  pods-field"<?php echo ( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                 <?php
@@ -1685,6 +1764,7 @@ class PodsMeta {
                 ?>
             </p>
             <?php
+				}
             }
         }
 
@@ -1703,6 +1783,8 @@ class PodsMeta {
 
         $id = null;
         $pod = null;
+
+		$block_field_types = PodsForm::block_field_types();
 
 		$form_fields[ 'pods_meta' ] = PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 
@@ -1742,6 +1824,17 @@ class PodsMeta {
                 }
 
                 ob_start();
+
+				if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+                ?>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?> pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <?php
+                    echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
+                ?>
+            </p>
+            <?php
+				}
+				else {
                 ?>
             <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?> pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                 <?php
@@ -1751,6 +1844,8 @@ class PodsMeta {
                 ?>
             </p>
             <?php
+				}
+
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
             }
         }
@@ -1827,6 +1922,8 @@ class PodsMeta {
 
         $hidden_fields = array();
 
+		$block_field_types = PodsForm::block_field_types();
+
 		echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_comment' ), 'hidden' );
 ?>
     <table class="form-table editcomment pods-metabox">
@@ -1865,6 +1962,16 @@ class PodsMeta {
                     );
                 }
                 else {
+					if ( in_array( $field[ 'type' ], $block_field_types ) ) {
+        ?>
+            <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                <td colspan="2">
+                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+                </td>
+            </tr>
+        <?php
+					}
+					else {
         ?>
             <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
@@ -1874,6 +1981,7 @@ class PodsMeta {
                 </td>
             </tr>
         <?php
+					}
                 }
             }
         ?>

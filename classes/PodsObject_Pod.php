@@ -404,16 +404,17 @@ class PodsObject_Pod extends PodsObject {
 	}
 
 	/**
-	 * Return object field array from Pod, a object field's data, or a object field option
+	 * Return object field array from Object, a object field's data, or a object field option
 	 *
 	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
+	 * @param bool $alt Set to true to check alternate fields array
 	 *
 	 * @return array|mixed
 	 *
 	 * @since 2.3.10
 	 */
-	public function object_fields( $field = null, $option = null ) {
+	public function object_fields( $field = null, $option = null, $alt = true ) {
 
 		if ( empty( $this->_object_fields ) ) {
 			if ( $this->is_custom() && isset( $this->_object[ 'object_fields' ] ) && !empty( $this->_object[ 'object_fields' ] ) ) {

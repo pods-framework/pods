@@ -40,12 +40,13 @@ class PodsObject_Group extends PodsObject {
 	 *
 	 * @param string|null $field Object Field name
 	 * @param string|null $option Field option
+	 * @param bool $alt Set to true to check alternate fields array
 	 *
 	 * @return array|mixed
 	 *
 	 * @since 2.3.10
 	 */
-	public function fields( $field = null, $option = null ) {
+	public function fields( $field = null, $option = null, $alt = true ) {
 
 		if ( !$this->is_valid() ) {
 			return array();

@@ -627,7 +627,6 @@ class PodsField_Pick extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         global $wpdb;
 
-        $options = (array) $options;
         $form_field_type = PodsForm::$field_type;
 
         $options[ 'grouped' ] = 1;

@@ -122,6 +122,14 @@ class PodsField_Heading extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+		if ( strlen( trim( $value ) ) < 1 ) {
+			$value = pods_v( self::$type . '_content', $options );
+		}
+
+		if ( strlen( trim( $value ) ) < 1 ) {
+			$value = $options[ 'label' ];
+		}
+
         if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
@@ -150,7 +158,6 @@ class PodsField_Heading extends PodsField {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
         $form_field_type = PodsForm::$field_type;
 
 		$field_type = 'heading';

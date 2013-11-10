@@ -1,4 +1,6 @@
 <?php
+wp_enqueue_script( 'post', false, array(), false, true );
+
 global $pods_i;
 
 $api = pods_api();

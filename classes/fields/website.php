@@ -133,7 +133,6 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
         $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
@@ -209,8 +208,6 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $options = (array) $options;
-
         if ( is_array( $value ) ) {
             if ( isset( $value[ 'scheme' ] ) )
                 $value = $this->build_url( $value );

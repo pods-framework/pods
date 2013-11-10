@@ -1,4 +1,6 @@
 <?php
+wp_enqueue_script( 'post', false, array(), false, true );
+
 global $pods_i;
 
 $api = pods_api();
@@ -183,7 +185,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
 
 	<div id="titlediv" class="pods-submittable-fields">
 		<div id="titlewrap">
-			<label class="hide-if-no-js" id="title-prompt-text" for="title"><?php _e( 'Enter Group title', 'pods' ); ?></label>
+			<label class="hide-if-no-js screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Enter Group title', 'pods' ); ?></label>
 			<input type="text" name="label" data-name-clean="label" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $group_label ) ); ?>" class="pods-form-ui-field-name-pods-field-label" autocomplete="off" />
 		</div>
 		<!-- /#titlewrap -->

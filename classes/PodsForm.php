@@ -416,8 +416,6 @@ class PodsForm {
      * @since 2.0
      */
     public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
-        $options = (array) $options;
-
         if ( !in_array( $type, array( 'label', 'comment' ) ) ) {
             $name_clean = self::clean( $name );
             $name_more_clean = self::clean( $name, true );
@@ -495,9 +493,7 @@ class PodsForm {
      * @since 2.0
      */
     public static function options ( $type, $options ) {
-        $options = (array) $options;
-
-        if ( isset( $options[ 'options' ] ) ) {
+        if ( !is_object( $options ) && isset( $options[ 'options' ] ) ) {
             $options_temp = $options[ 'options' ];
 
             unset( $options[ 'options' ] );
@@ -777,11 +773,11 @@ class PodsForm {
      * @since 2.0
      */
     public static function dependencies ( $options, $prefix = '' ) {
-        $options = (array) $options;
-
         $depends_on = $excludes_on = array();
+
         if ( isset( $options[ 'depends-on' ] ) )
             $depends_on = (array) $options[ 'depends-on' ];
+
         if ( isset( $options[ 'excludes-on' ] ) )
             $excludes_on = (array) $options[ 'excludes-on' ];
 

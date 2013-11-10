@@ -254,7 +254,6 @@ class PodsField_WYSIWYG extends PodsField {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
         $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
@@ -350,8 +349,6 @@ class PodsField_WYSIWYG extends PodsField {
 
         if ( empty( $value ) )
             return $value;
-
-        $options = (array) $options;
 
         $allowed_html_tags = '';
 

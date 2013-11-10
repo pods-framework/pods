@@ -165,7 +165,6 @@ class PodsField_Text extends PodsField {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
         $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
@@ -281,8 +280,6 @@ class PodsField_Text extends PodsField {
 
         if ( empty( $value ) )
             return $value;
-
-        $options = (array) $options;
 
         if ( 1 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) ) {
             $allowed_html_tags = '';

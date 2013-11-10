@@ -300,7 +300,7 @@ if ( 0 < $id ) {
                                 ?>
                                 <div id="titlediv">
                                     <div id="titlewrap">
-                                        <label class="hide-if-no-js" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
+                                        <label class="hide-if-no-js screen-reader-text" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
                                         <input type="text" name="pods_field_<?php echo $table_info[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $table_info[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $table_info[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
                                     </div>
                                     <!-- /#titlewrap -->

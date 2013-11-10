@@ -140,6 +140,10 @@ class PodsField_HTML extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+		if ( strlen( trim( $value ) ) < 1 ) {
+			$value = pods_v( self::$type . '_content', $options );
+		}
+
         if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );

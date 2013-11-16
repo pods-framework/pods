@@ -1,12 +1,12 @@
 <?php
-wp_enqueue_script( 'pods-codemirror' );
-wp_enqueue_style( 'pods-codemirror' );
-wp_enqueue_script( 'pods-codemirror-loadmode' );
+    wp_enqueue_script( 'pods-codemirror' );
+    wp_enqueue_style( 'pods-codemirror' );
+    wp_enqueue_script( 'pods-codemirror-loadmode' );
 
-$type = 'textarea';
-$attributes = array();
-$attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
+    $type = 'textarea';
+    $attributes = array();
+    $attributes[ 'tabindex' ] = 2;
+    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
 ?>
 <div class="code-toolbar"><!-- Placeholder --></div>
 <textarea<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>

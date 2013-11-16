@@ -156,7 +156,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   z-index: 3;
 }
 .CodeMirror-gutter {
-  position: static;
   white-space: normal;
   height: 100%;
   -moz-box-sizing: content-box;

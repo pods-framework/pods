@@ -687,6 +687,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'filters' => false,
         'filters_label' => null,
         'filters_location' => 'before',
+		'pagination_type' => null,
         'pagination_label' => null,
         'pagination_location' => 'after',
         'field' => null,
@@ -850,12 +851,12 @@ function pods_shortcode ( $tags, $content = null ) {
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
-        echo $pod->pagination( $tags[ 'pagination_label' ] );
+        echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
 
     echo $pod->template( $tags[ 'template' ], $content );
 
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
-        echo $pod->pagination( $tags[ 'pagination_label' ] );
+        echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
 
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );

@@ -352,7 +352,10 @@ class PodsMeta {
         return false;
     }
 
-    public function integrations () {
+	/**
+	 * Load integrations with other plugins / themes
+	 */
+	public function integrations () {
         // Codepress Admin Columns 2.x
         add_filter( 'cac/meta_keys/storage_key=post', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/meta_keys/storage_key=link', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
@@ -366,13 +369,37 @@ class PodsMeta {
         add_filter( 'cpac-get-meta-by-type', array( $this, 'cpac_meta_keys' ), 10, 2 );
         add_filter( 'cpac-get-post-types', array( $this, 'cpac_post_types' ), 10, 1 );
         add_filter( 'cpac_get_column_value_custom_field', array( $this, 'cpac_meta_values' ), 10, 5 );
+
+		// Timber Theme
+		add_filter( 'timber_post_get_meta_field', array( $this, 'timber_meta_feld' ), 10, 4 );
+		add_filter( 'timber_term_get_meta_field', array( $this, 'timber_meta_feld' ), 10, 4 );
+		add_filter( 'timber_user_get_meta_field', array( $this, 'timber_meta_feld' ), 10, 4 );
+		add_filter( 'timber_comment_get_meta_field', array( $this, 'timber_meta_feld' ), 10, 4 );
+		add_filter( 'timber_term_get_meta', array( $this, 'timber_term_meta' ), 10, 3 );
     }
 
-    public function cpac_meta_keys_get ( $meta_fields, $obj ) {
+	/**
+	 * Handle CPAC meta keys (variation)
+	 *
+	 * @param $meta_fields
+	 * @param $obj
+	 *
+	 * @return array
+	 */
+	public function cpac_meta_keys_get ( $meta_fields, $obj ) {
         return $this->cpac_meta_keys( $meta_fields, $obj->key, $obj->type );
     }
 
-    public function cpac_meta_keys ( $meta_fields, $cac_key, $cac_type = null ) {
+	/**
+	 * Handle CPAC meta keys
+	 *
+	 * @param $meta_fields
+	 * @param $cac_key
+	 * @param null $cac_type
+	 *
+	 * @return array
+	 */
+	public function cpac_meta_keys ( $meta_fields, $cac_key, $cac_type = null ) {
         $object_type = 'post_type';
         $object = $cac_key;
 
@@ -415,7 +442,14 @@ class PodsMeta {
         return $meta_fields;
     }
 
-    public function cpac_post_types ( $post_types ) {
+	/**
+	 * CPAC exclude for Pods internal post types
+	 *
+	 * @param $post_types
+	 *
+	 * @return mixed
+	 */
+	public function cpac_post_types ( $post_types ) {
         // Remove internal Pods post types
         foreach ( $post_types as $post_type => $post_type_name ) {
             if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) )
@@ -425,7 +459,16 @@ class PodsMeta {
         return $post_types;
     }
 
-    public function cpac_meta_value ( $meta, $id, $obj ) {
+	/**
+	 * Handle CPAC meta value
+	 *
+	 * @param $meta
+	 * @param $id
+	 * @param $obj
+	 *
+	 * @return array|mixed|string
+	 */
+	public function cpac_meta_value ( $meta, $id, $obj ) {
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
 
@@ -463,7 +506,18 @@ class PodsMeta {
         return $meta;
     }
 
-    public function cpac_meta_values ( $meta, $field_type, $field, $type, $id ) {
+	/**
+	 * Handle CPAC meta values
+	 *
+	 * @param $meta
+	 * @param $field_type
+	 * @param $field
+	 * @param $type
+	 * @param $id
+	 *
+	 * @return array|mixed|string
+	 */
+	public function cpac_meta_values ( $meta, $field_type, $field, $type, $id ) {
         $tableless_field_types = PodsForm::tableless_field_types();
 
         $object = $type;
@@ -490,6 +544,69 @@ class PodsMeta {
 
         return $meta;
     }
+
+	/**
+	 * Handle Timber theme meta field display
+	 *
+	 * @param mixed $value
+	 * @param int $id
+	 * @param string $field
+	 * @param TermPost|TermTerm|TermUser|TermComment $timber_object
+	 *
+	 * @return mixed
+	 */
+	public function timber_meta_field( $value, $id, $field, $timber_object ) {
+
+		$object_type = 'post_type';
+
+		if ( 'TimberTerm' == get_class( $timber_object ) ) {
+			$object_type = 'taxonomy';
+		}
+		elseif ( 'TimberUser' == get_class( $timber_object ) ) {
+			$object_type = 'user';
+		}
+		elseif ( 'TimberComment' == get_class( $timber_object ) ) {
+			$object_type = 'comment';
+		}
+
+        $object = $this->get_object( $object_type, $id );
+
+        if ( empty( $object_id ) || empty( $object ) )
+            return $value;
+
+		if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] ) {
+			self::$current_field_pod = pods( $object[ 'name' ], $id );
+		}
+		elseif ( self::$current_field_pod->id() != $id ) {
+			self::$current_field_pod->fetch( $id );
+		}
+
+		$pod = self::$current_field_pod;
+
+		$value = $pod->display( $field );
+
+		return $value;
+
+	}
+
+	/**
+	 * Handle Timber theme term meta values
+	 *
+	 * @param array $meta
+	 * @param int $term_id
+	 * @param TimberTerm $timber_object
+	 *
+	 * @return array
+	 *
+	 * @since 3.0
+	 */
+	public function timber_term_meta( $meta, $term_id, $timber_object ) {
+
+		$meta = array_merge( $meta, $this->get_term_meta( $term_id ) );
+
+		return $meta;
+
+	}
 
     /**
      * Add a meta group of fields to add/edit forms

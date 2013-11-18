@@ -21,7 +21,7 @@
         }
     }
 
-    $ignored_pick_objects = apply_filters( '', array( 'table' ) );
+    $ignored_pick_objects = apply_filters( 'pods_admin_ui_ignored_pick_objects', array( 'table' ) );
 
     if ( !in_array( pods_var( 'pick_object', $field ), $ignored_pick_objects ) ) {
         // Set pick object

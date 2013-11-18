@@ -174,7 +174,7 @@
                     shortcode += ' label="' + label + '"';
 
                 if ( thank_you.length )
-                    shortcode += ' thank-you="' + thank_you + '"';
+                    shortcode += ' thank_you="' + thank_you + '"';
 
             }
             else if ( 'view' == use_case ) {

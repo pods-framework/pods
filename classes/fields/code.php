@@ -64,6 +64,17 @@ class PodsField_Code extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
+            'output_options' => array(
+                'label' => __( 'Output Options', 'pods' ),
+                'group' => array(
+                    self::$type . '_allow_shortcode' => array(
+                        'label' => __( 'Allow Shortcodes?', 'pods' ),
+                        'default' => 0,
+                        'type' => 'boolean',
+                        'dependency' => true
+                    )
+                )
+            ),
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => -1,
@@ -123,6 +134,8 @@ class PodsField_Code extends PodsField {
 	 * @since 2.0
 	 */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) )
+            $value = do_shortcode( $value );
 
         return $value;
     }

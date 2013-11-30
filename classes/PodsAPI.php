@@ -3270,7 +3270,7 @@ class PodsAPI {
                                     $attachment_id = pods_image_id_from_field( $v );
 
                                     // If file not found, add it
-                                    $v = empty($image_id) ? pods_attachment_import( $v ) : $attachment_id;
+                                    $v = empty( $image_id ) ? pods_attachment_import( $v ) : $attachment_id;
                                 }
                                 // Reference by slug
                                 else {

@@ -73,9 +73,21 @@
     ?>
 
     <li>
+        <label for="<?php echo $this->get_field_id( 'before_content' ); ?>"> <?php _e( 'Before Content', 'pods' ); ?></label>
+
+        <input type="text" class="widefat" id="<?php echo $this->get_field_id( 'before_content' ); ?>" name="<?php echo $this->get_field_name( 'before_content' ); ?>" value="<?php echo esc_attr( $before_content ); ?>" />
+    </li>
+
+    <li>
         <label for="<?php echo $this->get_field_id( 'template_custom' ); ?>"> <?php _e( 'Custom Template', 'pods' ); ?></label>
 
         <textarea name="<?php echo $this->get_field_name( 'template_custom' ); ?>" id="<?php echo $this->get_field_id( 'template_custom' ); ?>" cols="10" rows="10" class="widefat"><?php echo esc_html( $template_custom ); ?></textarea>
+    </li>
+
+    <li>
+        <label for="<?php echo $this->get_field_id( 'after_content' ); ?>"> <?php _e( 'After Content', 'pods' ); ?></label>
+
+        <input type="text" class="widefat" id="<?php echo $this->get_field_id( 'after_content' ); ?>" name="<?php echo $this->get_field_name( 'after_content' ); ?>" value="<?php echo esc_attr( $after_content ); ?>" />
     </li>
 
     <li>

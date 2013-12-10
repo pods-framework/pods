@@ -35,7 +35,9 @@ class PodsWidgetList extends WP_Widget {
             'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) )
         );
 
+        $before_content = trim( pods_var_raw( 'before_content', $instance, '' ) );
         $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
+        $after_content = trim( pods_var_raw( 'after_content', $instance, '' ) );
 
         if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
             require PODS_DIR . 'ui/front/widgets.php';
@@ -59,6 +61,8 @@ class PodsWidgetList extends WP_Widget {
         $instance[ 'where' ] = pods_var_raw( 'where', $new_instance, '' );
         $instance[ 'expires' ] = (int) pods_var_raw( 'expires', $new_instance, ( 60 * 5 ) );
         $instance[ 'cache_mode' ] = pods_var_raw( 'cache_mode', $new_instance, 'none' );
+        $instance[ 'before_content' ] = pods_var_raw( 'before_content', $new_instance, '' );
+        $instance[ 'after_content' ] = pods_var_raw( 'after_content', $new_instance, '' );
 
         return $instance;
     }
@@ -76,6 +80,8 @@ class PodsWidgetList extends WP_Widget {
         $where = pods_var_raw( 'where', $instance, '' );
         $expires = (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) );
         $cache_mode = pods_var_raw( 'cache_mode', $instance, 'none' );
+        $before_content = pods_var_raw( 'before_content', $instance, '' );
+        $after_content = pods_var_raw( 'after_content', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/list.php';
     }

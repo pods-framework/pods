@@ -140,7 +140,7 @@ class PodsField_Avatar extends PodsField {
     }
 
     /**
-     * Change the way the value of the field is displayed with Pods::get
+	 * Change the value of the field when displayed with Pods::display
      *
      * @param mixed $value
      * @param string $name

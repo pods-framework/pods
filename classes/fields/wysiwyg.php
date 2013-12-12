@@ -186,18 +186,18 @@ class PodsField_WYSIWYG extends PodsField {
         return $schema;
     }
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
+	/**
+	 * Change the value of the field when displayed with Pods::display
+	 *
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 * @param int $id
+	 *
+	 * @return mixed|null|string
+	 * @since 2.0
+	 */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 

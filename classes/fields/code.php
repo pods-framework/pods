@@ -121,20 +121,20 @@ class PodsField_Code extends PodsField {
         return $schema;
     }
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
+	/**
+	 * Change the value of the field when displayed with Pods::display
+	 *
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 * @param int $id
+	 *
+	 * @return mixed|null|string
+	 * @since 2.0
+	 */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) )
+        if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -165,19 +165,20 @@ class PodsField_Code extends PodsField {
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-     /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0
-     */
+	/**
+	 * Change the value or perform actions after validation but before saving to the DB
+	 *
+	 * @param mixed $value
+	 * @param int $id
+	 * @param string $name
+	 * @param array $options
+	 * @param array $fields
+	 * @param array $pod
+	 * @param object $params
+	 *
+	 * @return mixed|string
+	 * @since 2.0
+	 */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
 

@@ -441,8 +441,14 @@ class Pods_Templates extends PodsComponent {
             else
                 echo self::do_template( $code, $obj );
         }
-        elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\/]/', '', $template_name ), ' /-' ) ) {
+        elseif ( $template_name == trim( preg_replace( '/[^a-zA-Z0-9_\-\.\/]/', '', $template_name ), ' /-' ) ) {
+			if ( false === strpos( $template_name, '.' ) ) {
+				$template_name .= '.php';
+			}
+
             $default_templates = array(
+                'pods/template-' . $template_name,
+                'pods-template-' . $template_name,
                 'pods/' . $template_name,
                 'pods-' . $template_name,
                 $template_name

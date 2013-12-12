@@ -1481,38 +1481,11 @@ class PodsAPI {
 			unset( $options[ 'method' ] );
 		}
 
-		$exclude = array(
-			'id',
-			'name',
-			'helper_type',
-			'code',
-			'options',
-			'status'
-		);
+		// Deprecated
+		if ( isset( $options[ 'options' ] ) ) {
+			$options = array_merge( $options, $options[ 'options' ] );
 
-		foreach ( $exclude as $k => $exclude_field ) {
-			$aliases = array( $exclude_field );
-
-			if ( is_array( $exclude_field ) ) {
-				$aliases = array_merge( array( $k ), $exclude_field );
-				$exclude_field = $k;
-			}
-
-			foreach ( $aliases as $alias ) {
-				if ( isset( $options[ $alias ] ) ) {
-					$object[ $exclude_field ] = pods_trim( $options[ $alias ] );
-
-					unset( $options[ $alias ] );
-				}
-			}
-		}
-
-		if ( 'helper' == $object[ 'type' ] ) {
-			$object[ 'helper_type' ] = $object[ 'helper_type' ];
-		}
-
-		if ( isset( $object[ 'code' ] ) ) {
-			unset( $object[ 'code' ] );
+			unset( $options[ 'options' ] );
 		}
 
 		$object = array_merge( $object, $options );
@@ -1537,7 +1510,9 @@ class PodsAPI {
 
 		$post_data = pods_sanitize( $post_data );
 
-		$params->id = $this->save_post( $post_data, $object, true, true );
+		$post_meta = array_diff_key( $object, array( 'id' => '', 'name' => '', 'code' => '', 'type' => '' ) );
+
+		$params->id = $this->save_post( $post_data, $post_meta, true, true );
 
 		pods_transient_clear( 'pods_objects_' . $params->type );
 		pods_transient_clear( 'pods_objects_' . $params->type . '_get' );
@@ -1992,11 +1967,10 @@ class PodsAPI {
 
             $value = $field_data[ 'value' ];
             $type = $field_data[ 'type' ];
-            $options = pods_var( 'options', $field_data, array() );
 
             // WPML AJAX compatibility
             if ( is_admin() && isset( $_GET[ 'page' ] ) && false !== strpos( $_GET[ 'page' ], '/menu/languages.php' ) && isset( $_POST[ 'icl_ajx_action' ] ) && isset( $_POST[ '_icl_nonce' ] ) && wp_verify_nonce( $_POST[ '_icl_nonce' ], $_POST[ 'icl_ajx_action' ] . '_nonce' ) )
-                $options[ 'unique' ] = $fields[ $field ][ 'unique' ] = $options[ 'required' ] = $fields[ $field ][ 'required' ] = 0;
+                $field_data[ 'unique' ] = $fields[ $field ][ 'unique' ] = $fields[ $field ][ 'required' ] = 0;
             else {
                 // Validate value
                 $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
@@ -2010,7 +1984,7 @@ class PodsAPI {
                     return pods_error( $validate, $this );
             }
 
-            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $field_data, $options ), array_merge( $fields, $object_fields ), $pod, $params );
+            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, $field_data, array_merge( $fields, $object_fields ), $pod, $params );
 
             $field_data[ 'value' ] = $value;
 
@@ -2031,15 +2005,15 @@ class PodsAPI {
                     if ( !is_array( $value ) )
                         $value = explode( ',', $value );
 
-                    $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
+                    $pick_limit = (int) pods_var_raw( 'pick_limit', $field_data, 0 );
 
-                    if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
+                    if ( 'single' == pods_var_raw( 'pick_format_type', $field_data ) )
                         $pick_limit = 1;
 
                     if ( 'custom-simple' == pods_var( 'pick_object', $field_data ) ) {
-                        $custom = pods_var_raw( 'pick_custom', $options, '' );
+                        $custom = pods_var_raw( 'pick_custom', $field_data, '' );
 
-                        $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $field_data, $options ), $pod, $params->id );
+                        $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, $field_data, $pod, $params->id );
 
                         if ( empty( $value ) || empty( $custom ) )
                             $value = '';
@@ -2109,7 +2083,7 @@ class PodsAPI {
                     }
 
                     $table_data[ $field ] = str_replace( array( '{prefix}', '@wp_' ), array( '{/prefix/}', '{prefix}' ), $value ); // Fix for pods_query
-                    $table_formats[] = PodsForm::prepare( $type, $options );
+                    $table_formats[] = PodsForm::prepare( $type, $field_data );
 
                     $object_meta[ $field ] = $value;
                 }
@@ -2234,38 +2208,50 @@ class PodsAPI {
                     // Enforce integers / unique values for IDs
                     $value_ids = array();
 
-                    foreach ( $values as $v ) {
-                        if ( !empty( $v ) ) {
-                            if ( !is_array( $v ) ) {
-                                if ( !preg_match( '/[^0-9]*/', $v ) )
-                                    $v = (int) $v;
-                                // File handling
-                                elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
-                                    // Get ID from GUID
-                                    $v = pods_image_id_from_field( $v );
+					foreach ( $values as $v ) {
+						if ( !empty( $v ) ) {
+							if ( !is_array( $v ) ) {
+								if ( !preg_match( '/[^0-9]*/', $v ) ) {
+									$v = (int) $v;
+								}
+								// File handling
+								elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
+									// Get ID from GUID
+									$attachment_id = pods_image_id_from_field( $v );
 
-                                    // If file not found, add it
-                                    if ( empty( $v ) )
-                                        $v = pods_attachment_import( $v );
-                                }
-                                // Reference by slug
-                                else {
-                                    $v_data = $search_data->fetch( $v );
+									// If file not found, add it
+									if ( empty( $attachment_id ) ) {
+										$attachment_id = pods_attachment_import( $v );
+									}
 
-                                    if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) )
-                                        $v = (int) $v_data[ $search_data->field_id ];
-                                }
-                                // @todo Handle simple relationships eventually
-                            }
-                            elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) )
-                                $v = (int) $v[ 'id' ];
-                            else
-                                continue;
+									$v = 0;
 
-                            if ( !empty( $v ) && !in_array( $v, $value_ids ) )
-                                $value_ids[] = $v;
-                        }
-                    }
+									if ( !empty( $attachment_id ) ) {
+										$v = $attachment_id;
+									}
+								}
+								// Reference by slug
+								else {
+									$v_data = $search_data->fetch( $v );
+
+									if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
+										$v = (int) $v_data[ $search_data->field_id ];
+									}
+								}
+								// @todo Handle simple relationships eventually
+							}
+							elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) ) {
+								$v = (int) $v[ 'id' ];
+							}
+							else {
+								continue;
+							}
+
+							if ( !empty( $v ) && !in_array( $v, $value_ids ) ) {
+								$value_ids[ ] = $v;
+							}
+						}
+					}
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
 
@@ -2291,7 +2277,7 @@ class PodsAPI {
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $values, $params->id, $field, $fields[ $field ], array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed

@@ -389,7 +389,7 @@ function pods_allow_deprecated( $strict = true ) {
 
 	$deprecated = false;
 
-	if ( ( !$strict || pods_strict() ) && ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) ) {
+	if ( ( !$strict || pods_strict( false ) ) && ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED ) ) {
 		$deprecated = true;
 	}
 
@@ -1583,7 +1583,7 @@ function pods_register_type ( $type, $name, $object = null ) {
  * @see PodsMeta::register_field
  *
  * @param string|array $pod The pod name or array of pod names
- * @param string $name The name of the Pod
+ * @param string $name The name of the Field
  * @param array $object (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Field data or false if unsuccessful

@@ -688,20 +688,19 @@ class Pods_Pages extends PodsComponent {
             if ( !empty( $pod_page_rewrites ) ) {
                 foreach ( $pod_page_rewrites as $pod_page => $pod_page_id ) {
                     if ( !apply_filters( 'pods_page_regex_matching', false ) ) {
-                        if ( false === strpos( $pod_page, '*' ) )
-                            continue;
+						$depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
 
-                        $depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
+						$pod_page = preg_quote( $pod_page, '/' );
 
-                        $pod_page = preg_quote( $pod_page, '/' );
+						$pod_page = str_replace( '\\*', '(.+)', $pod_page );
 
-                        $pod_page = str_replace( '\\*', '(.*)', $pod_page );
+						$pod_page = apply_filters( 'pods_page_matching', $pod_page, $pod_page_id, $uri, $uri_depth, $depth_check );
 
-                        if ( $uri_depth == $depth_check && preg_match( '/^' . $pod_page . '$/', $uri ) ) {
-                            $found_rewrite_page_id = $pod_page_id;
+						if ( $uri_depth == $depth_check && preg_match( '/^' . $pod_page . '$/', $uri ) ) {
+							$found_rewrite_page_id = $pod_page_id;
 
-                            break;
-                        }
+							break;
+						}
                     }
                     elseif ( preg_match( '/^' . str_replace( '/', '\\/', $pod_page ) . '$/', $uri ) ) {
                         $found_rewrite_page_id = $pod_page_id;
@@ -1107,6 +1106,8 @@ class Pods_Pages extends PodsComponent {
                     $file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
                     $sanitized = sanitize_title( $file_name );
 
+                    $default_templates[] = 'pods/page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+                    $default_templates[] = 'pods-page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
                     $default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
                     $default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
                 }

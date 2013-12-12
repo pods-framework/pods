@@ -80,18 +80,17 @@ else {
             require_once( PODS_DIR . 'includes/media.php' );
 
         // @todo Allow user to opt-in to future betas easily
-        if ( PODS_GITHUB_UPDATE ) {
+        if ( is_admin() && PODS_GITHUB_UPDATE ) {
             $update = admin_url( 'update.php' );
             $update = str_replace( get_site_url(), '', $update );
 
             $update_network = network_admin_url( 'update.php' );
             $update_network = str_replace( get_site_url(), '', $update_network );
 
-            if ( is_admin() &&
-                 ( isset( $_GET[ 'pods_force_refresh' ] ) ||
+            if ( isset( $_GET[ 'pods_force_refresh' ] ) ||
                    ( 'update-selected' == pods_v( 'action' ) &&
                      ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) ||
-                       false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) ) {
+                       false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) {
 
                 // Configuration
                 $user = 'pods-framework';

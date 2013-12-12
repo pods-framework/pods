@@ -33,10 +33,17 @@ if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
     wp_enqueue_script( 'jquery-ui-sortable' );
 
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+
+do_action( 'pods_form_ui_select2_before', $value, $name, $options, $pod );
 ?>
 <div class="pods-select2">
     <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 </div>
+<?php
+do_action( 'pods_form_ui_select2_after', $value, $name, $options, $pod );
+
+$select2_args = array();
+?>
 
 <script type="text/javascript">
     jQuery( function ( $ ) {
@@ -166,6 +173,8 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                                 lang : '<?php echo ICL_LANGUAGE_CODE; ?>'
                             <?php
                                 }
+
+								do_action( 'pods_form_ui_select2_js_data', $value, $name, $options, $pod );
                             ?>
                         };
                     },

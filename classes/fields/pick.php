@@ -1485,7 +1485,7 @@ class PodsField_Pick extends PodsField {
                             if ( empty( $role ) || ( pods_clean_name( $role ) != $role && sanitize_title( $role ) != $role ) )
                                 continue;
 
-                            $where[] = 'wp_' . ( ( is_multisite() && !is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+                            $where[] = $wpdb->base_prefix . ( ( is_multisite() && !is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
                         }
 
                         if ( !empty( $where ) ) {
@@ -1493,6 +1493,8 @@ class PodsField_Pick extends PodsField {
                         }
                     }
                 }
+
+				$params = apply_filters( 'pods_form_ui_field_pick_search_params', $params, $search_data, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
                 $results = $search_data->select( $params );
 

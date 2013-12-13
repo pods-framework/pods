@@ -2553,36 +2553,42 @@ class PodsData {
     }
 
     /**
-     * Setup fields for traversal
-     *
-     * @param array $fields Associative array of fields data
-     *
-     * @return array Traverse feed
-     * @param object $params (optional) Parameters from build()
-     *
-     * @since 2.0
-     */
-    function traverse_build ( $fields = null, $params = null ) {
-        if ( null === $fields )
-            $fields = $this->fields;
+	 * Setup fields for traversal
+	 *
+	 * @param array $fields Associative array of fields data
+	 *
+	 * @return array Traverse feed
+	 * @param object $params (optional) Parameters from build()
+	 *
+	 * @since 2.0
+	 */
+	function traverse_build( $fields = null, $params = null ) {
 
-        $feed = array();
+		if ( null === $fields ) {
+			$fields = $this->fields;
+		}
 
-        foreach ( $fields as $field => $data ) {
-            if ( !is_array( $data ) )
-                $field = $data;
+		$feed = array();
 
-            if ( !isset( $_GET[ 'filter_' . $field ] ) )
-                continue;
+		foreach ( $fields as $field => $data ) {
+			if ( !is_array( $data ) ) {
+				$field = $data;
+			}
 
-            $field_value = pods_var( 'filter_' . $field, 'get', false, null, true );
+			if ( !isset( $_GET[ 'filter_' . $field ] ) ) {
+				continue;
+			}
 
-            if ( !empty( $field_value ) || 0 < strlen( $field_value ) )
-                $feed[ 'traverse_' . $field ] = array( $field );
-        }
+			$field_value = pods_var( 'filter_' . $field, 'get', false, null, true );
 
-        return $feed;
-    }
+			if ( !empty( $field_value ) || 0 < strlen( $field_value ) ) {
+				$feed[ 'traverse_' . $field ] = array( $field );
+			}
+		}
+
+		return $feed;
+
+	}
 
     /**
      * Recursively join tables based on fields
@@ -2603,7 +2609,10 @@ class PodsData {
             'depth' => 0,
             'joined_id' => 'id',
             'joined_index' => 'id',
-            'params' => new stdClass(),
+            'params' => (object) array(
+				'table' => '',
+				'filters' => array()
+			),
             'last_table_info' => array()
         );
 
@@ -2614,7 +2623,7 @@ class PodsData {
         if ( 0 == $traverse_recurse[ 'depth' ] && !empty( $traverse_recurse[ 'pod' ] ) && !empty( $traverse_recurse [ 'last_table_info' ] ) && isset( $traverse_recurse [ 'last_table_info' ][ 'id' ] ) )
             $pod_data = $traverse_recurse [ 'last_table_info' ];
         elseif ( empty( $traverse_recurse[ 'pod' ] ) ) {
-            if ( !empty( $traverse_recurse[ 'params' ] ) && !empty( $traverse_recurse[ 'params' ]->table ) && 0 === strpos( $traverse_recurse[ 'params' ]->table, $wpdb->prefix ) ) {
+            if ( !empty( $traverse_recurse[ 'params' ] ) && 0 === strpos( $traverse_recurse[ 'params' ]->table, $wpdb->prefix ) ) {
                 if ( $wpdb->posts == $traverse_recurse[ 'params' ]->table )
                     $traverse_recurse[ 'pod' ] = 'post_type';
                 elseif ( $wpdb->terms == $traverse_recurse[ 'params' ]->table )
@@ -2765,9 +2774,8 @@ class PodsData {
         if ( empty( $traverse ) )
             return $joins;
 
-        $traverse = pods_sanitize( $traverse );
-
         $traverse[ 'id' ] = (int) $traverse[ 'id' ];
+        $traverse[ 'name' ] = pods_sanitize( $traverse[ 'name' ] );
 
         if ( empty( $traverse[ 'id' ] ) )
             $traverse[ 'id' ] = $field;
@@ -2922,83 +2930,97 @@ class PodsData {
             $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recursive ) );
 
         return $joins;
+
     }
 
     /**
-     * Recursively join tables based on fields
-     *
-     * @param array $fields Fields to recurse
-     * @param null $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be passed
-     * @param object $params (optional) Parameters from build()
-     *
-     * @return array Array of joins
-     */
-    function traverse ( $fields = null, $all_fields = null, $params = null ) {
-        $joins = array();
+	 * Recursively join tables based on fields
+	 *
+	 * @param array $fields Fields to recurse
+	 * @param null $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be passed
+	 * @param object $params (optional) Parameters from build()
+	 *
+	 * @return array Array of joins
+	 */
+	function traverse( $fields = null, $all_fields = null, $params = null ) {
 
-        if ( null === $fields )
-            $fields = $this->traverse_build( $all_fields, $params );
+		$joins = array();
 
-        foreach ( (array) $fields as $field_group ) {
-            $traverse_recurse = array(
-                'pod' => $this->pod,
-                'fields' => $fields,
-                'params' => $params,
-                'last_table_info' => $this->pod_data,
-                'joined_id' => $this->pod_data[ 'field_id' ],
-                'joined_index' => $this->pod_data[ 'field_index' ]
-            );
+		if ( null === $all_fields ) {
+			$all_fields = $this->fields;
+		}
 
-            if ( is_array( $field_group ) ) {
-                $traverse_recurse[ 'fields' ] = $field_group;
+		if ( null === $fields ) {
+			$fields = $this->traverse_build( $all_fields, $params );
+		}
 
-                $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recurse ) );
-            }
-            else {
-                $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recurse ) );
-                $joins = array_filter( $joins );
+		foreach ( (array) $fields as $field_group ) {
+			$traverse_recurse = array(
+				'pod' => $this->pod,
+				'fields' => $fields,
+				'params' => $params,
+				'last_table_info' => $this->pod_data,
+				'joined_id' => $this->pod_data[ 'field_id' ],
+				'joined_index' => $this->pod_data[ 'field_index' ]
+			);
 
-                return $joins;
-            }
-        }
+			if ( is_array( $field_group ) ) {
+				$traverse_recurse[ 'fields' ] = $field_group;
 
-        $joins = array_filter( $joins );
+				$joins = array_merge( $joins, $this->traverse_recurse( $traverse_recurse ) );
+			}
+			else {
+				$joins = array_merge( $joins, $this->traverse_recurse( $traverse_recurse ) );
+				$joins = array_filter( $joins );
 
-        return $joins;
-    }
+				return $joins;
+			}
+		}
 
-    /**
-     * Handle filters / actions for the class
-     *
-     * @since 2.0
-     */
-    private static function do_hook () {
-        $args = func_get_args();
+		$joins = array_filter( $joins );
 
-        if ( empty( $args ) )
-            return false;
+		return $joins;
 
-        $name = array_shift( $args );
+	}
 
-        return pods_do_hook( 'data', $name, $args );
-    }
+	/**
+	 * Handle filters / actions for the class
+	 *
+	 * @since 2.0
+	 */
+	private static function do_hook() {
 
-    /**
-     * Get the complete sql
-     *
-     * @since 2.0.5
-     */
-    public function get_sql ( $sql ) {
-        global $wpdb;
+		$args = func_get_args();
 
-        if ( empty( $sql ) )
-            $sql = $this->sql;
+		if ( empty( $args ) ) {
+			return false;
+		}
 
-        $sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+		$name = array_shift( $args );
 
-        $sql = str_replace( '{prefix}', '@wp_', $sql );
-        $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
+		return pods_do_hook( 'data', $name, $args );
 
-        return $sql;
-    }
+	}
+
+	/**
+	 * Get the complete sql
+	 *
+	 * @since 2.0.5
+	 */
+	public function get_sql( $sql ) {
+
+		global $wpdb;
+
+		if ( empty( $sql ) ) {
+			$sql = $this->sql;
+		}
+
+		$sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
+
+		$sql = str_replace( '{prefix}', '@wp_', $sql );
+		$sql = str_replace( '{/prefix/}', '{prefix}', $sql );
+
+		return $sql;
+
+	}
 }

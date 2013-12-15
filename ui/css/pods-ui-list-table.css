@@ -46,64 +46,6 @@
     font-size: 14px;
 }
 
-.pods-ui-filter-bar-primary ul.subsubsub li a {
-    text-decoration: none;
-    font-size: 12px;
-    line-height: 13px;
-    padding: 3px 10px;
-    cursor: pointer;
-    -webkit-border-radius: 11px;
-    border-radius: 11px;
-    -moz-box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    box-sizing: content-box;
-
-    border: 1px solid #BBB;
-    color: #464646;
-
-    background: #F2F2F2 url(/wp-admin/images/white-grad.png) repeat-x scroll left top;
-    text-shadow: rgba(255, 255, 255, 1) 0 1px 0;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a:hover {
-    color: #000;
-    border-color: #666;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a:active {
-    background: #EEE url(/wp-admin/images/white-grad-active.png) repeat-x scroll left top;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a.current {
-    border: none;
-
-    font-weight: bold;
-    color: white;
-    background: #21759B url(/wp-admin/images/button-grad.png) repeat-x scroll left top;
-    text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover {
-    border-color: #13455B;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
-    background: #21759B url(/wp-admin/images/button-grad-active.png) repeat-x scroll left top;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover,
-.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
-    color: #EAF2FA;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a span {
-    font-size: 11px;
-}
-
-.pods-ui-filter-bar-primary ul.subsubsub li a.current span {
-    color: #F7F7F7;
-}
-
 .pods-ui-filter-bar-primary p.search-box {
     margin: 0;
 }

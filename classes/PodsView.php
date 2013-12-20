@@ -37,8 +37,9 @@ class PodsView {
 		}
 
 		// Support my-view.php?custom-key=X#hash keying for cache
+		$view_id = '';
+
 		if ( !is_array( $view ) ) {
-			$view_id = '';
 			$view_q = explode( '?', $view );
 
 			if ( 1 < count( $view_q ) ) {
@@ -67,7 +68,9 @@ class PodsView {
 			$view_key = implode( '-', $view_key ) . '.php';
 		}
 
-		$view_key = realpath( $view_key );
+		if ( false !== realpath( $view_key ) ) {
+			$view_key = realpath( $view_key );
+		}
 
 		$pods_ui_dir = realpath( PODS_DIR . 'ui/' );
 		$pods_components_dir = realpath( PODS_DIR . 'components/' );

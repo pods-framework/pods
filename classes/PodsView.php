@@ -37,25 +37,27 @@ class PodsView {
 		}
 
 		// Support my-view.php?custom-key=X#hash keying for cache
-		$view_id = '';
-		$view_q = explode( '?', $view );
+		if ( !is_array( $view ) ) {
+			$view_id = '';
+			$view_q = explode( '?', $view );
 
-		if ( 1 < count( $view_q ) ) {
-			$view_id = '?' . $view_q[ 1 ];
+			if ( 1 < count( $view_q ) ) {
+				$view_id = '?' . $view_q[ 1 ];
 
-			$view = $view_q[ 0 ];
+				$view = $view_q[ 0 ];
+			}
+
+			$view_h = explode( '#', $view );
+
+			if ( 1 < count( $view_h ) ) {
+				$view_id .= '#' . $view_h[ 1 ];
+
+				$view = $view_h[ 0 ];
+			}
+
+			// Support dynamic tags!
+			$view_id = pods_evaluate_tags( $view_id );
 		}
-
-		$view_h = explode( '#', $view );
-
-		if ( 1 < count( $view_h ) ) {
-			$view_id .= '#' . $view_h[ 1 ];
-
-			$view = $view_h[ 0 ];
-		}
-
-		// Support dynamic tags!
-		$view_id = pods_evaluate_tags( $view_id );
 
 		$view = apply_filters( 'pods_view_inc', $view, $data, $expires, $cache_mode );
 

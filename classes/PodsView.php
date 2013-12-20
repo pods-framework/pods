@@ -29,22 +29,8 @@ class PodsView {
 	 */
 	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
 
-		// Different $expires if user is anonymous or logged in or specific capability
-		if ( is_array( $expires ) ) {
-			$anon = pods_var_raw( 0, $expires, false );
-			$user = pods_var_raw( 1, $expires, false );
-			$capability = pods_var_raw( 2, $expires, null, null, true );
-
-			$expires = pods_var_user( $anon, $user, $capability );
-		}
-
-		if ( 'none' == $cache_mode ) {
-			$expires = false;
-		}
-
-		if ( false !== $expires && empty( $expires ) ) {
-			$expires = 0;
-		}
+		// Advanced $expires handling
+		$expires = self::expires( $expires, $cache_mode );
 
 		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
@@ -282,9 +268,8 @@ class PodsView {
 			$object_cache = true;
 		}
 
-		if ( (int) $expires < 1 ) {
-			$expires = 0;
-		}
+		// Advanced $expires handling
+		$expires = self::expires( $expires, $cache_mode );
 
 		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
@@ -519,21 +504,19 @@ class PodsView {
 	private static function locate_template( $_view ) {
 
 		if ( is_array( $_view ) ) {
-			if ( !empty( $_view ) ) {
-				if ( isset( $_view[ 0 ] ) && false === strpos( $_view[ 0 ], '.php' ) ) {
-					$_views = array();
+			$_views = array();
 
-					$_view_count = count( $_view );
+			if ( isset( $_view[ 0 ] ) && false === strpos( $_view[ 0 ], '.php' ) ) {
+				$_view_count = count( $_view );
 
-					for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
-						$_view_v = array_slice( $_view, 0, $_view_x );
+				for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
+					$_view_v = array_slice( $_view, 0, $_view_x );
 
-						$_views[ ] = implode( '-', $_view_v ) . '.php';
-					}
+					$_views[] = implode( '-', $_view_v ) . '.php';
 				}
-				else {
-					$_views = $_view;
-				}
+			}
+			else {
+				$_views = $_view;
 			}
 
 			$_view = false;
@@ -588,6 +571,78 @@ class PodsView {
 		}
 
 		return $located;
+	}
+
+	/**
+	 * Advanced $expires handling
+	 *
+	 * @param array|bool|int $expires
+	 * @param string $cache_mode
+	 *
+	 * @return bool|int
+	 *
+	 * @since 3.0
+	 * @static
+	 */
+	private static function expires( $expires, $cache_mode = 'cache' ) {
+
+		// Different $expires if user is anonymous or logged in or specific capability
+		if ( is_array( $expires ) ) {
+			if ( ( isset( $expires[ 'anonymous' ] ) || isset( $expires[ 'user_with_access' ] ) ) && isset( $expires[ 'user' ] ) ) {
+				if ( isset( $expires[ 'user_with_access' ] ) ) {
+					$expires = array(
+						pods_var_raw( 'anonymous', $expires, false ),
+						pods_var_raw( 'user', $expires, false ),
+						pods_var_raw( 'user_with_access', $expires, false ),
+						pods_var_raw( 'capability', $expires, null, null, true )
+					);
+				}
+				elseif ( isset( $expires[ 'anonymous' ] ) ) {
+					$expires = array(
+						pods_var_raw( 'anonymous', $expires, false ),
+						pods_var_raw( 'user', $expires, false ),
+						pods_var_raw( 'capability', $expires, null, null, true )
+					);
+				}
+			}
+			else {
+				$expires = array_values( $expires );
+			}
+
+			if ( 4 == count( $expires ) ) {
+				if ( !is_user_logged_in() ) {
+					$expires = pods_var_raw( 0, $expires, false );
+				}
+				else {
+					$user_no_access = pods_var_raw( 1, $expires, false );
+					$user_with_access = pods_var_raw( 2, $expires, false );
+					$capability = pods_var_raw( 3, $expires, null, null, true );
+
+					$expires = pods_var_user( $user_no_access, $user_with_access, $capability );
+				}
+			}
+			else {
+				$anon = pods_var_raw( 0, $expires, false );
+				$user = pods_var_raw( 1, $expires, false );
+				$capability = pods_var_raw( 2, $expires, null, null, true );
+
+				$expires = pods_var_user( $anon, $user, $capability );
+			}
+		}
+
+		if ( 'none' == $cache_mode ) {
+			$expires = false;
+		}
+		elseif ( false !== $expires ) {
+			$expires = (int) $expires;
+
+			if ( $expires < 1 ) {
+				$expires = 0;
+			}
+		}
+
+		return $expires;
+
 	}
 
 	private static function filter_callback( $value ) {

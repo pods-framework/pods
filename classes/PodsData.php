@@ -2387,6 +2387,7 @@ class PodsData {
 					$field_cast = '';
 
 					$tableless_field_types = PodsForm::tableless_field_types();
+					$file_field_types = PodsForm::file_field_types();
 
 					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
 						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {
@@ -2394,6 +2395,9 @@ class PodsData {
 								$field_cast = "`t`.`{$field_name}`";
 							else
 								$field_cast = "`{$field_name}`.`meta_value`";
+						}
+						elseif ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $file_field_types ) ) {
+							$field_cast = "`{$field_name}`.`post_title`";
 						}
 						else {
 							$table = pods_api()->get_table_info( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $pod[ 'fields' ][ $field_name ][ 'pick_val' ] );

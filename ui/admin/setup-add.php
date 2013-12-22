@@ -90,7 +90,10 @@
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
                                                 'comment' => __( 'Custom Comment Type (like Comments or Pingbacks)', 'pods' ),
                                                 'settings' => __( 'Custom Settings Page', 'pods' ),
-                                                'pod' => '' // component will fill this in if it's enabled (this exists for placement)
+                                                'pod' => array( // component will fill this in if it's enabled (this exists for placement)
+													'label' => sprintf( __( '%s - Requires Advanced Content Types component', 'pods' ), __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ) ),
+													'disabled' => true
+												)
                                             );
 
 											if ( !function_exists( 'register_comment_type' ) ) {
@@ -232,7 +235,10 @@
 
                                             $data = array(
                                                 'post_type' => __( 'Post Types (Posts, Pages, etc..)', 'pods' ),
-                                                'taxonomy' => '', // component will fill this in if it's enabled (this exists for placement)
+                                                'taxonomy' => array( // component will fill this in if it's enabled (this exists for placement)
+													'label' => sprintf( __( '%s - Requires Table Storage component', 'pods' ), __( 'Taxonomies (Categories, Tags, etc..)', 'pods' ) ),
+													'disabled' => true
+												),
                                                 'media' => __( 'Media', 'pods' ),
                                                 'user' => __( 'Users', 'pods' ),
                                                 'comment' => __( 'Comments', 'pods' )

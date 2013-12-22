@@ -32,7 +32,7 @@ $selection_made = false;
         if ( is_array( $option_label ) && isset( $option_label[ 'label' ] ) )
             $option_label = $option_label[ 'label' ];
 
-        if ( is_array( $option_label ) ) {
+        if ( is_array( $option_label ) && !isset( $option_label[ 'disabled' ] ) ) {
             ?>
             <optgroup label="<?php echo esc_attr( $option_value ); ?>">
                 <?php
@@ -73,17 +73,26 @@ $selection_made = false;
             <?php
         }
         else {
+            $selected = $options[ 'selected' ] = '';
+
+			if ( is_array( $option_label ) && isset( $option_label[ 'label' ] ) ) {
+				if ( isset( $option_label[ 'disabled' ] ) && $option_label[ 'disabled' ] ) {
+					$selected .= ' DISABLED';
+					$options[ 'disabled' ] = 'disabled';
+				}
+
+				$option_label = $option_label[ 'label' ];
+			}
+
             $option_label = (string) $option_label;
 
-            $selected = '';
-            $options[ 'selected' ] = '';
-
             if ( !$selection_made && ( ( !is_array( $value ) && (string) $option_value === (string) $value ) || ( is_array( $value ) && ( in_array( $option_value, $value ) || in_array( (string) $option_value, $value ) ) ) ) ) {
-                $selected = ' SELECTED';
+                $selected .= ' SELECTED';
                 $options[ 'selected' ] = 'selected';
 
-                if ( !$multiple )
+                if ( !$multiple ) {
                     $selection_made = true;
+				}
             }
 
             if ( is_array( $option_value ) ) {

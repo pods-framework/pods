@@ -924,6 +924,16 @@ class PodsUI {
             'views' => __( 'View', 'pods' )
         ), 'array_merge' );
 
+        if ( is_object( $this->pod ) ) {
+			$heading = $options->heading;
+
+			$heading[ 'add' ] = pods_var_raw( 'label_add_new', $this->pod->pod_data, $heading[ 'add' ], null, true );
+			$heading[ 'edit' ] = pods_var_raw( 'label_edit', $this->pod->pod_data, $heading[ 'edit' ], null, true );
+			$heading[ 'view' ] = pods_var_raw( 'label_view', $this->pod->pod_data, $heading[ 'view' ], null, true );
+
+			$options->heading = $heading;
+        }
+
         $options->validate( 'header', array(
             'manage' => sprintf( __( 'Manage %s', 'pods' ), $options->items ),
             'add' => sprintf( __( 'Add New %s', 'pods' ), $options->item ),
@@ -934,6 +944,30 @@ class PodsUI {
             'search' => sprintf( __( 'Search %s', 'pods' ), $options->items )
         ), 'array_merge' );
 
+        if ( is_object( $this->pod ) ) {
+			$header = $options->header;
+
+			$header[ 'add' ] = pods_var_raw( 'label_add_new_item', $this->pod->pod_data, $header[ 'add' ], null, true );
+			$header[ 'edit' ] = pods_var_raw( 'label_edit_item', $this->pod->pod_data, $header[ 'edit' ], null, true );
+			$header[ 'view' ] = pods_var_raw( 'label_view_item', $this->pod->pod_data, $header[ 'view' ], null, true );
+
+			$options->header = $header;
+
+                $cpt_labels[ 'add_new' ] = pods_var_raw( 'label_add_new', $post_type, '', null, true );
+                $cpt_labels[ 'add_new_item' ] = pods_var_raw( 'label_add_new_item', $post_type, '', null, true );
+                $cpt_labels[ 'new_item' ] = pods_var_raw( 'label_new_item', $post_type, '', null, true );
+                $cpt_labels[ 'edit' ] = pods_var_raw( 'label_edit', $post_type, '', null, true );
+                $cpt_labels[ 'edit_item' ] = pods_var_raw( 'label_edit_item', $post_type, '', null, true );
+                $cpt_labels[ 'view' ] = pods_var_raw( 'label_view', $post_type, '', null, true );
+                $cpt_labels[ 'view_item' ] = pods_var_raw( 'label_view_item', $post_type, '', null, true );
+                $cpt_labels[ 'all_items' ] = pods_var_raw( 'label_all_items', $post_type, '', null, true );
+                $cpt_labels[ 'search_items' ] = pods_var_raw( 'label_search_items', $post_type, '', null, true );
+                $cpt_labels[ 'not_found' ] = pods_var_raw( 'label_not_found', $post_type, '', null, true );
+                $cpt_labels[ 'not_found_in_trash' ] = pods_var_raw( 'label_not_found_in_trash', $post_type, '', null, true );
+                $cpt_labels[ 'parent' ] = pods_var_raw( 'label_parent', $post_type, '', null, true );
+                $cpt_labels[ 'parent_item_colon' ] = pods_var_raw( 'label_parent_item_colon', $post_type, '', null, true );
+        }
+
         $options->validate( 'label', array(
             'add' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
             'add_new' => __( 'Add New', 'pods' ),
@@ -943,6 +977,15 @@ class PodsUI {
             'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
             'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items )
         ), 'array_merge' );
+
+        if ( is_object( $this->pod ) ) {
+			$label = $options->label;
+
+			$label[ 'add_new' ] = pods_var_raw( 'add_new', $this->pod->pod_data, $label[ 'add_new' ], null, true );
+			$label[ 'view' ] = pods_var_raw( 'label_view_item', $this->pod->pod_data, $label[ 'view' ], null, true );
+
+			$options->label = $label;
+        }
 
         $options->validate( 'fields', array(
             'manage' => array(

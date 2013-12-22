@@ -102,9 +102,6 @@
 
                                             $data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
 
-                                            if ( empty( $data[ 'pod' ] ) )
-                                                unset( $data[ 'pod' ] );
-
                                             echo PodsForm::field( 'create_pod_type', pods_var_raw( 'create_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );
                                         ?>
                                     </div>
@@ -254,9 +251,6 @@
                                                 unset( $data[ 'comment' ] );
 
                                             $data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
-
-                                            if ( empty( $data[ 'taxonomy' ] ) )
-                                                unset( $data[ 'taxonomy' ] );
 
                                             echo PodsForm::field( 'extend_pod_type', pods_var_raw( 'extend_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );
                                         ?>

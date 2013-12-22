@@ -2378,14 +2378,14 @@ class Pods implements Iterator {
 	 * @see PodsData::fetch
 	 *
 	 * @param int $id ID or slug of the item to fetch
-	 * @param bool $explicit_set Whether to set explicitly (use false when in loop)
+	 * @param null|bool $explicit_set Whether to set explicitly (use false when in loop)
 	 *
 	 * @return array An array of fields from the row
 	 *
 	 * @since 2.0
 	 * @link http://pods.io/docs/fetch/
 	 */
-	public function fetch( $id = null, $explicit_set = true ) {
+	public function fetch( $id = null, $explicit_set = null ) {
 
 		$this->do_hook( 'fetch', $id );
 

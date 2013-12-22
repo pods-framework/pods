@@ -626,6 +626,9 @@ class PodsData {
 
         $cache_key = $results = false;
 
+		$this->id = 0;
+        $this->row_number = -1;
+
         // Debug purposes
         if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $params );
@@ -662,8 +665,6 @@ class PodsData {
         $results = $this->do_hook( 'select', $results );
 
         $this->data = $results;
-
-        $this->row_number = -1;
 
         // Fill in empty field data (if none provided)
         if ( ( !isset( $this->fields ) || empty( $this->fields ) ) && !empty( $this->data ) ) {
@@ -1670,17 +1671,22 @@ class PodsData {
      *
      * @since 2.0
      */
-    public function fetch ( $row = null, $explicit_set = true ) {
+    public function fetch ( $row = null, $explicit_set = null ) {
         global $wpdb;
 
-        if ( null === $row )
-            $explicit_set = false;
+		if ( null === $explicit_set ) {
+			$explicit_set = true;
+
+			if ( null === $row ) {
+				$explicit_set = false;
+			}
+		}
 
         $id = $row;
 
         $tableless_field_types = PodsForm::tableless_field_types();
 
-        if ( null === $row ) {
+        if ( null === $row && !empty( $this->data ) ) {
             $this->row_number++;
 
             $this->row = false;
@@ -1729,8 +1735,7 @@ class PodsData {
 			else {
 				$row = false;
 
-				// @todo Figure out why taking out this in_array() causes cached data issues in User edit screen
-            	if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+            	if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && pods_api_cache() ) {
 					$row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 				}
 
@@ -1942,8 +1947,7 @@ class PodsData {
 					}
 				}
 
-				// @todo Figure out why taking out this in_array() causes cached data issues in User edit screen
-            	if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+            	if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && pods_api_cache() ) {
 					pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
 				}
 			}

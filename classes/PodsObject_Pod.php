@@ -672,6 +672,13 @@ class PodsObject_Pod extends PodsObject {
 			if ( !in_array( $pod[ 'type' ], array( 'post_type', 'comment' ) ) ) {
 				unset( $options[ 'labels' ][ 'label_not_found_in_trash' ] );
 			}
+
+			if ( 'taxonomy' != $pod[ 'type' ] ) {
+				unset( $options[ 'labels' ][ 'label_popular_items' ] );
+				unset( $options[ 'labels' ][ 'label_separate_items_with_commas' ] );
+				unset( $options[ 'labels' ][ 'label_add_or_remove_items' ] );
+				unset( $options[ 'labels' ][ 'label_choose_from_the_most_used' ] );
+			}
 		}
 
 		if ( 'post_type' == $pod[ 'type' ] ) {

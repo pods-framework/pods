@@ -694,6 +694,8 @@ function pods_shortcode ( $tags, $content = null ) {
         'col' => null,
         'template' => null,
         'pods_page' => null,
+		'before' => null,
+		'after' => null,
         'helper' => null,
         'form' => null,
         'fields' => null,
@@ -850,13 +852,27 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
-    if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
-        echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+	if ( empty( $id ) && 0 < $found ) {
+		if ( false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) ) {
+			echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+		}
 
-    echo $pod->template( $tags[ 'template' ], $content );
+		if ( !empty( $tags[ 'before' ] ) ) {
+			echo pods_evaluate_tags( $tags[ 'before' ] );
+		}
+	}
 
-    if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
-        echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+	echo $pod->template( $tags[ 'template' ], $content );
+
+	if ( empty( $id ) && 0 < $found ) {
+		if ( !empty( $tags[ 'after' ] ) ) {
+			echo pods_evaluate_tags( $tags[ 'after' ] );
+		}
+
+		if ( false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) ) {
+			echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+		}
+	}
 
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );

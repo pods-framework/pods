@@ -281,19 +281,32 @@ class PodsField_Text extends PodsField {
         if ( empty( $value ) )
             return $value;
 
-        if ( 1 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) ) {
-            $allowed_html_tags = '';
-
-            if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( self::$type . '_allowed_html_tags', $options ) ) );
-                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-            }
-
-            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
-                $value = strip_tags( $value, $allowed_html_tags );
-        }
-        else
+        if ( 0 == pods_var( self::$type . '_allow_html', $options ) ) {
             $value = strip_tags( $value );
+		}
+		elseif ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+			$allowed_tags = trim( preg_replace( '/[^\<\>\/\,]/', ' ', $allowed_tags ) );
+			$allowed_tags = explode( ' ', $allowed_tags );
+
+			// Handle issue with self-closing tags in strip_tags
+			// @link http://www.php.net/strip_tags#88991
+			if ( in_array( 'br', $allowed_tags ) ) {
+				$allowed_tags[] = 'br /';
+			}
+
+			if ( in_array( 'hr', $allowed_tags ) ) {
+				$allowed_tags[] = 'hr /';
+			}
+
+			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+			if ( !empty( $allowed_tags ) ) {
+				$allowed_tags = '<' . implode( '><', $allowed_tags ) . '>';
+
+				$value = strip_tags( $value, $allowed_tags );
+			}
+		}
 
         return $value;
     }

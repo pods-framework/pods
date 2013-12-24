@@ -534,25 +534,32 @@ class PodsAdmin {
      * Create PodsUI content for the administration pages
      */
     public function admin_content () {
+
+		global $pods;
+
         $pod_name = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
 
-        $pod = pods( $pod_name, pods_var( 'id', 'get', null, null, true ) );
+        $pods = pods( $pod_name, pods_var( 'id', 'get', null, null, true ) );
 
         if ( false !== strpos( $_GET[ 'page' ], 'pods-add-new-' ) )
             $_GET[ 'action' ] = pods_var( 'action', 'get', 'add' );
 
-        $pod->ui();
+        $pods->ui();
+
     }
 
     /**
      * Create PodsUI content for the settings administration pages
      */
     public function admin_content_settings () {
+
+		global $pods;
+
         $pod_name = str_replace( 'pods-settings-', '', $_GET[ 'page' ] );
 
-        $pod = pods( $pod_name );
+        $pods = pods( $pod_name );
 
-        if ( 'custom' != pods_var( 'ui_style', $pod->pod_data, 'settings', null, true ) ) {
+        if ( 'custom' != pods_var( 'ui_style', $pods->pod_data, 'settings', null, true ) ) {
             $actions_disabled = array(
                 'manage' => 'manage',
                 'add' => 'add',
@@ -564,12 +571,12 @@ class PodsAdmin {
 
             $_GET[ 'action' ] = 'edit';
 
-            $page_title = pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
+            $page_title = pods_var_raw( 'label', $pods->pod_data, ucwords( str_replace( '_', ' ', $pods->pod_data[ 'name' ] ) ), null, true );
 
             $ui = array(
-                'pod' => $pod,
+                'pod' => $pods,
                 'fields' => array(
-                    'edit' => $pod->pod_data[ 'fields' ]
+                    'edit' => $pods->pod_data[ 'fields' ]
                 ),
                 'header' => array(
                     'edit' => $page_title
@@ -577,12 +584,12 @@ class PodsAdmin {
                 'label' => array(
                     'edit' => __( 'Save Changes', 'pods' )
                 ),
-                'style' => pods_var( 'ui_style', $pod->pod_data, 'settings', null, true ),
-                'icon' => pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod->pod_data ), true ),
+                'style' => pods_var( 'ui_style', $pods->pod_data, 'settings', null, true ),
+                'icon' => pods_evaluate_tags( pods_var_raw( 'menu_icon', $pods->pod_data ), true ),
                 'actions_disabled' => $actions_disabled
             );
 
-            $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
+            $ui = apply_filters( 'pods_admin_ui_' . $pods->pod, apply_filters( 'pods_admin_ui', $ui, $pods->pod, $pods ), $pods->pod, $pods );
 
             // Force disabled actions, do not pass go, do not collect $two_hundred
             $ui[ 'actions_disabled' ] = $actions_disabled;
@@ -590,9 +597,10 @@ class PodsAdmin {
             pods_ui( $ui );
         }
         else {
-            do_action( 'pods_admin_ui_custom', $pod );
-            do_action( 'pods_admin_ui_custom_' . $pod->pod, $pod );
+            do_action( 'pods_admin_ui_custom', $pods );
+            do_action( 'pods_admin_ui_custom_' . $pods->pod, $pods );
         }
+
     }
 
     /**

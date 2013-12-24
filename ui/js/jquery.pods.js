@@ -769,7 +769,7 @@
 				}
 
                 var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' ),
-					dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
+					dependent_specific = dependent_flag + '-' + val.replace( /\s/gi, '-' );
 
                 $current.find( dependent_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -878,7 +878,7 @@
                 } );
 
                 var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
+                var exclude_specific = exclude_flag + '-' + val.replace( /\s/gi, '-' );
 
                 $current.find( exclude_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -987,7 +987,7 @@
                 } );
 
                 var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var wildcard_value = val.replace( /\_/gi, '-' );
+                var wildcard_value = val.replace( /\s/gi, '-' );
 
                 $current.find( wildcard_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -1074,7 +1074,7 @@
                     var $field = $el;
 
                     var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\_/gi, '-' );
+                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\s/gi, '-' );
 
                     $current.find( dependent_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -1138,7 +1138,7 @@
                     } );
 
                     var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\_/gi, '-' );
+                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\s/gi, '-' );
 
                     $current.find( exclude_flag ).each( function () {
                         var $dependent_el = $( this );

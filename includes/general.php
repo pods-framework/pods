@@ -787,10 +787,10 @@ function pods_shortcode ( $tags, $content = null ) {
             $params[ 'limit' ] = $tags[ 'limit' ];
 
         if ( 0 < strlen( $tags[ 'where' ] ) )
-            $params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
+            $params[ 'where' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'where' ] ) );
 
         if ( 0 < strlen( $tags[ 'having' ] ) )
-            $params[ 'having' ] = pods_evaluate_tags( $tags[ 'having' ] );
+            $params[ 'having' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'having' ] ) );
 
         if ( 0 < strlen( $tags[ 'groupby' ] ) )
             $params[ 'groupby' ] = $tags[ 'groupby' ];

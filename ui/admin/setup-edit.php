@@ -584,7 +584,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 	foreach ( $tabs as $tab => $tab_label ) {
 		$tab = sanitize_title( $tab );
 
-		if ( in_array( $tab, array( 'manage-groups', 'labels', 'advanced', 'extra-fields' ) ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
+		if ( in_array( $tab, array( 'manage-groups', 'labels', 'extra-fields' ) ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) || isset( $tab_options[ $tab ][ 'temporary' ] ) )
 			continue;
 ?>
     <div id="pods-<?php echo $tab; ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">

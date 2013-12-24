@@ -1048,9 +1048,51 @@ class PodsObject_Pod extends PodsObject {
 				)
 			);
 
-			// @todo fill this in
 			$options[ 'advanced' ] = array(
-				'temporary' => 'This type has the fields hardcoded' // :(
+				'restrict_role' => array(
+					'label' => __( 'Restrict access by Role?', 'pods' ),
+					'help' => array(
+						__( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
+						'http://codex.wordpress.org/Roles_and_Capabilities'
+					),
+					'default' => 0,
+					'type' => 'boolean',
+					'dependency' => true
+				),
+				'roles_allowed' => array(
+					'label' => __( 'Role(s) Allowed', 'pods' ),
+					'type' => 'pick',
+					'pick_object' => 'role',
+					'pick_format_type' => 'multi',
+					'pick_format_multi' => 'autocomplete',
+					'pick_ajax' => false,
+					'default' => '',
+					'depends-on' => array(
+						'restrict_role' => true
+					)
+				),
+				'restrict_capability' => array(
+					'label' => __( 'Restrict access by Capability?', 'pods' ),
+					'help' => array(
+						__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+						'http://codex.wordpress.org/Roles_and_Capabilities'
+					),
+					'default' => 0,
+					'type' => 'boolean',
+					'dependency' => true
+				),
+				'capability_allowed' => array(
+					'label' => __( 'Capability Allowed', 'pods' ),
+					'type' => 'pick',
+					'pick_object' => 'capability',
+					'pick_format_type' => 'multi',
+					'pick_format_multi' => 'autocomplete',
+					'pick_ajax' => false,
+					'default' => '',
+					'depends-on' => array(
+						'restrict_capability' => true
+					)
+				)
 			);
 		}
 		elseif ( 'pod' == $pod[ 'type' ] ) {

@@ -27,7 +27,7 @@
         </label>
 
         <?php if ( 0 < count( $all_pods ) ): ?>
-            <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
+            <select id="<?php echo $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
                 <?php foreach ( $all_pods as $pod_name => $pod_label ): ?>
                     <?php $selected = ( $pod_name == $pod_type ) ? 'selected' : ''; ?>
                     <option value="<?php echo $pod_name; ?>" <?php echo $selected; ?>>
@@ -49,26 +49,26 @@
     </li>
 
     <li>
-        <label for="<?php $this->get_field_id( 'field' ); ?>"><?php _e( 'Field', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'field' ); ?>"><?php _e( 'Field', 'pods' ); ?></label>
 
         <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'field' ); ?>" id="<?php echo $this->get_field_id( 'field' ); ?>" value="<?php echo esc_attr( $field ); ?>" />
     </li>
 
     <li>
-        <label for="<?php $this->get_field_id( 'before' ); ?>"><?php _e( 'Before Text', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'before' ); ?>"><?php _e( 'Before Text', 'pods' ); ?></label>
 
         <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'before' ); ?>" id="<?php echo $this->get_field_id( 'before' ); ?>" value="<?php echo esc_attr( $before ); ?>" />
     </li>
 
     <li>
-        <label for="<?php $this->get_field_id( 'after' ); ?>"><?php _e( 'After Text', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'after' ); ?>"><?php _e( 'After Text', 'pods' ); ?></label>
 
         <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'after' ); ?>" id="<?php echo $this->get_field_id( 'after' ); ?>" value="<?php echo esc_attr( $after ); ?>" />
     </li>
 
     <li>
-        <label for="<?php $this->get_field_id( 'shortcodes' ); ?>"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'shortcodes' ); ?>"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
 
-        <input class="widefat" type="checkbox" name="<?php echo $this->get_field_name( 'shortcodes' ); ?>" id="<?php echo $this->get_field_id( 'shortcodes' ); ?>" value="1" <?php selected( 1, $shortcodes ); ?> />
+        <input type="checkbox" name="<?php echo $this->get_field_name( 'shortcodes' ); ?>" id="<?php echo $this->get_field_id( 'shortcodes' ); ?>" value="1" <?php selected( 1, $shortcodes ); ?> />
     </li>
 </ol>

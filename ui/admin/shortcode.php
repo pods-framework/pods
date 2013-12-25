@@ -14,15 +14,22 @@
                 pods_page = '',
                 template_custom = $( '#pod_template_custom' ).val(),
                 field = $( '#pod_field' ).val(),
-                before = $( '#pod_before' ).val(),
-                after = $( '#pod_after' ).val(),
                 fields = $( '#pod_fields' ).val(),
                 label = $( '#pod_label' ).val(),
                 thank_you = $( '#pod_thank_you' ).val(),
                 view = $( '#pod_view' ).val(),
                 cache_mode = $( '#pod_cache_mode' ).val(),
                 expires = $( '#pod_expires' ).val(),
-                shortcodes = $( '#pod_shortcodes' ).val();
+                filters = $( '#pod_filters' ).val(),
+                filters_label = $( '#pod_filters_label' ).val(),
+                filters_location = $( '#pod_filters_location' ).val(),
+                pagination = $( '#pod_pagination' ).prop( 'checked' ),
+                pagination_label = $( '#pod_pagination_label' ).val(),
+                pagination_location = $( '#pod_pagination_location' ).val(),
+                pagination_type = $( '#pod_pagination_type' ).val(),
+                before = $( '#pod_before' ).val(),
+                after = $( '#pod_after' ).val(),
+                shortcodes = $( '#pod_shortcodes' ).prop( 'checked' );
 
             <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
                 pods_page = $( '#pods_page' ).val();
@@ -37,15 +44,17 @@
             template = ( template + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             pods_page = ( pods_page + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             field = ( field + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            before = ( before + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            after = ( after + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             cache_mode = ( cache_mode + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            shortcodes = ( shortcodes + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            filters = ( before + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            filters_label = ( after + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            pagination_label = ( after + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            before = ( before + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            after = ( after + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
             // Validate the form
             var errors = [];
@@ -145,6 +154,28 @@
                 if ( template.length )
                     shortcode += ' template="' + template + '"';
 
+                if ( filters.length ) {
+                    shortcode += ' filters="' + filters + '"';
+
+					if ( filters_label.length )
+						shortcode += ' filters_label="' + filters_label + '"';
+
+					if ( filters_location.length )
+						shortcode += ' filters_location="' + filters_location + '"';
+				}
+
+                if ( pagination ) {
+                    shortcode += ' pagination="1"';
+
+					if ( pagination_label.length )
+						shortcode += ' pagination_label="' + pagination_label + '"';
+
+					if ( pagination_location.length )
+						shortcode += ' pagination_location="' + pagination_location + '"';
+
+					if ( pagination_type.length )
+						shortcode += ' pagination_type="' + pagination_type + '"';
+				}
             }
             else if ( 'field' == use_case ) {
                 if ( pod_select.length )
@@ -204,8 +235,8 @@
 			if ( after.length )
 				shortcode += ' after="' + after + '"';
 
-			if ( shortcodes.length )
-				shortcode += ' shortcodes="' + shortcodes + '"';
+			if ( shortcodes )
+				shortcode += ' shortcodes="1"';
 
             shortcode += ']';
 
@@ -237,44 +268,44 @@
 
             switch ( val ) {
                 case 'single':
-                    $( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'list':
-                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pod_filters, #pod_filters_label, #pod_filters_location, #pod_pagination, #pod_pagination_label, #pod_pagination_location, #pod_pagination_type, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'field':
-                    $( '#pod_select, #pod_slug, #pod_field, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_field, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'field-current':
-                    $( '#pod_field, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_field, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'form':
-                    $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'view':
-                    $( '#pod_view, #pod_cache_mode, #pod_expires, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_view, #pod_cache_mode, #pod_expires, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
                     case 'page':
-                        $( '#pods_page, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
+                        $( '#pods_page, #pod_before, #pod_after, #pod_shortcodes, #pods_insert_shortcode' ).each( function () {
                             $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                         } )
                         break;
@@ -407,7 +438,7 @@
                 <div class="pods-section hide">
                     <label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
 
-                    <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
+                    <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10"></textarea>
                 </div>
 
                 <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
@@ -509,6 +540,94 @@
 
                     <input type="text" name="pod_expires" id="pod_expires" value="<?php echo ( 60 * 5 ); ?>" />
                 </div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters"><?php _e( 'Filters', 'pods' ); ?></label>
+
+					<input type="text" name="pod_filters" id="pod_filters" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters_location"><?php _e( 'Filters Location', 'pods' ); ?></label>
+
+					<?php
+						$locations = array(
+							'before' => __( 'Before (default)', 'pods' ),
+							'after' => __( 'After', 'pods' ),
+							'both' => __( 'Both', 'pods' )
+						);
+
+						$filters_location = 'before';
+					?>
+					<select id="pod_filters_location" name="pod_filters_location">
+						<?php foreach ( $locations as $location_value => $location_label ): ?>
+						<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $filters_location ); ?>>
+							<?php echo esc_html( $location_label ); ?>
+						</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters_label"><?php _e( 'Filters Label', 'pods' ); ?></label>
+
+					<input type="text" name="pod_filters_label" id="pod_filters_label" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination"><?php _e( 'Show Pagination links', 'pods' ); ?></label>
+
+					<input type="checkbox" name="pod_pagination" id="pod_pagination" value="1" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_label"><?php _e( 'Pagination Label', 'pods' ); ?></label>
+
+					<input type="text" name="pod_pagination_label" id="pod_pagination_label" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_location"><?php _e( 'Pagination Location', 'pods' ); ?></label>
+
+					<?php
+						$locations = array(
+							'before' => __( 'Before', 'pods' ),
+							'after' => __( 'After (default)', 'pods' ),
+							'both' => __( 'Both', 'pods' )
+						);
+
+						$pagination_location = 'after';
+					?>
+					<select id="pod_pagination_location" name="pod_pagination_location">
+						<?php foreach ( $locations as $location_value => $location_label ): ?>
+						<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $pagination_location ); ?>>
+							<?php echo esc_html( $location_label ); ?>
+						</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_type"><?php _e( 'Pagination Type', 'pods' ); ?></label>
+
+					<?php
+						$pagination_types = array(
+							'advanced' => __( 'Advanced (default)', 'pods' ),
+							'simple' => __( 'Simple', 'pods' ),
+							'paginate' => __( 'Paginate (paginate_links plain type)', 'pods' ),
+							'list' => __( 'List (paginate_links list type)', 'pods' )
+						);
+
+						$pagination_type = 'advanced';
+					?>
+					<select id="pod_pagination_type" name="pod_pagination_type">
+						<?php foreach ( $pagination_types as $pagination_type_value => $pagination_type_label ): ?>
+						<option value="<?php echo $pagination_type_value; ?>"<?php selected( $pagination_type_value, $pagination_type ); ?>>
+							<?php echo esc_html( $pagination_type_label ); ?>
+						</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
 
                 <div class="pods-section hide">
                     <label for="pod_before"><?php _e( 'Before Text', 'pods' ); ?></label>

@@ -2803,9 +2803,9 @@ class PodsUI {
                                 $link = pods_var_update( array( 'view' . $this->num => $view, 'pg' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
                                 if ( $this->view == $view )
-                                    $label = '<a href="' . $link . '" class="current">' . $label . '</a>';
+                                    $label = '<a href="' . $link . '" class="button current">' . $label . '</a>';
                                 else
-                                    $label = '<a href="' . $link . '">' . $label . '</a>';
+                                    $label = '<a href="' . $link . '" class="button">' . $label . '</a>';
                             }
                     ?>
                         <li class="<?php echo $view; ?>"><?php echo $label; ?></li>

@@ -86,4 +86,22 @@
 
         <textarea name="<?php echo $this->get_field_name( 'template_custom' ); ?>" id="<?php echo $this->get_field_id( 'template_custom' ); ?>" cols="10" rows="10" class="widefat"><?php echo esc_html( $template_custom ); ?></textarea>
     </li>
+
+    <li>
+        <label for="<?php $this->get_field_id( 'before' ); ?>"><?php _e( 'Before Text', 'pods' ); ?></label>
+
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'before' ); ?>" id="<?php echo $this->get_field_id( 'before' ); ?>" value="<?php echo esc_attr( $before ); ?>" />
+    </li>
+
+    <li>
+        <label for="<?php $this->get_field_id( 'after' ); ?>"><?php _e( 'After Text', 'pods' ); ?></label>
+
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'after' ); ?>" id="<?php echo $this->get_field_id( 'after' ); ?>" value="<?php echo esc_attr( $after ); ?>" />
+    </li>
+
+    <li>
+        <label for="<?php $this->get_field_id( 'shortcodes' ); ?>"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
+
+        <input class="widefat" type="checkbox" name="<?php echo $this->get_field_name( 'shortcodes' ); ?>" id="<?php echo $this->get_field_id( 'shortcodes' ); ?>" value="1" <?php selected( 1, $shortcodes ); ?> />
+    </li>
 </ol>

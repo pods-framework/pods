@@ -14,13 +14,15 @@
                 pods_page = '',
                 template_custom = $( '#pod_template_custom' ).val(),
                 field = $( '#pod_field' ).val(),
+                before = $( '#pod_before' ).val(),
+                after = $( '#pod_after' ).val(),
                 fields = $( '#pod_fields' ).val(),
                 label = $( '#pod_label' ).val(),
                 thank_you = $( '#pod_thank_you' ).val(),
                 view = $( '#pod_view' ).val(),
                 cache_mode = $( '#pod_cache_mode' ).val(),
-                expires = $( '#pod_expires' ).val();
-                template = $( '#pod_template' ).val();
+                expires = $( '#pod_expires' ).val(),
+                shortcodes = $( '#pod_shortcodes' ).val();
 
             <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
                 pods_page = $( '#pods_page' ).val();
@@ -35,12 +37,15 @@
             template = ( template + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             pods_page = ( pods_page + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             field = ( field + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            before = ( before + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            after = ( after + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             cache_mode = ( cache_mode + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            shortcodes = ( shortcodes + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
             // Validate the form
             var errors = [];
@@ -53,7 +58,7 @@
                     if ( !slug || !slug.length ) {
                         errors.push( "Slug or ID" );
                     }
-                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length) ) {
+                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length ) ) {
                         errors.push( "Template" );
                     }
                     break;
@@ -62,7 +67,7 @@
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
                     }
-                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length) ) {
+                    if ( ( !template || !template.length ) && ( !template_custom || !template_custom.length ) ) {
                         errors.push( "Template" );
                     }
                     break;
@@ -193,6 +198,15 @@
                     shortcode += ' pods_page="' + pods_page + '"';
             }
 
+			if ( before.length )
+				shortcode += ' before="' + before + '"';
+
+			if ( after.length )
+				shortcode += ' after="' + after + '"';
+
+			if ( shortcodes.length )
+				shortcode += ' shortcodes="' + shortcodes + '"';
+
             shortcode += ']';
 
             if ( ( 'single' == use_case || 'list' == use_case ) && template_custom && template_custom.length )
@@ -223,44 +237,44 @@
 
             switch ( val ) {
                 case 'single':
-                    $( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'list':
-                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'field':
-                    $( '#pod_select, #pod_slug, #pod_field, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_field, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'field-current':
-                    $( '#pod_field, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_field, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'form':
-                    $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 case 'view':
-                    $( '#pod_view, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_view, #pod_cache_mode, #pod_expires, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
 
                 <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
                     case 'page':
-                        $( '#pods_page, #pods_insert_shortcode' ).each( function () {
+                        $( '#pods_page, #pods_before, #pods_after, #pods_shortcodes, #pods_insert_shortcode' ).each( function () {
                             $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                         } )
                         break;
@@ -494,6 +508,24 @@
                     <label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 
                     <input type="text" name="pod_expires" id="pod_expires" value="<?php echo ( 60 * 5 ); ?>" />
+                </div>
+
+                <div class="pods-section hide">
+                    <label for="pod_before"><?php _e( 'Before Text', 'pods' ); ?></label>
+
+                    <input type="text" name="pod_before" id="pod_before" />
+                </div>
+
+                <div class="pods-section hide">
+                    <label for="pod_after"><?php _e( 'After Text', 'pods' ); ?></label>
+
+                    <input type="text" name="pod_after" id="pod_after" />
+                </div>
+
+                <div class="pods-section hide">
+                    <label for="pod_shortcodes"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
+
+                    <input type="checkbox" name="pod_shortcodes" id="pod_shortcodes" value="1" />
                 </div>
 
                 <div class="pods-section" style="text-align: right;">

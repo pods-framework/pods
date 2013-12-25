@@ -28,7 +28,10 @@ class PodsWidgetField extends WP_Widget {
         $args = array(
             'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
             'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
-            'field' => trim( pods_var_raw( 'field', $instance, '' ) )
+            'field' => trim( pods_var_raw( 'field', $instance, '' ) ),
+            'before' => trim( pods_var_raw( 'before', $instance, '' ) ),
+            'after' => trim( pods_var_raw( 'after', $instance, '' ) ),
+            'shortcodes' => (int) pods_var_raw( 'shortcodes', $instance, 0 )
         );
 
         if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) ) {
@@ -47,6 +50,9 @@ class PodsWidgetField extends WP_Widget {
         $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
         $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
         $instance[ 'field' ] = pods_var_raw( 'field', $new_instance, '' );
+        $instance[ 'before' ] = pods_var_raw( 'before', $new_instance, '' );
+        $instance[ 'after' ] = pods_var_raw( 'after', $new_instance, '' );
+        $instance[ 'shortcodes' ] = (int) pods_var_raw( 'shortcodes', $new_instance, 0 );
 
         return $instance;
     }
@@ -59,6 +65,9 @@ class PodsWidgetField extends WP_Widget {
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
         $slug = pods_var_raw( 'slug', $instance, '' );
         $field = pods_var_raw( 'field', $instance, '' );
+        $before = pods_var_raw( 'before', $instance, '' );
+        $after = pods_var_raw( 'after', $instance, '' );
+        $shortcodes = (int) pods_var_raw( 'shortcodes', $instance, 0 );
 
         require PODS_DIR . 'ui/admin/widgets/field.php';
     }

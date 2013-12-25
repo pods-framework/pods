@@ -669,221 +669,260 @@ function pods_access ( $privs, $method = 'OR' ) {
  * @return string
  * @since 1.6.7
  */
-function pods_shortcode ( $tags, $content = null ) {
+function pods_shortcode( $tags, $content = null ) {
+
     $defaults = array(
-        'name' => null,
-        'id' => null,
-        'slug' => null,
-        'select' => null,
-        'order' => null,
-        'orderby' => null,
-        'limit' => null,
-        'where' => null,
-        'having' => null,
-        'groupby' => null,
-        'search' => true,
-        'pagination' => false,
-        'page' => null,
-        'filters' => false,
-        'filters_label' => null,
-        'filters_location' => 'before',
+		'name' => null,
+		'id' => null,
+		'slug' => null,
+		'select' => null,
+		'order' => null,
+		'orderby' => null,
+		'limit' => null,
+		'where' => null,
+		'having' => null,
+		'groupby' => null,
+		'search' => true,
+		'pagination' => false,
+		'page' => null,
+		'filters' => false,
+		'filters_label' => null,
+		'filters_location' => 'before',
 		'pagination_type' => null,
-        'pagination_label' => null,
-        'pagination_location' => 'after',
-        'field' => null,
-        'col' => null,
-        'template' => null,
-        'pods_page' => null,
+		'pagination_label' => null,
+		'pagination_location' => 'after',
+		'field' => null,
+		'col' => null,
+		'template' => null,
+		'pods_page' => null,
 		'before' => null,
 		'after' => null,
-        'helper' => null,
-        'form' => null,
-        'fields' => null,
-        'label' => null,
-        'thank_you' => null,
-        'view' => null,
-        'cache_mode' => 'none',
-        'expires' => 0,
+		'helper' => null,
+		'form' => null,
+		'fields' => null,
+		'label' => null,
+		'thank_you' => null,
+		'view' => null,
+		'cache_mode' => 'none',
+		'expires' => 0,
 		'shortcodes' => false
-    );
+	);
 
-    if ( !empty( $tags ) )
-        $tags = array_merge( $defaults, $tags );
-    else
-        $tags = $defaults;
-
-    $tags = apply_filters( 'pods_shortcode', $tags );
-
-    if ( empty( $content ) )
-        $content = null;
-
-    if ( 0 < strlen( $tags[ 'view' ] ) ) {
-        $return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
-
-		if ( $tags[ 'shortcodes' ] ) {
-			$return = do_shortcode( $return );
-		}
-
-		return $return;
+	if ( !empty( $tags ) ) {
+		$tags = array_merge( $defaults, $tags );
+	}
+	else {
+		$tags = $defaults;
 	}
 
-    if ( empty( $tags[ 'name' ] ) ) {
-        if ( in_the_loop() || is_singular() ) {
-            $pod = pods( get_post_type(), get_the_ID(), false );
+	$tags = apply_filters( 'pods_shortcode', $tags );
 
-            if ( !empty( $pod ) ) {
-                $tags[ 'name' ] = get_post_type();
-                $id = $tags[ 'id' ] = get_the_ID();
-            }
-        }
-
-        if ( empty( $tags[ 'name' ] ) )
-            return '<p>Please provide a Pod name</p>';
-    }
-
-    if ( !empty( $tags[ 'col' ] ) ) {
-        $tags[ 'field' ] = $tags[ 'col' ];
-
-        unset( $tags[ 'col' ] );
-    }
-
-    if ( !empty( $tags[ 'order' ] ) ) {
-        $tags[ 'orderby' ] = $tags[ 'order' ];
-
-        unset( $tags[ 'order' ] );
-    }
-
-    if ( empty( $content ) && empty( $tags[ 'pods_page' ] ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
-        return '<p>Please provide either a template or field name</p>';
-    }
-
-    if ( !isset( $id ) ) {
-        // id > slug (if both exist)
-        $id = empty( $tags[ 'slug' ] ) ? null : pods_evaluate_tags( $tags[ 'slug' ] );
-
-        if ( !empty( $tags[ 'id' ] ) ) {
-            $id = $tags[ 'id' ];
-
-            if ( is_numeric( $id ) )
-                $id = absint( $id );
-        }
-    }
-
-    if ( !isset( $pod ) )
-        $pod = pods( $tags[ 'name' ], $id );
-
-    if ( empty( $pod ) )
-        return '<p>Pod not found</p>';
-
-    $found = 0;
-
-    if ( !empty( $tags[ 'form' ] ) )
-        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
-    elseif ( empty( $id ) ) {
-        $params = array();
-
-        if ( 0 < strlen( $tags[ 'orderby' ] ) )
-            $params[ 'orderby' ] = $tags[ 'orderby' ];
-
-        if ( !empty( $tags[ 'limit' ] ) )
-            $params[ 'limit' ] = $tags[ 'limit' ];
-
-        if ( 0 < strlen( $tags[ 'where' ] ) )
-            $params[ 'where' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'where' ] ) );
-
-        if ( 0 < strlen( $tags[ 'having' ] ) )
-            $params[ 'having' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'having' ] ) );
-
-        if ( 0 < strlen( $tags[ 'groupby' ] ) )
-            $params[ 'groupby' ] = $tags[ 'groupby' ];
-
-        if ( 0 < strlen( $tags[ 'select' ] ) )
-            $params[ 'select' ] = $tags[ 'select' ];
-
-        if ( empty( $tags[ 'search' ] ) )
-            $params[ 'search' ] = false;
-
-        if ( 0 < absint( $tags[ 'page' ] ) )
-            $params[ 'page' ] = absint( $tags[ 'page' ] );
-
-        if ( empty( $tags[ 'pagination' ] ) )
-            $params[ 'pagination' ] = false;
-
-        if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
-            $params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
-            $params[ 'expires' ] = (int) $tags[ 'expires' ];
-        }
-
-        $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
-
-        $pod->find( $params );
-
-        $found = $pod->total();
-    }
-    elseif ( !empty( $tags[ 'field' ] ) ) {
-        if ( empty( $tags[ 'helper' ] ) )
-            $return = $pod->display( $tags[ 'field' ] );
-        else
-            $return = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
-
-		if ( $tags[ 'shortcodes' ] ) {
-			$return = do_shortcode( $return );
-		}
-
-		return $return;
-    }
-    elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
-        $pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
-
-        if ( empty( $pods_page ) )
-            return '<p>Pods Page not found</p>';
-
-        $return = Pods_Pages::content( true, $pods_page );
-
-		if ( $tags[ 'shortcodes' ] ) {
-			$return = do_shortcode( $return );
-		}
-
-		return $return;
-    }
-
-    ob_start();
-
-    if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
-        echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
-
-	if ( empty( $id ) && 0 < $found ) {
-		if ( false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) ) {
-			echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
-		}
-
-		if ( !empty( $tags[ 'before' ] ) ) {
-			echo pods_evaluate_tags( $tags[ 'before' ] );
-		}
+	if ( empty( $content ) ) {
+		$content = null;
 	}
 
-	echo $pod->template( $tags[ 'template' ], $content );
+	$return = '';
 
-	if ( empty( $id ) && 0 < $found ) {
+	if ( !empty( $tags[ 'before' ] ) ) {
+		$return .= pods_evaluate_tags( $tags[ 'before' ] );
+	}
+
+	if ( 0 < strlen( $tags[ 'view' ] ) ) {
+		$return .= pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+
 		if ( !empty( $tags[ 'after' ] ) ) {
-			echo pods_evaluate_tags( $tags[ 'after' ] );
+			$return .= pods_evaluate_tags( $tags[ 'after' ] );
 		}
 
-		if ( false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) ) {
-			echo $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
+
+	if ( empty( $tags[ 'name' ] ) ) {
+		if ( in_the_loop() || is_singular() ) {
+			$pod = pods( get_post_type(), get_the_ID(), false );
+
+			if ( !empty( $pod ) ) {
+				$tags[ 'name' ] = get_post_type();
+				$id = $tags[ 'id' ] = get_the_ID();
+			}
+		}
+
+		if ( empty( $tags[ 'name' ] ) ) {
+			return '<p>Please provide a Pod name</p>';
 		}
 	}
 
-    if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
-        echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+	if ( !empty( $tags[ 'col' ] ) ) {
+		$tags[ 'field' ] = $tags[ 'col' ];
 
-	$return = ob_get_clean();
+		unset( $tags[ 'col' ] );
+	}
+
+	if ( !empty( $tags[ 'order' ] ) ) {
+		$tags[ 'orderby' ] = $tags[ 'order' ];
+
+		unset( $tags[ 'order' ] );
+	}
+
+	if ( empty( $content ) && empty( $tags[ 'pods_page' ] ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
+		return '<p>Please provide either a template or field name</p>';
+	}
+
+	if ( !isset( $id ) ) {
+		// id > slug (if both exist)
+		$id = empty( $tags[ 'slug' ] ) ? null : pods_evaluate_tags( $tags[ 'slug' ] );
+
+		if ( !empty( $tags[ 'id' ] ) ) {
+			$id = $tags[ 'id' ];
+
+			if ( is_numeric( $id ) ) {
+				$id = absint( $id );
+			}
+		}
+	}
+
+	if ( !isset( $pod ) ) {
+		$pod = pods( $tags[ 'name' ], $id );
+	}
+
+	if ( empty( $pod ) ) {
+		return '<p>Pod not found</p>';
+	}
+
+	$found = 0;
+
+	if ( !empty( $tags[ 'form' ] ) ) {
+		$return .= $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+
+		if ( !empty( $tags[ 'after' ] ) ) {
+			$return .= pods_evaluate_tags( $tags[ 'after' ] );
+		}
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
+	elseif ( empty( $id ) ) {
+		$params = array();
+
+		if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
+			$params[ 'orderby' ] = $tags[ 'orderby' ];
+		}
+
+		if ( !empty( $tags[ 'limit' ] ) ) {
+			$params[ 'limit' ] = $tags[ 'limit' ];
+		}
+
+		if ( 0 < strlen( $tags[ 'where' ] ) ) {
+			$params[ 'where' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'where' ] ) );
+		}
+
+		if ( 0 < strlen( $tags[ 'having' ] ) ) {
+			$params[ 'having' ] = pods_evaluate_tags( html_entity_decode( $tags[ 'having' ] ) );
+		}
+
+		if ( 0 < strlen( $tags[ 'groupby' ] ) ) {
+			$params[ 'groupby' ] = $tags[ 'groupby' ];
+		}
+
+		if ( 0 < strlen( $tags[ 'select' ] ) ) {
+			$params[ 'select' ] = $tags[ 'select' ];
+		}
+
+		if ( empty( $tags[ 'search' ] ) ) {
+			$params[ 'search' ] = false;
+		}
+
+		if ( 0 < absint( $tags[ 'page' ] ) ) {
+			$params[ 'page' ] = absint( $tags[ 'page' ] );
+		}
+
+		if ( empty( $tags[ 'pagination' ] ) ) {
+			$params[ 'pagination' ] = false;
+		}
+
+		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
+			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
+			$params[ 'expires' ] = (int) $tags[ 'expires' ];
+		}
+
+		$params = apply_filters( 'pods_shortcode_findrecords_params', $params );
+
+		$pod->find( $params );
+
+		$found = $pod->total();
+	}
+	elseif ( !empty( $tags[ 'field' ] ) ) {
+		if ( empty( $tags[ 'helper' ] ) ) {
+			$return .= $pod->display( $tags[ 'field' ] );
+		}
+		else {
+			$return .= $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
+		}
+
+		if ( !empty( $tags[ 'after' ] ) ) {
+			$return .= pods_evaluate_tags( $tags[ 'after' ] );
+		}
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
+	elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
+		$pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
+
+		if ( empty( $pods_page ) ) {
+			return '<p>Pods Page not found</p>';
+		}
+
+		$return .= Pods_Pages::content( true, $pods_page );
+
+		if ( !empty( $tags[ 'after' ] ) ) {
+			$return .= pods_evaluate_tags( $tags[ 'after' ] );
+		}
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
+
+	if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
+		$return .= $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+
+	if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) ) {
+		$return .= $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+	}
+
+	$return .= $pod->template( $tags[ 'template' ], $content );
+
+	if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) ) {
+		$return .= $pod->pagination( array( 'label' => $tags[ 'pagination_label' ], 'type' => $tags[ 'pagination_type' ] ) );
+	}
+
+	if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] ) {
+		$return .= $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+	}
+
+	if ( !empty( $tags[ 'after' ] ) ) {
+		$return .= pods_evaluate_tags( $tags[ 'after' ] );
+	}
 
 	if ( $tags[ 'shortcodes' ] ) {
 		$return = do_shortcode( $return );
 	}
 
 	return $return;
+
 }
 
 /**

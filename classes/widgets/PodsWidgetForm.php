@@ -25,6 +25,9 @@ class PodsWidgetForm extends WP_Widget {
             'fields' => trim( pods_var_raw( 'fields', $instance, '' ) ),
             'label' => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
             'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
+            'shortcodes' => (int) pods_var_raw( 'shortcodes', $instance, 0 ),
+            'before' => trim( pods_var_raw( 'before', $instance, '' ) ),
+            'after' => trim( pods_var_raw( 'after', $instance, '' ) ),
             'form' => 1
         );
 
@@ -41,6 +44,9 @@ class PodsWidgetForm extends WP_Widget {
         $instance[ 'fields' ] = pods_var_raw( 'fields', $new_instance, '' );
         $instance[ 'label' ] = pods_var_raw( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
         $instance[ 'thank_you' ] = pods_var_raw( 'thank_you', $new_instance, '' );
+        $instance[ 'before' ] = pods_var_raw( 'before', $new_instance, '' );
+        $instance[ 'after' ] = pods_var_raw( 'after', $new_instance, '' );
+        $instance[ 'shortcodes' ] = (int) pods_var_raw( 'shortcodes', $new_instance, 0 );
 
         return $instance;
     }
@@ -52,6 +58,9 @@ class PodsWidgetForm extends WP_Widget {
         $fields = pods_var_raw( 'fields', $instance, '' );
         $label = pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true );
         $thank_you = pods_var_raw( 'thank_you', $instance, '' );
+        $before = pods_var_raw( 'before', $instance, '' );
+        $after = pods_var_raw( 'after', $instance, '' );
+        $shortcodes = (int) pods_var_raw( 'shortcodes', $instance, 0 );
 
         require PODS_DIR . 'ui/admin/widgets/form.php';
     }

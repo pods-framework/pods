@@ -28,7 +28,10 @@ class PodsWidgetView extends WP_Widget {
         $args = array(
             'view' => trim( pods_var_raw( 'view', $instance, '' ) ),
             'expires' => (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) ),
-            'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) )
+            'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) ),
+            'before' => trim( pods_var_raw( 'before', $instance, '' ) ),
+            'after' => trim( pods_var_raw( 'after', $instance, '' ) ),
+            'shortcodes' => (int) pods_var_raw( 'shortcodes', $instance, 0 )
         );
 
         if ( 0 < strlen( $args[ 'view' ] ) )
@@ -46,7 +49,9 @@ class PodsWidgetView extends WP_Widget {
         $instance[ 'view' ] = pods_var_raw( 'view', $new_instance, '' );
         $instance[ 'expires' ] = (int) pods_var_raw( 'expires', $new_instance, ( 60 * 5 ) );
         $instance[ 'cache_mode' ] = pods_var_raw( 'cache_mode', $new_instance, 'none', null, true );
-
+        $instance[ 'before' ] = pods_var_raw( 'before', $new_instance, '' );
+        $instance[ 'after' ] = pods_var_raw( 'after', $new_instance, '' );
+        $instance[ 'shortcodes' ] = (int) pods_var_raw( 'shortcodes', $new_instance, 0 );
         return $instance;
     }
 
@@ -58,6 +63,9 @@ class PodsWidgetView extends WP_Widget {
         $view = pods_var_raw( 'view', $instance, '' );
         $expires = (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) );
         $cache_mode = pods_var_raw( 'cache_mode', $instance, 'none', null, true );
+        $before = pods_var_raw( 'before', $instance, '' );
+        $after = pods_var_raw( 'after', $instance, '' );
+        $shortcodes = (int) pods_var_raw( 'shortcodes', $instance, 0 );
 
         require PODS_DIR . 'ui/admin/widgets/view.php';
     }

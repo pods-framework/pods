@@ -826,7 +826,7 @@ class PodsObject_Pod extends PodsObject {
 				),
 				'rewrite' => array(
 					'label' => __( 'Rewrite', 'pods' ),
-					'help' => __( 'help', 'pods' ),
+					'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Reading. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
 					'type' => 'boolean',
 					'default' => true,
 					'dependency' => true,
@@ -834,14 +834,14 @@ class PodsObject_Pod extends PodsObject {
 				),
 				'rewrite_custom_slug' => array(
 					'label' => __( 'Custom Rewrite Slug', 'pods' ),
-					'help' => __( 'help', 'pods' ),
+					'help' => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
 					'type' => 'text',
 					'default' => '',
 					'depends-on' => array( 'rewrite' => true )
 				),
 				'rewrite_with_front' => array(
 					'label' => __( 'Rewrite with Front', 'pods' ),
-					'help' => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
+					'help' => __( 'Allows permalinks to be prepended with your front base. For example, if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/', 'pods' ),
 					'type' => 'boolean',
 					'default' => true,
 					'depends-on' => array( 'rewrite' => true ),
@@ -849,15 +849,15 @@ class PodsObject_Pod extends PodsObject {
 				),
 				'rewrite_feeds' => array(
 					'label' => __( 'Rewrite Feeds', 'pods' ),
-					'help' => __( 'help', 'pods' ),
+					'help' => __( 'Apply rewrites to RSS feeds.', 'pods' ),
 					'type' => 'boolean',
 					'default' => false,
 					'depends-on' => array( 'rewrite' => true ),
 					'boolean_yes_label' => ''
 				),
 				'rewrite_pages' => array(
-					'label' => __( 'Rewrite Pages', 'pods' ),
-					'help' => __( 'help', 'pods' ),
+					'label' => __( 'Rewrite With Page Numbers', 'pods' ),
+					'help' => __( 'Add page numbers to URLs for paged posts or post type archives.', 'pods' ),
 					'type' => 'boolean',
 					'default' => true,
 					'depends-on' => array( 'rewrite' => true ),

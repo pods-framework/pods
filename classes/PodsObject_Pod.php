@@ -796,8 +796,8 @@ class PodsObject_Pod extends PodsObject {
 					'boolean_yes_label' => ''
 				),
 				'has_archive' => array(
-					'label' => __( 'Has Archive', 'pods' ),
-					'help' => __( 'help', 'pods' ),
+					'label' => __( 'Enable Archive Page', 'pods' ),
+					'help' => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),
 					'type' => 'boolean',
 					'default' => false,
 					'boolean_yes_label' => ''

@@ -163,10 +163,8 @@ class PodsMeta {
 		}
 
         if ( is_admin() && apply_filters( 'pods_meta_form_handler', true, 'media' ) ) {
-            if ( pods_version_check( 'wp', '3.5' ) ) {
-                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-                add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-            }
+			add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+			add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
 
             add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
@@ -753,10 +751,8 @@ class PodsMeta {
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
             if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
-                if ( pods_version_check( 'wp', '3.5' ) ) {
-                    add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-                    add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-                }
+				add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+				add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
 
                 add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 

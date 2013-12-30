@@ -220,7 +220,7 @@ function pods_unsanitize( $input, $params = array() ) {
 	}
 	// @todo Figure out what to do to unescape mysql_real_escape_string
 	else {
-		$output = ( pods_version_check( 'wp', '3.6' ) ? stripslashes( $input ) : stripslashes( $input ) );
+		$output = stripslashes( $input );
 	}
 
 	if ( !is_array( $params ) || !isset( $params[ 'nested' ] ) || false === $params[ 'nested' ] ) {
@@ -265,7 +265,7 @@ function pods_unslash( $input ) {
 	}
 	// @todo Figure out what to do to unescape mysql_real_escape_string
 	else {
-		$output = ( pods_version_check( 'wp', '3.6' ) ? wp_unslash( $input ) : stripslashes( $input ) );
+		$output = wp_unslash( $input );
 	}
 
 	return $output;

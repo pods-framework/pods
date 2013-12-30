@@ -267,9 +267,6 @@ class PodsInit {
             ), '1.1.1' );
         }
 
-        wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );
-        wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
-
         wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
         wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
@@ -485,15 +482,12 @@ class PodsInit {
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 
-                if ( !pods_version_check( 'wp', '3.5' ) )
-                    $cpt_supports = array( '_bug_fix_pre_35' );
-
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
                     if ( true === $supported )
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( empty( $cpt_supports ) && pods_version_check( 'wp', '3.5' ) )
+                if ( empty( $cpt_supports ) )
                     $cpt_supports = false;
 
                 // Rewrite

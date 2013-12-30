@@ -952,18 +952,15 @@ class PodsObject_Pod extends PodsObject {
 					'type' => 'boolean',
 					'default' => true,
 					'boolean_yes_label' => ''
-				)
-			);
-
-			if ( pods_version_check( 'wp', '3.5' ) ) {
-				$options[ 'admin-ui' ][ 'show_admin_column' ] = array(
+				),
+				'show_admin_column' => array(
 					'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
 					'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
 					'type' => 'boolean',
 					'default' => false,
 					'boolean_yes_label' => ''
-				);
-			}
+				)
+			);
 
 			if ( pods_version_check( 'wp', '3.8' ) ) {
 				$options[ 'admin-ui' ][ 'hide_metabox' ] = array(

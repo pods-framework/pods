@@ -111,17 +111,6 @@ class PodsField_Avatar extends PodsField {
             )
         );
 
-        if ( !pods_version_check( 'wp', '3.5' ) ) {
-            unset( $options[ self::$type . '_modal_title' ] );
-            unset( $options[ self::$type . '_modal_add_button' ] );
-
-            $options[ self::$type . '_attachment_tab' ][ 'default' ] = 'type';
-            $options[ self::$type . '_attachment_tab' ][ 'data' ] = array(
-                'type' => __( 'Upload File', 'pods' ),
-                'library' => __( 'Media Library', 'pods' )
-            );
-        }
-
         return $options;
     }
 
@@ -192,10 +181,8 @@ class PodsField_Avatar extends PodsField {
         if ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
-            if ( !pods_version_check( 'wp', '3.5' ) || !is_admin() ) // @todo test frontend media modal
-                $field_type = 'attachment';
-            else
-                $field_type = 'media';
+			// @todo test frontend media modal
+			$field_type = 'media';
         }
         else {
             // Support custom File Uploader integration

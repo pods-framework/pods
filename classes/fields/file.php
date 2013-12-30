@@ -180,17 +180,6 @@ class PodsField_File extends PodsField {
             )
         );
 
-        if ( !pods_version_check( 'wp', '3.5' ) ) {
-            unset( $options[ self::$type . '_modal_title' ] );
-            unset( $options[ self::$type . '_modal_add_button' ] );
-
-            $options[ self::$type . '_attachment_tab' ][ 'default' ] = 'type';
-            $options[ self::$type . '_attachment_tab' ][ 'data' ] = array(
-                'type' => __( 'Upload File', 'pods' ),
-                'library' => __( 'Media Library', 'pods' )
-            );
-        }
-
         return $options;
     }
 
@@ -282,10 +271,8 @@ class PodsField_File extends PodsField {
         elseif ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
-            if ( !pods_version_check( 'wp', '3.5' ) || !is_admin() ) // @todo test frontend media modal
-                $field_type = 'attachment';
-            else
-                $field_type = 'media';
+            // @todo test frontend media modal
+            $field_type = 'media';
         }
         else {
             // Support custom File Uploader integration
@@ -467,8 +454,13 @@ class PodsField_File extends PodsField {
 
         ob_start();
 
-        if ( empty( $id ) )
+        if ( empty( $id ) ) {
             $id = '{{id}}';
+			$url = '{{guid}}';
+		}
+		else {
+			$url = get_attached_file( $id );
+		}
 
         if ( empty( $icon ) )
             $icon = '{{icon}}';
@@ -487,7 +479,7 @@ class PodsField_File extends PodsField {
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">
-                <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+                <a href="<?php echo $url; ?>"><img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" /></a>
             </li>
 
             <li class="pods-file-col pods-file-name">
@@ -654,52 +646,50 @@ class PodsField_File extends PodsField {
 
             $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
-            if ( pods_version_check( 'wp', '3.5' ) ) {
-                $mime_types = wp_get_mime_types();
+			$mime_types = wp_get_mime_types();
 
-                if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
-                    $new_limit_types = array();
+			if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
+				$new_limit_types = array();
 
-                    foreach ( $mime_types as $type => $mime ) {
-                        if ( 0 === strpos( $mime, $limit_file_type ) ) {
-                            $type = explode( '|', $type );
+				foreach ( $mime_types as $type => $mime ) {
+					if ( 0 === strpos( $mime, $limit_file_type ) ) {
+						$type = explode( '|', $type );
 
-                            $new_limit_types = array_merge( $new_limit_types, $type );
-                        }
-                    }
+						$new_limit_types = array_merge( $new_limit_types, $type );
+					}
+				}
 
-                    if ( !empty( $new_limit_types ) )
-                        $limit_types = implode( ',', $new_limit_types );
-                }
-                elseif ( 'any' != $limit_file_type ) {
-                    $new_limit_types = array();
+				if ( !empty( $new_limit_types ) )
+					$limit_types = implode( ',', $new_limit_types );
+			}
+			elseif ( 'any' != $limit_file_type ) {
+				$new_limit_types = array();
 
-                    $limit_types = explode( ',', $limit_types );
+				$limit_types = explode( ',', $limit_types );
 
-                    foreach ( $limit_types as $k => $limit_type ) {
-                        $found = false;
+				foreach ( $limit_types as $k => $limit_type ) {
+					$found = false;
 
-                        foreach ( $mime_types as $type => $mime ) {
-                            if ( 0 === strpos( $mime, $limit_type ) ) {
-                                $type = explode( '|', $type );
+					foreach ( $mime_types as $type => $mime ) {
+						if ( 0 === strpos( $mime, $limit_type ) ) {
+							$type = explode( '|', $type );
 
-                                foreach ( $type as $t ) {
-                                    if ( !in_array( $t, $new_limit_types ) )
-                                        $new_limit_types[] = $t;
-                                }
+							foreach ( $type as $t ) {
+								if ( !in_array( $t, $new_limit_types ) )
+									$new_limit_types[] = $t;
+							}
 
-                                $found = true;
-                            }
-                        }
+							$found = true;
+						}
+					}
 
-                        if ( !$found )
-                            $new_limit_types[] = $limit_type;
-                    }
+					if ( !$found )
+						$new_limit_types[] = $limit_type;
+				}
 
-                    if ( !empty( $new_limit_types ) )
-                        $limit_types = implode( ',', $new_limit_types );
-                }
-            }
+				if ( !empty( $new_limit_types ) )
+					$limit_types = implode( ',', $new_limit_types );
+			}
 
             $limit_types = explode( ',', $limit_types );
 

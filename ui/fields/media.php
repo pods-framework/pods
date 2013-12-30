@@ -235,7 +235,8 @@ else
                             id: attachment.id,
                             icon: attachment_thumbnail,
                             name: attachment.attributes.title,
-                            filename: attachment.filename
+                            filename: attachment.filename,
+							guid: attachment.guid
                         };
 
                         var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

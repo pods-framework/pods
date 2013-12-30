@@ -453,17 +453,11 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     }
                 ?>
 
-                <?php
-                    if ( pods_version_check( 'wp', '3.5' ) ) {
-                ?>
-                    <li>
-                        <div class="pods-field pods-boolean">
-                            <?php echo PodsForm::field( 'built_in_post_types_attachment', pods_var_raw( 'built_in_post_types_attachment', $pod, false ), 'boolean', array( 'boolean_yes_label' => 'Media <small>(attachment)</small>' ) ); ?>
-                        </div>
-                    </li>
-                <?php
-                    }
-                ?>
+				<li>
+					<div class="pods-field pods-boolean">
+						<?php echo PodsForm::field( 'built_in_post_types_attachment', pods_var_raw( 'built_in_post_types_attachment', $pod, false ), 'boolean', array( 'boolean_yes_label' => 'Media <small>(attachment)</small>' ) ); ?>
+					</div>
+				</li>
             </ul>
         </div>
     </div>

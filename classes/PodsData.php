@@ -1038,10 +1038,10 @@ class PodsData {
                 }
 
                 if ( !empty( $where ) )
-                    $params->where[] = implode( ' OR ', $where );
+                    $params->where[] = '( ' . implode( ' OR ', $where ) . ' )';
 
                 if ( !empty( $having ) )
-                    $params->having[] = implode( ' OR ', $where );
+                    $params->having[] = '( ' . implode( ' OR ', $having ) . ' )';
             }
 
             // Filter

@@ -131,7 +131,7 @@ class Pods_Roles extends PodsComponent {
     function admin_add ( $obj ) {
         global $wp_roles;
 
-        $capabilities = $this->get_capabilities();
+        $grouped_capabilities = $this->get_grouped_capabilities();
 
         $defaults = $this->get_default_capabilities();
 
@@ -147,7 +147,7 @@ class Pods_Roles extends PodsComponent {
 
         $id = $obj->id;
 
-        $capabilities = $this->get_capabilities();
+        $grouped_capabilities = $this->get_grouped_capabilities();
 
         $role_name = $role_label = $role_capabilities = null;
 
@@ -397,6 +397,38 @@ class Pods_Roles extends PodsComponent {
         $capabilities = array_unique( $capabilities );
 
         return $capabilities;
+    }
+
+    function get_grouped_capabilities () {
+        $capabilities = $this->get_capabilities();
+
+        $groups_start_with = array( 'pods' );
+        $groups_end_with = array( 'pages', 'plugins', 'posts', 'themes', 'users' );
+        $grouped_capabilities = array();
+
+        foreach ( $capabilities as $capability ) {
+
+            $capability_pieces = explode( "_", $capability );
+
+            if ( in_array( current( $capability_pieces ) , $groups_start_with ) ) {
+                $group_name = current( $capability_pieces );
+            } elseif ( in_array( end( $capability_pieces ) , $groups_end_with ) ) {
+                $group_name = end( $capability_pieces );    
+            } else { 
+                $group_name = 'other';
+            }
+
+            if ( !array_key_exists( $group_name, $grouped_capabilities ) ) {
+                $grouped_capabilities[ $group_name ] = array();
+            }
+
+            $grouped_capabilities[ $group_name ] = array_merge( $grouped_capabilities[ $group_name ], array( $capability ) );
+            
+        }
+
+        ksort( $grouped_capabilities );
+
+        return $grouped_capabilities;
     }
 
     function get_wp_capabilities () {

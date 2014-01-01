@@ -402,8 +402,8 @@ class Pods_Roles extends PodsComponent {
     function get_grouped_capabilities () {
         $capabilities = $this->get_capabilities();
 
-        $groups_start_with = array( 'pods' );
-        $groups_end_with = array( 'pages', 'plugins', 'posts', 'themes', 'users' );
+        $groups_start_with = array( 'gravityforms', 'pods' );
+        $groups_end_with = array( 'files', 'pages', 'plugins', 'posts', 'themes', 'users' );
         $grouped_capabilities = array();
 
         foreach ( $capabilities as $capability ) {

@@ -282,13 +282,13 @@ class Pods_Object_Group extends Pods_Object {
 
 		$options[ 'additional-field' ] = array();
 
-		$field_types = PodsForm::field_types();
+		$field_types = Pods_Form::field_types();
 
 		foreach ( $field_types as $type => $field_type_data ) {
 			/**
 			 * @var $field_type Pods_Field
 			 */
-			$field_type = PodsForm::field_loader( $type, $field_type_data[ 'file' ] );
+			$field_type = Pods_Form::field_loader( $type, $field_type_data[ 'file' ] );
 
 			$field_type_vars = get_class_vars( get_class( $field_type ) );
 
@@ -311,7 +311,7 @@ class Pods_Object_Group extends Pods_Object {
 				}
 			}
 
-			$options[ 'additional-field' ][ $type ] = PodsForm::ui_options( $type );
+			$options[ 'additional-field' ][ $type ] = Pods_Form::ui_options( $type );
 		}
 
 		$input_helpers = array(
@@ -545,8 +545,8 @@ class Pods_Object_Group extends Pods_Object {
 			return false;
 		}
 
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$tableless_field_types = Pods_Form::tableless_field_types();
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
 		$params = (object) $options;
 

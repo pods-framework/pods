@@ -220,7 +220,7 @@ class Pods_Field_DateTime extends Pods_Field {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $form_field_type = PodsForm::$field_type;
+        $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
             $value = implode( ' ', $value );
@@ -230,7 +230,7 @@ class Pods_Field_DateTime extends Pods_Field {
 
         $field_type = 'datetime';
 
-        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+        if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
             if ( pods_var( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 

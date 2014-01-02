@@ -181,7 +181,7 @@ class Pods_Field_HTML extends Pods_Field {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		echo '<div class="pods-form-ui-' . PodsForm::clean( $name ) . ' pods-form-html">' . $this->display( $value, $name, $options, $pod, $id ) . '</div>';
+		echo '<div class="pods-form-ui-' . Pods_Form::clean( $name ) . ' pods-form-html">' . $this->display( $value, $name, $options, $pod, $id ) . '</div>';
     }
 
     /**

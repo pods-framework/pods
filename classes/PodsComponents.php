@@ -598,7 +598,7 @@ class PodsComponents {
             $this->settings[ 'components' ][ $component ] = array();
 
         foreach ( $options as $field_name => $field_option ) {
-            $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+            $field_option = Pods_Form::field_setup( $field_option, null, $field_option[ 'type' ] );
 
             if ( !is_array( $field_option[ 'group' ] ) ) {
                 $field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );

@@ -106,7 +106,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 			echo '<div class="pods-field-option">';
 
-			echo PodsForm::field( 'export_package', $package, 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
+			echo Pods_Form::field( 'export_package', $package, 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
 
 			echo '</div>';
 		}
@@ -672,12 +672,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'label_singular'
 			);
 
-			$field_types = PodsForm::field_types();
+			$field_types = Pods_Form::field_types();
 
 			$field_type_options = array();
 
 			foreach ( $field_types as $type => $field_type_data ) {
-				$field_type_options[ $type ] = PodsForm::ui_options( $type );
+				$field_type_options[ $type ] = Pods_Form::ui_options( $type );
 			}
 
 			foreach ( $export[ 'pods' ] as &$pod ) {

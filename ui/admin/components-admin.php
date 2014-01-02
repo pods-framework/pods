@@ -2,10 +2,10 @@
     <div id="icon-pods" class="icon32"><br /></div>
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', 'settings', 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-settings' ), 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'component', $component, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'method', 'settings', 'hidden' ); ?>
+            <?php echo Pods_Form::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-settings' ), 'hidden' ); ?>
 
             <h2><?php _e( 'Settings', 'pods' ); ?>: <?php echo $component_label; ?></h2>
 
@@ -19,9 +19,9 @@
                     $depends_on = false;
 
                     foreach ( $options as $field_name => $field_option ) {
-                        $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+                        $field_option = Pods_Form::field_setup( $field_option, null, $field_option[ 'type' ] );
 
-                        $depends = PodsForm::dependencies( $field_option );
+                        $depends = Pods_Form::dependencies( $field_option );
 
                         if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
                             if ( !empty( $depends_on ) ) {
@@ -42,10 +42,10 @@
                 ?>
                     <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo $field_name; ?>">
                         <th>
-                            <?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option[ 'label' ], $field_option[ 'help' ], $field_option ); ?>
+                            <?php echo Pods_Form::label( 'pods_setting_' . $field_name, $field_option[ 'label' ], $field_option[ 'help' ], $field_option ); ?>
                         </th>
                         <td>
-                            <?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option[ 'type' ], $field_option ); ?>
+                            <?php echo Pods_Form::field( 'pods_setting_' . $field_name, $value, $field_option[ 'type' ], $field_option ); ?>
                         </td>
                     </tr>
                 <?php
@@ -60,19 +60,19 @@
                             <ul>
                                 <?php
                                     foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
-                                        $field_group_option = PodsForm::field_setup( $field_group_option, null, $field_group_option[ 'type' ] );
+                                        $field_group_option = Pods_Form::field_setup( $field_group_option, null, $field_group_option[ 'type' ] );
 
                                         if ( 'boolean' != $field_group_option[ 'type' ] )
                                             continue;
 
                                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
-                                        $depends_option = PodsForm::dependencies( $field_group_option );
+                                        $depends_option = Pods_Form::dependencies( $field_group_option );
 
                                         $value = pods_var_raw( $field_group_name, $settings, $field_group_option[ 'default' ] );
                                 ?>
                                     <li class="<?php echo $depends_option; ?>">
-                                        <?php echo PodsForm::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
+                                        <?php echo Pods_Form::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
                                     </li>
                                 <?php
                                     }

@@ -3,9 +3,9 @@ $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
+<input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).change( function () {

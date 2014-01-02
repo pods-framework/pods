@@ -1639,11 +1639,11 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
     if ( !empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
         $params->field = $params->fields[ $params->field ];
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $tableless_field_types = Pods_Form::tableless_field_types();
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         if ( !empty( $params->field ) && is_array( $params->field ) && in_array( $params->field[ 'type' ], $tableless_field_types ) ) {
-            if ( in_array( $params->field[ 'type' ], PodsForm::file_field_types() ) ) {
+            if ( in_array( $params->field[ 'type' ], Pods_Form::file_field_types() ) ) {
                 if ( null === $params->field_index )
                     $params->field_index = 'guid';
             }
@@ -1663,7 +1663,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $params->field = null;
 
     if ( $simple && is_array( $params->field ) && !is_array( $value ) && '' !== $value && null !== $value )
-        $value = PodsForm::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $value, $params->field );
+        $value = Pods_Form::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $value, $params->field );
 
     if ( !is_array( $value ) )
         return $value;
@@ -1679,7 +1679,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $last = array_pop( $value );
 
     if ( $simple && is_array( $params->field ) && !is_array( $last ) && '' !== $last && null !== $last )
-        $last = PodsForm::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $last, $params->field );
+        $last = Pods_Form::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $last, $params->field );
 
     if ( is_array( $last ) ) {
         if ( null !== $params->field_index && isset( $last[ $params->field_index ] ) )
@@ -1702,7 +1702,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
 
         foreach ( $value as $k => $v ) {
             if ( $simple && is_array( $params->field ) && !is_array( $v ) && '' !== $v && null !== $v )
-                $v = PodsForm::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $v, $params->field );
+                $v = Pods_Form::field_method( 'pick', 'simple_value', $params->field[ 'name' ], $v, $params->field );
 
             if ( is_array( $v ) ) {
                 if ( null !== $params->field_index && isset( $v[ $params->field_index ] ) )

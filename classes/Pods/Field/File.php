@@ -243,7 +243,7 @@ class Pods_Field_File extends Pods_Field {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $form_field_type = PodsForm::$field_type;
+        $form_field_type = Pods_Form::$field_type;
 
         if ( !is_admin() ) {
             include_once( ABSPATH . '/wp-admin/includes/template.php' );
@@ -450,7 +450,7 @@ class Pods_Field_File extends Pods_Field {
      */
     public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
         // Preserve current file type
-        $field_type = PodsForm::$field_type;
+        $field_type = Pods_Form::$field_type;
 
         ob_start();
 
@@ -471,7 +471,7 @@ class Pods_Field_File extends Pods_Field {
         $editable = (boolean) $editable;
         ?>
     <li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
-        <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
+        <?php echo Pods_Form::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
             <?php if ( 1 != $limit ) { ?>
@@ -485,7 +485,7 @@ class Pods_Field_File extends Pods_Field {
             <li class="pods-file-col pods-file-name">
                 <?php
                 if ( $editable )
-                    echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
+                    echo Pods_Form::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
                 else
                     echo ( empty( $name ) ? '{{name}}' : $name );
                 ?>
@@ -495,7 +495,7 @@ class Pods_Field_File extends Pods_Field {
         </ul>
     </li>
     <?php
-        PodsForm::$field_type = $field_type;
+        Pods_Form::$field_type = $field_type;
 
         return ob_get_clean();
     }
@@ -582,7 +582,7 @@ class Pods_Field_File extends Pods_Field {
             if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
                 pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 
-            if ( !in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
+            if ( !in_array( $field[ 'type' ], Pods_Form::file_field_types() ) )
                 pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
         }
 

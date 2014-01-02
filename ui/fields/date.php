@@ -33,7 +33,7 @@
     $attributes[ 'type' ] = $type;
     $attributes[ 'tabindex' ] = 2;
 
-    $format = PodsForm::field_method( 'date', 'format', $options );
+    $format = Pods_Form::field_method( 'date', 'format', $options );
 
     $method = 'datepicker';
 
@@ -45,8 +45,8 @@
 
     $html5_format = 'Y-m-d';
 
-    $date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
-    $date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d', (string) $value );
+    $date = Pods_Form::field_method( 'date', 'createFromFormat', $format, (string) $value );
+    $date_default = Pods_Form::field_method( 'date', 'createFromFormat', 'Y-m-d', (string) $value );
 
     $formatted_date = $value;
 
@@ -69,9 +69,9 @@
 
     $attributes[ 'value' ] = $value;
 
-    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+    $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
+<input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <script>
     jQuery( function () {

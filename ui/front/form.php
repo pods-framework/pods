@@ -8,7 +8,7 @@ if ( !wp_script_is( 'pods', 'done' ) )
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
+    elseif ( false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
         if ( pods_var( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
         elseif ( pods_var( 'read_only', $field, false ) )
@@ -52,15 +52,15 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 ?>
 <form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
     <div class="pods-submittable-fields">
-        <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-        <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-        <?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'action', 'pods_admin', 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'method', 'process_form', 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_id', $pod->id(), 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 
         <ul class="pods-form-fields">
             <?php
@@ -70,15 +70,15 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
                     do_action( 'pods_form_pre_field', $field, $fields, $pod );
             ?>
-                <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Pods_Form::clean( $field[ 'name' ], true ); ?>">
                     <div class="pods-field-label">
-                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
+                        <?php echo Pods_Form::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
                     </div>
 
                     <div class="pods-field-input">
-                        <?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
+                        <?php echo Pods_Form::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
 
-                        <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], null, $field ); ?>
+                        <?php echo Pods_Form::comment( 'pods_field_' . $field[ 'name' ], null, $field ); ?>
                     </div>
                 </li>
             <?php
@@ -91,7 +91,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
                 if ( 'hidden' != $field[ 'type' ] )
                     continue;
 
-                echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+                echo Pods_Form::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
            }
         ?>
 

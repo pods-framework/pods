@@ -12,13 +12,13 @@ if ( !isset( $duplicate ) )
 else
     $duplicate = (boolean) $duplicate;
 
-$block_field_types = PodsForm::block_field_types();
+$block_field_types = Pods_Form::block_field_types();
 
 // unset fields
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $id ) ) {
+    elseif ( false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $id ) ) {
         if ( pods_var( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
         elseif ( pods_var( 'read_only', $field, false ) )
@@ -93,15 +93,15 @@ $do = 'save';
 
 <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax">
     <div class="pods-submittable-fields">
-        <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-        <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-        <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $id ), 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'action', 'pods_admin', 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'method', 'process_form', 'hidden' ); ?>
+        <?php echo Pods_Form::field( 'do', $do, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_id', ( $duplicate ? 0 : $id ), 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+        <?php echo Pods_Form::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 
         <?php
 			$groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[ 'name' ] );
@@ -115,14 +115,14 @@ $do = 'save';
 		?>
 			<h3 class="title"><?php echo $group[ 'label' ]; ?></h3>
 
-			<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_settings' ), 'hidden' ); ?>
+			<?php echo Pods_Form::field( 'pods_meta', wp_create_nonce( 'pods_meta_settings' ), 'hidden' ); ?>
 
         	<table class="form-table pods-manage-field">
             	<?php
 					$depends_on = false;
 
 					foreach ( $group[ 'fields' ] as $field ) {
-						if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
+						if ( false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
 							if ( pods_var( 'hidden', $field, false ) )
 								$field[ 'type' ] = 'hidden';
 							else
@@ -142,7 +142,7 @@ $do = 'save';
 							continue;
 						}
 
-						$depends = PodsForm::dependencies( $field );
+						$depends = Pods_Form::dependencies( $field );
 
 						if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
 							if ( !empty( $depends_on ) ) {
@@ -160,22 +160,22 @@ $do = 'save';
 
 						if ( in_array( $field[ 'type' ], $block_field_types ) ) {
 						?>
-							<tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+							<tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Pods_Form::clean( $field[ 'name' ], true ); ?>">
 								<td colspan="2">
-									<?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+									<?php echo Pods_Form::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
 								</td>
 							</tr>
 						<?php
 						}
 						else {
 						?>
-							<tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+							<tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Pods_Form::clean( $field[ 'name' ], true ); ?>">
 								<th>
-									<?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
+									<?php echo Pods_Form::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 								</th>
 								<td>
-									<?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
-									<?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+									<?php echo Pods_Form::field( 'pods_field_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+									<?php echo Pods_Form::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
 								</td>
 							</tr>
 						<?php
@@ -196,7 +196,7 @@ $do = 'save';
 					foreach ( $hidden_fields as $hidden_field ) {
 						$field = $hidden_field[ 'field' ];
 
-						echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+						echo Pods_Form::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
 					}
 				}
 			}

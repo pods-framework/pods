@@ -1270,8 +1270,8 @@ class Pods_Object_Pod extends Pods_Object {
 			return false;
 		}
 
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$tableless_field_types = Pods_Form::tableless_field_types();
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
 		$params = (object) $options;
 

@@ -10,7 +10,7 @@ if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
 
 $counter = 1;
 $primary_name = $name;
-$primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
+$primary_id = 'pods-form-ui-' . Pods_Form::clean( $name );
 $selection_made = false;
 
 foreach ( $options[ 'data' ] as $val => $label ) {
@@ -35,7 +35,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
 
     $attributes[ 'value' ] = $val;
 
-    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+    $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 
     $indent = '';
 
@@ -63,7 +63,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     }
     ?>
     <div class="pods-field pods-boolean"<?php echo $indent; ?>>
-        <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
+        <input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
         <?php
         if ( 0 < strlen( $label ) ) {
             $help = pods_var_raw( 'help', $options );
@@ -71,7 +71,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
             if ( 1 == pods_var( 'grouped', $options, 0, null, true ) || empty( $help ) )
                 $help = '';
 
-            echo PodsForm::label( $attributes[ 'id' ], $label, $help );
+            echo Pods_Form::label( $attributes[ 'id' ], $label, $help );
         }
         ?>
     </div>

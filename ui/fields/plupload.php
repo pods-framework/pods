@@ -9,10 +9,10 @@ wp_enqueue_script( 'pods-attach' );
 
 wp_enqueue_style( 'pods-attach' );
 
-$field_file = PodsForm::field_loader( 'file' );
+$field_file = Pods_Form::field_loader( 'file' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
@@ -132,7 +132,7 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+<div<?php Pods_Form::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
         foreach ( $value as $val ) {
             $attachment = get_post( $val );

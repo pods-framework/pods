@@ -1256,7 +1256,7 @@ class PodsUI {
                 if ( 'search_columns' == $which && !$attributes[ 'search' ] )
                     continue;
 
-                $attributes = PodsForm::field_setup( $attributes, null, $attributes[ 'type' ] );
+                $attributes = Pods_Form::field_setup( $attributes, null, $attributes[ 'type' ] );
 
                 $new_fields[ $field ] = $attributes;
             }
@@ -1783,7 +1783,7 @@ class PodsUI {
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
 				continue;
 			}
-			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
+			elseif ( !Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
 				continue;
 			}
 
@@ -2517,21 +2517,21 @@ class PodsUI {
 
 
                             if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                $start = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
+                                $start = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
 
                             if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                $end = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
+                                $end = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>_start">
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
-                        <?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field[ 'type' ], $filter_field ); ?>
+                        <?php echo Pods_Form::field( 'filter_' . $filter . '_start', $start, $filter_field[ 'type' ], $filter_field ); ?>
 
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>_end">
                             to
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field[ 'type' ], $filter_field );
+                            echo Pods_Form::field( 'filter_' . $filter . '_end', $end, $filter_field[ 'type' ], $filter_field );
                         }
                         elseif ( 'pick' == $filter_field[ 'type' ] ) {
                             $value = pods_var_raw( 'filter_' . $filter, 'get' );
@@ -2552,7 +2552,7 @@ class PodsUI {
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field );
+                            echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         elseif ( 'boolean' == $filter_field[ 'type' ] ) {
                             $value = pods_var_raw( 'filter_' . $filter, 'get', '' );
@@ -2579,7 +2579,7 @@ class PodsUI {
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field );
+                            echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         else {
                             $value = pods_var_raw( 'filter_' . $filter, 'get' );
@@ -2598,21 +2598,21 @@ class PodsUI {
                             <?php echo $filter_field[ 'label' ]; ?>
                         </label>
                     <?php
-                            echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options );
+                            echo Pods_Form::field( 'filter_' . $filter, $value, 'text', $options );
                         }
                     }
 
 					if ( false !== $this->do_hook( 'filters_show_search', true ) ) {
 					?>
 						&nbsp;&nbsp; <label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search<?php echo $this->num; ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-						<?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+						<?php echo Pods_Form::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
 					<?php
 					}
 					else {
-						echo PodsForm::field( 'search' . $this->num, '', 'hidden' );
+						echo Pods_Form::field( 'search' . $this->num, '', 'hidden' );
 					}
                     ?>
-                    <?php echo PodsForm::submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search' . $this->num . '-submit') ); ?>
+                    <?php echo Pods_Form::submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search' . $this->num . '-submit') ); ?>
                     <?php
                     if ( 0 < strlen( $this->search ) ) {
                         $clear_filters = array(
@@ -2840,15 +2840,15 @@ class PodsUI {
 						if ( false !== $this->do_hook( 'filters_show_search', true ) ) {
 					?>
 						&nbsp;&nbsp; <label class="screen-reader-text" for="page-search<?php echo $this->num; ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-						<?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
+						<?php echo Pods_Form::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search' . $this->num . '-input' ) ) ); ?>
 					<?php
 						}
 						else {
-							echo PodsForm::field( 'search' . $this->num, '', 'hidden' );
+							echo Pods_Form::field( 'search' . $this->num, '', 'hidden' );
 						}
 					?>
 
-                    <?php echo PodsForm::submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search' . $this->num . '-submit') ); ?>
+                    <?php echo Pods_Form::submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search' . $this->num . '-submit') ); ?>
                 </p>
             <?php
                 }
@@ -2902,17 +2902,17 @@ class PodsUI {
                                 $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true );
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                    $start = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
+                                    $start = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
 
                                 if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                    $end = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
+                                    $end = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
 
                                 $value = trim( $start . ' - ' . $end, ' -' );
 
                                 $data_filter = 'filter_' . $filter . '_start';
                             }
                             elseif ( 'pick' == $filter_field[ 'type' ] )
-                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $filter_field, $this->pod->pod_data, null ) );
+                                $value_label = trim( Pods_Form::field_method( 'pick', 'value_to_label', $filter, $value, $filter_field, $this->pod->pod_data, null ) );
                             elseif ( 'boolean' == $filter_field[ 'type' ] ) {
                                 $yesno_options = array(
                                     '1' => pods_var_raw( 'boolean_yes_label', $filter_field, __( 'Yes', 'pods' ), null, true ),
@@ -2936,11 +2936,11 @@ class PodsUI {
 
                             <?php
                                 if ( in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                                    echo PodsForm::field( 'filter_' . $filter . '_start', $start, 'hidden' );
-                                    echo PodsForm::field( 'filter_' . $filter . '_end', $end, 'hidden' );
+                                    echo Pods_Form::field( 'filter_' . $filter . '_start', $start, 'hidden' );
+                                    echo Pods_Form::field( 'filter_' . $filter . '_end', $end, 'hidden' );
                                 }
                                 else
-                                    echo PodsForm::field( $data_filter, $value, 'hidden' );
+                                    echo Pods_Form::field( $data_filter, $value, 'hidden' );
                             ?>
                         </li>
                     <?php
@@ -3037,10 +3037,10 @@ class PodsUI {
                                 $filter_field[ $filter_field[ 'type' ] . '_allow_empty' ] = 1;
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                    $start = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
+                                    $start = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
 
                                 if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                    $end = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
+                                    $end = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( ( empty( $start ) && empty( $end ) ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3050,10 +3050,10 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field[ 'type' ], $filter_field ); ?>
+                                <?php echo Pods_Form::field( 'filter_' . $filter . '_start', $start, $filter_field[ 'type' ], $filter_field ); ?>
 
                                 <label for="pods-form-ui-filter-<?php echo $filter; ?>_end">to</label>
-                                <?php echo PodsForm::field( 'filter_' . $filter . '_end', $end, $filter_field[ 'type' ], $filter_field ); ?>
+                                <?php echo Pods_Form::field( 'filter_' . $filter . '_end', $end, $filter_field[ 'type' ], $filter_field ); ?>
                             </span>
                         <?php
                             }
@@ -3080,7 +3080,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
+                                <?php echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
                             </span>
                         <?php
                             }
@@ -3113,7 +3113,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
+                                <?php echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field ); ?>
                             </span>
                         <?php
                             }
@@ -3138,7 +3138,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options ); ?>
+                                <?php echo Pods_Form::field( 'filter_' . $filter, $value, 'text', $options ); ?>
                             </span>
                         <?php
                             }
@@ -3151,7 +3151,7 @@ class PodsUI {
 
                 <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-search<?php echo ( $zebra ? ' clear' : '' ); ?>">
                     <label for="pods-form-ui-search<?php echo $this->num; ?>"><?php _e( 'Search Text', 'pods' ); ?></label>
-                    <?php echo PodsForm::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num, 'get' ), 'text' ); ?>
+                    <?php echo Pods_Form::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num, 'get' ), 'text' ); ?>
                 </p>
 
                 <?php $zebra = empty( $zebra ); ?>
@@ -3394,7 +3394,7 @@ class PodsUI {
                                 else {
                                     ob_start();
 
-                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, $attributes, $fields, $this->pod );
+                                    $field_value = Pods_Form::field_method( $attributes[ 'type' ], 'ui', $this->id, $row_value, $field, $attributes, $fields, $this->pod );
 
                                     $field_output = trim( (string) ob_get_clean() );
 

@@ -6,11 +6,11 @@
 
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
-            <?php echo PodsForm::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
+            <?php echo Pods_Form::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'component', $component, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'method', $method, 'hidden' ); ?>
+            <?php echo Pods_Form::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
 
             <h2 class="italicized"><?php _e( 'Migrate: Import from Custom Post Type UI', 'pods' ); ?></h2>
 
@@ -81,7 +81,7 @@
                                                     ?>
                                                     <li>
                                                         <div class="pods-field pods-boolean">
-                                                            <?php echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
+                                                            <?php echo Pods_Form::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
                                                         </div>
                                                     </li>
                                                     <?php
@@ -121,7 +121,7 @@
                                                     $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
                                                     ?>
                                                     <li>
-                                                        <?php echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
+                                                        <?php echo Pods_Form::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
                                                     </li>
                                                     <?php
                                                 }

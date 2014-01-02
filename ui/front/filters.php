@@ -10,7 +10,7 @@
 
                     $filter = pods_var_raw( 'filter_' . $name, 'get', '' );
 
-                    echo PodsForm::field( 'filter_' . $name, $filter, 'pick', $field, $pod->pod, $pod->id() );
+                    echo Pods_Form::field( 'filter_' . $name, $filter, 'pick', $field, $pod->pod, $pod->id() );
                 }
             }
         ?>

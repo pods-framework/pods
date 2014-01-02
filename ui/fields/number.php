@@ -1,5 +1,5 @@
 <?php
-$field_number = PodsForm::field_loader( 'number' );
+$field_number = Pods_Form::field_loader( 'number' );
 
 $value = $field_number->format( $value, $name, $options, $pod, $id );
 
@@ -7,7 +7,7 @@ $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 global $wp_locale;
 
@@ -28,7 +28,7 @@ else {
     $dot = $wp_locale->number_format[ 'decimal_point' ];
 }
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
+<input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {

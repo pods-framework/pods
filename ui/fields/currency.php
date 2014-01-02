@@ -1,5 +1,5 @@
 <?php
-$field_number = PodsForm::field_loader( 'currency' );
+$field_number = Pods_Form::field_loader( 'currency' );
 
 $value = $field_number->format( $value, $name, $options, $pod, $id );
 
@@ -7,7 +7,7 @@ $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 global $wp_locale;
 
@@ -35,7 +35,7 @@ if ( isset( Pods_Field_Currency::$currencies[ pods_var( 'currency_format_sign', 
 
 $currency_sign = Pods_Field_Currency::$currencies[ $currency ];
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
+<input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {

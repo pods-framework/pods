@@ -6,11 +6,11 @@
 
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
-            <?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'component', $component, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'method', $method, 'hidden' ); ?>
+            <?php echo Pods_Form::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'import_export', 'export', 'hidden' ); ?>
 
             <h2 class="italicized"><?php _e( 'Migrate: Packages', 'pods' ); ?></h2>
 
@@ -91,7 +91,7 @@
                                 <div class="inside pods-manage-field pods-dependency">
                                     <div class="pods-field-option">
                                         <?php
-                                            echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
+                                            echo Pods_Form::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
                                         ?>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                                                             $zebra = ( !$zebra );
                                                     ?>
                                                         <li class="pods-zebra-<?php echo $class; ?>">
-                                                            <?php echo PodsForm::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
+                                                            <?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
                                                         </li>
                                                     <?php
                                                         }
@@ -169,7 +169,7 @@
                                                             $zebra = ( !$zebra );
                                                     ?>
                                                         <li class="pods-zebra-<?php echo $class; ?>">
-                                                            <?php echo PodsForm::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
+                                                            <?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
                                                         </li>
                                                     <?php
                                                         }
@@ -208,7 +208,7 @@
                                                             $zebra = ( !$zebra );
                                                     ?>
                                                         <li class="pods-zebra-<?php echo $class; ?>">
-                                                            <?php echo PodsForm::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
+                                                            <?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
                                                         </li>
                                                     <?php
                                                         }
@@ -247,7 +247,7 @@
                                                             $zebra = ( !$zebra );
                                                     ?>
                                                         <li class="pods-zebra-<?php echo $class; ?>">
-                                                            <?php echo PodsForm::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
+                                                            <?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( !empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
                                                         </li>
                                                     <?php
                                                         }

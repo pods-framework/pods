@@ -205,17 +205,17 @@ function pods_data ( $pod = null, $id = null, $strict = true, $unique = true ) {
 }
 
 /**
- * Include and Init the PodsFormUI class
+ * Include and Init the Pods_FormUI class
  *
- * @see PodsForm
+ * @see Pods_Form
  *
- * @return PodsForm
+ * @return Pods_Form
  *
  * @since 2.0
  */
 function pods_form () {
 
-    return PodsForm::init();
+    return Pods_Form::init();
 }
 
 /**

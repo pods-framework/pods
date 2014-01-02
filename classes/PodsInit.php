@@ -219,7 +219,7 @@ class PodsInit {
 
         $this->register_pods();
 
-        $avatar = PodsForm::field_loader( 'avatar' );
+        $avatar = Pods_Form::field_loader( 'avatar' );
 
         if ( method_exists( $avatar, 'get_avatar' ) )
             add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
@@ -1289,7 +1289,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        $file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
+        $file_types = "'" . implode( "', '", Pods_Form::file_field_types() ) . "'";
 
         if ( !pods_tableless() ) {
             $sql = "

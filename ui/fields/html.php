@@ -1,3 +1,3 @@
-<h4 class="pods-form-ui-<?php echo PodsForm::clean( $name ); ?> pods-form-html">
+<h4 class="pods-form-ui-<?php echo Pods_Form::clean( $name ); ?> pods-form-html">
 	<?php echo $value; ?>
 </h4>

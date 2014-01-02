@@ -675,7 +675,7 @@ class PodsData {
                 $this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
             }
 
-            $this->fields = PodsForm::fields_setup( $this->fields );
+            $this->fields = Pods_Form::fields_setup( $this->fields );
         }
         $this->total_found_calculated = false;
 
@@ -713,7 +713,7 @@ class PodsData {
      * @since 2.0
      */
     public function build ( $params ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         $defaults = array(
             'select' => '*',
@@ -985,7 +985,7 @@ class PodsData {
                                 $fieldfield = $fieldfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                             }
                         }
-                        elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) ) {
+                        elseif ( in_array( $attributes[ 'type' ], Pods_Form::file_field_types() ) ) {
                             if ( false === $params->search_across_files )
                                 continue;
                             else
@@ -1065,7 +1065,7 @@ class PodsData {
 
                     $filterfield = $filterfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                 }
-                elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) )
+                elseif ( in_array( $attributes[ 'type' ], Pods_Form::file_field_types() ) )
                     $filterfield = $filterfield . '.`post_title`';
                 elseif ( isset( $params->fields[ $field ] ) ) {
                     if ( $params->meta_fields )
@@ -1684,7 +1684,7 @@ class PodsData {
 
         $id = $row;
 
-        $tableless_field_types = PodsForm::tableless_field_types();
+        $tableless_field_types = Pods_Form::tableless_field_types();
 
         if ( null === $row && !empty( $this->data ) ) {
             $this->row_number++;
@@ -2332,7 +2332,7 @@ class PodsData {
     public static function query_field ( $field, $q, $pod = null, &$params = null ) {
         global $wpdb;
 
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         $field_query = null;
 
@@ -2390,8 +2390,8 @@ class PodsData {
 				if ( !empty( $pod ) && false === strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
-					$tableless_field_types = PodsForm::tableless_field_types();
-					$file_field_types = PodsForm::file_field_types();
+					$tableless_field_types = Pods_Form::tableless_field_types();
+					$file_field_types = Pods_Form::file_field_types();
 
 					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
 						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {
@@ -2681,9 +2681,9 @@ class PodsData {
 			$pod_data[ 'fields' ] = array_merge( $pod_data[ 'fields' ], $pod_data[ 'object_fields' ] );
 		}
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-        $file_field_types = PodsForm::file_field_types();
+        $tableless_field_types = Pods_Form::tableless_field_types();
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+        $file_field_types = Pods_Form::file_field_types();
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
@@ -2738,7 +2738,7 @@ class PodsData {
             if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
             elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
-                $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
+                $pod_data[ 'fields' ][ $field ] = Pods_Form::field_setup( array( 'name' => $field ) );
             else {
                 if ( 'post_type' == $pod_data[ 'type' ] ) {
                     $pod_data[ 'object_fields' ] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );

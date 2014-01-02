@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsForm {
+class Pods_Form {
 
     /**
-     * @var PodsForm
+     * @var Pods_Form
      */
     protected static $instance = null;
 
@@ -42,13 +42,13 @@ class PodsForm {
     /**
      * Singleton handling for a basic pods_form() request
      *
-     * @return \PodsForm
+     * @return \Pods_Form
      *
      * @since 2.3.5
      */
     public static function init () {
         if ( !is_object( self::$instance ) )
-            self::$instance = new PodsForm();
+            self::$instance = new Pods_Form();
 
         return self::$instance;
     }
@@ -56,7 +56,7 @@ class PodsForm {
     /**
      * Master handler for all field / form methods
      *
-     * @return \PodsForm
+     * @return \Pods_Form
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0

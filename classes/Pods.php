@@ -467,7 +467,7 @@ class Pods implements Iterator {
 				$value = $this->field( array( 'name' => $field, 'in_form' => true ) );
 			}
 
-			return PodsForm::field( $input_name, $value, $field_type, $field_data, $this, $this->id() );
+			return Pods_Form::field( $input_name, $value, $field_type, $field_data, $this, $this->id() );
 		}
 
 		return '';
@@ -506,8 +506,8 @@ class Pods implements Iterator {
 			$field_data = null;
 
 			// Get a list of available items from a relationship field
-			if ( 'data' == $option && in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $this->fields[ $field ] );
+			if ( 'data' == $option && in_array( $this->fields[ $field ][ 'type' ], Pods_Form::tableless_field_types() ) ) {
+				$field_data = Pods_Form::field_method( 'pick', 'get_field_data', $this->fields[ $field ] );
 			}
 			// Return option
 			elseif ( isset( $this->fields[ $field ][ $option ] ) ) {
@@ -732,8 +732,8 @@ class Pods implements Iterator {
 			return 0;
 		}
 
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$tableless_field_types = Pods_Form::tableless_field_types();
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
 		$params->traverse = array();
 
@@ -807,7 +807,7 @@ class Pods implements Iterator {
 			}
 
 			if ( false !== $value && !is_array( $value ) && 'pick' == $field_data[ 'type' ] && ( in_array( $field_data[ 'pick_object' ], $simple_tableless_objects ) || 1 == $field_data[ 'pick_simple' ] ) ) {
-				$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
+				$value = Pods_Form::field_method( 'pick', 'simple_value', $params->name, $value, $field_data, $this->pod_data, $this->id(), true );
 			}
 		}
 
@@ -1023,7 +1023,7 @@ class Pods implements Iterator {
 							$params->single = false;
 						}
 
-						$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
+						$value = Pods_Form::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
 					}
 
 					if ( !$no_conflict ) {
@@ -1190,7 +1190,7 @@ class Pods implements Iterator {
 							$object_type = $last_object;
 							$object = $last_pick_val;
 
-							if ( in_array( $last_type, PodsForm::file_field_types() ) ) {
+							if ( in_array( $last_type, Pods_Form::file_field_types() ) ) {
 								$object_type = 'media';
 								$object = 'attachment';
 							}
@@ -1399,11 +1399,11 @@ class Pods implements Iterator {
 
 										if ( (
 												( false !== strpos( $full_field, '_src' ) || 'guid' == $field )
-												&& ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) )
+												&& ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, Pods_Form::file_field_types() ) )
 											)
 											|| ( in_array( $field, array( '_link', 'detail_url' ) )
 												|| in_array( $field, array( 'permalink', 'the_permalink' ) )
-												&& in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+												&& in_array( $last_type, Pods_Form::file_field_types() ) ) ) {
 											$size = 'full';
 
 											if ( false !== strpos( $full_field, '_src.' ) && 5 < strlen( $full_field ) ) {
@@ -1435,7 +1435,7 @@ class Pods implements Iterator {
 										elseif ( false !== strpos( $full_field, '_img' )
 												&& (
 													in_array( $table[ 'type' ], array( 'attachment', 'media' ) )
-													|| in_array( $last_type, PodsForm::file_field_types() )
+													|| in_array( $last_type, Pods_Form::file_field_types() )
 												) ) {
 											$size = 'full';
 
@@ -1525,7 +1525,7 @@ class Pods implements Iterator {
 										$params->single = false;
 									}
 
-									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
+									$value = Pods_Form::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
 								}
 								elseif ( false === $params->in_form && !empty( $value ) ) {
 									$value = array_values( $value );
@@ -1594,7 +1594,7 @@ class Pods implements Iterator {
 					$value = call_user_func_array( 'apply_filters', $args );
 				}
 				elseif ( 1 == pods_v_sanitized( 'display_process', $field_data, 1 ) ) {
-					$value = PodsForm::display( $field_data[ 'type' ], $value, $params->name, $field_data, $this->pod_data, $this->id() );
+					$value = Pods_Form::display( $field_data[ 'type' ], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 				}
 
 				if ( $post_temp ) {
@@ -1603,7 +1603,7 @@ class Pods implements Iterator {
 				}
 			}
 			else {
-				$value = PodsForm::value( $field_data[ 'type' ], $value, $params->name, $field_data, $this->pod_data, $this->id() );
+				$value = Pods_Form::value( $field_data[ 'type' ], $value, $params->name, $field_data, $this->pod_data, $this->id() );
 			}
 		}
 
@@ -1641,12 +1641,12 @@ class Pods implements Iterator {
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::tableless_field_types() ) ) {
 			if ( !is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) ) {
@@ -1680,7 +1680,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Text fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -1724,14 +1724,14 @@ class Pods implements Iterator {
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::tableless_field_types() ) ) {
 			if ( !is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
 			$current_value = array();
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) ) {
@@ -1786,7 +1786,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Number fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::number_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( (float) $current_value === (float) $value ) {
@@ -1794,7 +1794,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Date fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::date_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -1807,7 +1807,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Text fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( (string) $current_value === (string) $value ) {
@@ -2144,8 +2144,8 @@ class Pods implements Iterator {
 	 */
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
 
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$tableless_field_types = Pods_Form::tableless_field_types();
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         $this->params = $params;
 
@@ -2614,12 +2614,12 @@ class Pods implements Iterator {
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::tableless_field_types() ) ) {
 			if ( !is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
+			if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( !empty( $current_value ) || ( !is_array( $current_value ) && 0 < strlen( $current_value ) ) ) {
@@ -2655,13 +2655,13 @@ class Pods implements Iterator {
 			}
 		}
 		// Number fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::number_field_types() ) ) {
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value + (float) $value );
 		}
 		// Date fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::date_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2672,7 +2672,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Text fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2734,7 +2734,7 @@ class Pods implements Iterator {
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::tableless_field_types() ) ) {
 			if ( empty( $value ) ) {
 				$value = array();
 			}
@@ -2744,7 +2744,7 @@ class Pods implements Iterator {
 					$value = explode( ',', $value );
 				}
 
-				if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
+				if ( 'pick' == $this->fields[ $field ][ 'type' ] && ( in_array( $this->fields[ $field ][ 'pick_object' ], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ][ 'pick_simple' ] ) ) {
 					$current_value = $pod->raw( $field );
 
 					if ( !empty( $current_value ) ) {
@@ -2790,7 +2790,7 @@ class Pods implements Iterator {
 			}
 		}
 		// Number fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::number_field_types() ) ) {
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;
@@ -2801,7 +2801,7 @@ class Pods implements Iterator {
 			$value = ( $current_value - (float) $value );
 		}
 		// Date fields
-		elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[ $field ][ 'type' ], Pods_Form::date_field_types() ) ) {
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;
@@ -3533,15 +3533,15 @@ class Pods implements Iterator {
 
 		$thank_you = $params[ 'thank_you' ];
 
-		PodsForm::$form_counter++;
+		Pods_Form::$form_counter++;
 
 		ob_start();
 
 		if ( empty( $thank_you ) ) {
 			$success = 'success';
 
-			if ( 1 < PodsForm::$form_counter ) {
-				$success .= PodsForm::$form_counter;
+			if ( 1 < Pods_Form::$form_counter ) {
+				$success .= Pods_Form::$form_counter;
 			}
 
 			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
@@ -3625,7 +3625,7 @@ class Pods implements Iterator {
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field[ 'type' ] ) {
 				continue;
 			}
-			elseif ( !PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
+			elseif ( !Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) ) {
 				continue;
 			}
 
@@ -3875,7 +3875,7 @@ class Pods implements Iterator {
 							'width' => '8%'
 						);
 
-						$manage_new[ $manage_field ] = PodsForm::field_setup( $field, null, $field[ 'type' ] );
+						$manage_new[ $manage_field ] = Pods_Form::field_setup( $field, null, $field[ 'type' ] );
 					}
 				}
 

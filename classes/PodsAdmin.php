@@ -1024,7 +1024,7 @@ class PodsAdmin {
 			$value = $row[ $option ];
 
 			if ( !empty( $value ) ) {
-				$value = PodsForm::field_method( 'pick', 'value_to_label', $option, $value, $option_data, $obj->pod->pod_data, $obj->id );
+				$value = Pods_Form::field_method( 'pick', 'value_to_label', $option, $value, $option_data, $obj->pod->pod_data, $obj->id );
 
 				if ( !empty( $value ) ) {
 					$rule_label = $option_data[ 'label' ];

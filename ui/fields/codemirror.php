@@ -7,10 +7,10 @@
 	$type = 'textarea';
 	$attributes = array();
 	$attributes[ 'tabindex' ] = 2;
-	$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
+	$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
 ?>
 <div class="code-toolbar"><!-- Placeholder --></div>
-<textarea<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
+<textarea<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
 <div class="code-footer"><!-- Placeholder --></div>
 
 <script>

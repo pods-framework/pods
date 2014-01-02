@@ -1637,10 +1637,10 @@ class PodsAPI {
     public function save_pod_item ( $params ) {
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $repeatable_field_types = PodsForm::repeatable_field_types();
-        $block_field_types = PodsForm::block_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $tableless_field_types = Pods_Form::tableless_field_types();
+        $repeatable_field_types = Pods_Form::repeatable_field_types();
+        $block_field_types = Pods_Form::block_field_types();
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
@@ -1778,7 +1778,7 @@ class PodsAPI {
 						continue;
 					}
 
-                    if ( 'save' == $params->from || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                    if ( 'save' == $params->from || true === Pods_Form::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
                     }
@@ -1842,7 +1842,7 @@ class PodsAPI {
                 if ( in_array( $field, $fields_active ) )
                     continue;
 
-				$value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field_data, $pod, $params->id );
+				$value = Pods_Form::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field_data, $pod, $params->id );
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$object_fields[ $field ][ 'value' ] = $value;
@@ -1854,7 +1854,7 @@ class PodsAPI {
                 if ( in_array( $field, $fields_active ) )
                     continue;
 
-				$value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field_data, $pod, $params->id );
+				$value = Pods_Form::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field_data, $pod, $params->id );
 
 				if ( null !== $value && '' !== $value && false !== $value ) {
 					$fields[ $field ][ 'value' ] = $value;
@@ -1984,7 +1984,7 @@ class PodsAPI {
                     return pods_error( $validate, $this );
             }
 
-            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, $field_data, array_merge( $fields, $object_fields ), $pod, $params );
+            $value = Pods_Form::pre_save( $field_data[ 'type' ], $value, $params->id, $field, $field_data, array_merge( $fields, $object_fields ), $pod, $params );
 
             $field_data[ 'value' ] = $value;
 
@@ -2083,7 +2083,7 @@ class PodsAPI {
                     }
 
                     $table_data[ $field ] = str_replace( array( '{prefix}', '@wp_' ), array( '{/prefix/}', '{prefix}' ), $value ); // Fix for pods_query
-                    $table_formats[] = PodsForm::prepare( $type, $field_data );
+                    $table_formats[] = Pods_Form::prepare( $type, $field_data );
 
                     $object_meta[ $field ] = $value;
                 }
@@ -2215,7 +2215,7 @@ class PodsAPI {
 									$v = (int) $v;
 								}
 								// File handling
-								elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
+								elseif ( in_array( $type, Pods_Form::file_field_types() ) ) {
 									// Get ID from GUID
 									$attachment_id = pods_image_id_from_field( $v );
 
@@ -2240,7 +2240,7 @@ class PodsAPI {
 								}
 								// @todo Handle simple relationships eventually
 							}
-							elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) ) {
+							elseif ( in_array( $type, Pods_Form::file_field_types() ) && isset( $v[ 'id' ] ) ) {
 								$v = (int) $v[ 'id' ];
 							}
 							else {
@@ -2277,7 +2277,7 @@ class PodsAPI {
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $values, $params->id, $field, $fields[ $field ], array_merge( $fields, $object_fields ), $pod, $params );
+                    Pods_Form::save( $type, $values, $params->id, $field, $fields[ $field ], array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -2745,8 +2745,8 @@ class PodsAPI {
      * @since 2.3
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $tableless_field_types = Pods_Form::tableless_field_types();
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
@@ -2778,7 +2778,7 @@ class PodsAPI {
                         if ( !empty( $field[ 'table_info' ] ) )
                             $field[ 'lookup_name' ] .= '.' . $field[ 'table_info' ][ 'field_id' ];
                     }
-                    elseif ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
+                    elseif ( in_array( $field[ 'type' ], Pods_Form::file_field_types() ) )
                         $field[ 'lookup_name' ] .= '.guid';
                 }
 
@@ -3323,7 +3323,7 @@ class PodsAPI {
 			$name = $pod[ 'name' ];
 
 			foreach ( $pod[ 'fields' ] as $field ) {
-				PodsForm::delete( $field[ 'type' ], $id, $field[ 'name' ], $field, $pod );
+				Pods_Form::delete( $field[ 'type' ], $id, $field[ 'name' ], $field, $pod );
 			}
 		}
 
@@ -4653,13 +4653,13 @@ class PodsAPI {
      *
      * @return array Array of field types
      *
-     * @uses PodsForm::field_loader
+     * @uses Pods_Form::field_loader
      *
      * @since 2.0
      * @deprecated
      */
     public function get_field_types () {
-        return PodsForm::field_types();
+        return Pods_Form::field_types();
     }
 
     /**
@@ -4673,13 +4673,13 @@ class PodsAPI {
      * @since 2.0
      */
     public function get_field_definition ( $type, $options = null ) {
-		$definition = PodsForm::field_method( $type, 'schema', $options );
+		$definition = Pods_Form::field_method( $type, 'schema', $options );
 
         return $this->do_hook( 'field_definition', $definition, $type, $options );
     }
 
     /**
-     * @see PodsForm:validate
+     * @see Pods_Form:validate
      *
      * Validates the value of a field.
      *
@@ -4692,12 +4692,12 @@ class PodsAPI {
      *
      * @return array|bool
      *
-     * @uses PodsForm::validate
+     * @uses Pods_Form::validate
      *
      * @since 2.0
      */
     public function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
-        $tableless_field_types = PodsForm::tableless_field_types();
+        $tableless_field_types = Pods_Form::tableless_field_types();
 
         $fields = array_merge( $fields, $object_fields );
 
@@ -4765,7 +4765,7 @@ class PodsAPI {
             }
         }
 
-        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, $options, $fields, $pod, $id, $params );
+        $validate = Pods_Form::validate( $options[ 'type' ], $value, $field, $options, $fields, $pod, $id, $params );
 
         $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params, $options );
 
@@ -4799,7 +4799,7 @@ class PodsAPI {
 
         $ids = array_unique( array_filter( $ids ) );
 
-        $tableless_field_types = PodsForm::tableless_field_types();
+        $tableless_field_types = Pods_Form::tableless_field_types();
 
 		$field_type = pods_var( 'type', $field );
 
@@ -4959,7 +4959,7 @@ class PodsAPI {
 
         $id = (int) $id;
 
-        $tableless_field_types = PodsForm::tableless_field_types();
+        $tableless_field_types = Pods_Form::tableless_field_types();
 
         if ( empty( $id ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
             return false;
@@ -5729,7 +5729,7 @@ class PodsAPI {
 
         $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         foreach ( $import_data as $key => $data_row ) {
             $data = array();
@@ -5750,12 +5750,12 @@ class PodsAPI {
                     $field_value = $data_row[ $field_data[ 'label' ] ];
 
                 if ( null !== $field_value && false !== $field_value && '' !== $field_value ) {
-                    if ( 'pick' == $type || in_array( $type, PodsForm::file_field_types() ) ) {
+                    if ( 'pick' == $type || in_array( $type, Pods_Form::file_field_types() ) ) {
                         $field_values = is_array( $field_value ) ? $field_value : array( $field_value );
                         $pick_values = array();
 
                         foreach ( $field_values as $pick_value ) {
-                            if ( in_array( $type, PodsForm::file_field_types() ) || 'media' == $pick_object ) {
+                            if ( in_array( $type, Pods_Form::file_field_types() ) || 'media' == $pick_object ) {
                                 $where = "`guid` = '" . pods_sanitize( $pick_value ) . "'";
 
                                 if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )

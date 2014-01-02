@@ -6,10 +6,10 @@
 
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'component', $component, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'method', $method, 'hidden' ); ?>
+            <?php echo Pods_Form::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
             <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Add New Role', 'pods' ); ?></h2>
 
@@ -40,15 +40,15 @@
                             <div class="inside pods-manage-field">
                                 <div class="pods-field-option">
                                     <?php
-                                    echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-                                    echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+                                    echo Pods_Form::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
+                                    echo Pods_Form::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
                                     ?>
                                 </div>
 
                                 <div class="pods-field-option">
                                     <?php
-                                    echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-                                    echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                    echo Pods_Form::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
+                                    echo Pods_Form::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                     ?>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                                                 $zebra = ( !$zebra );
                                                 ?>
                                                 <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-                                                    <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+                                                    <?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                 </li>
                                                 <?php
                                             }
@@ -94,17 +94,17 @@
                                 <div class="pods-field-option-group">
                                     <p class="pods-field-option-group-label">
                                         <?php
-                                        echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
+                                        echo Pods_Form::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
                                         ?>
                                     </p>
 
                                     <div class="pods-pick-values pods-pick-checkbox">
                                         <ul id="custom-capabilities">
                                             <li class="pods-repeater hidden">
-                                                <?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+                                                <?php echo Pods_Form::field( 'custom_capabilities[--1]', '', 'text' ); ?>
                                             </li>
                                             <li>
-                                                <?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+                                                <?php echo Pods_Form::field( 'custom_capabilities[0]', '', 'text' ); ?>
                                             </li>
                                         </ul>
 

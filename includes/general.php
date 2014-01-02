@@ -1657,7 +1657,7 @@ function pods_register_field ( $pod, $name, $field = null ) {
 /**
  * Add a new Pod field type
  *
- * @see PodsForm::register_field_type
+ * @see Pods_Form::register_field_type
  *
  * @param string $type The new field type identifier
  * @param string $file The new field type class file location
@@ -1666,7 +1666,7 @@ function pods_register_field ( $pod, $name, $field = null ) {
  * @since 2.3
  */
 function pods_register_field_type ( $type, $file = null ) {
-    return PodsForm::register_field_type( $type, $file );
+    return Pods_Form::register_field_type( $type, $file );
 }
 
 /**
@@ -1680,7 +1680,7 @@ function pods_register_field_type ( $type, $file = null ) {
  * @since 2.3
  */
 function pods_register_related_object ( $name, $label, $options = null ) {
-    return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
+    return Pods_Form::field_method( 'pick', 'register_related_object', $name, $label, $options );
 }
 
 /**

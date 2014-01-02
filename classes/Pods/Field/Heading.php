@@ -158,7 +158,7 @@ class Pods_Field_Heading extends Pods_Field {
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $form_field_type = PodsForm::$field_type;
+        $form_field_type = Pods_Form::$field_type;
 
 		$field_type = 'heading';
 

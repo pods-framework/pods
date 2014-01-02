@@ -6,11 +6,11 @@
 
     <form action="" method="post" class="pods-submittable pods-form">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'component', $component, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'method', $method, 'hidden' ); ?>
+            <?php echo Pods_Form::field( 'id', $id, 'hidden' ); ?>
+            <?php echo Pods_Form::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
             <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
@@ -98,7 +98,7 @@
                                                     $zebra = ( !$zebra );
                                                     ?>
                                                     <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-                                                        <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+                                                        <?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                     </li>
                                                     <?php
                                                 }
@@ -110,17 +110,17 @@
                                     <div class="pods-field-option-group">
                                         <p class="pods-field-option-group-label">
                                             <?php
-                                            echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
+                                            echo Pods_Form::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
                                             ?>
                                         </p>
 
                                         <div class="pods-pick-values pods-pick-checkbox">
                                             <ul id="custom-capabilities">
                                                 <li class="pods-repeater hidden">
-                                                    <?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+                                                    <?php echo Pods_Form::field( 'custom_capabilities[--1]', '', 'text' ); ?>
                                                 </li>
                                                 <li>
-                                                    <?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+                                                    <?php echo Pods_Form::field( 'custom_capabilities[0]', '', 'text' ); ?>
                                                 </li>
                                             </ul>
 

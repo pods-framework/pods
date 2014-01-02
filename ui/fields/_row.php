@@ -1,5 +1,5 @@
-<?php echo PodsForm::label( $name, $options ); ?>
+<?php echo Pods_Form::label( $name, $options ); ?>
 
-<?php echo PodsForm::field( $name, $value, $type, $options, $pod, $id ); ?>
+<?php echo Pods_Form::field( $name, $value, $type, $options, $pod, $id ); ?>
 
-<?php echo PodsForm::comment( $name, null, $options ); ?>
+<?php echo Pods_Form::comment( $name, null, $options ); ?>

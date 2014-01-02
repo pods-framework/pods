@@ -27,7 +27,7 @@ else {
 
 $group_label = $group[ 'label' ];
 
-$field_types = PodsForm::field_types();
+$field_types = Pods_Form::field_types();
 
 $field_types_select = array();
 
@@ -35,7 +35,7 @@ foreach ( $field_types as $type => $field_type_data ) {
     /**
      * @var $field_type Pods_Field
      */
-    $field_type = PodsForm::field_loader( $type, $field_type_data[ 'file' ] );
+    $field_type = Pods_Form::field_loader( $type, $field_type_data[ 'file' ] );
 
     $field_type_vars = get_class_vars( get_class( $field_type ) );
 
@@ -52,11 +52,11 @@ foreach ( $field_types as $type => $field_type_data ) {
             continue;
     }
 
-    if ( !empty( PodsForm::$field_group ) ) {
-        if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
-            $field_types_select[ PodsForm::$field_group ] = array();
+    if ( !empty( Pods_Form::$field_group ) ) {
+        if ( !isset( $field_types_select[ Pods_Form::$field_group ] ) )
+            $field_types_select[ Pods_Form::$field_group ] = array();
 
-        $field_types_select[ PodsForm::$field_group ][ $type ] = $field_type_data[ 'label' ];
+        $field_types_select[ Pods_Form::$field_group ][ $type ] = $field_type_data[ 'label' ];
     }
     else {
         if ( !isset( $field_types_select[ __( 'Other', 'pods' ) ] ) )
@@ -77,11 +77,11 @@ $field_defaults = array(
     'unique' => 0,
 );
 
-$pick_object = PodsForm::field_method( 'pick', 'related_objects', true );
+$pick_object = Pods_Form::field_method( 'pick', 'related_objects', true );
 
-$tableless_field_types = PodsForm::tableless_field_types();
-$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-$bidirectional_objects = PodsForm::field_method( 'pick', 'bidirectional_objects' );
+$tableless_field_types = Pods_Form::tableless_field_types();
+$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+$bidirectional_objects = Pods_Form::field_method( 'pick', 'bidirectional_objects' );
 
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
 
@@ -331,7 +331,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
     <div id="pods-<?php echo $tab; ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
         <?php
             $fields = $tab_options[ $tab ];
-            $field_options = PodsForm::fields_setup( $fields );
+            $field_options = Pods_Form::fields_setup( $fields );
             $field = $group;
 
             include PODS_DIR . 'ui/admin/field-option.php';
@@ -503,7 +503,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
 
         pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
-        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', Pods_Form::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();

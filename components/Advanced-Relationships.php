@@ -17,7 +17,7 @@
 if ( class_exists( 'Pods_Advanced_Relationships' ) )
     return;
 
-class Pods_Advanced_Relationships extends PodsComponent {
+class Pods_Advanced_Relationships extends Pods_Component {
 
     /**
      * Do things like register/enqueue scripts and stylesheets

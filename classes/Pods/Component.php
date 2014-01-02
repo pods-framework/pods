@@ -4,12 +4,12 @@
  *
  * @package Pods
  */
-class PodsComponent {
+class Pods_Component {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @return \PodsComponent
+     * @return \Pods_Component
      *
      * @since 2.0
      */

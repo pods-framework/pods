@@ -17,7 +17,7 @@
 if ( class_exists( 'Pods_Roles' ) )
     return;
 
-class Pods_Roles extends PodsComponent {
+class Pods_Roles extends Pods_Component {
 
     /**
      * Do things like register/enqueue scripts and stylesheets

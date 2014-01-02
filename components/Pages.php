@@ -18,7 +18,7 @@
 if ( class_exists( 'Pods_Pages' ) )
     return;
 
-class Pods_Pages extends PodsComponent {
+class Pods_Pages extends Pods_Component {
 
     /**
      * Current Pod Page

@@ -20,7 +20,7 @@ if ( class_exists( 'Pods_Migrate_Packages' ) ) {
 	return;
 }
 
-class Pods_Migrate_Packages extends PodsComponent {
+class Pods_Migrate_Packages extends Pods_Component {
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets

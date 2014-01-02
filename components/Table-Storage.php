@@ -18,7 +18,7 @@ if ( class_exists( 'Pods_Table_Storage' ) ) {
 	return;
 }
 
-class Pods_Table_Storage extends PodsComponent {
+class Pods_Table_Storage extends Pods_Component {
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets

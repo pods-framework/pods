@@ -18,7 +18,7 @@
 if ( class_exists( 'Pods_Templates' ) )
     return;
 
-class Pods_Templates extends PodsComponent {
+class Pods_Templates extends Pods_Component {
 
     /**
      * Pods object

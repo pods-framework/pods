@@ -19,7 +19,7 @@
 if ( class_exists( 'Pods_Migrate_CPTUI' ) )
     return;
 
-class Pods_Migrate_CPTUI extends PodsComponent {
+class Pods_Migrate_CPTUI extends Pods_Component {
 
     private $api = null;
 

@@ -20,7 +20,7 @@
 if ( class_exists( 'Pods_Helpers' ) )
     return;
 
-class Pods_Helpers extends PodsComponent {
+class Pods_Helpers extends Pods_Component {
 
     /**
      * Pods object

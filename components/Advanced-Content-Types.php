@@ -18,7 +18,7 @@ if ( class_exists( 'Pods_Advanced_Content_Types' ) ) {
 	return;
 }
 
-class Pods_Advanced_Content_Types extends PodsComponent {
+class Pods_Advanced_Content_Types extends Pods_Component {
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets

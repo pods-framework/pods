@@ -207,7 +207,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
             }
         }
 
-        $columns = PodsData::get_table_columns( "{$wpdb->prefix}pod_tbl_{$pod}" );
+        $columns = Pods_Data::get_table_columns( "{$wpdb->prefix}pod_tbl_{$pod}" );
 
         $errors = array();
 
@@ -645,7 +645,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                 $table_formats = array_fill( 0, count( $table_data ), '%d' );
 
-                $sql = PodsData::insert_on_duplicate( "@wp_podsrel", $table_data, $table_formats );
+                $sql = Pods_Data::insert_on_duplicate( "@wp_podsrel", $table_data, $table_formats );
 
                 pods_query( $sql );
 

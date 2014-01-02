@@ -5,7 +5,7 @@
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
  *
- * @see PodsData::query
+ * @see Pods_Data::query
  *
  * @param string $sql SQL Query
  * @param string $error (optional) The failure message

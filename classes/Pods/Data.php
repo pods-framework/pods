@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsData {
+class Pods_Data {
 
     /**
-     * @var PodsData
+     * @var Pods_Data
      */
     static $instance = null;
 
@@ -231,15 +231,15 @@ class PodsData {
      * @param integer $id Pod Item ID
      * @param bool $strict If true throws an error if a pod is not found.
      *
-     * @return \PodsData
+     * @return \Pods_Data
      *
      * @since 2.3.5
      */
     public static function init ( $pod = null, $id = 0, $strict = true ) {
         if ( ( true !== $pod && null !== $pod ) || 0 != $id )
-            return new PodsData( $pod, $id, $strict );
+            return new Pods_Data( $pod, $id, $strict );
         elseif ( !is_object( self::$instance ) )
-            self::$instance = new PodsData();
+            self::$instance = new Pods_Data();
         else {
             $vars = get_class_vars( __CLASS__ );
 
@@ -261,7 +261,7 @@ class PodsData {
      * @param integer $id Pod Item ID
      * @param bool $strict If true throws an error if a pod is not found.
      *
-     * @return \PodsData
+     * @return \Pods_Data
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
@@ -573,8 +573,8 @@ class PodsData {
      *
      * @return array|bool|mixed|null|void
      *
-     * @uses PodsData::query
-     * @uses PodsData::prepare
+     * @uses Pods_Data::query
+     * @uses Pods_Data::prepare
      *
      * @since 2.0
      */
@@ -1455,7 +1455,7 @@ class PodsData {
      *
      * @return bool Zebra state
      * @since 1.12
-     * @see PodsData::nth
+     * @see Pods_Data::nth
      */
     public function zebra () {
         return $this->nth( 'odd' ); // Odd numbers
@@ -1464,7 +1464,7 @@ class PodsData {
     /**
      * Fetch the nth state
      *
-     * @param int|string $nth The $nth to match on the PodsData::row_number
+     * @param int|string $nth The $nth to match on the Pods_Data::row_number
      *
      * @return bool Whether $nth matches
      * @since 2.3
@@ -1527,7 +1527,7 @@ class PodsData {
      *
      * @return array|bool|mixed|null|void
      *
-     * @uses PodsData::query
+     * @uses Pods_Data::query
      *
      * @since 2.0
      */
@@ -1561,7 +1561,7 @@ class PodsData {
      *
      * @return array|bool|mixed|null|void
      *
-     * @uses PodsData::query
+     * @uses Pods_Data::query
      *
      * @since 2.0
      */
@@ -1583,7 +1583,7 @@ class PodsData {
      *
      * @return array|bool|mixed|null|void
      *
-     * @uses PodsData::query
+     * @uses Pods_Data::query
      *
      * @since 2.0
      */
@@ -1603,11 +1603,11 @@ class PodsData {
      *
      * @param string $table Table name
      *
-     * @uses PodsData::query
+     * @uses Pods_Data::query
      *
      * @return array|bool|mixed|null|void
      *
-     * @uses PodsData::query
+     * @uses Pods_Data::query
      *
      * @since 2.0
      */
@@ -1632,7 +1632,7 @@ class PodsData {
      *
      * @return bool
      *
-     * @uses PodsData::update
+     * @uses Pods_Data::update
      *
      * @since 2.0
      */
@@ -2325,7 +2325,7 @@ class PodsData {
      *
      * @return string|null Query field string
      *
-     * @see PodsData::query_fields
+     * @see Pods_Data::query_fields
      * @static
      * @since 2.3
      */

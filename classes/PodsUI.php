@@ -6,7 +6,7 @@ class PodsUI {
 
     // internal
     /**
-     * @var bool|PodsData
+     * @var bool|Pods_Data
      */
     private $pods_data = false;
 
@@ -2100,7 +2100,7 @@ class PodsUI {
     public function get_field ( $field ) {
         $value = null;
 
-        // use PodsData to get field
+        // use Pods_Data to get field
 
 		if ( $callback = $this->callback( 'get_field', $field ) ) {
 			return $callback;

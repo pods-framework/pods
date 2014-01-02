@@ -15,12 +15,12 @@ class Pods implements Iterator {
 	public $api;
 
 	/**
-	 * @var PodsData
+	 * @var Pods_Data
 	 */
 	public $data;
 
 	/**
-	 * @var PodsData
+	 * @var Pods_Data
 	 */
 	public $alt_data;
 
@@ -197,7 +197,7 @@ class Pods implements Iterator {
 		$this->api->display_errors =& $this->display_errors;
 
 		$this->data = pods_data( $this->api, $id, false );
-		PodsData::$display_errors =& $this->display_errors;
+		Pods_Data::$display_errors =& $this->display_errors;
 
 		// Set up page variable
 		if ( pods_strict( false ) || 0 === strpos( $pod, '_pods_' ) ) {
@@ -2375,7 +2375,7 @@ class Pods implements Iterator {
 	 *
 	 * Providing an $id will fetch a specific item from a Pod, much like a call to pods(), and can handle either an id or slug.
 	 *
-	 * @see PodsData::fetch
+	 * @see Pods_Data::fetch
 	 *
 	 * @param int $id ID or slug of the item to fetch
 	 * @param null|bool $explicit_set Whether to set explicitly (use false when in loop)
@@ -2401,7 +2401,7 @@ class Pods implements Iterator {
 	/**
 	 * (Re)set the MySQL result pointer
 	 *
-	 * @see PodsData::reset
+	 * @see Pods_Data::reset
 	 *
 	 * @param int $row ID of the row to reset to
 	 *
@@ -2424,7 +2424,7 @@ class Pods implements Iterator {
 	 *
 	 * This is different than the total number of rows found in the database, which you can get with total_found().
 	 *
-	 * @see PodsData::total
+	 * @see Pods_Data::total
 	 *
 	 * @return int Number of rows returned by find(), based on the 'limit' parameter set
 	 * @since 2.0
@@ -2446,7 +2446,7 @@ class Pods implements Iterator {
 	 *
 	 * This is different than the total number of rows limited by the current call, which you can get with total().
 	 *
-	 * @see PodsData::total_found
+	 * @see Pods_Data::total_found
 	 *
 	 * @return int Number of rows returned by find(), regardless of the 'limit' parameter
 	 * @since 2.0
@@ -2498,7 +2498,7 @@ class Pods implements Iterator {
 	/**
 	 * Fetch the zebra switch
 	 *
-	 * @see PodsData::zebra
+	 * @see Pods_Data::zebra
 	 *
 	 * @return bool Zebra state
 	 * @since 1.12
@@ -2513,9 +2513,9 @@ class Pods implements Iterator {
 	/**
 	 * Fetch the nth state
 	 *
-	 * @see PodsData::nth
+	 * @see Pods_Data::nth
 	 *
-	 * @param int|string $nth The $nth to match on the PodsData::row_number
+	 * @param int|string $nth The $nth to match on the Pods_Data::row_number
 	 *
 	 * @return bool Whether $nth matches
 	 * @since 2.3
@@ -2530,7 +2530,7 @@ class Pods implements Iterator {
 	/**
 	 * Fetch the current position in the loop (starting at 1)
 	 *
-	 * @see PodsData::position
+	 * @see Pods_Data::position
 	 *
 	 * @return int Current row number (+1)
 	 * @since 2.3

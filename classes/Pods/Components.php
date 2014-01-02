@@ -266,7 +266,7 @@ class Pods_Components {
         if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             $components = array();
 
-        if ( PodsInit::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+        if ( Pods_Init::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
             do_action( 'pods_components_get' );
 
             $component_dir = @opendir( untrailingslashit( $this->components_dir ) );

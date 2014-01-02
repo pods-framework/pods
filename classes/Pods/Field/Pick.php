@@ -1731,7 +1731,7 @@ class Pods_Field_Pick extends Pods_Field {
 		}
 
         if ( !isset( $params->_wpnonce ) || empty( $nonce_check ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
-            pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Unauthorized request', 'pods' ), Pods_Init::$admin );
 
         $api = pods_api();
 
@@ -1767,15 +1767,15 @@ class Pods_Field_Pick extends Pods_Field {
             $page = (int) $params->page;
 
         if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 || empty( $field ) )
-            pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Invalid field request', 'pods' ), Pods_Init::$admin );
         elseif ( !$custom_field && ( empty( $pod ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) ) )
-            pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Invalid field request', 'pods' ), Pods_Init::$admin );
         elseif ( 'pick' != $field[ 'type' ] || empty( $field[ 'table_info' ] ) )
-            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Invalid field', 'pods' ), Pods_Init::$admin );
         elseif ( 'single' == pods_var( 'pick_format_type', $field ) && 'autocomplete' != pods_var( 'pick_format_single', $field ) )
-            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Invalid field', 'pods' ), Pods_Init::$admin );
         elseif ( 'multi' == pods_var( 'pick_format_type', $field ) && 'autocomplete' != pods_var( 'pick_format_multi', $field ) )
-            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+            pods_error( __( 'Invalid field', 'pods' ), Pods_Init::$admin );
 
         $object_params = array(
             'name' => $field[ 'name' ], // The name of the field

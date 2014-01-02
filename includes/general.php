@@ -1769,7 +1769,7 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
 
-    if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
+    if ( !empty( Pods_Init::$no_conflict ) && isset( Pods_Init::$no_conflict[ $object_type ] ) && !empty( Pods_Init::$no_conflict[ $object_type ] ) )
         return true;
 
     return false;
@@ -1791,10 +1791,10 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
+    if ( !empty( Pods_Init::$no_conflict ) && isset( Pods_Init::$no_conflict[ $object_type ] ) && !empty( Pods_Init::$no_conflict[ $object_type ] ) )
         return true;
 
-    if ( !is_object( PodsInit::$meta ) )
+    if ( !is_object( Pods_Init::$meta ) )
         return false;
 
     $no_conflict = array();
@@ -1803,41 +1803,41 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     // Actions = Usually insert/update/save/delete object functions
     if ( 'post' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-            array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
+            array( 'get_post_metadata', array( Pods_Init::$meta, 'get_post_meta' ), 10, 4 ),
         );
 
         if ( !pods_tableless() ) {
             $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
-                array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-                array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-                array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
+                array( 'add_post_metadata', array( Pods_Init::$meta, 'add_post_meta' ), 10, 5 ),
+                array( 'update_post_metadata', array( Pods_Init::$meta, 'update_post_meta' ), 10, 5 ),
+                array( 'delete_post_metadata', array( Pods_Init::$meta, 'delete_post_meta' ), 10, 5 )
             ) );
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'transition_post_status', array( PodsInit::$meta, 'save_post_detect_new' ), 10, 3 ),
-            array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 )
+            array( 'transition_post_status', array( Pods_Init::$meta, 'save_post_detect_new' ), 10, 3 ),
+            array( 'save_post', array( Pods_Init::$meta, 'save_post' ), 10, 2 )
         );
     }
     elseif ( 'taxonomy' == $object_type ) {
         $no_conflict[ 'filter' ] = array();
 
         $no_conflict[ 'action' ] = array(
-            array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
-            array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
+            array( 'edit_term', array( Pods_Init::$meta, 'save_taxonomy' ), 10, 3 ),
+            array( 'create_term', array( Pods_Init::$meta, 'save_taxonomy' ), 10, 3 )
         );
     }
     elseif ( 'media' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-            array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
-            array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 )
+            array( 'wp_update_attachment_metadata', array( Pods_Init::$meta, 'save_media' ), 10, 2 ),
+            array( 'get_post_metadata', array( Pods_Init::$meta, 'get_post_meta' ), 10, 4 )
         );
 
         if ( !pods_tableless() ) {
             $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
-                array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-                array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-                array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
+                array( 'add_post_metadata', array( Pods_Init::$meta, 'add_post_meta' ), 10, 5 ),
+                array( 'update_post_metadata', array( Pods_Init::$meta, 'update_post_meta' ), 10, 5 ),
+                array( 'delete_post_metadata', array( Pods_Init::$meta, 'delete_post_meta' ), 10, 5 )
             ) );
         }
 
@@ -1845,39 +1845,39 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     }
     elseif ( 'user' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-            array( 'get_user_metadata', array( PodsInit::$meta, 'get_user_meta' ), 10, 4 ),
+            array( 'get_user_metadata', array( Pods_Init::$meta, 'get_user_meta' ), 10, 4 ),
         );
 
         if ( !pods_tableless() ) {
             $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
-                array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
-                array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
-                array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 )
+                array( 'add_user_metadata', array( Pods_Init::$meta, 'add_user_meta' ), 10, 5 ),
+                array( 'update_user_metadata', array( Pods_Init::$meta, 'update_user_meta' ), 10, 5 ),
+                array( 'delete_user_metadata', array( Pods_Init::$meta, 'delete_user_meta' ), 10, 5 )
             ) );
         }
 
         $no_conflict[ 'action' ] = array(
-            //array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
-            array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
+            //array( 'user_register', array( Pods_Init::$meta, 'save_user' ) ),
+            array( 'profile_update', array( Pods_Init::$meta, 'save_user' ) )
         );
     }
     elseif ( 'comment' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-            array( 'get_comment_metadata', array( PodsInit::$meta, 'get_comment_meta' ), 10, 4 ),
+            array( 'get_comment_metadata', array( Pods_Init::$meta, 'get_comment_meta' ), 10, 4 ),
         );
 
         if ( !pods_tableless() ) {
             $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
-                array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
-                array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
-                array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 )
+                array( 'add_comment_metadata', array( Pods_Init::$meta, 'add_comment_meta' ), 10, 5 ),
+                array( 'update_comment_metadata', array( Pods_Init::$meta, 'update_comment_meta' ), 10, 5 ),
+                array( 'delete_comment_metadata', array( Pods_Init::$meta, 'delete_comment_meta' ), 10, 5 )
             ) );
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'pre_comment_approved', array( PodsInit::$meta, 'validate_comment' ), 10, 2 ),
-            array( 'comment_post', array( PodsInit::$meta, 'save_comment' ) ),
-            array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) )
+            array( 'pre_comment_approved', array( Pods_Init::$meta, 'validate_comment' ), 10, 2 ),
+            array( 'comment_post', array( Pods_Init::$meta, 'save_comment' ) ),
+            array( 'edit_comment', array( Pods_Init::$meta, 'save_comment' ) )
         );
     }
     elseif ( 'settings' == $object_type ) {
@@ -1887,15 +1887,15 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         /*if ( empty( $object ) ) {
             foreach ( PodsMeta::$settings as $setting_pod ) {
                 foreach ( $setting_pod[ 'fields' ] as $option ) {
-                    $no_conflict[ 'filter' ][] = array( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'get_option' ), 10, 1 );
-                    $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'update_option' ), 10, 2 );
+                    $no_conflict[ 'filter' ][] = array( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( Pods_Init::$meta, 'get_option' ), 10, 1 );
+                    $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( Pods_Init::$meta, 'update_option' ), 10, 2 );
                 }
             }
         }
         elseif ( isset( PodsMeta::$settings[ $object ] ) ) {
             foreach ( PodsMeta::$settings[ $object ][ 'fields' ] as $option ) {
-                $no_conflict[ 'filter' ][] = array( 'pre_option_' . $object . '_' . $option[ 'name' ], array( PodsInit::$meta, 'get_option' ), 10, 1 );
-                $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $object . '_' . $option[ 'name' ], array( PodsInit::$meta, 'update_option' ), 10, 2 );
+                $no_conflict[ 'filter' ][] = array( 'pre_option_' . $object . '_' . $option[ 'name' ], array( Pods_Init::$meta, 'get_option' ), 10, 1 );
+                $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $object . '_' . $option[ 'name' ], array( Pods_Init::$meta, 'update_option' ), 10, 2 );
             }
         }*/
     }
@@ -1915,7 +1915,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     }
 
     if ( $conflicted ) {
-        PodsInit::$no_conflict[ $object_type ] = $no_conflict;
+        Pods_Init::$no_conflict[ $object_type ] = $no_conflict;
 
         return true;
     }
@@ -1936,13 +1936,13 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
 
-    if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
+    if ( empty( Pods_Init::$no_conflict ) || !isset( Pods_Init::$no_conflict[ $object_type ] ) || empty( Pods_Init::$no_conflict[ $object_type ] ) )
         return false;
 
-    if ( !is_object( PodsInit::$meta ) )
+    if ( !is_object( Pods_Init::$meta ) )
         return false;
 
-    $no_conflict = PodsInit::$no_conflict[ $object_type ];
+    $no_conflict = Pods_Init::$no_conflict[ $object_type ];
 
     $conflicted = false;
 
@@ -1957,7 +1957,7 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     }
 
     if ( $conflicted ) {
-        unset( PodsInit::$no_conflict[ $object_type ] );
+        unset( Pods_Init::$no_conflict[ $object_type ] );
 
         return true;
     }

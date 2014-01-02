@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsInit {
+class Pods_Init {
 
     /**
-     * @var PodsInit
+     * @var Pods_Init
      */
     static $instance = null;
 
@@ -76,13 +76,13 @@ class PodsInit {
     /**
      * Singleton handling for a basic pods_init() request
      *
-     * @return \PodsInit
+     * @return \Pods_Init
      *
      * @since 2.3.5
      */
     public static function init () {
         if ( !is_object( self::$instance ) )
-            self::$instance = new PodsInit();
+            self::$instance = new Pods_Init();
 
         return self::$instance;
     }
@@ -90,7 +90,7 @@ class PodsInit {
     /**
      * Setup and Initiate Pods
      *
-     * @return \PodsInit
+     * @return \Pods_Init
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9

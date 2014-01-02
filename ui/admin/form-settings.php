@@ -104,7 +104,7 @@ $do = 'save';
         <?php echo Pods_Form::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 
         <?php
-			$groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[ 'name' ] );
+			$groups = Pods_Init::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[ 'name' ] );
 
 			if ( 0 < count( $groups ) ) {
 				foreach ( $groups as $group ) {

@@ -176,7 +176,7 @@ class Pods_Admin {
 
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
-        if ( !PodsInit::$upgrade_needed || ( pods_is_admin() && 1 == pods_v( 'pods_upgrade_bypass' ) ) ) {
+        if ( !Pods_Init::$upgrade_needed || ( pods_is_admin() && 1 == pods_v( 'pods_upgrade_bypass' ) ) ) {
             $submenu_items = array();
 
             if ( !empty( $advanced_content_types ) ) {
@@ -515,7 +515,7 @@ class Pods_Admin {
                 add_submenu_page( $parent, $page_title, $menu_title, 'read', $page, $menu_item[ 'function' ] );
 
                 if ( 'pods-components' == $page )
-                    PodsInit::$components->menu( $parent );
+                    Pods_Init::$components->menu( $parent );
             }
         }
     }
@@ -1162,7 +1162,7 @@ class Pods_Admin {
      * Get components administration UI
      */
     public function admin_components () {
-        $components = PodsInit::$components->components;
+        $components = Pods_Init::$components->components;
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
@@ -1247,7 +1247,7 @@ class Pods_Admin {
                 $component_data[ 'category' ] = '<a href="' . $category_url . '">' . $component_data[ 'category' ] . '</a>';
             }
 
-            if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
+            if ( isset( Pods_Init::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != Pods_Init::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
                 $component_data[ 'toggle' ] = 1;
             elseif ( $component_data[ 'mustuse' ] )
                 $component_data[ 'toggle' ] = 1;
@@ -1323,8 +1323,8 @@ class Pods_Admin {
     public function admin_components_toggle ( PodsUI $ui ) {
         $component = $_GET[ 'id' ];
 
-        if ( !empty( PodsInit::$components->components[ $component ][ 'PluginDependency' ] ) ) {
-            $dependency = explode( '|', PodsInit::$components->components[ $component ][ 'PluginDependency' ] );
+        if ( !empty( Pods_Init::$components->components[ $component ][ 'PluginDependency' ] ) ) {
+            $dependency = explode( '|', Pods_Init::$components->components[ $component ][ 'PluginDependency' ] );
 
             if ( !pods_is_plugin_active( $dependency[ 1 ] ) ) {
                 $website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[ 1 ] ) . '/';
@@ -1335,7 +1335,7 @@ class Pods_Admin {
                 if ( !empty( $website ) )
                     $website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
 
-                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> plugin installed and activated.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> plugin installed and activated.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
 
                 $ui->error( $message );
 
@@ -1345,8 +1345,8 @@ class Pods_Admin {
             }
         }
 
-        if ( !empty( PodsInit::$components->components[ $component ][ 'ThemeDependency' ] ) ) {
-            $dependency = explode( '|', PodsInit::$components->components[ $component ][ 'ThemeDependency' ] );
+        if ( !empty( Pods_Init::$components->components[ $component ][ 'ThemeDependency' ] ) ) {
+            $dependency = explode( '|', Pods_Init::$components->components[ $component ][ 'ThemeDependency' ] );
 
             if ( strtolower( $dependency[ 1 ] ) != strtolower( get_template() ) && strtolower( $dependency[ 1 ] ) != strtolower( get_stylesheet() ) ) {
                 $website = '';
@@ -1354,7 +1354,7 @@ class Pods_Admin {
                 if ( isset( $dependency[ 2 ] ) )
                     $website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[ 2 ] . '" target="_blank">' . $dependency[ 2 ] . '</a>' );
 
-                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> theme installed and activated.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> theme installed and activated.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
 
                 $ui->error( $message );
 
@@ -1364,8 +1364,8 @@ class Pods_Admin {
             }
         }
 
-        if ( !empty( PodsInit::$components->components[ $component ][ 'MustUse' ] ) ) {
-            $message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ] );
+        if ( !empty( Pods_Init::$components->components[ $component ][ 'MustUse' ] ) ) {
+            $message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ] );
 
             $ui->error( $message );
 
@@ -1375,20 +1375,20 @@ class Pods_Admin {
         }
 
         if ( 1 == pods_v( 'toggled' ) ) {
-            $toggle = PodsInit::$components->toggle( $component );
+            $toggle = Pods_Init::$components->toggle( $component );
 
             if ( true === $toggle )
-                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+                $ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
             elseif ( false === $toggle )
-                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+                $ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
-            $components = PodsInit::$components->components;
+            $components = Pods_Init::$components->components;
 
             foreach ( $components as $component => &$component_data ) {
                 $toggle = 0;
 
-                if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
-                    if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                if ( isset( Pods_Init::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
+                    if ( 0 != Pods_Init::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
                         $toggle = 1;
                 }
                 if ( true === $component_data[ 'DeveloperMode' ] ) {
@@ -1417,9 +1417,9 @@ class Pods_Admin {
             pods_redirect( $url );
         }
         elseif ( 1 == pods_v( 'toggle' ) )
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+            $ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
         else
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+            $ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
         $ui->manage();
     }
@@ -1428,8 +1428,8 @@ class Pods_Admin {
      * Get the admin upgrade page
      */
     public function admin_upgrade () {
-        foreach ( PodsInit::$upgrades as $old_version => $new_version ) {
-            if ( version_compare( $old_version, PodsInit::$version_last, '<=' ) && version_compare( PodsInit::$version_last, $new_version, '<' ) ) {
+        foreach ( Pods_Init::$upgrades as $old_version => $new_version ) {
+            if ( version_compare( $old_version, Pods_Init::$version_last, '<=' ) && version_compare( Pods_Init::$version_last, $new_version, '<' ) ) {
                 $new_version = str_replace( '.', '_', $new_version );
 
                 pods_view( PODS_DIR . 'ui/admin/upgrade/upgrade_' . $new_version . '.php', compact( array_keys( get_defined_vars() ) ) );

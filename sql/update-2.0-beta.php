@@ -63,9 +63,9 @@ if ( version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
 
     $_GET[ 'toggle' ] = 1;
 
-    PodsInit::$components->toggle( 'templates' );
-    PodsInit::$components->toggle( 'pages' );
-    PodsInit::$components->toggle( 'helpers' );
+    Pods_Init::$components->toggle( 'templates' );
+    Pods_Init::$components->toggle( 'pages' );
+    Pods_Init::$components->toggle( 'helpers' );
 
     $_GET = $oldget;
 

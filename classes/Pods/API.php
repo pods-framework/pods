@@ -3301,7 +3301,7 @@ class Pods_API {
 	public function delete_object_from_relationships( $id, $object, $name = null ) {
 
 		/**
-		 * @var $pods_init \PodsInit
+		 * @var $pods_init \Pods_Init
 		 */
 		global $pods_init;
 

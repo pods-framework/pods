@@ -221,15 +221,15 @@ function pods_form () {
 /**
  * Include and Init the Pods class
  *
- * @see PodsInit
+ * @see Pods_Init
  *
- * @return PodsInit
+ * @return Pods_Init
  *
  * @since 2.0
  */
 function pods_init () {
 
-    return PodsInit::init();
+    return Pods_Init::init();
 }
 
 /**

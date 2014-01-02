@@ -64,7 +64,7 @@ class Pods_Helpers extends Pods_Component {
         if ( !pods_is_admin() )
             $args[ 'capability_type' ] = 'pods_helper';
 
-        $args = PodsInit::object_label_fix( $args, 'post_type' );
+        $args = Pods_Init::object_label_fix( $args, 'post_type' );
 
         register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
 

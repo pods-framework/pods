@@ -922,9 +922,9 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
         $_GET[ 'toggle' ] = 1;
 
-        PodsInit::$components->toggle( 'templates' );
-        PodsInit::$components->toggle( 'pages' );
-        PodsInit::$components->toggle( 'helpers' );
+        Pods_Init::$components->toggle( 'templates' );
+        Pods_Init::$components->toggle( 'pages' );
+        Pods_Init::$components->toggle( 'helpers' );
 
         $_GET = $oldget;
 

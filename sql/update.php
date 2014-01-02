@@ -18,8 +18,8 @@ if ( version_compare( $pods_version, '2.3', '<' ) ) {
 
     $_GET[ 'toggle' ] = 1;
 
-    PodsInit::$components->toggle( 'advanced-content-types' );
-    PodsInit::$components->toggle( 'table-storage' );
+    Pods_Init::$components->toggle( 'advanced-content-types' );
+    Pods_Init::$components->toggle( 'table-storage' );
 
     $_GET = $oldget;
 

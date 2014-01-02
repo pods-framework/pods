@@ -57,7 +57,7 @@ class Pods_Object_Pod extends Pods_Object {
 	public function load( $name = null, $id = 0, $parent = null ) {
 
 		/**
-		 * @var $pods_init \PodsInit
+		 * @var $pods_init \Pods_Init
 		 */
 		global $pods_init;
 
@@ -116,7 +116,7 @@ class Pods_Object_Pod extends Pods_Object {
 			$object = $name;
 		}
 		// Handle code-registered types
-		elseif ( is_object( $pods_init ) && is_object( PodsInit::$meta ) && $meta_object = PodsInit::$meta->get_object( null, $name, null, true ) ) {
+		elseif ( is_object( $pods_init ) && is_object( Pods_Init::$meta ) && $meta_object = Pods_Init::$meta->get_object( null, $name, null, true ) ) {
 			$object = get_object_vars( $meta_object );
 		}
 		// Find Object by name
@@ -1946,7 +1946,7 @@ class Pods_Object_Pod extends Pods_Object {
 
 		$api->cache_flush_pods( $pod );
 
-		// Register Post Types / Taxonomies / Comment Types post-registration from PodsInit
+		// Register Post Types / Taxonomies / Comment Types post-registration from Pods_Init
 		if ( did_action( 'pods_setup_content_types' ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'comment' ) ) && empty( $pod[ 'object' ] ) ) {
 			global $pods_init;
 

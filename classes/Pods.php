@@ -10,7 +10,7 @@ class Pods implements Iterator {
 	private $iterator = false;
 
 	/**
-	 * @var PodsAPI
+	 * @var Pods_API
 	 */
 	public $api;
 
@@ -2548,7 +2548,7 @@ class Pods implements Iterator {
 	 *
 	 * You may be looking for save() in most cases where you're setting a specific field.
 	 *
-	 * @see PodsAPI::save_pod_item
+	 * @see Pods_API::save_pod_item
 	 *
 	 * @param array|string $data Either an associative array of field information or a field name
 	 * @param mixed $value (optional) Value of the field, if $data is a field name
@@ -2582,7 +2582,7 @@ class Pods implements Iterator {
 	/**
 	 * Add an item to the values of a relationship field, add a value to a number field (field+1), add time to a date field, or add text to a text field
 	 *
-	 * @see PodsAPI::save_pod_item
+	 * @see Pods_API::save_pod_item
 	 *
 	 * @param string $field Field name
 	 * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (+1 week), or string for text
@@ -2702,7 +2702,7 @@ class Pods implements Iterator {
 	/**
 	 * Remove an item from the values of a relationship field, remove a value from a number field (field-1), remove time to a date field
 	 *
-	 * @see PodsAPI::save_pod_item
+	 * @see Pods_API::save_pod_item
 	 *
 	 * @param string $field Field name
 	 * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (-1 week), or string for text
@@ -2845,7 +2845,7 @@ class Pods implements Iterator {
 	 * Though this function has the capacity to add new items, best practice should direct you
 	 * to use add() for that instead.
 	 *
-	 * @see PodsAPI::save_pod_item
+	 * @see Pods_API::save_pod_item
 	 *
 	 * @param array|string $data Either an associative array of field information or a field name
 	 * @param mixed $value (optional) Value of the field, if $data is a field name
@@ -2920,7 +2920,7 @@ class Pods implements Iterator {
 	/**
 	 * Delete an item
 	 *
-	 * @see PodsAPI::delete_pod_item
+	 * @see Pods_API::delete_pod_item
 	 *
 	 * @param int $id ID of the Pod item to delete
 	 *
@@ -2952,7 +2952,7 @@ class Pods implements Iterator {
 	/**
 	 * Reset Pod
 	 *
-	 * @see PodsAPI::reset_pod
+	 * @see Pods_API::reset_pod
 	 *
 	 * @return bool Whether the Pod was successfully reset
 	 *
@@ -2975,7 +2975,7 @@ class Pods implements Iterator {
 	/**
 	 * Duplicate an item
 	 *
-	 * @see PodsAPI::duplicate_pod_item
+	 * @see Pods_API::duplicate_pod_item
 	 *
 	 * @param int $id ID of the pod item to duplicate
 	 *
@@ -3007,7 +3007,7 @@ class Pods implements Iterator {
 	/**
 	 * Import data / Save multiple rows of data at once
 	 *
-	 * @see PodsAPI::import
+	 * @see Pods_API::import
 	 *
 	 * @param mixed $import_data PHP associative array or CSV input
 	 * @param bool $numeric_mode Use IDs instead of the name field when matching
@@ -3025,7 +3025,7 @@ class Pods implements Iterator {
 	/**
 	 * Export an item's data
 	 *
-	 * @see PodsAPI::export_pod_item
+	 * @see Pods_API::export_pod_item
 	 *
 	 * @param array $fields (optional) Fields to export
 	 * @param int $id (optional) ID of the pod item to export
@@ -3081,7 +3081,7 @@ class Pods implements Iterator {
 	/**
 	 * Export data from all items
 	 *
-	 * @see PodsAPI::export
+	 * @see Pods_API::export
 	 *
 	 * @param array $params An associative array of parameters
 	 *

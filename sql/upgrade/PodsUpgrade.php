@@ -15,7 +15,7 @@ class PodsUpgrade {
     protected $progress = array();
 
     /**
-     * @var PodsAPI
+     * @var Pods_API
      */
     protected $api = null;
 

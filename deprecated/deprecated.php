@@ -212,7 +212,7 @@ class Pod
 }
 
 /**
- * Include and Init the PodsAPI class
+ * Include and Init the Pods_API class
  *
  * @since 1.x
  * @deprecated deprecated since version 2.0

@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsAPI {
+class Pods_API {
 
     /**
-     * @var PodsAPI
+     * @var Pods_API
      */
     static $instance = null;
 
@@ -51,16 +51,16 @@ class PodsAPI {
      * @param string $pod (optional) The pod name
      * @param string $format (deprecated) Format for import/export, "php" or "csv"
      *
-     * @return \PodsAPI
+     * @return \Pods_API
      *
      * @since 2.3.5
      */
     public static function init ( $pod = null, $format = null ) {
         if ( null !== $pod || null !== $format ) {
-            return new PodsAPI( $pod, $format );
+            return new Pods_API( $pod, $format );
 		}
         elseif ( !is_object( self::$instance ) ) {
-            self::$instance = new PodsAPI();
+            self::$instance = new Pods_API();
 		}
 
         return self::$instance;
@@ -72,7 +72,7 @@ class PodsAPI {
      * @param string $pod (optional) The pod name
      * @param string $format (deprecated) Format for import/export, "php" or "csv"
      *
-     * @return \PodsAPI
+     * @return \Pods_API
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.7.1
@@ -1037,7 +1037,7 @@ class PodsAPI {
 
     /**
 	 *
-	 * @see PodsAPI::save_pod
+	 * @see Pods_API::save_pod
 	 *
 	 * Add a Pod via the Wizard
 	 *
@@ -1522,7 +1522,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * @see PodsAPI::save_object
+	 * @see Pods_API::save_object
 	 *
 	 * Add or edit a Pod Template
 	 *
@@ -1548,7 +1548,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * @see PodsAPI::save_object
+	 * @see Pods_API::save_object
 	 *
 	 * Add or edit a Pod Page
 	 *
@@ -1584,7 +1584,7 @@ class PodsAPI {
 	}
 
 	/**
-	 * @see PodsAPI::save_object
+	 * @see Pods_API::save_object
 	 *
 	 * Add or edit a Pod Helper
 	 *
@@ -1662,7 +1662,7 @@ class PodsAPI {
                 $check = current( $params->data );
 
                 if ( is_array( $check ) ) {
-                    pods_deprecated( 'PodsAPI::save_pod_items', '2.0' );
+                    pods_deprecated( 'Pods_API::save_pod_items', '2.0' );
 
                     return $this->save_pod_items( $params, $params->data );
                 }
@@ -2363,7 +2363,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::save_pod_item
+     * @see Pods_API::save_pod_item
      * Add multiple pod items
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
@@ -2635,7 +2635,7 @@ class PodsAPI {
 	}
 
     /**
-     * @see PodsAPI::save_pod_item
+     * @see Pods_API::save_pod_item
      *
      * Duplicate a pod item
      *
@@ -2969,7 +2969,7 @@ class PodsAPI {
 	 * @param bool $strict (deprecated)
 	 * @param bool $delete_all (optional) Whether to delete all content from a WP object
 	 *
-	 * @uses PodsAPI::load_pod
+	 * @uses Pods_API::load_pod
 	 * @uses wp_delete_post
 	 * @uses pods_query
 	 *
@@ -3014,7 +3014,7 @@ class PodsAPI {
 	 * @param array $params An associative array of parameters
 	 * @param bool $table_operation Whether or not to handle table operations
 	 *
-	 * @uses PodsAPI::load_field
+	 * @uses Pods_API::load_field
 	 * @uses wp_delete_post
 	 * @uses pods_query
 	 *
@@ -3083,7 +3083,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::delete_object
+     * @see Pods_API::delete_object
      *
      * Drop a Pod Template
      *
@@ -3102,7 +3102,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::delete_object
+     * @see Pods_API::delete_object
      *
      * Drop a Pod Page
      *
@@ -3127,7 +3127,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::delete_object
+     * @see Pods_API::delete_object
      *
      * Drop a Pod Helper
      *
@@ -3644,7 +3644,7 @@ class PodsAPI {
      *
      * @return array|mixed
      *
-     * @uses PodsAPI::load_pod
+     * @uses Pods_API::load_pod
      *
      * @since 2.0
      */
@@ -4368,7 +4368,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_object
+     * @see Pods_API::load_object
      *
      * Load a Pod Template
      *
@@ -4390,7 +4390,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_objects
+     * @see Pods_API::load_objects
      *
      * Load Multiple Pod Templates
      *
@@ -4415,7 +4415,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_object
+     * @see Pods_API::load_object
      *
      * Load a Pod Page
      *
@@ -4442,7 +4442,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_objects
+     * @see Pods_API::load_objects
      *
      * Load Multiple Pod Pages
      *
@@ -4467,7 +4467,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_object
+     * @see Pods_API::load_object
      *
      * Load a Pod Helper
      *
@@ -4490,7 +4490,7 @@ class PodsAPI {
     }
 
     /**
-     * @see PodsAPI::load_objects
+     * @see Pods_API::load_objects
      *
      * Load Multiple Pod Helpers
      *
@@ -4565,7 +4565,7 @@ class PodsAPI {
      *
      * @since 1.7.9
      *
-     * @uses PodsAPI::load_pod
+     * @uses Pods_API::load_pod
      */
     public function load_sister_fields ( $params, $pod = null ) {
         $params = (object) pods_sanitize( $params );
@@ -5911,7 +5911,7 @@ class PodsAPI {
      * @deprecated 2.3.5
      */
     public function csv_to_php ( $data, $delimiter = ',' ) {
-        pods_deprecated( "PodsAPI->csv_to_php", '2.3.5' );
+        pods_deprecated( "Pods_API->csv_to_php", '2.3.5' );
 
         $data = pods_migrate( 'sv', $delimiter, $data )->parse();
 
@@ -6065,12 +6065,12 @@ class PodsAPI {
         $var = null;
 
         if ( isset( $this->deprecated->{$name} ) ) {
-            pods_deprecated( "PodsAPI->{$name}", '2.0' );
+            pods_deprecated( "Pods_API->{$name}", '2.0' );
 
             $var = $this->deprecated->{$name};
         }
         else
-            pods_deprecated( "PodsAPI->{$name}", '2.0' );
+            pods_deprecated( "Pods_API->{$name}", '2.0' );
 
         return $var;
     }
@@ -6091,6 +6091,6 @@ class PodsAPI {
         if ( method_exists( $this->deprecated, $name ) )
             return call_user_func_array( array( $this->deprecated, $name ), $args );
         else
-            pods_deprecated( "PodsAPI::{$name}", '2.0' );
+            pods_deprecated( "Pods_API::{$name}", '2.0' );
     }
 }

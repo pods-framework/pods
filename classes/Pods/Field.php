@@ -47,7 +47,7 @@ class Pods_Field {
     /**
      * API caching for fields that need it during validate/save
      *
-     * @var \PodsAPI
+     * @var \Pods_API
      * @since 2.3
      */
     private static $api = false;

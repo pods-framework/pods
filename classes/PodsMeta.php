@@ -10,7 +10,7 @@ class PodsMeta {
     static $instance = null;
 
     /**
-     * @var PodsAPI
+     * @var Pods_API
      */
     private $api;
 

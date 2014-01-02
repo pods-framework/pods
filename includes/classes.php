@@ -165,21 +165,21 @@ function pods_ui ( $obj, $deprecated = false ) {
 }
 
 /**
- * Include and get the PodsAPI object, for use with all calls that Pods makes for add, save, delete, and more.
+ * Include and get the Pods_API object, for use with all calls that Pods makes for add, save, delete, and more.
  *
- * @see PodsAPI
+ * @see Pods_API
  *
  * @param string $pod (optional) (deprecated) The Pod name
  * @param string $format (optional) (deprecated) Format used in import() and export()
  *
- * @return PodsAPI
+ * @return Pods_API
  *
  * @since 2.0
  * @link http://pods.io/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
 
-    return PodsAPI::init( $pod, $format );
+    return Pods_API::init( $pod, $format );
 }
 
 /**

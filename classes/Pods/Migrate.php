@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-class PodsMigrate {
+class Pods_Migrate {
 
     /**
      * @var null|string
@@ -60,7 +60,7 @@ class PodsMigrate {
      * @param string $delimiter Delimiter for export type 'sv'
      * @param array $data Array of data settings
      *
-     * @return \PodsMigrate
+     * @return \Pods_Migrate
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0

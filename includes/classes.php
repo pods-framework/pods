@@ -317,21 +317,21 @@ function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache
 }
 
 /**
- * Include and Init the PodsMigrate class
+ * Include and Init the Pods_Migrate class
  *
- * @see PodsMigrate
+ * @see Pods_Migrate
  *
  * @param string $type Export Type (php, json, sv, xml)
  * @param string $delimiter Delimiter for export type 'sv'
  * @param array $data Array of data
  *
- * @return PodsMigrate
+ * @return Pods_Migrate
  *
  * @since 2.2
  */
 function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
 
-    return new PodsMigrate( $type, $delimiter, $data );
+    return new Pods_Migrate( $type, $delimiter, $data );
 }
 
 /**

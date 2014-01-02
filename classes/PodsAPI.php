@@ -3311,7 +3311,7 @@ class PodsAPI {
 		if ( is_array( $object ) ) {
 			$pod = $object;
 		}
-		elseif ( is_object( $object ) && 0 === strpos( get_class( $object ), 'PodsObject' ) ) {
+		elseif ( is_object( $object ) && 0 === strpos( get_class( $object ), 'Pods_Object' ) ) {
 			$pod = $object;
 		}
 		elseif ( !empty( $name ) ) {
@@ -3554,7 +3554,7 @@ class PodsAPI {
 	 * @param array|object $params An associative array of parameters or pod name as a string
 	 * @param bool|string $strict Makes sure the pod exists, throws an error if it doesn't work
 	 *
-	 * @return PodsObject_Pod|bool|mixed|void
+	 * @return Pods_Object_Pod|bool|mixed|void
 	 * @since 1.7.9
 	 */
 	public function load_pod( $params, $strict = true ) {
@@ -3929,7 +3929,7 @@ class PodsAPI {
 	 * @param array $params An associative array of parameters
 	 * @param boolean $strict Whether to require a field exist or not when loading the info
 	 *
-	 * @return PodsObject_Field|bool Array with field data, false if field not found
+	 * @return Pods_Object_Field|bool Array with field data, false if field not found
 	 * @since 1.7.9
 	 */
 	public function load_field( $params, $strict = false ) {

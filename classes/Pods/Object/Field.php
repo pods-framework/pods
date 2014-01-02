@@ -2,9 +2,9 @@
 /**
  * @package Pods
  *
- * Class PodsObject_Field
+ * Class Pods_Object_Field
  */
-class PodsObject_Field extends PodsObject {
+class Pods_Object_Field extends Pods_Object {
 
 	/**
 	 * Post type / meta key prefix for internal values

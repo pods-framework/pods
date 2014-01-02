@@ -10,7 +10,7 @@ class PodsAdmin {
     static $instance = null;
 
 	/**
-	 * @var bool|PodsObject_Pod
+	 * @var bool|Pods_Object_Pod
 	 */
 	static $admin_row = false;
 
@@ -1003,11 +1003,11 @@ class PodsAdmin {
     /**
      * Custom value handler for 'Rules' in the Groups PodsUI
      *
-     * @param array|PodsObject|PodsObject_Group $row Row data
+     * @param array|Pods_Object|Pods_Object_Group $row Row data
      * @param PodsUI $obj PodsUI object
      * @param mixed $row_value Row value
      * @param string $field Field name
-     * @param array|PodsObject|PodsObject_Field $attributes Field options
+     * @param array|Pods_Object|Pods_Object_Field $attributes Field options
      * @param array $fields Fields
      */
 	public function admin_setup_groups_field_rules( $row, $obj, $row_value, $field, $attributes, $fields ) {
@@ -1054,11 +1054,11 @@ class PodsAdmin {
     /**
      * Custom value handler for 'Field Count' in the Groups PodsUI
      *
-     * @param array|PodsObject|PodsObject_Group $row Row data
+     * @param array|Pods_Object|Pods_Object_Group $row Row data
      * @param PodsUI $obj PodsUI object
      * @param mixed $row_value Row value
      * @param string $field Field name
-     * @param array|PodsObject|PodsObject_Field $attributes Field options
+     * @param array|Pods_Object|Pods_Object_Field $attributes Field options
      * @param array $fields Fields
      */
 	public function admin_setup_groups_field_count( $row, $obj, $row_value, $field, $attributes, $fields ) {

@@ -3355,7 +3355,7 @@ class PodsUI {
                     $counter = 0;
 
                     while ( $row = $this->get_row( $counter, 'table' ) ) {
-                        if ( is_object( $row ) && 0 !== strpos( get_class( $row ), 'PodsObject' ) )
+                        if ( is_object( $row ) && 0 !== strpos( get_class( $row ), 'Pods_Object' ) )
                             $row = get_object_vars( (object) $row );
 
                         $toggle_class = '';

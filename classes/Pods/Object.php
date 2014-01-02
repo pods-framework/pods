@@ -2,9 +2,9 @@
 /**
  * @package Pods
  *
- * Class PodsObject
+ * Class Pods_Object
  */
-class PodsObject implements ArrayAccess, Serializable {
+class Pods_Object implements ArrayAccess, Serializable {
 
 	/**
 	 * Object data
@@ -398,7 +398,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Get a list of all meta keys that have changed
 	 *
-	 * @param array|object|PodsObject $data Data override
+	 * @param array|object|Pods_Object $data Data override
 	 *
 	 * @since 3.0
 	 */
@@ -417,14 +417,14 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Merge overrides of options for Objects
 	 *
-	 * @param array|object|PodsObject $data Data override
+	 * @param array|object|Pods_Object $data Data override
 	 *
 	 * @since 3.0
 	 */
 	public function override( $data ) {
 
 		if ( is_object( $data ) ) {
-			if ( 0 === strpos( get_class( $data ), 'PodsObject' ) ) {
+			if ( 0 === strpos( get_class( $data ), 'Pods_Object' ) ) {
 				$data = $data->export();
 			}
 			else {
@@ -466,14 +466,14 @@ class PodsObject implements ArrayAccess, Serializable {
 	/**
 	 * Merge default options for Objects
 	 *
-	 * @param array|object|PodsObject $data Data override
+	 * @param array|object|Pods_Object $data Data override
 	 *
 	 * @since 3.0
 	 */
 	public function defaults( $data ) {
 
 		if ( is_object( $data ) ) {
-			if ( 0 === strpos( get_class( $data ), 'PodsObject' ) ) {
+			if ( 0 === strpos( get_class( $data ), 'Pods_Object' ) ) {
 				$data = $data->export();
 			}
 			else {
@@ -1672,7 +1672,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
-	 * Serialize PodsObject
+	 * Serialize Pods_Object
 	 *
 	 * @return string Serialized string
 	 *
@@ -1693,7 +1693,7 @@ class PodsObject implements ArrayAccess, Serializable {
 	}
 
 	/**
-	 * Unserialize PodsObject
+	 * Unserialize Pods_Object
 	 *
 	 * @param string $data Serialized string
 	 *

@@ -2,9 +2,9 @@
 /**
  * @package Pods
  *
- * Class PodsObject_Group
+ * Class Pods_Object_Group
  */
-class PodsObject_Group extends PodsObject {
+class Pods_Object_Group extends Pods_Object {
 
 	/**
 	 * Post type / meta key prefix for internal values
@@ -1075,7 +1075,7 @@ class PodsObject_Group extends PodsObject {
 			$fields = $this->fields();
 
 			/**
-			 * @var $field PodsObject_Field
+			 * @var $field Pods_Object_Field
 			 */
 			foreach ( $fields as $field ) {
 				$field->delete();

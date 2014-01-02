@@ -10,7 +10,7 @@
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject|null
+ * @return Pods_Object|null
  *
  * @since 2.3.10
  */
@@ -20,7 +20,7 @@ function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
 		return null;
 	}
 
-	return new PodsObject( $name, $id, $live, $parent );
+	return new Pods_Object( $name, $id, $live, $parent );
 
 }
 
@@ -32,7 +32,7 @@ function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Pod|null
+ * @return Pods_Object_Pod|null
  *
  * @since 2.3.10
  */
@@ -42,7 +42,7 @@ function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null )
 		return null;
 	}
 
-	return new PodsObject_Pod( $name, $id, $live, $parent );
+	return new Pods_Object_Pod( $name, $id, $live, $parent );
 
 }
 
@@ -54,7 +54,7 @@ function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null )
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Field|null
+ * @return Pods_Object_Field|null
  *
  * @since 2.3.10
  */
@@ -64,7 +64,7 @@ function pods_object_field( $name = null, $id = 0, $live = false, $parent = null
 		return null;
 	}
 
-	return new PodsObject_Field( $name, $id, $live, $parent );
+	return new Pods_Object_Field( $name, $id, $live, $parent );
 
 }
 
@@ -76,7 +76,7 @@ function pods_object_field( $name = null, $id = 0, $live = false, $parent = null
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Group|null
+ * @return Pods_Object_Group|null
  *
  * @since 2.3.10
  */
@@ -86,7 +86,7 @@ function pods_object_group( $name = null, $id = 0, $live = false, $parent = null
 		return null;
 	}
 
-	return new PodsObject_Group( $name, $id, $live, $parent );
+	return new Pods_Object_Group( $name, $id, $live, $parent );
 
 }
 
@@ -99,7 +99,7 @@ function pods_object_group( $name = null, $id = 0, $live = false, $parent = null
  * @param bool $live Set to true to automatically save values in the DB when you $object['option']='value'
  * @param mixed $parent Parent Object or ID
  *
- * @return PodsObject_Pod|PodsObject_Field|PodsObject_Group|PodsObject|null
+ * @return Pods_Object_Pod|Pods_Object_Field|Pods_Object_Group|Pods_Object|null
  *
  * @since 3.0
  */

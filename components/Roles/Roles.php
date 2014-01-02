@@ -399,21 +399,180 @@ class Pods_Roles extends PodsComponent {
         return $capabilities;
     }
 
+    function get_capability_group_map () {
+         $defaults_capability_group = array(
+            'activate_plugins' => 'plugins',
+            'add_users' => 'users',
+            'create_users' => 'users',
+            'delete_others_pages' => 'pages',
+            'delete_others_posts' => 'posts',
+            'delete_pages' => 'pages',
+            'delete_plugins' => 'plugins',
+            'delete_posts' => 'posts',
+            'delete_private_pages' => 'pages',
+            'delete_private_posts' => 'posts',
+            'delete_published_pages' => 'pages',
+            'delete_published_posts' => 'posts',
+            'delete_themes' => 'themes',
+            'delete_users' => 'users',
+            'edit_dashboard' => 'other',
+            'edit_files' => 'files',
+            'edit_others_pages' => 'pages',
+            'edit_others_posts' => 'posts',
+            'edit_pages' => 'pages',
+            'edit_plugins' => 'plugins',
+            'edit_posts' => 'posts',
+            'edit_private_pages' => 'pages',
+            'edit_private_posts' => 'posts',
+            'edit_published_pages' => 'pages',
+            'edit_published_posts' => 'posts',
+            'edit_theme_options' => 'themes',
+            'edit_themes' => 'themes',
+            'edit_users' => 'users',
+            'import' => 'other',
+            'install_plugins' => 'plugins',
+            'install_themes' => 'themes',
+            'list_users' => 'users',
+            'manage_categories' => 'other',
+            'manage_links' => 'other',
+            'manage_options' => 'other',
+            'moderate_comments' => 'other',
+            'promote_users' => 'users',
+            'publish_pages' => 'pages',
+            'publish_posts' => 'posts',
+            'read' => 'other',
+            'read_private_pages' => 'pages',
+            'read_private_posts' => 'posts',
+            'remove_users' => 'users',
+            'switch_themes' => 'themes',
+            'unfiltered_html' => 'other',
+            'unfiltered_upload' => 'other',
+            'update_core' => 'other',
+            'update_plugins' => 'plugins',
+            'update_themes' => 'themes',
+            'upload_files' => 'files'
+        );
+
+        $pods_roles_capability_group = array(
+            'pods_roles_add' => 'pods',
+            'pods_roles_delete' => 'pods',
+            'pods_roles_edit' => 'pods'
+        );
+
+        $pods_components = pods_components();
+        $pods_components_capability_group = $pods_components->admin_capabilities( array() );
+        $pods_components_capability_group = array_keys( array_flip( $pods_components_capability_group ) );
+        $pods_components_capability_group = array_fill_keys( $pods_components_capability_group, 'pods' );
+
+        $pods_capability_group = array();
+
+        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'taxonomy', 'settings' ) ) );
+
+        $pods_capability_group[ 'pods' ] = 'pods';
+        $pods_capability_group[ 'pods_content' ] = 'pods';
+        $pods_capability_group[ 'pods_settings' ] = 'pods';
+        $pods_capability_group[ 'pods_components' ] = 'pods';
+
+        foreach ( $pods as $pod ) {
+            if ( 'settings' == $pod[ 'type' ] ) {
+                $pods_capability_group[ 'pods_edit_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+            }
+            elseif ( 'post_type' == $pod[ 'type' ] ) {
+                $capability_type = pods_var( 'capability_type_custom', $pod, pods_var_raw( 'name', $pod ) );
+
+                if ( 'custom' == pods_var( 'capability_type', $pod ) && 0 < strlen( $capability_type ) ) {
+                    $pods_capability_group[ 'read_' . $capability_type ] = $pod[ 'name' ];
+                    $pods_capability_group[ 'edit_' . $capability_type ] = $pod[ 'name' ];
+                    $pods_capability_group[ 'delete_' . $capability_type ] = $pod[ 'name' ];
+
+                    if ( 1 == pods_var( 'capability_type_extra', $pod, 1 ) ) {
+                        $pods_capability_group[ 'read_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'edit_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'edit_others_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'edit_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'edit_published_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'publish_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'delete_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'delete_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'delete_published_' . $capability_type . 's' ] = $pod[ 'name' ];
+                        $pods_capability_group[ 'delete_others_' . $capability_type . 's' ] = $pod[ 'name' ];
+                    }
+                }
+            }
+            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+                if ( 1 == pods_var( 'capabilities', $pod, 0 ) ) {
+                    $capability_type = pods_var( 'capability_type_custom', $pod, pods_var_raw( 'name', $pod ) . 's' );
+
+                    $pods_capability_group[ 'manage_' . $capability_type ] = $pod[ 'name' ];
+                    $pods_capability_group[ 'edit_' . $capability_type ] = $pod[ 'name' ];
+                    $pods_capability_group[ 'delete_' . $capability_type ] = $pod[ 'name' ];
+                    $pods_capability_group[ 'assign_' . $capability_type ] = $pod[ 'name' ];
+                }
+            }
+            else {
+                $pods_capability_group[ 'pods_add_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+                $pods_capability_group[ 'pods_edit_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+
+                if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                    $pods_capability_group[ 'pods_edit_others_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+
+                $pods_capability_group[ 'pods_delete_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+
+                if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                    $pods_capability_group[ 'pods_delete_others_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+
+                $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod );
+
+                if ( !empty( $actions_enabled ) )
+                    $actions_enabled = (array) $actions_enabled;
+                else
+                    $actions_enabled = array();
+
+                $available_actions = array(
+                    'add',
+                    'edit',
+                    'duplicate',
+                    'delete',
+                    'reorder',
+                    'export'
+                );
+
+                if ( !empty( $actions_enabled ) ) {
+                    $actions_disabled = array(
+                        'view' => 'view'
+                    );
+
+                    foreach ( $available_actions as $action ) {
+                        if ( !in_array( $action, $actions_enabled ) )
+                            $actions_disabled[ $action ] = $action;
+                    }
+
+                    if ( !in_array( 'export', $actions_disabled ) )
+                        $pods_capability_group[ 'pods_export_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+
+                    if ( !in_array( 'reorder', $actions_disabled ) )
+                        $pods_capability_group[ 'pods_reorder_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+                }
+                elseif ( 1 == pods_var( 'ui_export', $pod, 0 ) )
+                    $pods_capability_group[ 'pods_export_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+            }
+        }
+
+        $capability_group_map = array_merge( $defaults_capability_group, $pods_roles_capability_group, $pods_components_capability_group, $pods_capability_group );
+
+        return $capability_group_map;
+    }
+
     function get_grouped_capabilities () {
         $capabilities = $this->get_capabilities();
+        $capability_group_map = $this->get_capability_group_map();
 
-        $groups_start_with = array( 'gravityforms', 'pods' );
-        $groups_end_with = array( 'files', 'pages', 'plugins', 'posts', 'themes', 'users' );
         $grouped_capabilities = array();
 
         foreach ( $capabilities as $capability ) {
 
-            $capability_pieces = explode( "_", $capability );
-
-            if ( in_array( current( $capability_pieces ) , $groups_start_with ) ) {
-                $group_name = current( $capability_pieces );
-            } elseif ( in_array( end( $capability_pieces ) , $groups_end_with ) ) {
-                $group_name = end( $capability_pieces );    
+            if ( array_key_exists( $capability, $capability_group_map ) ) {
+                $group_name = $capability_group_map[ $capability ];
             } else { 
                 $group_name = 'other';
             }
@@ -445,6 +604,7 @@ class Pods_Roles extends PodsComponent {
             'delete_private_posts',
             'delete_published_pages',
             'delete_published_posts',
+            'delete_themes',
             'delete_users',
             'edit_dashboard',
             'edit_files',

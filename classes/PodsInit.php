@@ -30,7 +30,7 @@ class PodsInit {
     static $meta;
 
     /**
-     * @var PodsAdmin
+     * @var Pods_Admin
      */
     static $admin;
 

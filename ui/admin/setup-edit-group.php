@@ -5,7 +5,7 @@ global $pods_i;
 
 $api = pods_api();
 
-$pod = pods_object_pod( null, PodsAdmin::$admin_row[ 'id' ] );
+$pod = pods_object_pod( null, Pods_Admin::$admin_row[ 'id' ] );
 
 if ( !$pod->is_valid() ) {
 	return pods_error( __( 'Pod not found', 'pods' ) );

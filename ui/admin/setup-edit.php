@@ -221,7 +221,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 <div id="pods-manage-groups" class="pods-nav-tab">
     <?php
 		/**
-		 * @var $pods_admin PodsAdmin
+		 * @var $pods_admin Pods_Admin
 		 */
 		$pods_admin->admin_setup_groups();
 	?>

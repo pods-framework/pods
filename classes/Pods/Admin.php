@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsAdmin {
+class Pods_Admin {
 
     /**
-     * @var PodsAdmin
+     * @var Pods_Admin
      */
     static $instance = null;
 
@@ -17,13 +17,13 @@ class PodsAdmin {
     /**
      * Singleton handling for a basic pods_admin() request
      *
-     * @return \PodsAdmin
+     * @return \Pods_Admin
      *
      * @since 2.3.5
      */
     public static function init () {
         if ( !is_object( self::$instance ) )
-            self::$instance = new PodsAdmin();
+            self::$instance = new Pods_Admin();
 
         return self::$instance;
     }
@@ -31,7 +31,7 @@ class PodsAdmin {
     /**
      * Setup and Handle Admin functionality
      *
-     * @return \PodsAdmin
+     * @return \Pods_Admin
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0

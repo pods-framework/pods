@@ -247,17 +247,17 @@ function pods_components () {
 }
 
 /**
- * Include and Init the PodsAdmin class
+ * Include and Init the Pods_Admin class
  *
- * @see PodsAdmin
+ * @see Pods_Admin
  *
- * @return PodsAdmin
+ * @return Pods_Admin
  *
  * @since 2.0
  */
 function pods_admin () {
 
-    return PodsAdmin::init();
+    return Pods_Admin::init();
 }
 
 /**

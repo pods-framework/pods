@@ -2,12 +2,12 @@
 /**
  * @package Pods\Widgets
  */
-class PodsWidgetList extends WP_Widget {
+class Pods_Widget_List extends WP_Widget {
 
     /**
      * Register the widget
      */
-    public function PodsWidgetList () {
+    public function Pods_Widget_List () {
         $this->WP_Widget(
             'pods_widget_list',
             'Pods - List Items',

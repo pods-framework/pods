@@ -1384,18 +1384,14 @@ class Pods_Init {
      */
     public function register_widgets () {
         $widgets = array(
-            'PodsWidgetSingle',
-            'PodsWidgetList',
-            'PodsWidgetField',
-            'PodsWidgetForm',
-            'PodsWidgetView'
+            'Pods_Widget_Single',
+            'Pods_Widget_List',
+            'Pods_Widget_Field',
+            'Pods_Widget_Form',
+            'Pods_Widget_View'
         );
 
         foreach ( $widgets as $widget ) {
-            if ( !file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) )
-                continue;
-
-            require_once PODS_DIR . 'classes/widgets/' . $widget . '.php';
 
             register_widget( $widget );
         }

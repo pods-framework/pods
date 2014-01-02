@@ -2,12 +2,12 @@
 /**
  * @package Pods\Widgets
  */
-class PodsWidgetView extends WP_Widget {
+class Pods_Widget_View extends WP_Widget {
 
     /**
      * Register the widget
      */
-    public function PodsWidgetView () {
+    public function Pods_Widget_View () {
         $this->WP_Widget(
             'pods_widget_view',
             'Pods - View',

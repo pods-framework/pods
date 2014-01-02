@@ -1,10 +1,10 @@
 <?php
 /**
- * @package Pods\Widgets
+ * @package Pods\Widget
  */
-class PodsWidgetForm extends WP_Widget {
+class Pods_Widget_Form extends WP_Widget {
 
-    public function PodsWidgetForm () {
+    public function Pods_Widget_Form () {
         $this->WP_Widget(
             'pods_widget_form',
             'Pods - Form',

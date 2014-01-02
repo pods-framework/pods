@@ -1173,8 +1173,8 @@ class PodsForm {
         if ( class_exists( $class_name ) )
             $class = new $class_name();
         else {
-            $class = new PodsField();
-            $class_name = 'PodsField';
+            $class = new Pods_Field();
+            $class_name = 'Pods_Field';
         }
 
         $class_vars = get_class_vars( $class_name ); // PHP 5.2.x workaround

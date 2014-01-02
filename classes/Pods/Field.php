@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-class PodsField {
+class Pods_Field {
 
     /**
      * Whether this field is running under 1.x deprecated forms
@@ -55,7 +55,7 @@ class PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @return \PodsField
+     * @return \Pods_Field
      *
      * @since 2.0
      */
@@ -69,7 +69,7 @@ class PodsField {
      * @return array $options
      *
      * @since 2.0
-     * @see PodsField::ui_options
+     * @see Pods_Field::ui_options
      */
     public function options () {
         $options = array( /*
@@ -119,7 +119,7 @@ class PodsField {
      * @return array $options
      *
      * @since 2.0
-     * @see PodsField::options
+     * @see Pods_Field::options
      */
     public function ui_options () {
         return $this->options();

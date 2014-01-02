@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Slug extends PodsField {
+class Pods_Field_Slug extends Pods_Field {
 
     /**
      * Field Type Identifier

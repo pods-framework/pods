@@ -286,7 +286,7 @@ class Pods_Object_Group extends Pods_Object {
 
 		foreach ( $field_types as $type => $field_type_data ) {
 			/**
-			 * @var $field_type PodsField
+			 * @var $field_type Pods_Field
 			 */
 			$field_type = PodsForm::field_loader( $type, $field_type_data[ 'file' ] );
 

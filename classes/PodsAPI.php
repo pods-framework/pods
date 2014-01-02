@@ -2260,8 +2260,8 @@ class PodsAPI {
                         $value_ids = array_slice( $value_ids, 0, $related_limit );
 
                     // Get current values
-                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
-                        $related_ids = PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ];
+                    if ( 'pick' == $type && isset( Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
+                        $related_ids = Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ];
                     else
                         $related_ids = $this->lookup_related_items( $fields[ $field ][ 'id' ], $pod[ 'id' ], $params->id, $fields[ $field ], $pod );
 
@@ -2283,9 +2283,9 @@ class PodsAPI {
                 // Unset data no longer needed
                 if ( 'pick' == $type ) {
                     foreach ( $data as $field => $values ) {
-                        if ( isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
-                            unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'related_field' ][ 'id' ] ] );
-                            unset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] );
+                        if ( isset( Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) ) {
+                            unset( Pods_Field_Pick::$related_data[ Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'related_field' ][ 'id' ] ] );
+                            unset( Pods_Field_Pick::$related_data[ $fields[ $field ][ 'id' ] ] );
                         }
                     }
                 }
@@ -2408,8 +2408,8 @@ class PodsAPI {
      */
     public function save_relationships ( $id, $related_ids, $pod, $field ) {
         // Get current values
-        if ( 'pick' == $field[ 'type' ] && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ] ) )
-            $current_ids = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ];
+        if ( 'pick' == $field[ 'type' ] && isset( Pods_Field_Pick::$related_data[ $field[ 'id' ] ] ) && isset( Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ] ) )
+            $current_ids = Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ];
         else
             $current_ids = $this->lookup_related_items( $field[ 'id' ], $pod[ 'id' ], $id, $field, $pod );
 
@@ -2460,9 +2460,9 @@ class PodsAPI {
 
         $related_pod_id = $related_field_id = 0;
 
-        if ( 'pick' == $field[ 'type' ] && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ] ) && !empty( PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ] ) ) {
-            $related_pod_id = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_pod' ][ 'id' ];
-            $related_field_id = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ][ 'id' ];
+        if ( 'pick' == $field[ 'type' ] && isset( Pods_Field_Pick::$related_data[ $field[ 'id' ] ] ) && !empty( Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ] ) ) {
+            $related_pod_id = Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'related_pod' ][ 'id' ];
+            $related_field_id = Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ][ 'id' ];
         }
 
         // Relationships table

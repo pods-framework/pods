@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-class PodsUI {
+class Pods_UI {
 
     // internal
     /**
@@ -51,7 +51,7 @@ class PodsUI {
     /**
      * @var string
      */
-    public $num = ''; // allows multiple co-existing PodsUI instances with separate functionality in URL
+    public $num = ''; // allows multiple co-existing Pods_UI instances with separate functionality in URL
 
     /**
      * @var array
@@ -423,7 +423,7 @@ class PodsUI {
      * @param mixed $options Object, Array, or String containing Pod or Options to be used
      * @param bool $deprecated Set to true to support old options array from Pods UI plugin
      *
-     * @return \PodsUI
+     * @return \Pods_UI
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0

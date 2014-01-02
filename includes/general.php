@@ -48,7 +48,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
 /**
  * Standardize filters / actions
  *
- * @param string $scope Scope of the filter / action (ui for PodsUI, api for Pods_API, etc..)
+ * @param string $scope Scope of the filter / action (ui for Pods_UI, api for Pods_API, etc..)
  * @param string $name Name of filter / action to run
  * @param mixed $args (optional) Arguments to send to filter / action
  * @param object $obj (optional) Object to reference for filter / action

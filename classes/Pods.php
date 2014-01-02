@@ -3729,7 +3729,7 @@ class Pods implements Iterator {
 	 * @param mixed $options Array or String containing Pod or Options to be used
 	 * @param bool $amend Whether to amend the default UI options or replace entirely
 	 *
-	 * @return PodsUI|void UI object or void if custom UI used
+	 * @return Pods_UI|void UI object or void if custom UI used
 	 *
 	 * @since 2.3.10
 	 */

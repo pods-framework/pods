@@ -531,7 +531,7 @@ class Pods_Admin {
     }
 
     /**
-     * Create PodsUI content for the administration pages
+     * Create Pods_UI content for the administration pages
      */
     public function admin_content () {
 
@@ -549,7 +549,7 @@ class Pods_Admin {
     }
 
     /**
-     * Create PodsUI content for the settings administration pages
+     * Create Pods_UI content for the settings administration pages
      */
     public function admin_content_settings () {
 
@@ -817,7 +817,7 @@ class Pods_Admin {
     /**
      * Get the add page of an object
      *
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      */
     public function admin_setup_add ( $obj ) {
         pods_view( PODS_DIR . 'ui/admin/setup-add.php', compact( array_keys( get_defined_vars() ) ) );
@@ -827,7 +827,7 @@ class Pods_Admin {
      * Get the edit page of an object
      *
      * @param bool $duplicate
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
 
@@ -841,7 +841,7 @@ class Pods_Admin {
      * Duplicate a pod
      *
      * @param int $id
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      *
      * @return mixed
      */
@@ -865,7 +865,7 @@ class Pods_Admin {
 	 * @param array $restrict
 	 * @param string $action
 	 * @param array $row
-	 * @param PodsUI $obj
+	 * @param Pods_UI $obj
 	 *
 	 * @since 2.3.10
 	 */
@@ -882,7 +882,7 @@ class Pods_Admin {
     /**
      * Reset a pod
      *
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      *
      * @return mixed
      */
@@ -906,7 +906,7 @@ class Pods_Admin {
 	 * @param array $restrict
 	 * @param string $action
 	 * @param array $row
-	 * @param PodsUI $obj
+	 * @param Pods_UI $obj
 	 *
 	 * @since 2.3.10
 	 */
@@ -924,7 +924,7 @@ class Pods_Admin {
      * Delete a pod
      *
      * @param int $id
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      *
      * @return mixed
      */
@@ -1001,10 +1001,10 @@ class Pods_Admin {
     }
 
     /**
-     * Custom value handler for 'Rules' in the Groups PodsUI
+     * Custom value handler for 'Rules' in the Groups Pods_UI
      *
      * @param array|Pods_Object|Pods_Object_Group $row Row data
-     * @param PodsUI $obj PodsUI object
+     * @param Pods_UI $obj Pods_UI object
      * @param mixed $row_value Row value
      * @param string $field Field name
      * @param array|Pods_Object|Pods_Object_Field $attributes Field options
@@ -1052,10 +1052,10 @@ class Pods_Admin {
 	}
 
     /**
-     * Custom value handler for 'Field Count' in the Groups PodsUI
+     * Custom value handler for 'Field Count' in the Groups Pods_UI
      *
      * @param array|Pods_Object|Pods_Object_Group $row Row data
-     * @param PodsUI $obj PodsUI object
+     * @param Pods_UI $obj Pods_UI object
      * @param mixed $row_value Row value
      * @param string $field Field name
      * @param array|Pods_Object|Pods_Object_Field $attributes Field options
@@ -1072,7 +1072,7 @@ class Pods_Admin {
     /**
      * Get the add page of an object
      *
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      */
     public function admin_setup_groups_add ( $obj ) {
 
@@ -1084,7 +1084,7 @@ class Pods_Admin {
      * Get the edit page of an object
      *
      * @param bool $duplicate
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      */
     public function admin_setup_groups_edit ( $duplicate, $obj ) {
 
@@ -1096,7 +1096,7 @@ class Pods_Admin {
      * Duplicate a pod
      *
      * @param int $id
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      *
      * @return mixed
      */
@@ -1123,7 +1123,7 @@ class Pods_Admin {
      * Delete a pod
      *
      * @param int $id
-     * @param PodsUI $obj
+     * @param Pods_UI $obj
      *
      * @return mixed
      */
@@ -1316,11 +1316,11 @@ class Pods_Admin {
     /**
      * Toggle a component on or off
      *
-     * @param PodsUI $ui
+     * @param Pods_UI $ui
      *
      * @return bool
      */
-    public function admin_components_toggle ( PodsUI $ui ) {
+    public function admin_components_toggle ( Pods_UI $ui ) {
         $component = $_GET[ 'id' ];
 
         if ( !empty( Pods_Init::$components->components[ $component ][ 'PluginDependency' ] ) ) {

@@ -149,19 +149,19 @@ function pods ( $type = null, $id = null, $strict = null ) {
  * Easily create content admin screens with in-depth customization. This is the primary interface function that Pods
  * runs off of. It's also the only function required to be run in order to have a fully functional Manage interface.
  *
- * @see PodsUI
+ * @see Pods_UI
  *
  * @param array|string|Pods $obj (optional) Configuration options for the UI
  * @param boolean $deprecated (optional) Whether to enable deprecated options (used by pods_ui_manage)
  *
- * @return PodsUI
+ * @return Pods_UI
  *
  * @since 2.0
  * @link http://pods.io/docs/pods-ui/
  */
 function pods_ui ( $obj, $deprecated = false ) {
 
-    return new PodsUI( $obj, $deprecated );
+    return new Pods_UI( $obj, $deprecated );
 }
 
 /**

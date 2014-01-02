@@ -3,7 +3,7 @@ wp_enqueue_style( 'pods-form' );
 
 /**
  * @var array $fields
- * @var PodsUI $obj
+ * @var Pods_UI $obj
  */
 ?>
 

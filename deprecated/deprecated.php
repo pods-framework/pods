@@ -254,7 +254,7 @@ class PodAPI
 }
 
 /**
- * Include and Init the PodsUI class
+ * Include and Init the Pods_UI class
  *
  * @since 2.0
  * @deprecated deprecated since version 2.0

@@ -275,19 +275,19 @@ function pods_meta () {
 }
 
 /**
- * Include and Init the PodsArray class
+ * Include and Init the Pods_Array class
  *
- * @see PodsArray
+ * @see Pods_Array
  *
  * @param mixed $container Object (or existing Array)
  *
- * @return PodsArray
+ * @return Pods_Array
  *
  * @since 2.0
  */
 function pods_array ( $container ) {
 
-    return new PodsArray( $container );
+    return new Pods_Array( $container );
 }
 
 /**

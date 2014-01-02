@@ -793,7 +793,7 @@ class PodsUI {
     /**
      * @param $options
      *
-     * @return array|bool|mixed|null|PodsArray
+     * @return array|bool|mixed|null|Pods_Array
      */
     public function setup ( $options ) {
         $options = pods_array( $options );

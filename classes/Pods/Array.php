@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-class PodsArray implements ArrayAccess {
+class Pods_Array implements ArrayAccess {
 
     /**
      * @var array|mixed
@@ -15,7 +15,7 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $container Object (or existing Array)
      *
-     * @return \PodsArray
+     * @return \Pods_Array
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
@@ -163,7 +163,7 @@ class PodsArray implements ArrayAccess {
     }
 
     /**
-     * Dump the PodsArray object to array
+     * Dump the Pods_Array object to array
      *
      * @return array Array version of the object
      *

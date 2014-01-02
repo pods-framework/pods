@@ -4,10 +4,10 @@
  *
  * @package Pods
  */
-class PodsComponents {
+class Pods_Components {
 
     /**
-     * @var PodsComponents
+     * @var Pods_Components
      */
     static $instance = null;
 
@@ -42,13 +42,13 @@ class PodsComponents {
     /**
      * Singleton handling for a basic pods_components() request
      *
-     * @return \PodsComponents
+     * @return \Pods_Components
      *
      * @since 2.3.5
      */
     public static function init () {
         if ( !is_object( self::$instance ) )
-            self::$instance = new PodsComponents();
+            self::$instance = new Pods_Components();
 
         return self::$instance;
     }
@@ -56,7 +56,7 @@ class PodsComponents {
     /**
      * Setup actions and get options
      *
-     * @return \PodsComponents
+     * @return \Pods_Components
      *
      * @since 2.0
      */

@@ -235,15 +235,15 @@ function pods_init () {
 /**
  * Include and Init the Pods Components class
  *
- * @see PodsComponents
+ * @see Pods_Components
  *
- * @return PodsComponents
+ * @return Pods_Components
  *
  * @since 2.0
  */
 function pods_components () {
 
-    return PodsComponents::init();
+    return Pods_Components::init();
 }
 
 /**

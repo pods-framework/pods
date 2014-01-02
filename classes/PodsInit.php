@@ -20,7 +20,7 @@ class PodsInit {
     static $content_types_registered = array();
 
     /**
-     * @var PodsComponents
+     * @var Pods_Components
      */
     static $components;
 

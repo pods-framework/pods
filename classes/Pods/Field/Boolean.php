@@ -4,7 +4,7 @@
  *
  * @package Pods\Fields
  */
-class PodsField_Boolean extends PodsField {
+class Pods_Field_Boolean extends PodsField {
 
     /**
      * Field Type Identifier

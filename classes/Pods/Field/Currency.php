@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_Number extends PodsField {
+class Pods_Field_Currency extends PodsField {
 
     /**
      * Field Type Group
@@ -18,7 +18,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $type = 'number';
+    public static $type = 'currency';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $label = 'Plain Number';
+    public static $label = 'Currency';
 
     /**
      * Field Type Preparation
@@ -37,12 +37,24 @@ class PodsField_Number extends PodsField {
     public static $prepare = '%d';
 
     /**
+     * Currency Formats
+     *
+     * @var array
+     * @since 2.0
+     */
+    public static $currencies = array(
+        'usd' => '$',
+        'cad' => '$',
+        'euro' => '&euro;'
+    );
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0
      */
     public function __construct () {
-
+        self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
     }
 
     /**
@@ -73,9 +85,33 @@ class PodsField_Number extends PodsField {
                 ),
                 'dependency' => true
             ),
+            self::$type . '_format_sign' => array(
+                'label' => __( 'Currency Sign', 'pods' ),
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
+                'type' => 'pick',
+                'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
+                    array(
+                        'usd' => '$ (USD)',
+                        'cad' => '$ (CAD)',
+                        'euro' => '&euro; (Euro)',
+                        'gbp' => '&pound; (GBP)'
+                    )
+                )
+            ),
+            self::$type . '_format_placement' => array(
+                'label' => __( 'Currency Placement', 'pods' ),
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
+                'type' => 'pick',
+                'data' => array(
+                    'before' => __( 'Before (ex. $100)', 'pods' ),
+                    'after' => __( 'After (ex. 100$)', 'pods' ),
+                    'none' => __( 'None (ex. 100)', 'pods' ),
+                    'beforeaftercode' => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' )
+                )
+            ),
             self::$type . '_format' => array(
                 'label' => __( 'Format', 'pods' ),
-                'default' => apply_filters( 'pods_form_ui_field_number_format_default', 'i18n' ),
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_format_default', 'i18n' ),
                 'type' => 'pick',
                 'data' => array(
                     'i18n' => __( 'Localized Default', 'pods' ),
@@ -88,7 +124,7 @@ class PodsField_Number extends PodsField {
             ),
             self::$type . '_decimals' => array(
                 'label' => __( 'Decimals', 'pods' ),
-                'default' => 0,
+                'default' => 2,
                 'type' => 'number',
                 'help' => __( 'Maximum allowed is 30 decimals', 'pods' )
             ),
@@ -107,7 +143,7 @@ class PodsField_Number extends PodsField {
             self::$type . '_max' => array(
                 'label' => __( 'Maximum Number', 'pods' ),
                 'depends-on' => array( self::$type . '_format_type' => 'slider' ),
-                'default' => 100,
+                'default' => 1000,
                 'type' => 'text'
             ),
             self::$type . '_max_length' => array(
@@ -145,7 +181,7 @@ class PodsField_Number extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( self::$type . '_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -176,7 +212,7 @@ class PodsField_Number extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( self::$type . '_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -209,6 +245,22 @@ class PodsField_Number extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->format( $value, $name, $options, $pod, $id );
 
+        $currency = 'usd';
+
+        if ( isset( self::$currencies[ pods_var( self::$type . '_format_sign', $options, -1 ) ] ) )
+            $currency = pods_var( self::$type . '_format_sign', $options );
+
+        $currency_sign = self::$currencies[ $currency ];
+
+        $placement = pods_var( self::$type . '_format_placement', $options, 'before', null, true );
+
+        if ( 'before' == $placement )
+            $value = $currency_sign . $value;
+        elseif ( 'after' == $placement )
+            $value .= $currency_sign;
+        elseif ( 'beforeaftercode' == $placement )
+            $value = $currency_sign . $value . ' ' . strtoupper( $currency );
+
         return $value;
     }
 
@@ -232,10 +284,10 @@ class PodsField_Number extends PodsField {
         if ( 'slider' == pods_var( self::$type . '_format_type', $options, 'number' ) )
             $field_type = 'slider';
         else
-            $field_type = 'number';
+            $field_type = 'currency';
 
         if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )  {
+            if ( pods_var( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -296,7 +348,14 @@ class PodsField_Number extends PodsField {
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
-        return '\-*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
+        $currency = 'usd';
+
+        if ( isset( self::$currencies[ pods_var( self::$type . '_format_sign', $options, -1 ) ] ) )
+            $currency = pods_var( self::$type . '_format_sign', $options );
+
+        $currency_sign = self::$currencies[ $currency ];
+
+        return '\-*\\' . $currency_sign .'*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
     }
 
     /**
@@ -341,7 +400,14 @@ class PodsField_Number extends PodsField {
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
-        $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+        $currency = 'usd';
+
+        if ( isset( self::$currencies[ pods_var( self::$type . '_format_sign', $options, -1 ) ] ) )
+            $currency = pods_var( self::$type . '_format_sign', $options );
+
+        $currency_sign = self::$currencies[ $currency ];
+
+        $check = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
         $check = preg_replace( '/[0-9\.\-]/', '', $check );
 
@@ -395,7 +461,14 @@ class PodsField_Number extends PodsField {
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
-        $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+        $currency = 'usd';
+
+        if ( isset( self::$currencies[ pods_var( self::$type . '_format_sign', $options, -1 ) ] ) )
+            $currency = pods_var( self::$type . '_format_sign', $options );
+
+        $currency_sign = self::$currencies[ $currency ];
+
+        $value = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
@@ -404,7 +477,7 @@ class PodsField_Number extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( self::$type . '_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -481,7 +554,7 @@ class PodsField_Number extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( self::$type . '_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;

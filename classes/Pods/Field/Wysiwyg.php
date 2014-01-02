@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_Paragraph extends PodsField {
+class Pods_Field_WYSIWYG extends PodsField {
 
     /**
      * Field Type Group
@@ -18,7 +18,7 @@ class PodsField_Paragraph extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $type = 'paragraph';
+    public static $type = 'wysiwyg';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_Paragraph extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $label = 'Plain Paragraph Text';
+    public static $label = 'WYSIWYG (Visual Editor)';
 
     /**
      * Field Type Preparation
@@ -63,15 +63,33 @@ class PodsField_Paragraph extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
+            self::$type . '_editor' => array(
+                'label' => __( 'Editor', 'pods' ),
+                'default' => 'tinymce',
+                'type' => 'pick',
+                'data' =>
+                    apply_filters(
+                        'pods_form_ui_field_wysiwyg_editors',
+                        array(
+                            'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
+                            'cleditor' => __( 'CLEditor', 'pods' )
+                        )
+                    )
+            ),
+            'editor_options' => array(
+                'label' => __( 'Editor Options', 'pods' ),
+                'depends-on' => array( self::$type . '_editor' => 'tinymce' ),
+                'group' => array(
+                    self::$type . '_media_buttons' => array(
+                        'label' => __( 'Enable Media Buttons?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean'
+                    )
+                )
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    self::$type . '_allow_html' => array(
-                        'label' => __( 'Allow HTML?', 'pods' ),
-                        'default' => 1,
-                        'type' => 'boolean',
-                        'dependency' => true
-                    ),
                     self::$type . '_oembed' => array(
                         'label' => __( 'Enable oEmbed?', 'pods' ),
                         'default' => 0,
@@ -122,8 +140,7 @@ class PodsField_Paragraph extends PodsField {
             ),
             self::$type . '_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( self::$type . '_allow_html' => true ),
-                'default' => 'strong em a ul ol li b i',
+                'default' => '',
                 'type' => 'text',
 				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
             ),
@@ -137,7 +154,7 @@ class PodsField_Paragraph extends PodsField {
                 'label' => __( 'Rows', 'pods' ),
                 'default' => 0,
                 'type' => 'number',
-                'help' => __( 'Customize how many rows the textarea will have.', 'pods' )
+                'help' => __( 'Customize how many rows the editor will have.', 'pods' )
             )
         );
 
@@ -149,7 +166,7 @@ class PodsField_Paragraph extends PodsField {
      *
      * @param array $options
      *
-     * @return array
+     * @return string
      * @since 2.0
      */
     public function schema ( $options = null ) {
@@ -169,25 +186,41 @@ class PodsField_Paragraph extends PodsField {
         return $schema;
     }
 
-    /**
-     * Change the value of the field when displayed with Pods::display
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.0
-     */
+	/**
+	 * Change the value of the field when displayed with Pods::display
+	 *
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 * @param int $id
+	 *
+	 * @return mixed|null|string
+	 * @since 2.0
+	 */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
         if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
+            $post_temp = false;
+
+            // Workaround for WP_Embed since it needs a $post to work from
+            if ( 'post_type' == pods_var( 'type', $pod ) && 0 < $id && ( !isset( $GLOBALS[ 'post' ] ) || empty( $GLOBALS[ 'post' ] ) ) ) {
+                $post_temp = true;
+
+                $GLOBALS[ 'post' ] = get_post( $id );
+            }
+
+            /**
+             * @var $embed WP_Embed
+             */
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );
             $value = $embed->autoembed( $value );
+
+            // Cleanup after ourselves
+            if ( $post_temp )
+                $GLOBALS[ 'post' ] = null;
         }
 
         if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
@@ -227,15 +260,32 @@ class PodsField_Paragraph extends PodsField {
             $value = implode( "\n", $value );
 
         if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )
+            if ( pods_var( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
+
+                $field_type = 'textarea';
+            }
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
-        pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
+            $field_type = 'textarea';
+        }
+        elseif ( 'tinymce' == pods_var( self::$type . '_editor', $options ) )
+            $field_type = 'tinymce';
+        elseif ( 'cleditor' == pods_var( self::$type . '_editor', $options ) )
+            $field_type = 'cleditor';
+        else {
+            // Support custom WYSIWYG integration
+            do_action( 'pods_form_ui_field_wysiwyg_' . pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_wysiwyg', pods_var( self::$type . '_editor', $options ), $name, $value, $options, $pod, $id );
+
+            return;
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -249,7 +299,6 @@ class PodsField_Paragraph extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @return mixed|string
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -274,7 +323,6 @@ class PodsField_Paragraph extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @return mixed|string
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
@@ -302,13 +350,10 @@ class PodsField_Paragraph extends PodsField {
         if ( empty( $value ) )
             return $value;
 
-        if ( 0 == pods_var( self::$type . '_allow_html', $options ) ) {
-            $value = strip_tags( $value );
-		}
-		elseif ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+        if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
 			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
 			$allowed_tags = trim( preg_replace( '/[^\<\>\/\,]/', ' ', $allowed_tags ) );
-			$allowed_tags = explode( ' ', $allowed_tags );
+            $allowed_tags = explode( ' ', $allowed_tags );
 
 			// Handle issue with self-closing tags in strip_tags
 			// @link http://www.php.net/strip_tags#88991
@@ -323,11 +368,11 @@ class PodsField_Paragraph extends PodsField {
 			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
 			if ( !empty( $allowed_tags ) ) {
-				$allowed_tags = '<' . implode( '><', $allowed_tags ) . '>';
+            	$allowed_tags = '<' . implode( '><', $allowed_tags ) . '>';
 
-				$value = strip_tags( $value, $allowed_tags );
+            	$value = strip_tags( $value, $allowed_tags );
 			}
-		}
+        }
 
         return $value;
     }

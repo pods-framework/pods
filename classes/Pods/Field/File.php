@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_File extends PodsField {
+class Pods_Field_File extends PodsField {
 
     /**
      * Field Type Group

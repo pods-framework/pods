@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_Password extends PodsField {
+class Pods_Field_Password extends PodsField {
 
     /**
      * Field Type Group

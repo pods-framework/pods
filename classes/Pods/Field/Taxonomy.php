@@ -3,7 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_Taxonomy extends PodsField_Pick {
+class Pods_Field_Taxonomy extends Pods_Field_Pick {
 
     /**
      * Setup related objects list

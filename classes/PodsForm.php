@@ -1168,7 +1168,7 @@ class PodsForm {
         $field_type = self::clean( $field_type, true, true );
 
         $class_name = ucfirst( $field_type );
-        $class_name = "PodsField_{$class_name}";
+        $class_name = "Pods_Field_{$class_name}";
 
         if ( class_exists( $class_name ) )
             $class = new $class_name();

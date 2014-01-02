@@ -10,7 +10,7 @@
 	 * </code>
 	 *
 	 */
-	class PodsClassLoader {
+	class Pods_ClassLoader {
 
 		private $_fileExtension;
 

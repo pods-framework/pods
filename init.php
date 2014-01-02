@@ -72,9 +72,9 @@ else {
     else {
         global $pods, $pods_init, $pods_form;
 
-		require_once( PODS_DIR . 'classes/PodsClassLoader.php' );
+		require_once( PODS_DIR . 'classes/Pods/ClassLoader.php' );
 
-		$classLoader = new PodsClassLoader( PODS_DIR . 'classes' );
+		$classLoader = new Pods_ClassLoader( PODS_DIR . 'classes' );
 		$classLoader->register();
 
         require_once( PODS_DIR . 'includes/classes.php' );

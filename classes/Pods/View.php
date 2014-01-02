@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-class PodsView {
+class Pods_View {
 
 	/**
 	 * @var array $cache_modes Array of available cache modes
@@ -10,7 +10,7 @@ class PodsView {
 	static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'option-cache' );
 
 	/**
-	 * @return \PodsView
+	 * @return \Pods_View
 	 */
 	private function __construct() {
 	}

@@ -293,7 +293,7 @@ function pods_array ( $container ) {
 /**
  * Include a file that's child/parent theme-aware, and can be cached into object cache or transients
  *
- * @see PodsView::view
+ * @see Pods_View::view
  *
  * @param string $view Path of the file to be included, this is relative to the current theme
  * @param array|null $data (optional) Data to pass on to the template, using variable => value format
@@ -308,7 +308,7 @@ function pods_array ( $container ) {
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
 
-    $view = PodsView::view( $view, $data, $expires, $cache_mode );
+    $view = Pods_View::view( $view, $data, $expires, $cache_mode );
 
     if ( $return )
         return $view;

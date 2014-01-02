@@ -1331,7 +1331,7 @@ function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
 /**
  * Set a cached value
  *
- * @see PodsView::set
+ * @see Pods_View::set
  *
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
@@ -1344,15 +1344,14 @@ function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
  * @since 2.0
  */
 function pods_view_set ( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
-    require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    return PodsView::set( $key, $value, $expires, $cache_mode, $group );
+    return Pods_View::set( $key, $value, $expires, $cache_mode, $group );
 }
 
 /**
  * Get a cached value
  *
- * @see PodsView::get
+ * @see Pods_View::get
  *
  * @param string $key Key for the cache
  * @param string $cache_mode (optional) Decides the caching method to use for the view.
@@ -1364,15 +1363,14 @@ function pods_view_set ( $key, $value, $expires = 0, $cache_mode = 'cache', $gro
  * @since 2.0
  */
 function pods_view_get ( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
-    require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    return PodsView::get( $key, $cache_mode, $group, $callback );
+    return Pods_View::get( $key, $cache_mode, $group, $callback );
 }
 
 /**
  * Clear a cached value
  *
- * @see PodsView::clear
+ * @see Pods_View::clear
  *
  * @param string|bool $key Key for the cache
  * @param string $cache_mode (optional) Decides the caching method to use for the view.
@@ -1383,15 +1381,14 @@ function pods_view_get ( $key, $cache_mode = 'cache', $group = '', $callback = n
  * @since 2.0
  */
 function pods_view_clear ( $key = true, $cache_mode = 'cache', $group = '' ) {
-    require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    return PodsView::clear( $key, $cache_mode, $group );
+    return Pods_View::clear( $key, $cache_mode, $group );
 }
 
 /**
  * Set a cached value
  *
- * @see PodsView::set
+ * @see Pods_View::set
  *
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
@@ -1409,7 +1406,7 @@ function pods_cache_set ( $key, $value, $group = '', $expires = 0) {
 /**
  * Clear a cached value
  *
- * @see PodsView::clear
+ * @see Pods_View::clear
  *
  * @param string $key Key for the cache
  * @param string $group (optional) Key for the group
@@ -1426,7 +1423,7 @@ function pods_cache_get ( $key, $group = '', $callback = null ) {
 /**
  * Get a cached value
  *
- * @see PodsView::get
+ * @see Pods_View::get
  *
  * @param string|bool $key Key for the cache
  * @param string $group (optional) Key for the group
@@ -1442,7 +1439,7 @@ function pods_cache_clear ( $key = true, $group = '' ) {
 /**
  * Set a cached value
  *
- * @see PodsView::set
+ * @see Pods_View::set
  *
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
@@ -1459,7 +1456,7 @@ function pods_transient_set ( $key, $value, $expires = 0 ) {
 /**
  * Get a cached value
  *
- * @see PodsView::get
+ * @see Pods_View::get
  *
  * @param string $key Key for the cache
  * @param string $callback (optional) Callback function to run to set the value if not cached
@@ -1475,7 +1472,7 @@ function pods_transient_get ( $key, $callback = null ) {
 /**
  * Clear a cached value
  *
- * @see PodsView::clear
+ * @see Pods_View::clear
  *
  * @param string|bool $key Key for the cache
  *
@@ -1490,7 +1487,7 @@ function pods_transient_clear ( $key = true ) {
 /**
  * Set a cached value
  *
- * @see PodsView::set
+ * @see Pods_View::set
  *
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
@@ -1507,7 +1504,7 @@ function pods_site_transient_set ( $key, $value, $expires = 0 ) {
 /**
  * Get a cached value
  *
- * @see PodsView::get
+ * @see Pods_View::get
  *
  * @param string $key Key for the cache
  * @param string $callback (optional) Callback function to run to set the value if not cached
@@ -1523,7 +1520,7 @@ function pods_site_transient_get ( $key, $callback = null ) {
 /**
  * Clear a cached value
  *
- * @see PodsView::clear
+ * @see Pods_View::clear
  *
  * @param string|bool $key Key for the cache
  *
@@ -1538,7 +1535,7 @@ function pods_site_transient_clear ( $key = true ) {
 /**
  * Set a cached value
  *
- * @see PodsView::set
+ * @see Pods_View::set
  *
  * @param string $key Key for the cache
  * @param mixed $value Value to add to the cache
@@ -1556,7 +1553,7 @@ function pods_option_cache_set ( $key, $value, $expires = 0, $group = '' ) {
 /**
  * Get a cached value
  *
- * @see PodsView::get
+ * @see Pods_View::get
  *
  * @param string $key Key for the cache
  * @param string $group (optional) Key for the group
@@ -1573,7 +1570,7 @@ function pods_option_cache_get ( $key, $group = '', $callback = null ) {
 /**
  * Clear a cached value
  *
- * @see PodsView::clear
+ * @see Pods_View::clear
  *
  * @param string|bool $key Key for the cache
  * @param string $group (optional) Key for the group
@@ -1599,7 +1596,7 @@ function pods_option_cache_clear ( $key = true, $group = '' ) {
  * @since 2.3.9
  */
 function pods_template_part ( $template, $data = null, $return = false ) {
-    $part = PodsView::get_template_part( $template, $data );
+    $part = Pods_View::get_template_part( $template, $data );
 
     if ( !$return ) {
         echo $part;

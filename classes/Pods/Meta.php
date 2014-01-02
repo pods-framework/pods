@@ -2,10 +2,10 @@
 /**
  * @package Pods
  */
-class PodsMeta {
+class Pods_Meta {
 
     /**
-     * @var PodsMeta
+     * @var Pods_Meta
      */
     static $instance = null;
 
@@ -87,19 +87,19 @@ class PodsMeta {
     /**
      * Singleton handling for a basic pods_meta() request
      *
-     * @return \PodsMeta
+     * @return \Pods_Meta
      *
      * @since 2.3.5
      */
     public static function init () {
         if ( !is_object( self::$instance ) )
-            self::$instance = new PodsMeta();
+            self::$instance = new Pods_Meta();
 
         return self::$instance;
     }
 
     /**
-     * @return \PodsMeta
+     * @return \Pods_Meta
      *
      * @since 2.0
      */
@@ -110,7 +110,7 @@ class PodsMeta {
     }
 
     /**
-     * @return \PodsMeta
+     * @return \Pods_Meta
      */
     public function core () {
 		// Handle Post Editor

@@ -25,7 +25,7 @@ class PodsInit {
     static $components;
 
     /**
-     * @var PodsMeta
+     * @var Pods_Meta
      */
     static $meta;
 
@@ -912,7 +912,7 @@ class PodsInit {
     public function setup_updated_messages ( $messages ) {
         global $post, $post_ID;
 
-        $post_types = PodsMeta::$post_types;
+        $post_types = Pods_Meta::$post_types;
         $existing_post_types = get_post_types();
 
         $pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
@@ -1313,7 +1313,7 @@ class PodsInit {
         }
 
         // Post Meta
-        if ( !empty( PodsMeta::$post_types ) ) {
+        if ( !empty( Pods_Meta::$post_types ) ) {
             $sql =  "
                 DELETE `rel`
                 FROM `@wp_postmeta` AS `rel`
@@ -1335,7 +1335,7 @@ class PodsInit {
         }
 
         // User Meta
-        if ( !empty( PodsMeta::$user ) ) {
+        if ( !empty( Pods_Meta::$user ) ) {
             $sql = "
                 DELETE `rel`
                 FROM `@wp_usermeta` AS `rel`
@@ -1357,7 +1357,7 @@ class PodsInit {
         }
 
         // Comment Meta
-        if ( !empty( PodsMeta::$comment ) ) {
+        if ( !empty( Pods_Meta::$comment ) ) {
             $sql = "
                 DELETE `rel`
                 FROM `@wp_commentmeta` AS `rel`

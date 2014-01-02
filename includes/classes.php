@@ -261,17 +261,17 @@ function pods_admin () {
 }
 
 /**
- * Include and Init the PodsMeta class
+ * Include and Init the Pods_Meta class
  *
- * @see PodsMeta
+ * @see Pods_Meta
  *
- * @return PodsMeta
+ * @return Pods_Meta
  *
  * @since 2.0
  */
 function pods_meta () {
 
-    return PodsMeta::init();
+    return Pods_Meta::init();
 }
 
 /**

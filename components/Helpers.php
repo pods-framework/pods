@@ -258,7 +258,7 @@ class Pods_Helpers extends Pods_Component {
             'type' => 'post_type'
         );
 
-        if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+        if ( isset( Pods_Meta::$post_types[ $pod[ 'name' ] ] ) )
             return;
 
         $fields = array(

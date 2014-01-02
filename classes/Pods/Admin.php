@@ -169,10 +169,10 @@ class Pods_Admin {
      * @since 2.0
      */
     public function admin_menu () {
-        $taxonomies = PodsMeta::$taxonomies;
+        $taxonomies = Pods_Meta::$taxonomies;
 
-        $advanced_content_types = PodsMeta::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
-        $settings = PodsMeta::$settings = pods_api()->load_pods( array( 'type' => 'settings' ) );
+        $advanced_content_types = Pods_Meta::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
+        $settings = Pods_Meta::$settings = pods_api()->load_pods( array( 'type' => 'settings' ) );
 
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 

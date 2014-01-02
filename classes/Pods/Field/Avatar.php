@@ -299,10 +299,10 @@ class Pods_Field_Avatar extends Pods_Field {
                 $_user_ID = (int) $_user->ID;
         }
 
-		// Include PodsMeta if not already included
+		// Include Pods_Meta if not already included
 		pods_meta();
 
-        if ( 0 < $_user_ID && !empty( PodsMeta::$user ) ) {
+        if ( 0 < $_user_ID && !empty( Pods_Meta::$user ) ) {
             $avatar_cached = pods_cache_get( $_user_ID . '-' . $size, 'pods_avatars' );
 
             if ( !empty( $avatar_cached ) )
@@ -310,7 +310,7 @@ class Pods_Field_Avatar extends Pods_Field {
             else {
                 $avatar_field = pods_transient_get( 'pods_avatar_field' );
 
-                $user = current( PodsMeta::$user );
+                $user = current( Pods_Meta::$user );
 
                 if ( empty( $avatar_field ) ) {
                     foreach ( $user[ 'fields' ] as $field ) {

@@ -3,19 +3,19 @@
 
     // Migrate pick object when saving
     if ( 'pod' == pods_var( 'pick_object', $field ) ) {
-        if ( isset( PodsMeta::$post_types[ $field[ 'pick_val' ] ] ) )
+        if ( isset( Pods_Meta::$post_types[ $field[ 'pick_val' ] ] ) )
             $field[ 'pick_object' ] = 'post_type';
-        elseif ( isset( PodsMeta::$taxonomies[ $field[ 'pick_val' ] ] ) )
+        elseif ( isset( Pods_Meta::$taxonomies[ $field[ 'pick_val' ] ] ) )
             $field[ 'pick_object' ] = 'taxonomy';
-        elseif ( 'user' == $field[ 'pick_val' ] && !empty( PodsMeta::$user ) ) {
+        elseif ( 'user' == $field[ 'pick_val' ] && !empty( Pods_Meta::$user ) ) {
             $field[ 'pick_object' ] = 'user';
             $field[ 'pick_val' ] = '';
         }
-        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( PodsMeta::$comment ) ) {
+        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( Pods_Meta::$comment ) ) {
             $field[ 'pick_object' ] = 'comment';
             $field[ 'pick_val' ] = '';
         }
-        elseif ( 'media' == $field[ 'pick_val' ] && !empty( PodsMeta::$media ) ) {
+        elseif ( 'media' == $field[ 'pick_val' ] && !empty( Pods_Meta::$media ) ) {
             $field[ 'pick_object' ] = 'media';
             $field[ 'pick_val' ] = '';
         }

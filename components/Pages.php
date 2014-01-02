@@ -335,7 +335,7 @@ class Pods_Pages extends Pods_Component {
             'type' => 'post_type'
         );
 
-        if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+        if ( isset( Pods_Meta::$post_types[ $pod[ 'name' ] ] ) )
             return;
 
         if ( !function_exists( 'get_page_templates' ) )

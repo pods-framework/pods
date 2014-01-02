@@ -1613,7 +1613,7 @@ function pods_template_part ( $template, $data = null, $return = false ) {
 /**
  * Add a new Pod outside of the DB
  *
- * @see PodsMeta::register
+ * @see Pods_Meta::register
  *
  * @param string $type The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
  * @param string $name The pod name
@@ -1635,7 +1635,7 @@ function pods_register_type ( $type, $name, $object = null ) {
 /**
  * Add a new Pod field outside of the DB
  *
- * @see PodsMeta::register_field
+ * @see Pods_Meta::register_field
  *
  * @param string|array $pod The pod name or array of pod names
  * @param string $name The name of the Field
@@ -1699,7 +1699,7 @@ function pods_require_component ( $component ) {
 /**
  * Add a meta group of fields to add/edit forms
  *
- * @see PodsMeta::group_add
+ * @see Pods_Meta::group_add
  *
  * @param string|array $pod The pod or type of element to attach the group to.
  * @param string $label Title of the edit screen section, visible to user.

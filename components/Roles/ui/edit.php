@@ -81,17 +81,30 @@
                                         <p>
                                             <a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
                                         </p>
+                                    </div>
 
+                                    <?php
+                                    foreach ( $grouped_capabilities as $group => $capabilities ) {
+                                    ?>
+                                    <div class="pods-field-option-group">
+                                        
+                                        <?php 
+                                        echo PodsForm::field( 'groups[' . $group . ']', pods_var_raw( 'groups[' . $group . ']', 'post', false ), 'boolean', array( 'boolean_yes_label' => '&nbsp;<strong>' . ucfirst( $group ) . '</strong>' ) );
+                                        ?>
                                         <div class="pods-pick-values pods-pick-checkbox pods-zebra">
-                                            <ul>
+                                            <ul data-group="<?php echo esc_attr( $group ); ?>">
                                                 <?php
                                                 $zebra = false;
+                                                $group_checked = true;
 
                                                 foreach ( $capabilities as $capability ) {
                                                     $checked = false;
 
-                                                    if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
+                                                    if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) ) {
                                                         $checked = true;
+                                                    } else {
+                                                        $group_checked = false;
+                                                    }
 
                                                     $class = ( $zebra ? 'even' : 'odd' );
 
@@ -105,7 +118,16 @@
                                                 ?>
                                             </ul>
                                         </div>
+                                        <script type="text/javascript">
+                                            jQuery( function ( $ ) {
+                                                $('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').prop( 'checked', <?php echo $group_checked ? 'true' : 'false'; ?> );
+                                                $('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').click( function(){ $('ul[data-group="<?php echo esc_js( $group ) ?>"] input[type="checkbox"]').prop( 'checked', $( this ).prop( 'checked' ) ); } );    
+                                            } );
+                                        </script>
                                     </div>
+                                    <?php 
+                                    }
+                                    ?>
 
                                     <div class="pods-field-option-group">
                                         <p class="pods-field-option-group-label">

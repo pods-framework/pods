@@ -643,9 +643,6 @@ class Pods_API {
      */
     public function get_wp_object_fields ( $object = 'post_type', $pod = null, $refresh = false ) {
 
-		// Include dependencies for caching
-		pods_object_field();
-
         $pod_name = pods_var_raw( 'name', $pod, $object, null, true );
 
 		if ( 'media' == $pod_name ) {
@@ -3559,10 +3556,6 @@ class Pods_API {
 	 */
 	public function load_pod( $params, $strict = true ) {
 
-		// Include dependencies for caching
-		pods_object_pod();
-		pods_object_field();
-
 		// Debug override for strict
 		if ( !is_bool( $strict ) ) {
 			$strict = apply_filters( 'pods_strict', false, __FUNCTION__, $strict );
@@ -3649,10 +3642,6 @@ class Pods_API {
      * @since 2.0
      */
     public function load_pods ( $params = null ) {
-
-		// Include dependencies for caching
-		pods_object_pod();
-		pods_object_field();
 
         /**
          * @var $sitepress SitePress
@@ -4037,9 +4026,6 @@ class Pods_API {
      * @since 1.7.9
      */
     public function load_fields ( $params, $strict = false ) {
-
-		// Include dependencies for caching
-		pods_object_field();
 
         $params = (object) pods_sanitize( $params );
 

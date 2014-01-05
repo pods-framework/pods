@@ -16,6 +16,11 @@
  */
 function pods_sanitize( $input, $params = array() ) {
 
+	// Optimization to avoid the rest of the logic
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
+
 	$output = array();
 
 	$defaults = array(
@@ -32,10 +37,7 @@ function pods_sanitize( $input, $params = array() ) {
 		$params = array_merge( $defaults, (array) $params );
 	}
 
-	if ( empty( $input ) ) {
-		$output = $input;
-	}
-	elseif ( is_object( $input ) ) {
+	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 
 		$n_params = $params;
@@ -69,10 +71,6 @@ function pods_sanitize( $input, $params = array() ) {
 	}
 	else {
 		$output = esc_sql( $input );
-	}
-
-	if ( false === $params[ 'nested' ] ) {
-		$output = apply_filters( 'pods_sanitize', $output, $input );
 	}
 
 	return $output;
@@ -129,6 +127,11 @@ function pods_sanitize_like( $input ) {
  * @see wp_slash
  */
 function pods_slash( $input, $params = array() ) {
+
+	// Optimization to avoid the rest of the logic
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
 
 	$output = array();
 
@@ -193,6 +196,11 @@ function pods_slash( $input, $params = array() ) {
  */
 function pods_unsanitize( $input, $params = array() ) {
 
+	// Optimization to avoid the rest of the logic
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
+
 	$output = array();
 
 	if ( empty( $input ) ) {
@@ -223,10 +231,6 @@ function pods_unsanitize( $input, $params = array() ) {
 		$output = stripslashes( $input );
 	}
 
-	if ( !is_array( $params ) || !isset( $params[ 'nested' ] ) || false === $params[ 'nested' ] ) {
-		$output = apply_filters( 'pods_unsanitize', $output, $input );
-	}
-
 	return $output;
 
 }
@@ -243,6 +247,11 @@ function pods_unsanitize( $input, $params = array() ) {
  * @see wp_unslash
  */
 function pods_unslash( $input ) {
+
+	// Optimization to avoid the rest of the logic
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
 
 	$output = array();
 
@@ -817,6 +826,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
 
 	$output = pods_v( $var, $type, $default, $params );
+
+	// Optimization to avoid the rest of the logic
+	if ( '' === $output || is_int( $output ) || is_float( $output ) || empty( $output ) ) {
+		return $output;
+	}
 
 	$output = pods_sanitize( $output, $params );
 

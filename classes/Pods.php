@@ -4016,7 +4016,6 @@ class Pods implements Iterator {
 		$name = (string) $name;
 
 		if ( !isset( $this->deprecated ) ) {
-			require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 
@@ -4049,7 +4048,6 @@ class Pods implements Iterator {
 		$name = (string) $name;
 
 		if ( !isset( $this->deprecated ) ) {
-			require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 

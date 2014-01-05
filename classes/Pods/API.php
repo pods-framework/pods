@@ -6044,7 +6044,6 @@ class Pods_API {
         $name = (string) $name;
 
         if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
             $this->deprecated = new PodsAPI_Deprecated( $this );
         }
 
@@ -6070,7 +6069,6 @@ class Pods_API {
         $name = (string) $name;
 
         if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
             $this->deprecated = new PodsAPI_Deprecated( $this );
         }
 

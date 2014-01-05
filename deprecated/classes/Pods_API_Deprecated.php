@@ -2,7 +2,7 @@
 /**
  * @package Pods\Deprecated
  */
-class PodsAPI_Deprecated {
+class Pods_API_Deprecated {
 
     private $obj;
 

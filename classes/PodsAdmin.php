@@ -533,8 +533,18 @@ class PodsAdmin {
 
                     break;
                 }
+            }  
+        }
+
+        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
+            global $submenu_file;
+            $components = PodsInit::$components->components;
+            foreach ( $components as $component => $component_data ) {
+                if ( ! empty( $component_data[ 'MenuPage' ] ) && $parent_file === $component_data[ 'MenuPage' ] ) {
+                    $parent_file = 'pods';
+                    $submenu_file = $component_data[ 'MenuPage' ];
+                }
             }
-            
         }
         
         return $parent_file;

@@ -796,7 +796,7 @@ class Pods_Object implements ArrayAccess, Serializable {
 			$field_data = null;
 
 			// Get a list of available items from a relationship field
-			if ( 'data' == $option && in_array( pods_var_raw( 'type', $this->_object[ $fields ][ $field ] ), Pods_Form::tableless_field_types() ) ) {
+			if ( 'data' == $option && in_array( pods_v( 'type', $this->_object[ $fields ][ $field ] ), Pods_Form::tableless_field_types() ) ) {
 				$field_data = Pods_Form::field_method( 'pick', 'get_field_data', $this->_object[ $fields ][ $field ] );
 			}
 			// Return option

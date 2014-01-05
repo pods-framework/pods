@@ -187,8 +187,8 @@ class Pods_Form {
 				$id = $options;
 			}
 
-			$name = pods_var_raw( 'name', $options );
-			$type = pods_var_raw( 'type', $options );
+			$name = pods_v( 'name', $options );
+			$type = pods_v( 'type', $options );
 		}
 
         $options = self::options( $type, $options );
@@ -206,7 +206,7 @@ class Pods_Form {
 
         $helper = false;
 
-        if ( 0 < strlen( pods_var_raw( 'input_helper', $options ) ) )
+        if ( 0 < strlen( pods_v( 'input_helper', $options ) ) )
             $helper = pods_api()->load_helper( array( 'name' => $options[ 'input_helper' ] ) );
 
         if ( ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) )
@@ -214,7 +214,7 @@ class Pods_Form {
 
         if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) )
             do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
-        elseif ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && false === strpos( $helper[ 'code' ], '$this->' ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+        elseif ( !empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper[ 'code' ], '$this->' ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
             eval( '?>' . $helper[ 'code' ] );
         elseif ( method_exists( get_class(), 'field_' . $type ) )
             echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
@@ -423,8 +423,8 @@ class Pods_Form {
             $_attributes[ 'name' ] = $name;
             $_attributes[ 'data-name-clean' ] = $name_more_clean;
 
-            if ( 0 < strlen( pods_var_raw( 'label', $options, '' ) ) )
-                $_attributes[ 'data-label' ] = strip_tags( pods_var_raw( 'label', $options ) );
+            if ( 0 < strlen( pods_v( 'label', $options, '' ) ) )
+                $_attributes[ 'data-label' ] = strip_tags( pods_v( 'label', $options ) );
 
             $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
             $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
@@ -468,10 +468,10 @@ class Pods_Form {
 			$attributes[ 'placeholder' ] = trim( $options[ 'placeholder' ] );
         }
 
-        if ( 1 == pods_var( 'required', $options, 0 ) )
+        if ( 1 == pods_v( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
 
-        $max_length = (int) pods_var( 'maxlength', $options, pods_var( $type . '_max_length', $options, 0 ), null, true );
+        $max_length = (int) pods_var( 'maxlength', $options, pods_v( $type . '_max_length', $options, 0 ), null, true );
 
         if ( 0 < $max_length )
             $attributes[ 'maxlength' ] = $max_length;
@@ -680,7 +680,7 @@ class Pods_Form {
             $fields = array( $fields );
 
         foreach ( $fields as $f => $field ) {
-            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
+            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_v( 'type', $field, 'text' ) );
 
             if ( !$single && strlen( $fields[ $f ][ 'name' ] ) < 1 )
                 $fields[ $f ][ 'name' ] = $f;
@@ -836,7 +836,7 @@ class Pods_Form {
         $tableless_field_types = self::tableless_field_types();
         $repeatable_field_types = self::repeatable_field_types();
 
-        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
+        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
             if ( 0 < strlen( $value ) ) {
                 $simple = @json_decode( $value, true );
 
@@ -964,7 +964,7 @@ class Pods_Form {
 
         $validate = true;
 
-        if ( 1 == pods_var( 'pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'validate' ) )
+        if ( 1 == pods_v( 'pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'validate' ) )
             $validate = self::$loaded[ $type ]->validate( $value, $name, $options, $fields, $pod, $id, $params );
 
         $validate = apply_filters( 'pods_field_' . $type . '_validate', $validate, $value, $name, $options, $fields, $pod, $id, $type, $params );
@@ -991,7 +991,7 @@ class Pods_Form {
     public static function pre_save ( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
 
-        if ( 1 == pods_var( 'field_pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'pre_save' ) )
+        if ( 1 == pods_v( 'field_pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'pre_save' ) )
             $value = self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $value;
@@ -1018,7 +1018,7 @@ class Pods_Form {
 
         $saved = null;
 
-        if ( 1 == pods_var( 'field_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'save' ) )
+        if ( 1 == pods_v( 'field_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'save' ) )
             $saved = self::$loaded[ $type ]->save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $saved;
@@ -1042,7 +1042,7 @@ class Pods_Form {
 
         $deleted = null;
 
-        if ( 1 == pods_var( 'field_delete', $options, 1 ) && method_exists( self::$loaded[ $type ], 'delete' ) )
+        if ( 1 == pods_v( 'field_delete', $options, 1 ) && method_exists( self::$loaded[ $type ], 'delete' ) )
             $deleted = self::$loaded[ $type ]->delete( $id, $name, $options, $pod );
 
         return $deleted;
@@ -1077,15 +1077,15 @@ class Pods_Form {
      * @since 2.0
      */
     public static function default_value ( $value, $type = 'text', $name = null, $options = null, $pod = null, $id = null ) {
-        $default_value = pods_var_raw( 'default_value', $options, $value, null, true );
-        $default = pods_var_raw( 'default', $options, $default_value, null, true );
+        $default_value = pods_v( 'default_value', $options, $value, true );
+        $default = pods_v( 'default', $options, $default_value, true );
 
         $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
 
-        if ( $default != $default_value && 1 == (int) pods_var_raw( 'default_evaluate_tags', $options, 1 ) )
+        if ( $default != $default_value && 1 == (int) pods_v( 'default_evaluate_tags', $options, 1 ) )
             $default = pods_evaluate_tags( $default );
 
-        $default = pods_var_raw( pods_var_raw( 'default_value_parameter', $options ), 'request', $default, null, true );
+        $default = pods_var_raw( pods_v( 'default_value_parameter', $options ), 'request', $default, null, true );
 
         if ( $default != $value )
             $value = $default;

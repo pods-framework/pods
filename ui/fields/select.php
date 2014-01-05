@@ -2,10 +2,10 @@
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
 
-$pick_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
+$pick_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 $multiple = false;
 
-if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
+if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
     $name .= '[]';
     $attributes[ 'multiple' ] = 'multiple';
     $multiple = true;
@@ -18,7 +18,7 @@ else
 
 $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 
-if ( pods_var( 'readonly', $options, false ) ) {
+if ( pods_v( 'readonly', $options, false ) ) {
     $attributes[ 'readonly' ] = 'READONLY';
 
     $attributes[ 'class' ] .= ' pods-form-ui-read-only';

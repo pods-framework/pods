@@ -144,23 +144,23 @@ class Pods_Field_HTML extends Pods_Field {
 			$value = pods_v( self::$type . '_content', $options );
 		}
 
-        if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
+        if ( 1 == pods_v( self::$type . '_oembed', $options, 0 ) ) {
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );
             $value = $embed->autoembed( $value );
         }
 
-        if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
+        if ( 1 == pods_v( self::$type . '_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
-        if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) )
+        if ( 1 == pods_v( self::$type . '_convert_chars', $options, 1 ) )
             $value = convert_chars( $value );
 
-        if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
+        if ( 1 == pods_v( self::$type . '_wpautop', $options, 1 ) )
             $value = wpautop( $value );
 
-        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
-            if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
+        if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
+            if ( 1 == pods_v( self::$type . '_wpautop', $options, 1 ) )
                 $value = shortcode_unautop( $value );
 
             $value = do_shortcode( $value );

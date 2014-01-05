@@ -8,7 +8,7 @@
                     $field[ 'pick_format_single' ] = 'dropdown';
                     $field[ 'pick_select_text' ] = '-- ' . $field[ 'label' ] . ' --';
 
-                    $filter = pods_var_raw( 'filter_' . $name, 'get', '' );
+                    $filter = pods_v( 'filter_' . $name, 'get', '' );
 
                     echo Pods_Form::field( 'filter_' . $name, $filter, 'pick', $field, $pod->pod, $pod->id() );
                 }

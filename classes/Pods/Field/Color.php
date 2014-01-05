@@ -109,7 +109,7 @@ class Pods_Field_Color extends Pods_Field {
         $field_type = 'color';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -117,7 +117,7 @@ class Pods_Field_Color extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -151,7 +151,7 @@ class Pods_Field_Color extends Pods_Field {
             $color = str_replace( '#', '', $check );
 
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
+                if ( 1 == pods_v( 'required', $options ) )
                     $errors[] = __( 'This field is required.', 'pods' );
                 else {
                     // @todo Ask for a specific format in error message

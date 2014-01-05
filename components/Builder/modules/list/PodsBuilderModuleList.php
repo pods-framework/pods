@@ -197,16 +197,16 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
-                'template' => trim( pods_var_raw( 'template', $fields[ 'data' ], '' ) ),
-                'limit' => (int) pods_var_raw( 'limit', $fields[ 'data' ], 15, null, true ),
-                'orderby' => trim( pods_var_raw( 'orderby', $fields[ 'data' ], '' ) ),
-                'where' => trim( pods_var_raw( 'where', $fields[ 'data' ], '' ) ),
+                'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
+                'template' => trim( pods_v( 'template', $fields[ 'data' ], '' ) ),
+                'limit' => (int) pods_v( 'limit', $fields[ 'data' ], 15, true ),
+                'orderby' => trim( pods_v( 'orderby', $fields[ 'data' ], '' ) ),
+                'where' => trim( pods_v( 'where', $fields[ 'data' ], '' ) ),
                 'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
-                'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields[ 'data' ], 'transient', null, true ) )
+                'cache_mode' => trim( pods_v( 'cache_mode', $fields[ 'data' ], 'transient', true ) )
             );
 
-            $content = trim( pods_var_raw( 'template_custom', $fields[ 'data' ], '' ) );
+            $content = trim( pods_v( 'template_custom', $fields[ 'data' ], '' ) );
 
             if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) )
                 echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );

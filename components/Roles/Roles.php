@@ -113,8 +113,8 @@ class Pods_Roles extends Pods_Component {
             'pagination' => false
         );
 
-        if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
-            $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
+        if ( isset( $roles[ pods_v( 'id', 'get', -1 ) ] ) )
+            $ui[ 'row' ] = $roles[ pods_v( 'id', 'get', -1 ) ];
 
         if ( !pods_is_admin( array( 'pods_roles_add' ) ) )
             $ui[ 'actions_disabled' ][] = 'add';
@@ -242,8 +242,8 @@ class Pods_Roles extends Pods_Component {
     public function ajax_add ( $params ) {
         global $wp_roles;
 
-        $role_name = pods_var_raw( 'role_name', $params );
-        $role_label = pods_var_raw( 'role_label', $params );
+        $role_name = pods_v( 'role_name', $params );
+        $role_label = pods_v( 'role_label', $params );
 
         $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
 

@@ -806,18 +806,18 @@ class Pods_UI {
 			$options->num = '_' . $options->num;
 		}
 
-        $options->validate( 'id', pods_var( 'id' . $options->num, 'get', $this->id ) );
+        $options->validate( 'id', pods_v_sanitized( 'id' . $options->num, 'get', $this->id ) );
 
-        $options->validate( 'do', pods_var( 'do' . $options->num, 'get', $this->do ), 'in_array', array(
+        $options->validate( 'do', pods_v( 'do' . $options->num, 'get', $this->do ), 'in_array', array(
             'save',
             'create'
         ) );
 
         $options->validate( 'excluded', self::$excluded, 'array_merge' );
 
-        $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
+        $options->validate( 'action', pods_v( 'action' . $options->num, 'get', $this->action, true ), 'in_array', $this->actions );
         $options->validate( 'actions_bulk', $this->actions_bulk, 'array_merge' );
-        $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
+        $options->validate( 'action_bulk', pods_v( 'action_bulk' . $options->num, 'get', $this->action_bulk, true ), 'isset', $this->actions_bulk );
 
         $bulk = pods_var( 'action_bulk_ids' . $options->num, 'get', array(), null, true );
 
@@ -829,10 +829,10 @@ class Pods_UI {
         $options->validate( 'bulk', $bulk, 'array_merge', $this->bulk );
 
         $options->validate( 'views', $this->views, 'array' );
-        $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
+        $options->validate( 'view', pods_v( 'view' . $options->num, 'get', $this->view, true ), 'isset', $this->views );
 
         $options->validate( 'searchable', $this->searchable, 'boolean' );
-        $options->validate( 'search', pods_var( 'search' . $options->num, 'get' ) );
+        $options->validate( 'search', pods_v( 'search' . $options->num ) );
         $options->validate( 'search_across', $this->search_across, 'boolean' );
         $options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
         $options->validate( 'filters', $this->filters, 'array' );
@@ -840,8 +840,8 @@ class Pods_UI {
         $options->validate( 'where', $this->where, 'array_merge' );
 
         $options->validate( 'pagination', $this->pagination, 'boolean' );
-        $options->validate( 'page', pods_var( 'pg' . $options->num, 'get', $this->page ), 'absint' );
-        $options->validate( 'limit', pods_var( 'limit' . $options->num, 'get', $this->limit ), 'int' );
+        $options->validate( 'page', pods_v( 'pg' . $options->num, 'get', $this->page ), 'absint' );
+        $options->validate( 'limit', pods_v( 'limit' . $options->num, 'get', $this->limit ), 'int' );
 
         if ( isset( $this->pods_data ) && is_object( $this->pods_data ) ) {
             $this->sql = array(
@@ -852,9 +852,9 @@ class Pods_UI {
         }
         $options->validate( 'sql', $this->sql, 'array_merge' );
 
-        $options->validate( 'orderby_dir', strtoupper( pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
+        $options->validate( 'orderby_dir', strtoupper( pods_v( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
 
-        $orderby = pods_var_raw( 'orderby' . $options->num, 'get', $this->orderby, null, true );
+        $orderby = pods_v( 'orderby' . $options->num, 'get', $this->orderby, true );
 
         if ( !empty( $orderby ) ) {
             $orderby = array(
@@ -906,8 +906,8 @@ class Pods_UI {
         $items = __( 'Items', 'pods' );
 
         if ( is_object( $this->pod ) ) {
-            $item = pods_var_raw( 'label_singular', $this->pod->pod_data, pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
-            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+            $item = pods_var_raw( 'label_singular', $this->pod->pod_data, pods_v( 'label', $this->pod->pod_data, $item, true ), null, true );
+            $items = pods_v( 'label', $this->pod->pod_data, $items, true );
         }
 
         $options->validate( 'item', $item );
@@ -927,9 +927,9 @@ class Pods_UI {
         if ( is_object( $this->pod ) ) {
 			$heading = $options->heading;
 
-			$heading[ 'add' ] = pods_var_raw( 'label_add_new', $this->pod->pod_data, $heading[ 'add' ], null, true );
-			$heading[ 'edit' ] = pods_var_raw( 'label_edit', $this->pod->pod_data, $heading[ 'edit' ], null, true );
-			$heading[ 'view' ] = pods_var_raw( 'label_view', $this->pod->pod_data, $heading[ 'view' ], null, true );
+			$heading[ 'add' ] = pods_v( 'label_add_new', $this->pod->pod_data, $heading[ 'add' ], true );
+			$heading[ 'edit' ] = pods_v( 'label_edit', $this->pod->pod_data, $heading[ 'edit' ], true );
+			$heading[ 'view' ] = pods_v( 'label_view', $this->pod->pod_data, $heading[ 'view' ], true );
 
 			$options->heading = $heading;
         }
@@ -947,25 +947,25 @@ class Pods_UI {
         if ( is_object( $this->pod ) ) {
 			$header = $options->header;
 
-			$header[ 'add' ] = pods_var_raw( 'label_add_new_item', $this->pod->pod_data, $header[ 'add' ], null, true );
-			$header[ 'edit' ] = pods_var_raw( 'label_edit_item', $this->pod->pod_data, $header[ 'edit' ], null, true );
-			$header[ 'view' ] = pods_var_raw( 'label_view_item', $this->pod->pod_data, $header[ 'view' ], null, true );
+			$header[ 'add' ] = pods_v( 'label_add_new_item', $this->pod->pod_data, $header[ 'add' ], true );
+			$header[ 'edit' ] = pods_v( 'label_edit_item', $this->pod->pod_data, $header[ 'edit' ], true );
+			$header[ 'view' ] = pods_v( 'label_view_item', $this->pod->pod_data, $header[ 'view' ], true );
 
 			$options->header = $header;
 
-                $cpt_labels[ 'add_new' ] = pods_var_raw( 'label_add_new', $post_type, '', null, true );
-                $cpt_labels[ 'add_new_item' ] = pods_var_raw( 'label_add_new_item', $post_type, '', null, true );
-                $cpt_labels[ 'new_item' ] = pods_var_raw( 'label_new_item', $post_type, '', null, true );
-                $cpt_labels[ 'edit' ] = pods_var_raw( 'label_edit', $post_type, '', null, true );
-                $cpt_labels[ 'edit_item' ] = pods_var_raw( 'label_edit_item', $post_type, '', null, true );
-                $cpt_labels[ 'view' ] = pods_var_raw( 'label_view', $post_type, '', null, true );
-                $cpt_labels[ 'view_item' ] = pods_var_raw( 'label_view_item', $post_type, '', null, true );
-                $cpt_labels[ 'all_items' ] = pods_var_raw( 'label_all_items', $post_type, '', null, true );
-                $cpt_labels[ 'search_items' ] = pods_var_raw( 'label_search_items', $post_type, '', null, true );
-                $cpt_labels[ 'not_found' ] = pods_var_raw( 'label_not_found', $post_type, '', null, true );
-                $cpt_labels[ 'not_found_in_trash' ] = pods_var_raw( 'label_not_found_in_trash', $post_type, '', null, true );
-                $cpt_labels[ 'parent' ] = pods_var_raw( 'label_parent', $post_type, '', null, true );
-                $cpt_labels[ 'parent_item_colon' ] = pods_var_raw( 'label_parent_item_colon', $post_type, '', null, true );
+                $cpt_labels[ 'add_new' ] = pods_v( 'label_add_new', $post_type, '', true );
+                $cpt_labels[ 'add_new_item' ] = pods_v( 'label_add_new_item', $post_type, '', true );
+                $cpt_labels[ 'new_item' ] = pods_v( 'label_new_item', $post_type, '', true );
+                $cpt_labels[ 'edit' ] = pods_v( 'label_edit', $post_type, '', true );
+                $cpt_labels[ 'edit_item' ] = pods_v( 'label_edit_item', $post_type, '', true );
+                $cpt_labels[ 'view' ] = pods_v( 'label_view', $post_type, '', true );
+                $cpt_labels[ 'view_item' ] = pods_v( 'label_view_item', $post_type, '', true );
+                $cpt_labels[ 'all_items' ] = pods_v( 'label_all_items', $post_type, '', true );
+                $cpt_labels[ 'search_items' ] = pods_v( 'label_search_items', $post_type, '', true );
+                $cpt_labels[ 'not_found' ] = pods_v( 'label_not_found', $post_type, '', true );
+                $cpt_labels[ 'not_found_in_trash' ] = pods_v( 'label_not_found_in_trash', $post_type, '', true );
+                $cpt_labels[ 'parent' ] = pods_v( 'label_parent', $post_type, '', true );
+                $cpt_labels[ 'parent_item_colon' ] = pods_v( 'label_parent_item_colon', $post_type, '', true );
         }
 
         $options->validate( 'label', array(
@@ -981,8 +981,8 @@ class Pods_UI {
         if ( is_object( $this->pod ) ) {
 			$label = $options->label;
 
-			$label[ 'add_new' ] = pods_var_raw( 'add_new', $this->pod->pod_data, $label[ 'add_new' ], null, true );
-			$label[ 'view' ] = pods_var_raw( 'label_view_item', $this->pod->pod_data, $label[ 'view' ], null, true );
+			$label[ 'add_new' ] = pods_v( 'add_new', $this->pod->pod_data, $label[ 'add_new' ], true );
+			$label[ 'view' ] = pods_v( 'label_view_item', $this->pod->pod_data, $label[ 'view' ], true );
 
 			$options->label = $label;
         }
@@ -1166,7 +1166,7 @@ class Pods_UI {
                 }
 
                 if ( !isset( $attributes[ 'real_name' ] ) )
-                    $attributes[ 'real_name' ] = pods_var( 'name', $attributes, $field );
+                    $attributes[ 'real_name' ] = pods_v_sanitized( 'name', $attributes, $field );
 
                 if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
                     $attributes = $this->pod->fields[ $attributes[ 'real_name' ] ]->override( $attributes );
@@ -1636,7 +1636,7 @@ class Pods_UI {
 				$field[ 'name' ] = trim( $field[ 'name' ] );
 			}
 
-            $value = pods_var_raw( 'default', $field );
+            $value = pods_v( 'default', $field );
 
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
@@ -1666,7 +1666,7 @@ class Pods_UI {
 				}
 			}
 
-            if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+            if ( pods_v( 'hidden', $field, false, true ) )
                 $field[ 'type' ] = 'hidden';
 
 			$fields[ $field[ 'name' ] ] = $field;
@@ -1767,7 +1767,7 @@ class Pods_UI {
 
 			$field[ 'name' ] = trim( $field[ 'name' ] );
 
-			$value = pods_var_raw( 'default', $field );
+			$value = pods_v( 'default', $field );
 
 			if ( empty( $field[ 'name' ] ) ) {
 				$field[ 'name' ] = trim( $name );
@@ -1875,8 +1875,8 @@ class Pods_UI {
         foreach ( $this->fields[ 'form' ] as $field => $attributes ) {
             $vartype = '%s';
             if ( 'bool' == $attributes[ 'type' ] )
-                $selected = ( 1 == pods_var( $field, 'post', 0 ) ) ? 1 : 0;
-            elseif ( '' == pods_var( $field, 'post', '' ) )
+                $selected = ( 1 == pods_v( $field, 'post', 0 ) ) ? 1 : 0;
+            elseif ( '' == pods_v( $field, 'post', '' ) )
                 continue;
             if ( false === $attributes[ 'display' ] || false !== $attributes[ 'readonly' ] ) {
                 if ( !in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime' ) ) )
@@ -1893,31 +1893,31 @@ class Pods_UI {
                 if ( false !== $attributes[ 'date_touch' ] || ( false !== $attributes[ 'date_touch_on_create' ] && true === $insert && $this->id < 1 ) )
                     $value = date_i18n( $format );
                 else
-                    $value = date_i18n( $format, strtotime( ( 'time' == $attributes[ 'type' ] ) ? date_i18n( 'Y-m-d ' ) : pods_var( $field, 'post', '' ) ) );
+                    $value = date_i18n( $format, strtotime( ( 'time' == $attributes[ 'type' ] ) ? date_i18n( 'Y-m-d ' ) : pods_v_sanitized( $field, 'post', '' ) ) );
             }
             else {
                 if ( 'bool' == $attributes[ 'type' ] ) {
                     $vartype = '%d';
                     $value = 0;
-                    if ( '' != pods_var( $field, 'post', '' ) )
+                    if ( '' != pods_v( $field, 'post', '' ) )
                         $value = 1;
                 }
                 elseif ( 'number' == $attributes[ 'type' ] ) {
                     $vartype = '%d';
-                    $value = number_format( pods_var( $field, 'post', 0 ), 0, '', '' );
+                    $value = number_format( pods_v( $field, 'post', 0 ), 0, '', '' );
                 }
                 elseif ( 'decimal' == $attributes[ 'type' ] ) {
                     $vartype = '%d';
-                    $value = number_format( pods_var( $field, 'post', 0 ), 2, '.', '' );
+                    $value = number_format( pods_v( $field, 'post', 0 ), 2, '.', '' );
                 }
                 elseif ( 'related' == $attributes[ 'type' ] ) {
-                    if ( is_array( pods_var( $field, 'post', '' ) ) )
-                        $value = implode( ',', pods_var( $field, 'post', '' ) );
+                    if ( is_array( pods_v( $field, 'post', '' ) ) )
+                        $value = implode( ',', pods_v_sanitized( $field, 'post', '' ) );
                     else
-                        $value = pods_var( $field, 'post', '' );
+                        $value = pods_v_sanitized( $field, 'post', '' );
                 }
                 else
-                    $value = pods_var( $field, 'post', '' );
+                    $value = pods_v_sanitized( $field, 'post', '' );
             }
 
             if ( isset( $attributes[ 'custom_save' ] ) && false !== $attributes[ 'custom_save' ] && is_callable( $attributes[ 'custom_save' ] ) )
@@ -1989,7 +1989,7 @@ class Pods_UI {
     public function delete_bulk () {
         $this->do_hook( 'pre_delete_bulk' );
 
-        if ( 1 != pods_var( 'deleted_bulk', 'get', 0 ) ) {
+        if ( 1 != pods_v( 'deleted_bulk', 'get', 0 ) ) {
             $ids = $this->bulk;
 
             $success = false;
@@ -2036,7 +2036,7 @@ class Pods_UI {
     }
 
     public function export () {
-        $export_type = pods_var( 'export_type', 'get', 'csv' );
+        $export_type = pods_v( 'export_type', 'get', 'csv' );
 
         $type = 'sv'; // covers csv + tsv
 
@@ -2172,7 +2172,7 @@ class Pods_UI {
             }
 
             $find_params = array(
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
+                'where' => pods_v( $action, $this->where, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'pagination' => true,
@@ -2194,7 +2194,7 @@ class Pods_UI {
             $find_params = array_merge( $find_params, (array) $this->params );
 
             // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
                 pods_debug( $find_params );
 
             $this->pod->find( $find_params );
@@ -2247,7 +2247,7 @@ class Pods_UI {
 
             $find_params = array(
                 'table' => $this->sql[ 'table' ],
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
+                'where' => pods_v( $action, $this->where, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'pagination' => true,
@@ -2264,7 +2264,7 @@ class Pods_UI {
                 $find_params[ 'limit' ] = -1;
 
             // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
                 pods_debug( $find_params );
 
             $this->pods_data->select( $find_params );
@@ -2441,12 +2441,12 @@ class Pods_UI {
 					}
 
                     if ( in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                        if ( '' == pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true ) && '' == pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true ) ) {
+                        if ( '' == pods_v( 'filter_' . $filter . '_start', 'get', '', true ) && '' == pods_v( 'filter_' . $filter . '_end', 'get', '', true ) ) {
                             unset( $filters[ $k ] );
                             continue;
                         }
                     }
-                    elseif ( '' === pods_var_raw( 'filter_' . $filter, 'get', '' ) ) {
+                    elseif ( '' === pods_v( 'filter_' . $filter, 'get', '' ) ) {
                         unset( $filters[ $k ] );
                         continue;
                     }
@@ -2508,8 +2508,8 @@ class Pods_UI {
 						}
 
                         if ( in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                            $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $filter_field, '', null, true ), null, true );
-                            $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $filter_field, '', null, true ), null, true );
+                            $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_v( 'filter_default', $filter_field, '', true ), null, true );
+                            $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_v( 'filter_ongoing_default', $filter_field, '', true ), null, true );
 
                             // override default value
                             $filter_field[ 'default_value' ] = '';
@@ -2534,10 +2534,10 @@ class Pods_UI {
                             echo Pods_Form::field( 'filter_' . $filter . '_end', $end, $filter_field[ 'type' ], $filter_field );
                         }
                         elseif ( 'pick' == $filter_field[ 'type' ] ) {
-                            $value = pods_var_raw( 'filter_' . $filter, 'get' );
+                            $value = pods_v( 'filter_' . $filter );
 
                             if ( strlen( $value ) < 1 )
-                                $value = pods_var_raw( 'filter_default', $filter_field );
+                                $value = pods_v( 'filter_default', $filter_field );
 
                             // override default value
                             $filter_field[ 'default_value' ] = '';
@@ -2546,7 +2546,7 @@ class Pods_UI {
                             $filter_field[ 'pick_format_single' ] = 'dropdown';
 
                             $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
+                            $filter_field[ 'input_helper' ] = pods_v( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
@@ -2555,10 +2555,10 @@ class Pods_UI {
                             echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         elseif ( 'boolean' == $filter_field[ 'type' ] ) {
-                            $value = pods_var_raw( 'filter_' . $filter, 'get', '' );
+                            $value = pods_v( 'filter_' . $filter, 'get', '' );
 
                             if ( strlen( $value ) < 1 )
-                                $value = pods_var_raw( 'filter_default', $filter_field );
+                                $value = pods_v( 'filter_default', $filter_field );
 
                             // override default value
                             $filter_field[ 'default_value' ] = '';
@@ -2573,7 +2573,7 @@ class Pods_UI {
                             );
 
                             $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
+                            $filter_field[ 'input_helper' ] = pods_v( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
@@ -2582,17 +2582,17 @@ class Pods_UI {
                             echo Pods_Form::field( 'filter_' . $filter, $value, 'pick', $filter_field );
                         }
                         else {
-                            $value = pods_var_raw( 'filter_' . $filter, 'get' );
+                            $value = pods_v( 'filter_' . $filter );
 
                             if ( strlen( $value ) < 1 )
-                                $value = pods_var_raw( 'filter_default', $filter_field );
+                                $value = pods_v( 'filter_default', $filter_field );
 
                             // override default value
                             $filter_field[ 'default_value' ] = '';
 
                             $options = array();
                             $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $filter_field[ 'input_helper' ], null, true );
+                            $options[ 'input_helper' ] = pods_v( 'ui_input_helper', $options, $filter_field[ 'input_helper' ], true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                             <?php echo $filter_field[ 'label' ]; ?>
@@ -2777,10 +2777,10 @@ class Pods_UI {
 			}
 
             if ( isset( $filter_field ) && in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                if ( '' == pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true ) && '' == pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true ) )
+                if ( '' == pods_v( 'filter_' . $filter . '_start', 'get', '', true ) && '' == pods_v( 'filter_' . $filter . '_end', 'get', '', true ) )
                     unset( $filters[ $k ] );
             }
-            elseif ( '' === pods_var_raw( 'filter_' . $filter, 'get', '' ) )
+            elseif ( '' === pods_v( 'filter_' . $filter, 'get', '' ) )
                 unset( $filters[ $k ] );
         }
 
@@ -2822,7 +2822,7 @@ class Pods_UI {
             ?>
                 <p class="search-box">
                     <?php
-                        if ( $filtered || '' != pods_var_raw( 'search' . $this->num, 'get', '', null, true ) ) {
+                        if ( $filtered || '' != pods_v( 'search' . $this->num, 'get', '', true ) ) {
                             $clear_filters = array(
 								'search' . $this->num => false
 							);
@@ -2881,7 +2881,7 @@ class Pods_UI {
                         }
 
                         foreach ( $filters as $filter ) {
-                            $value = pods_var_raw( 'filter_' . $filter, 'get' );
+                            $value = pods_v( 'filter_' . $filter );
 
 							if ( isset( $this->pod->fields[ $filter ] ) ) {
 								$filter_field = $this->pod->fields[ $filter ];
@@ -2898,8 +2898,8 @@ class Pods_UI {
                             $start = $end = $value_label = '';
 
                             if ( in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                                $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
-                                $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true );
+                                $start = pods_v( 'filter_' . $filter . '_start', 'get', '', true );
+                                $end = pods_v( 'filter_' . $filter . '_end', 'get', '', true );
 
                                 if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $start = Pods_Form::field_method( $filter_field[ 'type' ], 'convert_date', $start, 'n/j/Y' );
@@ -3029,8 +3029,8 @@ class Pods_UI {
                     <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-<?php echo $filter . ( $zebra ? ' clear' : '' ); ?>">
                         <?php
                             if ( in_array( $filter_field[ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                                $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $filter_field, '', null, true ), null, true );
-                                $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $filter_field, '', null, true ), null, true );
+                                $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_v( 'filter_default', $filter_field, '', true ), null, true );
+                                $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_v( 'filter_ongoing_default', $filter_field, '', true ), null, true );
 
                                 // override default value
                                 $filter_field[ 'default_value' ] = '';
@@ -3058,10 +3058,10 @@ class Pods_UI {
                         <?php
                             }
                             elseif ( 'pick' == $filter_field[ 'type' ] ) {
-                                $value = pods_var_raw( 'filter_' . $filter, 'get', '' );
+                                $value = pods_v( 'filter_' . $filter, 'get', '' );
 
                                 if ( strlen( $value ) < 1 )
-                                    $value = pods_var_raw( 'filter_default', $filter_field );
+                                    $value = pods_v( 'filter_default', $filter_field );
 
                                 // override default value
                                 $filter_field[ 'default_value' ] = '';
@@ -3070,7 +3070,7 @@ class Pods_UI {
                                 $filter_field[ 'pick_format_single' ] = 'dropdown';
 
                                 $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
+                                $filter_field[ 'input_helper' ] = pods_v( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], true );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3085,10 +3085,10 @@ class Pods_UI {
                         <?php
                             }
                             elseif ( 'boolean' == $filter_field[ 'type' ] ) {
-                                $value = pods_var_raw( 'filter_' . $filter, 'get', '' );
+                                $value = pods_v( 'filter_' . $filter, 'get', '' );
 
                                 if ( strlen( $value ) < 1 )
-                                    $value = pods_var_raw( 'filter_default', $filter_field );
+                                    $value = pods_v( 'filter_default', $filter_field );
 
                                 // override default value
                                 $filter_field[ 'default_value' ] = '';
@@ -3103,7 +3103,7 @@ class Pods_UI {
                                 );
 
                                 $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                                $filter_field[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], null, true );
+                                $filter_field[ 'input_helper' ] = pods_v( 'ui_input_helper', $filter_field, $filter_field[ 'input_helper' ], true );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -3118,10 +3118,10 @@ class Pods_UI {
                         <?php
                             }
                             else {
-                                $value = pods_var_raw( 'filter_' . $filter, 'get' );
+                                $value = pods_v( 'filter_' . $filter );
 
                                 if ( strlen( $value ) < 1 )
-                                    $value = pods_var_raw( 'filter_default', $filter_field );
+                                    $value = pods_v( 'filter_default', $filter_field );
 
                                 $options = array(
                                     'input_helper' => pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true )
@@ -3151,7 +3151,7 @@ class Pods_UI {
 
                 <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-search<?php echo ( $zebra ? ' clear' : '' ); ?>">
                     <label for="pods-form-ui-search<?php echo $this->num; ?>"><?php _e( 'Search Text', 'pods' ); ?></label>
-                    <?php echo Pods_Form::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num, 'get' ), 'text' ); ?>
+                    <?php echo Pods_Form::field( 'search' . $this->num, pods_v( 'search' . $this->num ), 'text' ); ?>
                 </p>
 
                 <?php $zebra = empty( $zebra ); ?>
@@ -4036,7 +4036,7 @@ class Pods_UI {
 
         // @todo Build 'edit', 'duplicate', 'delete' action support for 'where' which runs another find() query
         /*if ( !in_array( $action, array( 'manage', 'reorder' ) ) ) {
-            $where = pods_var_raw( $action, $this->where, null, null, true );
+            $where = pods_v( $action, $this->where, null, true );
 
             if ( !empty( $where ) ) {
                 $restricted = true;
@@ -4046,7 +4046,7 @@ class Pods_UI {
                 $id = $this->row[ $this->sql[ 'field_id' ] ];
 
                 if ( is_array( $where ) ) {
-                    if ( 'OR' == pods_var( 'relation', $where ) )
+                    if ( 'OR' == pods_v( 'relation', $where ) )
                         $where = array( $where );
 
                     $where[] = "`t`.`" . $this->sql[ 'field_id' ] . "` = " . (int) $id;
@@ -4105,7 +4105,7 @@ class Pods_UI {
         }
 
         if ( $restricted && !empty( $restrict ) ) {
-            $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
+            $relation = strtoupper( trim( pods_v( 'relation', $restrict, 'AND', true ) ) );
 
             if ( 'AND' != $relation )
                 $relation = 'OR';
@@ -4119,7 +4119,7 @@ class Pods_UI {
                 if ( is_array( $match ) ) {
                     $match_okay = true;
 
-                    $match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
+                    $match_relation = strtoupper( trim( pods_v( 'relation', $match, 'OR', true ) ) );
 
                     if ( 'AND' != $match_relation )
                         $match_relation = 'OR';

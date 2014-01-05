@@ -152,12 +152,12 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
-                'slug' => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
-                'template' => trim( pods_var_raw( 'template', $fields[ 'data' ], '' ) )
+                'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
+                'slug' => trim( pods_v( 'slug', $fields[ 'data' ], '' ) ),
+                'template' => trim( pods_v( 'template', $fields[ 'data' ], '' ) )
             );
 
-            $content = trim( pods_var_raw( 'template_custom', $fields[ 'data' ], '' ) );
+            $content = trim( pods_v( 'template_custom', $fields[ 'data' ], '' ) );
 
             if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) )
                 echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );

@@ -76,12 +76,12 @@
                                             <ul>
                                                 <?php
                                                 foreach ( $post_types as $post_type ) {
-                                                    $post_type_name = pods_var_raw( 'name', $post_type );
+                                                    $post_type_name = pods_v( 'name', $post_type );
                                                     $post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
                                                     ?>
                                                     <li>
                                                         <div class="pods-field pods-boolean">
-                                                            <?php echo Pods_Form::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
+                                                            <?php echo Pods_Form::field( 'post_type[' . $post_type_name . ']', pods_v( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
                                                         </div>
                                                     </li>
                                                     <?php
@@ -117,11 +117,11 @@
                                             <ul>
                                                 <?php
                                                 foreach ( $taxonomies as $taxonomy ) {
-                                                    $taxonomy_name = pods_var_raw( 'name', $taxonomy );
+                                                    $taxonomy_name = pods_v( 'name', $taxonomy );
                                                     $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
                                                     ?>
                                                     <li>
-                                                        <?php echo Pods_Form::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
+                                                        <?php echo Pods_Form::field( 'taxonomy[' . $taxonomy_name . ']', pods_v( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
                                                     </li>
                                                     <?php
                                                 }

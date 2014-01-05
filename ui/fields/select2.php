@@ -27,9 +27,9 @@ else {
 	$field_nonce = wp_create_nonce( 'pods_relationship_0_' . $uid . '_' . $uri_hash . '_' . json_encode( $options ) );
 }
 
-$pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
 
-if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
+if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit )
     wp_enqueue_script( 'jquery-ui-sortable' );
 
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
@@ -88,7 +88,7 @@ $select2_args = array();
                 } );
 
                 <?php
-                    if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+                    if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) {
                 ?>
                     callback( data );
                 <?php
@@ -102,13 +102,13 @@ $select2_args = array();
                 ?>
             },
             <?php
-               if ( 1 != (int) pods_var( 'required', $options ) ) {
+               if ( 1 != (int) pods_v( 'required', $options ) ) {
             ?>
                 allowClear : true,
             <?php
                }
 
-                if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+                if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) {
             ?>
                 placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
                 multiple : true,
@@ -190,7 +190,7 @@ $select2_args = array();
             ?>
         } );
 
-        <?php if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
+        <?php if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
             $element.select2( 'container' ).find( 'ul.select2-choices' ).sortable( {
                 containment: 'parent',
                 start: function() { $element.select2( 'onSortStart' ); },

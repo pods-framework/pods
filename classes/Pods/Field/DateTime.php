@@ -200,7 +200,7 @@ class Pods_Field_DateTime extends Pods_Field {
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
-        elseif ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
+        elseif ( 0 == pods_v( self::$type . '_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
         else
             $value = '';
@@ -231,7 +231,7 @@ class Pods_Field_DateTime extends Pods_Field {
         $field_type = 'datetime';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -239,7 +239,7 @@ class Pods_Field_DateTime extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -265,9 +265,9 @@ class Pods_Field_DateTime extends Pods_Field {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( !empty( $value ) && ( 0 == pods_v( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = $this->convert_date( $value, 'Y-m-d H:i:s', $format );
-        elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
+        elseif ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) )
             $value = '0000-00-00 00:00:00';
         else
             $value = current_time( 'mysql' );
@@ -291,7 +291,7 @@ class Pods_Field_DateTime extends Pods_Field {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -348,15 +348,15 @@ class Pods_Field_DateTime extends Pods_Field {
 		$time_format = apply_filters( 'pods_form_ui_field_time_formats', $time_format );
 		$time_format_24 = apply_filters( 'pods_form_ui_field_time_formats_24', $time_format_24 );
 
-        $format_value = pods_var( self::$type . '_format', $options, 'ymd_dash', null, true );
+        $format_value = pods_v( self::$type . '_format', $options, 'ymd_dash', true );
 
         $format = $date_format[ $format_value ];
 
         if ( 'c' != $format_value ) {
-            if ( 12 == pods_var( self::$type . '_time_type', $options ) )
-                $format .= ' ' . $time_format[ pods_var( self::$type . '_time_format', $options, 'hh_mm', null, true ) ];
+            if ( 12 == pods_v( self::$type . '_time_type', $options ) )
+                $format .= ' ' . $time_format[ pods_v( self::$type . '_time_format', $options, 'hh_mm', true ) ];
             else
-                $format .= ' ' . $time_format_24[ pods_var( self::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
+                $format .= ' ' . $time_format_24[ pods_v( self::$type . '_time_format_24', $options, 'hh_mm', true ) ];
         }
 
         return $format;

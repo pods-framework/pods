@@ -266,18 +266,18 @@ class Pods_Field_File extends Pods_Field {
         }
 
         // Use plupload if attachment isn't available
-        if ( 'attachment' == pods_var( self::$type . '_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )
+        if ( 'attachment' == pods_v( self::$type . '_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )
             $field_type = 'plupload';
-        elseif ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
+        elseif ( 'plupload' == pods_v( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
+        elseif ( 'attachment' == pods_v( self::$type . '_uploader', $options ) ) {
             // @todo test frontend media modal
             $field_type = 'media';
         }
         else {
             // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_file_uploader_' . pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_file_uploader', pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader_' . pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader', pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 
@@ -373,7 +373,7 @@ class Pods_Field_File extends Pods_Field {
                 continue;
 
             // Update the title if set
-            if ( false !== $title && 1 == pods_var( self::$type . '_edit_title', $options, 0 ) ) {
+            if ( false !== $title && 1 == pods_v( self::$type . '_edit_title', $options, 0 ) ) {
                 $attachment_data = array(
                     'ID' => $id,
                     'post_title' => $title
@@ -593,7 +593,7 @@ class Pods_Field_File extends Pods_Field {
         unset( $params->method );
         unset( $params->_wpnonce );
 
-        $params->post_id = pods_var( 'post_id', $params, 0, null, true );
+        $params->post_id = (int) pods_v( 'post_id', $params, 0, true );
 
         /**
          * Upload a new file (advanced - returns URL and ID)
@@ -601,7 +601,7 @@ class Pods_Field_File extends Pods_Field {
         if ( 'upload' == $method ) {
             $file = $_FILES[ 'Filedata' ];
 
-            $limit_size = pods_var( $field[ 'type' ] . '_restrict_filesize', $field );
+            $limit_size = pods_v( $field[ 'type' ] . '_restrict_filesize', $field );
 
             if ( !empty( $limit_size ) ) {
                 if ( false !== stripos( $limit_size, 'MB' ) ) {
@@ -623,13 +623,13 @@ class Pods_Field_File extends Pods_Field {
 
                 if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
                     $error = __( 'File size too large, max size is %s', 'pods' );
-                    $error = sprintf( $error, pods_var( $field[ 'type' ] . '_restrict_filesize', $field ) );
+                    $error = sprintf( $error, pods_v( $field[ 'type' ] . '_restrict_filesize', $field ) );
 
                     pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
                 }
             }
 
-            $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field, 'images' );
+            $limit_file_type = pods_v( $field[ 'type' ] . '_type', $field, 'images' );
 
             if ( 'images' == $limit_file_type )
                 $limit_types = 'jpg,jpeg,png,gif';
@@ -642,7 +642,7 @@ class Pods_Field_File extends Pods_Field {
             elseif ( 'any' == $limit_file_type )
                 $limit_types = '';
             else
-                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field, '', null, true );
+                $limit_types = pods_v( $field[ 'type' ] . '_allowed_extensions', $field, '', true );
 
             $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 

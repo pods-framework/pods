@@ -8,7 +8,7 @@ if (
     && !( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN )
           && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
 ) {
-    $settings[ 'media_buttons' ] = (boolean) pods_var( 'wysiwyg_media_buttons', $options, true );
+    $settings[ 'media_buttons' ] = (boolean) pods_v( 'wysiwyg_media_buttons', $options, true );
 }
 
 $rows = (int) pods_v( 'wysiwyg_rows', $options, 0 );

@@ -95,7 +95,7 @@ class Pods_Field_Slug extends Pods_Field {
         $field_type = 'slug';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -103,7 +103,7 @@ class Pods_Field_Slug extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -161,7 +161,7 @@ class Pods_Field_Slug extends Pods_Field {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $index = pods_var( 'pod_index', pods_var( 'options', $pod, $pod, null, true ), 'id', null, true );
+        $index = pods_var( 'pod_index', pods_v( 'options', $pod, $pod, true ), 'id', null, true );
 
         if ( empty( $value ) && isset( $fields[ $index ] ) )
             $value = $fields[ $index ][ 'value' ];

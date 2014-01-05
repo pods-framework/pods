@@ -31,7 +31,7 @@ if ( !function_exists( 'pods_markdown_output' ) ) {
 
 	function pods_markdown_output( $value, $name, $options, $pod, $id, $traverse ) {
 
-		if ( 1 == pods_var( $options[ 'type' ] . '_allow_markdown', $options ) ) {
+		if ( 1 == pods_v( $options[ 'type' ] . '_allow_markdown', $options ) ) {
 			$value = Markdown( $value );
 		}
 

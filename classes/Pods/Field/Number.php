@@ -140,12 +140,12 @@ class Pods_Field_Number extends Pods_Field {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
 
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_v( self::$type . '_decimals', $options, 0, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -171,12 +171,12 @@ class Pods_Field_Number extends Pods_Field {
     public function prepare ( $options = null ) {
         $format = self::$prepare;
 
-        $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
 
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_v( self::$type . '_decimals', $options, 0, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -229,13 +229,13 @@ class Pods_Field_Number extends Pods_Field {
         if ( is_array( $value ) )
             $value = implode( '', $value );
 
-        if ( 'slider' == pods_var( self::$type . '_format_type', $options, 'number' ) )
+        if ( 'slider' == pods_v( self::$type . '_format_type', $options, 'number' ) )
             $field_type = 'slider';
         else
             $field_type = 'number';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )  {
+            if ( pods_v( 'read_only', $options, false ) )  {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -245,7 +245,7 @@ class Pods_Field_Number extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -271,23 +271,23 @@ class Pods_Field_Number extends Pods_Field {
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
-        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ' ';
             $dot = ',';
         }
-        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = '.';
         }
-        elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
@@ -316,23 +316,23 @@ class Pods_Field_Number extends Pods_Field {
     public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         global $wp_locale;
 
-        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ' ';
             $dot = ',';
         }
-        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -370,23 +370,23 @@ class Pods_Field_Number extends Pods_Field {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         global $wp_locale;
 
-        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ' ';
             $dot = ',';
         }
-        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -399,12 +399,12 @@ class Pods_Field_Number extends Pods_Field {
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
-        $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
 
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_v( self::$type . '_decimals', $options, 0, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -451,23 +451,23 @@ class Pods_Field_Number extends Pods_Field {
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
-        if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
+        if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9,999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ',';
             $dot = '.';
         }
-        elseif ( '9 999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = ' ';
             $dot = ',';
         }
-        elseif ( '9999.99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999.99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = '.';
         }
-        elseif ( '9999,99' == pods_var( self::$type . '_format', $options ) ) {
+        elseif ( '9999,99' == pods_v( self::$type . '_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
@@ -476,12 +476,12 @@ class Pods_Field_Number extends Pods_Field {
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
-        $length = (int) pods_var( self::$type . '_max_length', $options, 12, null, true );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
 
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( self::$type . '_decimals', $options, 0, null, true );
+        $decimals = (int) pods_v( self::$type . '_decimals', $options, 0, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -491,7 +491,7 @@ class Pods_Field_Number extends Pods_Field {
         if ( $length < $decimals )
             $decimals = $length;
 
-        if ( 'i18n' == pods_var( self::$type . '_format', $options ) )
+        if ( 'i18n' == pods_v( self::$type . '_format', $options ) )
             $value = number_format_i18n( (float) $value, $decimals );
         else
             $value = number_format( (float) $value, $decimals, $dot, $thousands );

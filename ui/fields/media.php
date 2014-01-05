@@ -20,17 +20,17 @@ $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type,
 
 $css_id = $attributes[ 'id' ];
 
-$router = pods_var( $form_field_type . '_attachment_tab', $options, 'browse' );
+$router = pods_v( $form_field_type . '_attachment_tab', $options, 'browse' );
 
 $file_limit = 1;
 
 // @todo: File limit not yet supported in the UI, it's either single or multiple
-if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 
-$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+$limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type ) {
     $limit_types = 'image';
@@ -53,7 +53,7 @@ elseif ( 'any' == $limit_file_type ) {
     $limit_extensions = '*';
 }
 else
-    $limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
+    $limit_types = $limit_extensions = pods_v( $form_field_type . '_allowed_extensions', $options, '', true );
 
 $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 $limit_extensions = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_extensions ), ',' );

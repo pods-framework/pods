@@ -85,7 +85,7 @@ class Pods_Field_Password extends Pods_Field {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -113,12 +113,12 @@ class Pods_Field_Password extends Pods_Field {
             $value = implode( ' ', $value );
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )
+            if ( pods_v( 'read_only', $options, false ) )
                 $options[ 'readonly' ] = true;
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) )
             $options[ 'readonly' ] = true;
 
         pods_view( PODS_DIR . 'ui/fields/password.php', compact( array_keys( get_defined_vars() ) ) );
@@ -147,7 +147,7 @@ class Pods_Field_Password extends Pods_Field {
             $errors = $check;
         else {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
+                if ( 1 == pods_v( 'required', $options ) )
                     $errors[] = __( 'This field is required.', 'pods' );
             }
         }

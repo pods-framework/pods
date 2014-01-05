@@ -38,7 +38,7 @@
                         }
 
                         if ( !is_array( $field_option[ 'group' ] ) ) {
-                            $value = pods_var_raw( $field_name, $settings, $field_option[ 'default' ] );
+                            $value = pods_v( $field_name, $settings, $field_option[ 'default' ] );
                 ?>
                     <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo $field_name; ?>">
                         <th>
@@ -69,7 +69,7 @@
 
                                         $depends_option = Pods_Form::dependencies( $field_group_option );
 
-                                        $value = pods_var_raw( $field_group_name, $settings, $field_group_option[ 'default' ] );
+                                        $value = pods_v( $field_group_name, $settings, $field_group_option[ 'default' ] );
                                 ?>
                                     <li class="<?php echo $depends_option; ?>">
                                         <?php echo Pods_Form::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>

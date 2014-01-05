@@ -421,7 +421,7 @@ class Pods_Pages extends Pods_Component {
             array(
                 'name' => 'pod_slug',
                 'label' => __( 'Wildcard Slug', 'pods' ),
-                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_var( 2, "url" ) in PHP.', 'pods' ),
+                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, "url" ) in PHP.', 'pods' ),
                 'type' => 'text',
                 'excludes-on' => array( 'pod' => 0 )
             )
@@ -876,15 +876,15 @@ class Pods_Pages extends Pods_Component {
             if ( $permission ) {
                 $content = false;
 
-                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists ) ) ) {
-					$slug = pods_var_raw( 'pod_slug', self::$exists, null, null, true );
+                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_v( 'pod', self::$exists ) ) ) {
+					$slug = pods_v( 'pod_slug', self::$exists, null, true );
 
 					// Handle special magic tags
 					if ( 0 < strlen( $slug ) ) {
 						$slug = pods_evaluate_tags( $slug, true );
 					}
 
-                    $pods = pods( pods_var( 'pod', self::$exists ), $slug );
+                    $pods = pods( pods_v( 'pod', self::$exists ), $slug );
 
 					// Auto 404 handling if item doesn't exist
 					if ( 0 < strlen( $slug ) && !$pods->exists() && apply_filters( 'pods_pages_auto_404', true, $slug, $pods, self::$exists ) ) {

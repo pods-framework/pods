@@ -500,7 +500,7 @@ class Pods_Migrate {
                 }
 
                 if ( is_array( $value ) || is_object( $value ) )
-                    $value = pods_serial_comma( $value, array( 'field' => $column, 'fields' => pods_var_raw( $column, $this->data[ 'fields' ] ), 'and' => '' ) );
+                    $value = pods_serial_comma( $value, array( 'field' => $column, 'fields' => pods_v( $column, $this->data[ 'fields' ] ), 'and' => '' ) );
 
                 $value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
 

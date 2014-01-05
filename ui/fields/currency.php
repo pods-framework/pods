@@ -11,15 +11,15 @@ $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type,
 
 global $wp_locale;
 
-if ( '9999.99' == pods_var( 'currency_format', $options ) ) {
+if ( '9999.99' == pods_v( 'currency_format', $options ) ) {
     $thousands = '';
     $dot = '.';
 }
-elseif ( '9999,99' == pods_var( 'currency_format', $options ) ) {
+elseif ( '9999,99' == pods_v( 'currency_format', $options ) ) {
     $thousands = '';
     $dot = ',';
 }
-elseif ( '9.999,99' == pods_var( 'currency_format', $options ) ) {
+elseif ( '9.999,99' == pods_v( 'currency_format', $options ) ) {
     $thousands = '.';
     $dot = ',';
 }
@@ -30,8 +30,8 @@ else {
 
 $currency = 'usd';
 
-if ( isset( Pods_Field_Currency::$currencies[ pods_var( 'currency_format_sign', $options, -1 ) ] ) )
-    $currency = pods_var( 'currency_format_sign', $options );
+if ( isset( Pods_Field_Currency::$currencies[ pods_v( 'currency_format_sign', $options, -1 ) ] ) )
+    $currency = pods_v( 'currency_format_sign', $options );
 
 $currency_sign = Pods_Field_Currency::$currencies[ $currency ];
 ?>

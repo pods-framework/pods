@@ -35,7 +35,7 @@ foreach ( $field_options as $field_name => $field_option ) {
         if ( isset( $field_option[ 'value' ] ) && 0 < strlen( $field_option[ 'value' ] ) )
             $value = $field_option[ 'value' ];
         else
-            $value = pods_var_raw( $field_name, $field, $value );
+            $value = pods_v( $field_name, $field, $value );
 
         if ( in_array( $field_option[ 'type' ], Pods_Form::file_field_types() ) ) {
             if ( is_array( $value ) && !isset( $value[ 'id' ] ) ) {
@@ -81,7 +81,7 @@ foreach ( $field_options as $field_name => $field_option ) {
                         if ( isset( $field_group_option[ 'value' ] ) && 0 < strlen( $field_group_option[ 'value' ] ) )
                             $value = $field_group_option[ 'value' ];
                         else
-                            $value = pods_var_raw( $field_group_name, $field, $value );
+                            $value = pods_v( $field_group_name, $field, $value );
 
                         ?>
                         <li class="<?php echo $depends_option; ?>">

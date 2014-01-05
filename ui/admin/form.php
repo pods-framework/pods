@@ -19,17 +19,17 @@ foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
     elseif ( false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $id ) ) {
-        if ( pods_var( 'hidden', $field, false ) )
+        if ( pods_v( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
-        elseif ( pods_var( 'read_only', $field, false ) )
+        elseif ( pods_v( 'read_only', $field, false ) )
             $fields[ $k ][ 'readonly' ] = true;
         else
             unset( $fields[ $k ] );
     }
     elseif ( !pods_has_permissions( $field ) ) {
-        if ( pods_var( 'hidden', $field, false ) )
+        if ( pods_v( 'hidden', $field, false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
-        elseif ( pods_var( 'read_only', $field, false ) )
+        elseif ( pods_v( 'read_only', $field, false ) )
             $fields[ $k ][ 'readonly' ] = true;
     }
 }
@@ -37,7 +37,7 @@ foreach ( $fields as $k => $field ) {
 $submittable_fields = $fields;
 
 foreach ( $submittable_fields as $k => $field ) {
-    if ( pods_var( 'readonly', $field, false ) )
+    if ( pods_v( 'readonly', $field, false ) )
         unset( $submittable_fields[ $k ] );
 }
 
@@ -57,9 +57,9 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $dupli
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     $action = __( 'saved', 'pods' );
 
-    if ( 'create' == pods_var_raw( 'do', 'post', 'save' ) )
+    if ( 'create' == pods_v( 'do', 'post', 'save' ) )
         $action = __( 'created', 'pods' );
-    elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+    elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
         $action = __( 'duplicated', 'pods' );
 
     try {
@@ -85,9 +85,9 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 elseif ( isset( $_GET[ 'do' ] ) ) {
     $action = __( 'saved', 'pods' );
 
-    if ( 'create' == pods_var_raw( 'do', 'get', 'save' ) )
+    if ( 'create' == pods_v( 'do', 'get', 'save' ) )
         $action = __( 'created', 'pods' );
-    elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+    elseif ( 'duplicate' == pods_v( 'do', 'get', 'save' ) )
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -226,8 +226,8 @@ if ( 0 < $id ) {
                             if ( !isset( $singular_label ) )
                                 $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 
-                            $singular_label = pods_var_raw( 'label', $pod->pod_data, $singular_label, null, true );
-                            $singular_label = pods_var_raw( 'label_singular', $pod->pod_data, $singular_label, null, true );
+                            $singular_label = pods_v( 'label', $pod->pod_data, $singular_label, true );
+                            $singular_label = pods_v( 'label_singular', $pod->pod_data, $singular_label, true );
 
                             $prev = $pod->prev_id();
                             $next = $pod->next_id();
@@ -293,7 +293,7 @@ if ( 0 < $id ) {
                                 $more = true;
                                 $extra = '';
 
-                                $max_length = (int) pods_var( 'maxlength', $field, pods_var( $field[ 'type' ] . '_max_length', $field, 0 ), null, true );
+                                $max_length = (int) pods_var( 'maxlength', $field, pods_v( $field[ 'type' ] . '_max_length', $field, 0 ), null, true );
 
                                 if ( 0 < $max_length )
                                     $extra .= ' maxlength="' . $max_length . '"';
@@ -344,12 +344,12 @@ if ( 0 < $id ) {
 											<?php
 												foreach ( $group[ 'fields' ] as $field ) {
 													if ( false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-														if ( pods_var( 'hidden', $field, false ) )
+														if ( pods_v( 'hidden', $field, false ) )
 															$field[ 'type' ] = 'hidden';
 														else
 															continue;
 													}
-													elseif ( !pods_has_permissions( $field ) && pods_var( 'hidden', $field, false ) )
+													elseif ( !pods_has_permissions( $field ) && pods_v( 'hidden', $field, false ) )
 														$field[ 'type' ] = 'hidden';
 
 													$value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );

@@ -111,7 +111,7 @@ class Pods_Field_Website extends Pods_Field {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -141,7 +141,7 @@ class Pods_Field_Website extends Pods_Field {
         $field_type = 'website';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -149,7 +149,7 @@ class Pods_Field_Website extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -181,7 +181,7 @@ class Pods_Field_Website extends Pods_Field {
             $errors = $check;
         else {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
+                if ( 1 == pods_v( 'required', $options ) )
                     $errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
                 else
                     $errors[] = sprintf( __( 'Invalid website provided for the field %s.', 'pods' ), $label );
@@ -233,28 +233,28 @@ class Pods_Field_Website extends Pods_Field {
 
             $url = array_merge( $defaults, $url );
 
-            if ( 'normal' == pods_var( self::$type . '_format', $options ) )
+            if ( 'normal' == pods_v( self::$type . '_format', $options ) )
                 $value = $this->build_url( $url );
-            elseif ( 'no-www' == pods_var( self::$type . '_format', $options ) ) {
+            elseif ( 'no-www' == pods_v( self::$type . '_format', $options ) ) {
                 if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
                 $value = $this->build_url( $url );
             }
-            elseif ( 'force-www' == pods_var( self::$type . '_format', $options ) ) {
+            elseif ( 'force-www' == pods_v( self::$type . '_format', $options ) ) {
                 if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
                 $value = $this->build_url( $url );
             }
-            elseif ( 'no-http' == pods_var( self::$type . '_format', $options ) ) {
+            elseif ( 'no-http' == pods_v( self::$type . '_format', $options ) ) {
                 $value = $this->build_url( $url );
                 $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
             }
-            elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
+            elseif ( 'no-http-no-www' == pods_v( self::$type . '_format', $options ) ) {
                 if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
@@ -264,7 +264,7 @@ class Pods_Field_Website extends Pods_Field {
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
             }
-            elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
+            elseif ( 'no-http-force-www' == pods_v( self::$type . '_format', $options ) ) {
                 if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
@@ -292,7 +292,7 @@ class Pods_Field_Website extends Pods_Field {
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        if ( 'website' == pods_var( self::$type . '_format_type', $options ) && 0 < strlen( pods_var( self::$type . '_format', $options ) ) )
+        if ( 'website' == pods_v( self::$type . '_format_type', $options ) && 0 < strlen( pods_v( self::$type . '_format', $options ) ) )
             $value = make_clickable( $value );
 
         return $value;

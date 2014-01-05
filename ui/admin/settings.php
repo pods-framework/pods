@@ -18,7 +18,7 @@
                 foreach ( $tabs as $tab => $label ) {
                     $class = '';
 
-                    if ( $tab == pods_var( 'tab', 'get', $default ) ) {
+                    if ( $tab == pods_v( 'tab', 'get', $default ) ) {
                         $class = ' nav-tab-active';
 
                         $label = 'Pods ' . $label;
@@ -36,7 +36,7 @@
         <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
         <?php
-            $tab = pods_var( 'tab', 'get', $default );
+            $tab = pods_v( 'tab', 'get', $default );
             $tab = sanitize_title( $tab );
 
             echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );

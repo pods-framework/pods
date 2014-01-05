@@ -596,17 +596,17 @@ class Pods_View {
 			if ( ( isset( $expires[ 'anonymous' ] ) || isset( $expires[ 'user_with_access' ] ) ) && isset( $expires[ 'user' ] ) ) {
 				if ( isset( $expires[ 'user_with_access' ] ) ) {
 					$expires = array(
-						pods_var_raw( 'anonymous', $expires, false ),
-						pods_var_raw( 'user', $expires, false ),
-						pods_var_raw( 'user_with_access', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true )
+						pods_v( 'anonymous', $expires, false ),
+						pods_v( 'user', $expires, false ),
+						pods_v( 'user_with_access', $expires, false ),
+						pods_v( 'capability', $expires, null, true )
 					);
 				}
 				elseif ( isset( $expires[ 'anonymous' ] ) ) {
 					$expires = array(
-						pods_var_raw( 'anonymous', $expires, false ),
-						pods_var_raw( 'user', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true )
+						pods_v( 'anonymous', $expires, false ),
+						pods_v( 'user', $expires, false ),
+						pods_v( 'capability', $expires, null, true )
 					);
 				}
 			}
@@ -616,20 +616,20 @@ class Pods_View {
 
 			if ( 4 == count( $expires ) ) {
 				if ( !is_user_logged_in() ) {
-					$expires = pods_var_raw( 0, $expires, false );
+					$expires = pods_v( 0, $expires, false );
 				}
 				else {
-					$user_no_access = pods_var_raw( 1, $expires, false );
-					$user_with_access = pods_var_raw( 2, $expires, false );
-					$capability = pods_var_raw( 3, $expires, null, null, true );
+					$user_no_access = pods_v( 1, $expires, false );
+					$user_with_access = pods_v( 2, $expires, false );
+					$capability = pods_v( 3, $expires, null, true );
 
 					$expires = pods_var_user( $user_no_access, $user_with_access, $capability );
 				}
 			}
 			else {
-				$anon = pods_var_raw( 0, $expires, false );
-				$user = pods_var_raw( 1, $expires, false );
-				$capability = pods_var_raw( 2, $expires, null, null, true );
+				$anon = pods_v( 0, $expires, false );
+				$user = pods_v( 1, $expires, false );
+				$capability = pods_v( 2, $expires, null, true );
 
 				$expires = pods_var_user( $anon, $user, $capability );
 			}

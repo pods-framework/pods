@@ -109,9 +109,9 @@ if ( !class_exists( 'PodsBuilderModuleField' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
-                'slug' => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
-                'field' => trim( pods_var_raw( 'field', $fields[ 'data' ], '' ) )
+                'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
+                'slug' => trim( pods_v( 'slug', $fields[ 'data' ], '' ) ),
+                'field' => trim( pods_v( 'field', $fields[ 'data' ], '' ) )
             );
 
             if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) )

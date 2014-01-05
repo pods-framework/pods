@@ -127,11 +127,11 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
-                'slug' => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
-                'fields' => trim( pods_var_raw( 'fields', $fields[ 'data' ], '' ) ),
+                'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
+                'slug' => trim( pods_v( 'slug', $fields[ 'data' ], '' ) ),
+                'fields' => trim( pods_v( 'fields', $fields[ 'data' ], '' ) ),
                 'label' => trim( pods_var_raw( 'label', $fields[ 'data' ], __( 'Submit', 'pods' ), null, true ) ),
-                'thank_you' => trim( pods_var_raw( 'thank_you', $fields[ 'data' ], '' ) ),
+                'thank_you' => trim( pods_v( 'thank_you', $fields[ 'data' ], '' ) ),
                 'form' => 1
             );
 

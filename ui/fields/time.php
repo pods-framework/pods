@@ -29,7 +29,7 @@
 
     $type = 'text';
 
-    if ( 1 == pods_var( $form_field_type . '_html5', $options ) )
+    if ( 1 == pods_v( $form_field_type . '_html5', $options ) )
         $type = $form_field_type;
 
     $attributes[ 'type' ] = $type;
@@ -40,7 +40,7 @@
     $method = 'timepicker';
 
     $args = array(
-        'timeFormat' => $time_format[ pods_var( $form_field_type . '_format', $options, 'h_mma', null, true ) ]
+        'timeFormat' => $time_format[ pods_v( $form_field_type . '_format', $options, 'h_mma', true ) ]
     );
 
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
@@ -48,9 +48,9 @@
 
     $html5_format = '\TH:i:s';
 
-    if ( 24 == pods_var( $form_field_type . '_type', $options, 12 ) ) {
+    if ( 24 == pods_v( $form_field_type . '_type', $options, 12 ) ) {
         $args[ 'ampm' ] = false;
-        $args[ 'timeFormat' ] = $time_format_24[ pods_var( $form_field_type . '_format_24', $options, 'hh_mm', null, true ) ];
+        $args[ 'timeFormat' ] = $time_format_24[ pods_v( $form_field_type . '_format_24', $options, 'hh_mm', true ) ];
     }
 
     $date = Pods_Form::field_method( 'time', 'createFromFormat', $format, (string) $value );
@@ -58,7 +58,7 @@
 
     $formatted_date = $value;
 
-    if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+    if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
         $formatted_date = $value = '';
     elseif ( 'text' != $type ) {
         $formatted_date = $value;

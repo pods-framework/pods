@@ -302,7 +302,7 @@ function pods_ui_access ($object, $access, $what) {
  * @deprecated deprecated since version 2.0
  */
 function pods_url_variable ($key = 'last', $type = 'url') {
-    $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
+    $output = apply_filters('pods_url_variable', pods_v_sanitized($key, $type), $key, $type);
     return $output;
 }
 

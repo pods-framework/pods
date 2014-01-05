@@ -5,7 +5,7 @@ $data_count = count( $options[ 'data' ] );
 
 if ( 0 < $data_count ) {
 
-    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+    if ( 1 == pods_v( 'grouped', $options, 0, true ) ) {
         ?>
 <div class="pods-pick-values pods-pick-checkbox">
     <ul>
@@ -55,7 +55,7 @@ if ( 0 < $data_count ) {
         if ( strlen( $label ) < 1 )
             $attributes[ 'class' ] .= ' pods-form-ui-no-label';
 
-        if ( pods_var( 'readonly', $options, false ) ) {
+        if ( pods_v( 'readonly', $options, false ) ) {
             $attributes[ 'readonly' ] = 'READONLY';
 
             $attributes[ 'class' ] .= ' pods-form-ui-read-only';
@@ -64,7 +64,7 @@ if ( 0 < $data_count ) {
         if ( 1 < $data_count )
             $attributes[ 'id' ] = $primary_id . $counter;
 
-        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+        if ( 1 == pods_v( 'grouped', $options, 0, true ) ) {
             ?>
         <li>
 <?php
@@ -74,9 +74,9 @@ if ( 0 < $data_count ) {
             <input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
             <?php
             if ( 0 < strlen( $label ) ) {
-                $help = pods_var_raw( 'help', $options );
+                $help = pods_v( 'help', $options );
 
-                if ( 1 == pods_var( 'grouped', $options, 0, null, true ) || empty( $help ) )
+                if ( 1 == pods_v( 'grouped', $options, 0, true ) || empty( $help ) )
                     $help = '';
 
                 echo Pods_Form::label( $attributes[ 'id' ], $label, $help );
@@ -85,7 +85,7 @@ if ( 0 < $data_count ) {
         </div>
         <?php
 
-        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+        if ( 1 == pods_v( 'grouped', $options, 0, true ) ) {
             ?>
         </li>
 <?php
@@ -94,7 +94,7 @@ if ( 0 < $data_count ) {
         $counter++;
     }
 
-    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+    if ( 1 == pods_v( 'grouped', $options, 0, true ) ) {
         ?>
     </ul>
 </div>

@@ -10,14 +10,14 @@
 
     $values = explode( ',', $value );
     $values = array(
-        pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
-        pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
+        pods_var( 0, $values, pods_v( $form_field_type . '_min', $options, 0, true ) ),
+        pods_var( 1, $values, pods_v( $form_field_type . '_max', $options, 100, true ) )
     );
 
-    $values[ 0 ] = max( $values[ 0 ], pods_var( $form_field_type . '_min', $options, 0 ) );
-    $values[ 1 ] = min( $values[ 1 ], pods_var( $form_field_type . '_min', $options, 100 ) );
+    $values[ 0 ] = max( $values[ 0 ], pods_v( $form_field_type . '_min', $options, 0 ) );
+    $values[ 1 ] = min( $values[ 1 ], pods_v( $form_field_type . '_min', $options, 100 ) );
 
-    if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) )
+    if ( 0 == pods_v( $form_field_type . '_range', $options, 0 ) )
         $output_value = $value = $values[ 0 ];
     else {
         $value = implode( ',', $values );
@@ -41,13 +41,13 @@
 <script>
     jQuery( function ( $ ) {
         $( "#<?php echo $attributes[ 'id' ]; ?>-range" ).slider( {
-            orientation : '<?php echo pods_var( $form_field_type . '_orientation', $options, 'horizontal' ); ?>',
-            min : <?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>,
-            max : <?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>,
-            step : <?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>,
+            orientation : '<?php echo pods_v( $form_field_type . '_orientation', $options, 'horizontal' ); ?>',
+            min : <?php echo pods_v( $form_field_type . '_min', $options, 0 ); ?>,
+            max : <?php echo pods_v( $form_field_type . '_max', $options, 100 ); ?>,
+            step : <?php echo pods_v( $form_field_type . '_step', $options, 1 ); ?>,
 
             <?php
-                if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
+                if ( 1 == pods_v( $form_field_type . '_range', $options, 0 ) ) {
             ?>
                 range : true,
                 values : [

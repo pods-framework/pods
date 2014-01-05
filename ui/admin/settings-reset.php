@@ -1,7 +1,7 @@
 <?php
     global $pods_init;
 
-    $monday_mode = pods_var( 'pods_monday_mode', 'get', 0, null, true );
+    $monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
     if ( 1 == date_i18n( 'N' ) && (int) date_i18n( 'G' ) < 15 )
         $monday_mode = 1;
@@ -28,7 +28,7 @@
         pods_message( 'Pods 2.x settings and data have been reset.' );
     elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) )
         pods_message( 'Pods 1.x data has been deleted.' );
-    elseif ( pods_var( 'pods_reset_weekend', 'post', pods_var( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
+    elseif ( pods_var( 'pods_reset_weekend', 'post', pods_v( 'pods_reset_weekend', 'get', 0, true ), null, true ) ) {
         if ( $monday_mode ) {
             $html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
             pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );

@@ -207,7 +207,7 @@ class Pods implements Iterator {
 		}
 		else {
 			// Get the page variable
-			$this->page = pods_v_sanitized( $this->page_var, 'get' );
+			$this->page = pods_v( $this->page_var );
 			$this->page = ( empty( $this->page ) ? 1 : max( pods_absint( $this->page ), 1 ) );
 		}
 
@@ -3814,7 +3814,7 @@ class Pods implements Iterator {
 					if ( !current_user_can( 'pods_add_' . $this->pod ) ) {
 						$actions_disabled[ 'add' ] = 'add';
 
-						if ( 'add' == pods_v_sanitized( 'action' . $num, 'get' ) ) {
+						if ( 'add' == pods_v( 'action' . $num ) ) {
 							$_GET[ 'action' . $num ] = 'manage';
 						}
 					}

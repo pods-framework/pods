@@ -123,7 +123,7 @@ class Pods_Field_Phone extends Pods_Field {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 25, null, true );
+        $length = (int) pods_v( self::$type . '_max_length', $options, 25, true );
 
         $schema = 'VARCHAR(' . $length . ')';
 
@@ -153,7 +153,7 @@ class Pods_Field_Phone extends Pods_Field {
         $field_type = 'phone';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -161,7 +161,7 @@ class Pods_Field_Phone extends Pods_Field {
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -193,7 +193,7 @@ class Pods_Field_Phone extends Pods_Field {
             $errors = $check;
         else {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
+                if ( 1 == pods_v( 'required', $options ) )
                     $errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
                 else
                     $errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
@@ -220,7 +220,7 @@ class Pods_Field_Phone extends Pods_Field {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        if ( 'international' == pods_var( self::$type . '_format', $options ) ) {
+        if ( 'international' == pods_v( self::$type . '_format', $options ) ) {
             // no validation/changes
         }
         else {
@@ -253,19 +253,19 @@ class Pods_Field_Phone extends Pods_Field {
                 $numbers = array( $numbers[ 0 ], $numbers[ 1 ] );
 
             // Format number
-            if ( '(999) 999-9999 x999' == pods_var( self::$type . '_format', $options ) ) {
+            if ( '(999) 999-9999 x999' == pods_v( self::$type . '_format', $options ) ) {
                 if ( 2 == count( $numbers ) )
                     $value = implode( '-', $numbers );
                 else
                     $value = '(' . $numbers[ 0 ] . ') ' . $numbers[ 1 ] . '-' . $numbers[ 2 ];
             }
-            elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) )
+            elseif ( '999.999.9999 x999' == pods_v( self::$type . '_format', $options ) )
                 $value = implode( '.', $numbers );
-            else //if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
+            else //if ( '999-999-9999 x999' == pods_v( self::$type . '_format', $options ) )
                 $value = implode( '-', $numbers );
 
             // Add extension
-            if ( 1 == pods_var( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
+            if ( 1 == pods_v( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
                 $value .= ' x' . $extension;
         }
 

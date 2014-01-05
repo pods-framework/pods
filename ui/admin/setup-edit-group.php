@@ -46,9 +46,9 @@ foreach ( $field_types as $type => $field_type_data ) {
     if ( true !== $field_type_vars[ 'pod_types' ] ) {
         if ( empty( $field_type_vars[ 'pod_types' ] ) )
             continue;
-        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( pods_var( 'type', $pod ), $field_type_vars[ 'pod_types' ] ) )
+        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( pods_v( 'type', $pod ), $field_type_vars[ 'pod_types' ] ) )
             continue;
-        elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && pods_var( 'type', $pod ) != $field_type_vars[ 'pod_types' ] )
+        elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && pods_v( 'type', $pod ) != $field_type_vars[ 'pod_types' ] )
             continue;
     }
 
@@ -166,9 +166,9 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
     $action = __( 'saved', 'pods' );
 
-    if ( 'create' == pods_var( 'do' . $obj->num, 'get', 'save' ) )
+    if ( 'create' == pods_v( 'do' . $obj->num, 'get', 'save' ) )
         $action = __( 'created', 'pods' );
-    elseif ( 'duplicate' == pods_var( 'do' . $obj->num, 'get', 'save' ) )
+    elseif ( 'duplicate' == pods_v( 'do' . $obj->num, 'get', 'save' ) )
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -204,7 +204,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
     ?>
         <h2 class="nav-tab-wrapper pods-nav-tabs">
             <?php
-                $default = sanitize_title( pods_var( 'tab', 'get', 'manage-fields', null, true ) );
+                $default = sanitize_title( pods_v( 'tab', 'get', 'manage-fields', true ) );
 
                 if ( !isset( $tabs[ $default ] ) ) {
                     $tab_keys = array_keys( $tabs );
@@ -503,7 +503,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
 
         pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
-        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', Pods_Form::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', Pods_Form::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_v( 'sister_id', $field_settings ) ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
@@ -524,7 +524,7 @@ if ( isset( $_GET[ 'do' . $obj->num ] ) ) {
             action : 'pods_admin',
             method : 'load_sister_fields',
             _wpnonce : '<?php echo wp_create_nonce( 'pods-load_sister_fields' ); ?>',
-            pod : '<?php echo pods_var( 'name', $pod ); ?>',
+            pod : '<?php echo pods_v( 'name', $pod ); ?>',
             related_pod : related_pod_name
         };
 

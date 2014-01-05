@@ -324,7 +324,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: API to register pods and fields from a theme or another plugin (doesn't save into the DB): pods_register_type and pods_register_field - See https://github.com/pods-framework/pods/issues/700
 * Added: Now you can look up meta field values within find() calls, just use the field_name.meta_value syntax (instead of t.field_name) and Pods will auto-join the table needed
 * Updated: Relationship 'where' option in Field editor now more robust and has all fields (including relationships, or meta like above) can be referenced
-* Updated: Relationship 'where' option in Field editor now supports {@user.ID} lookups which maps to pods_var( 'ID', 'user' ) to sanitize (ex. user.ID != '{@user.ID}' in the Pick WHERE will return all users not the current user); You can use any pods_var enabled option, documentation coming this month
+* Updated: Relationship 'where' option in Field editor now supports {@user.ID} lookups which maps to pods_v( 'ID', 'user' ) to sanitize (ex. user.ID != '{@user.ID}' in the Pick WHERE will return all users not the current user); You can use any pods_var enabled option, documentation coming this month
 * Updated: Relationship saving has been optimized for both bi-directional relationships and regular relationships
 * Various fixes that can be found on GitHub
 

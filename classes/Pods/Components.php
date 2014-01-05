@@ -263,7 +263,7 @@ class Pods_Components {
     public function get_components () {
         $components = pods_transient_get( 'pods_components' );
 
-        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+        if ( 1 == pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             $components = array();
 
         if ( Pods_Init::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
@@ -401,7 +401,7 @@ class Pods_Components {
             pods_transient_set( 'pods_components', $components );
         }
 
-        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+        if ( 1 == pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $components );
 
         $this->components = $components;
@@ -500,10 +500,10 @@ class Pods_Components {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && !pods_developer() )
+            if ( true === (boolean) pods_v( 'DeveloperMode', $component_data, false ) && !pods_developer() )
                 continue;
 
-            if ( true === (boolean) pods_var( 'TablelessMode', $component_data, false ) && !pods_developer() )
+            if ( true === (boolean) pods_v( 'TablelessMode', $component_data, false ) && !pods_developer() )
                 continue;
 
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
@@ -601,13 +601,13 @@ class Pods_Components {
             $field_option = Pods_Form::field_setup( $field_option, null, $field_option[ 'type' ] );
 
             if ( !is_array( $field_option[ 'group' ] ) ) {
-                $field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
+                $field_value = pods_v( 'pods_setting_' . $field_name, $params );
 
                 $this->settings[ 'components' ][ $component ][ $field_name ] = $field_value;
             }
             else {
                 foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
-                    $field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
+                    $field_value = pods_v( 'pods_setting_' . $field_group_name, $params );
 
                     $this->settings[ 'components' ][ $component ][ $field_group_name ] = $field_value;
                 }

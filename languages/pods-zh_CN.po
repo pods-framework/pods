@@ -170,8 +170,8 @@ msgid "Import Again"
 msgstr ""
 
 #: components/Pages.php:424
-msgid "Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named \"first/second/*\" part of the pod page. This is functionally the same as using pods_var( 2, \"url\" ) in PHP."
-msgstr "设置通配符别名是设置详情页链接的快捷方式，你可以使用{@url.2}匹配Pods的三级页面：\"first/second/*\"，此功能和在PHP中使用pods_var( 2, \"url\" )一样。"
+msgid "Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named \"first/second/*\" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, \"url\" ) in PHP."
+msgstr "设置通配符别名是设置详情页链接的快捷方式，你可以使用{@url.2}匹配Pods的三级页面：\"first/second/*\"，此功能和在PHP中使用pods_v_sanitized( 2, \"url\" )一样。"
 
 #: classes/PodsAdmin.php:1612 components/Pages.php:435
 msgid "Restrict access to Admins?"

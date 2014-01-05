@@ -586,7 +586,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                 $related_item_id = $r->tbl_row_id;
 
                 if ( 'pick' == $field[ 'type' ] ) {
-                    $old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field, 0 );
+                    $old_sister_id = (int) pods_v( '_pods_1x_sister_id', $field, 0 );
 
                     if ( 0 < $old_sister_id ) {
                         $sql = "

@@ -7,11 +7,11 @@
 			echo esc_html( $label );
 		}
 
-		if ( 1 == pods_var( 'required', $options, pods_var( 'options', $options, $options ) ) ) {
+		if ( 1 == pods_var( 'required', $options, pods_v( 'options', $options, $options ) ) ) {
 			echo ' <abbr title="required" class="required">*</abbr>';
 		}
 
-		if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && !empty( $help ) && 'help' != $help && __( 'help', 'pods' ) != $help ) {
+		if ( 0 == pods_v( 'grouped', $options, 0, true ) && !empty( $help ) && 'help' != $help && __( 'help', 'pods' ) != $help ) {
 			pods_help( $help );
 		}
 	?>

@@ -102,8 +102,8 @@ class Pods_Field_Boolean extends Pods_Field {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
-            1 => pods_var_raw( self::$type . '_yes_label', $options ),
-            0 => pods_var_raw( self::$type . '_no_label', $options )
+            1 => pods_v( self::$type . '_yes_label', $options ),
+            0 => pods_v( self::$type . '_no_label', $options )
         );
 
         // Deprecated handling for 1.x
@@ -132,18 +132,18 @@ class Pods_Field_Boolean extends Pods_Field {
 
         $field_type = 'checkbox';
 
-        if ( 'radio' == pods_var( self::$type . '_format_type', $options ) )
+        if ( 'radio' == pods_v( self::$type . '_format_type', $options ) )
             $field_type = 'radio';
-        elseif ( 'dropdown' == pods_var( self::$type . '_format_type', $options ) )
+        elseif ( 'dropdown' == pods_v( self::$type . '_format_type', $options ) )
             $field_type = 'select';
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )
+            if ( pods_v( 'read_only', $options, false ) )
                 $options[ 'readonly' ] = true;
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) )
             $options[ 'readonly' ] = true;
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
@@ -164,15 +164,15 @@ class Pods_Field_Boolean extends Pods_Field {
      * @since 2.0
      */
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-        if ( 'checkbox' != pods_var( self::$type . '_format_type', $options ) ) {
+        if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
             $data = array(
-                1 => pods_var_raw( self::$type . '_yes_label', $options ),
-                0 => pods_var_raw( self::$type . '_no_label', $options )
+                1 => pods_v( self::$type . '_yes_label', $options ),
+                0 => pods_v( self::$type . '_no_label', $options )
             );
         }
         else {
             $data = array(
-                1 => pods_var_raw( self::$type . '_yes_label', $options )
+                1 => pods_v( self::$type . '_yes_label', $options )
             );
         }
 

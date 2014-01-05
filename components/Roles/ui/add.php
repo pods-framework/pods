@@ -41,14 +41,14 @@
                                 <div class="pods-field-option">
                                     <?php
                                     echo Pods_Form::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-                                    echo Pods_Form::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+                                    echo Pods_Form::field( 'role_label', pods_v( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
                                     ?>
                                 </div>
 
                                 <div class="pods-field-option">
                                     <?php
                                     echo Pods_Form::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-                                    echo Pods_Form::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                    echo Pods_Form::field( 'role_name', pods_v( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                     ?>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                                                 $zebra = ( !$zebra );
                                                 ?>
                                                 <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-                                                    <?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+                                                    <?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                 </li>
                                                 <?php
                                             }

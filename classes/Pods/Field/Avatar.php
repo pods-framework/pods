@@ -178,16 +178,16 @@ class Pods_Field_Avatar extends Pods_Field {
             return;
         }
 
-        if ( 'plupload' == pods_var( self::$type . '_uploader', $options ) )
+        if ( 'plupload' == pods_v( self::$type . '_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( self::$type . '_uploader', $options ) ) {
+        elseif ( 'attachment' == pods_v( self::$type . '_uploader', $options ) ) {
 			// @todo test frontend media modal
 			$field_type = 'media';
         }
         else {
             // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_avatar_uploader_' . pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_avatar_uploader', pods_var( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_avatar_uploader_' . pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_avatar_uploader', pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 

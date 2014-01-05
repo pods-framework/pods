@@ -147,7 +147,7 @@ class Pods_Field_Text extends Pods_Field {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options ) )
+        if ( 1 == pods_v( self::$type . '_allow_shortcode', $options ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -171,12 +171,12 @@ class Pods_Field_Text extends Pods_Field {
             $value = implode( ' ', $value );
 
         if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) )
+            if ( pods_v( 'read_only', $options, false ) )
                 $options[ 'readonly' ] = true;
             else
                 return;
         }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+        elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) )
             $options[ 'readonly' ] = true;
 
         pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
@@ -205,7 +205,7 @@ class Pods_Field_Text extends Pods_Field {
             $errors = $check;
         else {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
+                if ( 1 == pods_v( 'required', $options ) )
                     $errors[] = __( 'This field is required.', 'pods' );
             }
         }
@@ -258,7 +258,7 @@ class Pods_Field_Text extends Pods_Field {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 0 == pods_var( self::$type . '_allow_html', $options, 0, null, true ) )
+        if ( 0 == pods_v( self::$type . '_allow_html', $options, 0, true ) )
             $value = wp_trim_words( $value );
 
         return $value;
@@ -281,11 +281,11 @@ class Pods_Field_Text extends Pods_Field {
         if ( empty( $value ) )
             return $value;
 
-        if ( 0 == pods_var( self::$type . '_allow_html', $options ) ) {
+        if ( 0 == pods_v( self::$type . '_allow_html', $options ) ) {
             $value = strip_tags( $value );
 		}
-		elseif ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+		elseif ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
 			$allowed_tags = trim( preg_replace( '/[^\<\>\/\,]/', ' ', $allowed_tags ) );
 			$allowed_tags = explode( ' ', $allowed_tags );
 

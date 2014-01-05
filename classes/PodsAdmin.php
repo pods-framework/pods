@@ -159,7 +159,7 @@ class PodsAdmin {
     }
 
     /**
-     * Buld the admin menus
+     * Build the admin menus
      *
      * @since 2.0
      */
@@ -443,6 +443,8 @@ class PodsAdmin {
 
             if ( empty( $all_pods ) )
                 unset( $admin_menus[ 'pods' ] );
+
+            add_filter( 'parent_file' , array( $this, 'parent_file' ) );
         }
         else {
             $admin_menus = array(
@@ -498,6 +500,44 @@ class PodsAdmin {
                     PodsInit::$components->menu( $parent );
             }
         }
+    }
+
+    /**
+     * Set the correct parent_file to highlight the correct top level menu
+     */
+    public function parent_file ( $parent_file ) {
+        global $current_screen;
+
+        if ( isset( $current_screen ) && ! empty( $current_screen->taxonomy ) ) {
+            $taxonomies = PodsMeta::$taxonomies;
+            if ( !empty( $taxonomies ) ) {
+                foreach ( (array) $taxonomies as $pod ) {
+                    if ( $current_screen->taxonomy !== $pod[ 'name' ] )
+                        continue;
+
+                    $menu_slug = 'edit-tags.php?taxonomy=' . $pod[ 'name' ];
+                    $menu_location = pods_var( 'menu_location', $pod[ 'options' ], 'default' );
+                    $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
+
+                    if ( 'settings' == $menu_location )
+                        $parent_file = 'options-general.php';
+                    elseif ( 'appearances' == $menu_location )
+                        $parent_file = 'themes.php';
+                    elseif ( 'objects' == $menu_location )
+                        $parent_file = $menu_slug;
+                    elseif ( 'top' == $menu_location )
+                        $parent_file = $menu_slug;
+                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) ) {
+                        $parent_file = $menu_location_custom;
+                    }
+
+                    break;
+                }
+            }
+            
+        }
+        
+        return $parent_file;
     }
 
     public function upgrade_notice () {

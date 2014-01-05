@@ -7,7 +7,7 @@ class Pods_Widget_Field extends WP_Widget {
     /**
      * Register the widget
      */
-    public function Pods_Widget_Field () {
+    public function Pods_Widget_Field() {
         $this->WP_Widget(
             'pods_widget_field',
             'Pods - Field Value',
@@ -19,7 +19,7 @@ class Pods_Widget_Field extends WP_Widget {
     /**
      * Output of widget
      */
-    public function widget ( $args, $instance ) {
+    public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget fields
@@ -44,7 +44,7 @@ class Pods_Widget_Field extends WP_Widget {
      *
      * @returns array $instance Updated instance
      */
-    public function update ( $new_instance, $old_instance ) {
+    public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_v( 'pod_type', $new_instance, '' );
@@ -60,7 +60,7 @@ class Pods_Widget_Field extends WP_Widget {
     /**
      * Widget Form
      */
-    public function form ( $instance ) {
+    public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $pod_type = pods_v( 'pod_type', $instance, '' );
         $slug = pods_v( 'slug', $instance, '' );

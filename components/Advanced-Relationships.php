@@ -24,7 +24,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function __construct () {
+    public function __construct() {
         add_action( 'pods_form_ui_field_pick_related_objects_other', array( $this, 'add_related_objects' ) );
     }
 
@@ -33,7 +33,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function add_related_objects () {
+    public function add_related_objects() {
         Pods_Field_Pick::$related_objects[ 'table' ] = array(
             'label' => __( 'Database Tables', 'pods' ),
             'group' => __( 'Advanced Objects', 'pods' )
@@ -100,7 +100,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function data_themes ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_themes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         $themes = wp_get_themes( array( 'allowed' => true ) );
@@ -125,7 +125,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function data_page_templates ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_page_templates( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         if ( !function_exists( 'get_page_templates' ) )
@@ -163,7 +163,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function data_sidebars ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_sidebars( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         global $wp_registered_sidebars;
@@ -190,7 +190,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function data_post_types ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         $post_types = get_post_types( array(), 'objects' );
@@ -220,7 +220,7 @@ class Pods_Advanced_Relationships extends Pods_Component {
      *
      * @since 2.3
      */
-    public function data_taxonomies ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         $taxonomies = get_taxonomies( array(), 'objects' );

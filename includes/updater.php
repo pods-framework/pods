@@ -111,7 +111,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          *
          * @return void
          */
-        public function __construct ( $config = array() ) {
+        public function __construct( $config = array() ) {
 
             global $wp_version;
 
@@ -153,7 +153,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.2
          * @return void
          */
-        public function set_defaults () {
+        public function set_defaults() {
 
             if ( !isset( $this->config[ 'new_version' ] ) )
                 $this->config[ 'new_version' ] = $this->get_new_version();
@@ -184,7 +184,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return int timeout value
          */
-        public function http_request_timeout () {
+        public function http_request_timeout() {
             return 2;
         }
 
@@ -196,7 +196,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          *
          * @return mixed
          */
-        public function http_request_sslverify ( $args, $url ) {
+        public function http_request_sslverify( $args, $url ) {
             if ( $this->config[ 'zip_url' ] == $url )
                 $args[ 'sslverify' ] = $this->config[ 'sslverify' ];
 
@@ -210,7 +210,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return void
          */
-        public function delete_transients () {
+        public function delete_transients() {
             delete_site_transient( 'update_plugins' );
             delete_site_transient( $this->config[ 'slug' ] . '_new_version' );
             delete_site_transient( $this->config[ 'slug' ] . '_github_data' );
@@ -223,7 +223,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return int $version the version number
          */
-        public function get_new_version () {
+        public function get_new_version() {
             $version = get_site_transient( $this->config[ 'slug' ] . '_new_version' );
 
             if ( !isset( $version ) || !$version || '' == $version ) {
@@ -278,7 +278,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return array $github_data the data
          */
-        public function get_github_data () {
+        public function get_github_data() {
             $github_data = get_site_transient( $this->config[ 'slug' ] . '_github_data' );
 
             if ( !isset( $github_data ) || !$github_data || '' == $github_data ) {
@@ -307,7 +307,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return string $date the date
          */
-        public function get_date () {
+        public function get_date() {
             $_date = $this->get_github_data();
             return ( !empty( $_date->updated_at ) ) ? date( 'Y-m-d', strtotime( $_date->updated_at ) ) : false;
         }
@@ -318,7 +318,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return string $description the description
          */
-        public function get_description () {
+        public function get_description() {
             $_description = $this->get_github_data();
             return ( !empty( $_description->description ) ) ? $_description->description : false;
         }
@@ -329,7 +329,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          * @since 1.0
          * @return object $data the data
          */
-        public function get_plugin_data () {
+        public function get_plugin_data() {
             include_once( ABSPATH . '/wp-admin/includes/plugin.php' );
             $data = get_plugin_data( WP_PLUGIN_DIR . '/' . $this->config[ 'slug' ] );
             return $data;
@@ -344,7 +344,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          *
          * @return object $transient updated plugin data transient
          */
-        public function api_check ( $transient ) {
+        public function api_check( $transient ) {
 
             // Check if the transient contains the 'checked' information
             // If not, just return its value without hacking it
@@ -380,7 +380,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          *
          * @return object $response the plugin info
          */
-        public function get_plugin_info ( $false, $action, $response ) {
+        public function get_plugin_info( $false, $action, $response ) {
 
             // Check if this call API is for the right plugin
             if ( !is_object( $response ) || !isset( $response->slug ) || $response->slug != $this->config[ 'slug' ] )
@@ -413,7 +413,7 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
          *
          * @return array $result the result of the move
          */
-        public function upgrader_post_install ( $true, $hook_extra, $result ) {
+        public function upgrader_post_install( $true, $hook_extra, $result ) {
 
             global $wp_filesystem;
 

@@ -132,7 +132,7 @@ function pods_object_get( $object, $name = null, $id = 0, $live = false, $parent
  * @since 2.0
  * @link http://pods.io/docs/pods/
  */
-function pods ( $type = null, $id = null, $strict = null ) {
+function pods( $type = null, $id = null, $strict = null ) {
 
     $pod = new Pods( $type, $id );
 
@@ -159,7 +159,7 @@ function pods ( $type = null, $id = null, $strict = null ) {
  * @since 2.0
  * @link http://pods.io/docs/pods-ui/
  */
-function pods_ui ( $obj, $deprecated = false ) {
+function pods_ui( $obj, $deprecated = false ) {
 
     return new Pods_UI( $obj, $deprecated );
 }
@@ -177,7 +177,7 @@ function pods_ui ( $obj, $deprecated = false ) {
  * @since 2.0
  * @link http://pods.io/docs/pods-api/
  */
-function pods_api ( $pod = null, $format = null ) {
+function pods_api( $pod = null, $format = null ) {
 
     return Pods_API::init( $pod, $format );
 }
@@ -196,7 +196,7 @@ function pods_api ( $pod = null, $format = null ) {
  *
  * @since 2.0
  */
-function pods_data ( $pod = null, $id = null, $strict = true, $unique = true ) {
+function pods_data( $pod = null, $id = null, $strict = true, $unique = true ) {
 
     if ( $unique && false !== $pod )
         return new Pods_Data( $pod, $id, $strict );
@@ -213,7 +213,7 @@ function pods_data ( $pod = null, $id = null, $strict = true, $unique = true ) {
  *
  * @since 2.0
  */
-function pods_form () {
+function pods_form() {
 
     return Pods_Form::init();
 }
@@ -227,7 +227,7 @@ function pods_form () {
  *
  * @since 2.0
  */
-function pods_init () {
+function pods_init() {
 
     return Pods_Init::init();
 }
@@ -241,7 +241,7 @@ function pods_init () {
  *
  * @since 2.0
  */
-function pods_components () {
+function pods_components() {
 
     return Pods_Components::init();
 }
@@ -255,7 +255,7 @@ function pods_components () {
  *
  * @since 2.0
  */
-function pods_admin () {
+function pods_admin() {
 
     return Pods_Admin::init();
 }
@@ -269,7 +269,7 @@ function pods_admin () {
  *
  * @since 2.0
  */
-function pods_meta () {
+function pods_meta() {
 
     return Pods_Meta::init();
 }
@@ -285,7 +285,7 @@ function pods_meta () {
  *
  * @since 2.0
  */
-function pods_array ( $container ) {
+function pods_array( $container ) {
 
     return new Pods_Array( $container );
 }
@@ -306,7 +306,7 @@ function pods_array ( $container ) {
  * @since 2.0
  * @link http://pods.io/docs/pods-view/
  */
-function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
+function pods_view( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
 
     $view = Pods_View::view( $view, $data, $expires, $cache_mode );
 
@@ -329,7 +329,7 @@ function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache
  *
  * @since 2.2
  */
-function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
+function pods_migrate( $type = null, $delimiter = null, $data = null ) {
 
     return new Pods_Migrate( $type, $delimiter, $data );
 }
@@ -345,7 +345,7 @@ function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
  *
  * @since 2.1
  */
-function pods_upgrade ( $version = '' ) {
+function pods_upgrade( $version = '' ) {
     include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
 
     $class_name = str_replace( '.', '_', $version );

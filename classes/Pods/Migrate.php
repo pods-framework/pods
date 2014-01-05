@@ -65,7 +65,7 @@ class Pods_Migrate {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    function __construct ( $type = null, $delimiter = null, $data = null ) {
+    function __construct( $type = null, $delimiter = null, $data = null ) {
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
 
@@ -76,7 +76,7 @@ class Pods_Migrate {
             $this->set_data( $data );
     }
 
-    function set_data ( $data ) {
+    function set_data( $data ) {
         $defaults = array(
             'items' => array(),
             'columns' => array(),
@@ -93,7 +93,7 @@ class Pods_Migrate {
      * @param string $type Export Type (php, json, sv, xml)
      * @param string $delimiter Delimiter for export type 'sv'
      */
-    function import ( $data = null, $type = null, $delimiter = null ) {
+    function import( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -113,7 +113,7 @@ class Pods_Migrate {
      * @param array $data Array of data
      * @param string $type Export Type (php, json, sv, xml)
      */
-    public function import_pod_items ( $data = null, $type = null ) {
+    public function import_pod_items( $data = null, $type = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -129,7 +129,7 @@ class Pods_Migrate {
      *
      * @return null
      */
-    public function parse ( $data = null, $type = null ) {
+    public function parse( $data = null, $type = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -147,7 +147,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function parse_json ( $data = null ) {
+    public function parse_json( $data = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -185,7 +185,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function parse_sv ( $data = null, $delimiter = null ) {
+    public function parse_sv( $data = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -234,7 +234,7 @@ class Pods_Migrate {
      *
      * @return array|mixed
      */
-    public function str_getcsv ( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
+    public function str_getcsv( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
         $line = str_replace( "\r\n", "\n", $line );
         $line = str_replace( "\r", "\n", $line );
 
@@ -259,7 +259,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function parse_xml ( $data = null ) {
+    public function parse_xml( $data = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -342,7 +342,7 @@ class Pods_Migrate {
      *
      * @todo For much much later
      */
-    public function parse_sql ( $data = null ) {
+    public function parse_sql( $data = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
@@ -358,7 +358,7 @@ class Pods_Migrate {
      * @param string $type Export Type (php, json, sv, xml)
      * @param string $delimiter Delimiter for export type 'sv'
      */
-    public function export ( $data = null, $type = null, $delimiter = null ) {
+    public function export( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -377,7 +377,7 @@ class Pods_Migrate {
     /**
      * @param array $data Array of data
      */
-    public function export_pod_items ( $data = null ) {
+    public function export_pod_items( $data = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
     }
@@ -388,7 +388,7 @@ class Pods_Migrate {
      *
      * @return null
      */
-    public function build ( $data = null, $type = null ) {
+    public function build( $data = null, $type = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -406,7 +406,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function build_json ( $data = null ) {
+    public function build_json( $data = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -459,7 +459,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function build_sv ( $data = null, $delimiter = null ) {
+    public function build_sv( $data = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -523,7 +523,7 @@ class Pods_Migrate {
      *
      * @return bool
      */
-    public function build_xml ( $data = null ) {
+    public function build_xml( $data = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -554,7 +554,7 @@ class Pods_Migrate {
         return $this->built;
     }
 
-    public function build_xml_level ( $item, $column, $level = 2, $column_name = '' ) {
+    public function build_xml_level( $item, $column, $level = 2, $column_name = '' ) {
         $column = pods_clean_name( $column, false, false );
 
         $line = '';
@@ -610,7 +610,7 @@ class Pods_Migrate {
      *
      * @return mixed
      */
-    public function build_sql ( $data = null ) {
+    public function build_sql( $data = null ) {
         if ( !empty( $data ) )
             $this->set_data( $data );
 
@@ -701,7 +701,7 @@ class Pods_Migrate {
      * @param $import
      * @param bool $output
      */
-    public function heres_the_beef ( $import, $output = true ) {
+    public function heres_the_beef( $import, $output = true ) {
         global $wpdb;
 
         $api = pods_api();

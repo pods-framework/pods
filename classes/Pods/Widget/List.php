@@ -7,7 +7,7 @@ class Pods_Widget_List extends WP_Widget {
     /**
      * Register the widget
      */
-    public function Pods_Widget_List () {
+    public function Pods_Widget_List() {
         $this->WP_Widget(
             'pods_widget_list',
             'Pods - List Items',
@@ -19,7 +19,7 @@ class Pods_Widget_List extends WP_Widget {
     /**
      * Output of widget
      */
-    public function widget ( $args, $instance ) {
+    public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget fields
@@ -57,7 +57,7 @@ class Pods_Widget_List extends WP_Widget {
      *
      * @returns array $instance Updated instance
      */
-    public function update ( $new_instance, $old_instance ) {
+    public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
 
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
@@ -86,7 +86,7 @@ class Pods_Widget_List extends WP_Widget {
     /**
      * Widget Form
      */
-    public function form ( $instance ) {
+    public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $pod_type = pods_v( 'pod_type', $instance, '' );
         $template = pods_v( 'template', $instance, '' );

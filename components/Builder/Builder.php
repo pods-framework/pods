@@ -15,7 +15,7 @@
  */
 
 if ( !function_exists( 'pods_builder_modules_init' ) ) {
-    function pods_builder_modules_init () {
+    function pods_builder_modules_init() {
         require_once( PODS_DIR . 'components/Builder/modules/field/PodsBuilderModuleField.php' );
         require_once( PODS_DIR . 'components/Builder/modules/form/PodsBuilderModuleForm.php' );
         require_once( PODS_DIR . 'components/Builder/modules/list/PodsBuilderModuleList.php' );

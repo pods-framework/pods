@@ -41,7 +41,7 @@ class Pods_Field_Time extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -51,7 +51,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
@@ -129,7 +129,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = 'TIME NOT NULL default "00:00:00"';
 
         return $schema;
@@ -147,7 +147,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return mixed|null|string
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
         if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
@@ -180,7 +180,7 @@ class Pods_Field_Time extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -223,7 +223,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return mixed|string
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
         if ( !empty( $value ) && ( 0 == pods_v( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
@@ -249,7 +249,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return mixed|null|string
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
         if ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
@@ -266,7 +266,7 @@ class Pods_Field_Time extends Pods_Field {
      * @return string
      * @since 2.0
      */
-    public function format ( $options ) {
+    public function format( $options ) {
         $time_format = array(
             'h_mm_A' => 'g:i A',
             'h_mm_ss_A' => 'g:i:s A',
@@ -302,7 +302,7 @@ class Pods_Field_Time extends Pods_Field {
      *
      * @return DateTime
      */
-    public function createFromFormat ( $format, $date ) {
+    public function createFromFormat( $format, $date ) {
         $datetime = false;
 
         if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
@@ -331,7 +331,7 @@ class Pods_Field_Time extends Pods_Field {
      * @param $new_format
      * @param $original_format
      */
-    public function convert_date ( $value, $new_format, $original_format = 'H:i:s' ) {
+    public function convert_date( $value, $new_format, $original_format = 'H:i:s' ) {
         if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 

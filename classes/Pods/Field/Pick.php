@@ -73,7 +73,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -82,7 +82,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function admin_init () {
+    public function admin_init() {
         // AJAX for Relationship lookups
         add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
@@ -95,7 +95,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             'pick_format_type' => array(
                 'label' => __( 'Selection Type', 'pods' ),
@@ -292,7 +292,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array|boolean Object array or false if unsuccessful
      * @since 2.3
      */
-    public function register_related_object ( $name, $label, $options = null ) {
+    public function register_related_object( $name, $label, $options = null ) {
         if ( empty( $name ) || empty( $label ) )
             return false;
 
@@ -319,7 +319,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function setup_related_objects ( $force = false ) {
+    public function setup_related_objects( $force = false ) {
         $related_objects = pods_transient_get( 'pods_related_objects' );
 
         if ( !$force && !empty( $related_objects ) )
@@ -511,7 +511,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array Field selection array
      * @since 2.3
      */
-    public function related_objects ( $force = false ) {
+    public function related_objects( $force = false ) {
         $this->setup_related_objects( $force );
 
         $related_objects = array();
@@ -532,7 +532,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array Simple object names
      * @since 2.3
      */
-    public function simple_objects () {
+    public function simple_objects() {
         $this->setup_related_objects();
 
         $simple_objects = array();
@@ -553,7 +553,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array Bidirectional object names
      * @since 2.3.4
      */
-    public function bidirectional_objects () {
+    public function bidirectional_objects() {
         $this->setup_related_objects();
 
         $bidirectional_objects = array();
@@ -576,7 +576,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = false;
 
         $simple_tableless_objects = $this->simple_objects();
@@ -599,7 +599,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
 
         if ( is_object( $pod ) && isset( $pod->fields ) )
@@ -621,7 +621,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         global $wpdb;
 
         $form_field_type = Pods_Form::$field_type;
@@ -702,7 +702,7 @@ class Pods_Field_Pick extends Pods_Field {
      * @return array|bool
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 
@@ -816,7 +816,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 
@@ -892,7 +892,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
+    public function delete( $id = null, $name = null, $options = null, $pod = null ) {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 
@@ -949,7 +949,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->simple_value( $name, $value, $options, $pod, $id );
 
         return $this->display( $value, $name, $options, $pod, $id );
@@ -969,7 +969,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.0
      */
-    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
+    public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 
         $data = pods_v( 'data', $options, null, true );
 
@@ -1007,7 +1007,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @return mixed Corrected value
      */
-    public function simple_value ( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
+    public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
         if ( in_array( pods_v( 'pick_object', $options ), self::simple_objects() ) || 1 == pods_v( 'pick_simple', $options ) ) {
 
             if ( !is_array( $value ) && 0 < strlen( $value ) ) {
@@ -1096,7 +1096,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.2
      */
-    public function value_to_label ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function value_to_label( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
         $data = pods_v( 'data', $options, null, true );
 
@@ -1190,7 +1190,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @return array|bool Object data
      */
-    public function get_object_data ( $object_params = null ) {
+    public function get_object_data( $object_params = null ) {
         global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
         $current_language = false;
@@ -1693,7 +1693,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function admin_ajax_relationship () {
+    public function admin_ajax_relationship() {
 		pods_session_start();
 
         // Sanitize input
@@ -1831,7 +1831,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_post_stati ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_post_stati( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         $post_stati = get_post_stati( array(), 'objects' );
@@ -1858,7 +1858,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_roles ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_roles( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         global $wp_roles;
@@ -1883,7 +1883,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_capabilities ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_capabilities( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         global $wp_roles;
@@ -1985,7 +1985,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_image_sizes ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_image_sizes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
         $image_sizes = get_intermediate_image_sizes();
@@ -2010,7 +2010,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_countries ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_countries( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array(
             'AF' => __( 'Afghanistan' ),
             'AL' => __( 'Albania' ),
@@ -2294,7 +2294,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_us_states ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_us_states( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array(
             'AL' => __( 'Alabama' ),
             'AK' => __( 'Alaska' ),
@@ -2365,7 +2365,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_days_of_week ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_days_of_week( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
 		/**
 		 * @var WP_Locale
@@ -2389,7 +2389,7 @@ class Pods_Field_Pick extends Pods_Field {
      *
      * @since 2.3
      */
-    public function data_months_of_year ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data_months_of_year( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
 		/**
 		 * @var WP_Locale

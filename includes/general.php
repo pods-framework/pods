@@ -16,7 +16,7 @@
  * @return array|bool|mixed|null|void
  * @since 2.0
  */
-function pods_query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+function pods_query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
     $podsdata = pods_data();
 
     $sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
@@ -56,7 +56,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @return mixed
  * @since 2.0
  */
-function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
+function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
     // Add filter name
     array_unshift( $args, "pods_{$scope}_{$name}" );
 
@@ -77,7 +77,7 @@ function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
  *
  * @return void
  */
-function pods_message ( $message, $type = null ) {
+function pods_message( $message, $type = null ) {
     if ( empty( $type ) || !in_array( $type, array( 'notice', 'error' ) ) )
         $type = 'notice';
 
@@ -104,7 +104,7 @@ function pods_message ( $message, $type = null ) {
  *
  * @since 2.0
  */
-function pods_error ( $error, $obj = null ) {
+function pods_error( $error, $obj = null ) {
     $display_errors = false;
 
     if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
@@ -173,7 +173,7 @@ $pods_debug = 0;
  *
  * @since 2.0
  */
-function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
+function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
     global $pods_debug;
 
     $pods_debug++;
@@ -474,7 +474,7 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  *
  * @since 2.0
  */
-function pods_help ( $text, $url = null ) {
+function pods_help( $text, $url = null ) {
     if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
         wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
     if ( !wp_script_is( 'jquery-qtip', 'queue' ) && !wp_script_is( 'jquery-qtip', 'to_do' ) && !wp_script_is( 'jquery-qtip', 'done' ) )
@@ -518,7 +518,7 @@ function pods_help ( $text, $url = null ) {
  *
  * @return bool
  */
-function pods_version_check ( $what, $minimum_version, $comparison = '<=', $maximum_version = null ) {
+function pods_version_check( $what, $minimum_version, $comparison = '<=', $maximum_version = null ) {
     global $wp_version, $wpdb;
 
     if ( 'php' == $what )
@@ -547,7 +547,7 @@ function pods_version_check ( $what, $minimum_version, $comparison = '<=', $maxi
  * @return bool
  * @since 1.7.5
  */
-function pods_helper ( $helper_name, $value = null, $name = null ) {
+function pods_helper( $helper_name, $value = null, $name = null ) {
     return pods()->helper( $helper_name, $value, $name );
 }
 
@@ -557,7 +557,7 @@ function pods_helper ( $helper_name, $value = null, $name = null ) {
  * @return string Full URL of the current page
  * @since 2.3
  */
-function pods_current_url () {
+function pods_current_url() {
     $url = 'http';
 
     if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )
@@ -585,7 +585,7 @@ function pods_current_url () {
  * @return bool
  * @since 2.0
  */
-function is_pod ( $object = null ) {
+function is_pod( $object = null ) {
     global $pods, $post;
 
     if ( is_object( $object ) && isset( $object->pod ) && !empty( $object->pod ) )
@@ -607,7 +607,7 @@ function is_pod ( $object = null ) {
  * @return bool
  * @since 1.2.0
  */
-function pods_access ( $privs, $method = 'OR' ) {
+function pods_access( $privs, $method = 'OR' ) {
     // Convert $privs to an array
     $privs = (array) $privs;
 
@@ -934,7 +934,7 @@ function pods_shortcode( $tags, $content = null ) {
  * @return string
  * @since 2.3
  */
-function pods_shortcode_form ( $tags, $content = null ) {
+function pods_shortcode_form( $tags, $content = null ) {
     $tags[ 'form' ] = 1;
 
     return pods_shortcode( $tags );
@@ -947,7 +947,7 @@ function pods_shortcode_form ( $tags, $content = null ) {
  *
  * @since 1.10
  */
-function pods_compatibility_check () {
+function pods_compatibility_check() {
     $compatible = true;
 
     if ( !pods_version_check( 'wp', PODS_WP_VERSION_MINIMUM ) ) {
@@ -978,7 +978,7 @@ function pods_compatibility_check () {
  *
  * @since 1.10
  */
-function pods_version_notice_wp () {
+function pods_version_notice_wp() {
     global $wp_version;
 ?>
     <div class="error fade">
@@ -998,7 +998,7 @@ function pods_version_notice_wp () {
  *
  * @since 1.10
  */
-function pods_version_notice_php () {
+function pods_version_notice_php() {
 ?>
     <div class="error fade">
         <p>
@@ -1017,7 +1017,7 @@ function pods_version_notice_php () {
  *
  * @since 1.10
  */
-function pods_version_notice_mysql () {
+function pods_version_notice_mysql() {
     global $wpdb;
     $mysql = $wpdb->db_version();
 ?>
@@ -1042,7 +1042,7 @@ function pods_version_notice_mysql () {
  *
  * @since 1.12
  */
-function pods_function_or_file ( $function_or_file, $function_name = null, $file_dir = null, $file_name = null ) {
+function pods_function_or_file( $function_or_file, $function_name = null, $file_dir = null, $file_name = null ) {
     $found = false;
     $function_or_file = (string) $function_or_file;
     if ( false !== $function_name ) {
@@ -1092,7 +1092,7 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
  *
  * @since 2.0
  */
-function pods_redirect ( $location, $status = 302 ) {
+function pods_redirect( $location, $status = 302 ) {
     if ( !headers_sent() ) {
         wp_redirect( $location, $status );
         die();
@@ -1192,7 +1192,7 @@ function pods_permission( $options ) {
  *
  * @since 2.3.4
  */
-function pods_has_permissions ( $options ) {
+function pods_has_permissions( $options ) {
 
 	if ( 1 == pods_v( 'restrict_role', $options, 0 ) || 1 == pods_v( 'restrict_capability', $options, 0 ) || 1 == pods_v( 'admin_only', $options, 0 ) ) {
 		return true;
@@ -1216,7 +1216,7 @@ function pods_has_permissions ( $options ) {
  *
  * @since 2.3.4
  */
-function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = null ) {
+function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null ) {
     // @todo support Pod item lookups, not just Post Types
 
     /**
@@ -1264,7 +1264,7 @@ function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = nul
  *
  * @since 2.1
  */
-function pods_field ( $pod, $id = false, $name = null, $single = false ) {
+function pods_field( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field( 'field_name' );
     if ( null === $name ) {
         $name = $pod;
@@ -1289,7 +1289,7 @@ function pods_field ( $pod, $id = false, $name = null, $single = false ) {
  *
  * @since 2.1
  */
-function pods_field_display ( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_display( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field_display( 'field_name' );
     if ( null === $name ) {
         $name = $pod;
@@ -1314,7 +1314,7 @@ function pods_field_display ( $pod, $id = false, $name = null, $single = false )
  *
  * @since 2.1
  */
-function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
+function pods_field_raw( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field_raw( 'field_name' );
     if ( null === $name ) {
         $name = $pod;
@@ -1343,7 +1343,7 @@ function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
  *
  * @since 2.0
  */
-function pods_view_set ( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
+function pods_view_set( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
 
     return Pods_View::set( $key, $value, $expires, $cache_mode, $group );
 }
@@ -1362,7 +1362,7 @@ function pods_view_set ( $key, $value, $expires = 0, $cache_mode = 'cache', $gro
  *
  * @since 2.0
  */
-function pods_view_get ( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
+function pods_view_get( $key, $cache_mode = 'cache', $group = '', $callback = null ) {
 
     return Pods_View::get( $key, $cache_mode, $group, $callback );
 }
@@ -1380,7 +1380,7 @@ function pods_view_get ( $key, $cache_mode = 'cache', $group = '', $callback = n
  *
  * @since 2.0
  */
-function pods_view_clear ( $key = true, $cache_mode = 'cache', $group = '' ) {
+function pods_view_clear( $key = true, $cache_mode = 'cache', $group = '' ) {
 
     return Pods_View::clear( $key, $cache_mode, $group );
 }
@@ -1399,7 +1399,7 @@ function pods_view_clear ( $key = true, $cache_mode = 'cache', $group = '' ) {
  *
  * @since 2.0
  */
-function pods_cache_set ( $key, $value, $group = '', $expires = 0) {
+function pods_cache_set( $key, $value, $group = '', $expires = 0) {
     return pods_view_set( $key, $value, $expires, 'cache', $group );
 }
 
@@ -1416,7 +1416,7 @@ function pods_cache_set ( $key, $value, $group = '', $expires = 0) {
  *
  * @since 2.0
  */
-function pods_cache_get ( $key, $group = '', $callback = null ) {
+function pods_cache_get( $key, $group = '', $callback = null ) {
     return pods_view_get( $key, 'cache', $group, $callback );
 }
 
@@ -1432,7 +1432,7 @@ function pods_cache_get ( $key, $group = '', $callback = null ) {
  *
  * @since 2.0
  */
-function pods_cache_clear ( $key = true, $group = '' ) {
+function pods_cache_clear( $key = true, $group = '' ) {
     return pods_view_clear( $key, 'cache', $group );
 }
 
@@ -1449,7 +1449,7 @@ function pods_cache_clear ( $key = true, $group = '' ) {
  *
  * @since 2.0
  */
-function pods_transient_set ( $key, $value, $expires = 0 ) {
+function pods_transient_set( $key, $value, $expires = 0 ) {
     return pods_view_set( $key, $value, $expires, 'transient' );
 }
 
@@ -1465,7 +1465,7 @@ function pods_transient_set ( $key, $value, $expires = 0 ) {
  *
  * @since 2.0
  */
-function pods_transient_get ( $key, $callback = null ) {
+function pods_transient_get( $key, $callback = null ) {
     return pods_view_get( $key, 'transient', '', $callback );
 }
 
@@ -1480,7 +1480,7 @@ function pods_transient_get ( $key, $callback = null ) {
  *
  * @since 2.0
  */
-function pods_transient_clear ( $key = true ) {
+function pods_transient_clear( $key = true ) {
     return pods_view_clear( $key, 'transient' );
 }
 
@@ -1497,7 +1497,7 @@ function pods_transient_clear ( $key = true ) {
  *
  * @since 2.3.10
  */
-function pods_site_transient_set ( $key, $value, $expires = 0 ) {
+function pods_site_transient_set( $key, $value, $expires = 0 ) {
     return pods_view_set( $key, $value, $expires, 'site-transient' );
 }
 
@@ -1513,7 +1513,7 @@ function pods_site_transient_set ( $key, $value, $expires = 0 ) {
  *
  * @since 2.3.10
  */
-function pods_site_transient_get ( $key, $callback = null ) {
+function pods_site_transient_get( $key, $callback = null ) {
     return pods_view_get( $key, 'site-transient', '', $callback );
 }
 
@@ -1528,7 +1528,7 @@ function pods_site_transient_get ( $key, $callback = null ) {
  *
  * @since 2.3.10
  */
-function pods_site_transient_clear ( $key = true ) {
+function pods_site_transient_clear( $key = true ) {
     return pods_view_clear( $key, 'site-transient' );
 }
 
@@ -1546,7 +1546,7 @@ function pods_site_transient_clear ( $key = true ) {
  *
  * @since 2.3.10
  */
-function pods_option_cache_set ( $key, $value, $expires = 0, $group = '' ) {
+function pods_option_cache_set( $key, $value, $expires = 0, $group = '' ) {
     return pods_view_set( $key, $value, $expires, 'option-cache', $group );
 }
 
@@ -1563,7 +1563,7 @@ function pods_option_cache_set ( $key, $value, $expires = 0, $group = '' ) {
  *
  * @since 2.3.10
  */
-function pods_option_cache_get ( $key, $group = '', $callback = null ) {
+function pods_option_cache_get( $key, $group = '', $callback = null ) {
     return pods_view_get( $key, 'option-cache', $group, $callback );
 }
 
@@ -1579,7 +1579,7 @@ function pods_option_cache_get ( $key, $group = '', $callback = null ) {
  *
  * @since 2.3.10
  */
-function pods_option_cache_clear ( $key = true, $group = '' ) {
+function pods_option_cache_clear( $key = true, $group = '' ) {
     return pods_view_clear( $key, 'option-cache', $group );
 }
 
@@ -1595,7 +1595,7 @@ function pods_option_cache_clear ( $key = true, $group = '' ) {
  *
  * @since 2.3.9
  */
-function pods_template_part ( $template, $data = null, $return = false ) {
+function pods_template_part( $template, $data = null, $return = false ) {
     $part = Pods_View::get_template_part( $template, $data );
 
     if ( !$return ) {
@@ -1619,7 +1619,7 @@ function pods_template_part ( $template, $data = null, $return = false ) {
  * @return array|boolean Pod data or false if unsuccessful
  * @since 2.1
  */
-function pods_register_type ( $type, $name, $object = null ) {
+function pods_register_type( $type, $name, $object = null ) {
     if ( empty( $object ) )
         $object = array();
 
@@ -1641,7 +1641,7 @@ function pods_register_type ( $type, $name, $object = null ) {
  * @return array|boolean Field data or false if unsuccessful
  * @since 2.1
  */
-function pods_register_field ( $pod, $name, $field = null ) {
+function pods_register_field( $pod, $name, $field = null ) {
     if ( empty( $field ) )
         $field = array();
 
@@ -1662,7 +1662,7 @@ function pods_register_field ( $pod, $name, $field = null ) {
  * @return array Field type array
  * @since 2.3
  */
-function pods_register_field_type ( $type, $file = null ) {
+function pods_register_field_type( $type, $file = null ) {
     return Pods_Form::register_field_type( $type, $file );
 }
 
@@ -1676,7 +1676,7 @@ function pods_register_field_type ( $type, $file = null ) {
  * @return array|boolean Object array or false if unsuccessful
  * @since 2.3
  */
-function pods_register_related_object ( $name, $label, $options = null ) {
+function pods_register_related_object( $name, $label, $options = null ) {
     return Pods_Form::field_method( 'pick', 'register_related_object', $name, $label, $options );
 }
 
@@ -1689,7 +1689,7 @@ function pods_register_related_object ( $name, $label, $options = null ) {
  *
  * @since 2.3
  */
-function pods_require_component ( $component ) {
+function pods_require_component( $component ) {
     add_filter( 'pods_component_require_' . $component, '__return_true' );
 }
 
@@ -1710,7 +1710,7 @@ function pods_require_component ( $component ) {
  * @since 2.0
  * @link http://pods.io/docs/pods-group-add/
  */
-function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
+function pods_group_add( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
     if ( !is_array( $pod ) && !is_object( $pod ) && null !== $type ) {
         $pod = array(
             'name' => $pod,
@@ -1730,7 +1730,7 @@ function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority 
  *
  * @since 2.0
  */
-function pods_is_plugin_active ( $plugin ) {
+function pods_is_plugin_active( $plugin ) {
     $active = false;
 
     if ( function_exists( 'is_plugin_active' ) )
@@ -1762,7 +1762,7 @@ function pods_is_plugin_active ( $plugin ) {
  *
  * @since 2.3
  */
-function pods_no_conflict_check ( $object_type = 'post' ) {
+function pods_no_conflict_check( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
 
@@ -1782,7 +1782,7 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
  *
  * @since 2.0
  */
-function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
+function pods_no_conflict_on( $object_type = 'post', $object = null ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
     elseif ( 'term' == $object_type )
@@ -1929,7 +1929,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
  *
  * @since 2.0
  */
-function pods_no_conflict_off ( $object_type = 'post' ) {
+function pods_no_conflict_off( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
 

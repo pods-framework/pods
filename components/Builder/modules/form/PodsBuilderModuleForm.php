@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleForm () {
+        public function PodsBuilderModuleForm() {
             $this->_name = __( 'Pods - Form', 'pods' );
             $this->_description = __( 'Display a form for creating and editing Pod items', 'pods' );
             $this->module_path = dirname( __FILE__ );
@@ -33,7 +33,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          *
          * @return mixed
          */
-        function _get_defaults ( $defaults ) {
+        function _get_defaults( $defaults ) {
             $new_defaults = array(
                 'pod_type' => '',
                 'slug' => '',
@@ -52,7 +52,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _before_table_edit ( $form, $results = true ) {
+        function _before_table_edit( $form, $results = true ) {
 ?>
     <p><?php echo $this->_description; ?></p>
 <?php
@@ -64,7 +64,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _start_table_edit ( $form, $results = true ) {
+        function _start_table_edit( $form, $results = true ) {
             $api = pods_api();
             $all_pods = $api->load_pods( array( 'names' => true ) );
 
@@ -125,7 +125,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
         /**
          * Module Output
          */
-        function _render ( $fields ) {
+        function _render( $fields ) {
             $args = array(
                 'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
                 'slug' => trim( pods_v( 'slug', $fields[ 'data' ], '' ) ),

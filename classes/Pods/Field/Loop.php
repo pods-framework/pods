@@ -33,7 +33,7 @@ class Pods_Field_Loop extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -44,7 +44,7 @@ class Pods_Field_Loop extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             'loop_limit' => array(
                 'label' => __( 'Loop Limit', 'pods' ),
@@ -65,7 +65,7 @@ class Pods_Field_Loop extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = 'LONGTEXT';
 
         return $schema;
@@ -83,7 +83,7 @@ class Pods_Field_Loop extends Pods_Field {
      *
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
 
         if ( is_object( $pod ) && isset( $pod->fields ) )
@@ -103,7 +103,7 @@ class Pods_Field_Loop extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         pods_view( PODS_DIR . 'ui/fields/loop.php', compact( array_keys( get_defined_vars() ) ) );
@@ -121,7 +121,7 @@ class Pods_Field_Loop extends Pods_Field {
      *
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->simple_value( $value, $options );
 
         return $this->display( $value, $name, $options, $pod, $id );
@@ -134,7 +134,7 @@ class Pods_Field_Loop extends Pods_Field {
      * @param array $options Field options
      * @param boolean $raw Whether to return the raw list of keys (true) or convert to key=>value (false)
      */
-    public function simple_value ( $value, $options, $raw = false ) {
+    public function simple_value( $value, $options, $raw = false ) {
 
         return $value;
 

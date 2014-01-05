@@ -7,7 +7,7 @@ class Pods_Widget_View extends WP_Widget {
     /**
      * Register the widget
      */
-    public function Pods_Widget_View () {
+    public function Pods_Widget_View() {
         $this->WP_Widget(
             'pods_widget_view',
             'Pods - View',
@@ -19,7 +19,7 @@ class Pods_Widget_View extends WP_Widget {
     /**
      * Output of widget
      */
-    public function widget ( $args, $instance ) {
+    public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget fields
@@ -43,7 +43,7 @@ class Pods_Widget_View extends WP_Widget {
      *
      * @returns array $instance Updated instance
      */
-    public function update ( $new_instance, $old_instance ) {
+    public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
         $instance[ 'view' ] = pods_v( 'view', $new_instance, '' );
@@ -58,7 +58,7 @@ class Pods_Widget_View extends WP_Widget {
     /**
      * Widget Form
      */
-    public function form ( $instance ) {
+    public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $view = pods_v( 'view', $instance, '' );
         $expires = (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) );

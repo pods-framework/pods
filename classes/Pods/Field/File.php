@@ -41,7 +41,7 @@ class Pods_Field_File extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -63,7 +63,7 @@ class Pods_Field_File extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $sizes = get_intermediate_image_sizes();
 
         $image_sizes = array();
@@ -191,7 +191,7 @@ class Pods_Field_File extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = false;
 
         return $schema;
@@ -209,7 +209,7 @@ class Pods_Field_File extends Pods_Field {
      * @return mixed|null
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( isset( $value[ 'ID' ] ) )
                 $value = wp_get_attachment_url( $value[ 'ID' ] );
@@ -242,7 +242,7 @@ class Pods_Field_File extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( !is_admin() ) {
@@ -296,7 +296,7 @@ class Pods_Field_File extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
     }
 
@@ -314,7 +314,7 @@ class Pods_Field_File extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
         // check file extensions
         return true;
@@ -334,7 +334,7 @@ class Pods_Field_File extends Pods_Field {
      * @return mixed
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
     }
 
@@ -351,7 +351,7 @@ class Pods_Field_File extends Pods_Field {
      *
      * @since 2.3
      */
-    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         if ( empty( self::$api ) )
             self::$api = pods_api();
 
@@ -397,7 +397,7 @@ class Pods_Field_File extends Pods_Field {
      * @return mixed|void
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( empty( $value ) )
             return;
 
@@ -422,7 +422,7 @@ class Pods_Field_File extends Pods_Field {
      * @return string
      * @since 2.3
      */
-    public function images ( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
+    public function images( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
         $images = '';
 
         if ( empty( $value ) || !is_array( $value ) )
@@ -448,7 +448,7 @@ class Pods_Field_File extends Pods_Field {
      * @return string
      * @since 2.0
      */
-    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
+    public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
         // Preserve current file type
         $field_type = Pods_Form::$field_type;
 
@@ -505,7 +505,7 @@ class Pods_Field_File extends Pods_Field {
      *
      * @since 2.3
      */
-    public function admin_ajax_upload () {
+    public function admin_ajax_upload() {
 		pods_session_start();
 
         // Sanitize input

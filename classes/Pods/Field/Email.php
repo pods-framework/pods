@@ -41,7 +41,7 @@ class Pods_Field_Email extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -52,7 +52,7 @@ class Pods_Field_Email extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
@@ -97,7 +97,7 @@ class Pods_Field_Email extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
         $schema = 'VARCHAR(' . $length . ')';
@@ -119,7 +119,7 @@ class Pods_Field_Email extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -157,7 +157,7 @@ class Pods_Field_Email extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
     }
 
@@ -175,7 +175,7 @@ class Pods_Field_Email extends Pods_Field {
      * @return array|bool
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
         $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
@@ -213,7 +213,7 @@ class Pods_Field_Email extends Pods_Field {
      * @return mixed|string
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         if ( !is_email( $value ) )
             $value = '';
 
@@ -233,7 +233,7 @@ class Pods_Field_Email extends Pods_Field {
      * @return mixed|string
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return '<a href="mailto:' . esc_attr( $value ) . '">' . $value . '</a>';
     }
 }

@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleSingle () {
+        public function PodsBuilderModuleSingle() {
             $this->_name = __( 'Pods - Single Item', 'pods' );
             $this->_description = __( 'Display a single Pod item', 'pods' );
             $this->module_path = dirname( __FILE__ );
@@ -33,7 +33,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          *
          * @return mixed
          */
-        function _get_defaults ( $defaults ) {
+        function _get_defaults( $defaults ) {
             $new_defaults = array(
                 'pod_type' => '',
                 'slug' => '',
@@ -51,7 +51,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _before_table_edit ( $form, $results = true ) {
+        function _before_table_edit( $form, $results = true ) {
 ?>
     <p><?php echo $this->_description; ?></p>
 <?php
@@ -63,7 +63,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _start_table_edit ( $form, $results = true ) {
+        function _start_table_edit( $form, $results = true ) {
             $api = pods_api();
             $all_pods = $api->load_pods( array( 'names' => true ) );
 
@@ -150,7 +150,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
         /**
          * Module Output
          */
-        function _render ( $fields ) {
+        function _render( $fields ) {
             $args = array(
                 'name' => trim( pods_v( 'pod_type', $fields[ 'data' ], '' ) ),
                 'slug' => trim( pods_v( 'slug', $fields[ 'data' ], '' ) ),

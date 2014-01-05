@@ -27,7 +27,7 @@
 		 * @param string $ns The namespace to use.
 		 * @param string $fileExtension File extensions to look for.
 		 */
-		public function __construct ( $includePath = null, $ns = null, $fileExtension = '.php' ) {
+		public function __construct( $includePath = null, $ns = null, $fileExtension = '.php' ) {
 			$this->_namespace = $ns;
 			$this->_includePath = $includePath;
 			$this->_fileExtension = $fileExtension;
@@ -36,14 +36,14 @@
 		/**
 		 * Installs this class loader on the SPL autoload stack.
 		 */
-		public function register () {
+		public function register() {
 			spl_autoload_register( array( $this, 'loadClass' ) );
 		}
 
 		/**
 		 * Uninstalls this class loader from the SPL autoloader stack.
 		 */
-		public function unregister () {
+		public function unregister() {
 			spl_autoload_unregister( array( $this, 'loadClass' ) );
 		}
 
@@ -54,7 +54,7 @@
 		 *
 		 * @return void
 		 */
-		public function loadClass ( $className ) {
+		public function loadClass( $className ) {
 			if ( null === $this->_namespace || $this->_namespace . $this->_namespaceSeparator === substr( $className, 0, strlen( $this->_namespace . $this->_namespaceSeparator ) ) ) {
 				$fileName = '';
 				$namespace = '';
@@ -71,4 +71,3 @@
 			}
 		}
 	}
-     

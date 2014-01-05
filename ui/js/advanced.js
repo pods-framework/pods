@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * Update Button
 	 */
-	function updateButtonText ($newText){
+	function updateButtonText($newText){
 		$('#pods-parts-submit').val($newText);
 	}
 

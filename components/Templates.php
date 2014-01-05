@@ -52,7 +52,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         $args = array(
             'label' => 'Pod Templates',
             'labels' => array( 'singular_name' => 'Pod Template' ),
@@ -94,7 +94,7 @@ class Pods_Templates extends Pods_Component {
         }
     }
 
-    public function disable_builder_layout ( $post_types ) {
+    public function disable_builder_layout( $post_types ) {
         $post_types[] = $this->object_type;
 
         return $post_types;
@@ -108,7 +108,7 @@ class Pods_Templates extends Pods_Component {
      * @return array
      * @since 2.0.2
      */
-    public function setup_updated_messages ( $messages ) {
+    public function setup_updated_messages( $messages ) {
         global $post, $post_ID;
 
         $post_type = get_post_type_object( $this->object_type );
@@ -159,7 +159,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function admin_assets () {
+    public function admin_assets() {
         wp_enqueue_style( 'pods-admin' );
     }
 
@@ -168,7 +168,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0.1
      */
-    public function fix_filters ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+    public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         remove_filter( 'content_save_pre', 'balanceTags', 50 );
     }
 
@@ -177,7 +177,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0.5
      */
-    function remove_row_actions ( $actions, $post ) {
+    function remove_row_actions( $actions, $post ) {
         global $current_screen;
 
         if ( !is_object( $current_screen ) || $this->object_type != $current_screen->post_type )
@@ -201,7 +201,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0.5
      */
-    public function remove_bulk_actions ( $actions ) {
+    public function remove_bulk_actions( $actions ) {
         if ( isset( $actions[ 'edit' ] ) )
             unset( $actions[ 'edit' ] );
 
@@ -213,7 +213,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+    public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         $old_post = $id;
 
         if ( !is_object( $id ) )
@@ -236,7 +236,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function set_title_text ( $text, $post ) {
+    public function set_title_text( $text, $post ) {
         return __( 'Enter template name here', 'pods' );
     }
 
@@ -245,7 +245,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function edit_page_form () {
+    public function edit_page_form() {
         global $post_type;
 
         if ( $this->object_type != $post_type )
@@ -259,7 +259,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 2.0
      */
-    public function add_meta_boxes () {
+    public function add_meta_boxes() {
         $pod = array(
             'name' => $this->object_type,
             'type' => 'post_type'
@@ -325,7 +325,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+    public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
@@ -346,7 +346,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @return bool|int|null
      */
-    public function save_meta ( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+    public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
@@ -389,7 +389,7 @@ class Pods_Templates extends Pods_Component {
      * @return mixed|string|void
      * @since 2.0
      */
-    public static function template ( $template_name, $code = null, $obj = null, $deprecated = false ) {
+    public static function template( $template_name, $code = null, $obj = null, $deprecated = false ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else
@@ -482,7 +482,7 @@ class Pods_Templates extends Pods_Component {
      *
      * @since 1.8.5
      */
-    public static function do_template ( $code, $obj = null ) {
+    public static function do_template( $code, $obj = null ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else

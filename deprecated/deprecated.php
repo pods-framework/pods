@@ -11,12 +11,12 @@
 if ( !function_exists( 'json_encode' ) ) {
     require_once( ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php' );
 
-    function json_encode ($str) {
+    function json_encode($str) {
         $json = new Moxiecode_JSON();
         return $json->encode($str);
     }
 
-    function json_decode ($str) {
+    function json_decode($str) {
         $json = new Moxiecode_JSON();
         return $json->decode($str);
     }
@@ -24,7 +24,7 @@ if ( !function_exists( 'json_encode' ) ) {
 
 // WP 3.4.x support
 if ( !function_exists( 'wp_send_json' ) ) {
-    function wp_send_json ( $response ) {
+    function wp_send_json( $response ) {
         @header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
         echo json_encode( $response );
         if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
@@ -54,12 +54,12 @@ if ( !function_exists( 'get_current_url' ) ) {
 }
 
 /**
- * Mapping function to new function name (following normalization of function names from pod_ to pods_)
+ * Mapping function to new function name(following normalization of function names from pod_ to pods_)
  *
  * @since 1.x
  * @deprecated deprecated since version 2.0
  */
-function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
+function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
     pods_deprecated('pod_query', '2.0', 'pods_query');
     global $wpdb;
 
@@ -128,7 +128,7 @@ class Pod
 
     public $meta_extra = '';
 
-    function __construct ($type = null, $id = null) {
+    function __construct($type = null, $id = null) {
         pods_deprecated('Pod (class)', '2.0', 'pods (function)');
 
         $this->new = pods( $type, $id );
@@ -139,7 +139,7 @@ class Pod
      *
      * @since 2.0
      */
-    public function __get ( $name ) {
+    public function __get( $name ) {
         $name = (string) $name;
 
         if ( 'data' == $name ) {
@@ -175,7 +175,7 @@ class Pod
      *
      * @since 2.0
      */
-    public function __set ( $name, $value ) {
+    public function __set( $name, $value ) {
         $name = (string) $name;
 
         $this->new->{$name} = $value;
@@ -188,7 +188,7 @@ class Pod
      *
      * @since 2.0
      */
-    public function __call ( $name, $args ) {
+    public function __call( $name, $args ) {
         $name = (string) $name;
 
         return call_user_func_array( array( $this->new, $name ), $args );
@@ -199,7 +199,7 @@ class Pod
      *
      * @since 2.0
      */
-    public function __isset ( $name ) {
+    public function __isset( $name ) {
         $name = (string) $name;
 
         if ( in_array( $name, array( '_data', 'data', 'total', 'total_rows', 'zebra' ) ) )
@@ -222,7 +222,7 @@ class PodAPI
 {
     private $new;
 
-    function __construct ( $type = null, $format = null ) {
+    function __construct( $type = null, $format = null ) {
         pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
 
         $this->new = pods_api( $type, $format );
@@ -233,7 +233,7 @@ class PodAPI
      *
      * @since 2.0
      */
-    public function __get ( $name ) {
+    public function __get( $name ) {
         $name = (string) $name;
 
         $var = $this->new->{$name};
@@ -246,7 +246,7 @@ class PodAPI
      *
      * @since 2.0
      */
-    public function __call ( $name, $args ) {
+    public function __call( $name, $args ) {
         $name = (string) $name;
 
         return call_user_func_array( array( $this->new, $name ), $args );
@@ -259,7 +259,7 @@ class PodAPI
  * @since 2.0
  * @deprecated deprecated since version 2.0
  */
-function pods_ui_manage ($obj) {
+function pods_ui_manage($obj) {
     pods_deprecated('pods_ui_manage', '2.0', 'pods_ui');
 
     return pods_ui($obj, true);
@@ -272,7 +272,7 @@ function pods_ui_manage ($obj) {
  * @since 1.x
  * @deprecated deprecated since version 2.0
  */
-function pods_ui_access ($object, $access, $what) {
+function pods_ui_access($object, $access, $what) {
     pods_deprecated('pods_ui_access', '2.0');
     if (is_array($access)) {
         foreach ($access as $field => $match) {
@@ -301,7 +301,7 @@ function pods_ui_access ($object, $access, $what) {
  * @since 1.6.2
  * @deprecated deprecated since version 2.0
  */
-function pods_url_variable ($key = 'last', $type = 'url') {
+function pods_url_variable($key = 'last', $type = 'url') {
     $output = apply_filters('pods_url_variable', pods_v_sanitized($key, $type), $key, $type);
     return $output;
 }
@@ -345,7 +345,7 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @since 1.12
  * @deprcated 2.3
  */
-function pods_ui_message ( $message, $error = false ) {
+function pods_ui_message( $message, $error = false ) {
     pods_deprecated( "pods_message", '2.3' );
 
     pods_message( $message, ( $error ? 'error' : 'notice' ) );
@@ -361,7 +361,7 @@ function pods_ui_message ( $message, $error = false ) {
  * @since 1.12
  * @deprcated 2.3
  */
-function pods_ui_error ( $message ) {
+function pods_ui_error( $message ) {
     pods_deprecated( "pods_message", '2.3' );
 
     pods_message( $message, 'error' );
@@ -373,7 +373,7 @@ function pods_ui_error ( $message ) {
  * @since 1.10.1
  * @deprcated 2.3
  */
-function pods_point_to_version ( $point ) {
+function pods_point_to_version( $point ) {
     $version_tmp = explode( '.', $point );
     $version = '';
 
@@ -402,7 +402,7 @@ function pods_point_to_version ( $point ) {
  * @since 1.10
  * @deprcated 2.3
  */
-function pods_version_to_point ( $version ) {
+function pods_version_to_point( $version ) {
     $point_tmp = $version;
 
     if ( strlen( $point_tmp ) < 9 ) {

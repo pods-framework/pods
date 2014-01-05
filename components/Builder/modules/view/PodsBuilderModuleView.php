@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleView () {
+        public function PodsBuilderModuleView() {
             $this->_name = __( 'Pods - View', 'pods' );
             $this->_description = __( "Include a file from a theme, with caching options", 'pods' );
             $this->module_path = dirname( __FILE__ );
@@ -33,7 +33,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
          *
          * @return mixed
          */
-        function _get_defaults ( $defaults ) {
+        function _get_defaults( $defaults ) {
             $new_defaults = array(
                 'view' => '',
                 'expires' => 0,
@@ -49,7 +49,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _before_table_edit ( $form, $results = true ) {
+        function _before_table_edit( $form, $results = true ) {
 ?>
     <p><?php echo $this->_description; ?></p>
 <?php
@@ -61,7 +61,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
          * @param object $form Form class
          * @param bool $results
          */
-        function _start_table_edit ( $form, $results = true ) {
+        function _start_table_edit( $form, $results = true ) {
 ?>
     <tr>
         <td valign="top">
@@ -102,7 +102,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
         /**
          * Module Output
          */
-        function _render ( $fields ) {
+        function _render( $fields ) {
             $args = array(
                 'view' => trim( pods_v( 'view', $fields[ 'data' ], '' ) ),
                 'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),

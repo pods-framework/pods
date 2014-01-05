@@ -27,7 +27,7 @@ class PodsUpgrade {
     /**
      *
      */
-    function __construct () {
+    function __construct() {
         $this->api = pods_api();
 
         $this->get_tables();
@@ -37,7 +37,7 @@ class PodsUpgrade {
     /**
      *
      */
-    public function install ( $_blog_id = null ) {
+    public function install( $_blog_id = null ) {
         /**
          * @var $wpdb WPDB
          */
@@ -86,7 +86,7 @@ class PodsUpgrade {
     /**
      *
      */
-    public function get_tables () {
+    public function get_tables() {
         /**
          * @var $wpdb WPDB
          */
@@ -104,7 +104,7 @@ class PodsUpgrade {
     /**
      *
      */
-    function get_progress () {
+    function get_progress() {
         $methods = get_class_methods( $this );
 
         foreach ( $methods as $method ) {
@@ -123,7 +123,7 @@ class PodsUpgrade {
      *
      * @return mixed|void
      */
-    public function ajax ( $params ) {
+    public function ajax( $params ) {
         if ( !isset( $params->step ) )
             return pods_error( __( 'Invalid upgrade process.', 'pods' ) );
 
@@ -141,7 +141,7 @@ class PodsUpgrade {
      * @param $v
      * @param null $x
      */
-    public function update_progress ( $method, $v, $x = null ) {
+    public function update_progress( $method, $v, $x = null ) {
         if ( empty( $this->version ) )
             return;
 
@@ -161,7 +161,7 @@ class PodsUpgrade {
      *
      * @return bool
      */
-    public function check_progress ( $method, $x = null ) {
+    public function check_progress( $method, $x = null ) {
         $method = str_replace( 'migrate_', '', $method );
 
         if ( isset( $this->progress[ $method ] ) ) {
@@ -177,7 +177,7 @@ class PodsUpgrade {
     /**
      *
      */
-    public function upgraded () {
+    public function upgraded() {
         if ( empty( $this->version ) )
             return;
 
@@ -197,7 +197,7 @@ class PodsUpgrade {
     /**
      *
      */
-    public function cleanup () {
+    public function cleanup() {
         /**
          * @var $wpdb WPDB
          */

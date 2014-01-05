@@ -428,7 +428,7 @@ class Pods_UI {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    public function __construct ( $options, $deprecated = false ) {
+    public function __construct( $options, $deprecated = false ) {
         $object = null;
 
         if ( is_object( $options ) ) {
@@ -503,7 +503,7 @@ class Pods_UI {
      *
      * @return array
      */
-    public function setup_deprecated ( $deprecated_options ) {
+    public function setup_deprecated( $deprecated_options ) {
         $options = array();
 
         if ( isset( $deprecated_options[ 'id' ] ) )
@@ -785,7 +785,7 @@ class Pods_UI {
     /**
      *
      */
-    public function deprecated_filters () {
+    public function deprecated_filters() {
         global $pods_ui_custom_filters;
         echo $pods_ui_custom_filters;
     }
@@ -795,7 +795,7 @@ class Pods_UI {
      *
      * @return array|bool|mixed|null|Pods_Array
      */
-    public function setup ( $options ) {
+    public function setup( $options ) {
         $options = pods_array( $options );
 
         $options->validate( 'num', '' );
@@ -1100,7 +1100,7 @@ class Pods_UI {
      *
      * @return array|bool|mixed|null
      */
-    public function setup_fields ( $fields = null, $which = 'fields' ) {
+    public function setup_fields( $fields = null, $which = 'fields' ) {
         $init = false;
         if ( null === $fields ) {
             if ( isset( $this->fields[ $which ] ) )
@@ -1316,7 +1316,7 @@ class Pods_UI {
      * @param $msg
      * @param bool $error
      */
-    public function message ( $msg, $error = false ) {
+    public function message( $msg, $error = false ) {
         $msg = $this->do_hook( ( $error ) ? 'error' : 'message', $msg );
         ?>
     <div id="message" class="<?php echo ( $error ) ? 'error' : 'updated'; ?> fade"><p><?php echo $msg; ?></p></div>
@@ -1328,7 +1328,7 @@ class Pods_UI {
      *
      * @return bool
      */
-    public function error ( $msg ) {
+    public function error( $msg ) {
         $this->message( $msg, true );
 
         return false;
@@ -1337,7 +1337,7 @@ class Pods_UI {
     /**
      * @return mixed
      */
-    public function go () {
+    public function go() {
         $this->do_hook( 'go' );
         $_GET = pods_unsanitize( $_GET ); // fix wp sanitization
         $_POST = pods_unsanitize( $_POST ); // fix wp sanitization
@@ -1455,7 +1455,7 @@ class Pods_UI {
     /**
      * @return mixed
      */
-    public function add () {
+    public function add() {
 		if ( false !== $this->callback_action( 'add' ) ) {
 			return null;
 		}
@@ -1485,7 +1485,7 @@ class Pods_UI {
      *
      * @return mixed
      */
-    public function edit ( $duplicate = false ) {
+    public function edit( $duplicate = false ) {
         if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
 
@@ -1537,7 +1537,7 @@ class Pods_UI {
      *
      * @return bool|mixed
      */
-    public function form ( $create = false, $duplicate = false ) {
+    public function form( $create = false, $duplicate = false ) {
         if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
 
@@ -1696,7 +1696,7 @@ class Pods_UI {
      * @return bool|mixed
 	 * @since 2.3.10
      */
-    public function view () {
+    public function view() {
 
 		if ( false !== $this->callback_action( 'view' ) ) {
             return null;
@@ -1835,7 +1835,7 @@ class Pods_UI {
     /**
      * Reorder data
      */
-    public function reorder () {
+    public function reorder() {
         // loop through order
         $order = (array) pods_var_raw( 'order', 'post', array(), null, true );
 
@@ -1858,7 +1858,7 @@ class Pods_UI {
      *
      * @return mixed
      */
-    public function save ( $insert = false ) {
+    public function save( $insert = false ) {
         $this->do_hook( 'pre_save', $insert );
 
         if ( $this->callback( 'save', $insert ) ) {
@@ -1950,7 +1950,7 @@ class Pods_UI {
      *
      * @return bool|mixed
      */
-    public function delete ( $id = null ) {
+    public function delete( $id = null ) {
         $this->do_hook( 'pre_delete', $id );
 
 		if ( false !== $this->callback_action( 'delete', $id ) ) {
@@ -1986,7 +1986,7 @@ class Pods_UI {
      *
      * @return bool|mixed
      */
-    public function delete_bulk () {
+    public function delete_bulk() {
         $this->do_hook( 'pre_delete_bulk' );
 
         if ( 1 != pods_v( 'deleted_bulk', 'get', 0 ) ) {
@@ -2035,7 +2035,7 @@ class Pods_UI {
         $this->manage();
     }
 
-    public function export () {
+    public function export() {
         $export_type = pods_v( 'export_type', 'get', 'csv' );
 
         $type = 'sv'; // covers csv + tsv
@@ -2097,7 +2097,7 @@ class Pods_UI {
      *
      * @return array|bool|mixed|null
      */
-    public function get_field ( $field ) {
+    public function get_field( $field ) {
         $value = null;
 
         // use Pods_Data to get field
@@ -2124,7 +2124,7 @@ class Pods_UI {
      *
      * @return bool
      */
-    public function get_data ( $params = null ) {
+    public function get_data( $params = null ) {
         $action = $this->action;
 
         $defaults = array(
@@ -2291,7 +2291,7 @@ class Pods_UI {
     /**
      * Sort out data alphabetically by a key
      */
-    public function sort_data () {
+    public function sort_data() {
         // only do this if we have a default orderby
         if ( isset( $this->orderby[ 'default' ] ) ) {
             $orderby = $this->orderby[ 'default' ];
@@ -2315,7 +2315,7 @@ class Pods_UI {
     /**
      * @return array
      */
-    public function get_row ( &$counter = 0, $method = null ) {
+    public function get_row( &$counter = 0, $method = null ) {
         if ( !empty( $this->row ) && 0 < (int) $this->id && 'table' != $method )
             return $this->row;
 
@@ -2356,7 +2356,7 @@ class Pods_UI {
      *
      * @return mixed|null
      */
-    public function manage ( $reorder = false ) {
+    public function manage( $reorder = false ) {
 		if ( false !== $this->callback_action( 'manage', $reorder ) ) {
 			return null;
 		}
@@ -2757,7 +2757,7 @@ class Pods_UI {
             $this->filters_popup();
     }
 
-    public function filters () {
+    public function filters() {
 		include_once ABSPATH . 'wp-admin/includes/template.php';
 
         wp_enqueue_script( 'thickbox' );
@@ -2975,7 +2975,7 @@ class Pods_UI {
 <?php
     }
 
-    public function filters_popup () {
+    public function filters_popup() {
         $filters = $this->filters;
 ?>
     <div id="pods-ui-posts-filter-popup" class="hidden">
@@ -3203,7 +3203,7 @@ class Pods_UI {
      *
      * @return bool|mixed
      */
-    public function table ( $reorder = false ) {
+    public function table( $reorder = false ) {
 		if ( false !== $this->callback( 'table', $reorder ) ) {
 			return null;
 		}
@@ -3662,7 +3662,7 @@ class Pods_UI {
     /**
      *
      */
-    public function screen_meta () {
+    public function screen_meta() {
         $screen_html = $help_html = '';
         $screen_link = $help_link = '';
         if ( !empty( $this->screen_options ) && !empty( $this->help ) ) {
@@ -3824,7 +3824,7 @@ class Pods_UI {
      *
      * @return mixed
      */
-    public function pagination ( $header = false ) {
+    public function pagination( $header = false ) {
 		if ( false !== $this->callback( 'pagination', $header ) ) {
 			return null;
 		}
@@ -3886,7 +3886,7 @@ class Pods_UI {
      *
      * @return mixed
      */
-    public function limit ( $options = false ) {
+    public function limit( $options = false ) {
 		if ( false !== $this->callback( 'limit', $options ) ) {
 			return null;
 		}
@@ -3911,7 +3911,7 @@ class Pods_UI {
      *
      * @return mixed
      */
-    public function do_template ( $code, $row = false ) {
+    public function do_template( $code, $row = false ) {
         if ( is_object( $this->pod ) && 1 == 0 && 0 < $this->pod->id() )
             return $this->pod->do_magic_tags( $code );
         else {
@@ -3936,7 +3936,7 @@ class Pods_UI {
      *
      * @return string
      */
-    public function do_magic_tags ( $tag ) {
+    public function do_magic_tags( $tag ) {
         if ( is_array( $tag ) ) {
             if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
                 return '';
@@ -3979,7 +3979,7 @@ class Pods_UI {
      * @param bool|array $exclude
      * @param bool|array $array
      */
-    public function hidden_vars ( $exclude = false, $array = false ) {
+    public function hidden_vars( $exclude = false, $array = false ) {
         $exclude = $this->do_hook( 'hidden_vars', $exclude, $array );
         if ( false === $exclude )
             $exclude = array();
@@ -4016,7 +4016,7 @@ class Pods_UI {
     /**
      * @return array
      */
-    public function exclusion () {
+    public function exclusion() {
         $exclusion = self::$excluded;
 
         foreach ( $exclusion as $k => $exclude ) {
@@ -4026,7 +4026,7 @@ class Pods_UI {
         return $exclusion;
     }
 
-    public function restricted ( $action = 'edit', $row = null ) {
+    public function restricted( $action = 'edit', $row = null ) {
         $restricted = false;
 
         $restrict = array();
@@ -4432,7 +4432,7 @@ class Pods_UI {
 
     /*
         // Example code for use with $this->do_hook
-        public function my_filter_function ($args, $obj) {
+        public function my_filter_function($args, $obj) {
             $obj[0]->item = 'Post';
             $obj[0]->add = true;
             // args are an array (0 => $arg1, 1 => $arg2)

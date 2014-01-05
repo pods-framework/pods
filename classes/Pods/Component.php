@@ -13,7 +13,7 @@ class Pods_Component {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -23,7 +23,7 @@ class Pods_Component {
      * @return array $options
      *
      * @since 2.0
-    public function options () {
+    public function options() {
         $options = array(
             'option_name' => array(
                 'label' => 'Option Label',
@@ -73,7 +73,7 @@ class Pods_Component {
      *
      * @since 2.0
      */
-    public function handler ( $options ) {
+    public function handler( $options ) {
         // run code based on $options set
     }
 
@@ -83,7 +83,7 @@ class Pods_Component {
      * @param $options
      *
      * @since 2.0
-    public function admin ( $options ) {
+    public function admin( $options ) {
     // run code based on $options set
     }
      */

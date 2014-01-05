@@ -24,7 +24,7 @@ class PodsAPI_Deprecated {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    public function __construct ( $obj ) {
+    public function __construct( $obj ) {
         // backwards-compatibility with references to $this->var_name
         $vars = get_object_vars( $obj );
 
@@ -54,7 +54,7 @@ class PodsAPI_Deprecated {
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    public function save_column ($params) {
+    public function save_column($params) {
         pods_deprecated( 'Pods_API::save_field', '2.0' );
 
         return $this->obj->save_field( $params );
@@ -66,7 +66,7 @@ class PodsAPI_Deprecated {
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    public function save_roles ($params) {
+    public function save_roles($params) {
         pods_deprecated( '[use WP roles and capabilities instead]', '2.0' );
 
         return false;
@@ -82,7 +82,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_pod ( $params ) {
+    public function drop_pod( $params ) {
         pods_deprecated( 'Pods_API::delete_pod', '2.0' );
 
         return $this->obj->delete_pod( $params );
@@ -100,7 +100,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_column ( $params ) {
+    public function drop_column( $params ) {
         pods_deprecated( 'Pods_API::delete_field', '2.0' );
 
         return $this->obj->delete_field( $params );
@@ -116,7 +116,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_template ( $params ) {
+    public function drop_template( $params ) {
         pods_deprecated( 'Pods_API::delete_template', '2.0' );
 
         return $this->obj->delete_template( $params );
@@ -132,7 +132,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_page ( $params ) {
+    public function drop_page( $params ) {
         pods_deprecated( 'Pods_API::delete_page', '2.0' );
 
         return $this->obj->delete_page( $params );
@@ -148,7 +148,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_helper ( $params ) {
+    public function drop_helper( $params ) {
         pods_deprecated( 'Pods_API::delete_helper', '2.0' );
 
         return $this->obj->delete_helper( $params );
@@ -166,7 +166,7 @@ class PodsAPI_Deprecated {
      *
      * @since 1.7.9
      */
-    public function drop_pod_item ( $params ) {
+    public function drop_pod_item( $params ) {
         pods_deprecated( 'Pods_API::delete_pod_item', '2.0' );
 
         return $this->obj->delete_pod_item( $params );
@@ -182,7 +182,7 @@ class PodsAPI_Deprecated {
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    public function load_column ($params) {
+    public function load_column($params) {
         pods_deprecated( 'Pods_API::load_column', '2.0', 'Pods_API::load_field' );
 
         return $this->obj->load_field( $params );

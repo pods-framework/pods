@@ -46,7 +46,7 @@ class Pods_Components {
      *
      * @since 2.3.5
      */
-    public static function init () {
+    public static function init() {
         if ( !is_object( self::$instance ) )
             self::$instance = new Pods_Components();
 
@@ -60,7 +60,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components' ) ) . '/';
 
         $settings = get_option( 'pods_component_settings', '' );
@@ -96,7 +96,7 @@ class Pods_Components {
      *
      * @uses add_submenu_page
      */
-    public function menu ( $parent ) {
+    public function menu( $parent ) {
         global $submenu;
 
         $custom_component_menus = array();
@@ -192,7 +192,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function load () {
+    public function load() {
         do_action( 'pods_components_load' );
 
         foreach ( (array) $this->components as $component => $component_data ) {
@@ -260,7 +260,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function get_components () {
+    public function get_components() {
         $components = pods_transient_get( 'pods_components' );
 
         if ( 1 == pods_v( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
@@ -417,7 +417,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function options ( $component, $options ) {
+    public function options( $component, $options ) {
         if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
             $this->settings[ 'components' ][ $component ] = array();
 
@@ -432,7 +432,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function admin_handler () {
+    public function admin_handler() {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ][ 'object' ] ) && is_object( $this->components[ $component ][ 'object' ] ) ) {
@@ -449,7 +449,7 @@ class Pods_Components {
         }
     }
 
-    public function admin ( $options, $settings, $component ) {
+    public function admin( $options, $settings, $component ) {
         if ( !isset( $this->components[ $component ] ) )
             wp_die( 'Invalid Component' );
 
@@ -467,7 +467,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function toggle ( $component ) {
+    public function toggle( $component ) {
         $toggle = null;
 
         if ( isset( $this->components[ $component ] ) ) {
@@ -495,7 +495,7 @@ class Pods_Components {
      *
      * @return array
      */
-    public function admin_capabilities ( $capabilities ) {
+    public function admin_capabilities( $capabilities ) {
         foreach ( $this->components as $component => $component_data ) {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
@@ -526,7 +526,7 @@ class Pods_Components {
      *
      * @since 2.0
      */
-    public function admin_ajax () {
+    public function admin_ajax() {
         if ( false === headers_sent() ) {
 			pods_session_start();
 
@@ -586,7 +586,7 @@ class Pods_Components {
         die(); // KBAI!
     }
 
-    public function admin_ajax_settings ( $component, $params ) {
+    public function admin_ajax_settings( $component, $params ) {
         if ( !isset( $this->components[ $component ] ) )
             wp_die( 'Invalid Component' );
         elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )

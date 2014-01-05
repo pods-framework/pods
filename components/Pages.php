@@ -61,7 +61,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         add_shortcode( 'pods-content', array( $this, 'shortcode' ) );
 
         $args = array(
@@ -118,7 +118,7 @@ class Pods_Pages extends Pods_Component {
      * @return string
      * @since 2.3.9
      */
-    public function shortcode ( $tags, $content = null ) {
+    public function shortcode( $tags, $content = null ) {
         if ( !isset( $tags[ 'page' ] ) || empty( $tags[ 'page' ] ) )
             $tags[ 'page' ] = null;
 
@@ -136,7 +136,7 @@ class Pods_Pages extends Pods_Component {
      * @param array $post_types
      * @return array
      */
-    public function disable_builder_layout ( $post_types ) {
+    public function disable_builder_layout( $post_types ) {
         $post_types[] = $this->object_type;
 
         return $post_types;
@@ -150,7 +150,7 @@ class Pods_Pages extends Pods_Component {
      * @return array
      * @since 2.0.2
      */
-    public function setup_updated_messages ( $messages ) {
+    public function setup_updated_messages( $messages ) {
         global $post, $post_ID;
 
         $post_type = get_post_type_object( $this->object_type );
@@ -201,7 +201,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function admin_assets () {
+    public function admin_assets() {
         wp_enqueue_style( 'pods-admin' );
     }
 
@@ -210,7 +210,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0.1
      */
-    public function fix_filters ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+    public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         remove_filter( 'content_save_pre', 'balanceTags', 50 );
     }
 
@@ -219,7 +219,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0.5
      */
-    public function remove_row_actions ( $actions, $post ) {
+    public function remove_row_actions( $actions, $post ) {
         global $current_screen;
 
         if ( !is_object( $current_screen ) || $this->object_type != $current_screen->post_type )
@@ -243,7 +243,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0.5
      */
-    public function remove_bulk_actions ( $actions ) {
+    public function remove_bulk_actions( $actions ) {
         if ( isset( $actions[ 'edit' ] ) )
             unset( $actions[ 'edit' ] );
 
@@ -255,7 +255,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+    public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         $old_post = $id;
 
         if ( !is_object( $id ) )
@@ -286,7 +286,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function set_title_text ( $text, $post ) {
+    public function set_title_text( $text, $post ) {
         return __( 'Enter URL here', 'pods' );
     }
 
@@ -295,7 +295,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function edit_page_form () {
+    public function edit_page_form() {
         global $post_type;
 
         if ( $this->object_type != $post_type )
@@ -312,7 +312,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return mixed
      */
-    public function post_type_link ( $post_link, $post ) {
+    public function post_type_link( $post_link, $post ) {
         if ( empty( $post ) || $this->object_type != $post->post_type )
             return $post_link;
 
@@ -329,7 +329,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.0
      */
-    public function add_meta_boxes () {
+    public function add_meta_boxes() {
         $pod = array(
             'name' => $this->object_type,
             'type' => 'post_type'
@@ -527,7 +527,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+    public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
@@ -548,7 +548,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return bool|int|null
      */
-    public function save_meta ( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+    public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
@@ -587,7 +587,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @since 2.3.4
      */
-    public static function flush_rewrites () {
+    public static function flush_rewrites() {
         $args = array(
             'post_type' => '_pods_page',
             'nopaging' => true,
@@ -623,7 +623,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return array|bool
      */
-    public static function exists ( $uri = null ) {
+    public static function exists( $uri = null ) {
         if ( null === $uri ) {
             $uri = parse_url( pods_current_url() );
             $uri = $uri[ 'path' ];
@@ -755,7 +755,7 @@ class Pods_Pages extends Pods_Component {
     /**
      * Check if a Pod Page exists
      */
-    public function page_check () {
+    public function page_check() {
         if ( self::$checked )
             return;
 
@@ -800,7 +800,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return string
      */
-    public static function content ( $return = false, $pods_page = false ) {
+    public static function content( $return = false, $pods_page = false ) {
         if ( empty( $pods_page ) )
             $pods_page = self::$exists;
 
@@ -859,7 +859,7 @@ class Pods_Pages extends Pods_Component {
     /**
      * Run any precode for current Pod Page
      */
-    public function precode () {
+    public function precode() {
         global $pods;
 
         // Fix any global confusion wherever this runs
@@ -934,7 +934,7 @@ class Pods_Pages extends Pods_Component {
     /**
      *
      */
-    public function wp_head () {
+    public function wp_head() {
         global $pods;
 
         do_action( 'pods_wp_head' );
@@ -976,7 +976,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return mixed|void
      */
-    public function wp_title ( $title, $sep, $seplocation ) {
+    public function wp_title( $title, $sep, $seplocation ) {
         global $pods;
 
         $page_title = trim( self::$exists[ 'title' ] );
@@ -1011,7 +1011,7 @@ class Pods_Pages extends Pods_Component {
      *
      * @return mixed|void
      */
-    public function body_class ( $classes ) {
+    public function body_class( $classes ) {
         global $pods;
 
         if ( defined( 'PODS_DISABLE_BODY_CLASSES' ) && PODS_DISABLE_BODY_CLASSES )
@@ -1045,14 +1045,14 @@ class Pods_Pages extends Pods_Component {
     /**
      * @return string
      */
-    public function status_header () {
+    public function status_header() {
         return $_SERVER[ 'SERVER_PROTOCOL' ] . ' 200 OK';
     }
 
     /**
      *
      */
-    public function silence_404 () {
+    public function silence_404() {
         global $wp_query;
 
         $wp_query->query_vars[ 'error' ] = '';
@@ -1062,7 +1062,7 @@ class Pods_Pages extends Pods_Component {
     /**
      *
      */
-    public function template_redirect () {
+    public function template_redirect() {
         global $pods;
 
         if ( false !== self::$exists ) {
@@ -1149,7 +1149,7 @@ class Pods_Pages extends Pods_Component {
  * @return bool
  * @since 1.7.5
  */
-function is_pod_page ( $uri = null ) {
+function is_pod_page( $uri = null ) {
     if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] || $uri == Pods_Pages::$exists[ 'id' ] ) )
         return true;
 
@@ -1164,7 +1164,7 @@ function is_pod_page ( $uri = null ) {
  * @return bool
  * @since 2.3.7
  */
-function is_pod_page_template ( $template = null ) {
+function is_pod_page_template( $template = null ) {
     if ( false !== Pods_Pages::$exists && $template == Pods_Pages::$exists[ 'page_template' ] )
         return true;
 
@@ -1177,7 +1177,7 @@ function is_pod_page_template ( $template = null ) {
  * @return string|bool
  * @since 2.3.3
  */
-function get_pod_page_uri () {
+function get_pod_page_uri() {
     $pod_page = Pods_Pages::exists();
 
     if ( !empty( $pod_page ) )
@@ -1197,7 +1197,7 @@ function get_pod_page_uri () {
  *
  * @since 1.7.5
  */
-function pod_page_exists ( $uri = null ) {
+function pod_page_exists( $uri = null ) {
     return Pods_Pages::exists( $uri );
 }
 
@@ -1210,7 +1210,7 @@ function pod_page_exists ( $uri = null ) {
  *
  * @since 1.7.0
  */
-function pods_content ( $return = false, $pods_page = false ) {
+function pods_content( $return = false, $pods_page = false ) {
     return Pods_Pages::content( $return, $pods_page );
 }
 
@@ -1224,7 +1224,7 @@ function pods_content ( $return = false, $pods_page = false ) {
  *
  * @since 2.3.4
  */
-function pods_page_length_sort ( $a, $b ) {
+function pods_page_length_sort( $a, $b ) {
 	return strlen( $b ) - strlen( $a );
 }
 
@@ -1235,7 +1235,7 @@ function pods_page_length_sort ( $a, $b ) {
  *
  * @since 2.3.4
  */
-function pods_page_flush_rewrites () {
+function pods_page_flush_rewrites() {
     return Pods_Pages::flush_rewrites();
 }
 

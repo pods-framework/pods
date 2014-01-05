@@ -20,7 +20,7 @@ class Pods_Array implements ArrayAccess {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    public function __construct ( $container ) {
+    public function __construct( $container ) {
         if ( is_array( $container ) || is_object( $container ) )
             $this->__container = &$container;
     }
@@ -34,7 +34,7 @@ class Pods_Array implements ArrayAccess {
      * @return mixed|void
      * @since 2.0
      */
-    public function offsetSet ( $offset, $value ) {
+    public function offsetSet( $offset, $value ) {
         if ( is_array( $this->__container ) )
             $this->__container[ $offset ] = $value;
         else
@@ -50,7 +50,7 @@ class Pods_Array implements ArrayAccess {
      * @return mixed|null
      * @since 2.0
      */
-    public function offsetGet ( $offset ) {
+    public function offsetGet( $offset ) {
         if ( is_array( $this->__container ) ) {
             if ( isset( $this->__container[ $offset ] ) )
                 return $this->__container[ $offset ];
@@ -69,7 +69,7 @@ class Pods_Array implements ArrayAccess {
      * @return bool
      * @since 2.0
      */
-    public function offsetExists ( $offset ) {
+    public function offsetExists( $offset ) {
         if ( is_array( $this->__container ) )
             return isset( $this->__container[ $offset ] );
         return isset( $this->__container->$offset );
@@ -82,7 +82,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function offsetUnset ( $offset ) {
+    public function offsetUnset( $offset ) {
         if ( is_array( $this->__container ) )
             unset( $this->__container[ $offset ] );
         else
@@ -100,7 +100,7 @@ class Pods_Array implements ArrayAccess {
      * @return array|bool|int|mixed|null|number|object
      * @since 2.0
      */
-    public function validate ( $offset, $default = null, $type = null, $extra = null ) {
+    public function validate( $offset, $default = null, $type = null, $extra = null ) {
         if ( !$this->offsetExists( $offset ) )
             $this->offsetSet( $offset, $default );
 
@@ -169,7 +169,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function dump () {
+    public function dump() {
         if ( is_array( $this->__container ) )
             return $this->__container;
         return get_object_vars( $this->__container );
@@ -180,7 +180,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function __set ( $offset, $value ) {
+    public function __set( $offset, $value ) {
         return $this->offsetSet( $offset, $value );
     }
 
@@ -189,7 +189,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function __get ( $offset ) {
+    public function __get( $offset ) {
         return $this->offsetGet( $offset );
     }
 
@@ -198,7 +198,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function __isset ( $offset ) {
+    public function __isset( $offset ) {
         return $this->offsetExists( $offset );
     }
 
@@ -207,7 +207,7 @@ class Pods_Array implements ArrayAccess {
      *
      * @since 2.0
      */
-    public function __unset ( $offset ) {
+    public function __unset( $offset ) {
         $this->offsetUnset( $offset );
     }
 }

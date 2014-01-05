@@ -11,7 +11,7 @@
  *
  * @since 2.0.5
  */
-function pods_image_id_from_field ( $image ) {
+function pods_image_id_from_field( $image ) {
     $id = 0;
 
     if ( !empty( $image ) ) {
@@ -65,7 +65,7 @@ function pods_image_id_from_field ( $image ) {
  *
  * @since 2.0.5
  */
-function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
+function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
     $html = '';
 
     $id = pods_image_id_from_field( $image );
@@ -110,7 +110,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
  *
  * @since 2.0.5
  */
-function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = false ) {
+function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = false ) {
     $url = '';
 
     $id = pods_image_id_from_field( $image );
@@ -174,7 +174,7 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
  *
  * @since 2.3
  */
-function pods_attachment_import ( $url, $post_parent = null, $featured = false ) {
+function pods_attachment_import( $url, $post_parent = null, $featured = false ) {
     $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
 
     $title = substr( $filename, 0, ( strrpos( $filename, '.' ) ) );
@@ -234,7 +234,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
  *
  * @since 2.3
  */
-function pods_image_resize ( $attachment_id, $size ) {
+function pods_image_resize( $attachment_id, $size ) {
     $size_data = array();
 
 	// Basic image size string

@@ -41,7 +41,7 @@ class Pods_Field_Avatar extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -52,7 +52,7 @@ class Pods_Field_Avatar extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $sizes = get_intermediate_image_sizes();
 
         $image_sizes = array();
@@ -122,7 +122,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = false;
 
         return $schema;
@@ -140,7 +140,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return mixed|null
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
     }
 
@@ -155,7 +155,7 @@ class Pods_Field_Avatar extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( !is_admin() ) {
@@ -206,7 +206,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
     }
 
@@ -224,7 +224,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
         // check file extensions
         return true;
@@ -244,7 +244,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return mixed
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
     }
 
@@ -261,7 +261,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @return mixed|void
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( empty( $value ) )
             return;
 
@@ -283,7 +283,7 @@ class Pods_Field_Avatar extends Pods_Field {
      * @param string $alt Alternate text to use in image tag. Defaults to blank
      * @return string <img> tag for the user's avatar
      */
-    public function get_avatar ( $avatar, $id_or_email, $size, $default = '', $alt ='' ) {
+    public function get_avatar( $avatar, $id_or_email, $size, $default = '', $alt ='' ) {
         $_user_ID = 0;
 
         if ( is_numeric( $id_or_email ) && 0 < $id_or_email )
@@ -361,7 +361,7 @@ class Pods_Field_Avatar extends Pods_Field {
 	 * @param $avatar_folder_url
 	 * @param $avatar_folder_dir
 	 */
-	public function bp_core_fetch_avatar ( $value, $params, $item_id, $avatar_dir, $css_id, $html_width, $html_height, $avatar_folder_url, $avatar_folder_dir ) {
+	public function bp_core_fetch_avatar( $value, $params, $item_id, $avatar_dir, $css_id, $html_width, $html_height, $avatar_folder_url, $avatar_folder_dir ) {
 
 		// We only want to override user avatars
 		if ( strtolower( $params[ 'object' ] ) != 'user' ) {
@@ -383,7 +383,7 @@ class Pods_Field_Avatar extends Pods_Field {
 	 * @param $value
 	 * @param $params
 	 */
-	public function bp_core_fetch_avatar_url ( $value, $params ) {
+	public function bp_core_fetch_avatar_url( $value, $params ) {
 
 		// We only want to override user avatars
 		if ( strtolower( $params[ 'object' ] ) != 'user' ) {

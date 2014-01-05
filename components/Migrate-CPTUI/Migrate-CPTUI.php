@@ -32,7 +32,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
         $this->taxonomies = (array) get_option( 'cpt_custom_tax_types', array() );
     }
@@ -42,14 +42,14 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @since 2.0
      */
-    public function admin_assets () {
+    public function admin_assets() {
         wp_enqueue_style( 'pods-wizard' );
     }
 
     /**
      * Show the Admin
      */
-    public function admin ( $options, $component ) {
+    public function admin( $options, $component ) {
         $post_types = (array) $this->post_types;
         $taxonomies = (array) $this->taxonomies;
 
@@ -63,7 +63,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @param $params
      */
-    public function ajax_migrate ( $params ) {
+    public function ajax_migrate( $params ) {
         $post_types = (array) $this->post_types;
         $taxonomies = (array) $this->taxonomies;
 
@@ -123,7 +123,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @since 2.0
      */
-    private function migrate_post_type ( $post_type ) {
+    private function migrate_post_type( $post_type ) {
         $params = array(
             'type' => 'post_type',
             'storage' => 'meta',
@@ -209,7 +209,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @since 2.0
      */
-    private function migrate_taxonomy ( $taxonomy ) {
+    private function migrate_taxonomy( $taxonomy ) {
 
         $params = array(
             'type' => 'taxonomy',
@@ -274,7 +274,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
      *
      * @since 2.0
      */
-    public function clean () {
+    public function clean() {
         delete_option( 'cpt_custom_post_types' );
         delete_option( 'cpt_custom_tax_types' );
     }

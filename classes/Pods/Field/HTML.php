@@ -41,7 +41,7 @@ class Pods_Field_HTML extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -52,7 +52,7 @@ class Pods_Field_HTML extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
@@ -123,7 +123,7 @@ class Pods_Field_HTML extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         return false;
     }
 
@@ -139,7 +139,7 @@ class Pods_Field_HTML extends Pods_Field {
      * @return mixed|null|string
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		if ( strlen( trim( $value ) ) < 1 ) {
 			$value = pods_v( self::$type . '_content', $options );
 		}
@@ -180,7 +180,7 @@ class Pods_Field_HTML extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 		echo '<div class="pods-form-ui-' . Pods_Form::clean( $name ) . ' pods-form-html">' . $this->display( $value, $name, $options, $pod, $id ) . '</div>';
     }
 
@@ -197,7 +197,7 @@ class Pods_Field_HTML extends Pods_Field {
      * @return mixed|string
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = wp_trim_words( $value );
 
         return $value;

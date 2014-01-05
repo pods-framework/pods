@@ -24,7 +24,7 @@ class Pods_Roles extends Pods_Component {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
     }
 
@@ -33,7 +33,7 @@ class Pods_Roles extends Pods_Component {
      *
      * @since 2.0
      */
-    public function admin_assets () {
+    public function admin_assets() {
         wp_enqueue_style( 'pods-wizard' );
     }
 
@@ -46,7 +46,7 @@ class Pods_Roles extends Pods_Component {
      * @return void
      * @since 2.0
      */
-    public function admin ( $options, $component ) {
+    public function admin( $options, $component ) {
         global $wp_roles;
 
         // Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
@@ -128,7 +128,7 @@ class Pods_Roles extends Pods_Component {
         pods_ui( $ui );
     }
 
-    function admin_add ( $obj ) {
+    function admin_add( $obj ) {
         global $wp_roles;
 
         $capabilities = $this->get_capabilities();
@@ -142,7 +142,7 @@ class Pods_Roles extends Pods_Component {
         pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_edit ( $duplicate, $obj ) {
+    function admin_edit( $duplicate, $obj ) {
         global $wp_roles;
 
         $id = $obj->id;
@@ -170,7 +170,7 @@ class Pods_Roles extends Pods_Component {
         pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_delete ( $id, $obj ) {
+    function admin_delete( $id, $obj ) {
         global $wp_roles;
 
         $id = $obj->id;
@@ -239,7 +239,7 @@ class Pods_Roles extends Pods_Component {
      * @param $params
      * @return mixed|void
      */
-    public function ajax_add ( $params ) {
+    public function ajax_add( $params ) {
         global $wp_roles;
 
         $role_name = pods_v( 'role_name', $params );
@@ -283,7 +283,7 @@ class Pods_Roles extends Pods_Component {
      * @param $params
      * @return bool|mixed|void
      */
-    public function ajax_edit ( $params ) {
+    public function ajax_edit( $params ) {
         global $wp_roles;
 
         $capabilities = $this->get_capabilities();
@@ -344,7 +344,7 @@ class Pods_Roles extends Pods_Component {
      *
      * @return array
      */
-    function count_users ( $role ) {
+    function count_users( $role ) {
         $count_users = count_users();
 
         $avail_roles = array();
@@ -362,7 +362,7 @@ class Pods_Roles extends Pods_Component {
         return $avail_roles[ $role ];
     }
 
-    function get_capabilities () {
+    function get_capabilities() {
         global $wp_roles;
 
         $default_caps = $this->get_wp_capabilities();
@@ -399,7 +399,7 @@ class Pods_Roles extends Pods_Component {
         return $capabilities;
     }
 
-    function get_wp_capabilities () {
+    function get_wp_capabilities() {
         $defaults = array(
             'activate_plugins',
             'add_users',
@@ -455,7 +455,7 @@ class Pods_Roles extends Pods_Component {
         return $defaults;
     }
 
-    function get_default_capabilities () {
+    function get_default_capabilities() {
         $capabilities = array(
             'read'
         );
@@ -468,7 +468,7 @@ class Pods_Roles extends Pods_Component {
         return $capabilities;
     }
 
-    function remove_deprecated_capabilities ( $capabilities ) {
+    function remove_deprecated_capabilities( $capabilities ) {
         $deprecated_capabilities = array(
             'level_0',
             'level_1',

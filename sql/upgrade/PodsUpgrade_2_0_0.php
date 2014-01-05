@@ -12,7 +12,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_pods () {
+    public function prepare_pods() {
         /**
          * @var $wpdb WPDB
          */
@@ -34,7 +34,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_fields () {
+    public function prepare_fields() {
         /**
          * @var $wpdb WPDB
          */
@@ -56,7 +56,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_relationships () {
+    public function prepare_relationships() {
         /**
          * @var $wpdb WPDB
          */
@@ -78,7 +78,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_index () {
+    public function prepare_index() {
         /**
          * @var $wpdb WPDB
          */
@@ -100,7 +100,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_templates () {
+    public function prepare_templates() {
         /**
          * @var $wpdb WPDB
          */
@@ -122,7 +122,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_pages () {
+    public function prepare_pages() {
         /**
          * @var $wpdb WPDB
          */
@@ -144,7 +144,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_helpers () {
+    public function prepare_helpers() {
         /**
          * @var $wpdb WPDB
          */
@@ -168,7 +168,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
      *
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_pod ( $params ) {
+    public function prepare_pod( $params ) {
         /**
          * @var $wpdb WPDB
          */
@@ -230,7 +230,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      *
      */
-    public function migrate_1_x () {
+    public function migrate_1_x() {
         $old_version = get_option( 'pods_version' );
 
         if ( 0 < strlen( $old_version ) ) {
@@ -254,7 +254,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|string
      */
-    public function migrate_pods () {
+    public function migrate_pods() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -472,7 +472,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_fields () {
+    public function migrate_fields() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -510,7 +510,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_relationships () {
+    public function migrate_relationships() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -672,14 +672,14 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_settings () {
+    public function migrate_settings() {
         return $this->migrate_roles();
     }
 
     /**
      * @return string
      */
-    public function migrate_roles () {
+    public function migrate_roles() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -745,7 +745,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|string
      */
-    public function migrate_templates () {
+    public function migrate_templates() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -769,7 +769,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|string
      */
-    public function migrate_pages () {
+    public function migrate_pages() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -791,7 +791,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return array|string
      */
-    public function migrate_helpers () {
+    public function migrate_helpers() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -826,7 +826,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
      *
      * @return mixed|string|void
      */
-    public function migrate_pod ( $params ) {
+    public function migrate_pod( $params ) {
         /**
          * @var $wpdb WPDB
          */
@@ -915,7 +915,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_cleanup () {
+    public function migrate_cleanup() {
         update_option( 'pods_framework_upgraded_1_x', 1 );
 
         $oldget = $_GET;
@@ -936,7 +936,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      *
      */
-    public function restart () {
+    public function restart() {
         /**
          * @var $wpdb WPDB
          */
@@ -955,7 +955,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     /**
      *
      */
-    public function cleanup () {
+    public function cleanup() {
         /**
          * @var $wpdb WPDB
          */

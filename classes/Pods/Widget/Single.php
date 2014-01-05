@@ -7,7 +7,7 @@ class Pods_Widget_Single extends WP_Widget {
     /**
      * Register the widget
      */
-    public function Pods_Widget_Single () {
+    public function Pods_Widget_Single() {
         $this->WP_Widget(
             'pods_widget_single',
             'Pods - Single Item',
@@ -19,7 +19,7 @@ class Pods_Widget_Single extends WP_Widget {
     /**
      * Output of widget
      */
-    public function widget ( $args, $instance ) {
+    public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget field values
@@ -46,7 +46,7 @@ class Pods_Widget_Single extends WP_Widget {
      *
      * @returns array $instance Updated instance
      */
-    public function update ( $new_instance, $old_instance ) {
+    public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
 
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
@@ -64,7 +64,7 @@ class Pods_Widget_Single extends WP_Widget {
     /**
      * Widget Form
      */
-    public function form ( $instance ) {
+    public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $slug = pods_v( 'slug', $instance, '' );
         $pod_type = pods_v( 'pod_type', $instance, '' );

@@ -80,7 +80,7 @@ class Pods_Init {
      *
      * @since 2.3.5
      */
-    public static function init () {
+    public static function init() {
         if ( !is_object( self::$instance ) )
             self::$instance = new Pods_Init();
 
@@ -95,7 +95,7 @@ class Pods_Init {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */
-    function __construct () {
+    function __construct() {
         self::$version = get_option( 'pods_framework_version' );
         self::$version_last = get_option( 'pods_framework_version_last' );
         self::$db_version = get_option( 'pods_framework_db_version' );
@@ -150,7 +150,7 @@ class Pods_Init {
     /**
      * Load the plugin textdomain and set default constants
      */
-    public function plugins_loaded () {
+    public function plugins_loaded() {
         if ( !defined( 'PODS_LIGHT' ) )
             define( 'PODS_LIGHT', false );
 
@@ -163,7 +163,7 @@ class Pods_Init {
     /**
      * Load Pods Components
      */
-    public function load_components () {
+    public function load_components() {
         if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
             self::$components = pods_components();
     }
@@ -171,14 +171,14 @@ class Pods_Init {
     /**
      * Load Pods Meta
      */
-    public function load_meta () {
+    public function load_meta() {
         self::$meta = pods_meta()->core();
     }
 
     /**
      * Set up the Pods core
      */
-    public function core () {
+    public function core() {
         // Session start
 		pods_session_start();
 
@@ -232,7 +232,7 @@ class Pods_Init {
     /**
      * Register Scripts and Styles
      */
-    public function register_assets () {
+    public function register_assets() {
         if ( !wp_style_is( 'jquery-ui', 'registered' ) )
             wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
 
@@ -337,14 +337,14 @@ class Pods_Init {
     /**
      * Include Admin
      */
-    public function admin_init () {
+    public function admin_init() {
         self::$admin = pods_admin();
     }
 
     /**
      * Register Post Types and Taxonomies
      */
-    public function setup_content_types ( $force = false ) {
+    public function setup_content_types( $force = false ) {
 
 		do_action( 'pods_setup_content_types' );
 
@@ -909,7 +909,7 @@ class Pods_Init {
      * @return array
      * @since 2.0.2
      */
-    public function setup_updated_messages ( $messages ) {
+    public function setup_updated_messages( $messages ) {
         global $post, $post_ID;
 
         $post_types = Pods_Meta::$post_types;
@@ -969,7 +969,7 @@ class Pods_Init {
      *
      * @return array
      */
-    public static function object_label_fix ( $args, $type = 'post_type' ) {
+    public static function object_label_fix( $args, $type = 'post_type' ) {
         if ( empty( $args ) || !is_array( $args ) )
             $args = array();
 
@@ -1040,7 +1040,7 @@ class Pods_Init {
     /**
      * Activate and Install
      */
-    public function activate_install () {
+    public function activate_install() {
         register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
         register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );
 
@@ -1059,7 +1059,7 @@ class Pods_Init {
     /**
      *
      */
-    public function activate () {
+    public function activate() {
         global $wpdb;
 
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
@@ -1076,14 +1076,14 @@ class Pods_Init {
     /**
      *
      */
-    public function deactivate () {
+    public function deactivate() {
         pods_api()->cache_flush_pods();
     }
 
     /**
      *
      */
-    public function needs_upgrade ( $current = null, $last = null ) {
+    public function needs_upgrade( $current = null, $last = null ) {
         if ( null === $current )
             $current = self::$version;
 
@@ -1120,7 +1120,7 @@ class Pods_Init {
      * @param $site_id
      * @param $meta
      */
-    public function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    public function new_blog( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
         if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) )
             $this->setup( $_blog_id );
     }
@@ -1128,7 +1128,7 @@ class Pods_Init {
     /**
      * @param null $_blog_id
      */
-    public function setup ( $_blog_id = null ) {
+    public function setup( $_blog_id = null ) {
         global $wpdb;
 
         // Switch DB table prefixes
@@ -1199,7 +1199,7 @@ class Pods_Init {
     /**
      * @param null $_blog_id
      */
-    public function reset ( $_blog_id = null ) {
+    public function reset( $_blog_id = null ) {
         global $wpdb;
 
         // Switch DB table prefixes
@@ -1282,7 +1282,7 @@ class Pods_Init {
      *
      * @param int $_ID
      */
-    public function delete_attachment ( $_ID ) {
+    public function delete_attachment( $_ID ) {
         global $wpdb;
 
         $_ID = (int) $_ID;
@@ -1382,7 +1382,7 @@ class Pods_Init {
     /**
      * Register widgets for Pods
      */
-    public function register_widgets () {
+    public function register_widgets() {
         $widgets = array(
             'Pods_Widget_Single',
             'Pods_Widget_List',
@@ -1400,7 +1400,7 @@ class Pods_Init {
     /**
      * Add Admin Bar links
      */
-    public function admin_bar_links () {
+    public function admin_bar_links() {
         global $wp_admin_bar, $pods;
 
         if ( !is_user_logged_in() || !is_admin_bar_showing() ) {

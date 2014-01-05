@@ -53,7 +53,7 @@ class Pods_Field_Currency extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
     }
 
@@ -64,7 +64,7 @@ class Pods_Field_Currency extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
@@ -175,7 +175,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
 
         if ( $length < 1 || 64 < $length )
@@ -204,7 +204,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function prepare ( $options = null ) {
+    public function prepare( $options = null ) {
         $format = self::$prepare;
 
         $length = (int) pods_v( self::$type . '_max_length', $options, 12, true );
@@ -242,7 +242,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return mixed|null|string
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->format( $value, $name, $options, $pod, $id );
 
         $currency = 'usd';
@@ -275,7 +275,7 @@ class Pods_Field_Currency extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -321,7 +321,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return bool|string
      * @since 2.0
      */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
         if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
@@ -373,7 +373,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return bool|mixed|void
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         global $wp_locale;
 
         if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
@@ -434,7 +434,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return mixed|string
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         global $wp_locale;
 
         if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
@@ -506,7 +506,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return mixed|null|string
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $this->display( $value, $name, $options, $pod, $id );
     }
 
@@ -522,7 +522,7 @@ class Pods_Field_Currency extends Pods_Field {
      * @return string
      * @since 2.0
      */
-    public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
         if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {

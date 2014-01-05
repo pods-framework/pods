@@ -21,7 +21,7 @@ class Pods_Admin {
      *
      * @since 2.3.5
      */
-    public static function init () {
+    public static function init() {
         if ( !is_object( self::$instance ) )
             self::$instance = new Pods_Admin();
 
@@ -36,7 +36,7 @@ class Pods_Admin {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
         // Scripts / Stylesheets
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ), 20 );
 
@@ -64,7 +64,7 @@ class Pods_Admin {
      *
      * @since 2.0
      */
-    public function admin_init () {
+    public function admin_init() {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
         if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) ) {
             $pods_admin_ajax_actions = array(
@@ -94,7 +94,7 @@ class Pods_Admin {
      *
      * @since 2.0
      */
-    public function admin_head () {
+    public function admin_head() {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
@@ -168,7 +168,7 @@ class Pods_Admin {
      *
      * @since 2.0
      */
-    public function admin_menu () {
+    public function admin_menu() {
         $taxonomies = Pods_Meta::$taxonomies;
 
         $advanced_content_types = Pods_Meta::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
@@ -520,7 +520,7 @@ class Pods_Admin {
         }
     }
 
-    public function upgrade_notice () {
+    public function upgrade_notice() {
         echo '<div class="error fade"><p>';
         echo sprintf(
             __( '<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href="%s">Upgrade Wizard</a>.', 'pods' ),
@@ -533,7 +533,7 @@ class Pods_Admin {
     /**
      * Create Pods_UI content for the administration pages
      */
-    public function admin_content () {
+    public function admin_content() {
 
 		global $pods;
 
@@ -551,7 +551,7 @@ class Pods_Admin {
     /**
      * Create Pods_UI content for the settings administration pages
      */
-    public function admin_content_settings () {
+    public function admin_content_settings() {
 
 		global $pods;
 
@@ -610,7 +610,7 @@ class Pods_Admin {
      *
      * @return string
      */
-    public function media_button ( $context = null ) {
+    public function media_button( $context = null ) {
         $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
         $current_page = explode( '?', $current_page );
         $current_page = explode( '#', $current_page[ 0 ] );
@@ -632,7 +632,7 @@ class Pods_Admin {
     /**
      * Enqueue assets for Media Library Popup
      */
-    public function register_media_assets () {
+    public function register_media_assets() {
         if ( 'pods_media_attachment' == pods_v( 'inlineId' ) )
             wp_enqueue_style( 'pods-attach' );
     }
@@ -640,14 +640,14 @@ class Pods_Admin {
     /**
      * Output Pods shortcode popup window
      */
-    public function mce_popup () {
+    public function mce_popup() {
         pods_view( PODS_DIR . 'ui/admin/shortcode.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
      * Handle main Pods Setup area for managing Pods and Fields
      */
-    public function admin_setup () {
+    public function admin_setup() {
         $all_pods = pods_api()->load_pods();
 
         $view = pods_v( 'view', 'get', 'all', true );
@@ -819,7 +819,7 @@ class Pods_Admin {
      *
      * @param Pods_UI $obj
      */
-    public function admin_setup_add ( $obj ) {
+    public function admin_setup_add( $obj ) {
         pods_view( PODS_DIR . 'ui/admin/setup-add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
@@ -829,7 +829,7 @@ class Pods_Admin {
      * @param bool $duplicate
      * @param Pods_UI $obj
      */
-    public function admin_setup_edit ( $duplicate, $obj ) {
+    public function admin_setup_edit( $duplicate, $obj ) {
 
 		$pods_admin =& $this;
 
@@ -845,7 +845,7 @@ class Pods_Admin {
      *
      * @return mixed
      */
-    public function admin_setup_duplicate ( $obj ) {
+    public function admin_setup_duplicate( $obj ) {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
         if ( 0 < $new_id ) {
@@ -886,7 +886,7 @@ class Pods_Admin {
      *
      * @return mixed
      */
-    public function admin_setup_reset ( $obj, $id ) {
+    public function admin_setup_reset( $obj, $id ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
@@ -928,7 +928,7 @@ class Pods_Admin {
      *
      * @return mixed
      */
-    public function admin_setup_delete ( $id, $obj ) {
+    public function admin_setup_delete( $id, $obj ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
         if ( empty( $pod ) )
@@ -947,7 +947,7 @@ class Pods_Admin {
     /**
      * Handle main Pods Setup area for managing Pods and Fields
      */
-    public function admin_setup_groups () {
+    public function admin_setup_groups() {
 
 		$field_groups = pods( '_pods_group' );
 
@@ -1074,7 +1074,7 @@ class Pods_Admin {
      *
      * @param Pods_UI $obj
      */
-    public function admin_setup_groups_add ( $obj ) {
+    public function admin_setup_groups_add( $obj ) {
 
         pods_view( PODS_DIR . 'ui/admin/setup-edit-group.php', compact( array_keys( get_defined_vars() ) ) );
 
@@ -1086,7 +1086,7 @@ class Pods_Admin {
      * @param bool $duplicate
      * @param Pods_UI $obj
      */
-    public function admin_setup_groups_edit ( $duplicate, $obj ) {
+    public function admin_setup_groups_edit( $duplicate, $obj ) {
 
         pods_view( PODS_DIR . 'ui/admin/setup-edit-group.php', compact( array_keys( get_defined_vars() ) ) );
 
@@ -1100,7 +1100,7 @@ class Pods_Admin {
      *
      * @return mixed
      */
-    public function admin_setup_groups_duplicate ( $obj ) {
+    public function admin_setup_groups_duplicate( $obj ) {
 
 		$group = pods_object_group( null, $obj->id );
 
@@ -1127,7 +1127,7 @@ class Pods_Admin {
      *
      * @return mixed
      */
-    public function admin_setup_groups_delete ( $id, $obj ) {
+    public function admin_setup_groups_delete( $id, $obj ) {
 
 		$group = pods_object_group( null, $obj->id );
 
@@ -1147,21 +1147,21 @@ class Pods_Admin {
     /**
      * Get advanced administration view.
      */
-    public function admin_advanced () {
+    public function admin_advanced() {
         pods_view( PODS_DIR . 'ui/admin/advanced.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
      * Get settings administration view
      */
-    public function admin_settings () {
+    public function admin_settings() {
         pods_view( PODS_DIR . 'ui/admin/settings.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
      * Get components administration UI
      */
-    public function admin_components () {
+    public function admin_components() {
         $components = Pods_Init::$components->components;
 
         $view = pods_v( 'view', 'get', 'all', true );
@@ -1320,7 +1320,7 @@ class Pods_Admin {
      *
      * @return bool
      */
-    public function admin_components_toggle ( Pods_UI $ui ) {
+    public function admin_components_toggle( Pods_UI $ui ) {
         $component = $_GET[ 'id' ];
 
         if ( !empty( Pods_Init::$components->components[ $component ][ 'PluginDependency' ] ) ) {
@@ -1427,7 +1427,7 @@ class Pods_Admin {
     /**
      * Get the admin upgrade page
      */
-    public function admin_upgrade () {
+    public function admin_upgrade() {
         foreach ( Pods_Init::$upgrades as $old_version => $new_version ) {
             if ( version_compare( $old_version, Pods_Init::$version_last, '<=' ) && version_compare( Pods_Init::$version_last, $new_version, '<' ) ) {
                 $new_version = str_replace( '.', '_', $new_version );
@@ -1442,7 +1442,7 @@ class Pods_Admin {
     /**
      * Get the admin help page
      */
-    public function admin_help () {
+    public function admin_help() {
         pods_view( PODS_DIR . 'ui/admin/help.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
@@ -1453,7 +1453,7 @@ class Pods_Admin {
      *
      * @return array
      */
-    public function admin_capabilities ( $capabilities ) {
+    public function admin_capabilities( $capabilities ) {
         $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'taxonomy', 'settings' ) ) );
 
         $capabilities[] = 'pods';
@@ -1552,7 +1552,7 @@ class Pods_Admin {
     /**
      * Handle ajax calls for the administration
      */
-    public function admin_ajax () {
+    public function admin_ajax() {
         if ( false === headers_sent() ) {
 			pods_session_start();
 

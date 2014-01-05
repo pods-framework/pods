@@ -12,13 +12,13 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
     /**
      *
      */
-    function __construct () {
+    function __construct() {
     }
 
     /**
      * @return array|bool|int|mixed|null|void
      */
-    public function prepare_relationships () {
+    public function prepare_relationships() {
         $relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
 
         $count = 0;
@@ -32,7 +32,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_relationships () {
+    public function migrate_relationships() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
@@ -84,7 +84,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
     /**
      * @return string
      */
-    public function migrate_cleanup () {
+    public function migrate_cleanup() {
         $this->upgraded();
 
         $this->api->cache_flush_pods();
@@ -95,7 +95,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
     /**
      *
      */
-    public function restart () {
+    public function restart() {
         $upgraded = get_option( 'pods_framework_upgraded' );
 
         if ( empty( $upgraded ) || !is_array( $upgraded ) )
@@ -112,7 +112,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
     /**
      *
      */
-    public function cleanup () {
+    public function cleanup() {
         $this->restart();
     }
 }

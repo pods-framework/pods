@@ -147,7 +147,7 @@ else {
 /**
  * Deactivate Pods 1.x or other Pods plugins
  */
-function pods_deactivate_pods_1_x () {
+function pods_deactivate_pods_1_x() {
     if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {
         if ( !function_exists( 'deactivate_plugins' ) )
             include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -164,7 +164,7 @@ function pods_deactivate_pods_1_x () {
 /**
  * Deactivate Pods UI plugin
  */
-function pods_deactivate_pods_ui () {
+function pods_deactivate_pods_ui() {
     if ( function_exists( 'pods_ui_manage' ) && file_exists( WP_CONTENT_DIR . 'plugins/pods-ui/pods-ui.php' ) ) {
         if ( !function_exists( 'deactivate_plugins' ) )
             include_once ABSPATH . 'wp-admin/includes/plugin.php';

@@ -235,7 +235,7 @@ class Pods_Data {
      *
      * @since 2.3.5
      */
-    public static function init ( $pod = null, $id = 0, $strict = true ) {
+    public static function init( $pod = null, $id = 0, $strict = true ) {
         if ( ( true !== $pod && null !== $pod ) || 0 != $id )
             return new Pods_Data( $pod, $id, $strict );
         elseif ( !is_object( self::$instance ) )
@@ -266,7 +266,7 @@ class Pods_Data {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */
-    public function __construct ( $pod = null, $id = 0, $strict = true ) {
+    public function __construct( $pod = null, $id = 0, $strict = true ) {
         global $wpdb;
 
         if ( is_object( $pod ) && 'Pods_API' == get_class( $pod ) ) {
@@ -343,7 +343,7 @@ class Pods_Data {
      * @param array|string $table
      * @param string $object
      */
-    public function table ( $table, $object = '' ) {
+    public function table( $table, $object = '' ) {
         global $wpdb;
 
         if ( !is_array( $table ) ) {
@@ -417,7 +417,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public function insert ( $table, $data, $format = null ) {
+    public function insert( $table, $data, $format = null ) {
         /**
          * @var $wpdb wpdb
          */
@@ -469,7 +469,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function insert_on_duplicate ( $table, $data, $formats = array() ) {
+    public static function insert_on_duplicate( $table, $data, $formats = array() ) {
         /**
          * @var $wpdb wpdb
          */
@@ -509,7 +509,7 @@ class Pods_Data {
      * @return bool
      * @since 2.0
      */
-    public function update ( $table, $data, $where, $format = null, $where_format = null ) {
+    public function update( $table, $data, $where, $format = null, $where_format = null ) {
         /**
          * @var $wpdb wpdb
          */
@@ -578,7 +578,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public function delete ( $table, $where, $where_format = null ) {
+    public function delete( $table, $where, $where_format = null ) {
         /**
          * @var $wpdb wpdb
          */
@@ -621,7 +621,7 @@ class Pods_Data {
      * @return array|bool|mixed
      * @since 2.0
      */
-    public function select ( $params ) {
+    public function select( $params ) {
         global $wpdb;
 
         $cache_key = $results = false;
@@ -684,7 +684,7 @@ class Pods_Data {
         return $this->data;
     }
 
-    public function calculate_totals () {
+    public function calculate_totals() {
         /**
          * @var $wpdb wpdb
          */
@@ -712,7 +712,7 @@ class Pods_Data {
      * @return bool|mixed|string
      * @since 2.0
      */
-    public function build ( $params ) {
+    public function build( $params ) {
         $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
         $defaults = array(
@@ -1433,7 +1433,7 @@ class Pods_Data {
      * @return int Number of rows returned by select()
      * @since 2.0
      */
-    public function total () {
+    public function total() {
         return (int) $this->total;
     }
 
@@ -1443,7 +1443,7 @@ class Pods_Data {
      * @return int Number of rows found by select()
      * @since 2.0
      */
-    public function total_found () {
+    public function total_found() {
         if(false === $this->total_found_calculated)
             $this->calculate_totals();
 
@@ -1457,7 +1457,7 @@ class Pods_Data {
      * @since 1.12
      * @see Pods_Data::nth
      */
-    public function zebra () {
+    public function zebra() {
         return $this->nth( 'odd' ); // Odd numbers
     }
 
@@ -1469,7 +1469,7 @@ class Pods_Data {
      * @return bool Whether $nth matches
      * @since 2.3
      */
-    public function nth ( $nth ) {
+    public function nth( $nth ) {
         if ( empty( $nth ) )
             $nth = 2;
 
@@ -1514,7 +1514,7 @@ class Pods_Data {
      * @return int Current row number (+1)
      * @since 2.3
      */
-    public function position () {
+    public function position() {
         return $this->row_number + 1;
     }
 
@@ -1531,7 +1531,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function table_create ( $table, $fields, $if_not_exists = false ) {
+    public static function table_create( $table, $fields, $if_not_exists = false ) {
         /**
          * @var $wpdb wpdb
          */
@@ -1565,7 +1565,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function table_alter ( $table, $changes ) {
+    public static function table_alter( $table, $changes ) {
         /**
          * @var $wpdb wpdb
          */
@@ -1587,7 +1587,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function table_truncate ( $table ) {
+    public static function table_truncate( $table ) {
         /**
          * @var $wpdb wpdb
          */
@@ -1611,7 +1611,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function table_drop ( $table ) {
+    public static function table_drop( $table ) {
         /**
          * @var $wpdb wpdb
          */
@@ -1636,7 +1636,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public function reorder ( $table, $weight_field, $id_field, $ids ) {
+    public function reorder( $table, $weight_field, $id_field, $ids ) {
         $success = false;
         $ids = (array) $ids;
 
@@ -1671,7 +1671,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public function fetch ( $row = null, $explicit_set = null ) {
+    public function fetch( $row = null, $explicit_set = null ) {
         global $wpdb;
 
 		if ( null === $explicit_set ) {
@@ -1967,7 +1967,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public function reset ( $row = null ) {
+    public function reset( $row = null ) {
         $row = pods_absint( $row );
 
         $this->row = false;
@@ -1997,7 +1997,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+    public static function query( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
         /**
          * @var $wpdb wpdb
          */
@@ -2087,7 +2087,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function get_tables ( $wp_core = true, $pods_tables = true ) {
+    public static function get_tables( $wp_core = true, $pods_tables = true ) {
         global $wpdb;
 
         $core_wp_tables = array(
@@ -2129,7 +2129,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function get_table_columns ( $table ) {
+    public static function get_table_columns( $table ) {
         global $wpdb;
 
         self::query( "SHOW COLUMNS FROM `{$table}` " );
@@ -2161,7 +2161,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function get_column_data ( $column_name, $table ) {
+    public static function get_column_data( $column_name, $table ) {
         $describe_data = mysql_query( 'DESCRIBE ' . $table );
 
         $column_data = array();
@@ -2188,7 +2188,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    public static function prepare ( $sql, $data ) {
+    public static function prepare( $sql, $data ) {
         /**
          * @var $wpdb wpdb
          */
@@ -2209,7 +2209,7 @@ class Pods_Data {
      * @static
      * @since 2.3
      */
-    public static function query_fields ( $fields, $pod = null, &$params = null ) {
+    public static function query_fields( $fields, $pod = null, &$params = null ) {
         $query_fields = array();
 
 		if ( !is_object( $params ) ) {
@@ -2329,7 +2329,7 @@ class Pods_Data {
      * @static
      * @since 2.3
      */
-    public static function query_field ( $field, $q, $pod = null, &$params = null ) {
+    public static function query_field( $field, $q, $pod = null, &$params = null ) {
         global $wpdb;
 
         $simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
@@ -2607,7 +2607,7 @@ class Pods_Data {
      *
      * @since 2.0
      */
-    function traverse_recurse ( $traverse_recurse ) {
+    function traverse_recurse( $traverse_recurse ) {
         global $wpdb;
 
         $defaults = array(

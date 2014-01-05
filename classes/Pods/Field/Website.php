@@ -41,7 +41,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -52,7 +52,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
@@ -110,7 +110,7 @@ class Pods_Field_Website extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
         $schema = 'VARCHAR(' . $length . ')';
@@ -132,7 +132,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -170,7 +170,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
         $label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
@@ -207,7 +207,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         if ( is_array( $value ) ) {
             if ( isset( $value[ 'scheme' ] ) )
                 $value = $this->build_url( $value );
@@ -291,7 +291,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( 'website' == pods_v( self::$type . '_format_type', $options ) && 0 < strlen( pods_v( self::$type . '_format', $options ) ) )
             $value = make_clickable( $value );
 
@@ -305,7 +305,7 @@ class Pods_Field_Website extends Pods_Field {
      *
      * @return string
      */
-    public function build_url ( $url ) {
+    public function build_url( $url ) {
         if ( function_exists( 'http_build_url' ) )
             return http_build_url( $url );
 

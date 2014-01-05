@@ -319,7 +319,7 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
  *
  * ===================================
  */
-function pods_2_beta_migrate_type ( $id, $options ) {
+function pods_2_beta_migrate_type( $id, $options ) {
     global $wpdb;
 
     foreach ( $options as $old => $new ) {
@@ -327,7 +327,7 @@ function pods_2_beta_migrate_type ( $id, $options ) {
     }
 }
 
-function pods_2_alpha_migrate_pods () {
+function pods_2_alpha_migrate_pods() {
     $api = pods_api();
 
     $api->display_errors = true;
@@ -401,7 +401,7 @@ function pods_2_alpha_migrate_pods () {
     return $pod_ids;
 }
 
-function pods_2_alpha_migrate_helpers () {
+function pods_2_alpha_migrate_helpers() {
     $api = pods_api();
 
     $helper_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'helper'", false );
@@ -426,7 +426,7 @@ function pods_2_alpha_migrate_helpers () {
     return $helper_ids;
 }
 
-function pods_2_alpha_migrate_pages () {
+function pods_2_alpha_migrate_pages() {
     $api = pods_api();
 
     $page_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page'", false );
@@ -450,7 +450,7 @@ function pods_2_alpha_migrate_pages () {
     return $page_ids;
 }
 
-function pods_2_alpha_migrate_templates () {
+function pods_2_alpha_migrate_templates() {
     $api = pods_api();
 
     $tpl_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'template'", false );

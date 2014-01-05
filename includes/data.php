@@ -291,7 +291,7 @@ function pods_unslash( $input ) {
  * @return array|object|string
  * @since 1.2.0
  */
-function pods_trim ( $input, $charlist = null, $lr = null ) {
+function pods_trim( $input, $charlist = null, $lr = null ) {
 
 	$output = array();
 
@@ -1292,7 +1292,7 @@ function pods_cast( $value, $cast_from = null ) {
  *
  * @since 1.8.9
  */
-function pods_create_slug ( $orig, $strict = true ) {
+function pods_create_slug( $orig, $strict = true ) {
     $str = preg_replace( "/([_ \\/])/", "-", trim( $orig ) );
 
     if ( $strict )
@@ -1320,7 +1320,7 @@ function pods_create_slug ( $orig, $strict = true ) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
+function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
     $slug = pods_create_slug( $slug, $strict );
 
     $pod_data = array();
@@ -1383,7 +1383,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
  *
  * @since 1.2.0
  */
-function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
+function pods_clean_name( $orig, $lower = true, $trim_underscores = true ) {
     $str = preg_replace( "/([\- ])/", "_", trim( $orig ) );
 
     if ( $lower )
@@ -1411,7 +1411,7 @@ function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
  * @return integer
  * @since 2.0
  */
-function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
+function pods_absint( $maybeint, $strict = true, $allow_negative = false ) {
     if ( true === $strict && !is_numeric( trim( $maybeint ) ) )
         return 0;
 
@@ -1432,7 +1432,7 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  * @return mixed
  * @version 2.0
  */
-function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
+function pods_str_replace( $find, $replace, $string, $occurrences = -1 ) {
     if ( is_array( $string ) ) {
         foreach ( $string as $k => $v ) {
             $string[ $k ] = pods_str_replace( $find, $replace, $v, $occurrences );
@@ -1473,7 +1473,7 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
  *
  * @see pods_evaluate_tag
  */
-function pods_evaluate_tags ( $tags, $sanitize = false ) {
+function pods_evaluate_tags( $tags, $sanitize = false ) {
 
 	if ( is_array( $tags ) ) {
 		foreach ( $tags as $k => $tag ) {
@@ -1625,7 +1625,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
  *
  * @since 2.0
  */
-function pods_serial_comma ( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
+function pods_serial_comma( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
     if ( is_object( $value ) )
         $value = get_object_vars( $value );
 
@@ -1769,7 +1769,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
  *
  * @since 2.0.5
  */
-function pods_var_user ( $anon = false, $user = true, $capability = null ) {
+function pods_var_user( $anon = false, $user = true, $capability = null ) {
     $value = $anon;
 
     if ( is_user_logged_in() ) {
@@ -1800,7 +1800,7 @@ function pods_var_user ( $anon = false, $user = true, $capability = null ) {
  * @return array|object
  * @since 2.3
  */
-function pods_hierarchical_list ( $list, $args = array() ) {
+function pods_hierarchical_list( $list, $args = array() ) {
     if ( empty( $args ) || ( !is_object( $list ) && !is_array( $list ) ) )
         return $list;
 
@@ -1831,7 +1831,7 @@ function pods_hierarchical_list ( $list, $args = array() ) {
  * @return array|object
  * @since 2.3
  */
-function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
+function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
     $new = array();
 
     $object = false;
@@ -1928,7 +1928,7 @@ function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
  * @return array|object
  * @since 2.3
  */
-function pods_hierarchical_select ( $list, $args = array() ) {
+function pods_hierarchical_select( $list, $args = array() ) {
     $object = false;
 
     if ( is_object( $list ) ) {
@@ -1965,7 +1965,7 @@ function pods_hierarchical_select ( $list, $args = array() ) {
  * @return array
  * @since 2.3
  */
-function pods_hierarchical_select_recurse ( $items, $args, $depth = 0 ) {
+function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
     $data = array();
 
     foreach ( $items as $k => $v ) {
@@ -2018,7 +2018,7 @@ function pods_hierarchical_select_recurse ( $items, $args, $depth = 0 ) {
  * @return array
  * @since 2.3
  */
-function pods_list_filter ( $list, $args = array(), $operator = 'AND' ) {
+function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
     if ( empty( $args ) )
         return $list;
 

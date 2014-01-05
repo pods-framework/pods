@@ -4,7 +4,7 @@
  */
 class Pods_Widget_Form extends WP_Widget {
 
-    public function Pods_Widget_Form () {
+    public function Pods_Widget_Form() {
         $this->WP_Widget(
             'pods_widget_form',
             'Pods - Form',
@@ -13,7 +13,7 @@ class Pods_Widget_Form extends WP_Widget {
         );
     }
 
-    public function widget ( $args, $instance ) {
+    public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget fields
@@ -36,7 +36,7 @@ class Pods_Widget_Form extends WP_Widget {
         }
     }
 
-    public function update ( $new_instance, $old_instance ) {
+    public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_v( 'pod_type', $new_instance, '' );
@@ -51,7 +51,7 @@ class Pods_Widget_Form extends WP_Widget {
         return $instance;
     }
 
-    public function form ( $instance ) {
+    public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $pod_type = pods_v( 'pod_type', $instance, '' );
         $slug = pods_v( 'slug', $instance, '' );

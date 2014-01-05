@@ -43,7 +43,7 @@ class Pods_Field_Code extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -53,7 +53,7 @@ class Pods_Field_Code extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
@@ -104,7 +104,7 @@ class Pods_Field_Code extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
 
         $schema = 'LONGTEXT';
@@ -133,7 +133,7 @@ class Pods_Field_Code extends Pods_Field {
 	 * @return mixed|null|string
 	 * @since 2.0
 	 */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
@@ -151,7 +151,7 @@ class Pods_Field_Code extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -179,7 +179,7 @@ class Pods_Field_Code extends Pods_Field {
 	 * @return mixed|string
 	 * @since 2.0
 	 */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, -1, true );
 
 		if ( 0 < $length ) {

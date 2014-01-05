@@ -35,7 +35,7 @@ class Pods_Field_Boolean extends Pods_Field {
      *
      * @since 2.0
      */
-    public function __construct () {
+    public function __construct() {
 
     }
 
@@ -46,7 +46,7 @@ class Pods_Field_Boolean extends Pods_Field {
      *
      * @since 2.0
      */
-    public function options () {
+    public function options() {
         $options = array(
             self::$type . '_format_type' => array(
                 'label' => __( 'Input Type', 'pods' ),
@@ -82,7 +82,7 @@ class Pods_Field_Boolean extends Pods_Field {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options = null ) {
+    public function schema( $options = null ) {
         $schema = 'BOOL DEFAULT 0';
 
         return $schema;
@@ -100,7 +100,7 @@ class Pods_Field_Boolean extends Pods_Field {
      * @return mixed|null
      * @since 2.0
      */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
             1 => pods_v( self::$type . '_yes_label', $options ),
             0 => pods_v( self::$type . '_no_label', $options )
@@ -124,7 +124,7 @@ class Pods_Field_Boolean extends Pods_Field {
      *
      * @since 2.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
 
         if ( is_array( $value ) )
@@ -163,7 +163,7 @@ class Pods_Field_Boolean extends Pods_Field {
      *
      * @since 2.0
      */
-    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
+    public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
             $data = array(
                 1 => pods_v( self::$type . '_yes_label', $options ),
@@ -191,7 +191,7 @@ class Pods_Field_Boolean extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
     }
 
@@ -209,7 +209,7 @@ class Pods_Field_Boolean extends Pods_Field {
      * @return bool
      * @since 2.0
      */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 
@@ -227,7 +227,7 @@ class Pods_Field_Boolean extends Pods_Field {
      * @return int|mixed
      * @since 2.0
      */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+    public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         // Only allow 0 / 1
         if ( 'yes' === strtolower( $value ) || '1' === (string) $value )
             $value = 1;
@@ -255,7 +255,7 @@ class Pods_Field_Boolean extends Pods_Field {
      *
      * @since 2.0
      */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $yesno = array(
             1 => pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
             0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true )

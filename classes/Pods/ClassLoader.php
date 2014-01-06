@@ -142,53 +142,14 @@ class Pods_ClassLoader {
 	public function forwardClass( $fromClass, $toClass ) {
 
 		eval( "
-			class {$fromClass} {
-
-				private \$__obj;
+			class {$fromClass} extends {$toClass} {
 
 				public function __construct() {
 
-					\$reflection = new ReflectionClass( '{$toClass}' );
-
-					\$this->__obj = \$reflection->newInstanceArgs( func_get_args() );
+					parent::__construct();
 
 				}
 
-				public function __call( \$name, \$arguments ) {
-
-					return call_user_func_array( array( \$this->__obj, \$name ), \$arguments );
-
-				}
-
-				public static function __callStatic( \$name, \$arguments ) {
-
-					return forward_static_call_array( array( '{$toClass}', \$name ), \$arguments );
-
-				}
-
-				public function __set( \$offset, \$value ) {
-
-					return \$this->__obj->{\$offset} = \$value;
-
-				}
-
-				public function __get( \$offset ) {
-
-					return \$this->__obj->{\$offset};
-
-				}
-
-				public function __isset( \$offset ) {
-
-					return isset( \$this->__obj->{\$offset} );
-
-				}
-
-				public function __unset( \$offset ) {
-
-					unset( \$this->__obj->{\$offset} );
-
-				}
 			}
 		" );
 

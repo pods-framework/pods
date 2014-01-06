@@ -148,7 +148,9 @@ class Pods_ClassLoader {
 
 				public function __construct() {
 
-					\$this->__obj = new {$toClass}( func_get_args() );
+					\$reflection = new ReflectionClass( '{$toClass}' );
+
+					\$this->__obj = \$reflection->newInstanceArgs( func_get_args() );
 
 				}
 

@@ -105,7 +105,7 @@ class Pods_ClassLoader {
 			}
 
 			// Fallback handling for old class style (PodsInit >> Pods_Init)
-			if ( !$this->_fallback && null !== $this->_namespace ) {
+			if ( !$foundClass && !$this->_fallback && null !== $this->_namespace ) {
 				$fallbackClass = trim( preg_replace( '/([A-Z])/', '_$1', $_className ), '_' );
 
 				// Load main class if it doesn't exist

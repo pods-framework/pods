@@ -14,5 +14,11 @@
   "license": "GPL",
   "bugs": {
     "url": "https://github.com/pods-framework/pods/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-cli": "~0.1.11",
+    "grunt-contrib-sass": "~0.6.0",
+    "grunt-contrib-watch": "~0.5.3"
   }
 }

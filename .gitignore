@@ -4,3 +4,4 @@
 .idea
 .svn
 .DS_Store
+.sass-cache/*

@@ -9,7 +9,9 @@ module.exports = function(grunt) {
 				style: 'compressed'
 			  },
 			  files: {
-				'ui/css/admin-styles.css': 'ui/css/sass/admin-styles.scss'
+				'ui/css/admin-styles.css': 'ui/css/sass/admin-styles.scss',
+				'ui/css/front-end-styles.css': 'ui/css/sass/front-end-styles.scss',
+				'ui/css/meta-boxes.css': 'ui/css/sass/meta-boxes.scss'
 			  }
 			}
 		},

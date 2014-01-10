@@ -1,0 +1,20 @@
+@import 'var';
+
+@mixin admin_table_title{
+	font-size: 16px;
+	font-family: $base_serif;
+	font-weight: normal;
+	text-shadow: #FFF 0 1px 0;
+	color: #464646;
+	margin-bottom: 5px;
+	margin-left: 3px;
+} // admin_table_title
+
+
+.pods-loop-table{
+
+	&.pods-loop-title {
+		@include admin_table_title;
+	} // &.pods-loop-title
+
+} // .pods-loop-table

@@ -1,4 +1,5 @@
 @import 'partials/genericons';
+@import 'partials/admin-tables';
 
 .pods-red-hover {
   color: rgba(139, 0, 0, 0.3);
@@ -31,15 +32,7 @@
 .pods-loop-table.pods-loop-description {
   margin-left: 3px;
 }
-.pods-loop-table.pods-loop-title {
-  font-size: 16px;
-  font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
-  font-weight: normal;
-  text-shadow: #FFF 0 1px 0;
-  color: #464646;
-  margin-bottom: 5px;
-  margin-left: 3px;
-}
+
 .pods-loop-table .default-text {
   display: none;
 }

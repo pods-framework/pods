@@ -29,88 +29,9 @@
 .pods-loop-row-expanded > .pods-loop-row-name {
   display: none;
 }
-.pods-loop-table.pods-loop-description {
-  margin-left: 3px;
-}
 
-.pods-loop-table .default-text {
-  display: none;
-}
-.pods-loop-table.no-rows > tbody > .default-text {
-  display: table-row;
-}
-.pods-loop-table .pods-icon {
-  margin-bottom: -3px;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-wrapper {
-  padding: 10px 10px 15px 10px;
-  margin-right: -7px;
-  margin-bottom: -2px;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-wrapper .form-table {
-  background: #fcfcfc;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-wrapper .wp_themeSkin table .mceIframeContainer {
-  background: white !important;
-}
-.pods-loop-table .pods-loop-row:hover {
-  background: #f1f1f1;
-}
-.pods-loop-table .pods-loop-row:hover .row-actions {
-  visibility: hidden !important;
-}
-.pods-loop-table .pods-loop-row:hover > td > .row-actions {
-  visibility: visible !important;
-}
-.pods-loop-table .pods-loop-row.nohover {
-  background: #fcfcfc !important;
-}
-.pods-loop-table .pods-loop-row.nohover > .pods-loop-row-label > .pods-loop-row-actions {
-  display: none !important;
-}
-.pods-loop-table .pods-loop-row.pods-loop-row-expanded .pods-loop-row-expanded > .pods-loop-row-label .pods-loop-row-actions {
-  display: none;
-}
-.pods-loop-table .pods-loop-row.pods-loop-row-expanded .pods-loop-row-expanded.current-hover > .pods-loop-row-label > .pods-loop-row-actions {
-  display: block;
-}
-.pods-loop-table .pods-loop-row label {
-  font-family: sans-serif;
-  font-size: 12px;
-}
-.pods-loop-table .pods-loop-row td > input.pods-form-ui-field-type-text {
-  width: 100%;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-add {
-  margin-top: 10px;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions {
-  display: none;
-  float: right;
-  margin-right: 13px;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions div {
-  float: left;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions .pods-genericon {
-  font-size: 30px;
-  font-weight: bold;
-  height: 25px;
-  width: 20px;
-  padding-right: 9px;
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions .deletion {
-  color: rgba(139, 0, 0, 0.3);
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions .deletion:hover {
-  color: rgba(139, 0, 0, 0.8);
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions .cancel {
-  color: rgba(125, 125, 125, 0.5);
-}
-.pods-loop-table .pods-loop-row .pods-loop-row-actions .cancel:hover {
-  color: #7d7d7d;
-}
+///
+
 .pods-loop-table .pods-loop-row.pods-loop-row-expanded > .pods-loop-row-label > .pods-loop-row-actions {
   display: block;
 }

@@ -2431,15 +2431,18 @@ class Pods_Data {
 								}
 							}
 						}
-						elseif ( isset( $pod[ 'fields' ][ $field_name ] ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`t`.`{$field_name}`";
-							else
-								$field_cast = "`{$field_name}`.`meta_value`";
-						}
 
-						if ( empty( $field_cast ) )
-							$field_cast = "`{$field_name}`";
+						if ( empty( $field_cast ) ) {
+							if ( isset( $pod[ 'fields' ][ $field_name ] ) && 'table' == $pod[ 'storage' ] ) {
+								$field_cast = "`t`.`{$field_name}`";
+							}
+							elseif ( 'meta' == $pod[ 'storage' ] ) {
+								$field_cast = "`{$field_name}`.`meta_value`";
+							}
+							else {
+								$field_cast = "`{$field_name}`";
+							}
+						}
 					}
 				}
 				else {

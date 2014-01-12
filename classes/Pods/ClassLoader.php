@@ -12,7 +12,7 @@
 	 */
 	class Pods_ClassLoader {
 
-		private $prefixedDirectories = array();
+		private $directoriesPrefixed = array();
 
 		private $directories = array();
 
@@ -32,8 +32,8 @@
 		 *
 		 * @return array
 		 */
-		public function getPrefixedDirectories () {
-			return $this->prefixedDirectories;
+		public function getDirectoriesPrefixed () {
+			return $this->directoriesPrefixed;
 		}
 
 		/**
@@ -45,13 +45,24 @@
 			return $this->directories;
 		}
 
-		public function addAlias ( $oldClass, $newClass ) {
-			$this->aliases[ $oldClass ] = $newClass;
+		/**
+		 * Adds a new class alias, forwarding the class to the new class.
+		 *
+		 * @param string $fromClass The class name we want to forward
+		 * @param string $toClass The class name we are forwarding to
+		 */
+		public function addAlias ( $fromClass, $toClass ) {
+			$this->aliases[ $fromClass ] = $toClass;
 		}
 
+		/**
+		 * Adds one or more aliases from an associative array.
+		 *
+		 * @param array $aliases associative array of aliases.
+		 */
 		public function addAliases ( array $aliases ) {
-			foreach ( $aliases as $oldClass => $newClass ) {
-				$this->addAlias( $oldClass, $newClass );
+			foreach ( $aliases as $fromClass => $toClass ) {
+				$this->addAlias( $fromClass, $toClass );
 			}
 		}
 
@@ -80,14 +91,14 @@
 
 				return;
 			}
-			if ( isset( $this->prefixedDirectories[ $prefix ] ) ) {
-				$this->prefixedDirectories[ $prefix ] = array_merge(
-					$this->prefixedDirectories[ $prefix ],
+			if ( isset( $this->directoriesPrefixed[ $prefix ] ) ) {
+				$this->directoriesPrefixed[ $prefix ] = array_merge(
+					$this->directoriesPrefixed[ $prefix ],
 					(array) $paths
 				);
 			}
 			else {
-				$this->prefixedDirectories[ $prefix ] = (array) $paths;
+				$this->directoriesPrefixed[ $prefix ] = (array) $paths;
 			}
 		}
 
@@ -129,6 +140,13 @@
 
 		}
 
+		/**
+		 * Finds the path to the file where the class is defined.
+		 *
+		 * @param string $class The classname to find
+		 *
+		 * @return bool|string
+		 */
 		public function findFile ( $class ) {
 			if ( false !== $pos = strrpos( $class, '\\' ) ) {
 				// namespaced class name
@@ -148,7 +166,7 @@
 				}
 			}
 
-			foreach ( $this->prefixedDirectories as $prefix => $dirs ) {
+			foreach ( $this->directoriesPrefixed as $prefix => $dirs ) {
 				if ( $class === strstr( $class, $prefix ) ) {
 					foreach ( $dirs as $dir ) {
 						if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
@@ -158,7 +176,7 @@
 				}
 			}
 
-			return false;
+			return null;
 		}
 
 		/**

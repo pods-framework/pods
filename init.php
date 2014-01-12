@@ -77,6 +77,51 @@ else {
 		$classLoader = new Pods_ClassLoader( );
 		$classLoader->addDirectory( PODS_DIR . 'classes' );
 		$classLoader->addDirectory( PODS_DIR . 'deprecated/classes' );
+		$classLoader->addAliases( array(
+			'PodsAPI' => 'Pods_API',
+			'PodsAdmin' => 'Pods_Admin',
+			'PodsArray' => 'Pods_Array',
+			'PodsComponent' => 'Pods_Component',
+			'PodsComponents' => 'Pods_Components',
+			'PodsData' => 'Pods_Data',
+			'PodsField' => 'Pods_Field',
+			'PodsForm' => 'Pods_Form',
+			'PodsInit' => 'Pods_Init',
+			'PodsMeta' => 'Pods_Meta',
+			'PodsMigrate' => 'Pods_Migrate',
+			'PodsObject' => 'Pods_Object',
+			'PodsObject_Field' => 'Pods_Object_Field',
+			'PodsObject_Group' => 'Pods_Object_Group',
+			'PodsObject_Pod' => 'Pods_Object_Pod',
+			'PodsUI' => 'Pods_UI',
+			'PodsView' => 'Pods_View',
+			'PodsWidgetField' => 'Pods_Widget_Field',
+			'PodsWidgetForm' => 'Pods_Widget_Form',
+			'PodsWidgetList' => 'Pods_Widget_List',
+			'PodsWidgetSingle' => 'Pods_Widget_Single',
+			'PodsWidgetView' => 'Pods_Widget_View',
+			'PodsField_Avatar' => 'Pods_Field_Avatar',
+			'PodsField_Boolean' => 'Pods_Field_Boolean',
+			'PodsField_Code' => 'Pods_Field_Code',
+			'PodsField_Color' => 'Pods_Field_Color',
+			'PodsField_Currency' => 'Pods_Field_Currency',
+			'PodsField_Date' => 'Pods_Field_Date',
+			'PodsField_DateTime' => 'Pods_Field_DateTime',
+			'PodsField_Email' => 'Pods_Field_Email',
+			'PodsField_File' => 'Pods_Field_File',
+			'PodsField_HTML' => 'Pods_Field_HTML',
+			'PodsField_Number' => 'Pods_Field_Number',
+			'PodsField_Paragraph' => 'Pods_Field_Paragraph',
+			'PodsField_Password' => 'Pods_Field_Password',
+			'PodsField_Phone' => 'Pods_Field_Phone',
+			'PodsField_Pick' => 'Pods_Field_Pick',
+			'PodsField_Slug' => 'Pods_Field_Slug',
+			'PodsField_Taxonomy' => 'Pods_Field_Taxonomy',
+			'PodsField_Text' => 'Pods_Field_Text',
+			'PodsField_Time' => 'Pods_Field_Time',
+			'PodsField_Website' => 'Pods_Field_Website',
+			'PodsField_WYSIWYG' => 'Pods_Field_WYSIWYG'
+		) );
 		$classLoader->register();
 
         require_once( PODS_DIR . 'includes/classes.php' );

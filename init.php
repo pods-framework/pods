@@ -74,7 +74,9 @@ else {
 
 		require_once( PODS_DIR . 'classes/Pods/ClassLoader.php' );
 
-		$classLoader = new Pods_ClassLoader( PODS_DIR . 'classes', null , '.php', PODS_DIR . 'deprecated/classes' );
+		$classLoader = new Pods_ClassLoader( );
+		$classLoader->addDirectory( PODS_DIR . 'classes' );
+		$classLoader->addDirectory( PODS_DIR . 'deprecated/classes' );
 		$classLoader->register();
 
         require_once( PODS_DIR . 'includes/classes.php' );

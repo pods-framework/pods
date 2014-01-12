@@ -1,147 +1,177 @@
 <?php
-/**
- * Class PodsClassLoader, PSR-0 compatible autoloader.
- *
- * Example usage:
- *
- * <code>
- *     $classLoader = new PodsClassLoader( '/path/to/load','Namespace\To\Load' );
- *     $classLoader->register();
- * </code>
- *
- */
-class Pods_ClassLoader {
-
-	private $_fileExtension;
-
-	private $_namespace;
-
-	private $_includePath;
-
-	private $_deprecatedIncludePath;
-
-	private $_namespaceSeparator = '\\';
-
-	private $_fallback = false;
-
 	/**
-	 * Creates a new instance that loads classes of the specified path, also works for namespaces.
+	 * Class PodsClassLoader, PSR-0 compatible autoloader.
 	 *
-	 * @param string $includePath Absolute path to include.
-	 * @param string $ns The namespace to use.
-	 * @param string $fileExtension File extensions to look for.
-	 */
-	public function __construct( $includePath = null, $ns = null, $fileExtension = '.php', $deprecatedIncludePath = null ) {
-
-		$this->_namespace = $ns;
-		$this->_includePath = $includePath;
-		$this->_fileExtension = $fileExtension;
-		$this->_deprecatedIncludePath = $deprecatedIncludePath;
-
-	}
-
-	/**
-	 * Installs this class loader on the SPL autoload stack.
-	 */
-	public function register() {
-
-		spl_autoload_register( array( $this, 'loadClass' ) );
-
-	}
-
-	/**
-	 * Uninstalls this class loader from the SPL autoloader stack.
-	 */
-	public function unregister() {
-
-		spl_autoload_unregister( array( $this, 'loadClass' ) );
-
-	}
-
-	/**
-	 * Loads the given class.
+	 * Example usage:
 	 *
-	 * @param string $className The name of the class to load.
+	 * <code>
+	 *     $classLoader = new PodsClassLoader( '/path/to/load','Namespace\To\Load' );
+	 *     $classLoader->register();
+	 * </code>
 	 *
-	 * @return void|boolean|null
 	 */
-	public function loadClass( $_className ) {
+	class Pods_ClassLoader {
 
-		$className = $_className;
+		private $prefixedDirectories = array();
 
-		$foundClass = false;
+		private $directories = array();
 
-		if ( null === $this->_namespace || $this->_namespace . $this->_namespaceSeparator === substr( $className, 0, strlen( $this->_namespace . $this->_namespaceSeparator ) ) ) {
-			$fileName = '';
+		private $aliases = array();
 
-			if ( false !== ( $lastNsPos = strripos( $className, $this->_namespaceSeparator ) ) ) {
-				$namespace = substr( $className, 0, $lastNsPos );
-				$className = substr( $className, $lastNsPos + 1 );
-				$fileName = str_replace( $this->_namespaceSeparator, DIRECTORY_SEPARATOR, $namespace ) . DIRECTORY_SEPARATOR;
-			}
+		/**
+		 * Returns aliases
+		 *
+		 * @return array
+		 */
+		public function getAliases () {
+			return $this->aliases;
+		}
 
-			$fileName .= str_replace( '_', DIRECTORY_SEPARATOR, $className ) . $this->_fileExtension;
+		/**
+		 * Returns prefixes.
+		 *
+		 * @return array
+		 */
+		public function getPrefixedDirectories () {
+			return $this->prefixedDirectories;
+		}
 
-			// Make sure we have a file before trying to include it, otherwise it will break WordPress
-			if ( file_exists( ( $this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '' ) . $fileName ) ) {
-				require_once( ( $this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '' ) . $fileName );
+		/**
+		 * Returns fallback directories.
+		 *
+		 * @return array
+		 */
+		public function getDirectories () {
+			return $this->directories;
+		}
 
-				$foundClass = true;
-			}
-			// Deprecated class loading
-			elseif ( null !== $this->_deprecatedIncludePath ) {
-				// Not many deprecated classes yet, only two
-				if ( file_exists( $this->_deprecatedIncludePath . DIRECTORY_SEPARATOR . $className . $this->_fileExtension ) ) {
-					require_once( $this->_includePath . DIRECTORY_SEPARATOR . $className . $this->_fileExtension );
+		public function addAlias ( $oldClass, $newClass ) {
+			$this->aliases[ $oldClass ] = $newClass;
+		}
 
-					$foundClass = true;
-				}
-				// PSR-0 version of the above
-				elseif ( file_exists( $this->_deprecatedIncludePath . DIRECTORY_SEPARATOR . $fileName ) ) {
-					require_once( $this->_includePath . DIRECTORY_SEPARATOR . $fileName );
-
-					$foundClass = true;
-				}
-			}
-
-			// Fallback handling for old class style (PodsInit >> Pods_Init)
-			if ( !$foundClass && !$this->_fallback && null !== $this->_namespace ) {
-				$fallbackClass = trim( preg_replace( '/([A-Z])/', '_$1', $_className ), '_' );
-
-				// Load main class if it doesn't exist
-				if ( !class_exists( $fallbackClass ) ) {
-					$this->_fallback = true;
-
-					$foundFallback = $this->loadClass( $fallbackClass );
-
-					// Setup fallback class
-					if ( $foundFallback ) {
-						$this->forwardClass( $_className, $fallbackClass );
-					}
-
-					$this->_fallback = false;
-				}
-			}
-			elseif ( $this->_fallback ) {
-				return $foundClass;
+		public function addAliases ( array $aliases ) {
+			foreach ( $aliases as $oldClass => $newClass ) {
+				$this->addAlias( $oldClass, $newClass );
 			}
 		}
 
-		return null;
+		/**
+		 * Adds prefixes.
+		 *
+		 * @param array $prefixes Prefixes to add
+		 */
+		public function addDirectoriesPrefixed ( array $prefixes ) {
+			foreach ( $prefixes as $prefix => $path ) {
+				$this->addDirectory( $path, $prefix );
+			}
+		}
 
-	}
+		/**
+		 * Registers a set of classes
+		 *
+		 * @param array|string $paths The location(s) of the classes
+		 * @param string $prefix The classes prefix
+		 */
+		public function addDirectory ( $paths, $prefix = null ) {
+			if ( !$prefix ) {
+				foreach ( (array) $paths as $path ) {
+					$this->directories[ ] = $path;
+				}
 
-	/**
-	 * Creates a fallback class that maps to the correct class (PodsInit >> Pods_Init).
-	 *
-	 * @param string $fromClass The name of the original class to map from.
-	 * @param string $toClass The name of the class to map to.
-	 *
-	 * @return void
-	 */
-	public function forwardClass( $fromClass, $toClass ) {
+				return;
+			}
+			if ( isset( $this->prefixedDirectories[ $prefix ] ) ) {
+				$this->prefixedDirectories[ $prefix ] = array_merge(
+					$this->prefixedDirectories[ $prefix ],
+					(array) $paths
+				);
+			}
+			else {
+				$this->prefixedDirectories[ $prefix ] = (array) $paths;
+			}
+		}
 
-		eval( "
+		/**
+		 * Registers this instance as an autoloader.
+		 *
+		 * @param Boolean $prepend Whether to prepend the autoloader or not
+		 */
+		public function register ( $prepend = false ) {
+			spl_autoload_register( array( $this, 'loadClass' ), true, $prepend );
+		}
+
+		/**
+		 * Unregisters this instance as an autoloader.
+		 */
+		public function unregister () {
+			spl_autoload_unregister( array( $this, 'loadClass' ) );
+		}
+
+		/**
+		 * Loads the given class.
+		 *
+		 * @param string $className The name of the class to load.
+		 *
+		 * @return boolean|null
+		 */
+		public function loadClass ( $className ) {
+
+			if ( isset( $this->aliases[ $className ] ) )
+				$this->forwardClass( $className, $this->aliases[ $className ] );
+
+			if ( $file = $this->findFile( $className ) ) {
+				require $file;
+
+				return true;
+			}
+
+			return null;
+
+		}
+
+		public function findFile ( $class ) {
+			if ( false !== $pos = strrpos( $class, '\\' ) ) {
+				// namespaced class name
+				$classPath = str_replace( '\\', DIRECTORY_SEPARATOR, substr( $class, 0, $pos ) ) . DIRECTORY_SEPARATOR;
+				$className = substr( $class, $pos + 1 );
+			}
+			else {
+				// PEAR-like class name
+				$classPath = null;
+				$className = $class;
+			}
+			$classPath .= str_replace( '_', DIRECTORY_SEPARATOR, $className ) . '.php';
+
+			foreach ( $this->directories as $dir ) {
+				if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
+					return $dir . DIRECTORY_SEPARATOR . $classPath;
+				}
+			}
+
+			foreach ( $this->prefixedDirectories as $prefix => $dirs ) {
+				if ( $class === strstr( $class, $prefix ) ) {
+					foreach ( $dirs as $dir ) {
+						if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
+							return $dir . DIRECTORY_SEPARATOR . $classPath;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Creates a fallback class that maps to the correct class (PodsInit >> Pods_Init).
+		 *
+		 * @param string $fromClass The name of the original class to map from.
+		 * @param string $toClass The name of the class to map to.
+		 *
+		 * @return void
+		 */
+		public function forwardClass ( $fromClass, $toClass ) {
+
+			eval( "
 			class {$fromClass} extends {$toClass} {
 
 				public function __construct() {
@@ -153,5 +183,5 @@ class Pods_ClassLoader {
 			}
 		" );
 
+		}
 	}
-}

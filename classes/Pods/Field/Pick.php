@@ -157,6 +157,11 @@ class Pods_Field_Pick extends Pods_Field {
                 'default' => 0,
                 'type' => 'number'
             ),
+			'pick_allow_html' => array(
+				'label' => __('Allow HTML','pods'),
+				'type' => 'boolean',
+				'default' => 0
+			),
             'pick_table_id' => array(
                 'label' => __( 'Table ID Column', 'pods' ),
                 'help' => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),

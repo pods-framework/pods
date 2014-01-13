@@ -75,6 +75,9 @@ $select2_args = array();
 
         $element.select2( {
             width : 'resolve',
+			<?php if (1 == (int) pods_v('pick_allow_html',$options)): ?>
+			escapeMarkup: function (m) { return m; },
+			<?php endif; ?>
             initSelection : function ( element, callback ) {
                 var data = [];
 

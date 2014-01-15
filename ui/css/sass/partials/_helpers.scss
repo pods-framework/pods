@@ -1,0 +1,47 @@
+/** === BORDER RADIUS === */
+@mixin border-top-left-round( $radii ){
+	-webkit-border-top-left-radius:$radii;
+	-moz-border-radius-topleft:$radii;
+	border-top-left-radius:$radii;
+} // border-top-left-round
+
+@mixin border-bottom-left-round( $radii ){
+	-webkit-border-bottom-left-radius:$radii;
+	-moz-border-radius-bottomleft:$radii;
+	border-bottom-left-radius:$radii;
+} // border-bottom-left-round
+
+
+@mixin border-top-right-round( $radii ){
+	-webkit-border-top-right-radius:$radii;
+	-moz-border-radius-topright:$radii;
+	border-top-right-radius:$radii;
+} // border-top-right-round
+
+@mixin border-bottom-right-round( $radii ){
+	-webkit-border-bottom-right-radius:$radii;
+	-moz-border-radius-bottomright:$radii;
+	border-bottom-right-radius:$radii;
+} // border-bottom-right-round
+
+@mixin border-top-round($radii){
+	@include border-top-left-round($radii);
+	@include border-top-right-round($radii);
+} // border-top-round
+
+@mixin border-bottom-round($radii){
+	@include border-bottom-left-round($radii);
+	@include border-bottom-right-round($radii);
+} // border-bottom-round
+
+@mixin border-left-round($radii){
+	@include border-top-left-round($radii);
+	@include border-bottom-left-round($radii);
+} // border-left-round
+
+@mixin border-all-round($radii){
+	@include border-top-left-round($radii);
+	@include border-bottom-left-round($radii);
+	@include border-top-right-round($radii);
+	@include border-bottom-right-round($radii);
+} // border-all-round

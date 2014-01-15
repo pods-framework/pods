@@ -4,6 +4,7 @@
 @import 'partials/admin-tables';
 @import 'partials/tabs';
 @import 'partials/fields';
+@import 'partials/mp6';
 
 .pods-no-show {
   display: none;
@@ -23,18 +24,6 @@
 }
 
 ///
-.mp6 .pods-tab-wrapper .pods-tabs li a {
-  padding-bottom: 4px;
-  -webkit-border-top-right-radius: 0;
-  -moz-border-radius-topright: 0;
-  border-top-right-radius: 0;
-  -webkit-border-top-left-radius: 0;
-  -moz-border-radius-topleft: 0;
-  border-top-left-radius: 0;
-}
-.mp6 .pods-form-ui-field-type-file {
-  margin-top: 15px;
-}
 .pods-form-ui-row-type-repeat .pods-repeating-field {
   background: #FFF;
   -webkit-border-top-right-radius: 3px;

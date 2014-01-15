@@ -30,4 +30,37 @@
 		border-color: #c9c9c9;
 	} // input
 
+	.pods-checkbox-wrapper{
+		float:left; margin:8px 5px 0 30px;
+
+		.pods-single-checkbox{
+			float:left; margin-bottom:5px;
+
+			// @todo this could probably be refactored to leverage sass better some sort of mixin that deals with columns
+			&.pods-checkbox-column-one{width:100%;}
+			&.pods-checkbox-column-two{width:50%;}
+			&.pods-checkbox-column-three{width:33%;}
+			&.pods-checkbox-column-four{width:25%;}
+		} // .pods-single-checkbox
+
+		input[type="checkbox"]{
+			width: 10px;
+			float: left;
+			margin: 8px 5px 0 0;
+		} // input[type="checkbox"]
+
+	} // .pods-checkbox-wrapper
+
+	select{
+		width: 65%;
+		float: right;
+		font-size: 13px;
+	} // select
+
+	small{
+		font-size: 12px;
+		margin-top: 6px;
+		display: inline-block;
+	} //small
+
 } // pods-field-option

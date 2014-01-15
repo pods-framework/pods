@@ -23,10 +23,49 @@
 				background: #F5F5F5;
 				text-decoration: none;
 				color: #AAA;
+
+				&:hover{
+					background: #eee;
+					color: #D54E21;
+				} // &:hover
 			} // a
+
+			&.selected{
+
+				a{
+					color: #464646;
+					background: white;
+					border-bottom: 1px solid white;
+					&:hover{
+						background: #eee;
+						color: #D54E21;
+					} // &:hover
+				} // a
+
+			} // &.selected
+
+			&:active{
+
+				a{
+					background: #CCC;
+					color: #FFF;
+					border-color: #AAA;
+					border-bottom: 0 none;
+				} // a
+
+			} // &:active
 
 		} // li
 
 	} // .pods-tabs
+
+	.pods-tab-content-wrapper{
+		border: 1px solid #cccccc;
+		border-top: 0 none; border-bottom: 0 none;
+		background: white;
+		padding-top: 5px;
+		font-size: 16px;
+		overflow: hidden;
+	} // .pods-tab-content-wrapper
 
 } // .pods-tab-wrapper

@@ -23,39 +23,6 @@
 
 ///
 
-// make a tab wrapper partial
-.pods-tab-wrapper .pods-tabs li.selected a {
-  color: #464646;
-  background: white;
-  border-bottom: 1px solid white;
-}
-.pods-tab-wrapper .pods-tabs li.selected a:hover {
-  background: #eee;
-  color: #D54E21;
-}
-.pods-tab-wrapper .pods-tabs li:active a {
-  background: #CCC;
-  color: #FFF;
-  border-color: #AAA;
-  border-bottom: 0 none;
-}
-.pods-tab-wrapper .pods-tab-content-wrapper {
-  border: 1px solid #cccccc;
-  border-top: 0 none;
-  border-bottom: 0 none;
-  background: white;
-  padding-top: 5px;
-  font-size: 16px;
-  overflow: hidden;
-}
-.pods-tab-wrapper .pods-tab-content-wrapper h4 {
-  background: #dbdbdb;
-  color: #333;
-  padding: 15px 6px 8px 9px;
-  margin: 0;
-  letter-spacing: .05em;
-  font-size: 15px;
-}
 .pods-field-option {
   overflow: hidden;
   clear: both;

@@ -1,0 +1,32 @@
+.pods-tab-wrapper{
+	min-width:300px; max-width:600px;
+
+	.pods-tabs{
+		padding:3px 0;
+		margin-left:0; margin-bottom:0;
+		border-bottom: 1px solid #CCC;
+		font-size: 15px;
+
+		li{
+			list-style: none;
+			margin: 0;
+			display: inline;
+
+			&:first-child a{margin-left:0;}
+
+			a{
+				@include border-top-round(3px);
+				padding: 6px 10px 3px;
+				margin-left: 3px;
+				border: 1px solid #CCC;
+				border-bottom: none;
+				background: #F5F5F5;
+				text-decoration: none;
+				color: #AAA;
+			} // a
+
+		} // li
+
+	} // .pods-tabs
+
+} // .pods-tab-wrapper

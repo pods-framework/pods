@@ -1,6 +1,8 @@
+@import 'partials/helpers';
 @import 'partials/colors';
 @import 'partials/genericons';
 @import 'partials/admin-tables';
+@import 'partials/tabs';
 
 .pods-no-show {
   display: none;
@@ -22,44 +24,6 @@
 ///
 
 // make a tab wrapper partial
-.pods-tab-wrapper {
-  min-width: 300px;
-  max-width: 600px;
-}
-.pods-tab-wrapper .pods-tabs {
-  padding: 3px 0;
-  margin-left: 0;
-  margin-bottom: 0;
-  border-bottom: 1px solid #CCC;
-  font-size: 15px;
-}
-.pods-tab-wrapper .pods-tabs li {
-  list-style: none;
-  margin: 0;
-  display: inline;
-}
-.pods-tab-wrapper .pods-tabs li:first-child a {
-  margin-left: 0;
-}
-.pods-tab-wrapper .pods-tabs li a {
-  padding: 6px 10px 3px;
-  margin-left: 3px;
-  border: 1px solid #CCC;
-  border-bottom: none;
-  background: #F5F5F5;
-  text-decoration: none;
-  color: #AAA;
-  -webkit-border-top-right-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  border-top-right-radius: 3px;
-  -webkit-border-top-left-radius: 3px;
-  -moz-border-radius-topleft: 3px;
-  border-top-left-radius: 3px;
-}
-.pods-tab-wrapper .pods-tabs li a:hover {
-  background: #eee;
-  color: #D54E21;
-}
 .pods-tab-wrapper .pods-tabs li.selected a {
   color: #464646;
   background: white;

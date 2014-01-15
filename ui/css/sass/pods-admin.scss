@@ -1,3 +1,13 @@
+@import 'partials/helpers';
+@import 'partials/colors';
+@import 'partials/genericons';
+@import 'partials/admin-tables';
+@import 'partials/tabs';
+@import 'partials/fields';
+@import 'partials/forms';
+@import 'partials/mp6';
+
+
 /*
  * Pods Admin
  */
@@ -479,3 +489,44 @@ div.row-actions.row-actions-toggle {
     height: auto;
 }
 
+
+/*
+	@todo I have no idea what to do with this css yet. Hopefully it comes to me in a flash of brilliance
+*/
+.pods-no-show {
+  display: none;
+}
+.pods-float-right {
+  text-align: right;
+}
+.pods-loop-row-save {
+  float: right;
+  display: inline-block;
+}
+.pods-loop-row-delete {
+  display: inline-block;
+}
+.pods-loop-row-expanded > .pods-loop-row-name {
+  display: none;
+}
+.pods-more-controls {
+  position: relative;
+}
+.pods-more-controls a {
+  position: absolute;
+  top: -20px;
+  display: block;
+  width: 100%;
+  padding: 5px 0;
+  text-align: center;
+}
+.pods-more-controls a.pods-no-show {
+  visibility: hidden;
+}
+.pods-more-controls a .more,
+.pods-more-controls a .less {
+  margin-top: 3px;
+}
+.pods-required {
+  color: rgba(139, 0, 0, 0.8);
+}

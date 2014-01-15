@@ -1,0 +1,9 @@
+.pods-red-hover {
+	color: rgba(139, 0, 0, 0.3);
+	&:hover{color: rgba(139, 0, 0, 0.8);}
+} // .pods-red-hover
+
+.pods-grey-hover {
+	color: rgba(125, 125, 125, 0.5);
+	&:hover{color: #7d7d7d;}
+} // .pods-grey-hover

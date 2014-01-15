@@ -4,6 +4,7 @@
 @import 'partials/admin-tables';
 @import 'partials/tabs';
 @import 'partials/collapsible';
+@import 'partials/toggled';
 @import 'partials/mp6';
 
 
@@ -86,34 +87,6 @@
 .pods-wizard h3 {
     font-family: Georgia !important;
     margin-bottom: 0px !important;
-}
-
-/*
- * Pods Toggled
- */
-.pods-toggled {
-    clear: both;
-    margin-top: 30px;
-}
-
-.pods-toggled.pods-toggled-only {
-    margin-top: 0;
-}
-
-.pods-toggled h3 {
-    cursor: pointer;
-}
-
-.pods-no-toggle h3 {
-    cursor: default;
-}
-
-tr.pods-toggled-on {
-    background-color: #FFF;
-}
-
-tr.pods-toggled-off {
-    background-color: #F4F4F4;
 }
 
 /*

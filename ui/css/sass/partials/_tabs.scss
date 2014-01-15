@@ -85,6 +85,8 @@
 
 .pods-tabbed{
 
+	div{overflow:hidden; zoom:1;}
+
 	ul.pods-tabs{
 
 		zoom:1;
@@ -140,3 +142,11 @@
 .pods-nav-tabbed .pods-nav-tab-group .pods-nav-tab {
     display: none;
 }
+
+.pods-tab{
+
+	&.pods-basic-options,
+	&#pods-advanced-labels,
+	&#pods-adavanced-settings-labels{display:block;}
+
+} // pods-tab

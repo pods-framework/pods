@@ -3,6 +3,7 @@
 @import 'partials/genericons';
 @import 'partials/admin-tables';
 @import 'partials/tabs';
+@import 'partials/fields';
 
 .pods-no-show {
   display: none;
@@ -22,44 +23,6 @@
 }
 
 ///
-
-.pods-field-option {
-  overflow: hidden;
-  clear: both;
-  display: block;
-  padding: 10px 10px 10px 10px;
-  border-bottom: 1px solid #cccccc;
-  min-height: 26px;
-}
-.pods-field-option:hover {
-  background: #f8f8f8;
-}
-.pods-field-option:nth-child(even) {
-  background: #FCFCFC;
-}
-.pods-field-option:nth-child(even):hover {
-  background: #f8f8f8;
-}
-.pods-field-option:first-child {
-  margin-top: -5px;
-}
-.pods-field-option label {
-  width: 30%;
-  float: left;
-  font-size: 14px !important;
-  color: black;
-  margin-top: 7px;
-}
-.pods-field-option input {
-  font-size: 14px;
-  width: 65%;
-  float: right;
-  border-color: #c9c9c9;
-}
-.pods-field-option .pods-checkbox-wrapper {
-  float: left;
-  margin: 8px 5px 0 30px;
-}
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox {
   float: left;
   margin-bottom: 5px;

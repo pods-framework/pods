@@ -97,6 +97,8 @@
 
 	} // .pods-loop-row
 
+	.form-table{margin-bottom:5px;}
+
 	/* === NO CONTENT IS IN THE LOOP TABLE YET === */
 	&.no-rows{
 
@@ -105,3 +107,32 @@
 	} // &.no-rows
 
 } // .pods-loop-table
+
+/* === Custom CSS for the edit tags pages === */
+.edit-tags{
+
+	.pods-loop-table,
+	.pods-metabox{margin-bottom:10px; clear:none;}
+
+	.pods-loop-table{
+		position: relative;
+		width: 100%;
+		-webkit-transition: width 1s ease;
+		transition: width 1s ease;
+	} // .pods-loop-table
+
+	#col-left{overflow:visible;}
+
+	&.pods-loop-form-expanded{
+
+		.pods-loop-wrapper > .pods-loop-table,
+		.pods-loop-row-add{
+			position: relative;
+			width: 200%;
+			-webkit-transition: width 1s ease;
+			transition: width 1s ease;
+		} // .pods-loop-wrapper > .pods-loop-table, .pods-loop-row-add
+
+	} // &.pods-loop-form-expanded
+
+} // .edit-tags

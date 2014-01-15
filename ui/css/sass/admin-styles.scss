@@ -32,26 +32,6 @@
 
 ///
 
-.pods-loop-table .pods-loop-row.pods-loop-row-expanded > .pods-loop-row-label > .pods-loop-row-actions {
-  display: block;
-}
-.pods-loop-table .form-table {
-  margin-bottom: 5px;
-}
-.edit-tags-php .pods-loop-table,
-.edit-tags-php .pods-metabox {
-  margin-bottom: 10px;
-  clear: none;
-}
-.edit-tags-php .pods-loop-table {
-  position: relative;
-  width: 100%;
-  -webkit-transition: width 1s ease;
-  transition: width 1s ease;
-}
-.edit-tags-php #col-left {
-  overflow: visible;
-}
 .edit-tags-php.pods-loop-form-expanded .pods-loop-wrapper > .pods-loop-table,
 .edit-tags-php.pods-loop-form-expanded .pods-loop-row-add {
   position: relative;
@@ -59,6 +39,8 @@
   -webkit-transition: width 1s ease;
   transition: width 1s ease;
 }
+
+// make a tab wrapper partial
 .pods-tab-wrapper {
   min-width: 300px;
   max-width: 600px;

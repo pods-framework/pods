@@ -3,6 +3,7 @@
 @import 'partials/genericons';
 @import 'partials/admin-tables';
 @import 'partials/tabs';
+@import 'partials/collapsible';
 @import 'partials/mp6';
 
 
@@ -85,78 +86,6 @@
 .pods-wizard h3 {
     font-family: Georgia !important;
     margin-bottom: 0px !important;
-}
-
-/*
- * Pods Collapsible
- */
-tbody.pods-manage-list div {
-    overflow: hidden;
-    zoom: 1;
-}
-
-tbody.pods-manage-list div.pods-manage-row-wrapper {
-    max-width: 500px;
-    display: none;
-    width: 100%;
-}
-
-tbody.pods-manage-list tr.pods-manage-row-expanded {
-    background: #f1f1f1;
-}
-
-tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-name,
-tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-type,
-tbody.pods-manage-list tr.pods-manage-row-expanded td.pods-manage-row-comment,
-tbody.pods-manage-list tr.pods-manage-row-expanded span.pods-manage-row-id,
-tbody.pods-manage-list tr.pods-manage-row-expanded div.row-actions,
-tbody.pods-manage-list tr.pods-manage-row-expanded th.pods-manage-sort img {
-    display: none;
-}
-
-tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort {
-    cursor: move;
-}
-tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
-    vertical-align: top;
-    margin-top: 1px;
-}
-
-tbody.pods-manage-list tr.pods-manage-row td > span.pods-manage-row-more {
-    display: none;
-    margin-left: 5px;
-    color: #999;
-}
-
-tbody.pods-manage-list tr.pods-manage-row td:hover > span.pods-manage-row-more {
-    display: inline;
-}
-
-tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-actions {
-    margin-bottom: 4px;
-    overflow: visible;
-}
-
-tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-delete {
-    float: left;
-    text-align: left;
-    width: 40%;
-}
-
-tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
-    float: right;
-    text-align: right;
-    width: 40%;
-}
-
-tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-delete a.submitdelete,
-tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add,
-tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-update {
-    display: none;
-}
-
-tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add {
-    display: inline-block;
 }
 
 /*

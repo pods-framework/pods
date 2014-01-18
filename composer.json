@@ -1,0 +1,38 @@
+{
+	"name" : "podsframework/pods",
+	"description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
+	"type" : "wordpress-plugin",
+	"license" : "GPL-2.0",
+	"authors" : [
+		{
+			"name" : "Scott Kingsley Clark"
+		},
+		{
+			"name" : "Phil Lewis"
+		},
+		{
+			"name" : "David Cramer"
+		},
+		{
+			"name" : "Josh Pollock"
+		},
+		{
+			"name" : "Mike Green"
+		},
+		{
+			"name" : "Dan Stefan Oprean"
+		},
+		{
+			"name" : "Jonathan Christopher"
+		},
+		{
+			"name" : "Matt Gibbs"
+		}
+	],
+	"require" : {
+		"composer/installers" : "~1.0.0"
+	},
+	"extra" : {
+		"installer-name" : "pods"
+	}
+}

@@ -1,5 +1,6 @@
 @import 'partials/helpers';
 @import 'partials/forms';
+@import 'partials/fields';
 
 #post-body {
     border: none;
@@ -20,110 +21,12 @@
     width: 50%;
 }
 
-.pods-field label {
-    cursor: pointer;
-    display: inline-block;
-    padding: 0 0 4px 2px;
-}
-
-.pods-field input, .pods-field textarea {
-    display: block;
-}
-
-.pods-field .quicktags-toolbar input {
-    display: inline-block;
-    width: auto;
-}
-
-.pods-field p.pods-field-comment {
-    color: #aaa;
-    font-size: .9em;
-    font-style: italic;
-    margin: 5px 0 0 2px !important;
-}
-
 .pods-pick select {
     display: block;
     min-width: 125px;
 }
 
-.pods-boolean {
-    position: relative;
-}
-
-.pods-boolean input {
-    display: block;
-    min-height:16px;
-    left: 2px;
-    margin: 1px 7px 0 0;
-    padding: 0;
-    position: absolute;
-    top: 10px;
-    width: auto;
-}
-
-.pods-boolean label {
-    margin-left: 20px;
-    padding-top: 1px;
-}
-
-.pods-pick-values {
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 3px;
-    min-width: 125px;
-    max-height: 200px;
-    overflow: auto;
-    padding: 2px 0;
-}
-
-select.pods-form-ui-field-type-pick[multiple] {
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 3px;
-    width: 100%;
-    max-height: 200px;
-}
-
-.pods-pick-values ul {
-    overflow: auto;
-    margin: 0;
-}
-
-.pods-pick-values li {
-    border-bottom: 1px solid #f4f4f4;
-    line-height: 1em;
-    margin: 0;
-    padding: 3px 6px 2px;
-}
-
-.pods-pick-values li:nth-child(even) {
-    background: #fcfcfc;
-}
-
-.pods-pick-values label {
-    display: block;
-    padding-bottom: 3px;
-    padding-top: 3px;
-}
-
-.pods-pick-values li:last-of-type {
-    border-bottom: 0;
-}
-
-.pods-pick-values li .pods-field {
-    padding: 3px 0 2px;
-}
-
-.pods-pick-values li .pods-boolean input {
-    top: 5px;
-}
-
-.pods-field.pods-boolean:hover,
-.pods-pick-values.pods-pick-radio li:hover {
-    background: #ffffd8;
-}
-
+///
 select.pods-pick-multi {
     height: auto !important;
 }

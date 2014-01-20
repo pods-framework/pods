@@ -1,3 +1,108 @@
+/**
+	This should hold all the field Sass for Pods
+**/
+
+$hover-background-color:#FFFFD8;
+
+.pods-field{
+
+	label{
+		cursor: pointer;
+		display: inline-block;
+		padding: 0 0 4px 2px;
+	} // label
+
+	input, textarea{display:block;}
+
+	.quicktags-toolbar{
+
+		input{
+			display: inline-block;
+			width: auto;
+		} // input
+
+	} // .quicktags-toolbar
+
+	p.pods-field-comment{
+		color: #aaa;
+		font-size: .9em;
+		font-style: italic;
+		margin: 5px 0 0 2px !important;
+	} // p.pods-field-comment
+
+} // .pods-field
+
+/* === BOOLEAN INPUTS === */
+.pods-boolean{
+	position:relative;
+
+	input {
+		display: block;
+		min-height:16px;
+		left: 2px;
+		margin: 1px 7px 0 0;
+		padding: 0;
+		position: absolute;
+		top: 10px;
+		width: auto;
+	} // input
+
+	label{
+		margin-left: 20px;
+		padding-top: 1px;
+	} // label
+
+	&:hover{background:$hover-background-color;}
+
+} // .pods-boolean
+
+/* === PODS PICK === */
+.pods-pick-values{
+	@include border-all-round( 3px );
+	background: #fff;
+	border: 1px solid #dfdfdf;
+	min-width: 125px;
+	max-height: 200px;
+	overflow: auto;
+	padding: 2px 0;
+
+	ul{
+		overflow: auto;
+		margin: 0;
+	} // ul
+
+	li{
+		border-bottom: 1px solid #f4f4f4;
+		line-height: 1em;
+		margin: 0;
+		padding: 3px 6px 2px;
+
+		// @todo this striping is a candidate for Sass magic and maybe remove the last border at the same time?
+		&:nth-child(even){background:#fcfcfc;}
+		&:last-of-type{border-bottom:0;}
+
+		.pods-field{padding: 3px 0 2px;} // .pods-field
+
+		.pods-boolean input{top: 5px;}
+
+	} // ul
+
+	label{
+		display: block;
+		padding-bottom: 3px;
+		padding-top: 3px;
+	} // lable
+
+} // .pods-pick-values
+
+select.pods-form-ui-field-type-pick[multiple] {
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    width: 100%;
+    max-height: 200px;
+}
+
 .pods-field-option{
 	overflow: hidden;
 	clear: both;

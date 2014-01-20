@@ -5,8 +5,11 @@
 	 * Example usage:
 	 *
 	 * <code>
-	 *     $classLoader = new PodsClassLoader( '/path/to/load','Namespace\To\Load' );
-	 *     $classLoader->register();
+	 *     $classLoader = new Pods_ClassLoader( );
+	 *     $classLoader->addDirectory( 'path/to/load' );
+	 *     $classLoader->addDirectory( 'path/to/load', 'namespace/prefix' );
+	 *     $classLoader->addAlias( 'Class_From', 'Class_To' );
+	 *     $classLoader->register( );
 	 * </code>
 	 *
 	 */

@@ -12,40 +12,43 @@
 /*
  * Pods Admin
  */
-.pods-admin .pods-leaf-watermark-right {
-    position: fixed;
-    width: 236px;
-    height: 178px;
-    bottom: 50px;
-    right: 16px;
-	z-index: -1;
-}
+.pods-admin{
 
-.pods-admin .pods_floatmenu {
-    width: 200px;
-}
+	.pods-leaf-watermark-right {
+		position: fixed;
+		width: 236px;
+		height: 178px;
+		bottom: 50px;
+		right: 16px;
+		z-index: -1;
+	} // .pods-leaf-watermark-right
 
-.pods-admin .pods-icon {
-    display: inline-block;
-    padding: 1px 0 0 5px;
-    vertical-align: top;
-}
+	.pods_floatmenu {width: 200px;}
+
+	.pods-icon {
+		display: inline-block;
+		padding: 1px 0 0 5px;
+		vertical-align: top;
+	} // .pods-icon
+
+	.waiting {
+		display: none;
+		vertical-align: middle;
+	} // .waiting
+
+	button,
+	a.button,
+	a.button-secondary,
+	a.button-primary {
+		vertical-align: middle;
+	}
+
+} // .pods-admin
 
 .icon32#icon-pods {
     background: url(../images/icon32.png) no-repeat;
 }
 
-.pods-admin .waiting {
-    display: none;
-    vertical-align: middle;
-}
-
-.pods-admin button,
-.pods-admin a.button,
-.pods-admin a.button-secondary,
-.pods-admin a.button-primary {
-    vertical-align: middle;
-}
 
 /*
  * Pods Validate

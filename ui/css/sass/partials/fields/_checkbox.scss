@@ -22,7 +22,7 @@
 	} // .pods-checkbox-wrapper
 
 	.pods-field input[type=checkbox]:focus + label{
-		background: #ffffcc;
+		background:$focus-background;
 	}
 
 } // .pods-field-option

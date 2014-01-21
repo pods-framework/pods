@@ -4,7 +4,19 @@
 
 $hover-background-color:#FFFFD8;
 
+@mixin label-standard{
+	padding-top: 0;
+	float: none;
+	width: auto;
+	max-width: 100%;
+} // label-standard
+
 @import 'fields/boolean';
+@import 'fields/date';
+@import 'fields/pick';
+@import 'fields/select2';
+@import 'fields/number';
+@import 'fields/slider';
 
 
 .pods-field{
@@ -35,81 +47,6 @@ $hover-background-color:#FFFFD8;
 
 } // .pods-field
 
-/* === PODS PICK === */
-.pods-pick-values{
-	@include border-all-round( 3px );
-	background: #fff;
-	border: 1px solid #dfdfdf;
-	min-width: 125px;
-	max-height: 200px;
-	overflow: auto;
-	padding: 2px 0;
-
-	ul{
-		overflow: auto;
-		margin: 0;
-	} // ul
-
-	li{
-		border-bottom: 1px solid #f4f4f4;
-		line-height: 1em;
-		margin: 0;
-		padding: 3px 6px 2px;
-
-		// @todo this striping is a candidate for Sass magic and maybe remove the last border at the same time?
-		&:nth-child(even){background:#fcfcfc;}
-		&:last-of-type{border-bottom:0;}
-
-		.pods-field{padding: 3px 0 2px;} // .pods-field
-
-		.pods-boolean input{top: 5px;}
-
-		&:hover{background:$hover-background-color;}
-
-	} // ul
-
-	label{
-		display: block;
-		padding-bottom: 3px;
-		padding-top: 3px;
-	} // label
-
-} // .pods-pick-values
-
-/* === PODS DATE === */
-.pods-date{
-
-	input{
-		min-width:125px;
-
-		&.pods-date-field.hasDatepicker {
-			background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
-			cursor: pointer;
-			padding-left: 25px !important;
-			padding-top: 6px !important;
-			width: 150px;
-		} // &.pods-date-field.hasDatepicker
-
-	} // input
-
-} // .pods-date
-
-/* === PODS NUMBER === */
-.pods-number{
-	input{min-width:125px;}
-} // .pods-number
-
-/* === PODS SLIDER FIELD === */
-.pods-slider-field{max-width:300px;}
-
-/* === SELECT === */
-select.pods-form-ui-field-type-pick[multiple] {
-	@include border-all-round(3px);
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    width: 100%;
-    max-height: 200px;
-}
 
 .pods-field-option{
 	overflow: hidden;
@@ -198,7 +135,6 @@ div.pods-manage-field{
 
 	} // .pods-field-option, .pods-field-option-group
 
-	.pods-pick-values li,
 	.pods-field{position:relative;}
 
 	.pods-field-option label,
@@ -209,22 +145,11 @@ div.pods-manage-field{
 		max-width: 150px;
 	}
 
-	.pods-field.pods-boolean label,
-	.pods-field-option .pods-pick-values label{
-		padding-top: 0;
-		float: none;
-		width: auto;
-		max-width: 100%;
+	.pods-field.pods-boolean label{
+		@include label-standard;
 	}
 
 	.pods-field-option{
-
-		.pods-pick-values .pods-field.pods-boolean{
-			float: none;
-			margin-left: 0;
-			width: auto;
-			max-width: 100%;
-		}
 
 		input[type="text"],
 		select,
@@ -263,7 +188,6 @@ div.pods-manage-field{
 
 	} // .pods-field-option
 
-	.pods-pick-values,
 	.pods-slider-field{
 		display: block;
 		float: left;
@@ -293,41 +217,6 @@ div.pods-manage-field{
 
 	} // .pods-field
 
-	.pods-pick-values{
-		label{
-			padding-top:0;
-			display:block;
-			margin-left:20px;
-		} // label
-
-		ul{
-			overflow:auto; margin:5px 0;
-
-			.pods-field.pods-boolean{margin:0;}
-		} // ul
-
-		&.pods-zebra{
-			width:100%; max-width:100%;
-
-			div.pods-boolean{padding:3px;}
-		} // &.pods-zebra
-
-		li.pods-zebra-odd{
-			display:block;
-			width:50%;
-			float:left;
-			clear:both;
-		} // li.pods-zebra-odd
-
-		li.pods-zebra-even{
-			display:block;
-			width:50%;
-			float:left;
-			clear:none;
-		} // li.pods-zebra-even
-
-	} // .pods-pick-values
-
 	input{
 
 		&[type="checkbox"],
@@ -347,34 +236,7 @@ div.pods-manage-field{
 
 } // div.pods-manage-field
 
-/* === SELECT 2 === */
-// @todo there is repeated CSS here and parts of it are different
-.pods-manage-field{
-	.pods-select2{
-		display: block;
-		float: left;
-		margin-left: 22px;
-		width: 65%;
-	} // .pods-select2
 
-	.pods-form-ui-field-type-select2{
-		min-width: 30%;
-		width: auto;
-		min-height: 28px;
-	} // .pods-form-ui-field-type-select2
-
-	.pods-select2 .select2-container-multi .select2-choices .select2-search-field input{height: auto;}
-} // .pods-manage-field
-
-.pods-form-ui-field-type-select2 {
-    min-width: 20%;
-    width: auto;
-    min-height: 28px;
-}
-
-.pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
-    height: auto;
-}
 
 /* === PODS FORM === */
 .pods-form{
@@ -388,8 +250,7 @@ div.pods-manage-field{
 	} // .pods-validate-error-message
 
 	div.pods-form-ui-field-type-avatar:after,
-	div.pods-form-ui-field-type-file:after,
-	div.pods-form-ui-field-type-pick:after{
+	div.pods-form-ui-field-type-file:after{
 		@include pods-visibility-hidden;
 	}
 

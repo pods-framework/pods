@@ -1,0 +1,17 @@
+/* === PODS DATE === */
+.pods-date{
+
+	input{
+		min-width:125px;
+
+		&.pods-date-field.hasDatepicker {
+			background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
+			cursor: pointer;
+			padding-left: 25px !important;
+			padding-top: 6px !important;
+			width: 150px;
+		} // &.pods-date-field.hasDatepicker
+
+	} // input
+
+} // .pods-date

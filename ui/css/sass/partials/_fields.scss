@@ -17,6 +17,7 @@ $hover-background-color:#FFFFD8;
 @import 'fields/select2';
 @import 'fields/number';
 @import 'fields/slider';
+@import 'fields/wysiwyg';
 
 
 .pods-field{
@@ -158,7 +159,6 @@ div.pods-manage-field{
 			max-width: 300px;
 		}
 
-		.pods-form-ui-field-type-wysiwyg textarea{width:100%;}
 
 		div select{float:none; width:100%;}
 

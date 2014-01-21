@@ -18,6 +18,7 @@ $hover-background-color:#FFFFD8;
 @import 'fields/number';
 @import 'fields/slider';
 @import 'fields/wysiwyg';
+@import 'fields/file';
 
 
 .pods-field{
@@ -150,8 +151,7 @@ div.pods-manage-field{
 
 		input[type="text"],
 		select,
-		textarea,
-		.pods-form-ui-field-type-file{
+		textarea{
 			display: block;
 			float: left;
 			margin-left: 22px;
@@ -162,34 +162,7 @@ div.pods-manage-field{
 
 		div select{float:none; width:100%;}
 
-		.pods-form-ui-field-type-file{
-			padding-bottom:8px;
-
-			table.form-table{
-				margin-top:0;
-
-				tr.form-field td{padding:0; border-bottom:none;}
-			} // table.form-table
-
-			ul.pods-files li.pods-file-name{
-				left: 46px;
-				right: 30px;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-
-		} // .pods-form-ui-field-type-file
-
 	} // .pods-field-option
-
-	.pods-slider-field{
-		display: block;
-		float: left;
-		margin-left: 22px;
-		width: 65%;
-		max-width: 300px;
-	}
 
 	.pods-field-option-group{
 		p.pods-field-option-group-label{margin-top:0;}
@@ -227,8 +200,7 @@ div.pods-manage-field{
 		display: inline-block;
 	} // .pods-validate-error-message
 
-	div.pods-form-ui-field-type-avatar:after,
-	div.pods-form-ui-field-type-file:after{
+	div.pods-form-ui-field-type-avatar:after{
 		@include pods-visibility-hidden;
 	}
 

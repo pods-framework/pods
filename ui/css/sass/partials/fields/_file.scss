@@ -1,0 +1,35 @@
+.pods-manage-field{
+	.pods-field-option{
+
+		.pods-form-ui-field-type-file{
+			display: block;
+			float: left;
+			margin-left: 22px;
+			width: 65%;
+			max-width: 300px;
+			padding-bottom:8px;
+
+			table.form-table{
+				margin-top:0;
+
+				tr.form-field td{padding:0; border-bottom:none;}
+			} // table.form-table
+
+			ul.pods-files li.pods-file-name{
+				left: 46px;
+				right: 30px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+		} // .pods-form-ui-field-type-file
+
+	} // .pods-field-option
+} // .pods-manange-field
+
+.pods-form{
+	div.pods-form-ui-field-type-file:after{
+		@include pods-visibility-hidden;
+	}
+} // .pods-form

@@ -4,6 +4,9 @@
 
 $hover-background-color:#FFFFD8;
 
+@import 'fields/boolean';
+
+
 .pods-field{
 
 	label{
@@ -31,30 +34,6 @@ $hover-background-color:#FFFFD8;
 	} // p.pods-field-comment
 
 } // .pods-field
-
-/* === BOOLEAN INPUTS === */
-.pods-boolean{
-	position:relative;
-
-	input {
-		display: block;
-		min-height:16px;
-		left: 2px;
-		margin: 1px 7px 0 0;
-		padding: 0;
-		position: absolute;
-		top: 10px;
-		width: auto;
-	} // input
-
-	label{
-		margin-left: 20px;
-		padding-top: 1px;
-	} // label
-
-	&:hover{background:$hover-background-color;}
-
-} // .pods-boolean
 
 /* === PODS PICK === */
 .pods-pick-values{
@@ -85,20 +64,49 @@ $hover-background-color:#FFFFD8;
 
 		.pods-boolean input{top: 5px;}
 
+		&:hover{background:$hover-background-color;}
+
 	} // ul
 
 	label{
 		display: block;
 		padding-bottom: 3px;
 		padding-top: 3px;
-	} // lable
+	} // label
 
 } // .pods-pick-values
 
+/* === PODS DATE === */
+.pods-date{
+
+	input{
+		min-width:125px;
+
+		&.pods-date-field.hasDatepicker {
+			background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
+			cursor: pointer;
+			padding-left: 25px !important;
+			padding-top: 6px !important;
+			width: 150px;
+		} // &.pods-date-field.hasDatepicker
+
+	} // input
+
+} // .pods-date
+
+/* === PODS NUMBER === */
+.pods-number{
+	input{min-width:125px;}
+} // .pods-number
+
+/* === PODS SLIDER FIELD === */
+.pods-slider-field{max-width:300px;}
+
+/* === SELECT === */
 select.pods-form-ui-field-type-pick[multiple] {
+	@include border-all-round(3px);
     background: #fff;
     border: 1px solid #dfdfdf;
-    border-radius: 3px;
     width: 100%;
     max-height: 200px;
 }
@@ -337,6 +345,11 @@ div.pods-manage-field{
 
 	} // input
 
+} // div.pods-manage-field
+
+/* === SELECT 2 === */
+// @todo there is repeated CSS here and parts of it are different
+.pods-manage-field{
 	.pods-select2{
 		display: block;
 		float: left;
@@ -351,5 +364,47 @@ div.pods-manage-field{
 	} // .pods-form-ui-field-type-select2
 
 	.pods-select2 .select2-container-multi .select2-choices .select2-search-field input{height: auto;}
+} // .pods-manage-field
 
-} // div.pods-manage-field
+.pods-form-ui-field-type-select2 {
+    min-width: 20%;
+    width: auto;
+    min-height: 28px;
+}
+
+.pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
+    height: auto;
+}
+
+/* === PODS FORM === */
+.pods-form{
+	overflow:hidden;
+
+	.pods-validate-error-message {
+		color: #790000;
+		font-weight: bold;
+		padding: 2px 0 5px;
+		display: inline-block;
+	} // .pods-validate-error-message
+
+	div.pods-form-ui-field-type-avatar:after,
+	div.pods-form-ui-field-type-file:after,
+	div.pods-form-ui-field-type-pick:after{
+		@include pods-visibility-hidden;
+	}
+
+	img.waiting {
+		display: none;
+		vertical-align: middle;
+	} // img.waiting
+
+	.pods-field-input textarea {
+		width: 95%;
+		min-height: 200px;
+	} // .pods-field-input textarea
+
+	.pods-field table.pods-metabox {
+		width: 95%;
+	}
+
+} // .pods-form

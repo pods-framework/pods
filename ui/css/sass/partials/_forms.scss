@@ -76,3 +76,110 @@
 	.pods-field-add{margin-top:15px;}
 
 } //.pods-form-ui-row-type-repeat
+
+/* === FRONT FORM === */
+.pods-form-front{
+
+	ul.pods-form-fields{
+		list-style: none;
+		margin: 0;
+	} // ul.pods-form-fields
+
+	.pods-field-label{
+		width: 20%;
+		min-width: 150px;
+		padding-top: 10px;
+		float: left;
+	} // .pods-field-label
+
+	.pods-field-input{
+		width: 75%;
+		min-width: 200px;
+		float: left;
+
+		input{width:95%;}
+
+		.quicktags-toolbar input {
+			display: inline-block;
+			width: auto;
+		} // .quicktags-toolbar input
+
+		.pods-boolean input{width: auto;}
+
+		select{
+			@include border-all-round(3px);
+			min-width: 200px;
+			border: 1px solid #CCC;
+			margin-top: 10px;
+		} // select
+
+		.CodeMirror{width: auto;}
+
+	} // .pods-field-input
+
+	table.pods-metabox {
+		width: 100%;
+	}
+
+	ul.pods-files li.pods-file-icon img {
+		width: 40px;
+	}
+
+	.pods-file-add {
+		display: block;
+		margin: 10px;
+	}
+
+	.pods-submit {
+		float: right;
+	}
+
+	.pods-validate-error-message {
+		padding: 5px 10px 4px;
+	}
+
+	.pods-submittable-fields:after,
+	li.pods-field:after {
+		@include pods-visibility-hidden;
+	}
+
+} // .pods-form-front
+
+.pods-form-front-success {
+    color: #4F8A10;
+    border: 1px solid;
+    margin: 10px 0;
+    padding: 15px 10px 15px 50px;
+    background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
+}
+
+/* === FORM TABLE === */
+.form-table{
+
+	tr{
+
+		&.pods-field.pods-form-ui-row-type-avatar > td,
+		&.pods-field.pods-form-ui-row-type-file > td {
+			padding: 0;
+		}
+
+		&.pods-field > td {
+			line-height: inherit;
+			padding: 10px 0;
+		}
+
+		&:last-child > th,
+		&:last-child > td {
+			border-bottom: none;
+		}
+
+	} // tr
+
+	&.pods-form-ui-table-type-avatar tr.form-field > td,
+	&.pods-form-ui-table-type-file tr.form-field > td {
+		padding: 0 10px;
+	}
+
+
+
+} // .form-table

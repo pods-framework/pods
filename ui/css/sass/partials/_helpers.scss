@@ -45,3 +45,11 @@
 	@include border-top-right-round($radii);
 	@include border-bottom-right-round($radii);
 } // border-all-round
+
+/* === VISIBILITY === */
+@mixin pods-visibility-hidden{
+	content: '.';
+	visibility: hidden;
+	clear: both;
+	display: block;
+} // pods-visibility-hidden

@@ -1,0 +1,23 @@
+/* === BOOLEAN INPUTS === */
+.pods-boolean{
+	position:relative;
+
+	input {
+		display: block;
+		min-height:16px;
+		left: 2px;
+		margin: 1px 7px 0 0;
+		padding: 0;
+		position: absolute;
+		top: 10px;
+		width: auto;
+	} // input
+
+	label{
+		margin-left: 20px;
+		padding-top: 1px;
+	} // label
+
+	&:hover{background:$hover-background-color;}
+
+} // .pods-boolean

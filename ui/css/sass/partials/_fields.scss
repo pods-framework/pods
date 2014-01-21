@@ -145,16 +145,11 @@ div.pods-manage-field{
 		max-width: 150px;
 	}
 
-	.pods-field.pods-boolean label{
-		@include label-standard;
-	}
-
 	.pods-field-option{
 
 		input[type="text"],
 		select,
 		textarea,
-		.pods-field.pods-boolean,
 		.pods-form-ui-field-type-file{
 			display: block;
 			float: left;
@@ -199,23 +194,6 @@ div.pods-manage-field{
 	.pods-field-option-group{
 		p.pods-field-option-group-label{margin-top:0;}
 	} // .pods-field-option-group
-
-	.pods-field{
-
-		&.pods-boolean{
-			margin:5px 0;
-
-			&:hover{background:#FFFFD8;}
-
-			label{
-				padding-top:0;
-				display:block;
-				margin-left:20px;
-			} // label
-
-		} // &.pods-boolean
-
-	} // .pods-field
 
 	input{
 

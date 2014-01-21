@@ -39,6 +39,12 @@
 	@include border-bottom-left-round($radii);
 } // border-left-round
 
+@mixin border-right-round($radii){
+	@include border-top-right-round($radii);
+	@include border-bottom-right-round($radii);
+} // border-left-round
+
+
 @mixin border-all-round($radii){
 	@include border-top-left-round($radii);
 	@include border-bottom-left-round($radii);

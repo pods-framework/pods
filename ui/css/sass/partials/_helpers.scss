@@ -1,4 +1,4 @@
-/** === BORDER RADIUS === */
+/* === BORDER RADIUS === */
 @mixin border-top-left-round( $radii ){
 	-webkit-border-top-left-radius:$radii;
 	-moz-border-radius-topleft:$radii;

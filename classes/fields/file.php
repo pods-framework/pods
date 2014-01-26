@@ -118,6 +118,23 @@ class PodsField_File extends PodsField {
                 'default' => 0,
                 'type' => 'number'
             ),
+            self::$type . '_multiout' => array(
+                'label' => __( 'Multiple items output', 'pods' ),
+                'depends-on' => array( self::$type . '_format_type' => 'multi' ),
+                'default' => 'spaces',
+                'type' => 'pick',
+                'data' => array(
+                    'spaces' => __( 'Space Separated', 'pods' ),
+                    'json' => __( 'JSON Array', 'pods' ),
+                    'pphoto' => __( 'prettyPhoto Lightbox Links', 'pods' )
+                )
+            ),
+            self::$type . '_ppout' => array(
+                'label' => __( 'Multiple files output prettyPhoto Links', 'pods' ),
+                'depends-on' => array( self::$type . '_format_type' => 'multi' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             self::$type . '_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
                 'depends-on' => array( self::$type . '_uploader' => 'plupload' ),
@@ -234,8 +251,18 @@ class PodsField_File extends PodsField {
                     elseif ( isset( $v[ 'ID' ] ) )
                         $value[] = wp_get_attachment_url( $v[ 'ID' ] );
                 }
+				if ( pods_var( self::$type . '_multiout', $options ) == 'json'  ) {
+	                $value = json_encode( $value );
+				} else if ( pods_var( self::$type . '_multiout', $options )  == 'pphoto' ) {
+					$out = '';
+	                foreach ( $value as $v ) {
+	                	$out .= sprintf( '<a href="%s" rel="prettyPhoto[]"><img src="%s" style="width:33%%;"/></a>', $v, $v );
+					}
+	                $value = $out;
+				} else {
+	                $value = implode( ' ', $value );
+				}
 
-                $value = implode( ' ', $value );
             }
         }
 

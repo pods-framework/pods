@@ -988,7 +988,7 @@ class PodsAdmin {
                 ),
                 'hierarchical' => array(
                     'label' => __( 'Hierarchical', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Allows for parent/ child relationships between items, just like with Pages. Note: To edit relationships in the post editor, you must enable "Page Attributes" in the "Supports" section below.', 'pods' ),
                     'type' => 'boolean',
                     'default' => false,
                     'dependency' => true,

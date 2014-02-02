@@ -3,8 +3,6 @@
     <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
     <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-	<p>For help using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a> or ask a question in our <a href="http://pods.io/forums/" target="_blank">forums</a>.
-
     <p>To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.</p>
 
     <p>It's open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?</p>

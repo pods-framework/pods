@@ -69,6 +69,18 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
     $html = '';
 
     $id = pods_image_id_from_field( $image );
+    if ( 0 == $default  ) {
+        /**
+         * Filter for default value
+         *
+         * Use to set a fallback image to be used when the image passed to pods_image can not be found. Will only take effect if $default is not set.
+         *
+         * @since 2.3.19
+         *
+         * @param array|int $default Default image to show if image not found, can be field array, ID, or guid
+         */
+        $default = apply_filters( 'pods_image_default', $default );
+    }
     $default = pods_image_id_from_field( $default );
 
     if ( 0 < $id ) {

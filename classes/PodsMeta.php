@@ -17,12 +17,17 @@ class PodsMeta {
     /**
      * @var Pods
      */
-    private $current_pod;
+    private static $current_pod;
 
     /**
      * @var array
      */
-    private $current_pod_data;
+    private static $current_pod_data;
+
+    /**
+     * @var Pods
+     */
+    private static $current_field_pod;
 
     /**
      * @var int
@@ -207,7 +212,7 @@ class PodsMeta {
             // Handle User Editor
             add_action( 'show_user_profile', array( $this, 'meta_user' ) );
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-            add_action( 'user_register', array( $this, 'save_user' ) );
+            //add_action( 'user_register', array( $this, 'save_user' ) );
             add_action( 'profile_update', array( $this, 'save_user' ) );
 
             if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
@@ -344,10 +349,10 @@ class PodsMeta {
             return $data;
         }
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
-            $this->current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $pod )
+            self::$current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 
-        $pod = $this->current_pod_data;
+        $pod = self::$current_pod_data;
 
         if ( !empty( $pod ) ) {
             $type = $pod[ 'type' ];
@@ -412,10 +417,10 @@ class PodsMeta {
         elseif ( in_array( $cac_key, array( 'wp-comments', 'comment' ) ) )
             $object_type = $object = 'comment';
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
-            $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
+            self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
-        $pod = $this->current_pod_data;
+        $pod = self::$current_pod_data;
 
         // Add Pods fields
         if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
@@ -467,10 +472,10 @@ class PodsMeta {
         $field = substr( $obj->options->field, 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->options->field ) : $obj->options->field;
         $field_type = $obj->options->field_type;
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
-            $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
+            self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
-        $pod = $this->current_pod_data;
+        $pod = self::$current_pod_data;
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
@@ -495,10 +500,10 @@ class PodsMeta {
         elseif ( 'wp-comments' == $type )
             $object = 'comment';
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $object )
-            $this->current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
+            self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
-        $pod = $this->current_pod_data;
+        $pod = self::$current_pod_data;
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
@@ -534,11 +539,11 @@ class PodsMeta {
         }
 
         if ( !is_array( $pod ) ) {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $pod )
-                $this->current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
+            if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $pod )
+                self::$current_pod_data = pods_api()->load_pod( array( 'name' => $pod ), false );
 
-            if ( !empty( $this->current_pod_data ) )
-                $pod = $this->current_pod_data;
+            if ( !empty( self::$current_pod_data ) )
+                $pod = self::$current_pod_data;
             else {
                 $type = 'post_type';
 
@@ -670,7 +675,7 @@ class PodsMeta {
             if ( !has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
                 add_action( 'show_user_profile', array( $this, 'meta_user' ) );
                 add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-                add_action( 'user_register', array( $this, 'save_user' ) );
+                //add_action( 'user_register', array( $this, 'save_user' ) );
                 add_action( 'profile_update', array( $this, 'save_user' ) );
             }
         }
@@ -700,10 +705,10 @@ class PodsMeta {
         if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $pod = $object[ $name ];
         else {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
-                $this->current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+            if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
+                self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
 
-            $pod = $this->current_pod_data;
+            $pod = self::$current_pod_data;
         }
 
         if ( empty( $pod ) )
@@ -759,10 +764,10 @@ class PodsMeta {
         if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod_data ) || $this->current_pod_data[ 'name' ] != $name )
-                $this->current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+            if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
+                self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
 
-            $pod = $this->current_pod_data;
+            $pod = self::$current_pod_data;
 
             if ( !empty( $pod ) )
                 $fields = $pod[ 'fields' ];
@@ -852,12 +857,18 @@ class PodsMeta {
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
+		$pod_type = 'post';
+
+		if ( 'attachment' == $post->post_type ) {
+			$pod_type = 'media';
+		}
+
         do_action( 'pods_meta_' . __FUNCTION__, $post );
 
         $hidden_fields = array();
 ?>
     <table class="form-table pods-metabox pods-admin pods-dependency">
-		<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_post' ), 'hidden' ); ?>
+		<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' ); ?>
 
         <?php
         $id = null;
@@ -865,10 +876,12 @@ class PodsMeta {
         if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php?' ) )
             $id = $post->ID;
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-            $this->current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
+        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod ) || self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] )
+            self::$current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
+		elseif ( self::$current_pod->id() != $id )
+			self::$current_pod->fetch( $id );
 
-        $pod = $this->current_pod;
+        $pod = self::$current_pod;
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
@@ -1022,14 +1035,17 @@ class PodsMeta {
 			if ( empty( $group[ 'fields' ] ) )
 				continue;
 
-			if ( null === $pod ) {
-				if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-					$this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-				$pod = $this->current_pod;
+				$pod = self::$current_pod;
 			}
 
 			foreach ( $group[ 'fields' ] as $field ) {
+
 				if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
 					if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
 						continue;
@@ -1105,12 +1121,14 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
@@ -1177,14 +1195,17 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
+
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
                     if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
@@ -1280,12 +1301,14 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
@@ -1347,6 +1370,11 @@ class PodsMeta {
             return $term_id;
 		}
 
+		// Block Quick Edits / Bulk Edits
+		if ( 'inline-save-tax' == pods_var( 'action', 'post' ) || null != pods_var( 'delete_tags', 'post' ) ) {
+            return $term_id;
+		}
+
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
         if ( empty( $groups ) )
@@ -1365,14 +1393,17 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
+
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
                     if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
@@ -1423,9 +1454,6 @@ class PodsMeta {
 
         do_action( 'pods_meta_' . __FUNCTION__, $user_id );
 
-        if ( is_object( $user_id ) )
-            $user_id = $user_id->ID;
-
         $groups = $this->groups_get( 'user', 'user' );
 
         if ( is_object( $user_id ) )
@@ -1438,14 +1466,16 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
+
+				$pod = self::$current_pod;
+			}
+
             $hidden_fields = array();
-
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
-
-                $pod = $this->current_pod;
-            }
 ?>
     <h3><?php echo $group[ 'label' ]; ?></h3>
 
@@ -1455,6 +1485,7 @@ class PodsMeta {
         <tbody>
             <?php
                 foreach ( $group[ 'fields' ] as $field ) {
+
                     if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
                         if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                             $field[ 'type' ] = 'hidden';
@@ -1475,6 +1506,7 @@ class PodsMeta {
 
                         pods_no_conflict_off( 'user' );
                     }
+
                     if ( 'hidden' == $field[ 'type' ] ) {
                         $hidden_fields[] = array(
                             'field' => $field,
@@ -1521,7 +1553,7 @@ class PodsMeta {
 		if ( empty( $_POST ) ) {
 			return $user_id;
 		}
-		elseif ( !$is_new_item && !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
+		elseif ( $is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
 			return $user_id;
 		}
 
@@ -1545,15 +1577,19 @@ class PodsMeta {
 				continue;
 			}
 
-			if ( null === $pod ) {
-				if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id ) {
-					$this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] ) {
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				}
+				elseif ( self::$current_pod->id() != $id ) {
+					self::$current_pod->fetch( $id );
 				}
 
-				$pod = $this->current_pod;
+				$pod = self::$current_pod;
 			}
 
 			foreach ( $group[ 'fields' ] as $field ) {
+
 				if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
 					if ( !pods_var( 'hidden', $field[ 'options' ], false ) ) {
 						continue;
@@ -1620,12 +1656,14 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
@@ -1682,14 +1720,17 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
+
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
                     if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                         $field[ 'type' ] = 'hidden';
@@ -1806,10 +1847,12 @@ class PodsMeta {
             if ( is_object( $comment ) )
                 $id = $comment->comment_ID;
 
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                $this->current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
+            if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] )
+                self::$current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
+			elseif ( self::$current_pod->id() != $id )
+				self::$current_pod->fetch( $id );
 
-            $pod = $this->current_pod;
+            $pod = self::$current_pod;
 
             foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
@@ -1875,14 +1918,17 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
+
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
                     if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
                         continue;
@@ -1931,12 +1977,14 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( null === $pod ) {
-                if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $group[ 'pod' ][ 'name' ] || $this->current_pod->id() != $id )
-                    $this->current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
+					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+				elseif ( self::$current_pod->id() != $id )
+					self::$current_pod->fetch( $id );
 
-                $pod = $this->current_pod;
-            }
+				$pod = self::$current_pod;
+			}
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
@@ -2425,10 +2473,12 @@ class PodsMeta {
         if ( empty( $meta_cache ) || !is_array( $meta_cache ) )
             $meta_cache = array();
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
-            $this->current_pod = pods( $object[ 'name' ], $object_id );
+        if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+            self::$current_field_pod = pods( $object[ 'name' ], $object_id );
+		elseif ( self::$current_field_pod->id() != $object_id )
+			self::$current_field_pod->fetch( $object_id );
 
-        $pod = $this->current_pod;
+        $pod = self::$current_field_pod;
 
         $meta_keys = array( $meta_key );
 
@@ -2440,11 +2490,6 @@ class PodsMeta {
         foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) ) {
                 if ( isset( $pod->fields[ $meta_k ] ) ) {
-                    if ( empty( $pod->id ) ) {
-                        $pod->fetch( $object_id );
-                        $pod->id = $object_id;
-                    }
-
                     $key_found = true;
 
                     $meta_cache[ $meta_k ] = $pod->field( array( 'name' => $meta_k, 'single' => $single, 'get_meta' => true ) );
@@ -2460,11 +2505,6 @@ class PodsMeta {
                         unset( $meta_cache[ '_pods_' . $meta_k ] );
                 }
                 elseif ( false !== strpos( $meta_k, '.' ) ) {
-                    if ( empty( $pod->id ) ) {
-                        $pod->fetch( $object_id );
-                        $pod->id = $object_id;
-                    }
-
                     $key_found = true;
 
                     $first = current( explode( '.', $meta_k ) );
@@ -2537,18 +2577,20 @@ class PodsMeta {
             return $_null;
 
         if ( in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
-                $this->current_pod = pods( $object[ 'name' ], $object_id );
+            if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+                self::$current_field_pod = pods( $object[ 'name' ], $object_id );
+			elseif ( self::$current_field_pod->id() != $object_id )
+				self::$current_field_pod->fetch( $object_id );
 
-            $pod = $this->current_pod;
+            $pod = self::$current_field_pod;
 
             $pod->add_to( $meta_key, $meta_value );
         }
         else {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
-                $this->current_pod = pods( $object[ 'name' ] );
+            if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+                self::$current_field_pod = pods( $object[ 'name' ] );
 
-            $pod = $this->current_pod;
+            $pod = self::$current_field_pod;
 
             $pod->save( $meta_key, $meta_value, $object_id );
         }
@@ -2575,10 +2617,10 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
-            $this->current_pod = pods( $object[ 'name' ] );
+        if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+            self::$current_field_pod = pods( $object[ 'name' ] );
 
-        $pod = $this->current_pod;
+        $pod = self::$current_field_pod;
 
         $pod->save( $meta_key, $meta_value, $object_id );
 
@@ -2604,25 +2646,22 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
-            $this->current_pod = pods( $object[ 'name' ], $object_id );
-
-        $pod = $this->current_pod;
-
         // @todo handle $delete_all (delete the field values from all pod items)
         if ( !empty( $meta_value ) && in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) ) {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] || $this->current_pod->id() != $object_id )
-                $this->current_pod = pods( $object[ 'name' ], $object_id );
+            if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+                self::$current_field_pod = pods( $object[ 'name' ], $object_id );
+			elseif ( self::$current_field_pod->id() != $object_id )
+				self::$current_field_pod->fetch( $object_id );
 
-            $pod = $this->current_pod;
+            $pod = self::$current_field_pod;
 
             $pod->remove_from( $meta_key, $meta_value );
         }
         else {
-            if ( empty( $this->current_pod_data ) || !is_object( $this->current_pod ) || $this->current_pod->pod != $object[ 'name' ] )
-                $this->current_pod = pods( $object[ 'name' ] );
+            if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
+                self::$current_field_pod = pods( $object[ 'name' ] );
 
-            $pod = $this->current_pod;
+            $pod = self::$current_field_pod;
 
             $pod->save( array( $meta_key => null ), null, $object_id );
         }

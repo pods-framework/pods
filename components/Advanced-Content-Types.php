@@ -2,7 +2,7 @@
 /**
  * Name: Advanced Content Types
  *
- * Description: Create custom tables entirely separate from WordPress. You most likely don't need these and we recommend you use Custom Post Types or Custom Taxonomies instead.
+ * Description: A content type that exists outside of the WordPress post and postmeta table and uses custom tables instead. You most likely don't need these and we strongly recommend that you use Custom Post Types or Custom Taxonomies instead. FOR ADVANCED USERS ONLY.
  *
  * Version: 2.3
  *

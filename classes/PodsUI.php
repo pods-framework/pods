@@ -354,6 +354,7 @@ class PodsUI {
      * @var array
      */
     public $action_links = array(
+		'manage' => null,
         'add' => null,
         'edit' => null,
         'duplicate' => null,
@@ -1410,9 +1411,13 @@ class PodsUI {
             <?php
             echo $this->header[ 'add' ];
 
-            $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+			$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+
+			if ( !empty( $this->action_links[ 'manage' ] ) ) {
+				$link = $this->action_links[ 'manage' ];
+			}
             ?>
-            <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
+            <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
         </h2>
 
         <?php $this->form( true ); ?>
@@ -1456,6 +1461,9 @@ class PodsUI {
             }
             elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+
+                if ( !empty( $this->action_links[ 'manage' ] ) )
+                    $link = $this->action_links[ 'manage' ];
                 ?>
                 <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
                 <?php
@@ -1726,6 +1734,10 @@ class PodsUI {
 					}
 					elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
 						$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+
+						if ( !empty( $this->action_links[ 'manage' ] ) ) {
+							$link = $this->action_links[ 'manage' ];
+						}
 				?>
 					<a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
 				<?php
@@ -2289,12 +2301,18 @@ class PodsUI {
             <?php
             if ( true === $reorder ) {
                 echo $this->header[ 'reorder' ];
+
+				$link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+
+                if ( !empty( $this->action_links[ 'manage' ] ) )
+                    $link = $this->action_links[ 'manage' ];
                 ?>
-                <small>(<a href="<?php echo pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)</small>
+                <small>(<a href="<?php echo $link; ?>">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>)</small>
                 <?php
             }
             else
                 echo $this->header[ 'manage' ];
+
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
@@ -2557,9 +2575,14 @@ class PodsUI {
                     }
 
                     if ( true === $reorder ) {
+						$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+
+						if ( !empty( $this->action_links[ 'manage' ] ) ) {
+							$link = $this->action_links[ 'manage' ];
+						}
                         ?>
                         <input type="button" value="<?php _e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
-                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'manage' ), self::$allowed, $this->exclusion() ); ?>';" />
+                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo esc_attr( $link ); ?>';" />
                         <?php
                     }
                     /*
@@ -3307,6 +3330,10 @@ class PodsUI {
                                     $row_value = $this->do_hook( $this->pod->pod . '_field_value', $row_value, $field, $attributes, $row );
 
                                 $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
+
+								if ( is_array( $row_value ) ) {
+									$row_value = pods_serial_comma( $row_value );
+								}
 
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
                                     if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {

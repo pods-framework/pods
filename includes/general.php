@@ -600,7 +600,8 @@ function pods_shortcode ( $tags, $content = null ) {
         'thank_you' => null,
         'view' => null,
         'cache_mode' => 'none',
-        'expires' => 0
+        'expires' => 0,
+		'shortcodes' => false
     );
 
     if ( !empty( $tags ) )
@@ -613,8 +614,15 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $content ) )
         $content = null;
 
-    if ( 0 < strlen( $tags[ 'view' ] ) )
-        return pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+    if ( 0 < strlen( $tags[ 'view' ] ) ) {
+        $return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	}
 
     if ( empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
@@ -711,11 +719,15 @@ function pods_shortcode ( $tags, $content = null ) {
     }
     elseif ( !empty( $tags[ 'field' ] ) ) {
         if ( empty( $tags[ 'helper' ] ) )
-            $val = $pod->display( $tags[ 'field' ] );
+            $return = $pod->display( $tags[ 'field' ] );
         else
-            $val = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
+            $return = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
-        return $val;
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
     }
     elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
         $pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
@@ -723,7 +735,13 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( empty( $pods_page ) )
             return '<p>Pods Page not found</p>';
 
-        return Pods_Pages::content( true, $pods_page );
+        $return = Pods_Pages::content( true, $pods_page );
+
+		if ( $tags[ 'shortcodes' ] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
     }
 
     ob_start();
@@ -742,7 +760,13 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
-    return ob_get_clean();
+	$return = ob_get_clean();
+
+	if ( $tags[ 'shortcodes' ] ) {
+		$return = do_shortcode( $return );
+	}
+
+	return $return;
 }
 
 /**
@@ -950,8 +974,11 @@ function pods_permission ( $options ) {
 
     if ( !$permission && 1 == pods_var( 'restrict_role', $options, 0 ) ) {
         $roles = pods_var( 'roles_allowed', $options );
-        $roles = array_unique( array_filter( $roles ) );
 
+        if ( !is_array( $roles ) )
+            $roles = explode( ',', $roles );
+
+        $roles = array_unique( array_filter( $roles ) );
 
         foreach( $roles as $role ) {
             if ( is_user_logged_in() && in_array( $role, $current_user->roles ) ) {
@@ -1671,7 +1698,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         }
 
         $no_conflict[ 'action' ] = array(
-            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            //array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
             array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
         );
     }
@@ -1786,9 +1813,33 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
  * @since 2.3.10
  */
 function pods_session_start() {
+
 	$save_path = session_save_path();
 
-	if ( ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) && !empty( $save_path ) && file_exists( $save_path ) && is_writable( $save_path ) && false === headers_sent() && '' == session_id() ) {
-		@session_start();
+	// Check if headers were sent
+	if ( false !== headers_sent() ) {
+		return false;
 	}
+	// Allow for bypassing Pods session autostarting
+	elseif ( defined( 'PODS_SESSION_AUTO_START' ) && !PODS_SESSION_AUTO_START ) {
+		return false;
+	}
+	// Allow for non-file based sessions, like Memcache
+	elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+		// This is OK, but we don't want to check if file_exists on next statement
+	}
+	// Check if session path exists and can be written to, avoiding PHP fatal errors
+	elseif ( empty( $save_path ) || !file_exists( $save_path ) || !is_writable( $save_path ) ) {
+		return false;
+	}
+	// Check if session ID is already set
+	elseif ( '' != session_id() ) {
+		return false;
+	}
+
+	// Start session
+	@session_start();
+
+	return true;
+
 }

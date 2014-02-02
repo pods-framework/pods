@@ -2118,8 +2118,12 @@ class PodsAPI {
                 $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_table' ];
                 $field[ 'pick_object' ] = 'table';
             }
-            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) )
+            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) ) {
                 $field[ 'pick_val' ] = '';
+			}
+			elseif ( 'custom-simple' == $field[ 'pick_object' ] ) {
+                $field[ 'pick_val' ] = '';
+			}
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
@@ -2287,10 +2291,10 @@ class PodsAPI {
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && !pods_tableless() ) {
             if ( !empty( $old_id ) ) {
-                if ( $field[ 'type' ] != $old_type && empty( $definition ) )
+                if ( ( $field[ 'type' ] != $old_type || $old_simple != $simple ) && empty( $definition ) )
                     pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
                 elseif ( 0 < strlen( $definition ) ) {
-                    if ( $old_name != $field[ 'name' ] ) {
+                    if ( $old_name != $field[ 'name' ] || $old_simple != $simple ) {
                         $test = false;
 
                         if ( 0 < strlen( $old_definition ) )
@@ -2871,6 +2875,42 @@ class PodsAPI {
                     }
                 }
             }
+
+			// Set default field values for object fields
+			if ( !empty( $object_fields ) ) {
+				foreach ( $object_fields as $field => $field_data ) {
+					if ( in_array( $field, $fields_active ) ) {
+						continue;
+					}
+					elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+						continue;
+					}
+
+                    $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
+
+                    if ( null !== $value && '' !== $value && false !== $value ) {
+                        $object_fields[ $field ][ 'value' ] = $value;
+                        $fields_active[] = $field;
+                    }
+				}
+			}
+
+			// Set default field values for Pod fields
+			foreach ( $fields as $field => $field_data ) {
+				if ( in_array( $field, $fields_active ) ) {
+					continue;
+				}
+				elseif ( !isset( $field_data[ 'default' ] ) || strlen( $field_data[ 'default' ] ) < 1 ) {
+					continue;
+				}
+
+				$value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
+
+				if ( null !== $value && '' !== $value && false !== $value ) {
+					$fields[ $field ][ 'value' ] = $value;
+					$fields_active[] = $field;
+				}
+			}
         }
 
         $columns =& $fields; // @deprecated 2.0
@@ -4738,43 +4778,6 @@ class PodsAPI {
      */
     public function load_pod ( $params, $strict = true ) {
 
-		if ( 1 == 0 && pods_developer() ) {
-			// Debug override for strict
-			$strict = ( !$strict ? pods_strict( true ) : $strict );
-
-			if ( is_object( $params ) && isset( $params->post_name ) ) {
-				$pod = pods_object_pod( $params );
-			}
-			else {
-				$params = (object) pods_sanitize( $params );
-
-				if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
-					if ( $strict ) {
-						return pods_error( 'Either Pod ID or Name are required', $this );
-					}
-
-					return false;
-				}
-
-				if ( isset( $params->name ) ) {
-					$pod = pods_object_pod( $params->name );
-				}
-				else {
-					$pod = pods_object_pod( null, $params->id );
-				}
-			}
-
-			if ( empty( $pod ) || !$pod->is_valid() ) {
-				if ( $strict ) {
-					return pods_error( __( 'Pod not found', 'pods' ), $this );
-				}
-
-				return false;
-			}
-
-			return $pod;
-		}
-
         /**
          * @var $sitepress SitePress
          */
@@ -5034,9 +5037,6 @@ class PodsAPI {
      * @since 2.0
      */
     public function load_pods ( $params = null ) {
-
-		// Include dependencies for caching
-		pods_object_pod();
 
         /**
          * @var $sitepress SitePress

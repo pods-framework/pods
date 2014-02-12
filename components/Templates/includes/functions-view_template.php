@@ -150,15 +150,17 @@ function frontier_template_once_blocks($atts, $code){
  * @since 2.3
  */
 function frontier_do_subtemplate($atts, $content){
+
 	$out = null;
 	$pod = pods($atts['pod'], $atts['id']);
+
+	$params = array(
+		'name' 		=> $atts['field'],
+	);
+	$entries = $pod->field($atts['field']);
 	if(!empty($pod->fields[$atts['field']]['table_info'])){
-		$params = array(
-			'name' 		=> $atts['field'],
-		);
-		$entries = $pod->field($params);
 		if(!empty($entries)){
-			$template = frontier_decode_template( $content, $atts );
+			$template = frontier_decode_template( $content, $atts );			
 			foreach ($entries as $key => $entry) {
 				
 				$content = str_replace('{@'.$atts['field'].'.', '{@', $template);
@@ -166,6 +168,21 @@ function frontier_do_subtemplate($atts, $content){
 
 			}
 		}
+	}else{
+		if(!empty($entries)){
+			if( 'file' == $pod->fields[$atts['field']]['type'] && 'attachment' == $pod->fields[$atts['field']]['options']['file_uploader'] &&  'multi' == $pod->fields[$atts['field']]['options']['file_format_type']){
+				$template = frontier_decode_template( $content, $atts );
+				foreach ($entries as $key => $entry) {
+					
+					$content = str_replace('{@_img', '{@image_attachment.'.$entry['ID'], $template);
+					$content = str_replace('{@_src', '{@image_attachment_url.'.$entry['ID'], $content);
+					$content = str_replace('{@'.$atts['field'].'}', '{@image_attachment.'.$entry['ID'].'}', $content);
+					
+					$out .= do_shortcode( $pod->do_magic_tags( $content ) );
+				}
+			}
+		}
+
 	}
 
 	return do_shortcode($out);
@@ -184,7 +201,7 @@ function frontier_do_subtemplate($atts, $content){
  */
 function frontier_prefilter_template($code, $template, $pod){	
 	global $frontier_once_tags;
-
+	
 	$commands = array(
 		'each'	=> 'pod_sub_template',
 		'once' 	=> 'pod_once_template',

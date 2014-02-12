@@ -1342,8 +1342,6 @@ class PodsForm {
     public static function block_field_types () {
         $field_types = array( 'html', 'section' );
 
-
-
         /**
          * Returns the available text field types
          * 

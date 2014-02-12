@@ -88,7 +88,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
             $full = wp_get_attachment_image_src( $id, 'full' );
             $src = wp_get_attachment_image_src( $id, $size );
 
-            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
                 pods_image_resize( $id, $size );
         }
 
@@ -100,7 +100,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
             $full = wp_get_attachment_image_src( $default, 'full' );
             $src = wp_get_attachment_image_src( $default, $size );
 
-            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
                 pods_image_resize( $default, $size );
         }
 
@@ -133,7 +133,7 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
             $full = wp_get_attachment_image_src( $id, 'full' );
             $src = wp_get_attachment_image_src( $id, $size );
 
-            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
                 pods_image_resize( $id, $size );
         }
 
@@ -155,7 +155,7 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
             $full = wp_get_attachment_image_src( $default, 'full' );
             $src = wp_get_attachment_image_src( $default, $size );
 
-            if ( !empty( $full ) && ( empty( $src ) || $full[ 0 ] != $src[ 0 ] ) )
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
                 pods_image_resize( $default, $size );
         }
 

@@ -792,7 +792,7 @@ class Pods implements Iterator {
                     }
 
                     // Pods will auto-get the thumbnail ID if this isn't an attachment
-                    $value = pods_image( $this->id(), $size );
+                    $value = pods_image( $this->id(), $size, 0, null, true );
 
                     $object_field_found = true;
                 }
@@ -807,9 +807,48 @@ class Pods implements Iterator {
                     }
 
                     // Pods will auto-get the thumbnail ID if this isn't an attachment
-                    $value = pods_image_url( $this->id(), $size );
+                    $value = pods_image_url( $this->id(), $size, 0, true );
 
                     $object_field_found = true;
+                }elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
+                    $size = 'thumbnail';
+
+                    $image_id = 0;
+
+                    $field_names = explode( '.', $params->name );
+
+                    if ( isset( $field_names[ 1 ] ) )
+                        $image_id = $field_names[ 1 ];
+
+                    if ( isset( $field_names[ 2 ] ) )
+                        $size = $field_names[ 2 ];
+
+                    if ( !empty( $image_id ) ) {
+                        $value = pods_image( $image_id, $size, 0, null, true );
+
+                        if ( !empty( $value ) )
+                            $object_field_found = true;
+                    }
+                }
+                elseif ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
+                    $size = 'thumbnail';
+
+                    $image_id = 0;
+
+                    $field_names = explode( '.', $params->name );
+
+                    if ( isset( $field_names[ 1 ] ) )
+                        $image_id = $field_names[ 1 ];
+
+                    if ( isset( $field_names[ 2 ] ) )
+                        $size = $field_names[ 2 ];
+
+                    if ( !empty( $image_id ) ) {
+                        $value = pods_image_url( $image_id, $size, 0, true );
+
+                        if ( !empty( $value ) )
+                            $object_field_found = true;
+                    }
                 }
             }
             elseif ( 'user' == $this->pod_data[ 'type' ] && !isset( $this->fields[ $params->name ] ) ) {
@@ -845,7 +884,7 @@ class Pods implements Iterator {
                     $size = $field_names[ 2 ];
 
                 if ( !empty( $image_id ) ) {
-                    $value = pods_image( $image_id, $size );
+                    $value = pods_image( $image_id, $size, 0, null, true );
 
                     if ( !empty( $value ) )
                         $object_field_found = true;
@@ -865,7 +904,7 @@ class Pods implements Iterator {
                     $size = $field_names[ 2 ];
 
                 if ( !empty( $image_id ) ) {
-                    $value = pods_image_url( $image_id, $size );
+                    $value = pods_image_url( $image_id, $size, 0, true );
 
                     if ( !empty( $value ) )
                         $object_field_found = true;
@@ -3344,6 +3383,7 @@ class Pods implements Iterator {
      * @since 2.0.2
      */
     private function process_magic_tags ( $tag ) {
+
         if ( is_array( $tag ) ) {
             if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
                 return '';

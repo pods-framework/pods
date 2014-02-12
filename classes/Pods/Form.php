@@ -1407,6 +1407,13 @@ class Pods_Form {
     public static function block_field_types() {
         $field_types = array( 'heading', 'html' );
 
+        /**
+         * Returns the available text field types
+         *
+         * @since unknown
+         *
+         * @param object $field_types Outputs the field types
+         */
         return apply_filters( 'pods_block_field_types', $field_types );
     }
 }

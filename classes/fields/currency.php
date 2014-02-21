@@ -245,8 +245,8 @@ class PodsField_Currency extends PodsField {
 
         $currency = 'usd';
 
-        if ( isset( self::$currencies[ pods_var( self::$type . '_format_sign', $options, -1 ) ] ) )
-            $currency = pods_var( self::$type . '_format_sign', $options );
+        if ( isset( self::$currencies[ pods_v( self::$type . '_format_sign', $options, -1 ) ] ) )
+            $currency = pods_v( self::$type . '_format_sign', $options );
 
         $currency_sign = self::$currencies[ $currency ];
 

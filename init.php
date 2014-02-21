@@ -3,13 +3,13 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.3.18
+Version: 2.3.19 Beta 1
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
 
-Copyright 2009-2013  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2014  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 }
 else {
     // Current version
-    define( 'PODS_VERSION', '2.3.18' );
+    define( 'PODS_VERSION', '2.3.19-b-1' );
 
     // Version tracking between DB updates themselves
     define( 'PODS_DB_VERSION', '2.3.5' );

@@ -63,9 +63,13 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
         $element.select2( {
             width : 'resolve',
-			<?php if (1 == (int) pods_var('pick_allow_html',$options)): ?>
+			<?php
+				if ( 1 == (int) pods_v( 'pick_allow_html', $options ) ) {
+			?>
 			escapeMarkup: function (m) { return m; },
-			<?php endif; ?>
+			<?php
+				}
+			?>
             initSelection : function ( element, callback ) {
                 var data = [];
 

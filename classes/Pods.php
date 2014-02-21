@@ -810,7 +810,8 @@ class Pods implements Iterator {
                     $value = pods_image_url( $this->id(), $size, 0, true );
 
                     $object_field_found = true;
-                }elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
+                }
+				elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
                     $size = 'thumbnail';
 
                     $image_id = 0;

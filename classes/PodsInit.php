@@ -344,7 +344,11 @@ class PodsInit {
 			 */
 			global $wp_query;
 
-			$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+			$reserved_query_vars = array();
+
+			if ( is_object( $wp_query ) ) {
+				$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+			}
 
             $pods_cpt_ct = array(
                 'post_types' => array(),

@@ -1440,7 +1440,9 @@ class PodsAPI {
 		 */
 		global $wp_query;
 
-		$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+		if ( is_object( $wp_query ) ) {
+			$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+		}
 
 		if ( isset( $pod[ 'options' ][ 'query_var_string' ] ) ) {
 			if ( in_array( $pod[ 'options' ][ 'query_var_string' ], $reserved_query_vars ) ) {

@@ -1035,10 +1035,10 @@ class PodsData {
                 }
 
                 if ( !empty( $where ) )
-                    $params->where[] = implode( ' OR ', $where );
+                    $params->where[] = '( ' . implode( ' OR ', $where ) . ' )';
 
                 if ( !empty( $having ) )
-                    $params->having[] = implode( ' OR ', $where );
+                    $params->having[] = '( ' . implode( ' OR ', $having ) . ' )';
             }
 
             // Filter
@@ -2244,7 +2244,7 @@ class PodsData {
 
         if ( !empty( $query_fields ) ) {
 			// If post_status not sent, detect it
-			if ( !empty( $pod ) && 'post_type' == $pod[ 'type' ] && !$params->where_defaulted && !empty( $params->where_default ) ) {
+			if ( !empty( $pod ) && 'post_type' == $pod[ 'type' ] && 1 == $current_level && !$params->where_defaulted && !empty( $params->where_default ) ) {
 				$post_status_found = false;
 
 				if ( !$params->query_field_syntax ) {
@@ -2412,8 +2412,12 @@ class PodsData {
 								$field_cast = "`{$field_name}`.`meta_value`";
 						}
 
-						if ( empty( $field_cast ) )
-							$field_cast = "`{$field_name}`";
+						if ( empty( $field_cast ) ) {
+							if ( 'table' == $pod[ 'storage' ] )
+								$field_cast = "`{$field_name}`";
+							else
+								$field_cast = "`{$field_name}`.`meta_value`";
+						}
 					}
 				}
 				else {
@@ -2746,8 +2750,6 @@ class PodsData {
 
         if ( empty( $traverse ) )
             return $joins;
-
-        $traverse = pods_sanitize( $traverse );
 
         $traverse[ 'id' ] = (int) $traverse[ 'id' ];
 

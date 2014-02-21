@@ -69,6 +69,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
     $html = '';
 
     $id = pods_image_id_from_field( $image );
+
     if ( 0 == $default  ) {
         /**
          * Filter for default value
@@ -81,6 +82,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
          */
         $default = apply_filters( 'pods_image_default', $default );
     }
+
     $default = pods_image_id_from_field( $default );
 
     if ( 0 < $id ) {

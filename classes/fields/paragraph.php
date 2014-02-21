@@ -126,13 +126,13 @@ class PodsField_Paragraph extends PodsField {
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text',
 				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
-            )/*,
+            ),
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
-            ),
+            )/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -157,7 +157,13 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+        	$schema = 'VARCHAR(' . $length . ')';
+		}
 
         return $schema;
     }

@@ -369,7 +369,7 @@ class PodsField_Pick extends PodsField {
 
                     continue;
                 }
-                elseif ( 0 === strpos( $post_type, '_pods_' ) ) {
+                elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
                     unset( $post_types[ $post_type ] );
 
                     continue;
@@ -391,8 +391,16 @@ class PodsField_Pick extends PodsField {
             $ignore = array( 'nav_menu', 'post_format' );
 
             foreach ( $taxonomies as $taxonomy => $label ) {
-                if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
+                if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
+                    unset( $taxonomies[ $taxonomy ] );
+
                     continue;
+                }
+                elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+                    unset( $taxonomies[ $taxonomy ] );
+
+                    continue;
+                }
 
                 $taxonomy = get_taxonomy( $taxonomy );
 

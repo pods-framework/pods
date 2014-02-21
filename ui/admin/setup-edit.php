@@ -524,6 +524,19 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
                         </div>
                     </li>
 				<?php } ?>
+
+				<?php if ( class_exists( 'Jetpack' ) ) { ?>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_jetpack_publicize', pods_var_raw( 'supports_jetpack_publicize', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Jetpack Publicize Support', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_jetpack_markdown', pods_var_raw( 'supports_jetpack_markdown', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Jetpack Markdown Support', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+				<?php } ?>
             </ul>
         </div>
     </div>

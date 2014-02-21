@@ -3228,7 +3228,8 @@ class Pods implements Iterator {
 
             $field[ 'name' ] = trim( $field[ 'name' ] );
 
-            $value = pods_var_raw( 'default', $field );
+            $default_value = pods_var_raw( 'default', $field );
+            $value = pods_var_raw( 'value', $field );
 
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
@@ -3245,8 +3246,12 @@ class Pods implements Iterator {
 
 			$fields[ $field[ 'name' ] ] = $field;
 
-            if ( empty( $this->id ) && null !== $value )
-                $this->row_override[ $field[ 'name' ] ] = $value;
+            if ( empty( $this->id ) && null !== $default_value ) {
+                $this->row_override[ $field[ 'name' ] ] = $default_value;
+			}
+			elseif ( !empty( $this->id ) && null !== $value ) {
+                $this->row[ $field[ 'name' ] ] = $value;
+			}
         }
 
         unset( $form_fields ); // Cleanup

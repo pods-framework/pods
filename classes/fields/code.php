@@ -105,7 +105,13 @@ class PodsField_Code extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+        	$schema = 'VARCHAR(' . $length . ')';
+		}
 
         return $schema;
     }

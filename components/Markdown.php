@@ -14,41 +14,13 @@
  * @subpackage Markdown
  */
 
-if ( !function_exists( 'pods_markdown_output' ) ) {
-	function pods_markdown_add_option( $options, $type ) {
-
-		$options[ 'output_options' ][ 'group' ][ $type . '_allow_markdown' ] = array(
-			'label' => __( 'Allow Markdown Syntax?', 'pods' ),
-			'default' => 0,
-			'type' => 'boolean'
-		);
-
-		return $options;
-
-	}
-	add_filter( 'pods_field_wysiwyg_options', 'pods_markdown_add_option', 10, 2 );
-	add_filter( 'pods_field_paragraph_options', 'pods_markdown_add_option', 10, 2 );
-
-	function pods_markdown_output( $value, $name, $options, $pod, $id, $traverse ) {
-
-		if ( 1 == pods_var( $options[ 'type' ] . '_allow_markdown', $options ) ) {
-			$value = Markdown( $value );
-		}
-
-		return $value;
-
-	}
-	add_filter( 'pods_form_display_wysiwyg', 'pods_markdown_output', 10, 6 );
-	add_filter( 'pods_form_display_paragraph', 'pods_markdown_output', 10, 6 );
-}
-
 if ( !function_exists( 'Markdown' ) ) :
 #
 # Markdown  -  A text-to-HTML conversion tool for web writers
 #
 # PHP Markdown
-# Copyright (c) 2004-2012 Michel Fortin
-# <http://michelf.com/projects/php-markdown/>
+# Copyright (c) 2004-2013 Michel Fortin
+# <http://michelf.ca/projects/php-markdown/>
 #
 # Original Markdown
 # Copyright (c) 2004-2006 John Gruber
@@ -56,7 +28,7 @@ if ( !function_exists( 'Markdown' ) ) :
 #
 
 
-define( 'MARKDOWN_VERSION',  "1.0.1o" ); # Sun 8 Jan 2012
+define( 'MARKDOWN_VERSION',  "1.0.2" ); # 29 Nov 2013
 
 
 #
@@ -75,8 +47,8 @@ define( 'MARKDOWN_VERSION',  "1.0.1o" ); # Sun 8 Jan 2012
 #
 
 # Change to false to remove Markdown from posts and/or comments.
-@define( 'MARKDOWN_WP_POSTS',      false );
-@define( 'MARKDOWN_WP_COMMENTS', false );
+@define( 'MARKDOWN_WP_POSTS',      true );
+@define( 'MARKDOWN_WP_COMMENTS',   true );
 
 
 
@@ -100,6 +72,86 @@ function Markdown($text) {
 }
 
 
+### WordPress Plugin Interface ###
+
+/*
+Plugin Name: Markdown
+Plugin URI: http://michelf.ca/projects/php-markdown/
+Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.ca/projects/php-markdown/">More...</a>
+Version: 1.0.2
+Author: Michel Fortin
+Author URI: http://michelf.ca/
+*/
+
+if (isset($wp_version)) {
+	# More details about how it works here:
+	# <http://michelf.ca/weblog/2005/wordpress-text-flow-vs-markdown/>
+
+	# Post content and excerpts
+	# - Remove WordPress paragraph generator.
+	# - Run Markdown on excerpt, then remove all tags.
+	# - Add paragraph tag around the excerpt, but remove it for the excerpt rss.
+	if (MARKDOWN_WP_POSTS) {
+		remove_filter('the_content',     'wpautop');
+        remove_filter('the_content_rss', 'wpautop');
+		remove_filter('the_excerpt',     'wpautop');
+		add_filter('the_content',     'Markdown', 6);
+        add_filter('the_content_rss', 'Markdown', 6);
+		add_filter('get_the_excerpt', 'Markdown', 6);
+		add_filter('get_the_excerpt', 'trim', 7);
+		add_filter('the_excerpt',     'mdwp_add_p');
+		add_filter('the_excerpt_rss', 'mdwp_strip_p');
+
+		remove_filter('content_save_pre',  'balanceTags', 50);
+		remove_filter('excerpt_save_pre',  'balanceTags', 50);
+		add_filter('the_content',  	  'balanceTags', 50);
+		add_filter('get_the_excerpt', 'balanceTags', 9);
+	}
+
+	# Comments
+	# - Remove WordPress paragraph generator.
+	# - Remove WordPress auto-link generator.
+	# - Scramble important tags before passing them to the kses filter.
+	# - Run Markdown on excerpt then remove paragraph tags.
+	if (MARKDOWN_WP_COMMENTS) {
+		remove_filter('comment_text', 'wpautop', 30);
+		remove_filter('comment_text', 'make_clickable');
+		add_filter('pre_comment_content', 'Markdown', 6);
+		add_filter('pre_comment_content', 'mdwp_hide_tags', 8);
+		add_filter('pre_comment_content', 'mdwp_show_tags', 12);
+		add_filter('get_comment_text',    'Markdown', 6);
+		add_filter('get_comment_excerpt', 'Markdown', 6);
+		add_filter('get_comment_excerpt', 'mdwp_strip_p', 7);
+
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		$mdwp_hidden_tags = explode(' ',
+			'<p> </p> <pre> </pre> <ol> </ol> <ul> </ul> <li> </li>');
+		$mdwp_placeholders = explode(' ', str_rot13(
+			'pEj07ZbbBZ U1kqgh4w4p pre2zmeN6K QTi31t9pre ol0MP1jzJR '.
+			'ML5IjmbRol ulANi1NsGY J7zRLJqPul liA8ctl16T K9nhooUHli'));
+	}
+
+	function mdwp_add_p($text) {
+		if (!preg_match('{^$|^<(p|ul|ol|dl|pre|blockquote)>}i', $text)) {
+			$text = '<p>'.$text.'</p>';
+			$text = preg_replace('{\n{2,}}', "</p>\n\n<p>", $text);
+		}
+		return $text;
+	}
+
+	function mdwp_strip_p($t) { return preg_replace('{</?p>}i', '', $t); }
+
+	function mdwp_hide_tags($text) {
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		return str_replace($mdwp_hidden_tags, $mdwp_placeholders, $text);
+	}
+	function mdwp_show_tags($text) {
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		return str_replace($mdwp_placeholders, $mdwp_hidden_tags, $text);
+	}
+}
+
+
 ### bBlog Plugin Info ###
 
 function identify_modifier_markdown() {
@@ -111,7 +163,7 @@ function identify_modifier_markdown() {
 		'authors'		=> 'Michel Fortin and John Gruber',
 		'licence'		=> 'BSD-like',
 		'version'		=> MARKDOWN_VERSION,
-		'help'			=> '<a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.com/projects/php-markdown/">More...</a>'
+		'help'			=> '<a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.ca/projects/php-markdown/">More...</a>'
 	);
 }
 
@@ -131,11 +183,7 @@ if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 	# Try to include PHP SmartyPants. Should be in the same directory.
 	@include_once 'smartypants.php';
 	# Fake Textile class. It calls Markdown instead.
-    /**
-     * @package Pods\Components
-     * @subpackage Markdown
-     */
-    class Textile {
+	class Textile {
 		function TextileThis($text, $lite='', $encode='') {
 			if ($lite == '' && $encode == '')    $text = Markdown($text);
 			if (function_exists('SmartyPants'))  $text = SmartyPants($text);
@@ -155,24 +203,10 @@ if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 #
 # Markdown Parser Class
 #
-/**
-* @package Pods\Components
-* @subpackage Markdown
-*/
 
 class Markdown_Parser {
 
-	# Regex to match balanced [brackets].
-	# Needed to insert a maximum bracked depth while converting to PHP.
-	var $nested_brackets_depth = 6;
-	var $nested_brackets_re;
-
-	var $nested_url_parenthesis_depth = 4;
-	var $nested_url_parenthesis_re;
-
-	# Table of hash values for escaped characters:
-	var $escape_chars = '\`*_{}[]()>#+-.!';
-	var $escape_chars_re;
+	### Configuration Variables ###
 
 	# Change to ">" for HTML output.
 	var $empty_element_suffix = MARKDOWN_EMPTY_ELEMENT_SUFFIX;
@@ -185,6 +219,21 @@ class Markdown_Parser {
 	# Predefined urls and titles for reference links and images.
 	var $predef_urls = array();
 	var $predef_titles = array();
+
+
+	### Parser Implementation ###
+
+	# Regex to match balanced [brackets].
+	# Needed to insert a maximum bracked depth while converting to PHP.
+	var $nested_brackets_depth = 6;
+	var $nested_brackets_re;
+
+	var $nested_url_parenthesis_depth = 4;
+	var $nested_url_parenthesis_re;
+
+	# Table of hash values for escaped characters:
+	var $escape_chars = '\`*_{}[]()>#+-.!';
+	var $escape_chars_re;
 
 
 	function Markdown_Parser() {
@@ -230,7 +279,7 @@ class Markdown_Parser {
 		$this->titles = $this->predef_titles;
 		$this->html_hashes = array();
 
-		$in_anchor = false;
+		$this->in_anchor = false;
 	}
 
 	function teardown() {
@@ -354,7 +403,9 @@ class Markdown_Parser {
 		#
 		$block_tags_a_re = 'ins|del';
 		$block_tags_b_re = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|address|'.
-						   'script|noscript|form|fieldset|iframe|math';
+						   'script|noscript|form|fieldset|iframe|math|svg|'.
+						   'article|section|nav|aside|hgroup|header|footer|'.
+						   'figure';
 
 		# Regular expression for the content of a block tag.
 		$nested_tags_level = 4;
@@ -1412,8 +1463,15 @@ class Markdown_Parser {
 			>
 			}xi',
 			array(&$this, '_doAutoLinks_email_callback'), $text);
+		$text = preg_replace_callback('{<(tel:([^\'">\s]+))>}i',array(&$this, '_doAutoLinks_tel_callback'), $text);
 
 		return $text;
+	}
+	function _doAutoLinks_tel_callback($matches) {
+		$url = $this->encodeAttribute($matches[1]);
+		$tel = $this->encodeAttribute($matches[2]);
+		$link = "<a href=\"$url\">$tel</a>";
+		return $this->hashPart($link);
 	}
 	function _doAutoLinks_url_callback($matches) {
 		$url = $this->encodeAttribute($matches[1]);
@@ -1487,12 +1545,16 @@ class Markdown_Parser {
 				|
 					<\?.*?\?> | <%.*?%>		# processing instruction
 				|
-					<[/!$]?[-a-zA-Z0-9:_]+	# regular tags
+					<[!$]?[-a-zA-Z0-9:_]+	# regular tags
 					(?>
 						\s
 						(?>[^"\'>]+|"[^"]*"|\'[^\']*\')*
 					)?
 					>
+				|
+					<[-a-zA-Z0-9:_]+\s*/> # xml-style empty tag
+				|
+					</[-a-zA-Z0-9:_]+\s*> # closing tag
 			').'
 				)
 				}xs';
@@ -1630,7 +1692,7 @@ Perl by John Gruber.
 
 Markdown is a text-to-HTML filter; it translates an easy-to-read /
 easy-to-write structured text format into HTML. Markdown's text format
-is most similar to that of plain text email, and supports features such
+is mostly similar to that of plain text email, and supports features such
 as headers, *emphasis*, code blocks, blockquotes, and links.
 
 Markdown's syntax is designed not as a generic markup language, but
@@ -1648,7 +1710,7 @@ Bugs
 
 To file bug reports please send email to:
 
-<michel.fortin@michelf.com>
+<michel.fortin@michelf.ca>
 
 Please include with your report: (1) the example input; (2) the output you
 expected; (3) the output Markdown actually produced.
@@ -1664,8 +1726,8 @@ Copyright and License
 ---------------------
 
 PHP Markdown
-Copyright (c) 2004-2009 Michel Fortin
-<http://michelf.com/>
+Copyright (c) 2004-2013 Michel Fortin
+<http://michelf.ca/>
 All rights reserved.
 
 Based on Markdown

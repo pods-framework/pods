@@ -162,6 +162,14 @@ class PodsField_WYSIWYG extends PodsField {
             )*/
         );
 
+		if ( function_exists( 'Markdown' ) ) {
+			$options[ 'output_options' ][ 'group' ][ self::$type . '_allow_markdown' ] = array(
+				'label' => __( 'Allow Markdown Syntax?', 'pods' ),
+				'default' => 0,
+				'type' => 'boolean'
+			);
+		}
+
         return $options;
     }
 
@@ -231,6 +239,10 @@ class PodsField_WYSIWYG extends PodsField {
 
             $value = do_shortcode( $value );
         }
+
+		if ( function_exists( 'Markdown' ) && 1 == pods_v( self::$type . '_allow_markdown', $options ) ) {
+			$value = Markdown( $value );
+		}
 
         return $value;
     }

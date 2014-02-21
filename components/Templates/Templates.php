@@ -91,7 +91,7 @@ class Pods_Templates extends PodsComponent {
 			add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
 
 			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
-		}		
+		}
 	}
 
 	public function disable_builder_layout ( $post_types ) {

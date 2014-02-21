@@ -22,9 +22,9 @@ if ( is_user_logged_in() )
 
 $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
-$pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
-if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit )
     wp_enqueue_script( 'jquery-ui-sortable' );
 
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
@@ -62,14 +62,34 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
         var $element = $('#<?php echo $attributes[ 'id' ] ?>' );
 
         $element.select2( {
-            width : 'resolve',
 			<?php
-				if ( 1 == (int) pods_v( 'pick_allow_html', $options ) ) {
+				if ( 1 == pods_v( $type . '_taggable' ) ) {
 			?>
-			escapeMarkup: function (m) { return m; },
+				tags : true,
+				createSearchChoice : function( term, data ) {
+					if ( 0 === $( data ).filter( function() { return this.text.localeCompare( term.trim() ) === 0; } ).length ) {
+						return {
+						// Simply use the new tag term as the id
+						//we might want to append 'new' to all newly created term IDs for processing in PodsAPI.php
+							id: term.trim(),
+							text: term.trim()
+						};
+					}
+				},
 			<?php
 				}
 			?>
+
+            width : 'resolve',
+
+			<?php
+				if ( 1 == (int) pods_v( $form_field_type . '_allow_html', $options ) ) {
+			?>
+				escapeMarkup : function (m) { return m; },
+			<?php
+				}
+			?>
+
             initSelection : function ( element, callback ) {
                 var data = [];
 
@@ -83,7 +103,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 } );
 
                 <?php
-                    if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+                    if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
                 ?>
                     callback( data );
                 <?php
@@ -103,7 +123,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
             <?php
                }
 
-                if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+                if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
             ?>
                 placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
                 multiple : true,
@@ -170,7 +190,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
             ?>
         } );
 
-        <?php if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
+        <?php if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) { ?>
             $element.select2( 'container' ).find( 'ul.select2-choices' ).sortable( {
                 containment: 'parent',
                 start: function() { $element.select2( 'onSortStart' ); },

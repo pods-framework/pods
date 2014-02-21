@@ -679,37 +679,48 @@ function pods_shortcode ( $tags, $content = null ) {
     elseif ( empty( $id ) ) {
         $params = array();
 
-        if ( 0 < strlen( $tags[ 'orderby' ] ) )
-            $params[ 'orderby' ] = $tags[ 'orderby' ];
+		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
+			if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
+				$params[ 'orderby' ] = $tags[ 'orderby' ];
+			}
 
-        if ( !empty( $tags[ 'limit' ] ) )
-            $params[ 'limit' ] = $tags[ 'limit' ];
+			if ( 0 < strlen( $tags[ 'where' ] ) ) {
+				$params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
+			}
 
-        if ( 0 < strlen( $tags[ 'where' ] ) )
-            $params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
+			if ( 0 < strlen( $tags[ 'having' ] ) ) {
+				$params[ 'having' ] = pods_evaluate_tags( $tags[ 'having' ] );
+			}
 
-        if ( 0 < strlen( $tags[ 'having' ] ) )
-            $params[ 'having' ] = pods_evaluate_tags( $tags[ 'having' ] );
+			if ( 0 < strlen( $tags[ 'groupby' ] ) ) {
+				$params[ 'groupby' ] = $tags[ 'groupby' ];
+			}
 
-        if ( 0 < strlen( $tags[ 'groupby' ] ) )
-            $params[ 'groupby' ] = $tags[ 'groupby' ];
+			if ( 0 < strlen( $tags[ 'select' ] ) ) {
+				$params[ 'select' ] = $tags[ 'select' ];
+			}
+		}
 
-        if ( 0 < strlen( $tags[ 'select' ] ) )
-            $params[ 'select' ] = $tags[ 'select' ];
+		if ( !empty( $tags[ 'limit' ] ) ) {
+			$params[ 'limit' ] = (int) $tags[ 'limit' ];
+		}
 
-        if ( empty( $tags[ 'search' ] ) )
-            $params[ 'search' ] = false;
+		if ( empty( $tags[ 'search' ] ) ) {
+			$params[ 'search' ] = false;
+		}
 
-        if ( 0 < absint( $tags[ 'page' ] ) )
-            $params[ 'page' ] = absint( $tags[ 'page' ] );
+		if ( 0 < absint( $tags[ 'page' ] ) ) {
+			$params[ 'page' ] = absint( $tags[ 'page' ] );
+		}
 
-        if ( empty( $tags[ 'pagination' ] ) )
-            $params[ 'pagination' ] = false;
+		if ( empty( $tags[ 'pagination' ] ) ) {
+			$params[ 'pagination' ] = false;
+		}
 
-        if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
-            $params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
-            $params[ 'expires' ] = (int) $tags[ 'expires' ];
-        }
+		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
+			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
+			$params[ 'expires' ] = (int) $tags[ 'expires' ];
+		}
 
         $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
 

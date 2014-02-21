@@ -2674,6 +2674,9 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod_item ( $params ) {
+
+		global $wpdb;
+
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = PodsForm::tableless_field_types();
@@ -3225,22 +3228,27 @@ class PodsAPI {
         if ( !empty( $rel_fields ) ) {
             foreach ( $rel_fields as $type => $data ) {
                 // Only handle tableless fields
-                if ( !in_array( $type, $tableless_field_types ) )
+                if ( !in_array( $type, $tableless_field_types ) ) {
                     continue;
+				}
 
                 foreach ( $data as $field => $values ) {
                     $pick_val = pods_var( 'pick_val', $fields[ $field ][ 'options' ] );
 
-                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ][ 'options' ] ) )
+                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ][ 'options' ] ) ) {
                         $pick_val = pods_var( 'pick_table', $fields[ $field ][ 'options' ], $pick_val, null, true );
+					}
 
                     if ( '__current__' == $pick_val ) {
-                        if ( is_object( $pod ) )
+                        if ( is_object( $pod ) ) {
                             $pick_val = $pod->pod;
-                        elseif ( is_array( $pod ) )
+						}
+                        elseif ( is_array( $pod ) ) {
                             $pick_val = $pod[ 'name' ];
-                        elseif ( 0 < strlen( $pod ) )
+						}
+                        elseif ( 0 < strlen( $pod ) ) {
                             $pick_val = $pod;
+						}
                     }
 
                     $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ][ 'options' ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
@@ -3253,44 +3261,70 @@ class PodsAPI {
                         $search_data->fields = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'fields' ];
                     }
 
+					$find_rel_params = array(
+						'select' => "`t`.`{$search_data->field_id}`",
+						'where' => "`t`.`{$search_data->field_slug}` = %s OR `t`.`{$search_data->field_index}` = %s",
+						'limit' => 1,
+						'pagination' => false,
+						'search' => false
+					);
+
                     $related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ][ 'options' ], 0 );
 
-                    if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) )
+                    if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) ) {
                         $related_limit = 1;
+					}
 
                     // Enforce integers / unique values for IDs
                     $value_ids = array();
 
+					$is_file_field = in_array( $type, PodsForm::file_field_types() );
+					$is_taggable = ( in_array( $type, PodsForm::tableless_field_types() ) && 1 == pods_v( $type . '_taggable' ) );
+
+					// @todo Handle simple relationships eventually
                     foreach ( $values as $v ) {
                         if ( !empty( $v ) ) {
-                            if ( !is_array( $v ) ) {
-                                if ( !preg_match( '/[^0-9]*/', $v ) )
-                                    $v = (int) $v;
-                                // File handling
-                                elseif ( in_array( $type, PodsForm::file_field_types() ) ) {
-                                    // Get ID from GUID
-                                    $v = pods_image_id_from_field( $v );
+							if ( !is_array( $v ) ) {
+								if ( !preg_match( '/[^0-9]*/', $v ) ) {
+									$v = (int) $v;
+								}
+								// File handling
+								elseif ( $is_file_field ) {
+									// Get ID from GUID
+									$v = pods_image_id_from_field( $v );
 
-                                    // If file not found, add it
-                                    if ( empty( $v ) )
-                                        $v = pods_attachment_import( $v );
-                                }
-                                // Reference by slug
-                                else {
-                                    $v_data = $search_data->fetch( $v );
+									// If file not found, add it
+									if ( empty( $v ) ) {
+										$v = pods_attachment_import( $v );
+									}
+								}
+								// Reference by slug
+								else {
+									$rel_params = $find_rel_params;
+									$rel_params[ 'where' ] = $wpdb->prepare( $rel_params[ 'where' ], array( $v, $v ) );
 
-                                    if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) )
-                                        $v = (int) $v_data[ $search_data->field_id ];
-                                }
-                                // @todo Handle simple relationships eventually
-                            }
-                            elseif ( in_array( $type, PodsForm::file_field_types() ) && isset( $v[ 'id' ] ) )
-                                $v = (int) $v[ 'id' ];
-                            else
-                                continue;
+									$search_data->select( $find_rel_params );
 
-                            if ( !empty( $v ) && !in_array( $v, $value_ids ) )
-                                $value_ids[] = $v;
+									$v_data = $search_data->fetch( $v );
+
+									if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
+										$v = (int) $v_data[ $search_data->field_id ];
+									}
+									elseif ( $is_taggable ) {
+										// @todo Save $v to a new item on related object
+									}
+								}
+							}
+							elseif ( $is_file_field && isset( $v[ 'id' ] ) ) {
+								$v = (int) $v[ 'id' ];
+							}
+							else {
+								continue;
+							}
+
+							if ( !empty( $v ) && !in_array( $v, $value_ids ) ) {
+								$value_ids[] = $v;
+							}
                         }
                     }
 
@@ -3401,6 +3435,7 @@ class PodsAPI {
 
         // Success! Return the id
         return $params->id;
+
     }
 
     /**

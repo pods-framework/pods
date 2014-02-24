@@ -2429,14 +2429,18 @@ class PodsMeta {
             return false;
 
         $reserved_post_types = array(
-            '_pods_pod',
-            '_pods_field'
+			'nav_menu_item',
+			'revision'
         );
 
         $reserved_post_types = apply_filters( 'pods_meta_reserved_post_types', $reserved_post_types, $object_type, $object_id, $object_name, $objects );
 
-        if ( empty( $object_name ) || ( 'post_type' == $object_type && in_array( $object_name, $reserved_post_types ) ) )
+        if ( empty( $object_name ) || ( 'post_type' == $object_type && ( 0 === strpos( $object_name, '_pods_' ) ) || in_array( $object_name, $reserved_post_types ) ) ) {
             return false;
+		}
+		elseif ( 'attachment' == $object_name ) {
+			return @current( self::$media );
+		}
 
         $recheck = array();
 

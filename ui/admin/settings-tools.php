@@ -58,6 +58,10 @@
             $plugins[ $plugin_data[ 'Name' ] ] = $plugin_data[ 'Version' ];
     }
 
+    $stylesheet = get_stylesheet();
+    $theme = wp_get_theme( $stylesheet );
+    $theme_name = $theme->get( 'Name' );
+
     $versions = array(
         'WordPress Version' => $wp,
         'PHP Version' => $php,
@@ -75,6 +79,7 @@
         'Pods Install Location' => PODS_DIR,
         'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
         'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
+        'Currently Active Theme' => $theme_name,
         'Currently Active Plugins' => $plugins
     );
 

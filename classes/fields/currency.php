@@ -47,7 +47,7 @@ class PodsField_Currency extends PodsField {
         'cad' => '$',
         'aud' => '$',
         'nzd' => '$',        
-        'eur' => '&euro;',
+        'euro' => '&euro;',
         'gbp' => '&pound;',
         'rub' => '&#8381;',
         'chf' => 'CHF',
@@ -109,7 +109,7 @@ class PodsField_Currency extends PodsField {
                 'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
                     array(
                         'usd' => '$ (USD)',
-                        'eur' => '&euro; (EUR)',
+                        'euro' => '&euro; (EUR)',
                         'gbp' => '&pound; (GBP)',
                         'aud' => 'Australian Dollar (AUD)',
                         'cad' => 'Canadian Dollar (CAD)',

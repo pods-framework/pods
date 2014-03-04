@@ -3303,7 +3303,7 @@ class PodsAPI {
 									$rel_params = $find_rel_params;
 									$rel_params[ 'where' ] = $wpdb->prepare( $rel_params[ 'where' ], array( $v, $v ) );
 
-									$search_data->select( $find_rel_params );
+									$search_data->select( $rel_params );
 
 									$v_data = $search_data->fetch( $v );
 

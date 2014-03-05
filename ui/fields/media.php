@@ -31,6 +31,7 @@ if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' 
 $limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
 $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' == $limit_file_type ) {
     $limit_types = 'image';
@@ -114,7 +115,9 @@ else
 
             $title = $attachment->post_title;
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+			$link = wp_get_attachment_url( $attachment->ID );
+
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
         }
         ?></ul>
 
@@ -122,7 +125,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/javascript">
@@ -234,7 +237,8 @@ else
                             id: attachment.id,
                             icon: attachment_thumbnail,
                             name: attachment.attributes.title,
-                            filename: attachment.filename
+                            filename: attachment.filename,
+                            link: attachment.url // @todo confirm this works
                         };
 
                         var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

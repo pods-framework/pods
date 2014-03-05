@@ -112,6 +112,11 @@ class PodsField_File extends PodsField {
                 'default' => 1,
                 'type' => 'boolean'
             ),
+            self::$type . '_linked' => array(
+                'label' => __( 'Link to File in editor', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             self::$type . '_limit' => array(
                 'label' => __( 'Max Number of Files', 'pods' ),
                 'depends-on' => array( self::$type . '_format_type' => 'multi' ),
@@ -462,7 +467,7 @@ class PodsField_File extends PodsField {
      * @return string
      * @since 2.0
      */
-    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
+    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
         // Preserve current file type
         $field_type = PodsForm::$field_type;
 
@@ -477,7 +482,11 @@ class PodsField_File extends PodsField {
         if ( empty( $name ) )
             $name = '{{name}}';
 
+        if ( empty( $link ) )
+            $link = '{{name}}';
+
         $editable = (boolean) $editable;
+        $linked = (boolean) $linked;
         ?>
     <li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
@@ -499,6 +508,14 @@ class PodsField_File extends PodsField {
                     echo ( empty( $name ) ? '{{name}}' : $name );
                 ?>
             </li>
+
+			<?php
+				if ( $linked ) {
+			?>
+            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>">Download</a></li>
+			<?php
+				}
+			?>
 
             <li class="pods-file-col pods-file-delete">Delete</li>
         </ul>
@@ -729,9 +746,11 @@ class PodsField_File extends PodsField {
                 }
             }
 
-            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
+            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
             if ( null === $custom_handler ) {
+				$linked = pods_var( $field[ 'type' ] . '_linked', $field[ 'options' ], 0 );
+
                 $attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
                 if ( is_object( $attachment_id ) ) {
@@ -750,6 +769,12 @@ class PodsField_File extends PodsField {
 
                     $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
                     $attachment[ 'thumbnail' ] = $thumb[ 0 ];
+
+					$attachment[ 'link' ] = '';
+
+					if ( $linked ) {
+                    	$attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
+					}
 
                     $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 

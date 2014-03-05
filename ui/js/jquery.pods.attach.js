@@ -57,10 +57,10 @@ function pods_attachments ( src, file_limit ) {
     function pods_thickbox_send ( wp_media_meta, e ) {
         // grab our meta as per the Media library
         var wp_media_title = wp_media_meta.find( 'tr.post_title td.field input' ).val();
-        var wp_media_caption = wp_media_meta.find( 'tr.post_excerpt td.field input' ).val();
-        var wp_media_url = wp_media_meta.find( 'tr.url td.field input.urlfield' ).val();
+        //var wp_media_caption = wp_media_meta.find( 'tr.post_excerpt td.field input' ).val();
         var wp_media_id = wp_media_meta.find( 'td.imgedit-response' ).attr( 'id' ).replace( 'imgedit-response-', '' );
         var wp_media_thumb = wp_media_meta.parent().find( 'img.thumbnail' ).attr( 'src' );
+        var wp_media_link = wp_media_meta.find( 'tr.url td.field input.urlfield' ).val();
 
         // use the data we found to form a new Pods file entry and append it to the DOM
         var source = jQuery( '#' + src + '-handlebars' ).html();
@@ -68,7 +68,8 @@ function pods_attachments ( src, file_limit ) {
         var binding = {
             id : wp_media_id,
             name : wp_media_title,
-            icon : wp_media_thumb
+            icon : wp_media_thumb,
+			link : wp_media_link
         };
 
         var tmpl = Handlebars.compile( source );

@@ -29,6 +29,7 @@ $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $p
 $limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
 $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,jpeg,png,gif';
@@ -87,7 +88,9 @@ else
             if ( 0 == $title_editable )
                 $title = basename( $attachment->guid );
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+			$link = wp_get_attachment_url( $attachment->ID );
+
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
         }
         ?></ul>
 
@@ -95,7 +98,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/javascript">

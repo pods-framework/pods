@@ -584,6 +584,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'search' => true,
         'pagination' => false,
         'page' => null,
+        'offset' => null,
         'filters' => false,
         'filters_label' => null,
         'filters_location' => 'before',
@@ -601,8 +602,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'view' => null,
         'cache_mode' => 'none',
         'expires' => 0,
-		'shortcodes' => false,
-        'offset'    => null,
+		'shortcodes' => false
     );
 
     if ( !empty( $tags ) )
@@ -718,17 +718,16 @@ function pods_shortcode ( $tags, $content = null ) {
 			$params[ 'pagination' ] = false;
 		}
 
+        if ( 0 < (int) $tags[ 'offset' ] ) {
+            $params[ 'offset' ] = (int) $tags[ 'offset' ];
+        }
+
 		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
 			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
 			$params[ 'expires' ] = (int) $tags[ 'expires' ];
 		}
 
-        if ( !is_null( $tags[ 'offset' ] ) ) {
-            $params[ 'offset' ] = $tags[ 'offset' ];
-        }
-
-
-        $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
+        $params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
         $pod->find( $params );
 

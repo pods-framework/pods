@@ -271,6 +271,12 @@ class PodsField_Phone extends PodsField {
                 $value .= ' x' . $extension;
         }
 
+		$length = (int) pods_var( self::$type . '_max_length', $options, 25 );
+
+		if ( 0 < $length && $length < mb_strlen( $value ) ) {
+			$value = mb_substr( $value, 0, $length );
+		}
+
         return $value;
     }
 }

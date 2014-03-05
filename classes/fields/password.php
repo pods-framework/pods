@@ -158,4 +158,28 @@ class PodsField_Password extends PodsField {
 
         return true;
     }
+
+    /**
+     * Change the value or perform actions after validation but before saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @return mixed|string
+     * @since 2.0
+     */
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+
+		if ( 0 < $length && $length < mb_strlen( $value ) ) {
+			$value = mb_substr( $value, 0, $length );
+		}
+
+        return $value;
+    }
 }

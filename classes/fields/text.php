@@ -228,6 +228,12 @@ class PodsField_Text extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
 
+		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+
+		if ( 0 < $length && $length < mb_strlen( $value ) ) {
+			$value = mb_substr( $value, 0, $length );
+		}
+
         return $value;
     }
 

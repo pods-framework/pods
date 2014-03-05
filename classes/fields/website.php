@@ -278,6 +278,12 @@ class PodsField_Website extends PodsField {
             }
         }
 
+		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+
+		if ( 0 < $length && $length < mb_strlen( $value ) ) {
+			$value = mb_substr( $value, 0, $length );
+		}
+
         return $value;
     }
 

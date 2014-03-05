@@ -65,6 +65,8 @@ if ( !$fields_only ) {
 			<?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 <?php
 }
+
+do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 ?>
 
 			<ul class="pods-form-fields">
@@ -73,7 +75,7 @@ if ( !$fields_only ) {
 						if ( 'hidden' == $field[ 'type' ] )
 							continue;
 
-						do_action( 'pods_form_pre_field', $field, $fields, $pod );
+						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
 				?>
 					<li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
 						<div class="pods-field-label">
@@ -87,6 +89,7 @@ if ( !$fields_only ) {
 						</div>
 					</li>
 				<?php
+						do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
 					}
 				?>
 			</ul>
@@ -98,6 +101,8 @@ if ( !$fields_only ) {
 
 					echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
 			   }
+
+				do_action( 'pods_form_after_fields', $fields, $pod, $params );
 			?>
 
 <?php
@@ -107,7 +112,7 @@ if ( !$fields_only ) {
             <img class="waiting" src="<?php echo admin_url() . '/images/wpspin_light.gif' ?>" alt="">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
 
-            <?php do_action( 'pods_form_after_submit', $pod, $fields ); ?>
+            <?php do_action( 'pods_form_after_submit', $pod, $fields, $params ); ?>
         </p>
     </div>
 </form>

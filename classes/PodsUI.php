@@ -2338,11 +2338,9 @@ class PodsUI {
             }
             ?>
         </h2>
-        <?php
-            if ( true !== $reorder ) {
-        ?>
-            <form id="posts-filter" action="" method="get">
-        <?php
+
+		<form id="posts-filter" action="" method="get">
+        	<?php
                 $excluded_filters = array(
                     'search' . $this->num,
                     'pg' . $this->num,
@@ -2386,11 +2384,10 @@ class PodsUI {
                 foreach ( $get as $k => $v ) {
                     if ( is_array( $v ) || in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
                         continue;
-                    ?>
-                    <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
-                <?php
+			?>
+				<input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
+			<?php
                 }
-            }
 
 			if ( false !== $this->callback( 'header', $reorder ) ) {
 				return null;
@@ -2676,10 +2673,8 @@ class PodsUI {
                 }
             }
 
-            if ( true !== $reorder ) {
             ?>
         </form>
-        <?php } ?>
     </div>
     <?php
         if ( $this->filters_enhanced )

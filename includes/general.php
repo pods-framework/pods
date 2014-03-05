@@ -582,7 +582,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'having' => null,
         'groupby' => null,
         'search' => true,
-        'pagination' => false,
+        'pagination' => null,
         'page' => null,
         'offset' => null,
         'filters' => false,
@@ -714,8 +714,8 @@ function pods_shortcode ( $tags, $content = null ) {
 			$params[ 'page' ] = absint( $tags[ 'page' ] );
 		}
 
-		if ( empty( $tags[ 'pagination' ] ) ) {
-			$params[ 'pagination' ] = false;
+		if ( null !== $tags[ 'pagination' ] ) {
+			$params[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
 		}
 
         if ( 0 < (int) $tags[ 'offset' ] ) {
@@ -765,12 +765,12 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
-    if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
+    if ( empty( $id ) && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
         echo $pod->pagination( $tags[ 'pagination_label' ] );
 
     echo $pod->template( $tags[ 'template' ], $content );
 
-    if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
+    if ( empty( $id ) && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
         echo $pod->pagination( $tags[ 'pagination_label' ] );
 
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )

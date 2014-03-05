@@ -2743,6 +2743,9 @@ class PodsAPI {
         if ( !isset( $params->from ) )
             $params->from = 'save';
 
+        if ( !isset( $params->location ) )
+            $params->location = null;
+
 		if ( !isset( $params->clear_slug_cache ) ) {
 			$params->clear_slug_cache = true;
 		}
@@ -7546,6 +7549,7 @@ class PodsAPI {
         $id = pods_var( '_pods_id', $params );
         $uri = pods_var( '_pods_uri', $params );
         $form = pods_var( '_pods_form', $params );
+        $location = pods_var( '_pods_location', $params );
 
         if ( is_object( $obj ) ) {
             $pod = $obj->pod;
@@ -7585,7 +7589,8 @@ class PodsAPI {
             'pod' => $pod,
             'id' => $id,
             'data' => $data,
-            'from' => 'process_form'
+            'from' => 'process_form',
+			'location' => $location
         );
 
         $id = $this->save_pod_item( $params );

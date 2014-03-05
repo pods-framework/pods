@@ -601,7 +601,8 @@ function pods_shortcode ( $tags, $content = null ) {
         'view' => null,
         'cache_mode' => 'none',
         'expires' => 0,
-		'shortcodes' => false
+		'shortcodes' => false,
+        'offset'    => null,
     );
 
     if ( !empty( $tags ) )
@@ -721,6 +722,11 @@ function pods_shortcode ( $tags, $content = null ) {
 			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
 			$params[ 'expires' ] = (int) $tags[ 'expires' ];
 		}
+
+        if ( !is_null( $tags[ 'offset' ] ) ) {
+            $params[ 'offset' ] = $tags[ 'offset' ];
+        }
+
 
         $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
 

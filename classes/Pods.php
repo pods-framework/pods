@@ -3181,7 +3181,8 @@ class Pods implements Iterator {
         $defaults = array(
             'fields' => $params,
             'label' => $label,
-            'thank_you' => $thank_you
+            'thank_you' => $thank_you,
+			'fields_only' => false
         );
 
         if ( is_array( $params ) )
@@ -3264,6 +3265,7 @@ class Pods implements Iterator {
             $label = __( 'Save Changes', 'pods' );
 
         $thank_you = $params[ 'thank_you' ];
+        $fields_only = $params[ 'fields_only' ];
 
         PodsForm::$form_counter++;
 

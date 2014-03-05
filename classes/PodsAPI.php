@@ -3474,6 +3474,34 @@ class PodsAPI {
         return $ids;
     }
 
+	/**
+	 * Get the fields that have changed during a save
+	 *
+	 * @param array $pieces Pieces array from save_pod_item
+	 *
+	 * @return array Array of fields and values that have changed
+	 */
+	public function get_changed_fields( $pieces ) {
+
+		$fields = $pieces[ 'fields' ];
+		$fields_active = $pieces[ 'fields_active' ];
+
+		$fields_changed = array();
+
+		if ( 0 < $pieces[ 'id' ] ) {
+			$pod = pods( $pieces[ 'params' ]->pod, $pieces[ 'params' ]->id );
+
+			foreach ( $fields_active as $field ) {
+				if ( isset( $fields[ $field ] ) && $pod->raw( $field ) != $fields[ $field ][ 'value' ] ) {
+					$fields_changed[ $field ] = $fields[ $field ][ 'value' ];
+				}
+			}
+		}
+
+		return $fields_changed;
+
+	}
+
     /**
      * Save relationships
      *

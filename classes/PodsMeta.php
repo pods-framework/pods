@@ -2477,8 +2477,11 @@ class PodsMeta {
             $meta_type = 'post';
 
         if ( empty( $meta_key ) ) {
-			return $_null; // don't cover get_post_meta( $id )
-            //$single = false;
+			if ( !defined( 'PODS_ALLOW_FULL_META' ) || !PODS_ALLOW_FULL_META ) {
+				return $_null; // don't cover get_post_meta( $id )
+			}
+
+			$single = false;
 		}
 
         $object = $this->get_object( $object_type, $object_id );

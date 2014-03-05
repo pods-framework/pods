@@ -2853,21 +2853,19 @@ class PodsAPI {
             unset( $params->data );
         }
 
-        if ( 'pod' == $pod[ 'type' ] ) {
-            if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) ) {
-                $fields[ 'created' ][ 'value' ] = current_time( 'mysql' );
-                $fields_active[] = 'created';
-            }
+		if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) && in_array( $fields[ 'created' ][ 'type' ], array( 'date', 'datetime' ) ) ) {
+			$fields[ 'created' ][ 'value' ] = current_time( 'mysql' );
+			$fields_active[] = 'created';
+		}
 
-            if ( !in_array( 'modified', $fields_active ) && isset( $fields[ 'modified' ] ) ) {
-                $fields[ 'modified' ][ 'value' ] = current_time( 'mysql' );
-                $fields_active[] = 'modified';
-            }
+		if ( !in_array( 'modified', $fields_active ) && isset( $fields[ 'modified' ] ) && in_array( $fields[ 'modified' ][ 'type' ], array( 'date', 'datetime' ) ) ) {
+			$fields[ 'modified' ][ 'value' ] = current_time( 'mysql' );
+			$fields_active[] = 'modified';
+		}
 
-            if ( empty( $params->id ) && !empty( $pod[ 'pod_field_index' ] ) && in_array( $pod[ 'pod_field_index' ], $fields_active ) && !in_array( $pod[ 'pod_field_slug' ], $fields_active ) && isset( $fields[ $pod[ 'pod_field_slug' ] ] ) ) {
-                $fields[ $pod[ 'pod_field_slug' ] ][ 'value' ] = ''; // this will get picked up by slug pre_save method
-                $fields_active[] = $pod[ 'pod_field_slug' ];
-            }
+        if ( in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) && empty( $params->id ) && !empty( $pod[ 'pod_field_index' ] ) && in_array( $pod[ 'pod_field_index' ], $fields_active ) && !in_array( $pod[ 'pod_field_slug' ], $fields_active ) && isset( $fields[ $pod[ 'pod_field_slug' ] ] ) ) {
+			$fields[ $pod[ 'pod_field_slug' ] ][ 'value' ] = ''; // this will get picked up by slug pre_save method
+			$fields_active[] = $pod[ 'pod_field_slug' ];
         }
 
         // Handle hidden fields

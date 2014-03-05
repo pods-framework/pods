@@ -1,0 +1,199 @@
+/**
+	This should hold all the field Sass for Pods
+**/
+
+$hover-background-color:#FFFFD8;
+$alt-hover-background-color:#F8F8F8;
+$focus-background:#FFFFCC;
+
+@mixin label-standard{
+	padding-top: 0;
+	float: none;
+	width: auto;
+	max-width: 100%;
+} // label-standard
+
+@import 'fields/boolean';
+@import 'fields/date';
+@import 'fields/pick';
+@import 'fields/select2';
+@import 'fields/number';
+@import 'fields/slider';
+@import 'fields/wysiwyg';
+@import 'fields/file';
+@import 'fields/checkbox';
+
+.pods-field{
+
+	label{
+		cursor: pointer;
+		display: inline-block;
+		padding: 0 0 4px 2px;
+	} // label
+
+	input, textarea{display:block;}
+
+	.quicktags-toolbar{
+
+		input{
+			display: inline-block;
+			width: auto;
+		} // input
+
+	} // .quicktags-toolbar
+
+	p.pods-field-comment{
+		color: #aaa;
+		font-size: .9em;
+		font-style: italic;
+		margin: 5px 0 0 2px !important;
+	} // p.pods-field-comment
+
+} // .pods-field
+
+
+.pods-field-option{
+	overflow: hidden;
+	clear: both;
+	display: block;
+	padding: 10px 10px 10px 10px;
+	border-bottom: 1px solid #cccccc;
+	min-height: 26px;
+
+	&:hover{background:$alt-hover-background-color;}
+
+	&:nth-child(even){
+		background:#FCFCFC;
+		&:hover{background:$alt-hover-background-color;}
+	} // &:nth-child(even)
+
+	&:first-child{margin-top:-5px;}
+
+	label{
+		width: 30%;
+		float: left;
+		font-size: 14px !important;
+		color: black;
+		margin-top: 7px;
+	} // label
+
+	input{
+		font-size: 14px;
+		width: 65%;
+		float: right;
+		border-color: #c9c9c9;
+	} // input
+
+
+	select{
+		width: 65%;
+		float: right;
+		font-size: 13px;
+
+		&:focus{background:$focus-background;}
+	} // select
+
+	small{
+		font-size: 12px;
+		margin-top: 6px;
+		display: inline-block;
+	} //small
+
+} // pods-field-option
+
+/* === MANAGE FIELDS === */
+div.pods-manage-field{
+
+	div{overflow:hidden;}
+
+	.pods-field-option,
+	.pods-field-option-group{
+		background:#FCFCFC;
+		border-bottom:1px solid #DFDFDF;
+		padding:10px;
+
+		&:nth-child(even){background:#FFF;}
+
+	} // .pods-field-option, .pods-field-option-group
+
+	.pods-field{position:relative;}
+
+	.pods-field-option label,
+	.pods-field-option-group .pods-field-option-group-label{
+		padding-top: 4px;
+		float: left;
+		width: 30%;
+		max-width: 150px;
+	}
+
+	.pods-field-option{
+
+		input[type="text"],
+		select,
+		textarea{
+			display: block;
+			float: left;
+			margin-left: 22px;
+			width: 65%;
+			max-width: 300px;
+		}
+
+
+		div select{float:none; width:100%;}
+
+	} // .pods-field-option
+
+	.pods-field-option-group{
+		p.pods-field-option-group-label{margin-top:0;}
+	} // .pods-field-option-group
+
+	input{
+
+		&[type="radio"]{
+			position: absolute;
+			left: 2px;
+			margin: 1px 7px 0 0;
+			float: none;
+			margin-right: 2px;
+			margin-left: 0;
+			vertical-align: middle;
+		} // type
+
+		&.pods-form-ui-no-label{position:relative;}
+
+	} // input
+
+} // div.pods-manage-field
+
+
+
+/* === PODS FORM === */
+.pods-form{
+	overflow:hidden;
+
+	.pods-validate-error-message {
+		color: #790000;
+		font-weight: bold;
+		padding: 2px 0 5px;
+		display: inline-block;
+	} // .pods-validate-error-message
+
+	div.pods-form-ui-field-type-avatar:after{
+		@include pods-visibility-hidden;
+	}
+
+	img.waiting {
+		display: none;
+		vertical-align: middle;
+	} // img.waiting
+
+	.pods-field-input textarea {
+		width: 95%;
+		min-height: 200px;
+	} // .pods-field-input textarea
+
+	.pods-field table.pods-metabox {
+		width: 95%;
+	}
+
+} // .pods-form

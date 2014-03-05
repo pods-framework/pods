@@ -1,0 +1,152 @@
+/**
+	Holds all the Sass for Pods tabs
+**/
+.pods-tab-wrapper{
+	min-width:300px; max-width:600px;
+
+	.pods-tabs{
+		padding:3px 0;
+		margin-left:0; margin-bottom:0;
+		border-bottom: 1px solid #CCC;
+		font-size: 15px;
+
+		li{
+			list-style: none;
+			margin: 0;
+			display: inline;
+
+			&:first-child a{margin-left:0;}
+
+			a{
+				@include border-top-round(3px);
+				padding: 6px 10px 3px;
+				margin-left: 3px;
+				border: 1px solid #CCC;
+				border-bottom: none;
+				background: #F5F5F5;
+				text-decoration: none;
+				color: #AAA;
+
+				&:hover{
+					background: #eee;
+					color: #D54E21;
+				} // &:hover
+			} // a
+
+			&.selected{
+
+				a{
+					color: #464646;
+					background: white;
+					border-bottom: 1px solid white;
+					&:hover{
+						background: #eee;
+						color: #D54E21;
+					} // &:hover
+				} // a
+
+			} // &.selected
+
+			&:active{
+
+				a{
+					background: #CCC;
+					color: #FFF;
+					border-color: #AAA;
+					border-bottom: 0 none;
+				} // a
+
+			} // &:active
+
+		} // li
+
+	} // .pods-tabs
+
+	.pods-tab-content-wrapper{
+		border: 1px solid #cccccc;
+		border-top: 0 none; border-bottom: 0 none;
+		background: white;
+		padding-top: 5px;
+		font-size: 16px;
+		overflow: hidden;
+
+		h4{
+			background: #dbdbdb;
+			color: #333;
+			padding: 15px 6px 8px 9px;
+			margin: 0;
+			letter-spacing: .05em;
+			font-size: 15px;
+		} // h4
+
+	} // .pods-tab-content-wrapper
+
+} // .pods-tab-wrapper
+
+.pods-tabbed{
+
+	div{overflow:hidden; zoom:1;}
+
+	ul.pods-tabs{
+
+		zoom:1;
+		margin-bottom:0;
+
+		&:before{content:""; display:table;}
+		&:after{content:""; display:table; clear:both;}
+
+		li.pods-tab{
+			float:left; margin:0;
+
+			a{
+				@include border-bottom-round(0);
+				@include border-top-round(5px);
+				background: #e9e9e9;
+				border: 1px solid #dfdfdf;
+				display: block;
+				float: left;
+				font-size: 14px;
+				margin-right: 5px;
+				padding: 5px 10px;
+				text-decoration: none;
+
+				&.selected{
+					background: #FFF;
+					border-bottom: 1px solid #FFF;
+				} // &.selected
+			} // a
+
+		} // li.pods-tab
+
+	} // ul.pods-tabs
+
+	/* === Tab group === */
+	.pods-tab-group{
+
+		h4{margin:5px 10px;}
+
+		.pods-tab{
+			display: none;
+			margin-bottom: 15px;
+			margin-top: -1px;
+			width: 99%;
+			border: 1px solid #dfdfdf;
+			border-bottom: 0;
+		} // .pods-tab
+
+	} // .pods-tab-grou
+
+} // .pods-tabbed
+
+/* === Tabbed nav === */
+.pods-nav-tabbed .pods-nav-tab-group .pods-nav-tab {
+    display: none;
+}
+
+.pods-tab{
+
+	&.pods-basic-options,
+	&#pods-advanced-labels,
+	&#pods-adavanced-settings-labels{display:block;}
+
+} // pods-tab

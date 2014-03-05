@@ -4,3 +4,5 @@
 .idea
 .svn
 .DS_Store
+.sass-cache/*
+node_modules/*

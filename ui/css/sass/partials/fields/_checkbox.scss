@@ -1,0 +1,42 @@
+.pods-field-option{
+
+	.pods-checkbox-wrapper{
+		float:left; margin:8px 5px 0 30px;
+
+		.pods-single-checkbox{
+			float:left; margin-bottom:5px;
+
+			// @todo this could probably be refactored to leverage sass better some sort of mixin that deals with columns
+			&.pods-checkbox-column-one{width:100%;}
+			&.pods-checkbox-column-two{width:50%;}
+			&.pods-checkbox-column-three{width:33%;}
+			&.pods-checkbox-column-four{width:25%;}
+		} // .pods-single-checkbox
+
+		input[type="checkbox"]{
+			width: 10px;
+			float: left;
+			margin: 8px 5px 0 0;
+		} // input[type="checkbox"]
+
+	} // .pods-checkbox-wrapper
+
+	.pods-field input[type=checkbox]:focus + label{
+		background:$focus-background;
+	}
+
+} // .pods-field-option
+
+.pods-manage-field{
+
+	input[type="checkbox"]{
+		position: absolute;
+		left: 2px;
+		margin: 1px 7px 0 0;
+		float: none;
+		margin-right: 2px;
+		margin-left: 0;
+		vertical-align: middle;
+	}
+
+} // .pods-manage-field

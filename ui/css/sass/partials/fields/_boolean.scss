@@ -1,0 +1,56 @@
+/* === BOOLEAN INPUTS === */
+.pods-boolean{
+	position:relative;
+
+	input {
+		display: block;
+		min-height:16px;
+		left: 2px;
+		margin: 1px 7px 0 0;
+		padding: 0;
+		position: absolute;
+		top: 10px;
+		width: auto;
+	} // input
+
+	label{
+		margin-left: 20px;
+		padding-top: 1px;
+	} // label
+
+	&:hover{background:$hover-background-color;}
+
+} // .pods-boolean
+
+.pods-manage-field{
+	.pods-field-option{
+
+		.pods-field.pods-boolean{
+			display: block;
+			float: left;
+			margin-left: 22px;
+			width: 65%;
+			max-width: 300px;
+		} // .pods-field.pods-boolean
+
+	} // .pods-field-option
+
+	.pods-field{
+
+		&.pods-boolean{
+			margin:5px 0;
+
+			&:hover{background:#FFFFD8;}
+
+			label{
+				@include label-standard;
+				padding-top:0;
+				display:block;
+				margin-left:20px;
+			} // label
+
+		} // &.pods-boolean
+
+	} // .pods-field
+
+} // .pods-manage-field

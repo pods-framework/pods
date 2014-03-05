@@ -1,0 +1,94 @@
+@import 'partials/helpers';
+@import 'partials/genericons';
+@import 'partials/loop-table';
+
+.button-primary{@include button-primary;}
+.pods-red-hover{@include pods-red-hover;}
+.pods-grey-hover{@include pods-grey-hover;}
+
+.pods-no-show {
+  display: none;
+}
+.pods-float-right {
+  text-align: right;
+}
+
+///
+
+.edit-tags-php .pods-loop-table,
+.edit-tags-php .pods-metabox {
+  margin-bottom: 10px;
+  clear: none;
+}
+.edit-tags-php .pods-loop-table {
+  position: relative;
+  width: 100%;
+  -webkit-transition: width 1s ease;
+  transition: width 1s ease;
+}
+.edit-tags-php #col-left {
+  overflow: visible;
+}
+.edit-tags-php.pods-loop-form-expanded .pods-loop-wrapper > .pods-loop-table,
+.edit-tags-php.pods-loop-form-expanded .pods-loop-row-add {
+  position: relative;
+  width: 200%;
+  -webkit-transition: width 1s ease;
+  transition: width 1s ease;
+}
+.pods-loop-wrapper .pods-loop-table thead th {
+  border-top: #DFDFDF !important;
+}
+.pods-loop-wrapper .loop.title {
+  margin-bottom: 5px;
+}
+.pods-loop-wrapper .loop.description {
+  font-size: 14px;
+}
+.pods-loop-wrapper .pods-loop-row-add {
+  margin-top: 10px;
+}
+.pods-loop-wrapper label {
+  text-transform: none;
+}
+.pods-loop-wrapper input[type="text"] {
+  max-width: 100% !important;
+}
+.pods-loop-wrapper .pods-loop-row-label .row-label {
+  color: #21759B;
+  text-decoration: none;
+}
+.pods-loop-wrapper .pods-loop-row-label .row-label:hover {
+  text-decoration: none;
+  color: #D54E21;
+}
+.pods-loop-wrapper .row-actions a {
+  color: #21759B;
+  text-decoration: none;
+}
+.pods-loop-wrapper .row-actions a:hover {
+  text-decoration: none;
+  color: #D54E21;
+}
+.pods-loop-wrapper th {
+  text-transform: none;
+}
+.pods-loop-wrapper .pods-icon {
+  margin-bottom: 0;
+}
+.pods-loop-wrapper th.field-label {
+  min-width: 100px;
+}
+.pods-loop-wrapper td.pods-loop-row-label {
+  min-width: 130px;
+}
+.pods-loop-wrapper .pods-loop-row-wrapper {
+  clear: both;
+}
+.pods-loop-wrapper .form-table th {
+  min-width: 100px;
+}
+.pods-loop-wrapper .form-table td {
+  padding: 10px 5px;
+}
+

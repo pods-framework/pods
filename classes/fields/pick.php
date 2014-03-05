@@ -1289,7 +1289,10 @@ class PodsField_Pick extends PodsField {
                                 $custom_label = $custom_label[ 1 ];
                             }
 
-                            $data[ (string) $custom_value ] = (string) $custom_label;
+							$custom_value = trim( (string) $custom_value );
+							$custom_label = trim( (string) $custom_label );
+
+                            $data[ $custom_value ] = $custom_label;
                         }
                     }
                     else

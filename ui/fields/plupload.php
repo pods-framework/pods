@@ -283,7 +283,8 @@ else
                 var binding = {
                     id : json.ID,
                     icon : json.thumbnail,
-                    name : json.post_title
+                    name : json.post_title,
+                    link : json.link
                 };
 
                 var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

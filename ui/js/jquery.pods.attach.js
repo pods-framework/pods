@@ -68,8 +68,7 @@ function pods_attachments ( src, file_limit ) {
         var binding = {
             id : wp_media_id,
             name : wp_media_title,
-            icon : wp_media_thumb,
-			link : wp_media_link
+            icon : wp_media_thumb
         };
 
         var tmpl = Handlebars.compile( source );

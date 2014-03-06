@@ -186,6 +186,7 @@ class PodsField_File extends PodsField {
         );
 
         if ( !pods_version_check( 'wp', '3.5' ) ) {
+            unset( $options[ self::$type . '_linked' ] );
             unset( $options[ self::$type . '_modal_title' ] );
             unset( $options[ self::$type . '_modal_add_button' ] );
 
@@ -483,7 +484,7 @@ class PodsField_File extends PodsField {
             $name = '{{name}}';
 
         if ( empty( $link ) )
-            $link = '{{name}}';
+            $link = '{{link}}';
 
         $editable = (boolean) $editable;
         $linked = (boolean) $linked;
@@ -509,15 +510,15 @@ class PodsField_File extends PodsField {
                 ?>
             </li>
 
+            <li class="pods-file-col pods-file-delete">Delete</li>
+
 			<?php
 				if ( $linked ) {
 			?>
-            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>">Download</a></li>
+            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>" target="_blank">Download</a></li>
 			<?php
 				}
 			?>
-
-            <li class="pods-file-col pods-file-delete">Delete</li>
         </ul>
     </li>
     <?php

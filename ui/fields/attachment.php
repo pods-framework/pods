@@ -90,7 +90,7 @@ else
 
 			$link = wp_get_attachment_url( $attachment->ID );
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
         }
         ?></ul>
 
@@ -98,7 +98,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
 </script>
 
 <script type="text/javascript">

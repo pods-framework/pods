@@ -1440,10 +1440,13 @@ class PodsAPI {
 		 */
 		global $wp_query;
 
-		$reserved_query_vars = array();
+		$reserved_query_vars = array(
+			'post_type',
+			'taxonomy'
+		);
 
 		if ( is_object( $wp_query ) ) {
-			$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+			$reserved_query_vars = array_merge( $reserved_query_vars, array_keys( $wp_query->fill_query_vars( array() ) ) );
 		}
 
 		if ( isset( $pod[ 'options' ][ 'query_var_string' ] ) ) {
@@ -1451,7 +1454,8 @@ class PodsAPI {
 				$pod[ 'options' ][ 'query_var_string' ] = $pod[ 'options' ][ 'type' ] . '_' . $pod[ 'options' ][ 'query_var_string' ];
 			}
 		}
-		elseif ( isset( $pod[ 'options' ][ 'query_var' ] ) ) {
+
+		if ( isset( $pod[ 'options' ][ 'query_var' ] ) ) {
 			if ( in_array( $pod[ 'options' ][ 'query_var' ], $reserved_query_vars ) ) {
 				$pod[ 'options' ][ 'query_var' ] = $pod[ 'options' ][ 'type' ] . '_' . $pod[ 'options' ][ 'query_var' ];
 			}

@@ -1442,7 +1442,8 @@ class PodsAPI {
 
 		$reserved_query_vars = array(
 			'post_type',
-			'taxonomy'
+			'taxonomy',
+			'output'
 		);
 
 		if ( is_object( $wp_query ) ) {

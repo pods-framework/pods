@@ -6297,7 +6297,7 @@ class PodsAPI {
 
         // Verify required fields
         if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) && 'slug' != $type ) {
-            if ( '' == $value || null === $value || array() === $value )
+            if ( '' == $value || null === $value || array() === $value || 0 === $value || '0' === $value )
                 return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 
             if ( 'multi' == pods_var( 'pick_format_type', $options[ 'options' ] ) && 'autocomplete' != pods_var( 'pick_format_multi', $options[ 'options' ] ) ) {

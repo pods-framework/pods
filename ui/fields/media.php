@@ -150,8 +150,10 @@ else
         <?php } ?>
 
         // hook delete links
-        $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', 'li.pods-file-delete', function () {
-            var podsfile = $( this ).parent().parent();
+        $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', 'li.pods-file-delete a', function ( e ) {
+			e.preventDefault();
+
+            var podsfile = $( this ).parent().parent().parent();
             podsfile.slideUp( function () {
                 // check to see if this was the only entry
                 if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet

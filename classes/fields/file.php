@@ -510,7 +510,7 @@ class PodsField_File extends PodsField {
                 ?>
             </li>
 
-            <li class="pods-file-col pods-file-delete">Delete</li>
+            <li class="pods-file-col pods-file-delete"><a href="#delete">Delete</a></li>
 
 			<?php
 				if ( $linked ) {

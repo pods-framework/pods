@@ -1,4 +1,5 @@
 <?php
+
 	class Pods_Service_Container implements ArrayAccess {
 
 		private $values = array();
@@ -6,6 +7,8 @@
 		private $services = array();
 
 		private $aliases = array();
+
+		private $locked = array();
 
 		function __construct ( array $values = array() ) {
 			$this->values = $values;
@@ -25,19 +28,14 @@
 		}
 
 		public function offsetGet ( $id ) {
-			if ( isset( $this->aliases[ $id ] ) ) {
-				return $this->offsetGet( $this->aliases[ $id ] );
+			if ( isset( $this->locked[ $id ] ) ) {
+				throw new InvalidArgumentException( 'Circular dependency found.' );
 			}
+			$this->locked[ $id ] = true;
+			$value = $this->getId( $id );
+			unset( $this->locked[ $id ] );
 
-			if ( isset( $this->values[ $id ] ) ) {
-				return $this->values[ $id ];
-			}
-
-			if ( isset( $this->services[ $id ] ) ) {
-				return $this->values[ $id ] = $this->build( $this->services[ $id ] );
-			}
-
-			return null;
+			return $value;
 		}
 
 		public function offsetExists ( $id ) {
@@ -50,6 +48,22 @@
 			unset( $this->values[ $id ] );
 			unset( $this->services[ $id ] );
 			unset( $this->aliases[ $id ] );
+		}
+
+		private function getId ( $id ) {
+			if ( isset( $this->aliases[ $id ] ) ) {
+				return $this->offsetGet( $this->aliases[ $id ] );
+			}
+
+			if ( isset( $this->values[ $id ] ) ) {
+				return $this->values[ $id ];
+			}
+
+			if ( isset( $this->services[ $id ] ) ) {
+				return $this->values[ $id ] = $this->build( $this->services[ $id ] );
+			}
+			return null;
+
 		}
 
 		public function build ( $service ) {
@@ -65,19 +79,23 @@
 		}
 
 		protected function resolve ( $value ) {
+			$return = null;
 			if ( is_array( $value ) ) {
 				foreach ( $value as $key => $val ) {
 					$value[ $key ] = $this->resolve( $val );
 				}
-
-				return $value;
+				$return = $value;
+			}
+			elseif ( is_string( $value ) && '@' == $value[ 0 ] ) {
+				$return = $this->offsetGet( substr( $value, 1 ) );
+				if ( is_null( $return ) ) {
+					$option = get_option( $value );
+					if ( false !== $option )
+						$return = $option;
+				}
 			}
 
-			if ( is_string( $value ) && '@' == $value[ 0 ] ) {
-				return $this->offsetGet( substr( $value, 1 ) );
-			}
-
-			return $value;
+			return $return;
 		}
 
 	}

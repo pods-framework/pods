@@ -1414,9 +1414,25 @@ class PodsAdmin {
             );
         }
 
-        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $options, $pod );
-        $options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ], $options, $pod );
-        $options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
+		/**
+		 * Add admin fields to the Pods editor for a specific Pod
+		 *
+		 * @params array $options The Options fields
+		 * @params object $pod Current Pods object
+		 *
+		 * @since unkown
+		 */
+		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $options, $pod );
+
+		/**
+		 * Add admin fields to the Pods editor for any Pod of a specific content type.
+		 */
+		$options = apply_filters( 'pods_admin_setup_edit_options_' . $pod[ 'type' ], $options, $pod );
+
+		/**
+		 * Add admin fields to the Pods editor for all Pods
+		 */
+		$options = apply_filters( 'pods_admin_setup_edit_options', $options, $pod );
 
         return $options;
     }

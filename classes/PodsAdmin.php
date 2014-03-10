@@ -895,9 +895,26 @@ class PodsAdmin {
 
 		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
 
-        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $tabs, $pod, $addtl_args );
-        $tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ], $tabs, $pod, $addtl_args );
-        $tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
+		/**
+		 * Add or modify tabs in Pods editor for a specific Pod
+		 *
+		 * @params array $tabs Tabs to set.
+		 * @params object $pod Current Pods object
+		 * @params array $addtl_args Additional args.
+		 *
+		 * @since unknown
+		 */
+		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ] . '_' . $pod[ 'name' ], $tabs, $pod, $addtl_args );
+
+		/**
+		 * Add or modify tabs for any Pod in Pods editor of a specific post type.
+		 */
+		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ], $tabs, $pod, $addtl_args );
+
+		/**
+		 * Add or modify tabs in Pods editor for all pods.
+		 */
+		$tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
 
         return $tabs;
     }

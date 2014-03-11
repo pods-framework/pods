@@ -132,7 +132,7 @@ if ( !$fields_only ) {
 </form>
 
 <script type="text/javascript">
-    if ( 'undefined' == typeof pods_form_init && 'undefined' != typeof $( document ).Pods ) {
+    if ( 'undefined' == typeof pods_form_init && 'undefined' != typeof jQuery( document ).Pods ) {
         var pods_form_init = true;
 
         if ( 'undefined' == typeof ajaxurl ) {

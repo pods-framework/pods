@@ -21,9 +21,7 @@ if ( class_exists( 'Pods_Advanced_Content_Types' ) ) {
 class Pods_Advanced_Content_Types extends Pods_Component {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.3
+	 * {@inheritDocs}
 	 */
 	public function __construct() {
 

@@ -41,9 +41,7 @@ class Pods_Helpers extends Pods_Component {
     private $object_type = '_pods_helper';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
         $args = array(

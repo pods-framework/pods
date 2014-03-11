@@ -48,9 +48,7 @@ class Pods_Templates extends Pods_Component {
     private $object_type = '_pods_template';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
         $args = array(

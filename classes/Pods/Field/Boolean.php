@@ -31,20 +31,14 @@ class Pods_Field_Boolean extends Pods_Field {
     public static $prepare = '%s';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
 
     }
 
     /**
-     * Add options and set defaults to
-     *
-     * @return array Array of available options
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function options() {
         $options = array(
@@ -75,12 +69,7 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function schema( $options = null ) {
         $schema = 'BOOL DEFAULT 0';
@@ -89,16 +78,7 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Change the value of the field when displayed with Pods::display
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
@@ -114,15 +94,7 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
@@ -150,18 +122,7 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Get the data from the field
-     *
-     * @param string $name The name of the field
-     * @param string|array $value The value of the field
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     * @param boolean $in_form
-     *
-     * @return array Array of possible field data
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
@@ -180,52 +141,21 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Build regex necessary for JS validation
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @return bool
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
     }
 
     /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param null $params
-     *
-     * @return bool
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 
     /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return int|mixed
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         // Only allow 0 / 1
@@ -244,16 +174,7 @@ class Pods_Field_Boolean extends Pods_Field {
     }
 
     /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $yesno = array(

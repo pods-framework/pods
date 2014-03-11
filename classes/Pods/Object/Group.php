@@ -36,15 +36,7 @@ class Pods_Object_Group extends Pods_Object {
 	);
 
 	/**
-	 * Return field array from Object, a field's data, or a field option
-	 *
-	 * @param string|null $field Object Field name
-	 * @param string|null $option Field option
-	 * @param bool $alt Set to true to check alternate fields array
-	 *
-	 * @return array|mixed
-	 *
-	 * @since 2.3.10
+	 * {@inheritDocs}
 	 */
 	public function fields( $field = null, $option = null, $alt = true ) {
 
@@ -516,15 +508,7 @@ class Pods_Object_Group extends Pods_Object {
 	}
 
     /**
-     * Save a Object by giving an array of option data or set a specific option to a specific value.
-     *
-     * @param array|string $options Either an associative array of option information or a option name
-     * @param mixed $value (optional) Value of the option, if $data is a option name
-	 * @param bool $refresh (optional) Refresh the current object
-     *
-     * @return int|bool The Object ID or false if failed
-     *
-     * @since 2.3.10
+     * {@inheritDocs}
 	 */
 	public function save( $options = null, $value = null, $refresh = true ) {
 
@@ -939,15 +923,7 @@ class Pods_Object_Group extends Pods_Object {
 	}
 
     /**
-     * Duplicate a Object, optionally giving an array of option data or set a specific option to a specific value.
-     *
-     * @param array|string $options (optional) Either an associative array of option information or a option name
-     * @param mixed $value (optional) Value of the option, if $data is a option name
-	 * @param bool $replace (optional) Replace the current object
-     *
-     * @return int|bool The new Object ID or false if failed
-     *
-     * @since 2.3.10
+     * {@inheritDocs}
 	 */
 	public function duplicate( $options = null, $value = null, $replace = false ) {
 
@@ -1048,13 +1024,7 @@ class Pods_Object_Group extends Pods_Object {
 	}
 
     /**
-     * Delete the Object
-     *
-	 * @param bool $delete_all (optional) Whether to delete all content
-     *
-     * @return bool Whether the Object was successfully deleted
-     *
-     * @since 2.3.10
+     * {@inheritDocs}
      */
 	public function delete( $delete_all = false ) {
 

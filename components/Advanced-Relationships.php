@@ -20,9 +20,7 @@ if ( class_exists( 'Pods_Advanced_Relationships' ) )
 class Pods_Advanced_Relationships extends Pods_Component {
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.3
+     * {@inheritDocs}
      */
     public function __construct() {
         add_action( 'pods_form_ui_field_pick_related_objects_other', array( $this, 'add_related_objects' ) );

@@ -17,7 +17,7 @@ class Pods_Widget_Single extends WP_Widget {
     }
 
     /**
-     * Output of widget
+     * {@inheritDocs}
      */
     public function widget( $args, $instance ) {
         extract( $args );
@@ -42,9 +42,7 @@ class Pods_Widget_Single extends WP_Widget {
     }
 
     /**
-     * Updates the new instance of widget arguments
-     *
-     * @returns array $instance Updated instance
+     * {@inheritDocs}
      */
     public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
@@ -62,7 +60,7 @@ class Pods_Widget_Single extends WP_Widget {
     }
 
     /**
-     * Widget Form
+     * {@inheritDocs}
      */
     public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );

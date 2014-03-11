@@ -37,21 +37,14 @@ class Pods_Field_Password extends Pods_Field {
     public static $prepare = '%s';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
 
     }
 
     /**
-     * Add options and set defaults to
-     *
-     * @return array
-     *
-     * @since 2.0
-     * @return array
+     * {@inheritDocs}
      */
     public function options() {
         $options = array(
@@ -77,12 +70,7 @@ class Pods_Field_Password extends Pods_Field {
     }
 
     /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function schema( $options = null ) {
         $length = (int) pods_v( self::$type . '_max_length', $options, 255 );
@@ -96,15 +84,7 @@ class Pods_Field_Password extends Pods_Field {
     }
 
     /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
@@ -125,18 +105,7 @@ class Pods_Field_Password extends Pods_Field {
     }
 
     /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param null $params
-     *
-     * @return array|bool
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();

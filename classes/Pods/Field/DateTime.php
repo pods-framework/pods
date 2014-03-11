@@ -37,20 +37,14 @@ class Pods_Field_DateTime extends Pods_Field {
     public static $prepare = '%s';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
 
     }
 
     /**
-     * Add options and set defaults to
-     *
-     * @return array
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function options() {
         $options = array(
@@ -161,12 +155,7 @@ class Pods_Field_DateTime extends Pods_Field {
     }
 
     /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function schema( $options = null ) {
         $schema = 'DATETIME NOT NULL default "0000-00-00 00:00:00"';
@@ -175,16 +164,7 @@ class Pods_Field_DateTime extends Pods_Field {
     }
 
     /**
-     * Change the value of the field when displayed with Pods::display
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
@@ -209,15 +189,7 @@ class Pods_Field_DateTime extends Pods_Field {
     }
 
     /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $form_field_type = Pods_Form::$field_type;
@@ -249,18 +221,7 @@ class Pods_Field_DateTime extends Pods_Field {
     }
 
     /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return mixed|string
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
@@ -276,17 +237,7 @@ class Pods_Field_DateTime extends Pods_Field {
     }
 
     /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @return mixed|null|string
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );

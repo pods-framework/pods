@@ -23,9 +23,7 @@ if ( class_exists( 'Pods_Migrate_Packages' ) ) {
 class Pods_Migrate_Packages extends Pods_Component {
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritDocs}
 	 */
 	public function __construct() {
 

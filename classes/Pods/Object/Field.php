@@ -39,13 +39,7 @@ class Pods_Object_Field extends Pods_Object {
 	);
 
 	/**
-	 * Load the object
-	 *
-	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
-	 * @param int $id Get the Object by ID (overrides $name)
-	 * @param mixed $parent Parent Object or ID
-	 *
-	 * @return int|bool $id The Object ID or false if Object not found
+	 * {@inheritDocs}
 	 */
 	public function load( $name = null, $id = 0, $parent = null ) {
 
@@ -287,15 +281,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
 	/**
-	 * Check if the object exists
-	 *
-	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
-	 * @param int $id Get the Object by ID (overrides $name)
-	 * @param mixed $parent Parent Object or ID
-	 *
-	 * @return int|bool $id The Object ID or false if Object not found
-	 *
-	 * @since 3.0
+	 * {@inheritDocs}
 	 */
 	public function exists( $name = null, $id = 0, $parent = null ) {
 
@@ -310,9 +296,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
 	/**
-	 * Get table info for a Pod
-	 *
-	 * @return array Table info
+	 * {@inheritDocs}
 	 */
 	public function table_info() {
 
@@ -856,15 +840,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
 	/**
-     * Save a Object by giving an array of option data or set a specific option to a specific value.
-     *
-     * @param array|string $options Either an associative array of option information or a option name
-     * @param mixed $value (optional) Value of the option, if $data is a option name
-	 * @param bool $refresh (optional) Refresh the current object
-     *
-     * @return int|bool The Object ID or false if failed
-     *
-     * @since 2.3.10
+     * {@inheritDocs}
 	 */
 	public function save( $options = null, $value = null, $refresh = true ) {
 
@@ -1467,15 +1443,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
     /**
-	 * Duplicate a Object, optionally giving an array of option data or set a specific option to a specific value.
-	 *
-	 * @param array|string $options (optional) Either an associative array of option information or a option name
-	 * @param mixed $value (optional) Value of the option, if $data is a option name
-	 * @param bool $replace (optional) Replace the current object
-	 *
-	 * @return int|bool The new Object ID or false if failed
-	 *
-	 * @since 2.3.10
+	 * {@inheritDocs}
 	 */
 	public function duplicate( $options = null, $value = null, $replace = false ) {
 
@@ -1571,13 +1539,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
     /**
-     * Delete the Object
-	 *
-	 * @param bool $delete_all (optional) Whether to delete all content
-     *
-     * @return bool Whether the Object was successfully deleted
-     *
-     * @since 2.3.10
+     * {@inheritDocs}
      */
 	public function delete( $delete_all = false, $table_operation = true ) {
 
@@ -1688,11 +1650,7 @@ class Pods_Object_Field extends Pods_Object {
 	}
 
     /**
-     * Delete all content and relationships for a field
-     *
-     * @return bool Whether the Content was successfully deleted
-     *
-     * @since 3.0
+     * {@inheritDocs}
      */
 	public function reset() {
 

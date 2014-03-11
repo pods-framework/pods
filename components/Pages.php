@@ -57,9 +57,7 @@ class Pods_Pages extends Pods_Component {
     static $content_called = false;
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
         add_shortcode( 'pods-content', array( $this, 'shortcode' ) );

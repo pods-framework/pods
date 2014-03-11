@@ -13,7 +13,10 @@ class Pods_Widget_Form extends WP_Widget {
         );
     }
 
-    public function widget( $args, $instance ) {
+	/**
+	 * {@inheritDocs}
+	 */
+	public function widget( $args, $instance ) {
         extract( $args );
 
         // Get widget fields
@@ -36,7 +39,10 @@ class Pods_Widget_Form extends WP_Widget {
         }
     }
 
-    public function update( $new_instance, $old_instance ) {
+	/**
+	 * {@inheritDocs}
+	 */
+	public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_v( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_v( 'pod_type', $new_instance, '' );
@@ -51,7 +57,10 @@ class Pods_Widget_Form extends WP_Widget {
         return $instance;
     }
 
-    public function form( $instance ) {
+	/**
+	 * {@inheritDocs}
+	 */
+	public function form( $instance ) {
         $title = pods_v( 'title', $instance, '' );
         $pod_type = pods_v( 'pod_type', $instance, '' );
         $slug = pods_v( 'slug', $instance, '' );

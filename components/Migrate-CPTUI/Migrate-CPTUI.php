@@ -28,9 +28,7 @@ class Pods_Migrate_CPTUI extends Pods_Component {
     private $taxonomies = null;
 
     /**
-     * Do things like register scripts and stylesheets
-     *
-     * @since 2.0
+     * {@inheritDocs}
      */
     public function __construct() {
         $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );

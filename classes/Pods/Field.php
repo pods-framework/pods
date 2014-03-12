@@ -363,20 +363,20 @@ class Pods_Field {
 
     }
 
-    /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @since string Value to be shown in the UI
-     *
-     * @since 2.0
-     */
+	/**
+	 * Customize the Pods UI manage table column output
+	 *
+	 * @param int $id
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $fields
+	 * @param array $pod
+	 *
+	 * @return string Value to be shown in the UI
+	 *
+	 * @since 2.0
+	 */
     public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $value;
     }

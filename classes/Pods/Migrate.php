@@ -86,13 +86,15 @@ class Pods_Migrate {
         $this->data = array_merge( $defaults, (array) $data );
     }
 
-    /**
-     * Importing / Parsing / Validating Code
-     *
-     * @param array $data Array of data
-     * @param string $type Export Type (php, json, sv, xml)
-     * @param string $delimiter Delimiter for export type 'sv'
-     */
+	/**
+	 * Importing / Parsing / Validating Code
+	 *
+	 * @param array $data Array of data
+	 * @param string $type Export Type (php, json, sv, xml)
+	 * @param string $delimiter Delimiter for export type 'sv'
+	 *
+	 * @return bool
+	 */
     function import( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
@@ -109,10 +111,12 @@ class Pods_Migrate {
         return $this->import_pod_items();
     }
 
-    /**
-     * @param array $data Array of data
-     * @param string $type Export Type (php, json, sv, xml)
-     */
+	/**
+	 * @param array $data Array of data
+	 * @param string $type Export Type (php, json, sv, xml)
+	 *
+	 * @return bool
+	 */
     public function import_pod_items( $data = null, $type = null ) {
         if ( !empty( $data ) )
             $this->input = $data;

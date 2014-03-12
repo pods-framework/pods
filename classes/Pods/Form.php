@@ -272,13 +272,14 @@ class Pods_Form {
 	 * @param string $name The HTML name of the submit button. Defaults to "submit". If no id attribute
 	 *               is given in $other_attributes below, $name will be used as the button's id.
 	 * @param bool $wrap True if the output button should be wrapped in a paragraph tag,
-	 * 			   false otherwise. Defaults to true
+	 *               false otherwise. Defaults to true
 	 * @param array|string $other_attributes Other attributes that should be output with the button,
 	 *                     mapping attributes to their values, such as array( 'tabindex' => '1' ).
 	 *                     These attributes will be output as attribute="value", such as tabindex="1".
 	 *                     Defaults to no other attributes. Other attributes can also be provided as a
 	 *                     string such as 'tabindex="1"', though the array format is typically cleaner.
 	 *
+	 * @return string
 	 * @since 3.0
 	 */
 	public static function submit_button( $text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null ) {
@@ -538,17 +539,18 @@ class Pods_Form {
         return $options;
     }
 
-    /**
-     * Get options for a field type and setup defaults
-     *
-     * @static
-     *
-     * @param $type
-     *
-     * @return array|null
-     *
-     * @since 2.0
-     */
+	/**
+	 * Get options for a field type and setup defaults
+	 *
+	 * @static
+	 *
+	 * @param $type
+	 * @param null|array $options
+	 *
+	 * @return array|null
+	 *
+	 * @since 2.0
+	 */
     public static function options_setup( $type = null, $options = null ) {
         $core_defaults = array(
             'id' => 0,
@@ -817,19 +819,20 @@ class Pods_Form {
         return $classes;
     }
 
-    /**
-     * Change the value of the field
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param array $traverse
-     *
-     * @since 2.3
-     */
+	/**
+	 * Change the value of the field
+	 *
+	 * @param $type
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 * @param int $id
+	 * @param array $traverse
+	 *
+	 * @return array|mixed|null
+	 * @since 2.3
+	 */
     public static function value( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
@@ -862,19 +865,20 @@ class Pods_Form {
         return $value;
     }
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param array $traverse
-     *
-     * @since 2.0
-     */
+	/**
+	 * Change the way the value of the field is displayed with Pods::get
+	 *
+	 * @param $type
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 * @param int $id
+	 * @param array $traverse
+	 *
+	 * @return array|mixed|null|void
+	 * @since 2.0
+	 */
     public static function display( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
@@ -943,22 +947,23 @@ class Pods_Form {
         return $prepare;
     }
 
-    /**
-     * Validate a value before it's saved
-     *
-     * @param string $type
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param array|object $params
-     *
-     * @static
-     *
-     * @since 2.0
-     */
+	/**
+	 * Validate a value before it's saved
+	 *
+	 * @param string $type
+	 * @param mixed $value
+	 * @param string $name
+	 * @param array $options
+	 * @param array $fields
+	 * @param array $pod
+	 * @param int $id
+	 * @param array|object $params
+	 *
+	 * @return bool|mixed|void
+	 * @static
+	 *
+	 * @since 2.0
+	 */
     public static function validate( $type, $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         self::field_loader( $type );
 
@@ -972,22 +977,23 @@ class Pods_Form {
         return $validate;
     }
 
-    /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param string $type
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @static
-     *
-     * @since 2.0
-     */
+	/**
+	 * Change the value or perform actions after validation but before saving to the DB
+	 *
+	 * @param string $type
+	 * @param mixed $value
+	 * @param int $id
+	 * @param string $name
+	 * @param array $options
+	 * @param array $fields
+	 * @param array $pod
+	 * @param object $params
+	 *
+	 * @return mixed
+	 * @static
+	 *
+	 * @since 2.0
+	 */
     public static function pre_save( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
 
@@ -997,22 +1003,23 @@ class Pods_Form {
         return $value;
     }
 
-    /**
-     * Save the value to the DB
-     *
-     * @param string $type
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @static
-     *
-     * @since 2.3
-     */
+	/**
+	 * Save the value to the DB
+	 *
+	 * @param string $type
+	 * @param mixed $value
+	 * @param int $id
+	 * @param string $name
+	 * @param array $options
+	 * @param array $fields
+	 * @param array $pod
+	 * @param object $params
+	 *
+	 * @return null
+	 * @static
+	 *
+	 * @since 2.3
+	 */
     public static function save( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
 
@@ -1024,19 +1031,20 @@ class Pods_Form {
         return $saved;
     }
 
-    /**
-     * Delete the value from the DB
-     *
-     * @param string $type
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @static
-     *
-     * @since 2.3
-     */
+	/**
+	 * Delete the value from the DB
+	 *
+	 * @param string $type
+	 * @param int $id
+	 * @param string $name
+	 * @param array $options
+	 * @param array $pod
+	 *
+	 * @return null
+	 * @static
+	 *
+	 * @since 2.3
+	 */
     public static function delete( $type, $id = null, $name = null, $options = null, $pod = null ) {
         self::field_loader( $type );
 
@@ -1048,21 +1056,22 @@ class Pods_Form {
         return $deleted;
     }
 
-    /**
-     * Check if a user has permission to be editing a field
-     *
-     * @param $type
-     * @param null $name
-     * @param null $options
-     * @param null $fields
-     * @param null $pod
-     * @param null $id
-     * @param null $params
-     *
-     * @static
-     *
-     * @since 2.0
-     */
+	/**
+	 * Check if a user has permission to be editing a field
+	 *
+	 * @param $type
+	 * @param null $name
+	 * @param null $options
+	 * @param null $fields
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $params
+	 *
+	 * @return bool
+	 * @static
+	 *
+	 * @since 2.0
+	 */
     public static function permission( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $permission = pods_permission( $options );
 

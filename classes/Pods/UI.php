@@ -2119,11 +2119,11 @@ class Pods_UI {
         return $this->do_hook( 'get_field', $value, $field );
     }
 
-    /**
-     * @param bool $full Whether to get ALL data or use pagination
-     *
-     * @return bool
-     */
+	/**
+	 * @param null $params
+	 *
+	 * @return bool
+	 */
     public function get_data( $params = null ) {
         $action = $this->action;
 
@@ -2312,9 +2312,12 @@ class Pods_UI {
         }
     }
 
-    /**
-     * @return array
-     */
+	/**
+	 * @param int $counter
+	 * @param null $method
+	 *
+	 * @return array
+	 */
     public function get_row( &$counter = 0, $method = null ) {
         if ( !empty( $this->row ) && 0 < (int) $this->id && 'table' != $method )
             return $this->row;

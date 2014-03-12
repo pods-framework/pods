@@ -837,14 +837,13 @@ class Pods_Admin {
 
     }
 
-    /**
-     * Duplicate a pod
-     *
-     * @param int $id
-     * @param Pods_UI $obj
-     *
-     * @return mixed
-     */
+	/**
+	 * Duplicate a pod
+	 *
+	 * @param Pods_UI $obj
+	 *
+	 * @return mixed
+	 */
     public function admin_setup_duplicate( $obj ) {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
@@ -867,6 +866,8 @@ class Pods_Admin {
 	 * @param array $row
 	 * @param Pods_UI $obj
 	 *
+	 * @return bool
+	 *
 	 * @since 2.3.10
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
@@ -879,13 +880,14 @@ class Pods_Admin {
 
 	}
 
-    /**
-     * Reset a pod
-     *
-     * @param Pods_UI $obj
-     *
-     * @return mixed
-     */
+	/**
+	 * Reset a pod
+	 *
+	 * @param Pods_UI $obj
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
     public function admin_setup_reset( $obj, $id ) {
         $pod = pods_api()->load_pod( array( 'id' => $id ), __METHOD__ );
 
@@ -908,6 +910,7 @@ class Pods_Admin {
 	 * @param array $row
 	 * @param Pods_UI $obj
 	 *
+	 * @return bool
 	 * @since 2.3.10
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
@@ -1000,16 +1003,18 @@ class Pods_Admin {
 
     }
 
-    /**
-     * Custom value handler for 'Rules' in the Groups Pods_UI
-     *
-     * @param array|Pods_Object|Pods_Object_Group $row Row data
-     * @param Pods_UI $obj Pods_UI object
-     * @param mixed $row_value Row value
-     * @param string $field Field name
-     * @param array|Pods_Object|Pods_Object_Field $attributes Field options
-     * @param array $fields Fields
-     */
+	/**
+	 * Custom value handler for 'Rules' in the Groups Pods_UI
+	 *
+	 * @param array|Pods_Object|Pods_Object_Group $row Row data
+	 * @param Pods_UI $obj Pods_UI object
+	 * @param mixed $row_value Row value
+	 * @param string $field Field name
+	 * @param array|Pods_Object|Pods_Object_Field $attributes Field options
+	 * @param array $fields Fields
+	 *
+	 * @return mixed|string|void
+	 */
 	public function admin_setup_groups_field_rules( $row, $obj, $row_value, $field, $attributes, $fields ) {
 
 		$options = $row->admin_options();
@@ -1051,16 +1056,18 @@ class Pods_Admin {
 
 	}
 
-    /**
-     * Custom value handler for 'Field Count' in the Groups Pods_UI
-     *
-     * @param array|Pods_Object|Pods_Object_Group $row Row data
-     * @param Pods_UI $obj Pods_UI object
-     * @param mixed $row_value Row value
-     * @param string $field Field name
-     * @param array|Pods_Object|Pods_Object_Field $attributes Field options
-     * @param array $fields Fields
-     */
+	/**
+	 * Custom value handler for 'Field Count' in the Groups Pods_UI
+	 *
+	 * @param array|Pods_Object|Pods_Object_Group $row Row data
+	 * @param Pods_UI $obj Pods_UI object
+	 * @param mixed $row_value Row value
+	 * @param string $field Field name
+	 * @param array|Pods_Object|Pods_Object_Field $attributes Field options
+	 * @param array $fields Fields
+	 *
+	 * @return int
+	 */
 	public function admin_setup_groups_field_count( $row, $obj, $row_value, $field, $attributes, $fields ) {
 
 		$field_count = count( $row->fields() );
@@ -1092,14 +1099,13 @@ class Pods_Admin {
 
     }
 
-    /**
-     * Duplicate a pod
-     *
-     * @param int $id
-     * @param Pods_UI $obj
-     *
-     * @return mixed
-     */
+	/**
+	 * Duplicate a pod
+	 *
+	 * @param Pods_UI $obj
+	 *
+	 * @return mixed
+	 */
     public function admin_setup_groups_duplicate( $obj ) {
 
 		$group = pods_object_group( null, $obj->id );

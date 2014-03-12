@@ -347,6 +347,8 @@ class Pods_Object implements ArrayAccess, Serializable {
 	/**
 	 * Check if the Object is a valid
 	 *
+	 * @param bool $strict
+	 *
 	 * @return bool
 	 *
 	 * @since 2.3.10
@@ -398,8 +400,7 @@ class Pods_Object implements ArrayAccess, Serializable {
 	/**
 	 * Get a list of all meta keys that have changed
 	 *
-	 * @param array|object|Pods_Object $data Data override
-	 *
+	 * @return array
 	 * @since 3.0
 	 */
 	public function changed() {
@@ -419,6 +420,7 @@ class Pods_Object implements ArrayAccess, Serializable {
 	 *
 	 * @param array|object|Pods_Object $data Data override
 	 *
+	 * @return $this
 	 * @since 3.0
 	 */
 	public function override( $data ) {
@@ -468,6 +470,7 @@ class Pods_Object implements ArrayAccess, Serializable {
 	 *
 	 * @param array|object|Pods_Object $data Data override
 	 *
+	 * @return $this
 	 * @since 3.0
 	 */
 	public function defaults( $data ) {
@@ -1464,6 +1467,7 @@ class Pods_Object implements ArrayAccess, Serializable {
 	 * Get value from array usage $object['offset'];
 	 *
 	 * @param mixed $offset Used to get value of Array
+	 * @param bool $strict
 	 *
 	 * @return mixed|null
 	 *

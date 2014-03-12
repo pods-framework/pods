@@ -491,7 +491,7 @@ class Pods_Components {
     /**
      * Add pods specific capabilities.
      *
-     * @param $capabilities List of extra capabilities to add
+     * @param array $capabilities List of extra capabilities to add
      *
      * @return array
      */

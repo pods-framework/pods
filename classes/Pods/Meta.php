@@ -2109,10 +2109,12 @@ class Pods_Meta {
         do_action( 'pods_meta_' . __FUNCTION__ . '_post', $comment, $metabox );
     }
 
-    /**
-     * @param $approved
-     * @param $commentdata
-     */
+	/**
+	 * @param $approved
+	 * @param $commentdata
+	 *
+	 * @return mixed|void
+	 */
     public function validate_comment( $approved, $commentdata ) {
         $groups = $this->groups_get( 'comment', 'comment' );
 

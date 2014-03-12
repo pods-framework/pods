@@ -2395,14 +2395,15 @@ class Pods_API {
         return $ids;
     }
 
-    /**
-     * Save relationships
-     *
-     * @param int $id ID of item
-     * @param int|array $related_id ID or IDs to save
-     * @param array $pod Pod data
-     * @param array $field Field data
-     */
+	/**
+	 * Save relationships
+	 *
+	 * @param int $id ID of item
+	 * @param int|array $related_ids ID or IDs to save
+	 * @param array $pod Pod data
+	 * @param array $field Field data
+	 *
+	 */
     public function save_relationships( $id, $related_ids, $pod, $field ) {
         // Get current values
         if ( 'pick' == $field[ 'type' ] && isset( Pods_Field_Pick::$related_data[ $field[ 'id' ] ] ) && isset( Pods_Field_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ] ) )
@@ -2902,22 +2903,22 @@ class Pods_API {
         return true;
     }
 
-    /**
-     * Delete all content for a Pod
-     *
-     * $params['id'] int The Pod ID
-     * $params['name'] string The Pod name
-     *
-     * @param array $params An associative array of parameters
-     * @param array $pod (optional) Pod data
-     *
-     * @return bool Whether the Content was successfully deleted
-     *
-     * @uses pods_query
-     * @uses pods_cache_clear
-     *
-     * @since 1.9.0
-     */
+	/**
+	 * Delete all content for a Pod
+	 *
+	 * $params['id'] int The Pod ID
+	 * $params['name'] string The Pod name
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param array|bool $pod (optional) Pod data
+	 *
+	 * @return bool Whether the Content was successfully deleted
+	 *
+	 * @uses pods_query
+	 * @uses pods_cache_clear
+	 *
+	 * @since 1.9.0
+	 */
     public function reset_pod( $params, $pod = false ) {
 
         if ( empty( $pod ) ) {
@@ -3284,11 +3285,11 @@ class Pods_API {
         return true;
     }
 
-    /**
+	/**
 	 * Delete an object from tableless fields
 	 *
 	 * @param int $id
-	 * @param string $type
+	 * @param string|array|object $object
 	 * @param string $name
 	 *
 	 * @return bool
@@ -3505,18 +3506,19 @@ class Pods_API {
             pods_no_conflict_off( $related_pod[ 'type' ] );
     }
 
-    /**
-     * Check if a Pod exists
-     *
-     * $params['id'] int Pod ID
-     * $params['name'] string Pod name
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return bool True if exists
-     *
-     * @since 1.12
-     */
+	/**
+	 * Check if a Pod exists
+	 *
+	 * $params['id'] int Pod ID
+	 * $params['name'] string Pod name
+	 *
+	 * @param array $params An associative array of parameters
+	 * @param null|string $type
+	 *
+	 * @return bool True if exists
+	 *
+	 * @since 1.12
+	 */
     public function pod_exists( $params, $type = null ) {
         if ( is_string( $params ) )
             $params = array( 'name' => $params );
@@ -5656,17 +5658,17 @@ class Pods_API {
         return false;
     }
 
-    /**
-     * Validate a package
-     *
-     * @param array|string $data (optional) An associative array containing a package, or the json encoded package
-     * @param bool $output (optional)
-     *
-     * @return array|bool
-     *
-     * @since 1.9.0
-     * @deprecated 2.0
-     */
+	/**
+	 * Validate a package
+	 *
+	 * @param array|bool|string $data (optional) An associative array containing a package, or the json encoded package
+	 * @param bool $output (optional)
+	 *
+	 * @return array|bool
+	 *
+	 * @since 1.9.0
+	 * @deprecated 2.0
+	 */
     public function validate_package( $data = false, $output = false ) {
         return true;
     }
@@ -5886,16 +5888,17 @@ class Pods_API {
         return $data;
     }
 
-    /**
-     * Convert CSV to a PHP array
-     *
-     * @param string $data The CSV input
-     *
-     * @return array
-     * @since 1.7.1
-     *
-     * @deprecated 2.3.5
-     */
+	/**
+	 * Convert CSV to a PHP array
+	 *
+	 * @param string $data The CSV input
+	 * @param string $delimiter
+	 *
+	 * @return array
+	 * @since 1.7.1
+	 *
+	 * @deprecated 2.3.5
+	 */
     public function csv_to_php( $data, $delimiter = ',' ) {
         pods_deprecated( "Pods_API->csv_to_php", '2.3.5' );
 

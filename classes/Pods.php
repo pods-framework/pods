@@ -437,7 +437,7 @@ class Pods implements Iterator {
 	 * Return a field input for a specific field
 	 *
 	 * @param string|array $field Field name or Field data array
-	 * @param string $field Input field name to use (overrides default name)
+	 * @param string $input_name Input field name to use (overrides default name)
 	 * @param mixed $value Current value to use
 	 *
 	 * @return string Field Input HTML
@@ -3029,6 +3029,7 @@ class Pods implements Iterator {
 	 *
 	 * @param array $fields (optional) Fields to export
 	 * @param int $id (optional) ID of the pod item to export
+	 * @param null $format
 	 *
 	 * @return array|bool Data array of the exported pod item
 	 *
@@ -3351,7 +3352,7 @@ class Pods implements Iterator {
 	 *
 	 * @see Pods_Templates::template
 	 *
-	 * @param string $template The template name
+	 * @param string $template_name The template name
 	 * @param string $code Custom template code to use instead
 	 * @param bool $deprecated Whether to use deprecated functionality based on old function usage
 	 *
@@ -3644,7 +3645,6 @@ class Pods implements Iterator {
 	 * Replace magic tags with their values
 	 *
 	 * @param string $code The content to evaluate
-	 * @param object $obj The Pods object
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *
@@ -3659,7 +3659,6 @@ class Pods implements Iterator {
 	 * Replace magic tags with their values
 	 *
 	 * @param string $tag The magic tag to process
-	 * @param object $obj The Pods object
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *

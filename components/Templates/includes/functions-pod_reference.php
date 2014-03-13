@@ -96,8 +96,3 @@ function pq_tunnel_pod_field( $fields, $prefix = null ){
 	return $out;
 }
 
-function pg_guild_query($id){
-	$struct = get_post_meta($id, 'query_builder', true);
-	dump($struct);
-}
-?>

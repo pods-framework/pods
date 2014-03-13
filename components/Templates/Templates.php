@@ -16,14 +16,17 @@
  */
 
 if ( class_exists( 'Pods_Templates' ) ){
+
+	// Pull in the functions
+	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
+	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );
+
 	// dont run if the Frontier Template Editor is already running.
 	if ( class_exists( 'Pods_Frontier_Template_Editor' ) || class_exists( 'Pods_Templates_Frontier' ) )
 		return;
 
 	// Pull in the Frontier Template System
 	require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
-	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
-	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );
 
 	Pods_Templates_Frontier::get_instance();
 	return;
@@ -91,7 +94,9 @@ class Pods_Templates extends PodsComponent {
 
 			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
-			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+			// removed the old editor meta box - replaced with the frontier base template editor
+			//add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+			
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
 			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 

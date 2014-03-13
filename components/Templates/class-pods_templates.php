@@ -58,22 +58,7 @@ class Pods_Templates_Frontier {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylescripts' ) );
 		add_action('wp_footer', array( $this, 'footer_scripts' ) );
 		add_action( 'init', array( $this, 'activate_metaboxes' ) );
-		
-		// remove default template metabox
-		add_action( 'add_meta_boxes', array( $this, 'remove_template_editor'), 1000 );
-
 	}
-	/**
-	 * Return an instance of this class.
-	 *
-	 *
-	 * @return    object    A single instance of this class.
-	 */
-
-	public function remove_template_editor(){
-	    remove_meta_box('pods-meta-template', '_pods_template', 'normal');
-	}
-
 
 	/**
 	 * Return an instance of this class.

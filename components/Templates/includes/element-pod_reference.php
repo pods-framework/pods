@@ -23,7 +23,7 @@ echo '</select>';
 		}
 	}else{
 		echo '<div class="pod-field-row">';
-		echo '<div class="pod-field-label pod-field-name" data-tag="No reference Pods selected">' . __( 'No reference Pod selected', 'pods' ) . '</div>';
+		echo __( 'No reference Pod selected', 'pods' );
 		echo '</div>';
 
 	}

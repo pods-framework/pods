@@ -22,9 +22,6 @@ echo '</select>';
 			}
 		}
 	}else{
-		echo '<div class="pod-field-row">';
-		echo __( 'No reference Pod selected', 'pods' );
-		echo '</div>';
 
 	}
 

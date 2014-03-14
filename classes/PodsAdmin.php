@@ -533,7 +533,7 @@ class PodsAdmin {
 
                     break;
                 }
-            }  
+            }
         }
 
         if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
@@ -546,7 +546,7 @@ class PodsAdmin {
                 }
             }
         }
-        
+
         return $parent_file;
     }
 
@@ -976,8 +976,8 @@ class PodsAdmin {
                     'depends-on' => array( 'show_in_menu' => true )
                 ),
                 'menu_icon' => array(
-                    'label' => __( 'Menu Icon URL', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'label' => __( 'Menu Icon', 'pods' ),
+                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="http://melchoyce.github.io/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
                     'type' => 'text',
                     'default' => '',
                     'depends-on' => array( 'show_in_menu' => true )
@@ -1047,8 +1047,8 @@ class PodsAdmin {
                     'boolean_yes_label' => ''
                 ),
                 'has_archive' => array(
-                    'label' => __( 'Has Archive', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'label' => __( 'Enable Archive Page', 'pods' ),
+                    'help' => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),
                     'type' => 'boolean',
                     'default' => false,
                     'boolean_yes_label' => ''
@@ -1077,7 +1077,7 @@ class PodsAdmin {
                 ),
                 'rewrite' => array(
                     'label' => __( 'Rewrite', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Reading. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'dependency' => true,
@@ -1085,7 +1085,7 @@ class PodsAdmin {
                 ),
                 'rewrite_custom_slug' => array(
                     'label' => __( 'Custom Rewrite Slug', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called "foo", if this field is left blank, your link will be "example.com/foo/post_slug", but if you were to enter "bar" your link will be "example.com/bar/post_slug".', 'pods' ),
                     'type' => 'text',
                     'default' => '',
                     'depends-on' => array( 'rewrite' => true )

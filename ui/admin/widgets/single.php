@@ -10,6 +10,8 @@
     }
 </style>
 
+<p><em><?php _e('You must specify a Pods Template or create a custom template, using <a href="http://pods.io/docs/build/using-magic-tags/" title="Using Magic Tags" target="_blank">magic tags</a>.', 'pods'); ?></p></em>
+
 <ol class="pods_single_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"> <?php _e( 'Title', 'pods' ); ?></label>

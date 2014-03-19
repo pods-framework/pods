@@ -467,7 +467,14 @@ class PodsAdmin {
             add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
         }
 
-        $admin_menus = apply_filters( 'pods_admin_menu', $admin_menus );
+		/**
+		 * Add or change Pods Admin menu items
+		 *
+		 * @params array $admin_menus The submenu items in Pods Admin menu.
+		 *
+		 * @since unknown
+		 */
+		$admin_menus = apply_filters( 'pods_admin_menu', $admin_menus );
 
         $parent = false;
 

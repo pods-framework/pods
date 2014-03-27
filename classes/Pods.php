@@ -1098,7 +1098,10 @@ class Pods implements Iterator {
                             $last_limit = $last_limit * count( $ids );
 
                             // Get related IDs
-	                        if (isset($all_fields[ $pod ][ $field ][ 'id' ]) && isset($all_fields[ $pod ][ $field ][ 'pod_id' ])) {
+							if ( !isset( $all_fields[ $pod ][ $field ][ 'pod_id' ] ) ) {
+								$all_fields[ $pod ][ $field ][ 'pod_id' ] = 0;
+							}
+	                        if ( isset( $all_fields[ $pod ][ $field ][ 'id' ] ) ) {
 	                            $ids = $this->api->lookup_related_items(
 	                                $all_fields[ $pod ][ $field ][ 'id' ],
 	                                $all_fields[ $pod ][ $field ][ 'pod_id' ],

@@ -3384,7 +3384,22 @@ class PodsUI {
 
 									if ( is_array( $css_field_value ) ) {
 										foreach ( $css_field_value as $css_field_val ) {
-											$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
+											if ( is_object( $css_field_val ) ) {
+												$css_field_val = get_object_vars( $css_field_val );
+											}
+
+											if ( is_array( $css_field_val ) ) {
+												foreach ( $css_field_val as $css_field_v ) {
+													if ( is_object( $css_field_v ) ) {
+														$css_field_v = get_object_vars( $css_field_v );
+													}
+
+													$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_v ) ) );
+												}
+											}
+											else {
+												$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
+											}
 										}
 									}
 									else {

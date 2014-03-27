@@ -63,7 +63,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
         $element.select2( {
 			<?php
-				if ( 1 == pods_v( $type . '_taggable' ) ) {
+				if ( 1 == pods_v( $form_field_type . '_taggable', $options ) ) {
 			?>
 				tags : true,
 				createSearchChoice : function( term, data ) {

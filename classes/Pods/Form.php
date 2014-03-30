@@ -148,7 +148,7 @@ class Pods_Form {
 		if ( isset( $options['description'] ) && ! empty( $options['description'] ) ) {
 			$message = $options['description'];
 		} elseif ( empty( $message ) ) {
-			return;
+			return null;
 		}
 
 		$message = apply_filters( 'pods_form_ui_comment_text', $message, $name, $options );

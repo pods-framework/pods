@@ -155,8 +155,7 @@ class Pods_Admin {
 					wp_enqueue_script( 'pods-advanced' );
 				} elseif ( 'pods-packages' == $page ) {
 					wp_enqueue_style( 'pods-wizard' );
-				}
-				elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_v( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
+				} elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_v( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
 					wp_enqueue_style( 'pods-wizard' );
 
 					if ( 'pods-upgrade' == $page ) {
@@ -646,6 +645,8 @@ class Pods_Admin {
 		echo '</style>';
 
 		echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox button pods-media-button" title="Embed Content"><span class="pod-media-icon"></span> Embed Content</a>';
+
+		return null;
 	}
 
 	/**
@@ -922,6 +923,8 @@ class Pods_Admin {
 		$obj->message( __( 'Pod reset successfully.', 'pods' ) );
 
 		$obj->manage();
+
+		return null;
 	}
 
 	/**
@@ -969,6 +972,7 @@ class Pods_Admin {
 		$obj->total_found = count( $obj->data );
 
 		$obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+		return null;
 	}
 
 	/**
@@ -1147,6 +1151,7 @@ class Pods_Admin {
 
 			$obj->manage();
 		}
+		return null;
 	}
 
 	/**
@@ -1173,6 +1178,7 @@ class Pods_Admin {
 		$obj->total_found = count( $obj->data );
 
 		$obj->message( __( 'Field Group deleted successfully.', 'pods' ) );
+		return null;
 	}
 
 	/**

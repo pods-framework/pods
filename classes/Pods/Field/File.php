@@ -319,7 +319,7 @@ class Pods_Field_File extends
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 		if ( empty( $value ) ) {
-			return;
+			return null;
 		}
 
 		if ( ! empty( $value ) && isset( $value['ID'] ) ) {

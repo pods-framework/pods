@@ -503,6 +503,7 @@ class Pods_UI {
 		}
 
 		$this->go();
+		return null;
 	}
 
 	/**
@@ -1583,6 +1584,7 @@ class Pods_UI {
 				$this->manage();
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -1830,6 +1832,8 @@ class Pods_UI {
 		} else {
 			pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
 		}
+
+		return null;
 	}
 
 	/**
@@ -1965,6 +1969,7 @@ class Pods_UI {
 			</h2>
 		</div>
 	<?php
+		return null;
 	}
 
 	/**
@@ -2127,6 +2132,8 @@ class Pods_UI {
 		}
 
 		$this->do_hook( 'post_delete', $id );
+
+		return null;
 	}
 
 	/**
@@ -2924,6 +2931,8 @@ class Pods_UI {
 		if ( $this->filters_enhanced ) {
 			$this->filters_popup();
 		}
+
+		return null;
 	}
 
 	public function filters() {
@@ -3849,6 +3858,8 @@ class Pods_UI {
             ?>
 		</script>
 	<?php
+
+		return null;
 	}
 
 	/**

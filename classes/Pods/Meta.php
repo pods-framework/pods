@@ -801,6 +801,7 @@ class Pods_Meta {
 				add_action( 'edit_comment', array( $this, 'save_comment' ) );
 			}
 		}
+		return null;
 	}
 
 	public function object_get( $type, $name ) {
@@ -3021,7 +3022,7 @@ class Pods_Meta {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			return;
+			return null;
 		}
 
 		$id        = $post->ID;

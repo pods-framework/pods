@@ -332,7 +332,7 @@ class Pods implements
 		if ( $this->iterator ) {
 			$this->row_number = 0;
 
-			return;
+			return null;
 		}
 
 		return false;
@@ -388,7 +388,7 @@ class Pods implements
 		if ( $this->iterator ) {
 			$this->row_number ++;
 
-			return;
+			return null;
 		}
 
 		return false;
@@ -3799,6 +3799,8 @@ class Pods implements
 
 		do_action( 'pods_admin_ui_custom', $this );
 		do_action( 'pods_admin_ui_custom_' . $this->pod, $this );
+
+		return null;
 	}
 
 	/**
@@ -3876,5 +3878,7 @@ class Pods implements
 		} else {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
+
+		return null;
 	}
 }

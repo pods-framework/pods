@@ -6292,5 +6292,7 @@ class Pods_API {
 		} else {
 			pods_deprecated( "Pods_API::{$name}", '2.0' );
 		}
+
+		return null;
 	}
 }

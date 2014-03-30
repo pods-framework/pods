@@ -347,6 +347,7 @@ class Pods_Data {
 				$this->fetch( $this->id );
 			}
 		}
+		return null;
 	}
 
 	/**

@@ -67,7 +67,7 @@ table.DMB_metabox input:focus, table.DMB_metabox textarea:focus {
 .DMB_metabox_title {
   margin: 0 0 5px 0;
   padding: 5px 0 0 0;
-  font: italic 24px/35px Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+  font: italic 24px/35px Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
 }
 
 .DMB_radio_inline {

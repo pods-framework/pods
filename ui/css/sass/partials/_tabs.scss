@@ -1,23 +1,27 @@
 /**
 	Holds all the Sass for Pods tabs
 **/
-.pods-tab-wrapper{
-	min-width:300px; max-width:600px;
+.pods-tab-wrapper {
+	min-width: 300px;
+	max-width: 600px;
 
-	.pods-tabs{
-		padding:3px 0;
-		margin-left:0; margin-bottom:0;
+	.pods-tabs {
+		padding: 3px 0;
+		margin-left: 0;
+		margin-bottom: 0;
 		border-bottom: 1px solid #CCC;
 		font-size: 15px;
 
-		li{
+		li {
 			list-style: none;
 			margin: 0;
 			display: inline;
 
-			&:first-child a{margin-left:0;}
+			&:first-child a {
+				margin-left: 0;
+			}
 
-			a{
+			a {
 				@include border-top-round(3px);
 				padding: 6px 10px 3px;
 				margin-left: 3px;
@@ -27,78 +31,102 @@
 				text-decoration: none;
 				color: #AAA;
 
-				&:hover{
+				&:hover {
 					background: #eee;
 					color: #D54E21;
-				} // &:hover
-			} // a
+				}
+				// &:hover
+			}
+			// a
 
-			&.selected{
+			&.selected {
 
-				a{
+				a {
 					color: #464646;
 					background: white;
 					border-bottom: 1px solid white;
-					&:hover{
+					&:hover {
 						background: #eee;
 						color: #D54E21;
-					} // &:hover
-				} // a
+					}
+					// &:hover
+				}
+				// a
 
-			} // &.selected
+			}
+			// &.selected
 
-			&:active{
+			&:active {
 
-				a{
+				a {
 					background: #CCC;
 					color: #FFF;
 					border-color: #AAA;
 					border-bottom: 0 none;
-				} // a
+				}
+				// a
 
-			} // &:active
+			}
+			// &:active
 
-		} // li
+		}
+		// li
 
-	} // .pods-tabs
+	}
+	// .pods-tabs
 
-	.pods-tab-content-wrapper{
+	.pods-tab-content-wrapper {
 		border: 1px solid #cccccc;
-		border-top: 0 none; border-bottom: 0 none;
+		border-top: 0 none;
+		border-bottom: 0 none;
 		background: white;
 		padding-top: 5px;
 		font-size: 16px;
 		overflow: hidden;
 
-		h4{
+		h4 {
 			background: #dbdbdb;
 			color: #333;
 			padding: 15px 6px 8px 9px;
 			margin: 0;
 			letter-spacing: .05em;
 			font-size: 15px;
-		} // h4
+		}
+		// h4
 
-	} // .pods-tab-content-wrapper
+	}
+	// .pods-tab-content-wrapper
 
-} // .pods-tab-wrapper
+}
+// .pods-tab-wrapper
 
-.pods-tabbed{
+.pods-tabbed {
 
-	div{overflow:hidden; zoom:1;}
+	div {
+		overflow: hidden;
+		zoom: 1;
+	}
 
-	ul.pods-tabs{
+	ul.pods-tabs {
 
-		zoom:1;
-		margin-bottom:0;
+		zoom: 1;
+		margin-bottom: 0;
 
-		&:before{content:""; display:table;}
-		&:after{content:""; display:table; clear:both;}
+		&:before {
+			content: "";
+			display: table;
+		}
+		&:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 
-		li.pods-tab{
-			float:left; margin:0;
+		li.pods-tab {
+			float: left;
+			margin: 0;
 
-			a{
+			a {
 				@include border-bottom-round(0);
 				@include border-top-round(5px);
 				background: #e9e9e9;
@@ -110,43 +138,55 @@
 				padding: 5px 10px;
 				text-decoration: none;
 
-				&.selected{
+				&.selected {
 					background: #FFF;
 					border-bottom: 1px solid #FFF;
-				} // &.selected
-			} // a
+				}
+				// &.selected
+			}
+			// a
 
-		} // li.pods-tab
+		}
+		// li.pods-tab
 
-	} // ul.pods-tabs
+	}
+	// ul.pods-tabs
 
 	/* === Tab group === */
-	.pods-tab-group{
+	.pods-tab-group {
 
-		h4{margin:5px 10px;}
+		h4 {
+			margin: 5px 10px;
+		}
 
-		.pods-tab{
+		.pods-tab {
 			display: none;
 			margin-bottom: 15px;
 			margin-top: -1px;
 			width: 99%;
 			border: 1px solid #dfdfdf;
 			border-bottom: 0;
-		} // .pods-tab
+		}
+		// .pods-tab
 
-	} // .pods-tab-grou
+	}
+	// .pods-tab-grou
 
-} // .pods-tabbed
+}
+// .pods-tabbed
 
 /* === Tabbed nav === */
 .pods-nav-tabbed .pods-nav-tab-group .pods-nav-tab {
-    display: none;
+	display: none;
 }
 
-.pods-tab{
+.pods-tab {
 
 	&.pods-basic-options,
 	&#pods-advanced-labels,
-	&#pods-adavanced-settings-labels{display:block;}
+	&#pods-adavanced-settings-labels {
+		display: block;
+	}
 
-} // pods-tab
+}
+// pods-tab

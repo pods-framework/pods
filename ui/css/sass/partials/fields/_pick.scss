@@ -1,6 +1,6 @@
 /* === PODS PICK === */
-.pods-pick-values{
-	@include border-all-round( 3px );
+.pods-pick-values {
+	@include border-all-round(3px);
 	background: #fff;
 	border: 1px solid #dfdfdf;
 	min-width: 125px;
@@ -8,114 +8,151 @@
 	overflow: auto;
 	padding: 2px 0;
 
-	ul{
+	ul {
 		overflow: auto;
 		margin: 0;
-	} // ul
+	}
+	// ul
 
-	li{
+	li {
 		border-bottom: 1px solid #f4f4f4;
 		line-height: 1em;
 		margin: 0;
 		padding: 3px 6px 2px;
 
 		// @todo this striping is a candidate for Sass magic and maybe remove the last border at the same time?
-		&:nth-child(even){background:#fcfcfc;}
-		&:last-of-type{border-bottom:0;}
+		&:nth-child(even) {
+			background: #fcfcfc;
+		}
+		&:last-of-type {
+			border-bottom: 0;
+		}
 
-		.pods-field{padding: 3px 0 2px;} // .pods-field
+		.pods-field {
+			padding: 3px 0 2px;
+		}
+		// .pods-field
 
-		.pods-boolean input{top: 5px;}
+		.pods-boolean input {
+			top: 5px;
+		}
 
-		&:hover{background:$hover-background-color;}
+		&:hover {
+			background: $hover-background-color;
+		}
 
-	} // ul
+	}
+	// ul
 
-	label{
+	label {
 		display: block;
 		padding-bottom: 3px;
 		padding-top: 3px;
-	} // label
+	}
+	// label
 
-} // .pods-pick-values
+}
+// .pods-pick-values
 
+.pods-manage-field {
 
-.pods-manage-field{
-
-	.pods-pick-values{
+	.pods-pick-values {
 		display: block;
 		float: left;
 		margin-left: 22px;
 		width: 65%;
 		max-width: 300px;
 
-		label{
-			padding-top:0;
-			display:block;
-			margin-left:20px;
-		} // label
+		label {
+			padding-top: 0;
+			display: block;
+			margin-left: 20px;
+		}
+		// label
 
-		ul{
-			overflow:auto; margin:5px 0;
+		ul {
+			overflow: auto;
+			margin: 5px 0;
 
-			.pods-field.pods-boolean{margin:0;}
-		} // ul
+			.pods-field.pods-boolean {
+				margin: 0;
+			}
+		}
+		// ul
 
-		li{
-			position:relative;
-		} // li
+		li {
+			position: relative;
+		}
+		// li
 
-		&.pods-zebra{
-			width:100%; max-width:100%;
+		&.pods-zebra {
+			width: 100%;
+			max-width: 100%;
 
-			div.pods-boolean{padding:3px;}
-		} // &.pods-zebra
+			div.pods-boolean {
+				padding: 3px;
+			}
+		}
+		// &.pods-zebra
 
 		// @todo this zebra stuff is a candidate for better SASS magic
-		li.pods-zebra-odd{
-			display:block;
-			width:50%;
-			float:left;
-			clear:both;
-		} // li.pods-zebra-odd
+		li.pods-zebra-odd {
+			display: block;
+			width: 50%;
+			float: left;
+			clear: both;
+		}
+		// li.pods-zebra-odd
 
-		li.pods-zebra-even{
-			display:block;
-			width:50%;
-			float:left;
-			clear:none;
-		} // li.pods-zebra-even
+		li.pods-zebra-even {
+			display: block;
+			width: 50%;
+			float: left;
+			clear: none;
+		}
+		// li.pods-zebra-even
 
-	} // .pods-pick-values
+	}
+	// .pods-pick-values
 
-	.pods-field-option{
+	.pods-field-option {
 
-		.pods-pick-values{
+		.pods-pick-values {
 
 			// @todo hrm does this make more sense in the boolean file
-			.pods-field.pods-boolean{
+			.pods-field.pods-boolean {
 				float: none;
 				margin-left: 0;
 				width: auto;
 				max-width: 100%;
-			} // .pods-field.pods-boolean
+			}
+			// .pods-field.pods-boolean
 
-			label{@include label-standard;} // label
+			label {
+				@include label-standard;
+			}
+			// label
 
-		} // .pods-pick-values
+		}
+		// .pods-pick-values
 
-	} // .pods-field-option
+	}
+	// .pods-field-option
 
-} // .pods-manage-field
+}
+// .pods-manage-field
 
-.pods-form{
-	div.pods-form-ui-field-type-pick:after{@include pods-visibility-hidden;}
-} // .pods-form
+.pods-form {
+	div.pods-form-ui-field-type-pick:after {
+		@include pods-visibility-hidden;
+	}
+}
+// .pods-form
 
 select.pods-form-ui-field-type-pick[multiple] {
 	@include border-all-round(3px);
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    width: 100%;
-    max-height: 200px;
+	background: #fff;
+	border: 1px solid #dfdfdf;
+	width: 100%;
+	max-height: 200px;
 }

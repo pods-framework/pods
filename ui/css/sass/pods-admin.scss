@@ -8,11 +8,10 @@
 @import 'partials/toggled';
 @import 'partials/mp6';
 
-
 /*
  * Pods Admin
  */
-.pods-admin{
+.pods-admin {
 
 	.pods-leaf-watermark-right {
 		position: fixed;
@@ -21,20 +20,25 @@
 		bottom: 50px;
 		right: 16px;
 		z-index: -1;
-	} // .pods-leaf-watermark-right
+	}
+	// .pods-leaf-watermark-right
 
-	.pods_floatmenu {width: 200px;}
+	.pods_floatmenu {
+		width: 200px;
+	}
 
 	.pods-icon {
 		display: inline-block;
 		padding: 1px 0 0 5px;
 		vertical-align: top;
-	} // .pods-icon
+	}
+	// .pods-icon
 
 	.waiting {
 		display: none;
 		vertical-align: middle;
-	} // .waiting
+	}
+	// .waiting
 
 	button,
 	a.button,
@@ -48,132 +52,144 @@
 		border-color: #C89797;
 		color: #790000;
 		background-color: #FFDFDF;
-	} // .pods-validate.pods-validate-error
+	}
+	// .pods-validate.pods-validate-error
 
 	.pods-validate-error-message {
 		color: #790000;
 		font-weight: bold;
 		padding: 5px 10px 4px;
 		display: inline-block;
-	} // .pods-validate-error-message
+	}
+	// .pods-validate-error-message
 
 	/* === PODS ADVANCED === */
 	.pods-advanced-toggle {
 		font-size: 12px;
 		text-decoration: underline;
-	} // .pods-advanced-toggle
+	}
+	// .pods-advanced-toggle
 
 	.pods-advanced {
 		display: none;
 		width: 100%;
-	} // .pods-advanced
+	}
+	// .pods-advanced
 
-} // .pods-admin
+}
+// .pods-admin
 
 .icon32#icon-pods {
-    background: url(../images/icon32.png) no-repeat;
+	background: url(../images/icon32.png) no-repeat;
 }
 
 /*
  * Pods Wizard
  */
-.pods-wizard{
+.pods-wizard {
 
-	p{font-size: 14px;}
+	p {
+		font-size: 14px;
+	}
 
 	#poststuff h1,
 	h2,
-	h3{
+	h3 {
 		font-family: Georgia !important;
 		margin-bottom: 0px !important;
 	}
 
-} // .pods-wizard
+}
+// .pods-wizard
 
 /*
  * Pods Dependency
  */
 .pods-depends-on,
 .pods-excludes-on {
-    display: none;
+	display: none;
 }
 
 /*
  * Pods Sluggable
  */
-.pods-sluggable{
+.pods-sluggable {
 
-	.pods-slug em{cursor: pointer;}
+	.pods-slug em {
+		cursor: pointer;
+	}
 
-	a.cancel{font-size: 12px;}
+	a.cancel {
+		font-size: 12px;
+	}
 
-	.pods-slug-edit{display: none;}
+	.pods-slug-edit {
+		display: none;
+	}
 
-} // .pods-sluggable
-
+}
+// .pods-sluggable
 
 /*
  * Pods Flexible
  */
 tbody.pods-manage-list tr.flexible-row {
-    display: none;
+	display: none;
 }
 
 .pods-admin .pods-float-right {
-    float: right;
+	float: right;
 }
 
 .pods-admin p.pods-manage-row-add {
-    text-align: right;
+	text-align: right;
 }
 
 /*
  * Pods UI
  */
 div.row-actions.row-actions-toggle {
-    display: block;
-    visibility: visible;
+	display: block;
+	visibility: visible;
 }
-
-
 
 /*
 	@todo I have no idea what to do with this css yet. Hopefully it comes to me in a flash of brilliance
 */
 .pods-no-show {
-  display: none;
+	display: none;
 }
 .pods-float-right {
-  text-align: right;
+	text-align: right;
 }
 .pods-loop-row-save {
-  float: right;
-  display: inline-block;
+	float: right;
+	display: inline-block;
 }
 .pods-loop-row-delete {
-  display: inline-block;
+	display: inline-block;
 }
 .pods-loop-row-expanded > .pods-loop-row-name {
-  display: none;
+	display: none;
 }
 .pods-more-controls {
-  position: relative;
+	position: relative;
 }
 .pods-more-controls a {
-  position: absolute;
-  top: -20px;
-  display: block;
-  width: 100%;
-  padding: 5px 0;
-  text-align: center;
+	position: absolute;
+	top: -20px;
+	display: block;
+	width: 100%;
+	padding: 5px 0;
+	text-align: center;
 }
 .pods-more-controls a.pods-no-show {
-  visibility: hidden;
+	visibility: hidden;
 }
 .pods-more-controls a .more,
 .pods-more-controls a .less {
-  margin-top: 3px;
+	margin-top: 3px;
 }
 .pods-required {
-  color: rgba(139, 0, 0, 0.8);
+	color: rgba(139, 0, 0, 0.8);
 }

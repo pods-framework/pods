@@ -9,51 +9,64 @@
 	clear: both;
 	margin: 0;
 
-	*{word-wrap:break-word;}
+	* {
+		word-wrap: break-word;
+	}
 
-/* === BASE TABLE HEADING AND FOOTER SETTINGS === */
-	thead, tfoot{
+	/* === BASE TABLE HEADING AND FOOTER SETTINGS === */
+	thead, tfoot {
 
-		tr th{
+		tr th {
 			@include light-grey-gradient;
 			color: #333;
-		} // tr th
+		}
+		// tr th
 
-		.check-column{padding:10px 0 0;}
+		.check-column {
+			padding: 10px 0 0;
+		}
 
-	} // thead
+	}
+	// thead
 
-	thead{
+	thead {
 
-		&:first-of-type{
+		&:first-of-type {
 			@include border-top-left-round(3px);
-		} // &:first-of-type
+		}
+		// &:first-of-type
 
-		&:last-of-type{
+		&:last-of-type {
 			@include border-top-right-round(3px);
-		} // &:last-of-type
+		}
+		// &:last-of-type
 
-	} // thead
+	}
+	// thead
 
-	tfoot{
+	tfoot {
 
-		&:first-of-type{
+		&:first-of-type {
 			@include border-bottom-left-round(3px);
-		} // &:first-of-type
+		}
+		// &:first-of-type
 
-		&:last-of-type{
+		&:last-of-type {
 			@include border-bottom-right-round(3px);
-		} // &:last-of-type
+		}
+		// &:last-of-type
 
-	} // tfoot
+	}
+	// tfoot
 
-/* === BASE TABLE CELL SETTINGS === */
-	th, td{
+	/* === BASE TABLE CELL SETTINGS === */
+	th, td {
 		border-top-color: #fff;
 		border-bottom-color: #dfdfdf;
 		border-width: 1px 0;
 		border-style: solid;
-	} // th, td
+	}
+	// th, td
 
 	th {
 		text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
@@ -66,59 +79,85 @@
 			margin: 0 0 0 8px;
 			padding: 0;
 			vertical-align: text-top;
-		} // input
+		}
+		// input
 
-		&#comments{vertical-align:middle;}
+		&#comments {
+			vertical-align: middle;
+		}
 
-		.check-column{padding:9px 0 22px;}
+		.check-column {
+			padding: 9px 0 22px;
+		}
 
-	} // th
+	}
+	// th
 
-	td{
+	td {
 		color: #555;
 		font-size: 12px;
 		padding: 4px 7px 2px;
 		vertical-align: top;
 
-		p, ul, ol{font-size:12px; color:#333;}
-	} // td
+		p, ul, ol {
+			font-size: 12px;
+			color: #333;
+		}
+	}
+	// td
 
-/* === NO TABLE ITEMS === */
-	.no-items td{border-bottom-width:0;}
+	/* === NO TABLE ITEMS === */
+	.no-items td {
+		border-bottom-width: 0;
+	}
 
-	span{
+	span {
 
 		&.delete a,
 		&.trash a,
-		&.spam a{
+		&.spam a {
 			color: #BC0B0B;
 
-			&:hover{color:#F00;}
-		} // &.delete a, &.trash a, &.spam a
+			&:hover {
+				color: #F00;
+			}
+		}
+		// &.delete a, &.trash a, &.spam a
 
-	} // span
+	}
+	// span
 
-	a{text-decoration:none;}
+	a {
+		text-decoration: none;
+	}
 
-	.check-column{
+	.check-column {
 		width: 2.2em;
 		padding: 6px 0 25px;
 		vertical-align: top;
-	} // .check-column
+	}
+	// .check-column
 
-/* === COLUMN STYLES === */
+	/* === COLUMN STYLES === */
 	.num,
 	.column-comments,
 	.column-links,
-	.column-posts{text-align:center;}
+	.column-posts {
+		text-align: center;
+	}
 
-/* === DEALING WITH NO JS PRESENT === */
+	/* === DEALING WITH NO JS PRESENT === */
 	&.no-js thead .check-column input,
-	&.no-js tfoot .check-column input{display:none;}
+	&.no-js tfoot .check-column input {
+		display: none;
+	}
 
-/* === TITLES AND DESTRIPTIONS === */
-	&.pods-loop-description{margin-left:3px;}
-	&.pods-loop-title{ // @todo could this be a base table font heading mixin?
+	/* === TITLES AND DESTRIPTIONS === */
+	&.pods-loop-description {
+		margin-left: 3px;
+	}
+	&.pods-loop-title {
+		// @todo could this be a base table font heading mixin?
 		font-size: 16px;
 		font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
 		font-weight: normal;
@@ -126,65 +165,97 @@
 		color: #464646;
 		margin-bottom: 5px;
 		margin-left: 3px;
-	} // .pods-loop-title
+	}
+	// .pods-loop-title
 
-/* === DEFAULT TEXT === */
-	.default-tex{display:none;}
-	.no-rows > tbody > .default-text{display:table-row;}
+	/* === DEFAULT TEXT === */
+	.default-tex {
+		display: none;
+	}
+	.no-rows > tbody > .default-text {
+		display: table-row;
+	}
 
-	.pods-icon{margin-bottom:-3px;}
+	.pods-icon {
+		margin-bottom: -3px;
+	}
 
-/* === LOOP ROWS === */
-	.pods-loop-row{
+	/* === LOOP ROWS === */
+	.pods-loop-row {
 
 		.pods-loop-row-wrapper {
 			padding: 10px 10px 15px 10px;
 			margin-right: -7px;
 			margin-bottom: -2px;
 
-			.form-table {background: #fcfcfc;} // .form-table
+			.form-table {
+				background: #fcfcfc;
+			}
+			// .form-table
 
-			.wp_themeSkin table .mceIframeContainer {background: white !important;}
+			.wp_themeSkin table .mceIframeContainer {
+				background: white !important;
+			}
 
-		} // .pods-loop-row-wrapper
+		}
+		// .pods-loop-row-wrapper
 
-		&:hover{
-			background:#F1F1F1;
+		&:hover {
+			background: #F1F1F1;
 
-			.row-actions{@include pods-visibility-hidden;}
+			.row-actions {
+				@include pods-visibility-hidden;
+			}
 
-			> td > .row-actions{visibility:visible !important;}
-		} // &:hover
+			> td > .row-actions {
+				visibility: visible !important;
+			}
+		}
+		// &:hover
 
-		&.nohover{
-			background:#FCFCFC !important;
+		&.nohover {
+			background: #FCFCFC !important;
 
-			> .pods-loop-row-label > .pods-loop-row-actions {display: none !important;}
+			> .pods-loop-row-label > .pods-loop-row-actions {
+				display: none !important;
+			}
 
-		} // &.nohover
+		}
+		// &.nohover
 
-	/* === LOOP ROW EXPANDED === */
-		&.pods-loop-row-expanded{
+		/* === LOOP ROW EXPANDED === */
+		&.pods-loop-row-expanded {
 
 			/* all this is just getting the funky hover stuff working right for nested rows */
-			> .pods-loop-row-label > .pods-loop-row-actions {display: block;}
+			> .pods-loop-row-label > .pods-loop-row-actions {
+				display: block;
+			}
 
-			.pods-loop-row-expanded{
-				> .pods-loop-row-label .pods-loop-row-actions {display: none;}
-				&.current-hover > .pods-loop-row-label > .pods-loop-row-actions {display: block;}
-			} // .pods-loop-row-expanded
+			.pods-loop-row-expanded {
+				> .pods-loop-row-label .pods-loop-row-actions {
+					display: none;
+				}
+				&.current-hover > .pods-loop-row-label > .pods-loop-row-actions {
+					display: block;
+				}
+			}
+			// .pods-loop-row-expanded
 
-		} // &.pods-loop-row-expanded
+		}
+		// &.pods-loop-row-expanded
 
-	/* === LOOP ROW ACTIONS === */
-		.pods-loop-row-actions{
+		/* === LOOP ROW ACTIONS === */
+		.pods-loop-row-actions {
 			display: none;
 			float: right;
 			margin-right: 13px;
 
-			div{float:left;}
+			div {
+				float: left;
+			}
 
-			.pods-genericon { // @todo look at this as a mixin or an @extends property which ever is less bloaty
+			.pods-genericon {
+				// @todo look at this as a mixin or an @extends property which ever is less bloaty
 				font-size: 30px;
 				font-weight: bold;
 				height: 25px;
@@ -192,32 +263,51 @@
 				padding-right: 9px;
 			}
 
-			.deletion{@include pods-red-hover;}
-			.cancel{@include pods-grey-hover;}
+			.deletion {
+				@include pods-red-hover;
+			}
+			.cancel {
+				@include pods-grey-hover;
+			}
 
-		} // .pods-loop-row-actions
+		}
+		// .pods-loop-row-actions
 
-		label{font-family:sans-serif; font-size:12px;}
+		label {
+			font-family: sans-serif;
+			font-size: 12px;
+		}
 
-		td > input.pods-form-ui-field-type-text {width: 100%;}
+		td > input.pods-form-ui-field-type-text {
+			width: 100%;
+		}
 
-	} // .pods-loop-row
+	}
+	// .pods-loop-row
 
-	.form-table{
-		margin-bottom:5px;
-	} // .form-table
+	.form-table {
+		margin-bottom: 5px;
+	}
+	// .form-table
 
-} // .pods-loop-table
+}
+// .pods-loop-table
 
 /* === LOOP ROW ACTIONS === */
-.pods-loop-row-save{
-	float:right;
-	display:inline-block;
-} // .pods-loop-row-save
+.pods-loop-row-save {
+	float: right;
+	display: inline-block;
+}
+// .pods-loop-row-save
 
-.pods-loop-row-delete{display:inline-block;}
+.pods-loop-row-delete {
+	display: inline-block;
+}
 
 /* === LOOP ROWS === */
-.pods-loop-row-expanded{
-	> .pods-loop-raw-name{display:none;}
-} // .pods-loop-row-expanded
+.pods-loop-row-expanded {
+	> .pods-loop-raw-name {
+		display: none;
+	}
+}
+// .pods-loop-row-expanded

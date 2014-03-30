@@ -1,28 +1,33 @@
 /* === SELECT 2 === */
 // @todo there is repeated CSS here and parts of it are different
-.pods-manage-field{
-	.pods-select2{
+.pods-manage-field {
+	.pods-select2 {
 		display: block;
 		float: left;
 		margin-left: 22px;
 		width: 65%;
-	} // .pods-select2
+	}
+	// .pods-select2
 
-	.pods-form-ui-field-type-select2{
+	.pods-form-ui-field-type-select2 {
 		min-width: 30%;
 		width: auto;
 		min-height: 28px;
-	} // .pods-form-ui-field-type-select2
+	}
+	// .pods-form-ui-field-type-select2
 
-	.pods-select2 .select2-container-multi .select2-choices .select2-search-field input{height: auto;}
-} // .pods-manage-field
+	.pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
+		height: auto;
+	}
+}
+// .pods-manage-field
 
 .pods-form-ui-field-type-select2 {
-    min-width: 20%;
-    width: auto;
-    min-height: 28px;
+	min-width: 20%;
+	width: auto;
+	min-height: 28px;
 }
 
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
-    height: auto;
+	height: auto;
 }

@@ -3,89 +3,87 @@
 @import 'partials/fields';
 
 #post-body {
-    border: none;
-    background: none;
+	border: none;
+	background: none;
 }
 
 .pods-admin #navigation-actions .previous-item {
-    display: block;
-    text-align: left;
-    float: left;
-    width: 50%;
+	display: block;
+	text-align: left;
+	float: left;
+	width: 50%;
 }
 
 .pods-admin #navigation-actions .next-item {
-    display: block;
-    text-align: right;
-    float: right;
-    width: 50%;
+	display: block;
+	text-align: right;
+	float: right;
+	width: 50%;
 }
 
 .pods-pick select {
-    display: block;
-    min-width: 125px;
+	display: block;
+	min-width: 125px;
 }
 
 ///
 select.pods-pick-multi {
-    height: auto !important;
+	height: auto !important;
 }
 
 .pods-field, p.pods-add-file {
-    padding: 10px 0;
+	padding: 10px 0;
 }
 
 div.pods-textfield input,
 .pods-textarea textarea {
-    width: 100%;
+	width: 100%;
 }
 
 textarea.pods-form-ui-field-type-paragraph {
-    font-family: monospace;
-    min-height: 100px;
-    resize: vertical;
+	font-family: monospace;
+	min-height: 100px;
+	resize: vertical;
 }
 
-
 input.pods-form-ui-field-type-color {
-    width: 80px;
+	width: 80px;
 }
 
 .form-table tr.pods-field:last-child > th,
 .form-table tr.pods-field:last-child > td {
-    border-bottom: none;
+	border-bottom: none;
 }
 
 .form-table tr.pods-field > td {
-    line-height: inherit;
-    padding: 10px 0;
+	line-height: inherit;
+	padding: 10px 0;
 }
 
 .form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
 .form-table tr.pods-field.pods-form-ui-row-type-file > td {
-    padding: 0;
+	padding: 0;
 }
 
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
 .form-table.pods-form-ui-table-type-file tr.form-field > td {
-    padding: 0 10px;
+	padding: 0 10px;
 }
 
 .pods-field .wp-editor-container {
-    background-color: #FFF;
+	background-color: #FFF;
 }
 
 /* Codemirror */
 .pods-field .CodeMirror {
-    width: 95%;
-    border: 1px solid #999;
-    background-color: #fff;
+	width: 95%;
+	border: 1px solid #999;
+	background-color: #fff;
 }
 
-
 .pods-form-ui-row-type-hidden {
-    display: none;
-    visibility: hidden;
+	display: none;
+	visibility: hidden;
 }
 
 .pods-meta div.pods-form-ui-field-type-avatar:after,

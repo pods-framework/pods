@@ -1,19 +1,19 @@
 ol.form-fields {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
 }
 
 .chzn-container {
-    display: block;
+	display: block;
 }
 
 ul.ui-sortable li {
-    cursor: move;
+	cursor: move;
 }
 
 ul.ui-sortable li:hover {
-    background: #ffffd8;
+	background: #ffffd8;
 }
 
 .ui-slider-handle {
@@ -21,126 +21,126 @@ ul.ui-sortable li:hover {
 }
 
 form.pods-manage .pods-field label {
-    cursor: pointer;
-    display: inline-block;
-    padding: 0 0 4px 2px;
+	cursor: pointer;
+	display: inline-block;
+	padding: 0 0 4px 2px;
 }
 
 form.pods-manage .pods-field input, .pods-field textarea {
-    display: block;
-    width: 100%;
+	display: block;
+	width: 100%;
 }
 
 form.pods-manage .pods-field textarea {
-    font-family: monospace;
-    height: 100%;
-    resize: none;
+	font-family: monospace;
+	height: 100%;
+	resize: none;
 }
 
 form.pods-manage .pods-field p.pods-field-comment {
-    color: #aaa;
-    font-size: .9em;
-    font-style: italic;
-    margin: 5px 0 0 2px !important;
+	color: #aaa;
+	font-size: .9em;
+	font-style: italic;
+	margin: 5px 0 0 2px !important;
 }
 
 form.pods-manage .pods-pick select {
-    display: block;
-    min-width: 125px;
-    padding: 4px;
+	display: block;
+	min-width: 125px;
+	padding: 4px;
 }
 
 form.pods-manage .pods-boolean {
-    position: relative;
-    cursor: pointer;
+	position: relative;
+	cursor: pointer;
 }
 
 form.pods-manage .pods-boolean input {
-    display: block;
-    height: auto;
-    left: 2px;
-    margin: 1px 7px 0 0;
-    padding: 0;
-    position: absolute;
-    top: 10px;
-    width: auto;
+	display: block;
+	height: auto;
+	left: 2px;
+	margin: 1px 7px 0 0;
+	padding: 0;
+	position: absolute;
+	top: 10px;
+	width: auto;
 }
 
 form.pods-manage .pods-boolean label {
-    margin-left: 20px;
+	margin-left: 20px;
 }
 
 form.pods-manage .pods-file label {
-    padding-bottom: 8px;
+	padding-bottom: 8px;
 }
 
 form.pods-manage .pods-file input {
-    display: none;
+	display: none;
 }
 
 form.pods-manage ul.pods-files {
-    background: #fbfbfb;
-    border: 1px solid #dfdfdf;
-    border-bottom: 0;
-    border-radius: 3px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+	background: #fbfbfb;
+	border: 1px solid #dfdfdf;
+	border-bottom: 0;
+	border-radius: 3px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
 form.pods-manage ul.pods-files li {
-    background: #fff;
-    border-bottom: 1px solid #dfdfdf;
-    margin: 0;
-    position: relative;
-    padding-bottom: 10px;
+	background: #fff;
+	border-bottom: 1px solid #dfdfdf;
+	margin: 0;
+	position: relative;
+	padding-bottom: 10px;
 }
 
 form.pods-manage ul.pods-files li span {
-    display: inline-block;
-    float: none;
+	display: inline-block;
+	float: none;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-reorder {
-    left: 3px;
-    position: absolute;
-    top: 15px;
-    width: 30px;
+	left: 3px;
+	position: absolute;
+	top: 15px;
+	width: 30px;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-reorder img {
-    cursor: move;
-    display: block;
+	cursor: move;
+	display: block;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-thumb {
-    left: 35px;
-    position: absolute;
-    top: 2px;
-    width: 45px;
+	left: 35px;
+	position: absolute;
+	top: 2px;
+	width: 45px;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail {
-    float: none;
-    margin: 0;
+	float: none;
+	margin: 0;
 	max-width: 40px !important;
 	max-height: 40px !important;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-name {
-    padding: 11px 35px 0 85px;
+	padding: 11px 35px 0 85px;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-remove {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 25px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 25px;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-remove img {
-    cursor: pointer;
-    display: block;
+	cursor: pointer;
+	display: block;
 }
 
 .plupload-queue {
@@ -180,101 +180,101 @@ form.pods-manage ul.pods-files li span.pods-file-remove img {
 }
 
 form.pods-manage .pods-pick-values {
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 3px;
-    min-width: 125px;
-    overflow: auto;
-    padding: 2px 0;
+	background: #fff;
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
+	min-width: 125px;
+	overflow: auto;
+	padding: 2px 0;
 }
 
 form.pods-manage .pods-pick-values ul {
-    overflow: auto;
+	overflow: auto;
 }
 
 form.pods-manage .pods-pick-values li {
-    border-bottom: 1px solid #f4f4f4;
-    line-height: 1em;
-    margin: 0;
-    padding: 3px 6px 2px;
+	border-bottom: 1px solid #f4f4f4;
+	line-height: 1em;
+	margin: 0;
+	padding: 3px 6px 2px;
 }
 
 form.pods-manage .pods-pick-values li:nth-child(even) {
-    background: #fcfcfc;
+	background: #fcfcfc;
 }
 
 form.pods-manage .pods-pick-values label {
-    padding-bottom: 3px;
-    padding-top: 3px;
+	padding-bottom: 3px;
+	padding-top: 3px;
 }
 
 form.pods-manage .pods-pick-values li:last-of-type {
-    border-bottom: 0;
+	border-bottom: 0;
 }
 
 form.pods-manage .pods-pick-values li .pods-field {
-    padding: 3px 0 2px;
+	padding: 3px 0 2px;
 }
 
 form.pods-manage .pods-pick-values li .pods-boolean input {
-    top: 5px;
+	top: 5px;
 }
 
 form.pods-manage .pods-pick-values li:hover {
-    background: #ffffd8;
+	background: #ffffd8;
 }
 
 form.pods-manage select.pods-pick-multi {
-    height: auto !important;
+	height: auto !important;
 }
 
 form.pods-manage .pods-field, p.pods-add-file {
-    clear: both;
-    padding: 10px 0;
+	clear: both;
+	padding: 10px 0;
 }
 
 form.pods-manage .pods-textfield input, .pods-textarea textarea {
-    width: 100%;
+	width: 100%;
 }
 
 form.pods-manage .pods-textfield input, form.pods-manage .pods-textarea textarea {
-    padding: 5px 7px;
-    color: #808080;
+	padding: 5px 7px;
+	color: #808080;
 }
 
 form.pods-manage .pods-textarea textarea {
-    resize: vertical;
+	resize: vertical;
 }
 
 form.pods-manage .pods-textfield input:focus, form.pods-manage .pods-textarea textarea:focus {
-    border-color: #a0a0a0;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    color: #000;
+	border-color: #a0a0a0;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	color: #000;
 }
 
 form.pods-manage .pods-date input, .pods-number input {
-    min-width: 125px;
+	min-width: 125px;
 }
 
 form.pods-manage .pods-date input.pods-date-field.hasDatepicker {
-    background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
-    cursor: pointer;
-    padding-left: 25px !important;
-    padding-top: 6px !important;
-    width: 150px;
+	background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
+	cursor: pointer;
+	padding-left: 25px !important;
+	padding-top: 6px !important;
+	width: 150px;
 }
 
 form.pods-manage ul.ui-sortable li:hover {
-    background: #ffffd8;
-    cursor: move;
+	background: #ffffd8;
+	cursor: move;
 }
 
 form.pods-manage .pods-slider-field {
-    margin: 10px 0;
+	margin: 10px 0;
 }
 
 form.pods-manage .pods-slider-field-display {
-    padding: 10px 0;
+	padding: 10px 0;
 }
 
 /**
@@ -282,17 +282,17 @@ form.pods-manage .pods-slider-field-display {
  */
 
 table.plupload-queue tr.hide {
-    display: none;
+	display: none;
 }
 
 table.plupload-queue td.progress {
-    width: 175px;
+	width: 175px;
 }
 
 table.plupload-queue td.progress .progress-bar {
-    width: 0%;
-    height: 14px;
-    background: black;
+	width: 0%;
+	height: 14px;
+	background: black;
 }
 
 tr.form-field .pods-boolean input {

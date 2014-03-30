@@ -1,14 +1,25 @@
-.pods-toggled{
-	clear:both;
-	margin-top:30px;
+.pods-toggled {
+	clear: both;
+	margin-top: 30px;
 
-	h3{cursor:pointer;}
+	h3 {
+		cursor: pointer;
+	}
 
-	&.pods-toggled-only{margin-top:0;}
+	&.pods-toggled-only {
+		margin-top: 0;
+	}
 
-} // .pods-toggled
+}
+// .pods-toggled
 
-.pods-no-toggle h3{cursor:default;}
+.pods-no-toggle h3 {
+	cursor: default;
+}
 
-tr.pods-toggled-on{background-color:#FFF;}
-tr.pods-toggled-off{background:#F4F4F4;}
+tr.pods-toggled-on {
+	background-color: #FFF;
+}
+tr.pods-toggled-off {
+	background: #F4F4F4;
+}

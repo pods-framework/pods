@@ -3,9 +3,9 @@
 */
 
 /* === Loop Rows === */
-.pods-form-ui-row-type-repeat{
+.pods-form-ui-row-type-repeat {
 
-	.pods-repeating-field{
+	.pods-repeating-field {
 		@include border-all-round(3px);
 		background: #FFF;
 		border: 1px solid #dfdfdf;
@@ -14,7 +14,7 @@
 		overflow: hidden;
 		min-width: 390px;
 
-		.pods-single-repeat{
+		.pods-single-repeat {
 			display: block;
 			clear: both;
 			overflow: hidden;
@@ -22,22 +22,33 @@
 			margin: 5px 0;
 			padding: 5px 10px;
 
-			&:last-of-type{
+			&:last-of-type {
 				border-bottom: 0 none;
 				padding-bottom: 0;
 				margin-bottom: 0;
-			} // &:last-of-type
+			}
+			// &:last-of-type
 
-			&:first-of-type{padding-top: 0; margin-top: 0;}
+			&:first-of-type {
+				padding-top: 0;
+				margin-top: 0;
+			}
 
-			.CodeMirror{width:100% !important;}
+			.CodeMirror {
+				width: 100% !important;
+			}
 
-			textarea{width:100%;}
-			select{margin-top:5px;}
+			textarea {
+				width: 100%;
+			}
+			select {
+				margin-top: 5px;
+			}
 
-		} // .pods-single-repeat
+		}
+		// .pods-single-repeat
 
-		.pods-repeat-handle{
+		.pods-repeat-handle {
 			width: 30px;
 			height: 30px;
 			float: left;
@@ -49,12 +60,18 @@
 			margin-top: 2px;
 			color: rgba(125, 125, 125, 0.5);
 
-			&:hover{color:#7D7D7D;}
-		} // .pods-repeat-handle
+			&:hover {
+				color: #7D7D7D;
+			}
+		}
+		// .pods-repeat-handle
 
-		.pods-repeat-name{width:85%; float:left;}
+		.pods-repeat-name {
+			width: 85%;
+			float: left;
+		}
 
-		.pods-repeat-delete{
+		.pods-repeat-delete {
 			width: 25px;
 			height: 25px;
 			float: right;
@@ -62,60 +79,80 @@
 			color: rgba(139, 0, 0, 0.3);
 			font-size: 25px;
 
-			&:hover{color:rgba(139, 0, 0, 0.8); cursor:pointer;}
-		} //.pods-repeat-delete
+			&:hover {
+				color: rgba(139, 0, 0, 0.8);
+				cursor: pointer;
+			}
+		}
+		//.pods-repeat-delete
 
-	} // .pods-repeating-field
+	}
+	// .pods-repeating-field
 
-	.pods-collapse{
+	.pods-collapse {
 		max-height: 80px;
 		overflow: hidden;
 		display: block;
-	} //.pods-collapse
+	}
+	//.pods-collapse
 
-	.pods-field-add{margin-top:15px;}
+	.pods-field-add {
+		margin-top: 15px;
+	}
 
-} //.pods-form-ui-row-type-repeat
+}
+//.pods-form-ui-row-type-repeat
 
 /* === FRONT FORM === */
-.pods-form-front{
+.pods-form-front {
 
-	ul.pods-form-fields{
+	ul.pods-form-fields {
 		list-style: none;
 		margin: 0;
-	} // ul.pods-form-fields
+	}
+	// ul.pods-form-fields
 
-	.pods-field-label{
+	.pods-field-label {
 		width: 20%;
 		min-width: 150px;
 		padding-top: 10px;
 		float: left;
-	} // .pods-field-label
+	}
+	// .pods-field-label
 
-	.pods-field-input{
+	.pods-field-input {
 		width: 75%;
 		min-width: 200px;
 		float: left;
 
-		input{width:95%;}
+		input {
+			width: 95%;
+		}
 
 		.quicktags-toolbar input {
 			display: inline-block;
 			width: auto;
-		} // .quicktags-toolbar input
+		}
+		// .quicktags-toolbar input
 
-		.pods-boolean input{width: auto;}
+		.pods-boolean input {
+			width: auto;
+		}
 
-		select{
+		select {
 			@include border-all-round(3px);
 			min-width: 200px;
 			border: 1px solid #CCC;
 			margin-top: 10px;
-		} // select
+		}
+		// select
 
-		.CodeMirror{width: auto;}
+		.CodeMirror {
+			width: auto;
+		}
 
-	} // .pods-field-input
+	}
+	// .pods-field-input
 
 	table.pods-metabox {
 		width: 100%;
@@ -143,20 +180,21 @@
 		@include pods-visibility-hidden;
 	}
 
-} // .pods-form-front
+}
+// .pods-form-front
 
 .pods-form-front-success {
-    color: #4F8A10;
-    border: 1px solid;
-    margin: 10px 0;
-    padding: 15px 10px 15px 50px;
-    background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
+	color: #4F8A10;
+	border: 1px solid;
+	margin: 10px 0;
+	padding: 15px 10px 15px 50px;
+	background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
 }
 
 /* === FORM TABLE === */
-.form-table{
+.form-table {
 
-	tr{
+	tr {
 
 		&.pods-field.pods-form-ui-row-type-avatar > td,
 		&.pods-field.pods-form-ui-row-type-file > td {
@@ -173,13 +211,13 @@
 			border-bottom: none;
 		}
 
-	} // tr
+	}
+	// tr
 
 	&.pods-form-ui-table-type-avatar tr.form-field > td,
 	&.pods-form-ui-table-type-file tr.form-field > td {
 		padding: 0 10px;
 	}
 
-
-
-} // .form-table
+}
+// .form-table

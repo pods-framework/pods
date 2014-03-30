@@ -1,16 +1,21 @@
 /* === COLORS === */
-@mixin pods-red-hover{
+@mixin pods-red-hover {
 	color: rgba(139, 0, 0, 0.3);
-	&:hover {color: rgba(139, 0, 0, 0.8);}
-} // pods-red-hover
+	&:hover {
+		color: rgba(139, 0, 0, 0.8);
+	}
+}
+// pods-red-hover
 
-@mixin pods-grey-hover{
+@mixin pods-grey-hover {
 	color: rgba(125, 125, 125, 0.5);
-	&:hover {color: #7d7d7d;}
+	&:hover {
+		color: #7d7d7d;
+	}
 }
 
 /* === GRADIENTS === */
-@mixin blue-gradient{
+@mixin blue-gradient {
 	background-color: #21759b;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#2a95c5), to(#21759b));
 	background-image: -webkit-linear-gradient(top, #2a95c5, #21759b);
@@ -18,9 +23,10 @@
 	background-image: -ms-linear-gradient(top, #2a95c5, #21759b);
 	background-image: -o-linear-gradient(top, #2a95c5, #21759b);
 	background-image: linear-gradient(to bottom, #2a95c5, #21759b);
-} // blue-gradient
+}
+// blue-gradient
 
-@mixin light-blue-gradient{
+@mixin light-blue-gradient {
 	background-color: #278ab7;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#2e9fd2), to(#21759b));
 	background-image: -webkit-linear-gradient(top, #2e9fd2, #21759b);
@@ -28,9 +34,10 @@
 	background-image: -ms-linear-gradient(top, #2e9fd2, #21759b);
 	background-image: -o-linear-gradient(top, #2e9fd2, #21759b);
 	background-image: linear-gradient(to bottom, #2e9fd2, #21759b);
-} // light-blue-gradient
+}
+// light-blue-gradient
 
-@mixin dark-blue-gradient{
+@mixin dark-blue-gradient {
 	background: #1b607f;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#21759b), to(#278ab7));
 	background-image: -webkit-linear-gradient(top, #21759b, #278ab7);
@@ -38,19 +45,21 @@
 	background-image: -ms-linear-gradient(top, #21759b, #278ab7);
 	background-image: -o-linear-gradient(top, #21759b, #278ab7);
 	background-image: linear-gradient(to bottom, #21759b, #278ab7);
-} // dark-blue-gradient
+}
+// dark-blue-gradient
 
-@mixin light-grey-gradient{
+@mixin light-grey-gradient {
 	background: #f1f1f1;
 	background-image: -webkit-gradient(linear, left bottom, left top, from(#ececec), to(#f9f9f9));
 	background-image: -webkit-linear-gradient(bottom, #ececec, #f9f9f9);
 	background-image: -moz-linear-gradient(bottom, #ececec, #f9f9f9);
 	background-image: -o-linear-gradient(bottom, #ececec, #f9f9f9);
 	background-image: linear-gradient(to top, #ececec, #f9f9f9);
-} // light-grey-gradient
+}
+// light-grey-gradient
 
 /* === BUTTONS === */
-@mixin button-primary{
+@mixin button-primary {
 	@include border-all-round(3px);
 	@include blue-gradient;
 	display: inline-block;
@@ -78,7 +87,7 @@
 	&:hover,
 	&:focus,
 	.hover,
-	.focus{
+	.focus {
 		@include light-blue-gradient;
 		border-color: #1b607f;
 		-webkit-box-shadow: inset 0 1px 0 rgba(120, 200, 230, 0.6);
@@ -86,19 +95,21 @@
 		color: #fff;
 		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
 		text-decoration: none;
-	} // &:hover, &:focus, &.focus, &.hover
+	}
+	// &:hover, &:focus, &.focus, &.hover
 
 	&:focus,
-	&.focus{
+	&.focus {
 		border-color: #0e3950;
 		-webkit-box-shadow: inset 0 1px 0 rgba(120, 200, 230, 0.6), 1px 1px 2px rgba(0, 0, 0, 0.4);
 		box-shadow: inset 0 1px 0 rgba(120, 200, 230, 0.6), 1px 1px 2px rgba(0, 0, 0, 0.4);
-	} // &:focus, &.focus
+	}
+	// &:focus, &.focus
 
 	&:active,
 	&.active:focus,
 	&.active:hover,
-	&.active{
+	&.active {
 		@include dark-blue-gradient;
 		border-color: #124560 #2382ae #2382ae #2382ae;
 		color: rgba(255, 255, 255, 0.95);
@@ -108,7 +119,7 @@
 	}
 
 	&:disabled,
-	&[disabled]{
+	&[disabled] {
 		color: #94cde7 !important;
 		background: #298cba !important;
 		border-color: #1b607f !important;
@@ -116,68 +127,78 @@
 		box-shadow: none !important;
 		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
 		cursor: default;
-	} // disabled
+	}
+	// disabled
 
-} // button-primary
+}
+// button-primary
 
 /* === BORDER RADIUS === */
-@mixin border-top-left-round( $radii ){
-	-webkit-border-top-left-radius:$radii;
-	-moz-border-radius-topleft:$radii;
-	border-top-left-radius:$radii;
-} // border-top-left-round
+@mixin border-top-left-round($radii) {
+	-webkit-border-top-left-radius: $radii;
+	-moz-border-radius-topleft: $radii;
+	border-top-left-radius: $radii;
+}
+// border-top-left-round
 
-@mixin border-bottom-left-round( $radii ){
-	-webkit-border-bottom-left-radius:$radii;
-	-moz-border-radius-bottomleft:$radii;
-	border-bottom-left-radius:$radii;
-} // border-bottom-left-round
+@mixin border-bottom-left-round($radii) {
+	-webkit-border-bottom-left-radius: $radii;
+	-moz-border-radius-bottomleft: $radii;
+	border-bottom-left-radius: $radii;
+}
+// border-bottom-left-round
 
+@mixin border-top-right-round($radii) {
+	-webkit-border-top-right-radius: $radii;
+	-moz-border-radius-topright: $radii;
+	border-top-right-radius: $radii;
+}
+// border-top-right-round
 
-@mixin border-top-right-round( $radii ){
-	-webkit-border-top-right-radius:$radii;
-	-moz-border-radius-topright:$radii;
-	border-top-right-radius:$radii;
-} // border-top-right-round
+@mixin border-bottom-right-round($radii) {
+	-webkit-border-bottom-right-radius: $radii;
+	-moz-border-radius-bottomright: $radii;
+	border-bottom-right-radius: $radii;
+}
+// border-bottom-right-round
 
-@mixin border-bottom-right-round( $radii ){
-	-webkit-border-bottom-right-radius:$radii;
-	-moz-border-radius-bottomright:$radii;
-	border-bottom-right-radius:$radii;
-} // border-bottom-right-round
-
-@mixin border-top-round($radii){
+@mixin border-top-round($radii) {
 	@include border-top-left-round($radii);
 	@include border-top-right-round($radii);
-} // border-top-round
+}
+// border-top-round
 
-@mixin border-bottom-round($radii){
+@mixin border-bottom-round($radii) {
 	@include border-bottom-left-round($radii);
 	@include border-bottom-right-round($radii);
-} // border-bottom-round
+}
+// border-bottom-round
 
-@mixin border-left-round($radii){
+@mixin border-left-round($radii) {
 	@include border-top-left-round($radii);
 	@include border-bottom-left-round($radii);
-} // border-left-round
+}
+// border-left-round
 
-@mixin border-right-round($radii){
+@mixin border-right-round($radii) {
 	@include border-top-right-round($radii);
 	@include border-bottom-right-round($radii);
-} // border-left-round
+}
+// border-left-round
 
-
-@mixin border-all-round($radii){
+@mixin border-all-round($radii) {
 	@include border-top-left-round($radii);
 	@include border-bottom-left-round($radii);
 	@include border-top-right-round($radii);
 	@include border-bottom-right-round($radii);
-} // border-all-round
+}
+// border-all-round
 
 /* === VISIBILITY === */
-@mixin pods-visibility-hidden{
+@mixin pods-visibility-hidden {
 	content: '.';
 	visibility: hidden;
 	clear: both;
 	display: block;
-} // pods-visibility-hidden
+}
+// pods-visibility-hidden

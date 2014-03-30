@@ -14,16 +14,6 @@ $focus-background: #FFFFCC;
 }
 // label-standard
 
-@import 'fields/boolean';
-@import 'fields/date';
-@import 'fields/pick';
-@import 'fields/select2';
-@import 'fields/number';
-@import 'fields/slider';
-@import 'fields/wysiwyg';
-@import 'fields/file';
-@import 'fields/checkbox';
-
 .pods-field {
 
 	label {
@@ -237,3 +227,13 @@ div.pods-manage-field {
 
 }
 // .pods-form
+
+@import 'fields/boolean';
+@import 'fields/date';
+@import 'fields/pick';
+@import 'fields/select2';
+@import 'fields/number';
+@import 'fields/slider';
+@import 'fields/wysiwyg';
+@import 'fields/file';
+@import 'fields/checkbox';

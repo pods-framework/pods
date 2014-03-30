@@ -189,6 +189,153 @@
 /**
 	This should hold all the field Sass for Pods
 **/
+.pods-field label {
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 0 4px 2px;
+}
+.pods-field input, .pods-field textarea {
+  display: block;
+}
+.pods-field .quicktags-toolbar input {
+  display: inline-block;
+  width: auto;
+}
+.pods-field p.pods-field-comment {
+  color: #aaa;
+  font-size: .9em;
+  font-style: italic;
+  margin: 5px 0 0 2px !important;
+}
+
+.pods-field-option {
+  overflow: hidden;
+  clear: both;
+  display: block;
+  padding: 10px 10px 10px 10px;
+  border-bottom: 1px solid #cccccc;
+  min-height: 26px;
+}
+.pods-field-option:hover {
+  background: #f8f8f8;
+}
+.pods-field-option:nth-child(even) {
+  background: #FCFCFC;
+}
+.pods-field-option:nth-child(even):hover {
+  background: #f8f8f8;
+}
+.pods-field-option:first-child {
+  margin-top: -5px;
+}
+.pods-field-option label {
+  width: 30%;
+  float: left;
+  font-size: 14px !important;
+  color: black;
+  margin-top: 7px;
+}
+.pods-field-option input {
+  font-size: 14px;
+  width: 65%;
+  float: right;
+  border-color: #c9c9c9;
+}
+.pods-field-option select {
+  width: 65%;
+  float: right;
+  font-size: 13px;
+}
+.pods-field-option select:focus {
+  background: #ffffcc;
+}
+.pods-field-option small {
+  font-size: 12px;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+/* === MANAGE FIELDS === */
+div.pods-manage-field div {
+  overflow: hidden;
+}
+div.pods-manage-field .pods-field-option,
+div.pods-manage-field .pods-field-option-group {
+  background: #FCFCFC;
+  border-bottom: 1px solid #DFDFDF;
+  padding: 10px;
+}
+div.pods-manage-field .pods-field-option:nth-child(even),
+div.pods-manage-field .pods-field-option-group:nth-child(even) {
+  background: #FFF;
+}
+div.pods-manage-field .pods-field {
+  position: relative;
+}
+div.pods-manage-field .pods-field-option label,
+div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+  padding-top: 4px;
+  float: left;
+  width: 30%;
+  max-width: 150px;
+}
+div.pods-manage-field .pods-field-option input[type="text"],
+div.pods-manage-field .pods-field-option select,
+div.pods-manage-field .pods-field-option textarea {
+  display: block;
+  float: left;
+  margin-left: 22px;
+  width: 65%;
+  max-width: 300px;
+}
+div.pods-manage-field .pods-field-option div select {
+  float: none;
+  width: 100%;
+}
+div.pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
+  margin-top: 0;
+}
+div.pods-manage-field input[type="radio"] {
+  position: absolute;
+  left: 2px;
+  margin: 1px 7px 0 0;
+  float: none;
+  margin-right: 2px;
+  margin-left: 0;
+  vertical-align: middle;
+}
+div.pods-manage-field input.pods-form-ui-no-label {
+  position: relative;
+}
+
+/* === PODS FORM === */
+.pods-form {
+  overflow: hidden;
+}
+.pods-form .pods-validate-error-message {
+  color: #790000;
+  font-weight: bold;
+  padding: 2px 0 5px;
+  display: inline-block;
+}
+.pods-form div.pods-form-ui-field-type-avatar:after {
+  content: '.';
+  visibility: hidden;
+  clear: both;
+  display: block;
+}
+.pods-form img.waiting {
+  display: none;
+  vertical-align: middle;
+}
+.pods-form .pods-field-input textarea {
+  width: 95%;
+  min-height: 200px;
+}
+.pods-form .pods-field table.pods-metabox {
+  width: 95%;
+}
+
 /* === BOOLEAN INPUTS === */
 .pods-boolean {
   position: relative;
@@ -493,153 +640,6 @@ select.pods-form-ui-field-type-pick[multiple] {
   margin-right: 2px;
   margin-left: 0;
   vertical-align: middle;
-}
-
-.pods-field label {
-  cursor: pointer;
-  display: inline-block;
-  padding: 0 0 4px 2px;
-}
-.pods-field input, .pods-field textarea {
-  display: block;
-}
-.pods-field .quicktags-toolbar input {
-  display: inline-block;
-  width: auto;
-}
-.pods-field p.pods-field-comment {
-  color: #aaa;
-  font-size: .9em;
-  font-style: italic;
-  margin: 5px 0 0 2px !important;
-}
-
-.pods-field-option {
-  overflow: hidden;
-  clear: both;
-  display: block;
-  padding: 10px 10px 10px 10px;
-  border-bottom: 1px solid #cccccc;
-  min-height: 26px;
-}
-.pods-field-option:hover {
-  background: #f8f8f8;
-}
-.pods-field-option:nth-child(even) {
-  background: #FCFCFC;
-}
-.pods-field-option:nth-child(even):hover {
-  background: #f8f8f8;
-}
-.pods-field-option:first-child {
-  margin-top: -5px;
-}
-.pods-field-option label {
-  width: 30%;
-  float: left;
-  font-size: 14px !important;
-  color: black;
-  margin-top: 7px;
-}
-.pods-field-option input {
-  font-size: 14px;
-  width: 65%;
-  float: right;
-  border-color: #c9c9c9;
-}
-.pods-field-option select {
-  width: 65%;
-  float: right;
-  font-size: 13px;
-}
-.pods-field-option select:focus {
-  background: #ffffcc;
-}
-.pods-field-option small {
-  font-size: 12px;
-  margin-top: 6px;
-  display: inline-block;
-}
-
-/* === MANAGE FIELDS === */
-div.pods-manage-field div {
-  overflow: hidden;
-}
-div.pods-manage-field .pods-field-option,
-div.pods-manage-field .pods-field-option-group {
-  background: #FCFCFC;
-  border-bottom: 1px solid #DFDFDF;
-  padding: 10px;
-}
-div.pods-manage-field .pods-field-option:nth-child(even),
-div.pods-manage-field .pods-field-option-group:nth-child(even) {
-  background: #FFF;
-}
-div.pods-manage-field .pods-field {
-  position: relative;
-}
-div.pods-manage-field .pods-field-option label,
-div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
-  padding-top: 4px;
-  float: left;
-  width: 30%;
-  max-width: 150px;
-}
-div.pods-manage-field .pods-field-option input[type="text"],
-div.pods-manage-field .pods-field-option select,
-div.pods-manage-field .pods-field-option textarea {
-  display: block;
-  float: left;
-  margin-left: 22px;
-  width: 65%;
-  max-width: 300px;
-}
-div.pods-manage-field .pods-field-option div select {
-  float: none;
-  width: 100%;
-}
-div.pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
-  margin-top: 0;
-}
-div.pods-manage-field input[type="radio"] {
-  position: absolute;
-  left: 2px;
-  margin: 1px 7px 0 0;
-  float: none;
-  margin-right: 2px;
-  margin-left: 0;
-  vertical-align: middle;
-}
-div.pods-manage-field input.pods-form-ui-no-label {
-  position: relative;
-}
-
-/* === PODS FORM === */
-.pods-form {
-  overflow: hidden;
-}
-.pods-form .pods-validate-error-message {
-  color: #790000;
-  font-weight: bold;
-  padding: 2px 0 5px;
-  display: inline-block;
-}
-.pods-form div.pods-form-ui-field-type-avatar:after {
-  content: '.';
-  visibility: hidden;
-  clear: both;
-  display: block;
-}
-.pods-form img.waiting {
-  display: none;
-  vertical-align: middle;
-}
-.pods-form .pods-field-input textarea {
-  width: 95%;
-  min-height: 200px;
-}
-.pods-form .pods-field table.pods-metabox {
-  width: 95%;
 }
 
 #post-body {

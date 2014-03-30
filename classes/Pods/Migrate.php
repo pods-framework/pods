@@ -80,6 +80,9 @@ class Pods_Migrate {
 		}
 	}
 
+	/**
+	 * @param $data
+	 */
 	function set_data( $data ) {
 		$defaults = array(
 			'items'   => array(),
@@ -612,6 +615,14 @@ class Pods_Migrate {
 		return $this->built;
 	}
 
+	/**
+	 * @param        $item
+	 * @param        $column
+	 * @param int    $level
+	 * @param string $column_name
+	 *
+	 * @return string
+	 */
 	public function build_xml_level( $item, $column, $level = 2, $column_name = '' ) {
 		$column = pods_clean_name( $column, false, false );
 

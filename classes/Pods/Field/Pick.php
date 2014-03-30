@@ -1083,7 +1083,7 @@ class Pods_Field_Pick extends
 	/**
 	 * Get available items from a relationship field
 	 *
-	 * @param array|string $field_name    Field array or field name
+	 * @param array|string $field    Field array or field name
 	 * @param array        $override      [optional] Field options array overrides
 	 * @param array        $object_params [optional] Additional get_object_data options
 	 *

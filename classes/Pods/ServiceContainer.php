@@ -76,6 +76,11 @@ class Pods_Service_Container implements
 		unset( $this->aliases[ $id ] );
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return mixed|null|object
+	 */
 	private function getId( $id ) {
 		if ( isset( $this->aliases[ $id ] ) ) {
 			return $this->offsetGet( $this->aliases[ $id ] );

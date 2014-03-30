@@ -2137,8 +2137,6 @@ class Pods_UI {
 	}
 
 	/**
-	 * @param null $id
-	 *
 	 * @return bool|mixed
 	 */
 	public function delete_bulk() {
@@ -4237,6 +4235,12 @@ class Pods_UI {
 		return $exclusion;
 	}
 
+	/**
+	 * @param string $action
+	 * @param null   $row
+	 *
+	 * @return bool
+	 */
 	public function restricted( $action = 'edit', $row = null ) {
 		$restricted = false;
 

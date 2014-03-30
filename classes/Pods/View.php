@@ -621,6 +621,11 @@ class Pods_View {
 
 	}
 
+	/**
+	 * @param $value
+	 *
+	 * @return bool
+	 */
 	private static function filter_callback( $value ) {
 
 		if ( in_array( $value, array( '', null, false ) ) ) {

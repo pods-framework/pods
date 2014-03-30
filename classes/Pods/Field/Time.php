@@ -287,9 +287,11 @@ class Pods_Field_Time extends
 	/**
 	 * Convert a date from one format to another
 	 *
-	 * @param $date
+	 * @param $value
 	 * @param $new_format
 	 * @param $original_format
+	 *
+	 * @return string
 	 */
 	public function convert_date( $value, $new_format, $original_format = 'H:i:s' ) {
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {

@@ -1247,23 +1247,18 @@ class Pods_Form {
 	}
 
 	/**
-	 * Run a method from a Field Type's class
+	 * Run a method from a Field Type's class, all other arguments except $field_type and $method will be passed on to the class method called.
 	 *
 	 * @param string $field_type Field Type indentifier
 	 * @param string $method     Method name
-	 * @param mixed  $arg        More arguments
 	 *
 	 * @return mixed
-	 * @access public
+	 * @access   public
 	 * @static
-	 * @since  2.0
+	 * @since    2.0
 	 */
-	public static function field_method() {
+	public static function field_method($field_type, $method) {
 		$args = func_get_args();
-
-		if ( empty( $args ) && count( $args ) < 2 ) {
-			return false;
-		}
 
 		$field_type = array_shift( $args );
 		$method     = array_shift( $args );

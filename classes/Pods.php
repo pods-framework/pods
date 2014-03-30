@@ -1818,11 +1818,11 @@ class Pods implements
 	/**
 	 * Return the next item ID, loops at the first id to return the last
 	 *
-	 * @param int   $id
-	 * @param array $find_params
+	 * @param int  $id
+	 * @param null $params_override
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @since    2.0
 	 */
 	public function next_id( $id = null, $params_override = null ) {
 

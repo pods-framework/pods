@@ -272,6 +272,12 @@ class Pods_Meta {
 
 	}
 
+	/**
+	 * @param $type
+	 * @param $pod
+	 *
+	 * @return array|bool|int
+	 */
 	public function register( $type, $pod ) {
 		$pod_type = $type;
 
@@ -312,6 +318,12 @@ class Pods_Meta {
 		return false;
 	}
 
+	/**
+	 * @param $pod
+	 * @param $field
+	 *
+	 * @return array|bool|int
+	 */
 	public function register_field( $pod, $field ) {
 		if ( is_array( $pod ) && ! empty( $pod ) && ! isset( $pod['name'] ) ) {
 			$data = array();
@@ -804,6 +816,12 @@ class Pods_Meta {
 		return null;
 	}
 
+	/**
+	 * @param $type
+	 * @param $name
+	 *
+	 * @return array
+	 */
 	public function object_get( $type, $name ) {
 		$object = self::$post_types;
 
@@ -3018,6 +3036,11 @@ class Pods_Meta {
 		return $_null;
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool|null
+	 */
 	public function delete_post( $id ) {
 		$post = get_post( $id );
 
@@ -3031,6 +3054,9 @@ class Pods_Meta {
 		return $this->delete_object( 'post_type', $id, $post_type );
 	}
 
+	/**
+	 * @param $id
+	 */
 	public function delete_taxonomy( $id ) {
 		/**
 		 * @var $wpdb WPDB
@@ -3051,18 +3077,40 @@ class Pods_Meta {
 		}
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_user( $id ) {
 		return $this->delete_object( 'user', $id );
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_comment( $id ) {
 		return $this->delete_object( 'comment', $id );
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_media( $id ) {
 		return $this->delete_object( 'media', $id );
 	}
 
+	/**
+	 * @param      $type
+	 * @param      $id
+	 * @param null $name
+	 *
+	 * @return bool
+	 */
 	public function delete_object( $type, $id, $name = null ) {
 		if ( empty( $name ) ) {
 			$name = $type;

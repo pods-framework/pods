@@ -99,6 +99,8 @@ class Pods_Field_Loop extends
 	 * @param mixed   $value   Value of the field
 	 * @param array   $options Field options
 	 * @param boolean $raw     Whether to return the raw list of keys (true) or convert to key=>value (false)
+	 *
+	 * @return mixed
 	 */
 	public function simple_value( $value, $options, $raw = false ) {
 

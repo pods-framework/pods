@@ -487,6 +487,11 @@ class Pods_Components {
 		}
 	}
 
+	/**
+	 * @param $options
+	 * @param $settings
+	 * @param $component
+	 */
 	public function admin( $options, $settings, $component ) {
 		if ( ! isset( $this->components[ $component ] ) ) {
 			wp_die( 'Invalid Component' );
@@ -636,6 +641,12 @@ class Pods_Components {
 		die(); // KBAI!
 	}
 
+	/**
+	 * @param $component
+	 * @param $params
+	 *
+	 * @return string
+	 */
 	public function admin_ajax_settings( $component, $params ) {
 		if ( ! isset( $this->components[ $component ] ) ) {
 			wp_die( 'Invalid Component' );

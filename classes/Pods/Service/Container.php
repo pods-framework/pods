@@ -2,9 +2,9 @@
 
 /**
  * @package Pods
- * Class Pods_ServiceContainer
+ * Class Pods_Service_Container
  */
-class Pods_ServiceContainer implements
+class Pods_Service_Container implements
 	ArrayAccess {
 
 	private $values = array();

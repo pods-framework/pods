@@ -27,7 +27,7 @@ class Pods_Service_Container implements
 	 * @param mixed $value
 	 */
 	public function offsetSet( $id, $value ) {
-		if ( is_callable( $value ) || $value instanceof Pods_Service ) {
+		if ( is_callable( $value ) || $value instanceof Pods_Service_Definition ) {
 			$this->services[ $id ] = $value;
 		} elseif ( 0 === strpos( $value, '@' ) ) {
 			$this->aliases[ $id ] = substr( $value, 1 );

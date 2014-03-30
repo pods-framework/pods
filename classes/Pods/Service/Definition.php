@@ -4,7 +4,7 @@
  * @package Pods
  * Class Pods_Service
  */
-class Pods_Service {
+class Pods_Service_Definition {
 
 	public $class;
 
@@ -39,7 +39,7 @@ class Pods_Service {
 	 * @param       $className
 	 * @param array $parameters
 	 *
-	 * @return Pods_Service
+	 * @return Pods_Service_Definition
 	 */
 	public static function create( $className, $parameters = array() ) {
 		$instance = new self( $className, $parameters );

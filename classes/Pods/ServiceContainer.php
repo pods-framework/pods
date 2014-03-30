@@ -2,9 +2,9 @@
 
 /**
  * @package Pods
- * Class Pods_Service_Container
+ * Class Pods_ServiceContainer
  */
-class Pods_Service_Container implements
+class Pods_ServiceContainer implements
 	ArrayAccess {
 
 	private $values = array();
@@ -48,7 +48,7 @@ class Pods_Service_Container implements
 			throw new InvalidArgumentException( 'Circular dependency found.' );
 		}
 		$this->locked[ $id ] = true;
-		$value               = $this->getId( $id );
+		$value               = $this->get( $id );
 		unset( $this->locked[ $id ] );
 
 		return $value;
@@ -81,7 +81,7 @@ class Pods_Service_Container implements
 	 *
 	 * @return mixed|null|object
 	 */
-	private function getId( $id ) {
+	private function get( $id ) {
 		if ( isset( $this->aliases[ $id ] ) ) {
 			return $this->offsetGet( $this->aliases[ $id ] );
 		}
@@ -111,7 +111,7 @@ class Pods_Service_Container implements
 		$reflection = new ReflectionClass( $this->resolve( $service->class ) );
 		$instance   = $reflection->newinstance( $this->resolve( $service->arguments ) );
 
-		// @TODO add ability to call methods in functions for the current instance(ex: for more detailed setups)
+		// TODO add ability to call methods in functions for the current instance(ex: for more detailed setups)
 
 		return $instance;
 	}

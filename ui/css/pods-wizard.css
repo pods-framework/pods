@@ -253,7 +253,7 @@
 #pods-wizard-box #pods-wizard-main .pods-wizard-panel .pods-wizard-content.pods-wizard-grey {
   background: #F9F9F9;
 }
-#pods-wizard-box #pods-wizard-main .pods-wizard-panel p {
+#pods-wizard-box #pods-wizard-main .pods-wizard-panel .pods-wizard-content p {
   padding: 20px;
   margin-top: 0;
 }

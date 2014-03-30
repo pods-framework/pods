@@ -256,12 +256,13 @@
 				background:#fff;
 
 				&.pods-wizard-grey{background:#F9F9F9;}
+
+				p{
+					padding: 20px;
+					margin-top: 0;
+				} // p
 			} // .pods-wizard-content
 
-			p{
-				padding: 20px;
-				margin-top: 0;
-			} // p
 
 			table{
 				width:100%;

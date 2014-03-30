@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @package Pods
+ * Class Pods_Service_Container
+ */
 class Pods_Service_Container implements
 	ArrayAccess {
 
@@ -11,10 +15,17 @@ class Pods_Service_Container implements
 
 	private $locked = array();
 
+	/**
+	 * @param array $values
+	 */
 	function __construct( array $values = array() ) {
 		$this->values = $values;
 	}
 
+	/**
+	 * @param mixed $id
+	 * @param mixed $value
+	 */
 	public function offsetSet( $id, $value ) {
 		if ( is_callable( $value ) || $value instanceof Pods_Service ) {
 			$this->services[ $id ] = $value;
@@ -26,6 +37,12 @@ class Pods_Service_Container implements
 
 	}
 
+	/**
+	 * @param mixed $id
+	 *
+	 * @return mixed
+	 * @throws InvalidArgumentException
+	 */
 	public function offsetGet( $id ) {
 		if ( isset( $this->locked[ $id ] ) ) {
 			throw new InvalidArgumentException( 'Circular dependency found.' );
@@ -37,6 +54,11 @@ class Pods_Service_Container implements
 		return $value;
 	}
 
+	/**
+	 * @param mixed $id
+	 *
+	 * @return bool
+	 */
 	public function offsetExists( $id ) {
 		if ( isset( $this->values[ $id ] ) || isset( $this->services[ $id ] ) || isset( $this->aliases[ $id ] ) ) {
 			return true;
@@ -45,6 +67,9 @@ class Pods_Service_Container implements
 		return false;
 	}
 
+	/**
+	 * @param mixed $id
+	 */
 	public function offsetUnset( $id ) {
 		unset( $this->values[ $id ] );
 		unset( $this->services[ $id ] );
@@ -68,6 +93,11 @@ class Pods_Service_Container implements
 
 	}
 
+	/**
+	 * @param $service
+	 *
+	 * @return mixed|object
+	 */
 	public function build( $service ) {
 		if ( is_callable( $service ) ) {
 			return call_user_func( $service, $this );
@@ -81,6 +111,11 @@ class Pods_Service_Container implements
 		return $instance;
 	}
 
+	/**
+	 * @param $value
+	 *
+	 * @return array|mixed|null|void
+	 */
 	protected function resolve( $value ) {
 		$return = null;
 		if ( is_array( $value ) ) {

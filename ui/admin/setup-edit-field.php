@@ -1,64 +1,63 @@
 <?php
-    $field->defaults( $field_settings[ 'field_defaults' ] );
+$field->defaults( $field_settings['field_defaults'] );
 
-    // Migrate pick object when saving
-    if ( 'pod' == pods_v( 'pick_object', $field ) ) {
-        if ( isset( Pods_Meta::$post_types[ $field[ 'pick_val' ] ] ) )
-            $field[ 'pick_object' ] = 'post_type';
-        elseif ( isset( Pods_Meta::$taxonomies[ $field[ 'pick_val' ] ] ) )
-            $field[ 'pick_object' ] = 'taxonomy';
-        elseif ( 'user' == $field[ 'pick_val' ] && !empty( Pods_Meta::$user ) ) {
-            $field[ 'pick_object' ] = 'user';
-            $field[ 'pick_val' ] = '';
-        }
-        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( Pods_Meta::$comment ) ) {
-            $field[ 'pick_object' ] = 'comment';
-            $field[ 'pick_val' ] = '';
-        }
-        elseif ( 'media' == $field[ 'pick_val' ] && !empty( Pods_Meta::$media ) ) {
-            $field[ 'pick_object' ] = 'media';
-            $field[ 'pick_val' ] = '';
-        }
-    }
+// Migrate pick object when saving
+if ( 'pod' == pods_v( 'pick_object', $field ) ) {
+	if ( isset( Pods_Meta::$post_types[ $field['pick_val'] ] ) ) {
+		$field['pick_object'] = 'post_type';
+	} elseif ( isset( Pods_Meta::$taxonomies[ $field['pick_val'] ] ) ) {
+		$field['pick_object'] = 'taxonomy';
+	} elseif ( 'user' == $field['pick_val'] && ! empty( Pods_Meta::$user ) ) {
+		$field['pick_object'] = 'user';
+		$field['pick_val']    = '';
+	} elseif ( 'comment' == $field['pick_val'] && ! empty( Pods_Meta::$comment ) ) {
+		$field['pick_object'] = 'comment';
+		$field['pick_val']    = '';
+	} elseif ( 'media' == $field['pick_val'] && ! empty( Pods_Meta::$media ) ) {
+		$field['pick_object'] = 'media';
+		$field['pick_val']    = '';
+	}
+}
 
-    $ignored_pick_objects = apply_filters( 'pods_admin_ui_ignored_pick_objects', array( 'table' ) );
+$ignored_pick_objects = apply_filters( 'pods_admin_ui_ignored_pick_objects', array( 'table' ) );
 
-    if ( !in_array( pods_v( 'pick_object', $field ), $ignored_pick_objects ) ) {
-        // Set pick object
-        $field[ 'pick_object' ] = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
-    }
+if ( ! in_array( pods_v( 'pick_object', $field ), $ignored_pick_objects ) ) {
+	// Set pick object
+	$field['pick_object'] = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
+}
 
-    // Unset pick_val for the field to be used above
-    if ( isset( $field[ 'pick_val' ] ) )
-        unset( $field[ 'pick_val' ] );
+// Unset pick_val for the field to be used above
+if ( isset( $field['pick_val'] ) ) {
+	unset( $field['pick_val'] );
+}
 
-    // Remove weight as we're going to allow reordering here
-    unset( $field[ 'weight' ] );
+// Remove weight as we're going to allow reordering here
+unset( $field['weight'] );
 
-    $data = array(
-        'row' => $pods_i
-    );
+$data = array(
+	'row' => $pods_i
+);
 ?>
 <tr id="row-<?php echo $pods_i; ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_v( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php Pods_Form::data( $data ); ?>>
-    <th scope="row" class="check-field pods-manage-sort">
-        <img src="<?php echo PODS_URL; ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
-    </th>
-    <td class="pods-manage-row-label">
-        <strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
-            <?php echo esc_html( pods_v( 'label', $field ) ); ?>
-        </a> <abbr title="required" class="required<?php echo ( 1 == pods_v( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
+	<th scope="row" class="check-field pods-manage-sort">
+		<img src="<?php echo PODS_URL; ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
+	</th>
+	<td class="pods-manage-row-label">
+		<strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
+				<?php echo esc_html( pods_v( 'label', $field ) ); ?>
+			</a> <abbr title="required" class="required<?php echo( 1 == pods_v( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
 
-        <?php
-        if ( '__1' != pods_v( 'id', $field ) ) {
-            ?>
-            <span class="pods-manage-row-more">
+		<?php
+		if ( '__1' != pods_v( 'id', $field ) ) {
+			?>
+			<span class="pods-manage-row-more">
                         [id: <?php echo esc_html( pods_v( 'id', $field ) ); ?>]
                     </span>
-            <?php
-        }
-        ?>
+		<?php
+		}
+		?>
 
-        <div class="row-actions">
+		<div class="row-actions">
                     <span class="edit">
                         <a title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" class="pods-manage-row-edit" href="#edit-field"><?php _e( 'Edit', 'pods' ); ?></a> |
                     </span>
@@ -68,72 +67,77 @@
                     <span class="trash pods-manage-row-delete">
                         <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
                     </span>
-        </div>
-        <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
-            <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field->export(), JSON_UNESCAPED_UNICODE ) : json_encode( $field->export() ) ) ); ?>" class="field_data" />
+		</div>
+		<div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
+			<input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field->export(), JSON_UNESCAPED_UNICODE ) : json_encode( $field->export() ) ) ); ?>" class="field_data" />
 
-            <div class="pods-manage-field pods-dependency">
-                <input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo esc_attr( pods_v( 'id', $field ) ); ?>" />
-            <div>
-        </div>
-    </td>
-    <td class="pods-manage-row-name">
-        <a title="Edit this field" class="pods-manage-row-edit row-name" href="#edit-field"><?php echo esc_html( pods_v( 'name', $field ) ); ?></a>
-    </td>
-    <td class="pods-manage-row-type">
-        <?php
-            $type = 'Unknown';
+			<div class="pods-manage-field pods-dependency">
+				<input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo esc_attr( pods_v( 'id', $field ) ); ?>" />
 
-            if ( isset( $field_types[ pods_v( 'type', $field ) ] ) )
-                $type = $field_types[ pods_v( 'type', $field ) ][ 'label' ];
+				<div>
+				</div>
+	</td>
+	<td class="pods-manage-row-name">
+		<a title="Edit this field" class="pods-manage-row-edit row-name" href="#edit-field"><?php echo esc_html( pods_v( 'name', $field ) ); ?></a>
+	</td>
+	<td class="pods-manage-row-type">
+		<?php
+		$type = 'Unknown';
 
-            echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v( 'type', $field ) . ']</span>';
+		if ( isset( $field_types[ pods_v( 'type', $field ) ] ) ) {
+			$type = $field_types[ pods_v( 'type', $field ) ]['label'];
+		}
 
-            $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
+		echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v( 'type', $field ) . ']</span>';
 
-            if ( 'pick' == pods_v( 'type', $field ) && '' != pods_v( 'pick_object', $field, '' ) ) {
-                $pick_object_name = null;
+		$pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
 
-                foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
-                    if ( null !== $pick_object_name )
-                        break;
+		if ( 'pick' == pods_v( 'type', $field ) && '' != pods_v( 'pick_object', $field, '' ) ) {
+			$pick_object_name = null;
 
-                    if ( '-- Select --' == $object_label )
-                        continue;
+			foreach ( $field_settings['pick_object'] as $object => $object_label ) {
+				if ( null !== $pick_object_name ) {
+					break;
+				}
 
-                    if ( is_array( $object_label ) ) {
-                        foreach ( $object_label as $sub_object => $sub_object_label ) {
-                            if ( $pick_object == $sub_object ) {
-                                $ies = strlen( $object ) - 3;
+				if ( '-- Select --' == $object_label ) {
+					continue;
+				}
 
-                                if ( $ies === strpos( $object, 'ies' ) )
-                                    $object = substr( $object, 0, $ies ) . 'y';
+				if ( is_array( $object_label ) ) {
+					foreach ( $object_label as $sub_object => $sub_object_label ) {
+						if ( $pick_object == $sub_object ) {
+							$ies = strlen( $object ) - 3;
 
-                                $object = rtrim( $object, 's' );
+							if ( $ies === strpos( $object, 'ies' ) ) {
+								$object = substr( $object, 0, $ies ) . 'y';
+							}
 
-                                $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';
+							$object = rtrim( $object, 's' );
 
-                                break;
-                            }
-                        }
-                    }
-                    elseif ( pods_v( 'pick_object', $field ) == $object ) {
-                        $pick_object_name = $object_label;
+							$pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';
 
-                        break;
-                    }
-                }
+							break;
+						}
+					}
+				} elseif ( pods_v( 'pick_object', $field ) == $object ) {
+					$pick_object_name = $object_label;
 
-                if ( null === $pick_object_name ) {
-                    $pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
+					break;
+				}
+			}
 
-                    if ( 0 < strlen( pods_v( 'pick_val', $field ) ) )
-                        $pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
-                }
-        ?>
-            <br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
-        <?php
-            }
-        ?>
-    </td>
+			if ( null === $pick_object_name ) {
+				$pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
+
+				if ( 0 < strlen( pods_v( 'pick_val', $field ) ) ) {
+					$pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
+				}
+			}
+			?>
+			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
+		<?php
+		}
+		?>
+	</td>
 </tr>

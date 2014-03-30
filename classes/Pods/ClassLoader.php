@@ -1,198 +1,196 @@
 <?php
+
+/**
+ * Class PodsClassLoader, PSR-0 compatible autoloader.
+ *
+ * Example usage:
+ *
+ * <code>
+ *     $classLoader = new Pods_ClassLoader( );
+ *     $classLoader->addDirectory( 'path/to/load' );
+ *     $classLoader->addDirectory( 'path/to/load', 'namespace/prefix' );
+ *     $classLoader->addAlias( 'Class_From', 'Class_To' );
+ *     $classLoader->register( );
+ * </code>
+ *
+ */
+class Pods_ClassLoader {
+
+	private $directoriesPrefixed = array();
+
+	private $directories = array();
+
+	private $aliases = array();
+
 	/**
-	 * Class PodsClassLoader, PSR-0 compatible autoloader.
+	 * Returns aliases
 	 *
-	 * Example usage:
-	 *
-	 * <code>
-	 *     $classLoader = new Pods_ClassLoader( );
-	 *     $classLoader->addDirectory( 'path/to/load' );
-	 *     $classLoader->addDirectory( 'path/to/load', 'namespace/prefix' );
-	 *     $classLoader->addAlias( 'Class_From', 'Class_To' );
-	 *     $classLoader->register( );
-	 * </code>
-	 *
+	 * @return array
 	 */
-	class Pods_ClassLoader {
+	public function getAliases() {
+		return $this->aliases;
+	}
 
-		private $directoriesPrefixed = array();
+	/**
+	 * Returns prefixes.
+	 *
+	 * @return array
+	 */
+	public function getDirectoriesPrefixed() {
+		return $this->directoriesPrefixed;
+	}
 
-		private $directories = array();
+	/**
+	 * Returns fallback directories.
+	 *
+	 * @return array
+	 */
+	public function getDirectories() {
+		return $this->directories;
+	}
 
-		private $aliases = array();
+	/**
+	 * Adds a new class alias, forwarding the class to the new class.
+	 *
+	 * @param string $fromClass The class name we want to forward
+	 * @param string $toClass   The class name we are forwarding to
+	 */
+	public function addAlias( $fromClass, $toClass ) {
+		$this->aliases[ $fromClass ] = $toClass;
+	}
 
-		/**
-		 * Returns aliases
-		 *
-		 * @return array
-		 */
-		public function getAliases () {
-			return $this->aliases;
+	/**
+	 * Adds one or more aliases from an associative array.
+	 *
+	 * @param array $aliases associative array of aliases.
+	 */
+	public function addAliases( array $aliases ) {
+		foreach ( $aliases as $fromClass => $toClass ) {
+			$this->addAlias( $fromClass, $toClass );
+		}
+	}
+
+	/**
+	 * Adds prefixes.
+	 *
+	 * @param array $prefixes Prefixes to add
+	 */
+	public function addDirectoriesPrefixed( array $prefixes ) {
+		foreach ( $prefixes as $prefix => $path ) {
+			$this->addDirectory( $path, $prefix );
+		}
+	}
+
+	/**
+	 * Registers a set of classes
+	 *
+	 * @param array|string $paths  The location(s) of the classes
+	 * @param string       $prefix The classes prefix
+	 */
+	public function addDirectory( $paths, $prefix = null ) {
+		if ( ! $prefix ) {
+			foreach ( (array) $paths as $path ) {
+				$this->directories[] = $path;
+			}
+
+			return;
+		}
+		if ( isset( $this->directoriesPrefixed[ $prefix ] ) ) {
+			$this->directoriesPrefixed[ $prefix ] = array_merge( $this->directoriesPrefixed[ $prefix ],
+				(array) $paths );
+		} else {
+			$this->directoriesPrefixed[ $prefix ] = (array) $paths;
+		}
+	}
+
+	/**
+	 * Registers this instance as an autoloader.
+	 *
+	 * @param Boolean $prepend Whether to prepend the autoloader or not
+	 */
+	public function register( $prepend = false ) {
+		spl_autoload_register( array( $this, 'loadClass' ), true, $prepend );
+	}
+
+	/**
+	 * Unregisters this instance as an autoloader.
+	 */
+	public function unregister() {
+		spl_autoload_unregister( array( $this, 'loadClass' ) );
+	}
+
+	/**
+	 * Loads the given class.
+	 *
+	 * @param string $className The name of the class to load.
+	 *
+	 * @return boolean|null
+	 */
+	public function loadClass( $className ) {
+
+		if ( isset( $this->aliases[ $className ] ) ) {
+			$this->forwardClass( $className, $this->aliases[ $className ] );
 		}
 
-		/**
-		 * Returns prefixes.
-		 *
-		 * @return array
-		 */
-		public function getDirectoriesPrefixed () {
-			return $this->directoriesPrefixed;
+		if ( $file = $this->findFile( $className ) ) {
+			require $file;
+
+			return true;
 		}
 
-		/**
-		 * Returns fallback directories.
-		 *
-		 * @return array
-		 */
-		public function getDirectories () {
-			return $this->directories;
-		}
+		return null;
 
-		/**
-		 * Adds a new class alias, forwarding the class to the new class.
-		 *
-		 * @param string $fromClass The class name we want to forward
-		 * @param string $toClass The class name we are forwarding to
-		 */
-		public function addAlias ( $fromClass, $toClass ) {
-			$this->aliases[ $fromClass ] = $toClass;
-		}
+	}
 
-		/**
-		 * Adds one or more aliases from an associative array.
-		 *
-		 * @param array $aliases associative array of aliases.
-		 */
-		public function addAliases ( array $aliases ) {
-			foreach ( $aliases as $fromClass => $toClass ) {
-				$this->addAlias( $fromClass, $toClass );
+	/**
+	 * Finds the path to the file where the class is defined.
+	 *
+	 * @param string $class The classname to find
+	 *
+	 * @return bool|string
+	 */
+	public function findFile( $class ) {
+		if ( false !== $pos = strrpos( $class, '\\' ) ) {
+			// namespaced class name
+			$classPath = str_replace( '\\', DIRECTORY_SEPARATOR, substr( $class, 0, $pos ) ) . DIRECTORY_SEPARATOR;
+			$className = substr( $class, $pos + 1 );
+		} else {
+			// PEAR-like class name
+			$classPath = null;
+			$className = $class;
+		}
+		$classPath .= str_replace( '_', DIRECTORY_SEPARATOR, $className ) . '.php';
+
+		foreach ( $this->directories as $dir ) {
+			if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
+				return $dir . DIRECTORY_SEPARATOR . $classPath;
 			}
 		}
 
-		/**
-		 * Adds prefixes.
-		 *
-		 * @param array $prefixes Prefixes to add
-		 */
-		public function addDirectoriesPrefixed ( array $prefixes ) {
-			foreach ( $prefixes as $prefix => $path ) {
-				$this->addDirectory( $path, $prefix );
-			}
-		}
-
-		/**
-		 * Registers a set of classes
-		 *
-		 * @param array|string $paths The location(s) of the classes
-		 * @param string $prefix The classes prefix
-		 */
-		public function addDirectory ( $paths, $prefix = null ) {
-			if ( !$prefix ) {
-				foreach ( (array) $paths as $path ) {
-					$this->directories[ ] = $path;
-				}
-
-				return;
-			}
-			if ( isset( $this->directoriesPrefixed[ $prefix ] ) ) {
-				$this->directoriesPrefixed[ $prefix ] = array_merge(
-					$this->directoriesPrefixed[ $prefix ],
-					(array) $paths
-				);
-			}
-			else {
-				$this->directoriesPrefixed[ $prefix ] = (array) $paths;
-			}
-		}
-
-		/**
-		 * Registers this instance as an autoloader.
-		 *
-		 * @param Boolean $prepend Whether to prepend the autoloader or not
-		 */
-		public function register ( $prepend = false ) {
-			spl_autoload_register( array( $this, 'loadClass' ), true, $prepend );
-		}
-
-		/**
-		 * Unregisters this instance as an autoloader.
-		 */
-		public function unregister () {
-			spl_autoload_unregister( array( $this, 'loadClass' ) );
-		}
-
-		/**
-		 * Loads the given class.
-		 *
-		 * @param string $className The name of the class to load.
-		 *
-		 * @return boolean|null
-		 */
-		public function loadClass ( $className ) {
-
-			if ( isset( $this->aliases[ $className ] ) )
-				$this->forwardClass( $className, $this->aliases[ $className ] );
-
-			if ( $file = $this->findFile( $className ) ) {
-				require $file;
-
-				return true;
-			}
-
-			return null;
-
-		}
-
-		/**
-		 * Finds the path to the file where the class is defined.
-		 *
-		 * @param string $class The classname to find
-		 *
-		 * @return bool|string
-		 */
-		public function findFile ( $class ) {
-			if ( false !== $pos = strrpos( $class, '\\' ) ) {
-				// namespaced class name
-				$classPath = str_replace( '\\', DIRECTORY_SEPARATOR, substr( $class, 0, $pos ) ) . DIRECTORY_SEPARATOR;
-				$className = substr( $class, $pos + 1 );
-			}
-			else {
-				// PEAR-like class name
-				$classPath = null;
-				$className = $class;
-			}
-			$classPath .= str_replace( '_', DIRECTORY_SEPARATOR, $className ) . '.php';
-
-			foreach ( $this->directories as $dir ) {
-				if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
-					return $dir . DIRECTORY_SEPARATOR . $classPath;
-				}
-			}
-
-			foreach ( $this->directoriesPrefixed as $prefix => $dirs ) {
-				if ( $class === strstr( $class, $prefix ) ) {
-					foreach ( $dirs as $dir ) {
-						if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
-							return $dir . DIRECTORY_SEPARATOR . $classPath;
-						}
+		foreach ( $this->directoriesPrefixed as $prefix => $dirs ) {
+			if ( $class === strstr( $class, $prefix ) ) {
+				foreach ( $dirs as $dir ) {
+					if ( file_exists( $dir . DIRECTORY_SEPARATOR . $classPath ) ) {
+						return $dir . DIRECTORY_SEPARATOR . $classPath;
 					}
 				}
 			}
-
-			return null;
 		}
 
-		/**
-		 * Creates a fallback class that maps to the correct class (PodsInit >> Pods_Init).
-		 *
-		 * @param string $fromClass The name of the original class to map from.
-		 * @param string $toClass The name of the class to map to.
-		 *
-		 * @return void
-		 */
-		public function forwardClass ( $fromClass, $toClass ) {
+		return null;
+	}
 
-			eval( "
+	/**
+	 * Creates a fallback class that maps to the correct class (PodsInit >> Pods_Init).
+	 *
+	 * @param string $fromClass The name of the original class to map from.
+	 * @param string $toClass   The name of the class to map to.
+	 *
+	 * @return void
+	 */
+	public function forwardClass( $fromClass, $toClass ) {
+
+		eval( "
 			class {$fromClass} extends {$toClass} {
 
 				public function __construct() {
@@ -204,5 +202,5 @@
 			}
 		" );
 
-		}
 	}
+}

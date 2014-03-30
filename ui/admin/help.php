@@ -1,125 +1,127 @@
 <div class="wrap pods-admin">
-    <div id="icon-pods" class="icon32"><br /></div>
-    <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
-    <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+	<div id="icon-pods" class="icon32"><br /></div>
+	<h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
+	<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-    <h3>Pods Support</h3>
+	<h3>Pods Support</h3>
 
-    <p>There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:</p>
-    <ul class="ul-disc">
-        <li>To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>.
+	<p>There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:</p>
+	<ul class="ul-disc">
+		<li>To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>.
 
-        <li>To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>.
+		<li>To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>.
 
-        <li>To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.</li>
+		<li>To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.</li>
 
-        <li>Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?</li>
-    </ul>
-    
-    <hr />
+		<li>Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?</li>
+	</ul>
 
-    <h3>Recommended Plugins</h3>
+	<hr />
 
-    <p>These plugins work together with Pods to bring your site even more organization and functionality.</p>
+	<h3>Recommended Plugins</h3>
 
-    <ul class="ul-disc">
-        <li><a href="http://wordpress.org/extend/plugins/codepress-admin-columns/" target="_blank">CodePress Admin Columns</a> - <em>Change the columns shown on the manage tables for Post Types, Taxonomies, and others areas</em></li>
-        <li><a href="http://wordpress.org/extend/plugins/tabify-edit-screen/" target="_blank">Tabify Edit Screens</a> - <em>Separate all of those pesky meta boxes that plugins add into tabs to more easily get to</em></li>
-        <li><a href="http://wordpress.org/extend/plugins/polylang/" target="_blank">Polylang</a> - <em>Make your site multi-lingual with ease, add as many languages as you need</em></li>
-    </ul>
+	<p>These plugins work together with Pods to bring your site even more organization and functionality.</p>
 
-    <hr />
+	<ul class="ul-disc">
+		<li><a href="http://wordpress.org/extend/plugins/codepress-admin-columns/" target="_blank">CodePress Admin Columns</a> - <em>Change the columns shown on the manage tables for Post Types, Taxonomies, and others areas</em></li>
+		<li><a href="http://wordpress.org/extend/plugins/tabify-edit-screen/" target="_blank">Tabify Edit Screens</a> - <em>Separate all of those pesky meta boxes that plugins add into tabs to more easily get to</em></li>
+		<li><a href="http://wordpress.org/extend/plugins/polylang/" target="_blank">Polylang</a> - <em>Make your site multi-lingual with ease, add as many languages as you need</em></li>
+	</ul>
 
-    <?php
-        include_once( ABSPATH . WPINC . '/feed.php' );
+	<hr />
 
-        $feed = fetch_feed( 'http://pods.io/forums/forum/general-discussion/pods-2-x/feed/' );
+	<?php
+	include_once( ABSPATH . WPINC . '/feed.php' );
 
-        if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
-            $rss_items = $feed->get_items( 0, $max_items );
+	$feed = fetch_feed( 'http://pods.io/forums/forum/general-discussion/pods-2-x/feed/' );
 
-            if ( 0 < $max_items ) {
-    ?>
-        <h3>Latest Forum Posts at <a href="http://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a></h3>
+	if ( ! is_wp_error( $feed ) ) {
+		$max_items = $feed->get_item_quantity( 6 );
+		$rss_items = $feed->get_items( 0, $max_items );
 
-        <ul class="ul-disc">
-            <?php
-                foreach ( $rss_items as $item ) {
-                    $authors = $item->get_authors();
+		if ( 0 < $max_items ) {
+			?>
+			<h3>Latest Forum Posts at <a href="http://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a></h3>
 
-                    $author_text = '';
+			<ul class="ul-disc">
+				<?php
+				foreach ( $rss_items as $item ) {
+					$authors = $item->get_authors();
 
-                    foreach ( $authors as $author ) {
-                        $author_text = '<br /> by ';
+					$author_text = '';
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
+					foreach ( $authors as $author ) {
+						$author_text = '<br /> by ';
 
-                        $author_text .= $author->name;
+						if ( ! empty( $author->link ) ) {
+							$author_text .= '<a href="' . $author->link . '" target="_blank">';
+						}
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '</a>';
-                    }
-            ?>
-                <li>
-                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>"><?php echo esc_html( $item->get_title() ); ?></a>
-                    <?php echo $author_text; ?>
-                    <br />
-                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
-                </li>
-            <?php
-                }
-            ?>
-        </ul>
+						$author_text .= $author->name;
 
-        <hr />
-    <?php
-            }
-        }
+						if ( ! empty( $author->link ) ) {
+							$author_text .= '</a>';
+						}
+					}
+					?>
+					<li>
+						<a href="<?php echo esc_url( $item->get_permalink() ); ?>"><?php echo esc_html( $item->get_title() ); ?></a>
+						<?php echo $author_text; ?>
+						<br /> on <?php echo $item->get_date( 'm/d/Y' ); ?>
+					</li>
+				<?php
+				}
+				?>
+			</ul>
 
-        $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/' . PODS_GITHUB_BRANCH . '.atom' );
+			<hr />
+		<?php
+		}
+	}
 
-        if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
-            $rss_items = $feed->get_items( 0, $max_items );
+	$feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/' . PODS_GITHUB_BRANCH . '.atom' );
 
-            if ( 0 < $max_items ) {
-    ?>
-        <h3>Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</h3>
+	if ( ! is_wp_error( $feed ) ) {
+		$max_items = $feed->get_item_quantity( 6 );
+		$rss_items = $feed->get_items( 0, $max_items );
 
-        <ul class="ul-disc">
-            <?php
-                foreach ( $rss_items as $item ) {
-                    $authors = $item->get_authors();
+		if ( 0 < $max_items ) {
+			?>
+			<h3>Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</h3>
 
-                    $author_text = '';
+			<ul class="ul-disc">
+				<?php
+				foreach ( $rss_items as $item ) {
+					$authors = $item->get_authors();
 
-                    foreach ( $authors as $author ) {
-                        $author_text = '<br /> by ';
+					$author_text = '';
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
+					foreach ( $authors as $author ) {
+						$author_text = '<br /> by ';
 
-                        $author_text .= $author->name;
+						if ( ! empty( $author->link ) ) {
+							$author_text .= '<a href="' . $author->link . '" target="_blank">';
+						}
 
-                        if ( !empty( $author->link ) )
-                            $author_text .= '</a>';
-                    }
-            ?>
-                <li>
-                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>">Commit</a>: <?php echo esc_html( $item->get_title() ); ?>
-                    <?php echo $author_text; ?>
-                    <br />
-                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
-                </li>
-            <?php
-                }
-            ?>
-        </ul>
-    <?php
-            }
-        }
-    ?>
+						$author_text .= $author->name;
+
+						if ( ! empty( $author->link ) ) {
+							$author_text .= '</a>';
+						}
+					}
+					?>
+					<li>
+						<a href="<?php echo esc_url( $item->get_permalink() ); ?>">Commit</a>: <?php echo esc_html( $item->get_title() ); ?>
+						<?php echo $author_text; ?>
+						<br /> on <?php echo $item->get_date( 'm/d/Y' ); ?>
+					</li>
+				<?php
+				}
+				?>
+			</ul>
+		<?php
+		}
+	}
+	?>
 
 </div>

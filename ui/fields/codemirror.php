@@ -1,13 +1,13 @@
 <?php
-	wp_enqueue_script( 'pods-codemirror' );
-	wp_enqueue_style( 'pods-codemirror' );
-	wp_enqueue_style( 'pods-codemirror-pods' );
-	wp_enqueue_script( 'pods-codemirror-loadmode' );
+wp_enqueue_script( 'pods-codemirror' );
+wp_enqueue_style( 'pods-codemirror' );
+wp_enqueue_style( 'pods-codemirror-pods' );
+wp_enqueue_script( 'pods-codemirror-loadmode' );
 
-	$type = 'textarea';
-	$attributes = array();
-	$attributes[ 'tabindex' ] = 2;
-	$attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
+$type                   = 'textarea';
+$attributes             = array();
+$attributes['tabindex'] = 2;
+$attributes             = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
 ?>
 <div class="code-toolbar"><!-- Placeholder --></div>
 <textarea<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
@@ -16,16 +16,16 @@
 <script>
 	var $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>;
 
-	jQuery ( function ( $ ) {
-		$textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = jQuery ( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
+	jQuery(function($) {
+		$textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = jQuery('textarea#<?php echo $attributes[ 'id' ]; ?>');
 
 		CodeMirror.modeURL = "<?php echo PODS_URL ?>ui/js/codemirror/mode/%N/%N.js";
-		if ( 'undefined' == typeof codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ) ?> ) {
+		if('undefined' == typeof codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ) ?>) {
 
 			// Get the width of the parent table cell element
-			var width = $textarea_<?php echo pods_clean_name($attributes['name']) ?>.width ();
+			var width = $textarea_<?php echo pods_clean_name($attributes['name']) ?>.width();
 
-			codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea ( document.getElementById ( "<?php echo $attributes[ 'id' ] ?>" ), {
+			codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea(document.getElementById("<?php echo $attributes[ 'id' ] ?>"),{
 				lineNumbers : true,
 				matchBrackets : true,
 				mode : "application/x-httpd-php",
@@ -34,19 +34,19 @@
 				lineWrapping : true,
 				enterMode : "keep",
 				tabMode : "shift",
-				onBlur : function () {
-					var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue ();
-					$textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val ( value );
+				onBlur : function() {
+					var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
+					$textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val(value);
 				}
-			} );
+			});
 
 			// Hack to fix percentage problems with percentage based sizes and long code lines on Webkit based browsers, https://github.com/pods-framework/pods/issues/1887
 			// TODO: Find a way to make this solution work for window resizing.
-			if ( navigator.userAgent.match ( /Chrome/ ) ) {
-				codemirror_<?php echo pods_clean_name($attributes['name']) ?>.setSize ( width );
+			if(navigator.userAgent.match(/Chrome/)) {
+				codemirror_<?php echo pods_clean_name($attributes['name']) ?>.setSize(width);
 			}
 
-			CodeMirror.autoLoadMode ( codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, 'php' );
+			CodeMirror.autoLoadMode(codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,'php');
 		}
-	} );
+	});
 </script>

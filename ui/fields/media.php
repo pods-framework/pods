@@ -169,8 +169,13 @@ else
 
             event.preventDefault();
 
-            var default_ext = wp.Uploader.defaults.filters[0].extensions;
-            wp.Uploader.defaults.filters[0].extensions = '<?php echo esc_js( $limit_extensions ); ?>';
+	        if(typeof wp.Uploader.defaults.filters.mime_types == 'undefined') {
+		        wp.Uploader.defaults.filters.mime_types = [{title:'Allowed Files', extensions: '*'}];
+	        }
+
+	        var default_ext = wp.Uploader.defaults.filters.mime_types[0].extensions;
+
+	        wp.Uploader.defaults.filters.mime_types[0].extensions = "<?php echo esc_js( $limit_extensions ); ?>";
 
             // if the frame already exists, open it
             if ( pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
@@ -273,7 +278,7 @@ else
             }
 
             // Reset the allowed file extensions
-            wp.Uploader.defaults.filters[0].extensions = default_ext;
+            wp.Uploader.defaults.filters.mime_types[0].extensions = default_ext;
         });
 
     });

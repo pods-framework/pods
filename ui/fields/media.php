@@ -53,9 +53,9 @@ elseif ( 'any' == $limit_file_type ) {
     $limit_types = '';
     $limit_extensions = '*';
 }
-else
+else {
     $limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
-
+}
 $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 $limit_extensions = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_extensions ), ',' );
 
@@ -82,9 +82,9 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
                     $mime = explode( '/', $mime );
                     $mime = $mime[ 0 ];
 
-                    if ( !in_array( $mime, $new_limit_types ) )
+                    if ( !in_array( $mime, $new_limit_types ) ) {
                         $new_limit_types[] = $mime;
-
+                    }
                     $found = true;
                 }
             }
@@ -95,7 +95,7 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
     }
 
     if ( !empty( $new_limit_types ) )
-        $limit_types = implode( ', ', $new_limit_types );
+        $limit_types = implode( ',', $new_limit_types );
 }
 
 if ( empty( $value ) )
@@ -235,7 +235,7 @@ else
                         }
 
                         <?php if ( !empty( $limit_types ) ) : ?>
-                            if ( '<?php echo implode( '\' != attachment.attributes.type || \'', explode( ',', $limit_types ) ); ?>' != attachment.attributes.type )
+                            if ( '<?php echo implode( '\' != attachment.attributes.type && \'', explode( ',', $limit_types ) ); ?>' != attachment.attributes.type )
                                 return;
                         <?php endif; ?>
 

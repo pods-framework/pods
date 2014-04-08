@@ -2753,6 +2753,12 @@ class PodsAPI {
         if ( !isset( $params->location ) )
             $params->location = null;
 
+        if ( !isset( $params->track_changed_fields ) )
+            $params->track_changed_fields = false;
+
+		$track_changed_fields = (boolean) $params->track_changed_fields;
+		$changed_fields = array();
+
 		if ( !isset( $params->clear_slug_cache ) ) {
 			$params->clear_slug_cache = true;
 		}
@@ -2932,17 +2938,19 @@ class PodsAPI {
 
         $pre_save_helpers = $post_save_helpers = array();
 
-        if ( false === $bypass_helpers ) {
-			$pieces = array(
-				'fields',
-				'params',
-				'pod',
-				'fields_active',
-				'object_fields',
-				'custom_fields',
-				'custom_data'
-			);
+		$pieces = array(
+			'fields',
+			'params',
+			'pod',
+			'fields_active',
+			'object_fields',
+			'custom_fields',
+			'custom_data',
+			'track_changed_fields',
+			'changed_fields'
+		);
 
+        if ( false === $bypass_helpers ) {
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
@@ -3000,6 +3008,10 @@ class PodsAPI {
                 }
             }
         }
+
+		if ( $track_changed_fields ) {
+			$changed_fields = $this->get_changed_fields( compact( $pieces ) );
+		}
 
         $table_data = $table_formats = $update_values = $rel_fields = $rel_field_ids = array();
 
@@ -3388,16 +3400,6 @@ class PodsAPI {
             pods_no_conflict_off( $pod[ 'type' ] );
 
         if ( false === $bypass_helpers ) {
-			$pieces = array(
-				'fields',
-				'params',
-				'pod',
-				'fields_active',
-				'object_fields',
-				'custom_fields',
-				'custom_data'
-			);
-
             $pieces = compact( $pieces );
 
             // Plugin hooks

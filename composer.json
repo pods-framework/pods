@@ -2,37 +2,55 @@
 	"name" : "podsframework/pods",
 	"description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
 	"type" : "wordpress-plugin",
-	"license" : "GPL-2.0",
+	"keywords" : [ "pods", "custom", "fields" ],
+	"license" : "GPL-2.0+",
 	"authors" : [
 		{
-			"name" : "Scott Kingsley Clark"
+			"name" : "Scott Kingsley Clark",
+			"email" : "scott@pods.io",
+			"homepage" : "http://scottkclark.com/",
+			"role" : "Lead Developer"
 		},
 		{
-			"name" : "Phil Lewis"
+			"name" : "Phil Lewis",
+			"email" : "phil@pods.io",
+			"role" : "Developer"
 		},
 		{
-			"name" : "David Cramer"
+			"name" : "Josh Pollock",
+			"email" : "josh@pods.io",
+			"role" : "Developer"
 		},
 		{
-			"name" : "Josh Pollock"
+			"name" : "Dan Stefan Oprean",
+			"role" : "Developer"
 		},
 		{
-			"name" : "Mike Green"
+			"name" : "David Cramer",
+			"role" : "Developer"
 		},
 		{
-			"name" : "Dan Stefan Oprean"
+			"name" : "Mike Green",
+			"role" : "Developer"
 		},
 		{
-			"name" : "Jonathan Christopher"
+			"name" : "Jonathan Christopher",
+			"role" : "Developer"
 		},
 		{
-			"name" : "Matt Gibbs"
+			"name" : "Matt Gibbs",
+			"role" : "Developer"
 		}
 	],
 	"require" : {
-		"composer/installers" : "~1.0.0"
+		"composer/installers" : "~1.0.0",
+		"php" : ">=5.2.4"
+	},
+	"require-dev": {
+		"satooshi/php-coveralls": "dev-master"
 	},
 	"extra" : {
 		"installer-name" : "pods"
-	}
+	},
+	"homepage" : "http://pods.io/"
 }

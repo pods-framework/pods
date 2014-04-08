@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, mik
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
-Tested up to: 3.7.1
+Tested up to: 3.9
 Stable tag: 2.3.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -153,6 +153,22 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+
+= 2.3.19 - April XXth, 2014 =
+* After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away
+* There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features
+* Added:
+* Added:
+* Added:
+* Added:
+* Added:
+* Fixed:
+* Fixed:
+* Fixed:
+* Fixed:
+* Fixed:
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.18 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields

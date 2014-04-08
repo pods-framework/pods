@@ -2756,7 +2756,7 @@ class PodsAPI {
         if ( !isset( $params->track_changed_fields ) )
             $params->track_changed_fields = false;
 
-		$track_changed_fields = (boolean) $params->track_changed_fields;
+		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
 		$changed_fields = array();
 
 		if ( !isset( $params->clear_slug_cache ) ) {

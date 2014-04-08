@@ -500,7 +500,7 @@ class Pods implements Iterator {
 	public function row () {
 		$this->do_hook( 'row' );
 
-		if ( empty( $this->row ) )
+		if ( !is_array( $this->row ) )
 			return false;
 
 		return (array) $this->row;

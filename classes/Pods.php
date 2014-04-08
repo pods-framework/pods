@@ -3719,7 +3719,7 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Handle variables that have been deprecated
+	 * Handle variables that have been deprecated and PodsData vars
 	 *
 	 * @var $name
 	 *
@@ -3729,6 +3729,11 @@ class Pods implements Iterator {
 	 */
 	public function __get ( $name ) {
 		$name = (string) $name;
+
+		// PodsData vars
+		if ( 0 === strpos( $name, 'field_' ) && isset( $this->data->{$name} ) ) {
+			return $this->data->{$name};
+		}
 
 		if ( !isset( $this->deprecated ) ) {
 			require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
@@ -3749,7 +3754,7 @@ class Pods implements Iterator {
 	}
 
 	/**
-	 * Handle methods that have been deprecated
+	 * Handle methods that have been deprecated and any aliasing
 	 *
 	 * @var $name
 	 * @var $args
@@ -3760,6 +3765,11 @@ class Pods implements Iterator {
 	 */
 	public function __call ( $name, $args ) {
 		$name = (string) $name;
+
+		// select > find alias
+		if ( 'select' == $name ) {
+			return call_user_func_array( array( $this, 'find' ), $args );
+		}
 
 		if ( !isset( $this->deprecated ) ) {
 			require_once( PODS_DIR . 'deprecated/classes/Pods.php' );

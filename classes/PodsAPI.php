@@ -3261,13 +3261,18 @@ class PodsAPI {
 
                     $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ][ 'options' ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
 
-                    $search_data = pods_data();
-                    $search_data->table( $fields[ $field ][ 'options' ][ 'table_info' ] );
-
                     if ( isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && !empty( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
-                        $search_data->pod = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ];
-                        $search_data->fields = $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'fields' ];
+						$search_data = pods( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] );
+
+						$data_mode = 'pods';
                     }
+					else {
+						$search_data = pods_data();
+						$search_data->table( $fields[ $field ][ 'options' ][ 'table_info' ] );
+
+						$data_mode = 'data';
+					}
+
 
 					$find_rel_params = array(
 						'select' => "`t`.`{$search_data->field_id}`",
@@ -3318,8 +3323,12 @@ class PodsAPI {
 									if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
 										$v = (int) $v_data[ $search_data->field_id ];
 									}
-									elseif ( $is_taggable ) {
-										// @todo Save $v to a new item on related object
+									// Allow tagging for Pods objects
+									elseif ( $is_taggable && 'pods' == $data_mode ) {
+										// Save $v to a new item on related object
+										$v = $search_data->add( array( $search_data->field_index => $v ) );
+
+										// @todo Support non-Pods for tagging
 									}
 								}
 							}

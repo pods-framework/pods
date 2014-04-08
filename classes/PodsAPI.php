@@ -3496,7 +3496,7 @@ class PodsAPI {
 
 		$fields_changed = array();
 
-		if ( 0 < $pieces[ 'id' ] ) {
+		if ( 0 < $pieces[ 'params' ]->id ) {
 			$pod = pods( $pieces[ 'params' ]->pod, $pieces[ 'params' ]->id );
 
 			foreach ( $fields_active as $field ) {

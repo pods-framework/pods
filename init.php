@@ -39,6 +39,7 @@ if ( !defined( 'PODS_VERSION' ) ) {
     define( 'WP_INC_URL', rtrim( includes_url(), '/' ) ); // non-trailing slash being deprecated in 2.0
 
     require_once( PODS_DIR . '/functions.php' );
+    require_once( PODS_DIR . '/compatibility.php' );
 
     require_once( PODS_DIR . '/classes/PodInit.php' );
 

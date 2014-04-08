@@ -8,7 +8,7 @@ if (false === apply_filters('pods_manage_content', true)) {
 
 // Get all pod types
 $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name ASC");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
     $datatypes[$row['id']] = $row['name'];
 }
 
@@ -326,7 +326,7 @@ else
             </tfoot>
             <tbody>
 <?php
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
     $date_desc = ($row['created'] != $row['modified']) ? 'Updated' : 'Added';
 ?>
                 <tr id="row<?php echo $row['id']; ?>">

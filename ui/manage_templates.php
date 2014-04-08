@@ -1,7 +1,7 @@
 <?php
 // Get all pages
 $result = pod_query("SELECT id, name FROM @wp_pod_templates ORDER BY name");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
     $templates[$row['id']] = $row['name'];
 }
 ?>

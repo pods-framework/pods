@@ -190,7 +190,7 @@ class PodInit
     function admin_menu() {
         $submenu = array();
         $result = pod_query("SELECT name, label, is_toplevel FROM @wp_pod_types ORDER BY label, name");
-        while ($row = mysql_fetch_array($result)) {
+        while ($row = pods_mysql_fetch_array($result)) {
             $name = apply_filters('pods_admin_menu_name', $row['name'], $row);
             $label = trim($row['label']);
             $label = ('' != $label) ? $label : $name;
@@ -371,8 +371,8 @@ class PodInit
 
     function delete_attachment($attachment_id) {
         $result = pod_query("SELECT id FROM @wp_pod_fields WHERE coltype = 'file'");
-        if (0 < mysql_num_rows($result)) {
-            while ($row = mysql_fetch_assoc($result)) {
+        if (0 < pods_mysql_num_rows($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 $field_ids[] = $row['id'];
             }
             $field_ids = implode(',', $field_ids);

@@ -64,8 +64,8 @@ if ('browse_files' == $params->action && false === $browse_disabled) {
     $thmb_width = get_option( 'thumbnail_size_w' );
     $thmb_height = get_option( 'thumbnail_size_h' );
     $thmb_size = "-{$thmb_width}x{$thmb_height}";
-    if ( 0 < mysql_num_rows( $result ) ) {
-        while ( $row = mysql_fetch_assoc( $result ) ) {
+    if ( 0 < pods_mysql_num_rows( $result ) ) {
+        while ( $row = pods_mysql_fetch_assoc( $result ) ) {
             $guid = substr( $row[ 'guid' ], strrpos( $row[ 'guid' ], '/' ) + 1 );
             $thumb = wp_get_attachment_thumb_url( $row[ 'id' ] );
             $ext = "." . substr( strrchr( $thumb, "." ), 1 );

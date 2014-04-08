@@ -650,7 +650,7 @@ foreach ($column_types as $type => $label)
 <?php
 // Get all pod names
 $result = pod_query("SELECT name FROM @wp_pod_types ORDER BY name");
-while ($row = mysql_fetch_array($result)) {
+while ($row = pods_mysql_fetch_array($result)) {
 ?>
                     <option value="<?php echo $row['name']; ?>" class="pod-selection"><?php echo $row['name']; ?></option>
 <?php

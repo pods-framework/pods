@@ -7,7 +7,7 @@ $datatype_id = $this->datatype_id;
 <?php
 if (empty($filters)) {
     $result = pod_query("SELECT list_filters FROM @wp_pod_types WHERE id = $datatype_id LIMIT 1");
-    $row = mysql_fetch_assoc($result);
+    $row = pods_mysql_fetch_assoc($result);
     $filters = $row['list_filters'];
 }
 
@@ -16,7 +16,7 @@ if (!empty($filters)) {
     foreach ($filters as $key => $val) {
         $field_name = trim($val);
         $result = pod_query("SELECT label, pickval, coltype FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
-        $row = mysql_fetch_assoc($result);
+        $row = pods_mysql_fetch_assoc($result);
         if ('pick' == $row['coltype'] && !empty($row['pickval'])) {
             $pick_params = array('table' => $row['pickval'], 'field_name' => $field_name, 'unique_vals' => false);
             $field_data = $this->get_dropdown_values($pick_params);

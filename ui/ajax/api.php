@@ -107,7 +107,7 @@ if (isset($methods[$action])) {
                 ";
             }
             $result = pod_query($sql);
-            $row = mysql_fetch_assoc($result);
+            $row = pods_mysql_fetch_assoc($result);
             $priv_val = 'pod_' . $row['datatype'];
             $params->datatype = $row['datatype'];
             $params->datatype_id = $row['datatype_id'];

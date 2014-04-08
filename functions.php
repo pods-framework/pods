@@ -24,19 +24,19 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
         $cache = PodCache::instance();
         if ($cache->cache_enabled && isset($cache->results[$sql])) {
             $result = $cache->results[$sql];
-            if (0 < mysql_num_rows($result)) {
-                mysql_data_seek($result, 0);
+            if (0 < pods_mysql_num_rows($result)) {
+                pods_mysql_data_seek($result, 0);
             }
             $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
             return $result;
         }
     }
     if (false !== $error)
-        $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
+        $result = pods_mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . pods_mysql_error($wpdb->dbh));
     else
-        $result = @mysql_query($sql, $wpdb->dbh);
+        $result = @pods_mysql_query($sql, $wpdb->dbh);
 
-    if (0 < @mysql_num_rows($result)) {
+    if (0 < @pods_mysql_num_rows($result)) {
         if (!empty($results_error)) {
             die("<e>$results_error");
         }
@@ -46,7 +46,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     }
 
     if ('INSERT' == substr($sql, 0, 6)) {
-        $result = mysql_insert_id($wpdb->dbh);
+        $result = pods_mysql_insert_id($wpdb->dbh);
     }
     elseif ('SELECT' == substr($sql, 0, 6)) {
         if ('SELECT FOUND_ROWS()' != $sql) {
@@ -325,14 +325,14 @@ function pods_unique_slug($value, $column_name, $datatype, $datatype_id = 0, $po
         ";
     }
     $result = pod_query($sql);
-    if (0 < mysql_num_rows($result)) {
+    if (0 < pods_mysql_num_rows($result)) {
         $unique_num = 0;
         $unique_found = false;
         while (!$unique_found) {
             $unique_num++;
             $test_slug = pods_sanitize($value . '-' . $unique_num);
             $result = pod_query(str_replace("t.`{$column_name}` = '{$slug}'", "t.`{$column_name}` = '{$test_slug}'", $sql));
-            if (0 < mysql_num_rows($result))
+            if (0 < pods_mysql_num_rows($result))
                 continue;
             $value = $test_slug;
             $unique_found = true;
@@ -418,7 +418,7 @@ function pod_page_exists($uri = null) {
 
     // See if the custom template exists
     $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");
-    if (1 > mysql_num_rows($result)) {
+    if (1 > pods_mysql_num_rows($result)) {
         // Find any wildcards
         $sql = "SELECT * FROM @wp_pod_pages
                 WHERE
@@ -429,8 +429,8 @@ function pod_page_exists($uri = null) {
         $result = pod_query($sql);
     }
 
-    if (0 < mysql_num_rows($result)) {
-        $pod_page_data = mysql_fetch_assoc($result);
+    if (0 < pods_mysql_num_rows($result)) {
+        $pod_page_data = pods_mysql_fetch_assoc($result);
         $validate_pod_page = explode('/',$pod_page_data['uri']);
         $validate_uri = explode('/',$uri);
         if (count($validate_pod_page)==count($validate_uri)) {
@@ -722,7 +722,7 @@ function pods_compatible($wp = null, $php = null, $mysql = null) {
     if (null === $php)
         $php = phpversion();
     if (null === $mysql)
-        $mysql = @mysql_result(pod_query("SELECT VERSION()"), 0);
+        $mysql = @pods_mysql_result(pod_query("SELECT VERSION()"), 0);
     $compatible = true;
     if (!version_compare($wp, PODS_WP_VERSION_MINIMUM, '>=')) {
         $compatible = false;
@@ -752,7 +752,7 @@ function pods_compatible($wp = null, $php = null, $mysql = null) {
         function pods_version_notice_mysql () {
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo @mysql_result(pod_query("SELECT VERSION()"), 0); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo @pods_mysql_result(pod_query("SELECT VERSION()"), 0); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
     </div>
 <?php
         }

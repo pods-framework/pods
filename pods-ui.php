@@ -622,7 +622,7 @@ function pods_ui_manage ($obj)
                         echo $field_settings['custom_output'];
                     else {
                         $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = {$object->datatype_id} AND name = '$field_name' LIMIT 1");
-                        if ($row = @mysql_fetch_assoc($result))
+                        if ($row = @pods_mysql_fetch_assoc($result))
                         {
                             $field_settings = array_merge($row, $field_settings);
                             if ('pick' == $field_settings['coltype'] && !empty($field_settings['pickval']))
@@ -1955,7 +1955,7 @@ function pods_ui_fields ($datatype_id)
 {
     $fields = array();
     $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id ORDER BY weight", 'Cannot get datatype fields');
-    while($row = mysql_fetch_assoc($result))
+    while($row = pods_mysql_fetch_assoc($result))
     {
         $fields[$row['name']] = $row;
     }

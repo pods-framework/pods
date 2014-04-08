@@ -8,9 +8,9 @@ if (version_compare($installed, '1.2.6', '<')) {
     if (!empty($table_prefix))
     {
         $result = pod_query("SHOW TABLES LIKE 'tbl_%'");
-        if (0 < mysql_num_rows($result))
+        if (0 < pods_mysql_num_rows($result))
         {
-            while ($row = mysql_fetch_array($result))
+            while ($row = pods_mysql_fetch_array($result))
             {
                 pod_query("RENAME TABLE `$row[0]` TO `@wp_$row[0]`");
             }
@@ -18,12 +18,12 @@ if (version_compare($installed, '1.2.6', '<')) {
     }
     // Change the "post_type" of all pod items
     $result = pod_query("SELECT id, name FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result))
+    while ($row = pods_mysql_fetch_assoc($result))
     {
         $datatypes[$row['id']] = $row['name'];
     }
     $result = pod_query("SELECT post_id, datatype FROM @wp_pod");
-    while ($row = mysql_fetch_array($result))
+    while ($row = pods_mysql_fetch_array($result))
     {
         $datatype = $datatypes[$row['datatype']];
         pod_query("UPDATE @wp_posts SET post_type = '$datatype' WHERE ID = $row[0] LIMIT 1");
@@ -39,9 +39,9 @@ if (version_compare($installed, '1.2.7', '<')) {
 
 if (version_compare($installed, '1.3.1', '<')) {
     $result = pod_query("SHOW TABLES LIKE '@wp_tbl_%'");
-    if (0 < mysql_num_rows($result))
+    if (0 < pods_mysql_num_rows($result))
     {
-        while ($row = mysql_fetch_array($result))
+        while ($row = pods_mysql_fetch_array($result))
         {
             $rename = explode('tbl_', $row[0]);
             pod_query("RENAME TABLE `{$row[0]}` TO `@wp_pod_tbl_{$rename[1]}`");
@@ -60,7 +60,7 @@ if (version_compare($installed, '1.3.2', '<')) {
 
 if (version_compare($installed, '1.4.3', '<')) {
     $result = pod_query("SHOW COLUMNS FROM @wp_pod_types LIKE 'description'");
-    if (0 < mysql_num_rows($result))
+    if (0 < pods_mysql_num_rows($result))
     {
         pod_query("ALTER TABLE @wp_pod_types CHANGE description label VARCHAR(32)");
     }
@@ -122,10 +122,10 @@ if (version_compare($installed, '1.5', '<')) {
         @wp_posts r ON r.ID = p.post_id
     ";
     $result = pod_query($sql);
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         foreach ($row as $key => $val)
         {
-            ${$key} = mysql_real_escape_string(trim($val));
+            ${$key} = pods_mysql_real_escape_string(trim($val));
         }
         $posts_to_delete[] = $post_id;
         $all_pod_ids[$post_id] = $id;
@@ -134,7 +134,7 @@ if (version_compare($installed, '1.5', '<')) {
 
     // Replace post_id with pod_id
     $result = pod_query("SELECT id, pod_id, sister_pod_id FROM @wp_pod_rel");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         $id = $row['id'];
         $new_pod_id = $all_pod_ids[$row['pod_id']];
         $new_sister_pod_id = $all_pod_ids[$row['sister_pod_id']];
@@ -172,7 +172,7 @@ if (version_compare($installed, '1.6', '<')) {
 
     // Try to route old templates as best as possible
     $result = pod_query("SELECT name, tpl_detail, tpl_list FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         // Create the new template, e.g. "dtname_list" or "dtname_detail"
         $row = pods_sanitize($row);
         pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('{$row['name']}_detail', '{$row['tpl_detail']}'),('{$row['name']}_list', '{$row['tpl_list']}')");
@@ -233,11 +233,11 @@ if (version_compare($installed, '1.7.6', '<')) {
     pod_query("ALTER TABLE @wp_pod_fields CHANGE label label VARCHAR(128)");
 
     $result = pod_query("SELECT f.id AS field_id, f.name AS field_name, f.datatype AS datatype_id, dt.name AS datatype FROM @wp_pod_fields AS f LEFT JOIN @wp_pod_types AS dt ON dt.id = f.datatype WHERE f.coltype='file'");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         $items = pod_query("SELECT t.id AS tbl_row_id, t.{$row['field_name']} AS file, p.id AS pod_id FROM @wp_pod_tbl_{$row['datatype']} AS t LEFT JOIN @wp_pod AS p ON p.tbl_row_id = t.id AND p.datatype = {$row['datatype_id']} WHERE t.{$row['field_name']} != '' AND t.{$row['field_name']} IS NOT NULL");
         $success = false;
         $rels = array();
-        while ($item = mysql_fetch_assoc($items)) {
+        while ($item = pods_mysql_fetch_assoc($items)) {
             $filename = $item['file'];
             if(strpos($filename,get_bloginfo('wpurl'))!==false&&strpos($filename,get_bloginfo('wpurl'))==0) {
                 $filename = ltrim($filename,get_bloginfo('wpurl'));
@@ -300,7 +300,7 @@ if (version_compare($installed, '1.8.2', '<')) {
 
     // Remove beginning and trailing slashes
     $result = pod_query("SELECT id, uri FROM @wp_pod_menu");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $row['uri']);
         $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_menu SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
@@ -315,7 +315,7 @@ if (version_compare($installed, '1.9.0', '<')) {
 
     // Remove beginning and trailing slashes
     $result = pod_query("SELECT id, uri FROM @wp_pod_pages");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         $uri = trim($row['uri'],'/');
         $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_pages SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
@@ -353,7 +353,7 @@ if (version_compare($installed, '1.11', '<')) {
     pod_query("ALTER TABLE `@wp_pod_rel` ADD INDEX `field_pod_idx` (`field_id`, `pod_id`)", false);
     pod_query("ALTER TABLE `@wp_pod_fields` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
     $result = pod_query("SELECT id, name FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = pods_mysql_fetch_assoc($result)) {
         $pod = pods_sanitize($row['name']);
         pod_query("ALTER TABLE `@wp_pod_tbl_{$pod}` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
     }

@@ -77,7 +77,7 @@ function podsImportCancel() {
                     <div class="form pick pod" style="height:100px; margin-bottom:15px">
 <?php
 $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
 ?>
             <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php
@@ -91,7 +91,7 @@ while ($row = mysql_fetch_assoc($result)) {
                     <div class="form pick template" style="height:100px; margin-bottom:15px">
 <?php
 $result = pod_query("SELECT id, name FROM @wp_pod_templates ORDER BY name");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
 ?>
             <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php
@@ -106,7 +106,7 @@ while ($row = mysql_fetch_assoc($result)) {
                     <div class="form pick podpage" style="height:100px">
 <?php
 $result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY uri");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
 ?>
             <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['uri']; ?></div>
 <?php
@@ -120,7 +120,7 @@ while ($row = mysql_fetch_assoc($result)) {
                     <div class="form pick helper" style="height:100px">
 <?php
 $result = pod_query("SELECT id, name FROM @wp_pod_helpers ORDER BY name");
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = pods_mysql_fetch_assoc($result)) {
 ?>
             <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php

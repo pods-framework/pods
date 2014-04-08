@@ -227,8 +227,8 @@ class PodAPI
             // Sink the new column to the bottom of the list
             $weight = 0;
             $result = pod_query("SELECT weight FROM @wp_pod_fields WHERE datatype = $params->datatype ORDER BY weight DESC LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $row = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $row = pods_mysql_fetch_assoc($result);
                 $weight = (int) $row['weight'] + 1;
             }
 
@@ -262,8 +262,8 @@ class PodAPI
             $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $params->id LIMIT 1";
             $result = pod_query($sql);
 
-            if (0 < mysql_num_rows($result)) {
-                $row = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $row = pods_mysql_fetch_assoc($result);
                 $old_coltype = $row['coltype'];
                 $old_name = $row['name'];
 
@@ -515,8 +515,8 @@ class PodAPI
         );
         $params = (object) array_merge($defaults, $params);
         $result = pod_query("SELECT $params->columns FROM @wp_pod_$params->table WHERE $params->where ORDER BY $params->orderby");
-        if (0 < mysql_num_rows($result)) {
-            while ($row = mysql_fetch_assoc($result)) {
+        if (0 < pods_mysql_num_rows($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 $data[$row[$params->array_key]] = $row;
             }
             return $data;
@@ -596,7 +596,7 @@ class PodAPI
 
         // Load all helpers
         $result = pod_query("SELECT pre_save_helpers, post_save_helpers FROM @wp_pod_types WHERE id = {$params->datatype_id}");
-        $row = mysql_fetch_assoc($result);
+        $row = pods_mysql_fetch_assoc($result);
         $params->pre_save_helpers = explode(',', $row['pre_save_helpers']);
         $params->post_save_helpers = explode(',', $row['post_save_helpers']);
 
@@ -604,11 +604,11 @@ class PodAPI
         $is_new_item = false;
         if (!empty($params->tbl_row_id)) {
             $result = pod_query("SELECT p.id FROM @wp_pod p INNER JOIN @wp_pod_types t ON t.id = p.datatype WHERE p.tbl_row_id = $params->tbl_row_id AND t.name = '$params->datatype' LIMIT 1",'Pod item not found',null,'Pod item not found');
-            $params->pod_id = mysql_result($result, 0);
+            $params->pod_id = pods_mysql_result($result, 0);
         }
         elseif (!empty($params->pod_id)) {
             $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1",'Item not found',null,'Item not found');
-            $params->tbl_row_id = mysql_result($result, 0);
+            $params->tbl_row_id = pods_mysql_result($result, 0);
         }
         else
             $is_new_item = true;
@@ -678,8 +678,8 @@ class PodAPI
                 $exclude = '';
                 if (!empty($params->pod_id)) {
                     $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = '$params->pod_id' AND datatype = '{$params->datatype_id}' LIMIT 1");
-                    if (0 < mysql_num_rows($result)) {
-                        $exclude = 'AND id != ' . mysql_result($result, 0);
+                    if (0 < pods_mysql_num_rows($result)) {
+                        $exclude = 'AND id != ' . pods_mysql_result($result, 0);
                     }
                 }
 
@@ -781,8 +781,8 @@ class PodAPI
                         if (!empty($sister_field_id)) {
                             // Get sister pod IDs (a sister pod's sister pod is the parent pod)
                             $result = pod_query("SELECT pod_id FROM @wp_pod_rel WHERE sister_pod_id = $params->pod_id");
-                            if (0 < mysql_num_rows($result)) {
-                                while ($row = mysql_fetch_assoc($result)) {
+                            if (0 < pods_mysql_num_rows($result)) {
+                                while ($row = pods_mysql_fetch_assoc($result)) {
                                     $sister_pod_ids[] = $row['pod_id'];
                                 }
                                 $sister_pod_ids = implode(',', $sister_pod_ids);
@@ -801,8 +801,8 @@ class PodAPI
                             $sister_pod_id = 0;
                             if (!empty($sister_field_id) && !empty($sister_datatype_id)) {
                                 $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $sister_datatype_id AND tbl_row_id = $related_id LIMIT 1");
-                                if (0 < mysql_num_rows($result)) {
-                                    $sister_pod_id = mysql_result($result, 0);
+                                if (0 < pods_mysql_num_rows($result)) {
+                                    $sister_pod_id = pods_mysql_result($result, 0);
                                     pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($sister_pod_id, $params->pod_id, $sister_field_id, $params->tbl_row_id, $rel_weight)", 'Cannot add sister relationships');
                                 }
                             }
@@ -1079,13 +1079,13 @@ class PodAPI
             $params = pods_sanitize($params);
         $params = (object) $params;
         $result = pod_query("SELECT name, coltype FROM @wp_pod_fields WHERE id = $params->id LIMIT 1");
-        list($field_name, $coltype) = mysql_fetch_array($result);
+        list($field_name, $coltype) = pods_mysql_fetch_array($result);
 
         if ('pick' == $coltype) {
             // Remove any orphans
             $result = pod_query("SELECT id FROM @wp_pod_fields WHERE sister_field_id = $params->id");
-            if (0 < mysql_num_rows($result)) {
-                while ($row = mysql_fetch_assoc($result)) {
+            if (0 < pods_mysql_num_rows($result)) {
+                while ($row = pods_mysql_fetch_assoc($result)) {
                     $related_fields[] = $row['id'];
                 }
                 $related_fields = implode(',', $related_fields);
@@ -1213,7 +1213,7 @@ class PodAPI
         }
 
         $result = pod_query($sql);
-        $row = mysql_fetch_assoc($result);
+        $row = pods_mysql_fetch_assoc($result);
         $params->datatype_id = $row['id'];
         $params->datatype = $row['name'];
         $params->pod_id = $row['pod_id'];
@@ -1221,7 +1221,7 @@ class PodAPI
 
         // Get helper code
         $result = pod_query("SELECT pre_drop_helpers, post_drop_helpers FROM @wp_pod_types WHERE id = $params->datatype_id");
-        $row = mysql_fetch_assoc($result);
+        $row = pods_mysql_fetch_assoc($result);
         $params->pre_drop_helpers = explode(',', $row['pre_drop_helpers']);
         $params->post_drop_helpers = explode(',', $row['post_drop_helpers']);
 
@@ -1335,8 +1335,8 @@ class PodAPI
         if (!empty($params->id) || !empty($params->name)) {
             $where = empty($params->id) ? "name = '{$params->name}'" : "id = {$params->id}";
             $result = pod_query("SELECT id, name FROM @wp_pod_types WHERE {$where} LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $pod = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $pod = pods_mysql_fetch_assoc($result);
                 return $pod;
             }
         }
@@ -1359,11 +1359,11 @@ class PodAPI
         if (!empty($params->id) || !empty($params->name)) {
             $where = empty($params->id) ? "name = '$params->name'" : "id = $params->id";
             $result = pod_query("SELECT * FROM @wp_pod_types WHERE $where LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $pod = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $pod = pods_mysql_fetch_assoc($result);
                 $pod['fields'] = array();
                 $result = pod_query("SELECT id, name, coltype, pickval, required, weight FROM @wp_pod_fields WHERE datatype = {$pod['id']} ORDER BY weight");
-                while ($row = mysql_fetch_assoc($result)) {
+                while ($row = pods_mysql_fetch_assoc($result)) {
                     $pod['fields'][$row['name']] = $row;
                 }
 
@@ -1391,7 +1391,7 @@ class PodAPI
             $params->id = absint($params->id);
         $where = empty($params->id) ? "`name` = '{$params->name}' AND `datatype` = {$params->datatype}" : "`id` = {$params->id}";
         $result = pod_query("SELECT * FROM @wp_pod_fields WHERE {$where} LIMIT 1");
-        return @mysql_fetch_assoc($result);
+        return @pods_mysql_fetch_assoc($result);
     }
 
     /**
@@ -1411,7 +1411,7 @@ class PodAPI
             $params->id = absint($params->id);
         $where = empty($params->id) ? "`name` = '{$params->name}'" : "`id` = {$params->id}";
         $result = pod_query("SELECT * FROM @wp_pod_templates WHERE {$where} LIMIT 1");
-        return @mysql_fetch_assoc($result);
+        return @pods_mysql_fetch_assoc($result);
     }
 
     /**
@@ -1431,7 +1431,7 @@ class PodAPI
             $params->id = absint($params->id);
         $where = empty($params->id) ? "`uri` = '{$params->uri}'" : "`id` = {$params->id}";
         $result = pod_query("SELECT * FROM @wp_pod_pages WHERE {$where} LIMIT 1");
-        return @mysql_fetch_assoc($result);
+        return @pods_mysql_fetch_assoc($result);
     }
 
     /**
@@ -1454,7 +1454,7 @@ class PodAPI
         if (isset($params->type) && !empty($params->type))
             $where .= " AND `helper_type` = '{$params->type}'";
         $result = pod_query("SELECT * FROM @wp_pod_helpers WHERE {$where} LIMIT 1");
-        return @mysql_fetch_assoc($result);
+        return @pods_mysql_fetch_assoc($result);
     }
 
     /**
@@ -1479,7 +1479,7 @@ class PodAPI
             $params->tbl_row_id = null;
             if (!empty($params->pod_id)) {
                 $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1",'Item not found',null,'Item not found');
-                $params->tbl_row_id = mysql_result($result, 0);
+                $params->tbl_row_id = pods_mysql_result($result, 0);
             }
         }
         $obj = new Pod($params->datatype,$params->tbl_row_id);
@@ -1506,16 +1506,16 @@ class PodAPI
 
         if (!empty($params->pickval) && is_string($params->pickval)) {
             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$params->pickval' LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $sister_datatype = mysql_result($result, 0);
+            if (0 < pods_mysql_num_rows($result)) {
+                $sister_datatype = pods_mysql_result($result, 0);
 
                 $result = pod_query("SELECT name FROM @wp_pod_types WHERE id = $params->datatype LIMIT 1");
-                if (0 < mysql_num_rows($result)) {
-                    $datatype_name = mysql_result($result, 0);
+                if (0 < pods_mysql_num_rows($result)) {
+                    $datatype_name = pods_mysql_result($result, 0);
 
                     $result = pod_query("SELECT id, name FROM @wp_pod_fields WHERE datatype = $sister_datatype AND pickval = '$datatype_name'");
-                    if (0 < mysql_num_rows($result)) {
-                        while ($row = mysql_fetch_assoc($result)) {
+                    if (0 < pods_mysql_num_rows($result)) {
+                        while ($row = pods_mysql_fetch_assoc($result)) {
                             $sister_fields[] = $row;
                         }
                         return $sister_fields;
@@ -1554,7 +1554,7 @@ class PodAPI
         // Get pods
         if (!empty($pod_ids)) {
             $result = pod_query("SELECT * FROM @wp_pod_types WHERE id IN ($pod_ids)");
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 $dt = $row['id'];
                 unset($row['id']);
                 $export['pods'][$dt] = $row;
@@ -1562,7 +1562,7 @@ class PodAPI
 
             // Get pod fields
             $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype IN ($pod_ids)");
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 unset($row['id']);
                 $dt = $row['datatype'];
                 unset($row['datatype']);
@@ -1574,7 +1574,7 @@ class PodAPI
         // Get templates
         if (!empty($template_ids)) {
             $result = pod_query("SELECT * FROM @wp_pod_templates WHERE id IN ($template_ids)");
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 unset($row['id']);
                 $export['templates'][] = $row;
             }
@@ -1583,7 +1583,7 @@ class PodAPI
         // Get pod pages
         if (!empty($pod_page_ids)) {
             $result = pod_query("SELECT * FROM @wp_pod_pages WHERE id IN ($pod_page_ids)");
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 unset($row['id']);
                 $export['pod_pages'][] = $row;
             }
@@ -1592,7 +1592,7 @@ class PodAPI
         // Get helpers
         if (!empty($helper_ids)) {
             $result = pod_query("SELECT * FROM @wp_pod_helpers WHERE id IN ($helper_ids)");
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 unset($row['id']);
                 $export['helpers'][] = $row;
             }
@@ -2032,7 +2032,7 @@ class PodAPI
             $pickval = $field_data['pickval'];
             if ('file' == $field_data['coltype']) {
                 $res = pod_query("SELECT ID as id, guid as name FROM $wpdb->posts WHERE post_type = 'attachment' ORDER BY id");
-                while ($item = mysql_fetch_assoc($res)) {
+                while ($item = pods_mysql_fetch_assoc($res)) {
                     $file_url = str_replace(get_bloginfo('url'), '', $item['name']);
                     $file_values[$field_name][$file_url] = $item['id'];
                     $file_values[$field_name][$item['name']] = $item['id'];
@@ -2041,26 +2041,26 @@ class PodAPI
             elseif ('pick' == $field_data['coltype']) {
                 if ('wp_taxonomy' == $pickval) {
                     $res = pod_query("SELECT term_id AS id, name FROM $wpdb->terms ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['name']] = $item['id'];
                     }
                 }
                 elseif ('wp_page' == $pickval || 'wp_post' == $pickval) {
                     $pickval = str_replace('wp_', '', $pickval);
                     $res = pod_query("SELECT ID as id, post_title as name FROM $wpdb->posts WHERE post_type = '$pickval' ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['name']] = $item['id'];
                     }
                 }
                 elseif ('wp_user' == $pickval) {
                     $res = pod_query("SELECT ID as id, display_name as name FROM $wpdb->users ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['name']] = $item['id'];
                     }
                 }
                 else {
                     $res = pod_query("SELECT id, name FROM @wp_pod_tbl_{$pickval} ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['name']] = $item['id'];
                     }
                 }
@@ -2125,7 +2125,7 @@ class PodAPI
 
         // Find all pick/file fields
         $result = pod_query("SELECT id, name, coltype, pickval FROM @wp_pod_fields WHERE datatype = {$this->dt} ORDER BY weight");
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $field_id = $row['id'];
             $field_name = $row['name'];
             $coltype = $row['coltype'];
@@ -2134,33 +2134,33 @@ class PodAPI
             // Store all pick/file values into an array
             if ('file' == $coltype) {
                 $res = pod_query("SELECT ID AS id, guid AS name FROM $wpdb->posts WHERE post_type = 'attachment' ORDER BY id");
-                while ($item = mysql_fetch_assoc($res)) {
+                while ($item = pods_mysql_fetch_assoc($res)) {
                     $pick_values[$field_name][$item['id']] = $item['name'];
                 }
             }
             elseif ('pick' == $coltype) {
                 if ('wp_taxonomy' == $pickval) {
                     $res = pod_query("SELECT term_id AS id, name FROM $wpdb->terms ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['id']] = $item['name'];
                     }
                 }
                 elseif ('wp_page' == $pickval || 'wp_post' == $pickval) {
                     $pickval = str_replace('wp_', '', $pickval);
                     $res = pod_query("SELECT ID as id, post_title as name FROM $wpdb->posts WHERE post_type = '$pickval' ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['id']] = $item['name'];
                     }
                 }
                 elseif ('wp_user' == $pickval) {
                     $res = pod_query("SELECT ID as id, display_name as name FROM $wpdb->users ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['id']] = $item['name'];
                     }
                 }
                 else {
                     $res = pod_query("SELECT id, name FROM @wp_pod_tbl_{$pickval} ORDER BY id");
-                    while ($item = mysql_fetch_assoc($res)) {
+                    while ($item = pods_mysql_fetch_assoc($res)) {
                         $pick_values[$field_name][$item['id']] = $item['name'];
                     }
                 }
@@ -2180,7 +2180,7 @@ class PodAPI
             p.tbl_row_id
         ";
         $result = pod_query($sql);
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $item_id = $row['item_id'];
             $tbl_row_id = $row['tbl_row_id'];
             $field_name = $fields[$row['field_id']];
@@ -2189,7 +2189,7 @@ class PodAPI
 
         // Access the current datatype
         $result = pod_query("SELECT * FROM @wp_pod_tbl_{$this->dtname} ORDER BY id");
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $tmp = array();
             $row_id = $row['id'];
 
@@ -2245,7 +2245,7 @@ class PodAPI
      */
     function fix_wp_pod() {
         $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
-        while ($row = mysql_fetch_array($result)) {
+        while ($row = pods_mysql_fetch_array($result)) {
             $id = (int) $row['id'];
             $name = pods_sanitize($row['name']);
             pod_query("DELETE p FROM `@wp_pod` AS p LEFT JOIN `@wp_pod_tbl_{$name}` AS t ON t.id = p.tbl_row_id WHERE p.datatype = {$id} AND t.id IS NULL");

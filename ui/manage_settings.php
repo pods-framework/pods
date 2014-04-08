@@ -138,7 +138,7 @@ WordPress <?php global $wp_version; echo $wp_version; ?>
 
 PHP Version: <?php echo phpversion(); ?>
 
-MySQL Version: <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?>
+MySQL Version: <?php echo pods_mysql_result(pod_query("SELECT VERSION()"), 0); ?>
 
 Server Software: <?php echo $_SERVER['SERVER_SOFTWARE']; ?>
 

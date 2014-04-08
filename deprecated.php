@@ -41,8 +41,8 @@ function pods_nav_array($uri = '<root>', $max_depth = 1) {
         node.weight, node.lft
     ";
     $result = pod_query($sql);
-    if (0 < mysql_num_rows($result)) {
-        while ($row = mysql_fetch_assoc($result)) {
+    if (0 < pods_mysql_num_rows($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $menu[] = $row;
         }
         return $menu;

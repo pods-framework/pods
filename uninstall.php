@@ -10,8 +10,8 @@ if ((!isset($_POST['_wpnonce']) || !pods_access('manage_settings') || false === 
 }
 
 $result = pod_query("SHOW TABLES LIKE '@wp_pod%'");
-if (0 < mysql_num_rows($result)) {
-    while ($row = mysql_fetch_array($result)) {
+if (0 < pods_mysql_num_rows($result)) {
+    while ($row = pods_mysql_fetch_array($result)) {
         pod_query("DROP TABLE {$row[0]}");
     }
 }

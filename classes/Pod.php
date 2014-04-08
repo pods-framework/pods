@@ -60,8 +60,8 @@ class Pod
 
         if (!empty($datatype)) {
             $result = pod_query("SELECT id, name, detail_page FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $row = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $row = pods_mysql_fetch_assoc($result);
                 $this->datatype = $row['name'];
                 $this->datatype_id = $row['id'];
                 $this->detail_page = $row['detail_page'];
@@ -87,7 +87,7 @@ class Pod
      * @since 1.2.0
      */
     function fetchRecord() {
-        if ($this->data = mysql_fetch_assoc($this->result)) {
+        if ($this->data = pods_mysql_fetch_assoc($this->result)) {
             $this->row_number++;
             if (true === $this->zebra)
                 $this->zebra = false;
@@ -128,7 +128,7 @@ class Pod
                 else
                     return;
             }
-            $row = mysql_fetch_assoc($result);
+            $row = pods_mysql_fetch_assoc($result);
             $this->data['pod_id'] = $row['pod_id'];
             $this->data['created'] = $row['created'];
             $this->data['modified'] = $row['modified'];
@@ -148,8 +148,8 @@ class Pod
 
             // Get columns matching traversal names
             $result = pod_query("SELECT id, datatype, name, coltype, pickval FROM @wp_pod_fields WHERE name IN ('$traverse_fields')");
-            if (0 < mysql_num_rows($result)) {
-                while ($row = mysql_fetch_assoc($result)) {
+            if (0 < pods_mysql_num_rows($result)) {
+                while ($row = pods_mysql_fetch_assoc($result)) {
                     $all_fields[$row['datatype']][$row['name']] = $row;
                 }
             }
@@ -185,7 +185,7 @@ class Pod
                             !in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user')))
                         {
                             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pickval' LIMIT 1");
-                            $datatype_id = mysql_result($result, 0);
+                            $datatype_id = pods_mysql_result($result, 0);
                         }
                     }
                     else {
@@ -267,8 +267,8 @@ class Pod
             `r`.`weight`
         ";
         $result = pod_query($sql);
-        if (0 < mysql_num_rows($result)) {
-            while ($row = mysql_fetch_assoc($result)) {
+        if (0 < pods_mysql_num_rows($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 $out[] = $row['tbl_row_id'];
             }
             return implode(',', $out);
@@ -311,7 +311,7 @@ class Pod
 
         // Put all related items into an array
         if (!is_array($result)) {
-            while ($row = mysql_fetch_assoc($result)) {
+            while ($row = pods_mysql_fetch_assoc($result)) {
                 $data[] = $row;
             }
         }
@@ -342,8 +342,8 @@ class Pod
             $this->data['pod_id'] = 0;
             $tbl_row_id = (isset($this->data['id']) ? (int) $this->data['id'] : 0);
             $result = pod_query("SELECT `id` FROM `@wp_pod` WHERE `datatype` = '$this->datatype_id' AND `tbl_row_id` = '$tbl_row_id' LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $this->data['pod_id'] = mysql_result($result, 0);
+            if (0 < pods_mysql_num_rows($result)) {
+                $this->data['pod_id'] = pods_mysql_result($result, 0);
             }
         }
         return $this->data['pod_id'];
@@ -470,7 +470,7 @@ class Pod
 
         $val = array();
         $result = pod_query($sql);
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $row['active'] = false;
             if (!empty($params->tbl_row_ids)) {
                 $row['active'] = in_array($row['id'], $params->tbl_row_ids);
@@ -669,8 +669,8 @@ class Pod
             else {
                 // Get the slug column
                 $fields_result = pod_query("SELECT name FROM @wp_pod_fields WHERE coltype = 'slug' AND datatype = $this->datatype_id LIMIT 1");
-                if (0 < mysql_num_rows($fields_result)) {
-                    $field_name = mysql_result($fields_result, 0);
+                if (0 < pods_mysql_num_rows($fields_result)) {
+                    $field_name = pods_mysql_result($fields_result, 0);
                     $sql = "
                     SELECT
                         DISTINCT `t`.*, `p`.`id` AS `pod_id`, `p`.`created`, `p`.`modified`
@@ -692,8 +692,8 @@ class Pod
                 }
             }
 
-            if (is_resource($this->result) && 0 < mysql_num_rows($this->result)) {
-                $this->data = mysql_fetch_assoc($this->result);
+            if (is_resource($this->result) && 0 < pods_mysql_num_rows($this->result)) {
+                $this->data = pods_mysql_fetch_assoc($this->result);
                 $this->data['type'] = $datatype;
                 return $this->data;
             }
@@ -923,7 +923,7 @@ class Pod
         $this->result = pod_query($sql);
         $this->row_number = -1;
         $this->zebra = false;
-        $this->total = absint(@mysql_num_rows($this->result));
+        $this->total = absint(@pods_mysql_num_rows($this->result));
         if (false !== $this->calc_found_rows) {
             $this->total_rows = pod_query("SELECT FOUND_ROWS()");
             $this->getTotalRows();
@@ -965,7 +965,7 @@ class Pod
      */
     function getTotalRows() {
         if (false === is_numeric($this->total_rows)) {
-            if (is_resource($this->total_rows) && $row = mysql_fetch_array($this->total_rows))
+            if (is_resource($this->total_rows) && $row = pods_mysql_fetch_array($this->total_rows))
                 $this->total_rows = $row[0];
             else
                 $this->total_rows = 0;
@@ -992,10 +992,10 @@ class Pod
      */
     function resetPointer($row_number = 0) {
         $row_number = absint($row_number);
-        if (0 < mysql_num_rows($this->result)) {
+        if (0 < pods_mysql_num_rows($this->result)) {
             $this->row_number = $row_number;
             $this->zebra = false;
-            return mysql_data_seek($this->result, $row_number);
+            return pods_mysql_data_seek($this->result, $row_number);
         }
         return false;
     }
@@ -1032,7 +1032,7 @@ class Pod
 
         $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where ORDER BY weight ASC");
         $public_columns = array();
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = pods_mysql_fetch_assoc($result)) {
             $fields[$row['name']] = $row;
             $public_columns[] = $row['name'];
         }
@@ -1063,8 +1063,8 @@ class Pod
                 1
             ";
             $result = pod_query($sql);
-            if (0 < mysql_num_rows($result)) {
-                $tbl_cols = mysql_fetch_assoc($result);
+            if (0 < pods_mysql_num_rows($result)) {
+                $tbl_cols = pods_mysql_fetch_assoc($result);
             }
         }
         $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
@@ -1091,10 +1091,10 @@ class Pod
                 $table = $field['pickval'];
 
                 $result = pod_query("SELECT `id` FROM `@wp_pod_fields` WHERE `datatype` = {$datatype_id} AND `name` = '$key' LIMIT 1");
-                $field_id = (int) mysql_result($result, 0);
+                $field_id = (int) pods_mysql_result($result, 0);
 
                 $result = pod_query("SELECT `tbl_row_id` FROM `@wp_pod_rel` WHERE `field_id` = {$field_id} AND `pod_id` = {$pod_id}");
-                while ($row = mysql_fetch_assoc($result)) {
+                while ($row = pods_mysql_fetch_assoc($result)) {
                     $tbl_row_ids[] = (int) $row['tbl_row_id'];
                 }
 
@@ -1114,9 +1114,9 @@ class Pod
                 if (1 == $field['unique']) {
                     $exclude = empty($pod_id) ? '' : "AND `pod_id` != {$pod_id}";
                     $result = pod_query("SELECT `tbl_row_id` FROM `@wp_pod_rel` WHERE `field_id` = {$field_id} {$exclude}");
-                    if (0 < mysql_num_rows($result)) {
+                    if (0 < pods_mysql_num_rows($result)) {
                         $unique_vals = array();
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = pods_mysql_fetch_assoc($result)) {
                             $unique_vals[] = (int) $row['tbl_row_id'];
                         }
                         $unique_vals = implode(',', $unique_vals);

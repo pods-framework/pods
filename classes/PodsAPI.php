@@ -2673,6 +2673,7 @@ class PodsAPI {
      * $params['id'] int The item ID
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
+	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via PodsAPI::get_changed_fields()
      *
      * @param array|object $params An associative array of parameters
      *
@@ -2756,6 +2757,15 @@ class PodsAPI {
         if ( !isset( $params->track_changed_fields ) )
             $params->track_changed_fields = false;
 
+		/**
+		 * Override $params['track_changed_fields']
+		 *
+		 * Use for globally setting field change tracking.
+		 *
+		 * @param bool
+		 *
+		 * @since 2.3.19
+		 */
 		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
 		$changed_fields = array();
 

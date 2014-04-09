@@ -3769,7 +3769,7 @@ class PodsUI {
 		}
 
         $total_pages = ceil( $this->total_found / $this->limit );
-        $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'filter_*', 'view' . $this->num, 'page' . $this->num ), $this->exclusion() );
+        $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'filter_*', 'page' . $this->num ), $this->exclusion() );
 
         $append = false;
 

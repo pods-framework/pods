@@ -506,7 +506,7 @@ class PodsInit {
                     'supports' => $cpt_supports,
                     //'register_meta_box_cb' => array($this, 'manage_meta_box'),
                     //'permalink_epmask' => EP_PERMALINK,
-                    'has_archive' => (boolean) pods_var( 'has_archive', $post_type, false ),
+                    'has_archive' => pods_v( 'has_archive_slug', $post_type, (boolean) pods_v( 'has_archive', $post_type, false ), true ),
                     'rewrite' => $cpt_rewrite,
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )

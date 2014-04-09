@@ -1058,7 +1058,15 @@ class PodsAdmin {
                     'help' => __( 'If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called "archive-{$post-type}.php".', 'pods' ),
                     'type' => 'boolean',
                     'default' => false,
+                    'dependency' => true,
                     'boolean_yes_label' => ''
+                ),
+                'has_archive_slug' => array(
+                    'label' => __( 'Archive Page Slug Override', 'pods' ),
+                    'help' => __( 'If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type.', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'has_archive' => true )
                 ),
                 'hierarchical' => array(
                     'label' => __( 'Hierarchical', 'pods' ),

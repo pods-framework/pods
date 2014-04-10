@@ -7,6 +7,8 @@
 class Pods_Service_Container implements
 	ArrayAccess {
 
+	static $instance;
+
 	private $values = array();
 
 	private $services = array();
@@ -14,6 +16,17 @@ class Pods_Service_Container implements
 	private $aliases = array();
 
 	private $locked = array();
+
+	/**
+	 * @return Pods_Service_Container
+	 */
+	static function init() {
+		if(!is_object(self::$instance)) {
+			self::$instance = new Pods_Service_Container();
+		}
+
+		return self::$instance;
+	}
 
 	/**
 	 * @param array $values

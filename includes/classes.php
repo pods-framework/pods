@@ -292,6 +292,13 @@ function pods_array( $container ) {
 }
 
 /**
+ * @return Pods_Service_Container
+ */
+function pods_service( ) {
+	return Pods_Service_Container::init();
+}
+
+/**
  * Include a file that's child/parent theme-aware, and can be cached into object cache or transients
  *
  * @see   Pods_View::view

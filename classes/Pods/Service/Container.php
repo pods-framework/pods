@@ -21,8 +21,9 @@ class Pods_Service_Container implements
 	 * @return Pods_Service_Container
 	 */
 	static function init() {
-		if(!is_object(self::$instance)) {
+		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new Pods_Service_Container();
+			do_action( 'pods_service_container', self::$instance );
 		}
 
 		return self::$instance;
@@ -40,14 +41,7 @@ class Pods_Service_Container implements
 	 * @param mixed $value
 	 */
 	public function offsetSet( $id, $value ) {
-		if ( is_callable( $value ) || $value instanceof Pods_Service_Definition ) {
-			$this->services[ $id ] = $value;
-		} elseif ( 0 === strpos( $value, '@' ) ) {
-			$this->aliases[ $id ] = substr( $value, 1 );
-		} else {
-			$this->values[ $id ] = $value;
-		}
-
+		$this->set( $id, $value );
 	}
 
 	/**
@@ -57,14 +51,7 @@ class Pods_Service_Container implements
 	 * @throws InvalidArgumentException
 	 */
 	public function offsetGet( $id ) {
-		if ( isset( $this->locked[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Circular dependency found.' );
-		}
-		$this->locked[ $id ] = true;
-		$value               = $this->get( $id );
-		unset( $this->locked[ $id ] );
-
-		return $value;
+		return $this->get( $id );
 	}
 
 	/**
@@ -73,7 +60,66 @@ class Pods_Service_Container implements
 	 * @return bool
 	 */
 	public function offsetExists( $id ) {
-		if ( isset( $this->values[ $id ] ) || isset( $this->services[ $id ] ) || isset( $this->aliases[ $id ] ) ) {
+		return $this->exists( $id );
+	}
+
+	/**
+	 * @param mixed $id
+	 */
+	public function offsetUnset( $id ) {
+		$this->remove( $id );
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @throws InvalidArgumentException
+	 * @return mixed|null|object
+	 */
+	public function get( $id ) {
+		if ( isset( $this->locked[$id] ) ) {
+			throw new InvalidArgumentException( 'Circular dependency found.' );
+		}
+		$this->locked[$id] = true;
+
+		if ( isset( $this->aliases[$id] ) ) {
+			return $this->get( $this->aliases[$id] );
+		}
+
+		if ( isset( $this->values[$id] ) ) {
+			return $this->values[$id];
+		}
+
+		if ( isset( $this->services[$id] ) ) {
+			return $this->values[$id] = $this->build( $this->services[$id] );
+		}
+
+		unset( $this->locked[$id] );
+
+		return null;
+	}
+
+	/**
+	 * @param $id
+	 * @param $value
+	 */
+	public function set( $id, $value ) {
+		if ( is_callable( $value ) || $value instanceof Pods_Service_Definition ) {
+			$this->services[$id] = $value;
+		} elseif ( 0 === strpos( $value, '@' ) ) {
+			$this->aliases[$id] = substr( $value, 1 );
+		} else {
+			$this->values[$id] = $value;
+		}
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
+	public function exists( $id ) {
+		if ( isset( $this->values[$id] ) || isset( $this->services[$id] ) || isset( $this->aliases[$id] ) ) {
 			return true;
 		}
 
@@ -81,34 +127,12 @@ class Pods_Service_Container implements
 	}
 
 	/**
-	 * @param mixed $id
-	 */
-	public function offsetUnset( $id ) {
-		unset( $this->values[ $id ] );
-		unset( $this->services[ $id ] );
-		unset( $this->aliases[ $id ] );
-	}
-
-	/**
 	 * @param $id
-	 *
-	 * @return mixed|null|object
 	 */
-	private function get( $id ) {
-		if ( isset( $this->aliases[ $id ] ) ) {
-			return $this->offsetGet( $this->aliases[ $id ] );
-		}
-
-		if ( isset( $this->values[ $id ] ) ) {
-			return $this->values[ $id ];
-		}
-
-		if ( isset( $this->services[ $id ] ) ) {
-			return $this->values[ $id ] = $this->build( $this->services[ $id ] );
-		}
-
-		return null;
-
+	public function remove( $id ) {
+		unset( $this->values[$id] );
+		unset( $this->services[$id] );
+		unset( $this->aliases[$id] );
 	}
 
 	/**
@@ -138,7 +162,7 @@ class Pods_Service_Container implements
 		$return = null;
 		if ( is_array( $value ) ) {
 			foreach ( $value as $key => $val ) {
-				$value[ $key ] = $this->resolve( $val );
+				$value[$key] = $this->resolve( $val );
 			}
 			$return = $value;
 		} elseif ( is_string( $value ) && '@' == $value[0] ) {

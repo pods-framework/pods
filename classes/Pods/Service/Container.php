@@ -23,7 +23,7 @@ class Pods_Service_Container implements
 	static function init() {
 		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new Pods_Service_Container();
-			do_action( 'pods_service_container', self::$instance );
+			do_action( 'pods_register_services', self::$instance );
 		}
 
 		return self::$instance;

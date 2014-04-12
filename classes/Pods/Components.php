@@ -271,6 +271,9 @@ class Pods_Components {
 				if ( method_exists( $this->components[ $component ]['object'], 'handler' ) ) {
 					$this->components[ $component ]['object']->handler( $this->settings['components'][ $component ] );
 				}
+				if (method_exists($this->components[$component]['object'],'register_services')) {
+					add_action('pods_register_services',array($this->components[$component]['object'],'register_services'));
+				}
 			}
 		}
 	}

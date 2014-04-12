@@ -88,4 +88,13 @@ class Pods_Component {
 	 * // run code based on $options set
 	 * }
 	 */
+
+	/**
+	 * Register any services required by the component here
+	 *
+	 * @param Pods_Service_Container $container global Pods container
+	 */
+	public function register_services( Pods_Service_Container $container ) {
+
+	}
 }

@@ -146,6 +146,13 @@ class PodsField_Boolean extends PodsField {
         elseif ( !pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) )
             $options[ 'readonly' ] = true;
 
+		if ( 1 === $value || '1' === $value || true === $value ) {
+            $value = 1;
+        }
+        else {
+            $value = 0;
+        }
+
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 

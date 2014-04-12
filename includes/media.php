@@ -78,7 +78,7 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
          *
          * @since 2.3.19
          *
-         * @param array|int $default Default image to show if image not found, can be field array, ID, or guid
+         * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid
          */
         $default = apply_filters( 'pods_image_default', $default );
     }

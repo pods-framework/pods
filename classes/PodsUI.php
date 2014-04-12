@@ -4386,9 +4386,11 @@ class PodsUI {
 	private function do_hook() {
 
 		$args = func_get_args();
+
 		if ( empty( $args ) ) {
 			return false;
 		}
+
 		$name = array_shift( $args );
 
 		return pods_do_hook( "ui", $name, $args, $this );

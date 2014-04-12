@@ -974,9 +974,22 @@ class Pods implements Iterator {
 						}
 
 						$value = get_post_meta( $id, $params->name, $params->single );
+
+						$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
+							$value = get_post_meta( $id, $params->name );
+						}
 					}
-					elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) )
+					elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) ) {
 						$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
+
+						$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
+							$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name );
+						}
+					}
 					elseif ( 'settings' == $this->pod_data[ 'type' ] )
 						$value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name, null );
 

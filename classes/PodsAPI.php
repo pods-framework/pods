@@ -269,6 +269,8 @@ class PodsAPI {
 				if ( $simple ) {
 					delete_post_meta( $id, $meta_key );
 
+					update_post_meta( $id, '_pods_' . $meta_key, $meta_value );
+
 					foreach ( $meta_value as $value ) {
 						add_post_meta( $id, $meta_key, $value );
 					}

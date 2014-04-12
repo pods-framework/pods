@@ -106,12 +106,13 @@ class PodsAPI {
      * @param array $meta (optional) Associative array of meta keys and values
      * @param bool $strict (optional) Decides whether the previous saved meta should be deleted or not
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return bool|mixed
      *
      * @since 2.0
      */
-    public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false, $sanitized = false ) {
+    public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false, $sanitized = false, $fields = array() ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
             $object_type = 'post';
 
@@ -121,7 +122,7 @@ class PodsAPI {
         }
 
         if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
-            return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
+            return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false, $fields );
         elseif ( 'settings' == $object_type ) {
             // Nothing to save
             if ( empty( $meta ) )
@@ -167,12 +168,13 @@ class PodsAPI {
      * @param array $post_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $post_meta
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return mixed|void
      *
      * @since 2.0
      */
-    public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
+    public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false, $fields = array() ) {
         $conflicted = pods_no_conflict_check( 'post' );
 
         if ( !$conflicted )
@@ -206,7 +208,7 @@ class PodsAPI {
             return pods_error( $post_error->get_error_message(), $this );
         }
 
-        $this->save_post_meta( $post_data[ 'ID' ], $post_meta, $strict );
+        $this->save_post_meta( $post_data[ 'ID' ], $post_meta, $strict, $fields );
 
         if ( !$conflicted )
             pods_no_conflict_off( 'post' );
@@ -220,12 +222,15 @@ class PodsAPI {
      * @param int $id Post ID
      * @param array $post_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int Id of the post with the meta
      *
      * @since 2.0
      */
-    public function save_post_meta ( $id, $post_meta = null, $strict = false ) {
+    public function save_post_meta ( $id, $post_meta = null, $strict = false, $fields = array() ) {
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+
         $conflicted = pods_no_conflict_check( 'post' );
 
         if ( !$conflicted )
@@ -252,8 +257,26 @@ class PodsAPI {
 
                 delete_post_meta( $id, $meta_key, $old_meta_value );
             }
-            else
-                update_post_meta( $id, $meta_key, $meta_value );
+            else {
+				$simple = false;
+
+				if ( isset( $fields[ $meta_key ] ) && is_array( $meta_value ) ) {
+					$field_data = $fields[ $meta_key ];
+
+					$simple = ( 'pick' == $field_data[ 'type' ] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
+				}
+
+				if ( $simple ) {
+					delete_post_meta( $id, $meta_key );
+
+					foreach ( $meta_value as $value ) {
+						add_post_meta( $id, $meta_key, $value );
+					}
+				}
+				else {
+                	update_post_meta( $id, $meta_key, $meta_value );
+				}
+			}
         }
 
         if ( $strict ) {
@@ -276,12 +299,13 @@ class PodsAPI {
      * @param array $user_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $user_meta
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int Returns user id on success
      *
      * @since 2.0
      */
-    public function save_user ( $user_data, $user_meta = null, $strict = false, $sanitized = false ) {
+    public function save_user ( $user_data, $user_meta = null, $strict = false, $sanitized = false, $fields = array() ) {
         if ( !is_array( $user_data ) || empty( $user_data ) )
             return pods_error( __( 'User data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -322,7 +346,7 @@ class PodsAPI {
             return pods_error( $user_error->get_error_message(), $this );
         }
 
-        $this->save_user_meta( $user_data[ 'ID' ], $user_meta, $strict );
+        $this->save_user_meta( $user_data[ 'ID' ], $user_meta, $strict, $fields );
 
         if ( !$conflicted )
             pods_no_conflict_off( 'user' );
@@ -336,13 +360,16 @@ class PodsAPI {
      * @param int $id User ID
      * @param array $user_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $user_meta
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int User ID
      *
      * @since 2.0
      *
      */
-    public function save_user_meta ( $id, $user_meta = null, $strict = false ) {
+    public function save_user_meta ( $id, $user_meta = null, $strict = false, $fields = array() ) {
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+
         $conflicted = pods_no_conflict_check( 'user' );
 
         if ( !$conflicted )
@@ -364,8 +391,26 @@ class PodsAPI {
 
                 delete_user_meta( $id, $meta_key, $old_meta_value );
             }
-            else
-                update_user_meta( $id, $meta_key, $meta_value );
+            else {
+				$simple = false;
+
+				if ( isset( $fields[ $meta_key ] ) && is_array( $meta_value ) ) {
+					$field_data = $fields[ $meta_key ];
+
+					$simple = ( 'pick' == $field_data[ 'type' ] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
+				}
+
+				if ( $simple ) {
+					delete_user_meta( $id, $meta_key );
+
+					foreach ( $meta_value as $value ) {
+						add_user_meta( $id, $meta_key, $value );
+					}
+				}
+				else {
+                	update_user_meta( $id, $meta_key, $meta_value );
+				}
+			}
         }
 
         if ( $strict ) {
@@ -388,12 +433,13 @@ class PodsAPI {
      * @param array $comment_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $comment_meta
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int Comment ID
      *
      * @since 2.0
      */
-    public function save_comment ( $comment_data, $comment_meta = null, $strict = false, $sanitized = false ) {
+    public function save_comment ( $comment_data, $comment_meta = null, $strict = false, $sanitized = false, $fields = array() ) {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
             return pods_error( __( 'Comment data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -427,7 +473,7 @@ class PodsAPI {
             return pods_error( $comment_error->get_error_message(), $this );
         }
 
-        $this->save_comment_meta( $comment_data[ 'comment_ID' ], $comment_meta, $strict );
+        $this->save_comment_meta( $comment_data[ 'comment_ID' ], $comment_meta, $strict, $fields );
 
         if ( !$conflicted )
             pods_no_conflict_off( 'comment' );
@@ -441,12 +487,15 @@ class PodsAPI {
      * @param int $id Comment ID
      * @param array $comment_meta (optional) All meta to be saved (set value to null to delete)
      * @param bool $strict (optional) Whether to delete previously saved meta not in $comment_meta
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int Comment ID
      *
      * @since 2.0
      */
-    public function save_comment_meta ( $id, $comment_meta = null, $strict = false ) {
+    public function save_comment_meta ( $id, $comment_meta = null, $strict = false, $fields = array() ) {
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+
         $conflicted = pods_no_conflict_check( 'comment' );
 
         if ( !$conflicted )
@@ -468,8 +517,26 @@ class PodsAPI {
 
                 delete_comment_meta( $id, $meta_key, $old_meta_value );
             }
-            else
-                update_comment_meta( $id, $meta_key, $meta_value );
+            else {
+				$simple = false;
+
+				if ( isset( $fields[ $meta_key ] ) && is_array( $meta_value ) ) {
+					$field_data = $fields[ $meta_key ];
+
+					$simple = ( 'pick' == $field_data[ 'type' ] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
+				}
+
+				if ( $simple ) {
+					delete_comment_meta( $id, $meta_key );
+
+					foreach ( $meta_value as $value ) {
+						add_comment_meta( $id, $meta_key, $value );
+					}
+				}
+				else {
+                	update_comment_meta( $id, $meta_key, $meta_value );
+				}
+			}
         }
 
         if ( $strict ) {
@@ -493,12 +560,13 @@ class PodsAPI {
      * @param string $taxonomy Taxonomy name
      * @param array $term_data All term data to be saved (using wp_insert_term / wp_update_term)
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @param array $fields (optional) The array of fields and their options, for further processing with
      *
      * @return int Term ID
      *
      * @since 2.0
      */
-    public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
+    public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false, $fields = array() ) {
         $conflicted = pods_no_conflict_check( 'taxonomy' );
 
         if ( !$conflicted )
@@ -3198,7 +3266,23 @@ class PodsAPI {
             if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
-            $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );
+			$fields_to_send = array_flip( array_keys( $object_meta ) );
+
+			foreach ( $fields_to_send as $field => $field_data ) {
+				if ( isset( $object_fields[ $field ] ) ) {
+					$field_data = $object_fields[ $field ];
+				}
+				elseif ( isset( $fields[ $field ] ) ) {
+					$field_data = $fields[ $field ];
+				}
+				else {
+					unset( $fields_to_send[ $field ] );
+				}
+
+				$fields_to_send[ $field ] = $field_data;
+			}
+
+            $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true, $fields_to_send );
 
             if ( !empty( $params->id ) && 'settings' == $object_type )
                 $params->id = $pod[ 'id' ];

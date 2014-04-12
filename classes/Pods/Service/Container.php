@@ -136,7 +136,7 @@ class Pods_Service_Container implements
 	}
 
 	/**
-	 * @param $service
+	 * @param Pods_Service_Definition|mixed $service
 	 *
 	 * @return mixed|object
 	 */
@@ -146,7 +146,7 @@ class Pods_Service_Container implements
 		}
 
 		$reflection = new ReflectionClass( $this->resolve( $service->class ) );
-		$instance   = $reflection->newinstance( $this->resolve( $service->arguments ) );
+		$instance   = $reflection->newinstance( $this->resolve( $service->parameters ) );
 
 		// TODO add ability to call methods in functions for the current instance(ex: for more detailed setups)
 

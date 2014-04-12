@@ -609,9 +609,9 @@ class PodsField_Pick extends PodsField {
         $fields = null;
 
         if ( is_object( $pod ) && isset( $pod->fields ) )
-            $fields = $pod->fields;
+            $fields = array_merge( $pod->fields, $pod->object_fields );
         elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) )
-            $fields = $pod[ 'fields' ];
+            $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
         return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
     }

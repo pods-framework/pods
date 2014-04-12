@@ -1068,7 +1068,7 @@ class Pods implements Iterator {
 						}
 
 						// Tableless handler
-						if ( $field_exists && ( 'pick' != $all_fields[ $pod ][ $field ][ 'type' ] || !$simple ) ) {
+						if ( $field_exists && ( !in_array( $all_fields[ $pod ][ $field ][ 'type' ], array( 'pick', 'taxonomy' ) ) || !$simple ) ) {
 
 							$type = $all_fields[ $pod ][ $field ][ 'type' ];
 							$pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
@@ -1152,10 +1152,8 @@ class Pods implements Iterator {
 						}
 						// Assume last iteration
 						else {
-
 							// Invalid field
 							if ( 0 == $key ) {
-
 								return false;
 							}
 
@@ -1163,7 +1161,6 @@ class Pods implements Iterator {
 						}
 
 						if ( $last_loop ) {
-
 							$object_type = $last_object;
 							$object = $last_pick_val;
 
@@ -1186,11 +1183,13 @@ class Pods implements Iterator {
 									$where[ $id ] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
 								}
 
-								if ( !empty( $where ) )
+								if ( !empty( $where ) ) {
 									$where = array( implode( ' OR ', $where ) );
+								}
 
-								if ( !empty( $table[ 'where' ] ) )
+								if ( !empty( $table[ 'where' ] ) ) {
 									$where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );
+								}
 							}
 
 							/**

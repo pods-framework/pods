@@ -4969,8 +4969,9 @@ class PodsAPI {
 
         /**
          * @var $sitepress SitePress
+		 * @var $wpdb wpdb
          */
-        global $sitepress, $icl_adjust_id_url_filter_off;
+        global $sitepress, $icl_adjust_id_url_filter_off, $wpdb;
 
         $current_language = false;
         $load_fields = true;
@@ -4990,7 +4991,7 @@ class PodsAPI {
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
-        $transient = 'pods_' . get_current_blog_id() . '_pod';
+        $transient = 'pods_' . $wpdb->prefix . '_pod';
 
         if ( !empty( $current_language ) )
             $transient .= '_' . $current_language;
@@ -6866,7 +6867,7 @@ class PodsAPI {
         if ( is_array( $field_name ) )
             $field_name = pods_var_raw( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), null, true );
 
-        $transient = 'pods_' . get_current_blog_id() . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
+        $transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
         $current_language = false;
         $current_language_t_id = $current_language_tt_id = 0;
@@ -6885,7 +6886,7 @@ class PodsAPI {
         }
 
         if ( !empty( $current_language ) )
-            $transient = 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
+            $transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
         $_info = false;
 

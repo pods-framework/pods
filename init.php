@@ -132,7 +132,7 @@ else {
                 require_once( PODS_DIR . 'deprecated/deprecated.php' );
 			}
 
-            if ( false !== pods_compatibility_check() ) {
+            if ( false !== pods_compatibility_check() && !is_network_admin()) {
                 $pods_form = pods_form();
 
                 $pods_init = pods_init();

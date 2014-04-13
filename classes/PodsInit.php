@@ -123,9 +123,7 @@ class PodsInit {
         if ( !empty( self::$version ) ) {
             add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
 
-			if ( !is_network_admin() ) {
-            	add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
-			}
+			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
 
             add_action( 'init', array( $this, 'core' ), 11 );
 

@@ -641,7 +641,7 @@ class PodsAdmin {
      */
     public function media_button ( $context = null ) {
 
-		if ( !apply_filters( 'pods_admin_media_button', true, $context ) ) ) {
+		if ( !apply_filters( 'pods_admin_media_button', true, $context ) ) {
 			return '';
 		}
 

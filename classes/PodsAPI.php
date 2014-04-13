@@ -3440,6 +3440,17 @@ class PodsAPI {
 											$tag_data[ 'post_status' ] = 'publish';
 										}
 
+										/**
+										 * Filter for changing tag before adding new item.
+										 *
+										 * @param array $tag_data Fields for creating new item.
+										 * @param int $v Field ID of tag.
+										 * @param obj $search_data Search object for tag.
+										 * @param string $field Table info for field.
+										 * @param array	$pieces Field array.
+										 *
+										 * @since 2.3.19
+										 */
 										$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, compact( $pieces ) );
 
 										// Save $v to a new item on related object

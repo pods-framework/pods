@@ -641,6 +641,14 @@ class PodsAdmin {
      */
     public function media_button ( $context = null ) {
 
+		/**
+		 * Filter to remove Pods shortcode button from the post editor.
+		 *
+		 * @param bool. Set to false to block the shortcode button from appearing.
+		 * @param string $context
+		 *
+		 * @since 2.3.19
+		 */
 		if ( !apply_filters( 'pods_admin_media_button', true, $context ) ) {
 			return '';
 		}

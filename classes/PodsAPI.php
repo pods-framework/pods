@@ -3432,8 +3432,18 @@ class PodsAPI {
 									}
 									// Allow tagging for Pods objects
 									elseif ( $is_taggable && 'pods' == $data_mode ) {
+										$tag_data = array(
+											$search_data->field_index => $v
+										);
+
+										if ( 'post_type' == $search_data->pod_data[ 'type' ] ) {
+											$tag_data[ 'post_status' ] = 'publish';
+										}
+
+										$tag_data = apply_filters( 'pods_api_save_pod_item_taggable_data', $tag_data, $v, $search_data, $field, compact( $pieces ) );
+
 										// Save $v to a new item on related object
-										$v = $search_data->add( array( $search_data->field_index => $v ) );
+										$v = $search_data->add( $tag_data );
 
 										// @todo Support non-Pods for tagging
 									}

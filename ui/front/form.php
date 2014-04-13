@@ -79,10 +79,10 @@ if ( !$fields_only ) {
 }
 
 /**
- * Runs before fields are processed.
+ * Runs before fields are outputted.
  *
- * @params array $fields Fields of the form
- * @params object $pod The current Pod object
+ * @params array $fields Fields of the form.
+ * @params object $pod The current Pod object.
  * @params array $params The form's parameters.
  *
  * @since 2.3.19
@@ -98,11 +98,11 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						}
 
 						/**
-						 * Runs before a field is processed.
+						 * Runs before a field is outputted.
 						 *
-						 * @params array $field The current field being processed.
-						 * @params array $fields All fields of the form
-						 * @params object $pod The current Pod object
+						 * @params array $field The current field.
+						 * @params array $fields All fields of the form.
+						 * @params object $pod The current Pod object.
 						 * @params array $params The form's parameters.
 						 *
 						 * @since 2.3.19
@@ -122,11 +122,11 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 					</li>
 				<?php
 						/**
-						 * Runs after a field was processed.
+						 * Runs after a field is outputted.
 						 *
-						 * @params array $field The current that was processed.
-						 * @params array $fields All fields of the form
-						 * @params object $pod The current Pod object
+						 * @params array $field The current field.
+						 * @params array $fields All fields of the form.
+						 * @params object $pod The current Pod object.
 						 * @params array $params The form's parameters.
 						 *
 						 * @since 2.3.19
@@ -146,7 +146,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 			   }
 
 				/**
-				 * Runs after all fields are processed.
+				 * Runs after all fields are outputted.
 				 *
 				 * @params array $fields Fields of the form
 				 * @params object $pod The current Pod object

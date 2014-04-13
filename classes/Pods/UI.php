@@ -1030,19 +1030,20 @@ class Pods_UI {
 
 			$options->header = $header;
 
-			$cpt_labels['add_new']            = pods_v( 'label_add_new', $post_type, '', true );
-			$cpt_labels['add_new_item']       = pods_v( 'label_add_new_item', $post_type, '', true );
-			$cpt_labels['new_item']           = pods_v( 'label_new_item', $post_type, '', true );
-			$cpt_labels['edit']               = pods_v( 'label_edit', $post_type, '', true );
-			$cpt_labels['edit_item']          = pods_v( 'label_edit_item', $post_type, '', true );
-			$cpt_labels['view']               = pods_v( 'label_view', $post_type, '', true );
-			$cpt_labels['view_item']          = pods_v( 'label_view_item', $post_type, '', true );
-			$cpt_labels['all_items']          = pods_v( 'label_all_items', $post_type, '', true );
-			$cpt_labels['search_items']       = pods_v( 'label_search_items', $post_type, '', true );
-			$cpt_labels['not_found']          = pods_v( 'label_not_found', $post_type, '', true );
-			$cpt_labels['not_found_in_trash'] = pods_v( 'label_not_found_in_trash', $post_type, '', true );
-			$cpt_labels['parent']             = pods_v( 'label_parent', $post_type, '', true );
-			$cpt_labels['parent_item_colon']  = pods_v( 'label_parent_item_colon', $post_type, '', true );
+			// TODO Figure out where these are supposed to be used at @unknownnf
+//			$cpt_labels['add_new']            = pods_v( 'label_add_new', $post_type, '', true );
+//			$cpt_labels['add_new_item']       = pods_v( 'label_add_new_item', $post_type, '', true );
+//			$cpt_labels['new_item']           = pods_v( 'label_new_item', $post_type, '', true );
+//			$cpt_labels['edit']               = pods_v( 'label_edit', $post_type, '', true );
+//			$cpt_labels['edit_item']          = pods_v( 'label_edit_item', $post_type, '', true );
+//			$cpt_labels['view']               = pods_v( 'label_view', $post_type, '', true );
+//			$cpt_labels['view_item']          = pods_v( 'label_view_item', $post_type, '', true );
+//			$cpt_labels['all_items']          = pods_v( 'label_all_items', $post_type, '', true );
+//			$cpt_labels['search_items']       = pods_v( 'label_search_items', $post_type, '', true );
+//			$cpt_labels['not_found']          = pods_v( 'label_not_found', $post_type, '', true );
+//			$cpt_labels['not_found_in_trash'] = pods_v( 'label_not_found_in_trash', $post_type, '', true );
+//			$cpt_labels['parent']             = pods_v( 'label_parent', $post_type, '', true );
+//			$cpt_labels['parent_item_colon']  = pods_v( 'label_parent_item_colon', $post_type, '', true );
 		}
 
 		$options->validate( 'label',
@@ -3677,6 +3678,7 @@ class Pods_UI {
 							if ( ! empty( $this->action_links['edit'] ) ) {
 								$link = $this->do_template( $this->action_links['edit'], $row );
 							}
+
 							?>
 							<td class="post-title page-title column-title<?php echo $css_classes; ?>"><strong><a class="row-title" href="<?php echo $link; ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
 						<?php

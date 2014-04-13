@@ -983,7 +983,7 @@ class Pods_Admin {
 		$field_groups = pods( '_pods_group' );
 
 		$fields = array(
-			'post_title'  => array(
+			'name'  => array(
 				'label' => __( 'Group title', 'pods' )
 			),
 			'rules'       => array(
@@ -1014,6 +1014,10 @@ class Pods_Admin {
 				'edit'      => array( $this, 'admin_setup_groups_edit' ),
 				'duplicate' => array( $this, 'admin_setup_groups_duplicate' ),
 				'delete'    => array( $this, 'admin_setup_groups_delete' )
+			),
+			'action_links'     => array(
+				'edit'   => pods_query_arg( array( 'id_group' => '{@id}', 'action_group' => 'edit' ) ),
+				'delete' => pods_query_arg( array( 'id_group' => '{@id}', 'action_group' => 'delete' ) )
 			),
 			'params'           => array(
 				'where' => 't.post_parent = ' . self::$admin_row['id']

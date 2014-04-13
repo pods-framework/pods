@@ -12,20 +12,17 @@
 		top: 10px;
 		width: auto;
 	}
-	// input
 
 	label {
 		margin-left: 20px;
 		padding-top: 1px;
 	}
-	// label
 
 	&:hover {
 		background: $hover-background-color;
 	}
 
 }
-// .pods-boolean
 
 .pods-manage-field {
 	.pods-field-option {
@@ -37,10 +34,8 @@
 			width: 65%;
 			max-width: 300px;
 		}
-		// .pods-field.pods-boolean
 
 	}
-	// .pods-field-option
 
 	.pods-field {
 
@@ -57,13 +52,9 @@
 				display: block;
 				margin-left: 20px;
 			}
-			// label
-
+			input {
+				top: 0;
+			}
 		}
-		// &.pods-boolean
-
 	}
-	// .pods-field
-
 }
-// .pods-manage-field

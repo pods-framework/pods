@@ -380,6 +380,9 @@ div.pods-manage-field input.pods-form-ui-no-label {
   display: block;
   margin-left: 20px;
 }
+.pods-manage-field .pods-field.pods-boolean input {
+  top: 0;
+}
 
 /* === PODS DATE === */
 .pods-date input {

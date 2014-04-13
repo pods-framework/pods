@@ -4990,7 +4990,7 @@ class PodsAPI {
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
-        $transient = 'pods_pod';
+        $transient = 'pods_' . get_current_blog_id() . '_pod';
 
         if ( !empty( $current_language ) )
             $transient .= '_' . $current_language;
@@ -6866,7 +6866,7 @@ class PodsAPI {
         if ( is_array( $field_name ) )
             $field_name = pods_var_raw( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), null, true );
 
-        $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
+        $transient = 'pods_' . get_current_blog_id() . '_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
         $current_language = false;
         $current_language_t_id = $current_language_tt_id = 0;

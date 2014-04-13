@@ -3349,9 +3349,9 @@ class PodsAPI {
 				}
 
                 foreach ( $data as $field => $values ) {
-                    $pick_val = pods_var( 'pick_val', $fields[ $field ][ 'options' ] );
+                    $pick_val = pods_var( 'pick_val', $fields[ $field ] );
 
-                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ][ 'options' ] ) ) {
+                    if ( 'table' == pods_var( 'pick_object', $fields[ $field ] ) ) {
                         $pick_val = pods_var( 'pick_table', $fields[ $field ][ 'options' ], $pick_val, null, true );
 					}
 
@@ -3367,7 +3367,7 @@ class PodsAPI {
 						}
                     }
 
-                    $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ][ 'options' ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
+                    $fields[ $field ][ 'options' ][ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $fields[ $field ] ), $pick_val, null, null, $fields[ $field ][ 'options' ] );
 
                     if ( isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && !empty( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ] ) && isset( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
 						$search_data = pods( $fields[ $field ][ 'options' ][ 'table_info' ][ 'pod' ][ 'name' ] );
@@ -3380,7 +3380,6 @@ class PodsAPI {
 
 						$data_mode = 'data';
 					}
-
 
 					$find_rel_params = array(
 						'select' => "`t`.`{$search_data->field_id}`",
@@ -3400,7 +3399,7 @@ class PodsAPI {
                     $value_ids = array();
 
 					$is_file_field = in_array( $type, PodsForm::file_field_types() );
-					$is_taggable = ( in_array( $type, PodsForm::tableless_field_types() ) && 1 == pods_v( $type . '_taggable' ) );
+					$is_taggable = ( in_array( $type, PodsForm::tableless_field_types() ) && 1 == pods_v( $type . '_taggable', $fields[ $field ][ 'options' ] ) );
 
 					// @todo Handle simple relationships eventually
                     foreach ( $values as $v ) {

@@ -155,18 +155,56 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 == Changelog ==
 
 = 2.3.19 - April XXth, 2014 =
-* After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away
-* There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features
-* Added:
-* Added:
-* Added:
-* Added:
-* Added:
-* Fixed:
-* Fixed:
-* Fixed:
-* Fixed:
-* Fixed:
+* After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
+* There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
+
+* Added: Filter to remove Pods shortcode button in post editor.
+* Added: Actions before and after Pods Form all and individual form fields are outputted.
+* Added: Inline docs for 'pods_api_get_table_info_default_post_status'
+* Added: Select2 tagging for adding new items to related Pods via relationship field.
+* Added: Inline docs for 'pods_admin_menu' filter.
+* Added: Support links in Pods Admin -> Help.
+* Added: Instructions about using Pods Templates in Pods Widgets.
+* Added: Better names for many fields in Pods Editor.
+* Added: New and improved help bubbles in Pods Editor.
+* Added: Improved Pods Template code sanitization.
+* Added: The base Pods Frontier editor to replace Pods Template editor. Includes auto-complete for magic tags and field reference.
+* Added: Inline docs for pods_admin_setup_edit_options filters
+* Added: Inline docs for pods editor tab filters
+* Added: An optional download link to file upload fields in post editor.
+* Added: Created/modified functionality to other Pod types, as long as they are a date/datetime fields.
+* Added: New constant PODS_ALLOW_FULL_META for for enabling get_post_meta( $id ) interaction with Pods
+* Added: _pods_location to $params for PodsAPI::save_pod_item
+* Added: PodsAPI::get_changed_fields() that can be used when in a pre-save hook to return array of changed values or used in PodsAPI::save_pods_item() to track changes to fields.
+* Added: 'pods_api_save_pod_item_track_changed_fields_{POD_NAME}' filter for tracking changes to fields.
+* Added: Support for new currencies and currency formats in currency fields.
+* Added: Currently active theme to Pods Debug info.
+* Added: New filter to _ to ignore internal content types in relationship values - pods_pick_ignore_internal
+* Added: New constant PODS_DISABLE_SHORTCODE_SQL to disable parameters that can be used to pass SQL from shortcode.
+* Added: Support for JetPack Publicize and Markdown modules.
+* Added: Max character length option for paragraph fields.
+* Added: Inline docs for 'pods_block_field_types' filter.
+* Added: Added 'pods_image_default filter'
+* Added: New descriptions for Pods Pages and Pods Advanced Content Types component descriptions.
+* Fixed: Issues with user tables in multisite.
+* Fixed: Issue with PodsForm::default_value
+* Fixed: With Pods UI. Keep view when generating pagination links.
+* Fixed: Bug with custom extensions for allowed file types in upload fields.
+* Fixed: Compatibility problem with changes to plupload in WordPress 3.9 that prevented upload pop-up from loading.
+* Fixed: Array to string conversion error for CSS fields in Pods UI.
+* Fixed: Magic tags for taxonomies in Pods Templates.
+* Fixed: Fixed jQuery scope in Pods Form inline JavaScript.
+* Fixed: Added 'output' to reserved content types names and reserved query vars.
+* Fixed: Issue where required currency and number fields could be saved at default value.
+* Fixed: Undefined method error in WP 3.4 due to use of WP_User::to_array() which was added in WP 3.5.
+* Fixed: Issue with ability to use filters on reorder page with Pods UI.
+* Fixed: Pre-save enforcing of max length for meta-based values.
+* Fixed: Extra spaces in custom defined list labels.
+* Fixed: Pagination default value for Pods shortcode.
+* Fixed: PodsForm::submit_button() method that had been lost from previous versions.
+* Fixed: Usage of pods_v in currency.php for optimzation purposes.
+* Fixed: Correct parent_file to highlight the correct top level menu
+* Fixed: Improper wording for text at top of settings page field.
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 

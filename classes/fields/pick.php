@@ -396,7 +396,15 @@ class PodsField_Pick extends PodsField {
 
                     continue;
                 }
-                elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+
+				/**
+				 * Filter to ignore internal content types for possible relationship field values.
+				 *
+				 * @param bool. Default is false.
+				 *
+				 * @since 2.3.19
+				 */
+				elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
                     unset( $taxonomies[ $taxonomy ] );
 
                     continue;

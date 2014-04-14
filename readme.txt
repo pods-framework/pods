@@ -184,7 +184,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Inline docs for 'pods_admin_menu' filter
 * Added: Inline docs for 'pods_admin_setup_edit_options' (and related) filters
 * Added: Inline docs for 'pods_admin_setup_edit_tabs' (and related) filters
-* Added: Inline docs for 'pods_block_field_types' filter
 * Fixed: Issues with user tables in multisite
 * Fixed: Issue with PodsForm::default_value
 * Fixed: With Pods UI. Keep view when generating pagination links

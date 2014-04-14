@@ -157,7 +157,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 = 2.3.19 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
 * There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
-
 * Added: Tagging feature for Relationship fields with Autocomplete (Select2) which lets you add new items on-demand when saving
 * Added: PodsAPI::get_changed_fields() that can be used when in a pre-save hook to return array of changed values or used in PodsAPI::save_pods_item() to track changes to fields
 * Added: _pods_location to $params for PodsAPI::save_pod_item which will contain the URL of the form it was submitted from
@@ -205,10 +204,8 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Usage of pods_v in currency.php for optimzation purposes
 * Fixed: Correct parent_file to highlight the correct top level menu
 * Fixed: Improper wording for text at top of settings page field
-
-Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-
-Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.18 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields

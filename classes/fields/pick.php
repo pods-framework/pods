@@ -398,9 +398,9 @@ class PodsField_Pick extends PodsField {
                 }
 
 				/**
-				 * Filter to ignore internal content types for possible relationship field values.
+				 * Prevent ability to extend core Pods content types.
 				 *
-				 * @param bool. Default is false.
+				 * @param bool. Default is true, when set to false Pods internal content types can not be extended.
 				 *
 				 * @since 2.3.19
 				 */

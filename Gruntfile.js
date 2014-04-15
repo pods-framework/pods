@@ -25,7 +25,7 @@ module.exports = function (grunt) {
 				files: [
 					{
 						expand: true,
-						src   : ['sources/images/**/*.{png,jpg,gif}'],
+						src   : ['sources/ui/images/**/*.{png,jpg,gif}'],
 						dest  : 'ui/images',
 						flatten: true
 					}

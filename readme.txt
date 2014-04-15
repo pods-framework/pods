@@ -154,7 +154,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.19 - April 16th, 2014 =
+= 2.4 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
 * There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
 * Added: Tagging feature for Relationship fields with Autocomplete (Select2) which lets you add new items on-demand when saving

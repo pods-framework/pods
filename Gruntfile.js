@@ -1,28 +1,40 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
 	// Project configuration.
 	grunt.initConfig({
-		pkg : grunt.file.readJSON('package.json'),
-		sass : {
-			pods : {
-				options : {
-					style : 'expanded',
-					sourcemap : true
+		pkg     : grunt.file.readJSON('package.json'),
+		sass    : {
+			pods: {
+				options: {
+					style    : 'expanded',
+					sourcemap: true
 				},
-				files : [
+				files  : [
 					{
 						expand : true,
-						src : ['sources/ui/css/**/*.scss'],
-						dest : 'ui/css',
-						ext: '.css',
+						src    : ['sources/ui/css/**/*.scss'],
+						dest   : 'ui/css',
+						ext    : '.css',
 						flatten: true
 					}
 				]
 			}
 		},
-		uglify : {
-			pods : {
-				files : [
+		imagemin: {
+			pods: {
+				files: [
+					{
+						expand: true,
+						src   : ['sources/images/**/*.{png,jpg,gif}'],
+						dest  : 'ui/images',
+						flatten: true
+					}
+				]
+			}
+		},
+		uglify  : {
+			pods: {
+				files: [
 					'ui/css/front-end-styles.css',
 					'ui/css/meta-boxes.css',
 					'ui/css/pods-admin.css',
@@ -35,10 +47,10 @@ module.exports = function(grunt) {
 				]
 			}
 		},
-		watch : {
-			sass : {
-				files : ['ui/css/sass/*.scss','ui/css/sass/partials/*.scss','ui/css/sass/partials/fields/*.scss'],
-				tasks : ["sass"]
+		watch   : {
+			sass: {
+				files: ['ui/css/sass/*.scss', 'ui/css/sass/partials/*.scss', 'ui/css/sass/partials/fields/*.scss'],
+				tasks: ["sass"]
 			}
 		}
 	});
@@ -46,8 +58,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-imagemin');
 
-	grunt.registerTask('default',['sass']);
-	grunt.registerTask('production',['sass','uglify'])
+	grunt.registerTask('default', ['sass', 'imagemin']);
+	grunt.registerTask('production', ['sass', 'imagemin', 'uglify'])
 
 }

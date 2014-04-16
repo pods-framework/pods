@@ -1276,9 +1276,9 @@ function pods_cache_set ( $key, $value, $group = '', $expires = 0) {
 }
 
 /**
- * Clear a cached value
+ * Get a cached value
  *
- * @see PodsView::clear
+ * @see PodsView::get
  *
  * @param string $key Key for the cache
  * @param string $group (optional) Key for the group
@@ -1293,9 +1293,9 @@ function pods_cache_get ( $key, $group = '', $callback = null ) {
 }
 
 /**
- * Get a cached value
+ * Clear a cached value
  *
- * @see PodsView::get
+ * @see PodsView::clear
  *
  * @param string|bool $key Key for the cache
  * @param string $group (optional) Key for the group

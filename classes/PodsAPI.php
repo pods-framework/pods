@@ -3389,6 +3389,13 @@ class PodsAPI {
 						'search' => false
 					);
 
+					if ( empty( $search_data->field_slug ) && !empty( $search_data->field_index ) ) {
+						$find_rel_params[ 'where' ] = "`t`.`{$search_data->field_index}` = %s";
+					}
+					elseif ( empty( $search_data->field_slug ) && empty( $search_data->field_index ) ) {
+						$find_rel_params = false;
+					}
+
                     $related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ][ 'options' ], 0 );
 
                     if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) ) {
@@ -3420,12 +3427,16 @@ class PodsAPI {
 								}
 								// Reference by slug
 								else {
-									$rel_params = $find_rel_params;
-									$rel_params[ 'where' ] = $wpdb->prepare( $rel_params[ 'where' ], array( $v, $v ) );
+									$v_data = false;
 
-									$search_data->select( $rel_params );
+									if ( false !== $find_rel_params ) {
+										$rel_params = $find_rel_params;
+										$rel_params[ 'where' ] = $wpdb->prepare( $rel_params[ 'where' ], array( $v, $v ) );
 
-									$v_data = $search_data->fetch( $v );
+										$search_data->select( $rel_params );
+
+										$v_data = $search_data->fetch( $v );
+									}
 
 									if ( !empty( $v_data ) && isset( $v_data[ $search_data->field_id ] ) ) {
 										$v = (int) $v_data[ $search_data->field_id ];

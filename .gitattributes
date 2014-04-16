@@ -1,6 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 /tests export-ignore
+/sources export-ignore
 kill-travis.php export-ignore
 
 # Custom for Visual Studio

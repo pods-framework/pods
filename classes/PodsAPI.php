@@ -3412,7 +3412,7 @@ class PodsAPI {
                     foreach ( $values as $v ) {
                         if ( !empty( $v ) ) {
 							if ( !is_array( $v ) ) {
-								if ( !preg_match( '/[^0-9]*/', $v ) ) {
+								if ( !preg_match( '/[^0-9]/', $v ) ) {
 									$v = (int) $v;
 								}
 								// File handling

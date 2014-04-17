@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, mikedamage, logikal16, jchristopher, Shelob9
+Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, Shelob9, mikedamage, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
@@ -156,7 +156,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 = 2.4 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
-* There will be no Pods 2.4, instead we're jumping straight to Pods 3.0 and focusing on getting some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
+* In Pods 3.0 we're focusing on finishing some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
 * Added: Tagging feature for Relationship fields with Autocomplete (Select2) which lets you add new items on-demand when saving
 * Added: PodsAPI::get_changed_fields() that can be used when in a pre-save hook to return array of changed values or used in PodsAPI::save_pods_item() to track changes to fields
 * Added: _pods_location to $params for PodsAPI::save_pod_item which will contain the URL of the form it was submitted from

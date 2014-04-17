@@ -8,13 +8,13 @@
  */
 
 // mb_strlen support
-function pods_mb_strlen( $str ) {
+function pods_mb_strlen( $string ) {
 
 	if ( function_exists( 'mb_strlen' ) ) {
-		return mb_strlen( $str );
+		return mb_strlen( $string );
 	}
 
-	return preg_match_all( "/[\\\\x00-\\\\xBF]|[\\\\xC0-\\\\xFF][\\\\x80-\\\\xBF]*/", $str, $m );
+	return strlen( $string );
 
 }
 

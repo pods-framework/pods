@@ -1597,7 +1597,7 @@ class Pods implements Iterator {
 				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
-					if ( !preg_match( '/[^0-9]*/', $v ) )
+					if ( !preg_match( '/[^0-9]/', $v ) )
 						$value[ $k ] = (int) $v;
 					// @todo Convert slugs into IDs
 					else {
@@ -1671,7 +1671,7 @@ class Pods implements Iterator {
 				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
-					if ( !preg_match( '/[^0-9]*/', $v ) )
+					if ( !preg_match( '/[^0-9]/', $v ) )
 						$value[ $k ] = (int) $v;
 					// @todo Convert slugs into IDs
 					else {
@@ -2481,7 +2481,7 @@ class Pods implements Iterator {
 				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
-					if ( !preg_match( '/[^0-9]*/', $v ) )
+					if ( !preg_match( '/[^0-9]/', $v ) )
 						$value[ $k ] = (int) $v;
 				}
 
@@ -2601,7 +2601,7 @@ class Pods implements Iterator {
 					$related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $id, $this->fields[ $field ], $this->pod_data );
 
 					foreach ( $value as $k => $v ) {
-						if ( !preg_match( '/[^0-9]*/', $v ) ) {
+						if ( !preg_match( '/[^0-9]/', $v ) ) {
 							$value[ $k ] = (int) $v;
 						}
 						// @todo Convert slugs into IDs

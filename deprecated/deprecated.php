@@ -7,6 +7,28 @@
  *
  */
 
+// mb_strlen support
+function pods_mb_strlen( $str ) {
+
+	if ( function_exists( 'mb_strlen' ) ) {
+		return mb_strlen( $str );
+	}
+
+	return preg_match_all( "/[\\\\x00-\\\\xBF]|[\\\\xC0-\\\\xFF][\\\\x80-\\\\xBF]*/", $str, $m );
+
+}
+
+// mb_substr support
+function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
+
+	if ( function_exists( 'mb_substr' ) ) {
+		return mb_substr( $string, $start, $length, $encoding );
+	}
+
+	return substr( $string, $start, $length );
+
+}
+
 // JSON support
 if ( !function_exists( 'json_encode' ) ) {
     require_once( ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php' );

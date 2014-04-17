@@ -312,8 +312,8 @@ class PodsField_WYSIWYG extends PodsField {
 
 		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
 
-		if ( 0 < $length && $length < mb_strlen( $value ) ) {
-			$value = mb_substr( $value, 0, $length );
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
 		}
 
         return $value;

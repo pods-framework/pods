@@ -7,32 +7,6 @@
  *
  */
 
-// mb_strlen support
-function pods_mb_strlen( $string ) {
-
-	if ( function_exists( 'mb_strlen' ) ) {
-		return mb_strlen( $string );
-	}
-
-	return strlen( $string );
-
-}
-
-// mb_substr support
-function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
-
-	if ( function_exists( 'mb_substr' ) ) {
-		if ( null === $encoding ) {
-			$encoding = mb_internal_encoding();
-		}
-
-		return mb_substr( $string, $start, $length, $encoding );
-	}
-
-	return substr( $string, $start, $length );
-
-}
-
 // JSON support
 if ( !function_exists( 'json_encode' ) ) {
     require_once( ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php' );

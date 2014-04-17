@@ -1372,6 +1372,47 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
 }
 
 /**
+ * Use mb_strlen if available, otherwise fallback to strlen
+ *
+ * @param string $string
+ *
+ * @return int
+ */
+function pods_mb_strlen( $string ) {
+
+	if ( function_exists( 'mb_strlen' ) ) {
+		return mb_strlen( $string );
+	}
+
+	return strlen( $string );
+
+}
+
+/**
+ * Use mb_substr if available, otherwise fallback to substr
+ *
+ * @param string $string
+ * @param int $start
+ * @param null|int $length
+ * @param null|string $encoding
+ *
+ * @return string
+ */
+function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
+
+	if ( function_exists( 'mb_substr' ) ) {
+		if ( null === $encoding ) {
+			$encoding = mb_internal_encoding();
+		}
+
+		return mb_substr( $string, $start, $length, $encoding );
+	}
+
+	return substr( $string, $start, $length );
+
+}
+
+/**
  * Evaluate tags like magic tags but through pods_var
  *
  * @param string|array|object $tags String to be evaluated

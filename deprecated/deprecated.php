@@ -22,6 +22,10 @@ function pods_mb_strlen( $string ) {
 function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
 
 	if ( function_exists( 'mb_substr' ) ) {
+		if ( null === $encoding ) {
+			$encoding = mb_internal_encoding();
+		}
+
 		return mb_substr( $string, $start, $length, $encoding );
 	}
 

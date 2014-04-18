@@ -1,4 +1,4 @@
-# [Pods Framework](http://pods.io) [![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=master)](http://travis-ci.org/pods-framework/pods) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
+# [Pods Framework](http://pods.io) [![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=3.0-unstable)](http://travis-ci.org/pods-framework/pods) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
 
 ### Welcome to our GitHub Repository
 

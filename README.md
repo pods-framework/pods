@@ -1,4 +1,5 @@
-# Pods Framework for WordPress
+# [Pods Framework](http://pods.io) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
+
 ![Pods Framework icon](http://pods.io/wp-content/themes/pods/images/logo-pods-header.png)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**

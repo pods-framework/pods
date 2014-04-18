@@ -40,3 +40,7 @@ notifications:
             - "irc.freenode.net#pods-dev"
         template:
             - "Build %{build_number} (%{branch} - %{commit}): %{message} %{build_url}"
+            
+branches:
+    only:
+        - 3.0-unstable

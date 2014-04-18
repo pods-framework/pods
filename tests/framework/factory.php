@@ -20,9 +20,9 @@ class Pods_UnitTest_Factory extends \WP_UnitTest_Factory {
 	public function __construct() {
 		parent::__construct();
 
-		$this->download = new Pods_UnitTest_Factory_For_Download( $this );
+		/*$this->download = new Pods_UnitTest_Factory_For_Download( $this );
 		$this->discount = new Pods_UnitTest_Factory_For_Discount( $this );
-		$this->payment = new Pods_UnitTest_Factory_For_Payment( $this );
+		$this->payment = new Pods_UnitTest_Factory_For_Payment( $this );*/
 	}
 }
 

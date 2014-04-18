@@ -6,7 +6,7 @@ $multisite = (int) ( defined( 'WP_TESTS_MULTISITE') && WP_TESTS_MULTISITE );
 system( WP_PHP_BINARY . ' ' . escapeshellarg( dirname( __FILE__ ) . '/install.php' ) . ' ' . escapeshellarg( $config_file_path ) . ' ' . $multisite );
 
 // Bootstrap Pods
-require dirname( __FILE__ ) . '/../../easy-digital-downloads.php';
+require dirname( __FILE__ ) . '/../../init.php';
 
 // Load Die Handler
 $die_handler = dirname( __FILE__ ) . '/die-handler.php';

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	bootstrap                   = "tests/phpunit/includes/bootstrap.php"
+	backupGlobals               = "false"
+	backupStaticAttributes      = "false"
+	colors                      = "true"
+	processIsolation            = "false"
+	convertErrorsToExceptions   = "true"
+	convertNoticesToExceptions  = "true"
+	convertWarningsToExceptions = "true"
+	stopOnError                 = "false"
+	stopOnFailure               = "false"
+	stopOnIncomplete            = "false"
+	stopOnSkipped               = "false"
+	syntaxCheck                 = "false"
+	verbose                     = "true"
+	strict                      = "false"
+	>
+	<testsuites>
+		<!-- Default test suite to run all tests -->
+		<testsuite name="Pods Test Suite">
+			<directory suffix=".php">./tests/phpunit/tests</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

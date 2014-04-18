@@ -598,7 +598,7 @@ class PodsMigrate {
             $line .= "<![CDATA[" . $value . "]]>";
         }
         else
-            $line .= $value;
+            $line .= str_replace( '&', '&amp;', $value );
 
         $line .= "</{$column}>\r\n";
 

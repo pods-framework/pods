@@ -582,7 +582,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'having' => null,
         'groupby' => null,
         'search' => true,
-        'pagination' => null,
+        'pagination' => false,
         'page' => null,
         'offset' => null,
         'filters' => false,
@@ -611,6 +611,9 @@ function pods_shortcode ( $tags, $content = null ) {
         $tags = $defaults;
 
     $tags = apply_filters( 'pods_shortcode', $tags );
+
+	$tags[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
+	$tags[ 'search' ] = (boolean) $tags[ 'search' ];
 
     if ( empty( $content ) )
         $content = null;
@@ -706,17 +709,13 @@ function pods_shortcode ( $tags, $content = null ) {
 			$params[ 'limit' ] = (int) $tags[ 'limit' ];
 		}
 
-		if ( empty( $tags[ 'search' ] ) ) {
-			$params[ 'search' ] = false;
-		}
+		$params[ 'search' ] = $tags[ 'search' ];
 
 		if ( 0 < absint( $tags[ 'page' ] ) ) {
 			$params[ 'page' ] = absint( $tags[ 'page' ] );
 		}
 
-		if ( null !== $tags[ 'pagination' ] ) {
-			$params[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
-		}
+		$params[ 'pagination' ] = $tags[ 'pagination' ];
 
         if ( 0 < (int) $tags[ 'offset' ] ) {
             $params[ 'offset' ] = (int) $tags[ 'offset' ];

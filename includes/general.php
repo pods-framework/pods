@@ -1887,7 +1887,7 @@ function pods_session_start() {
 		// This is OK, but we don't want to check if file_exists on next statement
 	}
 	// Check if session path exists and can be written to, avoiding PHP fatal errors
-	elseif ( empty( $save_path ) || !file_exists( $save_path ) || !is_writable( $save_path ) ) {
+	elseif ( empty( $save_path ) || !@file_exists( $save_path ) || !is_writable( $save_path ) ) {
 		return false;
 	}
 	// Check if session ID is already set

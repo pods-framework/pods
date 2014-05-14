@@ -192,8 +192,8 @@ class Pods_Field_Text extends
 
 		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
-		if ( 0 < $length ) {
-			$value = substr( $value, 0, $length );
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
 		}
 
 		return $value;

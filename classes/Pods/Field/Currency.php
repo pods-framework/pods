@@ -46,8 +46,25 @@ class Pods_Field_Currency extends
 	 */
 	public static $currencies = array(
 		'usd'  => '$',
+		'euro' => '&euro;',
+		'gbp'  => '&pound;',
 		'cad'  => '$',
-		'euro' => '&euro;'
+		'aud'  => '$',
+		'nzd'  => '$',
+		'rub'  => '&#8381;',
+		'chf'  => 'CHF',
+		'dkk'  => 'kr',
+		'nok'  => 'kr',
+		'sek'  => 'kr',
+		'zar'  => 'R',
+		'inr'  => '&#x20B9;',
+		'jpy'  => '&yen;',
+		'cny'  => '&yen;',
+		'sgd'  => '$',
+		'krw'  => '&#8361;',
+		'thb'  => '&#x0E3F;',
+		'trl'  => '&#8378;',
+		'vnd'  => '&#8363;'
 	);
 
 	/**
@@ -85,12 +102,27 @@ class Pods_Field_Currency extends
 				'label'   => __( 'Currency Sign', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
 				'type'    => 'pick',
-				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options',
-					array(
+				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options', array(
 						'usd'  => '$ (USD)',
-						'cad'  => '$ (CAD)',
-						'euro' => '&euro; (Euro)',
-						'gbp'  => '&pound; (GBP)'
+					'euro' => '&euro; (EUR)',
+					'gbp'  => '&pound; (GBP)',
+					'aud'  => 'Australian Dollar (AUD)',
+					'cad'  => 'Canadian Dollar (CAD)',
+					'cny'  => 'Chinese Yuan (CNY)',
+					'dkk'  => 'Danish Krone (DKK)',
+					'inr'  => 'Indian Rupee (INR)',
+					'jpy'  => 'Japanese Yen (JPY)',
+					'krw'  => 'Korean Won (KRW)',
+					'nzd'  => 'New Zealand Dollar (NZD)',
+					'nok'  => 'Norwegian Krone (NOK)',
+					'rub'  => 'Russian Ruble (RUB)',
+					'sgd'  => 'Singapore Dollar (SGD)',
+					'zar'  => 'South African Rand (ZAR)',
+					'sek'  => 'Swedish Krona (SEK)',
+					'chf'  => 'Swiss Franc (CHF)',
+					'thb'  => 'Thai Baht (THB)',
+					'trl'  => 'Turkish Lira (TRL)',
+					'vnd'  => 'Vietnamese Dong (VND)'
 					) )
 			),
 			self::$type . '_format_placement' => array(
@@ -111,6 +143,7 @@ class Pods_Field_Currency extends
 				'data'    => array(
 					'i18n'     => __( 'Localized Default', 'pods' ),
 					'9,999.99' => '1,234.00',
+					'9\'999.99' => '1\'234.00',
 					'9.999,99' => '1.234,00',
 					'9 999,99' => '1 234,00',
 					'9999.99'  => '1234.00',
@@ -231,11 +264,11 @@ class Pods_Field_Currency extends
 
 		$currency = 'usd';
 
-		if ( isset( self::$currencies[ pods_v( self::$type . '_format_sign', $options, - 1 ) ] ) ) {
+		if ( isset( self::$currencies[pods_v( self::$type . '_format_sign', $options, - 1 )] ) ) {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[$currency];
 
 		$placement = pods_v( self::$type . '_format_placement', $options, 'before', true );
 
@@ -299,6 +332,9 @@ class Pods_Field_Currency extends
 		} elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ',';
 			$dot       = '.';
+		} elseif ( '9\'999.99' == pods_v( self::$type . '_format', $options ) ) {
+			$thousands = '\'';
+			$dot       = '.';
 		} elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ' ';
 			$dot       = ',';
@@ -315,11 +351,11 @@ class Pods_Field_Currency extends
 
 		$currency = 'usd';
 
-		if ( isset( self::$currencies[ pods_v( self::$type . '_format_sign', $options, - 1 ) ] ) ) {
+		if ( isset( self::$currencies[pods_v( self::$type . '_format_sign', $options, - 1 )] ) ) {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[$currency];
 
 		return '\-*\\' . $currency_sign . '*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
 	}
@@ -336,6 +372,9 @@ class Pods_Field_Currency extends
 		} elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ',';
 			$dot       = '.';
+		} elseif ( '9\'999.99' == pods_v( self::$type . '_format', $options ) ) {
+			$thousands = '\'';
+			$dot       = '.';
 		} elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ' ';
 			$dot       = ',';
@@ -352,11 +391,11 @@ class Pods_Field_Currency extends
 
 		$currency = 'usd';
 
-		if ( isset( self::$currencies[ pods_v( self::$type . '_format_sign', $options, - 1 ) ] ) ) {
+		if ( isset( self::$currencies[pods_v( self::$type . '_format_sign', $options, - 1 )] ) ) {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[$currency];
 
 		$check = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
@@ -383,6 +422,9 @@ class Pods_Field_Currency extends
 		} elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ',';
 			$dot       = '.';
+		} elseif ( '9\'999.99' == pods_v( self::$type . '_format', $options ) ) {
+			$thousands = '\'';
+			$dot       = '.';
 		} elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ' ';
 			$dot       = ',';
@@ -399,11 +441,11 @@ class Pods_Field_Currency extends
 
 		$currency = 'usd';
 
-		if ( isset( self::$currencies[ pods_v( self::$type . '_format_sign', $options, - 1 ) ] ) ) {
+		if ( isset( self::$currencies[pods_v( self::$type . '_format_sign', $options, - 1 )] ) ) {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[$currency];
 
 		$value = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
@@ -459,6 +501,9 @@ class Pods_Field_Currency extends
 			$dot       = ',';
 		} elseif ( '9,999.99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ',';
+			$dot       = '.';
+		} elseif ( '9\'999.99' == pods_v( self::$type . '_format', $options ) ) {
+			$thousands = '\'';
 			$dot       = '.';
 		} elseif ( '9 999,99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = ' ';

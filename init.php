@@ -9,7 +9,7 @@ Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
 
-Copyright 2009-2013  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2014  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ else {
                 require_once( PODS_DIR . 'deprecated/deprecated.php' );
 			}
 
-            if ( false !== pods_compatibility_check() ) {
+            if ( false !== pods_compatibility_check() && !is_network_admin()) {
                 $pods_form = pods_form();
 
                 $pods_init = pods_init();

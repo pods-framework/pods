@@ -347,6 +347,7 @@ class Pods_Data {
 				$this->fetch( $this->id );
 			}
 		}
+
 		return null;
 	}
 
@@ -455,10 +456,10 @@ class Pods_Data {
 			$format = array();
 
 			foreach ( $data as $field ) {
-				if ( isset( self::$field_types[ $field ] ) ) {
-					$format[] = self::$field_types[ $field ];
-				} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
-					$format[] = $wpdb->field_types[ $field ];
+				if ( isset( self::$field_types[$field] ) ) {
+					$format[] = self::$field_types[$field];
+				} elseif ( isset( $wpdb->field_types[$field] ) ) {
+					$format[] = $wpdb->field_types[$field];
 				} else {
 					break;
 				}
@@ -551,10 +552,10 @@ class Pods_Data {
 			$format = array();
 
 			foreach ( $data as $field ) {
-				if ( isset( self::$field_types[ $field ] ) ) {
-					$form = self::$field_types[ $field ];
-				} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
-					$form = $wpdb->field_types[ $field ];
+				if ( isset( self::$field_types[$field] ) ) {
+					$form = self::$field_types[$field];
+				} elseif ( isset( $wpdb->field_types[$field] ) ) {
+					$form = $wpdb->field_types[$field];
 				} else {
 					$form = '%s';
 				}
@@ -567,10 +568,10 @@ class Pods_Data {
 			$where_format = array();
 
 			foreach ( (array) array_keys( $where ) as $field ) {
-				if ( isset( self::$field_types[ $field ] ) ) {
-					$form = self::$field_types[ $field ];
-				} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
-					$form = $wpdb->field_types[ $field ];
+				if ( isset( self::$field_types[$field] ) ) {
+					$form = self::$field_types[$field];
+				} elseif ( isset( $wpdb->field_types[$field] ) ) {
+					$form = $wpdb->field_types[$field];
 				} else {
 					$form = '%s';
 				}
@@ -580,13 +581,13 @@ class Pods_Data {
 		}
 
 		list( $table, $data, $where, $format, $where_format ) = $this->do_hook( 'update',
-		array(
-			$table,
-			$data,
-			$where,
-			$format,
-			$where_format
-		) );
+			array(
+				$table,
+				$data,
+				$where,
+				$format,
+				$where_format
+			) );
 
 		$result = $wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -627,10 +628,10 @@ class Pods_Data {
 		foreach ( (array) array_keys( $where ) as $field ) {
 			if ( ! empty( $where_format ) ) {
 				$form = ( $form = array_shift( $where_formats ) ) ? $form : $where_format[0];
-			} elseif ( isset( self::$field_types[ $field ] ) ) {
-				$form = self::$field_types[ $field ];
-			} elseif ( isset( $wpdb->field_types[ $field ] ) ) {
-				$form = $wpdb->field_types[ $field ];
+			} elseif ( isset( self::$field_types[$field] ) ) {
+				$form = self::$field_types[$field];
+			} elseif ( isset( $wpdb->field_types[$field] ) ) {
+				$form = $wpdb->field_types[$field];
 			} else {
 				$form = '%s';
 			}
@@ -641,14 +642,14 @@ class Pods_Data {
 		$sql = "DELETE FROM `$table` WHERE " . implode( ' AND ', $wheres );
 
 		list( $sql, $where ) = $this->do_hook( 'delete',
-		array(
-			$sql,
-			array_values( $where )
-		),
-		$table,
-		$where,
-		$where_format,
-		$wheres );
+			array(
+				$sql,
+				array_values( $where )
+			),
+			$table,
+			$where,
+			$where_format,
+			$wheres );
 
 		return $this->query( self::prepare( $sql, $where ) );
 	}
@@ -717,7 +718,7 @@ class Pods_Data {
 			$data         = (array) @current( $this->data );
 
 			foreach ( $data as $data_key => $data_value ) {
-				$this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
+				$this->fields[$data_key] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
 			}
 
 			$this->fields = Pods_Form::fields_setup( $this->fields );
@@ -1010,9 +1011,9 @@ class Pods_Data {
 				$selectfield = explode( ' AS ', str_replace( ' as ', ' AS ', $selected ) );
 
 				if ( 2 == count( $selectfield ) ) {
-					$field                   = trim( trim( $selectfield[1] ), '`' );
-					$real_field              = trim( trim( $selectfield[0] ), '`' );
-					$this->aliases[ $field ] = $real_field;
+					$field                 = trim( trim( $selectfield[1] ), '`' );
+					$real_field            = trim( trim( $selectfield[0] ), '`' );
+					$this->aliases[$field] = $real_field;
 				}
 			}
 		}
@@ -1064,20 +1065,20 @@ class Pods_Data {
 							} else {
 								$fieldfield = $fieldfield . '.`post_title`';
 							}
-						} elseif ( isset( $params->fields[ $field ] ) ) {
+						} elseif ( isset( $params->fields[$field] ) ) {
 							if ( $params->meta_fields ) {
 								$fieldfield = $fieldfield . '.`' . $params->pod_table_prefix . '`';
 							} else {
 								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
 							}
-						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) ) {
+						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$field] ) ) {
 							$fieldfield = $fieldfield . '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
 						}
 
-						if ( isset( $this->aliases[ $field ] ) ) {
-							$fieldfield = '`' . $this->aliases[ $field ] . '`';
+						if ( isset( $this->aliases[$field] ) ) {
+							$fieldfield = '`' . $this->aliases[$field] . '`';
 						}
 
 						if ( isset( $attributes['real_name'] ) && ! empty( $attributes['real_name'] ) ) {
@@ -1095,13 +1096,13 @@ class Pods_Data {
 
 					$fieldfield = '`t`.`' . $params->index . '`';
 
-					if ( isset( $params->fields[ $params->index ] ) ) {
+					if ( isset( $params->fields[$params->index] ) ) {
 						if ( $params->meta_fields ) {
 							$fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
 						} else {
 							$fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
 						}
-					} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $params->index ] ) ) {
+					} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$params->index] ) ) {
 						$fieldfield = '`' . $params->index . '`.`meta_value`';
 					}
 
@@ -1129,11 +1130,11 @@ class Pods_Data {
 			foreach ( $params->filters as $filter ) {
 				$where = $having = array();
 
-				if ( ! isset( $params->fields[ $filter ] ) ) {
+				if ( ! isset( $params->fields[$filter] ) ) {
 					continue;
 				}
 
-				$attributes = $params->fields[ $filter ];
+				$attributes = $params->fields[$filter];
 				$field      = pods_v_sanitized( 'name', $attributes, $filter, true );
 
 				$filterfield = '`' . $field . '`';
@@ -1150,21 +1151,20 @@ class Pods_Data {
 					$filterfield = $filterfield . '.`' . $attributes['table_info']['field_index'] . '`';
 				} elseif ( in_array( $attributes['type'], Pods_Form::file_field_types() ) ) {
 					$filterfield = $filterfield . '.`post_title`';
-				}
-				elseif ( isset( $params->fields[ $field ] ) ) {
+				} elseif ( isset( $params->fields[$field] ) ) {
 					if ( $params->meta_fields ) {
 						$filterfield = $filterfield . '.`meta_value`';
 					} else {
 						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
 					}
-				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) ) {
+				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$field] ) ) {
 					$filterfield = $filterfield . '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
 				}
 
-				if ( isset( $this->aliases[ $field ] ) ) {
-					$filterfield = '`' . $this->aliases[ $field ] . '`';
+				if ( isset( $this->aliases[$field] ) ) {
+					$filterfield = '`' . $this->aliases[$field] . '`';
 				}
 
 				if ( isset( $attributes['real_name'] ) && false !== $attributes['real_name'] && ! empty( $attributes['real_name'] ) ) {
@@ -1227,8 +1227,8 @@ class Pods_Data {
 					if ( isset( $attributes['date_ongoing'] ) && true === $attributes['date_ongoing'] ) {
 						$date_ongoing = '`' . $attributes['date_ongoing'] . '`';
 
-						if ( isset( $this->aliases[ $date_ongoing ] ) ) {
-							$date_ongoing = '`' . $this->aliases[ $date_ongoing ] . '`';
+						if ( isset( $this->aliases[$date_ongoing] ) ) {
+							$date_ongoing = '`' . $this->aliases[$date_ongoing] . '`';
 						}
 
 						if ( isset( $attributes['group_related'] ) && false !== $attributes['group_related'] ) {
@@ -1284,21 +1284,21 @@ class Pods_Data {
 				$value = explode( '.', $value );
 				$dot   = $last_value = array_pop( $value );
 
-				if ( 't' == $value[0] || in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
+				if ( 't' == $value[0] || in_array( '/\b' . trim( $found[$key], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
 					continue;
 				} elseif ( 1 == count( $value ) && '' == preg_replace( '/[0-9]*/', '', $value[0] ) && '' == preg_replace( '/[0-9]*/', '', $last_value ) ) {
 					continue;
 				}
 
-				$find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+				$find[$key] = '/\b' . trim( $found[$key], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
 
 				$esc_start = $esc_end = '`';
 
-				if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) ) {
+				if ( strlen( ltrim( $found[$key], '`' ) ) < strlen( $found[$key] ) ) {
 					$esc_start = '';
 				}
 
-				if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) ) {
+				if ( strlen( rtrim( $found[$key], '`' ) ) < strlen( $found[$key] ) ) {
 					$esc_end = '';
 				}
 
@@ -1306,12 +1306,12 @@ class Pods_Data {
 					$dot = '`' . $dot . $esc_end;
 				}
 
-				$replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
+				$replace[$key] = $esc_start . implode( '_', $value ) . '`.' . $dot;
 
 				$value[] = $last_value;
 
 				if ( ! in_array( $value, $traverse ) ) {
-					$traverse[ $key ] = $value;
+					$traverse[$key] = $value;
 				}
 			}
 
@@ -1332,7 +1332,7 @@ class Pods_Data {
 					}
 
 					if ( ! $already_found ) {
-						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse );
+						$traverse['traverse_' . $key] = explode( '.', $traverse );
 					}
 				}
 			}
@@ -1529,16 +1529,16 @@ class Pods_Data {
 
 			// Clear any unused variables
 			$sql = str_ireplace( array(
-				'%%SELECT%%',
-				'%%JOIN%%',
-				'%%WHERE%%',
-				'%%GROUPBY%%',
-				'%%HAVING%%',
-				'%%ORDERBY%%',
-				'%%LIMIT%%'
-			),
-			'',
-			$sql );
+					'%%SELECT%%',
+					'%%JOIN%%',
+					'%%WHERE%%',
+					'%%GROUPBY%%',
+					'%%HAVING%%',
+					'%%ORDERBY%%',
+					'%%LIMIT%%'
+				),
+				'',
+				$sql );
 			$sql = str_replace( array( '``', '`' ), array( '  ', ' ' ), $sql );
 		}
 
@@ -1765,12 +1765,12 @@ class Pods_Data {
 		$ids     = (array) $ids;
 
 		list( $table, $weight_field, $id_field, $ids ) = $this->do_hook( 'reorder',
-		array(
-			$table,
-			$weight_field,
-			$id_field,
-			$ids
-		) );
+			array(
+				$table,
+				$weight_field,
+				$id_field,
+				$ids
+			) );
 
 		if ( ! empty( $ids ) ) {
 			$success = true;
@@ -1817,8 +1817,8 @@ class Pods_Data {
 
 			$this->row = false;
 
-			if ( isset( $this->data[ $this->row_number ] ) ) {
-				$this->row = get_object_vars( $this->data[ $this->row_number ] );
+			if ( isset( $this->data[$this->row_number] ) ) {
+				$this->row = get_object_vars( $this->data[$this->row_number] );
 
 				$current_row_id = false;
 
@@ -2014,7 +2014,7 @@ class Pods_Data {
 					} else {
 						foreach ( $this->fields as $field ) {
 							if ( ! in_array( $field['type'], $tableless_field_types ) ) {
-								$this->row[ $field['name'] ] = get_option( $this->pod_data['name'] . '_' . $field['name'], null );
+								$this->row[$field['name']] = get_option( $this->pod_data['name'] . '_' . $field['name'], null );
 							}
 						}
 
@@ -2107,8 +2107,8 @@ class Pods_Data {
 
 		$this->row = false;
 
-		if ( isset( $this->data[ $row ] ) ) {
-			$this->row = get_object_vars( $this->data[ $row ] );
+		if ( isset( $this->data[$row] ) ) {
+			$this->row = get_object_vars( $this->data[$row] );
 		}
 
 		if ( empty( $row ) ) {
@@ -2291,7 +2291,7 @@ class Pods_Data {
 				$modified_type = substr( $table_col->Type, 0, ( strpos( $table_col->Type, '(' ) ) );
 			}
 
-			$table_cols_and_types[ $table_col->Field ] = $modified_type;
+			$table_cols_and_types[$table_col->Field] = $modified_type;
 		}
 
 		return $table_cols_and_types;
@@ -2414,7 +2414,7 @@ class Pods_Data {
 
 		if ( ! empty( $query_fields ) ) {
 			// If post_status not sent, detect it
-			if ( ! empty( $pod ) && 'post_type' == $pod['type'] && ! $params->where_defaulted && ! empty( $params->where_default ) ) {
+			if ( ! empty( $pod ) && 'post_type' == $pod['type'] && 1 == $current_level && ! $params->where_defaulted && ! empty( $params->where_default ) ) {
 				$post_status_found = false;
 
 				if ( ! $params->query_field_syntax ) {
@@ -2543,17 +2543,17 @@ class Pods_Data {
 					$tableless_field_types = Pods_Form::tableless_field_types();
 					$file_field_types      = Pods_Form::file_field_types();
 
-					if ( isset( $pod['fields'][ $field_name ] ) && in_array( $pod['fields'][ $field_name ]['type'], $tableless_field_types ) ) {
-						if ( in_array( $pod['fields'][ $field_name ]['pick_object'], $simple_tableless_objects ) ) {
+					if ( isset( $pod['fields'][$field_name] ) && in_array( $pod['fields'][$field_name]['type'], $tableless_field_types ) ) {
+						if ( in_array( $pod['fields'][$field_name]['pick_object'], $simple_tableless_objects ) ) {
 							if ( 'table' == $pod['storage'] ) {
 								$field_cast = "`t`.`{$field_name}`";
 							} else {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							}
-						} elseif ( in_array( $pod['fields'][ $field_name ]['pick_object'], $file_field_types ) ) {
+						} elseif ( in_array( $pod['fields'][$field_name]['pick_object'], $file_field_types ) ) {
 							$field_cast = "`{$field_name}`.`post_title`";
 						} else {
-							$table = pods_api()->get_table_info( $pod['fields'][ $field_name ]['pick_object'], $pod['fields'][ $field_name ]['pick_val'] );
+							$table = pods_api()->get_table_info( $pod['fields'][$field_name]['pick_object'], $pod['fields'][$field_name]['pick_val'] );
 
 							if ( ! empty( $table ) ) {
 								$field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
@@ -2563,9 +2563,9 @@ class Pods_Data {
 
 					if ( empty( $field_cast ) ) {
 						if ( ! in_array( $pod['type'], array( 'pod', 'table' ) ) ) {
-							if ( isset( $pod['object_fields'][ $field_name ] ) ) {
+							if ( isset( $pod['object_fields'][$field_name] ) ) {
 								$field_cast = "`t`.`{$field_name}`";
-							} elseif ( isset( $pod['fields'][ $field_name ] ) ) {
+							} elseif ( isset( $pod['fields'][$field_name] ) ) {
 								if ( 'table' == $pod['storage'] ) {
 									$field_cast = "`d`.`{$field_name}`";
 								} else {
@@ -2583,7 +2583,7 @@ class Pods_Data {
 						}
 
 						if ( empty( $field_cast ) ) {
-							if ( isset( $pod['fields'][ $field_name ] ) && 'table' == $pod['storage'] ) {
+							if ( isset( $pod['fields'][$field_name] ) && 'table' == $pod['storage'] ) {
 								$field_cast = "`t`.`{$field_name}`";
 							} elseif ( 'meta' == $pod['storage'] ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
@@ -2730,14 +2730,14 @@ class Pods_Data {
 				$field = $data;
 			}
 
-			if ( ! isset( $_GET[ 'filter_' . $field ] ) ) {
+			if ( ! isset( $_GET['filter_' . $field] ) ) {
 				continue;
 			}
 
 			$field_value = pods_v_sanitized( 'filter_' . $field, 'get', false, true );
 
 			if ( ! empty( $field_value ) || 0 < strlen( $field_value ) ) {
-				$feed[ 'traverse_' . $field ] = array( $field );
+				$feed['traverse_' . $field] = array( $field );
 			}
 		}
 
@@ -2834,15 +2834,15 @@ class Pods_Data {
 		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 		$file_field_types         = Pods_Form::file_field_types();
 
-		if ( ! isset( $this->traversal[ $traverse_recurse['pod'] ] ) ) {
-			$this->traversal[ $traverse_recurse['pod'] ] = array();
+		if ( ! isset( $this->traversal[$traverse_recurse['pod']] ) ) {
+			$this->traversal[$traverse_recurse['pod']] = array();
 		}
 
-		if ( ( empty( $pod_data['meta_table'] ) || $pod_data['meta_table'] == $pod_data['table'] ) && ( empty( $traverse_recurse['fields'] ) || ! isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] ] ) || empty( $traverse_recurse['fields'][ $traverse_recurse['depth'] ] ) ) ) {
+		if ( ( empty( $pod_data['meta_table'] ) || $pod_data['meta_table'] == $pod_data['table'] ) && ( empty( $traverse_recurse['fields'] ) || ! isset( $traverse_recurse['fields'][$traverse_recurse['depth']] ) || empty( $traverse_recurse['fields'][$traverse_recurse['depth']] ) ) ) {
 			return $joins;
 		}
 
-		$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] ];
+		$field = $traverse_recurse['fields'][$traverse_recurse['depth']];
 
 		$ignore_aliases = array(
 			'wpml_languages',
@@ -2857,18 +2857,18 @@ class Pods_Data {
 
 		$meta_data_table = false;
 
-		if ( ! isset( $pod_data['fields'][ $field ] ) && 'd' == $field && isset( $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ] ) ) {
-			$field = $traverse_recurse['fields'][ $traverse_recurse['depth'] - 1 ];
+		if ( ! isset( $pod_data['fields'][$field] ) && 'd' == $field && isset( $traverse_recurse['fields'][$traverse_recurse['depth'] - 1] ) ) {
+			$field = $traverse_recurse['fields'][$traverse_recurse['depth'] - 1];
 
 			$field_type = 'pick';
 
-			if ( isset( $traverse_recurse['last_table_info']['pod']['fields'][ $field ] ) ) {
-				$field_type = $traverse_recurse['last_table_info']['pod']['fields'][ $field ]['type'];
-			} elseif ( isset( $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ] ) ) {
-				$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][ $field ]['type'];
+			if ( isset( $traverse_recurse['last_table_info']['pod']['fields'][$field] ) ) {
+				$field_type = $traverse_recurse['last_table_info']['pod']['fields'][$field]['type'];
+			} elseif ( isset( $traverse_recurse['last_table_info']['pod']['object_fields'][$field] ) ) {
+				$field_type = $traverse_recurse['last_table_info']['pod']['object_fields'][$field]['type'];
 			}
 
-			$pod_data['fields'][ $field ] = array(
+			$pod_data['fields'][$field] = array(
 				'id'          => 0,
 				'name'        => $field,
 				'type'        => $field_type,
@@ -2880,23 +2880,23 @@ class Pods_Data {
 		}
 
 		// Fallback to meta table if the pod type supports it
-		if ( ! isset( $pod_data['fields'][ $field ] ) ) {
+		if ( ! isset( $pod_data['fields'][$field] ) ) {
 			$last = end( $traverse_recurse['fields'] );
 
 			if ( 'post_type' == $pod_data['type'] && ! isset( $pod_data['object_fields'] ) ) {
 				$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data );
 			}
 
-			if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
-				$pod_data['fields'][ $field ] = $pod_data['object_fields'][ $field ];
+			if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][$field] ) && in_array( $pod_data['object_fields'][$field]['type'], $tableless_field_types ) ) {
+				$pod_data['fields'][$field] = $pod_data['object_fields'][$field];
 			} elseif ( in_array( $pod_data['type'], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last ) {
-				$pod_data['fields'][ $field ] = Pods_Form::field_setup( array( 'name' => $field ) );
+				$pod_data['fields'][$field] = Pods_Form::field_setup( array( 'name' => $field ) );
 			} else {
 				if ( 'post_type' == $pod_data['type'] ) {
 					$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );
 
-					if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
-						$pod_data['fields'][ $field ] = $pod_data['object_fields'][ $field ];
+					if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][$field] ) && in_array( $pod_data['object_fields'][$field]['type'], $tableless_field_types ) ) {
+						$pod_data['fields'][$field] = $pod_data['object_fields'][$field];
 					} else {
 						return $joins;
 					}
@@ -2906,7 +2906,7 @@ class Pods_Data {
 			}
 		}
 
-		$traverse = $pod_data['fields'][ $field ];
+		$traverse = $pod_data['fields'][$field];
 
 		if ( 'taxonomy' == $traverse['type'] ) {
 			$traverse['table_info'] = $this->api->get_table_info( $traverse['type'], $traverse['name'] );
@@ -2928,8 +2928,8 @@ class Pods_Data {
 			}
 		}
 
-		if ( isset( $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] ) ) {
-			$traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] );
+		if ( isset( $this->traversal[$traverse_recurse['pod']][$traverse['name']] ) ) {
+			$traverse = array_merge( $traverse, (array) $this->traversal[$traverse_recurse['pod']][$traverse['name']] );
 		}
 
 		$traverse = $this->do_hook( 'traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ) );
@@ -2946,7 +2946,7 @@ class Pods_Data {
 
 		$table_info = $traverse['table_info'];
 
-		$this->traversal[ $traverse_recurse['pod'] ][ $field ] = $traverse;
+		$this->traversal[$traverse_recurse['pod']][$field] = $traverse;
 
 		$field_joined = $field;
 
@@ -3042,7 +3042,7 @@ class Pods_Data {
                 ";
 			}
 		} elseif ( 'meta' == $pod_data['storage'] ) {
-			if ( ( $traverse_recurse['depth'] + 2 ) == count( $traverse_recurse['fields'] ) && ( 'pick' != $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) && $table_info['meta_field_value'] == $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
+			if ( ( $traverse_recurse['depth'] + 2 ) == count( $traverse_recurse['fields'] ) && ( 'pick' != $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) && $table_info['meta_field_value'] == $traverse_recurse['fields'][$traverse_recurse['depth'] + 1] ) {
 				$the_join = "
                     LEFT JOIN `{$table_info['meta_table']}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info['meta_field_index']}` = '" . pods_sanitize( $traverse['name'] ) . "'
@@ -3080,7 +3080,7 @@ class Pods_Data {
 			return $joins;
 		}
 
-		$joins[ $traverse_recurse['pod'] . '_' . $traverse_recurse['depth'] . '_' . $traverse['id'] ] = $the_join;
+		$joins[$traverse_recurse['pod'] . '_' . $traverse_recurse['depth'] . '_' . $traverse['id']] = $the_join;
 
 		if ( ( $traverse_recurse['depth'] + 1 ) < count( $traverse_recurse['fields'] ) && ! empty( $traverse_recurse['pod'] ) && false !== $table_info['recurse'] ) {
 			$joins = array_merge( $joins, $this->traverse_recurse( $traverse_recursive ) );

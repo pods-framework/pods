@@ -348,6 +348,18 @@ if ( isset( $tabs['advanced'] ) ) { //&& !empty( $tab_options[ 'advanced' ] ) ) 
 							</div>
 						</li>
 					<?php } ?>
+                    <?php if ( class_exists( 'Jetpack' ) ) { ?>
+                        <li>
+                            <div class="pods-field pods-boolean">
+                                <?php echo Pods_Form::field( 'supports_jetpack_publicize', pods_v( 'supports_jetpack_publicize', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Jetpack Publicize Support', 'pods' ) ) ); ?>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="pods-field pods-boolean">
+                                <?php echo Pods_Form::field( 'supports_jetpack_markdown', pods_v( 'supports_jetpack_markdown', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Jetpack Markdown Support', 'pods' ) ) ); ?>
+                            </div>
+                        </li>
+                    <?php } ?>
 				</ul>
 			</div>
 		</div>

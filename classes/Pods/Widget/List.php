@@ -3,17 +3,18 @@
 /**
  * @package Pods\Widgets
  */
-class Pods_Widget_List extends
-	WP_Widget {
+class Pods_Widget_List extends WP_Widget {
 
 	/**
 	 * Register the widget
 	 */
 	public function Pods_Widget_List() {
-		$this->WP_Widget( 'pods_widget_list',
+		$this->WP_Widget(
+			'pods_widget_list',
 			'Pods - List Items',
 			array( 'classname' => 'pods_widget_list', 'description' => 'Display multiple Pod items' ),
-			array( 'width' => 200 ) );
+			array( 'width' => 200 )
+		);
 	}
 
 	/**

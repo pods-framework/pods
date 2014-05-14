@@ -237,6 +237,12 @@ class Pods_Field_Phone extends
 			}
 		}
 
+		$length = (int) pods_v( self::$type . '_max_length', $options, 25 );
+
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
+		}
+
 		return $value;
 	}
 }

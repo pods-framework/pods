@@ -195,7 +195,7 @@ class Pods_Migrate {
 				}
 			}
 
-			$data['items'][ $key ] = $item;
+			$data['items'][$key] = $item;
 		}
 
 		$this->parsed = $data;
@@ -235,13 +235,13 @@ class Pods_Migrate {
 			} else {
 				$row = $this->str_getcsv( $row, $this->delimiter );
 
-				$data['items'][ $key ] = array();
+				$data['items'][$key] = array();
 
 				foreach ( $data['columns'] as $ckey => $column ) {
-					$data['items'][ $key ][ $column ] = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
+					$data['items'][$key][$column] = ( isset( $row[$ckey] ) ? $row[$ckey] : '' );
 
-					if ( 'NULL' === $data['items'][ $key ][ $column ] ) {
-						$data['items'][ $key ][ $column ] = null;
+					if ( 'NULL' === $data['items'][$key][$column] ) {
+						$data['items'][$key][$column] = null;
 					}
 				}
 			}
@@ -345,7 +345,7 @@ class Pods_Migrate {
 						$data['columns'][] = $column;
 					}
 
-					$item[ $column ] = $value;
+					$item[$column] = $value;
 				}
 			}
 
@@ -359,7 +359,7 @@ class Pods_Migrate {
 						$data['columns'][] = $column;
 					}
 
-					$item[ $column ] = $item_child->$column;
+					$item[$column] = $item_child->$column;
 				}
 			}
 
@@ -473,7 +473,7 @@ class Pods_Migrate {
 			$row = array();
 
 			foreach ( $this->data['columns'] as $column => $label ) {
-				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[ $column ] ) ) ) ) {
+				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[$column] ) ) ) ) {
 					$column = $label;
 				}
 
@@ -486,14 +486,14 @@ class Pods_Migrate {
 
 					$value = $item->$column;
 				} elseif ( is_array( $item ) ) {
-					if ( ! isset( $item[ $column ] ) ) {
-						$item[ $column ] = '';
+					if ( ! isset( $item[$column] ) ) {
+						$item[$column] = '';
 					}
 
-					$value = $item[ $column ];
+					$value = $item[$column];
 				}
 
-				$row[ $column ] = $value;
+				$row[$column] = $value;
 			}
 
 			$data['items']['item'][] = $row;
@@ -535,7 +535,7 @@ class Pods_Migrate {
 			$line = '';
 
 			foreach ( $this->data['columns'] as $column => $label ) {
-				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[ $column ] ) ) ) ) {
+				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[$column] ) ) ) ) {
 					$column = $label;
 				}
 
@@ -548,11 +548,11 @@ class Pods_Migrate {
 
 					$value = $item->$column;
 				} elseif ( is_array( $item ) ) {
-					if ( ! isset( $item[ $column ] ) ) {
-						$item[ $column ] = '';
+					if ( ! isset( $item[$column] ) ) {
+						$item[$column] = '';
 					}
 
-					$value = $item[ $column ];
+					$value = $item[$column];
 				}
 
 				if ( is_array( $value ) || is_object( $value ) ) {
@@ -597,7 +597,7 @@ class Pods_Migrate {
 			$line = "\t<item>\r\n";
 
 			foreach ( $this->data['columns'] as $column => $label ) {
-				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[ $column ] ) ) ) ) {
+				if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[$column] ) ) ) ) {
 					$column = $label;
 				}
 
@@ -637,11 +637,11 @@ class Pods_Migrate {
 
 			$value = $item->$column;
 		} elseif ( is_array( $item ) ) {
-			if ( ! isset( $item[ $column ] ) ) {
-				$item[ $column ] = '';
+			if ( ! isset( $item[$column] ) ) {
+				$item[$column] = '';
 			}
 
-			$value = $item[ $column ];
+			$value = $item[$column];
 		}
 
 		if ( ! empty( $column_name ) ) {
@@ -669,7 +669,7 @@ class Pods_Migrate {
 
 			$line .= "<![CDATA[" . $value . "]]>";
 		} else {
-			$line .= $value;
+			$line .= str_replace( '&', '&amp;', $value );
 		}
 
 		$line .= "</{$column}>\r\n";
@@ -868,9 +868,9 @@ class Pods_Migrate {
 				$api->reset_pod( array( 'id' => $data['pod']['id'], 'name' => $data['pod']['name'] ) );
 			}
 
-			if ( null === $data['sort'] && null !== $data['update_on'] && isset( $data['fields'][ $data['update_on'] ] ) ) {
-				if ( isset( $data['fields'][ $data['update_on'] ]['field'] ) ) {
-					$data['sort'] = $data['fields'][ $data['update_on'] ]['field'];
+			if ( null === $data['sort'] && null !== $data['update_on'] && isset( $data['fields'][$data['update_on']] ) ) {
+				if ( isset( $data['fields'][$data['update_on']]['field'] ) ) {
+					$data['sort'] = $data['fields'][$data['update_on']]['field'];
 				} else {
 					$data['sort'] = $data['update_on'];
 				}
@@ -878,8 +878,8 @@ class Pods_Migrate {
 
 			$page = 1;
 
-			if ( false !== $data['page_var'] && isset( $_GET[ $data['page_var'] ] ) ) {
-				$page = absval( $_GET[ $data['page_var'] ] );
+			if ( false !== $data['page_var'] && isset( $_GET[$data['page_var']] ) ) {
+				$page = absval( $_GET[$data['page_var']] );
 			}
 
 			if ( null === $data['sql'] ) {
@@ -955,15 +955,15 @@ class Pods_Migrate {
 				foreach ( $data['pod']['fields'] as $fk => $field_info ) {
 					$field = $field_info['name'];
 
-					if ( ! empty( $data['fields'] ) && ! isset( $data['fields'][ $field ] ) && ! in_array( $field, $data['fields'] ) ) {
+					if ( ! empty( $data['fields'] ) && ! isset( $data['fields'][$field] ) && ! in_array( $field, $data['fields'] ) ) {
 						continue;
 					}
 
-					if ( isset( $data['fields'][ $field ] ) ) {
-						if ( is_array( $data['fields'][ $field ] ) ) {
-							$field_data = $data['fields'][ $field ];
+					if ( isset( $data['fields'][$field] ) ) {
+						if ( is_array( $data['fields'][$field] ) ) {
+							$field_data = $data['fields'][$field];
 						} else {
-							$field_data = array( 'field' => $data['fields'][ $field ] );
+							$field_data = array( 'field' => $data['fields'][$field] );
 						}
 					} else {
 						$field_data = array();
@@ -980,11 +980,11 @@ class Pods_Migrate {
 						$field_data['field'] = $field;
 					}
 
-					$data['fields'][ $field ] = $field_data;
-					$value                    = '';
+					$data['fields'][$field] = $field_data;
+					$value                  = '';
 
-					if ( isset( $row[ $field_data['field'] ] ) ) {
-						$value = $row[ $field_data['field'] ];
+					if ( isset( $row[$field_data['field']] ) ) {
+						$value = $row[$field_data['field']];
 					}
 
 					if ( null !== $field_data['filter'] ) {
@@ -1003,7 +1003,7 @@ class Pods_Migrate {
 						die( '<h1 style="color:red;font-weight:bold;">ERROR: Field Required for <strong>' . $field . '</strong></h1>' );
 					}
 
-					$params['columns'][ $field ] = $value;
+					$params['columns'][$field] = $value;
 
 					unset( $value );
 					unset( $field_data );
@@ -1017,7 +1017,7 @@ class Pods_Migrate {
 
 				$params['columns'] = pods_sanitize( $params['columns'] );
 
-				if ( null !== $data['update_on'] && isset( $params['columns'][ $data['update_on'] ] ) ) {
+				if ( null !== $data['update_on'] && isset( $params['columns'][$data['update_on']] ) ) {
 					if ( false !== $output ) {
 						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Checking for Existing Item\n";
 					}
@@ -1074,7 +1074,7 @@ class Pods_Migrate {
 				}
 
 				unset( $params );
-				unset( $result[ $k ] );
+				unset( $result[$k] );
 				unset( $row );
 
 				wp_cache_flush();
@@ -1109,7 +1109,7 @@ class Pods_Migrate {
 			}
 
 			unset( $result );
-			unset( $import[ $datatype ] );
+			unset( $import[$datatype] );
 			unset( $datatype );
 			unset( $data );
 

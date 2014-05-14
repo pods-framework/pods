@@ -65,7 +65,7 @@ class Pods_Field_File extends
 		$image_sizes = array();
 
 		foreach ( $sizes as $size ) {
-			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
+			$image_sizes[$size] = ucwords( str_replace( '-', ' ', $size ) );
 		}
 
 		$options = array(
@@ -104,6 +104,11 @@ class Pods_Field_File extends
 			self::$type . '_edit_title'         => array(
 				'label'   => __( 'Editable Title', 'pods' ),
 				'default' => 1,
+				'type'    => 'boolean'
+			),
+			self::$type . '_linked'             => array(
+				'label'   => __( 'Link to File in editor', 'pods' ),
+				'default' => 0,
 				'type'    => 'boolean'
 			),
 			self::$type . '_limit'              => array(
@@ -371,7 +376,7 @@ class Pods_Field_File extends
 	 * @return string
 	 * @since 2.0
 	 */
-	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
+	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
 		// Preserve current file type
 		$field_type = Pods_Form::$field_type;
 
@@ -392,7 +397,12 @@ class Pods_Field_File extends
 			$name = '{{name}}';
 		}
 
+		if ( empty( $link ) ) {
+			$link = '{{link}}';
+		}
+
 		$editable = (boolean) $editable;
+		$linked   = (boolean) $linked;
 		?>
 		<li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
 			<?php echo Pods_Form::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
@@ -417,6 +427,15 @@ class Pods_Field_File extends
 				</li>
 
 				<li class="pods-file-col pods-file-delete">Delete</li>
+
+				<?php
+				if ( $linked ) {
+					?>
+					<li class="pods-file-col pods-file-download">
+						<a href="<?php echo $link; ?>" target="_blank">Download</a></li>
+				<?php
+				}
+				?>
 			</ul>
 		</li>
 		<?php
@@ -441,9 +460,9 @@ class Pods_Field_File extends
 				continue;
 			}
 
-			unset( $params[ $key ] );
+			unset( $params[$key] );
 
-			$params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+			$params[str_replace( '_podsfix_', '', $key )] = $value;
 		}
 
 		$params = (object) $params;
@@ -461,14 +480,14 @@ class Pods_Field_File extends
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
-		if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			$_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
-		} elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			$_COOKIE[ AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
+		if ( is_ssl() && empty( $_COOKIE[SECURE_AUTH_COOKIE] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
+			$_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];
+		} elseif ( empty( $_COOKIE[AUTH_COOKIE] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
+			$_COOKIE[AUTH_COOKIE] = $_REQUEST['auth_cookie'];
 		}
 
-		if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && ! empty( $_REQUEST['logged_in_cookie'] ) ) {
-			$_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST['logged_in_cookie'];
+		if ( empty( $_COOKIE[LOGGED_IN_COOKIE] ) && ! empty( $_REQUEST['logged_in_cookie'] ) ) {
+			$_COOKIE[LOGGED_IN_COOKIE] = $_REQUEST['logged_in_cookie'];
 		}
 
 		global $current_user;
@@ -511,7 +530,7 @@ class Pods_Field_File extends
 			$pod   = $api->load_pod( array( 'id' => (int) $params->pod ) );
 			$field = $api->load_field( array( 'id' => (int) $params->field ) );
 
-			if ( empty( $pod ) || empty( $field ) || $pod['id'] != $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
+			if ( empty( $pod ) || empty( $field ) || $pod['id'] != $field['pod_id'] || ! isset( $pod['fields'][$field['name']] ) ) {
 				pods_error( __( 'Invalid field request', 'pods' ), Pods_Init::$admin );
 			}
 
@@ -657,6 +676,8 @@ class Pods_Field_File extends
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
 
 			if ( null === $custom_handler ) {
+				$linked = pods_var( $field['type'] . '_linked', $field['options'], 0 );
+
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
 				if ( is_object( $attachment_id ) ) {
@@ -674,6 +695,12 @@ class Pods_Field_File extends
 
 					$thumb                   = wp_get_attachment_image_src( $attachment['ID'], 'thumbnail', true );
 					$attachment['thumbnail'] = $thumb[0];
+
+					$attachment['link'] = '';
+
+					if ( $linked ) {
+						$attachment['link'] = wp_get_attachment_url( $attachment['ID'] );
+					}
 
 					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 

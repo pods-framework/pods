@@ -28,11 +28,10 @@ if ( is_object( $pod ) ) {
 	$field_nonce = wp_create_nonce( 'pods_relationship_0_' . $uid . '_' . $uri_hash . '_' . json_encode( $options ) );
 }
 
-$pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 
-if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) {
-	wp_enqueue_script( 'jquery-ui-sortable' );
-}
+if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $pick_limit )
+    wp_enqueue_script( 'jquery-ui-sortable' );
 
 $options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
@@ -75,15 +74,37 @@ $select2_args = array();
 
 		var $element = $('#<?php echo $attributes[ 'id' ] ?>');
 
-		$element.select2({
-			width : 'resolve',
-			<?php if (1 == (int) pods_v('pick_allow_html',$options)): ?>
-			escapeMarkup : function(m) {
-				return m;
-			},
-			<?php endif; ?>
-			initSelection : function(element,callback) {
-				var data = [];
+        $element.select2( {
+			<?php
+				if ( 1 == pods_v( $form_field_type . '_taggable', $options ) ) {
+			?>
+				tags : true,
+				createSearchChoice : function( term, data ) {
+					if ( 0 === $( data ).filter( function() { return this.text.localeCompare( term.trim() ) === 0; } ).length ) {
+						return {
+						// Simply use the new tag term as the id
+						//we might want to append 'new' to all newly created term IDs for processing in PodsAPI.php
+							id: term.trim(),
+							text: term.trim()
+						};
+					}
+				},
+			<?php
+				}
+			?>
+
+            width : 'resolve',
+
+			<?php
+				if ( 1 == (int) pods_v( $form_field_type . '_allow_html', $options ) ) {
+			?>
+				escapeMarkup : function (m) { return m; },
+			<?php
+				}
+			?>
+
+            initSelection : function ( element, callback ) {
+                var data = [];
 
 				jQuery(element.val().split(",")).each(function() {
 					if('undefined' != typeof <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data[ this ]) {
@@ -95,7 +116,7 @@ $select2_args = array();
 				});
 
 				<?php
-					if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+					if ( 'multi' == pods_v( $form_field_type.'_format_type', $options ) && 1 != $pick_limit ) {
 				?>
 				callback(data);
 				<?php
@@ -116,18 +137,18 @@ $select2_args = array();
 			<?php
 			   }
 
-				if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) {
-			?>
-			placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
-			multiple : true,
-			maximumSelectionSize : <?php echo (int) $pick_limit; ?>,
-			<?php
-				}
-				else {
-			?>
-			placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
-			<?php
-				}
+                if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
+            ?>
+                placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
+                multiple : true,
+                maximumSelectionSize : <?php echo (int) $pick_limit; ?>,
+            <?php
+                }
+                else {
+            ?>
+                placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
+            <?php
+                }
 
 				if ( !is_object( $pod ) || !empty( $options[ 'data' ] ) ) {
 			?>
@@ -198,7 +219,7 @@ $select2_args = array();
 			?>
 		});
 
-		<?php if ( 'multi' == pods_v( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
+		<?php if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) { ?>
 		$element.select2('container').find('ul.select2-choices').sortable({
 			containment : 'parent',
 			start : function() {

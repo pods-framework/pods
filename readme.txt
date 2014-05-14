@@ -1,10 +1,10 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, mikedamage, logikal16, jchristopher, Shelob9
+Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, Shelob9, mikedamage, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
-Requires at least: 3.6
-Tested up to: 3.7.1
-Stable tag: 2.3.15
+Requires at least: 3.7
+Tested up to: 3.9
+Stable tag: 2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,8 +154,73 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.3.15 - October 31st, 2013 =
+= 2.4 - April 16th, 2014 =
+* After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.
+* In Pods 3.0 we're focusing on finishing some overarching performance improvements that are necessary to support large installs with the new Loop and Repeatable fields features.
+* Added: Tagging feature for Relationship fields with Autocomplete (Select2) which lets you add new items on-demand when saving
+* Added: PodsAPI::get_changed_fields() that can be used when in a pre-save hook to return array of changed values or used in PodsAPI::save_pods_item() to track changes to fields
+* Added: _pods_location to $params for PodsAPI::save_pod_item which will contain the URL of the form it was submitted from
+* Added: New Pods Template editor revamp to include auto-complete for magic tags and field reference, which can be further extended by installing Pods Frontier
+* Added: An optional download link to File Upload field type
+* Added: Additional Currency formats to Currency field type
+* Added: created/modified functionality (see Advanced Content Types) to other Pod types, as long as they are date/datetime fields
+* Added: Support for JetPack Publicize and Markdown modules
+* Added: Max character length option for paragraph fields
+* Added: Actions before and after Pods Form all and individual form fields are outputted
+* Added: New constant PODS_ALLOW_FULL_META for for enabling/disabling get_post_meta( $id ) interaction with Pods (on by default)
+* Added: New constant PODS_DISABLE_SHORTCODE_SQL to disable SQL-related parameters in shortcode
+* Added: 'pods_admin_media_button' filter to disable the Pods shortcode button in post editor
+* Added: 'pods_api_save_pod_item_track_changed_fields_{POD_NAME}' filter for tracking changes to fields
+* Added: 'pods_pick_ignore_internal' filter to enable/disable Relationships with core Pods types (_pods_pod, etc)
+* Added: 'pods_image_default' filter to allow for placekitten.com or other image placeholder scripts for testing
+* Added: Improved Pods Template code sanitization
+* Added: Better names for many fields in Pods Editor
+* Added: New and improved help bubbles in Pods Editor
+* Added: Instructions about using Pods Templates in Pods Widgets
+* Added: New descriptions for Pods Pages and Pods Advanced Content Types component descriptions
+* Added: Support links in Pods Admin -> Help
+* Added: Currently active theme to Pods Debug info list
+* Added: Inline docs for 'pods_api_get_table_info_default_post_status' filter
+* Added: Inline docs for 'pods_admin_menu' filter
+* Added: Inline docs for 'pods_admin_setup_edit_options' (and related) filters
+* Added: Inline docs for 'pods_admin_setup_edit_tabs' (and related) filters
+* Fixed: Issues with user tables in multisite
+* Fixed: Issue with PodsForm::default_value
+* Fixed: With Pods UI. Keep view when generating pagination links
+* Fixed: Bug with custom extensions for allowed file types in upload fields
+* Fixed: Compatibility problem with changes to plupload in WordPress 3.9 that prevented upload pop-up from loading
+* Fixed: Array to string conversion error for CSS fields in Pods UI
+* Fixed: Magic tags for taxonomies in Pods Templates
+* Fixed: Fixed jQuery scope in Pods Form inline JavaScript
+* Fixed: Added 'output' to reserved content types names and reserved query vars
+* Fixed: Issue where required currency and number fields could be saved at default value
+* Fixed: Undefined method error in WP 3.4 due to use of WP_User::to_array() which was added in WP 3.5
+* Fixed: Issue with ability to use filters on reorder page with Pods UI
+* Fixed: Pre-save enforcing of max length for meta-based values
+* Fixed: Extra spaces in custom defined list labels
+* Fixed: Pagination default value for Pods shortcode
+* Fixed: PodsForm::submit_button() method that had been lost from previous versions
+* Fixed: Usage of pods_v in currency.php for optimzation purposes
+* Fixed: Correct parent_file to highlight the correct top level menu
+* Fixed: Improper wording for text at top of settings page field
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.3.18 - November 4th, 2013 =
 * Be on the look out for Pods 2.4, officially in development and in Beta soon! It will include our new Loop and Repeatable fields
+* Fixed: PodsData row handling during fetch loop, thanks to a number of users who helped find this one
+
+= 2.3.17 - November 4th, 2013 =
+* Fixed: PodsData item caching now disabled for WP objects, relying on core WP caching entirely
+* Fixed: PodsAPI::save_pod_item default value handling for new items no goes through all fields, even if not included in form
+
+= 2.3.16 - November 4th, 2013 =
+* Fixed: PodsMeta pod caching is now different between meta calls and the form methods, avoiding potential issues with functions used that call their own meta (TinyMCE)
+* Fixed: Properly add/drop column for table-based Pods when switching between a custom simple relationship and a normal relationship
+* Fixed: Session starting for memcache-based sessions and other tcp:// configs improved
+* Fixed: Media saving bug, where the custom fields were not saving when going to Media Library > Edit
+
+= 2.3.15 - October 31st, 2013 =
 * Added: New 'calc_rows' option in Pods::find, this allows for SQL_CALC_FOUND_ROWS to be run selectively (default is off, since we run a separate count query on demand by default)
 * Added: You can now override the 'manage' action link in PodsUI 'action_links'
 * Added: `shortcodes="1"` attribute for the Pods shortcode will allow for running of shortcodes output through templates or fields included
@@ -163,8 +228,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: 2.3.14 introduced a regression bug that would not save fields in the user profile, so values never changed
 * Fixed: Quick Edit on terms could potentially save empty values for the custom fields
 * Fixed: Traversal handling of Pods::field for related_item.ID would cache into object as related_item, so a subsequent lookup of related_item would come back as the ID and return the wrong value
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code or contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.3.14 - October 29th, 2013 =
 * Fixed: Some users experienced and issue with user registration when there were required fields

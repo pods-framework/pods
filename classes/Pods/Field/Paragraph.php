@@ -137,6 +137,14 @@ class Pods_Field_Paragraph extends
 			)
 		);
 
+		if ( function_exists( 'Markdown' ) ) {
+			$options['output_options']['group'][ self::$type . '_allow_markdown' ] = array(
+				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
+				'default' => 0,
+				'type'    => 'boolean'
+			);
+		}
+
 		return $options;
 	}
 
@@ -189,6 +197,10 @@ class Pods_Field_Paragraph extends
 			}
 
 			$value = do_shortcode( $value );
+		}
+
+		if ( function_exists( 'Markdown' ) && 1 == pods_v( self::$type . '_allow_markdown', $options ) ) {
+			$value = Markdown( $value );
 		}
 
 		return $value;

@@ -69,18 +69,31 @@ function pods_image_id_from_field( $image ) {
 function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
 	$html = '';
 
-	$id      = pods_image_id_from_field( $image );
-	$default = pods_image_id_from_field( $default );
+    $id = pods_image_id_from_field( $image );
+
+    if ( 0 == $default  ) {
+        /**
+         * Filter for default value
+         *
+         * Use to set a fallback image to be used when the image passed to pods_image can not be found. Will only take effect if $default is not set.
+         *
+         * @since 2.3.19
+         *
+         * @param array|int|string $default Default image to show if image not found, can be field array, ID, or guid
+         */
+        $default = apply_filters( 'pods_image_default', $default );
+    }
+
+    $default = pods_image_id_from_field( $default );
 
 	if ( 0 < $id ) {
 		if ( $force ) {
 			$full = wp_get_attachment_image_src( $id, 'full' );
 			$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( ! empty( $full ) && ( empty( $src ) || $full[0] != $src[0] ) ) {
-				pods_image_resize( $id, $size );
-			}
-		}
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
+                pods_image_resize( $id, $size );
+        }
 
 		$html = wp_get_attachment_image( $id, $size, true, $attributes );
 	}
@@ -90,10 +103,9 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 			$full = wp_get_attachment_image_src( $default, 'full' );
 			$src  = wp_get_attachment_image_src( $default, $size );
 
-			if ( ! empty( $full ) && ( empty( $src ) || $full[0] != $src[0] ) ) {
-				pods_image_resize( $default, $size );
-			}
-		}
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
+                pods_image_resize( $default, $size );
+        }
 
 		$html = wp_get_attachment_image( $default, $size, true, $attributes );
 	}
@@ -124,10 +136,9 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 			$full = wp_get_attachment_image_src( $id, 'full' );
 			$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( ! empty( $full ) && ( empty( $src ) || $full[0] != $src[0] ) ) {
-				pods_image_resize( $id, $size );
-			}
-		}
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
+                pods_image_resize( $id, $size );
+        }
 
 		$src = wp_get_attachment_image_src( $id, $size );
 
@@ -148,10 +159,9 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 			$full = wp_get_attachment_image_src( $default, 'full' );
 			$src  = wp_get_attachment_image_src( $default, $size );
 
-			if ( ! empty( $full ) && ( empty( $src ) || $full[0] != $src[0] ) ) {
-				pods_image_resize( $default, $size );
-			}
-		}
+            if ( 'full' != $size && $full[ 0 ] == $src[ 0 ] )
+                pods_image_resize( $default, $size );
+        }
 
 		$src = wp_get_attachment_image_src( $default, $size );
 

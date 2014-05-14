@@ -1,5 +1,7 @@
 # [Pods Framework](http://pods.io) [![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=3.0-unstable)](http://travis-ci.org/pods-framework/pods) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
 
+![Pods Framework icon](http://pods.io/wp-content/themes/pods/images/logo-pods-header.png)
+
 ### Welcome to our GitHub Repository
 
 More information can be found at [pods.io](http://pods.io/).

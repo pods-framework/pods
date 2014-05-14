@@ -161,7 +161,9 @@ class Pods_View {
 			}
 		}
 
-		if ( 'transient' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
+		if ( apply_filters( 'pods_view_cache_alt_get', false, $cache_mode, $group_key . $key, $original_key, $group ) ) {
+			$value = apply_filters( 'pods_view_cache_alt_get_value', $value, $cache_mode, $group_key . $key, $original_key, $group );
+		} elseif ( 'transient' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			$value = get_transient( $group_key . $key );
 		} elseif ( 'site-transient' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			$value = get_site_transient( $group_key . $key );
@@ -289,7 +291,9 @@ class Pods_View {
 			}
 		}
 
-		if ( 'transient' == $cache_mode ) {
+		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $group_key . $key, $original_key, $value, $expires, $group ) ) {
+			return $value;
+		} elseif ( 'transient' == $cache_mode ) {
 			set_transient( $group_key . $key, $value, $expires );
 		} elseif ( 'site-transient' == $cache_mode ) {
 			set_site_transient( $group_key . $key, $value, $expires );
@@ -369,8 +373,9 @@ class Pods_View {
 			$group_key = $group . '_';
 		}
 
-		$original_key = $key;
+		$full_key = $original_key = $key;
 
+		if ( true !== $key ) {
 		// Patch for limitations in DB
 		if ( 44 < strlen( $group_key . $key ) ) {
 			$key = md5( $key );
@@ -380,7 +385,12 @@ class Pods_View {
 			}
 		}
 
-		if ( 'transient' == $cache_mode ) {
+			$full_key = $group_key . $key;
+		}
+
+		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $full_key, $original_key, '', 0, $group ) ) {
+			return true;
+		} elseif ( 'transient' == $cache_mode ) {
 			if ( true === $key ) {
 				$group_key = pods_sanitize_like( $group_key );
 

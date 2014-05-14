@@ -1,0 +1,18 @@
+.pod-switch {
+	width: 100%;
+}
+.pod-reference-wrapper{
+	max-height: 500px;
+	margin: 6px -12px 6px;
+	border-top: 1px solid #EEEEEE;
+	overflow: auto;
+}
+.pod-reference-wrapper.loading {
+	max-height: 10px;
+	opacity: 0.2;
+	overflow: hidden;
+}
+.pod-field-row {
+	border-bottom: 1px solid #EEEEEE;
+	padding: 3px 14px;
+}

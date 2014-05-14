@@ -56,6 +56,7 @@ $plupload_init = array(
 $limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
 $title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' == $limit_file_type )
 	$limit_types = 'jpg,jpeg,png,gif'; elseif ( 'video' == $limit_file_type )
@@ -143,6 +144,8 @@ if ( empty( $value ) )
 			if ( 0 == $title_editable )
 				$title = basename( $attachment->guid );
 
+            $link = wp_get_attachment_url( $attachment->ID );
+            
 			echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title );
 		}
 		?></ul>
@@ -153,7 +156,7 @@ if ( empty( $value ) )
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-	<?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
@@ -182,18 +185,20 @@ if ( empty( $value ) )
 		});
 		<?php } ?>
 
-		// hook delete links
-		$('#<?php echo esc_js( $css_id ); ?>').on('click','li.pods-file-delete',function() {
-			var podsfile = $(this).parent().parent();
-			podsfile.slideUp(function() {
-				// check to see if this was the only entry
-				if(podsfile.parent().children().length == 1) { // 1 because we haven't removed our target yet
-					podsfile.parent().hide();
-				}
-				// remove the entry
-				$(this).remove();
-			});
-		});
+        // hook delete links
+        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete a', function ( e ) {
+			e.preventDefault();
+
+            var podsfile = $( this ).parent().parent().parent();
+            podsfile.slideUp( function () {
+                // check to see if this was the only entry
+                if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
+                    podsfile.parent().hide();
+                }
+                // remove the entry
+                $(this).remove();
+            } );
+        } );
 
 		var pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = new plupload.Uploader(<?php echo json_encode( $plupload_init ); ?>),
 			list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo esc_js( $css_id ); ?> ul.pods-files-list'),
@@ -282,11 +287,12 @@ if ( empty( $value ) )
 					$(this).remove();
 				});
 
-				var binding = {
-					id : json.ID,
-					icon : json.thumbnail,
-					name : json.post_title
-				};
+                var binding = {
+                    id : json.ID,
+                    icon : json.thumbnail,
+                    name : json.post_title,
+                    link : json.link
+                };
 
 				var tmpl = Handlebars.compile($('script#<?php echo esc_js( $css_id ); ?>-handlebars').html());
 

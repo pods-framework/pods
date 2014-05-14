@@ -204,7 +204,7 @@ class Pods_Init {
 		foreach ( $security_settings as $security_setting => $setting ) {
 			$setting = get_option( $security_setting );
 			if ( ! empty( $setting ) ) {
-				$security_settings[ $security_setting ] = $setting;
+				$security_settings[$security_setting] = $setting;
 			}
 		}
 
@@ -216,8 +216,8 @@ class Pods_Init {
 			}
 
 			if ( in_array( $security_setting, array( 'pods_files_require_login', 'pods_upload_require_login' ) ) ) {
-				if ( 0 < strlen( $security_settings[ $security_setting . '_cap' ] ) ) {
-					$setting = $security_settings[ $security_setting . '_cap' ];
+				if ( 0 < strlen( $security_settings[$security_setting . '_cap'] ) ) {
+					$setting = $security_settings[$security_setting . '_cap'];
 				}
 			} elseif ( in_array( $security_setting, array( 'pods_files_require_login_cap', 'pods_upload_require_login_cap' ) ) ) {
 				continue;
@@ -274,14 +274,14 @@ class Pods_Init {
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script( 'jquery-ui-timepicker',
-			PODS_URL . 'ui/js/jquery.ui.timepicker.min.js',
-			array(
-				'jquery',
-				'jquery-ui-core',
-				'jquery-ui-datepicker',
-				'jquery-ui-slider'
-			),
-			'1.1.1' );
+				PODS_URL . 'ui/js/jquery.ui.timepicker.min.js',
+				array(
+					'jquery',
+					'jquery-ui-core',
+					'jquery-ui-datepicker',
+					'jquery-ui-slider'
+				),
+				'1.1.1' );
 		}
 
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
@@ -424,11 +424,11 @@ class Pods_Init {
 
 			foreach ( $post_types as $post_type ) {
 				// Post Type exists already
-				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+				if ( isset( $pods_cpt_ct['post_types'][$post_type['name']] ) ) {
 					continue;
-				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[ $post_type['object'] ] ) ) {
+				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[$post_type['object']] ) ) {
 					continue;
-				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
+				} elseif ( ! $force && isset( $existing_post_types[$post_type['name']] ) ) {
 					continue;
 				}
 
@@ -479,7 +479,7 @@ class Pods_Init {
 					$cpt_supported_custom = array_filter( array_unique( $cpt_supported_custom ) );
 
 					foreach ( $cpt_supported_custom as $cpt_support ) {
-						$cpt_supported[ $cpt_support ] = true;
+						$cpt_supported[$cpt_support] = true;
 					}
 				}
 
@@ -493,6 +493,12 @@ class Pods_Init {
 				// YARPP Support
 				if ( defined( 'YARPP_VERSION' ) ) {
 					$cpt_supported['yarpp_support'] = (boolean) pods_v( 'supports_yarpp_support', $post_type, false );
+				}
+
+				// Jetpack Support
+				if ( class_exists( 'Jetpack' ) ) {
+					$cpt_supported['supports_jetpack_publicize'] = (boolean) pods_var( 'supports_jetpack_publicize', $post_type, false );
+					$cpt_supported['supports_jetpack_markdown']  = (boolean) pods_var( 'supports_jetpack_markdown', $post_type, false );
 				}
 
 				// WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
@@ -540,7 +546,7 @@ class Pods_Init {
 				}
 
 				// Register Post Type
-				$pods_post_types[ $post_type_name ] = array(
+				$pods_post_types[$post_type_name] = array(
 					'label'               => $cpt_label,
 					'labels'              => $cpt_labels,
 					'description'         => esc_html( pods_v( 'description', $post_type ) ),
@@ -567,18 +573,18 @@ class Pods_Init {
 				);
 
 				// Prevent reserved query_var issues
-				if ( in_array( $pods_post_types[ $post_type_name ]['query_var'], $reserved_query_vars ) ) {
-					$pods_post_types[ $post_type_name ]['query_var'] = 'post_type_' . $pods_post_types[ $post_type_name ]['query_var'];
+				if ( in_array( $pods_post_types[$post_type_name]['query_var'], $reserved_query_vars ) ) {
+					$pods_post_types[$post_type_name]['query_var'] = 'post_type_' . $pods_post_types[$post_type_name]['query_var'];
 				}
 
-				if ( 25 == $pods_post_types[ $post_type_name ]['menu_position'] ) {
-					$pods_post_types[ $post_type_name ]['menu_position'] ++;
+				if ( 25 == $pods_post_types[$post_type_name]['menu_position'] ) {
+					$pods_post_types[$post_type_name]['menu_position'] ++;
 				}
 
-				if ( $pods_post_types[ $post_type_name ]['menu_position'] < 1 || in_array( $pods_post_types[ $post_type_name ]['menu_position'], $cpt_positions ) ) {
-					unset( $pods_post_types[ $post_type_name ]['menu_position'] );
+				if ( $pods_post_types[$post_type_name]['menu_position'] < 1 || in_array( $pods_post_types[$post_type_name]['menu_position'], $cpt_positions ) ) {
+					unset( $pods_post_types[$post_type_name]['menu_position'] );
 				} else {
-					$cpt_positions[] = $pods_post_types[ $post_type_name ]['menu_position'];
+					$cpt_positions[] = $pods_post_types[$post_type_name]['menu_position'];
 
 					// This would be nice if WP supported floats in menu_position
 					// $pods_post_types[ $post_type_name ][ 'menu_position' ] = $pods_post_types[ $post_type_name ][ 'menu_position' ] . '.1';
@@ -598,26 +604,26 @@ class Pods_Init {
 					if ( false !== (boolean) pods_v( 'built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
 						$cpt_taxonomies[] = $taxonomy;
 
-						if ( isset( $supported_post_types[ $taxonomy ] ) && ! in_array( $post_type_name, $supported_post_types[ $taxonomy ] ) ) {
-							$supported_post_types[ $taxonomy ][] = $post_type_name;
+						if ( isset( $supported_post_types[$taxonomy] ) && ! in_array( $post_type_name, $supported_post_types[$taxonomy] ) ) {
+							$supported_post_types[$taxonomy][] = $post_type_name;
 						}
 					}
 				}
 
-				if ( isset( $supported_taxonomies[ $post_type_name ] ) ) {
-					$supported_taxonomies[ $post_type_name ] = array_merge( (array) $supported_taxonomies[ $post_type_name ], $cpt_taxonomies );
+				if ( isset( $supported_taxonomies[$post_type_name] ) ) {
+					$supported_taxonomies[$post_type_name] = array_merge( (array) $supported_taxonomies[$post_type_name], $cpt_taxonomies );
 				} else {
-					$supported_taxonomies[ $post_type_name ] = $cpt_taxonomies;
+					$supported_taxonomies[$post_type_name] = $cpt_taxonomies;
 				}
 			}
 
 			foreach ( $taxonomies as $taxonomy ) {
 				// Taxonomy Type exists already
-				if ( isset( $pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] ) ) {
+				if ( isset( $pods_cpt_ct['taxonomies'][$taxonomy['name']] ) ) {
 					continue;
-				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
+				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[$taxonomy['object']] ) ) {
 					continue;
-				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
+				} elseif ( ! $force && isset( $existing_taxonomies[$taxonomy['name']] ) ) {
 					continue;
 				}
 
@@ -663,7 +669,7 @@ class Pods_Init {
 				}
 
 				// Register Taxonomy
-				$pods_taxonomies[ $taxonomy_name ] = array(
+				$pods_taxonomies[$taxonomy_name] = array(
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
 					'public'                => (boolean) pods_v( 'public', $taxonomy, true ),
@@ -679,19 +685,19 @@ class Pods_Init {
 					'sort'                  => (boolean) pods_v( 'sort', $taxonomy, false )
 				);
 
-				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
-					$pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true );
+				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[$taxonomy_name]['query_var'] ) {
+					$pods_taxonomies[$taxonomy_name]['query_var'] = pods_v( 'query_var_string', $taxonomy, $taxonomy_name, true );
 				};
 
 				// Prevent reserved query_var issues
-				if ( in_array( $pods_taxonomies[ $taxonomy_name ]['query_var'], $reserved_query_vars ) ) {
-					$pods_taxonomies[ $taxonomy_name ]['query_var'] = 'taxonomy_' . $pods_taxonomies[ $taxonomy_name ]['query_var'];
+				if ( in_array( $pods_taxonomies[$taxonomy_name]['query_var'], $reserved_query_vars ) ) {
+					$pods_taxonomies[$taxonomy_name]['query_var'] = 'taxonomy_' . $pods_taxonomies[$taxonomy_name]['query_var'];
 				}
 
 				// Integration for Single Value Taxonomy UI
 				if ( function_exists( 'tax_single_value_meta_box' ) ) {
-					$pods_taxonomies[ $taxonomy_name ]['single_value'] = (boolean) pods_v( 'single_value', $taxonomy, false );
-					$pods_taxonomies[ $taxonomy_name ]['required']     = (boolean) pods_v( 'single_value_required', $taxonomy, false );
+					$pods_taxonomies[$taxonomy_name]['single_value'] = (boolean) pods_v( 'single_value', $taxonomy, false );
+					$pods_taxonomies[$taxonomy_name]['required']     = (boolean) pods_v( 'single_value_required', $taxonomy, false );
 				}
 
 				// Post Types
@@ -708,26 +714,26 @@ class Pods_Init {
 					if ( false !== (boolean) pods_v( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
 						$ct_post_types[] = $post_type;
 
-						if ( isset( $supported_taxonomies[ $post_type ] ) && ! in_array( $taxonomy_name, $supported_taxonomies[ $post_type ] ) ) {
-							$supported_taxonomies[ $post_type ][] = $taxonomy_name;
+						if ( isset( $supported_taxonomies[$post_type] ) && ! in_array( $taxonomy_name, $supported_taxonomies[$post_type] ) ) {
+							$supported_taxonomies[$post_type][] = $taxonomy_name;
 						}
 					}
 				}
 
-				if ( isset( $supported_post_types[ $taxonomy_name ] ) ) {
-					$supported_post_types[ $taxonomy_name ] = array_merge( $supported_post_types[ $taxonomy_name ], $ct_post_types );
+				if ( isset( $supported_post_types[$taxonomy_name] ) ) {
+					$supported_post_types[$taxonomy_name] = array_merge( $supported_post_types[$taxonomy_name], $ct_post_types );
 				} else {
-					$supported_post_types[ $taxonomy_name ] = $ct_post_types;
+					$supported_post_types[$taxonomy_name] = $ct_post_types;
 				}
 			}
 
 			foreach ( $comment_types as $comment_type ) {
 				// Comment Type exists already
-				if ( isset( $pods_cpt_ct['comment_types'][ $comment_type['name'] ] ) ) {
+				if ( isset( $pods_cpt_ct['comment_types'][$comment_type['name']] ) ) {
 					continue;
-				} elseif ( ! empty( $comment_type['object'] ) && isset( $existing_comment_types[ $comment_type['object'] ] ) ) {
+				} elseif ( ! empty( $comment_type['object'] ) && isset( $existing_comment_types[$comment_type['object']] ) ) {
 					continue;
-				} elseif ( ! $force && isset( $existing_comment_types[ $comment_type['name'] ] ) ) {
+				} elseif ( ! $force && isset( $existing_comment_types[$comment_type['name']] ) ) {
 					continue;
 				}
 
@@ -774,7 +780,7 @@ class Pods_Init {
 				}
 
 				// Register Comment Type
-				$pods_comment_types[ $comment_type_name ] = array(
+				$pods_comment_types[$comment_type_name] = array(
 					'label'               => $ct_label,
 					'labels'              => $ct_labels,
 					'description'         => esc_html( pods_v( 'description', $comment_type ) ),
@@ -792,14 +798,14 @@ class Pods_Init {
 					'can_export'          => (boolean) pods_v( 'can_export', $comment_type, true )
 				);
 
-				if ( 25 == $pods_comment_types[ $comment_type_name ]['menu_position'] ) {
-					$pods_comment_types[ $comment_type_name ]['menu_position'] ++;
+				if ( 25 == $pods_comment_types[$comment_type_name]['menu_position'] ) {
+					$pods_comment_types[$comment_type_name]['menu_position'] ++;
 				}
 
-				if ( $pods_comment_types[ $comment_type_name ]['menu_position'] < 1 || in_array( $pods_comment_types[ $comment_type_name ]['menu_position'], $ct_positions ) ) {
-					unset( $pods_comment_types[ $comment_type_name ]['menu_position'] );
+				if ( $pods_comment_types[$comment_type_name]['menu_position'] < 1 || in_array( $pods_comment_types[$comment_type_name]['menu_position'], $ct_positions ) ) {
+					unset( $pods_comment_types[$comment_type_name]['menu_position'] );
 				} else {
-					$ct_positions[] = $pods_comment_types[ $comment_type_name ]['menu_position'];
+					$ct_positions[] = $pods_comment_types[$comment_type_name]['menu_position'];
 
 					// This would be nice if WP supported floats in menu_position
 					// $pods_comment_types[ $comment_type_name ][ 'menu_position' ] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ] . '.1';
@@ -819,30 +825,30 @@ class Pods_Init {
 			foreach ( $pods_taxonomies as $taxonomy => $options ) {
 				$ct_post_types = null;
 
-				if ( isset( $supported_post_types[ $taxonomy ] ) && ! empty( $supported_post_types[ $taxonomy ] ) ) {
-					$ct_post_types = $supported_post_types[ $taxonomy ];
+				if ( isset( $supported_post_types[$taxonomy] ) && ! empty( $supported_post_types[$taxonomy] ) ) {
+					$ct_post_types = $supported_post_types[$taxonomy];
 				}
 
-				$pods_cpt_ct['taxonomies'][ $taxonomy ] = array(
+				$pods_cpt_ct['taxonomies'][$taxonomy] = array(
 					'post_types' => $ct_post_types,
 					'options'    => $options
 				);
 			}
 
 			foreach ( $pods_post_types as $post_type => $options ) {
-				if ( isset( $supported_taxonomies[ $post_type ] ) && ! empty( $supported_taxonomies[ $post_type ] ) ) {
-					$options['taxonomies'] = $supported_taxonomies[ $post_type ];
+				if ( isset( $supported_taxonomies[$post_type] ) && ! empty( $supported_taxonomies[$post_type] ) ) {
+					$options['taxonomies'] = $supported_taxonomies[$post_type];
 				}
 
-				$pods_cpt_ct['post_types'][ $post_type ] = $options;
+				$pods_cpt_ct['post_types'][$post_type] = $options;
 			}
 
 			foreach ( $pods_comment_types as $comment_type => $options ) {
-				if ( isset( $supported_comment_post_types[ $comment_type ] ) && ! empty( $supported_comment_post_types[ $comment_type ] ) ) {
-					$options['comment_types'] = $supported_comment_post_types[ $comment_type ];
+				if ( isset( $supported_comment_post_types[$comment_type] ) && ! empty( $supported_comment_post_types[$comment_type] ) ) {
+					$options['comment_types'] = $supported_comment_post_types[$comment_type];
 				}
 
-				$pods_cpt_ct['comment_types'][ $comment_type ] = $options;
+				$pods_cpt_ct['comment_types'][$comment_type] = $options;
 			}
 
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
@@ -966,14 +972,14 @@ class Pods_Init {
 		}
 
 		foreach ( $post_types as $post_type ) {
-			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+			if ( ! isset( $pods_cpt_ct['post_types'][$post_type['name']] ) ) {
 				continue;
 			}
 
-			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][ $post_type['name'] ], 'post_type' );
+			$labels = self::object_label_fix( $pods_cpt_ct['post_types'][$post_type['name']], 'post_type' );
 			$labels = $labels['labels'];
 
-			$messages[ $post_type['name'] ] = array(
+			$messages[$post_type['name']] = array(
 				1  => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				2  => __( 'Custom field updated.', 'pods' ),
 				3  => __( 'Custom field deleted.', 'pods' ),
@@ -992,15 +998,15 @@ class Pods_Init {
 				10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels['singular_name'] )
 			);
 
-			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {
-				$messages[ $post_type['name'] ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][6]  = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
+			if ( false === (boolean) $pods_cpt_ct['post_types'][$post_type['name']]['public'] ) {
+				$messages[$post_type['name']][1]  = sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] );
+				$messages[$post_type['name']][6]  = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
+				$messages[$post_type['name']][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
+				$messages[$post_type['name']][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
 					$labels['singular_name'],
 					// translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
-				$messages[ $post_type['name'] ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels['singular_name'] );
+				$messages[$post_type['name']][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels['singular_name'] );
 			}
 		}
 

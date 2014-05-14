@@ -85,6 +85,10 @@ function pods_sanitize( $input, $params = array() ) {
  */
 function pods_sanitize_like( $input ) {
 
+	if ( '' === $input || is_int( $input ) || is_float( $input ) || empty( $input ) ) {
+		return $input;
+	}
+
 	$output = array();
 
 	if ( is_object( $input ) ) {
@@ -842,15 +846,22 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 		} elseif ( 'user' == $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
-			$user_data = $user->to_array();
+			if ( !pods_version_check( 'wp', '3.5' ) ) {
+				$user_data = get_object_vars( $user->data );
+			}
+			else {
+				$user_data = $user->to_array();
+			}
 
-			// Core field
-			if ( isset( $user_data[ $var ] ) ) {
-				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
-			} // Role
-			elseif ( 'role' == $var ) {
+			// Role
+			if ( 'role' == $var ) {
 				$user->set_role( $value );
-			} // Meta field
+			}
+			// Core field
+			elseif ( isset( $user_data[ $var ] ) ) {
+				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
+			}
+			// Meta field
 			else {
 				update_user_meta( $user->ID, $var, $value );
 			}
@@ -1346,7 +1357,48 @@ function pods_str_replace( $find, $replace, $string, $occurrences = -1 ) {
 		$find = '/' . preg_quote( $find, '/' ) . '/';
 	}
 
-	return preg_replace( $find, $replace, $string, $occurrences );
+    return preg_replace( $find, $replace, $string, $occurrences );
+}
+
+/**
+ * Use mb_strlen if available, otherwise fallback to strlen
+ *
+ * @param string $string
+ *
+ * @return int
+ */
+function pods_mb_strlen( $string ) {
+
+	if ( function_exists( 'mb_strlen' ) ) {
+		return mb_strlen( $string );
+	}
+
+	return strlen( $string );
+
+}
+
+/**
+ * Use mb_substr if available, otherwise fallback to substr
+ *
+ * @param string $string
+ * @param int $start
+ * @param null|int $length
+ * @param null|string $encoding
+ *
+ * @return string
+ */
+function pods_mb_substr( $string, $start, $length = null, $encoding = null ) {
+
+	if ( function_exists( 'mb_substr' ) ) {
+		if ( null === $encoding ) {
+			$encoding = mb_internal_encoding();
+		}
+
+		return mb_substr( $string, $start, $length, $encoding );
+	}
+
+	return substr( $string, $start, $length );
+
 }
 
 /**

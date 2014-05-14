@@ -152,8 +152,10 @@ class Pods_Field_Email extends
 
 			if ( 0 == strlen( $value ) && 1 == pods_var( 'required', $options ) ) {
 				$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
-			} else if ( strlen( $check ) < 1 ) {
-				$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
+			} else {
+				if ( strlen( $check ) < 1 ) {
+					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
+				}
 			}
 		}
 
@@ -170,6 +172,12 @@ class Pods_Field_Email extends
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		if ( ! is_email( $value ) ) {
 			$value = '';
+		}
+
+		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
+
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
 		}
 
 		return $value;

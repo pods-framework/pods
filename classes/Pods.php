@@ -3,8 +3,7 @@
 /**
  * @package Pods
  */
-class Pods implements
-	Iterator {
+class Pods implements Iterator {
 
 	/**
 	 * @var bool
@@ -150,13 +149,9 @@ class Pods implements
 	 * @var mixed SEO related vars for Pod Pages
 	 */
 	public $page_template;
-
 	public $body_classes;
-
 	public $meta = array();
-
 	public $meta_properties = array();
-
 	public $meta_extra = '';
 
 	/**
@@ -282,7 +277,7 @@ class Pods implements
 		}
 
 		if ( $this->iterator ) {
-			return isset( $this->rows[ $this->row_number ] );
+			return isset( $this->rows[$this->row_number] );
 		}
 
 		return true;
@@ -491,20 +486,20 @@ class Pods implements
 		elseif ( empty( $field ) ) {
 			$field_data = (array) $this->fields;
 		} // Field not found
-		elseif ( ! isset( $this->fields[ $field ] ) ) {
+		elseif ( ! isset( $this->fields[$field] ) ) {
 			$field_data = array();
 		} // Return all field data
 		elseif ( empty( $option ) ) {
-			$field_data = $this->fields[ $field ];
+			$field_data = $this->fields[$field];
 		} else {
 			$field_data = null;
 
 			// Get a list of available items from a relationship field
-			if ( 'data' == $option && in_array( $this->fields[ $field ]['type'], Pods_Form::tableless_field_types() ) ) {
-				$field_data = Pods_Form::field_method( 'pick', 'get_field_data', $this->fields[ $field ] );
+			if ( 'data' == $option && in_array( $this->fields[$field]['type'], Pods_Form::tableless_field_types() ) ) {
+				$field_data = Pods_Form::field_method( 'pick', 'get_field_data', $this->fields[$field] );
 			} // Return option
-			elseif ( isset( $this->fields[ $field ][ $option ] ) ) {
-				$field_data = $this->fields[ $field ][ $option ];
+			elseif ( isset( $this->fields[$field][$option] ) ) {
+				$field_data = $this->fields[$field][$option];
 			}
 		}
 
@@ -522,7 +517,7 @@ class Pods implements
 
 		$this->do_hook( 'row' );
 
-		if ( empty( $this->row ) ) {
+		if ( ! is_array( $this->row ) ) {
 			return false;
 		}
 
@@ -693,8 +688,8 @@ class Pods implements
 
 		$value = null;
 
-		if ( isset( $this->row_override[ $params->name ] ) ) {
-			$value = $this->row_override[ $params->name ];
+		if ( isset( $this->row_override[$params->name] ) ) {
+			$value = $this->row_override[$params->name];
 		}
 
 		if ( false === $this->row() ) {
@@ -706,8 +701,8 @@ class Pods implements
 		}
 
 		if ( $this->data->field_id == $params->name ) {
-			if ( isset( $this->row[ $params->name ] ) ) {
-				return $this->row[ $params->name ];
+			if ( isset( $this->row[$params->name] ) ) {
+				return $this->row[$params->name];
 			} elseif ( null !== $value ) {
 				return $value;
 			}
@@ -740,12 +735,12 @@ class Pods implements
 		$first_field = explode( '.', $params->name );
 		$first_field = $first_field[0];
 
-		if ( isset( $this->fields[ $first_field ] ) ) {
-			$field_data = $this->fields[ $first_field ];
+		if ( isset( $this->fields[$first_field] ) ) {
+			$field_data = $this->fields[$first_field];
 			$field_type = 'field';
 		} elseif ( isset( $this->pod_data['object_fields'] ) && ! empty( $this->pod_data['object_fields'] ) ) {
-			if ( isset( $this->pod_data['object_fields'][ $first_field ] ) ) {
-				$field_data = $this->pod_data['object_fields'][ $first_field ];
+			if ( isset( $this->pod_data['object_fields'][$first_field] ) ) {
+				$field_data = $this->pod_data['object_fields'][$first_field];
 				$field_type = 'object_field';
 			} else {
 				foreach ( $this->pod_data['object_fields'] as $object_field => $object_field_opt ) {
@@ -774,10 +769,10 @@ class Pods implements
 
 			$value = false;
 
-			if ( 'arrays' != $params->output && isset( $this->row[ '_' . $params->output . '_' . $params->name ] ) ) {
-				$value = $this->row[ '_' . $params->output . '_' . $params->name ];
-			} elseif ( 'arrays' == $params->output && isset( $this->row[ $params->name ] ) ) {
-				$value = $this->row[ $params->name ];
+			if ( 'arrays' != $params->output && isset( $this->row['_' . $params->output . '_' . $params->name] ) ) {
+				$value = $this->row['_' . $params->output . '_' . $params->name];
+			} elseif ( 'arrays' == $params->output && isset( $this->row[$params->name] ) ) {
+				$value = $this->row[$params->name];
 			}
 
 			if ( false !== $value && ! is_array( $value ) && 'pick' == $field_data['type'] && ( in_array( $field_data['pick_object'], $simple_tableless_objects ) || 1 == $field_data['pick_simple'] ) ) {
@@ -785,22 +780,22 @@ class Pods implements
 			}
 		}
 
-		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( ! in_array( $field_data['type'], $tableless_field_types ) || 'arrays' == $params->output ) ) {
+		if ( empty( $value ) && isset( $this->row[$params->name] ) && ( ! in_array( $field_data['type'], $tableless_field_types ) || 'arrays' == $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data['type'], array( 'boolean', 'number', 'currency' ) ) ) {
 				$params->raw = true;
 			}
 
-			$value = $this->row[ $params->name ];
+			$value = $this->row[$params->name];
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
 
 			if ( 'object_field' == $field_type ) {
 				$object_field_found = true;
 
-				if ( isset( $this->row[ $first_field ] ) ) {
-					$value = $this->row[ $first_field ];
+				if ( isset( $this->row[$first_field] ) ) {
+					$value = $this->row[$first_field];
 				} elseif ( in_array( $field_data['type'], $tableless_field_types ) ) {
-					$this->fields[ $first_field ] = $field_data;
+					$this->fields[$first_field] = $field_data;
 
 					$object_field_found = false;
 				} else {
@@ -808,7 +803,7 @@ class Pods implements
 				}
 			}
 
-			if ( 'post_type' == $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
+			if ( 'post_type' == $this->pod_data['type'] && ! isset( $this->fields[$params->name] ) ) {
 				if ( ! isset( $this->fields['post_thumbnail'] ) && ( 'post_thumbnail' == $params->name || 0 === strpos( $params->name, 'post_thumbnail.' ) ) ) {
 					$size = 'thumbnail';
 
@@ -821,7 +816,7 @@ class Pods implements
 					}
 
 					// Pods will auto-get the thumbnail ID if this isn't an attachment
-					$value = pods_image( $this->id(), $size );
+					$value = pods_image( $this->id(), $size, 0, null, true );
 
 					$object_field_found = true;
 				} elseif ( ! isset( $this->fields['post_thumbnail_url'] ) && ( 'post_thumbnail_url' == $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) ) {
@@ -836,11 +831,11 @@ class Pods implements
 					}
 
 					// Pods will auto-get the thumbnail ID if this isn't an attachment
-					$value = pods_image_url( $this->id(), $size );
+					$value = pods_image_url( $this->id(), $size, 0, true );
 
 					$object_field_found = true;
 				}
-			} elseif ( 'user' == $this->pod_data['type'] && ! isset( $this->fields[ $params->name ] ) ) {
+			} elseif ( 'user' == $this->pod_data['type'] && ! isset( $this->fields[$params->name] ) ) {
 				if ( ! isset( $this->fields['avatar'] ) && ( 'avatar' == $params->name || 0 === strpos( $params->name, 'avatar.' ) ) ) {
 					$size = null;
 
@@ -876,7 +871,7 @@ class Pods implements
 				}
 
 				if ( ! empty( $image_id ) ) {
-					$value = pods_image( $image_id, $size );
+					$value = pods_image( $image_id, $size, 0, null, true );
 
 					if ( ! empty( $value ) ) {
 						$object_field_found = true;
@@ -898,7 +893,7 @@ class Pods implements
 				}
 
 				if ( ! empty( $image_id ) ) {
-					$value = pods_image_url( $image_id, $size );
+					$value = pods_image_url( $image_id, $size, 0, true );
 
 					if ( ! empty( $value ) ) {
 						$object_field_found = true;
@@ -915,8 +910,8 @@ class Pods implements
 					$params->name = $params->traverse[0];
 				}
 
-				if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ]['type'] ) ) {
-					$v = $this->do_hook( 'field_' . $this->fields[ $params->name ]['type'], null, $this->fields[ $params->name ], $this->row, $params );
+				if ( isset( $this->fields[$params->name] ) && isset( $this->fields[$params->name]['type'] ) ) {
+					$v = $this->do_hook( 'field_' . $this->fields[$params->name]['type'], null, $this->fields[$params->name], $this->row, $params );
 
 					if ( null !== $v ) {
 						return $v;
@@ -926,28 +921,28 @@ class Pods implements
 				$simple      = false;
 				$simple_data = array();
 
-				if ( isset( $this->fields[ $params->name ] ) ) {
+				if ( isset( $this->fields[$params->name] ) ) {
 					if ( 'meta' == $this->pod_data['storage'] ) {
-						if ( ! in_array( $this->fields[ $params->name ]['type'], $tableless_field_types ) ) {
+						if ( ! in_array( $this->fields[$params->name]['type'], $tableless_field_types ) ) {
 							$simple = true;
 						}
 					}
 
-					if ( in_array( $this->fields[ $params->name ]['type'], $tableless_field_types ) ) {
+					if ( in_array( $this->fields[$params->name]['type'], $tableless_field_types ) ) {
 						$params->raw = true;
 
-						if ( 'pick' == $this->fields[ $params->name ]['type'] && ( in_array( $this->fields[ $params->name ]['pick_object'], $simple_tableless_objects ) || 1 == $this->fields[ $params->name ]['pick_simple'] ) ) {
+						if ( 'pick' == $this->fields[$params->name]['type'] && ( in_array( $this->fields[$params->name]['pick_object'], $simple_tableless_objects ) || 1 == $this->fields[$params->name]['pick_simple'] ) ) {
 							$simple         = true;
 							$params->single = true;
 						}
-					} elseif ( in_array( $this->fields[ $params->name ]['type'], array( 'boolean', 'number', 'currency' ) ) ) {
+					} elseif ( in_array( $this->fields[$params->name]['type'], array( 'boolean', 'number', 'currency' ) ) ) {
 						$params->raw = true;
 					}
 				}
 
-				if ( ! isset( $this->fields[ $params->name ] ) || ! in_array( $this->fields[ $params->name ]['type'], $tableless_field_types ) || $simple ) {
+				if ( ! isset( $this->fields[$params->name] ) || ! in_array( $this->fields[$params->name]['type'], $tableless_field_types ) || $simple ) {
 					if ( null === $params->single ) {
-						if ( isset( $this->fields[ $params->name ] ) && ! in_array( $this->fields[ $params->name ]['type'], $tableless_field_types ) ) {
+						if ( isset( $this->fields[$params->name] ) && ! in_array( $this->fields[$params->name]['type'], $tableless_field_types ) ) {
 							$params->single = true;
 						} else {
 							$params->single = false;
@@ -973,8 +968,20 @@ class Pods implements
 						}
 
 						$value = get_post_meta( $id, $params->name, $params->single );
+
+						$single_multi = pods_var( $this->fields[$params->name]['type'] . '_format_type', $this->fields[$params->name]['options'], 'single' );
+
+						if ( $simple && ! is_array( $value ) && 'single' != $single_multi ) {
+							$value = get_post_meta( $id, $params->name );
+						}
 					} elseif ( in_array( $this->pod_data['type'], array( 'user', 'comment' ) ) ) {
 						$value = get_metadata( $this->pod_data['type'], $this->id(), $params->name, $params->single );
+
+						$single_multi = pods_var( $this->fields[$params->name]['type'] . '_format_type', $this->fields[$params->name]['options'], 'single' );
+
+						if ( $simple && ! is_array( $value ) && 'single' != $single_multi ) {
+							$value = get_metadata( $this->pod_data['type'], $this->id(), $params->name );
+						}
 					} elseif ( 'settings' == $this->pod_data['type'] ) {
 						$value = get_option( $this->pod_data['name'] . '_' . $params->name, null );
 					}
@@ -985,7 +992,7 @@ class Pods implements
 							$params->single = false;
 						}
 
-						$value = Pods_Form::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
+						$value = Pods_Form::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[$params->name], $this->pod_data, $this->id(), true );
 					}
 
 					if ( ! $no_conflict ) {
@@ -1023,11 +1030,11 @@ class Pods implements
 						if ( ! empty( $fields ) ) {
 							foreach ( $fields as $field ) {
 								if ( ! empty( $field ) ) {
-									if ( ! isset( $all_fields[ $field['pod'] ] ) ) {
-										$all_fields[ $field['pod'] ] = array();
+									if ( ! isset( $all_fields[$field['pod']] ) ) {
+										$all_fields[$field['pod']] = array();
 									}
 
-									$all_fields[ $field['pod'] ][ $field['name'] ] = $field;
+									$all_fields[$field['pod']][$field['name']] = $field;
 								}
 							}
 						}
@@ -1035,7 +1042,7 @@ class Pods implements
 						if ( isset( $this->pod_data['object_fields'] ) && ! empty( $this->pod_data['object_fields'] ) ) {
 							foreach ( $this->pod_data['object_fields'] as $object_field => $object_field_opt ) {
 								if ( in_array( $object_field_opt['type'], $tableless_field_types ) ) {
-									$all_fields[ $this->pod ][ $object_field ] = $object_field_opt;
+									$all_fields[$this->pod][$object_field] = $object_field_opt;
 								}
 							}
 						}
@@ -1044,8 +1051,8 @@ class Pods implements
 					$last_type    = $last_object = $last_pick_val = '';
 					$last_options = array();
 
-					if ( 'multi' == $this->fields[ $params->name ][ $this->fields[ $params->name ]['type'] . '_format_type' ] ) {
-						$limit = (int) pods_v( $this->fields[ $params->name ]['type'] . '_limit', $this->fields[ $params->name ], 0 );
+					if ( 'multi' == $this->fields[$params->name][$this->fields[$params->name]['type'] . '_format_type'] ) {
+						$limit = (int) pods_v( $this->fields[$params->name]['type'] . '_limit', $this->fields[$params->name], 0 );
 					} else {
 						$limit = 1;
 					}
@@ -1060,34 +1067,39 @@ class Pods implements
 							$last_loop = true;
 						}
 
-						$field_exists = isset( $all_fields[ $pod ][ $field ] );
+						$field_exists = isset( $all_fields[$pod][$field] );
 
 						$simple       = false;
 						$last_options = array();
 
-						if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ]['type'] && ( in_array( $all_fields[ $pod ][ $field ]['pick_object'], $simple_tableless_objects ) || 1 == $all_fields[ $pod ][ $field ]['pick_simple'] ) ) {
+						if ( $field_exists && 'pick' == $all_fields[$pod][$field]['type'] && ( in_array( $all_fields[$pod][$field]['pick_object'], $simple_tableless_objects ) || 1 == $all_fields[$pod][$field]['pick_simple'] ) ) {
 							$simple       = true;
-							$last_options = $all_fields[ $pod ][ $field ];
+							$last_options = $all_fields[$pod][$field];
 						}
 
 						// Tableless handler
-						if ( $field_exists && ( 'pick' != $all_fields[ $pod ][ $field ]['type'] || ! $simple ) ) {
-							$type        = $all_fields[ $pod ][ $field ]['type'];
-							$pick_object = $all_fields[ $pod ][ $field ]['pick_object'];
-							$pick_val    = $all_fields[ $pod ][ $field ]['pick_val'];
+						if ( $field_exists && ( ! in_array( $all_fields[$pod][$field]['type'], array( 'pick', 'taxonomy' ) ) || ! $simple ) ) {
+
+							$type        = $all_fields[$pod][$field]['type'];
+							$pick_object = $all_fields[$pod][$field]['pick_object'];
+							$pick_val    = $all_fields[$pod][$field]['pick_val'];
 
 							if ( 'table' == $pick_object ) {
-								$pick_val = pods_v_sanitized( 'pick_table', $all_fields[ $pod ][ $field ], $pick_val, null, true );
+
+								$pick_val = pods_v_sanitized( 'pick_table', $all_fields[$pod][$field]['options'], $pick_val, null, true );
 							} elseif ( '__current__' == $pick_val ) {
+
 								$pick_val = $pod;
 							}
 
 							$last_limit = 0;
 
 							if ( in_array( $type, $tableless_field_types ) ) {
-								if ( 'multi' == $all_fields[ $pod ][ $field ][ $type . '_format_type' ] ) {
-									$last_limit = (int) pods_v( $type . '_limit', $all_fields[ $pod ][ $field ], 0 );
+								if ( 'multi' == $all_fields[$pod][$field][$type . '_format_type'] ) {
+
+									$last_limit = (int) pods_v( $type . '_limit', $all_fields[$pod][$field], 0 );
 								} else {
+
 									$last_limit = 1;
 								}
 							}
@@ -1095,17 +1107,17 @@ class Pods implements
 							$last_type     = $type;
 							$last_object   = $pick_object;
 							$last_pick_val = $pick_val;
-							$last_options  = $all_fields[ $pod ][ $field ];
+							$last_options  = $all_fields[$pod][$field];
 
 							// Temporary hack until there's some better handling here
 							$last_limit = $last_limit * count( $ids );
 
 							// Get related IDs
-							if ( isset( $all_fields[ $pod ][ $field ]['id'] ) && isset( $all_fields[ $pod ][ $field ]['pod_id'] ) ) {
-								$ids = $this->api->lookup_related_items( $all_fields[ $pod ][ $field ]['id'],
-									$all_fields[ $pod ][ $field ]['pod_id'],
+							if ( isset( $all_fields[$pod][$field]['id'] ) && isset( $all_fields[$pod][$field]['pod_id'] ) ) {
+								$ids = $this->api->lookup_related_items( $all_fields[$pod][$field]['id'],
+									$all_fields[$pod][$field]['pod_id'],
 									$ids,
-									$all_fields[ $pod ][ $field ] );
+									$all_fields[$pod][$field] );
 							}
 
 							// No items found
@@ -1159,7 +1171,7 @@ class Pods implements
 
 							if ( ! empty( $table['where'] ) || ! empty( $ids ) ) {
 								foreach ( $ids as $id ) {
-									$where[ $id ] = '`t`.`' . $table['field_id'] . '` = ' . (int) $id;
+									$where[$id] = '`t`.`' . $table['field_id'] . '` = ' . (int) $id;
 								}
 
 								if ( ! empty( $where ) ) {
@@ -1285,7 +1297,7 @@ class Pods implements
 										}
 
 										// Pass item data into $data
-										$items[ $item_id ] = $item;
+										$items[$item_id] = $item;
 									}
 
 									// Cleanup
@@ -1294,8 +1306,8 @@ class Pods implements
 									// Return all of the data in the order expected
 									if ( empty( $params->orderby ) ) {
 										foreach ( $ids as $id ) {
-											if ( isset( $items[ $id ] ) ) {
-												$data[ $id ] = $items[ $id ];
+											if ( isset( $items[$id] ) ) {
+												$data[$id] = $items[$id];
 											}
 										}
 									}
@@ -1393,11 +1405,11 @@ class Pods implements
 											}
 
 											$params->raw_display = true;
-										} elseif ( is_array( $item ) && isset( $item[ $field ] ) ) {
+										} elseif ( is_array( $item ) && isset( $item[$field] ) ) {
 											if ( $table['field_id'] == $field ) {
-												$value[] = (int) $item[ $field ];
+												$value[] = (int) $item[$field];
 											} else {
-												$value[] = $item[ $field ];
+												$value[] = $item[$field];
 											}
 										} elseif ( is_object( $item ) && isset( $item->{$field} ) ) {
 											if ( $table['field_id'] == $field ) {
@@ -1434,7 +1446,7 @@ class Pods implements
 										$params->single = false;
 									}
 
-									$value = Pods_Form::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
+									$value = Pods_Form::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[$pod], 0, true );
 								} elseif ( false === $params->in_form && ! empty( $value ) ) {
 									$value = array_values( $value );
 								}
@@ -1455,11 +1467,11 @@ class Pods implements
 		if ( ! empty( $params->traverse ) && 1 < count( $params->traverse ) ) {
 			$field_names = implode( '.', $params->traverse );
 
-			$this->row[ $field_names ] = $value;
+			$this->row[$field_names] = $value;
 		} elseif ( 'arrays' != $params->output && in_array( $field_data['type'], $tableless_field_types ) ) {
-			$this->row[ '_' . $params->output . '_' . $params->full_name ] = $value;
+			$this->row['_' . $params->output . '_' . $params->full_name] = $value;
 		} elseif ( 'arrays' == $params->output || ! in_array( $field_data['type'], $tableless_field_types ) ) {
-			$this->row[ $params->full_name ] = $value;
+			$this->row[$params->full_name] = $value;
 		}
 
 		if ( $params->single && is_array( $value ) && 1 == count( $value ) ) {
@@ -1539,17 +1551,17 @@ class Pods implements
 
 		$this->do_hook( 'has', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
+		if ( ! isset( $this->fields[$field] ) ) {
 			return false;
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ]['type'], Pods_Form::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[$field]['type'], Pods_Form::tableless_field_types() ) ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ]['type'] && ( in_array( $this->fields[ $field ]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ]['pick_simple'] ) ) {
+			if ( 'pick' == $this->fields[$field]['type'] && ( in_array( $this->fields[$field]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[$field]['pick_simple'] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) ) {
@@ -1562,11 +1574,11 @@ class Pods implements
 					}
 				}
 			} else {
-				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->api->lookup_related_items( $this->fields[$field]['id'], $this->pod_data['id'], $id, $this->fields[$field], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^0-9]*/', $v ) ) {
-						$value[ $k ] = (int) $v;
+						$value[$k] = (int) $v;
 					} // @todo Convert slugs into IDs
 					else {
 
@@ -1580,7 +1592,7 @@ class Pods implements
 				}
 			}
 		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -1617,19 +1629,19 @@ class Pods implements
 
 		$this->do_hook( 'is', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
+		if ( ! isset( $this->fields[$field] ) ) {
 			return false;
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ]['type'], Pods_Form::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[$field]['type'], Pods_Form::tableless_field_types() ) ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
 			$current_value = array();
 
-			if ( 'pick' == $this->fields[ $field ]['type'] && ( in_array( $this->fields[ $field ]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ]['pick_simple'] ) ) {
+			if ( 'pick' == $this->fields[$field]['type'] && ( in_array( $this->fields[$field]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[$field]['pick_simple'] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) ) {
@@ -1642,11 +1654,11 @@ class Pods implements
 					}
 				}
 			} else {
-				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->api->lookup_related_items( $this->fields[$field]['id'], $this->pod_data['id'], $id, $this->fields[$field], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^0-9]*/', $v ) ) {
-						$value[ $k ] = (int) $v;
+						$value[$k] = (int) $v;
 					} // @todo Convert slugs into IDs
 					else {
 
@@ -1679,14 +1691,14 @@ class Pods implements
 				return true;
 			}
 		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::number_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( (float) $current_value === (float) $value ) {
 				return true;
 			}
 		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::date_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -1697,7 +1709,7 @@ class Pods implements
 				return true;
 			}
 		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( (string) $current_value === (string) $value ) {
@@ -1786,13 +1798,13 @@ class Pods implements
 						}
 
 						if ( 'ASC' == $dir ) {
-							$params['orderby'][ $orderby ] = 'DESC';
+							$params['orderby'][$orderby] = 'DESC';
 						} else {
-							$params['orderby'][ $orderby ] = 'ASC';
+							$params['orderby'][$orderby] = 'ASC';
 						}
 					}
 
-					$params['orderby'][ $this->data->field_id ] = 'DESC';
+					$params['orderby'][$this->data->field_id] = 'DESC';
 				} elseif ( "`t`.`{$this->data->field_id}` DESC" != $params['orderby'] ) {
 					$params['orderby'] .= ", `t`.`{$this->data->field_id}` DESC";
 				}
@@ -1972,13 +1984,13 @@ class Pods implements
 						}
 
 						if ( 'ASC' == $dir ) {
-							$params['orderby'][ $orderby ] = 'DESC';
+							$params['orderby'][$orderby] = 'DESC';
 						} else {
-							$params['orderby'][ $orderby ] = 'ASC';
+							$params['orderby'][$orderby] = 'ASC';
 						}
 					}
 
-					$params['orderby'][ $this->data->field_id ] = 'DESC';
+					$params['orderby'][$this->data->field_id] = 'DESC';
 				} elseif ( "`t`.`{$this->data->field_id}` DESC" != $params['orderby'] ) {
 					$params['orderby'] .= ", `t`.`{$this->data->field_id}` DESC";
 				}
@@ -2113,8 +2125,8 @@ class Pods implements
 						$order = 'DESC';
 					}
 
-					if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ]['type'], $tableless_field_types ) ) {
-						if ( in_array( $this->fields[ $k ]['pick_object'], $simple_tableless_objects ) || 1 == $this->fields[ $k ]['pick_simple'] ) {
+					if ( isset( $this->fields[$k] ) && in_array( $this->fields[$k]['type'], $tableless_field_types ) ) {
+						if ( in_array( $this->fields[$k]['pick_object'], $simple_tableless_objects ) || 1 == $this->fields[$k]['pick_simple'] ) {
 							if ( 'table' == $this->pod_data['storage'] ) {
 								if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ) ) ) {
 									$key = "`d`.`{$k}`";
@@ -2125,13 +2137,13 @@ class Pods implements
 								$key = "`{$k}`.`meta_value`";
 							}
 						} else {
-							$pick_val = $this->fields[ $k ]['pick_val'];
+							$pick_val = $this->fields[$k]['pick_val'];
 
 							if ( '__current__' == $pick_val ) {
 								$pick_val = $this->pod;
 							}
 
-							$table = $this->api->get_table_info( $this->fields[ $k ]['pick_object'], $pick_val );
+							$table = $this->api->get_table_info( $this->fields[$k]['pick_object'], $pick_val );
 
 							if ( ! empty( $table ) ) {
 								$key = "`{$k}`.`" . $table['field_index'] . '`';
@@ -2141,9 +2153,9 @@ class Pods implements
 
 					if ( empty( $key ) ) {
 						if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ) ) ) {
-							if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
+							if ( isset( $this->pod_data['object_fields'][$k] ) ) {
 								$key = "`t`.`{$k}`";
-							} elseif ( isset( $this->fields[ $k ] ) ) {
+							} elseif ( isset( $this->fields[$k] ) ) {
 								if ( 'table' == $this->pod_data['storage'] ) {
 									$key = "`d`.`{$k}`";
 								} else {
@@ -2156,7 +2168,7 @@ class Pods implements
 									}
 								}
 							}
-						} elseif ( isset( $this->fields[ $k ] ) ) {
+						} elseif ( isset( $this->fields[$k] ) ) {
 							if ( 'table' == $this->pod_data['storage'] ) {
 								$key = "`t`.`{$k}`";
 							} else {
@@ -2201,9 +2213,9 @@ class Pods implements
 					$key = $k;
 
 					if ( ! in_array( $this->pod_data['type'], array( 'pod', 'table' ) ) ) {
-						if ( isset( $this->pod_data['object_fields'][ $k ] ) ) {
+						if ( isset( $this->pod_data['object_fields'][$k] ) ) {
 							$key = "`t`.`{$k}`";
-						} elseif ( isset( $this->fields[ $k ] ) ) {
+						} elseif ( isset( $this->fields[$k] ) ) {
 							if ( 'table' == $this->pod_data['storage'] ) {
 								$key = "`d`.`{$k}`";
 							} else {
@@ -2216,7 +2228,7 @@ class Pods implements
 								}
 							}
 						}
-					} elseif ( isset( $this->fields[ $k ] ) ) {
+					} elseif ( isset( $this->fields[$k] ) ) {
 						if ( 'table' == $this->pod_data['storage'] ) {
 							$key = "`t`.`{$k}`";
 						} else {
@@ -2473,17 +2485,17 @@ class Pods implements
 
 		$this->do_hook( 'add_to', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
+		if ( ! isset( $this->fields[$field] ) ) {
 			return $id;
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ]['type'], Pods_Form::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[$field]['type'], Pods_Form::tableless_field_types() ) ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'pick' == $this->fields[ $field ]['type'] && ( in_array( $this->fields[ $field ]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ]['pick_simple'] ) ) {
+			if ( 'pick' == $this->fields[$field]['type'] && ( in_array( $this->fields[$field]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[$field]['pick_simple'] ) ) {
 				$current_value = $pod->raw( $field );
 
 				if ( ! empty( $current_value ) || ( ! is_array( $current_value ) && 0 < strlen( $current_value ) ) ) {
@@ -2494,11 +2506,11 @@ class Pods implements
 
 				$value = array_merge( $current_value, $value );
 			} else {
-				$related_ids = $this->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+				$related_ids = $this->api->lookup_related_items( $this->fields[$field]['id'], $this->pod_data['id'], $id, $this->fields[$field], $this->pod_data );
 
 				foreach ( $value as $k => $v ) {
 					if ( ! preg_match( '/[^0-9]*/', $v ) ) {
-						$value[ $k ] = (int) $v;
+						$value[$k] = (int) $v;
 					}
 				}
 
@@ -2515,12 +2527,12 @@ class Pods implements
 				return $id;
 			}
 		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::number_field_types() ) ) {
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value + (float) $value );
 		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::date_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2529,7 +2541,7 @@ class Pods implements
 				$value = strtotime( $value );
 			}
 		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::text_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::text_field_types() ) ) {
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2585,12 +2597,12 @@ class Pods implements
 
 		$this->do_hook( 'remove_from', $field, $value, $id );
 
-		if ( ! isset( $this->fields[ $field ] ) ) {
+		if ( ! isset( $this->fields[$field] ) ) {
 			return $id;
 		}
 
 		// Tableless fields
-		if ( in_array( $this->fields[ $field ]['type'], Pods_Form::tableless_field_types() ) ) {
+		if ( in_array( $this->fields[$field]['type'], Pods_Form::tableless_field_types() ) ) {
 			if ( empty( $value ) ) {
 				$value = array();
 			}
@@ -2600,7 +2612,7 @@ class Pods implements
 					$value = explode( ',', $value );
 				}
 
-				if ( 'pick' == $this->fields[ $field ]['type'] && ( in_array( $this->fields[ $field ]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[ $field ]['pick_simple'] ) ) {
+				if ( 'pick' == $this->fields[$field]['type'] && ( in_array( $this->fields[$field]['pick_object'], Pods_Form::field_method( 'pick', 'simple_objects' ) ) || 1 == $this->fields[$field]['pick_simple'] ) ) {
 					$current_value = $pod->raw( $field );
 
 					if ( ! empty( $current_value ) ) {
@@ -2609,17 +2621,17 @@ class Pods implements
 
 					foreach ( $current_value as $k => $v ) {
 						if ( in_array( $v, $value ) ) {
-							unset( $current_value[ $k ] );
+							unset( $current_value[$k] );
 						}
 					}
 
 					$value = $current_value;
 				} else {
-					$related_ids = $this->api->lookup_related_items( $this->fields[ $field ]['id'], $this->pod_data['id'], $id, $this->fields[ $field ], $this->pod_data );
+					$related_ids = $this->api->lookup_related_items( $this->fields[$field]['id'], $this->pod_data['id'], $id, $this->fields[$field], $this->pod_data );
 
 					foreach ( $value as $k => $v ) {
 						if ( ! preg_match( '/[^0-9]*/', $v ) ) {
-							$value[ $k ] = (int) $v;
+							$value[$k] = (int) $v;
 						} // @todo Convert slugs into IDs
 						else {
 
@@ -2628,7 +2640,7 @@ class Pods implements
 
 					foreach ( $related_ids as $k => $v ) {
 						if ( in_array( $v, $value ) ) {
-							unset( $related_ids[ $k ] );
+							unset( $related_ids[$k] );
 						}
 					}
 
@@ -2642,7 +2654,7 @@ class Pods implements
 				}
 			}
 		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::number_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::number_field_types() ) ) {
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;
@@ -2652,7 +2664,7 @@ class Pods implements
 
 			$value = ( $current_value - (float) $value );
 		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], Pods_Form::date_field_types() ) ) {
+		elseif ( in_array( $this->fields[$field]['type'], Pods_Form::date_field_types() ) ) {
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;
@@ -3104,14 +3116,14 @@ class Pods implements
 					$field['type'] = 'hidden';
 				}
 
-				if ( isset( $object_fields[ $field['name'] ] ) ) {
-					$field->defaults( $object_fields[ $field['name'] ] );
+				if ( isset( $object_fields[$field['name']] ) ) {
+					$field->defaults( $object_fields[$field['name']] );
 
-					$fields[ $field['name'] ] = $field;
-				} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-					$field->defaults( $this->fields[ $field['name'] ] );
+					$fields[$field['name']] = $field;
+				} elseif ( isset( $this->fields[$field['name']] ) ) {
+					$field->defaults( $this->fields[$field['name']] );
 
-					$fields[ $field['name'] ] = $field;
+					$fields[$field['name']] = $field;
 				}
 			}
 
@@ -3332,26 +3344,29 @@ class Pods implements
 
 			$field['name'] = trim( $field['name'] );
 
-			$value = pods_v( 'default', $field );
+			$default_value = pods_v( 'default', $field );
+			$value         = pods_v( 'value', $field );
 
 			if ( empty( $field['name'] ) ) {
 				$field['name'] = trim( $name );
 			}
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$field->defaults( $object_fields[ $field['name'] ] );
-			} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-				$field->defaults( $this->fields[ $field['name'] ] );
+			if ( isset( $object_fields[$field['name']] ) ) {
+				$field->defaults( $object_fields[$field['name']] );
+			} elseif ( isset( $this->fields[$field['name']] ) ) {
+				$field->defaults( $this->fields[$field['name']] );
 			}
 
 			if ( pods_v( 'hidden', $field, false, null, true ) ) {
 				$field['type'] = 'hidden';
 			}
 
-			$fields[ $field['name'] ] = $field;
+			$fields[$field['name']] = $field;
 
-			if ( empty( $this->id ) && null !== $value ) {
-				$this->row_override[ $field['name'] ] = $value;
+			if ( empty( $this->id ) && null !== $default_value ) {
+				$this->row_override[$field['name']] = $default_value;
+			} elseif ( ! empty( $this->id ) && null !== $value ) {
+				$this->row[$field['name']] = $value;
 			}
 		}
 
@@ -3366,6 +3381,7 @@ class Pods implements
 		}
 
 		$thank_you = $params['thank_you'];
+		$fields_only = $params['fields_only'];
 
 		Pods_Form::$form_counter ++;
 
@@ -3448,10 +3464,10 @@ class Pods implements
 				$field['name'] = trim( $name );
 			}
 
-			if ( isset( $object_fields[ $field['name'] ] ) ) {
-				$field = $object_fields[ $field['name'] ]->override( $field );
-			} elseif ( isset( $this->fields[ $field['name'] ] ) ) {
-				$field = $this->fields[ $field['name'] ]->override( $field );
+			if ( isset( $object_fields[$field['name']] ) ) {
+				$field = $object_fields[$field['name']]->override( $field );
+			} elseif ( isset( $this->fields[$field['name']] ) ) {
+				$field = $this->fields[$field['name']]->override( $field );
 			}
 
 			if ( pods_v( 'hidden', $field, false, null, true ) || 'hidden' == $field['type'] ) {
@@ -3460,7 +3476,7 @@ class Pods implements
 				continue;
 			}
 
-			$fields[ $field['name'] ] = $field;
+			$fields[$field['name']] = $field;
 		}
 
 		unset( $view_fields ); // Cleanup
@@ -3512,7 +3528,7 @@ class Pods implements
 		}
 
 		foreach ( $tag as $k => $v ) {
-			$tag[ $k ] = trim( $v );
+			$tag[$k] = trim( $v );
 		}
 
 		$field_name = $tag[0];
@@ -3612,7 +3628,7 @@ class Pods implements
 
 				foreach ( $available_actions as $action ) {
 					if ( ! in_array( $action, $actions_enabled ) ) {
-						$actions_disabled[ $action ] = $action;
+						$actions_disabled[$action] = $action;
 					}
 				}
 			} else {
@@ -3639,7 +3655,7 @@ class Pods implements
 						$actions_disabled['add'] = 'add';
 
 						if ( 'add' == pods_v( 'action' . $num ) ) {
-							$_GET[ 'action' . $num ] = 'manage';
+							$_GET['action' . $num] = 'manage';
 						}
 					}
 
@@ -3661,14 +3677,14 @@ class Pods implements
 				}
 			}
 
-			$_GET[ 'action' . $num ] = pods_v_sanitized( 'action' . $num, 'get', pods_v_sanitized( 'action', $options, 'manage' ) );
+			$_GET['action' . $num] = pods_v_sanitized( 'action' . $num, 'get', pods_v_sanitized( 'action', $options, 'manage' ) );
 
 			$index = $this->pod_data['field_id'];
 			$label = __( 'ID', 'pods' );
 
-			if ( isset( $this->pod_data['fields'][ $this->pod_data['field_index'] ] ) ) {
+			if ( isset( $this->pod_data['fields'][$this->pod_data['field_index']] ) ) {
 				$index = $this->pod_data['field_index'];
-				$label = $this->pod_data['fields'][ $this->pod_data['field_index'] ];
+				$label = $this->pod_data['fields'][$this->pod_data['field_index']];
 			}
 
 			$manage = array(
@@ -3685,10 +3701,10 @@ class Pods implements
 				$manage_new = array();
 
 				foreach ( $manage_fields as $manage_field ) {
-					if ( isset( $this->pod_data['fields'][ $manage_field ] ) ) {
-						$manage_new[ $manage_field ] = $this->pod_data['fields'][ $manage_field ];
-					} elseif ( isset( $this->pod_data['object_fields'][ $manage_field ] ) ) {
-						$manage_new[ $manage_field ] = $this->pod_data['object_fields'][ $manage_field ];
+					if ( isset( $this->pod_data['fields'][$manage_field] ) ) {
+						$manage_new[$manage_field] = $this->pod_data['fields'][$manage_field];
+					} elseif ( isset( $this->pod_data['object_fields'][$manage_field] ) ) {
+						$manage_new[$manage_field] = $this->pod_data['object_fields'][$manage_field];
 					} elseif ( $manage_field == $this->pod_data['field_id'] ) {
 						$field = array(
 							'name'  => $manage_field,
@@ -3697,7 +3713,7 @@ class Pods implements
 							'width' => '8%'
 						);
 
-						$manage_new[ $manage_field ] = Pods_Form::field_setup( $field, null, $field['type'] );
+						$manage_new[$manage_field] = Pods_Form::field_setup( $field, null, $field['type'] );
 					}
 				}
 
@@ -3720,10 +3736,10 @@ class Pods implements
 				$filters_new = array();
 
 				foreach ( $filters as $filter_field ) {
-					if ( isset( $this->pod_data['fields'][ $filter_field ] ) ) {
-						$filters_new[ $filter_field ] = $this->pod_data['fields'][ $filter_field ];
-					} elseif ( isset( $this->pod_data['object_fields'][ $filter_field ] ) ) {
-						$filters_new[ $filter_field ] = $this->pod_data['object_fields'][ $filter_field ];
+					if ( isset( $this->pod_data['fields'][$filter_field] ) ) {
+						$filters_new[$filter_field] = $this->pod_data['fields'][$filter_field];
+					} elseif ( isset( $this->pod_data['object_fields'][$filter_field] ) ) {
+						$filters_new[$filter_field] = $this->pod_data['object_fields'][$filter_field];
 					}
 				}
 
@@ -3749,7 +3765,7 @@ class Pods implements
 
 			$reorder_field = $this->pod_data['ui_reorder_field'];
 
-			if ( in_array( 'reorder', $actions_enabled ) && ! in_array( 'reorder', $actions_disabled ) && ! empty( $reorder_field ) && ( ( ! empty( $this->pod_data['object_fields'] ) && isset( $this->pod_data['object_fields'][ $reorder_field ] ) ) || isset( $this->pod_data['fields'][ $reorder_field ] ) ) ) {
+			if ( in_array( 'reorder', $actions_enabled ) && ! in_array( 'reorder', $actions_disabled ) && ! empty( $reorder_field ) && ( ( ! empty( $this->pod_data['object_fields'] ) && isset( $this->pod_data['object_fields'][$reorder_field] ) ) || isset( $this->pod_data['fields'][$reorder_field] ) ) ) {
 				$ui['reorder']     = array( 'on' => $reorder_field );
 				$ui['orderby']     = $reorder_field;
 				$ui['orderby_dir'] = 'ASC';
@@ -3785,7 +3801,7 @@ class Pods implements
 
 			// Override UI options
 			foreach ( $options as $option => $value ) {
-				$ui[ $option ] = $value;
+				$ui[$option] = $value;
 			}
 
 			$this->ui = $ui;
@@ -3838,6 +3854,11 @@ class Pods implements
 
 		$name = (string) $name;
 
+		// PodsData vars
+		if ( 0 === strpos( $name, 'field_' ) && isset( $this->data->{$name} ) ) {
+			return $this->data->{$name};
+		}
+
 		if ( ! isset( $this->deprecated ) ) {
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
@@ -3866,8 +3887,12 @@ class Pods implements
 	 * @since 2.0
 	 */
 	public function __call( $name, $args ) {
-
 		$name = (string) $name;
+
+		// select > find alias
+		if ( 'select' == $name ) {
+			return call_user_func_array( array( $this, 'find' ), $args );
+		}
 
 		if ( ! isset( $this->deprecated ) ) {
 			$this->deprecated = new Pods_Deprecated( $this );

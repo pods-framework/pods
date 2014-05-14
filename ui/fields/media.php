@@ -31,6 +31,7 @@ if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) 
 $limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
 $title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_v( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' == $limit_file_type ) {
 	$limit_types      = 'image';
@@ -92,7 +93,8 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 }
 
 if ( empty( $value ) )
-	$value = array(); else
+	$value = array(); 
+else
 	$value = (array) $value;
 ?>
 <div<?php Pods_Form::attributes( array( 'class' => $attributes['class'], 'id' => $attributes['id'] ), $name, $form_field_type, $options ); ?>>
@@ -107,6 +109,8 @@ if ( empty( $value ) )
 
 			$title = $attachment->post_title;
 
+            $link = wp_get_attachment_url( $attachment->ID );
+
 			echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title );
 		}
 		?></ul>
@@ -115,7 +119,7 @@ if ( empty( $value ) )
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-	<?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/javascript">
@@ -140,36 +144,43 @@ if ( empty( $value ) )
 		});
 		<?php } ?>
 
-		// hook delete links
-		$element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on('click','li.pods-file-delete',function() {
-			var podsfile = $(this).parent().parent();
-			podsfile.slideUp(function() {
-				// check to see if this was the only entry
-				if(podsfile.parent().children().length == 1) { // 1 because we haven't removed our target yet
-					podsfile.parent().hide();
-				}
-				// remove the entry
-				$(this).remove();
-			});
-		});
+        // hook delete links
+        $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', 'li.pods-file-delete a', function ( e ) {
+			e.preventDefault();
+
+            var podsfile = $( this ).parent().parent().parent();
+            podsfile.slideUp( function () {
+                // check to see if this was the only entry
+                if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
+                    podsfile.parent().hide();
+                }
+                // remove the entry
+                $(this).remove();
+            } );
+        } );
 
 		$element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on('click','.pods-file-add',function(event) {
 			var options, attachment;
 
 			event.preventDefault();
 
-			var default_ext = wp.Uploader.defaults.filters[0].extensions;
-			wp.Uploader.defaults.filters[0].extensions = '<?php echo esc_js( $limit_extensions ); ?>';
+	        if(typeof wp.Uploader.defaults.filters.mime_types == 'undefined') {
+		        wp.Uploader.defaults.filters.mime_types = [{title:'Allowed Files', extensions: '*'}];
+	        }
 
-			// if the frame already exists, open it
-			if(pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>) {
-				pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
-				pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.content.mode('<?php echo $router; ?>');
-			}
-			else {
-				// set our settings
-				pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
-					title : title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
+	        var default_ext = wp.Uploader.defaults.filters.mime_types[0].extensions;
+
+	        wp.Uploader.defaults.filters.mime_types[0].extensions = "<?php echo esc_js( $limit_extensions ); ?>";
+
+            // if the frame already exists, open it
+            if ( pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
+                pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.content.mode('<?php echo $router; ?>');
+            }
+            else {
+                // set our settings
+                pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
+                    title: title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
 
 					<?php if( $file_limit !== 1 ) : ?>
 					multiple : true,
@@ -265,9 +276,9 @@ if ( empty( $value ) )
 				pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.content.mode('<?php echo $router; ?>');
 			}
 
-			// Reset the allowed file extensions
-			wp.Uploader.defaults.filters[0].extensions = default_ext;
-		});
+            // Reset the allowed file extensions
+            wp.Uploader.defaults.filters.mime_types[0].extensions = default_ext;
+        });
 
 	});
 </script>

@@ -60,25 +60,30 @@ foreach ( $all_plugins as $plugin_file => $plugin_data ) {
 	}
 }
 
-$versions = array(
-	'WordPress Version'             => $wp,
-	'PHP Version'                   => $php,
-	'MySQL Version'                 => $mysql,
-	'Server Software'               => $_SERVER['SERVER_SOFTWARE'],
-	'Your User Agent'               => $_SERVER['HTTP_USER_AGENT'],
-	'Session Save Path'             => session_save_path(),
-	'Session Save Path Exists'      => ( file_exists( session_save_path() ) ? 'Yes' : 'No' ),
-	'Session Save Path Writeable'   => ( is_writable( session_save_path() ) ? 'Yes' : 'No' ),
-	'Session Max Lifetime'          => ini_get( 'session.gc_maxlifetime' ),
-	'WPDB Prefix'                   => $wpdb->prefix,
-	'WP Multisite Mode'             => ( is_multisite() ? 'Yes' : 'No' ),
-	'WP Memory Limit'               => WP_MEMORY_LIMIT,
-	'Pods Network-Wide Activated'   => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
-	'Pods Install Location'         => PODS_DIR,
-	'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
-	'Pods Light Mode Activated'     => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
-	'Currently Active Plugins'      => $plugins
-);
+    $stylesheet = get_stylesheet();
+    $theme = wp_get_theme( $stylesheet );
+    $theme_name = $theme->get( 'Name' );
+
+    $versions = array(
+        'WordPress Version' => $wp,
+        'PHP Version' => $php,
+        'MySQL Version' => $mysql,
+        'Server Software' => $_SERVER[ 'SERVER_SOFTWARE' ],
+        'Your User Agent' => $_SERVER[ 'HTTP_USER_AGENT' ],
+        'Session Save Path' => session_save_path(),
+        'Session Save Path Exists' => ( file_exists( session_save_path() ) ? 'Yes' : 'No' ),
+        'Session Save Path Writeable' => ( is_writable( session_save_path() ) ? 'Yes' : 'No' ),
+        'Session Max Lifetime' => ini_get( 'session.gc_maxlifetime' ),
+        'WPDB Prefix' => $wpdb->prefix,
+        'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),
+        'WP Memory Limit' => WP_MEMORY_LIMIT,
+        'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
+        'Pods Install Location' => PODS_DIR,
+        'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
+        'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
+        'Currently Active Theme' => $theme_name,
+        'Currently Active Plugins' => $plugins
+    );
 
 foreach ( $versions as $what => $version ) {
 	echo '<p><strong>' . $what . '</strong>: ';

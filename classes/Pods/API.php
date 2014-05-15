@@ -2021,12 +2021,43 @@ class Pods_API {
 
 			if ( false === $bypass_helpers ) {
 				// Plugin hooks
+
+				/**
+				 * Filter items of any Pod before saving.
+				 *
+				 * @param array $pieces {
+				 * 		Field data to be saved
+				 *
+			     *		@type array $fields An array of fields in the Pod, 'value' key stores the *new* value if it's been set to save
+				 * 		@type obj $params Parameters sent to PodsAPI::save_pod_item
+				 * 		@type array	$pod Information about the Pod, including id, name, label, etc
+				 * 		@type array $fields_active An array of fields that are currently being saved. If saving via WP admin all fields will be included. If saving via API, only specified fields will be included. You must add additonal fields to thsi array before saving.
+				 *      @type array $object_fields An array of the WP Object fields for the Pod (WP-based content types).
+				 *      @type array $custom_fields An array of the custom fields (ones that aren't actually fields on the Pod) being saved, this cannot be changed (meta-based content types.)
+ 				 * 		@type array $custom_data An array of the custom field values being saved, you can change this to add other custom fields to the saving process (meta-based content types).
+				 * }
+				 * @param bool $is_new_item True if new item is being created, false if item already exists.
+				 * @param int	$id ID of item being saved.
+				 *
+				 * @since unknown
+				 *
+				 * @return array Array to be saved.
+				 */
 				$hooked = apply_filters( 'pods_api_pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
 					extract( $hooked );
 				}
 
+				/**
+				 * Filter items of a specific Pod, before saving.
+				 *
+				 * Parameters are the same as pods_api_pre_save_pod_item
+				 *
+				 * @since unknown
+				 *
+				 * @return array Array to be saved.
+				 */
 				$hooked = apply_filters( "pods_api_pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
 				if ( is_array( $hooked ) && ! empty( $hooked ) ) {
@@ -2034,24 +2065,62 @@ class Pods_API {
 				}
 
 				if ( $is_new_item ) {
+					/**
+					 * Filter a new item, of any Pod, before it is created.
+					 *
+					 * @param array $pieces See pods_api_pre_save_pod_item
+					 *
+					 * @since unknown
+					 *
+					 * @return array Array to be saved.
+					 */
 					$hooked = apply_filters( 'pods_api_pre_create_pod_item', compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
 						extract( $hooked );
 					}
 
+					/**
+					 * Filter a new item, of a specific Pod, before it is created.
+					 *
+					 * @param array $pieces See pods_api_pre_save_pod_item
+					 *
+					 * @since unknown
+					 *
+					 * @return array Array to be saved.
+					 */
 					$hooked = apply_filters( "pods_api_pre_create_pod_item_{$params->pod}", compact( $pieces ) );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
 						extract( $hooked );
 					}
 				} else {
+					/**
+					 * Filter an existing item, of any Pod, when it is being edited.
+					 *
+					 * @param array $pieces See pods_api_pre_save_pod_item
+					 * @param int $id ID of item being saved.
+					 *
+					 * @since unknown
+					 *
+					 * @return array Array to be saved.
+					 */
 					$hooked = apply_filters( 'pods_api_pre_edit_pod_item', compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {
 						extract( $hooked );
 					}
 
+					/**
+					 * Filter an existing item, of a specific Pod, when it is being edited.
+					 *
+					 * @param array $pieces See pods_api_pre_save_pod_item
+					 * @param int $id ID of item being saved.
+					 *
+					 * @since unknown
+					 *
+					 * @return array Array to be saved.
+					 */
 					$hooked = apply_filters( "pods_api_pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
 					if ( is_array( $hooked ) && ! empty( $hooked ) ) {

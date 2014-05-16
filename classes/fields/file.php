@@ -637,7 +637,7 @@ class PodsField_File extends PodsField {
                 }
                 elseif ( false !== stripos( $limit_size, 'KB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-                    $limit_size = $limit_size * 1025 * 1025; // convert to B
+                    $limit_size = $limit_size * 1025; // convert to B
                 }
                 elseif ( false !== stripos( $limit_size, 'GB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );

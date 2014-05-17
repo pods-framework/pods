@@ -2615,15 +2615,16 @@ class Pods_API {
 			$pieces = compact( $pieces );
 
 			// Plugin hooks
-			$this->do_hook( 'post_save_pod_item', $pieces, $is_new_item, $params->id );
-			$this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
+			do_action( 'pods_api_post_save_pod_item', $pieces, $is_new_item, $params->id );
+			do_action( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
 
 			if ( $is_new_item ) {
-				$this->do_hook( 'post_create_pod_item', $pieces, $params->id );
-				$this->do_hook( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
-			} else {
-				$this->do_hook( 'post_edit_pod_item', $pieces, $params->id );
-				$this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces, $params->id );
+				do_action( 'pods_api_post_create_pod_item', $pieces, $params->id );
+				do_action( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
+			}
+			else {
+				do_action( 'pods_api_post_edit_pod_item', $pieces, $params->id );
+				do_action( "pods_api_post_edit_pod_item_{$params->pod}", $pieces, $params->id );
 			}
 
 			// Call any post-save helpers (if not bypassed)

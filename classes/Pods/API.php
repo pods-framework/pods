@@ -2615,15 +2615,75 @@ class Pods_API {
 			$pieces = compact( $pieces );
 
 			// Plugin hooks
+			/**
+			 * Runs after an item of any Pod is updated
+			 *
+			 * @param array $pieces {
+			 * 		Field data that was saved
+			 *
+			 *		@type array $fields An array of fields in the Pod, 'value' key stores the *new* value if it's been set to save
+			 * 		@type obj $params Parameters sent to PodsAPI::save_pod_item
+			 * 		@type array	$pod Information about the Pod, including id, name, label, etc
+			 * 		@type array $fields_active An array of fields that are currently being saved. If saving via WP admin all fields will be included. If saving via API, only specified fields will be included. You must add additonal fields to thsi array before saving.
+			 *      @type array $object_fields An array of the WP Object fields for the Pod (WP-based content types).
+			 *      @type array $custom_fields An array of the custom fields (ones that aren't actually fields on the Pod) being saved, this cannot be changed (meta-based content types.)
+			 * 		@type array $custom_data An array of the custom field values being saved, you can change this to add other custom fields to the saving process (meta-based content types).
+			 * }
+			 * @param bool $is_new_item True if new item is being created, false if item already exists.
+			 * @param int	$id ID of item being saved.
+			 *
+			 * @since unknown
+			 */
 			do_action( 'pods_api_post_save_pod_item', $pieces, $is_new_item, $params->id );
+
+			/**
+			 * Runs after a specific Pod has been updated.
+			 *
+			 * Parameters are the same as pods_api_post_save_pod_item
+			 *
+			 * @since unknown
+			 *
+			 */
 			do_action( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
 
 			if ( $is_new_item ) {
+				/**
+				 * Runs after an item, in any Pod, is created.
+				 *
+				 * @param array $pieces See pods_api_post_save_pod_item
+				 *
+				 * @since unknown
+				 */
 				do_action( 'pods_api_post_create_pod_item', $pieces, $params->id );
+
+				/**
+				 * Runs after an item, in a specific Pod, is created.
+				 *
+				 * @param array $pieces See pods_api_post_save_pod_item
+				 *
+				 * @since unknown
+				 */
 				do_action( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
 			}
 			else {
+				/**
+				 * Runs after an existing item, in any Pod, is edited.
+				 *
+				 * @param array $pieces See pods_api_post_save_pod_item
+				 * @param int $id ID of item being updated.
+				 *
+				 * @since unknown
+				 */
 				do_action( 'pods_api_post_edit_pod_item', $pieces, $params->id );
+
+				/**
+				 * Runs after an existing item, in a specific Pod, is edited.
+				 *
+				 * @param array $pieces See pods_api_post_save_pod_item
+				 * @param int $id ID of item being updated.
+				 *
+				 * @since unknown
+				 */
 				do_action( "pods_api_post_edit_pod_item_{$params->pod}", $pieces, $params->id );
 			}
 

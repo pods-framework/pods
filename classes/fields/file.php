@@ -10,7 +10,7 @@ class PodsField_File extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $group = 'Relationships / Media';
+    public static $group = __( 'Relationships / Media', 'pods' );
 
     /**
      * Field Type Identifier
@@ -26,7 +26,7 @@ class PodsField_File extends PodsField {
      * @var string
      * @since 2.0
      */
-    public static $label = 'File / Image / Video';
+    public static $label = __( 'File / Image / Video', 'pods' );
 
     /**
      * API caching for fields that need it during validate/save
@@ -510,12 +510,12 @@ class PodsField_File extends PodsField {
                 ?>
             </li>
 
-            <li class="pods-file-col pods-file-delete"><a href="#delete">Delete</a></li>
+            <li class="pods-file-col pods-file-delete"><a href="#delete"><?php _e( 'Delete', 'pods' ); ?></a></li>
 
 			<?php
 				if ( $linked ) {
 			?>
-            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>" target="_blank">Download</a></li>
+            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>" target="_blank"><?php _e( 'Download', 'pods' ); ?></a></li>
 			<?php
 				}
 			?>
@@ -554,11 +554,11 @@ class PodsField_File extends PodsField {
         );
 
         if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->pod ) || !isset( $params->field ) || !isset( $params->uri ) || empty( $params->uri ) )
-            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+            pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
         elseif ( !empty( $params->pod ) && empty( $params->field ) )
-            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+            pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
         elseif ( empty( $params->pod ) && !current_user_can( 'upload_files' ) )
-            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+            pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 
         // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
         if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
@@ -637,7 +637,7 @@ class PodsField_File extends PodsField {
                 }
                 elseif ( false !== stripos( $limit_size, 'KB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-                    $limit_size = $limit_size * 1025 * 1025; // convert to B
+                    $limit_size = $limit_size * 1025; // convert to B
                 }
                 elseif ( false !== stripos( $limit_size, 'GB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );

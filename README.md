@@ -11,4 +11,6 @@ Check out <http://pods.io/> for our User Guide and many other resources to help 
 ## GitHub Update Note
 ~Current Release: [https://github.com/pods-framework/pods/releases/tag/2.4](2.4)~
 
-~Development Branch: [3.0-unstable](https://github.com/pods-framework/pods/tree/3.0-unstable)
+~Development Branch: [3.0-unstable](https://github.com/pods-framework/pods/tree/3.0-unstable)~
+
+<em>Please submit all pull requests against 3.0-unstable branch</em>

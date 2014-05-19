@@ -17,7 +17,7 @@ When contributing please ensure you follow the guidelines below so that we can k
 * Make the changes to your forked repository's code
   * Ensure you stick to the [WordPress Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards)
 * When committing, reference your issue (if present) and include a note about the fix
-* Push the changes to your fork and submit a pull request to the '2.x' branch of the Pods repository
+* Push the changes to your fork and submit a pull request to the '3.0-unstable' branch of the Pods repository
 
 At this point you're waiting on us to merge your pull request. We'll review all pull requests, and make suggestions and changes if necessary.
 

@@ -12,7 +12,7 @@ class Pods_Field_File extends
 	 * @var string
 	 * @since 2.0
 	 */
-	public static $group = 'Relationships / Media';
+    public static $group = 'Relationships / Media';
 
 	/**
 	 * Field Type Identifier
@@ -28,7 +28,7 @@ class Pods_Field_File extends
 	 * @var string
 	 * @since 2.0
 	 */
-	public static $label = 'File / Image / Video';
+    public static $label = 'File / Image / Video';
 
 	/**
 	 * API caching for fields that need it during validate/save
@@ -426,13 +426,13 @@ class Pods_Field_File extends
 					?>
 				</li>
 
-				<li class="pods-file-col pods-file-delete">Delete</li>
+				<li class="pods-file-col pods-file-delete"><?php _e( 'Delete', 'pods' ); ?></li>
 
 				<?php
 				if ( $linked ) {
 					?>
 					<li class="pods-file-col pods-file-download">
-						<a href="<?php echo $link; ?>" target="_blank">Download</a></li>
+						<a href="<?php echo $link; ?>" target="_blank"><?php _e('Download'); ?></a></li>
 				<?php
 				}
 				?>
@@ -472,11 +472,11 @@ class Pods_Field_File extends
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( 'Invalid AJAX request', Pods_Init::$admin );
+			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( 'Invalid AJAX request', Pods_Init::$admin );
+			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( 'Invalid AJAX request', Pods_Init::$admin );
+			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead

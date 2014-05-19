@@ -2,4 +2,4 @@
 /**
  * Frontier Template code editor metabox
  */
-?><textarea id="content" name="content"><?php if(isset($content)){ echo htmlentities( $content );} ?></textarea>
+?><textarea id="content" name="content"><?php if ( isset( $content ) ) { echo esc_textarea( $content ); } ?></textarea>

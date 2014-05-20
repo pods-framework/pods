@@ -1317,6 +1317,14 @@ class Pods_Field_Pick extends
 				if ( in_array( $options[self::$type . '_object'], array( 'site', 'network' ) ) ) {
 					$params['select'] .= ', `t`.`path`';
 				}
+        
+        // Not sure if checking only table object for duplicty?
+        // Same duplicity is also for orderby.
+        if ( $options[ self::$type . '_object' ] == 'table' ) {
+          if ( $search_data->field_id == $search_data->field_index ) {
+            $params[ 'select' ] = "`t`.`{$search_data->field_id}`";
+          }
+        }
 
 				if ( ! empty( $params['where'] ) && (array) $options['table_info']['where_default'] != $params['where'] ) {
 					$params['where'] = pods_evaluate_tags( $params['where'], true );
@@ -1367,6 +1375,12 @@ class Pods_Field_Pick extends
 
 						$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
 					}
+          
+          // Enable selecting also Display Field for table object.
+          if ( $options[ self::$type . '_object' ] == 'table' ) {
+            $search_data->field_index = $display;
+            $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+          }
 				}
 
 				$autocomplete = false;

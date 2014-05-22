@@ -1689,13 +1689,17 @@ class Pods_Admin {
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
-			if ( 'action' == $key ) {
+			if ( 'action' == $key )
 				continue;
-			}
 
-			unset( $params[$key] );
+			// Fixup $_POST data
+			$_POST[ str_replace( '_podsfix_', '', $key ) ] = $_POST[ $key ];
 
-			$params[str_replace( '_podsfix_', '', $key )] = $value;
+			// Fixup $params with unslashed data
+			$params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+
+			// Unset the _podsfix_* keys
+			unset( $params[ $key ] );
 		}
 
 		$params = (object) $params;

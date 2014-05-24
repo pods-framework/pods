@@ -74,20 +74,26 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 					try {
 						$dropdown = $element.select2( 'dropdown' );
 					}
-					catch () {
+					catch ( e ) {
 						$dropdown = $( '.select2-drop-active' );
 					}
 
-					// hide/show the dropdown appropriately
-					if ( $.isEmptyObject( data ) ) {
+					// Only show the dropdown if there is at least one unselected potential match
+					$dropdown.hide();
 
-						// No potential matches; a new tag is being added.  Hide the dropdown
-						$dropdown.hide();
-					}
-					else {
+					// Any potential matches?
+					if ( !$.isEmptyObject( data ) ) {
 
-						// Potential matches, make sure the dropdown is visible
-						$dropdown.show();
+						// If there are any unselected potential matches then we want to show the dropdown
+						$.each( data, function( i, this_element ) {
+
+							// Is this one unselected?
+							// 'val' return will be an array of string ids
+							if ( 0 > $element.select2( 'val' ).indexOf( this_element.id + '' ) ) {
+								$dropdown.show();
+								return false; // Break out of the each loop
+							}
+						} );
 					}
 
 					// Not an exact match for something existing?

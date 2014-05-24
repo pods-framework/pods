@@ -67,10 +67,34 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 			?>
 				tags : true,
 				createSearchChoice : function( term, data ) {
+					var $dropdown;
+
+					// Get a reference to the dropdown container
+					// the dropdown method is not available before v3.4.1
+					try {
+						$dropdown = $element.select2( 'dropdown' );
+					}
+					catch () {
+						$dropdown = $( '.select2-drop-active' );
+					}
+
+					// hide/show the dropdown appropriately
+					if ( $.isEmptyObject( data ) ) {
+
+						// No potential matches; a new tag is being added.  Hide the dropdown
+						$dropdown.hide();
+					}
+					else {
+
+						// Potential matches, make sure the dropdown is visible
+						$dropdown.show();
+					}
+
+					// Not an exact match for something existing?
 					if ( 0 === $( data ).filter( function() { return this.text.localeCompare( term.trim() ) === 0; } ).length ) {
 						return {
-						// Simply use the new tag term as the id
-						//we might want to append 'new' to all newly created term IDs for processing in PodsAPI.php
+							// Simply use the new tag term as the id
+							//we might want to append 'new' to all newly created term IDs for processing in PodsAPI.php
 							id: term.trim(),
 							text: term.trim()
 						};

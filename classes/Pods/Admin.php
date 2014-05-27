@@ -1793,4 +1793,74 @@ class Pods_Admin {
 
 		die(); // KBAI!
 	}
+
+	/**
+	 * Profiles the Pods configuration
+	 *
+	 * @param null|string|array $pod. Optional. Which Pod(s) to get configuration for. Can be a the name of one Pod, or an array of names of Pods, or null, which is the default, to profile all Pods.
+	 * @param bool $full_field_info Optional. If true all info about each field is returned. If false, which is the default only name and type, will be returned.
+	 *
+	 * @return array
+	 *
+	 * @since 3.0.0
+	 */
+	function configuration( $pod = null, $full_field_info = false ){
+		$api = pods_api();
+
+		if ( is_null( $pod ) ) {
+			$the_pods = $api->load_pods();
+		}
+		elseif( is_array( $pod ) ) {
+			foreach ( $pod as $p ) {
+				$the_pods[] = $api->load_pod( $p );
+			}
+		}
+		else {
+			$the_pods[] = $api->load_pod( $pod );
+		}
+
+		foreach( $the_pods as $pod ) {
+			$configuration[ $pod[ 'name' ] ] = array(
+				'name' 		=> $pod['name'],
+				'ID' 		=> $pod[ 'id' ],
+				'storage' 	=> $pod[ 'storage' ],
+				'fields' 	=> $pod[ 'fields' ],
+			);
+		}
+
+		if ( ! $full_field_info ) {
+			foreach ( $the_pods as $pod ) {
+				$fields = $configuration[ $pod['name'] ][ 'fields' ];
+				unset( $configuration[ $pod['name'] ][ 'fields' ] );
+				foreach ( $fields as $field ) {
+					$info = array (
+						'name' => $field[ 'name' ],
+						'type' => $field[ 'type' ],
+					);
+
+					if ( $info[ 'type' ]  === 'pick' ) {
+						$info[ 'pick_object' ] = $field[ 'pick_object' ];
+						if ( isset ( $field[ 'pick_val' ] ) && $field[ 'pick_val' ] !== '' ) {
+							$info[ 'pick_val' ] = $field[ 'pick_val' ];
+						}
+					}
+
+					if ( is_array( $info ) ) {
+						$configuration[ $pod[ 'name' ] ][ 'fields' ][ $field[ 'name' ] ] = $info;
+					}
+
+					unset( $info );
+
+				}
+
+			}
+
+		}
+
+		if ( is_array ( $configuration ) ) {
+			return $configuration;
+
+		}
+
+	}
 }

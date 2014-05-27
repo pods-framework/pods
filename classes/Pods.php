@@ -3397,7 +3397,20 @@ class Pods implements Iterator {
 			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
 
 			if ( 1 == pods_v_sanitized( $success, 'get', 0 ) ) {
-				echo '<div id="message" class="pods-form-front-success">' . __( 'Form submitted successfully', 'pods' ) . '</div>';
+				$message = __( 'Form submitted successfully', 'pods' );
+				
+				/**
+				 * Change the text of the message that appears on succesful form submission.
+				 *
+				 * @param string $message
+				 *
+				 * @returns string the message
+				 *
+				 * @since 3.0.0
+				 */
+				$message = apply_filters( 'pods_pod_form_success_message', $message );
+
+				echo '<div id="message" class="pods-form-front-success">' . $message . '</div>';
 			}
 		}
 

@@ -4,10 +4,10 @@
 		<div id="icon-pods" class="icon32"><br /></div>
 
 		<?php
-		$default = 'tools';
+		$default = 'settings';
 
 		$tabs = array(
-			//'settings' => __( 'Settings', 'pods' ),
+			'settings' => __( 'Settings', 'pods' ),
 			'tools' => __( 'Tools', 'pods' ),
 			'reset' => __( 'Cleanup &amp; Reset', 'pods' )
 		);
@@ -24,7 +24,7 @@
 					$label = 'Pods ' . $label;
 				}
 
-				$url = pods_var_update( array( 'tab' => $tab ), array( 'page' ) );
+				$url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
 				?>
 				<a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
 					<?php echo $label; ?>

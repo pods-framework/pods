@@ -1863,4 +1863,73 @@ class Pods_Admin {
 		}
 
 	}
+
+	/**
+	 * Debug Information
+	 *
+	 * @return string
+	 *
+	 * @since 3.0.0
+	 */
+	function debug_info() {
+		global $wp_version, $wpdb;
+
+		$wp      = $wp_version;
+		$php     = phpversion();
+		$mysql   = $wpdb->db_version();
+		$plugins = array();
+
+		$all_plugins = get_plugins();
+
+		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+			if ( is_plugin_active( $plugin_file ) ) {
+				$plugins[ $plugin_data['Name'] ] = $plugin_data['Version'];
+			}
+		}
+
+		$stylesheet = get_stylesheet();
+		$theme = wp_get_theme( $stylesheet );
+		$theme_name = $theme->get( 'Name' );
+
+		$versions = array(
+			'WordPress Version' => $wp,
+			'PHP Version' => $php,
+			'MySQL Version' => $mysql,
+			'Server Software' => $_SERVER[ 'SERVER_SOFTWARE' ],
+			'Your User Agent' => $_SERVER[ 'HTTP_USER_AGENT' ],
+			'Session Save Path' => session_save_path(),
+			'Session Save Path Exists' => ( file_exists( session_save_path() ) ? 'Yes' : 'No' ),
+			'Session Save Path Writeable' => ( is_writable( session_save_path() ) ? 'Yes' : 'No' ),
+			'Session Max Lifetime' => ini_get( 'session.gc_maxlifetime' ),
+			'WPDB Prefix' => $wpdb->prefix,
+			'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),
+			'WP Memory Limit' => WP_MEMORY_LIMIT,
+			'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
+			'Pods Install Location' => PODS_DIR,
+			'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
+			'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
+			'Currently Active Theme' => $theme_name,
+			'Currently Active Plugins' => $plugins
+		);
+
+		$debug = '';
+		foreach ( $versions as $what => $version ) {
+			$debug .= '<p><strong>' . $what . '</strong>: ';
+
+			if ( is_array( $version ) ) {
+				$debug .= '</p><ul class="ul-disc">';
+
+				foreach ( $version as $what_v => $v ) {
+					$debug .= '<li><strong>' . $what_v . '</strong>: ' . $v . '</li>';
+				}
+
+				$debug .= '</ul>';
+			} else {
+				$debug .= $version . '</p>';
+			}
+		}
+
+		return $debug;
+
+	}
 }

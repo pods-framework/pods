@@ -1871,7 +1871,7 @@ class Pods_Admin {
 	 *
 	 * @since 3.0.0
 	 */
-	function debug_info() {
+	function debug_info( $html = true ) {
 		global $wp_version, $wpdb;
 
 		$wp      = $wp_version;
@@ -1912,24 +1912,42 @@ class Pods_Admin {
 			'Currently Active Plugins' => $plugins
 		);
 
-		$debug = '';
-		foreach ( $versions as $what => $version ) {
-			$debug .= '<p><strong>' . $what . '</strong>: ';
+		if ( $html ) {
+			$debug = '';
+			foreach ( $versions as $what => $version ) {
+				$debug .= '<p><strong>' . $what . '</strong>: ';
 
-			if ( is_array( $version ) ) {
-				$debug .= '</p><ul class="ul-disc">';
+				if ( is_array( $version ) ) {
+					$debug .= '</p><ul class="ul-disc">';
 
-				foreach ( $version as $what_v => $v ) {
-					$debug .= '<li><strong>' . $what_v . '</strong>: ' . $v . '</li>';
+					foreach ( $version as $what_v => $v ) {
+						$debug .= '<li><strong>' . $what_v . '</strong>: ' . $v . '</li>';
+					}
+
+					$debug .= '</ul>';
 				}
-
-				$debug .= '</ul>';
-			} else {
-				$debug .= $version . '</p>';
+				else {
+					$debug .= $version . '</p>';
+				}
 			}
+
+			return $debug;
+
+		}
+		else {
+			return $versions;
+
 		}
 
-		return $debug;
+	}
+
+	function send_info(){
+		$info = array(
+			'Debug Information' => $this->debug_info( false ),
+			'Pods Configuration' => $this->configuration(),
+		);
+		return '<pre>'.print_r( $info, true ).'</pre>';
 
 	}
+
 }

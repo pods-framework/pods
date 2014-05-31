@@ -1941,12 +1941,27 @@ class Pods_Admin {
 
 	}
 
-	function send_info(){
+	/**
+	 * Formatted array of information prepared to send to support.
+	 *
+	 * @param bool $kses. Optional. Whether to pass output through wp kses() or not and only allow <pre>. Defaults to true.
+	 * @return string
+	 */
+	function send_info( $kses = true ){
 		$info = array(
 			'Debug Information' => $this->debug_info( false ),
 			'Pods Configuration' => $this->configuration(),
 		);
-		return '<pre>'.print_r( $info, true ).'</pre>';
+
+		$return = '<pre>' . print_r( $info, TRUE ) . '</pre>';
+
+		if ( $kpes ) {
+			return wp_kses( $return, array( 'pre' => array(), ) );
+
+		}
+		else {
+			return $return;
+		}
 
 	}
 

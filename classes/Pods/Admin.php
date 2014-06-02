@@ -1944,7 +1944,7 @@ class Pods_Admin {
 	/**
 	 * Formatted array of information prepared to send to support.
 	 *
-	 * @param bool $kses. Optional. Whether to pass output through wp kses() or not and only allow <pre>. Defaults to true.
+	 * @param bool $kses. Optional. Whether to pass output through wp_kses() or not and only allow <pre>. Defaults to true.
 	 * @return string
 	 */
 	function send_info( $kses = true ){
@@ -1966,12 +1966,159 @@ class Pods_Admin {
 	}
 
 	/**
-	 * Sets the settings fields for Pods Settings
+	 * Sets the settings fields used to create Pods Settings (_pods_settings)
+	 *
+	 * @todo Add the rest of the settings fields.
+	 *
+	 * @return array Pods settings fields
 	 *
 	 * @since 3.0.0
 	 */
 	function pods_settings() {
-		//@TODO THIS.
+		$general = array (
+			'default_pagination' =>
+				array (
+					'name' => 'default_pagination',
+					'label' => 'Default Pagination',
+					'description' => 'Change the default pagination, when pagination type is not set explicitly.',
+					'help' => '',
+					'default' => NULL,
+					'options' =>
+						array (
+							'pick_custom' => 'none|None
+simple|Simple
+paginate|Paginate
+advanced|Advanced',
+						),
+					'pick_object' => 'custom-simple',
+
+			),
+		);
+
+		/**
+		 * Change or add to Pods Settings General Group
+		 *
+		 * @param array General Settings
+		 *
+		 * @return array The settings field arrays.
+		 *
+		 * @since 3.0.0
+		 */
+		$general = apply_filters( 'pods_admin_general_settings', $general );
+
+		foreach ( $general as $item ) {
+			$item[ 'group' ] =  1;
+			$item[ 'grouped' ] = 1;
+		}
+
+		$performance = array(
+			'enable_pods_light_mode' =>
+				array (
+					'name' => 'enable_pods_light_mode',
+					'label' => 'Enable Pods Light Mode',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'enable_pods_tableless_mode' =>
+				array (
+					'name' => 'enable_pods_tableless_mode',
+					'label' => 'Enable Pods Tabless Mode',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+		);
+
+		/**
+		 * Change or add to Pods Settings Performance Group
+		 *
+		 * @param array Performance settings
+		 *
+		 * @return array The settings field arrays.
+		 *
+		 * @since 3.0.0
+		 */
+		$performance = apply_filters( 'pods_admin_performance_settings', $performance );
+
+		foreach ( $performance  as $item ) {
+			$item[ 'group' ] =  2;
+			$item[ 'grouped' ] = 1;
+		}
+
+		$pods_pages = array(
+			'enable_pods_light_mode' =>
+				array (
+					'name' => 'enable_pages_pods_version_output',
+					'label' => 'Enable output of Pods version in head of Pods Pages.',
+					'description' => 'If enabled, Pods Pages will display, inside the &lt;head&gt; tag the current version of Pods.',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_pods_pages_page_check' =>
+				array (
+					'name' => 'disable_pods_pages_page_check',
+					'label' => 'Disable Pods Pages Page Check',
+					'description' => 'Disables the check that is run before a page loads to see if Pods Pages is being used.',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+		);
+
+		/**
+		 * Change or add to Pods Settings Pods Pages Group
+		 *
+		 * @param array Pods Pages settings
+		 *
+		 * @return array The settings field arrays.
+		 *
+		 * @since 3.0.0
+		 */
+		$pods_pages = apply_filters( 'pods_admin_pods_pages_settings', $pods_pages );
+
+		foreach ( $pods_pages  as $item ) {
+			$item[ 'group' ] =  3;
+			$item[ 'grouped' ] = 1;
+		}
+
+
+		$pods_settings = array_merge( $general, $performance, $pods_pages );
+
+		/**
+		 * Change or add to Pods Settings fields and groups.
+		 *
+		 * Useful for adding your own group of settings to Pods Settings page.
+		 *
+		 * @param array Pods settings.
+		 *
+		 * @return array The settings field arrays.
+		 *
+		 * @since 3.0.0
+		 */
+		$pods_settings = apply_filters( 'pods_admin_pods_settings', $pods_settings );
+
+		return $pods_settings;
+
 	}
 
 	/**
@@ -2002,7 +2149,7 @@ class Pods_Admin {
 			define( 'PODS_LIGHT', true );
 		}
 
-		if ( ! defined( 'PODS_TABLELESS' ) && $settings->field( 'enable_pods_tabless_mode' ) == 1 ) {
+		if ( ! defined( 'PODS_TABLELESS' ) && $settings->field( 'enable_pods_tableless_mode' ) == 1 ) {
 			define( 'PODS_TABLELESS', true );
 		}
 
@@ -2048,16 +2195,16 @@ class Pods_Admin {
 		}
 
 		if ( ( is_multisite() && $settings->field( 'admin_access_role' )  !== 'super_admin' ) || ( !is_multisite() && $settings->field( 'admin_access_role' )  !== 'admin' ) )  {
-			add_filter( 'pods_is_admin', array( $this, 'pods_settings_callback' ), 25, 3 );
+			add_filter( 'pods_is_admin', array( $this, 'settings_admin_access' ), 25, 3 );
 		}
 
 		//COMPONENTS
 		//Pods Pages
-		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT') && $settings->field( 'enable_pages_pods-version_output' ) == 1 ) {
+		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT') && $settings->field( 'enable_pages_pods_version_output' ) == 1 ) {
 			define( 'PODS_DISABLE_VERSION_OUTPUT', true );
 		}
 
-		if ( ! defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) && $settings->field( 'disables_pods_pages_page_check' ) == 1 ) {
+		if ( ! defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) && $settings->field( 'disable_pods_pages_page_check' ) == 1 ) {
 			define( 'PODS_DISABLE_POD_PAGE_CHECK', true );
 		}
 

@@ -1955,7 +1955,7 @@ class Pods_Admin {
 
 		$return = '<pre>' . print_r( $info, TRUE ) . '</pre>';
 
-		if ( $kpes ) {
+		if ( $kses ) {
 			return wp_kses( $return, array( 'pre' => array(), ) );
 
 		}
@@ -1964,5 +1964,155 @@ class Pods_Admin {
 		}
 
 	}
+
+	/**
+	 * Sets the settings fields for Pods Settings
+	 *
+	 * @since 3.0.0
+	 */
+	function pods_settings() {
+		//@TODO THIS.
+	}
+
+	/**
+	 * Implements settings set in pods settings
+	 *
+	 * @TODO Hook this to something when it's ready to be used.
+	 *
+	 * @since 3.0.0
+	 */
+	function pods_settings_callback() {
+		$settings = pods( '_pods_settings', null, true );
+		if ( !$settings || !is_object( $settings ) ) {
+			return;
+
+		}
+
+		//GENERAL
+		if ( $settings->field( 'default_pagination' ) != 'none' ) {
+			$type = $settings->field( 'defualt_pagination' );
+			//@TODO Do something with this
+		}
+		else {
+			//@TODO Disable pagination
+		}
+
+		//PERFORMANCE
+		if ( ! defined( 'PODS_LIGHT' ) && $settings->field( 'enable_pods_light_mode' ) == 1  ) {
+			define( 'PODS_LIGHT', true );
+		}
+
+		if ( ! defined( 'PODS_TABLELESS' ) && $settings->field( 'enable_pods_tabless_mode' ) == 1 ) {
+			define( 'PODS_TABLELESS', true );
+		}
+
+		if ( $settings->field( 'disable_full_meta_integration' ) == 1 )  {
+			//@TODO disable full meta integration
+		}
+
+		if ( ! defined( 'PODS_API_CACHE' ) && $settings->field( 'disable_pods_api_cache') == 0 ) {
+				define( 'PODS_API_CACHE', false );
+		}
+
+		if ( ! defined( 'PODS_DEPRECATED' ) && $settings->field( 'disable_pods_deprecated_functions' ) == 0 ) {
+			define( 'PODS_DEPRECATED', false );
+		}
+
+		if ( ! defined( 'PODS_SESSION_AUTO_START' ) && $settings->field( 'disable_session_auto_start' ) == 1 ) {
+			define( 'PODS_SESSION_AUTO_START', true );
+		}
+
+		//ACCESS & SECURITY
+		if (  ! defined( 'PODS_DISABLE_ADMIN_MENU' ) && $settings->field( 'disable_pods_menu' ) == 1 ) {
+			define( 'PODS_DISABLE_ADMIN_MENU', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_EVAL' ) && $settings->field( 'disable_pods_eval' ) ) {
+			define( 'PODS_DISABLE_EVAL', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_FILE_UPLOAD') && $settings->field( 'disable_file_upload') == 1 ) {
+			define( 'PODS_DISABLE_FILE_UPLOAD', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_FILE_BROWSER') && $settings->field( 'disable_file_browser' ) == 1 ) {
+			define( 'PODS_DISABLE_FILE_BROWSER', true );
+		}
+
+		if ( ! defined( 'PODS_FILES_REQUIRE_LOGIN' ) && $settings->field( 'require_login_for_files' ) == 1 ) {
+			define( 'PODS_FILES_REQUIRE_LOGIN', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_SHORTCODE_SQL') && $settings->field( 'disable_shortcode_sql' ) == 1 ) {
+			define( 'PODS_DISABLE_SHORTCODE_SQL', true );
+		}
+
+		if ( ( is_multisite() && $settings->field( 'admin_access_role' )  !== 'super_admin' ) || ( !is_multisite() && $settings->field( 'admin_access_role' )  !== 'admin' ) )  {
+			add_filter( 'pods_is_admin', array( $this, 'pods_settings_callback' ), 25, 3 );
+		}
+
+		//COMPONENTS
+		//Pods Pages
+		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT') && $settings->field( 'enable_pages_pods-version_output' ) == 1 ) {
+			define( 'PODS_DISABLE_VERSION_OUTPUT', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) && $settings->field( 'disables_pods_pages_page_check' ) == 1 ) {
+			define( 'PODS_DISABLE_POD_PAGE_CHECK', true );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_META' ) && $settings->field( 'disable_pods_pages_meta' ) == 1 ) {
+			define( 'PODS_DISABLE_META', false );
+		}
+
+		if ( ! defined( 'PODS_DISABLE_BODY_CLASSES' ) && $settings->field( 'disable_pods_pages_body_class' ) == 1 ) {
+			define( 'PODS_DISABLE_BODY_CLASSES', true );
+		}
+
+	}
+
+	/**
+	 * Implements Pods Admin Menu Access Setting
+	 *
+	 * Don't use this to set admin access programmatically! Use pods_is_admin filter instead.
+	 *
+	 * @param $has_access
+	 * @param $cap
+	 * @param $capability
+	 *
+	 * @return mixed|null
+	 *
+	 * @since 3.0.0
+	 */
+	function settings_admin_access(  $has_access, $cap, $capability ) {
+		$settings = pods( '_pods_settings', null, true );
+		if ( !$settings || !is_object( $settings ) ) {
+			return $capability;
+
+		}
+		$capability = $settings->field( 'admin_access_role' );
+
+		return $capability;
+
+	}
+
+	/**
+	 * Returns the Pods settings UI
+	 *
+	 * @return Pods_UI|void
+	 *
+	 * @since 3.0.0
+	 */
+	function pods_settings_ui() {
+		$settings = pods( '_pods_settings', null, true );
+		if ( !$settings || !is_object( $settings ) ) {
+			return;
+
+		}
+
+		return $settings->ui();
+
+	}
+
 
 }

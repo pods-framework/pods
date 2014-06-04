@@ -1968,8 +1968,6 @@ class Pods_Admin {
 	/**
 	 * Sets the settings fields used to create Pods Settings (_pods_settings)
 	 *
-	 * @todo Add the rest of the settings fields.
-	 *
 	 * @return array Pods settings fields
 	 *
 	 * @since 3.0.0
@@ -1983,9 +1981,9 @@ class Pods_Admin {
 					'description' => 'Change the default pagination, when pagination type is not set explicitly.',
 					'help' => '',
 					'default' => NULL,
-					'options' =>
-						array (
-							'pick_custom' => 'none|None
+					'type' => 'pick',
+					'pick_custom' => array(
+'none|None
 simple|Simple
 paginate|Paginate
 advanced|Advanced',
@@ -2038,6 +2036,45 @@ advanced|Advanced',
 							'boolean_no_label' => 'Disable',
 						),
 				),
+			'disable_pods_api_cache' =>
+				array (
+					'name' => 'disable_pods_api_cache',
+					'label' => 'Disable Pods API Cache',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_pods_deprecated_functions' =>
+				array (
+					'name' => 'disable_pods_deprecated_functions',
+					'label' => 'Disable Deprecated Pods Functions',
+					'description' => 'Use with caution. When checked use of deprecated functions will cause fatal errors instead of warnings.',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_session_auto_start' =>
+				array (
+					'name' => 'disable_session_auto_start',
+					'label' => 'Disable Session Auto Start',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
 		);
 
 		/**
@@ -2055,6 +2092,134 @@ advanced|Advanced',
 			$item[ 'group' ] =  2;
 			$item[ 'grouped' ] = 1;
 		}
+
+		$access_security = array(
+			'disable_pods_menu' =>
+				array (
+					'name' => 'disable_pods_menu',
+					'label' => 'Disable Pods Menu',
+					'description' => 'Hide the Pods admin menu for users of any role.',
+					'help' => 'Since you can set access to the Pods admin menu by user level using the Admin Access Role setting, that is generally a better setting to use.',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_pods_menu' =>
+				array (
+					'name' => 'disable_pods_eval',
+					'label' => 'Disable Pods Eval',
+					'description' => 'Prevents Pods Pages and Templates from executing PHP code.',
+					'help' => 'If you are allowing untrusted users access to your Pods Pages or Pods Template editors, the ability to execute php code via these components is a threat to security and stability of your site.',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_file_upload' =>
+				array (
+					'name' => 'disable_file_upload',
+					'label' => 'Disable File Upload',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_file_browser' =>
+				array (
+					'name' => 'disable_file_browser',
+					'label' => 'Disable File Browser',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'require_login_for_files' =>
+				array (
+					'name' => 'require_login_for_files',
+					'label' => 'Require Files For Login',
+					'description' => '',
+					'help' => '',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'disable_shortcode_sql' =>
+				array (
+					'name' => 'disable_shortcode_sql',
+					'label' => 'Disable Shortcode SQL',
+					'description' => 'Prevent shortcodes from passing SQL that could potentially be used to used to compromise site security.',
+					'help' => 'This setting is recommended if you are allowing untrusted users to create or edit posts. When enabled, Pods shortcodes will ignore its "orderby", "where", "having", "groupby" and "select" arguments.',
+					'options' =>
+						array (
+							'boolean_format_type' => 'checkbox',
+							'boolean_yes_label' => 'Enable',
+							'boolean_no_label' => 'Disable',
+						),
+				),
+			'admin_access_role' =>
+				array (
+					'name' => 'admin_access_role',
+					'label' => 'Admin access role',
+					'description' => 'Set the minimum use role to access the Pods Admin.',
+					'help' => 'On multisite, default is super admin, otherwise the default is admin.',
+					'type' => 'pick',
+					'pick_custom' => array(
+						'admin|None
+						simple|Simple
+						paginate|Paginate
+						advanced|Advanced',
+					),
+					'pick_object' => 'custom-simple',
+
+				),
+
+		);
+
+		$access_security[ 'admin_access_role' ][ 'default' ] = 'admin';
+		if ( is_multisite() ) {
+			$access_security[ 'admin_access_role' ][ 'default' ] = 'super_admin';
+		}
+
+		global $wp_roles;
+		$roles = $wp_roles->get_names();
+		foreach ( $roles as $role => $label ) {
+			$the_roles[] = $role.'|'.$label."\n";
+		}
+
+		$access_security[ 'admin_access_role' ][ 'pick_custom' ] = implode("\n", $the_roles );
+
+		/**
+		 * Change or add to Pods Settings Access & Security Group
+		 *
+		 * @param array Access & Security settings
+		 *
+		 * @return array The settings field arrays.
+		 *
+		 * @since 3.0.0
+		 */
+		$access_security = apply_filters( 'pods_admin_access_security_settings', $access_security );
+
+		foreach ( $access_security as $item ) {
+			$item[ 'group' ] =  3;
+			$item[ 'grouped' ] = 1;
+		}
+
 
 		$pods_pages = array(
 			'enable_pods_light_mode' =>
@@ -2097,7 +2262,7 @@ advanced|Advanced',
 		$pods_pages = apply_filters( 'pods_admin_pods_pages_settings', $pods_pages );
 
 		foreach ( $pods_pages  as $item ) {
-			$item[ 'group' ] =  3;
+			$item[ 'group' ] =  5;
 			$item[ 'grouped' ] = 1;
 		}
 
@@ -2117,6 +2282,13 @@ advanced|Advanced',
 		 */
 		$pods_settings = apply_filters( 'pods_admin_pods_settings', $pods_settings );
 
+		foreach ( $pods_settings as $setting ) {
+			if ( !isset( $setting[ 'type' ] ) ) {
+				$setting[ 'type' ] = 'boolean';
+			}
+
+		}
+
 		return $pods_settings;
 
 	}
@@ -2129,15 +2301,11 @@ advanced|Advanced',
 	 * @since 3.0.0
 	 */
 	function pods_settings_callback() {
-		$settings = pods( '_pods_settings', null, true );
-		if ( !$settings || !is_object( $settings ) ) {
-			return;
-
-		}
+		$settings = $this->settings_object();
 
 		//GENERAL
 		if ( $settings->field( 'default_pagination' ) != 'none' ) {
-			$type = $settings->field( 'defualt_pagination' );
+			$type = $settings->field( 'default_pagination' );
 			//@TODO Do something with this
 		}
 		else {
@@ -2232,11 +2400,8 @@ advanced|Advanced',
 	 * @since 3.0.0
 	 */
 	function settings_admin_access(  $has_access, $cap, $capability ) {
-		$settings = pods( '_pods_settings', null, true );
-		if ( !$settings || !is_object( $settings ) ) {
-			return $capability;
+		$settings = $this->settings_object();
 
-		}
 		$capability = $settings->field( 'admin_access_role' );
 
 		return $capability;
@@ -2251,15 +2416,30 @@ advanced|Advanced',
 	 * @since 3.0.0
 	 */
 	function pods_settings_ui() {
+		$settings = $this->settings_object();
+
+		return $settings->ui();
+
+	}
+
+	/**
+	 * Get the settings object
+	 *
+	 * @todo Make pods( '_pods_settings' ) return the actual settings
+	 *
+	 * @return bool|Pods
+	 *
+	 * @since 3.0.0
+	 */
+	function settings_object() {
 		$settings = pods( '_pods_settings', null, true );
 		if ( !$settings || !is_object( $settings ) ) {
 			return;
 
 		}
 
-		return $settings->ui();
+		return $settings;
 
 	}
-
 
 }

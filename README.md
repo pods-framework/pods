@@ -1,4 +1,4 @@
-# [Pods Framework](http://pods.io) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
+# [Pods Framework](http://pods.io) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) [![Bountysource](https://api.bountysource.com/badge/team?team_id=131&style=bounties_received)](https://www.bountysource.com/teams/pods-framework/issues?utm_source=Pods%20Framework&utm_medium=shield&utm_campaign=bounties_received) #
 
 ![Pods Framework icon](http://pods.io/wp-content/themes/pods/images/logo-pods-header.png)
 

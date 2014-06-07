@@ -2941,7 +2941,11 @@ class PodsAPI {
                 }
             }
 
-            unset( $params->data );
+			if ( $pod[ 'type' ] === 'taxonomy' && isset( $params->data )  && !empty( $params->data ) ) {
+				$term_data = $params->data;
+			}
+
+           unset( $params->data );
         }
 
 		if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) && in_array( $fields[ 'created' ][ 'type' ], array( 'date', 'datetime' ) ) ) {
@@ -3293,8 +3297,10 @@ class PodsAPI {
             if ( !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) )
                 $params->id = $this->save_wp_object( $object_type, $object_data, array(), false, true );
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $term = pods_var( $object_fields[ 'name' ][ 'name' ], $object_data, '', null, true );
-                $term_data = array();
+                $term = pods_v( $object_fields[ 'name' ][ 'name' ], $object_data, '', null, true );
+				if ( !isset( $term_data ) ) {
+					$term_data = array ();
+				}
 
                 if ( empty( $params->id ) || !empty( $term_data ) ) {
                     $taxonomy = $pod[ 'name' ];

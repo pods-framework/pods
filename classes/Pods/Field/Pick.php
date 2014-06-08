@@ -1263,7 +1263,7 @@ class Pods_Field_Pick extends
 				$data = self::$related_objects[ $options[self::$type . '_object'] ]['data'];
 
 				$simple = true;
-			} elseif ( isset( self::$related_objects[ $options[self::$type . '_object'] ] ) && isset( self::$related_objects[ $options[self::$type . 'k_object'] ]['data_callback'] ) && is_callable( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'] ) ) {
+			} elseif ( isset( self::$related_objects[ $options[self::$type . '_object'] ] ) && isset( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'] ) && is_callable( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'] ) ) {
 				$data = call_user_func_array( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'],
 					array( $name, $value, $options, $pod, $id ) );
 

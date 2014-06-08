@@ -99,8 +99,8 @@ function pods_message( $message, $type = null ) {
 /**
  * Error Handling which throws / displays errors
  *
- * @param string $error         The error message to be thrown / displayed
- * @param        object         / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
+ * @param string|object  $error The error message to be thrown / displayed
+ * @param boolean|object $obj   If object, if $obj->display_errors is set, and is set to true: display errors;
  *                              If boolean, and is set to true: display errors
  *
  * @throws Exception
@@ -391,7 +391,7 @@ function pods_strict( $include_debug = true ) {
 /**
  * Determine if Deprecated Mode is enabled
  *
- * @param bool $include_debug Whether to include strict mode
+ * @param bool $strict Whether to include strict mode
  *
  * @return bool Whether Deprecated Mode is enabled
  *
@@ -535,6 +535,7 @@ function pods_help( $text, $url = null ) {
 /**
  * Check whether or not something is a specific version minimum and/or maximum
  *
+ * @param string $what 'php' or 'mysql'. Any other value returns the WordPress version
  * @param string $minimum_version Minimum version
  * @param string $comparison      Comparison operator
  * @param string $maximum_version Maximum version
@@ -1678,9 +1679,9 @@ function pods_register_type( $type, $name, $object = null ) {
  *
  * @see   Pods_Meta::register_field
  *
- * @param string|array $pod    The pod name or array of pod names
- * @param string       $name   The name of the Field
- * @param array        $object (optional) Pod array, including any 'fields' arrays
+ * @param string|array $pod   The pod name or array of pod names
+ * @param string       $name  The name of the Field
+ * @param array        $field (optional) Pod array, including any 'fields' arrays
  *
  * @return array|boolean Field data or false if unsuccessful
  * @since 2.1

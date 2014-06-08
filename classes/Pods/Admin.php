@@ -2442,4 +2442,128 @@ advanced|Advanced',
 
 	}
 
+	/**
+	 * Pods add-on plugins available in the plugin installer
+	 *
+	 * @todo Add componets as plugins?
+	 *
+	 * @return array
+	 *
+	 * @since 3.0.0
+	 */
+	function pods_plugins() {
+		$plugins = array(
+			'pods-alternative-cache' 		=> 'http://wordpress.org/plugins/pods-alternative-cache',
+			'pods-frontier-auto-template' 	=> 'http://wordpress.org/plugins/pods-frontier-auto-template/',
+			'pods-seo' 						=> 'http://wordpress.org/plugins/pods-seo/',
+			'csv-importer-for-pods' 		=> 'https://wordpress.org/plugins/csv-importer-for-pods/',
+		);
+
+		/**
+		 * Set plugins available in the plugin installer
+		 *
+		 * @param array $plugins Should be in the form of 'plugin-slug' => 'plugin-uri'
+		 *
+		 * @returns array
+		 *
+		 * @since 3.0.0
+		 */
+		$plugins = apply_filters( 'pods_admin_pods_plugins', $plugins );
+
+		return $plugins;
+
+	}
+
+	/**
+	 * Creates a message about plugin status, with activation/install link if possible.
+	 *
+	 * @param string $name The plugin's proper name (displayable.)
+	 * @param string $slug The plugin's slug (needs to match http://wordpress.org/plugins/{$slug})
+	 * @param string $uri The plugin's URI (WordPress.org page)
+	 *
+	 * @return string
+	 *
+	 * @since 3.0.0
+	 */
+	function plugin_install_link( $name, $slug, $uri  ) {
+
+			$install = new Pods_Plugin_Install( $slug, $uri );
+
+			if ( $install->check_active() ) {
+				$message = ' is installed and activated!';
+			}
+			elseif ( $install->check() ) {
+				$message = ' is installed, but not activated. <a href="' . $install->activate_link() . '">Click here to activate the plugin.</a>';
+			}
+			elseif ( $install_link = $install->install_link() ) {
+				$message = '  is not installed. <a href="' . $install_link . '">Click here to install the plugin.</a>';
+			}
+			else {
+				$message = '  is not installed and could not be found in the Plugin Directory. Please install this plugin manually.';
+			}
+
+			return sprintf( '<div id="message" class="error"><p>%s</p></div>',
+				sprintf(
+					__( '%1$s %2$s.', 'pods' ),
+					$name, $message )
+			);
+
+	}
+
+	/**
+	 * Fetch plugin info via WordPress.org plugins API
+	 *
+	 * @param string $slug The plugin's slug (needs to match http://wordpress.org/plugins/{$slug})
+	 *
+	 * @return array
+	 *
+	 * @since 3.0.0
+	 */
+	function plugin_info( $slug ) {
+		$url = "http://api.wordpress.org/plugins/info/1.0/{$slug}.json";
+		if ( curl_init( $url ) ) {
+			$json = file_get_contents( $url );
+			$obj = json_decode( $json );
+			$info = array(
+				'name' 			=> $obj->name,
+				'slug' 			=> $obj->slug,
+				'version'		=> $obj->version,
+				'wp_requires' 	=> $obj->requires,
+				'wp_tested' 	=> $obj->tested,
+				'author' 	=> $obj->author,
+			);
+
+			return $info;
+
+		}
+
+	}
+
+	/**
+	 * @todo This
+	 */
+	function plugin_install_ui() {
+		$plugins = $this->pods_plugins();
+		if ( !is_array( $plugins ) ) {
+			return;
+		}
+
+		foreach ( $plugins as $slug => $uri ) {
+			$info = $this->plugin_info( $slug );
+			if ( $info  ) {
+				$name = $info['name'];
+			}
+
+			$links[] = $this->plugin_install_link( $name, $slug, $uri  );
+
+		}
+
+		if ( isset( $links ) && is_array( $links ) ) {
+
+			return implode( ',', $links );
+
+		}
+
+	}
+
 }

@@ -1354,8 +1354,9 @@ class PodsAPI {
 
         $old_fields = $old_options = array();
 
-        if ( isset( $params->name ) )
-            $params->name = pods_clean_name( $params->name );
+		if ( isset( $params->name ) && ! isset( $params->object ) ) {
+			$params->name = pods_clean_name( $params->name );
+		}
 
         if ( !empty( $pod ) ) {
             if ( isset( $params->id ) && 0 < $params->id )

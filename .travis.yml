@@ -5,6 +5,8 @@ php:
     - 5.3
     - 5.4
     - 5.5
+    - 5.6
+    - hhvm
 
 env:
     - WP_VERSION=master WP_MULTISITE=0
@@ -17,6 +19,11 @@ env:
     - WP_VERSION=3.7.3 WP_MULTISITE=1
     - WP_VERSION=3.8.3 WP_MULTISITE=1
     - WP_VERSION=3.9 WP_MULTISITE=1
+    
+matrix:
+  allow_failures:
+    - php: 5.6
+    - php: hhvm
 
 before_script:
     - mkdir -p tmp

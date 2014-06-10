@@ -5403,15 +5403,21 @@ class PodsAPI {
 
         $the_pods = array();
 
-        $_pods = get_posts( array(
-            'post_type' => '_pods_pod',
-            'nopaging' => true,
-            'posts_per_page' => $limit,
-            'order' => $order,
-            'orderby' => $orderby,
-            'meta_query' => $meta_query,
-            'post__in' => $ids
-        ) );
+		$get_post_params = array(
+			'post_type' => '_pods_pod',
+			'nopaging' => true,
+			'posts_per_page' => $limit,
+			'order' => $order,
+			'orderby' => $orderby,
+			'meta_query' => $meta_query,
+		);
+
+		// Only set post__in if there are ids to filter (see issue #2228)
+		if ( false !== $ids ) {
+			$get_post_params[ 'post__in' ] = $ids;
+		}
+
+        $_pods = get_posts( $get_post_params );
 
         $export_ignore = array(
             'object_type',

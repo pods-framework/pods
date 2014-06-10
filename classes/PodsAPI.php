@@ -5403,7 +5403,7 @@ class PodsAPI {
 
         $the_pods = array();
 
-		$get_post_params = array(
+		$args = array(
 			'post_type' => '_pods_pod',
 			'nopaging' => true,
 			'posts_per_page' => $limit,
@@ -5412,12 +5412,12 @@ class PodsAPI {
 			'meta_query' => $meta_query,
 		);
 
-		// Only set post__in if there are ids to filter (see issue #2228)
-		if ( false !== $ids ) {
-			$get_post_params[ 'post__in' ] = $ids;
+		// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+		if ( false != $ids ) {
+			$args[ 'post__in' ] = $ids;
 		}
 
-        $_pods = get_posts( $get_post_params );
+		$_pods = get_posts( $args );
 
         $export_ignore = array(
             'object_type',
@@ -5858,15 +5858,19 @@ class PodsAPI {
             if ( isset( $params->where ) && !empty( $params->where ) && is_array( $params->where ) )
                 $meta_query = array_merge( $meta_query, (array) $params->where );
 
-            $args = array(
-                'post_type' => '_pods_field',
-                'nopaging' => true,
-                'posts_per_page' => $limit,
-                'order' => $order,
-                'orderby' => $orderby,
-                'meta_query' => $meta_query,
-                'post__in' => $ids
-            );
+			$args = array(
+				'post_type' => '_pods_field',
+				'nopaging' => true,
+				'posts_per_page' => $limit,
+				'order' => $order,
+				'orderby' => $orderby,
+				'meta_query' => $meta_query,
+			);
+
+			// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+			if ( false != $ids ) {
+				$args[ 'post__in' ] = $ids;
+			}
 
             $fields = false;
 
@@ -6085,15 +6089,21 @@ class PodsAPI {
 
         $the_objects = array();
 
-        $objects = get_posts( array(
-            'post_type' => '_pods_' . $params->type,
-            'nopaging' => true,
-            'posts_per_page' => $limit,
-            'order' => $order,
-            'orderby' => $orderby,
-            'meta_query' => $meta_query,
-            'post__in' => $ids
-        ) );
+		$args = array(
+			'post_type' => '_pods_' . $params->type,
+			'nopaging' => true,
+			'posts_per_page' => $limit,
+			'order' => $order,
+			'orderby' => $orderby,
+			'meta_query' => $meta_query,
+		);
+
+		// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+		if ( false != $ids ) {
+			$args[ 'post__in' ] = $ids;
+		}
+
+		$objects = get_posts( $args );
 
         foreach ( $objects as $object ) {
             $object = $this->load_object( $object );

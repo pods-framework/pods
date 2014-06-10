@@ -60,7 +60,19 @@ class PodsField_Password extends PodsField {
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
-            )/*,
+            ),
+            self::$type . '_hash' => array(
+                'label' => __( 'Hash', 'pods' ),
+                'default' => 1,
+                'type' => 'boolean',
+                'help' => __( 'Securely hash passwords when storing them', 'pods' )
+	    ),
+            self::$type . '_salt' => array(
+                'label' => __( 'Salt', 'pods' ),
+                'default' => "",
+                'type' => 'string',
+                'help' => __( 'Used for salting the hashes of secure fields', 'pods' )
+	    )/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -85,14 +97,19 @@ class PodsField_Password extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+        if( pods_var( self::$type . '_hash', $options ) ) {
+            return 'VARCHAR(32)';
+        }
+        else {
+            $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
-        $schema = 'VARCHAR(' . $length . ')';
+            $schema = 'VARCHAR(' . $length . ')';
 
-        if ( 255 < $length || $length < 1 )
-            $schema = 'LONGTEXT';
+            if ( 255 < $length || $length < 1 )
+                $schema = 'LONGTEXT';
 
-        return $schema;
+            return $schema;
+        }
     }
 
     /**
@@ -174,12 +191,14 @@ class PodsField_Password extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
+        $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
-		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
-			$value = pods_mb_substr( $value, 0, $length );
-		}
+        if ( 0 < $length && $length < pods_mb_strlen( $value ) )
+            $value = pods_mb_substr( $value, 0, $length );
 
-        return $value;
+        if ( pods_var( self::$type . '_hash', $options ) )
+            return hash_pbkdf2('sha1', $value, pods_var( self::$type . '_salt', $options ), 1, 32);
+        else
+            return $value;
     }
 }

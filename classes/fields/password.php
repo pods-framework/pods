@@ -97,19 +97,17 @@ class PodsField_Password extends PodsField {
      * @since 2.0
      */
     public function schema ( $options = null ) {
-        if( pods_var( self::$type . '_hash', $options ) ) {
-            return 'VARCHAR(32)';
-        }
-        else {
+        if( pods_var( self::$type . '_hash', $options ) )
+            $length = 6 + 32;
+        else
             $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
-            $schema = 'VARCHAR(' . $length . ')';
+        $schema = 'VARCHAR(' . $length . ')';
 
-            if ( 255 < $length || $length < 1 )
-                $schema = 'LONGTEXT';
+        if ( 255 < $length || $length < 1 )
+            $schema = 'LONGTEXT';
 
-            return $schema;
-        }
+        return $schema;
     }
 
     /**
@@ -140,6 +138,24 @@ class PodsField_Password extends PodsField {
             $options[ 'readonly' ] = true;
 
         pods_view( PODS_DIR . 'ui/fields/password.php', compact( array_keys( get_defined_vars() ) ) );
+    }
+
+    /**
+     * Helper function to check if a string is a tagged hash or not
+     * The format of a tagged hash string is the string "{SHA1}"
+     * followed by 32 hexets
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    function tagged_hash_string( $value ) {
+        if ( 6 + 32 == strlen( $value ) ) {
+            if ("{SHA1}" == pods_mb_substr($value, 0, 6) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -193,12 +209,18 @@ class PodsField_Password extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
-        if ( 0 < $length && $length < pods_mb_strlen( $value ) )
+        if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
             $value = pods_mb_substr( $value, 0, $length );
-
-        if ( pods_var( self::$type . '_hash', $options ) )
-            return hash_pbkdf2('sha1', $value, pods_var( self::$type . '_salt', $options ), 1, 32);
-        else
+        }
+        
+        if( pods_var( self::$type . '_hash', $options ) ) {
+            if ( PodsField_Password::tagged_hash_string( $value ) )
+                return $value;
+            else
+                return "{SHA1}" . hash_pbkdf2('sha1', $value, pods_var( self::$type . '_salt', $options ), 1, 32, false);
+        }
+        else {
             return $value;
+        }
     }
 }

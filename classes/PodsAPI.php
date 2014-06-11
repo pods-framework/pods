@@ -7644,6 +7644,7 @@ class PodsAPI {
 
         while ( $pod->fetch() ) {
             $data[ $pod->id() ] = $this->export_pod_item( $params, $pod );
+			$data[ $pod->id() ][ 'ID' ] = (int) $pod->id();
         }
 
         $data = $this->do_hook( 'export', $data, $pod->pod, $pod );

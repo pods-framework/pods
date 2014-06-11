@@ -4234,15 +4234,21 @@ class Pods_API {
 
 		$the_pods = array();
 
-		$_pods = get_posts( array(
+		$args = array(
 			'post_type'      => '_pods_pod',
 			'nopaging'       => true,
 			'posts_per_page' => $limit,
 			'order'          => $order,
 			'orderby'        => $orderby,
 			'meta_query'     => $meta_query,
-			'post__in'       => $ids
-		) );
+		);
+
+		// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+		if ( false != $ids ) {
+			$args[ 'post__in' ] = $ids;
+		}
+
+		$_pods = get_posts( $args );
 
 		$export_ignore = array(
 			'object_type',
@@ -4563,8 +4569,12 @@ class Pods_API {
 				'order'          => $order,
 				'orderby'        => $orderby,
 				'meta_query'     => $meta_query,
-				'post__in'       => $ids
 			);
+
+			// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+			if ( false != $ids ) {
+				$args[ 'post__in' ] = $ids;
+			}
 
 			$fields = false;
 
@@ -4805,15 +4815,21 @@ class Pods_API {
 
 		$the_objects = array();
 
-		$objects = get_posts( array(
+		$args = array(
 			'post_type'      => '_pods_' . $params->type,
 			'nopaging'       => true,
 			'posts_per_page' => $limit,
 			'order'          => $order,
 			'orderby'        => $orderby,
 			'meta_query'     => $meta_query,
-			'post__in'       => $ids
-		) );
+		);
+
+		// Only set post__in if there are ids to filter (see https://core.trac.wordpress.org/ticket/28099)
+		if ( false != $ids ) {
+			$args[ 'post__in' ] = $ids;
+		}
+
+		$objects = get_posts( $args );
 
 		foreach ( $objects as $object ) {
 			$object = $this->load_object( $object );

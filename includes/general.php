@@ -93,7 +93,7 @@ function pods_message( $message, $type = null ) {
 		$class = 'error';
 	}
 
-	echo '<div id="message" class="' . $class . ' fade"><p>' . $message . '</p></div>';
+	echo '<div id="message" class="' . $class . ' fade"><p>' . $message . '</p></div>' . PHP_EOL;
 }
 
 /**

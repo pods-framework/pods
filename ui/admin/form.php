@@ -134,6 +134,18 @@ if ( 0 < $pod->id() ) {
         ?>
         <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
             <div id="side-info-column" class="inner-sidebar">
+				<?php
+					/**
+					 * Action that runs before the sidebar of the editor for an Advanced Content Type
+					 *
+					 * Occurs at the top of #side-info-column
+					 *
+					 * @param obj $pod Current Pods object.
+					 *
+					 * @since 2.4.1
+					 */
+					do_action( 'pods_act_editor_before_sidebar', $pod );
+				?>
                 <div id="side-sortables" class="meta-box-sortables ui-sortable">
                     <!-- BEGIN PUBLISH DIV -->
                     <div id="submitdiv" class="postbox">
@@ -231,6 +243,18 @@ if ( 0 < $pod->id() ) {
                             if ( 0 < $prev || 0 < $next ) {
                     ?>
                     <div id="navigatediv" class="postbox">
+						<?php
+							/**
+							 * Action that runs before the post navagiation in the editor for an Advanced Content Type
+							 *
+							 * Occurs at the top of #navigatediv
+							 *
+							 * @param obj $pod Current Pods object.
+							 *
+							 * @since 2.4.1
+							 */
+							do_action( 'pods_act_editor_before_navigation', $pod );
+						?>
                         <div class="handlediv" title="Click to toggle"><br /></div>
                         <h3 class="hndle"><span><?php _e( 'Navigate', 'pods' ); ?></span></h3>
 
@@ -264,6 +288,18 @@ if ( 0 < $pod->id() ) {
                             <!-- /#navigatebox -->
                         </div>
                         <!-- /.inside -->
+						<?php
+							/**
+							 * Action that runs before the post navagiation in the editor for an Advanced Content Type
+							 *
+							 * Occurs at the bottom of #navigatediv
+							 *
+							 * @param obj $pod Current Pods object.
+							 *
+							 * @since 2.4.1
+							 */
+							do_action( 'pods_act_editor_after_navigation', $pod );
+						?>
                     </div> <!-- /#navigatediv -->
                     <?php
                             }
@@ -271,11 +307,24 @@ if ( 0 < $pod->id() ) {
                     ?>
                 </div>
                 <!-- /#side-sortables -->
+				<?php
+					/**
+					 * Action that runs after the sidebar of the editor for an Advanced Content Type
+					 *
+					 * Occurs at the bottom of #side-info-column
+					 *
+					 * @param obj $pod Current Pods object.
+					 *
+					 * @since 2.4.1
+					 */
+					do_action( 'pods_act_editor_after_sidebar', $pod );
+				?>
             </div>
             <!-- /#side-info-column -->
 
             <div id="post-body">
                 <div id="post-body-content">
+
                     <?php
                         $more = false;
 
@@ -293,9 +342,33 @@ if ( 0 < $pod->id() ) {
                                     $extra .= ' maxlength="' . $max_length . '"';
                                 ?>
                                 <div id="titlediv">
+									<?php
+										/**
+										 * Action that runs before the title field of the editor for an Advanced Content Type
+										 *
+										 * Occurs at the top of #titlediv
+										 *
+										 * @param obj $pod Current Pods object.
+										 *
+										 * @since 2.4.1
+										 */
+										do_action( 'pods_act_editor_before_title', $pod );
+									?>
                                     <div id="titlewrap">
                                         <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
                                         <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
+										<?php
+										/**
+										 * Action that runs after the title field of the editor for an Advanced Content Type
+										 *
+										 * Occurs at the bottom of #titlediv
+										 *
+										 * @param obj $pod Current Pods object.
+										 *
+										 * @since 2.4.1
+										 */
+										do_action( 'pods_act_editor_after_title', $pod );
+										?>
                                     </div>
                                     <!-- /#titlewrap -->
 
@@ -316,6 +389,18 @@ if ( 0 < $pod->id() ) {
                     ?>
 
                     <div id="normal-sortables" class="meta-box-sortables ui-sortable">
+						<?php
+						/**
+						 * Action that runs before the main fields metabox in the editor for an Advanced Content Type
+						 *
+						 * Occurs at the top of #normal-sortables
+						 *
+						 * @param obj $pod Current Pods object.
+						 *
+						 * @since 2.4.1
+						 */
+						do_action( 'pods_act_editor_before_metabox', $pod );
+						?>
                         <div id="pods-meta-box" class="postbox" style="">
                             <div class="handlediv" title="Click to toggle"><br /></div>
                             <h3 class="hndle">
@@ -353,6 +438,18 @@ if ( 0 < $pod->id() ) {
                             <!-- /.inside -->
                         </div>
                         <!-- /#pods-meta-box -->
+						<?php
+						/**
+						 * Action that runs after the main fields metabox in the editor for an Advanced Content Type
+						 *
+						 * Occurs at the bottom of #normal-sortables
+						 *
+						 * @param obj $pod Current Pods object.
+						 *
+						 * @since 2.4.1
+						 */
+						do_action( 'pods_act_editor_after_metabox', $pod );
+						?>
                     </div>
                     <!-- /#normal-sortables -->
 

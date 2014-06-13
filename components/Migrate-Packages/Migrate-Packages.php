@@ -372,6 +372,11 @@ class Pods_Migrate_Packages extends PodsComponent {
                     if ( isset( $field[ 'pod_id' ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'pod_id' ] );
 
+                    if ( isset( $existing_fields[ $field['name'] ] ) ) {
+                        if ( $existing_field = pods_api()->load_field( array( 'name' => $field['name'], 'pod' => $pod[ 'name' ] ) ) )
+                            $pod['fields'][$k]['id'] = $existing_field['id'];
+                    }
+
                     if ( isset( $field[ 'pod' ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'pod' ] );
                 }

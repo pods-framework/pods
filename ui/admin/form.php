@@ -290,7 +290,7 @@ if ( 0 < $pod->id() ) {
                         <!-- /.inside -->
 						<?php
 							/**
-							 * Action that runs before the post navagiation in the editor for an Advanced Content Type
+							 * Action that runs after the post navagiation in the editor for an Advanced Content Type
 							 *
 							 * Occurs at the bottom of #navigatediv
 							 *

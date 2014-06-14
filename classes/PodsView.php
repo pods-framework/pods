@@ -34,7 +34,7 @@ class PodsView {
 		 *
 		 * To use, set first param to true. If that param in not null, this method returns its value.
 		 *
-		 * @param null|bool If not set to null, thsi filter overrides the rest of the method.
+		 * @param null|bool If not set to null, this filter overrides the rest of the method.
 		 * @param string $view Path of the view file
 		 * @param array|null $data (optional) Data to pass on to the template
 		 * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
@@ -47,7 +47,9 @@ class PodsView {
 		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
 		if ( !is_null( $filter_check ) ) {
 			return $filter_check;
+
 		}
+
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 

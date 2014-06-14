@@ -30,6 +30,27 @@ class Pods_View {
 	 */
 	public static function view( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
 
+		/**
+		 * Override the value of $view. For example, using Pods AJAX View.
+		 *
+		 * To use, set first param to true. If that param in not null, this method returns its value.
+		 *
+		 * @param null|bool If not set to null, this filter overrides the rest of the method.
+		 * @param string $view Path of the view file
+		 * @param array|null $data (optional) Data to pass on to the template
+		 * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string $cache_mode (optional) Decides the caching method to use for the view.
+		 *
+		 * @returns The value of the first param.
+		 *
+		 * @since 2.4.1
+		 */
+		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
+		if ( !is_null( $filter_check ) ) {
+			return $filter_check;
+
+		}
+
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 

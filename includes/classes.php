@@ -201,14 +201,33 @@ function pods_array ( $container ) {
  * @link http://pods.io/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
-    require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    $view = PodsView::view( $view, $data, $expires, $cache_mode );
+	/**
+	 * Override the value of $view. For example, using Pods AJAX View.
+	 *
+	 * To use, set first param to true. All other params are the same as for pods_view()
+	 *
+	 * @returns null|mixed
+	 *
+	 * @since 2.4.1
+	 */
+	$filter_check = apply_filters( 'pods_view_alt_view', null, $data, $expires, $cache_mode, $return );
 
-    if ( $return )
-        return $view;
+	if ( !is_null( $filter_check ) ) {
+		$view = $filter_check;
+	}
+	else {
+		require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    echo $view;
+		$view = PodsView::view( $view, $data, $expires, $cache_mode );
+	}
+
+	if ( $return ) {
+		return $view;
+	}
+
+	echo $view;
+
 }
 
 /**

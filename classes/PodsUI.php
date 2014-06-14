@@ -2172,6 +2172,8 @@ class PodsUI {
 
             $find_params = array(
                 'table' => $this->sql[ 'table' ],
+                'id' => $this->sql[ 'field_id' ],
+                'index' => $this->sql[ 'field_index' ],
                 'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
@@ -2198,7 +2200,7 @@ class PodsUI {
                 $this->data = $this->pods_data->data;
 
                 if ( !empty( $this->data ) )
-                    $this->data_keys = array_keys( $this->data );
+                    $this->data_keys = array_keys( $this->data[ 0 ] );
 
                 $this->total = $this->pods_data->total();
                 $this->total_found = $this->pods_data->total_found();

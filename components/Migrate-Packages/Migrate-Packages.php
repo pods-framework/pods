@@ -10,16 +10,21 @@
  *
  * Category: Migration
  *
+ * Plugin: pods-migrate-packages/pods-migrate-packages.php
+ *
  * @package Pods\Components
  * @subpackage Migrate-Packages
  */
+
+if ( class_exists( 'Pods_Migrate_Packages' ) )
+    return;
 
 class Pods_Migrate_Packages extends PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -28,7 +33,7 @@ class Pods_Migrate_Packages extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -39,7 +44,7 @@ class Pods_Migrate_Packages extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options, $component ) {
         $method = 'import_export'; // ajax_import
@@ -56,31 +61,33 @@ class Pods_Migrate_Packages extends PodsComponent {
         if ( 'import' == $params->import_export ) {
             $data = trim( $params->import_package );
 
-            echo '<div class="pods-wizard-content">';
+            $content = '<div class="pods-wizard-content">';
 
             if ( !empty( $data ) ) {
                 $imported = $this->import( $data );
 
                 if ( !empty( $imported ) ) {
-                    echo '<p>Import Complete! The following items were imported:</p>';
+                    $content .= '<p>Import Complete! The following items were imported:</p>';
 
                     foreach ( $imported as $type => $import ) {
-                        echo '<h4>' . ucwords( $type ) . '</h4>';
+                        $content .= '<h4>' . ucwords( $type ) . '</h4>';
 
-                        echo '<ul class="normal">';
+                        $content .= '<ul class="normal">';
 
                         foreach ( $import as $k => $what ) {
-                            echo '<li>' . esc_html( $what ) . '</li>';
+                            $content .= '<li>' . esc_html( $what ) . '</li>';
                         }
 
-                        echo '</ul>';
+                        $content .= '</ul>';
                     }
                 }
             }
             else
-                echo '<p>Import Error: Invalid Package</p>';
+                $content .= '<p>Import Error: Invalid Package</p>';
 
-            echo '</div>';
+            $content .= '</div>';
+
+            echo $content;
         }
         elseif ( 'export' == $params->import_export ) {
             $params = get_object_vars( $params );
@@ -119,7 +126,7 @@ class Pods_Migrate_Packages extends PodsComponent {
             $json_data = @json_decode( $data, true );
 
             if ( !is_array( $json_data ) )
-                $json_data = @json_decode( stripslashes( $data ), true );
+                $json_data = @json_decode( pods_unslash( $data ), true );
 
             $data = $json_data;
         }
@@ -148,6 +155,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                 $pod = $api->load_pod( array( 'name' => $pod_data[ 'name' ] ), false );
 
+                $existing_fields = array();
+
                 if ( !empty( $pod ) ) {
                     // Delete Pod if it exists
                     if ( $replace ) {
@@ -155,12 +164,14 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                         $pod = array( 'fields' => array() );
                     }
+                    else
+                        $existing_fields = $pod[ 'fields' ];
                 }
                 else
                     $pod = array( 'fields' => array() );
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
+                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0', '<' ) ) {
                     $core_fields = array(
                         array(
                             'name' => 'created',
@@ -198,6 +209,8 @@ class Pods_Migrate_Packages extends PodsComponent {
                         )
                     );
 
+                    $found_fields = array();
+
                     if ( !empty( $pod_data[ 'fields' ] ) ) {
                         foreach ( $pod_data[ 'fields' ] as $k => $field ) {
                             $field_type = $field[ 'coltype' ];
@@ -230,8 +243,13 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 )
                             );
 
-                            if ( in_array( $new_field[ 'name' ], array( 'created', 'modified', 'author' ) ) )
-                                $new_field[ 'name' ] .= '2';
+                            if ( in_array( $new_field[ 'name' ], $found_fields ) ) {
+                                unset( $pod_data[ 'fields' ][ $k ] );
+
+                                continue;
+                            }
+
+                            $found_fields[] = $new_field[ 'name' ];
 
                             if ( 'pick' == $field_type ) {
                                 $new_field[ 'pick_object' ] = 'pod';
@@ -277,7 +295,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 $new_field[ 'options' ][ 'text_max_length' ] = 128;
 
                             if ( isset( $pod[ 'fields' ][ $new_field[ 'name' ] ] ) )
-                                $new_field = array_merge_recursive( $pod[ 'fields' ][ $new_field[ 'name' ] ], $new_field );
+                                $new_field = array_merge( $pod[ 'fields' ][ $new_field[ 'name' ] ], $new_field );
 
                             $pod_data[ 'fields' ][ $k ] = $new_field;
                         }
@@ -348,11 +366,16 @@ class Pods_Migrate_Packages extends PodsComponent {
                 $pod = array_merge( $pod, $pod_data );
 
                 foreach ( $pod[ 'fields' ] as $k => $field ) {
-                    if ( isset( $field[ 'id' ] ) )
+                    if ( isset( $field[ 'id' ] ) && !isset( $existing_fields[ $field[ 'name' ] ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'id' ] );
 
                     if ( isset( $field[ 'pod_id' ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'pod_id' ] );
+
+                    if ( isset( $existing_fields[ $field['name'] ] ) ) {
+                        if ( $existing_field = pods_api()->load_field( array( 'name' => $field['name'], 'pod' => $pod[ 'name' ] ) ) )
+                            $pod['fields'][$k]['id'] = $existing_field['id'];
+                    }
 
                     if ( isset( $field[ 'pod' ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'pod' ] );
@@ -538,12 +561,104 @@ class Pods_Migrate_Packages extends PodsComponent {
         $helper_ids = pods_var_raw( 'helpers', $params );
 
         if ( !empty( $pod_ids ) ) {
-            $api_params = array();
+            $api_params = array( 'export' => true );
 
             if ( true !== $pod_ids )
                 $api_params[ 'ids' ] = (array) $pod_ids;
 
             $export[ 'pods' ] = $api->load_pods( $api_params );
+
+            $options_ignore = array(
+                'pod_id',
+                'old_name',
+                'object_type',
+                'object_name',
+                'object_hierarchical',
+                'table',
+                'meta_table',
+                'pod_table',
+                'field_id',
+                'field_index',
+                'field_slug',
+                'field_type',
+                'field_parent',
+                'field_parent_select',
+                'meta_field_id',
+                'meta_field_index',
+                'meta_field_value',
+                'pod_field_id',
+                'pod_field_index',
+                'object_fields',
+                'join',
+                'where',
+                'where_default',
+                'orderby',
+                'pod',
+                'recurse',
+                'table_info',
+                'attributes',
+                'group',
+                'grouped',
+                'developer_mode',
+                'dependency',
+                'depends-on',
+                'excludes-on'
+            );
+
+            $field_types = PodsForm::field_types();
+
+            $field_type_options = array();
+
+            foreach ( $field_types as $type => $field_type_data ) {
+                $field_type_options[ $type ] = PodsForm::ui_options( $type );
+            }
+
+            foreach ( $export[ 'pods' ] as &$pod ) {
+                if ( isset( $pod[ 'options' ] ) ) {
+                    $pod = array_merge( $pod, $pod[ 'options' ] );
+
+                    unset( $pod[ 'options' ] );
+                }
+
+                foreach ( $pod as $option => $option_value ) {
+                    if ( in_array( $option, $options_ignore ) || null === $option_value )
+                        unset( $pod[ $option ] );
+                }
+
+                if ( !empty( $pod[ 'fields' ] ) ) {
+                    foreach ( $pod[ 'fields' ] as &$field ) {
+                        if ( isset( $field[ 'options' ] ) ) {
+                            $field = array_merge( $field, $field[ 'options' ] );
+
+                            unset( $field[ 'options' ] );
+                        }
+
+                        foreach ( $field as $option => $option_value ) {
+                            if ( in_array( $option, $options_ignore ) || null === $option_value )
+                                unset( $field[ $option ] );
+                        }
+
+                        foreach ( $field_type_options as $type => $options ) {
+                            if ( $type == pods_var( 'type', $field ) )
+                                continue;
+
+                            foreach ( $options as $option_data ) {
+                                if ( isset( $option_data[ 'group' ] ) && is_array( $option_data[ 'group' ] ) && !empty( $option_data[ 'group' ] ) ) {
+                                    if ( isset( $field[ $option_data[ 'name' ] ] ) )
+                                        unset( $field[ $option_data[ 'name' ] ] );
+
+                                    foreach ( $option_data[ 'group' ] as $group_option_data ) {
+                                        if ( isset( $field[ $group_option_data[ 'name' ] ] ) )
+                                            unset( $field[ $group_option_data[ 'name' ] ] );
+                                    }
+                                }
+                                elseif ( isset( $field[ $option_data[ 'name' ] ] ) )
+                                    unset( $field[ $option_data[ 'name' ] ] );
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         if ( !empty( $template_ids ) ) {

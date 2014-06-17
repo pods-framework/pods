@@ -8,7 +8,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Paragraph';
 
@@ -16,7 +16,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'paragraph';
 
@@ -24,7 +24,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Plain Paragraph Text';
 
@@ -32,14 +32,14 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,20 +50,29 @@ class PodsField_Paragraph extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            self::$type . '_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'paragraph_allow_html' => array(
+                    self::$type . '_allow_html' => array(
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
                         'dependency' => true
                     ),
-                    'paragraph_oembed' => array(
+                    self::$type . '_oembed' => array(
                         'label' => __( 'Enable oEmbed?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -72,7 +81,7 @@ class PodsField_Paragraph extends PodsField {
                             'http://codex.wordpress.org/Embeds'
                         )
                     ),
-                    'paragraph_wptexturize' => array(
+                    self::$type . '_wptexturize' => array(
                         'label' => __( 'Enable wptexturize?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -81,7 +90,7 @@ class PodsField_Paragraph extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/wptexturize'
                         )
                     ),
-                    'paragraph_convert_chars' => array(
+                    self::$type . '_convert_chars' => array(
                         'label' => __( 'Enable convert_chars?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -90,7 +99,7 @@ class PodsField_Paragraph extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/convert_chars'
                         )
                     ),
-                    'paragraph_wpautop' => array(
+                    self::$type . '_wpautop' => array(
                         'label' => __( 'Enable wpautop?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
@@ -99,7 +108,7 @@ class PodsField_Paragraph extends PodsField {
                             'http://codex.wordpress.org/Function_Reference/wpautop'
                         )
                     ),
-                    'paragraph_allow_shortcode' => array(
+                    self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -111,18 +120,20 @@ class PodsField_Paragraph extends PodsField {
                     )
                 )
             ),
-            'paragraph_allowed_html_tags' => array(
+            self::$type . '_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( 'paragraph_allow_html' => true ),
+                'depends-on' => array( self::$type . '_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
-                'type' => 'text'
+                'type' => 'text',
+				'help' => __( 'Format: strong em a ul ol li b i', 'pods' )
             ),
-            'paragraph_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to -1 for no limit', 'pods' )
             )/*,
-            'paragraph_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -134,6 +145,14 @@ class PodsField_Paragraph extends PodsField {
             )*/
         );
 
+		if ( function_exists( 'Markdown' ) ) {
+			$options[ 'output_options' ][ 'group' ][ self::$type . '_allow_markdown' ] = array(
+				'label' => __( 'Allow Markdown Syntax?', 'pods' ),
+				'default' => 0,
+				'type' => 'boolean'
+			);
+		}
+
         return $options;
     }
 
@@ -143,10 +162,16 @@ class PodsField_Paragraph extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+        	$schema = 'VARCHAR(' . $length . ')';
+		}
 
         return $schema;
     }
@@ -161,32 +186,36 @@ class PodsField_Paragraph extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'paragraph_oembed', $options, 0 ) ) {
+        if ( 1 == pods_var( self::$type . '_oembed', $options, 0 ) ) {
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );
             $value = $embed->autoembed( $value );
         }
 
-        if ( 1 == pods_var( 'paragraph_wptexturize', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
-        if ( 1 == pods_var( 'paragraph_convert_chars', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_convert_chars', $options, 1 ) )
             $value = convert_chars( $value );
 
-        if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
             $value = wpautop( $value );
 
-        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) ) {
-            if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( self::$type . '_allow_shortcode', $options, 0 ) ) {
+            if ( 1 == pods_var( self::$type . '_wpautop', $options, 1 ) )
                 $value = shortcode_unautop( $value );
 
             $value = do_shortcode( $value );
         }
+
+		if ( function_exists( 'Markdown' ) && 1 == pods_v( self::$type . '_allow_markdown', $options ) ) {
+			$value = Markdown( $value );
+		}
 
         return $value;
     }
@@ -200,13 +229,23 @@ class PodsField_Paragraph extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+        $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
             $value = implode( "\n", $value );
+
+        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) )
+                $options[ 'readonly' ] = true;
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) )
+            $options[ 'readonly' ] = true;
 
         pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -223,10 +262,16 @@ class PodsField_Paragraph extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
+
+		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
+
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
+		}
 
         return $value;
     }
@@ -242,7 +287,7 @@ class PodsField_Paragraph extends PodsField {
      * @param array $pod
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );
@@ -271,16 +316,22 @@ class PodsField_Paragraph extends PodsField {
 
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'paragraph_allow_html', $options ) ) {
+        if ( 1 == pods_var( self::$type . '_allow_html', $options ) ) {
             $allowed_html_tags = '';
 
-            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( 'paragraph_allowed_html_tags', $options ) ) );
-                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-            }
+			if ( 0 < strlen( pods_var( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_var( self::$type . '_allowed_html_tags', $options );
+				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+				$allowed_tags = explode( ' ', $allowed_tags );
+				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
 
-            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
-                $value = strip_tags( $value, $allowed_html_tags );
+				if ( !empty( $allowed_tags ) ) {
+					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				}
+			}
+
+			if ( !empty( $allowed_html_tags ) )
+				$value = strip_tags( $value, $allowed_html_tags );
         }
         else
             $value = strip_tags( $value );

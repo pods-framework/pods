@@ -10,9 +10,9 @@ $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <div id="color_<?php echo $attributes[ 'id' ]; ?>"></div>
 

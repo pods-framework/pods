@@ -4,7 +4,7 @@
  *
  * Menu Name: Roles &amp; Capabilities
  *
- * Description: Create and Manage WordPress User Roles and Capabilities; Uses the 'Members' plugin filters for additional plugin integrations; Portions of code based on the 'Members' plugin by Justin Tadlock
+ * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin by Justin Tadlock
  *
  * Version: 1.0
  *
@@ -14,12 +14,15 @@
  * @subpackage Roles
  */
 
+if ( class_exists( 'Pods_Roles' ) )
+    return;
+
 class Pods_Roles extends PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
@@ -28,7 +31,7 @@ class Pods_Roles extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -41,10 +44,14 @@ class Pods_Roles extends PodsComponent {
      * @param $component
      *
      * @return void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options, $component ) {
         global $wp_roles;
+
+        // Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
+        if ( class_exists( 'RGForms' ) && !has_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) ) )
+            add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
 
         $default_role = get_option( 'default_role' );
 
@@ -64,7 +71,7 @@ class Pods_Roles extends PodsComponent {
             if ( $default_role == $key )
                 $roles[ $key ][ 'label' ] .= ' (site default)';
 
-            if ( 0 < $count && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'list_users' ) ) ) {
+            if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
                 $roles[ $key ][ 'users' ] .= '<br /><a href="'
                                              . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
                                              . __( 'View Users', 'pods' ) . '</a>';
@@ -109,13 +116,13 @@ class Pods_Roles extends PodsComponent {
         if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
             $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
 
-        if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods_roles_add' ) )
+        if ( !pods_is_admin( array( 'pods_roles_add' ) ) )
             $ui[ 'actions_disabled' ][] = 'add';
 
-        if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods_roles_edit' ) )
+        if ( !pods_is_admin( array( 'pods_roles_edit' ) ) )
             $ui[ 'actions_disabled' ][] = 'edit';
 
-        if ( count( $roles ) < 2 || ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods_roles_delete' ) ) )
+        if ( count( $roles ) < 2 || !pods_is_admin( array( 'pods_roles_delete' ) ) )
             $ui[ 'actions_disabled' ][] = 'delete';
 
         pods_ui( $ui );
@@ -163,7 +170,7 @@ class Pods_Roles extends PodsComponent {
         pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_delete ( $id, &$obj ) {
+    function admin_delete ( $id, $obj ) {
         global $wp_roles;
 
         $id = $obj->id;
@@ -210,7 +217,7 @@ class Pods_Roles extends PodsComponent {
             if ( $default_role == $key )
                 $roles[ $key ][ 'label' ] .= ' (site default)';
 
-            if ( 0 < $count && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'list_users' ) ) ) {
+            if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
                 $roles[ $key ][ 'users' ] .= '<br /><a href="'
                                              . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
                                              . __( 'View Users', 'pods' ) . '</a>';
@@ -265,10 +272,7 @@ class Pods_Roles extends PodsComponent {
         if ( empty( $role_label ) )
             return pods_error( __( 'Role label is required', 'pods' ) );
 
-        if ( !isset( $wp_roles ) )
-            $wp_roles = new WP_Roles();
-
-        return $wp_roles->add_role( $role_name, $role_label, $capabilities );
+        return add_role( $role_name, $role_label, $capabilities );
     }
 
     /**
@@ -292,6 +296,9 @@ class Pods_Roles extends PodsComponent {
         if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
             return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
 
+        /**
+         * @var $role WP_Role
+         */
         $role = $wp_roles->role_objects[ $params->id ];
         $role_name = $params->id;
         $role_label = $wp_roles->role_names[ $params->id ];
@@ -323,7 +330,7 @@ class Pods_Roles extends PodsComponent {
         }
 
         foreach ( $role_capabilities as $capability => $x ) {
-            if ( !in_array( $capability, $new_capabilities ) )
+            if ( !in_array( $capability, $new_capabilities ) && false === strpos( $capability, 'level_' ) )
                 $role->remove_cap( $capability );
         }
 
@@ -373,11 +380,9 @@ class Pods_Roles extends PodsComponent {
         $role_caps = array_unique( $role_caps );
 
         $plugin_caps = array(
-            'pods_roles_list',
             'pods_roles_add',
             'pods_roles_delete',
-            'pods_roles_edit',
-            'restrict_content'
+            'pods_roles_edit'
         );
 
         $capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );

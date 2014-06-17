@@ -10,7 +10,7 @@ class PodsField_Code extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Paragraph';
 
@@ -18,7 +18,7 @@ class PodsField_Code extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'code';
 
@@ -26,7 +26,7 @@ class PodsField_Code extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Code (Syntax Highlighting)';
 
@@ -34,14 +34,14 @@ class PodsField_Code extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -51,14 +51,23 @@ class PodsField_Code extends PodsField {
      * Add options and set defaults to
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            self::$type . '_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'code_allow_shortcode' => array(
+                    self::$type . '_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
@@ -66,12 +75,13 @@ class PodsField_Code extends PodsField {
                     )
                 )
             ),
-            'code_max_length' => array(
+            self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to -1 for no limit', 'pods' )
             )/*,
-            'code_size' => array(
+            self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -92,10 +102,16 @@ class PodsField_Code extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
+        $length = (int) pods_v( self::$type . '_max_length', $options, 0 );
+
         $schema = 'LONGTEXT';
+
+		if ( 0 < $length ) {
+        	$schema = 'VARCHAR(' . $length . ')';
+		}
 
         return $schema;
     }
@@ -110,10 +126,10 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( 'code_allow_shortcode', $options, 0 ) )
+        if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -128,10 +144,11 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+        $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
             $value = implode( "\n", $value );
@@ -155,9 +172,15 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		$length = (int) pods_var( self::$type . '_max_length', $options, 0 );
+
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
+		}
+
         return $value;
     }
 }

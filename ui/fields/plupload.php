@@ -12,7 +12,7 @@ wp_enqueue_style( 'pods-attach' );
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
@@ -27,11 +27,12 @@ $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $p
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
 $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
+    'container' => $css_id,
     'browse_button' => $css_id . '-upload',
     'url' => admin_url( 'admin-ajax.php', 'relative' ) . '?pods_ajax=1',
     'file_data_name' => 'Filedata',
@@ -46,16 +47,86 @@ $plupload_init = array(
         '_wpnonce' => $field_nonce,
         'action' => 'pods_upload',
         'method' => 'upload',
-        'pod' => $pod->pod_id,
+        'pod' => ( !is_object( $pod ) ? '0' : $pod->pod_id ),
         'field' => $options[ 'id' ],
         'uri' => $uri_hash
     ),
 );
 
-if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
-    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) pods_var( 'post' );
-elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < $post_ID )
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
+
+if ( 'images' == $limit_file_type )
+    $limit_types = 'jpg,jpeg,png,gif';
+elseif ( 'video' == $limit_file_type )
+    $limit_types = 'mpg,mov,flv,mp4';
+elseif ( 'audio' == $limit_file_type )
+    $limit_types = 'mp3,m4a,wav,wma';
+elseif ( 'text' == $limit_file_type )
+    $limit_types = 'txt,rtx,csv,tsv';
+elseif ( 'any' == $limit_file_type )
+    $limit_types = '';
+else
+    $limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
+
+$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
+
+if ( pods_version_check( 'wp', '3.5' ) ) {
+    $mime_types = wp_get_mime_types();
+
+    if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
+        $new_limit_types = array();
+
+        foreach ( $mime_types as $type => $mime ) {
+            if ( 0 === strpos( $mime, $limit_file_type ) ) {
+                $type = explode( '|', $type );
+
+                $new_limit_types = array_merge( $new_limit_types, $type );
+            }
+        }
+
+        if ( !empty( $new_limit_types ) )
+            $limit_types = implode( ',', $new_limit_types );
+    }
+    elseif ( 'any' != $limit_file_type ) {
+        $new_limit_types = array();
+
+        $limit_types = explode( ',', $limit_types );
+
+        foreach ( $limit_types as $k => $limit_type ) {
+            $found = false;
+
+            foreach ( $mime_types as $type => $mime ) {
+                if ( 0 === strpos( $mime, $limit_type ) ) {
+                    $type = explode( '|', $type );
+
+                    foreach ( $type as $t ) {
+                        if ( !in_array( $t, $new_limit_types ) )
+                            $new_limit_types[] = $t;
+                    }
+
+                    $found = true;
+                }
+            }
+
+            if ( !$found )
+                $new_limit_types[] = $limit_type;
+        }
+
+        if ( !empty( $new_limit_types ) )
+            $limit_types = implode( ',', $new_limit_types );
+    }
+}
+
+if ( !empty( $limit_types ) )
+    $plupload_init[ 'filters' ][ 0 ][ 'extensions' ] = $limit_types;
+
+if ( is_admin() && !empty( $post_ID ) )
     $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $post_ID;
+elseif ( is_object( $pod ) && in_array( $pod->pod_data[ 'type' ], array( 'post_type', 'media' ) ) && 0 < $id )
+    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $id;
 
 $plupload_init = apply_filters( 'plupload_init', $plupload_init );
 
@@ -64,40 +135,34 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
-    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
-        <tbody>
-            <tr class="form-field">
-                <td>
-                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
-                        foreach ( $value as $val ) {
-                            $attachment = get_post( $val );
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
+        foreach ( $value as $val ) {
+            $attachment = get_post( $val );
 
-                            if ( empty( $attachment ) )
-                                continue;
+            if ( empty( $attachment ) )
+                continue;
 
-                            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-                            $title = $attachment->post_title;
+            $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
-                                $title = basename( $attachment->guid );
+            if ( 0 == $title_editable )
+                $title = basename( $attachment->guid );
 
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
-                        }
-                        ?></ul>
+			$link = wp_get_attachment_url( $attachment->ID );
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php _e( 'Add File', 'pods' ); ?></a>
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
+        }
+        ?></ul>
 
-                    <ul class="pods-files pods-files-queue"></ul>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+
+    <ul class="pods-files pods-files-queue"></ul>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
@@ -126,8 +191,10 @@ else
             <?php } ?>
 
         // hook delete links
-        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
-            var podsfile = $( this ).parent().parent();
+        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete a', function ( e ) {
+			e.preventDefault();
+
+            var podsfile = $( this ).parent().parent().parent();
             podsfile.slideUp( function () {
                 // check to see if this was the only entry
                 if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
@@ -192,11 +259,12 @@ else
                 file_div.append( response );
             }
             else {
-                var json = response.match( /\{(.*)\}/gi );
+                var json = response.match( /{.*}$/ );
 
-                if ( json[ 0 ] ) {
+                if ( null !== json && 0 < json.length )
                     json = jQuery.parseJSON( json[ 0 ] );
-                }
+                else
+                    json = {};
 
                 if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
                     if ( window.console ) console.log( response );
@@ -217,7 +285,8 @@ else
                 var binding = {
                     id : json.ID,
                     icon : json.thumbnail,
-                    name : json.post_title
+                    name : json.post_title,
+                    link : json.link
                 };
 
                 var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

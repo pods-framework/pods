@@ -1,0 +1,107 @@
+.CodeMirror-completions {
+	position: absolute;
+	z-index: 10;
+	overflow: hidden;
+	-webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+	-moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+	box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+}
+.CodeMirror-completions select {
+	background: #fafafa;
+	outline: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font-family: monospace;
+}
+
+.CodeMirror-dialog {
+	position: absolute;
+	left: 0; right: 0;
+	background: white;
+	z-index: 15;
+	padding: .1em .8em;
+	overflow: hidden;
+	color: #333;
+}
+
+.CodeMirror-dialog-top {
+	border-bottom: 1px solid #eee;
+	top: 0;
+}
+
+.CodeMirror-dialog-bottom {
+	border-top: 1px solid #eee;
+	bottom: 0;
+}
+
+.CodeMirror-dialog input {
+	border: none;
+	outline: none;
+	background: transparent;
+	width: 20em;
+	color: inherit;
+	font-family: monospace;
+}
+
+.CodeMirror-dialog button {
+	font-size: 70%;
+}
+
+
+.CodeMirror-hints {
+	position: absolute;
+	z-index: 10;
+	overflow: hidden;
+	list-style: none;
+	
+	margin: 0;
+	padding: 2px;
+	
+	-webkit-box-shadow: 0 3px 5px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 3px 5px rgba(0,0,0,.2);
+	box-shadow: 0 3px 5px rgba(0,0,0,.2);
+	border-radius: 2px;
+	border: 1px solid #e1e1e1;
+	
+	background: white;
+	font-size: 100%;
+	font-family: monospace;
+	
+	max-height: 20em;
+	overflow-y: auto;
+	z-index: 9999999;
+}
+
+.CodeMirror-hint {
+	margin: 0;
+	padding: 0 4px;
+	border-radius: 1px;
+	max-width: 19em;
+	overflow: hidden;
+	white-space: pre;
+	color: black;
+	cursor: pointer;
+}
+
+.CodeMirror-hint-active {
+	background: #39A94C;
+	color: white;
+}
+/* editor panels | custome highlight */
+.cm-mustache {color: #2AB02A;}
+.cm-mustacheinternal {color: #ff7040;}
+.cm-include {color: #ff00aa;}
+.cm-phptag{color: #20af20;font-weight: bold;}
+.cm-command{color: #20afe0;font-weight: bold;}
+
+.ui-resizable-e, ui-resizable-se {display:none;}
+.ui-resizable-s {
+  background: none repeat scroll 0 0 #E0E0E0;
+  bottom: 8px;
+  cursor: s-resize;
+  height: 5px;
+  margin: 0 -12px -12px;
+  position: absolute;
+  width: 100%;
+}

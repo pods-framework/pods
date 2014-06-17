@@ -10,9 +10,15 @@
  *
  * Version: 1.0
  *
+ * Plugin: pods-migrate-custom-post-type-ui/pods-migrate-custom-post-type-ui.php
+ *
  * @package Pods\Components
  * @subpackage Migrate-Cptui
  */
+
+if ( class_exists( 'Pods_Migrate_CPTUI' ) )
+    return;
+
 class Pods_Migrate_CPTUI extends PodsComponent {
 
     private $api = null;
@@ -24,7 +30,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      * Do things like register scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
@@ -34,7 +40,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -115,7 +121,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      *
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private function migrate_post_type ( $post_type ) {
         $params = array(
@@ -201,7 +207,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      *
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private function migrate_taxonomy ( $taxonomy ) {
 
@@ -266,7 +272,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
     /**
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clean () {
         delete_option( 'cpt_custom_post_types' );

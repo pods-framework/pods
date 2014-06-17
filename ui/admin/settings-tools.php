@@ -1,13 +1,19 @@
 <?php
     if ( !empty( $_POST ) ) {
         if ( isset( $_POST[ 'clearcache' ] ) ) {
-            pods_api()->cache_flush_pods();
+			$api = pods_api();
+
+            $api->cache_flush_pods();
+
+			if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
+				$api->load_pods();
+			}
 
             pods_redirect( pods_var_update( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
         }
     }
     elseif ( 1 == pods_var( 'pods_clearcache' ) )
-        pods_ui_message( 'Pods transients and cache have been cleared.' );
+        pods_message( 'Pods transients and cache have been cleared.' );
 
     if ( PODS_GITHUB_UPDATE ) {
 ?>
@@ -58,6 +64,10 @@
             $plugins[ $plugin_data[ 'Name' ] ] = $plugin_data[ 'Version' ];
     }
 
+    $stylesheet = get_stylesheet();
+    $theme = wp_get_theme( $stylesheet );
+    $theme_name = $theme->get( 'Name' );
+
     $versions = array(
         'WordPress Version' => $wp,
         'PHP Version' => $php,
@@ -73,8 +83,9 @@
         'WP Memory Limit' => WP_MEMORY_LIMIT,
         'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
         'Pods Install Location' => PODS_DIR,
-        'Pods Tableless Mode Activated' => ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'Yes' : 'No' ),
+        'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
         'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
+        'Currently Active Theme' => $theme_name,
         'Currently Active Plugins' => $plugins
     );
 

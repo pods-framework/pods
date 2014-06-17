@@ -10,6 +10,8 @@
     }
 </style>
 
+<p><em><?php _e('You must specify a Pods Template or create a custom template, using <a href="http://pods.io/docs/build/using-magic-tags/" title="Using Magic Tags" target="_blank">magic tags</a>.', 'pods'); ?></p></em>
+
 <ol class="pods_single_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"> <?php _e( 'Title', 'pods' ); ?></label>
@@ -20,17 +22,18 @@
     <li>
         <?php
             $api = pods_api();
-            $all_pods = $api->load_pods();
+            $all_pods = $api->load_pods( array( 'names' => true ) );
         ?>
-
-        <label for="<?php echo $this->get_field_id( 'pod_type' ); ?>"> <?php _e( 'Pod Type', 'pods' ); ?> </label>
+        <label for="<?php echo $this->get_field_id( 'pod_type' ); ?>">
+            <?php _e( 'Pod', 'pods' ); ?>
+        </label>
 
         <?php if ( 0 < count( $all_pods ) ): ?>
             <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
-                <?php foreach ( $all_pods as $pod ): ?>
-                    <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
-                    <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                        <?php echo esc_html( $pod[ 'label' ] ); ?>
+                <?php foreach ( $all_pods as $pod_name => $pod_label ): ?>
+                    <?php $selected = ( $pod_name == $pod_type ) ? 'selected' : ''; ?>
+                    <option value="<?php echo $pod_name; ?>" <?php echo $selected; ?>>
+                        <?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -47,7 +50,9 @@
         <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'slug' ); ?>" name="<?php echo $this->get_field_name( 'slug' ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
     </li>
 
-    <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
+    <?php
+        if ( class_exists( 'Pods_Templates' ) ) {
+    ?>
         <li>
             <?php
                 $all_templates = (array) $api->load_templates( array() );
@@ -64,7 +69,18 @@
                 <?php endforeach; ?>
             </select>
         </li>
-    <?php } ?>
+    <?php
+        }
+        else {
+    ?>
+        <li>
+            <label for="<?php echo $this->get_field_id( 'template' ); ?>"> <?php _e( 'Template', 'pods' ); ?> </label>
+
+            <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'template' ); ?>" name="<?php echo $this->get_field_name( 'template' ); ?>" value="<?php echo esc_attr( $template ); ?>" />
+        </li>
+    <?php
+        }
+    ?>
 
     <li>
         <label for="<?php echo $this->get_field_id( 'template_custom' ); ?>"> <?php _e( 'Custom Template', 'pods' ); ?> </label>

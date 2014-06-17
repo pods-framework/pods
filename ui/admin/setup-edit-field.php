@@ -1,11 +1,35 @@
 <?php
     $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
-    // Set pick object
-    $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+    // Migrate pick object when saving
+    if ( 'pod' == pods_var( 'pick_object', $field ) ) {
+        if ( isset( PodsMeta::$post_types[ $field[ 'pick_val' ] ] ) )
+            $field[ 'pick_object' ] = 'post_type';
+        elseif ( isset( PodsMeta::$taxonomies[ $field[ 'pick_val' ] ] ) )
+            $field[ 'pick_object' ] = 'taxonomy';
+        elseif ( 'user' == $field[ 'pick_val' ] && !empty( PodsMeta::$user ) ) {
+            $field[ 'pick_object' ] = 'user';
+            $field[ 'pick_val' ] = '';
+        }
+        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( PodsMeta::$comment ) ) {
+            $field[ 'pick_object' ] = 'comment';
+            $field[ 'pick_val' ] = '';
+        }
+        elseif ( 'media' == $field[ 'pick_val' ] && !empty( PodsMeta::$media ) ) {
+            $field[ 'pick_object' ] = 'media';
+            $field[ 'pick_val' ] = '';
+        }
+    }
+
+    $ignored_pick_objects = apply_filters( '', array( 'table' ) );
+
+    if ( !in_array( pods_var( 'pick_object', $field ), $ignored_pick_objects ) ) {
+        // Set pick object
+        $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+    }
 
     // Unset pick_val for the field to be used above
-    if ( isset( $field[ 'pick_val'  ] ) )
+    if ( isset( $field[ 'pick_val' ] ) )
         unset( $field[ 'pick_val' ] );
 
     // Remove weight as we're going to allow reordering here
@@ -13,6 +37,7 @@
 
     // Remove options, we don't need it in the JSON
     unset( $field[ 'options' ] );
+    unset( $field[ 'table_info' ] );
 
     $data = array(
         'row' => $pods_i
@@ -64,7 +89,7 @@
             $type = 'Unknown';
 
             if ( isset( $field_types[ pods_var( 'type', $field ) ] ) )
-                $type = $field_types[ pods_var( 'type', $field ) ];
+                $type = $field_types[ pods_var( 'type', $field ) ][ 'label' ];
 
             echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_var( 'type', $field ) . ']</span>';
 
@@ -90,7 +115,6 @@
 
                                 $object = rtrim( $object, 's' );
 
-                                $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                                 $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';
 
                                 break;

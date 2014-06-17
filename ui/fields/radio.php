@@ -11,6 +11,7 @@ if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
 $counter = 1;
 $primary_name = $name;
 $primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
+$selection_made = false;
 
 foreach ( $options[ 'data' ] as $val => $label ) {
     if ( is_array( $label ) ) {
@@ -27,12 +28,30 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     $attributes[ 'checked' ] = null;
     $attributes[ 'tabindex' ] = 2;
 
-    if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
+    if ( !$selection_made && ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) ) ) {
         $attributes[ 'checked' ] = 'CHECKED';
+        $selection_made = true;
+    }
 
     $attributes[ 'value' ] = $val;
 
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
+    $indent = '';
+
+    $indent_count = substr_count( $label, '&nbsp;&nbsp;&nbsp;' );
+
+    if ( 0 < $indent_count ) {
+        $label = str_replace( '&nbsp;&nbsp;&nbsp;', '', $label );
+
+        $indent = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
+    }
+
+    if ( pods_var( 'readonly', $options, false ) ) {
+        $attributes[ 'readonly' ] = 'READONLY';
+
+        $attributes[ 'class' ] .= ' pods-form-ui-read-only';
+    }
 
     if ( 1 < count( $options[ 'data' ] ) )
         $attributes[ 'id' ] = $primary_id . $counter;
@@ -43,8 +62,8 @@ foreach ( $options[ 'data' ] as $val => $label ) {
 <?php
     }
     ?>
-    <div class="pods-field pods-boolean">
-        <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+    <div class="pods-field pods-boolean"<?php echo $indent; ?>>
+        <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
         <?php
         if ( 0 < strlen( $label ) ) {
             $help = pods_var_raw( 'help', $options );

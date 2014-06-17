@@ -43,21 +43,37 @@ ul.pods-files li.pods-file-icon img {
     border-radius: 2px;
 }
 
+ul.pods-files li.pods-file-download,
 ul.pods-files li.pods-file-delete {
     width: 25px;
-    height: 25px;
+    height: 32px;
     float: right;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAA3NCSVQICAjb4U/gAAAATlBMVEX///9/f39/f39/f39/f39/f39/f39/f39/f39/f39/f3/Dw8O4uLi1tbV/f3++vr6ysrK7u7uysrLd3d3a2tr////w8PDs7OzX19eZmZmiM/O2AAAAGnRSTlMAESIzRFVmd4iZqru7u7vMzN3d7u7//////5iXHkEAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAUdEVYdENyZWF0aW9uIFRpbWUAOC82LzExcXp9NQAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAB9SURBVBiVbY9bFoMgDAUJ4RGjohU1dv8brQGk/eh85c7JycOYf2Agoog9hymLSJ4jtDxKZaFicJKH1asJuYt9sLcg+cIIRVxv5RJJrorzUM4m4s8MVoFzFxvpDBOXll/sdYsBWnft39hjvRX8wCkxPfk2Fp1zaKG/Z0Ap1QfqJArAT0KCEwAAAABJRU5ErkJggg==) 50% 75% no-repeat;
-    cursor: pointer;
+}
+
+ul.pods-files li.pods-file-download a,
+ul.pods-files li.pods-file-delete a {
+	display: block;
+    width: 25px;
+    height: 32px;
     opacity: 0.45;
 }
 
-ul.pods-files li.pods-file-delete:hover {
+ul.pods-files li.pods-file-download a:hover,
+ul.pods-files li.pods-file-delete a:hover {
     opacity: 1;
 }
 
+ul.pods-files li.pods-file-download a {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NDkxMSwgMjAxMy8xMC8yOS0xMTo0NzoxNiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjg4RTEzRDgzOUQ2NDExRTM4RDU0RTZEREYzM0JGOUU1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjg4RTEzRDg0OUQ2NDExRTM4RDU0RTZEREYzM0JGOUU1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6ODhFMTNEODE5RDY0MTFFMzhENTRFNkRERjMzQkY5RTUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6ODhFMTNEODI5RDY0MTFFMzhENTRFNkRERjMzQkY5RTUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6K9kXzAAAA4klEQVR42mL8//8/A60BEwMdwKglJAEWXBKlpaUOQMqeBLMOdnd3HyDJEqgFDSRYAlJLsiUwcACXZihwgGLSgwvZEmAwNOIJVgZqWIIrjnDGAdmWYImjBgLBOMIy40FokBwklD8IqcMZJ9BIJRjmxKhjxFfUA1OUAZDyx5EfkA3fCLTsAlmWQC2aD6QS8ChZALQgkdKILwRiXK68AJVnIDu4kHwjAKTuA7EAkvAHIFYE+uIDVZIw1CBHqMEwCxyJsYCkfAKNWFjQFOKLaAwACi5ScElJiQKpehhHWyukAIAAAwAmYpjupaJ3tgAAAABJRU5ErkJggg==) 50% 75% no-repeat;
+}
+
+ul.pods-files li.pods-file-delete a {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NDkxMSwgMjAxMy8xMC8yOS0xMTo0NzoxNiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjg4RTEzRDg3OUQ2NDExRTM4RDU0RTZEREYzM0JGOUU1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjg4RTEzRDg4OUQ2NDExRTM4RDU0RTZEREYzM0JGOUU1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6ODhFMTNEODU5RDY0MTFFMzhENTRFNkRERjMzQkY5RTUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6ODhFMTNEODY5RDY0MTFFMzhENTRFNkRERjMzQkY5RTUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5lwqP2AAAArUlEQVR42mL8//8/A60BEwMdwKglJAEWYhWWlpYKAKkEKHdBd3f3B6r6BGiBApC6D8T6UHwfKkYUYMSWhKGuzkcScgBikNgGKD8AiEE+OYCkZiIu3+EKLpAFDVjEDdD4Dmj8RlIsOYjDEnzgIElxAvT2AXyasFkA1UNy6rInwTcNaPFDcuo6gGQALjbFSZguloyWXSO0FHYggj24LZlIQohMJLmoH01duABAgAEAWAkzFiNjhgAAAAAASUVORK5CYII=) 50% 75% no-repeat;
+}
+
 ul.pods-files li.pods-file-handle,
-ul.pods-files li.pods-file-delete {
+ul.pods-files li.pods-file-download a,
+ul.pods-files li.pods-file-delete a {
     text-indent: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -66,7 +82,7 @@ ul.pods-files li.pods-file-delete {
 ul.pods-files li.pods-file-name {
     position: absolute;
     left: 85px;
-    right: 40px;
+    right: 60px;
     padding-top: 5px;
 }
 

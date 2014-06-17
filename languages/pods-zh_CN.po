@@ -1,0 +1,3490 @@
+# Translation of Development in Chinese (China)
+# This file is distributed under the same license as the Development package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2013-07-26 12:49:23+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/0.1\n"
+"Project-Id-Version: Development\n"
+
+#: classes/PodsAdmin.php:1385
+msgid "Normal (Looks like the Post Type UI)"
+msgstr ""
+
+#: components/Pages.php:348
+msgid "Custom (uses only Pod Page content)"
+msgstr ""
+
+#: components/Pages.php:351
+msgid "Pods (Pods Default)"
+msgstr ""
+
+#: components/Pages.php:354
+msgid "Page (WP Default)"
+msgstr ""
+
+#: components/Pages.php:357
+msgid "Index (WP Fallback)"
+msgstr ""
+
+#: classes/fields/file.php:134
+msgid "Images (jpg, jpeg, png, gif)"
+msgstr "图片（jpg, png, gif）"
+
+#: classes/PodsAPI.php:5204
+msgid "Pod for field not found"
+msgstr "未找到字段"
+
+#: classes/PodsAdmin.php:845
+msgid "Number of Fields"
+msgstr "字段数"
+
+#: classes/PodsAdmin.php:923
+msgid "Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too."
+msgstr "确定要删除此Pod？如果这是一个扩展Pod。原项目也会被移除。"
+
+#: classes/PodsAdmin.php:936
+msgid "field"
+msgid_plural "fields"
+msgstr[0] ""
+
+#: classes/PodsAdmin.php:1131
+msgid "User Capability"
+msgstr "兼容类型"
+
+#: classes/PodsAdmin.php:1132
+msgid "Uses these capabilties for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}"
+msgstr "授予此文章类型以下权限：edit_{capability}, read_{capability}, and delete_{capability}"
+
+#: classes/PodsAdmin.php:1138
+msgid "Custom Capability"
+msgstr "自定义权限"
+
+#: classes/PodsAdmin.php:1143
+msgid "Custom User Capability"
+msgstr "自定义用户权限"
+
+#: classes/PodsAdmin.php:1150
+msgid "Additional User Capabilities"
+msgstr "附加用户权限"
+
+#: classes/PodsAdmin.php:1151
+msgid "Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s"
+msgstr "为此文章类型启用以下附加权限：delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, edit_published_{capability}s"
+
+#: classes/PodsAdmin.php:1264
+msgid "Default - Add to associated Post Type(s) menus"
+msgstr "默认-添加到关键文章类型菜单"
+
+#: classes/PodsAdmin.php:1265 classes/PodsAdmin.php:1343
+msgid "Add to Settings menu"
+msgstr "添加到设置菜单"
+
+#: classes/PodsAdmin.php:1266 classes/PodsAdmin.php:1344
+msgid "Add to Appearances menu"
+msgstr "添加到外观菜单"
+
+#: classes/PodsAdmin.php:1267
+msgid "Make a menu item"
+msgstr "添加一个菜单项"
+
+#: classes/PodsAdmin.php:1268 classes/PodsAdmin.php:1346
+msgid "Add a submenu item to another menu"
+msgstr "在其他菜单下添加一个子菜单"
+
+#: classes/PodsAdmin.php:1311
+msgid "Whether to add a column for this taxonomy on the associated post types manage screens"
+msgstr "是否在关联的文章类型管理界面添加分类法盒子。"
+
+#: classes/PodsAdmin.php:1331
+msgid "Normal Settings Form"
+msgstr "一般设置表单"
+
+#: classes/PodsAdmin.php:1332
+msgid "Post Type UI"
+msgstr "文章类型UI"
+
+#: classes/PodsAdmin.php:1333 classes/PodsAdmin.php:1386
+msgid "Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)"
+msgstr "自定义(挂载到pods_admin_ui_custom或pods_admin_ui_custom_{podname}动作)"
+
+#: classes/PodsAdmin.php:1345
+msgid "Make a new menu item below Settings"
+msgstr "在设置菜单下添加一个新菜单"
+
+#: classes/PodsAdmin.php:1940
+msgid "Developer Preview"
+msgstr "开发预览"
+
+#: classes/PodsUI.php:1826
+msgid "<strong>Success:</strong> Your export is ready, you can download it <a href=\"%s\" target=\"_blank\">here</a>"
+msgstr "<strong>成功：</strong>导出文件已就绪，你可以点击<a href=\"%s\" target=\"_blank\">这里</a>下载。"
+
+#: classes/fields/email.php:70 classes/fields/password.php:62
+#: classes/fields/phone.php:95 classes/fields/text.php:93
+#: classes/fields/website.php:83
+msgid "Set to 0 for no limit"
+msgstr "设为0无限制"
+
+#: classes/fields/email.php:175
+msgid "Invalid e-mail provided for %s"
+msgstr "为%s提供的e-mail不正确。"
+
+#: classes/fields/pick.php:389
+msgid "User Capabilities"
+msgstr "用户权限"
+
+#: classes/fields/pick.php:434
+msgid "Countries"
+msgstr "国家"
+
+#: classes/fields/pick.php:435 classes/fields/pick.php:442
+msgid "Predefined Lists"
+msgstr "预定义列表"
+
+#: classes/fields/pick.php:441
+msgid "US States"
+msgstr "US States"
+
+#: classes/fields/pick.php:722
+msgid "The %s field is required and cannot be removed by the %s field"
+msgstr "%s字段是必需的，不能被%s删除。"
+
+#: components/Advanced-Relationships.php:38
+msgid "Database Tables"
+msgstr "数据表"
+
+#: components/Advanced-Relationships.php:76
+msgid "Post Type Objects"
+msgstr "文章类型对象"
+
+#: components/Advanced-Relationships.php:83
+msgid "Taxonomy Objects"
+msgstr "分类法对象"
+
+#: components/Migrate-Packages/ui/wizard.php:279
+msgid "Import Again"
+msgstr ""
+
+#: components/Pages.php:424
+msgid "Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named \"first/second/*\" part of the pod page. This is functionally the same as using pods_var( 2, \"url\" ) in PHP."
+msgstr "设置通配符别名是设置详情页链接的快捷方式，你可以使用{@url.2}匹配Pods的三级页面：\"first/second/*\"，此功能和在PHP中使用pods_var( 2, \"url\" )一样。"
+
+#: classes/PodsAdmin.php:1612 components/Pages.php:435
+msgid "Restrict access to Admins?"
+msgstr "仅允许管理员访问？"
+
+#: components/Pages.php:444
+msgid "<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones."
+msgstr "<h6>角色</h6>分配给用户以提供特定的访问权限，查看Pods中的角色和权限组件以方便的添加自定义角色或编辑现有的。"
+
+#: components/Pages.php:468
+msgid "<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles."
+msgstr "<h6>权限</h6>权限被分配到特定的用户角色，表示访问WordPress的特定功能。查看Pods中的角色和权限组件以方便的添加自定义权限或编辑现有的。"
+
+#: includes/general.php:125
+msgid "The following issue occurred:"
+msgstr "出现了一些问题："
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:551
+msgid "Pod <strong>%s</strong> not found, relationships cannot be migrated"
+msgstr "Pod<strong>%s</strong> 未找到，关联不能迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:858
+msgid "Pod <strong>%s</strong> not found, items cannot be migrated"
+msgstr "Pod<strong>%s</strong> 未找到，条目不能被迁移"
+
+#: ui/admin/setup-add.php:78
+msgid "Creating a new Content Type allows you to control exactly what that content type does, how it acts like, the fields it has, and the way you manage it."
+msgstr "创建新内容类型允许你精确控制内容类型，内容显示方式，内容域和管理方式"
+
+#: classes/PodsAdmin.php:1616
+msgid "This field will only be able to be edited by users with the ability to manage_options or delete_users, or super admins of a WordPress Multisite network"
+msgstr "这个字段只能被有管理选项、删除用户或站点的超级管理员编辑。"
+
+#: classes/PodsAdmin.php:1634
+msgid "Hide field from UI"
+msgstr "隐藏界面"
+
+#: classes/PodsAdmin.php:1637
+msgid "This option is overriden by access restrictions. If the user does not have access to edit this field, it will be hidden. If no access restrictions are set, this field will always be hidden."
+msgstr "此选被访问限制覆盖，如果用户不具有访问该字段的权限，它会被隐藏，如果没有访问限制设置，此选项将始终隐藏。"
+
+#: ui/admin/setup-edit.php:581
+msgid "Custom Query Var Name"
+msgstr "字段一查询参数名称"
+
+#: ui/admin/setup-edit.php:928
+msgid "There was a server error with your AJAX request."
+msgstr ""
+
+#: ui/admin/shortcode.php:336
+msgid "Embed content from a Pods Page"
+msgstr "从Pods页面嵌入内容"
+
+#: ui/admin/shortcode.php:397
+msgid "Pods Page"
+msgstr "Pod页面"
+
+#: classes/PodsAPI.php:553
+msgid "Setting data is required but is either invalid or empty"
+msgstr "用户数据为必填字段，但目前为空或无效数据"
+
+#: classes/PodsAPI.php:3488 classes/PodsAPI.php:3494
+msgid "Pod not allowed to be duplicated"
+msgstr "Pod 不能重复"
+
+#: classes/PodsAdmin.php:829 ui/admin/setup-add.php:91
+msgid "Custom Settings Page"
+msgstr "自定义设置页面"
+
+#: classes/PodsAdmin.php:839 classes/PodsAdmin.php:943
+msgid "Type"
+msgstr "类型"
+
+#: classes/PodsAdmin.php:1897 classes/PodsAdmin.php:1931
+msgid "Category"
+msgstr "分类"
+
+#: classes/PodsAdmin.php:1923
+msgid "Field Types"
+msgstr "字段类型"
+
+#: classes/PodsAdmin.php:1925
+msgid "Integration"
+msgstr "整合"
+
+#: classes/PodsAdmin.php:1926
+msgid "Migration"
+msgstr "迁移"
+
+#: classes/PodsAdmin.php:1965 classes/PodsAdmin.php:1984
+msgid "You can find it at %s"
+msgstr "你可以在%s找到。"
+
+#: classes/PodsAdmin.php:1967
+msgid "The %s component requires that you have the <strong>%s</strong> plugin installed and activated."
+msgstr "%s插件需要<strong>%s</strong>插件安装并激活。"
+
+#: classes/PodsAdmin.php:1986
+msgid "The %s component requires that you have the <strong>%s</strong> theme installed and activated."
+msgstr "%s插件需要<strong>%s</strong>插件安装并激活。"
+
+#: classes/PodsAdmin.php:1997
+msgid "The %s component can not be disabled from here. You must deactivate the plugin or theme that added it."
+msgstr "%s组件在这里不能禁用，你必须禁用添加此插件的的插件或主题。"
+
+#: classes/PodsMigrate.php:640 classes/PodsMigrate.php:673
+msgid "There was an issue saving the export file in your uploads folder."
+msgstr "保存导出文件到上传文件夹时出现了点问题。"
+
+#: classes/PodsUI.php:921
+msgid "Manage %s"
+msgstr "管理%s"
+
+#: classes/PodsUI.php:924
+msgid "Duplicate %s"
+msgstr "复制%s"
+
+#: classes/PodsUI.php:926 classes/PodsUI.php:937
+msgid "Reorder %s"
+msgstr "排序%s"
+
+#: classes/PodsUI.php:931 classes/PodsUI.php:934
+msgid "Save New %s"
+msgstr "新建%s"
+
+#: classes/PodsUI.php:933
+msgid "Save %s"
+msgstr "保存%s"
+
+#: classes/PodsUI.php:935
+msgid "Delete this %s"
+msgstr "删除%s"
+
+#: classes/PodsUI.php:1412
+msgid "Back to %s"
+msgstr "返回%s"
+
+#: classes/PodsUI.php:1458
+msgid "<strong>Error:</strong> You do not have access to this %s."
+msgstr "<strong>错误：</strong> 你没有权限访问%s。"
+
+#: classes/fields/avatar.php:96 classes/fields/file.php:165
+msgid "Add Button Text"
+msgstr "添加按钮文本"
+
+#: classes/fields/avatar.php:101 classes/fields/file.php:170
+msgid "Modal Title"
+msgstr "模式标题"
+
+#: classes/fields/avatar.php:103 classes/fields/file.php:172
+#: ui/fields/media.php:133
+msgid "Attach a file"
+msgstr "附加一个文件"
+
+#: classes/fields/avatar.php:107 classes/fields/file.php:176
+msgid "Modal Add Button Text"
+msgstr "模式添加文本"
+
+#: classes/fields/boolean.php:52 classes/fields/currency.php:79
+#: classes/fields/number.php:67
+msgid "Input Type"
+msgstr "输入类型"
+
+#: classes/fields/code.php:59 classes/fields/color.php:49
+#: classes/fields/currency.php:70 classes/fields/date.php:58
+#: classes/fields/datetime.php:58 classes/fields/email.php:58
+#: classes/fields/number.php:58 classes/fields/paragraph.php:58
+#: classes/fields/phone.php:58 classes/fields/text.php:58
+#: classes/fields/time.php:57 classes/fields/website.php:58
+#: classes/fields/wysiwyg.php:58
+msgid "Repeatable Field"
+msgstr "重复字段"
+
+#: classes/fields/code.php:62 classes/fields/color.php:52
+#: classes/fields/currency.php:73 classes/fields/date.php:61
+#: classes/fields/datetime.php:61 classes/fields/email.php:61
+#: classes/fields/number.php:61 classes/fields/paragraph.php:61
+#: classes/fields/phone.php:61 classes/fields/text.php:61
+#: classes/fields/time.php:60 classes/fields/website.php:61
+#: classes/fields/wysiwyg.php:61
+msgid "Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments\"."
+msgstr "改变一个自动为可重复字段将在字段后面添加允许用户添加/删除/排序的控制功能，这些值作为一个数组才存储在数据库中，所有搜索和过滤这些数据需要将来更多调整。"
+
+#: classes/fields/currency.php:83 classes/fields/number.php:71
+msgid "Freeform Number"
+msgstr "自由表单数字"
+
+#: classes/fields/currency.php:84 classes/fields/number.php:72
+msgid "Slider"
+msgstr " 幻灯"
+
+#: classes/fields/currency.php:106
+msgid "Before (ex. $100)"
+msgstr "本币($100)"
+
+#: classes/fields/currency.php:107
+msgid "After (ex. 100$)"
+msgstr "兑换后 (100$)"
+
+#: classes/fields/currency.php:108
+msgid "None (ex. 100)"
+msgstr "None (100)"
+
+#: classes/fields/currency.php:109
+msgid "Before with Currency Code after (ex. $100 USD)"
+msgstr "在货币代码后 ($100 USD)"
+
+#: classes/fields/currency.php:131 classes/fields/number.php:95
+msgid "Slider Increment (Step)"
+msgstr "递增幻灯"
+
+#: classes/fields/currency.php:137 classes/fields/number.php:101
+msgid "Minimum Number"
+msgstr "最小值"
+
+#: classes/fields/currency.php:143 classes/fields/number.php:107
+msgid "Maximum Number"
+msgstr "最大值"
+
+#: classes/fields/file.php:135
+msgid "Video (mpg, mov, flv, mp4, etc..)"
+msgstr "视频 （mpg, mov, flv, mp4）"
+
+#: classes/fields/file.php:136
+msgid "Audio (mp3, m4a, wav, wma, etc..)"
+msgstr "音频 (mp3, m4a, wav, wma..)"
+
+#: classes/fields/file.php:137
+msgid "Text (txt, csv, tsv, rtx, etc..)"
+msgstr "文本(txt, csv, tsv, rtx..)"
+
+#: classes/fields/pick.php:151
+msgid "Table ID Column"
+msgstr "表格ID栏"
+
+#: classes/fields/pick.php:152
+msgid "You must provide the ID column name for the table, this will be used to keep track of the relationship"
+msgstr "你必须为此表格添加一个ID列名称，此列将用来跟踪关系。"
+
+#: classes/fields/pick.php:159
+msgid "Table Index Column"
+msgstr "表单索引栏"
+
+#: classes/fields/pick.php:160
+msgid "You must provide the index column name for the table, this may optionally also be the ID column name"
+msgstr "你必须为此表格添加一个索引列名称，此列也可以作为ID列名称。"
+
+#: classes/fields/pick.php:179
+msgid "Limit list to Role(s)"
+msgstr "对角色限制列表"
+
+#: classes/fields/pick.php:296
+msgid "Simple (custom defined list)"
+msgstr "简单（自定义选项）"
+
+#: classes/fields/pick.php:377 classes/fields/pick.php:383
+#: classes/fields/pick.php:390 classes/fields/pick.php:397
+#: classes/fields/pick.php:403 classes/fields/pick.php:409
+#: classes/fields/pick.php:416 classes/fields/pick.php:421
+#: classes/fields/pick.php:426
+msgid "Other WP Objects"
+msgstr "其他WP对象"
+
+#: classes/fields/pick.php:382
+msgid "User Roles"
+msgstr "用户角色"
+
+#: classes/fields/pick.php:408
+msgid "Image Sizes"
+msgstr "图片尺寸"
+
+#: classes/fields/pick.php:415
+msgid "Navigation Menus"
+msgstr "导航菜单"
+
+#: classes/fields/pick.php:425
+msgid "Post Status"
+msgstr "文章状态"
+
+#: components/Advanced-Relationships.php:69
+msgid "Sidebars"
+msgstr "侧栏"
+
+#: components/Advanced-Relationships.php:39
+#: components/Advanced-Relationships.php:45
+#: components/Advanced-Relationships.php:50
+#: components/Advanced-Relationships.php:56
+#: components/Advanced-Relationships.php:63
+#: components/Advanced-Relationships.php:70
+#: components/Advanced-Relationships.php:77
+#: components/Advanced-Relationships.php:84
+msgid "Advanced Objects"
+msgstr "高级对象"
+
+#: components/Advanced-Relationships.php:44
+msgid "Multisite Sites"
+msgstr "多站点"
+
+#: components/Advanced-Relationships.php:49
+msgid "Multisite Networks"
+msgstr "多站点"
+
+#: components/Advanced-Relationships.php:55
+msgid "Themes"
+msgstr "主题"
+
+#: components/Advanced-Relationships.php:62
+msgid "Page Templates"
+msgstr "页面模版"
+
+#: classes/fields/wysiwyg.php:80
+msgid "Editor Options"
+msgstr "编辑器选项"
+
+#: classes/fields/wysiwyg.php:84
+msgid "Enable Media Buttons?"
+msgstr "是否启用媒体按钮？"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:157
+#: components/Builder/modules/view/PodsBuilderModuleView.php:76
+#: ui/admin/shortcode.php:464 ui/admin/widgets/list.php:88
+#: ui/admin/widgets/view.php:27
+msgid "Cache Type"
+msgstr "缓存类型"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:162
+#: components/Builder/modules/view/PodsBuilderModuleView.php:81
+#: ui/admin/shortcode.php:468 ui/admin/widgets/list.php:92
+#: ui/admin/widgets/view.php:31
+msgid "Disable Caching"
+msgstr "禁用缓存"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:163
+#: components/Builder/modules/view/PodsBuilderModuleView.php:82
+#: ui/admin/shortcode.php:469 ui/admin/widgets/list.php:93
+#: ui/admin/widgets/view.php:32
+msgid "Object Cache"
+msgstr "对象缓存"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:164
+#: components/Builder/modules/view/PodsBuilderModuleView.php:83
+#: ui/admin/shortcode.php:470 ui/admin/widgets/list.php:94
+#: ui/admin/widgets/view.php:33
+msgid "Transient"
+msgstr "临时"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:165
+#: components/Builder/modules/view/PodsBuilderModuleView.php:84
+#: ui/admin/shortcode.php:471 ui/admin/widgets/list.php:95
+#: ui/admin/widgets/view.php:34
+msgid "Site Transient"
+msgstr "网站临时"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:174
+#: components/Builder/modules/view/PodsBuilderModuleView.php:93
+#: ui/admin/shortcode.php:486 ui/admin/widgets/list.php:109
+#: ui/admin/widgets/view.php:48
+msgid "Cache Expiration (in seconds)"
+msgstr "缓存过期（秒）"
+
+#: components/Builder/modules/view/PodsBuilderModuleView.php:22
+msgid "Pods - View"
+msgstr "Pods视图"
+
+#: components/Builder/modules/view/PodsBuilderModuleView.php:23
+#: ui/admin/shortcode.php:334
+msgid "Include a file from a theme, with caching options"
+msgstr "从主题中包含文件，包括缓存选项"
+
+#: components/Builder/modules/view/PodsBuilderModuleView.php:68
+#: ui/admin/shortcode.php:458 ui/admin/widgets/view.php:21
+msgid "File to include"
+msgstr "包含文件"
+
+#: components/Pages.php:399
+msgid "-- Select a Pod --"
+msgstr "-- 选择Pod --"
+
+#: components/Pages.php:415
+msgid "Associated Pod"
+msgstr "关联Pod"
+
+#: components/Pages.php:423
+msgid "Wildcard Slug"
+msgstr "通配符别名"
+
+#: components/Pages.php:430
+msgid "Pod Association"
+msgstr "Pod 分配"
+
+#: includes/general.php:127
+msgid "The following issues occurred:"
+msgstr "出现了一些问题："
+
+#: ui/admin/components-admin.php:14
+msgid "Settings saved successfully."
+msgstr "设置保存成功。"
+
+#: ui/admin/form.php:158
+msgid "Created on"
+msgstr "创建"
+
+#: ui/admin/form.php:167
+msgid "Last Modified"
+msgstr "最近修改"
+
+#: ui/admin/setup-add.php:48
+msgid "Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments."
+msgstr "Pods 是一种内容类型，你可以基于你的需求自定义域，你可以选择创建自定义文章类型、自定义分类、或者独立于WordPress对象的自定义Pod；同时，你也可以扩展当前的WP对象，如文章类型、分类法、用户或评论。"
+
+#: ui/admin/setup-add.php:50
+msgid "Not sure what content type you should use? Check out our <a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">Content Type Comparison</a> to help you decide."
+msgstr "不知道应该使用那种类型？查看我们的<a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">内容类型指南</a>帮助你作决定。"
+
+#: ui/admin/setup-add.php:59
+msgid "Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>."
+msgstr "通过 <strong>自定义文章</strong>，<strong>自定义分类</strong>或基于自定义数据表的<strong>高级内容类型</strong>创建全新的内容类型。"
+
+#: ui/admin/setup-add.php:140
+msgid "<h6>Page Title</h6> This is the text that will at the top of your settings page."
+msgstr "<h6>页面标题</h6>此文本显示在设置页面的页头。"
+
+#: ui/admin/setup-add.php:146
+msgid "Menu Label"
+msgstr "确认按钮"
+
+#: ui/admin/setup-add.php:146
+msgid "<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings."
+msgstr "<h6>菜单标签</h6>显示出来的菜单名称，可以用中文。"
+
+#: classes/PodsAdmin.php:1258 classes/PodsAdmin.php:1338
+#: ui/admin/setup-add.php:152
+msgid "Menu Location"
+msgstr "菜单位置"
+
+#: ui/admin/setup-add.php:152
+msgid "<h6>Menu Location</h6> This is the location where the new settings page will be added in the WordPress Dashboard menu."
+msgstr "<h6>菜单位置</h6>菜单在WP后台中出现的位置。"
+
+#: ui/admin/setup-edit-field-fluid.php:87
+msgid "Related Table"
+msgstr "相关表格"
+
+#: ui/admin/setup-edit.php:15
+msgid "Extra fields were successfully enabled for this Custom Taxonomy."
+msgstr "成功为此自定义分类启用附加域。"
+
+#: classes/PodsAdmin.php:1620 components/Pages.php:442
+msgid "Restrict access by Role?"
+msgstr "是否通过权限限制访问"
+
+#: classes/PodsAdmin.php:1643 components/Pages.php:453
+msgid "Role(s) Allowed"
+msgstr "允许的角色"
+
+#: ui/admin/setup-edit.php:92
+msgid "-- Select Table --"
+msgstr "-- 请选择表格 --"
+
+#: classes/PodsAdmin.php:1010 ui/admin/setup-edit.php:236
+msgid "Manage Fields"
+msgstr "管理字段"
+
+#: classes/PodsAdmin.php:1013
+msgid "Labels"
+msgstr "标签"
+
+#: classes/PodsAdmin.php:1016
+msgid "Admin UI"
+msgstr "管理界面"
+
+#: classes/PodsAdmin.php:1019
+msgid "Advanced Options"
+msgstr "高级选项"
+
+#: classes/PodsAdmin.php:1022
+msgid "Extra Fields"
+msgstr "附加字段"
+
+#: classes/PodsAdmin.php:1202
+msgid "Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)"
+msgstr "允许固定链接使用预置前缀（如：如果链接结构为/blog/，如果设置了显示为：/news/, 为设置显示为：/blog/news/）"
+
+#: classes/PodsAdmin.php:1326 classes/PodsAdmin.php:1380
+msgid "Admin UI Style"
+msgstr "管理UI风格"
+
+#: classes/PodsAdmin.php:1273 classes/PodsAdmin.php:1351
+msgid "Custom Menu Location"
+msgstr "自定义菜单位置"
+
+#: classes/PodsAdmin.php:1066 classes/PodsAdmin.php:1399
+msgid "Parent Menu ID (optional)"
+msgstr "父菜单ID"
+
+#: classes/PodsAdmin.php:1413
+msgid "This is the icon shown to the left of the menu text for this content type."
+msgstr "这是文章类型左边显示的图标。"
+
+#: classes/PodsAdmin.php:1419
+msgid "Header Icon"
+msgstr "标题图标"
+
+#: classes/PodsAdmin.php:1420
+msgid "This is the icon shown to the left of the heading text at the top of the manage pages for this content type."
+msgstr "这是文章类型管理页面标题左边显示的图标。"
+
+#: classes/PodsAdmin.php:1427
+msgid "Actions Available"
+msgstr "可用操作"
+
+#: classes/PodsAdmin.php:1443
+msgid "Reorder Field"
+msgstr "重新排序字段"
+
+#: classes/PodsAdmin.php:1444
+msgid "This is the field that will be reordered on, it should be numeric."
+msgstr "此字段将被重复记录，应该为数字。"
+
+#: classes/PodsAdmin.php:1450
+msgid "Admin Table Columns"
+msgstr "管理表格栏"
+
+#: classes/PodsAdmin.php:1458
+msgid "Search Filters"
+msgstr "搜索过滤"
+
+#: ui/admin/setup-edit.php:492
+msgid "Genesis: SEO"
+msgstr "通用：SEO"
+
+#: ui/admin/setup-edit.php:497
+msgid "Genesis: Layouts"
+msgstr "通用：布局"
+
+#: ui/admin/setup-edit.php:502
+msgid "Genesis: Simple Sidebars"
+msgstr "通用：侧栏"
+
+#: ui/admin/setup-edit.php:510
+msgid "Advanced Supports"
+msgstr "高级支持"
+
+#: ui/admin/setup-edit.php:510
+msgid "Comma-separated list of custom \"supports\" values to pass to register_post_type."
+msgstr "为register_post_type准备的逗号分隔的自定义\"支持\"列表。 "
+
+#: ui/admin/setup-edit.php:666
+msgid "No Hierarchical Fields found"
+msgstr "没有父级字段"
+
+#: ui/admin/setup-edit.php:670
+msgid "Hierarchical Field"
+msgstr "父级字段"
+
+#: ui/admin/setup-edit.php:763
+msgid "Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table."
+msgstr "自定义分类原生不支持附加字段，是Pods可以轻松的为你添加，基于数据表的存储将把你创建的每个内容类型存储到一个表中。"
+
+#: ui/admin/setup-edit.php:765
+msgid "Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>."
+msgstr "为此分类法启用附加域将添加<em>%s</em>表到你的数据库里。"
+
+#: ui/admin/setup-edit.php:770
+msgid "Enable Extra Fields"
+msgstr "启用附加字段"
+
+#: ui/admin/shortcode.php:332
+msgid "Display a field from this item"
+msgstr "从此字段显示一个字段"
+
+msgid "http://pods.io/"
+msgstr ""
+
+msgid "http://pods.io/about/"
+msgstr ""
+
+#: components/Templates.php:274 ui/admin/upgrade/upgrade_2_0_0.php:148
+#: ui/admin/upgrade/upgrade_2_0_0.php:264
+msgid "Content"
+msgstr "内容"
+
+#: ui/fields/plupload.php:43
+msgid "Allowed Files"
+msgstr "允许的文件"
+
+#: components/Templates.php:406
+msgid "You do not have access to view this content."
+msgstr "你没有访问此内容的权限。"
+
+#: ui/fields/plupload.php:267
+msgid "There was an issue with the file upload, please try again."
+msgstr "文件上传时出现了点问题，请重试。"
+
+#: ui/fields/select2.php:101 ui/fields/select2.php:108
+msgid "Start Typing..."
+msgstr "开始输入……"
+
+#: includes/general.php:131
+msgid "An unknown error has occurred"
+msgstr "发生了未知错误"
+
+#: includes/updater.php:427
+msgid "The plugin has been updated, but could not be reactivated. Please reactivate it manually."
+msgstr "插件已更新，但是不能重新激活，请手动激活。"
+
+#: includes/general.php:326
+msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead."
+msgstr "Pods %2$s之后，<strong>不建议使用</strong>%1$s，请改用%3$s。"
+
+#: includes/updater.php:428
+msgid "Plugin reactivated successfully."
+msgstr "插件激活成功。"
+
+#: includes/general.php:328
+msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available."
+msgstr "Pods %2$s之后，<strong>不建议使用</strong>%1$s，目前暂时没有替代方法。"
+
+msgid "Pods - Custom Content Types and Fields"
+msgstr ""
+
+#: includes/general.php:374 ui/admin/setup-edit.php:767
+msgid "Find out more"
+msgstr "查找更多"
+
+#: includes/data.php:948
+msgid "and"
+msgstr "和"
+
+msgid "Pods is a framework for creating, managing, and deploying customized content types and fields"
+msgstr ""
+
+#: includes/general.php:764 includes/general.php:783 includes/general.php:803
+msgid "NOTICE"
+msgstr "注意"
+
+msgid "Pods Framework Team"
+msgstr ""
+
+#: includes/general.php:764 includes/general.php:783 includes/general.php:803
+msgid "requires a minimum of"
+msgstr "最小长度为："
+
+#: includes/general.php:765 includes/general.php:784 includes/general.php:804
+msgid "to function. You are currently running"
+msgstr "为了这些工具. 你正在运行"
+
+#: includes/general.php:766
+msgid "Please upgrade your WordPress to continue."
+msgstr "请更新Wordpress 以继续"
+
+#: includes/general.php:785
+msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue."
+msgstr "请升级（或联系你的主机提供商为你升级）你的PHP版本"
+
+#: includes/general.php:805
+msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue."
+msgstr "请升级（或联系你的主机提供商为你升级）你的MySQL版本"
+
+#: sql/upgrade/PodsUpgrade.php:128
+msgid "Invalid upgrade process."
+msgstr "错误的升级过程"
+
+#: sql/upgrade/PodsUpgrade.php:131
+msgid "Invalid upgrade method."
+msgstr "错误的升级方法"
+
+#: sql/upgrade/PodsUpgrade.php:134
+msgid "Upgrade method not found."
+msgstr "升级方法未找到"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:22 sql/upgrade/PodsUpgrade_2_0_0.php:44
+#: sql/upgrade/PodsUpgrade_2_0_0.php:66 sql/upgrade/PodsUpgrade_2_0_0.php:88
+#: sql/upgrade/PodsUpgrade_2_0_0.php:110 sql/upgrade/PodsUpgrade_2_0_0.php:132
+#: sql/upgrade/PodsUpgrade_2_0_0.php:154 sql/upgrade/PodsUpgrade_2_0_0.php:183
+msgid "Table not found, it cannot be migrated"
+msgstr "数据表未找到，不能迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:178 sql/upgrade/PodsUpgrade_2_0_0.php:836
+msgid "Invalid Pod."
+msgstr "错误的Pod"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:197
+msgid "Pod not found, it cannot be migrated"
+msgstr "Pod未找到，不能迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:216
+msgid "is a field in the table, but was not found in this pod - the field data will not be migrated."
+msgstr "是数据表中的一个字段，但是未能找到，此项数据将不会被迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:221
+msgid "is a field in this pod, but was not found in the table - the field data will not be migrated."
+msgstr "是Pod中的一个字段，但是未能找到，此项数据将不会被迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:819
+msgid "Input Helpers may not function in our new forms, we have imported and disabled them for your review."
+msgstr "输入帮助在新表单中可能不起作用，我们禁用了此功能。"
+
+#: components/Roles/ui/edit.php:47 ui/admin/form-settings.php:72
+#: ui/admin/form.php:90
+msgid "Save"
+msgstr "保存"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:841
+msgid "Table not found, items cannot be migrated"
+msgstr "数据表未找到，条目不能迁移"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:844
+msgid "New table not found, items cannot be migrated"
+msgstr "新数据表未找到，条目不能迁移"
+
+#: classes/PodsUI.php:1364
+msgid "Back to"
+msgstr "返回"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:847
+msgid "Pod Types table not found, items cannot be migrated"
+msgstr "Pod类型数据表未找到，条目不能迁移"
+
+#: classes/PodsUI.php:1455 classes/PodsUI.php:1569
+msgid "<strong>Error:</strong> %s not found."
+msgstr "<strong>错误：</strong> %s 未找到。"
+
+#: sql/upgrade/PodsUpgrade_2_0_0.php:850
+msgid "Pod table not found, items cannot be migrated"
+msgstr "Pod数据表未找到，条目不能迁移"
+
+#: classes/PodsUI.php:1590
+msgid "<strong>Success!</strong> %s reordered successfully."
+msgstr "<strong>成功！</strong> %s重新排序成功。"
+
+#: classes/PodsUI.php:1592
+msgid "<strong>Error:</strong> %s has not been reordered."
+msgstr "<strong>错误：</strong> %s 未重新排序。"
+
+#: ui/admin/form.php:46 ui/admin/form.php:74 ui/admin/setup-edit.php:212
+msgid "duplicated"
+msgstr "复制"
+
+#: classes/PodsUI.php:1605 components/Roles/ui/edit.php:19
+#: ui/admin/form-settings.php:41 ui/admin/form-settings.php:60
+#: ui/admin/form.php:41 ui/admin/form.php:69 ui/admin/setup-edit.php:207
+msgid "saved"
+msgstr "保存"
+
+#: ui/admin/form-settings.php:48 ui/admin/form.php:57
+msgid "<strong>Error:</strong> %s %s successfully."
+msgstr "<strong>错误：</strong> %s %s 成功。"
+
+#: classes/PodsUI.php:1607 components/Roles/ui/edit.php:22 ui/admin/form.php:44
+#: ui/admin/form.php:72 ui/admin/setup-edit.php:210
+msgid "created"
+msgstr "已创建"
+
+#: ui/admin/form-settings.php:63 ui/admin/form.php:81
+msgid "<strong>Error:</strong> %s not %s."
+msgstr "<strong>错误：</strong> %s不是 %s."
+
+#: classes/PodsUI.php:1701
+msgid "<strong>Error:</strong> Invalid Configuration - Missing \"id\" definition."
+msgstr "<strong>错误：</strong> 无效配置 - 缺少 \"id\" 定义。"
+
+#: ui/admin/form.php:222
+msgid "Navigate"
+msgstr "导航"
+
+#: classes/PodsUI.php:2122 ui/admin/setup-add.php:23
+#: ui/admin/setup-edit.php:783
+msgid "Back to Manage"
+msgstr "返回管理"
+
+#: ui/admin/form.php:233
+msgid "Previous"
+msgstr "上一页"
+
+#: classes/PodsUI.php:2333
+msgid "Reset Filters"
+msgstr "重新搜索"
+
+#: ui/admin/form.php:244
+msgid "Next"
+msgstr "下一个"
+
+#: classes/PodsUI.php:2356
+msgid "Bulk Actions"
+msgstr "批量操作"
+
+#: ui/admin/form.php:290
+msgid "Enter name here"
+msgstr "输入名称"
+
+#: classes/PodsUI.php:2372 classes/PodsUI.php:3383
+msgid "Apply"
+msgstr "应用"
+
+#: ui/admin/form.php:320 ui/admin/upgrade/upgrade_2_0_0.php:85
+#: ui/admin/upgrade/upgrade_2_0_0.php:201
+msgid "Fields"
+msgstr "字段"
+
+#: classes/PodsUI.php:2387
+msgid "Update Order"
+msgstr "更新排序"
+
+#: ui/admin/help.php:3
+msgid "Pods Help"
+msgstr "Pods帮助"
+
+#: classes/PodsUI.php:2388 ui/admin/setup-edit-field-fluid.php:190
+msgid "Cancel"
+msgstr "取消"
+
+#: ui/admin/settings-reset.php:46
+msgid "Delete Pods 1.x data"
+msgstr "删除Pods1.x数据"
+
+#: classes/PodsAdmin.php:1437 classes/PodsUI.php:2405
+#: components/Migrate-Packages/ui/wizard.php:69
+msgid "Export"
+msgstr "导出"
+
+#: ui/admin/settings-reset.php:48
+msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.x."
+msgstr "此操作会删除Pods 1.x的所有数据，执行此操作之前，确保所有的数据已经正确地迁移到了Pods 2.0。"
+
+#: classes/PodsUI.php:2431
+msgid "Please use the search filter(s) above to display data"
+msgstr "请使用搜索功能查找数据"
+
+#: ui/admin/settings-reset.php:51
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install."
+msgstr ""
+"确定要执行此操作？\n"
+"\n"
+"确保你已经做好了备份，此操作会删除Pods 1.x的数据，恢复插件到初始状态"
+
+#: classes/PodsUI.php:2431
+msgid "or click on an Export to download a full copy of the data"
+msgstr "点击导出下载完整数据副本"
+
+#: ui/admin/settings-reset.php:52
+msgid "Delete Pods 1.x settings and data"
+msgstr ""
+
+#: classes/PodsUI.php:2521
+msgid "Reset"
+msgstr "重置"
+
+#: ui/admin/settings-reset.php:57
+msgid "Reset Pods 2.x"
+msgstr "重置Pod2.0"
+
+#: classes/PodsUI.php:2546 classes/PodsUI.php:2547 classes/PodsUI.php:2555
+#: classes/PodsUI.php:2599 classes/PodsUI.php:2652
+msgid "Advanced Filters"
+msgstr "高级过滤器"
+
+#: ui/admin/settings-reset.php:59
+msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it's data, and performs a fresh install."
+msgstr "此操作会删除Pods1.x的数据，然后重置Pods 2.0设置，删除所有数据，然后执行全新安装。"
+
+#: classes/PodsUI.php:2556
+msgid "Add Filter"
+msgstr "添加过滤器"
+
+#: ui/admin/settings-reset.php:60 ui/admin/settings-reset.php:72
+#: ui/admin/settings-reset.php:85 ui/admin/settings-reset.php:97
+msgid "<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified."
+msgstr "<strong>请注意：</strong>此操作不会移除你添加的文章类型、自定义分类、多媒体、用户或评论数据。"
+
+#: classes/PodsUI.php:2604
+msgid "Remove Filter"
+msgstr ""
+
+#: ui/admin/settings-reset.php:63
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install."
+msgstr ""
+"确定要执行此操作？\n"
+"\n"
+"确保你已经做好了备份，此操作会删除Pods 2.x的数据，恢复插件到初始状态。"
+
+#: classes/PodsUI.php:2702 classes/PodsUI.php:2734 classes/PodsUI.php:2769
+#: classes/PodsUI.php:2794
+msgid "Clear"
+msgstr "清理"
+
+#: ui/admin/settings-reset.php:64
+msgid "Reset Pods 2.x settings and data"
+msgstr ""
+
+#: classes/PodsUI.php:2813
+msgid "Search Text"
+msgstr "搜索文字"
+
+#: ui/admin/settings-reset.php:69 ui/admin/settings-reset.php:76
+msgid "Deactivate and Delete Pods 2.x data"
+msgstr "停用并删除Pods 2.0数据"
+
+#: classes/PodsUI.php:2872
+msgid "No %s found"
+msgstr "%s 未找到"
+
+#: ui/admin/settings-reset.php:71
+msgid "This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed."
+msgstr "此操作会删除Pods 2.x的设置、数据，然后自动停用，操作完成后，数据库看起来就像Pods 2.0 从来没有存在过一样。"
+
+#: classes/PodsUI.php:2900
+msgid "<strong>Error:</strong> Invalid Configuration - Missing \"fields\" definition."
+msgstr "<strong>错误：</strong> 无效配置 - 缺少 \"fields\" 定义。"
+
+#: ui/admin/settings-reset.php:75
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back."
+msgstr ""
+"确定要执行此操作？\n"
+"\n"
+"确保你已经做好了备份，此操作会删除Pods 2.x的数据，一旦完成，数据不能找回。"
+
+#: classes/PodsUI.php:3125 classes/PodsUI.php:3144
+msgid "View this item"
+msgstr "查看"
+
+#: ui/admin/settings-reset.php:82
+msgid "Reset Pods"
+msgstr "充值Pods"
+
+#: classes/PodsUI.php:3116 classes/PodsUI.php:3153
+msgid "Edit this item"
+msgstr "编辑"
+
+#: ui/admin/settings-reset.php:84
+msgid "This will reset Pods settings, removes all of it's data, and performs a fresh install."
+msgstr "此操作会重置Pods 2.0设置，删除Pods数据，然后执行全新安装。"
+
+#: classes/PodsUI.php:3162
+msgid "Duplicate this item"
+msgstr "复制"
+
+#: ui/admin/settings-reset.php:88
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install."
+msgstr ""
+"确定要执行此操作？\n"
+"\n"
+"确保你已经做好了备份，此操作会删除Pods 2.0的数据，恢复插件到初始状态"
+
+#: classes/PodsUI.php:3171
+msgid "Delete this item"
+msgstr "删除"
+
+#: ui/admin/settings-reset.php:89
+msgid "Reset Pods settings and data"
+msgstr ""
+
+#: classes/PodsUI.php:3171
+msgid "You are about to permanently delete this item\\n Choose \\'Cancel\\' to stop, \\'OK\\' to delete."
+msgstr ""
+"将永久删除此字段\n"
+"点击\\'取消\\' 停止， \\'确定\\' 删除。"
+
+#: ui/admin/settings-reset.php:94 ui/admin/settings-reset.php:101
+msgid "Deactivate and Delete Pods data"
+msgstr "停用并删除Pods 2.0数据"
+
+#: classes/PodsUI.php:3181
+msgid "Enable"
+msgstr "启用"
+
+#: ui/admin/settings-reset.php:96
+msgid "This will delete Pods settings, data, and deactivate itself once done. Your database will be as if Pods never existed."
+msgstr "此操作会删除Pods 2.0的设置、数据，然后自动停用，操作完成后，数据库看起来就像Pods从来没有存在过一样。"
+
+#: classes/PodsUI.php:3182
+msgid "Disable"
+msgstr "停用"
+
+#: ui/admin/settings-reset.php:100
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back."
+msgstr ""
+"确定要执行此操作？\n"
+"\n"
+"确保你已经做好了备份，此操作会删除Pods的数据，一旦完成，数据不能找回。"
+
+#: classes/PodsUI.php:3352 classes/PodsUI.php:3370
+msgid "Show on screen"
+msgstr "在屏幕上显示"
+
+#: ui/admin/settings-settings.php:1
+msgid "The following are settings provided for advanced site configurations."
+msgstr "下面的设置为高级配置"
+
+#: ui/admin/settings-tools.php:15
+msgid "Force an update of this beta from GitHub"
+msgstr "从GitHub强制升级beta版本"
+
+#: classes/PodsUI.php:3484
+msgid "Go to the first page"
+msgstr "回首页"
+
+#: ui/admin/settings-tools.php:17
+msgid "This tool lets you update your Pods installation to the latest alpha/beta/release candidate, usually only when you've been instructed to do so."
+msgstr "此工具帮助你升级Pods 2.0 Beta到最新版本，请在专家指导下使用此工具。"
+
+#: classes/PodsUI.php:3485
+msgid "Go to the previous page"
+msgstr "上一页"
+
+#: ui/admin/settings-tools.php:27
+msgid "Force Plugin Refresh/Update from GitHub"
+msgstr ""
+
+#: classes/PodsUI.php:3489
+msgid "Current page"
+msgstr "当前页"
+
+#: ui/admin/settings-tools.php:34 ui/admin/settings-tools.php:39
+msgid "Clear Pods Cache"
+msgstr "清理Pods缓存"
+
+#: classes/PodsUI.php:3489 classes/PodsUI.php:3506
+msgid "of"
+msgstr "/"
+
+#: ui/admin/settings-tools.php:36
+msgid "This tool will clear all of the transients/cache that are used by Pods. "
+msgstr "此工具用来清理Pods产生的临时数据和缓存"
+
+#: classes/PodsUI.php:3510
+msgid "Go to the next page"
+msgstr "下一页"
+
+#: ui/admin/settings-tools.php:44
+msgid "Debug Information"
+msgstr "调试信息"
+
+#: classes/PodsUI.php:3511
+msgid "Go to the last page"
+msgstr "倒尾页"
+
+#: classes/PodsAdmin.php:1924 ui/admin/settings.php:11
+msgid "Tools"
+msgstr "工具"
+
+#: classes/fields/avatar.php:66
+msgid "Avatar Uploader"
+msgstr "头像上传"
+
+#: ui/admin/settings.php:12
+msgid "Cleanup &amp; Reset"
+msgstr "清理和重置"
+
+#: classes/fields/avatar.php:72 classes/fields/file.php:93
+msgid "Attachments (WP Media Library)"
+msgstr "附件（WP媒体库）"
+
+#: ui/admin/setup-add.php:16
+msgid "Add New Pod"
+msgstr "添加Pod"
+
+#: classes/fields/avatar.php:73 classes/fields/file.php:94
+msgid "Plupload"
+msgstr "Plupload"
+
+#: ui/admin/setup-add.php:35
+msgid "Create or Extend"
+msgstr "新建或扩展"
+
+#: classes/fields/avatar.php:79 classes/fields/file.php:100
+msgid "Attachments Default Tab"
+msgstr "附加默认选项卡"
+
+#: ui/admin/setup-add.php:39
+msgid "Configure"
+msgstr "配置"
+
+#: classes/fields/avatar.php:85 classes/fields/avatar.php:120
+#: classes/fields/file.php:106 classes/fields/file.php:189
+msgid "Upload File"
+msgstr "上传文件"
+
+#: classes/fields/avatar.php:86 classes/fields/avatar.php:121
+#: classes/fields/file.php:107 classes/fields/file.php:190
+msgid "Media Library"
+msgstr "媒体库"
+
+#: classes/fields/avatar.php:90 classes/fields/file.php:122
+msgid "Restrict File Size"
+msgstr "限制文件大小"
+
+#: ui/admin/setup-add.php:57
+msgid "Create New"
+msgstr "新建"
+
+#: classes/fields/boolean.php:56
+msgid "Checkbox"
+msgstr "复选框"
+
+#: ui/admin/setup-add.php:66
+msgid "Extend Existing"
+msgstr "扩展"
+
+#: classes/fields/boolean.php:57 classes/fields/pick.php:121
+msgid "Radio Buttons"
+msgstr "单选框"
+
+#: ui/admin/setup-add.php:68
+msgid "Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>."
+msgstr "扩展WordPress现有的内容类型，包括<strong>文章类型</strong>（文章、页面等），<strong>分类</strong> （分类、标签等），<strong>媒体</strong>，<strong>用用户</strong>或<strong>评论</strong>。"
+
+#: classes/fields/boolean.php:58 classes/fields/pick.php:120
+msgid "Drop Down"
+msgstr "下拉菜单"
+
+#: classes/fields/boolean.php:63
+msgid "Yes Label"
+msgstr "确认按钮"
+
+#: ui/admin/setup-add.php:81
+msgid "Create a New Content Type"
+msgstr "创建内容类型"
+
+#: classes/PodsUI.php:2284 classes/PodsUI.php:2587 classes/PodsUI.php:2759
+#: classes/fields/boolean.php:64 classes/fields/boolean.php:227
+#: classes/fields/boolean.php:251
+msgid "Yes"
+msgstr "确认"
+
+#: ui/admin/setup-add.php:86 ui/admin/setup-add.php:226
+msgid "Content Type"
+msgstr "内容类型"
+
+#: classes/fields/boolean.php:68
+msgid "No Label"
+msgstr "取消按钮"
+
+#: ui/admin/setup-add.php:86 ui/admin/setup-add.php:226
+msgid "<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best."
+msgstr "<h6>内容类型</h6>可以选择的内容类型有很多，我们把他们放在了一起，帮助你对照以便决定哪个最能满足你的需求。"
+
+#: classes/PodsUI.php:2285 classes/PodsUI.php:2588 classes/PodsUI.php:2760
+#: classes/fields/boolean.php:69 classes/fields/boolean.php:229
+#: classes/fields/boolean.php:252
+msgid "No"
+msgstr "取消"
+
+#: ui/admin/setup-add.php:89
+msgid "Custom Post Type (like Posts or Pages)"
+msgstr "自定义文章（如文章或页面）"
+
+#: classes/fields/code.php:68 classes/fields/paragraph.php:67
+#: classes/fields/text.php:67 classes/fields/wysiwyg.php:91
+msgid "Output Options"
+msgstr "输出选项"
+
+#: ui/admin/setup-add.php:90
+msgid "Custom Taxonomy (like Categories or Tags)"
+msgstr "自定义分类（类似分类和标签）"
+
+#: classes/fields/code.php:71 classes/fields/paragraph.php:112
+#: classes/fields/text.php:70 classes/fields/wysiwyg.php:130
+msgid "Allow Shortcodes?"
+msgstr "是否允许简码？"
+
+#: components/Advanced-Content-Types.php:40
+msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
+msgstr "高级内容类型"
+
+#: classes/fields/code.php:79 classes/fields/currency.php:149
+#: classes/fields/email.php:67 classes/fields/number.php:113
+#: classes/fields/password.php:59 classes/fields/phone.php:92
+#: classes/fields/text.php:90 classes/fields/website.php:80
+msgid "Maximum Length"
+msgstr "最大长度"
+
+#: ui/admin/setup-add.php:109 ui/admin/setup-add.php:305
+msgid "Enable Extra Fields?"
+msgstr "是否启用附加字段"
+
+#: classes/fields/color.php:144 classes/fields/password.php:143
+#: classes/fields/text.php:195
+msgid "This field is required."
+msgstr "此字段为必填项。"
+
+#: ui/admin/setup-add.php:109 ui/admin/setup-add.php:305
+msgid "<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table."
+msgstr "<h6>存数类型</h6>自定义分类法原生不支持附加字段，但是Pods可以轻松的为你添加，基于数据表的存储将把你创建的每个内容类型存储到一个表中。"
+
+#: classes/fields/color.php:147
+msgid "Invalid value provided for this field."
+msgstr "输入错误"
+
+#: ui/admin/setup-add.php:112 ui/admin/setup-add.php:308
+msgid "Do not enable extra fields to be added"
+msgstr "不要启用已添加的附加字段。"
+
+#: classes/fields/color.php:151
+msgid "Invalid Hex Color value provided for this field."
+msgstr "错误的16进制颜色值"
+
+#: ui/admin/setup-add.php:113 ui/admin/setup-add.php:309
+msgid "Enable extra fields for this Taxonomy (Table Based)"
+msgstr "为自定义分类法启用附加字段（基于数据表）"
+
+#: classes/fields/currency.php:89
+msgid "Currency Sign"
+msgstr "货币符号"
+
+#: ui/admin/setup-add.php:132
+msgid "Plural Label"
+msgstr "复数标签"
+
+#: classes/fields/currency.php:102
+msgid "Currency Placement"
+msgstr "货币兑换"
+
+#: ui/admin/setup-add.php:132
+msgid "<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content."
+msgstr "<h6>复数标签</h6>此标签将在WordPress管理区域的内容多余1条时出现。"
+
+#: ui/admin/setup-add.php:126 ui/admin/setup-edit.php:321
+msgid "Singular Label"
+msgstr "单数标签"
+
+#: ui/admin/setup-add.php:126
+msgid "<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content."
+msgstr "<h6>单数标签</h6>此标签将在WordPress管理区域的内容为1条时出现。"
+
+#: classes/PodsAdmin.php:1511 classes/PodsAdmin.php:1927
+#: ui/admin/setup-add.php:166 ui/admin/setup-add.php:323
+msgid "Advanced"
+msgstr "高级"
+
+#: ui/admin/setup-add.php:177 ui/admin/setup-add.php:188
+msgid "Identifier"
+msgstr "标识符"
+
+#: classes/fields/currency.php:113 classes/fields/number.php:77
+#: classes/fields/phone.php:67 classes/fields/pick.php:112
+#: classes/fields/pick.php:128 classes/fields/website.php:67
+msgid "Format"
+msgstr "格式"
+
+#: ui/admin/setup-add.php:177 ui/admin/setup-add.php:188
+msgid "<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP."
+msgstr "<h6>Pod标识</h6>这不同于WordPress管理界面中看到的标签，而是你在主题、WordPress或其他PHP程序中看到的编程参考。"
+
+#: classes/fields/currency.php:117 classes/fields/number.php:81
+msgid "Localized Default"
+msgstr "当前位置"
+
+#: ui/admin/setup-add.php:198 ui/admin/setup-add.php:328
+msgid "<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data."
+msgstr "<h6>存储类型</h6>基于数据表的存储是一种你将创建的内容类型中的每一项成为数据表中的项，而基于元数据的存储是把所有数据存储在WordPress的元数据表里。"
+
+#: classes/fields/currency.php:126 classes/fields/number.php:90
+msgid "Decimals"
+msgstr "整数"
+
+#: ui/admin/setup-add.php:201 ui/admin/setup-add.php:331
+msgid "Meta Based (WP Default)"
+msgstr "基于元数据（WP默认）"
+
+#: classes/fields/currency.php:396 classes/fields/number.php:330
+msgid "%s is not numeric"
+msgstr "%s 不是一个整数"
+
+#: ui/admin/setup-add.php:202 ui/admin/setup-add.php:332
+msgid "Table Based"
+msgstr "基于数据表"
+
+#: classes/fields/date.php:67 classes/fields/datetime.php:67
+msgid "Date Format"
+msgstr "日期格式"
+
+#: ui/admin/setup-add.php:217
+msgid "Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming."
+msgstr "扩展现有内容类型允许添加字段，以充分利用Pods结构管理和方便的修改主题。"
+
+#: classes/fields/date.php:83 classes/fields/datetime.php:124
+#: classes/fields/time.php:104
+msgid "Allow empty value?"
+msgstr "是否允许空值？"
+
+#: ui/admin/setup-add.php:220
+msgid "Extend an Existing Content Type"
+msgstr "扩展现有内容类型"
+
+#: classes/fields/date.php:88 classes/fields/datetime.php:129
+#: classes/fields/email.php:73 classes/fields/phone.php:98
+#: classes/fields/time.php:109 classes/fields/website.php:86
+msgid "Enable HTML5 Input Field?"
+msgstr "是否启用HTML5输入域？"
+
+#: ui/admin/setup-add.php:229
+msgid "Post Types (Posts, Pages, etc..)"
+msgstr "文章（文章，页面等）"
+
+#: classes/fields/datetime.php:84 classes/fields/time.php:66
+msgid "Time Format Type"
+msgstr "时间格式类型"
+
+#: components/Table-Storage.php:47
+msgid "Taxonomies (Categories, Tags, etc..)"
+msgstr "分类（分类，标签等）"
+
+#: classes/fields/datetime.php:89 classes/fields/time.php:70
+msgid "12 hour"
+msgstr "12小时"
+
+#: classes/fields/pick.php:396 ui/admin/setup-add.php:231
+msgid "Media"
+msgstr "媒体"
+
+#: classes/fields/datetime.php:90 classes/fields/time.php:71
+msgid "24 hour"
+msgstr "小时"
+
+#: classes/fields/pick.php:402 ui/admin/setup-add.php:233
+#: ui/admin/setup-edit.php:470
+msgid "Comments"
+msgstr "评论"
+
+#: classes/fields/datetime.php:95 classes/fields/datetime.php:114
+#: classes/fields/time.php:76 classes/fields/time.php:94
+msgid "Time Format"
+msgstr "时间格式"
+
+#: ui/admin/setup-add.php:272 ui/admin/setup-edit.php:822
+msgid "Post Type"
+msgstr "文章"
+
+#: ui/admin/setup-add.php:272
+msgid "<h6>Post Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type."
+msgstr "<h6>文章类型</h6>WordPress能处理很多类型的内容，在内部，他们都存储在一个叫wp_posts_table，他们通过一个叫post_type的列区分。"
+
+#: classes/fields/file.php:77
+msgid "File Type"
+msgstr "文件类型"
+
+#: ui/admin/setup-add.php:295 ui/admin/setup-edit.php:823
+msgid "Taxonomy"
+msgstr "分类"
+
+#: classes/fields/file.php:81 classes/fields/pick.php:106
+msgid "Single Select"
+msgstr "单选"
+
+#: ui/admin/setup-add.php:295
+msgid "<h6>Taxonomies</h6> A taxonomy is a way to group Post Types."
+msgstr "<h6分类法</h6>分类法是一种组合文章类型的方法。"
+
+#: classes/fields/file.php:82 classes/fields/pick.php:107
+msgid "Multiple Select"
+msgstr "多选"
+
+#: ui/admin/setup-edit-field-fluid.php:8 ui/admin/setup-edit-field.php:48
+msgid "Move"
+msgstr ""
+
+#: classes/fields/file.php:87
+msgid "File Uploader"
+msgstr "文件上传"
+
+#: ui/admin/setup-edit-field-fluid.php:11
+#: ui/admin/setup-edit-field-fluid.php:17 ui/admin/setup-edit-field.php:51
+#: ui/admin/setup-edit-field.php:67
+msgid "Edit this field"
+msgstr ""
+
+#: classes/fields/file.php:111
+msgid "Editable Title"
+msgstr "可编辑标题"
+
+#: ui/admin/setup-edit-field-fluid.php:12
+msgid "New Field"
+msgstr "新字段"
+
+#: classes/fields/file.php:116
+msgid "File Limit"
+msgstr "文件限制"
+
+#: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
+msgid "Duplicate this field"
+msgstr ""
+
+#: classes/fields/file.php:128
+msgid "Restrict File Types"
+msgstr "限制文件格式"
+
+#: ui/admin/setup-edit-field-fluid.php:23 ui/admin/setup-edit-field.php:73
+msgid "Delete this field"
+msgstr ""
+
+#: classes/PodsAdmin.php:1509
+msgid "Basic"
+msgstr "基本"
+
+#: classes/PodsAdmin.php:1510
+msgid "Additional Field Options"
+msgstr "附加选项"
+
+#: classes/fields/file.php:138
+msgid "Any Type (no restriction)"
+msgstr "任何类型"
+
+#: ui/admin/setup-edit-field-fluid.php:66
+msgid "You will use this name to programatically reference this field throughout WordPress"
+msgstr "用以在WordPress中描述角色属性"
+
+#: classes/fields/file.php:139
+msgid "Other (customize allowed extensions)"
+msgstr "其他（自定义允许的扩展名）"
+
+#: ui/admin/setup-edit-field-fluid.php:74
+msgid "Field Type"
+msgstr "字段类型"
+
+#: classes/fields/file.php:145
+msgid "Allowed File Extensions"
+msgstr "允许的文件扩展名"
+
+#: ui/admin/setup-edit-field-fluid.php:79
+msgid "Related To"
+msgstr "关联到"
+
+#: classes/fields/file.php:146
+msgid "Separate file extensions with a comma (ex. jpg,png,mp4,mov)"
+msgstr "用英文逗号分隔 (例： jpg,png,mp4,mov)"
+
+#: ui/admin/setup-edit-field-fluid.php:83
+msgid "Custom Defined Options"
+msgstr "自定义选项"
+
+#: classes/fields/paragraph.php:70 classes/fields/text.php:76
+msgid "Allow HTML?"
+msgstr "是否允许HTML？"
+
+#: ui/admin/setup-edit-field-fluid.php:83
+msgid "One option per line, use <em>value|Label</em> for separate values and labels"
+msgstr "每行一个选项，使用<em>value|Label</em>分割值和标签"
+
+#: classes/fields/paragraph.php:76 classes/fields/wysiwyg.php:94
+msgid "Enable oEmbed?"
+msgstr "勾选启用嵌入"
+
+#: ui/admin/setup-edit-field-fluid.php:91
+msgid "Bi-directional Field"
+msgstr "互相关联"
+
+#: classes/fields/paragraph.php:80 classes/fields/wysiwyg.php:98
+msgid "Embed videos, images, tweets, and other content."
+msgstr "嵌入视频、图像、tweets、和其他内容"
+
+#: ui/admin/setup-edit-field-fluid.php:91
+msgid "Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected."
+msgstr "相关联的自定将在你选择任意一项时更新相关字段，此特性只在两个相关联的Pods之间可用<br /><br />。例如：当你更新一个父Pods到一个相关的子Pods，当你编辑子条目时，你会发现父Pod也被选中了。"
+
+#: classes/fields/paragraph.php:85 classes/fields/wysiwyg.php:103
+msgid "Enable wptexturize?"
+msgstr "勾选启用WP符号转义？"
+
+#: ui/admin/setup-edit-field-fluid.php:100
+msgid "Options"
+msgstr "选项"
+
+#: classes/fields/paragraph.php:89 classes/fields/wysiwyg.php:107
+msgid "Transforms less-beautfiul text characters into stylized equivalents."
+msgstr "转换字符串为更好看的格式"
+
+#: ui/admin/setup-edit-field-fluid.php:106
+msgid "Required"
+msgstr "必填项"
+
+#: classes/fields/paragraph.php:94 classes/fields/wysiwyg.php:112
+msgid "Enable convert_chars?"
+msgstr "勾选启用字符串转换？"
+
+#: ui/admin/setup-edit-field-fluid.php:112
+msgid "Unique"
+msgstr "唯一的"
+
+#: classes/fields/paragraph.php:98 classes/fields/wysiwyg.php:116
+msgid "Converts text into valid XHTML and Unicode"
+msgstr "把纯文本转换为XHTML和Unicode"
+
+#: classes/fields/paragraph.php:103 classes/fields/wysiwyg.php:121
+msgid "Enable wpautop?"
+msgstr "勾选启用WP格式化？"
+
+#: ui/admin/setup-edit-field-fluid.php:187
+msgid "Delete Field"
+msgstr "删除字段"
+
+#: classes/fields/paragraph.php:107 classes/fields/wysiwyg.php:125
+msgid "Changes double line-breaks in the text into HTML paragraphs"
+msgstr "把换行符转换成HTML段落"
+
+#: ui/admin/setup-edit-field-fluid.php:190
+msgid "Update Field"
+msgstr "更新字段"
+
+#: classes/fields/paragraph.php:117 classes/fields/wysiwyg.php:135
+msgid "Embed [shortcodes] that help transform your static content into dynamic content."
+msgstr "嵌入[shortcodes]以帮助你把静态内容转化为动态内容。"
+
+#: ui/admin/setup-edit-field-fluid.php:190 ui/admin/setup-edit.php:231
+#: ui/admin/setup-edit.php:302
+msgid "Add Field"
+msgstr "添加字段"
+
+#: classes/fields/paragraph.php:124 classes/fields/text.php:84
+#: classes/fields/wysiwyg.php:142
+msgid "Allowed HTML Tags"
+msgstr "允许HTML标签"
+
+#: ui/admin/setup-edit.php:50 ui/admin/setup-edit.php:51
+#: ui/admin/setup-edit.php:53
+msgid "Other"
+msgstr "其他"
+
+#: classes/fields/phone.php:71
+msgid "US"
+msgstr "US"
+
+#: classes/PodsAdmin.php:1572
+msgid "Visual"
+msgstr "可视化"
+
+#: classes/fields/phone.php:76
+msgid "International"
+msgstr "国际的"
+
+#: classes/PodsAdmin.php:1575
+msgid "Additional CSS Classes"
+msgstr "附加CSS类"
+
+#: classes/fields/phone.php:77
+msgid "Any (no validation available)"
+msgstr "任意（不验证）"
+
+#: classes/PodsAdmin.php:1582
+msgid "Input Helper"
+msgstr "输入帮助"
+
+#: classes/fields/phone.php:82
+msgid "Phone Options"
+msgstr "电话选项"
+
+#: classes/PodsAdmin.php:1589
+msgid "Values"
+msgstr "值"
+
+#: classes/fields/phone.php:85
+msgid "Enable Phone Extension?"
+msgstr "启用电话扩展"
+
+#: classes/PodsAdmin.php:1592
+msgid "Default Value"
+msgstr "默认值"
+
+#: classes/fields/phone.php:180 classes/fields/website.php:168
+msgid "The %s field is required."
+msgstr "%s字段为必填字段。"
+
+#: classes/PodsAdmin.php:1599
+msgid "Set Default Value via Parameter"
+msgstr "通过参数设置默认值"
+
+#: classes/fields/phone.php:182
+msgid "Invalid phone number provided for the field %s."
+msgstr "为%s输入的电话号码错误。"
+
+#: classes/PodsAdmin.php:1605
+msgid "Visibility"
+msgstr "公开度"
+
+#: classes/fields/pick.php:101
+msgid "Selection Type"
+msgstr "选择类型"
+
+#: ui/admin/setup-edit.php:113
+msgid "No Related Fields Found"
+msgstr "相关Pod未找到"
+
+#: classes/PodsAdmin.php:1052 classes/PodsAdmin.php:1059
+#: classes/PodsAdmin.php:1067 classes/PodsAdmin.php:1073
+#: classes/PodsAdmin.php:1080 classes/PodsAdmin.php:1087
+#: classes/PodsAdmin.php:1094 classes/PodsAdmin.php:1101
+#: classes/PodsAdmin.php:1111 classes/PodsAdmin.php:1118
+#: classes/PodsAdmin.php:1125 classes/PodsAdmin.php:1144
+#: classes/PodsAdmin.php:1158 classes/PodsAdmin.php:1165
+#: classes/PodsAdmin.php:1173 classes/PodsAdmin.php:1180
+#: classes/PodsAdmin.php:1187 classes/PodsAdmin.php:1195
+#: classes/PodsAdmin.php:1210 classes/PodsAdmin.php:1218
+#: classes/PodsAdmin.php:1226 classes/PodsAdmin.php:1233
+#: classes/PodsAdmin.php:1244 classes/PodsAdmin.php:1252
+#: classes/PodsAdmin.php:1259 classes/PodsAdmin.php:1274
+#: classes/PodsAdmin.php:1280 classes/PodsAdmin.php:1287
+#: classes/PodsAdmin.php:1294 classes/PodsAdmin.php:1301
+#: classes/PodsAdmin.php:1327 classes/PodsAdmin.php:1339
+#: classes/PodsAdmin.php:1352 classes/PodsAdmin.php:1358
+#: classes/PodsAdmin.php:1365 classes/PodsAdmin.php:1381
+#: classes/PodsAdmin.php:1392 classes/PodsAdmin.php:1400
+#: classes/PodsAdmin.php:1406 classes/PodsAdmin.php:1428
+#: classes/PodsAdmin.php:1451 classes/PodsAdmin.php:1459
+#: classes/PodsAdmin.php:1576 classes/PodsAdmin.php:1583
+#: classes/PodsAdmin.php:1593 classes/PodsAdmin.php:1600
+#: classes/PodsAdmin.php:1644 classes/fields/pick.php:102
+#: classes/fields/pick.php:113 classes/fields/pick.php:129
+#: classes/fields/pick.php:145 classes/fields/pick.php:180
+#: classes/fields/pick.php:198 classes/fields/pick.php:210
+#: classes/fields/pick.php:222 ui/admin/setup-edit-field-fluid.php:62
+#: ui/admin/setup-edit-field-fluid.php:70
+#: ui/admin/setup-edit-field-fluid.php:74
+#: ui/admin/setup-edit-field-fluid.php:79
+#: ui/admin/setup-edit-field-fluid.php:87
+#: ui/admin/setup-edit-field-fluid.php:106
+#: ui/admin/setup-edit-field-fluid.php:112 ui/admin/setup-edit.php:317
+#: ui/admin/setup-edit.php:321 ui/admin/setup-edit.php:325
+#: ui/admin/setup-edit.php:329 ui/admin/setup-edit.php:333
+#: ui/admin/setup-edit.php:337 ui/admin/setup-edit.php:341
+#: ui/admin/setup-edit.php:345 ui/admin/setup-edit.php:349
+#: ui/admin/setup-edit.php:353 ui/admin/setup-edit.php:357
+#: ui/admin/setup-edit.php:361 ui/admin/setup-edit.php:365
+#: ui/admin/setup-edit.php:373 ui/admin/setup-edit.php:381
+#: ui/admin/setup-edit.php:385 ui/admin/setup-edit.php:389
+#: ui/admin/setup-edit.php:393 ui/admin/setup-edit.php:401
+#: ui/admin/setup-edit.php:405 ui/admin/setup-edit.php:540
+#: ui/admin/setup-edit.php:544 ui/admin/setup-edit.php:549
+#: ui/admin/setup-edit.php:553 ui/admin/setup-edit.php:558
+#: ui/admin/setup-edit.php:563 ui/admin/setup-edit.php:571
+#: ui/admin/setup-edit.php:576 ui/admin/setup-edit.php:581
+#: ui/admin/setup-edit.php:586 ui/admin/setup-edit.php:591
+#: ui/admin/setup-edit.php:634 ui/admin/setup-edit.php:653
+#: ui/admin/setup-edit.php:670 ui/admin/setup-edit.php:688
+#: ui/admin/setup-edit.php:702 ui/admin/setup-edit.php:716
+#: ui/admin/setup-edit.php:730
+msgid "help"
+msgstr "帮助"
+
+#: ui/admin/setup-edit.php:247 ui/admin/setup-edit.php:263
+msgid "<h6>Label</h6>The label is the descriptive name to identify the Pod field."
+msgstr "<h6>标签</h6>保证Pod域为唯一的描述性名称。"
+
+#: classes/fields/pick.php:122 classes/fields/pick.php:138
+msgid "Autocomplete"
+msgstr "自动完成"
+
+#: ui/admin/setup-edit.php:250 ui/admin/setup-edit.php:266
+msgid "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically."
+msgstr "<h6>名称</h6>名称属性用来标记和识别Pod域。"
+
+#: classes/fields/pick.php:123 classes/fields/pick.php:139
+msgid "Flexible"
+msgstr "灵活"
+
+#: ui/admin/setup-edit.php:253 ui/admin/setup-edit.php:269
+msgid "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc."
+msgstr "<h6>文件类型</h6>文件类型用来确定数据在Pod中的存储方式，他们可以是日期，文本，文件等。"
+
+#: classes/fields/pick.php:136
+msgid "Checkboxes"
+msgstr "复选框"
+
+#: ui/admin/setup-edit.php:329
+msgid "Add New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "新建<span class=\"pods-slugged\" data-sluggable=\"label_singular\">条目</span>"
+
+#: classes/fields/pick.php:137
+msgid "Multi Select"
+msgstr "多选"
+
+#: ui/admin/setup-edit.php:333
+msgid "New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "新<span class=\"pods-slugged\" data-sluggable=\"label_singular\">条目</span>"
+
+#: classes/fields/pick.php:144
+msgid "Selection Limit"
+msgstr "选择限制"
+
+#: ui/admin/setup-edit.php:341
+msgid "Edit <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "编辑<span class=\"pods-slugged\" data-sluggable=\"label_singular\">条目</span>"
+
+#: classes/fields/pick.php:167
+msgid "Display Field in Selection List"
+msgstr "在选择列表中显示域"
+
+#: ui/admin/setup-edit.php:345
+msgid "Update <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "更新<span class=\"pods-slugged\" data-sluggable=\"label_singular\">条目</span>"
+
+#: classes/fields/pick.php:168
+msgid "Provide the name of a field on the related object to reference, example: {@post_title}"
+msgstr "提供对象字段名称作为参考，如：{@post_title}"
+
+#: ui/admin/setup-edit.php:353
+msgid "View <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "查看<span class=\"pods-slugged\" data-sluggable=\"label_singular\">条目</span>"
+
+#: classes/fields/pick.php:197
+msgid "Customized <em>WHERE</em>"
+msgstr "自定义<em>WHERE</em>"
+
+#: ui/admin/setup-edit.php:357
+msgid "All <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr "所有<span class=\"pods-slugged\" data-sluggable=\"label\">条目</span>"
+
+#: classes/fields/pick.php:209
+msgid "Customized <em>ORDER BY</em>"
+msgstr "自定义<em>ORDER BY</em>"
+
+#: ui/admin/setup-edit.php:361
+msgid "Search <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr "搜索<span class=\"pods-slugged\" data-sluggable=\"label\">条目</span>"
+
+#: classes/fields/pick.php:221
+msgid "Customized <em>GROUP BY</em>"
+msgstr "自定义<em>GROUP BY</em>"
+
+#: ui/admin/setup-edit.php:365
+msgid "Not Found"
+msgstr "未找到"
+
+#: classes/fields/pick.php:949
+msgid "-- Select One --"
+msgstr "-- 请选择 --"
+
+#: ui/admin/setup-edit.php:373
+msgid "Not Found in Trash"
+msgstr "回收站中未找到"
+
+#: classes/fields/website.php:71
+msgid "http://example.com/"
+msgstr "http://example.com/"
+
+#: ui/admin/setup-edit.php:381
+msgid "Popular <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr "热门<span class=\"pods-slugged\" data-sluggable=\"label\">条目</span>"
+
+#: classes/fields/website.php:72
+msgid "http://example.com/ (remove www)"
+msgstr "http://example.com/ (remove www)"
+
+#: ui/admin/setup-edit.php:385
+msgid "Separate <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> with commas"
+msgstr "用英文逗号分隔<span class=\"pods-slugged-lower\" data-sluggable=\"label\">条目</span>"
+
+#: classes/fields/website.php:73
+msgid "http://www.example.com/ (force www if no sub-domain provided)"
+msgstr "http://www.example.com/（如果没有子域，添加www）"
+
+#: ui/admin/setup-edit.php:389
+msgid "Add or remove <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
+msgstr "添加或删除<span class=\"pods-slugged-lower\" data-sluggable=\"label\">条目</span>"
+
+#: classes/fields/website.php:74
+msgid "example.com"
+msgstr "example.com"
+
+#: ui/admin/setup-edit.php:393
+msgid "Choose from the most used"
+msgstr "最常用"
+
+#: classes/fields/website.php:75
+msgid "example.com (force removal of www)"
+msgstr "example.com（删除www）"
+
+#: classes/PodsAdmin.php:1045
+msgid "Post Type Description"
+msgstr "文章类型描述"
+
+#: classes/fields/website.php:76
+msgid "www.example.com (force www if no sub-domain provided)"
+msgstr "http://www.example.com/（如果没有子域，添加www）"
+
+#: classes/PodsAdmin.php:1046
+msgid "A short descriptive summary of what the post type is."
+msgstr "文章类型的简短描述"
+
+#: classes/fields/website.php:170
+msgid "Invalid website provided for the field %s."
+msgstr "为%s字段输入的网址错误。"
+
+#: classes/PodsAdmin.php:1110 ui/admin/setup-edit.php:540
+msgid "Public"
+msgstr "发布"
+
+#: classes/fields/wysiwyg.php:67 ui/admin/setup-edit.php:440
+msgid "Editor"
+msgstr "编辑器"
+
+#: classes/PodsAdmin.php:1117
+msgid "Publicly Queryable"
+msgstr "公开"
+
+#: classes/fields/wysiwyg.php:74
+msgid "TinyMCE (WP Default)"
+msgstr "TinyMCE (WP 默认)"
+
+#: classes/PodsAdmin.php:1124
+msgid "Exclude from Search"
+msgstr "从搜索中排除"
+
+#: classes/fields/wysiwyg.php:75
+msgid "CLEditor"
+msgstr "CLEditor"
+
+#: classes/PodsAdmin.php:1051 classes/PodsAdmin.php:1243
+msgid "Show Admin UI"
+msgstr "显示管理界面"
+
+#: classes/widgets/PodsWidgetForm.php:26 classes/widgets/PodsWidgetForm.php:42
+#: classes/widgets/PodsWidgetForm.php:53
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:41
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:133
+msgid "Submit"
+msgstr "提交"
+
+#: classes/PodsAdmin.php:1058 classes/PodsAdmin.php:1391
+msgid "Show Admin Menu in Dashboard"
+msgstr "在仪表盘中显示管理菜单"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:22
+msgid "Pods - Field Value"
+msgstr "Pods - 字段类型"
+
+#: classes/PodsAdmin.php:1072 classes/PodsAdmin.php:1251
+#: ui/admin/setup-edit.php:405
+msgid "Menu Name"
+msgstr "菜单名称"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:23
+msgid "Display a single Pod item's field value"
+msgstr "显示一个单独的Pod条目值"
+
+#: classes/PodsAdmin.php:1079 classes/PodsAdmin.php:1279
+#: classes/PodsAdmin.php:1357 classes/PodsAdmin.php:1405
+msgid "Menu Position"
+msgstr "菜单位置"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:77
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:79
+#: components/Builder/modules/list/PodsBuilderModuleList.php:82
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:78
+#: ui/admin/setup-edit.php:821 ui/admin/widgets/field.php:26
+#: ui/admin/widgets/form.php:26 ui/admin/widgets/list.php:26
+#: ui/admin/widgets/single.php:26
+msgid "Pod"
+msgstr "Pod"
+
+#: classes/PodsAdmin.php:1086 classes/PodsAdmin.php:1286
+#: classes/PodsAdmin.php:1364 classes/PodsAdmin.php:1412
+msgid "Menu Icon URL"
+msgstr "菜单图标URL"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:84
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:86
+#: components/Builder/modules/list/PodsBuilderModuleList.php:89
+#: components/Builder/modules/list/PodsBuilderModuleList.php:115
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:85
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:119
+#: components/Pages.php:410 ui/admin/shortcode.php:361
+#: ui/admin/widgets/field.php:39 ui/admin/widgets/form.php:39
+#: ui/admin/widgets/list.php:39 ui/admin/widgets/single.php:39
+msgid "None Found"
+msgstr "未找到"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:90
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:92
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:91
+#: ui/admin/widgets/field.php:45 ui/admin/widgets/single.php:45
+msgid "Slug or ID"
+msgstr "别名或ID"
+
+#: classes/PodsAdmin.php:1093 classes/PodsAdmin.php:1293
+msgid "Show in Navigation Menus"
+msgstr "在导航菜单中显示"
+
+#: components/Builder/modules/field/PodsBuilderModuleField.php:98
+#: ui/admin/shortcode.php:434 ui/admin/widgets/field.php:52
+msgid "Field"
+msgstr "字段"
+
+#: classes/PodsAdmin.php:1100
+msgid "Show in Admin Bar \"New\" Menu"
+msgstr "先管理工具条中的\"新建\" 菜单中显示"
+
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:22
+msgid "Pods - Form"
+msgstr "Pods表单"
+
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:23
+#: ui/admin/shortcode.php:333
+msgid "Display a form for creating and editing Pod items"
+msgstr "为创建和编辑Pod条目创建一个表单。"
+
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:100
+#: ui/admin/shortcode.php:440 ui/admin/widgets/form.php:50
+msgid "Fields (comma-separated)"
+msgstr "字段（英文逗号分隔）"
+
+#: classes/fields/pick.php:297
+msgid "Custom"
+msgstr "自定义"
+
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:108
+#: ui/admin/shortcode.php:446 ui/admin/widgets/form.php:56
+msgid "Submit Label"
+msgstr "提交标签"
+
+#: components/Builder/modules/form/PodsBuilderModuleForm.php:116
+#: ui/admin/shortcode.php:452 ui/admin/widgets/form.php:62
+msgid "Thank You URL upon submission"
+msgstr "提交后的感谢URL"
+
+#: classes/PodsAdmin.php:1157
+msgid "Has Archive"
+msgstr "是否允许存档"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:22
+msgid "Pods - List Items"
+msgstr "Pods - 列表字段"
+
+#: classes/PodsAdmin.php:1164 ui/admin/setup-edit.php:544
+#: ui/admin/setup-edit.php:653
+msgid "Hierarchical"
+msgstr "允许分层"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:23
+msgid "Display multiple Pod items"
+msgstr "列出多个Pod字段"
+
+#: classes/PodsAdmin.php:1172 ui/admin/setup-edit.php:549
+msgid "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "<strong>标签：</strong> 父级<span class=\"pods-slugged\" data-sluggable=\"label_singular\">项</span>"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:99
+#: components/Builder/modules/list/PodsBuilderModuleList.php:125
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:103
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:129
+#: ui/admin/shortcode.php:374 ui/admin/shortcode.php:386
+#: ui/admin/widgets/list.php:51 ui/admin/widgets/list.php:64
+#: ui/admin/widgets/single.php:59 ui/admin/widgets/single.php:71
+msgid "Custom Template"
+msgstr "自定义模版"
+
+#: classes/PodsAdmin.php:1179 ui/admin/setup-edit.php:553
+msgid "<strong>Label: </strong> Parent"
+msgstr "<strong>标签：</strong> 父级"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:108
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:112
+#: components/Templates.php:279 ui/admin/shortcode.php:371
+#: ui/admin/widgets/list.php:48 ui/admin/widgets/single.php:56
+msgid "Template"
+msgstr "模版"
+
+#: classes/PodsAdmin.php:1186 ui/admin/setup-edit.php:558
+msgid "Rewrite"
+msgstr "重定向"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:133
+#: ui/admin/shortcode.php:416 ui/admin/widgets/list.php:70
+msgid "Limit"
+msgstr "限制"
+
+#: classes/PodsAdmin.php:1194 ui/admin/setup-edit.php:563
+msgid "Custom Rewrite Slug"
+msgstr "重定向路径"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:141
+#: ui/admin/shortcode.php:422 ui/admin/widgets/list.php:76
+msgid "Order By"
+msgstr "排序"
+
+#: classes/PodsAdmin.php:1201
+msgid "Rewrite with Front"
+msgstr "使用预置前缀"
+
+#: components/Builder/modules/list/PodsBuilderModuleList.php:149
+#: ui/admin/shortcode.php:428 ui/admin/widgets/list.php:82
+msgid "Where"
+msgstr "那里"
+
+#: ui/admin/setup-edit.php:567
+msgid "Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)"
+msgstr "允许固定链接使用预置前缀（如：如果链接结构为/blog/，如果设置了显示为：/news/, 为设置显示为：/blog/news/）"
+
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:22
+msgid "Pods - Single Item"
+msgstr "Pods - 单独项"
+
+#: classes/PodsAdmin.php:1209
+msgid "Rewrite Feeds"
+msgstr "重定向Feeds"
+
+#: components/Builder/modules/single/PodsBuilderModuleSingle.php:23
+#: ui/admin/shortcode.php:329
+msgid "Display a single Pod item"
+msgstr "显示一个单独的Pod项"
+
+#: classes/PodsAdmin.php:1217
+msgid "Rewrite Pages"
+msgstr "重定向页面"
+
+#: components/Helpers.php:233
+msgid "Enter helper name here"
+msgstr "在这里输入帮助名称"
+
+#: classes/PodsAdmin.php:1225 ui/admin/setup-edit.php:576
+msgid "Query Var"
+msgstr "查询参数"
+
+#: components/Helpers.php:267
+msgid "Helper Type"
+msgstr "帮助类型"
+
+#: classes/PodsAdmin.php:1232
+msgid "Exportable"
+msgstr "可导出"
+
+#: components/Helpers.php:281
+msgid "Code"
+msgstr "代码"
+
+#: ui/admin/setup-edit.php:428
+msgid "Supports"
+msgstr "支持"
+
+#: components/Helpers.php:286
+msgid "Helper"
+msgstr "帮助"
+
+#: ui/admin/setup-edit.php:435 ui/admin/widgets/field.php:15
+#: ui/admin/widgets/form.php:15 ui/admin/widgets/list.php:15
+#: ui/admin/widgets/single.php:15 ui/admin/widgets/view.php:15
+msgid "Title"
+msgstr "标题"
+
+#: components/Markdown.php:20
+msgid "Allow Markdown Syntax?"
+msgstr "是否允许Markdown语法？"
+
+#: ui/admin/setup-edit.php:445
+msgid "Author"
+msgstr "作者"
+
+#: components/Migrate-CPTUI/Migrate-CPTUI.php:189
+#: components/Migrate-CPTUI/Migrate-CPTUI.php:255
+msgid "Pod with the name %s already exists"
+msgstr "Pod%s已存在"
+
+#: ui/admin/setup-edit.php:450
+msgid "Featured Image"
+msgstr "特色图像"
+
+#: components/Migrate-CPTUI/ui/wizard.php:15
+msgid "Migrate: Import from Custom Post Type UI"
+msgstr "迁移：从Custom Post Type UI导入"
+
+#: ui/admin/setup-edit.php:455
+msgid "Excerpt"
+msgstr "摘要"
+
+#: components/Migrate-CPTUI/ui/wizard.php:23
+msgid "Setup"
+msgstr "设置"
+
+#: ui/admin/setup-edit.php:460
+msgid "Trackbacks"
+msgstr "Trackbacks"
+
+#: components/Migrate-CPTUI/ui/wizard.php:27
+#: ui/admin/upgrade/upgrade_2_0_0.php:26
+msgid "Migrate"
+msgstr "迁移"
+
+#: ui/admin/setup-edit.php:465
+msgid "Custom Fields"
+msgstr "自定义域"
+
+#: components/Migrate-CPTUI/ui/wizard.php:35
+msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
+msgstr "Custom Post Type UI 为创建自定义文章和分类提供了接口，你可以直接导入数据到Pods 2.0"
+
+#: ui/admin/setup-edit.php:475
+msgid "Revisions"
+msgstr "版本控制"
+
+#: components/Migrate-CPTUI/ui/wizard.php:40
+msgid "Import Only"
+msgstr "只导入"
+
+#: ui/admin/setup-edit.php:480
+msgid "Page Attributes"
+msgstr "页面属性"
+
+#: components/Migrate-CPTUI/ui/wizard.php:42
+msgid "This will import your Custom Post Types and Taxonomies."
+msgstr "此操作将导入自定义文章和分类"
+
+#: classes/fields/pick.php:420 ui/admin/setup-edit.php:485
+msgid "Post Formats"
+msgstr "文章格式"
+
+#: components/Migrate-CPTUI/ui/wizard.php:49
+msgid "Import and Clean Up"
+msgstr "导入和清理"
+
+#: ui/admin/setup-edit.php:515
+msgid "Built-in Taxonomies"
+msgstr "内置分类"
+
+#: components/Migrate-CPTUI/ui/wizard.php:51
+msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
+msgstr "此操作将导入自定义文件和分类，然后从Custom Post Type UI移除。"
+
+#: components/Migrate-CPTUI/ui/wizard.php:60
+msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
+msgstr "从下面选择需要导入到Pod2.0的自定义文章和分类"
+
+#: components/Migrate-CPTUI/ui/wizard.php:64
+msgid "Choose Post Types to Import"
+msgstr "选择导入的文章类型"
+
+#: components/Migrate-CPTUI/ui/wizard.php:72
+msgid "Available Post Types"
+msgstr "可用的文章类型"
+
+#: classes/PodsAdmin.php:1300
+msgid "Allow in Tagcloud Widget"
+msgstr "在Tagcloud小工具中显示"
+
+#: components/Migrate-CPTUI/ui/wizard.php:97
+msgid "No Post Types were found."
+msgstr "没有找到文章类型"
+
+#: ui/admin/setup-edit.php:567
+msgid "Allow Front Prepend"
+msgstr "允许预加载"
+
+#: components/Migrate-CPTUI/ui/wizard.php:105
+msgid "Choose Taxonomies to Import"
+msgstr "选择导出分类"
+
+#: ui/admin/setup-edit.php:571
+msgid "Hierarchical Permalinks"
+msgstr "分层永久链接"
+
+#: components/Migrate-CPTUI/ui/wizard.php:113
+msgid "Available Taxonomies"
+msgstr "可用分类"
+
+#: ui/admin/setup-edit.php:586
+msgid "Remember order saved on Post Types"
+msgstr "提示保存"
+
+#: components/Migrate-CPTUI/ui/wizard.php:136
+msgid "No Taxonomies were found."
+msgstr "分类未找到"
+
+#: classes/PodsAdmin.php:1310
+msgid "Show Taxonomy column on Post Types"
+msgstr "在文章类型上显示分类法列"
+
+#: components/Migrate-CPTUI/ui/wizard.php:146
+#: components/Migrate-Packages/ui/wizard.php:279
+#: components/Roles/ui/add.php:122 ui/admin/setup-add.php:350
+#: ui/admin/upgrade/upgrade_2_0_0.php:289
+#: ui/admin/upgrade/upgrade_2_1_0.php:122
+msgid "Start Over"
+msgstr "重新开始"
+
+#: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
+#: ui/admin/setup-add.php:350 ui/admin/upgrade/upgrade_2_0_0.php:289
+#: ui/admin/upgrade/upgrade_2_1_0.php:122
+msgid "Next Step"
+msgstr "下一步"
+
+#: ui/admin/setup-edit.php:591
+msgid "Function to call when updating counts"
+msgstr "更新计数时调用的函数"
+
+#: components/Migrate-CPTUI/ui/wizard.php:146
+#: components/Migrate-Packages/ui/wizard.php:279
+#: components/Roles/ui/add.php:122 ui/admin/setup-add.php:350
+msgid "Finished"
+msgstr ""
+
+#: ui/admin/setup-edit.php:596
+msgid "Associated Post Types"
+msgstr "关联的文章类型"
+
+#: components/Migrate-CPTUI/ui/wizard.php:146
+#: components/Migrate-Packages/ui/wizard.php:279
+#: components/Roles/ui/add.php:122 ui/admin/setup-add.php:350
+msgid "Processing"
+msgstr ""
+
+#: ui/admin/setup-edit.php:634
+msgid "Detail Page URL"
+msgstr "详情页面URL"
+
+#: components/Migrate-Packages/ui/wizard.php:15
+msgid "Migrate: Packages"
+msgstr "迁移：插件包"
+
+#: ui/admin/setup-edit.php:648
+msgid "Title Field"
+msgstr "标题字段"
+
+#: components/Migrate-Packages/ui/wizard.php:23
+msgid "Choose"
+msgstr "选择"
+
+#: ui/admin/setup-edit.php:648
+msgid "If you delete the \"name\" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field."
+msgstr "如果删除了 \"名称\" 字段，我们需要定义此项为主字段作为内容的索引，通常此字段内容为人名、地点、物品或概括性描述。"
+
+#: components/Migrate-Packages/ui/wizard.php:27
+msgid "Import / Export"
+msgstr "导入/导出"
+
+#: ui/admin/setup-edit.php:688
+msgid "Pre-Save Helper(s)"
+msgstr "保存前提示"
+
+#: components/Migrate-Packages/ui/wizard.php:50
+#: components/Migrate-Packages/ui/wizard.php:85
+#: components/Migrate-Packages/ui/wizard.php:103
+msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
+msgstr "数据包允许你在不同的Pods站点中相互导入/导出Pods、字段和其他设置。"
+
+#: ui/admin/setup-edit.php:702
+msgid "Post-Save Helper(s)"
+msgstr "保存后提示"
+
+#: components/Migrate-Packages/ui/wizard.php:56
+msgid "Import"
+msgstr "导入"
+
+#: ui/admin/setup-edit.php:716
+msgid "Pre-Delete Helper(s)"
+msgstr "删除前提示"
+
+#: components/Migrate-Packages/ui/wizard.php:58
+msgid "Import a package of Pods, Fields, and other settings from another site."
+msgstr "从其他网站导入Pods、字段和其他设置。"
+
+#: ui/admin/setup-edit.php:730
+msgid "Post-Delete Helper(s)"
+msgstr "删除后提示"
+
+#: components/Migrate-Packages/ui/wizard.php:71
+msgid "Choose which Pods, Fields, and other settings to export into a package."
+msgstr "选择导出哪些Pods、字段和其他设置。"
+
+#: ui/admin/setup-edit.php:789
+msgid "Are you sure you want to delete this Pod? All fields and data will be removed."
+msgstr "确定要删除此Pod？所有的字段和数据将被删除。"
+
+#: components/Migrate-Packages/ui/wizard.php:89
+msgid "Paste the Package Code"
+msgstr "粘贴包代码"
+
+#: classes/fields/pick.php:323 ui/admin/setup-edit.php:821
+#: ui/admin/upgrade/upgrade_2_0_0.php:75 ui/admin/upgrade/upgrade_2_0_0.php:191
+msgid "Pods"
+msgstr "Pods"
+
+#: components/Migrate-Packages/ui/wizard.php:112
+msgid "Choose which Pods to export"
+msgstr "选择导入的Pods"
+
+#: classes/fields/pick.php:350 ui/admin/setup-edit.php:602
+#: ui/admin/setup-edit.php:822
+msgid "Post Types"
+msgstr "Post Types"
+
+#: components/Migrate-Packages/ui/wizard.php:117
+#: components/Migrate-Packages/ui/wizard.php:156
+#: components/Migrate-Packages/ui/wizard.php:195
+#: components/Migrate-Packages/ui/wizard.php:234
+msgid "Toggle all on / off"
+msgstr "全选/反选"
+
+#: classes/fields/pick.php:369 ui/admin/setup-edit.php:521
+#: ui/admin/setup-edit.php:823
+msgid "Taxonomies"
+msgstr "分类"
+
+#: components/Migrate-Packages/ui/wizard.php:151
+msgid "Choose which Pod Templates to export"
+msgstr "选择导出的Pod模版"
+
+#: ui/admin/setup-edit.php:897
+msgid "Loading available fields.."
+msgstr ""
+
+#: components/Migrate-Packages/ui/wizard.php:190
+msgid "Choose which Pod Pages to export"
+msgstr "选择需要导出的Pod页面"
+
+#: ui/admin/setup-edit.php:931
+msgid "-- Select Related Field --"
+msgstr ""
+
+#: components/Migrate-Packages/ui/wizard.php:229
+msgid "Choose which Pod Helpers to export"
+msgstr "选择导出的Pod类型"
+
+#: ui/admin/shortcode.php:321
+msgid "Pods &raquo; Embed"
+msgstr "Pods &raquo; 嵌入"
+
+#: components/Migrate-Packages/ui/wizard.php:270
+msgid "Results"
+msgstr "结果"
+
+#: ui/admin/shortcode.php:326
+msgid "What would you like to do?"
+msgstr "你想要干什么？"
+
+#: components/Migrate-Packages/ui/wizard.php:279
+msgid "Continue"
+msgstr "继续"
+
+#: ui/admin/shortcode.php:330
+msgid "List multiple Pod items"
+msgstr "列出多个Pod项"
+
+#: components/Pages.php:290
+msgid "Enter URL here"
+msgstr "输入URL"
+
+#: ui/admin/shortcode.php:331
+msgid "Display a field from a single Pod item"
+msgstr "从单独的Pod条目中显示项"
+
+#: components/Pages.php:346
+msgid "-- Page Template --"
+msgstr "-- 页面模版 --"
+
+#: ui/admin/shortcode.php:347
+msgid "Choose a Pod"
+msgstr "选择一个Pod"
+
+#: components/Pages.php:366 ui/admin/setup-add.php:140
+#: ui/admin/setup-edit.php:401
+msgid "Page Title"
+msgstr "页面标题"
+
+#: ui/admin/shortcode.php:410 ui/admin/widgets/form.php:44
+msgid "ID or Slug"
+msgstr "ID或别名"
+
+#: components/Pages.php:371
+msgid "Page Code"
+msgstr "页面代码"
+
+#: ui/admin/shortcode.php:492
+msgid "Insert"
+msgstr "插入"
+
+#: components/Pages.php:384
+msgid "Page Precode"
+msgstr "页面预置代码"
+
+#: ui/admin/upgrade/backup.php:1
+msgid "We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below."
+msgstr "为避免一系列的麻烦和一些奇怪的问题，我们建议你对数据库进行备份，选中下面的几项是<em>不错的</em>做法。"
+
+#: components/Pages.php:386
+msgid "Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default."
+msgstr "预格式化会在主题输出页面之前运行，输出内容为一段PHP代码，因为我们默认没有为你打开PHP标签，你必须手动打开。"
+
+#: ui/admin/upgrade/backup.php:7
+msgid "Receive 25% off"
+msgstr "Receive 25% off"
+
+#: components/Pages.php:390
+msgid "Page Template"
+msgstr "页面模版"
+
+#: ui/admin/upgrade/backup.php:9
+msgid "Coupon Code"
+msgstr "优惠码"
+
+#: components/Pages.php:396
+msgid "Page"
+msgstr "页面"
+
+#: ui/admin/upgrade/backup.php:12
+msgid "The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations."
+msgstr "all-in-one WordPress 备份插件来方便的备份、恢复和迁移任何本地的或扩展的数据。"
+
+#: components/Templates.php:284
+msgid "Show to Admins Only?"
+msgstr "只对管理员显示"
+
+#: ui/admin/upgrade/backup.php:17
+msgid "1 free month"
+msgstr "首月免费"
+
+#: classes/PodsAdmin.php:1627 components/Pages.php:466
+#: components/Templates.php:291
+msgid "Restrict access by Capability?"
+msgstr "是否通过权限限制访问"
+
+#: ui/admin/upgrade/backup.php:19
+msgid "Click to sign up"
+msgstr "点击注册"
+
+#: classes/PodsAdmin.php:1655 components/Pages.php:477
+#: components/Templates.php:298
+msgid "Capability Allowed"
+msgstr "权限"
+
+#: ui/admin/upgrade/backup.php:22
+msgid "A service that provides realtime continuous backups, restores, and security scanning."
+msgstr "提供持久备份、恢复、和安全扫描的服务。"
+
+#: classes/PodsAdmin.php:1656 components/Templates.php:299
+msgid "Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own."
+msgstr "英文逗号分割的权限，如： add_podname_item，请从角色和权限组件中查看完整列表"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:10 ui/admin/upgrade/upgrade_2_1_0.php:10
+msgid "Upgrade Pods"
+msgstr "更新Pods"
+
+#: classes/PodsAdmin.php:1608 components/Pages.php:490
+#: components/Templates.php:306
+msgid "Restrict Access"
+msgstr "限制访问"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:18 ui/admin/upgrade/upgrade_2_1_0.php:18
+msgid "Getting Started"
+msgstr "现在开始"
+
+#: components/Roles/Roles.php:68 components/Roles/Roles.php:214
+msgid "%s User"
+msgid_plural "%s Users"
+msgstr[0] ""
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:22 ui/admin/upgrade/upgrade_2_1_0.php:22
+msgid "Prepare"
+msgstr "准备工作"
+
+#: components/Roles/Roles.php:77 components/Roles/Roles.php:223
+msgid "View Users"
+msgstr "查看用户"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:38
+msgid "Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>."
+msgstr "欢迎来到#Pods2！我们真诚的希望你喜欢我们两年的计划和工作，这些都是<em>免费</em>的。"
+
+#: components/Roles/Roles.php:93 components/Roles/ui/add.php:26
+msgid "Capabilities"
+msgstr "权限"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:39
+msgid "Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that."
+msgstr "因为#Pods2中的一些优化，我们需要更新你的数据，此操作不会删除或者修改当前Pods1.x中的数据，所以你可以能方便的回到Pods1.x。"
+
+#: classes/fields/pick.php:376 components/Roles/Roles.php:95
+#: ui/admin/setup-add.php:232
+msgid "Users"
+msgstr "用户"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:53
+msgid "We will prepare all of your Pods, Settings, and Content for migration. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for Migration."
+msgstr "我们将为迁移准备你所有的Pods、设置和内容。迁移过程中出现的问题将显示在下面，进行下一步之前，确保进行了备份。"
+
+#: components/Roles/Roles.php:164 components/Roles/Roles.php:297
+msgid "Role not found, cannot edit it."
+msgstr "角色未找到，不能编辑"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:61
+msgid "Preparing Your Content for Migration"
+msgstr "为迁移内容做准备"
+
+#: components/Roles/Roles.php:179
+msgid "Role not found, it cannot be deleted."
+msgstr "角色未找到，所以不能删除"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:95 ui/admin/upgrade/upgrade_2_0_0.php:211
+#: ui/admin/upgrade/upgrade_2_1_0.php:70 ui/admin/upgrade/upgrade_2_1_0.php:100
+msgid "Relationships"
+msgstr "关系"
+
+#: components/Roles/Roles.php:184
+msgid "You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first."
+msgstr "在重新设置默认角色之前，你不能删除<strong>%s</strong>角色。"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:105
+msgid "Item Indexes"
+msgstr "条目索引"
+
+#: components/Roles/Roles.php:233
+msgid "role removed from site."
+msgstr "角色已删除"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:115
+#: ui/admin/upgrade/upgrade_2_0_0.php:231
+msgid "Templates"
+msgstr "模版"
+
+#: components/Roles/Roles.php:270
+msgid "Role name is required"
+msgstr "角色名称为必填项"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:125
+#: ui/admin/upgrade/upgrade_2_0_0.php:241
+msgid "Pod Pages"
+msgstr "Pod页面"
+
+#: components/Roles/Roles.php:273
+msgid "Role label is required"
+msgstr "角色标签为必填项"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:135
+#: ui/admin/upgrade/upgrade_2_0_0.php:251
+msgid "Helpers"
+msgstr "帮助"
+
+#: components/Roles/ui/add.php:14
+msgid "Roles &amp; Capabilities: Add New Role"
+msgstr "角色和权限：添加角色"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:163
+msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.x architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
+msgstr "处理过程中，你的Pods、设置和内容将被迁移到优化过的Pods2.0中，在确保升级成功之前，我们不会删除你原有的数据。"
+
+#: components/Roles/ui/add.php:22
+msgid "Naming"
+msgstr "名称"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:171
+msgid "Migrating Your Content"
+msgstr "迁移内容"
+
+#: components/Roles/ui/add.php:34
+msgid "Roles allow you to specify which capabilities a user should be able to do within WordPress."
+msgstr "角色允许你为一个用户设置权限以定义一个用户可以在WordPress中做哪些操作。"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:181
+msgid "1.x Updates"
+msgstr "1.x更新"
+
+#: components/Roles/ui/add.php:38
+msgid "Name your new Role"
+msgstr "角色名称"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:277
+#: ui/admin/upgrade/upgrade_2_1_0.php:110
+msgid "Cleanup"
+msgstr "清理"
+
+#: components/Roles/ui/add.php:43
+msgid "Users will see this as the name of their role"
+msgstr "用户可是看到他们的角色名"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:289
+#: ui/admin/upgrade/upgrade_2_1_0.php:122
+msgid "Start using Pods"
+msgstr ""
+
+#: components/Roles/ui/add.php:50
+msgid "You will use this name to programatically reference this role throughout WordPress"
+msgstr "用以在WordPress中描述角色属性"
+
+#: ui/admin/upgrade/upgrade_2_0_0.php:292
+msgid "Migration Complete!"
+msgstr "迁移成功！"
+
+#: components/Roles/ui/add.php:59
+msgid "Choose below which Capabilities you would like this new user role to have."
+msgstr "从下面为新角色选择权限"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:38
+msgid "Thanks for upgrading your #Pods2 site! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>."
+msgstr "谢谢您更新#Pods2网站，我们真诚的希望你喜欢我们两年的计划和工作，这些都是<em>免费</em>的。"
+
+#: components/Roles/ui/add.php:63 components/Roles/ui/edit.php:74
+msgid "Assign the Capabilities for"
+msgstr "分配权限给"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:39
+msgid "We need to run a few updates to your database to optimize your relationship data."
+msgstr "我们需要对数据库进行一些升级以优化关系数据。"
+
+#: components/Roles/ui/add.php:67 components/Roles/ui/edit.php:82
+msgid "Toggle All Capabilities on / off"
+msgstr "全选/反选"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:52
+msgid "We will prepare your relationships for the upgrade. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for the Upgrade."
+msgstr "我们将为迁移准备你所有的关系，迁移过程中出现的问题将显示在下面，进行下一步之前，确保进行了备份。"
+
+#: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
+msgid "Custom Capabilities"
+msgstr "自定义权限"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:60
+msgid "Preparing Your Relationships for Upgrade"
+msgstr "准备关系以便更新"
+
+#: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
+msgid "These capabilities will automatically be created and assigned to this role"
+msgstr "这些权限会被自动创建然后分配给此角色"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:82
+msgid "During this process your Relationships will be optimized."
+msgstr "此过程中你的关系将被优化。"
+
+#: components/Roles/ui/edit.php:15
+msgid "Roles &amp; Capabilities: Edit Role"
+msgstr "角色和权限：编辑角色"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:90
+msgid "Optimizing Your Relationships"
+msgstr "优化关系"
+
+#: components/Roles/ui/edit.php:24 ui/admin/form-settings.php:47
+#: ui/admin/form-settings.php:62 ui/admin/form.php:52 ui/admin/form.php:76
+#: ui/admin/setup-edit.php:214
+msgid "<strong>Success!</strong> %s %s successfully."
+msgstr "<strong>成功！</strong> %s %s 已成功。"
+
+#: ui/admin/upgrade/upgrade_2_1_0.php:125
+msgid "Upgrade Complete!"
+msgstr "更新成功！"
+
+#: components/Roles/ui/edit.php:30
+msgid "Choose below which Capabilities you would like this existing user role to have."
+msgstr "为现有用户角色选择权限。"
+
+#: components/Templates.php:240
+msgid "Enter template name here"
+msgstr "输入模版名称"
+
+#: classes/fields/avatar.php:97 classes/fields/avatar.php:109
+#: classes/fields/file.php:166 classes/fields/file.php:178
+#: ui/fields/attachment.php:94 ui/fields/media.php:121 ui/fields/media.php:134
+#: ui/fields/plupload.php:156
+msgid "Add File"
+msgstr "添加文件"
+
+#: classes/PodsInit.php:786
+msgid "New %s"
+msgstr "新%s"
+
+#: classes/PodsInit.php:788 classes/PodsInit.php:805 classes/PodsInit.php:1220
+#: classes/PodsUI.php:923
+msgid "Edit %s"
+msgstr "编辑%s"
+
+#: classes/PodsInit.php:789 classes/PodsInit.php:790 classes/PodsUI.php:925
+#: classes/PodsUI.php:936 ui/admin/form.php:55 ui/admin/form.php:79
+#: ui/admin/form.php:141
+msgid "View %s"
+msgstr "查看%s"
+
+#: classes/PodsInit.php:791 classes/PodsInit.php:802
+msgid "All %s"
+msgstr "所有%s"
+
+#: classes/PodsInit.php:792 classes/PodsInit.php:800 classes/PodsUI.php:927
+msgid "Search %s"
+msgstr "搜索%s"
+
+#: classes/PodsInit.php:793
+msgid "No %s Found"
+msgstr "%s未找到"
+
+#: classes/PodsInit.php:794
+msgid "No %s Found in Trash"
+msgstr "回收站中为找到%s"
+
+#: classes/PodsInit.php:795 classes/PodsInit.php:803
+msgid "Parent %s"
+msgstr "父级%s"
+
+#: classes/PodsInit.php:796
+msgid "Parent %s:"
+msgstr "父级%s："
+
+#: classes/PodsInit.php:801
+msgid "Popular %s"
+msgstr "热门%s"
+
+#: classes/PodsInit.php:804
+msgid "Parent %s :"
+msgstr "父级%s"
+
+#: classes/PodsInit.php:806
+msgid "Update %s"
+msgstr "更新%s"
+
+#: classes/PodsInit.php:808
+msgid "New %s Name"
+msgstr "新%s名称"
+
+#: classes/PodsInit.php:809
+msgid "Separate %s with commas"
+msgstr "用英文逗号隔开%s"
+
+#: classes/PodsInit.php:810
+msgid "Add or remove %s"
+msgstr "添加或删除%s"
+
+#: classes/PodsInit.php:811
+msgid "Choose from the most used %s"
+msgstr "从常用%s中选择"
+
+#: classes/PodsMeta.php:473
+msgid "Object required to add a Pods meta group"
+msgstr "对象需要添加一个Pods元组"
+
+#: classes/PodsMeta.php:683 ui/admin/form.php:318
+msgid "More Fields"
+msgstr "更多字段"
+
+#: classes/PodsUI.php:489
+msgid "<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information."
+msgstr "<strong>错误：</strong>Pods UI 需要一个Pods对象或数据表运行，详细信息查看用户指南。"
+
+#: classes/PodsAdmin.php:1434 classes/PodsUI.php:913 classes/PodsUI.php:3162
+#: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
+msgid "Duplicate"
+msgstr "复制"
+
+#: classes/PodsUI.php:914 classes/PodsUI.php:917 classes/PodsUI.php:3144
+#: ui/admin/setup-edit.php:349
+msgid "View"
+msgstr "查看"
+
+#: classes/PodsAdmin.php:1436 classes/PodsUI.php:915
+msgid "Reorder"
+msgstr "排序"
+
+#: classes/Pods.php:2591
+msgid "Go to page:"
+msgstr "跳转到页面："
+
+#: classes/Pods.php:2593
+msgid "&laquo; First"
+msgstr "&laquo;首页"
+
+#: classes/Pods.php:2594
+msgid "&lsaquo; Previous"
+msgstr "&lsaquo;上一个"
+
+#: classes/Pods.php:2595
+msgid "Next &rsaquo;"
+msgstr "下一个&rsaquo;"
+
+#: classes/Pods.php:2596
+msgid "Last &raquo;"
+msgstr "尾页"
+
+#: classes/Pods.php:2710 classes/PodsUI.php:916 classes/PodsUI.php:2320
+#: classes/PodsUI.php:2322 classes/PodsUI.php:2526
+msgid "Search"
+msgstr "搜索"
+
+#: classes/Pods.php:2896 classes/PodsAdmin.php:743
+#: ui/admin/components-admin.php:99
+msgid "Save Changes"
+msgstr "保存"
+
+#: classes/Pods.php:2914
+msgid "Form submitted successfully"
+msgstr "Pod已提交"
+
+#: classes/PodsAPI.php:284
+msgid "User data is required but is either invalid or empty"
+msgstr "用户数据为必填项，但目前为空或无效数据"
+
+#: classes/PodsAPI.php:389
+msgid "Comment data is required but is either invalid or empty"
+msgstr "评论数据为必填项，但目前为空或无效数据"
+
+#: classes/PodsAPI.php:519
+msgid "Taxonomy term data is required but is either invalid or empty"
+msgstr "分类数据为必填项，但目前为空或无效数据"
+
+#: classes/PodsAPI.php:720 classes/PodsAPI.php:731
+msgid "Open"
+msgstr "打开"
+
+#: classes/PodsAPI.php:721 classes/PodsAPI.php:732
+msgid "Closed"
+msgstr "已关闭"
+
+#: classes/PodsAPI.php:1088
+msgid "Please choose whether to Create or Extend a Content Type"
+msgstr "请选择新建还是扩展内容类型"
+
+#: classes/PodsAPI.php:1203
+msgid "Post Type %s already exists, try extending it instead"
+msgstr "文章类型%s已存在，请更改"
+
+#: classes/PodsAPI.php:1212
+msgid "Taxonomy %s already exists, try extending it instead"
+msgstr "分类%s已存在，请更改"
+
+#: classes/PodsAPI.php:1283
+msgid "Pod %s already exists, you cannot rename %s to that"
+msgstr "Pod%s已存在，不能重新命名%s"
+
+#: classes/PodsAPI.php:1286 classes/PodsAPI.php:1289
+msgid "Pod %s cannot be renamed, it extends an existing WP Object"
+msgstr "Pod%s不能重命名，他扩展了一个WP对象"
+
+#: classes/PodsAPI.php:1293
+msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
+msgstr "Pod %s已经被使用，所以你不能跨多个Pods重新使用。"
+
+#: classes/PodsAPI.php:1295
+msgid "Pod %s already exists"
+msgstr "Pod %s已存在"
+
+#: classes/PodsAPI.php:1433
+msgid "Post Type %s already exists, you cannot rename %s to that"
+msgstr "文章类型 %s 已存在，不能重新命名%s。"
+
+#: classes/PodsAPI.php:1439
+msgid "Taxonomy %s already exists, you cannot rename %s to that"
+msgstr "分类%s已存在，不能重新命名%s。"
+
+#: classes/PodsAPI.php:1448
+msgid "Pod name cannot be empty"
+msgstr "Pod不能为空"
+
+#: classes/PodsAPI.php:1546
+msgid "Cannot save Pod"
+msgstr "不能保存pod"
+
+#: classes/PodsAPI.php:1578
+msgid "Cannot add Database Table for Pod"
+msgstr "不能为Pod添加数据库表"
+
+#: classes/PodsAPI.php:1585
+msgid "Cannot update Database Table for Pod"
+msgstr "不能为Pod升级数据库表"
+
+#: classes/PodsAPI.php:1808
+msgid "Cannot save the %s field"
+msgstr "不能保存%s"
+
+#: classes/PodsAPI.php:1921
+msgid "Pod ID or name is required"
+msgstr "Pod ID或名称为必填项"
+
+#: classes/PodsAPI.php:1936 classes/PodsAPI.php:2737 classes/PodsAPI.php:3482
+#: classes/PodsAPI.php:3545 classes/PodsAPI.php:3823 classes/PodsAPI.php:3945
+#: classes/PodsAPI.php:4056 classes/PodsAPI.php:4255 classes/PodsAPI.php:4679
+#: classes/PodsAPI.php:5149 classes/PodsAPI.php:5366 classes/PodsAPI.php:5851
+#: classes/PodsAPI.php:6958
+msgid "Pod not found"
+msgstr "Pod未找到"
+
+#: classes/PodsAPI.php:1969
+msgid "Field %s already exists, you cannot rename %s to that"
+msgstr "字段%s已存在，不能重新命名%s。"
+
+#: classes/PodsAPI.php:1972
+msgid "Field %s already exists"
+msgstr "%s已存在"
+
+#: classes/PodsAPI.php:2106 classes/PodsAPI.php:2109 classes/PodsAPI.php:2112
+#: classes/PodsAPI.php:2175 classes/PodsAPI.php:2181 classes/PodsAPI.php:2184
+msgid "%s is reserved for internal Pods usage, please try a different name"
+msgstr "%s 被保留用于Pods内部，请尝试其他名称。"
+
+#: classes/PodsAPI.php:2116
+msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
+msgstr "%s 被保留用于Pods或WordPress内部，请尝试其他名称，同事考虑一下WordPress和Pods的内置功能"
+
+#: classes/PodsAPI.php:2124
+msgid "This pod already has an internal WordPress permalink field"
+msgstr "此Pod已经含有WordPress内部固定链接域"
+
+#: classes/PodsAPI.php:2141
+msgid "This pod already has a permalink field"
+msgstr "此Pod已经包含了一个固定链接域。"
+
+#: classes/PodsAPI.php:2177 classes/PodsAPI.php:2193
+msgid "%s is not editable"
+msgstr "%s不可编辑"
+
+#: classes/PodsAPI.php:2191
+msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
+msgstr "%s 是一个WordPress或Pods保留的名称，换个试试。"
+
+#: classes/PodsAPI.php:2229
+msgid "Cannot save Field"
+msgstr "不能保存字段"
+
+#: classes/PodsAPI.php:2262 classes/PodsAPI.php:2269 classes/PodsAPI.php:2281
+msgid "Cannot create new field"
+msgstr "不能创建新字段"
+
+#: classes/PodsAPI.php:2445
+msgid "Name must be given to save an Object"
+msgstr "保存之前必须命名"
+
+#: classes/PodsAPI.php:2448
+msgid "Type must be given to save an Object"
+msgstr "保存之前必须设置一个类型"
+
+#: classes/PodsAPI.php:2888
+msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
+msgstr "Pre-save 提示已弃用，使用 pods_pre_save_pod_item_%s 代替。"
+
+#: classes/PodsAPI.php:2939 classes/PodsMeta.php:1640
+msgid "There was an issue validating the field %s"
+msgstr "验证字段%s时出现了一个问题"
+
+#: classes/PodsAPI.php:3253
+msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
+msgstr "Post-save 提示已弃用，使用 pods_post_save_pod_item_%s 代替。"
+
+#: classes/PodsAPI.php:3761 classes/PodsAPI.php:4235
+msgid "$params->pod instead of $params->datatype"
+msgstr "用 $params->pod 代替 $params->datatype"
+
+#: classes/PodsAPI.php:3769
+msgid "$params->pod is required"
+msgstr "$params->pod为必填字段"
+
+#: classes/PodsAPI.php:3779
+msgid "Pod is required"
+msgstr "Pod 名称为必填字段"
+
+#: classes/PodsAPI.php:3963
+msgid "Pod unable to be deleted"
+msgstr "Pod 不能删除"
+
+#: classes/PodsAPI.php:4070 classes/PodsAPI.php:5178 classes/PodsAPI.php:5191
+msgid "Field not found"
+msgstr "未找到字段"
+
+#: classes/PodsAPI.php:4084
+msgid "Field unable to be deleted"
+msgstr "字段不能删除"
+
+#: classes/PodsAPI.php:4122
+msgid "%s Object not found"
+msgstr "未找到%s对象"
+
+#: classes/PodsAPI.php:4127
+msgid "%s Object not deleted"
+msgstr "%s 对象未删除"
+
+#: classes/PodsAPI.php:4217
+msgid "$params->id instead of $params->tbl_row_id"
+msgstr "用 $params->id 代替 $params->tbl_row_id"
+
+#: classes/PodsAPI.php:4223
+msgid "$params->id instead of $params->pod_id"
+msgstr "用 $params->id 代替 $params->pod_id"
+
+#: classes/PodsAPI.php:4229
+msgid "$params->pod_id instead of $params->datatype_id"
+msgstr "用 $params->pod_id 代替 $params->datatype_id"
+
+#: classes/PodsAPI.php:4242
+msgid "Pod Item not found"
+msgstr "Pod条目未找到"
+
+#: classes/PodsAPI.php:4285
+msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
+msgstr "Pre-delete 提示已被启用，使用pods_pre_delete_pod_item_%s代替。"
+
+#: classes/PodsAPI.php:4322
+msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
+msgstr "Post-delete 提示已被启用，使用pods_post_delete_pod_item_%s代替。"
+
+#: classes/PodsAPI.php:5159
+msgid "Either Field Name or Field ID / Pod ID are required"
+msgstr "项名称和项ID / Pod ID为必填项"
+
+#: classes/PodsAPI.php:5437
+msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
+msgstr "项名称/项 ID/项类型, 或Pod名称/ Pod ID为必填项"
+
+#: classes/PodsAPI.php:5503
+msgid "Object type is required"
+msgstr "对象类型为必填项"
+
+#: classes/PodsAPI.php:5506
+msgid "Either Object ID or Name are required"
+msgstr "对象ID和名称都为必填项"
+
+#: classes/PodsAPI.php:5523
+msgid "Object not found"
+msgstr "对象未找到"
+
+#: classes/PodsAPI.php:5566
+msgid "Pods Object type is required"
+msgstr "Pods 对象类型为必填项"
+
+#: classes/PodsAPI.php:5813
+msgid "Pod name required"
+msgstr "Pod 名称为必填项"
+
+#: classes/PodsAPI.php:5815
+msgid "Item ID required"
+msgstr "项ID为必填项"
+
+#: classes/PodsAPI.php:5875
+msgid "Related Pod not found"
+msgstr "相关Pod未找到"
+
+#: classes/PodsAPI.php:5992
+msgid "%s is empty"
+msgstr "%s为空"
+
+#: classes/PodsAPI.php:6008 classes/fields/email.php:173
+msgid "%s is required"
+msgstr "%s为必填项"
+
+#: classes/PodsAPI.php:6035
+msgid "%s needs to be unique"
+msgstr "%s 不能重复"
+
+#: classes/PodsAPI.php:7227
+msgid "Invalid submission"
+msgstr "错误的提交"
+
+#: classes/PodsAPI.php:7237
+msgid "Access denied for your session, please refresh and try again."
+msgstr "当前会话访问被拒绝，刷新重试。"
+
+#: classes/PodsAPI.php:7240
+msgid "Access denied, please refresh and try again."
+msgstr "访问被拒绝，刷新重试。"
+
+#: classes/PodsAdmin.php:228 classes/PodsAdmin.php:941
+#: classes/PodsAdmin.php:1921
+msgid "All"
+msgstr "所有"
+
+#: classes/PodsAdmin.php:232 classes/PodsAdmin.php:288
+#: classes/PodsAdmin.php:1433 classes/PodsInit.php:787 classes/PodsUI.php:912
+#: classes/PodsUI.php:3153 ui/admin/setup-edit-field-fluid.php:17
+#: ui/admin/setup-edit-field.php:67 ui/admin/setup-edit.php:337
+msgid "Edit"
+msgstr "编辑"
+
+#: classes/PodsAdmin.php:234 classes/PodsAdmin.php:255
+#: classes/PodsAdmin.php:256 classes/PodsAdmin.php:290
+#: classes/PodsAdmin.php:304 classes/PodsAdmin.php:424
+#: classes/PodsAdmin.php:1432 classes/PodsInit.php:784 classes/PodsUI.php:911
+#: classes/PodsUI.php:932 ui/admin/setup-edit.php:325
+msgid "Add New"
+msgstr "添加"
+
+#: classes/PodsAdmin.php:284 classes/PodsAdmin.php:305 classes/PodsUI.php:910
+#: components/Roles/ui/edit.php:39 ui/admin/form.php:128
+msgid "Manage"
+msgstr "管理"
+
+#: classes/PodsAdmin.php:419
+msgid "Edit Pods"
+msgstr "编辑"
+
+#: classes/PodsAdmin.php:429
+msgid "Components"
+msgstr "组件"
+
+#: classes/PodsAdmin.php:434 classes/PodsAdmin.php:455
+#: ui/admin/components-admin.php:10 ui/admin/upgrade/upgrade_2_0_0.php:221
+msgid "Settings"
+msgstr "高级"
+
+#: classes/PodsAdmin.php:439 classes/PodsAdmin.php:460
+msgid "Help"
+msgstr "帮助"
+
+#: classes/PodsAdmin.php:450 ui/admin/upgrade/upgrade_2_1_0.php:26
+msgid "Upgrade"
+msgstr "更新"
+
+#: classes/PodsAdmin.php:487
+msgid "Pods Admin"
+msgstr "Pods"
+
+#: classes/PodsAdmin.php:490
+msgid "Pods Upgrade"
+msgstr "Pods更新"
+
+#: classes/PodsAdmin.php:506
+msgid "<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href=\"%s\">Upgrade Wizard</a>."
+msgstr "<strong>警告：</strong> Pods %s 需要更新，请运行<a href=\"%s\">更新向导</a>。"
+
+#: classes/PodsAdmin.php:591
+msgid "ID"
+msgstr "ID"
+
+#: classes/PodsAdmin.php:685 classes/PodsAdmin.php:1435 classes/PodsUI.php:3171
+#: ui/admin/form.php:187 ui/admin/setup-edit-field-fluid.php:23
+#: ui/admin/setup-edit-field.php:73
+msgid "Delete"
+msgstr "删除"
+
+#: classes/PodsAdmin.php:821
+msgid "Post Type (extended)"
+msgstr "文章类型 （扩展的）"
+
+#: classes/PodsAdmin.php:822
+msgid "Taxonomy (extended)"
+msgstr "分类（扩展的）"
+
+#: classes/PodsAdmin.php:823
+msgid "Custom Post Type"
+msgstr "自定义文章类型"
+
+#: classes/PodsAdmin.php:824
+msgid "Custom Taxonomy"
+msgstr "自定义分类"
+
+#: classes/PodsAdmin.php:825
+msgid "User (extended)"
+msgstr "用户（扩展的）"
+
+#: classes/PodsAdmin.php:826
+msgid "Media (extended)"
+msgstr "媒体（扩展的）"
+
+#: classes/PodsAdmin.php:827
+msgid "Comments (extended)"
+msgstr "评论（扩展的）"
+
+#: classes/PodsAdmin.php:828
+msgid "Advanced Content Type"
+msgstr "高级内容类型"
+
+#: classes/PodsAdmin.php:837 components/Roles/Roles.php:91
+#: components/Roles/ui/add.php:43 ui/admin/setup-edit-field-fluid.php:62
+#: ui/admin/setup-edit.php:317
+msgid "Label"
+msgstr "标签"
+
+#: classes/PodsAdmin.php:838 classes/PodsAdmin.php:1889 classes/PodsUI.php:942
+#: components/Roles/Roles.php:92 components/Roles/ui/add.php:50
+#: ui/admin/setup-edit-field-fluid.php:66
+msgid "Name"
+msgstr "名称"
+
+#: classes/PodsAdmin.php:841 ui/admin/setup-add.php:198
+#: ui/admin/setup-add.php:328
+msgid "Storage Type"
+msgstr "存储类型"
+
+#: classes/PodsAdmin.php:922
+msgid "Delete All Items"
+msgstr "删除所有条目"
+
+#: classes/PodsAdmin.php:1737 classes/PodsAdmin.php:1758
+msgid "Pod not found."
+msgstr "Pod未找到"
+
+#: classes/PodsAdmin.php:1767
+msgid "Pod deleted successfully."
+msgstr "Pod已删除"
+
+#: classes/PodsAdmin.php:1741
+msgid "Pod reset successfully."
+msgstr "Pod已重置"
+
+#: classes/PodsAdmin.php:1847
+msgid "by %s"
+msgstr "作者：%s"
+
+#: classes/PodsAdmin.php:1850
+msgid "Visit component site"
+msgstr "访问组件网站"
+
+#: classes/PodsAdmin.php:1905 ui/admin/setup-edit-field-fluid.php:70
+msgid "Description"
+msgstr "描述"
+
+#: classes/PodsAdmin.php:2010 classes/PodsAdmin.php:2049
+msgid "Component enabled"
+msgstr "组件已启用"
+
+#: classes/PodsAdmin.php:2012 classes/PodsAdmin.php:2051
+msgid "Component disabled"
+msgstr "组件已停用"
+
+#: classes/PodsAdmin.php:2219 classes/fields/file.php:580
+#: classes/fields/pick.php:1593
+msgid "Unauthorized request"
+msgstr "未授权请求"
+
+#: classes/PodsAdmin.php:2230
+msgid "Access denied"
+msgstr "访问被拒绝"
+
+#: classes/fields/file.php:595 classes/fields/pick.php:1612
+#: classes/fields/pick.php:1614
+msgid "Invalid field request"
+msgstr "无效字段请求"
+
+#: classes/fields/file.php:598 classes/fields/pick.php:1616
+#: classes/fields/pick.php:1618 classes/fields/pick.php:1620
+msgid "Invalid field"
+msgstr "无效字段"
+
+#: classes/fields/file.php:637
+msgid "File size too large, max size is %s"
+msgstr "文件太大了，最大允许大小为%s"
+
+#: classes/fields/file.php:728
+msgid "File type not allowed, please use one of the following: %s"
+msgstr "文件格式受限，请使用文件格式：%s"
+
+#: classes/PodsInit.php:726 components/Helpers.php:112 components/Pages.php:161
+#: components/Templates.php:119
+msgid "%s updated. <a href=\"%s\">%s</a>"
+msgstr "%s已更新<a href=\"%s\">%s</a>"
+
+#: classes/PodsInit.php:727 components/Helpers.php:113 components/Pages.php:162
+#: components/Templates.php:120
+msgid "Custom field updated."
+msgstr "自定义域已更新"
+
+#: classes/PodsInit.php:728 components/Helpers.php:114 components/Pages.php:163
+#: components/Templates.php:121
+msgid "Custom field deleted."
+msgstr "自定义域已删除"
+
+#: classes/PodsInit.php:729 classes/PodsInit.php:746 components/Helpers.php:115
+#: components/Helpers.php:136 components/Pages.php:164 components/Pages.php:185
+#: components/Templates.php:122 components/Templates.php:143
+msgid "%s updated."
+msgstr "%s aktualisiert."
+
+#: classes/PodsInit.php:731 components/Helpers.php:117 components/Pages.php:166
+#: components/Templates.php:124
+msgid "%s restored to revision from %s"
+msgstr "%s 已从%s中恢复"
+
+#: classes/PodsInit.php:732 components/Helpers.php:118 components/Pages.php:167
+#: components/Templates.php:125
+msgid "%s published. <a href=\"%s\">%s</a>"
+msgstr "%s 已发布 <a href=\"%s\">%s</a>"
+
+#: classes/PodsInit.php:733 components/Helpers.php:119 components/Pages.php:168
+#: components/Templates.php:126
+msgid "%s saved."
+msgstr "%s保存"
+
+#: classes/PodsInit.php:734 components/Helpers.php:120 components/Pages.php:169
+#: components/Templates.php:127
+msgid "%s submitted. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
+msgstr "%s 已提交。<a target=\"_blank\" href=\"%s\">预览 %s</a>"
+
+#: classes/PodsInit.php:735 components/Helpers.php:125 components/Pages.php:174
+#: components/Templates.php:132
+msgid "%s scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview %s</a>"
+msgstr "%s 已计划: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">预览%s</a>"
+
+#: classes/PodsInit.php:742 components/Helpers.php:132 components/Pages.php:181
+#: components/Templates.php:139
+msgid "%s draft updated. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
+msgstr "%s 草稿已更新. <a target=\"_blank\" href=\"%s\">预览 %s</a>"
+
+#: classes/PodsInit.php:747 components/Helpers.php:137 components/Pages.php:186
+#: components/Templates.php:144
+msgid "%s published."
+msgstr "%s veröffentlicht."
+
+#: classes/PodsInit.php:748 components/Helpers.php:138 components/Pages.php:187
+#: components/Templates.php:145
+msgid "%s submitted."
+msgstr "%s 已提交。"
+
+#: classes/PodsInit.php:749 components/Helpers.php:139 components/Pages.php:188
+#: components/Templates.php:146
+msgid "%s scheduled for: <strong>%1$s</strong>."
+msgstr "%s 已计划: <strong>%1$s</strong>."
+
+#: classes/PodsInit.php:754 components/Helpers.php:144 components/Pages.php:193
+#: components/Templates.php:151
+msgid "%s draft updated."
+msgstr "%s 草稿已更新。"
+
+#: classes/PodsInit.php:774 classes/PodsUI.php:899
+msgid "Items"
+msgstr "条目"
+
+#: classes/PodsInit.php:775 classes/PodsUI.php:898
+msgid "Item"
+msgstr "条目"
+
+#: classes/PodsInit.php:785 classes/PodsInit.php:807 classes/PodsUI.php:922
+msgid "Add New %s"
+msgstr "添加%s"

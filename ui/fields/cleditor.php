@@ -5,9 +5,9 @@ wp_enqueue_style( 'pods-cleditor' );
 $type = 'textarea';
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options, 'pods-ui-field-cleditor' );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-cleditor' );
 ?>
-<textarea<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
+<textarea<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
 <script>
     jQuery( function ( $ ) {
         var $textarea = $( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );

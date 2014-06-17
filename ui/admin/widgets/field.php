@@ -20,7 +20,7 @@
     <li>
         <?php
             $api = pods_api();
-            $all_pods = $api->load_pods();
+            $all_pods = $api->load_pods( array( 'names' => true ) );
         ?>
         <label for="<?php echo $this->get_field_id( 'pod_type' ); ?>">
             <?php _e( 'Pod', 'pods' ); ?>
@@ -28,10 +28,10 @@
 
         <?php if ( 0 < count( $all_pods ) ): ?>
             <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
-                <?php foreach ( $all_pods as $pod ): ?>
-                    <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
-                    <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                        <?php echo esc_html( $pod[ 'label' ] ); ?>
+                <?php foreach ( $all_pods as $pod_name => $pod_label ): ?>
+                    <?php $selected = ( $pod_name == $pod_type ) ? 'selected' : ''; ?>
+                    <option value="<?php echo $pod_name; ?>" <?php echo $selected; ?>>
+                        <?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
                     </option>
                 <?php endforeach; ?>
             </select>

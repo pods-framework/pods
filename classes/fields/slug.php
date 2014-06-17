@@ -8,7 +8,7 @@ class PodsField_Slug extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'slug';
 
@@ -16,7 +16,7 @@ class PodsField_Slug extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Permalink (url-friendly)';
 
@@ -24,7 +24,7 @@ class PodsField_Slug extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
@@ -39,7 +39,7 @@ class PodsField_Slug extends PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -51,7 +51,7 @@ class PodsField_Slug extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'VARCHAR(200)';
@@ -69,7 +69,7 @@ class PodsField_Slug extends PodsField {
      * @param int $id
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
@@ -84,15 +84,33 @@ class PodsField_Slug extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+        $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
             $value = implode( '-', $value );
 
-        pods_view( PODS_DIR . 'ui/fields/slug.php', compact( array_keys( get_defined_vars() ) ) );
+        $field_type = 'slug';
+
+        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
+            if ( pods_var( 'read_only', $options, false ) ) {
+                $options[ 'readonly' ] = true;
+
+                $field_type = 'text';
+            }
+            else
+                return;
+        }
+        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+            $options[ 'readonly' ] = true;
+
+            $field_type = 'text';
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -105,7 +123,7 @@ class PodsField_Slug extends PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
@@ -123,14 +141,9 @@ class PodsField_Slug extends PodsField {
      * @param null $params
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        $index = pods_var( 'pod_index', pods_var( 'options', $pod, $pod, null, true ), 'id', null, true );
-
-        if ( empty( $value ) && isset( $fields[ $index ] ) )
-            $value = $fields[ $index ][ 'value' ];
-
+    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 
@@ -146,59 +159,17 @@ class PodsField_Slug extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        $index = pods_var( 'pod_index', pods_var( 'options', $pod, $pod, null, true ), 'id', null, true );
+
+        if ( empty( $value ) && isset( $fields[ $index ] ) )
+            $value = $fields[ $index ][ 'value' ];
+
         $value = pods_unique_slug( $value, $name, $pod, 0, $params->id, null, false );
 
         return $value;
-    }
-
-    /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param null $options
-     * @param string $pod
-     *
-     * @return void
-     *
-     * @since 2.0.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
     }
 
     /**
@@ -212,7 +183,7 @@ class PodsField_Slug extends PodsField {
      * @param array $pod
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $this->display( $value, $name, $options, $pod, $id );

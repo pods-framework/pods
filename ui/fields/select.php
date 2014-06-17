@@ -2,11 +2,13 @@
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
 
-$pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
+$multiple = false;
 
-if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
     $name .= '[]';
     $attributes[ 'multiple' ] = 'multiple';
+    $multiple = true;
 }
 
 if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strlen( $options[ 'data' ] ) )
@@ -14,9 +16,17 @@ if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strl
 else
     $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
+if ( pods_var( 'readonly', $options, false ) ) {
+    $attributes[ 'readonly' ] = 'READONLY';
+
+    $attributes[ 'class' ] .= ' pods-form-ui-read-only';
+}
+
+$selection_made = false;
 ?>
-<select<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
+<select<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>>
     <?php
     foreach ( $options[ 'data' ] as $option_value => $option_label ) {
         if ( is_array( $option_label ) && isset( $option_label[ 'label' ] ) )
@@ -37,13 +47,19 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
                     $sub_option_label = (string) $sub_option_label;
 
                     $selected = '';
+                    $options[ 'selected' ] = '';
 
-                    if ( $sub_option_value == $value || ( is_array( $value ) && in_array( $sub_option_value, $value ) ) )
+                    if ( !$selection_made && ( ( !is_array( $value ) && (string) $sub_option_value === (string) $value ) || ( is_array( $value ) && ( in_array( $sub_option_value, $value ) || in_array( (string) $sub_option_value, $value ) ) ) ) ) {
                         $selected = ' SELECTED';
+                        $options[ 'selected' ] = 'selected';
 
-                    if ( is_array( $sub_option_label ) ) {
+                        if ( !$multiple )
+                            $selection_made = true;
+                    }
+
+                    if ( is_array( $sub_option_value ) ) {
                         ?>
-                        <option<?php PodsForm::attributes( $sub_option_label, $name, PodsForm::$field_type . '_option', $options ); ?>><?php echo esc_html( $sub_option_label ); ?></option>
+                        <option<?php PodsForm::attributes( $sub_option_value, $name, $form_field_type . '_option', $options ); ?>><?php echo esc_html( $sub_option_label ); ?></option>
                         <?php
                     }
                     else {
@@ -60,13 +76,19 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
             $option_label = (string) $option_label;
 
             $selected = '';
+            $options[ 'selected' ] = '';
 
-            if ( $option_value == $value || ( is_array( $value ) && in_array( $option_value, $value ) ) )
+            if ( !$selection_made && ( ( !is_array( $value ) && (string) $option_value === (string) $value ) || ( is_array( $value ) && ( in_array( $option_value, $value ) || in_array( (string) $option_value, $value ) ) ) ) ) {
                 $selected = ' SELECTED';
+                $options[ 'selected' ] = 'selected';
+
+                if ( !$multiple )
+                    $selection_made = true;
+            }
 
             if ( is_array( $option_value ) ) {
                 ?>
-                <option<?php PodsForm::attributes( $option_value, $name, PodsForm::$field_type . '_option', $options ); ?>><?php echo esc_html( $option_label ); ?></option>
+                <option<?php PodsForm::attributes( $option_value, $name, $form_field_type . '_option', $options ); ?>><?php echo esc_html( $option_label ); ?></option>
                 <?php
             }
             else {

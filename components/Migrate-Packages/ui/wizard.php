@@ -34,7 +34,7 @@
                     <?php
                         $api = pods_api();
 
-                        $pods = $api->load_pods();
+                        $pods = $api->load_pods( array( 'fields' => false ) );
                         $pod_templates = $api->load_templates();
                         $pod_pages = $api->load_pages();
                         $pod_helpers = $api->load_helpers();
@@ -276,7 +276,7 @@
 
                     <div id="pods-wizard-actions">
                         <div id="pods-wizard-toolbar">
-                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Continue', 'pods' ); ?></a>
+                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Continue', 'pods' ); ?></a>
                         </div>
                         <div id="pods-wizard-finished">
 
@@ -289,11 +289,26 @@
 </div>
 
 <script type="text/javascript">
-    var pods_admin_submit_callback = function ( id ) {
-        jQuery( '#pods-wizard-panel-2 div#import-export-results' ).show();
-        jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( id );
+    var pods_admin_wizard_callback = function ( step, completed ) {
+        console.log( step );
+        console.log( completed );
 
-        jQuery( '#pods-wizard-next' ).text( jQuery( '#pods-wizard-next' ).data( 'next' ) );
+        if ( 2 == step || !step) {
+            jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideUp( 'fast', function () {
+                jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( '' );
+            } );
+        }
+
+        return true;
+    }
+
+    var pods_admin_submit_callback = function ( id ) {
+        jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( id );
+        jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideDown( 'fast' );
+
+        jQuery( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+        jQuery( '#pods-wizard-next' ).prop( 'disabled', false );
+        jQuery( '#pods-wizard-next' ).text( jQuery( '#pods-wizard-next' ).data( 'again' ) );
 
         window.location.hash = 'import-export';
 

@@ -53,7 +53,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          */
         function _before_table_edit ( $form, $results = true ) {
 ?>
-    <p><?php _e( 'Display a single Pod item', 'pods' ); ?></p>
+    <p><?php echo $this->_description; ?></p>
 <?php
         }
 
@@ -65,12 +65,12 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          */
         function _start_table_edit ( $form, $results = true ) {
             $api = pods_api();
-            $all_pods = $api->load_pods();
+            $all_pods = $api->load_pods( array( 'names' => true ) );
 
             $pod_types = array();
 
-            foreach ( $all_pods as $pod ) {
-                $pod_types[ $pod[ 'name' ] ] = $pod[ 'label' ];
+            foreach ( $all_pods as $pod_name => $pod_label ) {
+                $pod_types[ $pod_name ] = $pod_label . ' (' . $pod_name . ')';
             }
 ?>
     <tr>
@@ -118,6 +118,18 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
                     else
                         echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
                 ?>
+            </td>
+        </tr>
+    <?php
+        }
+        else {
+    ?>
+        <tr>
+            <td valign="top">
+                <label for="template"><?php _e( 'Template', 'pods' ); ?></label>
+            </td>
+            <td>
+                <?php $form->add_text_box( 'template' ); ?>
             </td>
         </tr>
     <?php

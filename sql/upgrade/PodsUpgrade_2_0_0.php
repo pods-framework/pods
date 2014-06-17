@@ -330,6 +330,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                 $weight = 4;
 
+                $found_fields = array();
+
                 foreach ( $field_rows as $row ) {
                     if ( 'name' == $row->name )
                         continue;
@@ -370,6 +372,11 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                             '_pods_1x_field_id' => $row->id
                         )
                     );
+
+                    if ( in_array( $field_params[ 'name' ], $found_fields ) )
+                        continue;
+
+                    $found_fields[] = $field_params[ 'name' ];
 
                     if ( 'pick' == $field_type ) {
                         $field_params[ 'pick_object' ] = 'pod-' . $row->pickval;
@@ -536,7 +543,12 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
         if ( !empty( $rel ) && !empty( $pod_types ) ) {
             foreach ( $pod_types as $type ) {
-                $types[ $type->id ] = $this->api->load_pod( array( 'name' => $type->name ) );
+                $type->name = pods_clean_name( $type->name );
+
+                $types[ $type->id ] = $this->api->load_pod( array( 'name' => $type->name ), false );
+
+                if ( empty( $types[ $type->id ] ) )
+                    return pods_error( sprintf( __( 'Pod <strong>%s</strong> not found, relationships cannot be migrated', 'pods' ), $type->name ) );
 
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
@@ -840,10 +852,10 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         if ( true === $this->check_progress( __FUNCTION__, $pod ) )
             return '1';
 
-        $pod_data = $this->api->load_pod( array( 'name' => $pod ) );
+        $pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
 
         if ( empty( $pod_data ) )
-            return pods_error( __( 'Pod not found, items cannot be migrated', 'pods' ) );
+            return pods_error( sprintf( __( 'Pod <strong>%s</strong> not found, items cannot be migrated', 'pods' ), $pod ) );
 
         $columns = array();
         $old_columns = array();

@@ -15,8 +15,10 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $container Object (or existing Array)
      *
+     * @return \PodsArray
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct ( $container ) {
         if ( is_array( $container ) || is_object( $container ) )
@@ -30,7 +32,7 @@ class PodsArray implements ArrayAccess {
      * @param mixed $value Value to be set
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function offsetSet ( $offset, $value ) {
         if ( is_array( $this->__container ) )
@@ -46,7 +48,7 @@ class PodsArray implements ArrayAccess {
      * @param mixed $offset Used to get value of Array or Variable on Object
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function offsetGet ( $offset ) {
         if ( is_array( $this->__container ) ) {
@@ -65,7 +67,7 @@ class PodsArray implements ArrayAccess {
      * @param mixed $offset Used to get value of Array or Variable on Object
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function offsetExists ( $offset ) {
         if ( is_array( $this->__container ) )
@@ -78,7 +80,7 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $offset Used to unset index of Array or Variable on Object
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function offsetUnset ( $offset ) {
         if ( is_array( $this->__container ) )
@@ -96,7 +98,7 @@ class PodsArray implements ArrayAccess {
      * @param mixed $extra Used in advanced types of variables
      *
      * @return array|bool|int|mixed|null|number|object
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( $offset, $default = null, $type = null, $extra = null ) {
         if ( !$this->offsetExists( $offset ) )
@@ -165,7 +167,7 @@ class PodsArray implements ArrayAccess {
      *
      * @return array Array version of the object
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function dump () {
         if ( is_array( $this->__container ) )
@@ -176,7 +178,7 @@ class PodsArray implements ArrayAccess {
     /**
      * Mapping >> offsetSet
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __set ( $offset, $value ) {
         return $this->offsetSet( $offset, $value );
@@ -185,7 +187,7 @@ class PodsArray implements ArrayAccess {
     /**
      * Mapping >> offsetGet
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __get ( $offset ) {
         return $this->offsetGet( $offset );
@@ -194,7 +196,7 @@ class PodsArray implements ArrayAccess {
     /**
      * Mapping >> offsetExists
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __isset ( $offset ) {
         return $this->offsetExists( $offset );
@@ -203,7 +205,7 @@ class PodsArray implements ArrayAccess {
     /**
      * Mapping >> offsetUnset
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __unset ( $offset ) {
         $this->offsetUnset( $offset );

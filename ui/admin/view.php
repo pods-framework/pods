@@ -187,7 +187,8 @@ wp_enqueue_style( 'pods-form' );
 								else
 									$title = __( 'Fields', 'pods' );
 
-								echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields );
+								/** This filter is documented in classes/PodsMeta.php */
+								echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data[ 'type' ], $pod->pod );
 							?>
 						</span>
 					</h3>

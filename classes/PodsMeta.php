@@ -810,7 +810,20 @@ class PodsMeta {
         $groups = array(
             array(
                 'pod' => $pod,
-                'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
+				/**
+				 * Filter the title of the Pods Metabox In The Post Editor
+				 *
+				 * @param string $title The title to use, default is 'More Fields'
+				 * @param obj|Pod $pod Current Pods Object
+				 * @param array $fields Array of fields that will go in the metabox
+				 * @param string $type The type of Pod
+				 * @params string $name Name of the Pod
+				 *
+				 * @returns string The title for the metabox.
+				 *
+				 * @since unknown
+				 */
+				'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
                 'fields' => $fields,
                 'context' => 'normal',
                 'priority' => 'default'

@@ -1,7 +1,13 @@
 <?php
     if ( !empty( $_POST ) ) {
         if ( isset( $_POST[ 'clearcache' ] ) ) {
-            pods_api()->cache_flush_pods();
+			$api = pods_api();
+
+            $api->cache_flush_pods();
+
+			if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
+				$api->load_pods();
+			}
 
             pods_redirect( pods_var_update( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
         }

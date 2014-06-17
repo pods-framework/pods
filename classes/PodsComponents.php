@@ -72,10 +72,10 @@ class PodsComponents {
             $this->settings[ 'components' ] = array();
 
         // Get components (give it access to theme)
-        add_action( 'setup_theme', array( $this, 'get_components' ), 11 );
+        add_action( 'after_setup_theme', array( $this, 'get_components' ), 11 );
 
         // Load in components
-        add_action( 'setup_theme', array( $this, 'load' ), 12 );
+        add_action( 'after_setup_theme', array( $this, 'load' ), 12 );
 
         // AJAX handling
         if ( is_admin() ) {

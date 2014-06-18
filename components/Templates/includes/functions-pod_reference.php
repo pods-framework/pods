@@ -40,6 +40,10 @@ function pq_loadpod($podname = false) {
 function pq_tunnel_pod_field( $fields, $prefix = null ){
 
 	$out = array();
+	// return out if fields are empty
+	if(empty($fields)){
+		return $out;
+	}
 	foreach($fields as $name=>$field){
 		$out[] = $prefix . $name;
 		if($field['type'] === 'file' && $field['options']['file_uploader'] == 'attachment'){
@@ -68,7 +72,10 @@ function pq_tunnel_pod_field( $fields, $prefix = null ){
 				if( false === strpos( $prefix, $name . '.' ) ){
 
 					$pod = pods( $field['table_info']['pod']['name'] );
-					$out = array_merge( $out, pq_tunnel_pod_field( $field['table_info']['object_fields'], $prefix . $name . '.' ) );
+					// only tunnel in if there are object fields
+					if(!empty($field['table_info']['object_fields'])){
+						$out = array_merge( $out, pq_tunnel_pod_field( $field['table_info']['object_fields'], $prefix . $name . '.' ) );
+					}
 					if( post_type_supports( $field['table_info']['pod']['name'], 'thumbnail' ) ){
 						$out[] = 'post_thumbnail';
 						$out[] = 'post_thumbnail_url';

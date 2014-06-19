@@ -29,12 +29,13 @@ add_shortcode( "pod_if_field"		, "frontier_if_block" );
 function frontier_decode_template($code, $atts){
 	
 	$code = base64_decode( $code );
+	$pod = pods($atts['pod']);
 
 	if(isset($atts['pod'])){
 		$code = str_replace('@pod', $atts['pod'], $code ); 
 	}
 	if(isset($atts['id'])){
-		$code = str_replace('{@ID}', $atts['id'], $code ); 
+		$code = str_replace('{@EntryID}', $atts['id'], $code );
 	}
 
 	return $code;
@@ -53,7 +54,7 @@ function frontier_decode_template($code, $atts){
 function frontier_if_block($atts, $code){
 
 	$pod = pods( $atts['pod'], $atts['id'] );
-	$code = explode( '<?php }else{ ?>',  frontier_decode_template( $code, $atts ) );
+	$code = explode( '[else]',  frontier_decode_template( $code, $atts ) );
 	
 	$template = do_shortcode( $code[0] );
 
@@ -130,7 +131,7 @@ function frontier_template_once_blocks($atts, $code){
 		$frontier_once_hashes = array();
 	}
 
-	$blockhash = md5($code);
+	$blockhash = md5($code.$atts['id']);
 	if(in_array($blockhash, $frontier_once_hashes)){
 		return '';
 	}
@@ -153,18 +154,27 @@ function frontier_do_subtemplate($atts, $content){
 
 	$out = null;
 	$pod = pods($atts['pod'], $atts['id']);
-
+	
 	$params = array(
 		'name' 		=> $atts['field'],
 	);
+
 	$entries = $pod->field($atts['field']);
 	if(!empty($pod->fields[$atts['field']]['table_info'])){
 		if(!empty($entries)){
-			$template = frontier_decode_template( $content, $atts );			
+			
 			foreach ($entries as $key => $entry) {
+				$subpod = pods($pod->fields[$atts['field']]['pick_val']);
 				
-				$content = str_replace('{@'.$atts['field'].'.', '{@', $template);
-				$out .= do_shortcode('[pods name="'.$pod->fields[$atts['field']]['pick_val'].'" slug="'.$entry['ID'].'"]'.$content.'[/pods]');
+				$subatts = array(
+					'id'	=>	$entry[$subpod->api->pod_data['field_id']],
+					'pod'	=>	$pod->fields[$atts['field']]['pick_val']
+				);
+
+				$template = frontier_decode_template( $content, array_merge($atts, $subatts) );
+				$template = str_replace('{@'.$atts['field'].'.', '{@', $template);
+
+				$out .= do_shortcode('[pods name="'.$pod->fields[$atts['field']]['pick_val'].'" slug="'.$entry['ID'].'"]'.$template.'[/pods]');
 
 			}
 		}
@@ -209,7 +219,7 @@ function frontier_prefilter_template($code, $template, $pod){
 		'after' => 'pod_after_template',
 		'if'	=> 'pod_if_field',
 	);
-	
+
 	$aliases = array();
 	foreach($commands as $command=>$shortcode){
 		preg_match_all("/(\[".$command."(.*?)]|\[\/".$command."\])/m", $code, $matches);
@@ -222,8 +232,8 @@ function frontier_prefilter_template($code, $template, $pod){
 						// open tag
 						$field = null;
 						$value = null;
-						$ID = '{@ID}';
-						$atts = ' pod="@pod"';
+						$ID = '{@EntryID}';
+						$atts = ' pod="@pod" id="'.$ID.'"';
 						if(!empty($matches[2][$key])){
 							// get atts if any
 							//$atts = shortcode_parse_atts(str_replace('.', '____', $matches[2][$key]));
@@ -239,7 +249,7 @@ function frontier_prefilter_template($code, $template, $pod){
 							if(false !== strpos($field, '.')){
 								$path = explode('.', $field);
 								$field = array_pop($path);
-								$ID = '{@'.implode('.', $path).'.ID}';								
+								$ID = '{@'.implode('.', $path).'.'.$pod->api->pod_data['field_id'].'}';								
 							}
 							$atts = ' id="'.$ID.'" pod="@pod" field="'.$field.'"';
 							if(!empty($value)){
@@ -261,14 +271,19 @@ function frontier_prefilter_template($code, $template, $pod){
 						
 					}
 				}
+			if($command == 'if'){
+				//dump($pod);
+			}				
 		}
 	}
 	// get new aliased shotcodes
 	
 	if(!empty($aliases)){
 		$code = frontier_backtrack_template($code, $aliases);
-	}
+	}	
 	$code = str_replace('@pod', $pod->pod, $code);
+	$code = str_replace('@EntryID', '@'.$pod->api->pod_data['field_id'], $code);
+	
 	return $code;
 }
 

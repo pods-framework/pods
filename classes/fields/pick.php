@@ -729,6 +729,10 @@ class PodsField_Pick extends PodsField {
         // Bidirectional relationship requirement checks
         $related_object = pods_var( self::$type . '_object', $options, '' ); // pod, post_type, taxonomy, etc..
         $related_val = pods_var( self::$type . '_val', $options, $related_object, null, true ); // pod name, post type name, taxonomy name, etc..
+        if ( empty( $related_val ) ) {
+            $related_val = $related_object;
+        }
+
         $related_sister_id = (int) pods_var( 'sister_id', $options, 0 );
 
         $options[ 'id' ] = (int) $options[ 'id' ];

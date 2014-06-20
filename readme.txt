@@ -175,6 +175,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Pagination/search boolean checks.
 * Fixed: Issue when mbstring module is not active.
 * Fixed: Issue with markdown module header causing activation errors.
+* New Filter: 'pods_admin_components_menu' to add/edit components submenu items.
 
 = 2.4 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.

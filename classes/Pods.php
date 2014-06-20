@@ -180,11 +180,35 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/pods/
 	 */
 	public function __construct ( $pod = null, $id = null ) {
-		if ( null === $pod  ) {
-			$pod = get_post_type();
+		if ( null === $pod ) {
+			$queried_object = get_queried_object();
 
-			if ( null === $id )
-				$id = get_the_ID();
+			if ( $queried_object ) {
+				$id_lookup = true;
+
+				// Post Type Singular
+				if ( isset( $queried_object->post_type ) ) {
+					$pod = $queried_object->post_type;
+				}
+				// Term Archive
+				elseif ( isset( $queried_object->taxonomy ) ) {
+					$pod = $queried_object->taxonomy;
+				}
+				// Author Archive
+				elseif ( isset( $queried_object->user_login ) ) {
+					$pod = 'user';
+				}
+				// Post Type Archive
+				elseif ( isset( $queried_object->public ) && isset( $queried_object->name ) ) {
+					$pod = $queried_object->name;
+
+					$id_lookup = false;
+				}
+
+				if ( null === $id && $id_lookup ) {
+					$id = get_queried_object_id();
+				}
+			}
 		}
 
 		$this->api = pods_api( $pod );

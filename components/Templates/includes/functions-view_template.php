@@ -56,7 +56,7 @@ function frontier_if_block($atts, $code){
 	$pod = pods( $atts['pod'], $atts['id'] );
 	$code = explode( '[else]',  frontier_decode_template( $code, $atts ) );
 	
-	$template = do_shortcode( $code[0] );
+	$template = do_shortcode( $pod->do_magic_tags( $code[0] ) );
 
 	if( $field_data = $pod->field( $atts['field'] ) ){
 		// theres a field - let go deeper		
@@ -65,7 +65,7 @@ function frontier_if_block($atts, $code){
 				return do_shortcode( $template );
 			}else{
 				if(isset($code[1])){
-					$template = do_shortcode( $code[1] );
+					$template = do_shortcode( $pod->do_magic_tags( $code[1] ) );
 					return do_shortcode( $template );
 				}
 			}
@@ -74,7 +74,7 @@ function frontier_if_block($atts, $code){
 		return do_shortcode( $template );
 	}else{
 		if(isset($code[1])){
-			$template = do_shortcode( $code[1] );
+			$template = do_shortcode( $pod->do_magic_tags( $code[1] ) );
 			return $template;
 		}		
 	}
@@ -162,7 +162,6 @@ function frontier_do_subtemplate($atts, $content){
 	$entries = $pod->field($atts['field']);
 	if(!empty($pod->fields[$atts['field']]['table_info'])){
 		if(!empty($entries)){
-			
 			foreach ($entries as $key => $entry) {
 				$subpod = pods($pod->fields[$atts['field']]['pick_val']);
 				

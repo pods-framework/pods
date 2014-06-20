@@ -176,6 +176,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Issue when mbstring module is not active.
 * Fixed: Issue with markdown module header causing activation errors.
 * New Filter: 'pods_admin_components_menu' to add/edit components submenu items.
+* Added: Ability to use pods() without any parameters. Will pull the pod object based off of the current WP_Query queried object / object id
 
 = 2.4 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.

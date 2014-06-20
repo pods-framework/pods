@@ -280,8 +280,6 @@ class Pods_Templates extends PodsComponent {
 			'type' => 'post_type'
 		);
 
-		var_dump( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) );
-
 		if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
 			return;
 

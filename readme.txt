@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.9
-Stable tag: 2.4
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,7 +164,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * New Constant: PODS_PRELOAD_CONFIG_AFTER_FLUSH check to allow for preloading $api->load_pods() after a Pods Cache flush.
 * Fixed: Issue with tabled-based SQL delete actions.
 * Fixed: PodsUI SQL table-based lookups
-* New Hooks In ui/admin/form, which generates ACT editor, for adding additional forms or other content to editor.
+* Added: New Hooks In ui/admin/form, which generates ACT editor, for adding additional forms or other content to editor.
 * Added: Inline docs for 'pods_meta_default_box_title' filter and normalized args across each usage.
 * Added: Item ID to pods_api::export() item array.
 * Fixed: Update from GitHub functionality.

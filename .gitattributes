@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+/assets export-ignore
 
 # Custom for Visual Studio
 *.cs     diff=csharp

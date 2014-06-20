@@ -1,12 +1,12 @@
-# Translation of Development in Portuguese (Brazil)
+# Translation of Development in Romanian
 # This file is distributed under the same license as the Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-04-17 20:04:24+0000\n"
+"PO-Revision-Date: 2014-04-10 14:06:38+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
 "X-Generator: GlotPress/0.1\n"
 "Project-Id-Version: Development\n"
 
@@ -275,6 +275,7 @@ msgid "field"
 msgid_plural "fields"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: classes/PodsAdmin.php:1044
 msgid "User Capability"
@@ -439,110 +440,110 @@ msgstr ""
 
 #: classes/PodsAPI.php:632
 msgid "Setting data is required but is either invalid or empty"
-msgstr "Dados de configuração requeridos, mas estão ou inválidos ou vazios."
+msgstr "Datele Setărilor sunt necesare dar sunt invalide sau goale"
 
 #: classes/PodsAPI.php:3827
 msgid "Pod not allowed to be duplicated"
-msgstr "Pod não pode ser duplicado"
+msgstr "Nu este permisă duplicarea Pod-ului"
 
 #: classes/PodsAdmin.php:714 ui/admin/setup-add.php:91
 msgid "Custom Settings Page"
-msgstr "Página de configurações customizadas"
+msgstr "Pagina Setărilor Personalizate"
 
 #: classes/PodsAdmin.php:724 classes/PodsAdmin.php:835
 msgid "Type"
-msgstr "Tipo"
+msgstr "Tip"
 
 #: classes/PodsAdmin.php:1929 classes/PodsAdmin.php:1963
 msgid "Category"
-msgstr "Categoria"
+msgstr "Categorie"
 
 #: classes/PodsAdmin.php:1955
 msgid "Field Types"
-msgstr "Tipos de campos"
+msgstr "Tipuri de Câmpuri"
 
 #: classes/PodsAdmin.php:1957
 msgid "Integration"
-msgstr "Integração"
+msgstr "Integrare"
 
 #: classes/PodsAdmin.php:1958
 msgid "Migration"
-msgstr "Migração"
+msgstr "Migrare"
 
 #: classes/PodsAdmin.php:1997 classes/PodsAdmin.php:2016
 msgid "You can find it at %s"
-msgstr "Você pode encontrar isto em %s"
+msgstr "Îl poți găsi la %s"
 
 #: classes/PodsAdmin.php:1999
 msgid "The %s component requires that you have the <strong>%s</strong> plugin installed and activated."
-msgstr "O componente %s requer que você tenha instalado e ativado o plugin <strong>%s</strong>."
+msgstr "Componenta %s cere să ai pluginul <strong>%s</strong> instalat și activat"
 
 #: classes/PodsAdmin.php:2018
 msgid "The %s component requires that you have the <strong>%s</strong> theme installed and activated."
-msgstr "O componente %s requer que você tenha instalado e ativado o tema <strong>%s</strong>."
+msgstr "Componenta %s cere să ai tema <strong>%s</strong> instalată și activată."
 
 #: classes/PodsAdmin.php:2029
 msgid "The %s component can not be disabled from here. You must deactivate the plugin or theme that added it."
-msgstr "The %s component can not be disabled from here. You must deactivate the plugin or theme that added it."
+msgstr "Componenta %s nu poate fi dezactivată de aici. Trebuie să dezactivezi pluginul sau tema care a adăugat-o."
 
 #: classes/PodsMigrate.php:640 classes/PodsMigrate.php:673
 msgid "There was an issue saving the export file in your uploads folder."
-msgstr "Ocorreu um problema ao salvar o arquivo de exportação para a sua pasta de uploads."
+msgstr "A fost o problemă cu salvarea fișierului export în folderul uploads."
 
 #: classes/PodsUI.php:923
 msgid "Manage %s"
-msgstr "Gerenciar %s"
+msgstr "Administrează %s"
 
 #: classes/PodsUI.php:926
 msgid "Duplicate %s"
-msgstr "Duplicar %s"
+msgstr "Dublează %s"
 
 #: classes/PodsUI.php:928 classes/PodsUI.php:939
 msgid "Reorder %s"
-msgstr "Reordenar %s"
+msgstr "Reordonare %s"
 
 #: classes/PodsUI.php:933 classes/PodsUI.php:936
 msgid "Save New %s"
-msgstr "Salvar Novo %s"
+msgstr "Salvează Nou %s"
 
 #: classes/PodsUI.php:935
 msgid "Save %s"
-msgstr "Salvar %s"
+msgstr "Salvează %s"
 
 #: classes/PodsUI.php:937
 msgid "Delete this %s"
-msgstr "Apagar este %s"
+msgstr "Șterge asta %s"
 
 #: classes/PodsUI.php:1420 classes/PodsUI.php:1468 classes/PodsUI.php:1747
 #: classes/PodsUI.php:2381
 msgid "Back to %s"
-msgstr "Voltar para %s"
+msgstr "Înapoi la %s"
 
 #: classes/PodsUI.php:1358 classes/PodsUI.php:1513
 msgid "<strong>Error:</strong> You do not have access to this %s."
-msgstr "<strong>Erro:</strong> Você não possui acesso a %s."
+msgstr "<strong>Eroare:</strong> Nu ai acces la asta%s."
 
 #: classes/fields/avatar.php:96 classes/fields/file.php:170
 msgid "Add Button Text"
-msgstr "Adicionar Texto do Botão"
+msgstr "Text Adăugare Buton"
 
 #: classes/fields/avatar.php:101 classes/fields/file.php:175
 msgid "Modal Title"
-msgstr "Título Modal"
+msgstr "Titlu Modal"
 
 #: classes/fields/avatar.php:103 classes/fields/file.php:177
 #: ui/fields/media.php:136
 msgid "Attach a file"
-msgstr "Anexar um arquivo"
+msgstr "Atașează un fișier"
 
 #: classes/fields/avatar.php:107 classes/fields/file.php:181
 msgid "Modal Add Button Text"
-msgstr "Texto do Botão de Adicionar Modal"
+msgstr "Textul Modal Adaugă Buton"
 
 #: classes/fields/boolean.php:52 classes/fields/currency.php:100
 #: classes/fields/number.php:67
 msgid "Input Type"
-msgstr "Tipo Input"
+msgstr "Tip Input"
 
 #: classes/fields/code.php:59 classes/fields/color.php:49
 #: classes/fields/currency.php:91 classes/fields/date.php:58
@@ -552,7 +553,7 @@ msgstr "Tipo Input"
 #: classes/fields/time.php:57 classes/fields/website.php:58
 #: classes/fields/wysiwyg.php:58
 msgid "Repeatable Field"
-msgstr "Campo Repetível"
+msgstr "Câmp Repetabil"
 
 #: classes/fields/code.php:62 classes/fields/color.php:52
 #: classes/fields/currency.php:94 classes/fields/date.php:61
@@ -562,11 +563,11 @@ msgstr "Campo Repetível"
 #: classes/fields/time.php:60 classes/fields/website.php:61
 #: classes/fields/wysiwyg.php:61
 msgid "Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments\"."
-msgstr "Tornar um campo repetível irá adicionar controles ao lado do campo que permitem aos usuários Adicionar/Remover/Reordernar os valores adicionais. Estes valores são salvos no banco de dados como um array, então filtrar e pesquisar por estes valores deve requerer ajustes adicionais\"."
+msgstr "Facerea unui câmp repetabil va adăuga controluri lângă câmp care permit utilizatorilor să Adauge/Înlăture/Reordoneze valori adiționale. Aceste valori sunt salvate în baza de date ca matrice, deci căutarea și filtrarea după ele ar putea să ceară  mai multe modificări\"."
 
 #: classes/fields/currency.php:104 classes/fields/number.php:71
 msgid "Freeform Number"
-msgstr "Número de Formato livre"
+msgstr "Număr liber"
 
 #: classes/fields/currency.php:105 classes/fields/number.php:72
 msgid "Slider"
@@ -574,67 +575,67 @@ msgstr "Slider"
 
 #: classes/fields/currency.php:141
 msgid "Before (ex. $100)"
-msgstr "Antes (ex: $100)"
+msgstr "Înainte (ej. $100)"
 
 #: classes/fields/currency.php:142
 msgid "After (ex. 100$)"
-msgstr "Depois (ex: 100$)"
+msgstr "După (ej. 100$)"
 
 #: classes/fields/currency.php:143
 msgid "None (ex. 100)"
-msgstr "Nenhum (ex: 100)"
+msgstr "Niciuna (ej. 100)"
 
 #: classes/fields/currency.php:144
 msgid "Before with Currency Code after (ex. $100 USD)"
-msgstr "Antes, com o código de Moeda depois (ex: $100 BRL)"
+msgstr "Înainte cu Codul Valutei după (ex. 100 $ )"
 
 #: classes/fields/currency.php:167 classes/fields/number.php:95
 msgid "Slider Increment (Step)"
-msgstr "Incremento do Slider (Passo)"
+msgstr "Creștere Slider (Step)"
 
 #: classes/fields/currency.php:173 classes/fields/number.php:101
 msgid "Minimum Number"
-msgstr "Número Mínimo"
+msgstr "Numărul Minim"
 
 #: classes/fields/currency.php:179 classes/fields/number.php:107
 msgid "Maximum Number"
-msgstr "Número Máximo"
+msgstr "Numărul Maxim"
 
 #: classes/fields/file.php:140
 msgid "Video (mpg, mov, flv, mp4, etc..)"
-msgstr "Vídeo (mpg, mov, flv, mp4, etc..)"
+msgstr "Video (mpg, mov, flv, mp4, etc..)"
 
 #: classes/fields/file.php:141
 msgid "Audio (mp3, m4a, wav, wma, etc..)"
-msgstr "Áudio (mp3, m4a, wav, wma, etc..)"
+msgstr "Audio (mp3, m4a, wav, wma, etc..)"
 
 #: classes/fields/file.php:142
 msgid "Text (txt, csv, tsv, rtx, etc..)"
-msgstr "Texto (txt, csv, tsv, rtx, etc..)"
+msgstr "Text (txt, csv, tsv, rtx, etc..)"
 
 #: classes/fields/pick.php:180
 msgid "Table ID Column"
-msgstr "Coluna ID da Tabela"
+msgstr "Coloana Tabel ID"
 
 #: classes/fields/pick.php:181
 msgid "You must provide the ID column name for the table, this will be used to keep track of the relationship"
-msgstr "Você deve fornecer o nome da coluna ID para a tabela, será usado para seguir o relacionamento"
+msgstr "Trebuie să furnizezi numele coloanei ID pentru tabel, va fi folosit pentru a ține seama de relație"
 
 #: classes/fields/pick.php:188
 msgid "Table Index Column"
-msgstr "Nome da Coluna Índice"
+msgstr "Coloană Index Tabel"
 
 #: classes/fields/pick.php:189
 msgid "You must provide the index column name for the table, this may optionally also be the ID column name"
-msgstr "Você deve fornecer o nome da coluna índice para a tabela, pode opcionalmente ser o nome da coluna ID"
+msgstr "Trebuie să furnizezi numele coloanei index pentru tabel, ar putea fi opțional și numele coloanei ID"
 
 #: classes/fields/pick.php:208
 msgid "Limit list to Role(s)"
-msgstr "Lista Limite para Permissão(ões)"
+msgstr "Limitează lista la Rol(uri)"
 
 #: classes/fields/pick.php:325
 msgid "Simple (custom defined list)"
-msgstr "Simples (lista customizada definida)"
+msgstr "Simplu (listă personalizată)"
 
 #: classes/fields/pick.php:425 classes/fields/pick.php:431
 #: classes/fields/pick.php:438 classes/fields/pick.php:445
@@ -642,27 +643,27 @@ msgstr "Simples (lista customizada definida)"
 #: classes/fields/pick.php:464 classes/fields/pick.php:469
 #: classes/fields/pick.php:474
 msgid "Other WP Objects"
-msgstr "Outros Objetos WP"
+msgstr "Alte Obiecte WP"
 
 #: classes/fields/pick.php:430
 msgid "User Roles"
-msgstr "Permissões de Usuário"
+msgstr "Roluri Utilizatori"
 
 #: classes/fields/pick.php:456
 msgid "Image Sizes"
-msgstr "Tamanhos de Imagem"
+msgstr "Mărimi Imagini"
 
 #: classes/fields/pick.php:463
 msgid "Navigation Menus"
-msgstr "Menus de Navegação"
+msgstr "Meniuri Navigare"
 
 #: classes/fields/pick.php:473
 msgid "Post Status"
-msgstr "Status do Post"
+msgstr "Statusul Postului"
 
 #: components/Advanced-Relationships.php:69
 msgid "Sidebars"
-msgstr "Sidebars"
+msgstr "Bări laterale"
 
 #: components/Advanced-Relationships.php:39
 #: components/Advanced-Relationships.php:45
@@ -673,526 +674,526 @@ msgstr "Sidebars"
 #: components/Advanced-Relationships.php:77
 #: components/Advanced-Relationships.php:84
 msgid "Advanced Objects"
-msgstr "Objetos Avançados"
+msgstr "Obiecte Avansate"
 
 #: components/Advanced-Relationships.php:44
 msgid "Multisite Sites"
-msgstr "Sites Multisite"
+msgstr "Site-uri Multisite"
 
 #: components/Advanced-Relationships.php:49
 msgid "Multisite Networks"
-msgstr "Redes Multisite"
+msgstr "Rețele Multisite"
 
 #: components/Advanced-Relationships.php:55
 msgid "Themes"
-msgstr "Temas"
+msgstr "Teme"
 
 #: components/Advanced-Relationships.php:62
 msgid "Page Templates"
-msgstr "Templates de Página"
+msgstr "Șabloane Pagină"
 
 #: classes/fields/wysiwyg.php:80
 msgid "Editor Options"
-msgstr "Opções de Editor"
+msgstr "Opțiuni Editor"
 
 #: classes/fields/wysiwyg.php:84
 msgid "Enable Media Buttons?"
-msgstr "Habilitar Botões de Mídia?"
+msgstr "Activează Butoane Media?"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:169
 #: components/Builder/modules/view/PodsBuilderModuleView.php:76
 #: ui/admin/shortcode.php:472 ui/admin/widgets/list.php:114
 #: ui/admin/widgets/view.php:27
 msgid "Cache Type"
-msgstr "Tipo de Cache"
+msgstr "Tip Cache"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:174
 #: components/Builder/modules/view/PodsBuilderModuleView.php:81
 #: ui/admin/shortcode.php:476 ui/admin/widgets/list.php:118
 #: ui/admin/widgets/view.php:31
 msgid "Disable Caching"
-msgstr "Desabilitar Cache"
+msgstr "Dezactivează Caching"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:175
 #: components/Builder/modules/view/PodsBuilderModuleView.php:82
 #: ui/admin/shortcode.php:477 ui/admin/widgets/list.php:119
 #: ui/admin/widgets/view.php:32
 msgid "Object Cache"
-msgstr "Objecto Cache"
+msgstr "Cache Obiect"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:176
 #: components/Builder/modules/view/PodsBuilderModuleView.php:83
 #: ui/admin/shortcode.php:478 ui/admin/widgets/list.php:120
 #: ui/admin/widgets/view.php:33
 msgid "Transient"
-msgstr "Transitório"
+msgstr "Tranzient"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:177
 #: components/Builder/modules/view/PodsBuilderModuleView.php:84
 #: ui/admin/shortcode.php:479 ui/admin/widgets/list.php:121
 #: ui/admin/widgets/view.php:34
 msgid "Site Transient"
-msgstr "Site Transitório"
+msgstr "Tranzient Site"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:186
 #: components/Builder/modules/view/PodsBuilderModuleView.php:93
 #: ui/admin/shortcode.php:494 ui/admin/widgets/list.php:135
 #: ui/admin/widgets/view.php:48
 msgid "Cache Expiration (in seconds)"
-msgstr "Expiração de Cache (em segundos)"
+msgstr "Expirarea Cache ( în secunde)"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:22
 msgid "Pods - View"
-msgstr "Pods - Visualizar"
+msgstr "Pods- Vizualizează"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:23
 #: ui/admin/shortcode.php:331
 msgid "Include a file from a theme, with caching options"
-msgstr "Incluir um arquivo do tema, com opções de cache"
+msgstr "Include un fișier dintr-o temă, cu opțiuni de caching"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:68
 #: ui/admin/shortcode.php:466 ui/admin/widgets/view.php:21
 msgid "File to include"
-msgstr "Arquivo para incluir"
+msgstr "Fișiere de inclus"
 
 #: components/Pages.php:399
 msgid "-- Select a Pod --"
-msgstr "-- Selecione um Pod --"
+msgstr "-- Selectează un Pod --"
 
 #: components/Pages.php:415
 msgid "Associated Pod"
-msgstr "Pod Associado"
+msgstr "Pod Asociat"
 
 #: components/Pages.php:423
 msgid "Wildcard Slug"
-msgstr "Slug Coringa"
+msgstr "Wildcard Slug"
 
 #: components/Pages.php:430
 msgid "Pod Association"
-msgstr "Associação Pod"
+msgstr "Asociere Pod"
 
 #: includes/general.php:127
 msgid "The following issues occurred:"
-msgstr "Ocorreram os seguintes problemas:"
+msgstr "Au apărut următoarele probleme:"
 
 #: ui/admin/components-admin.php:14
 msgid "Settings saved successfully."
-msgstr "Configurações salvas com sucesso."
+msgstr "Setări salvate cu succes."
 
 #: ui/admin/form.php:183 ui/admin/view.php:47
 msgid "Created on"
-msgstr "Criado em"
+msgstr "Creat la"
 
 #: ui/admin/form.php:192 ui/admin/view.php:56
 msgid "Last Modified"
-msgstr "Modificado em"
+msgstr "Modificat Ultima Dată"
 
 #: ui/admin/setup-add.php:48
 msgid "Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments."
-msgstr "Pods são content types que você pode customizar e definir campos baseados nas suas necessidades. Você pode escolher criar um Custom Post Type, Custom Taxonomy, ou Custom Settings Pages para dados específicos do site. Você pode também extender content type existentes como WP Objects como Post Types, Taxonomies, Users ou Comments."
+msgstr "Pods sunt tipuri de conținut pe care le poți personaliza și defini pentru câmpuri bazat pe nevoile tale. Poți alege să creezi un Tip Postare Personalizată, Taxonomie Personalizată sau Pagină Setări Personalizată pentru date specifice siteului. Poți extinde de asemenea tipuri de conținut existente ca Obiectele WP, cum ar fi Tipuri Postări, Taxonomii, Utilizatori sau Comentarii."
 
 #: ui/admin/setup-add.php:50
 msgid "Not sure what content type you should use? Check out our <a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">Content Type Comparison</a> to help you decide."
-msgstr "Não sabe qual content type deveria usar? Confira em nossa <a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">Comparação de Content Type</a> feita para ajudar na sua escolha."
+msgstr "Nu sunteți sigur ce tip de conținut să folosiți? Uitați-vă la  <a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">Content Type Comparison</a>pentru a vă ajuta să decideți"
 
 #: ui/admin/setup-add.php:59
 msgid "Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>."
-msgstr "Cria um novo content type usando <strong>Post Types</strong>, <strong>Taxonomies</strong>, ou <strong>Custom Settings Pages</strong>."
+msgstr "Crează tipuri noi de conținut folosind <strong>Post Types</strong>, <strong>Taxonomies</strong>, sau <strong>Custom Settings Pages</strong>."
 
 #: ui/admin/setup-add.php:146
 msgid "Menu Label"
-msgstr "Rótulo do Menu"
+msgstr "Eticheta Meniului"
 
 #: ui/admin/setup-add.php:146
 msgid "<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings."
-msgstr "<h6>Rótulo do Menu</h6> Este é o rótulo que irá aparecer na área de administração do Wordpress para as suas configurações."
+msgstr "<h6>Eticheta Meniu</h6> Aceasta este eticheta care va apărea în zona admin din WordPress pentru setările tale."
 
 #: classes/PodsAdmin.php:1186 classes/PodsAdmin.php:1286
 #: ui/admin/setup-add.php:152
 msgid "Menu Location"
-msgstr "Local do Menu"
+msgstr "Locul Meniului"
 
 #: ui/admin/setup-add.php:152
 msgid "<h6>Menu Location</h6> This is the location where the new settings page will be added in the WordPress Dashboard menu."
-msgstr "<h6>Local do Menu</h6> Este é a localização onde a nova página de configurações será adicionada no menu Dashboard do Wordpress."
+msgstr "<h6>Loc Meniu</h6> Acesta este locul unde pagina noilor setări va fi adăugată în meniul WordPress Dashboard."
 
 #: ui/admin/setup-edit-field-fluid.php:87
 msgid "Related Table"
-msgstr "Tabela Relacionada"
+msgstr "Tabel Înrudit"
 
 #: ui/admin/setup-edit.php:15
 msgid "Extra fields were successfully enabled for this Custom Taxonomy."
-msgstr "Campos Extras foram habilitados com sucesso para esta Custom Taxonomy."
+msgstr "Câmpuri în plus au fost activate cu succes pentru această Taxonomie Personalizată."
 
 #: classes/PodsAdmin.php:1586 components/Pages.php:442
 msgid "Restrict access by Role?"
-msgstr "Restringir acesso por Permissão?"
+msgstr "Interzice accesul după Rol?"
 
 #: classes/PodsAdmin.php:1634 components/Pages.php:453
 msgid "Role(s) Allowed"
-msgstr "Permissão(ões) Permitidas"
+msgstr "Rol(uri) Permise"
 
 #: ui/admin/setup-edit.php:92
 msgid "-- Select Table --"
-msgstr "-- Seleciona Tabela --"
+msgstr "-- Selectează Tabel -- "
 
 #: classes/PodsAdmin.php:902 ui/admin/setup-edit.php:247
 msgid "Manage Fields"
-msgstr "Gerenciar Campos"
+msgstr "Administreză Câmpuri"
 
 #: classes/PodsAdmin.php:905
 msgid "Labels"
-msgstr "Rótulos"
+msgstr "Etichete"
 
 #: classes/PodsAdmin.php:908
 msgid "Admin UI"
-msgstr "UI do Admin"
+msgstr "UI Administrator"
 
 #: classes/PodsAdmin.php:911
 msgid "Advanced Options"
-msgstr "Opções Avançadas"
+msgstr "Opțiuni Avansate"
 
 #: classes/PodsAdmin.php:914
 msgid "Extra Fields"
-msgstr "Campos Extras"
+msgstr "Mai multe câmpuri"
 
 #: classes/PodsAdmin.php:1123
 msgid "Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)"
-msgstr "Possibilita que permalinks serão prefixados com a sua base inicial (exemplo: se a estrutura do seu permalink é /blog/, então seus links irão ser: Desabilitado->/news/, Habilitado->/blog/news/)"
+msgstr "Permite permalinkurilor să fie prefixate cu front base (exemplu: dacă structura permalinkului este /blog/, atunci linkurile vor fi:  Unchecked->/news/, Checked->/blog/news/)"
 
 #: classes/PodsAdmin.php:1274 classes/PodsAdmin.php:1328
 msgid "Admin UI Style"
-msgstr "Estilo da UI de Admin"
+msgstr "Stil UI Administrator"
 
 #: classes/PodsAdmin.php:1202 classes/PodsAdmin.php:1299
 msgid "Custom Menu Location"
-msgstr "Local do Menu Customizado"
+msgstr "Locul Meniului Personalizat"
 
 #: classes/PodsAdmin.php:979 classes/PodsAdmin.php:1347
 msgid "Parent Menu ID (optional)"
-msgstr "ID do Menu Pai (opcional)"
+msgstr "ID Meniu Părinte (opțional)"
 
 #: classes/PodsAdmin.php:1361
 msgid "This is the icon shown to the left of the menu text for this content type."
-msgstr "Este é o ícone mostrado ao lado do texto do menu para este content type."
+msgstr "Acesta este iconul arătat la stânga textului meniu pentru acest tip de conținut."
 
 #: classes/PodsAdmin.php:1367
 msgid "Header Icon"
-msgstr "Ícone do Header"
+msgstr "Icon Antet"
 
 #: classes/PodsAdmin.php:1368
 msgid "This is the icon shown to the left of the heading text at the top of the manage pages for this content type."
-msgstr "Este é o ícone mostrado à esquerda do texto do título no topo do gerenciar páginas deste content type."
+msgstr "Acesta este iconul arătat la stânga textului heading la capătul de sus al paginii de administrație pentru acest tip de conținut."
 
 #: classes/PodsAdmin.php:1375
 msgid "Actions Available"
-msgstr "Ações Disponíveis"
+msgstr "Acțiuni Disponibile"
 
 #: classes/PodsAdmin.php:1391
 msgid "Reorder Field"
-msgstr "Reordenar Campo"
+msgstr "Reordonează Câmpul"
 
 #: classes/PodsAdmin.php:1392
 msgid "This is the field that will be reordered on, it should be numeric."
-msgstr "Este é o campo que será reordenado, deverá ser numérico."
+msgstr "Acesta este câmpul pe care se va face reordonarea, ar trebui să fie numeric."
 
 #: classes/PodsAdmin.php:1398
 msgid "Admin Table Columns"
-msgstr "Colunas da Tabela Admin"
+msgstr "Coloane Tabel Administrator"
 
 #: classes/PodsAdmin.php:1406
 msgid "Search Filters"
-msgstr "Filtros de Pesquisa"
+msgstr "Filtre de căutare"
 
 #: ui/admin/setup-edit.php:505
 msgid "Genesis: SEO"
-msgstr ""
+msgstr "Genesis: SEO"
 
 #: ui/admin/setup-edit.php:510
 msgid "Genesis: Layouts"
-msgstr ""
+msgstr "Genesis: Plan"
 
 #: ui/admin/setup-edit.php:515
 msgid "Genesis: Simple Sidebars"
-msgstr "Genesis: Sidebars Simples"
+msgstr "Genesis: Bări Laterale Simple"
 
 #: ui/admin/setup-edit.php:544
 msgid "Advanced Supports"
-msgstr "Suportes Avançados"
+msgstr "Asistență Avansată"
 
 #: ui/admin/setup-edit.php:544
 msgid "Comma-separated list of custom \"supports\" values to pass to register_post_type."
-msgstr "Lista separada por vírgulas de valores de \"supportes\" customizados para passar para o register_post_type."
+msgstr "Listă separată de virgule de valori personalizate \"supports\"  pentru a trece la  register_post_type."
 
 #: ui/admin/setup-edit.php:700
 msgid "No Hierarchical Fields found"
-msgstr "Nenhum campo Hierárquico encontrado"
+msgstr "Niciun Câmp Ierarhic găsit"
 
 #: ui/admin/setup-edit.php:704
 msgid "Hierarchical Field"
-msgstr "Campo Hierárquico"
+msgstr "Câmp ierarhic"
 
 #: ui/admin/setup-edit.php:797
 msgid "Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table."
-msgstr "Taxonomias não suportam campos extras nativamente, mas Pods podem adicionar esta funcionalidade para você facilmente. O armazenamento baseando em Tabela funcionará de um jeito onde cada campo que você criar para o seu content type se torne um campo em uma tabela."
+msgstr "Taxonomiile nu suportă câmpuri în plus, dar Pods poate adăuga această trăsătură cu ușurință. Depozitarea bazată pe tabel va opera într-un fel în care fiecare câmp pe care îl creezi pentru tipul de conținut devine un câmp în tabel."
 
 #: ui/admin/setup-edit.php:799
 msgid "Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>."
-msgstr "Habilitar campos extras para esta taxonomia irá adicionar uma tabela customizada em sua base de dados como <em>%s</em>."
+msgstr "Activarea câmpurilor în plus pentru această taxonomie va adăuga un tabel personalizat în baza de date ca  <em>%s</em>."
 
 #: ui/admin/setup-edit.php:804
 msgid "Enable Extra Fields"
-msgstr "Habilita Campos Extras"
+msgstr "Permite Câmpuri in Plus"
 
 #: ui/admin/shortcode.php:329
 msgid "Display a field from this item"
-msgstr "Mostra um campo deste ítem"
+msgstr "Afișează un câmp din acest item"
 
 msgid "http://pods.io/"
-msgstr ""
+msgstr "http://pods.io/"
 
 msgid "http://pods.io/about/"
-msgstr ""
+msgstr "http://pods.io/despre/"
 
 #: components/Templates/Templates.php:290
 #: ui/admin/upgrade/upgrade_2_0_0.php:148
 #: ui/admin/upgrade/upgrade_2_0_0.php:264
 msgid "Content"
-msgstr "Conteúdo"
+msgstr "Conținut"
 
 #: ui/fields/plupload.php:43
 msgid "Allowed Files"
-msgstr "Arquivos Permitidos"
+msgstr "Fișiere Permise"
 
 #: components/Templates/Templates.php:440
 msgid "You do not have access to view this content."
-msgstr "Você não tem permissão para ver este conteúdo."
+msgstr "Nu ai acces pentru vizualizarea acestui conținut."
 
 #: ui/fields/plupload.php:272
 msgid "There was an issue with the file upload, please try again."
-msgstr "Ocorreu um problema com o envio de arquivo, por favor tente novamente."
+msgstr "A fost o problemă cu adăugarea fișierului, te rugăm încearcă din nou."
 
 #: ui/fields/select2.php:158 ui/fields/select2.php:165
 msgid "Start Typing..."
-msgstr "Digite aqui..."
+msgstr "Începe să Scrii..."
 
 #: includes/general.php:131
 msgid "An unknown error has occurred"
-msgstr "Ocorreu um erro desconhecido"
+msgstr "A apărut o eroare necunoscută"
 
 #: includes/updater.php:427
 msgid "The plugin has been updated, but could not be reactivated. Please reactivate it manually."
-msgstr "O plugin foi atualizado, mas não pôde ser reaticado. Por favor reative-se manualmente."
+msgstr "Pluginul a fost actualizat, dar nu a putut fi reactivat. Te rugăm să-l reactivezi manual."
 
 #: includes/general.php:368
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead."
-msgstr "%1$s se tornou <strong>obsoleto</strong> desde a versão de Pods %2$s! Use %3$s em seu lugar."
+msgstr "%1$s a fost <strong>combătut</strong> de la versiunea Pods %2$s! Folosește %3$ în loc."
 
 #: includes/updater.php:428
 msgid "Plugin reactivated successfully."
-msgstr "Plugin reativado com sucesso."
+msgstr "Plugin reactivat cu succes."
 
 #: includes/general.php:370
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available."
-msgstr "%1$s se tornou <strong>obsoleto</strong> desde a versão de Pods %2$s sem nenhuma alternativa disponível."
+msgstr "%1$s a fost <strong>combătut</strong> de la versiunea Pods %2$s fără nicio alternativă disponibilă."
 
 msgid "Pods - Custom Content Types and Fields"
-msgstr "Pods - Content Type e Fields Customizados"
+msgstr "Pods- Tipuri Conținut și Câmpuri Personalizate"
 
 #: includes/general.php:416 ui/admin/setup-edit.php:801
 msgid "Find out more"
-msgstr "Saiba mais"
+msgstr "Află mai multe"
 
 #: includes/data.php:1637
 msgid "and"
-msgstr "e"
+msgstr "și"
 
 msgid "Pods is a framework for creating, managing, and deploying customized content types and fields"
-msgstr "Pods é um framework para criar, gerenciar e publicar content types e fields customizados."
+msgstr "Pods este un cadru pentru crearea, administrarea și desfășurarea tipurilor de conținut și câmpuri personalizate"
 
 #: includes/general.php:845 includes/general.php:864 includes/general.php:884
 msgid "NOTICE"
-msgstr "AVISO"
+msgstr "AVERTIZARE"
 
 msgid "Pods Framework Team"
-msgstr "Time Pods Framework"
+msgstr "Echipa Pods Framework"
 
 #: includes/general.php:845 includes/general.php:864 includes/general.php:884
 msgid "requires a minimum of"
-msgstr "necessita um mínimo de"
+msgstr "cere un minimum de "
 
 #: includes/general.php:846 includes/general.php:865 includes/general.php:885
 msgid "to function. You are currently running"
-msgstr "para funcionar. Você está rodando"
+msgstr "pentru a funcționa. În mod curent rulează"
 
 #: includes/general.php:847
 msgid "Please upgrade your WordPress to continue."
-msgstr "Por favor atualize seu Wordpress para continuar."
+msgstr "Te rugăm fă upgrade la WorPress pentru a continua."
 
 #: includes/general.php:866
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue."
-msgstr "Por favor atualize a sua versão do PHP (ou peça que o seu Provedor de Hospedagem faça isso para você) para continuar."
+msgstr "Te rugăm fă upgrade (sau roagă Furnizorul de Hosting să upgradeze pentru tine) versiunea PHP pentru a continua."
 
 #: includes/general.php:886
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue."
-msgstr "Por favor atualize a sua versão de MySQL (ou peça que o seu Provedor de Hospedagem faça isso para você) para continuar."
+msgstr "Te rugăm fă upgrade (sau roagă Furnizorul de Hosting să upgradeze pentru tine) versiunea MySQL pentru a continua."
 
 #: sql/upgrade/PodsUpgrade.php:128
 msgid "Invalid upgrade process."
-msgstr "Processo de atualização inválido."
+msgstr "Proces de upgrade invalid."
 
 #: sql/upgrade/PodsUpgrade.php:131
 msgid "Invalid upgrade method."
-msgstr "Método de Atualização inválido."
+msgstr "Metodă de upgrade invalidă."
 
 #: sql/upgrade/PodsUpgrade.php:134
 msgid "Upgrade method not found."
-msgstr "Método de Atualização não encontrado."
+msgstr "Metoda de actualizare nu a fost găsită."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:22 sql/upgrade/PodsUpgrade_2_0_0.php:44
 #: sql/upgrade/PodsUpgrade_2_0_0.php:66 sql/upgrade/PodsUpgrade_2_0_0.php:88
 #: sql/upgrade/PodsUpgrade_2_0_0.php:110 sql/upgrade/PodsUpgrade_2_0_0.php:132
 #: sql/upgrade/PodsUpgrade_2_0_0.php:154 sql/upgrade/PodsUpgrade_2_0_0.php:183
 msgid "Table not found, it cannot be migrated"
-msgstr "Tabela não encontrada, não pode ser migrada"
+msgstr "Tabelul nu a fost găsit, nu poate fi mutat"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:178 sql/upgrade/PodsUpgrade_2_0_0.php:836
 msgid "Invalid Pod."
-msgstr "Pod inválido."
+msgstr "Pod Invalid."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:197
 msgid "Pod not found, it cannot be migrated"
-msgstr "Pod não encontrado, não pode ser migrado"
+msgstr "Pod-ul nu a fost găsit, nu poate fi mutat"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:216
 msgid "is a field in the table, but was not found in this pod - the field data will not be migrated."
-msgstr "é um campo na tabela, mas não foi encontrado neste pod - os dados do campo não serão migrados."
+msgstr "este un câmp în tabel, dar nu a fost găsit în acest pod - datele din câmp nu vor fi mutate."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:221
 msgid "is a field in this pod, but was not found in the table - the field data will not be migrated."
-msgstr "é um campo neste pod, mas não foi encontrado na tabela - os dados do campo não serão migrados."
+msgstr "este un câmp în pod, dar nu a fost găsit în acest tabel - datele din câmp nu vor fi mutate."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:819
 msgid "Input Helpers may not function in our new forms, we have imported and disabled them for your review."
-msgstr "Helpers de Input podem não funcionar em nossos novos formulários, nós os importamos e os desabilitamos para a sua conferência."
+msgstr "Input Helpers pot să nu funcționeze în noile forme, le-am importat și dezactivat pentru revizuire."
 
 #: components/Roles/ui/edit.php:47 ui/admin/form-settings.php:72
 #: ui/admin/form.php:103
 msgid "Save"
-msgstr "Salvar"
+msgstr "Salvează"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:841
 msgid "Table not found, items cannot be migrated"
-msgstr "Tabela não encontrada, ítens não podem ser migrados"
+msgstr "Tabelul nu a fost găsit, itemurile nu pot fi mutate."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:844
 msgid "New table not found, items cannot be migrated"
-msgstr "Nova tabela não encontrada, ítens não podem ser migrados"
+msgstr "Tabelul Nou nu a fost găsit, itemurile nu pot fi mutate"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:847
 msgid "Pod Types table not found, items cannot be migrated"
-msgstr "Tabela Pod Types não encontrada, ítens não podem ser migrados"
+msgstr "Tabelul Tipuri Pod nu a fost găsit, itemurile nu pot fi mutate"
 
 #: classes/PodsUI.php:1510 classes/PodsUI.php:1638
 msgid "<strong>Error:</strong> %s not found."
-msgstr "<strong>Erro:</strong> %s não encontrado."
+msgstr "<strong>Eroare:</strong> %s nu a fost găsit."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:850
 msgid "Pod table not found, items cannot be migrated"
-msgstr "Tabela Pod não encontrada, ítens não podem ser migrados"
+msgstr "Tabelul Pod nu a fost găsit, itemurile nu pot fi mutate"
 
 #: classes/PodsUI.php:1776
 msgid "<strong>Success!</strong> %s reordered successfully."
-msgstr "<strong>Sucesso!</strong> %s reordenados com sucesso."
+msgstr "<strong>Succes!</strong> %s reordonat cu succes."
 
 #: classes/PodsUI.php:1778
 msgid "<strong>Error:</strong> %s has not been reordered."
-msgstr "<strong>Erro:</strong> %s não foram reordenados."
+msgstr "<strong>Eroare:</strong> %s nu a fost reordonat."
 
 #: ui/admin/form.php:59 ui/admin/form.php:87 ui/admin/setup-edit.php:223
 msgid "duplicated"
-msgstr "duplicado"
+msgstr "duplicat"
 
 #: classes/PodsUI.php:1794 components/Roles/ui/edit.php:19
 #: ui/admin/form-settings.php:41 ui/admin/form-settings.php:60
 #: ui/admin/form.php:54 ui/admin/form.php:82 ui/admin/setup-edit.php:218
 msgid "saved"
-msgstr "salvo"
+msgstr "salvat"
 
 #: ui/admin/form-settings.php:48 ui/admin/form.php:70
 msgid "<strong>Error:</strong> %s %s successfully."
-msgstr "<strong>Erro:</strong> %s %s com sucesso."
+msgstr "<strong>Eroare:</strong> %s %s cu succes.."
 
 #: classes/PodsUI.php:1796 components/Roles/ui/edit.php:22 ui/admin/form.php:57
 #: ui/admin/form.php:85 ui/admin/setup-edit.php:221
 msgid "created"
-msgstr "criado"
+msgstr "creat"
 
 #: ui/admin/form-settings.php:63 ui/admin/form.php:94
 msgid "<strong>Error:</strong> %s not %s."
-msgstr "<strong>Erro:</strong> %s não %s."
+msgstr "<strong>Eroare:</strong> %s nu %s."
 
 #: classes/PodsUI.php:1891
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"id\" definition."
-msgstr "<strong>Erro:</strong> Configuração Inválida - Falta a definição \"id\" ."
+msgstr "<strong>Eroare:</strong> Configurare Invalidă - Lipsește definiția  \"id\"."
 
 #: ui/admin/form.php:259 ui/admin/view.php:105
 msgid "Navigate"
-msgstr "Navegar"
+msgstr "Navigare"
 
 #: ui/admin/setup-add.php:23 ui/admin/setup-edit.php:817
 msgid "Back to Manage"
-msgstr "Voltar para administração"
+msgstr "Înapoi la Administrează"
 
 #: classes/PodsUI.php:2621
 msgid "Reset Filters"
-msgstr "Zerar filtros"
+msgstr "Resetează Filtrele"
 
 #: classes/PodsUI.php:2644
 msgid "Bulk Actions"
-msgstr "Ações em massa"
+msgstr "Acțiuni Bulk"
 
 #: ui/admin/form.php:358
 msgid "Enter name here"
-msgstr "Insira o nome aqui"
+msgstr "Adaugă numele aici"
 
 #: classes/PodsUI.php:2660 classes/PodsUI.php:3757
 msgid "Apply"
-msgstr "Aplicar"
+msgstr "Aplică"
 
 #: ui/admin/form.php:412 ui/admin/upgrade/upgrade_2_0_0.php:85
 #: ui/admin/upgrade/upgrade_2_0_0.php:201 ui/admin/view.php:188
 msgid "Fields"
-msgstr "Campos"
+msgstr "Câmpuri"
 
 #: classes/PodsUI.php:2680
 msgid "Update Order"
-msgstr "Ordem de atualização"
+msgstr "Ordinea Actualizării"
 
 #: ui/admin/help.php:3
 msgid "Pods Help"
-msgstr "Ajuda do Pods"
+msgstr "Ajutor Pods"
 
 #: classes/PodsUI.php:2681 ui/admin/setup-edit-field-fluid.php:190
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Anulează"
 
 #: ui/admin/settings-reset.php:46
 msgid "Delete Pods 1.x data"
-msgstr "Apagar dados de Pods 1.x"
+msgstr "Șterge datele Pods 1.x"
 
 #: classes/PodsAdmin.php:1385 classes/PodsUI.php:2699
 #: components/Migrate-Packages/ui/wizard.php:69
 msgid "Export"
-msgstr "Exportar"
+msgstr "Exportă"
 
 #: ui/admin/settings-reset.php:48
 msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.x."
-msgstr "Irá deletar todos os dados do seu Pods 1.x, somente é recomendado se você conferiu se os seus dados foram migrados corretamente para o Pods 2.x."
+msgstr "Asta va șterge toate datele Pods 1.x, este recomandat doar dacă ai verificat că datele au fost mutate în Pods 2.x."
 
 #: classes/PodsUI.php:2725
 msgid "Please use the search filter(s) above to display data"
-msgstr "Por favor use o(s) filtro(s) de pesquisa acima para mostrar os dados"
+msgstr "Te rog folosește filtrul de căutare de deasupra pentru a afișa datele"
 
 #: ui/admin/settings-reset.php:51
 msgid ""
@@ -1200,47 +1201,47 @@ msgid ""
 "\n"
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install."
 msgstr ""
-"Tem certeza que deseja fazer isso?\n"
+"Ești sigur că vrei să faci asta?\n"
 "\n"
-"É uma boa hora para ter certeza se você tem um backup. Vamos deletar todos os dados da versão 1.x, resetar tudo para deixar como se fosse uma instalação zerada."
+"Asigură-te că ai o copie de rezervă. Ștergem toate datele din jurul 1.x, resetându-l la o primă instalare curată."
 
 #: classes/PodsUI.php:2725
 msgid "or click on an Export to download a full copy of the data"
-msgstr "ou clique em Exportar para baixar uma cópia completa dos dados"
+msgstr "sau dă click pe un Export pentru a downloada o copie întreagă a datelor"
 
 #: ui/admin/settings-reset.php:52
 msgid "Delete Pods 1.x settings and data"
-msgstr "Apagar configurações e dados do Pods 1.x"
+msgstr "Șterge setările și datele Pods 1.x"
 
 #: classes/PodsUI.php:2827
 msgid "Reset"
-msgstr "Resetar"
+msgstr "Resetează"
 
 #: ui/admin/settings-reset.php:57
 msgid "Reset Pods 2.x"
-msgstr "Resetar Pods 2.x"
+msgstr "Resetează Pods 2.x"
 
 #: classes/PodsUI.php:2858 classes/PodsUI.php:2859 classes/PodsUI.php:2867
 #: classes/PodsUI.php:2921 classes/PodsUI.php:2974
 msgid "Advanced Filters"
-msgstr "Filtros Avançados"
+msgstr "Filtre Avansate"
 
 #: ui/admin/settings-reset.php:59
 msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it's data, and performs a fresh install."
-msgstr "Não remove os dados do Pods 1.x, somente reseta as configurações do Pods 2.x, remvoe todos os dados e faz uma instalação zerada."
+msgstr "Asta nu șterge datele Pods 1.x, pur și simplu resetează setările Pods 2.x, șterge toate detele și face o instalare nouă."
 
 #: classes/PodsUI.php:2868
 msgid "Add Filter"
-msgstr "Adicionar Filtro"
+msgstr "Adaugă Filtru"
 
 #: ui/admin/settings-reset.php:60 ui/admin/settings-reset.php:72
 #: ui/admin/settings-reset.php:85 ui/admin/settings-reset.php:97
 msgid "<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified."
-msgstr "<strong>Por favor Leia:</strong> Não remove nenhum ítem dos dados de Post Types, Taxonomies, Media, Users ou Comments que você tenha adicionado/modificado."
+msgstr "<strong>Ține cont: </strong>Asta nu șterge niciun item din niciun Tip de Post, Taxonomie, Media, Utilizator sau Comentarii care au fost adăugate/modificate."
 
 #: classes/PodsUI.php:2926
 msgid "Remove Filter"
-msgstr "Remover Filtro"
+msgstr "Înlătură Filtrul"
 
 #: ui/admin/settings-reset.php:63
 msgid ""
@@ -1248,38 +1249,38 @@ msgid ""
 "\n"
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install."
 msgstr ""
-"Tem certeza que deseja fazer isso?\n"
+"Ești sigur că vrei să faci asta?\n"
 "\n"
-"É uma boa hora para ter certeza se você tem um backup. Vamos deletar todos os dados da versão 2.x, resetar tudo para deixar como se fosse uma instalação zerada."
+"Asigură-te că ai o copie de rezervă. Ștergem toate datele din jurul 2.x, resetându-l la o primă instalare curată."
 
 #: classes/PodsUI.php:3037 classes/PodsUI.php:3069 classes/PodsUI.php:3104
 #: classes/PodsUI.php:3129
 msgid "Clear"
-msgstr "Limpar"
+msgstr "Curăță"
 
 #: ui/admin/settings-reset.php:64
 msgid "Reset Pods 2.x settings and data"
-msgstr "Resetar dados e configurações do Pods 2.x"
+msgstr "Resetează setările și datele Pods 2.x"
 
 #: classes/PodsUI.php:3148
 msgid "Search Text"
-msgstr "Texto de Pesquisa"
+msgstr "Caută Text"
 
 #: ui/admin/settings-reset.php:69 ui/admin/settings-reset.php:76
 msgid "Deactivate and Delete Pods 2.x data"
-msgstr "Desativar e Apagar dados do Pods 2.x"
+msgstr "Dezactivează și Șterge datele Pods 2.x"
 
 #: classes/PodsUI.php:3208
 msgid "No %s found"
-msgstr "Nenhum %s encontrado"
+msgstr "Niciun %s găsit"
 
 #: ui/admin/settings-reset.php:71
 msgid "This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed."
-msgstr "Irá deletar configurações, dados e desativar a si mesmo ao terminar. Sua base de dados ficará como se o Pods 2.x nunca tivesse existido."
+msgstr "Asta va șterge setările Pods 2.x , datele și se va dezactiva o data ce a terminat. Baza ta de date va fi ca și când Pods 2.x nu a existat niciodată."
 
 #: classes/PodsUI.php:3236
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"fields\" definition."
-msgstr "<strong>Erro:</strong> Configuração Inválida - Falta as definições de \"campos\" ."
+msgstr "<strong>Eroare:</strong> Configurare Invalida - Lipsește definiția \"fields\"."
 
 #: ui/admin/settings-reset.php:75
 msgid ""
@@ -1287,29 +1288,29 @@ msgid ""
 "\n"
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back."
 msgstr ""
-"Tem certeza que quer fazer isso?\n"
+"Ești sigur că vrei să faci asta?\n"
 "\n"
-"É uma boa hora para ter certeza que você tem um backup. Vamos deletar todos os dados da versão 2.x sem possibilidade de desfazer."
+"Asigură-te că ai o copie de rezervă. Ștergem toate datele din jurul 2.x, fără cale de întoarcere."
 
 #: classes/PodsUI.php:3500 classes/PodsUI.php:3519
 msgid "View this item"
-msgstr "Visualizar este ítem"
+msgstr "Vizualizează acest item"
 
 #: ui/admin/settings-reset.php:82
 msgid "Reset Pods"
-msgstr "Resetar Pods"
+msgstr "Resetează Pods"
 
 #: classes/PodsUI.php:3491 classes/PodsUI.php:3528
 msgid "Edit this item"
-msgstr "Editar este ítem"
+msgstr "Editează acest item"
 
 #: ui/admin/settings-reset.php:84
 msgid "This will reset Pods settings, removes all of it's data, and performs a fresh install."
-msgstr "Irá resetar as configurações do Pods, remover todos os seus dados, e fazer uma instalação zerada."
+msgstr "Asta va reseta setările Pods, va șterge toate datele și va face o instalare nouă."
 
 #: classes/PodsUI.php:3537
 msgid "Duplicate this item"
-msgstr "Duplicar este ítem"
+msgstr "Dublează acest item"
 
 #: ui/admin/settings-reset.php:88
 msgid ""
@@ -1317,37 +1318,37 @@ msgid ""
 "\n"
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install."
 msgstr ""
-"Tem certeza que quer fazer isso?\n"
+"Ești sigur că vrei să faci asta?\n"
 "\n"
-"É uma boa hora para ter certeza que você tem um backup. Vamos deletar todos os dados do Pods, resetar para uma instalação zerada."
+"Asigură-te că ai o copie de rezervă. Ștergem toate datele din jurul Pods, resetându-l la o primă instalare, curată."
 
 #: classes/PodsUI.php:3546
 msgid "Delete this item"
-msgstr "Apagar este ítem"
+msgstr "Șterge acest item"
 
 #: ui/admin/settings-reset.php:89
 msgid "Reset Pods settings and data"
-msgstr "Resetar configurações e dados do Pods"
+msgstr "Resetează setările și datele Pods"
 
 #: classes/PodsUI.php:3546
 msgid "You are about to permanently delete this item\\n Choose \\'Cancel\\' to stop, \\'OK\\' to delete."
-msgstr "Você irá apagar este ítem permanentemente\\n Escolha \\'Cancel\\' para cancelar, \\'OK\\' para apagar."
+msgstr "Esti pe cale să ștergi permanent acest item\\nAlege\\'Cancel\\' pentru a opri, \\'OK\\' pentru a șterge"
 
 #: ui/admin/settings-reset.php:94 ui/admin/settings-reset.php:101
 msgid "Deactivate and Delete Pods data"
-msgstr "Desaticar e Apagar os dados do Pods"
+msgstr "Dezactivează și Șterge data Pods"
 
 #: classes/PodsUI.php:3556
 msgid "Enable"
-msgstr "Habilitar"
+msgstr "Activează"
 
 #: ui/admin/settings-reset.php:96
 msgid "This will delete Pods settings, data, and deactivate itself once done. Your database will be as if Pods never existed."
-msgstr "Irá apagar as configurações e dados do Pods, e desativar a si mesmo ao terminar. Sua base de dados ficará como se o Pods nunca tivesse existido."
+msgstr "Asta va șterge toate setările Pods, datele și se va dezactiva odată ce termină. Baza ta de date va fi ca și cum Pods nu a existat niciodată."
 
 #: classes/PodsUI.php:3557
 msgid "Disable"
-msgstr "Desabilitar"
+msgstr "Dezactivează"
 
 #: ui/admin/settings-reset.php:100
 msgid ""
@@ -1355,45 +1356,45 @@ msgid ""
 "\n"
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back."
 msgstr ""
-"Tem certeza que quer fazer isso?\n"
+"Ești sigur că vrei să faci asta?\n"
 "\n"
-"É uma boa hora para ter certeza que você tem um backup. Vamos deletar todos os dados do Pods sem possibilidade de desfazer."
+"Asigură-te că ai o copie de rezervă. Ștergem toate datele din jur fără cale de întoarcere."
 
 #: classes/PodsUI.php:3726 classes/PodsUI.php:3744
 msgid "Show on screen"
-msgstr "Exibir na tela"
+msgstr "Arată pe ecran"
 
 #: ui/admin/settings-settings.php:1
 msgid "The following are settings provided for advanced site configurations."
-msgstr "A seguir as configurações fornecidas para configurações de sites avançados."
+msgstr "Următoarele sunt setări furnizate pentru configurări avansate ale siteului."
 
 #: ui/admin/settings-tools.php:21
 msgid "Force an update of this beta from GitHub"
-msgstr "Força uma atualização deste beta do GitHub"
+msgstr "Forțează o actualizare a acestei beta din GitHub"
 
 #: classes/PodsUI.php:3857
 msgid "Go to the first page"
-msgstr "Vai para a primeira página"
+msgstr "Mergi la prima pagină"
 
 #: ui/admin/settings-tools.php:23
 msgid "This tool lets you update your Pods installation to the latest alpha/beta/release candidate, usually only when you've been instructed to do so."
-msgstr "Esta ferramenta permite atualizar a instalação do seu Pods para a última versão alpha/bta/release candidate, use quando tiver sido instruído para fazer isso."
+msgstr "Aceasta unealta te lasa sa actualizezi instalarea Pods la ultimul alpha/beta/release candidat, de obicei cand ai fost instruit sa faci asta.Această unealtă te lasă să actualizezi instalarea Pods la utlimul alpha/beta/release candidat, de obicei când ai fost instruit să faci asta."
 
 #: classes/PodsUI.php:3858
 msgid "Go to the previous page"
-msgstr "Vai para a página anterior"
+msgstr "Mergi la pagina precedentă"
 
 #: ui/admin/settings-tools.php:33
 msgid "Force Plugin Refresh/Update from GitHub"
-msgstr "Força um Recarregamento/Atualização do GitHub"
+msgstr "Forțează Reîmprospătarea Plugin/Actualizării de la GitHub"
 
 #: classes/PodsUI.php:3862
 msgid "Current page"
-msgstr "página atual"
+msgstr "Pagina actuală"
 
 #: ui/admin/settings-tools.php:40 ui/admin/settings-tools.php:45
 msgid "Clear Pods Cache"
-msgstr "Limpa o Cache do Pods"
+msgstr "Curăță Pods Cache"
 
 #: classes/PodsUI.php:3862 classes/PodsUI.php:3879
 msgid "of"
@@ -1401,139 +1402,139 @@ msgstr "de"
 
 #: ui/admin/settings-tools.php:42
 msgid "This tool will clear all of the transients/cache that are used by Pods. "
-msgstr "Esta ferramenta irá limpar todos os transients/cache que forem usados pelo Pods."
+msgstr "Această unealtă va curăța toate transients/cache care sunt folosite de Pods."
 
 #: classes/PodsUI.php:3883
 msgid "Go to the next page"
-msgstr "Vai para a próxima página"
+msgstr "Mergi la pagina următoare"
 
 #: ui/admin/settings-tools.php:50
 msgid "Debug Information"
-msgstr "Informação de Debug"
+msgstr "Informații Depanare"
 
 #: classes/PodsUI.php:3884
 msgid "Go to the last page"
-msgstr "Vai para a última página"
+msgstr "Mergi la ultima pagină"
 
 #: classes/PodsAdmin.php:1956 ui/admin/settings.php:11
 msgid "Tools"
-msgstr "Ferramentas"
+msgstr "Unelte"
 
 #: classes/fields/avatar.php:66
 msgid "Avatar Uploader"
-msgstr "Uploader de Avatar"
+msgstr "Adaugă Avatar"
 
 #: ui/admin/settings.php:12
 msgid "Cleanup &amp; Reset"
-msgstr "Limpeza &amp; Resetagem"
+msgstr "Curăță &amp; Resetează"
 
 #: classes/fields/avatar.php:72 classes/fields/file.php:93
 msgid "Attachments (WP Media Library)"
-msgstr "Anexos (WP Biblioteca de Mídia)"
+msgstr "Atașamente (WP Librărie Media)"
 
 #: ui/admin/setup-add.php:16
 msgid "Add New Pod"
-msgstr "Adicionar Novo Pod"
+msgstr "Adaugă Pod Nou"
 
 #: classes/fields/avatar.php:73 classes/fields/file.php:94
 msgid "Plupload"
-msgstr ""
+msgstr "Plupload"
 
 #: ui/admin/setup-add.php:35
 msgid "Create or Extend"
-msgstr "Criar ou Extender"
+msgstr "Crează sau Extinde"
 
 #: classes/fields/avatar.php:79 classes/fields/file.php:100
 msgid "Attachments Default Tab"
-msgstr "Aba Padrão do Attachments "
+msgstr "Filă Prestabilită Atașamente"
 
 #: ui/admin/setup-add.php:39
 msgid "Configure"
-msgstr "Configurar"
+msgstr "Configurează"
 
 #: classes/fields/avatar.php:85 classes/fields/avatar.php:120
 #: classes/fields/file.php:106 classes/fields/file.php:195
 msgid "Upload File"
-msgstr "Enviar Arquivo"
+msgstr "Adaugă Fișier"
 
 #: classes/fields/avatar.php:86 classes/fields/avatar.php:121
 #: classes/fields/file.php:107 classes/fields/file.php:196
 msgid "Media Library"
-msgstr "Biblioteca de Mídia"
+msgstr "Librărie Media"
 
 #: classes/fields/avatar.php:90 classes/fields/file.php:127
 msgid "Restrict File Size"
-msgstr "Restringir Tamanho de Arquivo"
+msgstr "Restricționează Mărime Fișier"
 
 #: ui/admin/setup-add.php:57
 msgid "Create New"
-msgstr "Criar Novo"
+msgstr "Crează Nou"
 
 #: classes/fields/boolean.php:56
 msgid "Checkbox"
-msgstr "Checkbox"
+msgstr "Căsuță de selectare"
 
 #: ui/admin/setup-add.php:66
 msgid "Extend Existing"
-msgstr "Extender Existente"
+msgstr "Extinde Existent"
 
 #: classes/fields/boolean.php:57 classes/fields/pick.php:121
 msgid "Radio Buttons"
-msgstr "Botões de Rádio"
+msgstr "Butoane Radio"
 
 #: ui/admin/setup-add.php:68
 msgid "Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>."
-msgstr "Extende um content type existente dentro do Wordpress, incluindo <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, ou <strong>Comments</strong>."
+msgstr "Extinde orice tip de conținut din WordPress, incluzând <strong>Tipuri Postări </strong> (Postări, Pagini, etc), <strong>Taxonomii</strong> (Categorii, Etichete, etc), <strong>Media</strong>, <strong>Utilizatori</strong>, sau <strong>Comentarii</strong>."
 
 #: classes/fields/boolean.php:58 classes/fields/pick.php:120
 msgid "Drop Down"
-msgstr "Menu Suspenso"
+msgstr "Drop Down"
 
 #: classes/fields/boolean.php:63
 msgid "Yes Label"
-msgstr "Rótulo Sim"
+msgstr "Eticheta Da"
 
 #: ui/admin/setup-add.php:81
 msgid "Create a New Content Type"
-msgstr "Criar um Novo Content Type"
+msgstr "Crează Nou Tip de Conținut"
 
 #: classes/PodsUI.php:2561 classes/PodsUI.php:2909 classes/PodsUI.php:3094
 #: classes/fields/boolean.php:64 classes/fields/boolean.php:243
 #: classes/fields/boolean.php:267
 msgid "Yes"
-msgstr "Sim"
+msgstr "Da"
 
 #: ui/admin/setup-add.php:86 ui/admin/setup-add.php:226
 msgid "Content Type"
-msgstr "Tipo de Conteúdo"
+msgstr "Tip de Conținut"
 
 #: classes/fields/boolean.php:68
 msgid "No Label"
-msgstr "Rótulo Não"
+msgstr "Fără Etichetă"
 
 #: ui/admin/setup-add.php:86 ui/admin/setup-add.php:226
 msgid "<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best."
-msgstr "<h6>Content Types</h6> Existem muitos content types para escolher, fizemos uma comparação entre todos eles juntos para ajudar você a decidir qual serve melhor para o seu propósito."
+msgstr "<h6>Tipuri Conținut</h6> Sunt multe tipuri de conținut din care să alegi, trebuie să facem o comparație între ele pentru a te ajuta să decizi ce se potrivește mai bine nevoilor tale."
 
 #: classes/PodsUI.php:2562 classes/PodsUI.php:2910 classes/PodsUI.php:3095
 #: classes/fields/boolean.php:69 classes/fields/boolean.php:245
 #: classes/fields/boolean.php:268
 msgid "No"
-msgstr "Não"
+msgstr "Nu"
 
 #: ui/admin/setup-add.php:89
 msgid "Custom Post Type (like Posts or Pages)"
-msgstr "Post Type Customizado (tipo Posts ou Páginas)"
+msgstr "Tipuri Postări Personalizate (Ca Postările sau Paginile)"
 
 #: classes/fields/code.php:68 classes/fields/html.php:58
 #: classes/fields/paragraph.php:67 classes/fields/text.php:67
 #: classes/fields/wysiwyg.php:91
 msgid "Output Options"
-msgstr "Opções de Exibição"
+msgstr "Optiuni de Output"
 
 #: ui/admin/setup-add.php:90
 msgid "Custom Taxonomy (like Categories or Tags)"
-msgstr "Taxonomia Customizada (tipo Categorias ou Tags)"
+msgstr "Taxonomie Personalizată ( Categorii sau Etichete)"
 
 #: classes/fields/code.php:71 classes/fields/html.php:103
 #: classes/fields/paragraph.php:112 classes/fields/text.php:70
@@ -1543,7 +1544,7 @@ msgstr "Permite Shortcodes?"
 
 #: components/Advanced-Content-Types.php:40
 msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
-msgstr "Content Type Avançado (separado do WP, em uma tabela separada)"
+msgstr "Tip Conținut Avansat (separat de WP, plăcuță goală, în propriul tabel)"
 
 #: classes/fields/code.php:79 classes/fields/currency.php:185
 #: classes/fields/email.php:67 classes/fields/number.php:113
@@ -1551,414 +1552,414 @@ msgstr "Content Type Avançado (separado do WP, em uma tabela separada)"
 #: classes/fields/phone.php:92 classes/fields/text.php:90
 #: classes/fields/website.php:80
 msgid "Maximum Length"
-msgstr "Tamanho Máximo"
+msgstr "Lungime Maximă"
 
 #: ui/admin/setup-add.php:109 ui/admin/setup-add.php:305
 msgid "Enable Extra Fields?"
-msgstr "Habilitar Campos Extras?"
+msgstr "Activează Câmpuri în Plus?"
 
 #: classes/fields/color.php:161 classes/fields/password.php:152
 #: classes/fields/text.php:204
 msgid "This field is required."
-msgstr "Este campo é requerido."
+msgstr "Acest câmp este obligatoriu"
 
 #: ui/admin/setup-add.php:109 ui/admin/setup-add.php:305
 msgid "<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table."
-msgstr "<h6>Tipos de Armazenamento</h6> Taxonomias não suportam campos extras nativamente, mas o Pods pode adicionar esta funcionalidade para você facilmente. O armazenamento baseado em Tabela funcionará de um jeito onde cada campo que você criar para o seu content type será um campo em uma tabela."
+msgstr "<h6>Tipuri Stocare</h6> Taxonomiile nu pot avea câmpuri în plus, dar Pods poate adăuga această caracteristică cu ușurință. Stocarea pe bază de tabel va opera în așa fel încât fiecare câmp pe care îl creezi pentru tipul tău de conținut devine un câmp într-un tabel."
 
 #: classes/fields/color.php:164
 msgid "Invalid value provided for this field."
-msgstr "Valor inválido fornecido para este campo."
+msgstr "Valoare invalidă furnizată pentru acest câmp"
 
 #: ui/admin/setup-add.php:112 ui/admin/setup-add.php:308
 msgid "Do not enable extra fields to be added"
-msgstr "Não habilita adicionar campos extras"
+msgstr "Nu activa câmpuri în plus pentru a fi adăugate"
 
 #: classes/fields/color.php:168
 msgid "Invalid Hex Color value provided for this field."
-msgstr "Cor Hexadecimal inválida fornecida para este campo."
+msgstr "Valoare Hex Color invalidă pentru acest câmp."
 
 #: ui/admin/setup-add.php:113 ui/admin/setup-add.php:309
 msgid "Enable extra fields for this Taxonomy (Table Based)"
-msgstr "Habilita campos extras para esta Taxonomia (Baseado em Tabela)"
+msgstr "Activează câmpuri în plus pentru această Taxonomie (Bazat pe Tabele)"
 
 #: classes/fields/currency.php:110
 msgid "Currency Sign"
-msgstr "Símbolo de Moeda"
+msgstr "Simbolul Monedei"
 
 #: ui/admin/setup-add.php:132
 msgid "Plural Label"
-msgstr "Rótulo de Plural"
+msgstr "Etichetă Plural"
 
 #: classes/fields/currency.php:137
 msgid "Currency Placement"
-msgstr "Posicionamento da Moeda"
+msgstr "Plasare Valută"
 
 #: ui/admin/setup-add.php:132
 msgid "<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content."
-msgstr "<h6>Rótulo de Plural</h6>Este é o rótulo para mais de 1 ítem (Plural) que irá aparecer no admin do Wordpress para gerenciar o conteúdo."
+msgstr "<h6>Etichetă Plural</h6> Aceasta este eticheta pentru mai mult de 1 item (Plural) care va apărea prin zona administrator WordPress pentru administratea conținutului."
 
 #: ui/admin/setup-add.php:126 ui/admin/setup-edit.php:334
 msgid "Singular Label"
-msgstr "Rótulo de Singular"
+msgstr "Etichetă Singulară"
 
 #: ui/admin/setup-add.php:126
 msgid "<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content."
-msgstr "<h6>Rótulo de Singular</h6>Este é o rótulo para 1 ítem (Singular) que irá aparecer no admin do Wordpress para gerenciar o conteúdo."
+msgstr "<h6>Eticheta Singulară</h6> Aceasta este eticheta pentru 1 item (Singular) care va apărea în zona administrator WordPress pentru administrarea conținutului."
 
 #: classes/PodsAdmin.php:1477 classes/PodsAdmin.php:1959
 #: ui/admin/setup-add.php:166 ui/admin/setup-add.php:323
 msgid "Advanced"
-msgstr "Avançado"
+msgstr "Avansat"
 
 #: classes/fields/currency.php:148 classes/fields/number.php:77
 #: classes/fields/phone.php:67 classes/fields/pick.php:112
 #: classes/fields/pick.php:128 classes/fields/website.php:67
 msgid "Format"
-msgstr "Formato"
+msgstr "Format"
 
 #: ui/admin/setup-add.php:177 ui/admin/setup-add.php:188
 msgid "<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP."
-msgstr "<h6>Identificador Pod</h6> Irá diferenciar dos rótulos que os usuários irão ver nas áreas de admin do Wordpress, é o nome que você irá usar para referenciar via código este objeto, através do tema, do Wordpress e de outro PHP."
+msgstr "<h6>Identificator Pods </h6>  Acesta este diferit față de etichetele pe care utilizatorii le vor vedea în zonele administrator WordPress, este numele pe care îl vei folosi pentru a face trimitere prin temă, WordPress și alte PHP."
 
 #: classes/fields/currency.php:152 classes/fields/number.php:81
 msgid "Localized Default"
-msgstr "Idioma Padrão"
+msgstr "Prestabilit Localizat"
 
 #: ui/admin/setup-add.php:198 ui/admin/setup-add.php:328
 msgid "<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data."
-msgstr "<h6>Tipos de Armazenamento</h6> Armazenamento baseado em Tabelas vão funcionar de modo que cada campo que você criar para o seu content type será um campo em uma tabela. Armazenamento baseando em Meta se baseia no armazenamento de campos meta para todos os campos."
+msgstr "<h6>Tipuri Stocare</h6>Stocarea pe bază de tabel va opera în așa fel încât fiecare câmp pe care îl creezi pentru tipul tău de conținut devine un câmp într-un tabel. Stocarea pe bază de Meta se bazează pe tabelul Worpress de depozitare meta pentru toate datele din câmpuri."
 
 #: classes/fields/currency.php:162 classes/fields/number.php:90
 msgid "Decimals"
-msgstr "Decimais"
+msgstr "Decimale"
 
 #: ui/admin/setup-add.php:201 ui/admin/setup-add.php:331
 msgid "Meta Based (WP Default)"
-msgstr "Baseado em Meta (Padrão WP)"
+msgstr "Bazat pe Meta (WP Default)"
 
 #: classes/fields/currency.php:503 classes/fields/number.php:350
 msgid "%s is not numeric"
-msgstr "%s não é numérico"
+msgstr "% nu este numeric"
 
 #: ui/admin/setup-add.php:202 ui/admin/setup-add.php:332
 msgid "Table Based"
-msgstr "Baseado em Tabela"
+msgstr "Bazat pe Tabel"
 
 #: classes/fields/date.php:67 classes/fields/datetime.php:67
 msgid "Date Format"
-msgstr "Formato de Data"
+msgstr "Formatul Datei"
 
 #: ui/admin/setup-add.php:217
 msgid "Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming."
-msgstr "Extender um Content Type existente permite adicionar campos para ele e ter as vantagens da arquitetura de gerenciamento do Pods e opcionalmente para temas."
+msgstr "Extinderea unui Tip Conținut existent îți permite să-i adagi câmpuri și să profiți de arhitectura Pods pentru administrare și opțional pentru temă."
 
 #: classes/fields/date.php:83 classes/fields/datetime.php:124
 #: classes/fields/time.php:104
 msgid "Allow empty value?"
-msgstr "Permite valor vazio?"
+msgstr "Permite valoare goală?"
 
 #: ui/admin/setup-add.php:220
 msgid "Extend an Existing Content Type"
-msgstr "Extende um Content Type existente"
+msgstr "Extinde un Tip Conținut Existent"
 
 #: classes/fields/date.php:88 classes/fields/datetime.php:129
 #: classes/fields/email.php:73 classes/fields/phone.php:98
 #: classes/fields/time.php:109 classes/fields/website.php:86
 msgid "Enable HTML5 Input Field?"
-msgstr "Habilita campo Input HTML5?"
+msgstr "Permite Câmpul Input HTML5?"
 
 #: ui/admin/setup-add.php:229
 msgid "Post Types (Posts, Pages, etc..)"
-msgstr "Post Types (Posts, Páginas, etc..)"
+msgstr "Tipuri Postări (Postări, Pagini, etc..)"
 
 #: classes/fields/datetime.php:84 classes/fields/time.php:66
 msgid "Time Format Type"
-msgstr "Tipo de Formato de Hora"
+msgstr "Tipul Formatului de Timp"
 
 #: components/Table-Storage.php:47
 msgid "Taxonomies (Categories, Tags, etc..)"
-msgstr "Taxonomias (Categorias, Tags, etc..)"
+msgstr "Taxonomii (Categorii, Etichete, etc..)"
 
 #: classes/fields/datetime.php:89 classes/fields/time.php:70
 msgid "12 hour"
-msgstr "12 horas"
+msgstr "12 ore"
 
 #: classes/fields/pick.php:444 ui/admin/setup-add.php:231
 msgid "Media"
-msgstr "Mídia"
+msgstr "Media"
 
 #: classes/fields/datetime.php:90 classes/fields/time.php:71
 msgid "24 hour"
-msgstr "24 horas"
+msgstr "24 de ore"
 
 #: classes/fields/pick.php:450 ui/admin/setup-add.php:233
 #: ui/admin/setup-edit.php:483
 msgid "Comments"
-msgstr "Comentários"
+msgstr "Comentarii"
 
 #: classes/fields/datetime.php:95 classes/fields/datetime.php:114
 #: classes/fields/time.php:76 classes/fields/time.php:94
 msgid "Time Format"
-msgstr "Formato de Hora"
+msgstr "Formatul Timpului"
 
 #: ui/admin/setup-add.php:272 ui/admin/setup-edit.php:856
 msgid "Post Type"
-msgstr "Post Type"
+msgstr "Tipul Postării"
 
 #: ui/admin/setup-add.php:272
 msgid "<h6>Post Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type."
-msgstr "<h6>Post Types</h6> O Wordpress pode guardar e mostrar diferentes tipos de conteúdo. Internamente, eles são armazenados no mesmo lugar, na tabela wp_posts. São diferenciados por uma coluna chamada post_type."
+msgstr "<h6>Tipuri Postări</h6> WordPress poate deține și arăta multe tipuri diferite de conținut. Intern, toate sunt depozitate în același loc, în tabelul wp_posts. Acestea sunt diferențiate de o coloană numită post_type."
 
 #: ui/admin/setup-add.php:295 ui/admin/setup-edit.php:857
 msgid "Taxonomy"
-msgstr "Taxonomia"
+msgstr "Taxonomie"
 
 #: classes/fields/pick.php:106
 msgid "Single Select"
-msgstr "Seleção Única"
+msgstr "Selectare Singulară"
 
 #: ui/admin/setup-add.php:295
 msgid "<h6>Taxonomies</h6> A taxonomy is a way to group Post Types."
-msgstr "<h6>Taxonomias</h6> Uma taxonomia é um jeito de agrupar Post Types."
+msgstr "<h6>Taxonomii</h6> O taxonomie este o modalitate de a grupa Tipuri Postări."
 
 #: classes/fields/pick.php:107
 msgid "Multiple Select"
-msgstr "Seleção Múltipla"
+msgstr "Selectare Multiplă"
 
 #: ui/admin/setup-edit-field-fluid.php:8 ui/admin/setup-edit-field.php:48
 msgid "Move"
-msgstr "Mover"
+msgstr "Mută"
 
 #: classes/fields/file.php:87
 msgid "File Uploader"
-msgstr "Uploader de Arquivo"
+msgstr "Încărcare Fișiere"
 
 #: ui/admin/setup-edit-field-fluid.php:11
 #: ui/admin/setup-edit-field-fluid.php:17 ui/admin/setup-edit-field.php:51
 #: ui/admin/setup-edit-field.php:67
 msgid "Edit this field"
-msgstr "Editar este campo"
+msgstr "Editează acest câmp"
 
 #: classes/fields/file.php:111
 msgid "Editable Title"
-msgstr "Título Editável"
+msgstr "Titlu editabil"
 
 #: ui/admin/setup-edit-field-fluid.php:12
 msgid "New Field"
-msgstr "Novo campo"
+msgstr "Câmp nou"
 
 #: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
 msgid "Duplicate this field"
-msgstr "Duplicar este campo"
+msgstr "Dublează acest câmp"
 
 #: classes/fields/file.php:133
 msgid "Restrict File Types"
-msgstr "Restringir Tipos de Arquivo"
+msgstr "Restricționează Tipuri Fișier"
 
 #: ui/admin/setup-edit-field-fluid.php:23 ui/admin/setup-edit-field.php:73
 msgid "Delete this field"
-msgstr "Apagar este campo"
+msgstr "Șterge acest câmp"
 
 #: classes/PodsAdmin.php:1475
 msgid "Basic"
-msgstr "Básico"
+msgstr "De bază"
 
 #: classes/PodsAdmin.php:1476
 msgid "Additional Field Options"
-msgstr "Opções de Campo Adicional"
+msgstr "Opțiuni Câmp Adiționale"
 
 #: classes/fields/file.php:143
 msgid "Any Type (no restriction)"
-msgstr "Qualquer Tipo (sem restrição)"
+msgstr "Orice Tip (fără restricție)"
 
 #: ui/admin/setup-edit-field-fluid.php:66
 msgid "You will use this name to programatically reference this field throughout WordPress"
-msgstr "Você irá usar este nome para referenciar este campo via código através do Wordpress."
+msgstr "Vei folosi acest nume pentru a face trimitere la acest câmp în WordPress"
 
 #: classes/fields/file.php:144
 msgid "Other (customize allowed extensions)"
-msgstr "Outro (customizar extensões permitidas)"
+msgstr "Altele ( personalizează extensii permise)"
 
 #: ui/admin/setup-edit-field-fluid.php:74
 msgid "Field Type"
-msgstr "Tipo de Campo"
+msgstr "Tipul Câmpului"
 
 #: classes/fields/file.php:150
 msgid "Allowed File Extensions"
-msgstr "Extensões de Arquivo Permitidas"
+msgstr "Extensii Fișier Permise"
 
 #: ui/admin/setup-edit-field-fluid.php:79
 msgid "Related To"
-msgstr "Relacionado A"
+msgstr "Legat de"
 
 #: classes/fields/file.php:151
 msgid "Separate file extensions with a comma (ex. jpg,png,mp4,mov)"
-msgstr "Separar as extensões de arquivo com uma vírgula (ex: jpg,png,mp4,mov)"
+msgstr "Separă extensiile fișierelor cu o virgulă (ex. jpg,png,mp4,mov)"
 
 #: ui/admin/setup-edit-field-fluid.php:83
 msgid "Custom Defined Options"
-msgstr "Opções Definidas Customizadas"
+msgstr "Opțiuni Definite Personalizate"
 
 #: classes/fields/html.php:61 classes/fields/paragraph.php:70
 #: classes/fields/text.php:76
 msgid "Allow HTML?"
-msgstr "Permitir HTML?"
+msgstr "Permite HTML?"
 
 #: ui/admin/setup-edit-field-fluid.php:83
 msgid "One option per line, use <em>value|Label</em> for separate values and labels"
-msgstr "Uma opção por linha, use  <em>valor|Rótulo</em> para separar valores e rótulos."
+msgstr "O opțiune pe rând, folosește <em>value|Label</em> pentru valori și etichete separate"
 
 #: classes/fields/html.php:67 classes/fields/paragraph.php:76
 #: classes/fields/wysiwyg.php:94
 msgid "Enable oEmbed?"
-msgstr "Habilitado ou Desabilitado?"
+msgstr "Activează oEmbed?"
 
 #: ui/admin/setup-edit-field-fluid.php:91
 msgid "Bi-directional Field"
-msgstr "Campo Bi-direcional"
+msgstr "Câmp bi-direcțional"
 
 #: classes/fields/html.php:71 classes/fields/paragraph.php:80
 #: classes/fields/wysiwyg.php:98
 msgid "Embed videos, images, tweets, and other content."
-msgstr "Embutir vídeos, imagens, tweets, e outros conteúdos."
+msgstr "Videoclipuri embed, imagini, tweets  și alt conținut."
 
 #: ui/admin/setup-edit-field-fluid.php:91
 msgid "Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected."
-msgstr "Campos Bi-direcionais irão atualizar seus campos relacionados para qualquer ítem que você selecionar. Esta funcionalidade está disponível somente para dois relacionamentos entre dois Pods.<br /><br />Por exemplo, quando você atualizar um ítem do Pod Pai para relacionar com um ítem Filho, ao editar o ítem Filho você irá ver o ítem do Pod Pai selecionado."
+msgstr "Câmpurile bi-direcționale vor actualiza câmpul înrudit pentru orice item pe care îl selectezi. Această caracteristică este disponibilă doar pentru două relații între două Pods.<br /><br /> De exemplu, când actualizezi un item pod Părinte să se lege cu un item Copil, când mergi dă editezi acel item Copil vei vedea itemul pod Părinte selectat."
 
 #: classes/fields/html.php:76 classes/fields/paragraph.php:85
 #: classes/fields/wysiwyg.php:103
 msgid "Enable wptexturize?"
-msgstr "Habilitar wptexturize?"
+msgstr "Activează wptexturize?"
 
 #: ui/admin/setup-edit-field-fluid.php:100
 msgid "Options"
-msgstr "Opções"
+msgstr "Opțiuni"
 
 #: classes/fields/html.php:80 classes/fields/paragraph.php:89
 #: classes/fields/wysiwyg.php:107
 msgid "Transforms less-beautfiul text characters into stylized equivalents."
-msgstr "Transforma caracteres text menos-bonitos para equivalentes estilizados."
+msgstr "Transformă caractere text mai puțin frumoase în echivalente stilizate."
 
 #: ui/admin/setup-edit-field-fluid.php:106
 msgid "Required"
-msgstr "Requerido"
+msgstr "Solicitat"
 
 #: classes/fields/html.php:85 classes/fields/paragraph.php:94
 #: classes/fields/wysiwyg.php:112
 msgid "Enable convert_chars?"
-msgstr "Habilitar convert_chars?"
+msgstr "Activează convert_chars?"
 
 #: ui/admin/setup-edit-field-fluid.php:112
 msgid "Unique"
-msgstr "Único"
+msgstr "Unic"
 
 #: classes/fields/html.php:89 classes/fields/paragraph.php:98
 #: classes/fields/wysiwyg.php:116
 msgid "Converts text into valid XHTML and Unicode"
-msgstr "Converte texto em XHTML válido e Unicode"
+msgstr "Convertește textul în XHTML și Unicode valid"
 
 #: classes/fields/html.php:94 classes/fields/paragraph.php:103
 #: classes/fields/wysiwyg.php:121
 msgid "Enable wpautop?"
-msgstr "Habilitar wpautop?"
+msgstr "Activează wpautop?"
 
 #: ui/admin/setup-edit-field-fluid.php:187
 msgid "Delete Field"
-msgstr "Apagar Campo"
+msgstr "Șterge câmpul"
 
 #: classes/fields/paragraph.php:107 classes/fields/wysiwyg.php:125
 msgid "Changes double line-breaks in the text into HTML paragraphs"
-msgstr "Altera duplas quebras-de-linha no texto para parágrafos HTML."
+msgstr "Schimbă line-breaks duble din text în paragrafe HTML"
 
 #: ui/admin/setup-edit-field-fluid.php:190
 msgid "Update Field"
-msgstr "Atualizar Campo"
+msgstr "Actualizează Câmpul"
 
 #: classes/fields/html.php:108 classes/fields/paragraph.php:117
 #: classes/fields/wysiwyg.php:135
 msgid "Embed [shortcodes] that help transform your static content into dynamic content."
-msgstr "Embutir [shortcodes] que transformam o seu conteúdo estático em dinâmico."
+msgstr "[shortcodes] embed care ajută la transformarea conținutului static în conținut dinamic."
 
 #: ui/admin/setup-edit-field-fluid.php:190 ui/admin/setup-edit.php:242
 #: ui/admin/setup-edit.php:315
 msgid "Add Field"
-msgstr "Adicionar Campo"
+msgstr "Adaugă Câmp"
 
 #: classes/fields/paragraph.php:124 classes/fields/text.php:84
 #: classes/fields/wysiwyg.php:142
 msgid "Allowed HTML Tags"
-msgstr "Tags HTML Permitidas"
+msgstr "Etichete HTML Permise"
 
 #: ui/admin/setup-edit.php:50 ui/admin/setup-edit.php:51
 #: ui/admin/setup-edit.php:53
 msgid "Other"
-msgstr "Outro"
+msgstr "Altele"
 
 #: classes/fields/phone.php:71
 msgid "US"
-msgstr ""
+msgstr "US"
 
 #: classes/PodsAdmin.php:1538
 msgid "Visual"
-msgstr ""
+msgstr "Vizual"
 
 #: classes/fields/phone.php:76
 msgid "International"
-msgstr "Internacional"
+msgstr "Internațional"
 
 #: classes/PodsAdmin.php:1541
 msgid "Additional CSS Classes"
-msgstr "Classes CSS Adicionais"
+msgstr "Clase CSS Adiționale"
 
 #: classes/fields/phone.php:77
 msgid "Any (no validation available)"
-msgstr "Qualquer (nenhuma validação disponível)"
+msgstr "Oricare (nicio validare disponibilă)"
 
 #: classes/PodsAdmin.php:1548
 msgid "Input Helper"
-msgstr "Helper de Input"
+msgstr "Input Helper"
 
 #: classes/fields/phone.php:82
 msgid "Phone Options"
-msgstr "Opções de Telefone"
+msgstr "Opțiuni Telefon"
 
 #: classes/PodsAdmin.php:1555
 msgid "Values"
-msgstr "Valores"
+msgstr "Valori"
 
 #: classes/fields/phone.php:85
 msgid "Enable Phone Extension?"
-msgstr "Habilitar Extensão de Telefone?"
+msgstr "Permite Extensie Telefon?"
 
 #: classes/PodsAdmin.php:1558
 msgid "Default Value"
-msgstr "Valor Padrão"
+msgstr "Valoare Prestabilită"
 
 #: classes/fields/phone.php:197 classes/fields/website.php:185
 msgid "The %s field is required."
-msgstr "O campo %s é requerido."
+msgstr "Câmpul %s este necesar."
 
 #: classes/PodsAdmin.php:1565
 msgid "Set Default Value via Parameter"
-msgstr "Seta o Valor Padrão via Parâmetro"
+msgstr "Setează Valoarea Prestabilită via Parametrii"
 
 #: classes/fields/phone.php:199
 msgid "Invalid phone number provided for the field %s."
-msgstr "Valor de telefone inválido fornecido para o campo %s."
+msgstr "Număr de telefon invalid furnizat pentru câmpul %s."
 
 #: classes/PodsAdmin.php:1571
 msgid "Visibility"
-msgstr "Visibilidade"
+msgstr "Vizibilitate"
 
 #: classes/fields/pick.php:101
 msgid "Selection Type"
-msgstr "Tipo de Seleção"
+msgstr "Tipul Selecției"
 
 #: ui/admin/setup-edit.php:113
 msgid "No Related Fields Found"
-msgstr "Nenhum Campo Relacionado encontrado"
+msgstr "Niciun Câmp Înrudit Găsit"
 
 #: classes/PodsAdmin.php:965 classes/PodsAdmin.php:972
 #: classes/PodsAdmin.php:980 classes/PodsAdmin.php:986
@@ -2012,155 +2013,155 @@ msgstr "Nenhum Campo Relacionado encontrado"
 #: ui/admin/setup-edit.php:736 ui/admin/setup-edit.php:750
 #: ui/admin/setup-edit.php:764
 msgid "help"
-msgstr "ajuda"
+msgstr "ajutor"
 
 #: ui/admin/setup-edit.php:260 ui/admin/setup-edit.php:276
 msgid "<h6>Label</h6>The label is the descriptive name to identify the Pod field."
-msgstr "<h6>Rótulo</h6>O rótulo é o nome descritivo para identificar o campo Pod."
+msgstr "<h6>Etichetă</h6>Eticheta este numele descriptiv pentru a identifica câmpul Pod."
 
 #: classes/fields/pick.php:122 classes/fields/pick.php:138
 msgid "Autocomplete"
-msgstr "Autocompletar"
+msgstr "Completare Automată"
 
 #: ui/admin/setup-edit.php:263 ui/admin/setup-edit.php:279
 msgid "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically."
-msgstr "<h6>Nome</h6>O atributo nome é usado para identificar e acessar o campo Pod via código."
+msgstr "<h6>Nume</h6>Atributul nume este ce este folosit pentru a identifica și accesa câmpul Pod programatic."
 
 #: classes/fields/pick.php:123 classes/fields/pick.php:139
 msgid "Flexible"
-msgstr "Flexível"
+msgstr "Flexibil"
 
 #: ui/admin/setup-edit.php:266 ui/admin/setup-edit.php:282
 msgid "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc."
-msgstr "<h6>Tipos de Campo</h6>Tipos de campo são usados para determinar que tipo de dado será gravado no Pod.  Podem variar entre datas, texto, arquivos, etc."
+msgstr "<h6>Tipuei Câmpuri</h6>"
 
 #: classes/fields/pick.php:136
 msgid "Checkboxes"
-msgstr ""
+msgstr "Căsuțe de selectare"
 
 #: ui/admin/setup-edit.php:342
 msgid "Add New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "Adicionar Novo <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "Adaugă Nou <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/pick.php:137
 msgid "Multi Select"
-msgstr "Seleção Múltipla"
+msgstr "Selectare Multiplă"
 
 #: ui/admin/setup-edit.php:346
 msgid "New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "Novo <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "Nou<span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/pick.php:168
 msgid "Selection Limit"
-msgstr "Limite de Seleção"
+msgstr "Limită Selecție"
 
 #: ui/admin/setup-edit.php:354
 msgid "Edit <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "Editar <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "Editează <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/pick.php:196
 msgid "Display Field in Selection List"
-msgstr "Exibir Campo na Lista de Seleção"
+msgstr "Arată Câmpul în Lista Selecțiilor"
 
 #: ui/admin/setup-edit.php:358
 msgid "Update <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "Atualizar <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "Actualizează <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/pick.php:197
 msgid "Provide the name of a field on the related object to reference, example: {@post_title}"
-msgstr "fornece o nome de um campo no objeto relacionado para referenciar, exemplo: {@post_title}"
+msgstr "Furnizează numele unui câmp pentru obiectul înrudit către care să se facă trimitere, exemplu:  {@post_title}"
 
 #: ui/admin/setup-edit.php:366
 msgid "View <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "Visualizar <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr "Vizualizează <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/pick.php:226
 msgid "Customized <em>WHERE</em>"
-msgstr "Customizado <em>WHERE</em>"
+msgstr "Personalizat <em>WHERE</em>"
 
 #: ui/admin/setup-edit.php:370
 msgid "All <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr "Todos os <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr "Toate <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
 
 #: classes/fields/pick.php:238
 msgid "Customized <em>ORDER BY</em>"
-msgstr "Customizado <em>ORDER BY</em>"
+msgstr "Personalizat <em>ORDER BY</em>"
 
 #: ui/admin/setup-edit.php:374
 msgid "Search <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr "Pesquisar <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr "Caută <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
 
 #: classes/fields/pick.php:250
 msgid "Customized <em>GROUP BY</em>"
-msgstr "Customizado <em>GROUP BY</em>"
+msgstr "Personalizat <em>GROUP BY</em>"
 
 #: ui/admin/setup-edit.php:378
 msgid "Not Found"
-msgstr "Não Encontrado"
+msgstr "Nu a fost găsit"
 
 #: classes/fields/pick.php:1015
 msgid "-- Select One --"
-msgstr "-- Selecione Um --"
+msgstr "-- Selectează Unul --"
 
 #: ui/admin/setup-edit.php:386
 msgid "Not Found in Trash"
-msgstr "Não Encontrado na Lixeira"
+msgstr "Nu a fost găsit în Gunoi"
 
 #: classes/fields/website.php:71
 msgid "http://example.com/"
-msgstr "http://exemplo.com/"
+msgstr "http://example.com/"
 
 #: ui/admin/setup-edit.php:394
 msgid "Popular <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr "<span class=\"pods-slugged\" data-sluggable=\"label\">Items</span> Populares"
+msgstr "Popular <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
 
 #: classes/fields/website.php:72
 msgid "http://example.com/ (remove www)"
-msgstr "http://exemplo.com/ (remove o www)"
+msgstr "http://example.com/ (scoate www)"
 
 #: ui/admin/setup-edit.php:398
 msgid "Separate <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> with commas"
-msgstr "Separar <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> com vírgulas"
+msgstr "Separă <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> cu virgule"
 
 #: classes/fields/website.php:73
 msgid "http://www.example.com/ (force www if no sub-domain provided)"
-msgstr "http://www.exemplo.com/ (força o www se nenhum subdomínio é fornecido)"
+msgstr "http://www.example.com/ (forțează www dacă niciun sub-domeniu nu este furnizat)"
 
 #: ui/admin/setup-edit.php:402
 msgid "Add or remove <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
-msgstr "Adicionar ou remover <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
+msgstr "Adaugă sau scoate <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
 
 #: classes/fields/website.php:74
 msgid "example.com"
-msgstr "exemplo.com"
+msgstr "example.com"
 
 #: ui/admin/setup-edit.php:406
 msgid "Choose from the most used"
-msgstr "Escolhe a partir do mais usado"
+msgstr "Alege dintre cele mai folosite"
 
 #: classes/fields/website.php:75
 msgid "example.com (force removal of www)"
-msgstr "exemplo.com (força a remoção do www)"
+msgstr "example.com (forțează scoaterea of www)"
 
 #: classes/PodsAdmin.php:958
 msgid "Post Type Description"
-msgstr "Descrição do Tipo de Post"
+msgstr "Descriere Tip Postare"
 
 #: classes/fields/website.php:76
 msgid "www.example.com (force www if no sub-domain provided)"
-msgstr "www.exemplo.com (força o www se nenhum subdomínio é fornecido)"
+msgstr "www.example.com (forțează www dacă niciun sub-domeniu nu este furnizat)"
 
 #: classes/PodsAdmin.php:959
 msgid "A short descriptive summary of what the post type is."
-msgstr "Um breve resumo descritivo de o que é um tipo de post."
+msgstr "Un sumar descriptiv a ceea ce este tipul postării."
 
 #: classes/fields/website.php:187
 msgid "Invalid website provided for the field %s."
-msgstr "Fornecido um site inválido para o campo %s."
+msgstr "Website invalid furnizat pentru câmpul %s."
 
 #: classes/PodsAdmin.php:1023 ui/admin/setup-edit.php:574
 msgid "Public"
-msgstr "Público"
+msgstr "public"
 
 #: classes/fields/wysiwyg.php:67 ui/admin/setup-edit.php:453
 msgid "Editor"
@@ -2168,52 +2169,52 @@ msgstr "Editor"
 
 #: classes/PodsAdmin.php:1030
 msgid "Publicly Queryable"
-msgstr "Query habilitada Publicamente"
+msgstr "Queryable Public"
 
 #: classes/fields/wysiwyg.php:74
 msgid "TinyMCE (WP Default)"
-msgstr "TinyMCE (Padrão WP)"
+msgstr "TinyMCE (WP Default)"
 
 #: classes/PodsAdmin.php:1037
 msgid "Exclude from Search"
-msgstr "Excluir da Pesquisa"
+msgstr "Exclude din Căutare"
 
 #: classes/fields/wysiwyg.php:75
 msgid "CLEditor"
-msgstr ""
+msgstr "CLEditor"
 
 #: classes/PodsAdmin.php:964 classes/PodsAdmin.php:1171
 msgid "Show Admin UI"
-msgstr "Exibir Admin UI"
+msgstr "Arată UI Administrator"
 
 #: classes/widgets/PodsWidgetForm.php:26 classes/widgets/PodsWidgetForm.php:42
 #: classes/widgets/PodsWidgetForm.php:53
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:41
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:133
 msgid "Submit"
-msgstr "Enviar"
+msgstr "Propune"
 
 #: classes/PodsAdmin.php:971 classes/PodsAdmin.php:1339
 msgid "Show Admin Menu in Dashboard"
-msgstr "Exibir Menu Admin no Dashboard"
+msgstr "Arată Meniu Administrator în Panoul de Control"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:22
 msgid "Pods - Field Value"
-msgstr "Pods - Valor do Campo"
+msgstr "Pods - Valorea Câmpului"
 
 #: classes/PodsAdmin.php:985 classes/PodsAdmin.php:1179
 #: ui/admin/setup-edit.php:418
 msgid "Menu Name"
-msgstr "Nome do Menu"
+msgstr "Numele Meniului"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:23
 msgid "Display a single Pod item's field value"
-msgstr "Exibir um único valor de campo do ítem Pod"
+msgstr "Afișează valoarea câmpului un singur item Pod"
 
 #: classes/PodsAdmin.php:992 classes/PodsAdmin.php:1208
 #: classes/PodsAdmin.php:1305 classes/PodsAdmin.php:1353
 msgid "Menu Position"
-msgstr "Posição do Menu"
+msgstr "Poziția Meniului"
 
 #: classes/PodsAPI.php:5070
 #: components/Builder/modules/field/PodsBuilderModuleField.php:77
@@ -2224,12 +2225,12 @@ msgstr "Posição do Menu"
 #: ui/admin/widgets/form.php:26 ui/admin/widgets/list.php:28
 #: ui/admin/widgets/single.php:28
 msgid "Pod"
-msgstr ""
+msgstr "Pod"
 
 #: classes/PodsAdmin.php:1215 classes/PodsAdmin.php:1312
 #: classes/PodsAdmin.php:1360
 msgid "Menu Icon URL"
-msgstr "URL do Ícone do Menu"
+msgstr "URL Icon Meniu"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:84
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:86
@@ -2241,72 +2242,72 @@ msgstr "URL do Ícone do Menu"
 #: ui/admin/widgets/field.php:39 ui/admin/widgets/form.php:39
 #: ui/admin/widgets/list.php:41 ui/admin/widgets/single.php:41
 msgid "None Found"
-msgstr "Não Encontrado"
+msgstr "Niciunul Găsit"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:90
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:92
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:91
 #: ui/admin/widgets/field.php:45 ui/admin/widgets/single.php:47
 msgid "Slug or ID"
-msgstr "Slug ou ID"
+msgstr "Slug sau ID"
 
 #: classes/PodsAdmin.php:1006 classes/PodsAdmin.php:1222
 msgid "Show in Navigation Menus"
-msgstr "Exibe em Menus de Navegação"
+msgstr "Arată în Meniurile Navigare"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:98
 #: ui/admin/shortcode.php:442 ui/admin/widgets/field.php:52
 msgid "Field"
-msgstr "Campo"
+msgstr "Câmp"
 
 #: classes/PodsAdmin.php:1013
 msgid "Show in Admin Bar \"New\" Menu"
-msgstr "Exibe na Barra do Admin no Menu \"Novo\""
+msgstr "Arată în Bara Administrator \"New\" Meniu"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:22
 msgid "Pods - Form"
-msgstr "Pods - Formulário"
+msgstr "Pods - Formă"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:23
 #: ui/admin/shortcode.php:330
 msgid "Display a form for creating and editing Pod items"
-msgstr "Exibe um formulário para criar e editar ítens Pod"
+msgstr "Afișează o formă pentru crearea și editarea itemurilor Pods"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:100
 #: ui/admin/shortcode.php:448 ui/admin/widgets/form.php:50
 msgid "Fields (comma-separated)"
-msgstr "Campos (separados por vírgula)"
+msgstr "Câmpuri (separate de virgule)"
 
 #: classes/fields/pick.php:326
 msgid "Custom"
-msgstr "Customizado"
+msgstr "Personalizat"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:108
 #: ui/admin/shortcode.php:454 ui/admin/widgets/form.php:56
 msgid "Submit Label"
-msgstr "Rótulo de Envio"
+msgstr "Propune Etichetă"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:116
 #: ui/admin/shortcode.php:460 ui/admin/widgets/form.php:62
 msgid "Thank You URL upon submission"
-msgstr "URL de Agradecimento ao enviar"
+msgstr "URL Mulțumesc la propunere"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:22
 msgid "Pods - List Items"
-msgstr "Pods - Lista Itens"
+msgstr "Pods - Listează Itemurile"
 
 #: classes/PodsAdmin.php:1085 ui/admin/setup-edit.php:578
 #: ui/admin/setup-edit.php:687
 msgid "Hierarchical"
-msgstr "Hierárquico"
+msgstr "Ierarhic"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:23
 msgid "Display multiple Pod items"
-msgstr "Exibe múltiplos ítens Pod"
+msgstr "Afișează mai multe itemuri Pods"
 
 #: classes/PodsAdmin.php:1093 ui/admin/setup-edit.php:583
 msgid "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "<strong>Rótulo: </strong> <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span> Pai"
+msgstr "<strong>Etichetă: </strong> Părinte <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:99
 #: components/Builder/modules/list/PodsBuilderModuleList.php:137
@@ -2316,11 +2317,11 @@ msgstr "<strong>Rótulo: </strong> <span class=\"pods-slugged\" data-sluggable=\
 #: ui/admin/widgets/list.php:55 ui/admin/widgets/list.php:84
 #: ui/admin/widgets/single.php:63 ui/admin/widgets/single.php:86
 msgid "Custom Template"
-msgstr "Template Customizado"
+msgstr "Șablon Personalizat"
 
 #: classes/PodsAdmin.php:1100 ui/admin/setup-edit.php:587
 msgid "<strong>Label: </strong> Parent"
-msgstr "<strong>Rótulo: </strong> Pai"
+msgstr "<strong>Etichetă: </strong> Părinte"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:108
 #: components/Builder/modules/list/PodsBuilderModuleList.php:125
@@ -2332,93 +2333,93 @@ msgstr "<strong>Rótulo: </strong> Pai"
 #: ui/admin/widgets/list.php:69 ui/admin/widgets/single.php:60
 #: ui/admin/widgets/single.php:77
 msgid "Template"
-msgstr ""
+msgstr "Șablon"
 
 #: classes/PodsAdmin.php:1107 ui/admin/setup-edit.php:592
 msgid "Rewrite"
-msgstr ""
+msgstr "Rescrie"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:145
 #: ui/admin/shortcode.php:424 ui/admin/widgets/list.php:96
 msgid "Limit"
-msgstr "Limite"
+msgstr "Limită"
 
 #: classes/PodsAdmin.php:1115 ui/admin/setup-edit.php:597
 msgid "Custom Rewrite Slug"
-msgstr "Slug de Rewrite Customizado"
+msgstr "Rescriere Personalizată Slug"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:153
 #: ui/admin/shortcode.php:430 ui/admin/widgets/list.php:102
 msgid "Order By"
-msgstr ""
+msgstr "Ordonează După:"
 
 #: classes/PodsAdmin.php:1122
 msgid "Rewrite with Front"
-msgstr "Rewrite com Front"
+msgstr "Rescrie cu Fața"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:161
 #: ui/admin/shortcode.php:436 ui/admin/widgets/list.php:108
 msgid "Where"
-msgstr ""
+msgstr "Unde"
 
 #: ui/admin/setup-edit.php:601
 msgid "Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)"
-msgstr "Permite permalinks a serem prefixados com a base do front ( exemplo: se a sua estrutura permalink é /blog/, então seus links serão: /news/ se tiver Habilitado, /blog/news se tiver Desabilitado )"
+msgstr "Permite permalinkurilor să fie prefixate cu front base (exemplu: dacă structura permalink este /blog/, atunci linkurile tale vor fi: Checked->/news/, Unchecked->/blog/news/)"
 
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:22
 msgid "Pods - Single Item"
-msgstr "Pods - Item Único"
+msgstr "Pods - Item Singular"
 
 #: classes/PodsAdmin.php:1130
 msgid "Rewrite Feeds"
-msgstr ""
+msgstr "Rescrie Feeds"
 
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:23
 #: ui/admin/shortcode.php:326
 msgid "Display a single Pod item"
-msgstr "Exibe um item único de Pod"
+msgstr "Afișează un singur item Pod"
 
 #: classes/PodsAdmin.php:1138
 msgid "Rewrite Pages"
-msgstr "Rewrite nas Páginas"
+msgstr "Rescrie Pagini"
 
 #: components/Helpers.php:233
 msgid "Enter helper name here"
-msgstr "Escreva o nome do helper aqui"
+msgstr "Introdu numele helper-ului aici"
 
 #: classes/PodsAdmin.php:1146 ui/admin/setup-edit.php:610
 msgid "Query Var"
-msgstr ""
+msgstr "Query Var"
 
 #: components/Helpers.php:267
 msgid "Helper Type"
-msgstr "Tipo Helper"
+msgstr "Tip Helper"
 
 #: classes/PodsAdmin.php:1153
 msgid "Exportable"
-msgstr "Exportável"
+msgstr "Exportabile"
 
 #: components/Helpers.php:281
 msgid "Code"
-msgstr "Código"
+msgstr "Cod"
 
 #: ui/admin/setup-edit.php:441
 msgid "Supports"
-msgstr "Supportes"
+msgstr "Asistență"
 
 #: components/Helpers.php:286
 msgid "Helper"
-msgstr ""
+msgstr "Helper"
 
 #: ui/admin/setup-edit.php:448 ui/admin/widgets/field.php:15
 #: ui/admin/widgets/form.php:15 ui/admin/widgets/list.php:17
 #: ui/admin/widgets/single.php:17 ui/admin/widgets/view.php:15
 msgid "Title"
-msgstr "Título"
+msgstr "Titlu"
 
 #: classes/fields/paragraph.php:150 classes/fields/wysiwyg.php:167
 msgid "Allow Markdown Syntax?"
-msgstr "Permite Sintaxe Markdown?"
+msgstr "Permite Markdown Syntax?"
 
 #: ui/admin/setup-edit.php:458
 msgid "Author"
@@ -2427,124 +2428,124 @@ msgstr "Autor"
 #: components/Migrate-CPTUI/Migrate-CPTUI.php:189
 #: components/Migrate-CPTUI/Migrate-CPTUI.php:255
 msgid "Pod with the name %s already exists"
-msgstr "Um Pod com o nome %s já existe"
+msgstr "Deja există Pod cu numele %s"
 
 #: ui/admin/setup-edit.php:463
 msgid "Featured Image"
-msgstr "Imagem Destacada"
+msgstr "Imagine Featured"
 
 #: components/Migrate-CPTUI/ui/wizard.php:15
 msgid "Migrate: Import from Custom Post Type UI"
-msgstr "Migrar: Importar de um Custom Post Type UI"
+msgstr "Mutare: Importare din Tip Postare Personalizată UI"
 
 #: ui/admin/setup-edit.php:468
 msgid "Excerpt"
-msgstr "Resumo"
+msgstr "Extras"
 
 #: components/Migrate-CPTUI/ui/wizard.php:23
 msgid "Setup"
-msgstr "Configuração"
+msgstr "Setup"
 
 #: ui/admin/setup-edit.php:473
 msgid "Trackbacks"
-msgstr ""
+msgstr "Trackbacks"
 
 #: components/Migrate-CPTUI/ui/wizard.php:27
 #: ui/admin/upgrade/upgrade_2_0_0.php:26
 msgid "Migrate"
-msgstr "Migrar"
+msgstr "Mută"
 
 #: ui/admin/setup-edit.php:478
 msgid "Custom Fields"
-msgstr "Campos Customizados"
+msgstr "Câmpuri Personalizate"
 
 #: components/Migrate-CPTUI/ui/wizard.php:35
 msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
-msgstr "Custom Post Type UI fornece uma interface para criar Custom Post Types e Custom Taxonomies. Você pode importar estes e suas configurações direto para o Pods 2.0"
+msgstr "Tipuri Postări Personalizate oferă o interfață pentru a crea Tipuri Postări Personalizate și Taxonomii Personalizate. Le poți importa împreună cu setările lor direct în Pods 2.0"
 
 #: ui/admin/setup-edit.php:488
 msgid "Revisions"
-msgstr "Revisões"
+msgstr "Revizii"
 
 #: components/Migrate-CPTUI/ui/wizard.php:40
 msgid "Import Only"
-msgstr "Somente Importar"
+msgstr "Doar Import"
 
 #: ui/admin/setup-edit.php:493
 msgid "Page Attributes"
-msgstr "Atributos de Página"
+msgstr "Atribute Pagină"
 
 #: components/Migrate-CPTUI/ui/wizard.php:42
 msgid "This will import your Custom Post Types and Taxonomies."
-msgstr "Irá importar os seus Custom Post Types e Taxonomies."
+msgstr "Asta va importa Tipurile Postări Personalizate și Taxonomii."
 
 #: classes/fields/pick.php:468 ui/admin/setup-edit.php:498
 msgid "Post Formats"
-msgstr "Formatos de Post"
+msgstr "Formate Postări"
 
 #: components/Migrate-CPTUI/ui/wizard.php:49
 msgid "Import and Clean Up"
-msgstr "Importar e Limpar"
+msgstr "Importare și Curățare"
 
 #: ui/admin/setup-edit.php:549
 msgid "Built-in Taxonomies"
-msgstr "Taxonomias Incorporadas"
+msgstr "Taxonomii Încorporate"
 
 #: components/Migrate-CPTUI/ui/wizard.php:51
 msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
-msgstr "Irá importar os seus Custom Post Types e Taxonomies, e então removê-los do Custom Post Type UI."
+msgstr "Asta va importa Tipurile Postare Personalizată și Taxonomii, apoi le va înlătura din Tipuri Postare Personalizată UI."
 
 #: components/Migrate-CPTUI/ui/wizard.php:60
 msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
-msgstr "Escolher entre quais Custom Post Types e Taxonomies você deseja importar para o Pods 2.0"
+msgstr "Alege mai jos ce Tipuri Postare Personalizată și Taxonomii vrei importate în Pods 2.0"
 
 #: classes/PodsAdmin.php:999
 msgid "Menu Icon"
-msgstr "Ícone de Menu"
+msgstr "Icon Meniu"
 
 #: components/Migrate-CPTUI/ui/wizard.php:64
 msgid "Choose Post Types to Import"
-msgstr "Escolher Post Types para Importar"
+msgstr "Alege Tipuri Postări pentru importare"
 
 #: components/Migrate-CPTUI/ui/wizard.php:72
 msgid "Available Post Types"
-msgstr "Post Types Disponíveis"
+msgstr "Tipuri Postări Disponibile"
 
 #: classes/PodsAdmin.php:1229
 msgid "Allow in Tagcloud Widget"
-msgstr "Permitido no Widget Tagcloud"
+msgstr "Permite în Widget-ul Tagcloud"
 
 #: components/Migrate-CPTUI/ui/wizard.php:97
 msgid "No Post Types were found."
-msgstr "Não foi encontrado nenhum Post Type."
+msgstr "Nu au fost găsite Tipuri Postări"
 
 #: ui/admin/setup-edit.php:601
 msgid "Allow Front Prepend"
-msgstr "Permite Prefixo no Front"
+msgstr "Permite Front Prepend"
 
 #: components/Migrate-CPTUI/ui/wizard.php:105
 msgid "Choose Taxonomies to Import"
-msgstr "Escolher Taxonomias para Importar"
+msgstr "Alege Taxonomii pentru a Importa"
 
 #: ui/admin/setup-edit.php:605
 msgid "Hierarchical Permalinks"
-msgstr "Permalinks Hierárquicos"
+msgstr "Permalinkuri Ierarhice"
 
 #: components/Migrate-CPTUI/ui/wizard.php:113
 msgid "Available Taxonomies"
-msgstr "Taxonomias Disponíveis"
+msgstr "Taxonomii Disponibile"
 
 #: ui/admin/setup-edit.php:620
 msgid "Remember order saved on Post Types"
-msgstr "Lembrar ordem de salvamento nos Post Types"
+msgstr "Amintește ordinea salvată la Tipuri Postări"
 
 #: components/Migrate-CPTUI/ui/wizard.php:136
 msgid "No Taxonomies were found."
-msgstr "Nenhuma Taxonomia foi encontrada."
+msgstr "Nu au fost găsite taxonomii"
 
 #: classes/PodsAdmin.php:1239
 msgid "Show Taxonomy column on Post Types"
-msgstr "Exibe coluna Taxonomia nos Post Types."
+msgstr "Arată coloana Taxonomii pe Tipuri Postări"
 
 #: components/Migrate-CPTUI/ui/wizard.php:146
 #: components/Migrate-Packages/ui/wizard.php:279
@@ -2552,691 +2553,692 @@ msgstr "Exibe coluna Taxonomia nos Post Types."
 #: ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:122
 msgid "Start Over"
-msgstr "Recomeçar"
+msgstr "Începe din nou"
 
 #: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
 #: ui/admin/setup-add.php:350 ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:122
 msgid "Next Step"
-msgstr "Próximo Passo"
+msgstr "Următorul Pas"
 
 #: ui/admin/setup-edit.php:625
 msgid "Function to call when updating counts"
-msgstr "Função para chamar ao atualizar contadores"
+msgstr "Funcție de invocat la actualizarea counts"
 
 #: components/Migrate-CPTUI/ui/wizard.php:146
 #: components/Migrate-Packages/ui/wizard.php:279
 #: components/Roles/ui/add.php:122 ui/admin/setup-add.php:350
 msgid "Finished"
-msgstr "Terminado"
+msgstr "Terminat"
 
 #: ui/admin/setup-edit.php:630
 msgid "Associated Post Types"
-msgstr "Post Types Associados"
+msgstr "Tipuri Postări Asociate"
 
 #: components/Migrate-CPTUI/ui/wizard.php:146
 #: components/Migrate-Packages/ui/wizard.php:279
 #: components/Roles/ui/add.php:122 ui/admin/setup-add.php:350
 msgid "Processing"
-msgstr "Processando"
+msgstr "În curs de procesare"
 
 #: ui/admin/setup-edit.php:668
 msgid "Detail Page URL"
-msgstr "URL de Página Detalhes"
+msgstr "Pagină Detalii URL"
 
 #: components/Migrate-Packages/ui/wizard.php:15
 msgid "Migrate: Packages"
-msgstr "Migrar: Pacotes"
+msgstr "Mutare: Pachete"
 
 #: ui/admin/setup-edit.php:682
 msgid "Title Field"
-msgstr "Campo Título"
+msgstr "Titlu Câmp"
 
 #: components/Migrate-Packages/ui/wizard.php:23
 msgid "Choose"
-msgstr "Escolha"
+msgstr "Alege"
 
 #: ui/admin/setup-edit.php:682
 msgid "If you delete the \"name\" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field."
-msgstr "Se você apagar o campo \"name\", teremos que especificar o campo a ser usado como título primário. Este campo servirá como um índice do seu conteúdo. Normalmente este campo representa o nome de uma pessoa, lugar, coisa ou um campo de resumo."
+msgstr "Dacă ștergi câmpul \"name\" , trebuie să specificăm câmpul de folosit ca și câmp de titlu primar. Acest câmp va servi ca un index al conținutului. În general acest câmp reprezintă numele unei persoane, a unui loc, lucru, sau un câmp pentru rezumat."
 
 #: components/Migrate-Packages/ui/wizard.php:27
 msgid "Import / Export"
-msgstr "Importar / Exportar"
+msgstr "Importare / Exportare"
 
 #: ui/admin/setup-edit.php:722
 msgid "Pre-Save Helper(s)"
-msgstr "Helper(s) de Pre-Salvamento"
+msgstr "Helper(s) Pre-salvare"
 
 #: components/Migrate-Packages/ui/wizard.php:50
 #: components/Migrate-Packages/ui/wizard.php:85
 #: components/Migrate-Packages/ui/wizard.php:103
 msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
-msgstr "Pacotes permitem importar/exportar seus Pods, Campos, e outras configurações entre qualquer sites com Pods."
+msgstr "Pachetele îți permit să imporți/exporți Pods, Câmpuri și alte setări între orice siteuri Pods."
 
 #: ui/admin/setup-edit.php:736
 msgid "Post-Save Helper(s)"
-msgstr "Helper(s) de Pós-Salvamento"
+msgstr "Helper(s) Post-Salvare"
 
 #: components/Migrate-Packages/ui/wizard.php:56
 msgid "Import"
-msgstr "Importar"
+msgstr "Importare"
 
 #: ui/admin/setup-edit.php:750
 msgid "Pre-Delete Helper(s)"
-msgstr "Helper(s) de Pre-Remoção"
+msgstr "Helper(s) Pre-ștergere"
 
 #: components/Migrate-Packages/ui/wizard.php:58
 msgid "Import a package of Pods, Fields, and other settings from another site."
-msgstr "Importa um pacote de Pods, Campos, e outras configurações de outro site."
+msgstr "Importă un pachet de Pods, Câmpuri și alte setări din alt site."
 
 #: ui/admin/setup-edit.php:764
 msgid "Post-Delete Helper(s)"
-msgstr "Helper(s) de Pós-Remoção"
+msgstr "Helper(s) Post-Ștergere"
 
 #: components/Migrate-Packages/ui/wizard.php:71
 msgid "Choose which Pods, Fields, and other settings to export into a package."
-msgstr "Escolhe quais Pods, Campos, e outras configurações para exportar num pacote."
+msgstr "Alege ce Pods, Câmpuri și alte setări să exportezi într-un pachet."
 
 #: ui/admin/setup-edit.php:823
 msgid "Are you sure you want to delete this Pod? All fields and data will be removed."
-msgstr "Tem certeza que deseja apagar este Pod? Todos os campos e dados serão removidos."
+msgstr "Ești sigur că vrei să ștergi acest Pod? Toate câmpurile și datele for fi înlăturate."
 
 #: components/Migrate-Packages/ui/wizard.php:89
 msgid "Paste the Package Code"
-msgstr "Copia o Código do Pacote"
+msgstr "Adaugă Codul Pachetului"
 
 #: classes/PodsAPI.php:5066 classes/fields/pick.php:355
 #: ui/admin/setup-edit.php:855 ui/admin/upgrade/upgrade_2_0_0.php:75
 #: ui/admin/upgrade/upgrade_2_0_0.php:191
 msgid "Pods"
-msgstr ""
+msgstr "Pods"
 
 #: components/Migrate-Packages/ui/wizard.php:112
 msgid "Choose which Pods to export"
-msgstr "Escolhe quais Pods para exportar"
+msgstr "Alege ce Pods să fie exportate"
 
 #: classes/fields/pick.php:382 ui/admin/setup-edit.php:636
 #: ui/admin/setup-edit.php:856
 msgid "Post Types"
-msgstr "Tipos de Post"
+msgstr "Tipuri Postări"
 
 #: components/Migrate-Packages/ui/wizard.php:117
 #: components/Migrate-Packages/ui/wizard.php:156
 #: components/Migrate-Packages/ui/wizard.php:195
 #: components/Migrate-Packages/ui/wizard.php:234
 msgid "Toggle all on / off"
-msgstr "Marca tudo ligado / desligado"
+msgstr "Comutare toate deschis/închis"
 
 #: classes/fields/pick.php:417 ui/admin/setup-edit.php:555
 #: ui/admin/setup-edit.php:857
 msgid "Taxonomies"
-msgstr "Taxonomias"
+msgstr "Taxonomii"
 
 #: components/Migrate-Packages/ui/wizard.php:151
 msgid "Choose which Pod Templates to export"
-msgstr "Escolhe quais Templates Pods para exportar"
+msgstr "Alege ce Șabloane Pod să exportezi"
 
 #: ui/admin/setup-edit.php:931
 msgid "Loading available fields.."
-msgstr "Carregando campos disponíveis..."
+msgstr "Se încarcă câmpuri disponibile..."
 
 #: components/Migrate-Packages/ui/wizard.php:190
 msgid "Choose which Pod Pages to export"
-msgstr "Escolhe quais Páginas Pods para exportar"
+msgstr "Alege ce Pagini Pod să exportezi"
 
 #: ui/admin/setup-edit.php:965
 msgid "-- Select Related Field --"
-msgstr "-- Selecione o Campo Relacionado --"
+msgstr "-- Alege Câmp Înrudit --"
 
 #: components/Migrate-Packages/ui/wizard.php:229
 msgid "Choose which Pod Helpers to export"
-msgstr "Escolhe quais Helpers Pod para exportar"
+msgstr "Alege ce Pod Helpers să fie exportate"
 
 #: ui/admin/shortcode.php:318
 msgid "Pods &raquo; Embed"
-msgstr ""
+msgstr "Pods &raquo; Embed"
 
 #: components/Migrate-Packages/ui/wizard.php:270
 msgid "Results"
-msgstr "Resultados"
+msgstr "Rezultate"
 
 #: ui/admin/shortcode.php:323
 msgid "What would you like to do?"
-msgstr "O que você gostaria de fazer?"
+msgstr "Ce ai vrea să faci?"
 
 #: components/Migrate-Packages/ui/wizard.php:279
 msgid "Continue"
-msgstr "Continuar"
+msgstr "Continuă"
 
 #: ui/admin/shortcode.php:327
 msgid "List multiple Pod items"
-msgstr "Lista múltiplos ítens Pod"
+msgstr "Listă itemuri multiple Pod"
 
 #: components/Pages.php:290
 msgid "Enter URL here"
-msgstr "Escreva a URL aqui"
+msgstr "Adaugă URL-ul aici"
 
 #: ui/admin/shortcode.php:328
 msgid "Display a field from a single Pod item"
-msgstr "Exibe um campo de um único ítem Pod"
+msgstr "Afișează un câmp dintr-un singur item Pod"
 
 #: components/Pages.php:346
 msgid "-- Page Template --"
-msgstr "-- Template de Página --"
+msgstr "-- Șablon Pagină --"
 
 #: ui/admin/shortcode.php:344
 msgid "Choose a Pod"
-msgstr "Escolhe um Pod"
+msgstr "Alege un Pod"
 
 #: components/Pages.php:366 ui/admin/setup-add.php:140
 #: ui/admin/setup-edit.php:414
 msgid "Page Title"
-msgstr "Título de Página"
+msgstr "Titlu Pagină"
 
 #: ui/admin/shortcode.php:418 ui/admin/widgets/form.php:44
 msgid "ID or Slug"
-msgstr "ID ou Slug"
+msgstr "ID sau Slug"
 
 #: components/Pages.php:371
 msgid "Page Code"
-msgstr "Código de Página"
+msgstr "Cod Pagină"
 
 #: ui/admin/shortcode.php:500
 msgid "Insert"
-msgstr "Insere"
+msgstr "Inserează"
 
 #: components/Pages.php:384
 msgid "Page Precode"
-msgstr "Pré código de Página"
+msgstr "Precod Pagină"
 
 #: ui/admin/upgrade/backup.php:1
 msgid "We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below."
-msgstr "Recomendamos que você faça um backup da base de dados, isso pode ser a salvação em uma situação inesperada que possa acontecer. Marque algumas opções que achamos ser <em>ótimas</em> abaixo."
+msgstr "Recomandăm să faci un back-up al bazei de date, te  poate salva într-o situație ciudată la care s-ar putea să nu te aștepți. Iată niște opțiuni care credem că sunt <em>minunate</em> mai jos."
 
 #: components/Pages.php:386
 msgid "Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default."
-msgstr "Pré código vai ser executado antes do tema ser exibido na página. É esperado que este valor seja um bloco de PHP. Você deve abrir as tags PHP aqui, pois não são abertas por padrão aqui."
+msgstr "Precodul va rula înainte ca tema să scoată pagina. Este de așteptat că această valoare va fi un block de PHP. Trebuie să deschizi tag-ul PHP aici, pentru că nu îl deschidem în mod prestabilit."
 
 #: ui/admin/upgrade/backup.php:7
 msgid "Receive 25% off"
-msgstr "Receber 25% de Desconto"
+msgstr "Primește reducere de 255"
 
 #: components/Pages.php:390
 msgid "Page Template"
-msgstr "Template de Página"
+msgstr "Șablon Pagină"
 
 #: ui/admin/upgrade/backup.php:9
 msgid "Coupon Code"
-msgstr "Código de Cupom"
+msgstr "Cod Cupon"
 
 #: components/Pages.php:396
 msgid "Page"
-msgstr "Página"
+msgstr "Pagină"
 
 #: ui/admin/upgrade/backup.php:12
 msgid "The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations."
-msgstr "O plugin tudo-em-um do Wordpress para fazer backup facilmente, restaurar, e migrar para qualquer número de locais ou locais externos."
+msgstr "Pluginul de backup toate-în-unul WordPress pentru a face backup cu ușurință, restabili și muta la orice număr de locuri locale sau externe."
 
 #: components/Templates/Templates.php:300
 msgid "Show to Admins Only?"
-msgstr "Exibe somente para Admins?"
+msgstr "Arată Doar Administratorilor?"
 
 #: ui/admin/upgrade/backup.php:17
 msgid "1 free month"
-msgstr "1 mês grátis"
+msgstr "O lună gratis"
 
 #: classes/PodsAdmin.php:1593 components/Pages.php:466
 #: components/Templates/Templates.php:307
 msgid "Restrict access by Capability?"
-msgstr "Restringe acesso por Capacidade?"
+msgstr "Restricționează accesul după Capabilitate?"
 
 #: ui/admin/upgrade/backup.php:19
 msgid "Click to sign up"
-msgstr "Clique para assinar"
+msgstr "Dă click pentru a te înscrie"
 
 #: classes/PodsAdmin.php:1646 components/Pages.php:477
 #: components/Templates/Templates.php:318
 msgid "Capability Allowed"
-msgstr "Capacidade Permitida"
+msgstr "Capabilitate permisă"
 
 #: ui/admin/upgrade/backup.php:22
 msgid "A service that provides realtime continuous backups, restores, and security scanning."
-msgstr "Um serviço que fornece backups contínuos em tempo real, restaurações e rastreamento de segurança."
+msgstr "Un serviciu care oferă backup-uri permanente în timp real, restabilire și scanare de securitate."
 
 #: classes/PodsAdmin.php:1647
 msgid "Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own."
-msgstr "Lista separada por vírgula, de capacidades, por exemplo add_podname_item - por favor veja o componente Roles e Capabilities para uma lista completa e um modo de adicionar o seu próprio."
+msgstr "Listă separată de virgule de capabilități, spre exemplu add_podname_item, te rugăm vezi componentele Roluri și Capabilități pentru lista completă și o modalitate de a le adăuga pe cele proprii."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:10 ui/admin/upgrade/upgrade_2_1_0.php:10
 msgid "Upgrade Pods"
-msgstr "Atualizar Pods"
+msgstr "Upgrade Pods"
 
 #: classes/PodsAdmin.php:1574 components/Pages.php:517
 #: components/Templates/Templates.php:331
 msgid "Restrict Access"
-msgstr "Restringir Acesso"
+msgstr "Restricționează Accesul"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:18 ui/admin/upgrade/upgrade_2_1_0.php:18
 msgid "Getting Started"
-msgstr "Iniciando"
+msgstr "Noțiuni de bază"
 
 #: components/Roles/Roles.php:68 components/Roles/Roles.php:214
 msgid "%s User"
 msgid_plural "%s Users"
-msgstr[0] "%s Usuário"
-msgstr[1] "%s Usuários"
+msgstr[0] "%s Utilizator"
+msgstr[1] "%s Utilizatori"
+msgstr[2] ""
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:22 ui/admin/upgrade/upgrade_2_1_0.php:22
 msgid "Prepare"
-msgstr "Preparar"
+msgstr "Pregătește"
 
 #: components/Roles/Roles.php:77 components/Roles/Roles.php:223
 msgid "View Users"
-msgstr "Visualizar Usuários"
+msgstr "Vezi Utilizatorii"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:38
 msgid "Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>."
-msgstr "Bem vindo ao #Pods 2! Realmente esperamos que você goste do trabalho de dois anos de planejamento e desenvolvimento, disponível a você <em>de graça</em>."
+msgstr "Bine ai venit la #Pods2! Sperăm să te bucuri de peste doi ani de planificare și muncă, disponibili <em>gratis</em>."
 
 #: components/Roles/Roles.php:93 components/Roles/ui/add.php:26
 msgid "Capabilities"
-msgstr "Capacidades"
+msgstr "Capabilități"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:39
 msgid "Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that."
-msgstr "Devido a um número de otimizações no #Pods 2, precisamos rodar alguns updates na sua base de dados. Isso não deve remover ou alterar os seus dados Pod existentes da versão 1.x, então se desejar voltar para o Pod 1.x - você poderá facilmente fazer isso."
+msgstr "Datorită unui număr de optimizări în #Pods2, trebuie să facem câteva actualizări bazei de date. Asta nu ar trebui să înlăture sau să schimbe datele existente Pods din 1.x, deci dacă dorești să te întorci la Pods 1.x poți face asta cu ușurință."
 
 #: classes/fields/pick.php:424 components/Roles/Roles.php:95
 #: ui/admin/setup-add.php:232
 msgid "Users"
-msgstr "Usuários"
+msgstr "Utilizatori"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:53
 msgid "We will prepare all of your Pods, Settings, and Content for migration. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for Migration."
-msgstr "Iremos preparar todos os seus Pods, Configurações e Conteúdo para migração. Se quaisquer problemas forem encontrados, serão mostrados abaixo para a sua conferência. Tenha certeza de fazer backup da sua base de dados antes de continuar no próximo passo da Migração."
+msgstr "Vom pregăti toate Pods, Setări și Conținut pentru mutare. Dacă sunt găsite probleme vor fi afișate pentru revizie. Fii sigur că ai făcut backup bazei de date înainte să continui la pasul următor pentru Migrare."
 
 #: components/Roles/Roles.php:164 components/Roles/Roles.php:297
 msgid "Role not found, cannot edit it."
-msgstr "Perfil não encontrado, não poderá ser editado."
+msgstr "Rolul nu a fost găsit, nu poate fi editat."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:61
 msgid "Preparing Your Content for Migration"
-msgstr "Preparando Seu Conteúdo para Migração"
+msgstr "Pregătirea Conținutului tău pentru Migrare"
 
 #: components/Roles/Roles.php:179
 msgid "Role not found, it cannot be deleted."
-msgstr "Perfil não encontrado, não poderá ser apagado."
+msgstr "Rolul nu a fost găsit, nu poate fi șters."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:95 ui/admin/upgrade/upgrade_2_0_0.php:211
 #: ui/admin/upgrade/upgrade_2_1_0.php:70 ui/admin/upgrade/upgrade_2_1_0.php:100
 msgid "Relationships"
-msgstr "Relacionamentos"
+msgstr "Relații"
 
 #: components/Roles/Roles.php:184
 msgid "You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first."
-msgstr "Você não pode remover o perfil <strong>%s</strong> , você deve definir um perfil padrão para este site primeiro."
+msgstr "Nu poți înlătura rolul <strong>%s</strong>, trebuie să setezi un nou rol prestabilit pentru site înainte."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:105
 msgid "Item Indexes"
-msgstr "Índices de Item"
+msgstr "Indexuri Item"
 
 #: components/Roles/Roles.php:233
 msgid "role removed from site."
-msgstr "perfil removido do site."
+msgstr "Role înlăturat de pe site"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:115
 #: ui/admin/upgrade/upgrade_2_0_0.php:231
 msgid "Templates"
-msgstr ""
+msgstr "Șabloane"
 
 #: components/Roles/Roles.php:270
 msgid "Role name is required"
-msgstr "Nome de Perfil é requerido"
+msgstr "Numele Rolului este necesar"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:125
 #: ui/admin/upgrade/upgrade_2_0_0.php:241
 msgid "Pod Pages"
-msgstr "Páginas Pod"
+msgstr "Pagini Pod"
 
 #: components/Roles/Roles.php:273
 msgid "Role label is required"
-msgstr "Rótulo do Perfil é requerido"
+msgstr "Rolul Etichetei este necesar"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:135
 #: ui/admin/upgrade/upgrade_2_0_0.php:251
 msgid "Helpers"
-msgstr ""
+msgstr "Helpers"
 
 #: components/Roles/ui/add.php:14
 msgid "Roles &amp; Capabilities: Add New Role"
-msgstr "Perfis &amp; Capacidades: Adicionar Novo Perfil"
+msgstr "Roluri &amp; Capabilități: Adaugă Rol Nou"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:163
 msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.x architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
-msgstr "Durante este processo os seus Pods, Configurações, e Conteúdo serão migrados para a arquitetura otimizada do Pods 2.x. Não iremos apagar nenhum dos seus daods antigos, as tabelas continuarão até você decidir removê-las depois da atualização completada com sucesso."
+msgstr "În  timpul acestui proces Pod-urile, Setările și Conținutul vor fi mutate în arhitectura optimizată Pods 2.x. Nu vom șterge datele vechi, tabelele vor rămâne până vei alege să le cureți după un upgrade reușit."
 
 #: components/Roles/ui/add.php:22
 msgid "Naming"
-msgstr "Nomeando"
+msgstr "Numire"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:171
 msgid "Migrating Your Content"
-msgstr "Migrando Seu Conteúdo"
+msgstr "Mută Conținutul Tău"
 
 #: components/Roles/ui/add.php:34
 msgid "Roles allow you to specify which capabilities a user should be able to do within WordPress."
-msgstr "Perfis permitem especificar quais capacidades um usuário poderá fazer no Wordpress."
+msgstr "Rolurile îți permit să specifici ce capabilități un utilizator ar trebui să aibă în WordPress."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:181
 msgid "1.x Updates"
-msgstr "Atualizações 1.x"
+msgstr "Actualizări 1.x"
 
 #: components/Roles/ui/add.php:38
 msgid "Name your new Role"
-msgstr "Nomeie o seu novo Perfil"
+msgstr "Numește noul Rol"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:277
 #: ui/admin/upgrade/upgrade_2_1_0.php:110
 msgid "Cleanup"
-msgstr "Limpeza"
+msgstr "Curățare"
 
 #: components/Roles/ui/add.php:43
 msgid "Users will see this as the name of their role"
-msgstr "Usuários verão isso como o nome do seu perfil"
+msgstr "Utilizatorii vor vedea asta ca numele rolului"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:122
 msgid "Start using Pods"
-msgstr "Começar a usar Pods"
+msgstr "Începe să folosești Pods"
 
 #: components/Roles/ui/add.php:50
 msgid "You will use this name to programatically reference this role throughout WordPress"
-msgstr "Você irá usar este nome para referenciar via código este perfil através do WordPress."
+msgstr "Vei folosi acest nume pentru a face referință programatic prin WordPress"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:292
 msgid "Migration Complete!"
-msgstr "Migração Completa!"
+msgstr "Mutare Completă!"
 
 #: components/Roles/ui/add.php:59
 msgid "Choose below which Capabilities you would like this new user role to have."
-msgstr "Escolha abaixo quais Capacidades você gostaria que este novo perfil de usuário tivesse."
+msgstr "Alege mai jos ce Capabilități ai vrea ca acest nou rol de utilizator să aibă."
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:38
 msgid "Thanks for upgrading your #Pods2 site! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>."
-msgstr "Obrigado por atualizar o seu site #Pods 2! Queremos sinceramente que você aprecie o nosso trabalho de 2 anos de planejamento e desenvolvimento, disponível a você <em>de graça</em>."
+msgstr "Mulțumim pentru upgradarea siteului #Pods2! Sperăm să te bucuri de peste doi ani de plănuire și muncă, disponibili <em>gratis</em>."
 
 #: components/Roles/ui/add.php:63 components/Roles/ui/edit.php:74
 msgid "Assign the Capabilities for"
-msgstr "Marque as Capacidades para"
+msgstr "Atribuie Capabilitățile pentru"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:39
 msgid "We need to run a few updates to your database to optimize your relationship data."
-msgstr "Precisamos rodar algumas atualizações na sua base de dados para otimizar os seus dados de relacionamentos."
+msgstr "Trebuie să facem câteva actualizări bazei de date pentru a optimiza datele relației."
 
 #: components/Roles/ui/add.php:67 components/Roles/ui/edit.php:82
 msgid "Toggle All Capabilities on / off"
-msgstr "Marcar Todas as Capacidades ligado / desligado"
+msgstr "Comutare Toate Capabilitățile deschis/închis"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:52
 msgid "We will prepare your relationships for the upgrade. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for the Upgrade."
-msgstr "Iremos preparar seus relacionamentos para a atualização. Se quaisquer problemas forem encontrados, serão exibidos abaixo para a sua conferência. Tenha certeza de ter feito backup da sua base de dados antes de continuar no próximo passo do Upgrade."
+msgstr "Vom pregăti relațiile pentru upgrade. Dacă sunt găsite probleme vor fi afișate pentru revizuire. Asigură-te că ai făcut backup bazei de date înainte să continui la următorul pas pentru Upgrade."
 
 #: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
 msgid "Custom Capabilities"
-msgstr "Capacidades Customizadas"
+msgstr "Capabilități Personalizate"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:60
 msgid "Preparing Your Relationships for Upgrade"
-msgstr "Preparando Seus Relacionamentos para o Upgrade"
+msgstr "Pregătirea Relațiilor Tale pentru Actualizare"
 
 #: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
 msgid "These capabilities will automatically be created and assigned to this role"
-msgstr "Estas Capacidades serão automaticamente criadas e associadas a este perfil"
+msgstr "Aceste capabilități vor fi create automat și alocate acestui rol"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:82
 msgid "During this process your Relationships will be optimized."
-msgstr "Durante este processo seus Relacionamentos serão otimizados."
+msgstr "În timpul acestui proces Relațiile vor fi optimizate."
 
 #: components/Roles/ui/edit.php:15
 msgid "Roles &amp; Capabilities: Edit Role"
-msgstr "Perfis &amp; Capacidades: Editar Perfil"
+msgstr "Roluri &amp; Capabilități: Editează Rol"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:90
 msgid "Optimizing Your Relationships"
-msgstr "Otimizando Seus Relacionamentos"
+msgstr "Optimizarea Relațiilor Tale"
 
 #: classes/PodsUI.php:1866 components/Roles/ui/edit.php:24
 #: ui/admin/form-settings.php:47 ui/admin/form-settings.php:62
 #: ui/admin/form.php:65 ui/admin/form.php:89 ui/admin/setup-edit.php:225
 msgid "<strong>Success!</strong> %s %s successfully."
-msgstr "<strong>Sucesso!</strong> %s %s com sucesso."
+msgstr "<strong>Succes!</strong> %s %s cu succes."
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:125
 msgid "Upgrade Complete!"
-msgstr "Atualização Completa!"
+msgstr "Upgradare Completă!"
 
 #: components/Roles/ui/edit.php:30
 msgid "Choose below which Capabilities you would like this existing user role to have."
-msgstr "Escolha abaixo quais Capacidades você gostaria que o perfil de usuário existente tenha."
+msgstr "Alege mai jos ce Capabilități ai vrea să aibă acest rol existent de utilizator."
 
 #: components/Templates/Templates.php:256
 msgid "Enter template name here"
-msgstr "Escreva o nome do template aqui"
+msgstr "Adaugă numele șablonului aici"
 
 #: classes/fields/avatar.php:97 classes/fields/avatar.php:109
 #: classes/fields/file.php:171 classes/fields/file.php:183
 #: ui/fields/attachment.php:97 ui/fields/media.php:124 ui/fields/media.php:137
 #: ui/fields/plupload.php:159
 msgid "Add File"
-msgstr "Adicionar Arquivo"
+msgstr "Adaugă Fișier"
 
 #: classes/PodsInit.php:839
 msgid "New %s"
-msgstr "Novo %s"
+msgstr "Nou %s"
 
 #: classes/PodsInit.php:841 classes/PodsInit.php:858 classes/PodsInit.php:1273
 #: classes/PodsUI.php:925
 msgid "Edit %s"
-msgstr "Editar %s"
+msgstr "Editează %s"
 
 #: classes/PodsInit.php:842 classes/PodsInit.php:843 classes/PodsUI.php:927
 #: classes/PodsUI.php:938 ui/admin/form.php:68 ui/admin/form.php:92
 #: ui/admin/form.php:166 ui/admin/view.php:30
 msgid "View %s"
-msgstr "Visualizar %s"
+msgstr "Vizualizează %s"
 
 #: classes/PodsInit.php:844 classes/PodsInit.php:855
 msgid "All %s"
-msgstr "Todos %s"
+msgstr "Toate %s"
 
 #: classes/PodsInit.php:845 classes/PodsInit.php:853 classes/PodsUI.php:929
 msgid "Search %s"
-msgstr "Pesquisar %s"
+msgstr "Caută %s"
 
 #: classes/PodsInit.php:846
 msgid "No %s Found"
-msgstr "Nenhum %s Encontrado"
+msgstr "Niciun %s Găsit"
 
 #: classes/PodsInit.php:847
 msgid "No %s Found in Trash"
-msgstr "Nenhum %s Encontrado na Lixeira"
+msgstr "Niciun %s Găsit la Gunoi"
 
 #: classes/PodsInit.php:848 classes/PodsInit.php:856
 msgid "Parent %s"
-msgstr "%s Pai"
+msgstr "Părinte %s"
 
 #: classes/PodsInit.php:849
 msgid "Parent %s:"
-msgstr "%s Pai:"
+msgstr "Părinte %s:"
 
 #: classes/PodsInit.php:854
 msgid "Popular %s"
-msgstr "%s Popular"
+msgstr "Popular %s"
 
 #: classes/PodsInit.php:857
 msgid "Parent %s :"
-msgstr "%s Pai:"
+msgstr "Părinte %s:"
 
 #: classes/PodsInit.php:859
 msgid "Update %s"
-msgstr "Atualiza %s"
+msgstr "Actualizare %s"
 
 #: classes/PodsInit.php:861
 msgid "New %s Name"
-msgstr "Novo Nome de %s"
+msgstr "Nou %s Nume"
 
 #: classes/PodsInit.php:862
 msgid "Separate %s with commas"
-msgstr "Separar %s com vírgulas"
+msgstr "Separă %s cu virgule"
 
 #: classes/PodsInit.php:863
 msgid "Add or remove %s"
-msgstr "Adicionar ou remover %s"
+msgstr "Adaugă sau înlătură %s"
 
 #: classes/PodsInit.php:864
 msgid "Choose from the most used %s"
-msgstr "Escolher a partir do %s mais usado"
+msgstr "Alege din cel mai folosit %s"
 
 #: classes/PodsMeta.php:596
 msgid "Object required to add a Pods meta group"
-msgstr "Objeto requerido para adicionar um meta grupoo Pods"
+msgstr "Obiect necesar pentru a adăuga un grup Pods meta"
 
 #: classes/PodsMeta.php:826 ui/admin/form.php:410 ui/admin/view.php:186
 msgid "More Fields"
-msgstr "Mais Campos"
+msgstr "Mai multe câmpuri"
 
 #: classes/PodsUI.php:491
 msgid "<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information."
-msgstr "<strong>Erro:</strong> Pods UI precisa de um objeto Pods ou uma definição de Tabela para rodar a partir de, veja o Guia de Usuário para mais informações."
+msgstr "<strong>Eroare:</strong> Pods UI are nevoie de un obiect Pods sau o definiție Tabel din care să ruleze, vezi Ghidul Utilizatorului pentru mai multă informație."
 
 #: classes/PodsAdmin.php:1382 classes/PodsUI.php:915 classes/PodsUI.php:3537
 #: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
 msgid "Duplicate"
-msgstr "Duplicar"
+msgstr "Duplicare"
 
 #: classes/PodsUI.php:916 classes/PodsUI.php:919 classes/PodsUI.php:3519
 #: ui/admin/setup-edit.php:362
 msgid "View"
-msgstr "Visualizar"
+msgstr "Vizualizează"
 
 #: classes/PodsAdmin.php:1384 classes/PodsUI.php:917
 msgid "Reorder"
-msgstr "Reordenar"
+msgstr "Reordonare"
 
 #: classes/Pods.php:2956
 msgid "Go to page:"
-msgstr "Ir para página:"
+msgstr "Mergi la pagina:"
 
 #: classes/Pods.php:2958
 msgid "&laquo; First"
-msgstr "&laquo; Primeiro"
+msgstr "&laquo; Prima"
 
 #: classes/Pods.php:2959
 msgid "&lsaquo; Previous"
-msgstr "&lsaquo; Anterior"
+msgstr "&lsaquo; Precedenta"
 
 #: classes/Pods.php:2960
 msgid "Next &rsaquo;"
-msgstr "Próximo &rsaquo;"
+msgstr "Următoarea &rsaquo;"
 
 #: classes/Pods.php:2961
 msgid "Last &raquo;"
-msgstr "Último &raquo;"
+msgstr "Ultima &raquo;"
 
 #: classes/Pods.php:3079 classes/PodsUI.php:918 classes/PodsUI.php:2599
 #: classes/PodsUI.php:2833
 msgid "Search"
-msgstr "Pesquisar"
+msgstr "Caută"
 
 #: classes/Pods.php:3306 classes/PodsAdmin.php:615
 #: ui/admin/components-admin.php:99
 msgid "Save Changes"
-msgstr "Salvar Alterações"
+msgstr "Salvează Schimbările"
 
 #: classes/Pods.php:3324
 msgid "Form submitted successfully"
-msgstr "Formulário enviado com sucesso"
+msgstr "Formă propusă cu succes"
 
 #: classes/PodsAPI.php:312
 msgid "User data is required but is either invalid or empty"
-msgstr "Dados do Usuário é requerido mas está vazio ou inválido"
+msgstr "Date Utilizator sunt necesare dar sunt invalide sau goale"
 
 #: classes/PodsAPI.php:446
 msgid "Comment data is required but is either invalid or empty"
-msgstr "Dados de Comentário é requerido mas está vazio ou inválido"
+msgstr "Date Comentarii sunt necesare dar sunt invalide sau goale"
 
 #: classes/PodsAPI.php:598
 msgid "Taxonomy term data is required but is either invalid or empty"
-msgstr "Dados do termo de Taxonomia é requerido mas está vazio ou inválido"
+msgstr "Date Termeni Taxonomie sunt necesare dar sunt invalide sau goale"
 
 #: classes/PodsAPI.php:807 classes/PodsAPI.php:818
 msgid "Open"
-msgstr "Aberto"
+msgstr "Deschide"
 
 #: classes/PodsAPI.php:808 classes/PodsAPI.php:819
 msgid "Closed"
-msgstr "Fechado"
+msgstr "Închis"
 
 #: classes/PodsAPI.php:1180
 msgid "Please choose whether to Create or Extend a Content Type"
-msgstr "Por favor escolha se quer Criar ou Extender um Content Type"
+msgstr "Te rugăm alege dacă să Creezi sau să Extinzi un Tip de Conținut"
 
 #: classes/PodsAPI.php:1295
 msgid "Post Type %s already exists, try extending it instead"
-msgstr "Tipo de Post %s já existe, ao invés tente extendê-lo "
+msgstr "Tipul Postării %s există deja, te rugăm să încerci o extindere înainte"
 
 #: classes/PodsAPI.php:1304
 msgid "Taxonomy %s already exists, try extending it instead"
-msgstr "Taxonomia %s já existe, ao invés tente extendê-la"
+msgstr "Taxonomia %s există deja, te rugăm să încerci o extindere înainte"
 
 #: classes/PodsAPI.php:1376
 msgid "Pod %s already exists, you cannot rename %s to that"
-msgstr "Pod %s já existe, você não pode renomear %s para isso"
+msgstr "Pod-ul %s deja există, nu poți redenumi %s așa"
 
 #: classes/PodsAPI.php:1379 classes/PodsAPI.php:1382
 msgid "Pod %s cannot be renamed, it extends an existing WP Object"
-msgstr "Pod %s não pode ser renomeado, este já extende um Objeto WP"
+msgstr "Pod-ul %s nu poate fi redenumit, extinde un Obiect WP deja existent"
 
 #: classes/PodsAPI.php:1386
 msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
-msgstr "Pod usando %s já existe, você não pode reusar um objeto entre múltiplos pods"
+msgstr "Pod folosind %s există deja, nu poți refolosi un obiect la mai multe pods"
 
 #: classes/PodsAPI.php:1388
 msgid "Pod %s already exists"
-msgstr "Pod %s já existe"
+msgstr "Pod %s deja există."
 
 #: classes/PodsAPI.php:1556
 msgid "Post Type %s already exists, you cannot rename %s to that"
-msgstr "Tipo de Post %s já existe, você não pode renomear %s para isso"
+msgstr "Tipul Postării %s deja există, nu poți redenumi %s așa"
 
 #: classes/PodsAPI.php:1562
 msgid "Taxonomy %s already exists, you cannot rename %s to that"
-msgstr "Taxonomia %s já existe, você não pode renomear %s para isso"
+msgstr "Taxonomia %s deja există, nu poți redenumi %s așa"
 
 #: classes/PodsAPI.php:1571
 msgid "Pod name cannot be empty"
-msgstr "Nome do Pod não pode ser vazio"
+msgstr "Numele Pod-ului nu poate fi gol"
 
 #: classes/PodsAPI.php:1671
 msgid "Cannot save Pod"
-msgstr "Não foi possível salvar o Pod"
+msgstr "Nu se poate salva Pod-ul."
 
 #: classes/PodsAPI.php:1703
 msgid "Cannot add Database Table for Pod"
-msgstr "Não foi possível adicionar a Tabela para o Pod"
+msgstr "Nu se poate adăuga Tabelul Bazei de Date pentru Pod"
 
 #: classes/PodsAPI.php:1710
 msgid "Cannot update Database Table for Pod"
-msgstr "Não foi possível atualizar a Tabela para o Pod"
+msgstr "Nu se poate actualiza Tabelul Bazei de Date pentru Pod"
 
 #: classes/PodsAPI.php:1927
 msgid "Cannot save the %s field"
-msgstr "Não foi possível salvar o campo %s"
+msgstr "Nu se poate salva câmpul %s"
 
 #: classes/PodsAPI.php:2040
 msgid "Pod ID or name is required"
-msgstr "ID do Pod ou nome é requerido"
+msgstr "ID-ul pod sau numele este necesar"
 
 #: classes/PodsAPI.php:2055 classes/PodsAPI.php:2886 classes/PodsAPI.php:3821
 #: classes/PodsAPI.php:3946 classes/PodsAPI.php:4218 classes/PodsAPI.php:4340
@@ -3244,197 +3246,197 @@ msgstr "ID do Pod ou nome é requerido"
 #: classes/PodsAPI.php:5599 classes/PodsAPI.php:5819 classes/PodsAPI.php:6327
 #: classes/PodsAPI.php:7479
 msgid "Pod not found"
-msgstr "Pod não encontrado"
+msgstr "Pod nu a fost găsit"
 
 #: classes/PodsAPI.php:2088
 msgid "Field %s already exists, you cannot rename %s to that"
-msgstr "Campo %s já existe, você não pode renomear %s para isso"
+msgstr "Câmpul %s deja există, nu poți redenumi %s așa"
 
 #: classes/PodsAPI.php:2091
 msgid "Field %s already exists"
-msgstr "Campo %s já existe"
+msgstr "Câmpul %s deja există"
 
 #: classes/PodsAPI.php:2229 classes/PodsAPI.php:2232 classes/PodsAPI.php:2235
 #: classes/PodsAPI.php:2298 classes/PodsAPI.php:2304 classes/PodsAPI.php:2307
 msgid "%s is reserved for internal Pods usage, please try a different name"
-msgstr "%s é reservado para uso interno do Pod, por favor tente um nome diferente"
+msgstr "%s este rezervat pentru uz intern Pods, te rugăm încearcă un nume diferit"
 
 #: classes/PodsAPI.php:2239
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
-msgstr "%s é reservado para uso interno do Pod ou do WordPress, por favor tente um nome diferente. Também considere o que o WordPress e o Pods fornecem prontos."
+msgstr "%s este rezervat pentru uz intern WordPress sau Pods, te rugăm încearcă un nume diferit. De asemenea ia în calcul ce îți sugerează WordPress și Pods."
 
 #: classes/PodsAPI.php:2247
 msgid "This pod already has an internal WordPress permalink field"
-msgstr "Este pod já tem um campo permalink interno do WordPress."
+msgstr "Acest pod are deja un câmp permalink WordPress intern."
 
 #: classes/PodsAPI.php:2264
 msgid "This pod already has a permalink field"
-msgstr "Este pod já tem um campo permalink"
+msgstr "Acest pod are deja un câmp permalink"
 
 #: classes/PodsAPI.php:2300 classes/PodsAPI.php:2316
 msgid "%s is not editable"
-msgstr "%s não é editável"
+msgstr "%s nu poate fi editat"
 
 #: classes/PodsAPI.php:2314
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
-msgstr "%s está reservado para uso interno do Wordpress ou do Pods, por favor tente um nome diferente"
+msgstr "%s este rezervat pentru uz intern WordPress sau Pods, te rugăm încearcă un nume diferit"
 
 #: classes/PodsAPI.php:2352
 msgid "Cannot save Field"
-msgstr "Não foi possível salvar o Campo"
+msgstr "Nu se poate salva Câmpul"
 
 #: classes/PodsAPI.php:2385 classes/PodsAPI.php:2392 classes/PodsAPI.php:2404
 msgid "Cannot create new field"
-msgstr "Não foi possível criar o novo campo"
+msgstr "Nu se poate crea câmp nou"
 
 #: classes/PodsAPI.php:2568
 msgid "Name must be given to save an Object"
-msgstr "Nome deve ser fornecido para salvar um Objeto"
+msgstr "Un nume trebuie să fie dat pentru a salva un Obiect"
 
 #: classes/PodsAPI.php:2571
 msgid "Type must be given to save an Object"
-msgstr "Tipo deve ser fornecido para salvar um Objeto"
+msgstr "Un tip trebuie să fie dat pentru a salva un Obiect"
 
 #: classes/PodsAPI.php:3085
 msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
-msgstr "Helpers de Pre-Salvamento está obsoleto, invés disso, use a ação pods_pre_save_pod_item_%s"
+msgstr "Helpers pre-salvare sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
 #: classes/PodsAPI.php:3140 classes/PodsMeta.php:1988
 msgid "There was an issue validating the field %s"
-msgstr "Ocorreu um problema ao validar o campo %s"
+msgstr "A fost o problemă cu validarea câmpului %s"
 
 #: classes/PodsAPI.php:3555
 msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
-msgstr "Helpers de Pós-Salvamento está obsoleto, invés disso, use a ação pods_post_save_pod_item_%s"
+msgstr "Helpers post-salvare sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
 #: classes/PodsAPI.php:4156 classes/PodsAPI.php:4630
 msgid "$params->pod instead of $params->datatype"
-msgstr "$params->pod invés de $params->datatype"
+msgstr "$params->pod în loc de f $params->datatype"
 
 #: classes/PodsAPI.php:4164
 msgid "$params->pod is required"
-msgstr "$params->pod é requerido"
+msgstr "$params->pod este necesar"
 
 #: classes/PodsAPI.php:4174
 msgid "Pod is required"
-msgstr "Pod é requerido"
+msgstr "Pod este necesar"
 
 #: classes/PodsAPI.php:4358
 msgid "Pod unable to be deleted"
-msgstr "Pod não pôde ser deletado"
+msgstr "Pod nu poate fi șters"
 
 #: classes/PodsAPI.php:3896 classes/PodsAPI.php:4465 classes/PodsAPI.php:5631
 #: classes/PodsAPI.php:5644
 msgid "Field not found"
-msgstr "Campo não encontrado"
+msgstr "Câmpul nu a fost găsit"
 
 #: classes/PodsAPI.php:4479
 msgid "Field unable to be deleted"
-msgstr "Campo não pôde ser deletado"
+msgstr "Câmpul nu a putut fi șters"
 
 #: classes/PodsAPI.php:4517
 msgid "%s Object not found"
-msgstr "Objeto %s não encontrado"
+msgstr "%s Obiectul nu a fost găsit"
 
 #: classes/PodsAPI.php:4522
 msgid "%s Object not deleted"
-msgstr "Objeto %s não apagado"
+msgstr "% Obiectul nu a fost șters"
 
 #: classes/PodsAPI.php:4612
 msgid "$params->id instead of $params->tbl_row_id"
-msgstr "$params->id invés de $params->tbl_row_id"
+msgstr "$params->id în loc de $params->tbl_row_id"
 
 #: classes/PodsAPI.php:4618
 msgid "$params->id instead of $params->pod_id"
-msgstr "$params->id invés de $params->pod_id"
+msgstr "$params->id în loc de $params->pod_id"
 
 #: classes/PodsAPI.php:4624
 msgid "$params->pod_id instead of $params->datatype_id"
-msgstr "$params->pod_id invés de $params->datatype_id"
+msgstr "$params->pod_id în loc de $params->datatype_id"
 
 #: classes/PodsAPI.php:4637
 msgid "Pod Item not found"
-msgstr "Ítem Pod não encontrado"
+msgstr "Item-ul Pod nu a fost găsit"
 
 #: classes/PodsAPI.php:4680
 msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
-msgstr "Helpers de Pré-Remoção está obsoleto, invés disso, use a ação pods_pre_delete_pod_item_%s "
+msgstr "Helpers pre-ștergere sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
 #: classes/PodsAPI.php:4717
 msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
-msgstr "Helpers de Pós-Remoção está obsoleto, invés disso, use a ação pods_post_delete_pod_item_%s "
+msgstr "Helpers post-ștergere sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
 #: classes/PodsAPI.php:5609
 msgid "Either Field Name or Field ID / Pod ID are required"
-msgstr "Ou Campo Nome ou Campo ID é requerido"
+msgstr "Numele Câmpului sau ID-ul Câmpului/ ID-ul Pod-ului sunt necesare"
 
 #: classes/PodsAPI.php:5899
 msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
-msgstr "Ou Campo Nome / Campo ID / Campo Tipo, ou Nome do Pod / ID do Pod são requeridos"
+msgstr "Numele Câmpului/ ID-ul Câmpului/ Tipul Câmpului, sau Numele Pod-ului/ ID-ul Pod-ului sunt necesare"
 
 #: classes/PodsAPI.php:5969
 msgid "Object type is required"
-msgstr "Tipo de Objeto é requerido"
+msgstr "Tipul Obiectului este necesar"
 
 #: classes/PodsAPI.php:5972
 msgid "Either Object ID or Name are required"
-msgstr "ID ou Nome do Objeto são requeridos"
+msgstr "ID-ul Obiectului sau Numele sunt necesare"
 
 #: classes/PodsAPI.php:5989
 msgid "Object not found"
-msgstr "Objeto não encontrado"
+msgstr "Obiectul nu a fost găsit"
 
 #: classes/PodsAPI.php:6032
 msgid "Pods Object type is required"
-msgstr "Tipo de Objeto Pods é requerido"
+msgstr "Tipul Obiectului Pods este necesar"
 
 #: classes/PodsAPI.php:6285
 msgid "Pod name required"
-msgstr "Nome do Pod requerido"
+msgstr "Numele Pod-ului este necesar"
 
 #: classes/PodsAPI.php:6287
 msgid "Item ID required"
-msgstr "ID do Item requerido"
+msgstr "ID-ul itemului este necesar"
 
 #: classes/PodsAPI.php:6351
 msgid "Related Pod not found"
-msgstr "Pod Relacionado não encontrado"
+msgstr "Podul Înrudit nu a fost găsit"
 
 #: classes/PodsAPI.php:6468
 msgid "%s is empty"
-msgstr "%s está vazio"
+msgstr "% este gol"
 
 #: classes/PodsAPI.php:6484 classes/fields/email.php:190
 msgid "%s is required"
-msgstr "%s é requerido"
+msgstr "%s este necesar"
 
 #: classes/PodsAPI.php:6511
 msgid "%s needs to be unique"
-msgstr "%s precisa ser único"
+msgstr "%s trebuie să fie unic"
 
 #: classes/PodsAPI.php:7750
 msgid "Invalid submission"
-msgstr "Submissão inválida"
+msgstr "Adăugare invalidă"
 
 #: classes/PodsAPI.php:7760
 msgid "Access denied for your session, please refresh and try again."
-msgstr "Acesso negado para a sua sessão, por favor atualize e tente novamente."
+msgstr "Acces respins pentru sesiunea ta, te rugăm dă refresh și încearcă din nou"
 
 #: classes/PodsAPI.php:7763
 msgid "Access denied, please refresh and try again."
-msgstr "Acesso negado, por favor atualize e tente novamente."
+msgstr "Acces respins, te rugăm dă refresh și încearcă din nou."
 
 #: classes/PodsAdmin.php:228 classes/PodsAdmin.php:833
 #: classes/PodsAdmin.php:1953
 msgid "All"
-msgstr "Todos"
+msgstr "Toate"
 
 #: classes/PodsAdmin.php:232 classes/PodsAdmin.php:288
 #: classes/PodsAdmin.php:1381 classes/PodsInit.php:840 classes/PodsUI.php:914
 #: classes/PodsUI.php:3528 ui/admin/setup-edit-field-fluid.php:17
 #: ui/admin/setup-edit-field.php:67 ui/admin/setup-edit.php:350
 msgid "Edit"
-msgstr "Editar"
+msgstr "Editează"
 
 #: classes/PodsAdmin.php:234 classes/PodsAdmin.php:255
 #: classes/PodsAdmin.php:256 classes/PodsAdmin.php:290
@@ -3442,248 +3444,248 @@ msgstr "Editar"
 #: classes/PodsAdmin.php:1380 classes/PodsInit.php:837 classes/PodsUI.php:913
 #: classes/PodsUI.php:934 ui/admin/setup-edit.php:338
 msgid "Add New"
-msgstr "Adicionar Novo"
+msgstr "Adaugă Nou"
 
 #: classes/PodsAdmin.php:284 classes/PodsAdmin.php:305 classes/PodsUI.php:912
 #: components/Roles/ui/edit.php:39 ui/admin/form.php:153 ui/admin/view.php:17
 msgid "Manage"
-msgstr "Gerenciar"
+msgstr "Administrează"
 
 #: classes/PodsAdmin.php:419
 msgid "Edit Pods"
-msgstr "Editar Pods"
+msgstr "Editează Pods"
 
 #: classes/PodsAdmin.php:429
 msgid "Components"
-msgstr "Componentes"
+msgstr "Componente"
 
 #: classes/PodsAdmin.php:434 classes/PodsAdmin.php:457
 #: ui/admin/components-admin.php:10 ui/admin/upgrade/upgrade_2_0_0.php:221
 msgid "Settings"
-msgstr "Configurações"
+msgstr "Setări"
 
 #: classes/PodsAdmin.php:439 classes/PodsAdmin.php:462
 msgid "Help"
-msgstr "Ajuda"
+msgstr "Ajutor"
 
 #: classes/PodsAdmin.php:452 ui/admin/upgrade/upgrade_2_1_0.php:26
 msgid "Upgrade"
-msgstr "Atualizar"
+msgstr "Upgrade"
 
 #: classes/PodsAdmin.php:496
 msgid "Pods Admin"
-msgstr "Admin Pods"
+msgstr "Administrator Pods"
 
 #: classes/PodsAdmin.php:499
 msgid "Pods Upgrade"
-msgstr "Atualizar Pods"
+msgstr "Upgrade Pods"
 
 #: classes/PodsAdmin.php:563
 msgid "<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href=\"%s\">Upgrade Wizard</a>."
-msgstr "<strong>AVISO:</strong> Pods %s precisa da sua ação para completar a atualização. Por favor rode o <a href=\"%s\">Upgrade Wizard</a>."
+msgstr "<strong>AVERTIZARE:</strong> Pods %s are nevoie de acțiunea ta pentru a completa upgradeul. Te rugăm rulează <a href=\"%s\">Upgrade Wizard</a>."
 
 #: classes/Pods.php:3596
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: classes/Pods.php:3689 classes/PodsAdmin.php:1383 classes/PodsUI.php:3546
 #: ui/admin/form.php:212 ui/admin/setup-edit-field-fluid.php:23
 #: ui/admin/setup-edit-field.php:73 ui/admin/view.php:76
 msgid "Delete"
-msgstr "Apagar"
+msgstr "Șterge"
 
 #: classes/PodsAdmin.php:706
 msgid "Post Type (extended)"
-msgstr "Tipo de Post (extendido)"
+msgstr "Tip Postare (extins)"
 
 #: classes/PodsAdmin.php:707
 msgid "Taxonomy (extended)"
-msgstr "Taxonomia (extendida)"
+msgstr "Taxonomie (extins)"
 
 #: classes/PodsAdmin.php:708
 msgid "Custom Post Type"
-msgstr "Post Type Customizado"
+msgstr "Tip Postare Personalizat"
 
 #: classes/PodsAdmin.php:709
 msgid "Custom Taxonomy"
-msgstr "Taxonomia Customizada"
+msgstr "Taxonomie Personalizată"
 
 #: classes/PodsAdmin.php:710
 msgid "User (extended)"
-msgstr "Usuário (extendido)"
+msgstr "Utilizator (extins)"
 
 #: classes/PodsAdmin.php:711
 msgid "Media (extended)"
-msgstr "Mídia (extendida)"
+msgstr "Media (extins)"
 
 #: classes/PodsAdmin.php:712
 msgid "Comments (extended)"
-msgstr "Comentários (extendido)"
+msgstr "Comentarii (extins)"
 
 #: classes/PodsAdmin.php:713
 msgid "Advanced Content Type"
-msgstr "Tipo de Conteúdo Avançado"
+msgstr "Tip Conținut Avansat"
 
 #: classes/PodsAdmin.php:722 components/Roles/Roles.php:91
 #: components/Roles/ui/add.php:43 ui/admin/setup-edit-field-fluid.php:62
 #: ui/admin/setup-edit.php:330
 msgid "Label"
-msgstr "Rótulo"
+msgstr "Etichetă"
 
 #: classes/PodsAdmin.php:723 classes/PodsAdmin.php:1921 classes/PodsUI.php:944
 #: components/Roles/Roles.php:92 components/Roles/ui/add.php:50
 #: ui/admin/setup-edit-field-fluid.php:66
 msgid "Name"
-msgstr "Nome"
+msgstr "Nume "
 
 #: classes/PodsAdmin.php:726 ui/admin/setup-add.php:198
 #: ui/admin/setup-add.php:328
 msgid "Storage Type"
-msgstr "Tipo de Armazenamento"
+msgstr "Tipul de Stocare"
 
 #: classes/PodsAdmin.php:813
 msgid "Delete All Items"
-msgstr "Apagar Todos os Ítens"
+msgstr "Șterge toate itemurile"
 
 #: classes/PodsAdmin.php:1748 classes/PodsAdmin.php:1790
 msgid "Pod not found."
-msgstr "Pod não encontrado."
+msgstr "Pod-ul nu a fost găsit."
 
 #: classes/PodsAdmin.php:1799
 msgid "Pod deleted successfully."
-msgstr "Por apagado com sucesso."
+msgstr "Pod șters cu succes."
 
 #: classes/PodsAdmin.php:1752
 msgid "Pod reset successfully."
-msgstr "Pod resetado com sucesso."
+msgstr "Pod resetat cu succes."
 
 #: classes/PodsAdmin.php:1879
 msgid "by %s"
-msgstr "por %s"
+msgstr "după %s"
 
 #: classes/PodsAdmin.php:1882
 msgid "Visit component site"
-msgstr "Visite o site do componente"
+msgstr "Vizitează site-ul component"
 
 #: classes/PodsAdmin.php:1937 ui/admin/setup-edit-field-fluid.php:70
 msgid "Description"
-msgstr "Descrição"
+msgstr "Descriere"
 
 #: classes/PodsAdmin.php:2042 classes/PodsAdmin.php:2081
 msgid "Component enabled"
-msgstr "Componente habilitado"
+msgstr "Componentă activată"
 
 #: classes/PodsAdmin.php:2044 classes/PodsAdmin.php:2083
 msgid "Component disabled"
-msgstr "Componente desabilitado"
+msgstr "Componentă dezactivată"
 
 #: classes/PodsAdmin.php:2265 classes/fields/file.php:595
 #: classes/fields/pick.php:1753
 msgid "Unauthorized request"
-msgstr "Requisição não autorizada"
+msgstr "Cerere neautorizată"
 
 #: classes/PodsAdmin.php:2276
 msgid "Access denied"
-msgstr "Acesso negado"
+msgstr "Acces nepermis"
 
 #: classes/fields/file.php:610 classes/fields/pick.php:1772
 #: classes/fields/pick.php:1774
 msgid "Invalid field request"
-msgstr "Requisição de campo inválida"
+msgstr "Cerere câmp invalidă"
 
 #: classes/fields/file.php:613 classes/fields/pick.php:1776
 #: classes/fields/pick.php:1778 classes/fields/pick.php:1780
 msgid "Invalid field"
-msgstr "campo inválido"
+msgstr "Câmp invalid"
 
 #: classes/fields/file.php:652
 msgid "File size too large, max size is %s"
-msgstr "Arquivo muito grande, tamanho máximo é %s"
+msgstr "Mărimea fișierului este prea mare, mărimea maximă este %s"
 
 #: classes/fields/file.php:743
 msgid "File type not allowed, please use one of the following: %s"
-msgstr "Tipo de arquivo não permitido, por favor use um dos seguintes: %s"
+msgstr "Tipul fișierului nu este permis, te rugăm folosește unul dintre următoarele: %s"
 
 #: classes/PodsInit.php:779 components/Helpers.php:112 components/Pages.php:161
 #: components/Templates/Templates.php:135
 msgid "%s updated. <a href=\"%s\">%s</a>"
-msgstr "%s atualizado. <a href=\"%s\">%s</a>"
+msgstr "%s actualizat. <a href=\"%s\">%s</a>"
 
 #: classes/PodsInit.php:780 components/Helpers.php:113 components/Pages.php:162
 #: components/Templates/Templates.php:136
 msgid "Custom field updated."
-msgstr "Campo personalizado atualizado."
+msgstr "Câmp personalizat actualizat."
 
 #: classes/PodsInit.php:781 components/Helpers.php:114 components/Pages.php:163
 #: components/Templates/Templates.php:137
 msgid "Custom field deleted."
-msgstr "Campo personalizado apagado."
+msgstr "Câmp personalizat șters."
 
 #: classes/PodsInit.php:782 classes/PodsInit.php:799 components/Helpers.php:115
 #: components/Helpers.php:136 components/Pages.php:164 components/Pages.php:185
 #: components/Templates/Templates.php:138
 #: components/Templates/Templates.php:159
 msgid "%s updated."
-msgstr "%s atualizado."
+msgstr "%s actualizat."
 
 #: classes/PodsInit.php:784 components/Helpers.php:117 components/Pages.php:166
 #: components/Templates/Templates.php:140
 msgid "%s restored to revision from %s"
-msgstr "%s restaurado para a revisão de %s"
+msgstr "%s restabilit la forma reviziei %s"
 
 #: classes/PodsInit.php:785 components/Helpers.php:118 components/Pages.php:167
 #: components/Templates/Templates.php:141
 msgid "%s published. <a href=\"%s\">%s</a>"
-msgstr "%s publicado. <a href=\"%s\">%s</a>"
+msgstr "%s publicat. <a href=\"%s\">%s</a>"
 
 #: classes/PodsInit.php:786 components/Helpers.php:119 components/Pages.php:168
 #: components/Templates/Templates.php:142
 msgid "%s saved."
-msgstr "%s salvo."
+msgstr "%s salvat."
 
 #: classes/PodsInit.php:787 components/Helpers.php:120 components/Pages.php:169
 #: components/Templates/Templates.php:143
 msgid "%s submitted. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
-msgstr "%s enviado. <a target=\"_blank\" href=\"%s\">Previsualizar %s</a>"
+msgstr "%s adăugat. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
 
 #: classes/PodsInit.php:788 components/Helpers.php:125 components/Pages.php:174
 #: components/Templates/Templates.php:148
 msgid "%s scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview %s</a>"
-msgstr "%s agendado para: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Previsualizar %s</a>"
+msgstr "%s programat pentru: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview %s</a>"
 
 #: classes/PodsInit.php:795 components/Helpers.php:132 components/Pages.php:181
 #: components/Templates/Templates.php:155
 msgid "%s draft updated. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
-msgstr "%s rascunho atualizado. <a target=\"_blank\" href=\"%s\">Previsualizar %s</a>"
+msgstr "%s ciornă actualizată. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
 
 #: classes/PodsInit.php:800 components/Helpers.php:137 components/Pages.php:186
 #: components/Templates/Templates.php:160
 msgid "%s published."
-msgstr "%s publicado."
+msgstr "%s publicat."
 
 #: classes/PodsInit.php:801 components/Helpers.php:138 components/Pages.php:187
 #: components/Templates/Templates.php:161
 msgid "%s submitted."
-msgstr "%s enviado."
+msgstr "%s adăugat."
 
 #: classes/PodsInit.php:802 components/Helpers.php:139 components/Pages.php:188
 #: components/Templates/Templates.php:162
 msgid "%s scheduled for: <strong>%1$s</strong>."
-msgstr "%s agendado para: <strong>%1$s</strong>."
+msgstr "%s programat pentru: <strong>%1$s</strong>."
 
 #: classes/PodsInit.php:807 components/Helpers.php:144 components/Pages.php:193
 #: components/Templates/Templates.php:167
 msgid "%s draft updated."
-msgstr "%s rascunho atualizado."
+msgstr "%s ciornă actualizată."
 
 #: classes/PodsInit.php:827 classes/PodsUI.php:901
 msgid "Items"
-msgstr "Ítens"
+msgstr "Itemuri"
 
 #: classes/PodsInit.php:828 classes/PodsUI.php:900
 msgid "Item"
-msgstr "Ítem"
+msgstr "Item"
 
 #: classes/PodsInit.php:838 classes/PodsInit.php:860 classes/PodsUI.php:924
 msgid "Add New %s"
-msgstr "Adicionar Novo %s"
+msgstr "Adaugă Nou %s"

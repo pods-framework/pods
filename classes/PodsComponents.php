@@ -157,7 +157,7 @@ class PodsComponents {
 			);
 
             if ( isset( $component_data[ 'object' ] ) && method_exists( $component_data[ 'object' ], 'admin_assets' ) ) {
-				$pods_component_menu_items[ $menu_page ][ 'assets' ] = array( $component_data[ 'object' ], 'admin_assets' );
+				$pods_component_menu_items[ $component_data[ 'MenuName' ] ][ 'assets' ] = array( $component_data[ 'object' ], 'admin_assets' );
 			}
         }
 

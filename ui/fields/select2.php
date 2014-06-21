@@ -65,7 +65,7 @@ $select2_args = array();
                     $data = array();
 
                     foreach ( $options[ 'data' ] as $item_id => $item ) {
-                        $data[] = '\'' . esc_js( $item_id ) . '\' : {id : \'' . esc_js( $item_id ) . '\', text: \'' . esc_js( $item ) . '\'}';
+                        $data[] = '\'' . esc_js( $item_id ) . '\' : {id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
                     }
 
                     echo implode( ",\n", $data );
@@ -180,9 +180,9 @@ $select2_args = array();
 				<?php
 					$data_items = array();
 
-					foreach ( $options[ 'data' ] as $item_id => $item ) {
-						$data_items[] = '{id : \'' . esc_js( $item_id ) . '\', text: \'' . esc_js( $item ) . '\'}';
-					}
+                        foreach ( $options[ 'data' ] as $item_id => $item ) {
+                            $data_items[] = '{id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
+                        }
 
 					echo implode( ",\n", $data_items );
 				?>

@@ -153,6 +153,30 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+= 2.4.1 June 19th, 2014 =
+* Fixed: Display of of hidden fields in Pods Forms
+* Fixed: Reordering fields in PodsUI
+* Fixed: PodsUI Admin Icon Display
+* Add new filter: ‘pods_pod_form_success_message’ for changing the message when Pods Forms are successfully submitted.
+* Fixed: Issues in Packages component when importing existing fields.
+* Added new filter: ‘pods_view_alt_view’ for overriding normal Pods Views to be loaded in via AJAX inline from Pods AJAX Views plugin.
+* Fixed: PHP error in Pods Template reference.
+* New Constant: PODS_PRELOAD_CONFIG_AFTER_FLUSH check to allow for preloading $api->load_pods() after a Pods Cache flush.
+* Fixed: Issue with tabled-based SQL delete actions.
+* Fixed: PodsUI SQL table-based lookups
+* Added: New Hooks In ui/admin/form, which generates ACT editor, for adding additional forms or other content to editor.
+* Added: Inline docs for 'pods_meta_default_box_title' filter and normalized args across each usage.
+* Added: Item ID to pods_api::export() item array.
+* Fixed: Update from GitHub functionality.
+* Fixed: Issue where extended custom post types had diffrent names then original post type due to use of dashes in names.
+* Improved UX for select2 field adding new items.
+* Fixed: $params with unslashed data in Pods_Admin::admin_ajax()
+* Fixed: Unwarranted base_dir warnings.
+* Fixed: Pagination/search boolean checks.
+* Fixed: Issue when mbstring module is not active.
+* Fixed: Issue with markdown module header causing activation errors.
+* New Filter: 'pods_admin_components_menu' to add/edit components submenu items.
+* Added: Ability to use pods() without any parameters. Will pull the pod object based off of the current WP_Query queried object / object id
 
 = 2.4 - April 16th, 2014 =
 * After a long road, we've got a new minor release out that fixes a large number of outstanding bugs and adds a few improvements that were within reach right away.

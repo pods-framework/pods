@@ -189,6 +189,7 @@ wp_enqueue_style( 'pods-form' );
 								$title = __( 'Fields', 'pods' );
 							}
 
+							/** This filter is documented in classes/Pods/Meta.php */
 							echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields );
 							?>
 						</span>

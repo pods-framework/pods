@@ -3,6 +3,7 @@
 /tests export-ignore
 /sources export-ignore
 kill-travis.php export-ignore
+/assets export-ignore
 
 # Custom for Visual Studio
 *.cs     diff=csharp

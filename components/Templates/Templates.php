@@ -94,9 +94,8 @@ class Pods_Templates extends Pods_Component {
 
 			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
-			// removed the old editor meta box - replaced with the frontier base template editor
-			//add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-			
+			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+
 			add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
 			add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
@@ -283,16 +282,6 @@ class Pods_Templates extends Pods_Component {
 
 		if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
 			return;
-
-		$fields = array(
-			array(
-				'name' => 'code',
-				'label' => __( 'Content', 'pods' ),
-				'type' => 'code'
-			)
-		);
-
-		pods_group_add( $pod, __( 'Template', 'pods' ), $fields, 'normal', 'high' );
 
 		$fields = array(
 			array(

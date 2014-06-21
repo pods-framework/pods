@@ -5,6 +5,13 @@ php:
     - 5.3
     - 5.4
     - 5.5
+    - 5.6
+    - hhvm
+
+matrix:
+    allow_failures:
+         - php: 5.6
+         - php: hhvm
 
 env:
     - WP_VERSION=master WP_MULTISITE=0

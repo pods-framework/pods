@@ -2197,7 +2197,7 @@ class Pods_API {
 			$type  = $field_data['type'];
 
 			// WPML AJAX compatibility
-			if ( is_admin() && isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' ) && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] ) && wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) ) {
+			if ( is_admin() && isset( $_GET['page'] ) && false !== strpos( $_GET['page'], '/menu/languages.php' ) && isset( $_POST['icl_ajx_action'] ) && isset( $_POST['_icl_nonce'] ) && false !== wp_verify_nonce( $_POST['_icl_nonce'], $_POST['icl_ajx_action'] . '_nonce' ) ) {
 				$field_data['unique'] = $fields[$field]['unique'] = $fields[$field]['required'] = 0;
 			} else {
 				// Validate value
@@ -6556,13 +6556,15 @@ class Pods_API {
 			$uid = 'user_' . get_current_user_id();
 		}
 
-		$action = 'pods_form_' . $pod . '_' . $uid . '_' . $id . '_' . $uri . '_' . wp_hash( $form );
+		$field_hash = wp_create_nonce( 'pods_fields_' . $form );
+
+        $action = 'pods_form_' . $pod . '_' . $uid . '_' . $id . '_' . $uri . '_' . $field_hash;
 
 		if ( empty( $uid ) ) {
 			return pods_error( __( 'Access denied for your session, please refresh and try again.', 'pods' ), $this );
 		}
 
-		if ( wp_verify_nonce( $nonce, $action ) ) {
+		if ( false === wp_verify_nonce( $nonce, $action ) ) {
 			return pods_error( __( 'Access denied, please refresh and try again.', 'pods' ), $this );
 		}
 

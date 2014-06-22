@@ -7759,7 +7759,7 @@ class PodsAPI {
         if ( empty( $uid ) )
             return pods_error( __( 'Access denied for your session, please refresh and try again.', 'pods' ), $this );
 
-        if ( wp_verify_nonce( $nonce, $action ) )
+        if ( false === wp_verify_nonce( $nonce, $action ) )
             return pods_error( __( 'Access denied, please refresh and try again.', 'pods' ), $this );
 
         $data = array();

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.9.1
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,11 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+
+= 2.4.2 June 22nd, 2014 =
+* Security Update: We recommend all Pods 2.x installations be updated to Pods 2.4.2 to fix a noncing issue with form saving
+* If you need assistance in upgrading your Pods 2.x site to Pods 2.4.2, please don't hesitate to contact us at http://pods.io/help/
+
 = 2.4.1 June 19th, 2014 =
 * Fixed: Display of of hidden fields in Pods Forms
 * Fixed: Reordering fields in PodsUI

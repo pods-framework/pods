@@ -1,5 +1,11 @@
 <div class="pod-queries-tools"><?php
 
+if ( empty( $atts ) ) {
+	$atts = array(
+		'pod' => ''
+	);
+}
+
 $api = pods_api();
 $_pods = $api->load_pods();
 echo '<select name="pod_reference[pod]" id="pod-reference" class="pod-switch" data-template="#podref-tmpl" data-target="#pod-reference-wrapper" data-action="pq_loadpod" data-event="change" />';
@@ -10,7 +16,7 @@ foreach($_pods as $pod){
 echo '</select>';
 ?></div>
 <div id="pod-reference-wrapper" class="pod-reference-wrapper">
-<?php 
+<?php
 
 	if(!empty($atts['pod'])){
 		$fields = pq_loadpod($atts['pod']);

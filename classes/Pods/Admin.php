@@ -2511,6 +2511,7 @@ advanced|Advanced',
 			'pods-alternative-cache' 		=> 'http://pods.io/2014/04/16/introducing-pods-alternative-cache/',
 			'pods-frontier-auto-template' 	=> 'http://pods.io/?p=182830',
 			'pods-seo' 						=> 'http://wordpress.org/plugins/pods-seo/',
+			'pods-ajax-views'				=> 'https://wordpress.org/plugins/pods-ajax-views/',
 			'csv-importer-for-pods' 		=> 'https://wordpress.org/plugins/csv-importer-for-pods/',
 		);
 

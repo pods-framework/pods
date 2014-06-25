@@ -6,7 +6,7 @@
 
 // add filters
 add_filter( "pods_templates_post_template", "frontier_end_template", 25, 4 );
-add_filter( "pods_templates_do_template", "do_shortcode", 25, 4 );
+add_filter( "pods_templates_do_template", "frontier_do_shortcode", 25, 1 );
 
 // template shortcode handlers
 add_shortcode( "pod_sub_template", "frontier_do_subtemplate" );
@@ -16,6 +16,20 @@ add_shortcode( "pod_before_template", "frontier_template_blocks" );
 add_shortcode( "pod_if_field", "frontier_if_block" );
 
 /**
+ * @param $content
+ *
+ * @return string
+ * @since 2.4.3
+ */
+function frontier_do_shortcode( $content ) {
+
+	$content = pods_do_shortcode( $content, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+
+	return $content;
+
+}
+
+/**
  * decodes a like nested shortcode based template
  *
  *
@@ -23,7 +37,7 @@ add_shortcode( "pod_if_field", "frontier_if_block" );
  * @param array attributed provided from parent
  *
  * @return string
- * @since 2.3
+ * @since 2.4
  */
 function frontier_decode_template( $code, $atts ) {
 
@@ -48,7 +62,7 @@ function frontier_decode_template( $code, $atts ) {
  * @param string encoded template to be decoded
  *
  * @return string
- * @since 2.3
+ * @since 2.4
  */
 function frontier_if_block( $atts, $code ) {
 
@@ -93,7 +107,7 @@ function frontier_if_block( $atts, $code ) {
  * @param string shortcode slug used to process
  *
  * @return null
- * @since 2.3
+ * @since 2.4
  */
 function frontier_template_blocks( $atts, $code, $slug ) {
 
@@ -133,7 +147,7 @@ function frontier_template_blocks( $atts, $code, $slug ) {
  * @param string encoded template to be decoded
  *
  * @return string template code
- * @since 2.3
+ * @since 2.4
  */
 function frontier_template_once_blocks( $atts, $code ) {
 
@@ -160,7 +174,7 @@ function frontier_template_once_blocks( $atts, $code ) {
  * @param string template to be processed
  *
  * @return null
- * @since 2.3
+ * @since 2.4
  */
 function frontier_do_subtemplate( $atts, $content ) {
 
@@ -221,7 +235,7 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param string template to be processed
  *
  * @return null
- * @since 2.3
+ * @since 2.4
  */
 function frontier_prefilter_template( $code, $template, $pod ) {
 

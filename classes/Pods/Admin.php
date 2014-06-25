@@ -1291,6 +1291,7 @@ class Pods_Admin {
 			'templates'
 		);
 
+
 		foreach ( $components as $component => &$component_data ) {
 			if ( ! in_array( $view, array( 'all', 'recommended', 'dev' ) ) && ( ! isset( $component_data['Category'] ) || $view != sanitize_title( $component_data['Category'] ) ) ) {
 				unset( $components[$component] );
@@ -1370,6 +1371,8 @@ class Pods_Admin {
 			}
 		}
 
+		$components = $this->plugins_to_components( $components );
+
 		$ui = array(
 			'data'             => $components,
 			'total'            => count( $components ),
@@ -1412,7 +1415,8 @@ class Pods_Admin {
 				'tools'       => __( 'Tools', 'pods' ),
 				'integration' => __( 'Integration', 'pods' ),
 				'migration'   => __( 'Migration', 'pods' ),
-				'advanced'    => __( 'Advanced', 'pods' )
+				'advanced'    => __( 'Advanced', 'pods' ),
+				'pods-plugins' => __( 'Pods Plugins', 'pods'),
 			),
 			'view'             => $view,
 			'heading'          => array(
@@ -1441,21 +1445,100 @@ class Pods_Admin {
 	public function admin_components_toggle( Pods_UI $ui ) {
 		$component = $_GET['id'];
 
-		if ( ! empty( Pods_Init::$components->components[$component]['PluginDependency'] ) ) {
-			$dependency = explode( '|', Pods_Init::$components->components[$component]['PluginDependency'] );
+		$plugins = $this->pods_plugins();
+		if ( array_key_exists ( $component, $this->pods_plugins() ) ) {
+			$slug = $component;
+			$uri = $plugins[ $slug ];
 
-			if ( ! pods_is_plugin_active( $dependency[1] ) ) {
-				$website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[1] ) . '/';
+			$plugin_file = $this->plugin_file( $uri );
+			$all_plugins = get_plugins();
+			if ( isset( $all_plugins[ $plugin_file ][ 'Name' ] ) ) {
+				$name = $all_plugins[ $plugin_file ][ 'Name' ];
+			}
+			else {
+				$name = $slug;
+			}
 
-				if ( isset( $dependency[2] ) ) {
-					$website = $dependency[2];
+			if ( pods_v( 'toggle', 'get', false, true ) ) {
+			//plugin is installed, but not active. So Activate
+				if ( !pods_is_plugin_active( $uri ) && $plugin_file ) {
+					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
+						sprintf(
+							__( 'Activating %1$s', 'pods' ),
+							$name )
+					);
+					pods_redirect( wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=' . $plugin_file ), 'activate-plugin_' . $plugin_file ) );
+
 				}
-
-				if ( ! empty( $website ) ) {
-					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
+				//plugin is not active or installed. So install.
+				elseif ( !pods_is_plugin_active( $uri ) && !$plugin_file ) {
+					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
+						sprintf(
+							__( 'Installing %1$s', 'pods' ),
+							$name )
+					);
+					pods_redirect( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $component ), 'install-plugin_' . $component ) );
 				}
+			}
+			else {
+				echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
+					sprintf(
+						__( 'Deactivating %1$s', 'pods' ),
+						$name )
+				);
+				pods_redirect( wp_nonce_url( self_admin_url( 'plugins.php?action=deactivate&plugin=' . $plugin_file ), 'activate-plugin_' . $plugin_file ) );
 
-				$message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> plugin installed and activated.', 'pods' ), Pods_Init::$components->components[$component]['Name'], $dependency[0] ) . $website;
+			}
+
+
+		}
+		else {
+			if ( !empty( Pods_Init::$components->components[ $component ][ 'PluginDependency' ] ) ) {
+				$dependency = explode( '|', Pods_Init::$components->components[ $component ][ 'PluginDependency' ] );
+
+				if ( !pods_is_plugin_active( $dependency[ 1 ] ) ) {
+					$website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[ 1 ] ) . '/';
+
+					if ( isset( $dependency[ 2 ] ) ) {
+						$website = $dependency[ 2 ];
+					}
+
+					if ( !empty( $website ) ) {
+						$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
+					}
+
+					$message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> plugin installed and activated.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+
+					$ui->error( $message );
+
+					$ui->manage();
+
+					return;
+				}
+			}
+
+			if ( !empty( Pods_Init::$components->components[ $component ][ 'ThemeDependency' ] ) ) {
+				$dependency = explode( '|', Pods_Init::$components->components[ $component ][ 'ThemeDependency' ] );
+
+				if ( strtolower( $dependency[ 1 ] ) != strtolower( get_template() ) && strtolower( $dependency[ 1 ] ) != strtolower( get_stylesheet() ) ) {
+					$website = '';
+
+					if ( isset( $dependency[ 2 ] ) ) {
+						$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[ 2 ] . '" target="_blank">' . $dependency[ 2 ] . '</a>' );
+					}
+
+					$message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> theme installed and activated.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+
+					$ui->error( $message );
+
+					$ui->manage();
+
+					return;
+				}
+			}
+
+			if ( !empty( Pods_Init::$components->components[ $component ][ 'MustUse' ] ) ) {
+				$message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), Pods_Init::$components->components[ $component ][ 'Name' ] );
 
 				$ui->error( $message );
 
@@ -1463,88 +1546,62 @@ class Pods_Admin {
 
 				return;
 			}
-		}
 
-		if ( ! empty( Pods_Init::$components->components[$component]['ThemeDependency'] ) ) {
-			$dependency = explode( '|', Pods_Init::$components->components[$component]['ThemeDependency'] );
+			if ( 1 == pods_v( 'toggled' ) ) {
+				$toggle = Pods_Init::$components->toggle( $component );
 
-			if ( strtolower( $dependency[1] ) != strtolower( get_template() ) && strtolower( $dependency[1] ) != strtolower( get_stylesheet() ) ) {
-				$website = '';
-
-				if ( isset( $dependency[2] ) ) {
-					$website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[2] . '" target="_blank">' . $dependency[2] . '</a>' );
+				if ( TRUE === $toggle ) {
+					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+				}
+				elseif ( FALSE === $toggle ) {
+					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 				}
 
-				$message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> theme installed and activated.', 'pods' ), Pods_Init::$components->components[$component]['Name'], $dependency[0] ) . $website;
+				$components = Pods_Init::$components->components;
 
-				$ui->error( $message );
+				foreach ( $components as $component => &$component_data ) {
+					$toggle = 0;
 
-				$ui->manage();
+					if ( isset( Pods_Init::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
+						if ( 0 != Pods_Init::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) {
+							$toggle = 1;
+						}
+					}
+					if ( TRUE === $component_data[ 'DeveloperMode' ] ) {
+						if ( !pods_developer() ) {
+							unset( $components[ $component ] );
+							continue;
+						}
+					}
 
-				return;
+					$component_data = array (
+						'id'          => $component_data[ 'ID' ],
+						'name'        => $component_data[ 'Name' ],
+						'description' => make_clickable( $component_data[ 'Description' ] ),
+						'version'     => $component_data[ 'Version' ],
+						'author'      => $component_data[ 'Author' ],
+						'toggle'      => $toggle
+					);
+				}
+
+				$ui->data = $components;
+
+				pods_transient_clear( 'pods_components' );
+
+				$url = pods_var_update( array ( 'toggled' => NULL ) );
+
+				pods_redirect( $url );
 			}
-		}
-
-		if ( ! empty( Pods_Init::$components->components[$component]['MustUse'] ) ) {
-			$message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), Pods_Init::$components->components[$component]['Name'] );
-
-			$ui->error( $message );
+			elseif ( 1 == pods_v( 'toggle' ) ) {
+				$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+			}
+			else {
+				$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+			}
 
 			$ui->manage();
-
-			return;
 		}
 
-		if ( 1 == pods_v( 'toggled' ) ) {
-			$toggle = Pods_Init::$components->toggle( $component );
-
-			if ( true === $toggle ) {
-				$ui->message( Pods_Init::$components->components[$component]['Name'] . ' ' . __( 'Component enabled', 'pods' ) );
-			} elseif ( false === $toggle ) {
-				$ui->message( Pods_Init::$components->components[$component]['Name'] . ' ' . __( 'Component disabled', 'pods' ) );
-			}
-
-			$components = Pods_Init::$components->components;
-
-			foreach ( $components as $component => &$component_data ) {
-				$toggle = 0;
-
-				if ( isset( Pods_Init::$components->settings['components'][$component_data['ID']] ) ) {
-					if ( 0 != Pods_Init::$components->settings['components'][$component_data['ID']] ) {
-						$toggle = 1;
-					}
-				}
-				if ( true === $component_data['DeveloperMode'] ) {
-					if ( ! pods_developer() ) {
-						unset( $components[$component] );
-						continue;
-					}
-				}
-
-				$component_data = array(
-					'id'          => $component_data['ID'],
-					'name'        => $component_data['Name'],
-					'description' => make_clickable( $component_data['Description'] ),
-					'version'     => $component_data['Version'],
-					'author'      => $component_data['Author'],
-					'toggle'      => $toggle
-				);
-			}
-
-			$ui->data = $components;
-
-			pods_transient_clear( 'pods_components' );
-
-			$url = pods_var_update( array( 'toggled' => null ) );
-
-			pods_redirect( $url );
-		} elseif ( 1 == pods_v( 'toggle' ) ) {
-			$ui->message( Pods_Init::$components->components[$component]['Name'] . ' ' . __( 'Component enabled', 'pods' ) );
-		} else {
-			$ui->message( Pods_Init::$components->components[$component]['Name'] . ' ' . __( 'Component disabled', 'pods' ) );
-		}
-
-		$ui->manage();
 	}
 
 	/**
@@ -2445,16 +2502,14 @@ advanced|Advanced',
 	/**
 	 * Pods add-on plugins available in the plugin installer
 	 *
-	 * @todo Add componets as plugins?
-	 *
 	 * @return array
 	 *
 	 * @since 3.0.0
 	 */
 	function pods_plugins() {
 		$plugins = array(
-			'pods-alternative-cache' 		=> 'http://wordpress.org/plugins/pods-alternative-cache',
-			'pods-frontier-auto-template' 	=> 'http://wordpress.org/plugins/pods-frontier-auto-template/',
+			'pods-alternative-cache' 		=> 'http://pods.io/2014/04/16/introducing-pods-alternative-cache/',
+			'pods-frontier-auto-template' 	=> 'http://pods.io/?p=182830',
 			'pods-seo' 						=> 'http://wordpress.org/plugins/pods-seo/',
 			'csv-importer-for-pods' 		=> 'https://wordpress.org/plugins/csv-importer-for-pods/',
 		);
@@ -2475,38 +2530,70 @@ advanced|Advanced',
 	}
 
 	/**
-	 * Creates a message about plugin status, with activation/install link if possible.
+	 * Adds Pods Plugins to the array of components used to populate components admin UI.
 	 *
-	 * @param string $name The plugin's proper name (displayable.)
-	 * @param string $slug The plugin's slug (needs to match http://wordpress.org/plugins/{$slug})
-	 * @param string $uri The plugin's URI (WordPress.org page)
+	 * @param array $components The prepared array of components.
 	 *
-	 * @return string
+	 * @returns array The array of components and plugins.
+	 *
+	 * @access private
 	 *
 	 * @since 3.0.0
 	 */
-	function plugin_install_link( $name, $slug, $uri  ) {
+	private function plugins_to_components( $components ) {
+		$pods_plugins = $this->pods_plugins();
+		$all_plugins = get_plugins();
+		$plugin_uris = wp_list_pluck( $all_plugins, 'PluginURI' );
+		$plugin_uris = array_flip( $plugin_uris );
 
-			$install = new Pods_Plugin_Install( $slug, $uri );
 
-			if ( $install->check_active() ) {
-				$message = ' is installed and activated!';
-			}
-			elseif ( $install->check() ) {
-				$message = ' is installed, but not activated. <a href="' . $install->activate_link() . '">Click here to activate the plugin.</a>';
-			}
-			elseif ( $install_link = $install->install_link() ) {
-				$message = '  is not installed. <a href="' . $install_link . '">Click here to install the plugin.</a>';
+		foreach ($pods_plugins as $slug => $uri ) {
+			if ( array_key_exists( $uri, $plugin_uris ) ) {
+				$file = $plugin_uris[ $uri ];
+				$plugin_info = $all_plugins[ $file ];
+				$components[ $slug ][ 'id' ] = $slug;
+				$components[ $slug ][ 'file' ] = $file;
+				$components[ $slug ][ 'name' ] =  $plugin_info[ 'Name' ];
+				$components[ $slug ][ 'PluginName' ] =  $plugin_info[ 'Name' ];
+				$components[ $slug ][ 'ShortName' ] =  $plugin_info[ 'Name' ];
+				$components[ $slug ][ 'PluginName' ] =  $plugin_info[ 'Name' ];
+				$components[ $slug ][ 'MenuName' ] =  $plugin_info[ 'Name' ];
+				$components[ $slug ][ 'URI' ] = $uri;
+				$components[ $slug ][ 'Version' ] = $plugin_info[ 'Version' ];
+				$components[ $slug ][ 'AuthorURI' ] = $plugin_info[ 'AuthorURI' ];
+				$components[ $slug ][ 'Description' ] = $plugin_info[ 'Description' ];
+				$components[ $slug ][ 'category'] = 'Pods Plugins';
+				$components = $this->plugin_component_meta_prepare( $components, $slug );
+
+
+				if ( pods_is_plugin_active( $file ) ) {
+					$components[ $slug ][ 'toggle' ] = 1;
+				}
+				else {
+					$components[ $slug ][ 'toggle' ] = 0;
+				}
+
 			}
 			else {
-				$message = '  is not installed and could not be found in the Plugin Directory. Please install this plugin manually.';
+				$info = $this->plugin_info_via_api( $slug );
+				$components[ $slug ][ 'id' ] = $slug;
+				foreach( $info as $key => $value ) {
+					if ( $key === 'Name') {
+						$components[ $slug ][  'name'  ] = $value;
+					}
+
+					$components[ $slug ][  $key  ] = $value;
+				}
+				$components[ $slug ][ 'category'] = 'Pods Plugins';
+
+				$components = $this->plugin_component_meta_prepare( $components, $slug );
+				$components[ $slug ][ 'toggle' ] = 0;
+
 			}
 
-			return sprintf( '<div id="message" class="error"><p>%s</p></div>',
-				sprintf(
-					__( '%1$s %2$s.', 'pods' ),
-					$name, $message )
-			);
+		}
+
+		return $components;
 
 	}
 
@@ -2519,18 +2606,17 @@ advanced|Advanced',
 	 *
 	 * @since 3.0.0
 	 */
-	function plugin_info( $slug ) {
+	function plugin_info_via_api( $slug ) {
 		$url = "http://api.wordpress.org/plugins/info/1.0/{$slug}.json";
 		if ( curl_init( $url ) ) {
 			$json = file_get_contents( $url );
 			$obj = json_decode( $json );
 			$info = array(
-				'name' 			=> $obj->name,
-				'slug' 			=> $obj->slug,
-				'version'		=> $obj->version,
-				'wp_requires' 	=> $obj->requires,
-				'wp_tested' 	=> $obj->tested,
-				'author' 	=> $obj->author,
+				'Name' 			=> $obj->name,
+				'Version'		=> $obj->version,
+				'Author' 		=> $obj->author,
+				'AuthorURI'    	=> $obj->author_profile,
+				'Description'	=> $obj->short_description,
 			);
 
 			return $info;
@@ -2540,29 +2626,70 @@ advanced|Advanced',
 	}
 
 	/**
-	 * @todo This
+	 * Get the base file for any installed plugin.
+	 *
+	 * @param string $uri The plugins WordPress.org page. IE 'http://wordpress.org/plugins/pods/'
+	 *
+	 * @return string|bool Either the base file for the plugin, IE 'pods/init.php' or false if plugin isn't installed.
+	 *
+	 * @since 3.0.0
 	 */
-	function plugin_install_ui() {
-		$plugins = $this->pods_plugins();
-		if ( !is_array( $plugins ) ) {
-			return;
+	function plugin_file( $uri ) {
+		$all_plugins = get_plugins();
+		$plugin_uris = wp_list_pluck( $all_plugins, 'PluginURI' );
+		$plugin_uris = array_flip( $plugin_uris );
+		if ( array_key_exists( $uri, $plugin_uris ) ) {
+			return  $plugin_uris[ $uri ];
 		}
 
-		foreach ( $plugins as $slug => $uri ) {
-			$info = $this->plugin_info( $slug );
-			if ( $info  ) {
-				$name = $info['name'];
-			}
+	}
 
-			$links[] = $this->plugin_install_link( $name, $slug, $uri  );
+	/**
+	 * Prepares the meta section of the component admin UI for Pods Plugin in $this->plugins_to_components()
+	 *
+	 * @param array $components The components array.
+	 * @param string $slug The slug of the plugin currently being prepared.
+	 *
+	 * @return array Updated components array.
+	 *
+	 * @access private
+	 *
+	 * @since 3.0.0
+	 */
+	private function plugin_component_meta_prepare( $components, $slug ) {
+		$meta = array();
 
+		if ( ! empty( $components[ $slug ]['Version'] ) ) {
+			$meta[] = 'Version ' . $components[ $slug ]['Version'];
 		}
 
-		if ( isset( $links ) && is_array( $links ) ) {
-
-			return implode( ',', $links );
-
+		if ( empty( $components[ $slug ]['Author'] ) ) {
+			$components[ $slug ]['Author']    = 'Pods Framework Team';
+			$components[ $slug ]['AuthorURI'] = 'http://pods.io/';
 		}
+		if ( ! empty( $components[ $slug ]['AuthorURI'] ) ) {
+			$components[ $slug ]['Author'] = '<a href="' . $components[ $slug ]['AuthorURI'] . '">' . $components[ $slug ]['Author'] . '</a>';
+		}
+
+		$meta[] = sprintf( __( 'by %s', 'pods' ), $components[ $slug ]['Author'] );
+
+		if ( ! empty( $components[ $slug ]['URI'] ) ) {
+			$meta[] = '<a href="' . $components[ $slug ]['URI'] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
+		}
+
+		$components[ $slug ]['description'] = wpautop( trim( make_clickable( strip_tags( $components[ $slug ]['Description'], 'em,strong' ) ) ) );
+
+		if ( ! empty( $meta ) ) {
+			$components[ $slug ]['description'] .= '<div class="pods-component-meta" ' . ( ! empty( $components[ $slug ]['Description'] ) ? ' style="padding:8px 0 4px;"' : '' ) . '>' . implode( '&nbsp;&nbsp;|&nbsp;&nbsp;', $meta ) . '</div>';
+		}
+
+		if ( ! empty( $components[ $slug ]['category'] ) ) {
+			$category_url = pods_query_arg( array( 'view' => sanitize_title( $components[ $slug ]['category'] ), 'pg' => '', 'page' => $_GET['page'] ) );
+
+			$component_data['category'] = '<a href="' . $category_url . '">' . $components[ $slug ]['category'] . '</a>';
+		}
+
+		return $components;
 
 	}
 

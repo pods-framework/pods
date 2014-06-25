@@ -813,7 +813,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
 	$return = ob_get_clean();
 
-	if ( $tags[ 'shortcodes' ] ) {
+	if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
 	}
 

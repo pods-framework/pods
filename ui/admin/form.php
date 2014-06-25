@@ -41,7 +41,7 @@ if ( !isset( $thank_you_alt ) )
     $thank_you_alt = $thank_you;
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
 $uid = @session_id();
 

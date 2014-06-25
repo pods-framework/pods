@@ -800,6 +800,61 @@ function pods_shortcode_form ( $tags, $content = null ) {
 }
 
 /**
+ * Fork of WordPress do_shortcode that allows specifying which shortcodes are ran.
+ *
+ * Search content for shortcodes and filter shortcodes through their hooks.
+ *
+ * If there are no shortcode tags defined, then the content will be returned
+ * without any filtering. This might cause issues when plugins are disabled but
+ * the shortcode will still show up in the post or content.
+ *
+ * @since 2.4.3
+ *
+ * @uses $shortcode_tags
+ * @uses get_shortcode_regex() Gets the search pattern for searching shortcodes.
+ *
+ * @param string $content Content to search for shortcodes
+ * @param array $shortcodes Array of shortcodes to run
+ * @return string Content with shortcodes filtered out.
+ */
+function pods_do_shortcode( $content, $shortcodes ) {
+
+	global $shortcode_tags;
+
+	// No shortcodes in content
+	if ( false === strpos( $content, '[' ) ) {
+		return $content;
+	}
+
+	// No shortcodes registered
+	if ( empty( $shortcode_tags ) || !is_array( $shortcode_tags ) ) {
+		return $content;
+	}
+
+	// Store all shortcodes, to restore later
+	$temp_shortcode_tags = $shortcode_tags;
+
+	// Loop through all shortcodes and remove those not being used right now
+	foreach ( $shortcode_tags as $tag => $callback ) {
+		if ( ! in_array( $tag, $shortcodes ) ) {
+			unset( $shortcode_tags[ $tag ] );
+		}
+	}
+
+	// Build Shortcode regex pattern just for the shortcodes we want
+	$pattern = get_shortcode_regex();
+
+	// Call shortcode callbacks just for the shortcodes we want
+	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
+
+	// Restore all shortcode tags
+	$shortcode_tags = $temp_shortcode_tags;
+
+	return $content;
+
+}
+
+/**
  * Check if Pods is compatible with WP / PHP / MySQL or not
  *
  * @return bool

@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2013-03-01 15:53:47+0000\n"
+"PO-Revision-Date: 2014-06-25 08:42:58+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Pod Reference"
 msgstr ""
 
-#: components/Templates/includes/element-pod_reference.php:6
+#: components/Templates/includes/element-pod_reference.php:12
 msgid "Select Pod to use as reference"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones."
 msgstr ""
 
-#: components/Pages.php:468 components/Templates/Templates.php:309
+#: components/Pages.php:468 components/Templates/Templates.php:298
 msgid "<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles."
 msgstr ""
 
@@ -515,7 +515,7 @@ msgid "Delete this %s"
 msgstr ""
 
 #: classes/PodsUI.php:1420 classes/PodsUI.php:1468 classes/PodsUI.php:1747
-#: classes/PodsUI.php:2381
+#: classes/PodsUI.php:2387
 msgid "Back to %s"
 msgstr ""
 
@@ -955,7 +955,6 @@ msgstr ""
 msgid "http://pods.io/about/"
 msgstr ""
 
-#: components/Templates/Templates.php:290
 #: ui/admin/upgrade/upgrade_2_0_0.php:148
 #: ui/admin/upgrade/upgrade_2_0_0.php:264
 msgid "Content"
@@ -965,7 +964,7 @@ msgstr "Obsah"
 msgid "Allowed Files"
 msgstr "Povolene subory"
 
-#: components/Templates/Templates.php:440
+#: components/Templates/Templates.php:429
 msgid "You do not have access to view this content."
 msgstr ""
 
@@ -1096,7 +1095,7 @@ msgstr "Pod Typy tabulka nebola najdena, ktore nemozno migrovat"
 
 #: classes/PodsUI.php:1510 classes/PodsUI.php:1638
 msgid "<strong>Error:</strong> %s not found."
-msgstr "<strong> Chyba:. </ strong>% s nebol najdeny"
+msgstr "<strong>Chyba:</strong> %s nebol najdeny."
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:850
 msgid "Pod table not found, items cannot be migrated"
@@ -1122,7 +1121,7 @@ msgstr "ulozit"
 
 #: ui/admin/form-settings.php:48 ui/admin/form.php:70
 msgid "<strong>Error:</strong> %s %s successfully."
-msgstr "<strong> Chyba:. </ strong>% s% s uspesne"
+msgstr "<strong>Chyba: </strong> %s %s uspesne."
 
 #: classes/PodsUI.php:1796 components/Roles/ui/edit.php:22 ui/admin/form.php:57
 #: ui/admin/form.php:85 ui/admin/setup-edit.php:221
@@ -1135,7 +1134,7 @@ msgstr ""
 
 #: classes/PodsUI.php:1891
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"id\" definition."
-msgstr "<strong> Chyba: </ strong> Invalid Configuration - Missing \"id\"\". Definicia"
+msgstr "<strong>Chyba:</strong> Invalid Configuration - Missing \"id\". Definicia"
 
 #: ui/admin/form.php:259 ui/admin/view.php:105
 msgid "Navigate"
@@ -1145,11 +1144,11 @@ msgstr "Navigacia"
 msgid "Back to Manage"
 msgstr "Spat na Sprava"
 
-#: classes/PodsUI.php:2621
+#: classes/PodsUI.php:2627
 msgid "Reset Filters"
 msgstr "Obnovit filtre"
 
-#: classes/PodsUI.php:2644
+#: classes/PodsUI.php:2650
 msgid "Bulk Actions"
 msgstr ""
 
@@ -1157,7 +1156,7 @@ msgstr ""
 msgid "Enter name here"
 msgstr "Zadajte meno tu"
 
-#: classes/PodsUI.php:2660 classes/PodsUI.php:3757
+#: classes/PodsUI.php:2666 classes/PodsUI.php:3763
 msgid "Apply"
 msgstr ""
 
@@ -1166,7 +1165,7 @@ msgstr ""
 msgid "Fields"
 msgstr "Pole"
 
-#: classes/PodsUI.php:2680
+#: classes/PodsUI.php:2686
 msgid "Update Order"
 msgstr "Aktualizacia Objednat"
 
@@ -1174,7 +1173,7 @@ msgstr "Aktualizacia Objednat"
 msgid "Pods Help"
 msgstr "Pods Pomoc"
 
-#: classes/PodsUI.php:2681 ui/admin/setup-edit-field-fluid.php:190
+#: classes/PodsUI.php:2687 ui/admin/setup-edit-field-fluid.php:190
 msgid "Cancel"
 msgstr "Zrusit"
 
@@ -1182,7 +1181,7 @@ msgstr "Zrusit"
 msgid "Delete Pods 1.x data"
 msgstr "Odstranit Pods 1.x data"
 
-#: classes/PodsAdmin.php:1385 classes/PodsUI.php:2699
+#: classes/PodsAdmin.php:1385 classes/PodsUI.php:2705
 #: components/Migrate-Packages/ui/wizard.php:69
 msgid "Export"
 msgstr "Export"
@@ -1191,7 +1190,7 @@ msgstr "Export"
 msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.x."
 msgstr "Toto zmaze vsetky data struky 1.x, je to len odporucit, ak overite data boli spravne prenesene do struky 2.x."
 
-#: classes/PodsUI.php:2725
+#: classes/PodsUI.php:2731
 msgid "Please use the search filter(s) above to display data"
 msgstr "Prosim, pouzite vyhladavaci filter (y) vyssie pre zobrazenie dat"
 
@@ -1202,7 +1201,7 @@ msgid ""
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install."
 msgstr ""
 
-#: classes/PodsUI.php:2725
+#: classes/PodsUI.php:2731
 msgid "or click on an Export to download a full copy of the data"
 msgstr "alebo kliknite na Export pre stiahnutie kopie dat"
 
@@ -1210,7 +1209,7 @@ msgstr "alebo kliknite na Export pre stiahnutie kopie dat"
 msgid "Delete Pods 1.x settings and data"
 msgstr "Odstranit Pods 1.x nastavenia a data"
 
-#: classes/PodsUI.php:2827
+#: classes/PodsUI.php:2833
 msgid "Reset"
 msgstr ""
 
@@ -1218,8 +1217,8 @@ msgstr ""
 msgid "Reset Pods 2.x"
 msgstr "Reset Pods 2.x"
 
-#: classes/PodsUI.php:2858 classes/PodsUI.php:2859 classes/PodsUI.php:2867
-#: classes/PodsUI.php:2921 classes/PodsUI.php:2974
+#: classes/PodsUI.php:2864 classes/PodsUI.php:2865 classes/PodsUI.php:2873
+#: classes/PodsUI.php:2927 classes/PodsUI.php:2980
 msgid "Advanced Filters"
 msgstr ""
 
@@ -1227,7 +1226,7 @@ msgstr ""
 msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it's data, and performs a fresh install."
 msgstr "Toto neodstrani ziadne struky 1.x dat, to jednoducho resetuje strukov 2.x nastavenia, odstrani vsetky jej udaje, a vykona novu instalaciu."
 
-#: classes/PodsUI.php:2868
+#: classes/PodsUI.php:2874
 msgid "Add Filter"
 msgstr ""
 
@@ -1236,7 +1235,7 @@ msgstr ""
 msgid "<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified."
 msgstr ""
 
-#: classes/PodsUI.php:2926
+#: classes/PodsUI.php:2932
 msgid "Remove Filter"
 msgstr ""
 
@@ -1247,8 +1246,8 @@ msgid ""
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install."
 msgstr ""
 
-#: classes/PodsUI.php:3037 classes/PodsUI.php:3069 classes/PodsUI.php:3104
-#: classes/PodsUI.php:3129
+#: classes/PodsUI.php:3043 classes/PodsUI.php:3075 classes/PodsUI.php:3110
+#: classes/PodsUI.php:3135
 msgid "Clear"
 msgstr ""
 
@@ -1256,7 +1255,7 @@ msgstr ""
 msgid "Reset Pods 2.x settings and data"
 msgstr "Obnovit Pods 2.x nastavenia a data"
 
-#: classes/PodsUI.php:3148
+#: classes/PodsUI.php:3154
 msgid "Search Text"
 msgstr ""
 
@@ -1264,7 +1263,7 @@ msgstr ""
 msgid "Deactivate and Delete Pods 2.x data"
 msgstr "Deaktivovat a odstranenie struky 2.x dat"
 
-#: classes/PodsUI.php:3208
+#: classes/PodsUI.php:3214
 msgid "No %s found"
 msgstr "Ziadne% s najdeny"
 
@@ -1272,9 +1271,9 @@ msgstr "Ziadne% s najdeny"
 msgid "This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed."
 msgstr "Toto zmaze struky 2.x nastavenia, data a deaktivovat sam raz urobil. Vasa databaza bude to, ako keby Pods 2.x nikdy neexistoval."
 
-#: classes/PodsUI.php:3236
+#: classes/PodsUI.php:3242
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"fields\" definition."
-msgstr "<strong> Chyba: </ strong> Invalid Configuration - Missing\"fields\". Definicia"
+msgstr "<strong>Chyba:</strong> Invalid Configuration - Missing\"fields\". Definicia"
 
 #: ui/admin/settings-reset.php:75
 msgid ""
@@ -1283,7 +1282,7 @@ msgid ""
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back."
 msgstr ""
 
-#: classes/PodsUI.php:3500 classes/PodsUI.php:3519
+#: classes/PodsUI.php:3506 classes/PodsUI.php:3525
 msgid "View this item"
 msgstr "Zobrazit tuto polozku"
 
@@ -1291,7 +1290,7 @@ msgstr "Zobrazit tuto polozku"
 msgid "Reset Pods"
 msgstr ""
 
-#: classes/PodsUI.php:3491 classes/PodsUI.php:3528
+#: classes/PodsUI.php:3497 classes/PodsUI.php:3534
 msgid "Edit this item"
 msgstr "Upravit tuto polozku"
 
@@ -1299,7 +1298,7 @@ msgstr "Upravit tuto polozku"
 msgid "This will reset Pods settings, removes all of it's data, and performs a fresh install."
 msgstr ""
 
-#: classes/PodsUI.php:3537
+#: classes/PodsUI.php:3543
 msgid "Duplicate this item"
 msgstr "Duplikovat tuto polozku"
 
@@ -1310,7 +1309,7 @@ msgid ""
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install."
 msgstr ""
 
-#: classes/PodsUI.php:3546
+#: classes/PodsUI.php:3552
 msgid "Delete this item"
 msgstr "Odstranit tuto polozku"
 
@@ -1318,7 +1317,7 @@ msgstr "Odstranit tuto polozku"
 msgid "Reset Pods settings and data"
 msgstr ""
 
-#: classes/PodsUI.php:3546
+#: classes/PodsUI.php:3552
 msgid "You are about to permanently delete this item\\n Choose \\'Cancel\\' to stop, \\'OK\\' to delete."
 msgstr ""
 
@@ -1326,7 +1325,7 @@ msgstr ""
 msgid "Deactivate and Delete Pods data"
 msgstr ""
 
-#: classes/PodsUI.php:3556
+#: classes/PodsUI.php:3562
 msgid "Enable"
 msgstr "Povolit"
 
@@ -1334,7 +1333,7 @@ msgstr "Povolit"
 msgid "This will delete Pods settings, data, and deactivate itself once done. Your database will be as if Pods never existed."
 msgstr ""
 
-#: classes/PodsUI.php:3557
+#: classes/PodsUI.php:3563
 msgid "Disable"
 msgstr "Zakazat"
 
@@ -1345,7 +1344,7 @@ msgid ""
 "This is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back."
 msgstr ""
 
-#: classes/PodsUI.php:3726 classes/PodsUI.php:3744
+#: classes/PodsUI.php:3732 classes/PodsUI.php:3750
 msgid "Show on screen"
 msgstr "Zobrazit na obrazovke"
 
@@ -1357,7 +1356,7 @@ msgstr "su nasledujuce nastavenia pre pokrocilych webe konfiguracie."
 msgid "Force an update of this beta from GitHub"
 msgstr "Vynutit aktualizaciu tohto beta z GitHub"
 
-#: classes/PodsUI.php:3857
+#: classes/PodsUI.php:3863
 msgid "Go to the first page"
 msgstr "Prejst na prvu stranku"
 
@@ -1365,7 +1364,7 @@ msgstr "Prejst na prvu stranku"
 msgid "This tool lets you update your Pods installation to the latest alpha/beta/release candidate, usually only when you've been instructed to do so."
 msgstr ""
 
-#: classes/PodsUI.php:3858
+#: classes/PodsUI.php:3864
 msgid "Go to the previous page"
 msgstr "Prejst na predchadzajucu stranku"
 
@@ -1373,7 +1372,7 @@ msgstr "Prejst na predchadzajucu stranku"
 msgid "Force Plugin Refresh/Update from GitHub"
 msgstr ""
 
-#: classes/PodsUI.php:3862
+#: classes/PodsUI.php:3868
 msgid "Current page"
 msgstr "Aktualna stranka"
 
@@ -1381,7 +1380,7 @@ msgstr "Aktualna stranka"
 msgid "Clear Pods Cache"
 msgstr ""
 
-#: classes/PodsUI.php:3862 classes/PodsUI.php:3879
+#: classes/PodsUI.php:3868 classes/PodsUI.php:3885
 msgid "of"
 msgstr "z"
 
@@ -1389,7 +1388,7 @@ msgstr "z"
 msgid "This tool will clear all of the transients/cache that are used by Pods. "
 msgstr ""
 
-#: classes/PodsUI.php:3883
+#: classes/PodsUI.php:3889
 msgid "Go to the next page"
 msgstr "Prejst na dalsiu stranku"
 
@@ -1397,7 +1396,7 @@ msgstr "Prejst na dalsiu stranku"
 msgid "Debug Information"
 msgstr "Debug Information"
 
-#: classes/PodsUI.php:3884
+#: classes/PodsUI.php:3890
 msgid "Go to the last page"
 msgstr "Prejst na poslednu stranku"
 
@@ -1469,7 +1468,7 @@ msgstr "Radio Buttons"
 
 #: ui/admin/setup-add.php:68
 msgid "Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>."
-msgstr "Rozsirit existujuci typ obsahu do WordPress, vratane <strong> Post Types </ strong> (Prispevky, stranky, atd), <strong> Taxonomia </ strong> (kategorie, slova, atd), <strong> Media </ strong>, <strong> Uzivatelske </ strong>, alebo <strong> Komentare </ strong>. "
+msgstr "Rozsirit existujuci typ obsahu do WordPress, vratane <strong>Post Types</strong> (Prispevky, stranky, atd), <strong>Taxonomia</strong> (kategorie, slova, atd), <strong>Media</strong>, <strong>Uzivatelske</strong>, alebo <strong>Komentare</strong>."
 
 #: classes/fields/boolean.php:58 classes/fields/pick.php:120
 msgid "Drop Down"
@@ -1483,7 +1482,7 @@ msgstr "Ano Label"
 msgid "Create a New Content Type"
 msgstr ""
 
-#: classes/PodsUI.php:2561 classes/PodsUI.php:2909 classes/PodsUI.php:3094
+#: classes/PodsUI.php:2567 classes/PodsUI.php:2915 classes/PodsUI.php:3100
 #: classes/fields/boolean.php:64 classes/fields/boolean.php:243
 #: classes/fields/boolean.php:267
 msgid "Yes"
@@ -1501,7 +1500,7 @@ msgstr "No Label"
 msgid "<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best."
 msgstr ""
 
-#: classes/PodsUI.php:2562 classes/PodsUI.php:2910 classes/PodsUI.php:3095
+#: classes/PodsUI.php:2568 classes/PodsUI.php:2916 classes/PodsUI.php:3101
 #: classes/fields/boolean.php:69 classes/fields/boolean.php:245
 #: classes/fields/boolean.php:268
 msgid "No"
@@ -2292,7 +2291,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1093 ui/admin/setup-edit.php:583
 msgid "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr "<strong> Label: </ strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> C </ span>"
+msgstr "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:99
 #: components/Builder/modules/list/PodsBuilderModuleList.php:137
@@ -2306,13 +2305,12 @@ msgstr "Vlastne sablony"
 
 #: classes/PodsAdmin.php:1100 ui/admin/setup-edit.php:587
 msgid "<strong>Label: </strong> Parent"
-msgstr "<strong> Label: </ strong> Parent"
+msgstr "<strong>Label: </strong> Parent"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:108
 #: components/Builder/modules/list/PodsBuilderModuleList.php:125
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:112
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:129
-#: components/Templates/Templates.php:295
 #: components/Templates/class-pods_templates.php:192 ui/admin/shortcode.php:368
 #: ui/admin/shortcode.php:385 ui/admin/widgets/list.php:52
 #: ui/admin/widgets/list.php:69 ui/admin/widgets/single.php:60
@@ -2764,7 +2762,7 @@ msgstr "Stranka"
 msgid "The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations."
 msgstr "all-in-one WordPress zalohovanie plugin pre jednoduche zalohovanie, obnovenie a prejst na lubovolny pocet miestnych alebo vonkajsich miestach."
 
-#: components/Templates/Templates.php:300
+#: components/Templates/Templates.php:289
 msgid "Show to Admins Only?"
 msgstr "Ukazat Admins len?"
 
@@ -2773,7 +2771,7 @@ msgid "1 free month"
 msgstr "1 mesiac zadarmo"
 
 #: classes/PodsAdmin.php:1593 components/Pages.php:466
-#: components/Templates/Templates.php:307
+#: components/Templates/Templates.php:296
 msgid "Restrict access by Capability?"
 msgstr "Obmedzit pristup zdatnosti?"
 
@@ -2782,7 +2780,7 @@ msgid "Click to sign up"
 msgstr "Kliknite pre prihlasenie"
 
 #: classes/PodsAdmin.php:1646 components/Pages.php:477
-#: components/Templates/Templates.php:318
+#: components/Templates/Templates.php:307
 msgid "Capability Allowed"
 msgstr "schopnost dovolila"
 
@@ -2799,7 +2797,7 @@ msgid "Upgrade Pods"
 msgstr "Aktualizacia Pods"
 
 #: classes/PodsAdmin.php:1574 components/Pages.php:517
-#: components/Templates/Templates.php:331
+#: components/Templates/Templates.php:320
 msgid "Restrict Access"
 msgstr "Obmedzit pristup"
 
@@ -2862,7 +2860,7 @@ msgstr "Vztahy"
 
 #: components/Roles/Roles.php:184
 msgid "You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first."
-msgstr "Nemozete odstranit <strong>% s </ strong> role, musite nastavit novu predvolenu ulohu pre web ako prvy."
+msgstr "Nemozete odstranit <strong>%s</strong> role, musite nastavit novu predvolenu ulohu pre web ako prvy."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:105
 msgid "Item Indexes"
@@ -2997,7 +2995,7 @@ msgstr ""
 #: ui/admin/form-settings.php:47 ui/admin/form-settings.php:62
 #: ui/admin/form.php:65 ui/admin/form.php:89 ui/admin/setup-edit.php:225
 msgid "<strong>Success!</strong> %s %s successfully."
-msgstr "<strong> Uspech! </ strong>% s% s uspesne."
+msgstr "<strong>Uspech!</strong>%s %s uspesne."
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:125
 msgid "Upgrade Complete!"
@@ -3007,7 +3005,7 @@ msgstr ""
 msgid "Choose below which Capabilities you would like this existing user role to have."
 msgstr "Vyberte, pod ktoru schopnosti si prajete existujuce uzivatelske role mat."
 
-#: components/Templates/Templates.php:256
+#: components/Templates/Templates.php:255
 msgid "Enter template name here"
 msgstr "Zadajte nazov predlohy tu"
 
@@ -3095,14 +3093,14 @@ msgstr "Dalsie pole"
 
 #: classes/PodsUI.php:491
 msgid "<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information."
-msgstr "<strong> Chyba: </ strong> Pods UI potrebuje struky objekt alebo definicie tabulky bezat, najdete v Uzivatelskej prirucke pre viac informacii."
+msgstr "<strong>Chyba:</strong> Pods UI potrebuje struky objekt alebo definicie tabulky bezat, najdete v Uzivatelskej prirucke pre viac informacii."
 
-#: classes/PodsAdmin.php:1382 classes/PodsUI.php:915 classes/PodsUI.php:3537
+#: classes/PodsAdmin.php:1382 classes/PodsUI.php:915 classes/PodsUI.php:3543
 #: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
 msgid "Duplicate"
 msgstr "Duplicitne"
 
-#: classes/PodsUI.php:916 classes/PodsUI.php:919 classes/PodsUI.php:3519
+#: classes/PodsUI.php:916 classes/PodsUI.php:919 classes/PodsUI.php:3525
 #: ui/admin/setup-edit.php:362
 msgid "View"
 msgstr "Zobrazit"
@@ -3111,37 +3109,37 @@ msgstr "Zobrazit"
 msgid "Reorder"
 msgstr "Zmenit poradie"
 
-#: classes/Pods.php:2956
+#: classes/Pods.php:2980
 msgid "Go to page:"
 msgstr "Prejst na stranku:"
 
-#: classes/Pods.php:2958
+#: classes/Pods.php:2982
 msgid "&laquo; First"
 msgstr "« First "
 
-#: classes/Pods.php:2959
+#: classes/Pods.php:2983
 msgid "&lsaquo; Previous"
 msgstr "<Predchadzajuce"
 
-#: classes/Pods.php:2960
+#: classes/Pods.php:2984
 msgid "Next &rsaquo;"
 msgstr "Dalsi>"
 
-#: classes/Pods.php:2961
+#: classes/Pods.php:2985
 msgid "Last &raquo;"
 msgstr "Posledna» "
 
-#: classes/Pods.php:3079 classes/PodsUI.php:918 classes/PodsUI.php:2599
-#: classes/PodsUI.php:2833
+#: classes/Pods.php:3103 classes/PodsUI.php:918 classes/PodsUI.php:2605
+#: classes/PodsUI.php:2839
 msgid "Search"
 msgstr "Hladat"
 
-#: classes/Pods.php:3306 classes/PodsAdmin.php:615
+#: classes/Pods.php:3330 classes/PodsAdmin.php:615
 #: ui/admin/components-admin.php:99
 msgid "Save Changes"
 msgstr "Ulozit zmeny"
 
-#: classes/Pods.php:3324
+#: classes/Pods.php:3348
 msgid "Form submitted successfully"
 msgstr ""
 
@@ -3403,11 +3401,11 @@ msgstr "% s je potrebne byt jedinecny"
 msgid "Invalid submission"
 msgstr "Neplatny predlozenie"
 
-#: classes/PodsAPI.php:7760
+#: classes/PodsAPI.php:7762
 msgid "Access denied for your session, please refresh and try again."
 msgstr "Pristup bol odmietnuty pre relaciu, prosim, osviezi a skuste to znova."
 
-#: classes/PodsAPI.php:7763
+#: classes/PodsAPI.php:7765
 msgid "Access denied, please refresh and try again."
 msgstr "Pristup bol odmietnuty, je nutne aktualizovat a skuste to znova."
 
@@ -3418,7 +3416,7 @@ msgstr "Vsetko"
 
 #: classes/PodsAdmin.php:232 classes/PodsAdmin.php:288
 #: classes/PodsAdmin.php:1381 classes/PodsInit.php:840 classes/PodsUI.php:914
-#: classes/PodsUI.php:3528 ui/admin/setup-edit-field-fluid.php:17
+#: classes/PodsUI.php:3534 ui/admin/setup-edit-field-fluid.php:17
 #: ui/admin/setup-edit-field.php:67 ui/admin/setup-edit.php:350
 msgid "Edit"
 msgstr "Upravit"
@@ -3469,11 +3467,11 @@ msgstr "Pods Upgrade"
 msgid "<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href=\"%s\">Upgrade Wizard</a>."
 msgstr ""
 
-#: classes/Pods.php:3596
+#: classes/Pods.php:3620
 msgid "ID"
 msgstr "ID"
 
-#: classes/Pods.php:3689 classes/PodsAdmin.php:1383 classes/PodsUI.php:3546
+#: classes/Pods.php:3713 classes/PodsAdmin.php:1383 classes/PodsUI.php:3552
 #: ui/admin/form.php:212 ui/admin/setup-edit-field-fluid.php:23
 #: ui/admin/setup-edit-field.php:73 ui/admin/view.php:76
 msgid "Delete"
@@ -3592,74 +3590,74 @@ msgid "File type not allowed, please use one of the following: %s"
 msgstr "Typ suboru nie je povoleny, prosim, pouzite jednu z nasledujucich moznosti:% s"
 
 #: classes/PodsInit.php:779 components/Helpers.php:112 components/Pages.php:161
-#: components/Templates/Templates.php:135
+#: components/Templates/Templates.php:134
 msgid "%s updated. <a href=\"%s\">%s</a>"
 msgstr ""
 
 #: classes/PodsInit.php:780 components/Helpers.php:113 components/Pages.php:162
-#: components/Templates/Templates.php:136
+#: components/Templates/Templates.php:135
 msgid "Custom field updated."
 msgstr ""
 
 #: classes/PodsInit.php:781 components/Helpers.php:114 components/Pages.php:163
-#: components/Templates/Templates.php:137
+#: components/Templates/Templates.php:136
 msgid "Custom field deleted."
 msgstr ""
 
 #: classes/PodsInit.php:782 classes/PodsInit.php:799 components/Helpers.php:115
 #: components/Helpers.php:136 components/Pages.php:164 components/Pages.php:185
-#: components/Templates/Templates.php:138
-#: components/Templates/Templates.php:159
+#: components/Templates/Templates.php:137
+#: components/Templates/Templates.php:158
 msgid "%s updated."
 msgstr ""
 
 #: classes/PodsInit.php:784 components/Helpers.php:117 components/Pages.php:166
-#: components/Templates/Templates.php:140
+#: components/Templates/Templates.php:139
 msgid "%s restored to revision from %s"
 msgstr ""
 
 #: classes/PodsInit.php:785 components/Helpers.php:118 components/Pages.php:167
-#: components/Templates/Templates.php:141
+#: components/Templates/Templates.php:140
 msgid "%s published. <a href=\"%s\">%s</a>"
 msgstr ""
 
 #: classes/PodsInit.php:786 components/Helpers.php:119 components/Pages.php:168
-#: components/Templates/Templates.php:142
+#: components/Templates/Templates.php:141
 msgid "%s saved."
 msgstr ""
 
 #: classes/PodsInit.php:787 components/Helpers.php:120 components/Pages.php:169
-#: components/Templates/Templates.php:143
+#: components/Templates/Templates.php:142
 msgid "%s submitted. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
 msgstr ""
 
 #: classes/PodsInit.php:788 components/Helpers.php:125 components/Pages.php:174
-#: components/Templates/Templates.php:148
+#: components/Templates/Templates.php:147
 msgid "%s scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s\">Preview %s</a>"
 msgstr ""
 
 #: classes/PodsInit.php:795 components/Helpers.php:132 components/Pages.php:181
-#: components/Templates/Templates.php:155
+#: components/Templates/Templates.php:154
 msgid "%s draft updated. <a target=\"_blank\" href=\"%s\">Preview %s</a>"
 msgstr ""
 
 #: classes/PodsInit.php:800 components/Helpers.php:137 components/Pages.php:186
-#: components/Templates/Templates.php:160
+#: components/Templates/Templates.php:159
 msgid "%s published."
 msgstr ""
 
 #: classes/PodsInit.php:801 components/Helpers.php:138 components/Pages.php:187
-#: components/Templates/Templates.php:161
+#: components/Templates/Templates.php:160
 msgid "%s submitted."
 msgstr ""
 
 #: classes/PodsInit.php:802 components/Helpers.php:139 components/Pages.php:188
-#: components/Templates/Templates.php:162
+#: components/Templates/Templates.php:161
 msgid "%s scheduled for: <strong>%1$s</strong>."
 msgstr ""
 
 #: classes/PodsInit.php:807 components/Helpers.php:144 components/Pages.php:193
-#: components/Templates/Templates.php:167
+#: components/Templates/Templates.php:166
 msgid "%s draft updated."
 msgstr ""
 

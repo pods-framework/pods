@@ -154,17 +154,17 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.4.3 June 23rd, 2014 =
+= 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes
 * Fixed: PodsUI data issue with Custom DB Table support
 * Hardened: Further security hardening of the `[pods]` shortcode, added PODS_DISABLE_SHORTCODE constant to allow sites to disable the Pods shortcode altogether
 * Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 * If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
 
-= 2.4.2 June 22nd, 2014 =
+= 2.4.2 - June 22nd, 2014 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods to fix a noncing issue with form saving, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 
-= 2.4.1 June 19th, 2014 =
+= 2.4.1 - June 19th, 2014 =
 * Fixed: Display of of hidden fields in Pods Forms
 * Fixed: Reordering fields in PodsUI
 * Fixed: PodsUI Admin Icon Display

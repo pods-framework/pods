@@ -570,6 +570,11 @@ function pods_access ( $privs, $method = 'OR' ) {
  * @since 1.6.7
  */
 function pods_shortcode ( $tags, $content = null ) {
+
+	if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
+		return '';
+	}
+
     $defaults = array(
         'name' => null,
         'id' => null,
@@ -618,11 +623,16 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $content ) )
         $content = null;
 
+	// Allow views only if not targeting a file path (must be within theme)
     if ( 0 < strlen( $tags[ 'view' ] ) ) {
-        $return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+		$return = '';
 
-		if ( $tags[ 'shortcodes' ] ) {
-			$return = do_shortcode( $return );
+		if ( !file_exists( $tags[ 'view' ] ) ) {
+			$return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+
+			if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
+				$return = do_shortcode( $return );
+			}
 		}
 
 		return $return;
@@ -660,7 +670,15 @@ function pods_shortcode ( $tags, $content = null ) {
 
     if ( !isset( $id ) ) {
         // id > slug (if both exist)
-        $id = empty( $tags[ 'slug' ] ) ? null : pods_evaluate_tags( $tags[ 'slug' ] );
+		$id = null;
+
+		if ( !empty( $tags[ 'slug' ] ) ) {
+			$id = $tags[ 'slug' ];
+
+			if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+				$id = pods_evaluate_tags( $id );
+			}
+		}
 
         if ( !empty( $tags[ 'id' ] ) ) {
             $id = $tags[ 'id' ];
@@ -678,8 +696,18 @@ function pods_shortcode ( $tags, $content = null ) {
 
     $found = 0;
 
-    if ( !empty( $tags[ 'form' ] ) )
+    if ( !empty( $tags[ 'form' ] ) ) {
+		// Further hardening of User-based forms
+		if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
+			return '';
+		}
+		// Only explicitly allow user edit forms
+		elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+			return '';
+		}
+
         return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+	}
     elseif ( empty( $id ) ) {
         $params = array();
 
@@ -689,11 +717,19 @@ function pods_shortcode ( $tags, $content = null ) {
 			}
 
 			if ( 0 < strlen( $tags[ 'where' ] ) ) {
-				$params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
+				$params[ 'where' ] = $tags[ 'where' ];
+
+				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+					$params[ 'where' ] = pods_evaluate_tags( $params[ 'where' ] );
+				}
 			}
 
 			if ( 0 < strlen( $tags[ 'having' ] ) ) {
-				$params[ 'having' ] = pods_evaluate_tags( $tags[ 'having' ] );
+				$params[ 'having' ] = $tags[ 'having' ];
+
+				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+					$params[ 'having' ] = pods_evaluate_tags( $id );
+				}
 			}
 
 			if ( 0 < strlen( $tags[ 'groupby' ] ) ) {
@@ -738,7 +774,7 @@ function pods_shortcode ( $tags, $content = null ) {
         else
             $return = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
-		if ( $tags[ 'shortcodes' ] ) {
+		if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
 
@@ -752,7 +788,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
         $return = Pods_Pages::content( true, $pods_page );
 
-		if ( $tags[ 'shortcodes' ] ) {
+		if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
 

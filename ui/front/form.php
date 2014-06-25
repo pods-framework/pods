@@ -40,7 +40,7 @@ foreach ( $submittable_fields as $k => $field ) {
 }
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
 $uid = @session_id();
 
@@ -52,7 +52,7 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     try {
-        $id = $pod->api->process_form( $_POST, $pod, $fields, $thank_you );
+        $id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
     }
     catch ( Exception $e ) {
         echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
@@ -73,7 +73,7 @@ if ( !$fields_only ) {
 			<?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
 			<?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
 			<?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-			<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+			<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
 			<?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 <?php
 }

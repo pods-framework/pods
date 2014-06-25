@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.9.1
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,9 +154,15 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.4.3 June 23rd, 2014 =
+* Fixed: Pods Templates component now has better handling of the new shortcodes
+* Fixed: PodsUI data issue with Custom DB Table support
+* Hardened: Further security hardening of the `[pods]` shortcode, added PODS_DISABLE_SHORTCODE constant to allow sites to disable the Pods shortcode altogether
+* Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
+* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
+
 = 2.4.2 June 22nd, 2014 =
-* Security Update: We recommend all Pods 2.x installations be updated to Pods 2.4.2 to fix a noncing issue with form saving
-* If you need assistance in upgrading your Pods 2.x site to Pods 2.4.2, please don't hesitate to contact us at http://pods.io/help/
+* Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods to fix a noncing issue with form saving, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 
 = 2.4.1 June 19th, 2014 =
 * Fixed: Display of of hidden fields in Pods Forms

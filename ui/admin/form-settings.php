@@ -24,11 +24,18 @@ foreach ( $fields as $k => $field ) {
         $fields[ $k ][ 'type' ] = 'hidden';
 }
 
+$submittable_fields = $fields;
+
+foreach ( $submittable_fields as $k => $field ) {
+    if ( pods_var( 'readonly', $field, false ) )
+        unset( $submittable_fields[ $k ] );
+}
+
 if ( !isset( $thank_you_alt ) )
     $thank_you_alt = $thank_you;
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $submittable_fields ) ) );
 
 $uid = @session_id();
 
@@ -42,7 +49,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
     try {
         $params = pods_unslash( (array) $_POST );
-        $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
+        $id = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
         $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -83,7 +90,7 @@ $do = 'save';
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' ); ?>
 
         <?php

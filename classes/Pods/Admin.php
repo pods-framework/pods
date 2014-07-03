@@ -1458,10 +1458,9 @@ class Pods_Admin {
 			else {
 				$name = $slug;
 			}
-
 			if ( pods_v( 'toggle', 'get', false, true ) ) {
-			//plugin is installed, but not active. So Activate
-				if ( !pods_is_plugin_active( $uri ) && $plugin_file ) {
+				//plugin is installed, but not active. So Activate
+				if ( ! is_plugin_active( $plugin_file ) && $plugin_file ) {
 					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
 						sprintf(
 							__( 'Activating %1$s', 'pods' ),
@@ -1471,7 +1470,7 @@ class Pods_Admin {
 
 				}
 				//plugin is not active or installed. So install.
-				elseif ( !pods_is_plugin_active( $uri ) && !$plugin_file ) {
+				elseif ( !is_plugin_active( $plugin_file ) && ! $plugin_file ) {
 					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
 						sprintf(
 							__( 'Installing %1$s', 'pods' ),

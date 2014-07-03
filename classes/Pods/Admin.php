@@ -2687,8 +2687,7 @@ advanced|Advanced',
 
 		if ( ! empty( $components[ $slug ]['category'] ) ) {
 			$category_url = pods_query_arg( array( 'view' => sanitize_title( $components[ $slug ]['category'] ), 'pg' => '', 'page' => $_GET['page'] ) );
-
-			$component_data['category'] = '<a href="' . $category_url . '">' . $components[ $slug ]['category'] . '</a>';
+			$components[ $slug ]['category'] = '<a href="' . $category_url . '">' . $components[ $slug ]['category'] . '</a>';
 		}
 
 		return $components;

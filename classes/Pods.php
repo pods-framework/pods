@@ -1863,7 +1863,7 @@ class Pods implements Iterator {
 	 * Return the next item ID, loops at the first id to return the last
 	 *
 	 * @param int $id
-	 * @param array $find_params
+	 * @param array $params_override
 	 *
 	 * @return int
 	 * @since 2.0

@@ -1486,7 +1486,8 @@ class Pods_Admin {
 						__( 'Deactivating %1$s', 'pods' ),
 						$name )
 				);
-				pods_redirect( wp_nonce_url( self_admin_url( 'plugins.php?action=deactivate&plugin=' . $plugin_file ), 'activate-plugin_' . $plugin_file ) );
+				deactivate_plugins( $plugin_file );
+				pods_redirect( self_admin_url( 'plugins.php' ) );
 
 			}
 

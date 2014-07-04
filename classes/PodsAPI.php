@@ -989,7 +989,7 @@ class PodsAPI {
                     'type' => 'text',
                     'alias' => array( 'url', 'website' ),
                     'options' => array(
-                        'required' => 1,
+                        'required' => 0,
                         'text_format_type' => 'website',
                         'text_format_website' => 'normal'
                     )

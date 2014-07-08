@@ -3474,7 +3474,7 @@ msgstr "Обновить"
 
 #: classes/PodsAdmin.php:496
 msgid "Pods Admin"
-msgstr "Адмитнистрирование Pod"
+msgstr "Управление Pods"
 
 #: classes/PodsAdmin.php:499
 msgid "Pods Upgrade"

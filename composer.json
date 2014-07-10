@@ -1,5 +1,5 @@
 {
-	"name" : "podsframework/pods",
+	"name" : "pods-framework/pods",
 	"description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
 	"type" : "wordpress-plugin",
 	"keywords" : [ "pods", "custom", "fields" ],

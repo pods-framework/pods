@@ -217,6 +217,7 @@
 						<div class="pods-wizard-option-content" id="pods-wizard-extend">
 							<div class="pods-wizard-content">
 								<p><?php _e( 'Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming.', 'pods' ); ?></p>
+								<p><?php _e( 'In order to extend taxonomies, you must enable the Table Storage component.', 'pods' ); ?></p>
 							</div>
 							<div class="stuffbox">
 								<h3><label for="link_name"><?php _e( 'Extend an Existing Content Type', 'pods' ); ?></label></h3>

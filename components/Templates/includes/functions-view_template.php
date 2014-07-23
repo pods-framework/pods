@@ -249,6 +249,19 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		'if' => 'pod_if_field',
 	);
 
+	/**
+	 * Add additional control blocks to Pods templates
+	 *
+	 * Can also be use to remove each/once/before/after/if functionality from Pods Templates
+	 *
+	 * @param array $commands The control blocks in the form of 'tag' => 'shortcode'
+	 *
+	 * @return array An array of control blocks, and shortcodes used to power them.
+	 *
+	 * @since 1.0.0
+	 */
+	$commands = apply_filters( 'pods_frontier_template_commands', $commands );
+
 	$aliases = array();
 	foreach ( $commands as $command => $shortcode ) {
 		preg_match_all( "/(\[" . $command . "(.*?)]|\[\/" . $command . "\])/m", $code, $matches );

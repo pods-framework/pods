@@ -50,6 +50,9 @@ function frontier_decode_template( $code, $atts ) {
 	if ( isset( $atts[ 'id' ] ) ) {
 		$code = str_replace( '{@EntryID}', $atts[ 'id' ], $code );
 	}
+	if ( isset( $atts[ 'index' ] ) ) {
+		$code = str_replace( '{_index}', $atts[ 'index' ], $code );
+	}
 
 	return $code;
 }
@@ -71,13 +74,55 @@ function frontier_if_block( $atts, $code ) {
 
 	$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 0 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
-	if ( $field_data = $pod->field( $atts[ 'field' ] ) ) {
+	// sysvals
+	$system_values = array(
+		'_index',
+	);
+
+	// field data
+	$field_data = null;
+
+	if ( in_array( $atts[ 'field' ], $system_values) ) {
+		switch ( $atts[ 'field' ] ){
+			case '_index':
+				$field_data = $atts['index'];
+				break;
+		}
+	}
+	else{
+
+		$field_data = $pod->field( $atts[ 'field' ] );
+	
+	}
+	
+	if ( $field_data !== null ){
+
 		// theres a field - let go deeper
 		if ( isset( $atts[ 'value' ] ) ) {
+
+			// check if > or < are present
+			if( substr( $atts[ 'value' ], 0, 1) === '+' ){
+				// is greater
+				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) + 1;
+				if(  (float) $field_data > $atts[ 'value' ] ){
+					// is greater - set it the same to allow
+					$atts[ 'value' ] = $field_data;
+				}
+
+			}elseif( substr( $atts[ 'value' ], 0, 1) === '-' ){
+				// is smaller
+				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) - 1;
+				if( (float) $field_data <  $atts[ 'value' ] ){
+					// is greater - set it the same to allow
+					$atts[ 'value' ] = $field_data;
+				}
+
+			}
+
 			if ( $field_data == $atts[ 'value' ] ) {
 				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 			}
-			else {
+			else {				
 				if ( isset( $code[ 1 ] ) ) {
 					$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
@@ -197,11 +242,13 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_index}' , $key, $template );
 				$template = str_replace( '{@' . $atts[ 'field' ] . '.', '{@', $template );
 
 				$out .= pods_shortcode( array(
 					'name' => $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ],
-					'slug' => $entry[ 'ID' ]
+					'slug' => $entry[ 'ID' ],
+					'index' => $key
 				), $template );
 
 			}
@@ -212,8 +259,8 @@ function frontier_do_subtemplate( $atts, $content ) {
 			if ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_uploader' ] && 'multi' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_format_type' ] ) {
 				$template = frontier_decode_template( $content, $atts );
 				foreach ( $entries as $key => $entry ) {
-
-					$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $template );
+					$content = str_replace( '{_index}' , $key, $template );
+					$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $content );
 					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry[ 'ID' ], $content );
 					$content = str_replace( '{@' . $atts[ 'field' ] . '}', '{@image_attachment.' . $entry[ 'ID' ] . '}', $content );
 
@@ -303,7 +350,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					$newtag = $shortcode . '__' . $key;
 					$tags[ $indexCount ] = $newtag;
 					$aliases[ ] = $newtag;
-					$code = preg_replace( "/(" . preg_quote( $tag ) . ")/m", "[" . $newtag . $atts . "]", $code, 1 );
+					$code = preg_replace( "/(" . preg_quote( $tag ) . ")/m", "[" . $newtag . $atts . " index=\"{_index}\"]", $code, 1 );
 					$indexCount++;
 				}
 				else {

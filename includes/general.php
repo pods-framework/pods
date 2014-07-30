@@ -833,6 +833,18 @@ function pods_shortcode ( $tags, $content = null ) {
 	if ( ! empty( $tags['form'] ) ) {
 		$return .= $pod->form( $tags['fields'], $tags['label'], $tags['thank_you'] );
 
+		if ( ! empty( $tags['after'] ) ) {
+			$return .= pods_evaluate_tags( $tags['after'] );
+		}
+
+		if ( $tags['shortcodes'] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	} elseif ( empty( $id ) ) {
+		$params = array();
+
 		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
 			if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
 				$params[ 'orderby' ] = $tags[ 'orderby' ];
@@ -859,13 +871,13 @@ function pods_shortcode ( $tags, $content = null ) {
 			$params[ 'limit' ] = (int) $tags[ 'limit' ];
 		}
 
-		$params[ 'search' ] = $tags[ 'search' ];
+		$params[ 'search' ] = (boolean) $tags[ 'search' ];
 
 		if ( 0 < absint( $tags[ 'page' ] ) ) {
 			$params[ 'page' ] = absint( $tags[ 'page' ] );
 		}
 
-		$params[ 'pagination' ] = $tags[ 'pagination' ];
+		$params[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
 
         if ( 0 < (int) $tags[ 'offset' ] ) {
             $params[ 'offset' ] = (int) $tags[ 'offset' ];
@@ -916,7 +928,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
 		return $return;
 	}
-    
+
 	if ( empty( $id ) && false !== $tags['filters'] && 'before' == $tags['filters_location'] ) {
 		$return .= $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}

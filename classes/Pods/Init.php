@@ -1217,11 +1217,6 @@ class Pods_Init {
 			if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && ! isset( $_GET['pods_bypass_update'] ) ) {
 				do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
-				// Update 2.0 alpha / beta sites
-				if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) ) {
-					include( PODS_DIR . 'sql/update-2.0-beta.php' );
-				}
-
 				if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) ) {
 					include( PODS_DIR . 'sql/update.php' );
 				}

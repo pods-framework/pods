@@ -1371,8 +1371,6 @@ class Pods_API {
 			$load_params->name = $load_params->old_name;
 		}
 
-		$load_params->table_info = true;
-
 		$pod = $this->load_pod( $load_params, __METHOD__ );
 
 		$params = (object) $params;

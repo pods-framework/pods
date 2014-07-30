@@ -1550,10 +1550,9 @@ class Pods_Admin {
 			if ( 1 == pods_v( 'toggled' ) ) {
 				$toggle = Pods_Init::$components->toggle( $component );
 
-				if ( TRUE === $toggle ) {
+			if ( true === $toggle ) {
 					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
-				}
-				elseif ( FALSE === $toggle ) {
+			} elseif ( false === $toggle ) {
 					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 				}
 
@@ -1567,9 +1566,11 @@ class Pods_Admin {
 							$toggle = 1;
 						}
 					}
-					if ( TRUE === $component_data[ 'DeveloperMode' ] ) {
+
+					if ( true === $component_data[ 'DeveloperMode' ] ) {
 						if ( !pods_developer() ) {
 							unset( $components[ $component ] );
+
 							continue;
 						}
 					}
@@ -1588,7 +1589,7 @@ class Pods_Admin {
 
 				pods_transient_clear( 'pods_components' );
 
-				$url = pods_var_update( array ( 'toggled' => NULL ) );
+				$url = pods_var_update( array ( 'toggled' => null ) );
 
 				pods_redirect( $url );
 			}

@@ -271,7 +271,7 @@ class PodsField_Currency extends PodsField {
 		}
 
 		if ( 0 < $decimals ) {
-			$format = '%01.' . $decimals . 'f';
+			$format = '%01.' . $decimals . 'F';
 		}
 		else {
 			$format = '%d';

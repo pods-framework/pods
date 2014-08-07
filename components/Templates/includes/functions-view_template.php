@@ -92,9 +92,9 @@ function frontier_if_block( $atts, $code ) {
 	else{
 
 		$field_data = $pod->field( $atts[ 'field' ] );
-	
+
 	}
-	
+
 	if ( $field_data !== null ){
 
 		// theres a field - let go deeper
@@ -122,7 +122,7 @@ function frontier_if_block( $atts, $code ) {
 			if ( $field_data == $atts[ 'value' ] ) {
 				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 			}
-			else {				
+			else {
 				if ( isset( $code[ 1 ] ) ) {
 					$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
@@ -296,6 +296,12 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		'if' => 'pod_if_field',
 	);
 
+	$commands_option( get_options( 'pods_frontier_extra_commands', false ) );
+
+	if ( is_array( $commands_option ) ) {
+		$commands = array_merge( $commands, $commands );
+	}
+
 	/**
 	 * Add additional control blocks to Pods templates
 	 *
@@ -414,22 +420,22 @@ function frontier_get_regex( $codes ) {
 	$validcodes = join( '|', array_map( 'preg_quote', $codes ) );
 
 	return '\\[' // Opening bracket
-		   . '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
-		   . "($validcodes)" // 2: selected codes only
-		   . '\\b' // Word boundary
-		   . '(' // 3: Unroll the loop: Inside the opening shortcode tag
-		   . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		   . '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
-		   . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		   . ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
-		   . '\\]' // ... and closing bracket
-		   . '|' . '\\]' // Closing bracket
-		   . '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
-		   . '[^\\[]*+' // Not an opening bracket
-		   . '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
-		   . '[^\\[]*+' // Not an opening bracket
-		   . ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
-		   . ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
+	. '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
+	. "($validcodes)" // 2: selected codes only
+	. '\\b' // Word boundary
+	. '(' // 3: Unroll the loop: Inside the opening shortcode tag
+	. '[^\\]\\/]*' // Not a closing bracket or forward slash
+	. '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
+	. '[^\\]\\/]*' // Not a closing bracket or forward slash
+	. ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
+	. '\\]' // ... and closing bracket
+	. '|' . '\\]' // Closing bracket
+	. '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
+	. '[^\\[]*+' // Not an opening bracket
+	. '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
+	. '[^\\[]*+' // Not an opening bracket
+	. ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
+	. ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
 
 }
 

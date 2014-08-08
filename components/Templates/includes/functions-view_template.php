@@ -296,11 +296,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		'if' => 'pod_if_field',
 	);
 
-	$commands_option = ( get_options( 'pods_frontier_extra_commands', false ) );
-
-	if ( is_array( $commands_option ) ) {
-		$commands = array_merge( $commands, $commands );
-	}
+	$commands = array_merge( $commands, get_option( 'pods_frontier_extra_commands', array()  ) );
 
 	/**
 	 * Add additional control blocks to Pods templates

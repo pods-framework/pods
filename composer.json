@@ -3,6 +3,7 @@
 	"description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
 	"type" : "wordpress-plugin",
 	"keywords" : [ "pods", "custom", "fields" ],
+	"homepage" : "http://pods.io/",
 	"license" : "GPL-2.0+",
 	"authors" : [
 		{
@@ -42,6 +43,10 @@
 			"role" : "Developer"
 		}
 	],
+	"support": {
+		"issues" : "https://github.com/pods-framework/pods-gravity-forms/issues",
+		"source" : "https://github.com/pods-framework/pods-gravity-forms"
+	},
 	"require" : {
 		"composer/installers" : "~1.0.0",
 		"php" : ">=5.2.4"
@@ -51,6 +56,5 @@
 	},
 	"extra" : {
 		"installer-name" : "pods"
-	},
-	"homepage" : "http://pods.io/"
+	}
 }

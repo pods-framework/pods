@@ -118,6 +118,24 @@ class Pods_Field_DateTime extends
 					'hh_mm_ss' => date_i18n( 'H:i:s' )
 				)
 			),
+			self::$type . '_year_range' => array(
+				'label' => __( 'Year Range', 'pods' ),
+				'default' => 'c-10:c+10',
+				'type' => 'text',
+				'help' => __( 'The range of years displayed in the year drop-down: either relative to today\'s year ("-nn:+nn"), relative to the currently selected year ("c-nn:c+nn"), absolute ("nnnn:nnnn"), or combinations of these formats ("nnnn:-nn").', 'pods' )
+			),
+			self::$type . '_min_date' => array(
+				'label' => __( 'Min Date', 'pods' ),
+				'default' => '',
+				'type' => 'text',
+				'help' => __( 'The minimum selectable date. When empty, there is no minimum.', 'pods' )
+			),
+			self::$type . '_max_date' => array(
+				'label' => __( 'Max Date', 'pods' ),
+				'default' => '',
+				'type' => 'text',
+				'help' => __( 'The maximum selectable date. When empty, there is no maximum.', 'pods' )
+			), 
 			self::$type . '_allow_empty'    => array(
 				'label'   => __( 'Allow empty value?', 'pods' ),
 				'default' => 1,

@@ -9,7 +9,7 @@ class testPods extends Pods_UnitTestCase {
 	/**
 	 * The pods system under test
 	 * 
-	 * @var   \Pods $this->podss
+	 * @var   \Pods
 	 * @since 3.0 
 	 */
 	private $pods;

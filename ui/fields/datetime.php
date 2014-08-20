@@ -68,9 +68,9 @@ $args = array(
 	'dateFormat'  => $date_format[ $format_value ],
 	'changeMonth' => true,
 	'changeYear'  => true,
-	'yearRange' => pods_var( $form_field_type . '_year_range', $options ),
-	'minDate' => pods_var( $form_field_type . '_min_date', $options ),
-	'maxDate' => pods_var( $form_field_type . '_max_date', $options )
+	'yearRange' => pods_v( $form_field_type . '_year_range', $options, 'c-10:c+10' ),
+	'minDate' => pods_v( $form_field_type . '_min_date', $options ),
+	'maxDate' => pods_v( $form_field_type . '_max_date', $options )
 );
 
 if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {

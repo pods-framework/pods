@@ -4,7 +4,7 @@ namespace Pods_Unit_Tests;
 /**
  * @group pods
  */
-class testPods extends Pods_UnitTestCase {
+class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * The pods system under test

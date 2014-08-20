@@ -41,7 +41,10 @@ $method = 'datepicker';
 $args = array(
 	'dateFormat'  => $date_format[ pods_v( $form_field_type . '_format', $options, 'mdy', true ) ],
 	'changeMonth' => true,
-	'changeYear'  => true
+	'changeYear'  => true,
+	'yearRange' => pods_var( $form_field_type . '_year_range', $options ),
+	'minDate' => pods_var( $form_field_type . '_min_date', $options ),
+	'maxDate' => pods_var( $form_field_type . '_max_date', $options )
 );
 
 $html5_format = 'Y-m-d';

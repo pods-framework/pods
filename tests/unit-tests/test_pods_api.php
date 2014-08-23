@@ -25,4 +25,19 @@ class Test_Pods_Api extends Pods_UnitTestCase {
 	{
 		$this->assertInstanceOf( 'Pods_API', \Pods_API::init(), 'Object returned is not of type Pods_API' );
 	}
+
+	/**
+	 * @covers Pods_API::__construct
+	 * @since  3.0
+	 */
+	public function test_method_construct_no_pod() {
+		$pods_api = new \Pods_API();
+
+		$this->assertEmpty( $pods_api->display_errors, 'Property display_errors not empty' );
+		$this->assertEmpty( $pods_api->pod_data,       'Property pod_data not empty' );
+		$this->assertEmpty( $pods_api->pod,            'Property pod not empty' );
+		$this->assertEmpty( $pods_api->pod_id,         'Property pod_id not empty' );
+		$this->assertEmpty( $pods_api->fields,         'Property fields not empty' );
+		$this->assertEmpty( $pods_api->format,         'Property format not empty' );
+	}
 }

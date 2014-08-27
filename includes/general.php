@@ -141,7 +141,7 @@ function pods_error( $error, $obj = null ) {
 	$log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 
 	// throw error as Exception and return false if silent
-	if ( false !== $display_errors && ! empty( $error ) ) {
+	if ( false === $display_errors && ! empty( $error ) ) {
 		$exception_bypass = apply_filters( 'pods_error_exception', null, $error );
 
 		if ( null !== $exception_bypass ) {

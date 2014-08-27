@@ -580,6 +580,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'id' => null,
         'slug' => null,
         'select' => null,
+        'join' => null,
         'order' => null,
         'orderby' => null,
         'limit' => null,
@@ -740,6 +741,9 @@ function pods_shortcode ( $tags, $content = null ) {
 
 			if ( 0 < strlen( $tags[ 'select' ] ) ) {
 				$params[ 'select' ] = $tags[ 'select' ];
+			}
+			if ( 0 < strlen( $tags[ 'join' ] ) ) {
+				$params[ 'join' ] = $tags[ 'join' ];
 			}
 		}
 

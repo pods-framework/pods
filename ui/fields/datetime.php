@@ -67,7 +67,10 @@ $args = array(
 	'timeFormat'  => $time_format[ pods_v( $form_field_type . '_time_format', $options, 'h_mma', true ) ],
 	'dateFormat'  => $date_format[ $format_value ],
 	'changeMonth' => true,
-	'changeYear'  => true
+	'changeYear'  => true,
+	'yearRange' => pods_v( $form_field_type . '_year_range', $options, 'c-10:c+10', true ),
+	'minDate' => pods_v( $form_field_type . '_min_date', $options ),
+	'maxDate' => pods_v( $form_field_type . '_max_date', $options )
 );
 
 if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {

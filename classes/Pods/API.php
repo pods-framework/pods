@@ -1019,7 +1019,7 @@ class Pods_API {
 					'label'               => 'URL',
 					'type'                => 'text',
 					'alias'               => array( 'url', 'website' ),
-					'required'            => 1,
+					'required'            => 0,
 					'text_format_type'    => 'website',
 					'text_format_website' => 'normal'
 				),
@@ -1370,8 +1370,6 @@ class Pods_API {
 		if ( isset( $load_params->old_name ) ) {
 			$load_params->name = $load_params->old_name;
 		}
-
-		$load_params->table_info = true;
 
 		$pod = $this->load_pod( $load_params, __METHOD__ );
 

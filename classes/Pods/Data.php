@@ -2206,7 +2206,7 @@ class Pods_Data {
 
 		if ( 'INSERT' == strtoupper( substr( $params->sql, 0, 6 ) ) || 'REPLACE' == strtoupper( substr( $params->sql, 0, 7 ) ) ) {
 			$result = $wpdb->insert_id;
-		} elseif ( preg_match( '/^[\s\r\n\(]*SELECT/', strtoupper( $params->sql ) ) ) {
+		} elseif ( preg_match( '/^[\s\r\n\(]*SELECT/', strtoupper( $params->sql ) ) || preg_match( '/^[\s\r\n\(]*CALL/', strtoupper( $params->sql ) ) ) {
 			$result = (array) $wpdb->last_result;
 
 			if ( ! empty( $result ) && ! empty( $params->results_error ) ) {

@@ -12,7 +12,7 @@ $config_file_path = $argv[1];
 $multisite = ! empty( $argv[2] );
 
 require_once $config_file_path;
-require_once dirname( $config_file_path ) . '/includes/functions.php';
+require_once dirname( $config_file_path ) . '/tests/phpunit/includes/functions.php';
 
 // Force WP_ADMIN to be true
 define( 'WP_ADMIN', true );

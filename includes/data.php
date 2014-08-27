@@ -846,12 +846,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 		} elseif ( 'user' == $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
-			if ( !pods_version_check( 'wp', '3.5' ) ) {
-				$user_data = get_object_vars( $user->data );
-			}
-			else {
-				$user_data = $user->to_array();
-			}
+			$user_data = $user->to_array();
 
 			// Role
 			if ( 'role' == $var ) {

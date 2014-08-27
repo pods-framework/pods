@@ -1,4 +1,4 @@
-# [Pods Framework](http://pods.io) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
+# [Pods Framework](http://pods.io) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) [![Build Status](https://travis-ci.org/pods-framework/pods.svg?branch=3.0-unstable)](https://travis-ci.org/pods-framework/pods)  #
 
 ![Pods Framework icon](http://pods.io/wp-content/themes/pods/images/logo-pods-header.png)
 

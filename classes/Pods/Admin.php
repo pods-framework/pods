@@ -1458,10 +1458,9 @@ class Pods_Admin {
 			else {
 				$name = $slug;
 			}
-
 			if ( pods_v( 'toggle', 'get', false, true ) ) {
-			//plugin is installed, but not active. So Activate
-				if ( !pods_is_plugin_active( $uri ) && $plugin_file ) {
+				//plugin is installed, but not active. So Activate
+				if ( ! is_plugin_active( $plugin_file ) && $plugin_file ) {
 					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
 						sprintf(
 							__( 'Activating %1$s', 'pods' ),
@@ -1471,7 +1470,7 @@ class Pods_Admin {
 
 				}
 				//plugin is not active or installed. So install.
-				elseif ( !pods_is_plugin_active( $uri ) && !$plugin_file ) {
+				elseif ( !is_plugin_active( $plugin_file ) && ! $plugin_file ) {
 					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
 						sprintf(
 							__( 'Installing %1$s', 'pods' ),
@@ -1486,7 +1485,8 @@ class Pods_Admin {
 						__( 'Deactivating %1$s', 'pods' ),
 						$name )
 				);
-				pods_redirect( wp_nonce_url( self_admin_url( 'plugins.php?action=deactivate&plugin=' . $plugin_file ), 'activate-plugin_' . $plugin_file ) );
+				deactivate_plugins( $plugin_file );
+				pods_redirect( self_admin_url( 'plugins.php' ) );
 
 			}
 
@@ -1550,10 +1550,9 @@ class Pods_Admin {
 			if ( 1 == pods_v( 'toggled' ) ) {
 				$toggle = Pods_Init::$components->toggle( $component );
 
-				if ( TRUE === $toggle ) {
+			if ( true === $toggle ) {
 					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
-				}
-				elseif ( FALSE === $toggle ) {
+			} elseif ( false === $toggle ) {
 					$ui->message( Pods_Init::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 				}
 
@@ -1567,9 +1566,11 @@ class Pods_Admin {
 							$toggle = 1;
 						}
 					}
-					if ( TRUE === $component_data[ 'DeveloperMode' ] ) {
+
+					if ( true === $component_data[ 'DeveloperMode' ] ) {
 						if ( !pods_developer() ) {
 							unset( $components[ $component ] );
+
 							continue;
 						}
 					}
@@ -1588,7 +1589,7 @@ class Pods_Admin {
 
 				pods_transient_clear( 'pods_components' );
 
-				$url = pods_var_update( array ( 'toggled' => NULL ) );
+				$url = pods_var_update( array ( 'toggled' => null ) );
 
 				pods_redirect( $url );
 			}
@@ -2686,8 +2687,7 @@ advanced|Advanced',
 
 		if ( ! empty( $components[ $slug ]['category'] ) ) {
 			$category_url = pods_query_arg( array( 'view' => sanitize_title( $components[ $slug ]['category'] ), 'pg' => '', 'page' => $_GET['page'] ) );
-
-			$component_data['category'] = '<a href="' . $category_url . '">' . $components[ $slug ]['category'] . '</a>';
+			$components[ $slug ]['category'] = '<a href="' . $category_url . '">' . $components[ $slug ]['category'] . '</a>';
 		}
 
 		return $components;

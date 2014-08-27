@@ -605,7 +605,7 @@ class Pods_Field_Pick extends
 
 		$simple_tableless_objects = $this->simple_objects();
 
-		if ( in_array( pods_v( 'pick_object', $options ), $simple_tableless_objects ) ) {
+		if ( in_array( pods_v( self::$type . '_object', $options ), $simple_tableless_objects ) ) {
 			$schema = 'LONGTEXT';
 		}
 
@@ -645,7 +645,7 @@ class Pods_Field_Pick extends
 
 		$ajax = false;
 
-		if ( ( 'custom-simple' != pods_v( self::$type . '_object', $options ) || empty( $custom ) ) && '' != pods_v( 'pick_object', $options, '', true ) ) {
+		if ( ( 'custom-simple' != pods_v( self::$type . '_object', $options ) || empty( $custom ) ) && '' != pods_v( self::$type . '_object', $options, '', true ) ) {
 			$ajax = true;
 		}
 
@@ -993,7 +993,7 @@ class Pods_Field_Pick extends
 	 * @return mixed Corrected value
 	 */
 	public function simple_value( $name, $value = null, $options = null, $pod = null, $id = null, $raw = false ) {
-		if ( in_array( pods_v( 'pick_object', $options ), self::simple_objects() ) || 1 == pods_v( self::$type . '_simple', $options ) ) {
+		if ( in_array( pods_v( self::$type . '_object', $options ), self::simple_objects() ) || 1 == pods_v( self::$type . '_simple', $options ) ) {
 
 			if ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 				$simple = @json_decode( $value, true );
@@ -1639,7 +1639,7 @@ class Pods_Field_Pick extends
 							$result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $args );
 						}
 
-						if ( in_array( $options['pick_object'], array( 'site', 'network' ) ) ) {
+						if ( in_array( $options[self::$type . '_object'], array( 'site', 'network' ) ) ) {
 							$result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result['path'];
 						} elseif ( strlen( $result[ $search_data->field_index ] ) < 1 ) {
 							$result[ $search_data->field_index ] = '(No Title)';

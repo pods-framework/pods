@@ -286,4 +286,31 @@ class Test_Pods extends Pods_UnitTestCase {
 		$this->expectOutputString( '' );
 		$this->pods->input( array() );
 	}
+
+	/**
+	 * @covers Pods::row
+	 * @since 3.0
+	 */
+	public function test_method_exists_row() {
+		$this->assertTrue( method_exists( $this->pods, 'row' ), 'Method row does not exist' );
+	}
+
+	/**
+	 * @covers  Pods::row
+	 * @depends test_method_exists_row
+	 * @since   3.0
+	 */
+	public function test_method_row_false() {
+		$this->assertFalse( $this->pods->row() );
+	}
+
+	/**
+	 * @covers  Pods::row
+	 * @depends test_method_exists_row
+	 * @since   3.0
+	 */
+	public function test_method_row() {
+		$this->setReflectionPropertyValue( $this->pods, 'row', array() );
+		$this->assertInternalType( 'array', $this->pods->row() );
+	}
 }

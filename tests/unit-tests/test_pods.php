@@ -313,4 +313,32 @@ class Test_Pods extends Pods_UnitTestCase {
 		$this->setReflectionPropertyValue( $this->pods, 'row', array() );
 		$this->assertInternalType( 'array', $this->pods->row() );
 	}
+
+	/**
+	 * @covers Pods::data
+	 * @since  3.0
+	 */
+	public function test_method_exists_data() {
+		$this->assertTrue( method_exists( $this->pods, 'data' ), 'Method data does not exist' );
+	}
+
+	/**
+	 * @covers  Pods::data
+	 * @depends test_method_exists_data
+	 * @since   3.0
+	 */
+	public function test_metod_data_empty_rows() {
+		$this->setReflectionPropertyValue( $this->pods, 'rows', array() );
+		$this->assertFalse( $this->pods->data() );
+	}
+
+	/**
+	 * @covers  Pods::data
+	 * @depends test_method_exists_data
+	 * @since   3.0
+	 */
+	public function test_metod_data() {
+		$this->setReflectionPropertyValue( $this->pods, 'rows', array( 'foo' => 'bar' ) );
+		$this->assertEquals( array( 'foo' => 'bar' ), $this->pods->data() );
+	}
 }

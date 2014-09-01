@@ -893,22 +893,6 @@ function pods_shortcode ( $tags, $content = null ) {
 		$pod->find( $params );
 
 		$found = $pod->total();
-	} elseif ( ! empty( $tags['field'] ) ) {
-		if ( empty( $tags['helper'] ) ) {
-			$return .= $pod->display( $tags['field'] );
-		} else {
-			$return .= $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
-		}
-
-		if ( ! empty( $tags['after'] ) ) {
-			$return .= pods_evaluate_tags( $tags['after'] );
-		}
-
-		if ( $tags['shortcodes'] ) {
-			$return = do_shortcode( $return );
-		}
-
-		return $return;
 	} elseif ( ! empty( $tags['pods_page'] ) && class_exists( 'Pods_Pages' ) ) {
 		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
 
@@ -928,6 +912,24 @@ function pods_shortcode ( $tags, $content = null ) {
 
 		return $return;
 	}
+
+	if ( ! empty( $tags['field'] ) ) {
+		if ( empty( $tags['helper'] ) ) {
+			$return .= $pod->display( $tags['field'] );
+		} else {
+			$return .= $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
+		}
+
+		if ( ! empty( $tags['after'] ) ) {
+			$return .= pods_evaluate_tags( $tags['after'] );
+		}
+
+		if ( $tags['shortcodes'] ) {
+			$return = do_shortcode( $return );
+		}
+
+		return $return;
+	} 
 
 	if ( empty( $id ) && false !== $tags['filters'] && 'before' == $tags['filters_location'] ) {
 		$return .= $pod->filters( $tags['filters'], $tags['filters_label'] );

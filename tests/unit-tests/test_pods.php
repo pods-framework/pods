@@ -1,5 +1,6 @@
 <?php
 namespace Pods_Unit_Tests;
+use Mockery;
 
 /**
  * @group pods
@@ -340,5 +341,60 @@ class Test_Pods extends Pods_UnitTestCase {
 	public function test_metod_data() {
 		$this->setReflectionPropertyValue( $this->pods, 'rows', array( 'foo' => 'bar' ) );
 		$this->assertEquals( array( 'foo' => 'bar' ), $this->pods->data() );
+	}
+
+	/**
+	 * @covers Pods::__get
+	 * @since  3.0
+	 */
+	public function test_metod_exists_get() {
+		$this->assertTrue( method_exists( $this->pods, '__get' ), 'Method __get does not exist' );
+	}
+
+	/**
+	 * Test the get method when the property does exist
+	 *
+	 * @covers  Pods::__get
+	 * @depends test_metod_exists_get
+	 * @since   3.0
+	 */
+	public function test_method_get()
+	{
+		$this->pods->data->field_foo  = 'bar';
+
+		$this->assertEquals( 'bar', $this->pods->field_foo );
+	}
+
+	/**
+	 * Test the get method when the property does exist in the deprecated class
+	 *
+	 * @covers  Pods::__get
+	 * @depends test_metod_exists_get
+	 * @since   3.0
+	 */
+	public function test_method_get_deprecated_property()
+	{
+		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
+		$deprecated->foo        = 'bar';
+		$this->pods->deprecated = $deprecated;
+
+		$this->assertEquals( 'bar', @$this->pods->foo );
+	}
+
+	/**
+	 * Test the get method error when the property does exist in the deprecated class
+	 *
+	 * @covers  Pods::__get
+	 * @depends test_metod_exists_get
+	 * @since   3.0
+	 */
+	public function test_method_get_deprecated_property_error()
+	{
+		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
+		$deprecated->foo        = 'bar';
+		$this->pods->deprecated = $deprecated;
+
+		$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
+		$test = $this->pods->foo;
 	}
 }

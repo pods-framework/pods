@@ -17,7 +17,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	/**
 	 * The id of the test pods
 	 *
-	 * @var string
+	 * @var int
 	 * @since 3.0
 	 */
 	private $pod_id;

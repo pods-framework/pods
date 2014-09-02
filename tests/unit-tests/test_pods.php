@@ -397,4 +397,56 @@ class Test_Pods extends Pods_UnitTestCase {
 		$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
 		$test = $this->pods->foo;
 	}
+
+	/**
+	 * @covers Pods::__call
+	 * @since  3.0
+	 */
+	public function test_metod_exists_call() {
+		$this->assertTrue( method_exists( $this->pods, '__call' ), 'Method __call does not exist' );
+	}
+
+	/**
+	 * Test the __call method when the called method does not exist in the deprecated class
+	 *
+	 * @covers  Pods::__call
+	 * @depends test_metod_exists_call
+	 * @since   3.0
+	 */
+	public function test_method_call_method_does_not_exist()
+	{
+		$deprecated = Mockery::mock( 'Pods_Deprecated' );
+		$this->pods->deprecated = $deprecated;
+
+		$this->assertNull( @$this->pods->__call( 'foo', array() ) );
+	}
+
+	/**
+	 * Test the __call method error when the called method does not exist in the deprecated class
+	 *
+	 * @covers  Pods::__call
+	 * @depends test_metod_exists_call
+	 * @since   3.0
+	 */
+	public function test_method_call_deprecated_property_error()
+	{
+		$deprecated = Mockery::mock( 'Pods_Deprecated' );
+		$this->pods->deprecated = $deprecated;
+
+		$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
+		$test = $this->pods->__call( 'foo', array() );
+	}
+
+	/**
+	 * @covers Pods::id
+	 * @since  3.0
+	 */
+	public function test_method_id_field_does_not_exist() {
+		$this->assertTrue( method_exists( $this->pods, 'id' ), 'Method id does not exist' );
+
+		$data = new \stdClass();
+		$data->field_id = 1;
+		$this->setReflectionPropertyValue( $this->pods, 'data', $data );
+		$this->assertEquals( $this->pods->id() );
+	}
 }

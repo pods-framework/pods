@@ -1,5 +1,5 @@
 <?php
-namespace Pods_Unit_Tests;
+namespace Pods_Integration_Tests;
 
 /**
  * @group pods

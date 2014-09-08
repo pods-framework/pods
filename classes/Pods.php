@@ -784,6 +784,15 @@ class Pods implements Iterator {
 		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( !in_array( $field_data[ 'type' ], $tableless_field_types ) || 'arrays' == $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
 				$params->raw = true;
+			
+			if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+				if ( null === $params->single ) {
+					if ( isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+						$params->single = true;
+					else
+						$params->single = false;
+				}
+			}
 
 			$value = $this->row[ $params->name ];
 		}

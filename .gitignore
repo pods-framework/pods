@@ -36,3 +36,6 @@ tests/clover.xml
 
 # Node
 node_modules/*
+
+# WP Tests dir
+wp-tests

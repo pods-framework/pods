@@ -1347,6 +1347,7 @@ class Pods implements Iterator {
 										if ( in_array( $id, $ids ) )
 											$data[ $id ] = $v;
 									}
+								}
 							}
 
 							if ( in_array( $last_type, $tableless_field_types ) || in_array( $last_type, array( 'boolean', 'number', 'currency' ) ) )

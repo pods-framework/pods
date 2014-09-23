@@ -2598,7 +2598,7 @@ msgstr "Choisir"
 
 #: ui/admin/setup-edit.php:682
 msgid "If you delete the \"name\" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field."
-msgstr "Si vous supprimer le champ \"name\", nous devons définir le champ qui sera utiliser comme champ de clé primaire. Ce champ servira d'index pour votre comptenu. le plus souvent ce champ représente le nom d'une personne,  un lieu, une chose ou un champ récapitulatif."
+msgstr "Si vous supprimez le champ \"name\", nous devons définir le champ qui sera utiliser comme champ de clé primaire. Ce champ servira d'index pour votre comptenu. le plus souvent ce champ représente le nom d'une personne,  un lieu, une chose ou un champ récapitulatif."
 
 #: components/Migrate-Packages/ui/wizard.php:27
 msgid "Import / Export"
@@ -2612,7 +2612,7 @@ msgstr "Helper(s) Pré sauvegarde"
 #: components/Migrate-Packages/ui/wizard.php:85
 #: components/Migrate-Packages/ui/wizard.php:103
 msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
-msgstr "Les Packages vous permettenet d'importer/exporter vos Pods, Champs, et autres règlages entre vos différentes installations de Pods."
+msgstr "Les Packages vous permettent d'importer/exporter vos Pods, Champs, et autres réglages entre vos différentes installations de Pods."
 
 #: ui/admin/setup-edit.php:736
 msgid "Post-Save Helper(s)"

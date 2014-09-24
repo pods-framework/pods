@@ -52,7 +52,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                     $data = array();
 
                     foreach ( $options[ 'data' ] as $item_id => $item ) {
-                        $data[] = '\'' . esc_js( $item_id ) . '\' : {id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
+                        $data[] = '\'' . pods_sanitize( $item_id ) . '\' : {id : \'' . pods_sanitize( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', pods_sanitize( $item ) ) . '\'}';
                     }
 
                     echo implode( ",\n", $data );
@@ -173,7 +173,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                         $data_items = array();
 
                         foreach ( $options[ 'data' ] as $item_id => $item ) {
-                            $data_items[] = '{id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
+                            $data_items[] = '{id : \'' . pods_sanitize( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', pods_sanitize( $item ) ) . '\'}';
                         }
 
                         echo implode( ",\n", $data_items );

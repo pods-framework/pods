@@ -48,7 +48,7 @@ class Pods implements Iterator {
 	/**
 	 * @var bool
 	 */
-	public $display_errors = false;
+	public $display_errors = true;
 
 	/**
 	 * @var array|bool|mixed|null|void

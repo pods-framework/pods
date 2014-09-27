@@ -14,11 +14,11 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		//register the fields
 		$params = array(
 			'pod'    => 'planet',
-			'pod_id' => $tis->pod_id,
+			'pod_id' => $this->pod_id,
 			'name'   => 'number_of_moons',
 			'type'   => 'number'
 		);
-		$moons_id = pods_api()->save_field( $params );
+		pods_api()->save_field( $params );
 	}
 
 	public function tearDown()
@@ -31,6 +31,9 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	 */
 	public function test_shortcode_pods()
 	{
+		//Initialize the items array
+		$items = array();
+
 		//add an item
 		$item[1] = $this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
 
@@ -59,7 +62,7 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	public function test_shortcode_pods_field_in_shortcode()
 	{
 		//add an item
-		$item = $this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
+		$this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
 
 		//test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );

@@ -31,9 +31,6 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	 */
 	public function test_shortcode_pods()
 	{
-		//Initialize the items array
-		$items = array();
-
 		//add an item
 		$this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
 

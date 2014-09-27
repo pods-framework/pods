@@ -893,12 +893,14 @@ function pods_shortcode ( $tags, $content = null ) {
 		$pod->find( $params );
 
 		$found = $pod->total();
-	} elseif ( ! empty( $tags['field'] ) ) {
-		if ( empty( $tags['helper'] ) ) {
-			$return .= $pod->display( $tags['field'] );
-		} else {
-			$return .= $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
+	} elseif ( ! empty( $tags['pods_page'] ) && class_exists( 'Pods_Pages' ) ) {
+		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
+
+		if ( empty( $pods_page ) ) {
+			return '<p>Pods Page not found</p>';
 		}
+
+		$return .= Pods_Pages::content( true, $pods_page );
 
 		if ( ! empty( $tags['after'] ) ) {
 			$return .= pods_evaluate_tags( $tags['after'] );
@@ -909,14 +911,14 @@ function pods_shortcode ( $tags, $content = null ) {
 		}
 
 		return $return;
-	} elseif ( ! empty( $tags['pods_page'] ) && class_exists( 'Pods_Pages' ) ) {
-		$pods_page = Pods_Pages::exists( $tags['pods_page'] );
+	}
 
-		if ( empty( $pods_page ) ) {
-			return '<p>Pods Page not found</p>';
+	if ( ! empty( $tags['field'] ) ) {
+		if ( empty( $tags['helper'] ) ) {
+			$return .= $pod->display( $tags['field'] );
+		} else {
+			$return .= $pod->helper( $tags['helper'], $pod->field( $tags['field'] ), $tags['field'] );
 		}
-
-		$return .= Pods_Pages::content( true, $pods_page );
 
 		if ( ! empty( $tags['after'] ) ) {
 			$return .= pods_evaluate_tags( $tags['after'] );

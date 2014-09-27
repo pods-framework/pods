@@ -275,7 +275,7 @@ class Pods_API {
 			} else {
 				$simple = false;
 
-				if ( isset( $fields[$meta_key] ) && is_array( $meta_value ) ) {
+				if ( isset( $fields[$meta_key] ) ) {
 					$field_data = $fields[$meta_key];
 
 					$simple = ( 'pick' == $field_data['type'] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
@@ -285,6 +285,10 @@ class Pods_API {
 					delete_post_meta( $id, $meta_key );
 
 					update_post_meta( $id, '_pods_' . $meta_key, $meta_value );
+
+					if ( ! is_array( $meta_value ) ) {
+						$meta_value = array( $meta_value );
+					}
 
 					foreach ( $meta_value as $value ) {
 						add_post_meta( $id, $meta_key, $value );
@@ -420,7 +424,7 @@ class Pods_API {
 			} else {
 				$simple = false;
 
-				if ( isset( $fields[$meta_key] ) && is_array( $meta_value ) ) {
+				if ( isset( $fields[$meta_key] ) ) {
 					$field_data = $fields[$meta_key];
 
 					$simple = ( 'pick' == $field_data['type'] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
@@ -428,6 +432,10 @@ class Pods_API {
 
 				if ( $simple ) {
 					delete_user_meta( $id, $meta_key );
+
+					if ( ! is_array( $meta_value ) ) {
+						$meta_value = array( $meta_value );
+					}
 
 					foreach ( $meta_value as $value ) {
 						add_user_meta( $id, $meta_key, $value );
@@ -555,7 +563,7 @@ class Pods_API {
 			} else {
 				$simple = false;
 
-				if ( isset( $fields[$meta_key] ) && is_array( $meta_value ) ) {
+				if ( isset( $fields[$meta_key] ) ) {
 					$field_data = $fields[$meta_key];
 
 					$simple = ( 'pick' == $field_data['type'] && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
@@ -563,6 +571,10 @@ class Pods_API {
 
 				if ( $simple ) {
 					delete_comment_meta( $id, $meta_key );
+
+					if ( ! is_array( $meta_value ) ) {
+						$meta_value = array( $meta_value );
+					}
 
 					foreach ( $meta_value as $value ) {
 						add_comment_meta( $id, $meta_key, $value );

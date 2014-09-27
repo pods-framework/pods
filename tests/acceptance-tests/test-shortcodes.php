@@ -23,7 +23,7 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	public function tearDown()
 	{
-		pods_api()->delete_pod( $this->pod_id );
+		pods_api()->delete_pod( array( 'id' => $this->pod_id ));
 	}
 
 	/**

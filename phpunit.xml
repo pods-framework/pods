@@ -25,6 +25,7 @@
 			<directory suffix=".php">./tmp/</directory>
 			<directory suffix=".php">./tests/</directory>
 			<directory suffix=".php">./languages/</directory>
+			<directory suffix=".php">./wp-tests/</directory>
 		</blacklist>
 	</filter>
 	<logging>

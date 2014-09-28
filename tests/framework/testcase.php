@@ -7,6 +7,14 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->factory = new Pods_UnitTest_Factory;
+
+		$component_settings = PodsInit::$components->settings;
+		$component_settings['components']['table-storage'] = array();
+		$component_settings['components']['advanced-relationships'] = array();
+		$component_settings['components']['migrate-packages'] = array();
+		$component_settings['components']['advanced-content-types'] = array();
+
+		update_option( 'pods_component_settings', json_encode($component_settings));
 	}
 
 	public function clean_up_global_scope() {
@@ -56,9 +64,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 		unset($GLOBALS['wp_query'], $GLOBALS['wp_the_query']);
 
-		$GLOBALS['wp_the_query'] =& new WP_Query();
-		$GLOBALS['wp_query'] =& $GLOBALS['wp_the_query'];
-		$GLOBALS['wp'] =& new WP();
+		$GLOBALS['wp_the_query'] = new WP_Query();
+		$GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
+		$GLOBALS['wp'] = new WP();
 
 		foreach ( $GLOBALS['wp']->public_query_vars as $v ) {
 			unset( $GLOBALS[ $v ] );

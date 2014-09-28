@@ -320,3 +320,73 @@ function pods_image_resize( $attachment_id, $size ) {
 
 	return false;
 }
+
+/**
+ * Output an audio field as a video player.
+ *
+ * @uses wp_audio_shortcode()
+ *
+ * @since 2.4.4
+ *
+ * @param string|array   $url   Can be a URL of the source file, or a Pods audio field.
+ * @param bool|array     $args  Optional. Additional arguments to pass to wp_audio_shortcode
+ *
+ * @return string
+ */
+function pods_audio( $url, $args = false ) {
+
+	if ( is_array( $url ) ) {
+		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
+			$id = pods_v( 'ID', $url );
+			$url = wp_get_attachment_url( $id );
+		}
+		else {
+			return;
+		}
+
+	}
+
+	$audio_args = array( 'src' => $url );
+
+	if ( is_array( $args ) ) {
+		$audio_args = array_merge(  $audio_args, $args );
+	}
+
+	return wp_audio_shortcode( $args );
+
+}
+
+/**
+ * Output a video field as a video player.
+ *
+ * @uses wp_video_shortcode()
+ *
+ * @since 2.4.4
+ *
+ * @param string|array   $url   Can be a URL of the source file, or a Pods video field.
+ * @param bool|array     $args  Optional. Additional arguments to pass to wp_video_shortcode()
+ *
+ * @return string
+ */
+function pods_video( $url, $args = false ) {
+
+	if ( is_array( $url ) ) {
+		if ( ! is_null( pods_v( 'ID', $url ) ) ) {
+			$id = pods_v( 'ID', $url );
+			$url = wp_get_attachment_url( $id );
+		}
+		else {
+			return;
+		}
+
+	}
+
+	$video_args = array( 'src' => $url );
+
+	if ( is_array( $args ) ) {
+		$video_args = array_merge( $video_args, $args );
+	}
+
+	return wp_video_shortcode( $video_args );
+
+}

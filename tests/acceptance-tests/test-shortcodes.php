@@ -32,19 +32,19 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	public function test_shortcode_pods()
 	{
 		//add an item
-		$this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
+		$this->pod->add( array( 'name' => 'Tatooine', 'number_of_moons' => 5 ) );
 
 		//test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
 
 		//add another item
-		$this->pod->add( array( 'name' => 'Geonosis', 'number_of_moons' => 7 ) );
+		$this->pod->add( array( 'name' => 'Alderaan', 'number_of_moons' => 7 ) );
 
 		//test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
 
 		//add third item
-		$this->pod->add( array( 'name' => 'Naboo', 'number_of_moons' => 5 ) );
+		$this->pod->add( array( 'name' => 'Hoth', 'number_of_moons' => 5 ) );
 
 		//test shortcode
 		$this->assertEquals( '55', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
@@ -59,7 +59,7 @@ class Test_Shortcodes extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	public function test_shortcode_pods_field_in_shortcode()
 	{
 		//add an item
-		$this->pod->add( array( 'name' => 'Felucia', 'number_of_moons' => 5 ) );
+		$this->pod->add( array( 'name' => 'Dagobah', 'number_of_moons' => 5 ) );
 
 		//test shortcode
 		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );

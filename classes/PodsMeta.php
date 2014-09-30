@@ -878,6 +878,10 @@ class PodsMeta {
 
             }
         }
+	if ( $field_found ) {
+		// Only add the classes to forms that actually have pods fields
+		add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+	}
     }
 
     /**
@@ -955,8 +959,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
+			<div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+			</div>
                 </td>
             </tr>
         <?php
@@ -978,6 +984,8 @@ class PodsMeta {
 
     <script type="text/javascript">
         jQuery( function ( $ ) {
+            $( document ).Pods( 'validate' );
+            $( document ).Pods( 'submit_meta' );
             $( document ).Pods( 'dependency', true );
         } );
     </script>

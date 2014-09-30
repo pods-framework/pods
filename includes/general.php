@@ -1796,7 +1796,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 			}
 
 			$no_conflict[ 'action' ] = array(
-				array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
+				array( 'edited_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
 				array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
 			);
 		}

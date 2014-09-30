@@ -1639,6 +1639,7 @@ class PodsUI {
 		}
 
 		$pod =& $this->pod;
+		$obj =& $this;
 
 		$fields = array();
 

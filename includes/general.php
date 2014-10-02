@@ -1994,3 +1994,13 @@ function pods_session_start() {
 	return true;
 
 }
+
+/**
+ * Returns the character used to separate strings <-> arrays when commas aren't appropriate,
+ * ASCII chr(31) is 'Unit separator'
+ *
+ * @since 2.4.4
+ */
+function pods_multi_sep() {
+	return chr(31);
+}

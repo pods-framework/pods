@@ -2610,9 +2610,15 @@ advanced|Advanced',
 	 */
 	function plugin_info_via_api( $slug ) {
 		$url = "http://api.wordpress.org/plugins/info/1.0/{$slug}.json";
-		if ( curl_init( $url ) ) {
-			$json = file_get_contents( $url );
-			$obj = json_decode( $json );
+		$response = wp_remote_post( $url, array (
+				'method'        => 'GET',
+				'timeout'       => 30,
+			)
+		);
+
+		if ( ! is_wp_error( $response ) ) {
+			$obj = wp_remote_retrieve_body( $response );
+			$obj = json_decode( $obj );
 			$info = array(
 				'Name' 			=> $obj->name,
 				'Version'		=> $obj->version,

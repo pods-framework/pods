@@ -3176,7 +3176,7 @@ class PodsAPI {
                 // Handle Simple Relationships
                 if ( $simple ) {
                     if ( !is_array( $value ) )
-                        $value = explode( ',', $value );
+                        $value = explode( pods_multi_sep(), $value );
 
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
@@ -3203,7 +3203,7 @@ class PodsAPI {
                                         if ( !isset( $custom_label[ 1 ] ) )
                                             $custom_label[ 1 ] = $custom_label[ 0 ];
 
-                                        $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                        $custom_values[ pods_unsanitize( $custom_label[ 0 ] ) ] = $custom_label[ 1 ];
                                     }
                                 }
                             }

@@ -3,7 +3,7 @@ wp_enqueue_style( 'pods-select2' );
 wp_enqueue_script( 'pods-select2' );
 
 if ( is_array( $value ) )
-    $value = implode( ',', $value );
+    $value = implode( pods_multi_sep(), $value );
 
 $attributes = array();
 $attributes[ 'type' ] = 'hidden';
@@ -52,7 +52,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                     $data = array();
 
                     foreach ( $options[ 'data' ] as $item_id => $item ) {
-                        $data[] = '\'' . esc_js( $item_id ) . '\' : {id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
+                        $data[] = '\'' . pods_sanitize( $item_id ) . '\' : {id : \'' . pods_sanitize( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', pods_sanitize( $item ) ) . '\'}';
                     }
 
                     echo implode( ",\n", $data );
@@ -123,7 +123,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
             initSelection : function ( element, callback ) {
                 var data = [];
 
-                jQuery( element.val().split( "," ) ).each( function () {
+                jQuery( element.val().split( '<?php echo pods_multi_sep(); ?>' ) ).each( function () {
                     if ( 'undefined' != typeof <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data[ this ] ) {
                         data.push( {
                             id : this,
@@ -157,6 +157,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
             ?>
                 placeholder : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
                 multiple : true,
+                separator: '<?php echo pods_multi_sep(); ?>',
                 maximumSelectionSize : <?php echo (int) $pick_limit; ?>,
             <?php
                 }
@@ -173,7 +174,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                         $data_items = array();
 
                         foreach ( $options[ 'data' ] as $item_id => $item ) {
-                            $data_items[] = '{id : \'' . esc_js( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', esc_js( $item ) ) . '\'}';
+                            $data_items[] = '{id : \'' . pods_sanitize( $item_id ) . '\', text: \'' . str_replace( '&amp;', '&', pods_sanitize( $item ) ) . '\'}';
                         }
 
                         echo implode( ",\n", $data_items );

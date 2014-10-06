@@ -100,7 +100,7 @@ $date_default = Pods_Form::field_method( 'datetime', 'createFromFormat', 'Y-m-d 
 
 $formatted_date = $value;
 
-if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '', '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
 	$formatted_date = $value = '';
 } elseif ( 'text' != $type ) {
 	$formatted_date = $value;

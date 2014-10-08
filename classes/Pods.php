@@ -1331,11 +1331,9 @@ class Pods implements Iterator {
 									unset( $item_data );
 
 									// Return all of the data in the order expected
-									if ( empty( $params->orderby ) ) {
-										foreach ( $ids as $id ) {
-											if ( isset( $items[$id] ) ) {
-												$data[$id] = $items[$id];
-											}
+									foreach ( $items as $id => $v ) {
+										if ( in_array( $id, $ids ) ) {
+											$data[ $id ] = $v;
 										}
 									}
 								}

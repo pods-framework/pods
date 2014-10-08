@@ -186,7 +186,7 @@ class Test_Pods_Field_Text extends Pods_UnitTestCase {
 
 	/**
 	 * @covers  Pods_Field_Text::validate
-	 * @depends test_method_exists_pre_save
+	 * @depends test_method_exists_validate
 	 * @uses    Pods_Field_Text::strip_html
 	 * @uses    ::pods_v
 	 * @uses    ::pods_mb_strlen
@@ -198,7 +198,7 @@ class Test_Pods_Field_Text extends Pods_UnitTestCase {
 
 	/**
 	 * @covers  Pods_Field_Text::validate
-	 * @depends test_method_exists_pre_save
+	 * @depends test_method_exists_validate
 	 * @uses    Pods_Field_Text::strip_html
 	 * @uses    ::pods_v
 	 * @uses    ::pods_mb_strlen

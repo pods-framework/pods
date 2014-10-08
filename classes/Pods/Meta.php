@@ -152,7 +152,7 @@ class Pods_Meta {
 			}
 
 			// Handle Term Save
-			add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+			add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
 			add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 		}
 
@@ -789,8 +789,8 @@ class Pods_Meta {
 				add_action( $pod['object'] . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
 			}
 
-			if ( ! has_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
-				add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+			if ( ! has_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
+				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
 				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 			}
 		} elseif ( 'media' == $pod['type'] ) {

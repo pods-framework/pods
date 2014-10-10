@@ -694,24 +694,8 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $pod ) )
         return '<p>Pod not found</p>';
 
-    $found = 0;
-
-    if ( !empty( $tags[ 'form' ] ) ) {
-		if ( 'user' == $pod->pod ) {
-			// Further hardening of User-based forms
-			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
-				return '';
-			}
-			// Only explicitly allow user edit forms
-			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
-				return '';
-			}
-		}
-
-        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
-	}
-    elseif ( empty( $id ) ) {
-        $params = array();
+	if ( empty( $id ) ) {
+		$params = array();
 
 		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
 			if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
@@ -755,21 +739,38 @@ function pods_shortcode ( $tags, $content = null ) {
 
 		$params[ 'pagination' ] = $tags[ 'pagination' ];
 
-        if ( 0 < (int) $tags[ 'offset' ] ) {
-            $params[ 'offset' ] = (int) $tags[ 'offset' ];
-        }
+		if ( 0 < (int) $tags[ 'offset' ] ) {
+			$params[ 'offset' ] = (int) $tags[ 'offset' ];
+		}
 
 		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
 			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
 			$params[ 'expires' ] = (int) $tags[ 'expires' ];
 		}
 
-        $params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
+		$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
-        $pod->find( $params );
+		$pod->find( $params );
 
-        $found = $pod->total();
-    }
+		$found = $pod->total();
+	} else {
+		$found = 0;
+	}
+
+    if ( !empty( $tags[ 'form' ] ) ) {
+		if ( 'user' == $pod->pod ) {
+			// Further hardening of User-based forms
+			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
+				return '';
+			}
+			// Only explicitly allow user edit forms
+			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				return '';
+			}
+		}
+
+        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+	}
     elseif ( !empty( $tags[ 'field' ] ) ) {
         if ( empty( $tags[ 'helper' ] ) )
             $return = $pod->display( $tags[ 'field' ] );

@@ -268,7 +268,9 @@ class PodsAPI {
 
 				if ( $simple ) {
 					delete_post_meta( $id, $meta_key );
-
+					if ( !has_filter( 'sanitize_post_meta__pods_' . $meta_key, 'pods_sanitize' ) ) {
+						add_filter( 'sanitize_post_meta__pods_' . $meta_key, 'pods_sanitize', 1, 1 );
+					}
 					update_post_meta( $id, '_pods_' . $meta_key, $meta_value );
 
 					foreach ( $meta_value as $value ) {

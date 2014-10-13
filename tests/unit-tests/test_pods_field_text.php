@@ -222,4 +222,110 @@ class Test_Pods_Field_Text extends Pods_UnitTestCase {
 	public function test_method_ui() {
 		$this->assertEquals( 'foo', $this->field->ui( 1, 'foo' ) );
 	}
+
+	/**
+	 * @covers Pods_Field_Text::strip_html
+	 */
+	public function test_method_exists_strip_html() {
+		$this->assertTrue( method_exists( 'Pods_Field_Text', 'strip_html' ), 'Pods_Field_Text::strip_html does not exist.' );
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_array_value() {
+		$this->assertEquals( 'foo bar baz', $this->field->strip_html( array( 'foo', 'bar', 'baz' ) ) );
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 */
+	public function test_method_strip_html_empty_array_value() {
+		$this->assertEmpty( $this->field->strip_html( array() ) );
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_defaults() {
+		$this->assertEquals( 'foo', $this->field->strip_html('<em>foo</em>') );
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_default_options() {
+		$this->assertEquals(
+			'foo',
+			$this->field->strip_html('<strong><em><a href="#"><ul><li><ol><li><b><i>foo</i></b></li></ol></li></ul></a></em></strong>' ),
+			$this->field->options()
+		);
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_default_tags_allowed() {
+		$options['text_allow_html']= 1;
+		$options['text_allowed_html_tags'] = 'strong em a ul ol li b i';
+
+		$this->assertEquals(
+			'<strong><em><a href="#"><ul><li><ol><li><b><i>foo</i></b></li></ol></li></ul></a></em></strong>',
+			$this->field->strip_html('<strong><em><a href="#"><ul><li><ol><li><b><i>foo</i></b></li></ol></li></ul></a></em></strong>', $options )
+		);
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_br_tags_allowed() {
+		$options['text_allow_html']= 1;
+		$options['text_allowed_html_tags'] = 'br';
+
+		$this->assertEquals(
+			'foo<br />',
+			$this->field->strip_html('foo<br />', $options )
+		);
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_hr_tags_allowed() {
+		$options['text_allow_html']= 1;
+		$options['text_allowed_html_tags'] = 'hr';
+
+		$this->assertEquals(
+			'foo<hr />',
+			$this->field->strip_html('foo<hr />', $options )
+		);
+	}
+
+	/**
+	 * @covers  Pods_Field_Text::strip_html
+	 * @depends test_method_exists_strip_html
+	 * @uses    ::pods_v
+	 */
+	public function test_method_strip_html_tags_allowed() {
+		$options['text_allow_html']= 1;
+		$options['text_allowed_html_tags'] = 'strong em';
+
+		$this->assertEquals(
+			'<strong><em>foo</em></strong>',
+			$this->field->strip_html('<div><strong><em>foo</em></strong></div>', $options )
+		);
+	}
 }

@@ -13,10 +13,7 @@ if ( !is_admin() ) {
 	wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', $colorpicker_l10n );
 } else {
 	wp_enqueue_script( 'wp-color-picker' );
-
 }
-
-
 
 $attributes = array();
 $attributes[ 'type' ] = 'text';

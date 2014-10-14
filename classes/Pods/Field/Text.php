@@ -235,9 +235,8 @@ class Pods_Field_Text extends
 			$value = strip_tags( $value );
 		} elseif ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
 			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
-			$allowed_tags = trim( preg_replace( '/[^\<\>\/\,]/', ' ', $allowed_tags ) );
+			$allowed_tags = trim( preg_replace( '[\<\>\/\,]', ' ', $allowed_tags ) );
 			$allowed_tags = explode( ' ', $allowed_tags );
-
 			// Handle issue with self-closing tags in strip_tags
 			// @link http://www.php.net/strip_tags#88991
 			if ( in_array( 'br', $allowed_tags ) ) {

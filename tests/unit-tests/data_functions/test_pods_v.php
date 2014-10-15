@@ -6,7 +6,7 @@ use Mockery;
  * @group  pods_data_functions
  * @covers ::pods_v
  */
-class Test_Data_Functions extends \Pods_Unit_Tests\Pods_UnitTestCase {
+class Test_Pods_V extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	/**
 	 * @covers ::pods_v
 	 */

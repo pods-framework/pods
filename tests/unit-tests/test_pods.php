@@ -5,6 +5,11 @@ use Mockery;
 /**
  * @group pods
  */
+
+if ( ! class_exists( 'Pods' ) ) {
+	require_once PODS_PLUGIN_DIR . '/classes/Pods.php';
+}
+
 class Test_Pods extends Pods_UnitTestCase {
 
 	/**
@@ -447,6 +452,6 @@ class Test_Pods extends Pods_UnitTestCase {
 		$data = new \stdClass();
 		$data->field_id = 1;
 		$this->setReflectionPropertyValue( $this->pods, 'data', $data );
-		$this->assertEquals( $this->pods->id() );
+		$this->assertNull( $this->pods->id() );
 	}
 }

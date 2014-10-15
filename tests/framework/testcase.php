@@ -8,7 +8,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		parent::setUp();
 		$this->factory = new Pods_UnitTest_Factory;
 
-		$component_settings = PodsInit::$components->settings;
+		$component_settings = \PodsInit::$components->settings;
 		$component_settings['components']['table-storage'] = array();
 		$component_settings['components']['advanced-relationships'] = array();
 		$component_settings['components']['migrate-packages'] = array();

@@ -401,11 +401,7 @@ class PodsMeta {
 
     public function integrations () {
         // Codepress Admin Columns 2.x
-        add_filter( 'cac/meta_keys/storage_key=post', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=link', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=media', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=user', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=comment', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
+		add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
         add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
 
@@ -416,10 +412,10 @@ class PodsMeta {
     }
 
     public function cpac_meta_keys_get ( $meta_fields, $obj ) {
-        return $this->cpac_meta_keys( $meta_fields, $obj->key, $obj->type );
+        return $this->cpac_meta_keys( $meta_fields, $obj->key );
     }
 
-    public function cpac_meta_keys ( $meta_fields, $cac_key, $cac_type = null ) {
+    public function cpac_meta_keys ( $meta_fields, $cac_key ) {
         $object_type = 'post_type';
         $object = $cac_key;
 

@@ -879,7 +879,8 @@ class Pods_Admin {
 					'label'             => __( 'Delete All Items', 'pods' ),
 					'confirm'           => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
 					'callback'          => array( $this, 'admin_setup_reset' ),
-					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' )
+					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' ),
+				    'nonce'             => true
 				),
 				'delete'    => array( $this, 'admin_setup_delete' )
 			),
@@ -1458,7 +1459,17 @@ class Pods_Admin {
 			else {
 				$name = $slug;
 			}
-			if ( pods_v( 'toggle', 'get', false, true ) ) {
+
+			$toggle = pods_v( 'toggle' );
+
+			if ( '1' !== $toggle ) {
+				$toggle = false;
+			}
+			else {
+				$toggle = true;
+			}
+
+			if ( $toggle ) {
 				//plugin is installed, but not active. So Activate
 				if ( ! is_plugin_active( $plugin_file ) && $plugin_file ) {
 					echo sprintf( '<div id="message" class="error"><p>%s</p></div>',
@@ -1547,7 +1558,9 @@ class Pods_Admin {
 				return;
 			}
 
-			if ( 1 == pods_v( 'toggled' ) ) {
+			$toggled = pods_v( 'toggled' );
+
+			if ( '1' === $toggled ) {
 				$toggle = Pods_Init::$components->toggle( $component );
 
 			if ( true === $toggle ) {

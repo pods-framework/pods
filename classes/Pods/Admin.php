@@ -1406,7 +1406,10 @@ class Pods_Admin {
 			),
 			'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
 			'actions_custom'   => array(
-				'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
+				'toggle' => array(
+					'callback' => array( $this, 'admin_components_toggle' ),
+					'nonce' => true
+				)
 			),
 			'filters_enhanced' => true,
 			'views'            => array(

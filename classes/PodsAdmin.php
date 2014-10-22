@@ -664,7 +664,7 @@ class PodsAdmin {
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
-        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
+        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox button" id="add_pod_button" title="Pods Shortcode"><img style="padding: 0px 6px 0px 0px; margin: -3px 0px 0px;" src="' . PODS_URL . 'ui/images/icon16.png" alt="' . __('Pods Shortcode' ,'pods') . '" />' . __('Pods Shortcode' ,'pods') . '</a>';
     }
 
     /**

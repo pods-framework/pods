@@ -217,7 +217,7 @@ class Pods_Field_Avatar extends
 		// Don't replace for the Avatars section of the Discussion settings page
 		if ( is_admin() ) {
 			$current_screen = get_current_screen();
-			if ( 'options-discussion' == $current_screen->id && 32 == $size ) {
+			if ( ! is_null( $current_screen ) && 'options-discussion' == $current_screen->id && 32 == $size ) {
 				return $avatar;
 			}
 		}

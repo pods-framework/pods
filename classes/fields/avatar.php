@@ -300,8 +300,8 @@ class PodsField_Avatar extends PodsField {
     public function get_avatar ( $avatar, $id_or_email, $size, $default = '', $alt ='' ) {
         // Don't replace for the Avatars section of the Discussion settings page
         if ( is_admin() ) {
-            $current_screen = get_current_screen();
-            if ( 'options-discussion' == $current_screen->id && 32 == $size ) {
+            $current_screen = gi();
+            if ( ! is_null( $current_screen ) && 'options-discussion' == $current_screen->id && 32 == $size ) {
                 return $avatar;
             }
         }

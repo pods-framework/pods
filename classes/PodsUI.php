@@ -4,6 +4,11 @@
  */
 class PodsUI {
 
+	/**
+	 * @var null Nonce for security
+	 */
+	private $_nonce = null;
+
     // internal
     /**
      * @var bool|PodsData
@@ -427,6 +432,9 @@ class PodsUI {
      * @since 2.0
      */
     public function __construct ( $options, $deprecated = false ) {
+
+		$this->_nonce = pods_v( '_wpnonce', 'request' );
+
         $object = null;
 
         if ( is_object( $options ) ) {
@@ -1317,7 +1325,7 @@ class PodsUI {
                 $this->save();
             $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? true : false );
         }
-        elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) {
+        elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) && false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-delete' ) ) {
             $this->delete( $this->id );
             $this->manage();
         }
@@ -1354,7 +1362,7 @@ class PodsUI {
 					$row = $this->get_row();
 				}
 
-				if ( $this->restricted( $this->action, $row ) ) {
+				if ( $this->restricted( $this->action, $row ) || ( $more_args && ! empty( $more_args[ 'nonce' ] ) && false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action ) ) ) {
 					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 				}
 				elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
@@ -2647,6 +2655,8 @@ class PodsUI {
                     if ( !empty( $this->data ) && !empty( $this->actions_bulk ) ) {
                 ?>
                     <div class="alignleft actions">
+	                    <?php wp_nonce_field( 'pods-ui-action-bulk' ); ?>
+
                         <select name="action_bulk<?php echo $this->num; ?>">
                             <option value="-1" selected="selected"><?php _e( 'Bulk Actions', 'pods' ); ?></option>
 
@@ -2689,17 +2699,6 @@ class PodsUI {
                     </form>
 				<?php
                     }
-                    /*
-                    elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && is_developer() ) {
-        ?>
-                    <div class="alignleft actions">
-                        <select name="action">
-                            <option value="-1" selected="selected"><?php _e('Bulk Actions', 'pods'); ?></option>
-                            <option value="delete"><?php _e('Delete', 'pods'); ?></option>
-                        </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
-                    </div>
-        <?php
-                    }*/
                     elseif ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) {
                         ?>
                         <div class="alignleft actions">
@@ -2707,7 +2706,7 @@ class PodsUI {
                             <?php
                             foreach ( $this->export[ 'formats' ] as $format => $separator ) {
                                 ?>
-                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format ), self::$allowed, $this->exclusion() ); ?>';" />
+                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ); ?>';" />
                                 <?php
                             }
                             ?>
@@ -2963,6 +2962,7 @@ class PodsUI {
                 jQuery( 'form#posts-filter [name="pg"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action_bulk<?php echo $this->num; ?>"]' ).prop( 'disabled', true );
+	            jQuery( 'form#posts-filter [name="_wpnonce"]' ).prop( 'disabled', true );
 
                 jQuery( 'form#posts-filter' ).submit();
 
@@ -3545,10 +3545,11 @@ class PodsUI {
                                         }
 
                                         if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
-                                            $link = pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+                                            $link = pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ], '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), self::$allowed, $this->exclusion() );
 
-                                            if ( !empty( $this->action_links[ 'delete' ] ) )
-                                                $link = $this->do_template( $this->action_links[ 'delete' ], $row );
+                                            if ( !empty( $this->action_links[ 'delete' ] ) ) {
+	                                            $link = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links[ 'delete' ], $row ) );
+                                            }
 
                                             $actions[ 'delete' ] = '<span class="delete"><a href="' . $link . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
                                         }
@@ -3573,7 +3574,8 @@ class PodsUI {
                                                         if ( !isset( $custom_data[ 'link' ] ) ) {
                                                             $vars = array(
                                                                 'action' => $custom_action,
-                                                                'id' => $row[ $this->sql[ 'field_id' ] ]
+                                                                'id' => $row[ $this->sql[ 'field_id' ] ],
+                                                                '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action )
                                                             );
 
                                                             if ( 'toggle' == $custom_action ) {
@@ -3583,8 +3585,9 @@ class PodsUI {
 
                                                             $custom_data[ 'link' ] = pods_var_update( $vars, self::$allowed, $this->exclusion() );
 
-                                                            if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) )
-                                                                $custom_data[ 'link' ] = $this->do_template( $this->action_links[ $custom_action ], $row );
+                                                            if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) ) {
+	                                                            $custom_data[ 'link' ] = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
+                                                            }
                                                         }
 
                                                         $confirm = '';

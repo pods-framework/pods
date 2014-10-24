@@ -813,7 +813,8 @@ class PodsAdmin {
                     'label' => __( 'Delete All Items', 'pods' ),
                     'confirm' => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
                     'callback' => array( $this, 'admin_setup_reset' ),
-					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' )
+					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' ),
+					'nonce' => true
                 ),
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
@@ -1946,7 +1947,10 @@ class PodsAdmin {
             ),
             'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
             'actions_custom' => array(
-                'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
+                'toggle' => array(
+	                'callback' => array( $this, 'admin_components_toggle' ),
+                    'nonce' => true
+                )
             ),
             'filters_enhanced' => true,
             'views' => array(
@@ -2035,7 +2039,7 @@ class PodsAdmin {
             return;
         }
 
-        if ( 1 == pods_var( 'toggled' ) ) {
+        if ( '1' == pods_v( 'toggled' ) ) {
             $toggle = PodsInit::$components->toggle( $component );
 
             if ( true === $toggle )

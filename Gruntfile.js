@@ -52,6 +52,16 @@ module.exports = function (grunt) {
 				files: ['sources/ui/css/**/*.scss'],
 				tasks: ["sass"]
 			}
+		},
+		glotpress_download : {
+			core : {
+				options : {
+					domainPath : 'languages',
+					url        : 'http://wp-translate.org',
+					slug       : 'pods',
+					textdomain : 'pods'
+				}
+			}
 		}
 	});
 
@@ -59,6 +69,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
+	grunt.loadNpmTasks('grunt-glotpress');
 
 	grunt.registerTask('default', ['sass', 'imagemin']);
 	grunt.registerTask('production', ['sass', 'imagemin', 'uglify'])

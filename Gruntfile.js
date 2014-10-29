@@ -17,6 +17,6 @@ module.exports = function (grunt) {
 
 	grunt.loadNpmTasks('grunt-glotpress');
 
-	grunt.registerTask('default', ['grunt-glotpress']);
+	grunt.registerTask('default', ['glotpress_download']);
 
 };

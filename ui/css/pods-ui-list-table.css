@@ -12,12 +12,12 @@
   -webkit-border-radius: 3px;
   border-radius: 3px;
   background-color: #F1F1F1;
-  background-image: -ms-linear-gradient(top, #f9f9f9, #ececec);
-  background-image: -moz-linear-gradient(top, #f9f9f9, #ececec);
-  background-image: -o-linear-gradient(top, #f9f9f9, #ececec);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#ececec));
-  background-image: -webkit-linear-gradient(top, #f9f9f9, #ececec);
-  background-image: linear-gradient(top, #f9f9f9, #ececec);
+  background-image: -ms-linear-gradient(top, #F9F9F9, #ECECEC);
+  background-image: -moz-linear-gradient(top, #F9F9F9, #ECECEC);
+  background-image: -o-linear-gradient(top, #F9F9F9, #ECECEC);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#F9F9F9), to(#ECECEC));
+  background-image: -webkit-linear-gradient(top, #F9F9F9, #ECECEC);
+  background-image: linear-gradient(top, #F9F9F9, #ECECEC);
   border: 1px solid #DFDFDF;
   position: relative;
   height: auto;

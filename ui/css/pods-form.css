@@ -168,7 +168,7 @@
   border: 1px solid;
   margin: 10px 0;
   padding: 15px 10px 15px 50px;
-  background: #dff2bf url(../images/green-check.png) no-repeat 10px center;
+  background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
 }
 
 /* === FORM TABLE === */
@@ -217,13 +217,13 @@
   min-height: 26px;
 }
 .pods-field-option:hover {
-  background: #f8f8f8;
+  background: #F8F8F8;
 }
 .pods-field-option:nth-child(even) {
   background: #FCFCFC;
 }
 .pods-field-option:nth-child(even):hover {
-  background: #f8f8f8;
+  background: #F8F8F8;
 }
 .pods-field-option:first-child {
   margin-top: -5px;
@@ -247,7 +247,7 @@
   font-size: 13px;
 }
 .pods-field-option select:focus {
-  background: #ffffcc;
+  background: #FFFFCC;
 }
 .pods-field-option small {
   font-size: 12px;
@@ -355,7 +355,7 @@ div.pods-manage-field input.pods-form-ui-no-label {
   padding-top: 1px;
 }
 .pods-boolean:hover {
-  background: #ffffd8;
+  background: #FFFFD8;
 }
 
 .pods-manage-field .pods-field-option .pods-field.pods-boolean {
@@ -389,7 +389,7 @@ div.pods-manage-field input.pods-form-ui-no-label {
   min-width: 125px;
 }
 .pods-date input.pods-date-field.hasDatepicker {
-  background: white url(../images/calendar16.png) no-repeat 5px 5px;
+  background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
   cursor: pointer;
   padding-left: 25px !important;
   padding-top: 6px !important;
@@ -440,7 +440,7 @@ div.pods-manage-field input.pods-form-ui-no-label {
   top: 5px;
 }
 .pods-pick-values li:hover {
-  background: #ffffd8;
+  background: #FFFFD8;
 }
 .pods-pick-values label {
   display: block;
@@ -632,7 +632,7 @@ select.pods-form-ui-field-type-pick[multiple] {
   margin: 8px 5px 0 0;
 }
 .pods-field-option .pods-field input[type=checkbox]:focus + label {
-  background: #ffffcc;
+  background: #FFFFCC;
 }
 
 .pods-manage-field input[type="checkbox"] {

@@ -257,7 +257,7 @@ form.pods-manage .pods-date input, .pods-number input {
 }
 
 form.pods-manage .pods-date input.pods-date-field.hasDatepicker {
-  background: white url(../images/calendar16.png) no-repeat 5px 5px;
+  background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
   cursor: pointer;
   padding-left: 25px !important;
   padding-top: 6px !important;

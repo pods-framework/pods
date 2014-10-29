@@ -71,7 +71,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 	grunt.loadNpmTasks('grunt-glotpress');
 
-	grunt.registerTask('default', ['sass', 'imagemin', 'grunt-glotpress']);
-	grunt.registerTask('production', ['sass', 'imagemin', 'uglify', 'grunt-glotpress'])
+	grunt.registerTask('default', ['sass', 'imagemin', 'glotpress_download']);
+	grunt.registerTask('production', ['sass', 'imagemin', 'uglify', 'glotpress_download'])
 
 };

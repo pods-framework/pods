@@ -72,6 +72,8 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-glotpress');
 
 	grunt.registerTask('default', ['sass', 'imagemin', 'glotpress_download']);
-	grunt.registerTask('production', ['sass', 'imagemin', 'uglify', 'glotpress_download'])
+
+	// @todo Fix uglify usage
+	//grunt.registerTask('production', ['sass', 'imagemin', 'uglify', 'glotpress_download'])
 
 };

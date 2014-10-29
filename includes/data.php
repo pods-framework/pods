@@ -243,9 +243,7 @@ function pods_unslash( $input ) {
 
 	$output = array();
 
-	if ( empty( $input ) ) {
-		$output = $input;
-	} elseif ( is_object( $input ) ) {
+	if ( is_object( $input ) ) {
 		$input = get_object_vars( $input );
 
 		foreach ( $input as $key => $val ) {

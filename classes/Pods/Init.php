@@ -367,8 +367,8 @@ class Pods_Init {
 
 		$api = pods_api();
 
-		$post_types    = $api->load_pods( array( 'type' => 'post_type' ) );
-		$taxonomies    = $api->load_pods( array( 'type' => 'taxonomy' ) );
+		$post_types    = $api->load_pods( array( 'type' => 'post_type', 'key_names' => true ) );
+		$taxonomies    = $api->load_pods( array( 'type' => 'taxonomy', 'key_names' => true ) );
 		$comment_types = array();
 
 		if ( function_exists( 'get_comment_types' ) ) {
@@ -949,6 +949,10 @@ class Pods_Init {
 
 			pods_transient_set( 'pods_flush_rewrites', 0 );
 		}
+
+		Pods_Meta::$post_types = array_merge( $post_types, Pods_Meta::$post_types );
+		Pods_Meta::$taxonomies = array_merge( $taxonomies, Pods_Meta::$taxonomies );
+		//Pods_Meta::$comment = array_merge( self::$content_types_registered[ 'comment_types' ], Pods_Meta::$post_types );
 	}
 
 	/**

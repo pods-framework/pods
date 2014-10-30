@@ -31,6 +31,11 @@ class Pods_Init {
 	static $meta;
 
 	/**
+	 * @var Pods_Metadata
+	 */
+	static $metadata;
+
+	/**
 	 * @var Pods_Admin
 	 */
 	static $admin;
@@ -180,6 +185,10 @@ class Pods_Init {
 	 */
 	public function load_meta() {
 		self::$meta = pods_meta()->core();
+
+		if ( pods_developer() ) {
+			self::$metadata = new Pods_Metadata();
+		}
 	}
 
 	/**

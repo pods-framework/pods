@@ -57,7 +57,6 @@ class Pods_Init {
 	 */
 	static $upgrades = array(
 		'1.0.0' => '2.0.0'
-		//'2.0.0' => '2.1.0'
 	);
 
 	/**

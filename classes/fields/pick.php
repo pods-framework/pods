@@ -1527,7 +1527,7 @@ class PodsField_Pick extends PodsField {
 
                 $results = $search_data->select( $params );
 
-                if ( $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
+                if ( $autocomplete && $params[ 'limit' ] > $search_data->total_found() ) {
                     if ( !empty( $value ) ) {
                         $ids = $value;
 

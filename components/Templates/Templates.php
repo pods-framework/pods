@@ -15,7 +15,7 @@
  * @subpackage Templates
  */
 
-if ( class_exists( 'Pods_Templates' ) ){
+if ( ! class_exists( 'Pods_Templates' ) ){
 
 	// Pull in the functions
 	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );

@@ -75,7 +75,13 @@ class Pods_Admin {
 				'pods_upload',
 				'pods_admin_components'
 			);
-
+			
+		     /**
+	             * Fire off the Pods Admin Ajax 
+	             * 
+	             * @since 2.0
+	             */
+	             
 			$pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
 			if ( in_array( pods_v( 'action' ), $pods_admin_ajax_actions ) || in_array( pods_v( 'action', 'post' ), $pods_admin_ajax_actions ) ) {

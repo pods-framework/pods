@@ -15,10 +15,6 @@
  * @subpackage Templates
  */
 
-if ( class_exists( 'Pods_Templates' ) ) {
-	return;
-}
-
 // Pull in the functions
 require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );

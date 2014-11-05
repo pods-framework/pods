@@ -23,10 +23,6 @@ if ( class_exists( 'Pods_Templates' ) ) {
 require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
 require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );
 
-// dont run if the Frontier Template Editor is already running.
-if ( class_exists( 'Pods_Frontier_Template_Editor' ) || class_exists( 'Pods_Templates_Frontier' ) )
-	return;
-
 // Pull in the Frontier Template System
 require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
 

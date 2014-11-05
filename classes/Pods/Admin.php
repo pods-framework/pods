@@ -79,6 +79,8 @@ class Pods_Admin {
 		     /**
 	             * Fire off the Pods Admin Ajax 
 	             * 
+	             * @param $pods_admin_ajax_actions The Ajax actions that will occur in the WordPress Admin
+	             * 
 	             * @since 2.0
 	             */
 	             

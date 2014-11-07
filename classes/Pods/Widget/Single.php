@@ -17,7 +17,7 @@ class Pods_Widget_Single extends
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * Output the Widget
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );

@@ -126,14 +126,22 @@ class PodsAdmin {
 
                 wp_enqueue_script( 'pods' );
 
-                if ( 0 === strpos( $page, 'pods-manage-' ) || 0 === strpos( $page, 'pods-add-new-' ) )
-                    wp_enqueue_script( 'post' );
-                elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
-                    wp_enqueue_script( 'post' );
-                    wp_enqueue_style( 'pods-admin' );
+                if ( 0 === strpos( $page, 'pods-manage-' ) || 0 === strpos( $page, 'pods-add-new-' ) ) {
+
+	                wp_enqueue_script( 'post' );
                 }
-                else
+
+                elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
+
+                    wp_enqueue_script( 'post' );
                     wp_enqueue_style( 'pods-admin' );
+
+                }
+
+                else {
+
+	                wp_enqueue_style( 'pods-admin' );
+                }
 
                 if ( 'pods-advanced' == $page ) {
                     wp_register_style( 'pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0' );
@@ -146,9 +154,15 @@ class PodsAdmin {
                     wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
                 }
-                elseif ( 'pods-packages' == $page )
-                    wp_enqueue_style( 'pods-wizard' );
+
+                elseif ( 'pods-packages' == $page ) {
+
+	                wp_enqueue_style( 'pods-wizard' );
+
+                }
+
                 elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
+
                     wp_enqueue_style( 'pods-wizard' );
 
                     if ( 'pods-upgrade' == $page )
@@ -929,11 +943,15 @@ class PodsAdmin {
 
 		/**
 		 * Add or modify tabs for any Pod in Pods editor of a specific post type.
+		 *
+		 * @since unknown
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_tabs_' . $pod[ 'type' ], $tabs, $pod, $addtl_args );
 
 		/**
 		 * Add or modify tabs in Pods editor for all pods.
+		 *
+		 * @since unknown
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_tabs', $tabs, $pod, $addtl_args );
 

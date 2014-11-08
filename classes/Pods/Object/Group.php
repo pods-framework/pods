@@ -254,6 +254,12 @@ class Pods_Object_Group extends
 			'advanced'         => __( 'Advanced', 'pods' )
 		);
 
+
+		/**
+		 * Fire off the setup for the Pods edit field tabs
+		 *
+		 * @param array $tabs The Pods edit field tabs setup
+		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $this );
 
 		$tabs = array_merge( $core_tabs, $tabs );

@@ -259,6 +259,8 @@ class Pods_Object_Group extends
 		 * Fire off the setup for the Pods edit field tabs
 		 *
 		 * @param array $tabs The Pods edit field tabs setup
+		 *
+		 * @since unknown
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $this );
 

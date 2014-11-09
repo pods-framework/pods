@@ -21,7 +21,7 @@ class Pods_Init {
 	static $content_types_registered = array();
 
 	/**
-	 * @var Pods_Components
+	 * @var Pods_Componenzts
 	 */
 	static $components;
 
@@ -813,8 +813,31 @@ class Pods_Init {
 				// @todo supported comment post types
 			}
 
+			/**
+			 * Fires off the Pods Post Types
+			 *
+			 * @since unknown
+			 *
+			 * @param array $pods_post_types The Pods post types
+			 */
 			$pods_post_types    = apply_filters( 'pods_wp_post_types', $pods_post_types );
+
+			/**
+			 * Fires off the Pods Taxonomies
+			 *
+			 * @since unknown
+			 *
+			 * @param array $pods_taxonomies The Pods Taxonomies
+			 */
 			$pods_taxonomies    = apply_filters( 'pods_wp_taxonomies', $pods_taxonomies );
+
+			/**
+			 * Fires off the Pods Comment Types
+			 *
+			 * @since unknown
+			 *
+			 * @param array $pods_comment_types The Pods Comment Types
+			 */
 			$pods_comment_types = apply_filters( 'pods_wp_comment_types', $pods_comment_types );
 
 			$supported_post_types         = apply_filters( 'pods_wp_supported_post_types', $supported_post_types );

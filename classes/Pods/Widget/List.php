@@ -18,7 +18,7 @@ class Pods_Widget_List extends WP_Widget {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * @see Pods_Widget_Field::widget()
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );

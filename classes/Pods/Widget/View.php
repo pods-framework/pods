@@ -17,7 +17,7 @@ class Pods_Widget_View extends
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * @see Pods_Widget_Field::widget()
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );

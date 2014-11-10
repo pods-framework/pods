@@ -675,7 +675,9 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
-			pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
+			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
+			}
 
 			$params->orderby = $params->single;
 			$params->single = false;
@@ -784,7 +786,7 @@ class Pods implements Iterator {
 		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( !in_array( $field_data[ 'type' ], $tableless_field_types ) || 'arrays' == $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
 				$params->raw = true;
-			
+
 			if ( null === $params->single ) {
 				if ( isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
 					$params->single = true;
@@ -3795,12 +3797,15 @@ class Pods implements Iterator {
 		$var = null;
 
 		if ( isset( $this->deprecated->{$name} ) ) {
-			pods_deprecated( "Pods->{$name}", '2.0' );
+			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+				pods_deprecated( "Pods->{$name}", '2.0' );
+			}
 
 			$var = $this->deprecated->{$name};
 		}
-		else
+		elseif ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods->{$name}", '2.0' );
+		}
 
 		return $var;
 	}
@@ -3828,9 +3833,11 @@ class Pods implements Iterator {
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 
-		if ( method_exists( $this->deprecated, $name ) )
+		if ( method_exists( $this->deprecated, $name ) ) {
 			return call_user_func_array( array( $this->deprecated, $name ), $args );
-		else
+		}
+		elseif ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
+		}
 	}
 }

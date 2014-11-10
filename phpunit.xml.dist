@@ -18,6 +18,7 @@
 	<testsuites>
 		<testsuite name="Pods Framework Test Suite">
 			<directory suffix=".php">./tests/unit-tests</directory>
+			<directory suffix=".php">./tests/acceptance-tests</directory>
 		</testsuite>
 	</testsuites>
 	<filter>

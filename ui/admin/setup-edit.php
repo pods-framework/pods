@@ -150,7 +150,7 @@ $tab_options = $pod->admin_options();
 	                    ),
 	                    'class'      => 'pods-validate pods-validate-required'
                     ) ); ?>
-	                <input type="button" class="save-button button" value="<?php esc_attr_e( 'OK', 'pods' ); ?>" /> <a class="cancel" href="#cancel-edit"><?php _e( 'Cancel', 'pods' ); ?></a>
+	                <input type="button" style="vertical-align: middle" class="save-button button" value="<?php esc_attr_e( 'OK', 'pods' ); ?>" /> <a class="cancel" href="#cancel-edit"><?php _e( 'Cancel', 'pods' ); ?></a>
                 </span>
             </span>
 		<?php

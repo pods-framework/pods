@@ -675,9 +675,14 @@ class PodsData {
 
             $this->fields = PodsForm::fields_setup( $this->fields );
         }
+
         $this->total_found_calculated = false;
 
-        $this->total = count( (array) $this->data );
+	    $this->total = 0;
+
+	    if ( ! empty( $this->data ) ) {
+		    $this->total = count( (array) $this->data );
+	    }
 
         return $this->data;
     }

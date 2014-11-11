@@ -695,7 +695,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 							}
 						}
 					}
-					elseif ( 'none' != $storage_type ) {
+					elseif ( 'none' != $storage_type && $field[ 'name' ] != $data[ 'field_index' ] ) {
 						if ( 'pod' == $pod_type ) {
 							$prefix = 't.';
 						}

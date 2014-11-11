@@ -157,7 +157,23 @@ class Test_Traversal extends Pods_UnitTestCase {
 		)
 	);
 
-	public static $builds = array();
+	public static $builds = array(
+		/*
+		 * 'pod_type' => array(
+		 *      'object_name' => array(
+		 *          'meta' => array(
+		 *              // pod array of info
+		 *          ),
+		 *          'table' => array(
+		 *              // pod array of info
+		 *          ),
+		 *          'none' => array(
+		 *              // pod array of info
+		 *          )
+		 *      )
+		 * )
+		 */
+	);
 
 	public static $related_items = array(
 	    'test_rel_user' => array(
@@ -184,7 +200,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 			    'post_status' => 'publish'
 			)
 		),
-	    'test_rel_page' => array(
+	    'test_rel_pages' => array(
 			'pod' => 'page',
 		    'id' => 0,
 		    'ids' => array(),
@@ -374,12 +390,15 @@ class Test_Traversal extends Pods_UnitTestCase {
 	public static function _initialize_data() {
 
 		// Insert initial data
-		$related_items = self::$related_items;
-
 		$related_author = 0;
 
-		foreach ( $related_items as $item => $item_data ) {
-			if ( '%s' != $item ) {
+		$new_related_items = array();
+
+		foreach ( self::$related_items as $item => $item_data ) {
+			if ( ! empty( $item_data[ 'is_build' ] ) ) {
+				continue;
+			}
+			elseif ( '%s' != $item ) {
 				foreach ( $item_data[ 'data' ] as $k => $v ) {
 					$item_data[ 'data' ][ $k ] = sprintf( $v, wp_generate_password( 4, false ) );
 				}
@@ -420,6 +439,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 				}
 				elseif ( 'test_rel_user' == $item ) {
 					$related_author = $id;
+
+					// Init user data to other items for saving
+					foreach ( self::$related_items as $r_item => $r_item_data ) {
+						if ( empty( $r_item_data[ 'is_build' ] ) ) {
+							self::$related_items[ $r_item ][ 'data' ][ $item ] = $id;
+						}
+					}
 				}
 
 				$item_data[ 'id' ] = $id;
@@ -470,9 +496,6 @@ class Test_Traversal extends Pods_UnitTestCase {
 							if ( in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
 								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
 							}
-							elseif ( 'user' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
-							}
 							elseif ( 'comment' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
 							}
@@ -484,13 +507,17 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 							//$this->assertGreaterThan( 0, $id, 'Item not added' );
 
-							self::$related_items[ $pod_item_data[ 'pod' ] ] = $pod_item_data;
-							self::$related_items[ $pod_item_data[ 'pod' ] ][ 'id' ] = $id;
-							self::$related_items[ $pod_item_data[ 'pod' ] ][ 'is_build' ] = true;
+							$new_related_items[ $pod_item_data[ 'pod' ] ] = $pod_item_data;
+							$new_related_items[ $pod_item_data[ 'pod' ] ][ 'id' ] = $id;
+							$new_related_items[ $pod_item_data[ 'pod' ] ][ 'is_build' ] = true;
 						}
 					}
 				}
 			}
+		}
+
+		foreach ( $new_related_items as $item => $item_data ) {
+			self::$related_items[ $item ] = $item_data;
 		}
 
 	}
@@ -560,8 +587,10 @@ class Test_Traversal extends Pods_UnitTestCase {
 		global $wpdb;
 
 		// Suppress MySQL errors
+		/*add_filter( 'pods_error_die', '__return_false' );
+
 		$wpdb->suppress_errors( true );
-		$wpdb->hide_errors();
+		$wpdb->hide_errors();*/
 
 		$params = array(
 			'limit' => 1
@@ -770,6 +799,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 			foreach ( $storage_types as $storage_type => $pod ) {
 				$data = self::$related_items[ $pod[ 'name' ] ];
 
+				$data[ 'id' ] = (int) $data[ 'id' ];
+
 				$p = pods( $pod[ 'name' ], $data[ 'id' ] );
 
 				$data[ 'field_id' ]    = $p->pod_data[ 'field_id' ];
@@ -789,6 +820,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 				$this->assertEquals( $data[ 'data' ][ $data[ 'field_index' ] ], $p->field( $data[ 'field_index' ] ), 'Item index not as expected for ' . $data[ 'field_index' ] );
 				$this->assertEquals( $data[ 'data' ][ $data[ 'field_index' ] ], $p->display( $data[ 'field_index' ] ), 'Item index not as expected for ' . $data[ 'field_index' ] );
 
+				$metadata_type = 'post';
+
+				if ( ! in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
+					$metadata_type = $pod_type;
+				}
+
 				// Loop through field types
 				foreach ( $pod[ 'fields' ] as $field ) {
 					if ( 'pick' == $field[ 'type' ] ) {
@@ -806,65 +843,57 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] ) {
 							$check_value = (array) $check_value;
-							$check_index = array(
-								$check_index,
-								$check_index
-							);
+
+							if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] && ! empty( $related_data[ 'limit' ] ) ) {
+								$check_indexes = array();
+
+								$check_indexes[] = $check_index;
+
+								for ( $x = 1; $x < $related_data[ 'limit' ]; $x++ ) {
+									$check_indexes[] = $check_index . ' (' . $x . ')';
+								}
+
+								$check_index = $check_indexes;
+							}
 
 							$check_display_value = pods_serial_comma( $check_value );
 							$check_display_index = pods_serial_comma( $check_index );
 						}
 
-						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] . '.' . $related_data[ 'field_id' ] ), 'Related Item field value not as expected for ' . $field[ 'name' ] );
-						$this->assertEquals( $check_display_value, $p->display( $field[ 'name' ] . '.' . $related_data[ 'field_id' ] ), 'Related Item field display value not as expected for ' . $field[ 'name' ] );
+						$traverse_id = $field[ 'name' ] . '.' . $related_data[ 'field_id' ];
+						$traverse_index = $field[ 'name' ] . '.' . $related_data[ 'field_index' ];
 
-						$this->assertEquals( $check_index, $p->field( $field[ 'name' ] . '.' . $related_data[ 'field_index' ] ), 'Related Item index field value not as expected for ' . $field[ 'name' ] );
-						$this->assertEquals( $check_display_index, $p->display( $field[ 'name' ] . '.' . $related_data[ 'field_index' ] ), 'Related Item index field display value not as expected for ' . $field[ 'name' ] );
+						$this->assertEquals( $check_value, $p->field( $traverse_id ), 'Related Item field value not as expected for ' . $traverse_id );
+						$this->assertEquals( $check_display_value, $p->display( $traverse_id ), 'Related Item field display value not as expected for ' . $traverse_id );
+
+						$this->assertEquals( $check_index, $p->field( $traverse_index ), 'Related Item index field value not as expected for ' . $traverse_index );
+						$this->assertEquals( $check_display_index, $p->display( $traverse_index ), 'Related Item index field display value not as expected for ' . $traverse_index );
+
+						if ( 'meta' == $storage_type ) {
+							$check_value = array_map( 'absint', (array) $check_value );
+							$check_index = (array) $check_index;
+
+							//var_dump( array( 'check' => $check_value, 'metadata' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ), 'metadata_full' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ) ) ) );
+
+							$this->assertEquals( $check_value, array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ), 'Related Item field meta value not as expected for ' . $traverse_id );
+							$this->assertEquals( current( $check_value ), (int) get_metadata( $metadata_type, $data[ 'id' ], $traverse_id, true ), 'Related Item field single meta value not as expected for ' . $traverse_id );
+
+							$this->assertEquals( $check_index, get_metadata( $metadata_type, $data[ 'id' ], $traverse_index ), 'Related Item index field meta value not as expected for ' . $traverse_index );
+							$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data[ 'id' ], $traverse_index, true ), 'Related Item index field single meta value not as expected for ' . $traverse_index );
+						}
+
+						// @todo Add recursive traversal (1 level)
 					} elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
 						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] ), 'Item field value not as expected for ' . $field[ 'name' ] );
 						$this->assertEquals( $check_value, $p->display( $field[ 'name' ] ), 'Item field display value not as expected for ' . $field[ 'name' ] );
-					}
-				}
 
-				// Use Metadata API
-				if ( 'meta' == $storage_type ) {
-					$metadata_type = 'post';
+						if ( 'meta' == $storage_type ) {
+							$check_value = (array) $check_value;
 
-					if ( ! in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
-						$metadata_type = $pod_type;
-					}
-
-					foreach ( self::$supported_fields as $field ) {
-						$related_data = array();
-
-						if ( isset( self::$related_items[ $field[ 'name' ] ] ) ) {
-							$related_data = self::$related_items[ $field[ 'name' ] ];
-						}
-
-						if ( 'pick' == $field[ 'type' ] ) {
-							$check_value = $related_data[ 'id' ];
-							$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
-
-							if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] ) {
-								$check_value = (array) $check_value;
-								$check_index = array(
-									$check_index,
-									$check_index
-								);
-							}
-
-							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] . '.' . $related_data[ 'field_id' ] ), 'Related Item field value not as expected for ' . $field[ 'name' ] );
-							$this->assertEquals( current( $check_value ), get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] . '.' . $related_data[ 'field_id' ], true ), 'Related Item field single value not as expected for ' . $field[ 'name' ] );
-
-							$this->assertEquals( $check_index, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] . '.' . $related_data[ 'field_index' ] ), 'Related Item index field value not as expected for ' . $field[ 'name' ] );
-							$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] . '.' . $related_data[ 'field_index' ], true ), 'Related Item index field single value not as expected for ' . $field[ 'name' ] );
-						} else {
-							$check_value = $data[ 'data' ][ $field[ 'name' ] ];
-
-							$this->assertEquals( (array) $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ), 'Item field value not as expected' );
-							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ], true ), 'Item field single value not as expected' );
+							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ), 'Item field meta value not as expected for ' . $field[ 'name' ] );
+							$this->assertEquals( current( $check_value ), get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ], true ), 'Item field single meta value not as expected for ' . $field[ 'name' ] );
 						}
 					}
 				}

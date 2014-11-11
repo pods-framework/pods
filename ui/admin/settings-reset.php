@@ -1,34 +1,33 @@
 <?php
     global $pods_init;
 
-    $monday_mode = pods_var( 'pods_monday_mode', 'get', 0, null, true );
+	if ( isset( $_POST[ '_wpnonce' ] ) && false !== wp_verify_nonce( $_POST[ '_wpnonce' ], 'pods-settings' ) ) {
+		if ( isset( $_POST[ 'pods_cleanup_1x' ] ) ) {
+			pods_upgrade( '2.0.0' )->cleanup();
 
-    if ( 1 == date_i18n( 'N' ) && (int) date_i18n( 'G' ) < 15 )
-        $monday_mode = 1;
+			pods_redirect( pods_var_update( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
+		} elseif ( isset( $_POST[ 'pods_reset' ] ) ) {
+			$pods_init->reset();
+			$pods_init->setup();
 
-    if ( isset( $_POST[ 'pods_cleanup_1x' ] ) ) {
-        pods_upgrade( '2.0.0' )->cleanup();
+			pods_redirect( pods_var_update( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
+		} elseif ( isset( $_POST[ 'pods_reset_deactivate' ] ) ) {
+			$pods_init->reset();
 
-        pods_redirect( pods_var_update( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
-    }
-    elseif ( isset( $_POST[ 'pods_reset' ] ) ) {
-        $pods_init->reset();
-        $pods_init->setup();
+			deactivate_plugins( PODS_DIR . 'init.php' );
 
-        pods_redirect( pods_var_update( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
-    }
-    elseif ( isset( $_POST[ 'pods_reset_deactivate' ] ) ) {
-        $pods_init->reset();
+			pods_redirect( 'index.php' );
+		} elseif ( 1 == pods_v( 'pods_reset_success' ) ) {
+			pods_message( 'Pods 2.x settings and data have been reset.' );
+		} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
+			pods_message( 'Pods 1.x data has been deleted.' );
+		}
+	}
 
-        deactivate_plugins( PODS_DIR . 'init.php' );
+	// Monday Mode
+	$monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
-        pods_redirect( 'index.php' );
-    }
-    elseif ( 1 == pods_var( 'pods_reset_success' ) )
-        pods_message( 'Pods 2.x settings and data have been reset.' );
-    elseif ( 1 == pods_var( 'pods_cleanup_1x_success' ) )
-        pods_message( 'Pods 1.x data has been deleted.' );
-    elseif ( pods_var( 'pods_reset_weekend', 'post', pods_var( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
+	if ( pods_var( 'pods_reset_weekend', 'post', pods_var( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
         if ( $monday_mode ) {
             $html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
             pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );

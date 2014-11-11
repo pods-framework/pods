@@ -14,14 +14,16 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * The pods system under test
-	 * 
+	 *
 	 * @var   \Pods
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	private $pods;
 
 	public function setUp() {
-		$this->pods = new \Pods();
+		require_once( PODS_DIR . 'deprecated/deprecated.php' );
+
+		$this->pods = pods();
 	}
 
 	public function tearDown() {
@@ -30,7 +32,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * Test the add method when passing empty parameters
-	 * 
+	 *
 	 * @covers Pods::add
 	 * @since  3.0
 	 */
@@ -53,7 +55,7 @@ class Test_Pods extends Pods_UnitTestCase {
 
 	/**
 	 * Test pod does not exist
-	 * 
+	 *
 	 * @covers Pods::exists
 	 * @since  3.0
 	 */
@@ -77,10 +79,10 @@ class Test_Pods extends Pods_UnitTestCase {
 	public function test_method_exists_valid() {
 		$this->assertTrue( method_exists( $this->pods, 'valid' ), 'Method valid does not exist' );
 	}
-	
+
 	/**
 	 * Test for invalid pod
-	 * 
+	 *
 	 * @covers  Pods::valid
 	 * @depends test_method_exists_valid
 	 * @since   3.0
@@ -333,7 +335,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @depends test_method_exists_data
 	 * @since   3.0
 	 */
-	public function test_metod_data_empty_rows() {
+	public function test_method_data_empty_rows() {
 		$this->setReflectionPropertyValue( $this->pods, 'rows', array() );
 		$this->assertFalse( $this->pods->data() );
 	}
@@ -343,7 +345,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @depends test_method_exists_data
 	 * @since   3.0
 	 */
-	public function test_metod_data() {
+	public function test_method_data() {
 		$this->setReflectionPropertyValue( $this->pods, 'rows', array( 'foo' => 'bar' ) );
 		$this->assertEquals( array( 'foo' => 'bar' ), $this->pods->data() );
 	}
@@ -352,7 +354,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @covers Pods::__get
 	 * @since  3.0
 	 */
-	public function test_metod_exists_get() {
+	public function test_method_exists_get() {
 		$this->assertTrue( method_exists( $this->pods, '__get' ), 'Method __get does not exist' );
 	}
 
@@ -360,7 +362,7 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the get method when the property does exist
 	 *
 	 * @covers  Pods::__get
-	 * @depends test_metod_exists_get
+	 * @depends test_method_exists_get
 	 * @since   3.0
 	 */
 	public function test_method_get()
@@ -374,11 +376,13 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the get method when the property does exist in the deprecated class
 	 *
 	 * @covers  Pods::__get
-	 * @depends test_metod_exists_get
+	 * @depends test_method_exists_get
 	 * @since   3.0
 	 */
 	public function test_method_get_deprecated_property()
 	{
+		\Pod::$deprecated_notice = false;
+
 		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$deprecated->foo        = 'bar';
 		$this->pods->deprecated = $deprecated;
@@ -390,15 +394,18 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the get method error when the property does exist in the deprecated class
 	 *
 	 * @covers  Pods::__get
-	 * @depends test_metod_exists_get
+	 * @depends test_method_exists_get
 	 * @since   3.0
 	 */
 	public function test_method_get_deprecated_property_error()
 	{
+		\Pod::$deprecated_notice = false;
+
 		$deprecated             = Mockery::mock( 'Pods_Deprecated' );
 		$deprecated->foo        = 'bar';
 		$this->pods->deprecated = $deprecated;
 
+		// @todo needs fixing
 		$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
 		$test = $this->pods->foo;
 	}
@@ -407,7 +414,9 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @covers Pods::__call
 	 * @since  3.0
 	 */
-	public function test_metod_exists_call() {
+	public function test_method_exists_call() {
+		\Pod::$deprecated_notice = false;
+
 		$this->assertTrue( method_exists( $this->pods, '__call' ), 'Method __call does not exist' );
 	}
 
@@ -415,11 +424,13 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the __call method when the called method does not exist in the deprecated class
 	 *
 	 * @covers  Pods::__call
-	 * @depends test_metod_exists_call
+	 * @depends test_method_exists_call
 	 * @since   3.0
 	 */
 	public function test_method_call_method_does_not_exist()
 	{
+		\Pod::$deprecated_notice = false;
+
 		$deprecated = Mockery::mock( 'Pods_Deprecated' );
 		$this->pods->deprecated = $deprecated;
 
@@ -430,14 +441,17 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * Test the __call method error when the called method does not exist in the deprecated class
 	 *
 	 * @covers  Pods::__call
-	 * @depends test_metod_exists_call
+	 * @depends test_method_exists_call
 	 * @since   3.0
 	 */
 	public function test_method_call_deprecated_property_error()
 	{
+		\Pod::$deprecated_notice = false;
+
 		$deprecated = Mockery::mock( 'Pods_Deprecated' );
 		$this->pods->deprecated = $deprecated;
 
+		// @todo needs fixing
 		$this->setExpectedException( 'PHPUnit_Framework_Error_Notice' );
 		$test = $this->pods->__call( 'foo', array() );
 	}
@@ -447,11 +461,15 @@ class Test_Pods extends Pods_UnitTestCase {
 	 * @since  3.0
 	 */
 	public function test_method_id_field_does_not_exist() {
+		\Pod::$deprecated_notice = false;
+
 		$this->assertTrue( method_exists( $this->pods, 'id' ), 'Method id does not exist' );
 
 		$data = new \stdClass();
 		$data->field_id = 1;
 		$this->setReflectionPropertyValue( $this->pods, 'data', $data );
+
 		$this->assertNull( $this->pods->id() );
+
 	}
 }

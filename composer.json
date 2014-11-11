@@ -47,7 +47,9 @@
         "php" : ">=5.2.4"
     },
     "require-dev": {
-        "satooshi/php-coveralls": "dev-master"
+        "satooshi/php-coveralls": "dev-master",
+        "phpunit/phpunit": "4.3.x",
+        "mockery/mockery": "dev-master"
     },
     "extra" : {
         "installer-name" : "pods"

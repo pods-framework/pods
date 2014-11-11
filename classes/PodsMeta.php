@@ -401,11 +401,7 @@ class PodsMeta {
 
     public function integrations () {
         // Codepress Admin Columns 2.x
-        add_filter( 'cac/meta_keys/storage_key=post', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=link', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=media', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=user', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=comment', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
+		add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
         add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
 
@@ -416,10 +412,10 @@ class PodsMeta {
     }
 
     public function cpac_meta_keys_get ( $meta_fields, $obj ) {
-        return $this->cpac_meta_keys( $meta_fields, $obj->key, $obj->type );
+        return $this->cpac_meta_keys( $meta_fields, $obj->key );
     }
 
-    public function cpac_meta_keys ( $meta_fields, $cac_key, $cac_type = null ) {
+    public function cpac_meta_keys ( $meta_fields, $cac_key ) {
         $object_type = 'post_type';
         $object = $cac_key;
 
@@ -878,6 +874,10 @@ class PodsMeta {
 
             }
         }
+	if ( $field_found ) {
+		// Only add the classes to forms that actually have pods fields
+		add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+	}
     }
 
     /**
@@ -947,7 +947,7 @@ class PodsMeta {
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
-            <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
+            <tr class="form-field pods-field pods-field-input <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php
@@ -955,8 +955,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
+			<div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+			</div>
                 </td>
             </tr>
         <?php
@@ -978,6 +980,8 @@ class PodsMeta {
 
     <script type="text/javascript">
         jQuery( function ( $ ) {
+            $( document ).Pods( 'validate' );
+            $( document ).Pods( 'submit_meta' );
             $( document ).Pods( 'dependency', true );
         } );
     </script>

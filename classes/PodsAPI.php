@@ -5307,8 +5307,8 @@ class PodsAPI {
                 'compare' => 'IN'
             );
 
-            if ( 1 == count( $params->type ) )
-                $cache_key .= '_type_' . trim( implode( '', $params->type ) );
+            if ( 0 < count( $params->type ) )
+                $cache_key .= '_type_' . trim( implode( '_', $params->type ) );
         }
 
         if ( isset( $params->object ) && !empty( $params->object ) ) {

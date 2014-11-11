@@ -662,6 +662,7 @@ class PodsData {
         $this->data = $results;
 
         $this->row_number = -1;
+        $this->row = null;
 
         // Fill in empty field data (if none provided)
         if ( ( !isset( $this->fields ) || empty( $this->fields ) ) && !empty( $this->data ) ) {
@@ -2844,7 +2845,7 @@ class PodsData {
             elseif ( $meta_data_table ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`related_item_id`
                 ";
             }
             else {

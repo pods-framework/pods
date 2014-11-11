@@ -1094,7 +1094,9 @@ class PodsForm {
 
         $default = pods_v( 'default', $options, $default_value, true );
 
-        $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
+	    if ( is_string( $default ) ) {
+		    $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
+	    }
 
         if ( $default != $default_value && 1 == (int) pods_v( 'default_evaluate_tags', $options, 1 ) )
             $default = pods_evaluate_tags( $default );

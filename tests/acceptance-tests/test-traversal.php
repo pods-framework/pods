@@ -48,12 +48,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 			    'meta',
 		        'table'
 			),
-	        'fields' => array(
+	        /*'fields' => array(
 		        array(
 			        'name' => 'avatar',
 			        'type' => 'avatar'
 		        )
-	        ),
+	        ),*/
 	        'data' => array(
 				'display_name' => 'User %s',
 				'user_login' => 'User-%s',
@@ -151,7 +151,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 			'name' => 'test_rel_comment',
 			'type' => 'pick',
 		    'pick_object' => 'comment',
-		    'pick_val' => 'comment',
+		    'pick_val' => '',
 		    'pick_format_type' => 'single'
 		),
 	    array(
@@ -633,7 +633,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						$related_data = self::$related_items[ $field[ 'name' ] ];
 
-						$prefix = $field[ 'name' ] . '.';
+						$prefix = '`' . $field[ 'name' ] . '`.';
 
 						$check_value = $related_data[ 'id' ];
 						$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
@@ -643,8 +643,16 @@ class Test_Traversal extends Pods_UnitTestCase {
 							$check_value = current( $check_value );
 						}
 
-						$params[ 'where' ][] = $prefix . $related_data[ 'field_id' ] . ' = ' . (int) $check_value;
-						$params[ 'where' ][] = $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+						$related_where = array();
+
+						if ( empty( $check_value ) ) {
+							$related_where[] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
+						}
+
+						$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value
+						                   . ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+
+						$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
 
 						if ( empty( $field[ 'pick_val' ] ) ) {
 							$field[ 'pick_val' ] = $field[ 'pick_object' ];
@@ -652,8 +660,6 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						// Related pod traversal
 						if ( isset( self::$builds[ $field[ 'pick_object' ] ] ) && isset( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] ) && isset( self::$related_items[ $field[ 'pick_val' ] ] ) ) {
-							$related_pod_data = self::$related_items[ $field[ 'pick_val' ] ];
-
 							$related_pod = current( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] );
 							$related_pod_type = $related_pod[ 'type' ];
 							$related_pod_storage_type = $related_pod[ 'storage' ];
@@ -668,29 +674,66 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 									$related_prefix = $related_pod_field[ 'name' ] . '.';
 
+									if ( isset( self::$related_items[ $related_pod_field[ 'name' ] ] ) ) {
+										$related_pod_data = self::$related_items[ $related_pod_field[ 'name' ] ];
+									}
+									elseif ( isset( self::$related_items[ $related_pod[ 'name' ] ] ) ) {
+										$related_pod_data = self::$related_items[ $related_pod[ 'name' ] ];
+									}
+									else {
+										continue;
+									}
+
 									$check_value = $related_pod_data[ 'id' ];
-									$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
+
+									$check_index = '';
+
+									if ( isset( $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ] ) ) {
+										$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
+									}
 
 									if ( isset( $related_pod_field[ 'pick_format_type' ] ) && 'multi' == $related_pod_field[ 'pick_format_type' ] ) {
 										$check_value = (array) $check_value;
 										$check_value = current( $check_value );
 									}
 
-									$params[ 'where' ][] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' = ' . (int) $check_value;
-									$params[ 'where' ][] = $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+									$related_where = array();
+
+									if ( empty( $check_value ) ) {
+										$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+									}
+
+									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value
+									                   . ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+
+									$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
+
+
 								}
 								elseif ( 'none' != $related_pod_storage_type ) {
 									if ( 'pod' == $related_pod_type ) {
 										$related_prefix = 't.';
 									} elseif ( 'table' == $related_pod_storage_type ) {
-										$related_prefix = 'd.';
+										$related_prefix = '`d`.';
 									} elseif ( 'meta' == $related_pod_storage_type ) {
 										$related_suffix = '.meta_value';
 									}
 
-									$check_related_value = $related_pod_data[ 'data' ][ $related_pod_field[ 'name' ] ];
+									$check_related_value = '';
 
-									$params[ 'where' ][] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
+									if ( isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
+										$check_related_value = $related_data[ 'data' ][ $related_pod_field[ 'name' ] ];
+									}
+
+									$related_where = array();
+
+									if ( '.meta_value' == $related_suffix && '' == $check_related_value ) {
+										$related_where[] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
+									}
+
+									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
+
+									$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 							}
 						}
@@ -700,7 +743,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 							$prefix = 't.';
 						}
 						elseif ( 'table' == $storage_type ) {
-							$prefix = 'd.';
+							$prefix = '`d`.';
 						}
 						elseif ( 'meta' == $storage_type ) {
 							$suffix = '.meta_value';
@@ -708,18 +751,17 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
-						$params[ 'where' ][] = $prefix . $field[ 'name' ] . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
+						$params[ 'where' ][] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
 					}
 				}
 
-				$prefix = 't.';
-				$suffix = '';
+				$prefix = '`t`.';
 
 				$check_value = $data[ 'id' ];
 				$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
 
-				$params[ 'where' ][] = $prefix . $data[ 'field_id' ] . $suffix . ' = ' . (int) $check_value;
-				$params[ 'where' ][] = $prefix . $data[ 'field_index' ] . $suffix . ' = "' . pods_sanitize( $check_index ) . '"';
+				$params[ 'where' ][] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
+				$params[ 'where' ][] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
 				$p->find( $params );
 
@@ -891,7 +933,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 								'check_display_index' => $check_display_index,
 								'display_index'       => $p->display( $traverse_index ),
 								'field_full'          => $p->field( $field[ 'name' ] ),
-								'field_data'          => $p->fields( $field[ 'name' ] )
+								//'field_data'          => $p->fields( $field[ 'name' ] )
 							) );
 						}
 

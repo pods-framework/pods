@@ -1026,10 +1026,6 @@ class Test_Traversal extends Pods_UnitTestCase {
 										$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
 									}
 
-									// @todo Check values
-									// $prefix . $related_prefix . $related_pod_data[ 'field_id' ]
-									// $prefix . $related_prefix . $related_pod_data[ 'field_index' ]
-
 									$check_display_value = $check_value;
 									$check_display_index = $check_index;
 
@@ -1064,18 +1060,18 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 										/*var_dump( array(
 											'check_array' => $check_value,
-											'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ),
+											'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id ) ),
 
 											'check_single' => current( $check_value ),
-											'metadata_single' => (int) get_metadata( $metadata_type, $data[ 'id' ], $traverse_id, true ),
+											'metadata_single' => (int) get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id, true ),
 
 											'check_index_array' => $check_index,
-											'metadata_index_array' => get_metadata( $metadata_type, $data[ 'id' ], $traverse_index ),
+											'metadata_index_array' => get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ),
 
 											'check_index_single' => current( $check_index ),
-											'metadata_index_single' => get_metadata( $metadata_type, $data[ 'id' ], $traverse_index, true ),
+											'metadata_index_single' => get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ),
 
-											'metadata_full' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ) )
+											'metadata_full' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $prefix . $related_pod_field[ 'name' ] ) )
 										) );*/
 
 										$this->assertEquals( $check_value, array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id ) ), 'Deep Related Item field meta value not as expected for ' . $related_traverse_id );

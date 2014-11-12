@@ -2726,7 +2726,9 @@ class PodsData {
                 else
                     return $joins;
             }
-        }
+        } elseif ( isset( $pod_data[ 'object_fields' ] ) && isset( $pod_data[ 'object_fields' ][ $field ] ) && ! in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) ) {
+            return $joins;
+	    }
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 

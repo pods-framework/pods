@@ -933,8 +933,9 @@ class Test_Traversal extends Pods_UnitTestCase {
 							$check_display_index = pods_serial_comma( $check_index );
 						}
 
-						$traverse_id = $field[ 'name' ] . '.' . $related_data[ 'field_id' ];
-						$traverse_index = $field[ 'name' ] . '.' . $related_data[ 'field_index' ];
+						$prefix = $field[ 'name' ] . '.';
+						$traverse_id = $prefix . $related_data[ 'field_id' ];
+						$traverse_index = $prefix . $related_data[ 'field_index' ];
 
 						/*if ( false === $p->field( $traverse_id ) ) {
 							var_dump( array(
@@ -987,7 +988,124 @@ class Test_Traversal extends Pods_UnitTestCase {
 							$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data[ 'id' ], $traverse_index, true ), 'Related Item index field single meta value not as expected for ' . $traverse_index );
 						}
 
-						// @todo Add recursive traversal (1 level)
+						if ( empty( $field[ 'pick_val' ] ) ) {
+							$field[ 'pick_val' ] = $field[ 'pick_object' ];
+						}
+
+						// Related pod traversal
+						if ( isset( self::$builds[ $field[ 'pick_object' ] ] ) && isset( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] ) && isset( self::$related_items[ $field[ 'pick_val' ] ] ) ) {
+							$related_pod              = current( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] );
+							$related_pod_type         = $related_pod[ 'type' ];
+							$related_pod_storage_type = $related_pod[ 'storage' ];
+
+							foreach ( $related_pod[ 'fields' ] as $related_pod_field ) {
+								if ( in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) ) {
+									if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && ! isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
+										continue;
+									}
+
+									if ( isset( self::$related_items[ $related_pod_field[ 'name' ] ] ) ) {
+										$related_pod_data = self::$related_items[ $related_pod_field[ 'name' ] ];
+									}
+									elseif ( isset( self::$related_items[ $related_pod[ 'name' ] ] ) ) {
+										$related_pod_data = self::$related_items[ $related_pod[ 'name' ] ];
+									}
+									else {
+										continue;
+									}
+
+									$related_prefix = $related_pod_field[ 'name' ] . '.';
+									$related_traverse_id = $prefix . $related_prefix . $related_pod_data[ 'field_id' ];
+									$related_traverse_index = $prefix . $related_prefix . $related_pod_data[ 'field_index' ];
+
+									$check_value = $related_pod_data[ 'id' ];
+
+									$check_index = '';
+
+									if ( isset( $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ] ) ) {
+										$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
+									}
+
+									// @todo Check values
+									// $prefix . $related_prefix . $related_pod_data[ 'field_id' ]
+									// $prefix . $related_prefix . $related_pod_data[ 'field_index' ]
+
+									$check_display_value = $check_value;
+									$check_display_index = $check_index;
+
+									if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] ) {
+										$check_value = (array) $check_value;
+
+										if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] && ! empty( $related_pod_data[ 'limit' ] ) ) {
+											$check_indexes = array();
+
+											$check_indexes[] = $check_index;
+
+											for ( $x = 1; $x < $related_pod_data[ 'limit' ]; $x++ ) {
+												$check_indexes[] = $check_index . ' (' . $x . ')';
+											}
+
+											$check_index = $check_indexes;
+										}
+
+										$check_display_value = pods_serial_comma( $check_value );
+										$check_display_index = pods_serial_comma( $check_index );
+									}
+
+									$this->assertEquals( $check_value, $p->field( $related_traverse_id ), 'Deep Related Item field value not as expected for ' . $related_traverse_id );
+									$this->assertEquals( $check_display_value, $p->display( $related_traverse_id ), 'Deep Related Item field display value not as expected for ' . $related_traverse_id );
+
+									$this->assertEquals( $check_index, $p->field( $related_traverse_index ), 'Deep Related Item index field value not as expected for ' . $related_traverse_index );
+									$this->assertEquals( $check_display_index, $p->display( $related_traverse_index ), 'Deep Related Item index field display value not as expected for ' . $related_traverse_index );
+
+									if ( 'meta' == $storage_type ) {
+										$check_value = array_map( 'absint', (array) $check_value );
+										$check_index = (array) $check_index;
+
+										/*var_dump( array(
+											'check_array' => $check_value,
+											'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ),
+
+											'check_single' => current( $check_value ),
+											'metadata_single' => (int) get_metadata( $metadata_type, $data[ 'id' ], $traverse_id, true ),
+
+											'check_index_array' => $check_index,
+											'metadata_index_array' => get_metadata( $metadata_type, $data[ 'id' ], $traverse_index ),
+
+											'check_index_single' => current( $check_index ),
+											'metadata_index_single' => get_metadata( $metadata_type, $data[ 'id' ], $traverse_index, true ),
+
+											'metadata_full' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ) )
+										) );*/
+
+										$this->assertEquals( $check_value, array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id ) ), 'Deep Related Item field meta value not as expected for ' . $related_traverse_id );
+										$this->assertEquals( current( $check_value ), (int) get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id, true ), 'Deep Related Item field single meta value not as expected for ' . $related_traverse_id );
+
+										$this->assertEquals( $check_index, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), 'Deep Related Item index field meta value not as expected for ' . $related_traverse_index );
+										$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ), 'Deep Related Item index field single meta value not as expected for ' . $related_traverse_index );
+									}
+								}
+								elseif ( 'none' != $related_pod_storage_type ) {
+									$check_related_value = '';
+
+									if ( isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
+										$check_related_value = $related_data[ 'data' ][ $related_pod_field[ 'name' ] ];
+									}
+
+									$related_traverse_index = $prefix . $related_pod_field[ 'name' ];
+
+									$this->assertEquals( $check_related_value, $p->field( $related_traverse_index ), 'Deep Related Item field value not as expected for ' . $related_traverse_index );
+									$this->assertEquals( $check_related_value, $p->display( $related_traverse_index ), 'Deep Related Item field display value not as expected for ' . $related_traverse_index );
+
+									if ( 'meta' == $storage_type ) {
+										$check_related_value = (array) $check_related_value;
+
+										$this->assertEquals( $check_related_value, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), 'Deep Related Item field meta value not as expected for ' . $related_traverse_index );
+										$this->assertEquals( current( $check_related_value ), get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ), 'Deep Related Item field single meta value not as expected for ' . $related_traverse_index );
+									}
+								}
+							}
+						}
 					} elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 

@@ -6915,8 +6915,8 @@ class PodsAPI {
             $object_type = 'post_type';
             $object = 'post';
         }
-	    elseif ( 'user' == $object_type ) {
-		    $object = 'user';
+	    elseif ( empty( $object ) && in_array( $object_type, array( 'user', 'media', 'comment' ) ) ) {
+		    $object = $object_type;
 	    }
 
         $pod_name = $pod;

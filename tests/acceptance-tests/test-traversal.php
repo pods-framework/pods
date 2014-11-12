@@ -661,27 +661,3 @@ class Test_Traversal extends Pods_UnitTestCase {
 			}
 		}
 	}
-}
-meta value not as expected for ' . $related_traverse_index );
-									}
-								}
-							}
-						}
-					} elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
-						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
-
-						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] ), 'Item field value not as expected for ' . $field[ 'name' ] );
-						$this->assertEquals( $check_value, $p->display( $field[ 'name' ] ), 'Item field display value not as expected for ' . $field[ 'name' ] );
-
-						if ( 'meta' == $storage_type ) {
-							$check_value = (array) $check_value;
-
-							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ), 'Item field meta value not as expected for ' . $field[ 'name' ] );
-							$this->assertEquals( current( $check_value ), get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ], true ), 'Item field single meta value not as expected for ' . $field[ 'name' ] );
-						}
-					}
-				}
-			}
-		}
-	}
-}

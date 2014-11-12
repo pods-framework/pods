@@ -936,7 +936,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$traverse_id = $field[ 'name' ] . '.' . $related_data[ 'field_id' ];
 						$traverse_index = $field[ 'name' ] . '.' . $related_data[ 'field_index' ];
 
-						if ( false === $p->field( $traverse_id ) ) {
+						/*if ( false === $p->field( $traverse_id ) ) {
 							var_dump( array(
 								'pod'                 => $pod[ 'name' ],
 								'storage'             => $storage_type,
@@ -952,7 +952,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 								'field_full'          => $p->field( $field[ 'name' ] ),
 								//'field_data'          => $p->fields( $field[ 'name' ] )
 							) );
-						}
+						}*/
 
 						$this->assertEquals( $check_value, $p->field( $traverse_id ), 'Related Item field value not as expected for ' . $traverse_id );
 						$this->assertEquals( $check_display_value, $p->display( $traverse_id ), 'Related Item field display value not as expected for ' . $traverse_id );
@@ -960,11 +960,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$this->assertEquals( $check_index, $p->field( $traverse_index ), 'Related Item index field value not as expected for ' . $traverse_index );
 						$this->assertEquals( $check_display_index, $p->display( $traverse_index ), 'Related Item index field display value not as expected for ' . $traverse_index );
 
-						if ( 0 == 1 && 'meta' == $storage_type ) {
+						if ( 'meta' == $storage_type ) {
 							$check_value = array_map( 'absint', (array) $check_value );
 							$check_index = (array) $check_index;
 
-							var_dump( array(
+							/*var_dump( array(
 								'check_array' => $check_value,
 								'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ),
 
@@ -978,7 +978,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 								'metadata_index_single' => get_metadata( $metadata_type, $data[ 'id' ], $traverse_index, true ),
 
 								'metadata_full' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ) )
-							) );
+							) );*/
 
 							$this->assertEquals( $check_value, array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ), 'Related Item field meta value not as expected for ' . $traverse_id );
 							$this->assertEquals( current( $check_value ), (int) get_metadata( $metadata_type, $data[ 'id' ], $traverse_id, true ), 'Related Item field single meta value not as expected for ' . $traverse_id );
@@ -994,7 +994,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] ), 'Item field value not as expected for ' . $field[ 'name' ] );
 						$this->assertEquals( $check_value, $p->display( $field[ 'name' ] ), 'Item field display value not as expected for ' . $field[ 'name' ] );
 
-						if ( 0 == 1 && 'meta' == $storage_type ) {
+						if ( 'meta' == $storage_type ) {
 							$check_value = (array) $check_value;
 
 							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ), 'Item field meta value not as expected for ' . $field[ 'name' ] );

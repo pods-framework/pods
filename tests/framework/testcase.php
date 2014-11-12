@@ -3,7 +3,115 @@ namespace Pods_Unit_Tests;
 
 require dirname( __FILE__ ) . '/factory.php';
 
+// Components
+require PODS_PLUGIN_DIR . '/components/Migrate-Packages/Migrate-Packages.php';
+require PODS_PLUGIN_DIR . '/components/Advanced-Content-Types.php';
+require PODS_PLUGIN_DIR . '/components/Table-Storage.php';
+
+require PODS_PLUGIN_DIR . '/classes/fields/pick.php';
+
 class Pods_UnitTestCase extends \WP_UnitTestCase {
+	/**
+	 * A collection of supported pod types
+	 * 
+	 * @var    array
+	 * @static
+	 */
+	public static $supported_types = array(
+		'post_type' => array(
+			'object' => array(
+				'%d',
+			    'post',
+			    'page',
+			    'nav_menu_item'
+			),
+		    // @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+				'meta',
+			    'table'
+			)
+		),
+	    'taxonomy' => array(
+		    'object' => array(
+			    '%d',
+		        'category',
+		        'post_tag',
+		        'nav_menu'
+		    ),
+		    // @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+			    'table',
+			    'none'
+			)
+	    ),
+	    'user' => array(
+		    // @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+			    'meta',
+		        'table'
+			),
+	        'fields' => array(
+		        array(
+			        'name' => 'avatar',
+			        'type' => 'avatar'
+		        )
+	        ),
+	        'data' => array(
+				'display_name' => 'User %s',
+				'user_login' => 'User-%s',
+				'user_email' => '%s@user.com',
+			    'user_pass' => '%s'
+	        )
+	    ),
+	    /*'media' => array(
+		    // @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+			    'meta',
+		        'table'
+			),
+	        'data' => array(
+		        'guid' => 'http://f.cl.ly/items/1f1e0d0c0D310X1z0m3C/Screen%%20Shot%%202014-11-07%%20at%%201.06.32%%20AM.png'
+	        )
+	    ),*/
+	    'comment' => array(
+		    // @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+			    'meta',
+		        'table'
+			),
+	        'data' => array(
+				'comment_author' => 'Comment %s',
+				'comment_author_email' => '%s@comment.com',
+				'comment_author_url' => 'http://comment.com',
+				'comment_content' => '%s',
+				'comment_post_ID' => 1,
+				'comment_type' => 'comment',
+			    'post_status' => 'publish',
+			    'comment_date' => '2014-11-11 00:00:00'
+	        )
+	    ),
+	    'pod' => array(
+		    'object' => array(
+			    '%d'
+		    ),
+			'storage' => array(
+		        'table'
+			),
+	        'fields' => array(
+		        array(
+			        'name' => 'name',
+			        'type' => 'text'
+		        ),
+		        array(
+			        'name' => 'author',
+			        'type' => 'pick',
+				    'pick_object' => 'user',
+				    'pick_val' => 'user',
+				    'pick_format_type' => 'single'
+		        )
+	        )
+	    )
+	);
 	
 	/**
 	 * A collection of supported field definitions
@@ -164,7 +272,23 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 * @var    array
 	 * @static
 	 */
-	public static $builds = array();
+	public static $builds = array(
+		/*
+		 * 'pod_type' => array(
+		 *      'object_name' => array(
+		 *          'meta' => array(
+		 *              // pod array of info
+		 *          ),
+		 *          'table' => array(
+		 *              // pod array of info
+		 *          ),
+		 *          'none' => array(
+		 *              // pod array of info
+		 *          )
+		 *      )
+		 * )
+		 */
+	);
 	
 	public function setUp() {
 		parent::setUp();
@@ -267,8 +391,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 	/**
 	 * Create a full working set of pods
-	 * 
-	 * @beforeClass
 	 */
 	public static function _initialize_config() {
 
@@ -386,8 +508,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	
 	/**
 	 * Add items to the pods
-	 * 
-	 * @beforeClass
 	 */
 	public static function _initialize_data() {
 
@@ -496,3 +616,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 	}
 }
+
+Pods_UnitTestCase::_initialize_config();
+Pods_UnitTestCase::_initialize_data();

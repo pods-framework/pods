@@ -6915,11 +6915,17 @@ class PodsAPI {
             $object_type = 'post_type';
             $object = 'post';
         }
+	    elseif ( 'user' == $object_type ) {
+		    $object = 'user';
+	    }
 
         $pod_name = $pod;
 
         if ( is_array( $pod_name ) )
             $pod_name = pods_var_raw( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), null, true );
+	    else {
+		    $pod_name = $object;
+	    }
 
         $field_name = $field;
 
@@ -6955,8 +6961,9 @@ class PodsAPI {
         if ( pods_api_cache() && false === $_info && !did_action( 'init' ) )
             $_info = pods_transient_get( $transient . '_pre_init' );
 
-        if ( false !== $_info )
-            $info = $_info;
+        if ( false !== $_info ) {
+	        $info = $_info;
+        }
         else {
             if ( 'pod' == $object_type && null === $pod ) {
                 if ( empty( $name ) ) {

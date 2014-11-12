@@ -1197,25 +1197,25 @@ class PodsData {
                 $value = explode( '.', $value );
                 $dot = $last_value = array_pop( $value );
 
-                if ( 't' == $value[ 0 ] || in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) )
+                if ( 't' == $value[ 0 ] )
                     continue;
                 elseif ( 1 == count( $value ) && '' == preg_replace( '/[0-9]*/', '', $value[ 0 ] ) && '' == preg_replace( '/[0-9]*/', '', $last_value ) )
                     continue;
 
-                $find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+	            $found_value = str_replace( '`', '', $found[ $key ] );
+	            $found_value = '([`]{1}|\b)' . str_replace( '.', '[`]*\.[`]*', $found_value ) . '([`]{1}|\b)';
+	            $found_value = '/' . $found_value . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
 
-                $esc_start = $esc_end = '`';
+	            if ( in_array( $found_value, $find ) ) {
+		            continue;
+	            }
 
-                if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                    $esc_start = '';
-
-                if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                    $esc_end = '';
+                $find[ $key ] = $found_value;
 
                 if ( '*' != $dot )
-                    $dot = '`' . $dot . $esc_end;
+                    $dot = '`' . $dot . '`';
 
-                $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
+                $replace[ $key ] = '`' . implode( '_', $value ) . '`.' . $dot;
 
                 $value[] = $last_value;
 

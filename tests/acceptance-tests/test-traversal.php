@@ -313,7 +313,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-post-type
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_post_type() {
 
@@ -324,7 +328,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-taxonomy
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_taxonomy() {
 
@@ -335,7 +343,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-user
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_user() {
 
@@ -346,7 +358,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-media
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_media() {
 
@@ -357,7 +373,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-comment
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_comment() {
 
@@ -368,7 +388,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-pod
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
 	 * @covers Pods::field
+	 * @covers Pods::display
 	 */
 	public function test_field_traversal_pod() {
 
@@ -616,6 +640,29 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 										$this->assertEquals( $check_related_value, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), 'Deep Related Item field meta value not as expected for ' . $related_traverse_index );
 										$this->assertEquals( current( $check_related_value ), get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ), 'Deep Related Item field single meta value not as expected for ' . $related_traverse_index );
+									}
+								}
+							}
+						}
+					} elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
+						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
+
+						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] ), 'Item field value not as expected for ' . $field[ 'name' ] );
+						$this->assertEquals( $check_value, $p->display( $field[ 'name' ] ), 'Item field display value not as expected for ' . $field[ 'name' ] );
+
+						if ( 'meta' == $storage_type ) {
+							$check_value = (array) $check_value;
+
+							$this->assertEquals( $check_value, get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ] ), 'Item field meta value not as expected for ' . $field[ 'name' ] );
+							$this->assertEquals( current( $check_value ), get_metadata( $metadata_type, $data[ 'id' ], $field[ 'name' ], true ), 'Item field single meta value not as expected for ' . $field[ 'name' ] );
+						}
+					}
+				}
+			}
+		}
+	}
+}
+meta value not as expected for ' . $related_traverse_index );
 									}
 								}
 							}

@@ -17,7 +17,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_post_type() {
+	public function test_find_traversal_post_type () {
 
 		$this->_find_traversal_type( 'post_type' );
 
@@ -35,7 +35,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_taxonomy() {
+	public function test_find_traversal_taxonomy () {
 
 		$this->_find_traversal_type( 'taxonomy' );
 
@@ -53,7 +53,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_user() {
+	public function test_find_traversal_user () {
 
 		$this->_find_traversal_type( 'user' );
 
@@ -71,7 +71,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_media() {
+	public function test_find_traversal_media () {
 
 		$this->_find_traversal_type( 'media' );
 
@@ -89,7 +89,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_comment() {
+	public function test_find_traversal_comment () {
 
 		$this->_find_traversal_type( 'comment' );
 
@@ -107,7 +107,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_pod() {
+	public function test_find_traversal_pod () {
 
 		$this->_find_traversal_type( 'pod' );
 
@@ -116,8 +116,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	private function _find_traversal_type( $pod_type = null ) {
-		if ( empty( $pod_type ) || ! isset( self::$builds[ $pod_type ] ) ) {
+	private function _find_traversal_type ( $pod_type = null ) {
+		if ( empty( $pod_type ) || !isset( self::$builds[ $pod_type ] ) ) {
 			return;
 		}
 
@@ -153,7 +153,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 					$prefix = $suffix = '';
 
 					if ( in_array( $field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) ) {
-						if ( ! isset( self::$related_items[ $field[ 'name' ] ] ) ) {
+						if ( !isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 							continue;
 						}
 
@@ -172,13 +172,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_where = array();
 
 						if ( empty( $check_value ) ) {
-							$related_where[] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
+							$related_where[ ] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
 						}
 
-						$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value;
-						                   //. ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+						$related_where[ ] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value;
+						//. ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-						$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
+						$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 
 						if ( empty( $field[ 'pick_val' ] ) ) {
 							$field[ 'pick_val' ] = $field[ 'pick_object' ];
@@ -194,7 +194,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 								$related_prefix = $related_suffix = '';
 
 								if ( in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) ) {
-									if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && ! isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
+									if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && !isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
 										continue;
 									}
 
@@ -227,23 +227,24 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 									// Temporarily check against null too, recursive data not saved fully yet
 									//if ( empty( $check_value ) ) {
-										$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
-										$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+									$related_where[ ] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+									$related_where[ ] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
 									//}
 
-									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;
-									                   //. ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+									$related_where[ ] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;
+									//. ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-									$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
-
+									$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 
 								}
 								elseif ( 'none' != $related_pod_storage_type ) {
 									if ( 'pod' == $related_pod_type ) {
 										$related_prefix = 't.';
-									} elseif ( 'table' == $related_pod_storage_type ) {
+									}
+									elseif ( 'table' == $related_pod_storage_type ) {
 										$related_prefix = '`d`.';
-									} elseif ( 'meta' == $related_pod_storage_type ) {
+									}
+									elseif ( 'meta' == $related_pod_storage_type ) {
 										$related_suffix = '.meta_value';
 									}
 
@@ -257,12 +258,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 									// Temporarily check against null too, recursive data not saved fully yet
 									//if ( '.meta_value' == $related_suffix && '' == $check_related_value ) {
-										$related_where[] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
+									$related_where[ ] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
 									//}
 
-									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
+									$related_where[ ] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
 
-									$params[ 'where' ][] = '( ' . implode( ' OR ', $related_where ) . ' )';
+									$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 							}
 						}
@@ -280,7 +281,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
-						$params[ 'where' ][] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
+						$params[ 'where' ][ ] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
 					}
 				}
 
@@ -289,8 +290,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 				$check_value = $data[ 'id' ];
 				$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
 
-				$params[ 'where' ][] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
-				$params[ 'where' ][] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+				$params[ 'where' ][ ] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
+				$params[ 'where' ][ ] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
 				$p->find( $params );
 
@@ -319,7 +320,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_post_type() {
+	public function test_field_traversal_post_type () {
 
 		$this->_field_traversal_type( 'post_type' );
 
@@ -334,7 +335,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_taxonomy() {
+	public function test_field_traversal_taxonomy () {
 
 		$this->_field_traversal_type( 'taxonomy' );
 
@@ -349,7 +350,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_user() {
+	public function test_field_traversal_user () {
 
 		$this->_field_traversal_type( 'user' );
 
@@ -364,7 +365,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_media() {
+	public function test_field_traversal_media () {
 
 		$this->_field_traversal_type( 'media' );
 
@@ -379,7 +380,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_comment() {
+	public function test_field_traversal_comment () {
 
 		$this->_field_traversal_type( 'comment' );
 
@@ -394,7 +395,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_pod() {
+	public function test_field_traversal_pod () {
 
 		$this->_field_traversal_type( 'pod' );
 
@@ -403,8 +404,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 *
 	 */
-	private function _field_traversal_type( $pod_type = null ) {
-		if ( empty( $pod_type ) || ! isset( self::$builds[ $pod_type ] ) ) {
+	private function _field_traversal_type ( $pod_type = null ) {
+		if ( empty( $pod_type ) || !isset( self::$builds[ $pod_type ] ) ) {
 			return;
 		}
 
@@ -418,7 +419,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 				$p = pods( $pod[ 'name' ], $data[ 'id' ] );
 
-				$data[ 'field_id' ]    = $p->pod_data[ 'field_id' ];
+				$data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
 				$data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
 
 				$this->assertTrue( is_object( $p ), 'Pod not object' );
@@ -437,14 +438,14 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 				$metadata_type = 'post';
 
-				if ( ! in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
+				if ( !in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
 					$metadata_type = $pod_type;
 				}
 
 				// Loop through field types
 				foreach ( $pod[ 'fields' ] as $field ) {
 					if ( 'pick' == $field[ 'type' ] ) {
-						if ( ! isset( self::$related_items[ $field[ 'name' ] ] ) ) {
+						if ( !isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 							continue;
 						}
 
@@ -459,13 +460,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 						if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] ) {
 							$check_value = (array) $check_value;
 
-							if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] && ! empty( $related_data[ 'limit' ] ) ) {
+							if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
 								$check_indexes = array();
 
-								$check_indexes[] = $check_index;
+								$check_indexes[ ] = $check_index;
 
 								for ( $x = 1; $x < $related_data[ 'limit' ]; $x++ ) {
-									$check_indexes[] = $check_index . ' (' . $x . ')';
+									$check_indexes[ ] = $check_index . ' (' . $x . ')';
 								}
 
 								$check_index = $check_indexes;
@@ -536,13 +537,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						// Related pod traversal
 						if ( isset( self::$builds[ $field[ 'pick_object' ] ] ) && isset( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] ) && isset( self::$related_items[ $field[ 'pick_val' ] ] ) ) {
-							$related_pod              = current( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] );
-							$related_pod_type         = $related_pod[ 'type' ];
+							$related_pod = current( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] );
+							$related_pod_type = $related_pod[ 'type' ];
 							$related_pod_storage_type = $related_pod[ 'storage' ];
 
 							foreach ( $related_pod[ 'fields' ] as $related_pod_field ) {
 								if ( in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) ) {
-									if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && ! isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
+									if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && !isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
 										continue;
 									}
 
@@ -574,13 +575,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 									if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] ) {
 										$check_value = (array) $check_value;
 
-										if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] && ! empty( $related_pod_data[ 'limit' ] ) ) {
+										if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] && !empty( $related_pod_data[ 'limit' ] ) ) {
 											$check_indexes = array();
 
-											$check_indexes[] = $check_index;
+											$check_indexes[ ] = $check_index;
 
 											for ( $x = 1; $x < $related_pod_data[ 'limit' ]; $x++ ) {
-												$check_indexes[] = $check_index . ' (' . $x . ')';
+												$check_indexes[ ] = $check_index . ' (' . $x . ')';
 											}
 
 											$check_index = $check_indexes;
@@ -644,7 +645,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 								}
 							}
 						}
-					} elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
+					}
+					elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
 						$this->assertEquals( $check_value, $p->field( $field[ 'name' ] ), 'Item field value not as expected for ' . $field[ 'name' ] );
@@ -661,3 +663,4 @@ class Test_Traversal extends Pods_UnitTestCase {
 			}
 		}
 	}
+}

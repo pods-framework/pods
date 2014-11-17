@@ -657,7 +657,7 @@ class PodsData {
                 pods_view_set( $cache_key, $results, pods_var( 'expires', $params, 0, null, true ), pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
         }
 
-        $results = $this->do_hook( 'select', $results );
+        $results = $this->do_hook( 'select', $results, $params );
 
         $this->data = $results;
 

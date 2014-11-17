@@ -708,7 +708,7 @@ class Pods_Data {
 			}
 		}
 
-		$results = $this->do_hook( 'select', $results );
+		$results = $this->do_hook( 'select', $results, $params );
 
 		$this->data = $results;
 

@@ -2786,6 +2786,13 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
+		if ( isset( $this->row ) ) {
+			// On a change wipe out the saved results or else we will return the wrong results on future lookups
+			$this->row_number = -1;
+			$this->row = null;
+			$fetch = true;
+		}
+
 		if ( 0 < $id && $fetch ) {
 			$this->fetch( $id, false );
 		}

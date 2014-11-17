@@ -439,7 +439,7 @@ class Pods_View {
 			if ( true === $key ) {
 				wp_cache_flush();
 			} else {
-				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), 'pods_view' );
+				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 			}
 		} elseif ( 'option-cache' == $cache_mode ) {
 			global $_wp_using_ext_object_cache;

@@ -712,6 +712,9 @@ class Pods_Data {
 
 		$this->data = $results;
 
+		$this->row_number = -1;
+		$this->row = null;
+
 		// Fill in empty field data (if none provided)
 		if ( ( ! isset( $this->fields ) || empty( $this->fields ) ) && ! empty( $this->data ) ) {
 			$this->fields = array();

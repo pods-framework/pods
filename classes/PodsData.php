@@ -624,6 +624,8 @@ class PodsData {
 
         $cache_key = $results = false;
 
+        $params = $this->do_hook( 'pre_select', $params );
+
         // Debug purposes
         if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $params );

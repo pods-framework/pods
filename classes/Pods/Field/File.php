@@ -202,7 +202,7 @@ class Pods_Field_File extends
 
 				foreach ( $attachments as $v ) {
 					if ( ! is_array( $v ) ) {
-						$values[] = $v;
+						$value[] = $v;
 					} elseif ( isset( $v['ID'] ) ) {
 						$value[] = wp_get_attachment_url( $v['ID'] );
 					}

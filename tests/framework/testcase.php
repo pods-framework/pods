@@ -524,6 +524,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		$related_items = self::$related_items;
 
 		$related_author = 0;
+		$related_media = 0;
+
+		// Get and store sample image for use later
+		$sample_image = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
+		$sample_image = get_attached_file( $sample_image );
 
 		foreach ( $related_items as $item => $item_data ) {
 			if ( '%s' != $item ) {
@@ -536,7 +541,15 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				$item_data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
 				$item_data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
 
-				$id = $p->add( $item_data[ 'data' ] );
+				if ( 'media' == $item_data[ 'pod' ] ) {
+					// Create new attachment from sample image
+					$id = pods_attachment_import( $sample_image );
+
+					$p->save( $item_data[ 'data' ], null, $id );
+				}
+				else {
+					$id = $p->add( $item_data[ 'data' ] );
+				}
 
 				if ( ! empty( $item_data[ 'limit' ] ) ) {
 					$ids = array();
@@ -548,7 +561,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$sub_item_data[ $item_data[ 'field_index' ] ] .= ' (' . $x . ')';
 
 						if ( 'media' == $item_data[ 'pod' ] ) {
-							$id = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
+							// Create new attachment from sample image
+							$id = pods_attachment_import( $sample_image );
 
 							$p->save( $sub_item_data, null, $id );
 						}
@@ -563,6 +577,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				}
 				elseif ( 'test_rel_user' == $item ) {
 					$related_author = $id;
+				}
+				elseif ( 'test_rel_media' == $item ) {
+					$related_media = $id;
 				}
 
 				$item_data[ 'id' ] = $id;
@@ -620,6 +637,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							}
 
 							$id = $p->add( $pod_item_data[ 'data' ] );
+
+							if ( 'post_type' == $pod_type ) {
+								set_post_thumbnail( $id, $related_media );
+							}
 
 							self::$related_items[ $pod_item_data[ 'pod' ] ] = $pod_item_data;
 							self::$related_items[ $pod_item_data[ 'pod' ] ][ 'id' ] = $id;

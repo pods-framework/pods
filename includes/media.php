@@ -189,7 +189,13 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
  * @since 2.3
  */
 function pods_attachment_import ( $url, $post_parent = null, $featured = false ) {
-    $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
+	$filename = explode( '?', $url );
+	$filename = $filename[ 0 ];
+
+	$filename = explode( '#', $filename );
+	$filename = $filename[ 0 ];
+
+    $filename = substr( $filename, ( strrpos( $filename, '/' ) ) + 1 );
 
     $title = substr( $filename, 0, ( strrpos( $filename, '.' ) ) );
 

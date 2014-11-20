@@ -292,7 +292,7 @@ namespace Pods_Unit_Tests;
 						$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value;
 						//. ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-						$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
+						$where[ $field[ 'id' ] ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 
 						if ( empty( $field[ 'pick_val' ] ) ) {
 							$field[ 'pick_val' ] = $field[ 'pick_object' ];
@@ -358,7 +358,7 @@ namespace Pods_Unit_Tests;
 									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;
 									//. ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-									$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
+									$where[ $related_pod_field[ 'id' ] ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 								elseif ( 'none' != $related_pod_storage_type ) {
 									if ( 'pod' == $related_pod_type ) {
@@ -386,7 +386,7 @@ namespace Pods_Unit_Tests;
 
 									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
 
-									$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
+									$where[ $related_pod_field[ 'id' ] ] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 							}
 						}
@@ -404,7 +404,7 @@ namespace Pods_Unit_Tests;
 
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
-						$where[] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
+						$where[ $field[ 'id' ] ] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
 					}
 				}
 
@@ -413,20 +413,19 @@ namespace Pods_Unit_Tests;
 				$check_value = $data[ 'id' ];
 				$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
 
-				$where_chunks = array_chunk( $where, 20 );
+				$check_where = array();
 
-				foreach ( $where_chunks as $where_chunk ) {
-					$params[ 'where' ] = $where_chunk;
+				$check_where[] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
+				$check_where[] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-					$params[ 'where' ][] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
-					$params[ 'where' ][] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+				foreach ( $where as $field_id => $field_where ) {
+					$params[ 'where' ] = $check_where;
+					$params[ 'where' ][] = $field_where;
 
 					$p->find( $params );
 
-					$this->assertEquals( 1, $p->total(), 'Total not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
-					$this->assertEquals( 1, $p->total_found(), 'Total found not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
-
-					usleep( 1500000 );
+					$this->assertEquals( 1, $p->total(), 'Total not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) . ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` = %d AND `pod_id` = %d AND `field_id` = %d", $check_value, $pod[ 'id' ], $field_id ) ) ) . ' related items' );
+					$this->assertEquals( 1, $p->total_found(), 'Total found not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) . ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` = %d AND `pod_id` = %d AND `field_id` = %d", $check_value, $pod[ 'id' ], $field_id ) ) ) . ' related items' );
 				}
 
 				$this->assertNotEmpty( $p->fetch(), 'Item not fetched for ' . $pod[ 'name' ] );

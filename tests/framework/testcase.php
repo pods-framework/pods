@@ -494,6 +494,14 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 					$id = $api->save_pod( $pod );
 
+					$load_pod = $api->load_pod( array( 'id' => $id ) );
+
+					foreach ( $load_pod[ 'fields' ] as $field ) {
+						if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ] ) ) {
+							self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ][ 'id' ] = $field[ 'id' ];
+						}
+					}
+
 					//$this->assertGreaterThan( 0, $id, 'Pod not added' );
 
 					self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'id' ] = $id;

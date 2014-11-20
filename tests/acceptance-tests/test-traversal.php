@@ -2,12 +2,14 @@
 namespace Pods_Unit_Tests;
 	use Mockery;
 	use Pods;
+	use SebastianBergmann\Exporter\Exception;
 
-class Test_Traversal extends Pods_UnitTestCase {
+	class Test_Traversal extends Pods_UnitTestCase {
 
 	/**
 	 * @group traversal
 	 * @group traversal-post-type
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -17,15 +19,35 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_post_type () {
+	public function test_find_traversal_post_type_meta () {
 
-		$this->_find_traversal_type( 'post_type' );
+		$this->_find_traversal_type( 'post_type', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-post-type
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::find
+	 * @covers Pods::total
+	 * @covers Pods::total_found
+	 * @covers Pods::fetch
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_find_traversal_post_type_table () {
+
+		$this->_find_traversal_type( 'post_type', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-taxonomy
+	 * @group traversal-none
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -35,15 +57,35 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_taxonomy () {
+	public function test_find_traversal_taxonomy_none () {
 
-		$this->_find_traversal_type( 'taxonomy' );
+		$this->_find_traversal_type( 'taxonomy', 'none' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-taxonomy
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::find
+	 * @covers Pods::total
+	 * @covers Pods::total_found
+	 * @covers Pods::fetch
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_find_traversal_taxonomy_table () {
+
+		$this->_find_traversal_type( 'taxonomy', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-user
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -53,15 +95,37 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_user () {
+	public function test_find_traversal_user_meta () {
 
-		$this->_find_traversal_type( 'user' );
+		$this->_find_traversal_type( 'user', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-user
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::find
+	 * @covers Pods::total
+	 * @covers Pods::total_found
+	 * @covers Pods::fetch
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_find_traversal_user_table () {
+
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_find_traversal_type( 'user', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-media
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -71,15 +135,37 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_media () {
+	public function test_find_traversal_media_meta () {
 
-		$this->_find_traversal_type( 'media' );
+		$this->_find_traversal_type( 'media', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-media
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::find
+	 * @covers Pods::total
+	 * @covers Pods::total_found
+	 * @covers Pods::fetch
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_find_traversal_media_table () {
+
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_find_traversal_type( 'media', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-comment
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -89,15 +175,37 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_find_traversal_comment () {
+	public function test_find_traversal_comment_meta () {
 
-		$this->_find_traversal_type( 'comment' );
+		$this->_find_traversal_type( 'comment', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-comment
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::find
+	 * @covers Pods::total
+	 * @covers Pods::total_found
+	 * @covers Pods::fetch
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_find_traversal_comment_table () {
+
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_find_traversal_type( 'comment', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-pod
+	 * @group traversal-table
 	 * @covers Pods::valid
 	 * @covers Pods::find
 	 * @covers Pods::total
@@ -109,15 +217,19 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 */
 	public function test_find_traversal_pod () {
 
-		$this->_find_traversal_type( 'pod' );
+		$this->_find_traversal_type( 'pod', 'table' );
 
 	}
 
 	/**
 	 *
 	 */
-	private function _find_traversal_type ( $pod_type = null ) {
+	private function _find_traversal_type ( $pod_type = null, $storage_type = null ) {
 		if ( empty( $pod_type ) || !isset( self::$builds[ $pod_type ] ) ) {
+			return;
+		}
+
+		if ( empty( $storage_type ) ) {
 			return;
 		}
 
@@ -136,14 +248,16 @@ class Test_Traversal extends Pods_UnitTestCase {
 		$objects = self::$builds[ $pod_type ];
 
 		foreach ( $objects as $object => $storage_types ) {
-			foreach ( $storage_types as $storage_type => $pod ) {
+			if ( isset( $storage_types[ $storage_type ] ) ) {
+				$pod = $storage_types[ $storage_type ];
+
 				$p = pods( $pod[ 'name' ] );
 
 				$this->assertTrue( is_object( $p ), 'Pod not object' );
 				$this->assertTrue( $p->valid(), 'Pod object not valid' );
 				$this->assertInstanceOf( 'Pods', $p, 'Pod object not a Pod' );
 
-				$params[ 'where' ] = array();
+				$where = array();
 
 				$data = self::$related_items[ $pod[ 'name' ] ];
 				$data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
@@ -162,7 +276,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$prefix = '`' . $field[ 'name' ] . '`.';
 
 						$check_value = $related_data[ 'id' ];
-						$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
+						//$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
 
 						if ( isset( $field[ 'pick_format_type' ] ) && 'multi' == $field[ 'pick_format_type' ] ) {
 							$check_value = (array) $check_value;
@@ -172,13 +286,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_where = array();
 
 						if ( empty( $check_value ) ) {
-							$related_where[ ] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
+							$related_where[] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
 						}
 
-						$related_where[ ] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value;
+						$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value;
 						//. ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-						$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
+						$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
 
 						if ( empty( $field[ 'pick_val' ] ) ) {
 							$field[ 'pick_val' ] = $field[ 'pick_object' ];
@@ -198,25 +312,35 @@ class Test_Traversal extends Pods_UnitTestCase {
 										continue;
 									}
 
+									$related_object = $related_pod_field[ 'name' ];
+
+									if ( isset( $related_pod_field[ 'pick_val' ] ) ) {
+										$related_object = $related_pod_field[ 'pick_val' ];
+									}
+
 									$related_prefix = $related_pod_field[ 'name' ] . '.';
 
 									if ( isset( self::$related_items[ $related_pod_field[ 'name' ] ] ) ) {
 										$related_pod_data = self::$related_items[ $related_pod_field[ 'name' ] ];
 									}
-									elseif ( isset( self::$related_items[ $related_pod[ 'name' ] ] ) ) {
-										$related_pod_data = self::$related_items[ $related_pod[ 'name' ] ];
+									elseif ( isset( self::$related_items[ $related_object ] ) ) {
+										$related_pod_data = self::$related_items[ $related_object ];
 									}
 									else {
+										var_dump( array( '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
+
+										throw new Exception( 'Invalid related item', 0 );
+
 										continue;
 									}
 
 									$check_value = $related_pod_data[ 'id' ];
 
-									$check_index = '';
+									/*$check_index = '';
 
 									if ( isset( $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ] ) ) {
 										$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
-									}
+									}*/
 
 									if ( isset( $related_pod_field[ 'pick_format_type' ] ) && 'multi' == $related_pod_field[ 'pick_format_type' ] ) {
 										$check_value = (array) $check_value;
@@ -227,15 +351,14 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 									// Temporarily check against null too, recursive data not saved fully yet
 									//if ( empty( $check_value ) ) {
-									$related_where[ ] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
-									$related_where[ ] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+									$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+									$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
 									//}
 
-									$related_where[ ] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;
+									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;
 									//. ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
 
-									$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
-
+									$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 								elseif ( 'none' != $related_pod_storage_type ) {
 									if ( 'pod' == $related_pod_type ) {
@@ -258,12 +381,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 									// Temporarily check against null too, recursive data not saved fully yet
 									//if ( '.meta_value' == $related_suffix && '' == $check_related_value ) {
-									$related_where[ ] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
+									$related_where[] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
 									//}
 
-									$related_where[ ] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
+									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
 
-									$params[ 'where' ][ ] = '( ' . implode( ' OR ', $related_where ) . ' )';
+									$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
 								}
 							}
 						}
@@ -281,7 +404,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 
-						$params[ 'where' ][ ] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
+						$where[] = $prefix . '`' . $field[ 'name' ] . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
 					}
 				}
 
@@ -290,13 +413,21 @@ class Test_Traversal extends Pods_UnitTestCase {
 				$check_value = $data[ 'id' ];
 				$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
 
-				$params[ 'where' ][ ] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
-				$params[ 'where' ][ ] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+				$where_chunks = array_chunk( $where, 20 );
 
-				$p->find( $params );
+				foreach ( $where_chunks as $where_chunk ) {
+					$params[ 'where' ] = $where_chunk;
 
-				$this->assertEquals( 1, $p->total(), 'Total not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
-				$this->assertEquals( 1, $p->total_found(), 'Total found not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
+					$params[ 'where' ][] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
+					$params[ 'where' ][] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+
+					$p->find( $params );
+
+					$this->assertEquals( 1, $p->total(), 'Total not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
+					$this->assertEquals( 1, $p->total_found(), 'Total found not correct for ' . $pod[ 'name' ] . ': ' . $p->sql . ' | ' . print_r( $params[ 'where' ], true ) );
+
+					usleep( 1500000 );
+				}
 
 				$this->assertNotEmpty( $p->fetch(), 'Item not fetched for ' . $pod[ 'name' ] );
 
@@ -314,66 +445,155 @@ class Test_Traversal extends Pods_UnitTestCase {
 	/**
 	 * @group traversal
 	 * @group traversal-post-type
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_post_type () {
+	public function test_field_traversal_post_type_meta () {
 
-		$this->_field_traversal_type( 'post_type' );
+		$this->_field_traversal_type( 'post_type', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-post-type
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_field_traversal_post_type_table () {
+
+		$this->_field_traversal_type( 'post_type', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-taxonomy
+	 * @group traversal-none
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_taxonomy () {
+	public function test_field_traversal_taxonomy_none () {
 
-		$this->_field_traversal_type( 'taxonomy' );
+		$this->_field_traversal_type( 'taxonomy', 'none' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-taxonomy
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_field_traversal_taxonomy_table () {
+
+		$this->_field_traversal_type( 'taxonomy', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-user
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_user () {
+	public function test_field_traversal_user_meta () {
 
-		$this->_field_traversal_type( 'user' );
+		$this->_field_traversal_type( 'user', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-user
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_field_traversal_user_table () {
+
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_field_traversal_type( 'user', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-media
+	 * @group traversal-meta
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
 	 * @covers Pods::field
 	 * @covers Pods::display
 	 */
-	public function test_field_traversal_media () {
+	public function test_field_traversal_media_meta () {
 
-		$this->_field_traversal_type( 'media' );
+		$this->_field_traversal_type( 'media', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-media
+	 * @group traversal-table
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_field_traversal_media_table () {
+
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_field_traversal_type( 'media', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-comment
+	 * @group traversal-meta
+	 * @covers Pods::valid
+	 * @covers Pods::exists
+	 * @covers Pods::id
+	 * @covers Pods::field
+	 * @covers Pods::display
+	 */
+	public function test_field_traversal_comment_meta () {
+
+		$this->_field_traversal_type( 'comment', 'meta' );
+
+	}
+
+	/**
+	 * @group traversal
+	 * @group traversal-comment
+	 * @group traversal-table
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
@@ -382,13 +602,16 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 */
 	public function test_field_traversal_comment () {
 
-		$this->_field_traversal_type( 'comment' );
+		// @todo Need to find a way to switch the Pod up by tearing down and recreating as table storage
+
+		//$this->_field_traversal_type( 'comment', 'table' );
 
 	}
 
 	/**
 	 * @group traversal
 	 * @group traversal-pod
+	 * @group traversal-table
 	 * @covers Pods::valid
 	 * @covers Pods::exists
 	 * @covers Pods::id
@@ -397,22 +620,28 @@ class Test_Traversal extends Pods_UnitTestCase {
 	 */
 	public function test_field_traversal_pod () {
 
-		$this->_field_traversal_type( 'pod' );
+		$this->_field_traversal_type( 'pod', 'table' );
 
 	}
 
 	/**
 	 *
 	 */
-	private function _field_traversal_type ( $pod_type = null ) {
+	private function _field_traversal_type ( $pod_type = null, $storage_type = null ) {
 		if ( empty( $pod_type ) || !isset( self::$builds[ $pod_type ] ) ) {
+			return;
+		}
+
+		if ( empty( $storage_type ) ) {
 			return;
 		}
 
 		$objects = self::$builds[ $pod_type ];
 
 		foreach ( $objects as $object => $storage_types ) {
-			foreach ( $storage_types as $storage_type => $pod ) {
+			if ( isset( $storage_types[ $storage_type ] ) ) {
+				$pod = $storage_types[ $storage_type ];
+
 				$data = self::$related_items[ $pod[ 'name' ] ];
 
 				$data[ 'id' ] = (int) $data[ 'id' ];
@@ -463,10 +692,10 @@ class Test_Traversal extends Pods_UnitTestCase {
 							if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
 								$check_indexes = array();
 
-								$check_indexes[ ] = $check_index;
+								$check_indexes[] = $check_index;
 
 								for ( $x = 1; $x < $related_data[ 'limit' ]; $x++ ) {
-									$check_indexes[ ] = $check_index . ' (' . $x . ')';
+									$check_indexes[] = $check_index . ' (' . $x . ')';
 								}
 
 								$check_index = $check_indexes;
@@ -578,10 +807,10 @@ class Test_Traversal extends Pods_UnitTestCase {
 										if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ 'pick_format_type' ] && !empty( $related_pod_data[ 'limit' ] ) ) {
 											$check_indexes = array();
 
-											$check_indexes[ ] = $check_index;
+											$check_indexes[] = $check_index;
 
 											for ( $x = 1; $x < $related_pod_data[ 'limit' ]; $x++ ) {
-												$check_indexes[ ] = $check_index . ' (' . $x . ')';
+												$check_indexes[] = $check_index . ' (' . $x . ')';
 											}
 
 											$check_index = $check_indexes;

@@ -520,9 +520,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public static function _initialize_data() {
 
-		// Insert initial data
-		$related_items = self::$related_items;
-
 		$related_author = 0;
 		$related_media = 0;
 
@@ -530,8 +527,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		$sample_image = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
 		$sample_image = get_attached_file( $sample_image );
 
-		foreach ( $related_items as $item => $item_data ) {
-			if ( '%s' != $item ) {
+		$new_related_items = array();
+
+		foreach ( self::$related_items as $item => $item_data ) {
+			if ( ! empty( $item_data[ 'is_build' ] ) ) {
+				continue;
+			}
+			elseif ( '%s' != $item ) {
 				foreach ( $item_data[ 'data' ] as $k => $v ) {
 					$item_data[ 'data' ][ $k ] = sprintf( $v, wp_generate_password( 4, false ) );
 				}
@@ -584,7 +586,16 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				$item_data[ 'id' ] = $id;
 
-				self::$related_items[ $item ] = $related_items[ $item ] = $item_data;
+				self::$related_items[ $item ] = $item_data;
+
+				// Init user data to other items for saving
+				foreach ( self::$related_items as $r_item => $r_item_data ) {
+					if ( $item == $r_item ) {
+						continue;
+					}
+
+					self::$related_items[ $r_item ][ 'data' ][ $item ] = $id;
+				}
 			}
 			else {
 				foreach ( self::$builds as $pod_type => $objects ) {
@@ -642,13 +653,28 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								set_post_thumbnail( $id, $related_media );
 							}
 
-							self::$related_items[ $pod_item_data[ 'pod' ] ] = $pod_item_data;
-							self::$related_items[ $pod_item_data[ 'pod' ] ][ 'id' ] = $id;
-							self::$related_items[ $pod_item_data[ 'pod' ] ][ 'is_build' ] = true;
+							$new_related_items[ $pod_item_data[ 'pod' ] ] = $pod_item_data;
+							$new_related_items[ $pod_item_data[ 'pod' ] ][ 'id' ] = $id;
+							$new_related_items[ $pod_item_data[ 'pod' ] ][ 'is_build' ] = true;
 						}
 					}
 				}
 			}
+		}
+
+		// Go over related field items and save relations to them too
+		foreach ( self::$related_items as $r_item => $r_item_data ) {
+			if ( '%s' == $r_item ) {
+				continue;
+			}
+
+			$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
+
+			$p->save( $r_item_data[ 'data' ] );
+		}
+
+		foreach ( $new_related_items as $item => $item_data ) {
+			self::$related_items[ $item ] = $item_data;
 		}
 
 	}

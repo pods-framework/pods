@@ -13,7 +13,7 @@ require PODS_PLUGIN_DIR . '/classes/fields/pick.php';
 class Pods_UnitTestCase extends \WP_UnitTestCase {
 	/**
 	 * A collection of supported pod types
-	 * 
+	 *
 	 * @var    array
 	 * @static
 	 */
@@ -63,16 +63,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			    'user_pass' => '%s'
 	        )
 	    ),
-	    /*'media' => array(
+	    'media' => array(
 		    // @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 			    'meta',
 		        'table'
-			),
-	        'data' => array(
-		        'guid' => 'http://f.cl.ly/items/1f1e0d0c0D310X1z0m3C/Screen%%20Shot%%202014-11-07%%20at%%201.06.32%%20AM.png'
-	        )
-	    ),*/
+			)
+	    ),
 	    'comment' => array(
 		    // @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
@@ -112,10 +109,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	        )
 	    )
 	);
-	
+
 	/**
 	 * A collection of supported field definitions
-	 * 
+	 *
 	 * @var    array
 	 * @static
 	 */
@@ -148,13 +145,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'pick_val' => 'post_tag',
 		    'pick_format_type' => 'single'
 		),
-	    /*array(
+	    array(
 			'name' => 'test_rel_media',
 			'type' => 'pick',
 		    'pick_object' => 'media',
 		    'pick_val' => '',
 		    'pick_format_type' => 'single'
-		),*/
+		),
 	    array(
 			'name' => 'test_rel_comment',
 			'type' => 'pick',
@@ -170,7 +167,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 	/**
 	 * A collection of preset related field configurations
-	 * 
+	 *
 	 * @var    array
 	 * @static
 	 */
@@ -199,7 +196,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			    'post_status' => 'publish'
 			)
 		),
-	    'test_rel_page' => array(
+	    'test_rel_pages' => array(
 			'pod' => 'page',
 		    'id' => 0,
 		    'ids' => array(),
@@ -224,7 +221,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'description' => '%s'
 			)
 		),
-	    /*'test_rel_media' => array(
+	    'test_rel_media' => array(
 			'pod' => 'media',
 		    'id' => 0,
 		    'field_index' => 'post_title',
@@ -235,7 +232,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_content' => '%s',
 			    'post_status' => 'publish'
 			)
-		),*/
+		),
 	    'test_rel_comment' => array(
 			'pod' => 'comment',
 		    'id' => 0,
@@ -253,6 +250,18 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			    'comment_date' => '2014-11-11 00:00:00'
 			)
 		),
+	    'avatar' => array(
+			'pod' => 'media',
+		    'id' => 0,
+		    'field_index' => 'post_title',
+		    'field_id' => 'ID',
+		    'field_author' => 'post_author',
+			'data' => array(
+				'post_title' => 'Related media',
+				'post_content' => '%s',
+			    'post_status' => 'publish'
+			)
+		),
 	    '%s' => array(
 			'pod' => '%s',
 		    'id' => 0,
@@ -268,7 +277,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 	/**
 	 * A collection of pre-built pod objects
-	 * 
+	 *
 	 * @var    array
 	 * @static
 	 */
@@ -289,7 +298,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		 * )
 		 */
 	);
-	
+
 	public function setUp() {
 		parent::setUp();
 		$this->factory = new Pods_UnitTest_Factory;
@@ -417,7 +426,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			$objects = array();
 
 			if ( ! isset( $options[ 'object' ] ) ) {
-				$objects[ ] = $pod_type;
+				$objects[] = $pod_type;
 			} else {
 				$objects = (array) $options[ 'object' ];
 			}
@@ -459,7 +468,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								// @todo Remove for 3.x
 								$field[ 'options' ] = $field;
 
-								$pod[ 'fields' ][ ] = $field;
+								$pod[ 'fields' ][] = $field;
 							}
 						}
 					}
@@ -505,7 +514,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
         $pods_init->setup_content_types( true );
 
 	}
-	
+
 	/**
 	 * Add items to the pods
 	 */
@@ -538,7 +547,14 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$sub_item_data = $item_data[ 'data' ];
 						$sub_item_data[ $item_data[ 'field_index' ] ] .= ' (' . $x . ')';
 
-						$id = $p->add( $sub_item_data );
+						if ( 'media' == $item_data[ 'pod' ] ) {
+							$id = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
+
+							$p->save( $sub_item_data, null, $id );
+						}
+						else {
+							$id = $p->add( $sub_item_data );
+						}
 
 						$ids[] = $id;
 					}
@@ -570,7 +586,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							}
 
 							foreach ( self::$supported_fields as $field ) {
-								if ( 'pick' == $field[ 'type' ] && isset( self::$related_items[ $field[ 'name' ] ] ) ) {
+								if ( in_array( $field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) && isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 									$pod_item_data[ 'data' ][ $field[ 'name' ] ] = self::$related_items[ $field[ 'name' ] ][ 'id' ];
 								}
 							}

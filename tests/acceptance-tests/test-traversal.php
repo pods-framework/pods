@@ -352,7 +352,6 @@ namespace Pods_Unit_Tests;
 									// Temporarily check against null too, recursive data not saved fully yet
 									//if ( empty( $check_value ) ) {
 									$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
-									$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
 									//}
 
 									$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value;

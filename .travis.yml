@@ -15,22 +15,22 @@ matrix:
          - php: hhvm-nightly
 
 env:
-    - WP_VERSION=3.4.2 WP_MULTISITE=0
-    - WP_VERSION=3.5.2 WP_MULTISITE=0
-    - WP_VERSION=3.6.1 WP_MULTISITE=0
-    - WP_VERSION=3.7.5 WP_MULTISITE=0
-    - WP_VERSION=3.8.5 WP_MULTISITE=0
-    - WP_VERSION=3.9.3 WP_MULTISITE=0
-    - WP_VERSION=4.0.1 WP_MULTISITE=0
-    - WP_VERSION=master WP_MULTISITE=0
-    - WP_VERSION=3.4.2 WP_MULTISITE=1
-    - WP_VERSION=3.5.2 WP_MULTISITE=1
-    - WP_VERSION=3.6.1 WP_MULTISITE=1
-    - WP_VERSION=3.7.5 WP_MULTISITE=1
-    - WP_VERSION=3.8.5 WP_MULTISITE=1
-    - WP_VERSION=3.9.3 WP_MULTISITE=1
-    - WP_VERSION=4.0.1 WP_MULTISITE=1
-    - WP_VERSION=master WP_MULTISITE=1
+    - WP_VERSION=3.4.2 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.5.2 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.6.1 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.7.5 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.8.5 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.9.3 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=4.0.1 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=master WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.4.2 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.5.2 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.6.1 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.7.5 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.8.5 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=3.9.3 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=4.0.1 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=master WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
 
 before_script:
     - mkdir -p tmp

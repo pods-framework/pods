@@ -78,7 +78,7 @@ install_db() {
 	fi
 
 	# drop database
-	mysqladmin drop $DB_NAME --force --no-beep --silent --user="$DB_USER" --password="$DB_PASS"$EXTRA
+	mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA -e "DROP DATABASE IF EXISTS $DB_NAME"
 
 	# create database
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA

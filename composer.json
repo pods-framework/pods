@@ -1,8 +1,9 @@
 {
     "name" : "pods-framework/pods",
-    "description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
     "type" : "wordpress-plugin",
+    "description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
     "keywords" : [ "pods", "custom", "fields" ],
+    "homepage" : "http://pods.io/",
     "license" : "GPL-2.0+",
     "authors" : [
         {
@@ -49,10 +50,11 @@
     "require-dev": {
         "satooshi/php-coveralls": "dev-master",
         "phpunit/phpunit": "4.3.x",
+        "phpunit/php-invoker": "1.1.3",
         "mockery/mockery": "dev-master"
     },
     "extra" : {
         "installer-name" : "pods"
     },
-    "homepage" : "http://pods.io/"
+    "minimum-stability": "dev"
 }

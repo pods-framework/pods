@@ -7,7 +7,7 @@ use Mockery;
  */
 
 if ( ! class_exists( 'Pods' ) ) {
-	require_once PODS_PLUGIN_DIR . '/classes/Pods.php';
+	require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods.php';
 }
 
 class Test_Pods extends Pods_UnitTestCase {

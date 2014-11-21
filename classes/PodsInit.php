@@ -121,29 +121,7 @@ class PodsInit {
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
         if ( !empty( self::$version ) ) {
-            add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
-
-			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
-
-            add_action( 'init', array( $this, 'core' ), 11 );
-
-            add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-            add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-            add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-
-            add_action( 'init', array( $this, 'setup_content_types' ), 11 );
-
-            add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
-            add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
-
-            if ( is_admin() )
-                add_action( 'init', array( $this, 'admin_init' ), 12 );
-
-            // Register widgets
-            add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-
-            // Show admin bar links
-            add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
+	        $this->run();
         }
     }
 
@@ -1026,6 +1004,9 @@ class PodsInit {
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )
             restore_current_blog();
+	    else {
+		    $this->run();
+	    }
     }
 
     /**
@@ -1108,6 +1089,54 @@ class PodsInit {
         if ( null !== $_blog_id )
             restore_current_blog();
     }
+
+	public function run () {
+
+		if ( ! did_action( 'plugins_loaded' ) ) {
+			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
+		}
+		else {
+			$this->load_components();
+		}
+
+		if ( ! did_action( 'setup_theme' ) ) {
+			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
+		}
+		else {
+			$this->load_meta();
+		}
+
+		if ( ! did_action( 'init' ) ) {
+			add_action( 'init', array( $this, 'core' ), 11 );
+	        add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+
+	        if ( is_admin() ) {
+		        add_action( 'init', array( $this, 'admin_init' ), 12 );
+	        }
+		}
+		else {
+			$this->core();
+			$this->setup_content_types();
+
+			if ( is_admin() ) {
+				$this->admin_init();
+			}
+		}
+
+        add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+        add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+
+        add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+        add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
+
+        // Register widgets
+        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+
+        // Show admin bar links
+        add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
+
+	}
 
     /**
      * Delete Attachments from relationships

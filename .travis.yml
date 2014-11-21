@@ -5,54 +5,25 @@ php:
     - 5.4
     - 5.5
     - 5.6
-    - hhvm
-    - hhvm-nightly
-
-matrix:
-    allow_failures:
-         - php: 5.6
-         - php: hhvm
-         - php: hhvm-nightly
 
 env:
-    - WP_VERSION=3.4.2 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.5.2 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.6.1 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.7.5 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.8.5 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.9.3 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=4.0.1 WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=master WP_MULTISITE=0 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.4.2 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.5.2 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.6.1 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.7.5 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.8.5 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=3.9.3 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=4.0.1 WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
-    - WP_VERSION=master WP_MULTISITE=1 WP_TESTS_DIR=/tmp/wordpress-tests
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.0 WP_MULTISITE=0
+    - WP_VERSION=4.0 WP_MULTISITE=1
+    - WP_VERSION=3.9 WP_MULTISITE=0
+    - WP_VERSION=3.9 WP_MULTISITE=1
+    - WP_VERSION=3.8 WP_MULTISITE=0
+    - WP_VERSION=3.8 WP_MULTISITE=1
+    - WP_VERSION=3.7 WP_MULTISITE=0
+    - WP_VERSION=3.6 WP_MULTISITE=0
+    - WP_VERSION=3.5 WP_MULTISITE=0
+    - WP_VERSION=3.4 WP_MULTISITE=0
 
 before_script:
-    - mkdir -p tmp
-    - WP_CORE_DIR=tmp/wordpress/
-    - WP_TESTS_DIR=tmp/wordpress-tests/
-    - svn co --ignore-externals http://core.svn.wordpress.org/trunk/ tmp/wordpress/
-    - svn co --ignore-externals http://unit-tests.svn.wordpress.org/trunk/ tmp/wordpress-tests/
-    - cp tmp/wordpress-tests/wp-tests-config-sample.php tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR':" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourdbnamehere/wordpress_test/" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourusernamehere/root/" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourpasswordhere//" tmp/wordpress-tests/wp-tests-config.php
-    - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
-    - wget http://getcomposer.org/composer.phar
-    - php composer.phar install --dev --no-interaction
+    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
-script:
-    - mkdir -p build/logs
-    - phpunit -c phpunit.xml.dist
-
-after_script:
-    - php vendor/bin/coveralls --config tests/framework/.coveralls.yml -v --exclude-no-stmt
+script: phpunit
 
 branches:
     only:

@@ -26,13 +26,9 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
 
-activate_plugin( PODS_TEST_PLUGIN );
-
 echo "Installing Pods...\n";
 
-global $pods_init;
-
-$pods_init->activate();
+activate_plugin( PODS_TEST_PLUGIN );
 
 require PODS_TEST_DIR . '/includes/factory.php';
 require PODS_TEST_DIR . '/includes/testcase.php';

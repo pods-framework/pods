@@ -55,6 +55,5 @@
     },
     "extra" : {
         "installer-name" : "pods"
-    },
-    "minimum-stability": "dev"
+    }
 }

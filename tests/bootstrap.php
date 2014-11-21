@@ -6,10 +6,6 @@ define( 'PODS_TEST_PLUGIN_DIR', dirname( dirname( __FILE__ ) ) );
 define( 'PODS_TEST_PLUGIN', basename( dirname( dirname( __FILE__ ) ) ) . '/init.php' );
 define( 'PODS_TEST_DIR', dirname( __FILE__ ) );
 
-// Includes
-require PODS_TEST_DIR . '/includes/testcase.php';
-require PODS_TEST_DIR . '/includes/factory.php';
-
 // Error reporting
 error_reporting( E_ALL & ~E_DEPRECATED & ~E_STRICT );
 
@@ -30,9 +26,16 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
 
+activate_plugin( PODS_TEST_PLUGIN );
+
 echo "Installing Pods...\n";
 
-activate_plugin( PODS_TEST_PLUGIN );
+global $pods_init;
+
+$pods_init->activate();
+
+require PODS_TEST_DIR . '/includes/factory.php';
+require PODS_TEST_DIR . '/includes/testcase.php';
 
 global $current_user;
 

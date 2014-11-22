@@ -35,3 +35,6 @@ tests/clover.xml
 
 # Grunt
 node_modules
+
+# PHPunit config
+phpunit.xml

@@ -11,4 +11,15 @@
 			<directory prefix="tests-" suffix=".php">./tests/</directory>
 		</testsuite>
 	</testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./classes</directory>
+            <directory suffix=".php">./components</directory>
+            <directory suffix=".php">./deprecated</directory>
+            <directory suffix=".php">./includes</directory>
+            <directory suffix=".php">./classes</directory>
+            <directory suffix=".php">./classes</directory>
+            <file>init.php</file>
+        </whitelist>
+    </filter>
 </phpunit>

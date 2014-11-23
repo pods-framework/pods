@@ -19,7 +19,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::id
 		 * @covers PodsData::select
 		 * @covers PodsData::build
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider_base
@@ -104,7 +103,6 @@ namespace Pods_Unit_Tests;
 		 * @covers PodsData::traverse
 		 * @covers PodsData::traverse_build
 		 * @covers PodsData::traverse_recurse
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider
@@ -135,7 +133,6 @@ namespace Pods_Unit_Tests;
 		 * @covers PodsData::traverse
 		 * @covers PodsData::traverse_build
 		 * @covers PodsData::traverse_recurse
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider_deep
@@ -160,7 +157,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::field
 		 * @covers Pods::display
 		 * @covers Pods::id
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider_base
@@ -225,7 +221,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::exists
 		 * @covers Pods::field
 		 * @covers Pods::id
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider
@@ -249,7 +244,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::exists
 		 * @covers Pods::field
 		 * @covers Pods::id
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider_deep
@@ -274,7 +268,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::field
 		 * @covers Pods::display
 		 * @covers Pods::id
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider
@@ -299,7 +292,6 @@ namespace Pods_Unit_Tests;
 		 * @covers Pods::field
 		 * @covers Pods::display
 		 * @covers Pods::id
-		 * @covers pods_query
 		 * @covers PodsData::query
 		 *
 		 * @dataProvider data_provider_deep

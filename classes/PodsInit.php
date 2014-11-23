@@ -611,7 +611,7 @@ class PodsInit {
                 $ct_post_types = array();
                 $_post_types = get_post_types();
                 $_post_types = array_merge_recursive( $_post_types, $pods_post_types );
-                $ignore = array( 'revision', 'nav_menu_item' );
+                $ignore = array( 'revision' );
 
                 foreach ( $_post_types as $post_type => $options ) {
                     if ( in_array( $post_type, $ignore ) )

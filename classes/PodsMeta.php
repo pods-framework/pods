@@ -2446,7 +2446,6 @@ class PodsMeta {
             return false;
 
         $reserved_post_types = array(
-			'nav_menu_item',
 			'revision'
         );
 

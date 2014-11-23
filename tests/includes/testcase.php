@@ -27,7 +27,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'storage' => array(
 				'meta',
 			    'table'
-			)
+			),
+	        'data' => array(
+				'post_status' => 'publish'
+	        )
 		),
 	    'taxonomy' => array(
 		    'object' => array(
@@ -66,7 +69,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'storage' => array(
 			    'meta',
 		        'table'
-			)
+			),
+	        'data' => array(
+				'post_status' => 'inherit',
+				'post_type' => 'attachment'
+	        )
 	    ),
 	    'comment' => array(
 		    // @todo Figure out how to split test meta/table for existing objects
@@ -81,7 +88,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_content' => '%s',
 				'comment_post_ID' => 1,
 				'comment_type' => 'comment',
-			    'post_status' => 'publish',
+			    'comment_approved' => 1,
 			    'comment_date' => '2014-11-11 00:00:00'
 	        )
 	    ),
@@ -101,7 +108,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			        'name' => 'author',
 			        'type' => 'pick',
 				    'pick_object' => 'user',
-				    'pick_val' => 'user',
+				    'pick_val' => '',
 				    'pick_format_type' => 'single'
 		        )
 	        )
@@ -154,7 +161,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'name' => 'test_rel_comment',
 			'type' => 'pick',
 		    'pick_object' => 'comment',
-		    'pick_val' => 'comment',
+		    'pick_val' => '',
 		    'pick_format_type' => 'single'
 		),
 	    array(
@@ -197,7 +204,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	    'test_rel_pages' => array(
 			'pod' => 'page',
 		    'id' => 0,
-		    'ids' => array(),
 		    'field_index' => 'post_title',
 		    'field_id' => 'ID',
 		    'field_author' => 'post_author',
@@ -206,7 +212,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_title' => 'Related page',
 				'post_content' => '%s',
 			    'post_status' => 'publish'
-			)
+			),
+	        'sub_data' => array(
+
+	        ),
+	        'sub_rel_data' => array(
+
+	        )
 		),
 	    'test_rel_tag' => array(
 			'pod' => 'post_tag',
@@ -244,7 +256,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_content' => '%s',
 				'comment_post_ID' => 1,
 				'comment_type' => 'comment',
-			    'post_status' => 'publish',
+			    'comment_approved' => 1,
 			    'comment_date' => '2014-11-11 00:00:00'
 			)
 		),
@@ -536,12 +548,24 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		$new_related_items = array();
 
 		foreach ( self::$related_items as $item => $item_data ) {
+			// Get latest, as we're updating as we go
+			$item_data = self::$related_items[ $item ];
+
 			if ( ! empty( $item_data[ 'is_build' ] ) ) {
 				continue;
 			}
 			elseif ( '%s' != $item ) {
 				foreach ( $item_data[ 'data' ] as $k => $v ) {
-					$item_data[ 'data' ][ $k ] = sprintf( $v, wp_generate_password( 4, false ) );
+					if ( is_array( $v ) ) {
+						foreach ( $v as $kv => $vv ) {
+							$v[ $kv ] = sprintf( $vv, wp_generate_password( 4, false ) );
+						}
+					}
+					else {
+						$v = sprintf( $v, wp_generate_password( 4, false ) );
+					}
+
+					$item_data[ 'data' ][ $k ] = $v;
 				}
 
 				$p = pods( $item_data[ 'pod' ] );
@@ -562,6 +586,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				if ( ! empty( $item_data[ 'limit' ] ) ) {
 					$ids = array();
 
+					$item_data[ 'sub_data' ][ $id ] = $item_data[ 'data' ];
+
 					$ids[] = $id;
 
 					for ( $x = 1; $x < $item_data[ 'limit' ]; $x++ ) {
@@ -576,6 +602,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						}
 						else {
 							$id = $p->add( $sub_item_data );
+
+							$item_data[ 'sub_data' ][ $id ] = $sub_item_data;
 						}
 
 						$ids[] = $id;
@@ -596,8 +624,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				// Init user data to other items for saving
 				foreach ( self::$related_items as $r_item => $r_item_data ) {
-					if ( $item == $r_item ) {
-						continue;
+					if ( is_array( $r_item_data[ 'id' ] ) ) {
+						foreach ( $r_item_data[ 'sub_data' ] as $sub_id => $sub_data ) {
+							self::$related_items[ $r_item ][ 'sub_data' ][ $sub_id ][ $item ] = $id;
+						}
+					}
+					elseif ( isset( $r_item_data[ 'sub_data' ] ) ) {
+						self::$related_items[ $r_item ][ 'sub_rel_data' ][ $item ] = $id;
 					}
 
 					self::$related_items[ $r_item ][ 'data' ][ $item ] = $id;
@@ -616,7 +649,16 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							}
 
 							foreach ( $pod_item_data[ 'data' ] as $k => $v ) {
-								$pod_item_data[ 'data' ][ $k ] = sprintf( $v, wp_generate_password( 4, false ) );
+								if ( is_array( $v ) ) {
+									foreach ( $v as $kv => $vv ) {
+										$v[ $kv ] = sprintf( $vv, wp_generate_password( 4, false ) );
+									}
+								}
+								else {
+									$v = sprintf( $v, wp_generate_password( 4, false ) );
+								}
+
+								$pod_item_data[ 'data' ][ $k ] = $v;
 							}
 
 							foreach ( self::$supported_fields as $field ) {
@@ -674,14 +716,28 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				continue;
 			}
 
-			$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
+			if ( is_array( $r_item_data[ 'id' ] ) ) {
+				foreach ( $r_item_data[ 'id' ] as $item_id ) {
+					$p = pods( $r_item_data[ 'pod' ], $item_id );
 
-			$p->save( $r_item_data[ 'data' ] );
+					$save_data = array_merge( $r_item_data[ 'sub_data' ][ $item_id ], $r_item_data[ 'sub_rel_data' ] );
+
+					$p->save( $save_data );
+				}
+			}
+			else {
+				$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
+
+				$p->save( $r_item_data[ 'data' ] );
+			}
 		}
 
 		foreach ( $new_related_items as $item => $item_data ) {
 			self::$related_items[ $item ] = $item_data;
 		}
+
+		// Setup copies
+		self::$related_items[ 'author' ] = self::$related_items[ 'test_rel_user' ];
 
 	}
 }

@@ -467,7 +467,7 @@ class PodsAPI {
         }
 
         if ( !isset( $comment_data[ 'comment_ID' ] ) || empty( $comment_data[ 'comment_ID' ] ) )
-            $comment_data[ 'comment_ID' ] = wp_insert_comment( $comment_data );
+	        $comment_data[ 'comment_ID' ] = wp_insert_comment( pods_slash( $comment_data ) ); // Expects slashed
         elseif ( 1 < count( $comment_data ) )
             wp_update_comment( $comment_data );
 
@@ -1054,6 +1054,47 @@ class PodsAPI {
                     'options' => array(
                         'date_format_type' => 'datetime'
                     )
+                ),
+                'comment_author' => array(
+                    'name' => 'comment_author',
+                    'label' => 'Author',
+                    'type' => 'text',
+                    'alias' => array( 'author' )
+                ),
+                'comment_author_email' => array(
+                    'name' => 'comment_author_email',
+                    'label' => 'Author E-mail',
+                    'type' => 'email',
+                    'alias' => array( 'author_email' )
+                ),
+                'comment_author_url' => array(
+                    'name' => 'comment_author_url',
+                    'label' => 'Author URL',
+                    'type' => 'text',
+                    'alias' => array( 'author_url' )
+                ),
+                'comment_author_IP' => array(
+                    'name' => 'comment_author_IP',
+                    'label' => 'Author IP',
+                    'type' => 'text',
+                    'alias' => array( 'author_IP' )
+                ),
+                'comment_type' => array(
+                    'name' => 'comment_type',
+                    'label' => 'Type',
+                    'type' => 'text',
+                    'alias' => array( 'type' ),
+                    'hidden' => true
+                ),
+                'comment_parent' => array(
+                    'name' => 'comment_parent',
+                    'label' => 'Parent',
+                    'type' => 'pick',
+                    'pick_object' => 'comment',
+                    'pick_val' => '__current__',
+                    'alias' => array( 'parent' ),
+                    'data' => array(),
+                    'hidden' => true
                 )
             );
         }

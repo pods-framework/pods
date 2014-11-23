@@ -530,6 +530,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		global $pods_init;
 
         $pods_init->setup_content_types( true );
+        $pods_init->load_meta();
 
 	}
 

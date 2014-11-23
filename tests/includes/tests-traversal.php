@@ -265,10 +265,8 @@ namespace Pods_Unit_Tests;
 
 		/**
 		 * @group traversal
-		 * @group traversal-field
 		 * @group traversal-display
 		 * @group traversal-shallow
-		 * @group traversal-field-shallow
 		 * @group traversal-display-shallow
 		 *
 		 * @covers Pods::valid
@@ -292,10 +290,8 @@ namespace Pods_Unit_Tests;
 
 		/**
 		 * @group traversal
-		 * @group traversal-field
 		 * @group traversal-display
 		 * @group traversal-deep
-		 * @group traversal-field-deep
 		 * @group traversal-display-deep
 		 *
 		 * @covers Pods::valid
@@ -909,8 +905,8 @@ namespace Pods_Unit_Tests;
 						}
 
 						if ( 'field' == $method ) {
-							$this->assertEquals( $check_value, $p->field( $related_traverse_id ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_id, $variant_id ) );
-							$this->assertEquals( $check_index, $p->field( $related_traverse_index ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+							$this->assertEquals( $check_value, $p->field( $related_traverse_id, true ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_id, $variant_id ) );
+							$this->assertEquals( $check_index, $p->field( $related_traverse_index, true ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 
 							if ( 'meta' == $storage_type ) {
 								$check_value = array_map( 'absint', (array) $check_value );

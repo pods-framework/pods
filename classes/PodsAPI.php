@@ -6595,7 +6595,7 @@ class PodsAPI {
     public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
 	if ( pods_api_cache() ) {
 		// Check cache first, no point in running the same query multiple times
-		$cache_key = md5( serialize( array( $field_id, $pod_Id, $ids ) ) );
+		$cache_key = md5( serialize( array( $field_id, $pod_id, $ids ) ) );
 		$results = pods_cache_get( $cache_key, 'pods_lookup_related_items' );
 
 		if ( false !== $results ) {

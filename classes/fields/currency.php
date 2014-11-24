@@ -661,7 +661,7 @@ class PodsField_Currency extends PodsField {
 			$length = 64;
 		}
 
-		$decimals = (int) pods_v( self::$type . '_decimals', $options, 2, true );
+		$decimals = (int) pods_v( self::$type . '_decimals', $options, 2 );
 
 		if ( $decimals < 1 ) {
 			$decimals = 0;

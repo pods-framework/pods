@@ -1187,7 +1187,7 @@ class Pods implements Iterator {
 							}
 
 							// Get $pod if related to a Pod
-							if ( !empty( $pick_object ) && !empty( $pick_val ) ) {
+							if ( !empty( $pick_object ) && ( !empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ) ) ) ) {
 
 								if ( 'pod' == $pick_object ) {
 

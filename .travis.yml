@@ -1,59 +1,31 @@
 language: php
 
 php:
-    - 5.2.4
     - 5.3
     - 5.4
-    - 5.5
-    - 5.6
-    - hhvm
-
-matrix:
-    allow_failures:
-         - php: 5.6
-         - php: hhvm
 
 env:
-    - WP_VERSION=master WP_MULTISITE=0
-    - WP_VERSION=3.6.1 WP_MULTISITE=0
-    - WP_VERSION=3.7.3 WP_MULTISITE=0
-    - WP_VERSION=3.8.3 WP_MULTISITE=0
-    - WP_VERSION=3.9.1 WP_MULTISITE=0
-    - WP_VERSION=master WP_MULTISITE=1
-    - WP_VERSION=3.6.1 WP_MULTISITE=1
-    - WP_VERSION=3.7.3 WP_MULTISITE=1
-    - WP_VERSION=3.8.3 WP_MULTISITE=1
-    - WP_VERSION=3.9.1 WP_MULTISITE=1
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.0 WP_MULTISITE=0
+    - WP_VERSION=4.0 WP_MULTISITE=1
+
 
 before_script:
-    - mkdir -p tmp
-    - WP_CORE_DIR=tmp/wordpress/
-    - WP_TESTS_DIR=tmp/wordpress-tests/
-    - svn co --ignore-externals http://core.svn.wordpress.org/trunk/ tmp/wordpress/
-    - svn co --ignore-externals http://unit-tests.svn.wordpress.org/trunk/ tmp/wordpress-tests/
-    - cp tmp/wordpress-tests/wp-tests-config-sample.php tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR':" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourdbnamehere/wordpress_test/" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourusernamehere/root/" tmp/wordpress-tests/wp-tests-config.php
-    - sed -i "s/yourpasswordhere//" tmp/wordpress-tests/wp-tests-config.php
-    - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
-    - wget http://getcomposer.org/composer.phar
-    - php composer.phar install --dev --no-interaction
+    - travis_retry composer self-update
+    - travis_retry composer install --no-interaction --prefer-source
+    - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+    - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    - mkdir -p build/logs
-    - phpunit -c phpunit.xml
+    - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then vendor/bin/phpunit --coverage-text --coverage-clover ./build/logs/clover.xml; fi
+    - if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then vendor/bin/phpunit; fi
 
 after_script:
-    - php vendor/bin/coveralls --config tests/framework/.coveralls.yml -v --exclude-no-stmt
-
-notifications:
-    irc:
-        channels:
-            - "irc.freenode.net#pods-dev"
-        template:
-            - "Build %{build_number} (%{branch} - %{commit}): %{message} %{build_url}"
+    - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then vendor/bin/coveralls -v; fi
+    - if [[ "$TRAVIS_PHP_VERSION" == "5.5" ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+    - if [[ "$TRAVIS_PHP_VERSION" == "5.5" ]]; then php ocular.phar code-coverage:upload --format=php-clover ./build/logs/clover.xml; fi
 
 branches:
     only:
-        - 3.0-unstable
+        - 2.x

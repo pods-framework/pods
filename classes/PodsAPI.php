@@ -5075,6 +5075,13 @@ class PodsAPI {
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
+	    $table_info = false;
+
+        if ( is_object( $params ) && ! empty( $params->table_info ) )
+            $table_info = true;
+        elseif ( is_array( $params ) && ! empty( $params[ 'table_info' ] ) )
+            $table_info = true;
+
         $transient = 'pods_' . $wpdb->prefix . '_pod';
 
         if ( !empty( $current_language ) )
@@ -5083,7 +5090,7 @@ class PodsAPI {
         if ( !$load_fields )
             $transient .= '_nofields';
 
-        if ( pods_var_raw( 'table_info', $params, false ) )
+        if ( $table_info )
             $transient .= '_tableinfo';
 
         if ( is_object( $params ) && isset( $params->post_name ) ) {
@@ -5092,7 +5099,7 @@ class PodsAPI {
             if ( pods_api_cache() )
                 $pod = pods_transient_get( $transient . '_' . $params->post_name );
 
-            if ( false !== $pod && ( pods_var_raw( 'table_info', $params, false ) || isset( $pod[ 'table' ] ) ) ) {
+            if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
                     $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
@@ -5143,7 +5150,7 @@ class PodsAPI {
                 elseif ( pods_api_cache() )
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
-                if ( false !== $pod && ( pods_var_raw( 'table_info', $params, false ) || isset( $pod[ 'table' ] ) ) ) {
+                if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
                     if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
                         $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
@@ -5179,7 +5186,7 @@ class PodsAPI {
         if ( pods_api_cache() )
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
-        if ( false !== $pod && ( pods_var_raw( 'table_info', $params, false ) || isset( $pod[ 'table' ] ) ) ) {
+        if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
                 $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
@@ -5235,7 +5242,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        if ( pods_var_raw( 'table_info', $params, false ) )
+        if ( $table_info )
             $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
 
         if ( isset( $pod[ 'pod' ] ) )
@@ -5260,7 +5267,7 @@ class PodsAPI {
         if ( !empty( $fields ) ) {
             foreach ( $fields as $field ) {
                 $field->pod = $pod[ 'name' ];
-                $field->table_info = (boolean) pods_var_raw( 'table_info', $params, false );
+                $field->table_info = $table_info;
 
                 if ( $load_fields ) {
                     $field = $this->load_field( $field );

@@ -1680,6 +1680,7 @@ class PodsData {
         if ( null === $row )
             $explicit_set = false;
 
+	    $already_cached = false;
         $id = $row;
 
         $tableless_field_types = PodsForm::tableless_field_types();

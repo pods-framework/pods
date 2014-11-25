@@ -5843,16 +5843,15 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_fields ( $params, $strict = false ) {
-/*	    if ( pods_api_cache() ) {
+	    if ( pods_api_cache() ) {
 		    $cache_key = md5( serialize( array( $params ) ) );
 		    $results = pods_cache_get( $cache_key, 'pods_load_fields' );
 
 		    if ( false !== $results ) {
 			    return $results;
 		    }
-
 	    }
-*/
+
         $params = (object) pods_sanitize( $params );
 
         if ( !isset( $params->pod ) || empty( $params->pod ) )

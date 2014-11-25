@@ -1726,6 +1726,9 @@ class PodsData {
 
             if ( !empty( $this->pod ) ) {
                 $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
+	            if ( false !== $row ) {
+		            $already_cached = true;
+	            }
 			}
 
             $current_row_id = false;
@@ -1930,7 +1933,7 @@ class PodsData {
                 }
             }
 
-            if ( !empty( $this->pod ) ) {
+            if ( !empty( $this->pod ) && ! $already_cached ) {
                 pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
 			}
         }

@@ -1724,8 +1724,7 @@ class PodsData {
 
             $row = false;
 
-			// @todo Figure out why taking out this in_array() causes cached data issues in User edit screen
-            if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+            if ( !empty( $this->pod ) ) {
                 $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 			}
 
@@ -1931,8 +1930,7 @@ class PodsData {
                 }
             }
 
-			// @todo Figure out why taking out this in_array() causes cached data issues in User edit screen
-            if ( !empty( $this->pod ) && in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+            if ( !empty( $this->pod ) ) {
                 pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
 			}
         }

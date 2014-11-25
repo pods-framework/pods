@@ -5843,6 +5843,16 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_fields ( $params, $strict = false ) {
+/*	    if ( pods_api_cache() ) {
+		    $cache_key = md5( serialize( array( $params ) ) );
+		    $results = pods_cache_get( $cache_key, 'pods_load_fields' );
+
+		    if ( false !== $results ) {
+			    return $results;
+		    }
+
+	    }
+*/
         $params = (object) pods_sanitize( $params );
 
         if ( !isset( $params->pod ) || empty( $params->pod ) )
@@ -5934,14 +5944,6 @@ class PodsAPI {
 				$args[ 'post__in' ] = $ids;
 			}
 
-            $fields = false;
-
-            if ( pods_api_cache() )
-                $fields = pods_cache_get( md5( json_encode( $args ) ), 'pods_load_fields' );
-
-            if ( false !== $fields )
-                return $fields;
-
             $fields = array();
 
             $_fields = get_posts( $args );
@@ -5952,9 +5954,6 @@ class PodsAPI {
                 if ( !empty( $field ) )
                     $fields[ $field[ 'id' ] ] = $field;
             }
-
-            if ( pods_api_cache() )
-                pods_cache_set( md5( json_encode( $args ) ), $fields, 'pods_load_fields' );
         }
         else {
             if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
@@ -5976,14 +5975,6 @@ class PodsAPI {
 
             $lookup = implode( ' AND ', $lookup );
 
-            $fields = false;
-
-            if ( pods_api_cache() )
-                $fields = pods_cache_get( md5( $lookup ), 'pods_load_fields' );
-
-            if ( false !== $fields )
-                return $fields;
-
             $result = pods_query( "SELECT `ID`, `post_name`, `post_parent` FROM `@wp_posts` WHERE `post_type` = '_pods_field' AND ( {$lookup} )" );
 
             $fields = array();
@@ -6000,11 +5991,10 @@ class PodsAPI {
                         $fields[ $field[ 'id' ] ] = $field;
                 }
             }
-
-            if ( pods_api_cache() )
-                pods_cache_set( md5( $lookup ), $fields, 'pods_load_fields' );
         }
-
+	    if ( isset( $cache_key ) ) {
+		    pods_cache_set( $cache_key, $fields, 'pods_load_fields' );
+	    }
         return $fields;
     }
 

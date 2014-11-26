@@ -1053,17 +1053,6 @@ class Pods implements Iterator {
 
 					$lookup = $params->traverse;
 
-					if ( !empty( $lookup ) ) {
-						unset( $lookup[ 0 ] );
-
-						foreach ( $this->fields as $field ) {
-							if ( !in_array( $field[ 'type' ], $tableless_field_types ) || in_array( $field[ 'name' ], $lookup ) )
-								continue;
-
-							$lookup[] = $field[ 'name' ];
-						}
-					}
-
 					// Get fields matching traversal names
 					if ( !empty( $lookup ) ) {
 						$fields = $this->api->load_fields( array(

@@ -687,7 +687,7 @@ class PodsForm {
             $fields = array( $fields );
 
         foreach ( $fields as $f => $field ) {
-            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
+            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_v( 'type', $field, 'text' ) );
 
             if ( !$single && strlen( $fields[ $f ][ 'name' ] ) < 1 )
                 $fields[ $f ][ 'name' ] = $f;

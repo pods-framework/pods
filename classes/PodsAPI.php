@@ -9,6 +9,12 @@ class PodsAPI {
      */
     static $instance = null;
 
+	/**
+	 * @var array PodsAPI
+	 */
+	static $instances = array();
+
+
     /**
      * @var bool
      */
@@ -45,8 +51,10 @@ class PodsAPI {
      */
     private $deprecated;
 
+	private $fields_cache = array();
+
     /**
-     * Singleton handling for a basic pods_api() request
+     * Singleton-ish handling for a basic pods_api() request
      *
      * @param string $pod (optional) The pod name
      * @param string $format (deprecated) Format for import/export, "php" or "csv"
@@ -55,16 +63,22 @@ class PodsAPI {
      *
      * @since 2.3.5
      */
-    public static function init ( $pod = null, $format = null ) {
-        if ( null !== $pod || null !== $format ) {
-            return new PodsAPI( $pod, $format );
+	public static function init ( $pod = null, $format = null ) {
+		if ( null !== $pod || null !== $format ) {
+			if ( isset( self::$instances[ $pod ] ) ) {
+				return self::$instances[ $pod ];
+			} else {
+				self::$instances[ $pod ] = new PodsAPI( $pod, $format );
+			}
+			return self::$instances[ $pod ];
 		}
-        elseif ( !is_object( self::$instance ) ) {
-            self::$instance = new PodsAPI();
+		elseif ( !is_object( self::$instance ) ) {
+			self::$instance = new PodsAPI();
 		}
 
-        return self::$instance;
-    }
+		return self::$instance;
+	}
+
 
     /**
      * Store and retrieve data programatically
@@ -5843,13 +5857,10 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_fields ( $params, $strict = false ) {
-	    if ( pods_api_cache() ) {
-		    $cache_key = md5( serialize( array( $params ) ) );
-		    $results = pods_cache_get( $cache_key, 'pods_load_fields' );
-
-		    if ( false !== $results ) {
-			    return $results;
-		    }
+		// @todo Get away from using md5/serialize, I'm sure we can cache specific parts
+	    $cache_key = md5( serialize( $params  ) );
+	    if ( isset( $this->fields_cache[ $cache_key ] ) ) {
+		    return $this->fields_cache[ $cache_key ];
 	    }
 
         $params = (object) pods_sanitize( $params );
@@ -5992,7 +6003,7 @@ class PodsAPI {
             }
         }
 	    if ( isset( $cache_key ) ) {
-		    pods_cache_set( $cache_key, $fields, 'pods_load_fields' );
+		    $this->fields_cache[ $cache_key ] = $fields;
 	    }
         return $fields;
     }

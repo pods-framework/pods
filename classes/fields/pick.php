@@ -315,7 +315,12 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function setup_related_objects ( $force = false ) {
-        $related_objects = pods_transient_get( 'pods_related_objects' );
+	    if ( !$force && isset( self::$related_objects ) ) {
+		    // Check if we've already been setup
+		    return;
+	    }
+
+	    $related_objects = pods_transient_get( 'pods_related_objects' );
 
         if ( !$force && !empty( $related_objects ) )
             self::$related_objects = $related_objects;

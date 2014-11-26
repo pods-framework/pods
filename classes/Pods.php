@@ -1257,7 +1257,8 @@ class Pods implements Iterator {
 									'orderby' => $params->orderby,
 									'pagination' => false,
 									'search' => false,
-									'limit' => -1
+									'limit' => -1,
+									'expires' => 0
 								);
 
 								// Output types
@@ -1300,9 +1301,6 @@ class Pods implements Iterator {
 
 										// Get Item ID
 										$item_id = $item->pod_item_id;
-
-										// Cleanup
-										unset( $item->pod_item_id );
 
 										// Output types
 										if ( 'ids' == $params->output )

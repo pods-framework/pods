@@ -1773,6 +1773,10 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 */
 	public function id () {
+		if ( isset( $this->data->row ) && isset( $this->data->row[ 'id' ] ) ) {
+			// If we already have data loaded return that ID
+			return $this->data->row[ 'id' ];
+		}
 		return $this->field( $this->data->field_id );
 	}
 

@@ -713,8 +713,14 @@ class Pods implements Iterator {
 			return 0;
 		}
 
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		static $tableless_field_types = null;
+		if ( null === $tableless_field_types ) {
+			$tableless_field_types = PodsForm::tableless_field_types();
+		}
+		static $simple_tableless_objects = null;
+		if ( null === $simple_tableless_objects ) {
+			$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		}
 
 		$params->traverse = array();
 
@@ -2064,8 +2070,15 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/find/
 	 */
 	public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
-		$tableless_field_types = PodsForm::tableless_field_types();
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+
+		static $tableless_field_types = null;
+		if ( null === $tableless_field_types ) {
+			$tableless_field_types = PodsForm::tableless_field_types();
+		}
+		static $simple_tableless_objects = null;
+		if ( null === $simple_tableless_objects ) {
+			$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		}
 
 		$this->params = $params;
 

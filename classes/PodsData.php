@@ -2319,7 +2319,10 @@ class PodsData {
     public static function query_field ( $field, $q, $pod = null, &$params = null ) {
         global $wpdb;
 
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    static $simple_tableless_objects = null;
+	    if ( null === $simple_tableless_objects ) {
+		    $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    }
 
         $field_query = null;
 
@@ -2659,9 +2662,20 @@ class PodsData {
 			$pod_data[ 'fields' ] = array_merge( $pod_data[ 'fields' ], $pod_data[ 'object_fields' ] );
 		}
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-        $file_field_types = PodsForm::file_field_types();
+	    static $tableless_field_types = null;
+	    if ( null === $tableless_field_types ) {
+		    $tableless_field_types = PodsForm::tableless_field_types();
+	    }
+
+	    static $simple_tableless_objects = null;
+	    if ( null === $simple_tableless_objects ) {
+		    $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    }
+
+	    static $file_field_types = null;
+	    if ( null === $file_field_types ) {
+		    $file_field_types = PodsForm::file_field_types();
+	    }
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();

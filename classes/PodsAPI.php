@@ -51,7 +51,18 @@ class PodsAPI {
      */
     private $deprecated;
 
+	/**
+	 * @var array
+	 * @since 2.5
+	 */
 	private $fields_cache = array();
+
+	/**
+	 * @var array
+	 * @since 2.5
+	 *
+	 */
+	private static $table_info_cache = array();
 
     /**
      * Singleton-ish handling for a basic pods_api() request
@@ -7015,11 +7026,15 @@ class PodsAPI {
 
         $_info = false;
 
-        if ( pods_api_cache() )
-            $_info = pods_transient_get( $transient );
-
-        if ( pods_api_cache() && false === $_info && !did_action( 'init' ) )
-            $_info = pods_transient_get( $transient . '_pre_init' );
+	    if ( isset( self::$table_info_cache[ $transient ] ) ) {
+		    // Prefer info from the object internal cache
+		    $_info = self::$table_info_cache[ $transient ];
+	    } elseif ( pods_api_cache() ) {
+		    $_info = pods_transient_get( $transient );
+		    if ( false === $_info && ! did_action( 'init' ) ) {
+			    $_info = pods_transient_get( $transient . '_pre_init' );
+		    }
+	    }
 
         if ( false !== $_info ) {
 	        $info = $_info;
@@ -7435,17 +7450,17 @@ class PodsAPI {
             $info[ 'type' ] = $object_type;
             $info[ 'object_name' ] = $object;
 
-            if ( pods_api_cache() ) {
-                if ( did_action( 'init' ) )
-                    pods_transient_set( $transient, $info );
-                else
-                    pods_transient_set( $transient . '_pre_init', $info );
-            }
+	        if ( pods_api_cache() ) {
+		        if ( ! did_action( 'init' ) ) {
+			        $transient .= '_pre_init';
+		        }
+		        pods_transient_set( $transient, $info );
+	        }
         }
 
-        $info = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
+	    self::$table_info_cache[ $transient ] = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
 
-        return $info;
+        return self::$table_info_cache[ $transient ];
     }
 
     /**

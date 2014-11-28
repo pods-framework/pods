@@ -1017,7 +1017,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
 						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
@@ -1030,7 +1030,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
 						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
@@ -1090,10 +1090,10 @@ class Pods implements Iterator {
 					$last_type = $last_object = $last_pick_val = '';
 					$last_options = array();
 
-					$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+					$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
 
 					if ( 'multi' == $single_multi )
-						$limit = (int) pods_var( $this->fields[ $params->name ][ 'type' ] . '_limit', $this->fields[ $params->name ][ 'options' ], 0 );
+						$limit = (int) pods_v( $this->fields[ $params->name ][ 'type' ] . '_limit', $this->fields[ $params->name ][ 'options' ], 0 );
 					else
 						$limit = 1;
 
@@ -1125,7 +1125,7 @@ class Pods implements Iterator {
 
 							if ( 'table' == $pick_object ) {
 
-								$pick_val = pods_var( 'pick_table', $all_fields[ $pod ][ $field ][ 'options' ], $pick_val, null, true );
+								$pick_val = pods_v( 'pick_table', $all_fields[ $pod ][ $field ][ 'options' ], $pick_val, true );
 							}
 							elseif ( '__current__' == $pick_val ) {
 
@@ -1136,11 +1136,11 @@ class Pods implements Iterator {
 
 							if ( in_array( $type, $tableless_field_types ) ) {
 
-								$single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
+								$single_multi = pods_v( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
 								if ( 'multi' == $single_multi ) {
 
-									$last_limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
+									$last_limit = (int) pods_v( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
 								}
 								else {
 
@@ -1525,7 +1525,7 @@ class Pods implements Iterator {
 
 				$post_temp = false;
 
-				if ( 'post_type' == pods_var( 'type', $this->pod_data ) && 0 < $this->id() && ( !isset( $GLOBALS[ 'post' ] ) || empty( $GLOBALS[ 'post' ] ) ) ) {
+				if ( 'post_type' == pods_v( 'type', $this->pod_data ) && 0 < $this->id() && ( !isset( $GLOBALS[ 'post' ] ) || empty( $GLOBALS[ 'post' ] ) ) ) {
 					global $post_ID, $post;
 
 					$post_temp = true;
@@ -1552,7 +1552,7 @@ class Pods implements Iterator {
 
 					$value = call_user_func_array( 'apply_filters', $args );
 				}
-				elseif ( 1 == pods_var( 'display_process', $field_data[ 'options' ], 1 ) ) {
+				elseif ( 1 == pods_v( 'display_process', $field_data[ 'options' ], 1 ) ) {
 					$value = PodsForm::display(
 						$field_data[ 'type' ],
 						$value,
@@ -3370,7 +3370,7 @@ class Pods implements Iterator {
 
 			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
 
-			if ( 1 == pods_var( $success, 'get', 0 ) ) {
+			if ( 1 == pods_v( $success, 'get', 0 ) ) {
 				$message = __( 'Form submitted successfully', 'pods' );
 				/**
 				 * Change the text of the message that appears on succesful form submission.

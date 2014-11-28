@@ -6633,7 +6633,7 @@ class PodsAPI {
 
         $tableless_field_types = PodsForm::tableless_field_types();
 
-		$field_type = pods_var( 'type', $field );
+		$field_type = pods_v( 'type', $field );
 
         if ( empty( $ids ) || !in_array( $field_type, $tableless_field_types ) )
             return array();
@@ -6647,9 +6647,9 @@ class PodsAPI {
         if ( !empty( $field ) ) {
             $options = (array) pods_var_raw( 'options', $field, $field, null, true );
 
-            $related_pick_limit = (int) pods_var( pods_var( 'type', $field ) . '_limit', $options, 0 );
+            $related_pick_limit = (int) pods_v( pods_v( 'type', $field ) . '_limit', $options, 0 );
 
-            if ( 'single' == pods_var_raw( pods_var( 'type', $field ) . '_format_type', $options ) )
+            if ( 'single' == pods_var_raw( pods_v( 'type', $field ) . '_format_type', $options ) )
                 $related_pick_limit = 1;
 
             // Temporary hack until there's some better handling here
@@ -6657,7 +6657,7 @@ class PodsAPI {
         }
 
 		if ( 'taxonomy' == $field_type ) {
-			$related = wp_get_object_terms( $ids, pods_var( 'name', $field ), array( 'fields' => 'ids' ) );
+			$related = wp_get_object_terms( $ids, pods_v( 'name', $field ), array( 'fields' => 'ids' ) );
 
 			if ( !is_wp_error( $related ) ) {
 				$related_ids = $related;
@@ -6798,7 +6798,7 @@ class PodsAPI {
 
         $tableless_field_types = PodsForm::tableless_field_types();
 
-        if ( empty( $id ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
+        if ( empty( $id ) || !in_array( pods_v( 'type', $field ), $tableless_field_types ) )
             return false;
 
         $related_pick_limit = 0;
@@ -6806,7 +6806,7 @@ class PodsAPI {
         if ( !empty( $field ) ) {
             $options = (array) pods_var_raw( 'options', $field, $field, null, true );
 
-            $related_pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+            $related_pick_limit = (int) pods_v( 'pick_limit', $options, 0 );
 
             if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
                 $related_pick_limit = 1;
@@ -7102,8 +7102,8 @@ class PodsAPI {
 
                 $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
-                if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_var( 'type', $info[ 'pod' ] ) ) {
-                    $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', null, true );
+                if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_v( 'type', $info[ 'pod' ] ) ) {
+                    $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_v( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', true );
 
                     $slug_field = get_posts( array(
                         'post_type' => '_pods_field',
@@ -7126,8 +7126,8 @@ class PodsAPI {
                         $info[ 'field_slug' ] = $info[ 'pod_field_slug' ] = $slug_field->post_name;
                     }
 
-                    if ( 1 == pods_var( 'hierarchical', $info[ 'pod' ][ 'options' ], 0 ) ) {
-                        $parent_field = pods_var( 'pod_parent', $info[ 'pod' ][ 'options' ], 'id', null, true );
+                    if ( 1 == pods_v( 'hierarchical', $info[ 'pod' ][ 'options' ], 0 ) ) {
+                        $parent_field = pods_v( 'pod_parent', $info[ 'pod' ][ 'options' ], 'id', true );
 
                         if ( !empty( $parent_field ) && isset( $info[ 'pod' ][ 'fields' ][ $parent_field ] ) ) {
                             $info[ 'object_hierarchical' ] = true;

@@ -625,14 +625,14 @@ class PodsData {
         $cache_key = $results = false;
 
         // Debug purposes
-        if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+        if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $params );
 
         // Get from cache if enabled
-        if ( null !== pods_var( 'expires', $params, null, null, true ) ) {
+        if ( null !== pods_v( 'expires', $params, null, true ) ) {
             $cache_key = md5( serialize( $params ) );
 
-            $results = pods_view_get( $cache_key, pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+            $results = pods_view_get( $cache_key, pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
 
             if ( empty( $results ) )
                 $results = false;
@@ -643,7 +643,7 @@ class PodsData {
             $this->sql = $this->build( $params );
 
             // Debug purposes
-            if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) ) )
+            if ( ( 1 == pods_v( 'pods_debug_sql', 'get', 0 ) || 1 == pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) ) )
                 echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) . '</textarea>';
 
             if ( empty( $this->sql ) )
@@ -654,7 +654,7 @@ class PodsData {
 
             // Cache if enabled
             if ( false !== $cache_key )
-                pods_view_set( $cache_key, $results, pods_var( 'expires', $params, 0, null, true ), pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+                pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, true ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
         }
 
         $results = $this->do_hook( 'select', $results, $params );
@@ -893,7 +893,7 @@ class PodsData {
 
         $params->search = (boolean) $params->search;
 
-        if ( 1 == pods_var( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+        if ( 1 == pods_v( 'pods_debug_params_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $params );
 
         $params->field_table_alias = 't';
@@ -959,7 +959,7 @@ class PodsData {
                     foreach ( $params->fields as $key => $field ) {
                         if ( is_array( $field ) ) {
                             $attributes = $field;
-                            $field = pods_var( 'name', $field, $key, null, true );
+                            $field = pods_v( 'name', $field, $key, true );
                         }
                         else {
                             $attributes = array(
@@ -976,12 +976,12 @@ class PodsData {
 
                         $fieldfield = '`' . $field . '`';
 
-                        if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
+                        if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                             if ( false === $params->search_across_picks )
                                 continue;
                             else {
                                 if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
-                                    $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
+                                    $attributes[ 'table_info' ] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
 
                                 if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
                                     continue;
@@ -1056,13 +1056,13 @@ class PodsData {
                     continue;
 
                 $attributes = $params->fields[ $filter ];
-                $field = pods_var( 'name', $attributes, $filter, null, true );
+                $field = pods_v( 'name', $attributes, $filter, true );
 
                 $filterfield = '`' . $field . '`';
 
-                if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
+                if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                     if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
-                        $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
+                        $attributes[ 'table_info' ] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
 
                     if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
                         continue;
@@ -1089,13 +1089,13 @@ class PodsData {
                     $filterfield = $attributes[ 'real_name' ];
 
                 if ( 'pick' == $attributes[ 'type' ] ) {
-                    $filter_value = pods_var_raw( 'filter_' . $field, 'get' );
+                    $filter_value = pods_v( 'filter_' . $field, 'get' );
 
                     if ( !is_array( $filter_value ) )
                         $filter_value = (array) $filter_value;
 
                     foreach ( $filter_value as $filter_v ) {
-                        if ( in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
+                        if ( in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                             if ( strlen( $filter_v ) < 1 )
                                 continue;
 
@@ -1127,8 +1127,8 @@ class PodsData {
                     $start = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
                     $end = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
 
-                    $start_value = pods_var( 'filter_' . $field . '_start', 'get', false );
-                    $end_value = pods_var( 'filter_' . $field . '_end', 'get', false );
+                    $start_value = pods_v( 'filter_' . $field . '_start', 'get', false );
+                    $end_value = pods_v( 'filter_' . $field . '_end', 'get', false );
 
                     if ( empty( $start_value ) && empty( $end_value ) )
                         continue;
@@ -1158,7 +1158,7 @@ class PodsData {
                     }
                 }
                 else {
-                    $filter_value = pods_var_raw( 'filter_' . $field, 'get', '' );
+                    $filter_value = pods_v( 'filter_' . $field, 'get', '' );
 
                     if ( strlen( $filter_value ) < 1 )
                         continue;

@@ -716,7 +716,10 @@ class PodsData {
      * @since 2.0
      */
     public function build ( $params ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		static $simple_tableless_objects = null;
+		if ( null === $simple_tableless_objects ) {
+			$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		}
 
         $defaults = array(
             'select' => '*',

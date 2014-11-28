@@ -1603,8 +1603,14 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
     if ( !empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
         $params->field = $params->fields[ $params->field ];
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    static $tableless_field_types = null;
+	    if ( null === $tableless_field_types ) {
+		    $tableless_field_types = PodsForm::tableless_field_types();
+	    }
+	    static $simple_tableless_objects = null;
+	    if ( null === $simple_tableless_objects ) {
+		    $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    }
 
         if ( !empty( $params->field ) && is_array( $params->field ) && in_array( $params->field[ 'type' ], $tableless_field_types ) ) {
             if ( in_array( $params->field[ 'type' ], PodsForm::file_field_types() ) ) {

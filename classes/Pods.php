@@ -667,7 +667,7 @@ class Pods implements Iterator {
 			$params->output = 'ids';
 		}
 		elseif ( null === $params->output ) {
-			$params->output = apply_filters( 'pods_field_related_output_type_arrays', $this->row, $params, $this );
+			$params->output = apply_filters( 'pods_field_related_output_type', 'arrays', $this->row, $params, $this );
 		}
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ) ) )
@@ -961,7 +961,7 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
-					$v = apply_filters( 'pods_field_' . $this->fields[ $params->name ][ 'type' ], $v, $this->fields[ $params->name ], $this->row, $params, $this );
+					$v = apply_filters( 'pods_field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v )
 						return $v;

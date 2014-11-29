@@ -1132,20 +1132,21 @@ class PodsData {
                     }
                 }
                 elseif ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
-                    $start = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
-                    $end = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
-
                     $start_value = pods_v( 'filter_' . $field . '_start', 'get', false );
                     $end_value = pods_v( 'filter_' . $field . '_end', 'get', false );
 
                     if ( empty( $start_value ) && empty( $end_value ) )
                         continue;
 
-                    if ( !empty( $start_value ) )
+	                if ( !empty( $start_value ) )
                         $start = date_i18n( 'Y-m-d', strtotime( $start_value ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
+	                else
+		                $start = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
 
                     if ( !empty( $end_value ) )
                         $end = date_i18n( 'Y-m-d', strtotime( $end_value ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
+	                else
+		                $end = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
 
                     if ( isset( $attributes[ 'date_ongoing' ] ) && true === $attributes[ 'date_ongoing' ] ) {
                         $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';

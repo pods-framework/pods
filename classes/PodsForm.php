@@ -842,8 +842,15 @@ class PodsForm {
     public static function value( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = self::tableless_field_types();
-        $repeatable_field_types = self::repeatable_field_types();
+	    static $tableless_field_types = null;
+	    if ( null === $tableless_field_types ) {
+		    $tableless_field_types = self::tableless_field_types();
+	    }
+
+	    static $repeatable_field_types = null;
+	    if ( null === $repeatable_field_types ) {
+		    $repeatable_field_types = self::repeatable_field_types();
+	    }
 
         if ( in_array( $type, $repeatable_field_types ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
             if ( 0 < strlen( $value ) ) {

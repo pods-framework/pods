@@ -721,6 +721,11 @@ class PodsData {
 			$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 		}
 
+	    static $file_field_types = null;
+	    if ( null === $file_field_types ) {
+		    $file_field_types = PodsForm::file_field_types();
+	    }
+
         $defaults = array(
             'select' => '*',
 			'calc_rows' => false,
@@ -992,7 +997,7 @@ class PodsData {
                                 $fieldfield = $fieldfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                             }
                         }
-                        elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) ) {
+                        elseif ( in_array( $attributes[ 'type' ], $file_field_types ) ) {
                             if ( false === $params->search_across_files )
                                 continue;
                             else
@@ -1072,7 +1077,7 @@ class PodsData {
 
                     $filterfield = $filterfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                 }
-                elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) )
+                elseif ( in_array( $attributes[ 'type' ], $file_field_types ) )
                     $filterfield = $filterfield . '.`post_title`';
                 elseif ( isset( $params->fields[ $field ] ) ) {
                     if ( $params->meta_fields )
@@ -1687,7 +1692,11 @@ class PodsData {
 	    $already_cached = false;
         $id = $row;
 
-        $tableless_field_types = PodsForm::tableless_field_types();
+	    static $tableless_field_types = null;
+	    if ( null === $tableless_field_types ) {
+		    $tableless_field_types = PodsForm::tableless_field_types();
+	    }
+
 
         if ( null === $row ) {
             $this->row_number++;
@@ -2383,7 +2392,10 @@ class PodsData {
 				if ( !empty( $pod ) && false === strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
-					$tableless_field_types = PodsForm::tableless_field_types();
+					static $tableless_field_types = null;
+					if ( null === $tableless_field_types ) {
+						$tableless_field_types = PodsForm::tableless_field_types();
+					}
 
 					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
 						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {

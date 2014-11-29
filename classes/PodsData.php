@@ -988,7 +988,7 @@ class PodsData {
                             if ( false === $params->search_across_picks )
                                 continue;
                             else {
-                                if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
+                                if ( empty( $attributes[ 'table_info' ] ) )
                                     $attributes[ 'table_info' ] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
 
                                 if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
@@ -1017,7 +1017,7 @@ class PodsData {
                         if ( isset( $this->aliases[ $field ] ) )
                             $fieldfield = '`' . $this->aliases[ $field ] . '`';
 
-                        if ( isset( $attributes[ 'real_name' ] ) && !empty( $attributes[ 'real_name' ] ) )
+                        if ( !empty( $attributes[ 'real_name' ] ) )
                             $fieldfield = $attributes[ 'real_name' ];
 
                         if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
@@ -1069,7 +1069,7 @@ class PodsData {
                 $filterfield = '`' . $field . '`';
 
                 if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_v( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
-                    if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
+                    if ( empty( $attributes[ 'table_info' ] ) )
                         $attributes[ 'table_info' ] = $this->api->get_table_info( pods_v( 'pick_object', $attributes ), pods_v( 'pick_val', $attributes ) );
 
                     if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
@@ -1093,7 +1093,7 @@ class PodsData {
                 if ( isset( $this->aliases[ $field ] ) )
                     $filterfield = '`' . $this->aliases[ $field ] . '`';
 
-                if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
+                if ( !empty( $attributes[ 'real_name' ] ) )
                     $filterfield = $attributes[ 'real_name' ];
 
                 if ( 'pick' == $attributes[ 'type' ] ) {
@@ -1915,7 +1915,7 @@ class PodsData {
                 }
             }
 
-			if ( !$explicit_set && is_array( $this->row ) && !empty( $this->row ) && !empty( $old_row ) ) {
+			if ( !$explicit_set && !empty( $this->row ) && is_array( $this->row ) && !empty( $old_row ) ) {
 				$this->row = array_merge( $old_row, $this->row );
 			}
 
@@ -2508,7 +2508,7 @@ class PodsData {
         }
 
 		// Empty array handling
-		if ( in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) && empty( $field_value ) ) {
+		if ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
 			$field_compare = 'EXISTS';
 		}
 
@@ -2696,7 +2696,7 @@ class PodsData {
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
 
-        if ( ( empty( $pod_data[ 'meta_table' ] ) || $pod_data[ 'meta_table' ] == $pod_data[ 'table' ] ) && ( empty( $traverse_recurse[ 'fields' ] ) || !isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) || empty( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) ) )
+        if ( ( empty( $pod_data[ 'meta_table' ] ) || $pod_data[ 'meta_table' ] == $pod_data[ 'table' ] ) && ( empty( $traverse_recurse[ 'fields' ] ) || empty( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) ) )
             return $joins;
 
         $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ];
@@ -2745,7 +2745,7 @@ class PodsData {
 
             if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
-            elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
+            elseif ( 'meta_value' === $last && in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
             else {
                 if ( 'post_type' == $pod_data[ 'type' ] ) {
@@ -2778,7 +2778,7 @@ class PodsData {
                 if ( !empty( $traverse[ 'table_info' ][ 'meta_table' ] ) )
                     $meta_data_table = true;
             }
-            elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
+            elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
             else {
 	            if ( ! isset( $traverse[ 'pod' ] ) ) {
@@ -2817,7 +2817,7 @@ class PodsData {
 
         $rel_alias = 'rel_' . $field_joined;
 
-        if ( pods_var( 'search', $traverse_recurse[ 'params' ], false ) && empty( $traverse_recurse[ 'params' ]->filters ) ) {
+        if ( pods_v( 'search', $traverse_recurse[ 'params' ], false ) && empty( $traverse_recurse[ 'params' ]->filters ) ) {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
                 $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
 
@@ -2872,7 +2872,7 @@ class PodsData {
                 $joined_index = $table_info[ 'field_index' ];
             }
         }
-        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
+        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
             if ( pods_tableless() ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON

@@ -747,7 +747,7 @@ class Pods implements Iterator {
 			$field_data = $this->fields[ $first_field ];
 			$field_type = 'field';
 		}
-		elseif ( isset( $this->pod_data[ 'object_fields' ] ) && !empty( $this->pod_data[ 'object_fields' ] ) ) {
+		elseif ( !empty( $this->pod_data[ 'object_fields' ] ) ) {
 			if ( isset( $this->pod_data[ 'object_fields' ][ $first_field ] ) ) {
 				$field_data = $this->pod_data[ 'object_fields' ][ $first_field ];
 				$field_type = 'object_field';
@@ -1078,7 +1078,7 @@ class Pods implements Iterator {
 							}
 						}
 
-						if ( isset( $this->pod_data[ 'object_fields' ] ) && !empty( $this->pod_data[ 'object_fields' ] ) ) {
+						if ( !empty( $this->pod_data[ 'object_fields' ] ) ) {
 							foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
 								if ( in_array( $object_field_opt[ 'type' ], $tableless_field_types ) ) {
 									$all_fields[ $this->pod ][ $object_field ] = $object_field_opt;
@@ -1248,7 +1248,7 @@ class Pods implements Iterator {
 
 							if ( 'pod' == $object_type )
 								$related_obj = pods( $object, null, false );
-							elseif ( isset( $table[ 'pod' ] ) && !empty( $table[ 'pod' ] ) )
+							elseif ( !empty( $table[ 'pod' ] ) )
 								$related_obj = pods( $table[ 'pod' ][ 'name' ], null, false );
 
 							if ( !empty( $table[ 'table' ] ) || !empty( $related_obj ) ) {
@@ -1270,7 +1270,7 @@ class Pods implements Iterator {
 								elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
 									$sql[ 'select' ] = '`t`.`' . $table[ 'field_index' ] . '` AS `pod_item_index`, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
 
-								if ( is_array( $params->params ) && !empty( $params->params ) ) {
+								if ( !empty( $params->params ) && is_array( $params->params ) ) {
 									$where = $sql[ 'where' ];
 
 									$sql = array_merge( $sql, $params->params );

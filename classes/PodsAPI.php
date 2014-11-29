@@ -7458,7 +7458,7 @@ class PodsAPI {
 	        }
         }
 
-	    self::$table_info_cache[ $transient ] = $this->do_hook( 'get_table_info', $info, $object_type, $object, $name, $pod, $field );
+	    self::$table_info_cache[ $transient ] = apply_filters( 'pods_api_get_table_info', $info, $object_type, $object, $name, $pod, $field, $this );
 
         return self::$table_info_cache[ $transient ];
     }

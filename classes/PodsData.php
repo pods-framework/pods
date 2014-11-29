@@ -657,7 +657,7 @@ class PodsData {
                 pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, true ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
         }
 
-        $results = $this->do_hook( 'select', $results, $params );
+        $results = apply_filters( 'pods_data_select', $results, $params, $this );
 
         $this->data = $results;
 
@@ -1953,7 +1953,7 @@ class PodsData {
 			}
         }
 
-        $this->row = $this->do_hook( 'fetch', $this->row, $id, $this->row_number );
+        $this->row = apply_filters( 'pods_data_fetch', $this->row, $id, $this->row_number, $this );
 
         return $this->row;
     }
@@ -2053,11 +2053,11 @@ class PodsData {
         $params->sql = trim( $params->sql );
 
         // Run Query
-        $params->sql = self::do_hook( 'query', $params->sql, $params );
+        $params->sql = apply_filters( 'pods_data_query', $params->sql, $params );
 
         $result = $wpdb->query( $params->sql );
 
-        $result = self::do_hook( 'query_result', $result, $params );
+        $result = apply_filters( 'pods_data_query_result', $result, $params );
 
         if ( false === $result && !empty( $params->error ) && !empty( $wpdb->last_error ) )
             return pods_error( "{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors );
@@ -2193,7 +2193,7 @@ class PodsData {
          * @var $wpdb wpdb
          */
         global $wpdb;
-        list( $sql, $data ) = self::do_hook( 'prepare', array( $sql, $data ) );
+        list( $sql, $data ) = apply_filters( 'pods_data_prepare', array( $sql, $data ) );
         return $wpdb->prepare( $sql, $data );
     }
 
@@ -2706,7 +2706,7 @@ class PodsData {
             'polylang_languages'
         );
 
-        $ignore_aliases = $this->do_hook( 'traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse );
+        $ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse, $this );
 
         if ( in_array( $field, $ignore_aliases ) )
             return $joins;
@@ -2792,7 +2792,7 @@ class PodsData {
         if ( isset( $this->traversal[ $traverse_recurse[ 'pod' ] ][ $traverse[ 'name' ] ] ) )
             $traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse[ 'pod' ] ][ $traverse[ 'name' ] ] );
 
-        $traverse = $this->do_hook( 'traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ) );
+        $traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
 
         if ( empty( $traverse ) )
             return $joins;
@@ -2941,7 +2941,7 @@ class PodsData {
             'last_table_info' => $table_info
         );
 
-        $the_join = $this->do_hook( 'traverse_the_join', $the_join, $traverse_recurse, $traverse_recursive );
+        $the_join = apply_filters( 'pods_data_traverse_the_join', $the_join, $traverse_recurse, $traverse_recursive, $this );
 
         if ( empty( $the_join ) )
             return $joins;

@@ -6675,7 +6675,7 @@ class PodsAPI {
             ";
 
             $sql = "
-                SELECT *
+                SELECT item_id, related_item_id, related_field_id
                 FROM `@wp_podsrel`
                 WHERE
                     {$related_where}
@@ -6686,7 +6686,7 @@ class PodsAPI {
 
             if ( !empty( $relationships ) ) {
                 foreach ( $relationships as $relation ) {
-                    if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
+                    if ( !in_array( $relation->related_item_id, $related_ids ) )
                         $related_ids[] = (int) $relation->related_item_id;
                     elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
                         $related_ids[] = (int) $relation->item_id;

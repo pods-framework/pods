@@ -629,7 +629,7 @@ class PodsData {
             pods_debug( $params );
 
         // Get from cache if enabled
-        if ( null !== pods_v( 'expires', $params, null, true ) ) {
+        if ( null !== pods_v( 'expires', $params, null, false ) ) {
             $cache_key = md5( serialize( $params ) );
 
             $results = pods_view_get( $cache_key, pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
@@ -654,7 +654,7 @@ class PodsData {
 
             // Cache if enabled
             if ( false !== $cache_key )
-                pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, true ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
+                pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
         }
 
         $results = apply_filters( 'pods_data_select', $results, $params, $this );

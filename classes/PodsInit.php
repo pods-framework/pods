@@ -491,7 +491,7 @@ class PodsInit {
                 );
                 
                 // YARPP doesn't use 'supports' array option (yet)
-                if ( ! empty( cpt_supports[ 'yarpp_support' ] ) ) {
+                if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
                     $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
                 }
 

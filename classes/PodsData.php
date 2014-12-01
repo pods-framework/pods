@@ -1209,6 +1209,9 @@ class PodsData {
 
                 if ( 't' == $value[ 0 ] )
                     continue;
+                elseif ( array_key_exists( $value[ 0 ], $params->join ) )
+	                // Don't traverse for tables we are already going to join
+	                continue;
                 elseif ( 1 == count( $value ) && '' == preg_replace( '/[0-9]*/', '', $value[ 0 ] ) && '' == preg_replace( '/[0-9]*/', '', $last_value ) )
                     continue;
 

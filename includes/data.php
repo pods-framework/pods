@@ -825,7 +825,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
  */
 function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
 
-	$output = pods_v( $var, $type, $default, $params );
+	$output = pods_v( $var, $type, $default, $strict, $params );
 
 	$output = pods_sanitize( $output, $params );
 

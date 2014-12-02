@@ -423,7 +423,7 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/data/
 	 */
 	public function data () {
-		apply_filters( 'pods_data', $this );
+		do_action( 'pods_pods_data', $this );
 
 		if ( empty( $this->rows ) )
 			return false;
@@ -511,7 +511,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		return apply_filters( 'pods_fields', $field_data, $field, $option, $this );
+		return apply_filters( 'pods_pods_fields', $field_data, $field, $option, $this );
 	}
 
 	/**
@@ -522,7 +522,7 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 */
 	public function row () {
-		apply_filters( 'pods_row', $this );
+		do_action( 'pods_pods_row', $this );
 
 		if ( !is_array( $this->row ) )
 			return false;
@@ -667,7 +667,7 @@ class Pods implements Iterator {
 			$params->output = 'ids';
 		}
 		elseif ( null === $params->output ) {
-			$params->output = apply_filters( 'pods_field_related_output_type', 'arrays', $this->row, $params, $this );
+			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->row, $params, $this );
 		}
 
 		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ) ) )
@@ -961,7 +961,7 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
-					$v = apply_filters( 'pods_field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $this );
+					$v = apply_filters( 'pods_pods_field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v )
 						return $v;
@@ -1580,7 +1580,7 @@ class Pods implements Iterator {
 			}
 		}
 
-		$value = apply_filters( 'pods_field', $value, $this->row, $params, $this );
+		$value = apply_filters( 'pods_pods_field', $value, $this->row, $params, $this );
 
 		return $value;
 	}
@@ -2130,7 +2130,7 @@ class Pods implements Iterator {
 			$params = (object) $defaults;
 		}
 
-		$params = apply_filters( 'pods_find', $params );
+		$params = apply_filters( 'pods_pods_find', $params );
 
 		$params->limit = (int) $params->limit;
 
@@ -2292,7 +2292,7 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/fetch/
 	 */
 	public function fetch ( $id = null, $explicit_set = true ) {
-		apply_filters( 'pods_fetch', $id, $this );
+		do_action( 'pods_pods_fetch', $id, $this );
 
 		if ( !empty( $id ) )
 			$this->params = array();
@@ -2315,7 +2315,7 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/reset/
 	 */
 	public function reset ( $row = null ) {
-		apply_filters( 'pods_reset', $row, $this );
+		do_action( 'pods_pods_reset', $row, $this );
 
 		$this->data->reset( $row );
 
@@ -2334,7 +2334,7 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/total/
 	 */
 	public function total () {
-		apply_filters( 'pods_total', $this );
+		do_action( 'pods_pods_total', $this );
 
 		$this->data->total();
 
@@ -2355,7 +2355,7 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/total-found/
 	 */
 	public function total_found () {
-		apply_filters( 'total_found', $this );
+		do_action( 'pods_pods_total_found', $this );
 
 		$this->data->total_found();
 
@@ -3141,7 +3141,7 @@ class Pods implements Iterator {
 
 		$output = ob_get_clean();
 
-		return apply_filters( 'pods_filters', $output, $params, $this );
+		return apply_filters( 'pods_pods_filters', $output, $params, $this );
 	}
 
 	/**

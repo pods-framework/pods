@@ -875,7 +875,7 @@ class PodsData {
 		}
 
         // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
-	    if ( null != $params->having )
+	    if ( null !== $params->having )
             $params->having = $this->query_fields( (array) $params->having, $pod );
 
         if ( empty( $params->having ) )

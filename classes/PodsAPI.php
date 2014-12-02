@@ -6647,9 +6647,9 @@ class PodsAPI {
         if ( !empty( $field ) ) {
             $options = (array) pods_var_raw( 'options', $field, $field, null, true );
 
-            $related_pick_limit = (int) pods_v( pods_v( 'type', $field ) . '_limit', $options, 0 );
+            $related_pick_limit = (int) pods_v( $field_type . '_limit', $options, 0 );
 
-            if ( 'single' == pods_var_raw( pods_v( 'type', $field ) . '_format_type', $options ) )
+            if ( 'single' == pods_var_raw( $field_type . '_format_type', $options ) )
                 $related_pick_limit = 1;
 
             // Temporary hack until there's some better handling here

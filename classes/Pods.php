@@ -1261,7 +1261,7 @@ class Pods implements Iterator {
 									'pagination' => false,
 									'search' => false,
 									'limit' => -1,
-									'expires' => 0
+									'expires' => 180  // @todo This could potentially cause issues if someone changes the data within this time and persistent storage is used
 								);
 
 								// Output types

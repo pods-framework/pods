@@ -76,9 +76,8 @@ class PodsAPI {
      */
 	public static function init ( $pod = null, $format = null ) {
 		if ( null !== $pod || null !== $format ) {
-			if ( isset( self::$instances[ $pod ] ) ) {
-				return self::$instances[ $pod ];
-			} else {
+			if ( ! isset( self::$instances[ $pod ] ) ) {
+				// Cache API singleton per Pod
 				self::$instances[ $pod ] = new PodsAPI( $pod, $format );
 			}
 			return self::$instances[ $pod ];

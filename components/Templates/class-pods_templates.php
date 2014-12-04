@@ -122,10 +122,10 @@ class Pods_Templates_Frontier {
 				}
 			}
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
-			wp_enqueue_style( $this->plugin_slug . '-cm-css', $this->get_url( 'assets/css/codemirror1.css', __FILE__ ), array(), self::VERSION );
+			wp_enqueue_style( 'pods-codemirror' );
 			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION );
-			// @todo We should be using the pods included codemirror here, but it wasn't a trivial change to get it to work
-			wp_enqueue_script( $this->plugin_slug . '-cm-comp', $this->get_url( 'assets/js/codemirror-compressed1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+			wp_enqueue_script( 'pods_codemirror' );
+			wp_enqueue_script( 'pods-codemirror-overlay' );
 			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 
 		}

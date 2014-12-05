@@ -494,6 +494,11 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
+                
+                // YARPP doesn't use 'supports' array option (yet)
+                if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
+                    $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
+                }
 
 				// Prevent reserved query_var issues
 				if ( in_array( $pods_post_types[ $post_type_name ][ 'query_var' ], $reserved_query_vars ) ) {

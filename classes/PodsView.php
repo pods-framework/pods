@@ -331,13 +331,6 @@ class PodsView {
 			set_site_transient( $group_key . $key, $value, $expires );
 		}
 		elseif ( 'cache' == $cache_mode && $object_cache ) {
-			/*
-			// Need to look into this more.  We have way too many references around for this to actually work
-			if ( ! function_exists( 'wp_deep_copy' ) ) {
-				// As of 4.0 wp_cache_set can not properly cache arrays of objects
-				$value = pods_deep_copy( $value );
-			}
-			*/
 			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
 		}
 		elseif ( 'option-cache' == $cache_mode ) {

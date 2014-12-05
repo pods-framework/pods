@@ -384,36 +384,46 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * @since 2.0
  */
 function pods_help ( $text, $url = null ) {
-    if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
-        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
-    if ( !wp_script_is( 'jquery-qtip', 'queue' ) && !wp_script_is( 'jquery-qtip', 'to_do' ) && !wp_script_is( 'jquery-qtip', 'done' ) )
-        wp_enqueue_script( 'jquery-qtip' );
 
-    if ( !wp_style_is( 'pods-qtip', 'registered' ) )
-        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-    if ( !wp_style_is( 'pods-qtip', 'queue' ) && !wp_style_is( 'pods-qtip', 'to_do' ) && !wp_style_is( 'pods-qtip', 'done' ) )
-        wp_enqueue_style( 'pods-qtip' );
+	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+	}
+	elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_script( 'jquery-qtip2' );
+	}
 
-    if ( !wp_script_is( 'pods-qtip-init', 'registered' ) )
-        wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
-            'jquery',
-            'jquery-qtip'
-        ), PODS_VERSION );
-    if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
-        wp_enqueue_script( 'pods-qtip-init' );
+	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
+	}
+	elseif ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_style( 'jquery-qtip2' );
+	}
 
-    if ( is_array( $text ) ) {
-        if ( isset( $text[ 1 ] ) )
-            $url = $text[ 1 ];
+	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
+		wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
+			'jquery',
+			'jquery-qtip2'
+		), PODS_VERSION );
+	}
+	elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
+		wp_enqueue_script( 'pods-qtip-init' );
+	}
 
-        $text = $text[ 0 ];
-    }
+	if ( is_array( $text ) ) {
+		if ( isset( $text[ 1 ] ) ) {
+			$url = $text[ 1 ];
+		}
 
-    if ( 'help' == $text )
-        return;
+		$text = $text[ 0 ];
+	}
 
-    if ( 0 < strlen( $url ) )
-        $text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	if ( 'help' == $text ) {
+		return;
+	}
+
+	if ( 0 < strlen( $url ) ) {
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	}
 
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }
@@ -580,6 +590,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'id' => null,
         'slug' => null,
         'select' => null,
+        'join' => null,
         'order' => null,
         'orderby' => null,
         'limit' => null,
@@ -724,6 +735,9 @@ function pods_shortcode ( $tags, $content = null ) {
 
 			if ( 0 < strlen( $tags[ 'select' ] ) ) {
 				$params[ 'select' ] = $tags[ 'select' ];
+			}
+			if ( 0 < strlen( $tags[ 'join' ] ) ) {
+				$params[ 'join' ] = $tags[ 'join' ];
 			}
 		}
 
@@ -2025,4 +2039,3 @@ function pods_deep_copy( $data ) {
 		return $data;
 	}
 }
-

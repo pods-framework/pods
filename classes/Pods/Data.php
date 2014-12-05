@@ -670,6 +670,8 @@ class Pods_Data {
 		$this->id         = 0;
 		$this->row_number = - 1;
 
+		$params = apply_filters( 'pods_data_pre_select_params', $params );
+
 		// Debug purposes
 		if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( $params );

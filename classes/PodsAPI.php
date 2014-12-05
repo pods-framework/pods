@@ -4210,7 +4210,8 @@ class PodsAPI {
             if ( $flatten && is_array( $data[ $field[ 'name' ] ] ) )
                 $data[ $field[ 'name' ] ] = pods_serial_comma( $data[ $field[ 'name' ] ], array( 'field' => $field[ 'name' ], 'fields' => $export_fields, 'and' => '' ) );
         }
-
+        
+	$data[ 'id' ] = (int) $pod->id();
         return $data;
     }
 
@@ -7739,7 +7740,6 @@ class PodsAPI {
 
         while ( $pod->fetch() ) {
             $data[ $pod->id() ] = $this->export_pod_item( $params, $pod );
-			$data[ $pod->id() ][ 'ID' ] = (int) $pod->id();
         }
 
         $data = $this->do_hook( 'export', $data, $pod->pod, $pod );

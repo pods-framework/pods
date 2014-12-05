@@ -718,15 +718,8 @@ class PodsData {
      * @since 2.0
      */
     public function build ( $params ) {
-		static $simple_tableless_objects = null;
-		if ( null === $simple_tableless_objects ) {
-			$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-		}
-
-	    static $file_field_types = null;
-	    if ( null === $file_field_types ) {
-		    $file_field_types = PodsForm::file_field_types();
-	    }
+		$simple_tableless_objects = PodsForm::simple_tableless_objects();
+	    $file_field_types = PodsForm::file_field_types();
 
         $defaults = array(
             'select' => '*',
@@ -1698,11 +1691,7 @@ class PodsData {
 	    $already_cached = false;
         $id = $row;
 
-	    static $tableless_field_types = null;
-	    if ( null === $tableless_field_types ) {
-		    $tableless_field_types = PodsForm::tableless_field_types();
-	    }
-
+	    $tableless_field_types = PodsForm::tableless_field_types();
 
         if ( null === $row ) {
             $this->row_number++;
@@ -2337,10 +2326,7 @@ class PodsData {
     public static function query_field ( $field, $q, $pod = null, &$params = null ) {
         global $wpdb;
 
-	    static $simple_tableless_objects = null;
-	    if ( null === $simple_tableless_objects ) {
-		    $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-	    }
+	    $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $field_query = null;
 
@@ -2398,10 +2384,7 @@ class PodsData {
 				if ( !empty( $pod ) && false === strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
-					static $tableless_field_types = null;
-					if ( null === $tableless_field_types ) {
-						$tableless_field_types = PodsForm::tableless_field_types();
-					}
+					$tableless_field_types = PodsForm::tableless_field_types();
 
 					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
 						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {
@@ -2683,20 +2666,9 @@ class PodsData {
 			$pod_data[ 'fields' ] = array_merge( $pod_data[ 'fields' ], $pod_data[ 'object_fields' ] );
 		}
 
-	    static $tableless_field_types = null;
-	    if ( null === $tableless_field_types ) {
-		    $tableless_field_types = PodsForm::tableless_field_types();
-	    }
-
-	    static $simple_tableless_objects = null;
-	    if ( null === $simple_tableless_objects ) {
-		    $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-	    }
-
-	    static $file_field_types = null;
-	    if ( null === $file_field_types ) {
-		    $file_field_types = PodsForm::file_field_types();
-	    }
+	    $tableless_field_types = PodsForm::tableless_field_types();
+	    $simple_tableless_objects = PodsForm::simple_tableless_objects();
+	    $file_field_types = PodsForm::file_field_types();
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();

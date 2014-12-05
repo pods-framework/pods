@@ -253,7 +253,7 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_post_meta ( $id, $post_meta = null, $strict = false, $fields = array() ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $conflicted = pods_no_conflict_check( 'post' );
 
@@ -398,7 +398,7 @@ class PodsAPI {
      *
      */
     public function save_user_meta ( $id, $user_meta = null, $strict = false, $fields = array() ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $conflicted = pods_no_conflict_check( 'user' );
 
@@ -528,7 +528,7 @@ class PodsAPI {
      * @since 2.0
      */
     public function save_comment_meta ( $id, $comment_meta = null, $strict = false, $fields = array() ) {
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $conflicted = pods_no_conflict_check( 'comment' );
 
@@ -1408,7 +1408,7 @@ class PodsAPI {
      */
     public function save_pod ( $params, $sanitized = false, $db = true ) {
         $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $load_params = (object) $params;
 
@@ -2090,7 +2090,7 @@ class PodsAPI {
             $table_operation = false;
 
         $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $params = (object) $params;
 
@@ -2837,7 +2837,7 @@ class PodsAPI {
 
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
@@ -4115,7 +4115,7 @@ class PodsAPI {
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
         $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
@@ -4508,7 +4508,7 @@ class PodsAPI {
         global $wpdb;
 
         $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         $params = (object) pods_sanitize( $params );
 
@@ -7576,7 +7576,7 @@ class PodsAPI {
 
         $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
         foreach ( $import_data as $key => $data_row ) {
             $data = array();

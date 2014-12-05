@@ -110,7 +110,15 @@ function pods_sanitize_like( $input ) {
 		}
 	}
 	else {
-		$output = like_escape( pods_sanitize( $input ) );
+		global $wpdb;
+
+		if ( pods_version_check( 'wp', '4.0', '<' ) ) {
+			// like_escape is deprecated in WordPress 4.0
+			$output = like_escape( pods_sanitize( $input ) );
+		}
+		else {
+			$output = $wpdb->esc_like( pods_sanitize( $input ) );
+		}
 	}
 
 	return $output;
@@ -825,7 +833,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
  */
 function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
 
-	$output = pods_v( $var, $type, $default, $params );
+	$output = pods_v( $var, $type, $default, $strict, $params );
 
 	$output = pods_sanitize( $output, $params );
 

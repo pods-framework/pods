@@ -121,29 +121,7 @@ class PodsInit {
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
         if ( !empty( self::$version ) ) {
-            add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
-
-			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
-
-            add_action( 'init', array( $this, 'core' ), 11 );
-
-            add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-            add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-            add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-
-            add_action( 'init', array( $this, 'setup_content_types' ), 11 );
-
-            add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
-            add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
-
-            if ( is_admin() )
-                add_action( 'init', array( $this, 'admin_init' ), 12 );
-
-            // Register widgets
-            add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-
-            // Show admin bar links
-            add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
+	        $this->run();
         }
     }
 
@@ -234,10 +212,15 @@ class PodsInit {
 
         wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
-        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2012-07-03' );
-        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
+	    if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		    wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
+	    }
 
-        wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery', 'pods-json', 'jquery-qtip' ), PODS_VERSION );
+	    if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		    wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+	    }
+
+        wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery', 'pods-json', 'jquery-qtip2' ), PODS_VERSION );
 
         wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
 
@@ -511,6 +494,11 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
+                
+                // YARPP doesn't use 'supports' array option (yet)
+                if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
+                    $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
+                }
 
 				// Prevent reserved query_var issues
 				if ( in_array( $pods_post_types[ $post_type_name ][ 'query_var' ], $reserved_query_vars ) ) {
@@ -633,7 +621,7 @@ class PodsInit {
                 $ct_post_types = array();
                 $_post_types = get_post_types();
                 $_post_types = array_merge_recursive( $_post_types, $pods_post_types );
-                $ignore = array( 'revision', 'nav_menu_item' );
+                $ignore = array( 'revision' );
 
                 foreach ( $_post_types as $post_type => $options ) {
                     if ( in_array( $post_type, $ignore ) )
@@ -1026,6 +1014,9 @@ class PodsInit {
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )
             restore_current_blog();
+	    else {
+		    $this->run();
+	    }
     }
 
     /**
@@ -1108,6 +1099,54 @@ class PodsInit {
         if ( null !== $_blog_id )
             restore_current_blog();
     }
+
+	public function run () {
+
+		if ( ! did_action( 'plugins_loaded' ) ) {
+			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
+		}
+		else {
+			$this->load_components();
+		}
+
+		if ( ! did_action( 'setup_theme' ) ) {
+			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
+		}
+		else {
+			$this->load_meta();
+		}
+
+		if ( ! did_action( 'init' ) ) {
+			add_action( 'init', array( $this, 'core' ), 11 );
+	        add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+
+	        if ( is_admin() ) {
+		        add_action( 'init', array( $this, 'admin_init' ), 12 );
+	        }
+		}
+		else {
+			$this->core();
+			$this->setup_content_types();
+
+			if ( is_admin() ) {
+				$this->admin_init();
+			}
+		}
+
+        add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+        add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+        add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
+
+        add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+        add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
+
+        // Register widgets
+        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+
+        // Show admin bar links
+        add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
+
+	}
 
     /**
      * Delete Attachments from relationships

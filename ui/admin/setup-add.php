@@ -276,7 +276,13 @@
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                         <?php
                                             $taxonomies = get_taxonomies();
-                                            $ignore = array( 'link_category' );
+                                            
+                                            //Add Support for built-in taxonomy "link_category" 
+                                            //if links are in use.
+                                            $bookmarkcount = count(get_bookmarks()); 
+                                            if ($bookmarkcount < 1){
+                                                $ignore = array( 'link_category' );
+                                            } 
 
                                             foreach ( $taxonomies as $taxonomy => $label ) {
                                                 if ( in_array( $taxonomy, $ignore ) ) {

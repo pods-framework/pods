@@ -36,6 +36,8 @@
         <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
         <?php
+            wp_nonce_field( 'pods-settings' );
+
             $tab = pods_var( 'tab', 'get', $default );
             $tab = sanitize_title( $tab );
 

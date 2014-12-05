@@ -47,7 +47,7 @@ class Pods implements Iterator {
 	/**
 	 * @var bool
 	 */
-	public $display_errors = false;
+	public $display_errors = true;
 
 	/**
 	 * @var array|bool|mixed|null|void
@@ -675,7 +675,9 @@ class Pods implements Iterator {
 
 		// Support old $orderby variable
 		if ( null !== $params->single && is_string( $params->single ) && empty( $params->orderby ) ) {
-			pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
+			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+				pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
+			}
 
 			$params->orderby = $params->single;
 			$params->single = false;
@@ -784,6 +786,13 @@ class Pods implements Iterator {
 		if ( empty( $value ) && isset( $this->row[ $params->name ] ) && ( !in_array( $field_data[ 'type' ], $tableless_field_types ) || 'arrays' == $params->output ) ) {
 			if ( empty( $field_data ) || in_array( $field_data[ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
 				$params->raw = true;
+
+			if ( null === $params->single ) {
+				if ( isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+					$params->single = true;
+				else
+					$params->single = false;
+			}
 
 			$value = $this->row[ $params->name ];
 		}
@@ -999,7 +1008,11 @@ class Pods implements Iterator {
 
 						$value = get_post_meta( $id, $params->name, $params->single );
 
-						$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+						$single_multi = 'single';
+
+						if ( isset( $this->fields[ $params->name ] ) ) {
+							$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
 							$value = get_post_meta( $id, $params->name );
@@ -1008,7 +1021,11 @@ class Pods implements Iterator {
 					elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) ) {
 						$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
 
-						$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+						$single_multi = 'single';
+
+						if ( isset( $this->fields[ $params->name ] ) ) {
+							$single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
 							$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name );
@@ -1170,7 +1187,7 @@ class Pods implements Iterator {
 							}
 
 							// Get $pod if related to a Pod
-							if ( !empty( $pick_object ) && !empty( $pick_val ) ) {
+							if ( !empty( $pick_object ) && ( !empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ) ) ) ) {
 
 								if ( 'pod' == $pick_object ) {
 
@@ -1343,11 +1360,9 @@ class Pods implements Iterator {
 									unset( $item_data );
 
 									// Return all of the data in the order expected
-									if ( empty( $params->orderby ) ) {
-										foreach ( $ids as $id ) {
-											if ( isset( $items[ $id ] ) )
-												$data[ $id ] = $items[ $id ];
-										}
+									foreach ( $items as $id => $v ) {
+										if ( in_array( $id, $ids ) )
+											$data[ $id ] = $v;
 									}
 								}
 							}
@@ -2754,6 +2769,13 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
+		if ( isset( $this->row ) ) {
+			// On a change wipe out the saved results or else we will return the wrong results on future lookups
+			$this->row_number = -1;
+			$this->row = null;
+			$fetch = true;
+		}
+
 		if ( 0 < $id && $fetch )
 			$this->fetch( $id, false );
 
@@ -3790,12 +3812,15 @@ class Pods implements Iterator {
 		$var = null;
 
 		if ( isset( $this->deprecated->{$name} ) ) {
-			pods_deprecated( "Pods->{$name}", '2.0' );
+			if ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
+				pods_deprecated( "Pods->{$name}", '2.0' );
+			}
 
 			$var = $this->deprecated->{$name};
 		}
-		else
+		elseif ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods->{$name}", '2.0' );
+		}
 
 		return $var;
 	}
@@ -3823,9 +3848,11 @@ class Pods implements Iterator {
 			$this->deprecated = new Pods_Deprecated( $this );
 		}
 
-		if ( method_exists( $this->deprecated, $name ) )
+		if ( method_exists( $this->deprecated, $name ) ) {
 			return call_user_func_array( array( $this->deprecated, $name ), $args );
-		else
+		}
+		elseif ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
+		}
 	}
 }

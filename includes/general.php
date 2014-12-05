@@ -134,7 +134,7 @@ function pods_error ( $error, $obj = null ) {
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 
     // throw error as Exception and return false if silent
-    if ( false !== $display_errors && !empty( $error ) ) {
+    if ( false === $display_errors && !empty( $error ) ) {
         $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
 
         if ( null !== $exception_bypass )
@@ -384,36 +384,46 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * @since 2.0
  */
 function pods_help ( $text, $url = null ) {
-    if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
-        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
-    if ( !wp_script_is( 'jquery-qtip', 'queue' ) && !wp_script_is( 'jquery-qtip', 'to_do' ) && !wp_script_is( 'jquery-qtip', 'done' ) )
-        wp_enqueue_script( 'jquery-qtip' );
 
-    if ( !wp_style_is( 'pods-qtip', 'registered' ) )
-        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-    if ( !wp_style_is( 'pods-qtip', 'queue' ) && !wp_style_is( 'pods-qtip', 'to_do' ) && !wp_style_is( 'pods-qtip', 'done' ) )
-        wp_enqueue_style( 'pods-qtip' );
+	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+	}
+	elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_script( 'jquery-qtip2' );
+	}
 
-    if ( !wp_script_is( 'pods-qtip-init', 'registered' ) )
-        wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
-            'jquery',
-            'jquery-qtip'
-        ), PODS_VERSION );
-    if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
-        wp_enqueue_script( 'pods-qtip-init' );
+	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
+	}
+	elseif ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_style( 'jquery-qtip2' );
+	}
 
-    if ( is_array( $text ) ) {
-        if ( isset( $text[ 1 ] ) )
-            $url = $text[ 1 ];
+	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
+		wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
+			'jquery',
+			'jquery-qtip2'
+		), PODS_VERSION );
+	}
+	elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
+		wp_enqueue_script( 'pods-qtip-init' );
+	}
 
-        $text = $text[ 0 ];
-    }
+	if ( is_array( $text ) ) {
+		if ( isset( $text[ 1 ] ) ) {
+			$url = $text[ 1 ];
+		}
 
-    if ( 'help' == $text )
-        return;
+		$text = $text[ 0 ];
+	}
 
-    if ( 0 < strlen( $url ) )
-        $text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	if ( 'help' == $text ) {
+		return;
+	}
+
+	if ( 0 < strlen( $url ) ) {
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	}
 
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }
@@ -694,24 +704,8 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $pod ) )
         return '<p>Pod not found</p>';
 
-    $found = 0;
-
-    if ( !empty( $tags[ 'form' ] ) ) {
-		if ( 'user' == $pod->pod ) {
-			// Further hardening of User-based forms
-			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
-				return '';
-			}
-			// Only explicitly allow user edit forms
-			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
-				return '';
-			}
-		}
-
-        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
-	}
-    elseif ( empty( $id ) ) {
-        $params = array();
+	if ( empty( $id ) ) {
+		$params = array();
 
 		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
 			if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
@@ -755,21 +749,38 @@ function pods_shortcode ( $tags, $content = null ) {
 
 		$params[ 'pagination' ] = $tags[ 'pagination' ];
 
-        if ( 0 < (int) $tags[ 'offset' ] ) {
-            $params[ 'offset' ] = (int) $tags[ 'offset' ];
-        }
+		if ( 0 < (int) $tags[ 'offset' ] ) {
+			$params[ 'offset' ] = (int) $tags[ 'offset' ];
+		}
 
 		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
 			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
 			$params[ 'expires' ] = (int) $tags[ 'expires' ];
 		}
 
-        $params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
+		$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
-        $pod->find( $params );
+		$pod->find( $params );
 
-        $found = $pod->total();
-    }
+		$found = $pod->total();
+	} else {
+		$found = 0;
+	}
+
+    if ( !empty( $tags[ 'form' ] ) ) {
+		if ( 'user' == $pod->pod ) {
+			// Further hardening of User-based forms
+			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
+				return '';
+			}
+			// Only explicitly allow user edit forms
+			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				return '';
+			}
+		}
+
+        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+	}
     elseif ( !empty( $tags[ 'field' ] ) ) {
         if ( empty( $tags[ 'helper' ] ) )
             $return = $pod->display( $tags[ 'field' ] );
@@ -1796,7 +1807,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 			}
 
 			$no_conflict[ 'action' ] = array(
-				array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
+				array( 'edited_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
 				array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
 			);
 		}

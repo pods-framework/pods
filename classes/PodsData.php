@@ -657,11 +657,12 @@ class PodsData {
                 pods_view_set( $cache_key, $results, pods_var( 'expires', $params, 0, null, true ), pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
         }
 
-        $results = $this->do_hook( 'select', $results );
+        $results = $this->do_hook( 'select', $results, $params );
 
         $this->data = $results;
 
         $this->row_number = -1;
+        $this->row = null;
 
         // Fill in empty field data (if none provided)
         if ( ( !isset( $this->fields ) || empty( $this->fields ) ) && !empty( $this->data ) ) {
@@ -674,9 +675,14 @@ class PodsData {
 
             $this->fields = PodsForm::fields_setup( $this->fields );
         }
+
         $this->total_found_calculated = false;
 
-        $this->total = count( (array) $this->data );
+	    $this->total = 0;
+
+	    if ( ! empty( $this->data ) ) {
+		    $this->total = count( (array) $this->data );
+	    }
 
         return $this->data;
     }
@@ -1191,25 +1197,25 @@ class PodsData {
                 $value = explode( '.', $value );
                 $dot = $last_value = array_pop( $value );
 
-                if ( 't' == $value[ 0 ] || in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) )
+                if ( 't' == $value[ 0 ] )
                     continue;
                 elseif ( 1 == count( $value ) && '' == preg_replace( '/[0-9]*/', '', $value[ 0 ] ) && '' == preg_replace( '/[0-9]*/', '', $last_value ) )
                     continue;
 
-                $find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+	            $found_value = str_replace( '`', '', $found[ $key ] );
+	            $found_value = '([`]{1}|\b)' . str_replace( '.', '[`]*\.[`]*', $found_value ) . '([`]{1}|\b)';
+	            $found_value = '/' . $found_value . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
 
-                $esc_start = $esc_end = '`';
+	            if ( in_array( $found_value, $find ) ) {
+		            continue;
+	            }
 
-                if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                    $esc_start = '';
-
-                if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                    $esc_end = '';
+                $find[ $key ] = $found_value;
 
                 if ( '*' != $dot )
-                    $dot = '`' . $dot . $esc_end;
+                    $dot = '`' . $dot . '`';
 
-                $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
+                $replace[ $key ] = '`' . implode( '_', $value ) . '`.' . $dot;
 
                 $value[] = $last_value;
 
@@ -2720,7 +2726,9 @@ class PodsData {
                 else
                     return $joins;
             }
-        }
+        } elseif ( isset( $pod_data[ 'object_fields' ] ) && isset( $pod_data[ 'object_fields' ][ $field ] ) && ! in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) ) {
+            return $joins;
+	    }
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 
@@ -2739,8 +2747,13 @@ class PodsData {
             }
             elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
-            else
-                $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ], null, $traverse[ 'pod' ], $traverse );
+            else {
+	            if ( ! isset( $traverse[ 'pod' ] ) ) {
+		            $traverse[ 'pod' ] = null;
+	            }
+
+	            $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ], null, $traverse[ 'pod' ], $traverse );
+            }
         }
 
         if ( isset( $this->traversal[ $traverse_recurse[ 'pod' ] ][ $traverse[ 'name' ] ] ) )
@@ -2844,7 +2857,7 @@ class PodsData {
             elseif ( $meta_data_table ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`related_item_id`
                 ";
             }
             else {

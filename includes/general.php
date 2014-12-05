@@ -2009,33 +2009,3 @@ function pods_session_start() {
 	return true;
 
 }
-
-
-/**
- * Performs a deep copy of an item to ensure that arrays of objects
- * are properly duplicated
- *
- * @param mixed $data The data to be duplicated
- *
- * @return mixed copy of the data
- */
-function pods_deep_copy( $data ) {
-	if ( is_object( $data ) ) {
-		return clone $data;
-	} elseif ( is_array( $data ) ) {
-		$new = array();
-		foreach ( $data as $key => $value ) {
-			if ( is_object( $value ) ) {
-				$new[ $key ] = clone $value;
-			} elseif ( is_array( $value ) ) {
-				$new[ $key ] = pods_deep_copy( $value );
-			} else {
-				$new[ $key ] = $value;
-			}
-		}
-
-		return $new;
-	} else {
-		return $data;
-	}
-}

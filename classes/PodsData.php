@@ -859,24 +859,27 @@ class PodsData {
 			}
 		}
 
-        // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
-        $params->where = $this->query_fields( (array) $params->where, $pod, $params );
+	    // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
+	    if ( ! empty( $params->where ) ) {
+		    $params->where = $this->query_fields( (array) $params->where, $pod, $params );
+	    }
 
-        if ( empty( $params->where ) ) {
-            $params->where = array();
-		}
-        else {
-            $params->where = (array) $params->where;
-		}
+	    if ( empty( $params->where ) ) {
+		    $params->where = array();
+	    } else {
+		    $params->where = (array) $params->where;
+	    }
 
-        // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
-	    if ( null !== $params->having )
-            $params->having = $this->query_fields( (array) $params->having, $pod );
+	    // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
+	    if ( ! empty( $params->having ) ) {
+		    $params->having = $this->query_fields( (array) $params->having, $pod, $params );
+	    }
 
-        if ( empty( $params->having ) )
-            $params->having = array();
-        else
-            $params->having = (array) $params->having;
+	    if ( empty( $params->having ) ) {
+		    $params->having = array();
+	    } else {
+		    $params->having = (array) $params->having;
+	    }
 
         if ( !empty( $params->orderby ) )
             $params->orderby = (array) $params->orderby;

@@ -6634,7 +6634,7 @@ class PodsAPI {
         $ids = array_unique( array_filter( $ids ) );
 
 	    $idstring = implode( ',', $ids );
-	    if ( isset( self::$related_item_cache[ $pod_id ], self::$related_item_cache[ $pod_id ][ $field_id ], self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
+	    if ( isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
 		    // Check cache first, no point in running the same query multiple times
 		    return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
 	    }

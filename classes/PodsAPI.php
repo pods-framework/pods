@@ -4936,6 +4936,10 @@ class PodsAPI {
      * @since 2.3
      */
     public function delete_relationships ( $related_id, $id, $related_pod, $related_field ) {
+	    if ( isset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] ) ) {
+		    // Delete relationship from cache
+		    unset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] );
+	    }
         if ( is_array( $related_id ) ) {
             foreach ( $related_id as $rid ) {
                 $this->delete_relationships( $rid, $id, $related_pod, $related_field );

@@ -4936,10 +4936,6 @@ class PodsAPI {
      * @since 2.3
      */
     public function delete_relationships ( $related_id, $id, $related_pod, $related_field ) {
-	    if ( isset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] ) ) {
-		    // Delete relationship from cache
-		    unset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] );
-	    }
         if ( is_array( $related_id ) ) {
             foreach ( $related_id as $rid ) {
                 $this->delete_relationships( $rid, $id, $related_pod, $related_field );
@@ -4968,6 +4964,10 @@ class PodsAPI {
         elseif ( !in_array( $id, $related_ids ) )
             return;
 
+	    if ( isset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] ) ) {
+		    // Delete relationship from cache
+		    unset( self::$related_item_cache[ $related_pod[ 'id' ] ][ $related_field[ 'id' ] ] );
+	    }
         unset( $related_ids[ array_search( $id, $related_ids ) ] );
 
         $no_conflict = pods_no_conflict_check( $related_pod[ 'type' ] );
@@ -6777,7 +6777,9 @@ class PodsAPI {
             if ( 0 < $related_pick_limit && !empty( $related_ids ) )
                 $related_ids = array_slice( $related_ids, 0, $related_pick_limit );
         }
-        self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
+	    if ( ! empty( $related_ids ) ) {
+		    self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
+	    }
 
         return $related_ids;
     }

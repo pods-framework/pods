@@ -153,6 +153,25 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
+= 2.5 - October, 13, 1982 =
+* Major performance enhancements.
+* More unit tests.
+* Upgraded Code Mirror library
+* Upgraded qTip library
+* Fixed: Issue causing issues in admin with CodePress admin columns.
+* Fixed: Issue preventing Pods Template editor from working with certain xcache configurations.
+* Removed: pods_deep_copy()
+* Added: 'join' to the accepted tags for Pods Shortcode.
+* Added: 'pods_data_pre_select_params' filter.
+* Improve: PodsAPI::export_pod_item_lvl(), adding item ID to all steps.
+* Simplify logic when creating new PodsAPI object.
+* Switch from Pods::do_hook() to apply_filters() or do_action() for 'pods_pods_fields', 'pods_pods_field_related_output_type', 'pods_pods_field_', 'pods_pods_field', 'pods_pods_fetch', 'pods_pods_reset', 'pods_pods_total_found', 'pods_pods_filters'
+* Fixed: YARRP support.
+* Ensure that pods_v_sanitized() passes the $strict argument to pods_v().
+* Prevent use of date_i18n() in PodsData when not needed.
+
+
+
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes

@@ -64,7 +64,14 @@ class PodsAPI {
 	 */
 	private static $table_info_cache = array();
 
-    /**
+	/**
+	 * @var array
+	 * @since 2.5
+	 *
+	 */
+	private static $related_item_cache = array();
+
+	/**
      * Singleton-ish handling for a basic pods_api() request
      *
      * @param string $pod (optional) The pod name
@@ -6611,15 +6618,6 @@ class PodsAPI {
      * @uses pods_query()
      */
     public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
-	if ( pods_api_cache() ) {
-		// Check cache first, no point in running the same query multiple times
-		$cache_key = md5( serialize( array( $field_id, $pod_id, $ids ) ) );
-		$results = pods_cache_get( $cache_key, 'pods_lookup_related_items' );
-
-		if ( false !== $results ) {
-			return $results;
-		}
-	}
         $related_ids = array();
 
         if ( !is_array( $ids ) )
@@ -6630,6 +6628,12 @@ class PodsAPI {
         }
 
         $ids = array_unique( array_filter( $ids ) );
+
+	    $idstring = implode( ',', $ids );
+	    if ( isset( self::$related_item_cache[ $pod_id ], self::$related_item_cache[ $pod_id ][ $field_id ], self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
+		    // Check cache first, no point in running the same query multiple times
+		    return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
+	    }
 
         $tableless_field_types = PodsForm::tableless_field_types();
 
@@ -6769,9 +6773,7 @@ class PodsAPI {
             if ( 0 < $related_pick_limit && !empty( $related_ids ) )
                 $related_ids = array_slice( $related_ids, 0, $related_pick_limit );
         }
-	if ( isset( $cache_key ) ) {
-		pods_cache_set( $cache_key, $related_ids, 'pods_lookup_related_items' );
-	}
+        self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
 
         return $related_ids;
     }

@@ -2733,10 +2733,12 @@ class Pods implements Iterator {
 
 		$fetch = false;
 
-		if ( null === $id ) {
+		if ( null === $id || ( $this->row && $id == $this->id() ) ) {
 			$fetch = true;
 
-			$id = $this->id();
+			if ( null === $id ) {
+				$id = $this->id();
+			}
 		}
 
 		$data = (array) $this->do_hook( 'save', $data, $id );
@@ -2761,13 +2763,6 @@ class Pods implements Iterator {
 			$params = array_merge( $params, $default );
 
 		$id = $this->api->save_pod_item( $params );
-
-		if ( isset( $this->row ) ) {
-			// On a change wipe out the saved results or else we will return the wrong results on future lookups
-			$this->row_number = -1;
-			$this->row = null;
-			$fetch = true;
-		}
 
 		if ( 0 < $id && $fetch )
 			$this->fetch( $id, false );

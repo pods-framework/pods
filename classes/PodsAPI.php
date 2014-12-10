@@ -7099,11 +7099,11 @@ class PodsAPI {
                     $info[ 'object_hierarchical' ] = true;
 
 				/**
-				 * Default Post Stati to query for.
+				 * Default Post Status to query for.
 				 *
 				 * Use to change "default" post status from publish to any other status or statuses.
 				 *
-				 * @param  array $post_stati List of post statuses. Default is 'publish'
+				 * @param  array $post_status List of post statuses. Default is 'publish'
 				 * @param  string $post_type Post type of current object
 				 * @param  array $info Array of information about the object.
 				 * @param  string $object	Type of object

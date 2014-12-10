@@ -7113,7 +7113,7 @@ class PodsAPI {
 				 *
 				 * @since unknown
 				 */
-				$post_stati = apply_filters( 'pods_api_get_table_info_default_post_status', array( 'publish' ), $post_type, $info, $object_type, $object, $name, $pod, $field );
+				$post_status = apply_filters( 'pods_api_get_table_info_default_post_status', array( 'publish' ), $post_type, $info, $object_type, $object, $name, $pod, $field );
 
                 $info[ 'where' ] = array(
                     //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
@@ -7121,7 +7121,7 @@ class PodsAPI {
                 );
 
                 if ( 'post_type' == $object_type )
-                    $info[ 'where_default' ] = '`t`.`post_status` IN ( "' . implode( '", "', $post_stati ) . '" )';
+                    $info[ 'where_default' ] = '`t`.`post_status` IN ( "' . implode( '", "', $post_status ) . '" )';
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 

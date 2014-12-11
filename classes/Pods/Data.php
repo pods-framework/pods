@@ -670,6 +670,11 @@ class Pods_Data {
 		$this->id         = 0;
 		$this->row_number = - 1;
 
+		/**
+		 * Fires right before the select item parameters
+		 * 
+		 * @since 3.0
+		 */ 
 		$params = apply_filters( 'pods_data_pre_select_params', $params );
 
 		// Debug purposes

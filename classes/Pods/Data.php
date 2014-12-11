@@ -674,6 +674,13 @@ class Pods_Data {
 		 * Fires right before the select item parameters
 		 * 
 		 * @since 3.0
+		 * 
+		 * @param array $params { 
+		 * 	The select item parameters
+		 *  	
+		 * 	@type string $results Get the select data results
+		 * 	@type string $cache_key The key to get the data from the cache
+		 * }
 		 */ 
 		$params = apply_filters( 'pods_data_pre_select_params', $params );
 

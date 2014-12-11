@@ -480,9 +480,9 @@
 }
 #pods-wizard-box #pods-wizard-actions .button.button-secondary {
   left: 0;
-  color: #7b7b7b;
+  color: black;
   background: #c9c9c9;
-  background: -webkit-gradient(linear, left top, left bottom, from(#dfdfdf), to(#b2b2b2));
+  background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#f7f7f7));
   background: -moz-linear-gradient(center top, #dfdfdf 0%, #b2b2b2 100%);
   background: -moz-gradient(center top, #dfdfdf 0%, #b2b2b2 100%);
   -webkit-border-top-left-radius: 0;
@@ -499,7 +499,8 @@
   border-bottom-left-radius: 8px;
 }
 #pods-wizard-box #pods-wizard-actions .button.button-secondary:hover {
-  background: #b2b2b2;
+    border: 1px solid #c9c9c9 !important;
+
 }
 #pods-wizard-box #pods-wizard-actions #pods-wizard-finished {
   display: none;

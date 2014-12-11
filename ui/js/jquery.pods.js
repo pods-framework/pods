@@ -110,8 +110,9 @@
 
                                 valid_form = false;
                             }
-
-                            postdata[ field_name ] = val;
+                            if ( null !== val ) {
+                                postdata[field_name] = val;
+                            }
                         }
                     } );
 
@@ -197,7 +198,9 @@
                                 valid_form = false;
                             }
 
-                            postdata[ field_name ] = val;
+                            if ( null !== val ) {
+                                postdata[field_name] = val;
+                            }
                         }
                     } );
 

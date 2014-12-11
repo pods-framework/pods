@@ -89,7 +89,12 @@
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-current + li > i {
-  background: url(../images/arrow_current.png);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 17px 0 17px 10px;
+    border-color: transparent transparent transparent black;
+    background: none;
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-complete {
   color: #6f9472;

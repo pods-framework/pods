@@ -440,9 +440,7 @@
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
   background: #f3f3f3;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#f9f9f9));
-  background: -moz-linear-gradient(center top, #ededed 0%, #f9f9f9 100%);
-  background: -moz-gradient(center top, #ededed 0%, #f9f9f9 100%);
+
 }
 #pods-wizard-box #pods-wizard-actions .button {
   display: block;

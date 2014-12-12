@@ -83,32 +83,36 @@
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-current span {
   text-shadow: none;
   background: #fff;
-  color: #6f6f6f;
+  color: #000000;
   -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-current + li > i {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 17px 0 17px 10px;
-    border-color: transparent transparent transparent black;
-    background: none;
+   width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 17px 0 17px 10px;
+  border-color: transparent transparent transparent #000000;
+  background: none;
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-complete {
   color: #6f9472;
   border-bottom: 1px solid #bbddbd;
-  background: #c8e9ca;
-  background: -webkit-gradient(linear, left top, left bottom, from(#d4f4d6), to(#bbddbd));
-  background: -moz-linear-gradient(center top, #d4f4d6 0%, #bbddbd 100%);
-  background: -moz-gradient(center top, #d4f4d6 0%, #bbddbd 100%);
+  background: #d4f4d6;
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-complete + li > i {
-  background: url(../images/arrow_complete.png);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 18px 0 18px 8px;
+  border-color: transparent transparent transparent #d4f4d6;
+  background:none
+  
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-complete + li.pods-wizard-menu-complete > i {
-  background: url(../images/arrow_complete_previous.png);
+  border-left: 1px solid rgba(0, 0, 0, 0.46);
 }
 #pods-wizard-box #pods-wizard-heading ul li.pods-wizard-menu-complete span {
   background: #6f9472;

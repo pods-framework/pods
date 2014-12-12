@@ -2285,6 +2285,8 @@ class PodsAdmin {
 
         $api = pods_api();
 
+	    $api->display_errors = false;
+
         if ( 'upgrade' == $method->name )
             $output = (string) pods_upgrade( $params->version )->ajax( $params );
         elseif ( 'migrate' == $method->name )

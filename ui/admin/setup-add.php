@@ -59,7 +59,6 @@
                                     <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
                                 </a>
 
-                                <p><br /></p>
                             </div>
                             <div class="pods-wizard-option">
                                 <a href="#pods-wizard-extend" data-opt="extend">
@@ -68,7 +67,6 @@
                                     <p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
                                 </a>
 
-                                <p><br /></p>
                             </div>
                         </div>
                     </div>

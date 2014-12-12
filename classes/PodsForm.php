@@ -687,7 +687,7 @@ class PodsForm {
             $fields = array( $fields );
 
         foreach ( $fields as $f => $field ) {
-            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
+            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_v( 'type', $field, 'text' ) );
 
             if ( !$single && strlen( $fields[ $f ][ 'name' ] ) < 1 )
                 $fields[ $f ][ 'name' ] = $f;
@@ -842,10 +842,7 @@ class PodsForm {
     public static function value( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = self::tableless_field_types();
-        $repeatable_field_types = self::repeatable_field_types();
-
-        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
+        if ( in_array( $type, self::repeatable_field_types() ) && 1 == pods_v( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
             if ( 0 < strlen( $value ) ) {
                 $simple = @json_decode( $value, true );
 
@@ -859,7 +856,7 @@ class PodsForm {
         }
 
         if ( method_exists( self::$loaded[ $type ], 'value' ) ) {
-            if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
+            if ( is_array( $value ) && in_array( $type, self::tableless_field_types() ) ) {
                 foreach ( $value as &$display_value ) {
                     $display_value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
                 }
@@ -1094,7 +1091,9 @@ class PodsForm {
 
         $default = pods_v( 'default', $options, $default_value, true );
 
-        $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
+	    if ( is_string( $default ) ) {
+		    $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
+	    }
 
         if ( $default != $default_value && 1 == (int) pods_v( 'default_evaluate_tags', $options, 1 ) )
             $default = pods_evaluate_tags( $default );
@@ -1357,9 +1356,14 @@ class PodsForm {
      * @since 2.3
      */
     public static function tableless_field_types() {
-        $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_tableless_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+
+		    $field_types = apply_filters( 'pods_tableless_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1370,9 +1374,14 @@ class PodsForm {
      * @since 2.3
      */
     public static function file_field_types() {
-        $field_types = array( 'file', 'avatar' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_file_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'file', 'avatar' );
+
+		    $field_types = apply_filters( 'pods_file_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1383,9 +1392,28 @@ class PodsForm {
      * @since 2.3
      */
     public static function repeatable_field_types() {
-        $field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_repeatable_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array(
+			    'code',
+			    'color',
+			    'currency',
+			    'date',
+			    'datetime',
+			    'email',
+			    'number',
+			    'paragraph',
+			    'phone',
+			    'text',
+			    'time',
+			    'website',
+			    'wysiwyg'
+		    );
+
+		    $field_types = apply_filters( 'pods_repeatable_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1396,9 +1424,14 @@ class PodsForm {
      * @since 2.3
      */
     public static function number_field_types() {
-        $field_types = array( 'currency', 'number' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_tableless_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'currency', 'number' );
+
+		    $field_types = apply_filters( 'pods_tableless_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1409,9 +1442,14 @@ class PodsForm {
      * @since 2.3
      */
     public static function date_field_types() {
-        $field_types = array( 'date', 'datetime', 'time' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_tableless_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'date', 'datetime', 'time' );
+
+		    $field_types = apply_filters( 'pods_tableless_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1422,9 +1460,14 @@ class PodsForm {
      * @since 2.3
      */
     public static function text_field_types() {
-        $field_types = array( 'code', 'paragraph', 'slug','password', 'text', 'wysiwyg' );
+	    static $field_types = null;
 
-        return apply_filters( 'pods_text_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'code', 'paragraph', 'slug', 'password', 'text', 'wysiwyg' );
+
+		    $field_types = apply_filters( 'pods_text_field_types', $field_types );
+	    }
+	    return $field_types;
     }
 
     /**
@@ -1435,15 +1478,38 @@ class PodsForm {
      * @since 2.3
      */
     public static function block_field_types() {
-        $field_types = array( 'heading', 'html' );
+	    static $field_types = null;
 
-        /**
-         * Returns the available text field types
-         *
-         * @since unknown
-         *
-         * @param object $field_types Outputs the field types
-         */
-        return apply_filters( 'pods_block_field_types', $field_types );
+	    if ( null === $field_types ) {
+		    $field_types = array( 'heading', 'html' );
+
+		    /**
+		     * Returns the available text field types
+		     *
+		     * @since unknown
+		     *
+		     * @param object $field_types Outputs the field types
+		     */
+
+		    $field_types = apply_filters( 'pods_block_field_types', $field_types );
+	    }
+	    return $field_types;
     }
-}
+
+	/**
+	 * Get list of available text field types
+	 *
+	 * @return array Text field types
+	 *
+	 * @since 2.3
+	 */
+	public static function simple_tableless_objects() {
+		static $object_types = null;
+
+		if ( null === $object_types ) {
+			$object_types = PodsForm::field_method( 'pick', 'simple_objects' );
+		}
+		return $object_types;
+	}
+
+	}

@@ -63,7 +63,7 @@ class Pods_Templates_Frontier {
 
 		add_filter( 'pods_templates_pre_template', 'frontier_prefilter_template', 25, 4 );
 		// Load admin style sheet and JavaScript.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylescripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_stylescripts' ), 20 );
 		add_action( 'wp_footer', array( $this, 'footer_scripts' ) );
 		add_action( 'init', array( $this, 'activate_metaboxes' ) );
 	}
@@ -104,9 +104,6 @@ class Pods_Templates_Frontier {
 			if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
 				include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 			}
-			else {
-				return;
-			}
 
 			if ( !empty( $configfiles ) ) {
 
@@ -125,7 +122,12 @@ class Pods_Templates_Frontier {
 				}
 			}
 			wp_enqueue_style( $this->plugin_slug . '-admin-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
+			wp_enqueue_style( 'pods-codemirror' );
 			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION );
+			wp_enqueue_script( 'pods_codemirror' );
+			wp_enqueue_script( 'pods-codemirror-overlay' );
+			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+
 		}
 
 	}
@@ -180,19 +182,16 @@ class Pods_Templates_Frontier {
 			}
 		}
 
+		$this->plugin_screen_hook_suffix[ $slug ] = $slug;
+
 		// Required Styles for metabox
-		wp_enqueue_style( $this->plugin_slug . '-panel-styles', $this->get_url( 'assets/css/panel.css', __FILE__ ), array(), self::VERSION );
-		wp_enqueue_style( $this->plugin_slug . '-cm-css', $this->get_url( 'assets/css/codemirror1.css', __FILE__ ), array(), self::VERSION );
 		wp_enqueue_style( $this->plugin_slug . '-view_template-styles', $this->get_url( 'assets/css/styles-view_template.css', __FILE__ ), array(), self::VERSION );
 
 		// Required scripts for metabox
-		wp_enqueue_script( $this->plugin_slug . '-cm-comp', $this->get_url( 'assets/js/codemirror-compressed1.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		wp_enqueue_script( $this->plugin_slug . '-panel-script', $this->get_url( 'assets/js/panel.js', __FILE__ ), array( 'jquery' ), self::VERSION );
 		wp_enqueue_script( 'jquery-ui-resizable' );
-		wp_enqueue_script( $this->plugin_slug . '-handlebarsjs', $this->get_url( 'assets/js/handlebars2.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		wp_enqueue_script( $this->plugin_slug . '-baldrickjs', $this->get_url( 'assets/js/jquery.baldrick3.js', __FILE__ ), array( 'jquery' ), self::VERSION );
-		wp_enqueue_script( $this->plugin_slug . '-handlebars-baldrick', $this->get_url( 'assets/js/handlebars.baldrick2.js', __FILE__ ), array( 'jquery' ), self::VERSION );
+		wp_enqueue_script( $this->plugin_slug . '-handlebarsjs', $this->get_url( 'assets/js/handlebars2.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+		wp_enqueue_script( $this->plugin_slug . '-baldrickjs', $this->get_url( 'assets/js/jquery.baldrick3.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+		wp_enqueue_script( $this->plugin_slug . '-handlebars-baldrick', $this->get_url( 'assets/js/handlebars.baldrick2.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
 		// add metabox
@@ -248,7 +247,7 @@ class Pods_Templates_Frontier {
 			echo "</script>\r\n";
 		}
 		elseif ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.js' ) ) {
-			wp_enqueue_script( $this->plugin_slug . '-' . $args[ 'args' ][ 'slug' ] . '-script', $this->get_url( 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.js', __FILE__ ), array( 'jquery' ), self::VERSION );
+			wp_enqueue_script( $this->plugin_slug . '-' . $args[ 'args' ][ 'slug' ] . '-script', $this->get_url( 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.js', __FILE__ ), array( 'jquery' ), self::VERSION, true);
 		}
 
 	}

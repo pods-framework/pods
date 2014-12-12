@@ -50,6 +50,9 @@ function frontier_decode_template( $code, $atts ) {
 	if ( isset( $atts[ 'id' ] ) ) {
 		$code = str_replace( '{@EntryID}', $atts[ 'id' ], $code );
 	}
+	if ( isset( $atts[ 'index' ] ) ) {
+		$code = str_replace( '{_index}', $atts[ 'index' ], $code );
+	}
 
 	return $code;
 }
@@ -71,9 +74,51 @@ function frontier_if_block( $atts, $code ) {
 
 	$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 0 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
-	if ( $field_data = $pod->field( $atts[ 'field' ] ) ) {
+	// sysvals
+	$system_values = array(
+		'_index',
+	);
+
+	// field data
+	$field_data = null;
+
+	if ( in_array( $atts[ 'field' ], $system_values) ) {
+		switch ( $atts[ 'field' ] ){
+			case '_index':
+				$field_data = $atts['index'];
+				break;
+		}
+	}
+	else{
+
+		$field_data = $pod->field( $atts[ 'field' ] );
+
+	}
+
+	if ( $field_data !== null ){
+
 		// theres a field - let go deeper
 		if ( isset( $atts[ 'value' ] ) ) {
+
+			// check if > or < are present
+			if( substr( $atts[ 'value' ], 0, 1) === '+' ){
+				// is greater
+				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) + 1;
+				if(  (float) $field_data > $atts[ 'value' ] ){
+					// is greater - set it the same to allow
+					$atts[ 'value' ] = $field_data;
+				}
+
+			}elseif( substr( $atts[ 'value' ], 0, 1) === '-' ){
+				// is smaller
+				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) - 1;
+				if( (float) $field_data <  $atts[ 'value' ] ){
+					// is greater - set it the same to allow
+					$atts[ 'value' ] = $field_data;
+				}
+
+			}
+
 			if ( $field_data == $atts[ 'value' ] ) {
 				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 			}
@@ -197,11 +242,13 @@ function frontier_do_subtemplate( $atts, $content ) {
 				);
 
 				$template = frontier_decode_template( $content, array_merge( $atts, $subatts ) );
+				$template = str_replace( '{_index}' , $key, $template );
 				$template = str_replace( '{@' . $atts[ 'field' ] . '.', '{@', $template );
 
 				$out .= pods_shortcode( array(
 					'name' => $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ],
-					'slug' => $entry[ 'ID' ]
+					'slug' => $entry[ 'ID' ],
+					'index' => $key
 				), $template );
 
 			}
@@ -212,8 +259,8 @@ function frontier_do_subtemplate( $atts, $content ) {
 			if ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_uploader' ] && 'multi' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_format_type' ] ) {
 				$template = frontier_decode_template( $content, $atts );
 				foreach ( $entries as $key => $entry ) {
-
-					$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $template );
+					$content = str_replace( '{_index}' , $key, $template );
+					$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $content );
 					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry[ 'ID' ], $content );
 					$content = str_replace( '{@' . $atts[ 'field' ] . '}', '{@image_attachment.' . $entry[ 'ID' ] . '}', $content );
 
@@ -248,6 +295,21 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 		'after' => 'pod_after_template',
 		'if' => 'pod_if_field',
 	);
+
+	$commands = array_merge( $commands, get_option( 'pods_frontier_extra_commands', array()  ) );
+
+	/**
+	 * Add additional control blocks to Pods templates
+	 *
+	 * Can also be use to remove each/once/before/after/if functionality from Pods Templates
+	 *
+	 * @param array $commands The control blocks in the form of 'tag' => 'shortcode'
+	 *
+	 * @return array An array of control blocks, and shortcodes used to power them.
+	 *
+	 * @since 1.0.0
+	 */
+	$commands = apply_filters( 'pods_frontier_template_commands', $commands );
 
 	$aliases = array();
 	foreach ( $commands as $command => $shortcode ) {
@@ -290,7 +352,7 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 					$newtag = $shortcode . '__' . $key;
 					$tags[ $indexCount ] = $newtag;
 					$aliases[ ] = $newtag;
-					$code = preg_replace( "/(" . preg_quote( $tag ) . ")/m", "[" . $newtag . $atts . "]", $code, 1 );
+					$code = preg_replace( "/(" . preg_quote( $tag ) . ")/m", "[" . $newtag . $atts . " index=\"{_index}\"]", $code, 1 );
 					$indexCount++;
 				}
 				else {
@@ -354,22 +416,22 @@ function frontier_get_regex( $codes ) {
 	$validcodes = join( '|', array_map( 'preg_quote', $codes ) );
 
 	return '\\[' // Opening bracket
-		   . '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
-		   . "($validcodes)" // 2: selected codes only
-		   . '\\b' // Word boundary
-		   . '(' // 3: Unroll the loop: Inside the opening shortcode tag
-		   . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		   . '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
-		   . '[^\\]\\/]*' // Not a closing bracket or forward slash
-		   . ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
-		   . '\\]' // ... and closing bracket
-		   . '|' . '\\]' // Closing bracket
-		   . '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
-		   . '[^\\[]*+' // Not an opening bracket
-		   . '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
-		   . '[^\\[]*+' // Not an opening bracket
-		   . ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
-		   . ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
+	. '(\\[?)' // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
+	. "($validcodes)" // 2: selected codes only
+	. '\\b' // Word boundary
+	. '(' // 3: Unroll the loop: Inside the opening shortcode tag
+	. '[^\\]\\/]*' // Not a closing bracket or forward slash
+	. '(?:' . '\\/(?!\\])' // A forward slash not followed by a closing bracket
+	. '[^\\]\\/]*' // Not a closing bracket or forward slash
+	. ')*?' . ')' . '(?:' . '(\\/)' // 4: Self closing tag ...
+	. '\\]' // ... and closing bracket
+	. '|' . '\\]' // Closing bracket
+	. '(?:' . '(' // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
+	. '[^\\[]*+' // Not an opening bracket
+	. '(?:' . '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
+	. '[^\\[]*+' // Not an opening bracket
+	. ')*+' . ')' . '\\[\\/\\2\\]' // Closing shortcode tag
+	. ')?' . ')' . '(\\]?)'; // 6: Optional second closing brocket for escaping shortcodes: [[tag]]
 
 }
 

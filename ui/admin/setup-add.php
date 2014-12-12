@@ -59,7 +59,6 @@
                                     <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
                                 </a>
 
-                                <p><br /></p>
                             </div>
                             <div class="pods-wizard-option">
                                 <a href="#pods-wizard-extend" data-opt="extend">
@@ -68,7 +67,6 @@
                                     <p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
                                 </a>
 
-                                <p><br /></p>
                             </div>
                         </div>
                     </div>
@@ -276,7 +274,13 @@
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                         <?php
                                             $taxonomies = get_taxonomies();
-                                            $ignore = array( 'link_category' );
+                                            
+                                            //Add Support for built-in taxonomy "link_category" 
+                                            //if links are in use.
+                                            $bookmarkcount = count(get_bookmarks()); 
+                                            if ($bookmarkcount < 1){
+                                                $ignore = array( 'link_category' );
+                                            } 
 
                                             foreach ( $taxonomies as $taxonomy => $label ) {
                                                 if ( in_array( $taxonomy, $ignore ) ) {

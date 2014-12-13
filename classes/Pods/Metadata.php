@@ -214,13 +214,13 @@ class Pods_Metadata {
 			$group = $cmb2_meta_box[ '_pods_group' ];
 		}
 
-		if ( ! empty( $group ) && false === Pods_Form::permission( $field[ 'type' ], $field[ 'name' ], $field, array(), $field[ 'pod' ], $cmb2_field->object_id ) ) {
-			if ( ! pods_v( 'hidden', $field, false ) ) {
-				return false;
+		if ( ! empty( $group ) ) {
+			if ( ! pods_v( 'hidden', $group, false ) ) {
+				$show_on = false;
 			}
 		}
 
-		return $show_on;
+		return apply_filters( 'pods_cmb2_group_show_on', $show_on, $group, $cmb2_meta_box );
 
 	}
 

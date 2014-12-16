@@ -324,7 +324,7 @@ function pods_image_resize ( $attachment_id, $size ) {
  *
  * @uses wp_audio_shortcode()
  *
- * @since 2.4.4
+ * @since 2.5
  *
  * @param string|array   $url   Can be a URL of the source file, or a Pods audio field.
  * @param bool|array     $args  Optional. Additional arguments to pass to wp_audio_shortcode
@@ -359,7 +359,7 @@ function pods_audio( $url, $args = false ) {
  *
  * @uses wp_video_shortcode()
  *
- * @since 2.4.4
+ * @since 2.5
  *
  * @param string|array   $url   Can be a URL of the source file, or a Pods video field.
  * @param bool|array     $args  Optional. Additional arguments to pass to wp_video_shortcode()

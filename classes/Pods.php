@@ -511,7 +511,18 @@ class Pods implements Iterator {
 			}
 		}
 
+		/**
+		 * Modify the field data before returning
+		 *
+		 * @since unknown
+		 *
+		 * @param array $field_data The data for the field.
+		 * @param string|null $field The specific field that data is being return for, if set when method is called or null.
+		 * @param string|null $option Value of option param when method was called. Can be used to get a list of available items from a relationship field.
+		 * @param Pods|object $this The current Pods class instance.
+		 */
 		return apply_filters( 'pods_pods_fields', $field_data, $field, $option, $this );
+
 	}
 
 	/**

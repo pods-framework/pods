@@ -51,7 +51,7 @@ else {
 	}
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-        define( 'PODS_WP_VERSION_MINIMUM', '3.4' );
+        define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
 	}
 
     if ( !defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {

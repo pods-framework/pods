@@ -844,12 +844,11 @@ class PodsMeta {
             $post_type = $post->post_type;
 
         $groups = $this->groups_get( 'post_type', $post_type );
+	$field_found = false;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
-
-            $field_found = false;
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) ) {

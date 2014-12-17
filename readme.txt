@@ -169,9 +169,38 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: YARRP support.
 * Ensure that pods_v_sanitized() passes the $strict argument to pods_v().
 * Prevent use of date_i18n() in PodsData when not needed.
-
-
-
+* Fixed: Issue where updating relationship to users in pods editor  threw an erroneous error.
+* Fixed: Hiding of text in title-prompt-text
+* Updated design of new Pod wizard to match MP6.
+* Fixed: Inline docs for pods_api_get_table_info_default_post_status filter
+* Fixed: Issue where Pods::field() showed cached data after saving via Pods::save(), without re-building the Pods Object.
+* Allowed PodsField_Pick to save names
+* Switched pods_v() to use switch/case instead of if/else where possible.
+* Prevented Pods::id() from calling the field method unless it has to.
+* In PodsData::select(), allow proper use of cache expiration time.
+* Fixed: Issue in currency fields to ensure proper handling of decimals.
+* Added a "pre_select" hook in PodsData.
+* Improved traversal regex in Pods::find() to have better handling for variation of backticks.
+* Removed usages of the deprecated WordPress function like_escape().
+* Remove redundant file/class chacks for Pods Templates.
+* Implement glotpress-grunt for manging translations.
+* Fixed: Issue where get_current_screen(), in some contexts was used as an object, when it was null.
+* Improved: Styling of shortcode insert button.
+* Prevented string replace and trim from running on a form field default when default value is not a string
+* Fixed: Issue preventing color pickers from working in front-end form.
+* Switched from using $wpdb->prefix to $wpdb->base_prefix in pick field class.
+* Fixed: Default avatars on the Discussion settings page replaced by user's custom avatar.
+* When saving custom fields, whitespace is now trimmed.
+* Better validation of custom fields when saving custom post types.
+* Improved: Handling of required fields.
+* Changed the default of $display_errors in Pods class to true.
+* Allowed save_post_meta to delete single meta elements instead of update.
+* Fixed: An issue preventing fields from being sorted by orderby
+* Fixed: Issue where fields, storing one value, returned arrays, instead of strings.
+* Allowed extending the link category taxonomy, if in use.
+* Added join as an acceptable tag for Pods shortcodes.
+* Fixed pods_error(): reversed logic that was emitting an error instead of throwing an exception when $display_errors is false
+* Fixed issue where user_url was created as a required field when extending users.
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes

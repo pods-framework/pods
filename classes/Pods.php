@@ -2327,6 +2327,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/fetch/
 	 */
 	public function fetch ( $id = null, $explicit_set = true ) {
+		/**
+		 * Runs directly before an item is fetched by fetch()
+		 *
+		 * @since unknown
+		 *
+		 * @param int|string|null $id Item ID being fetched or null.
+		 * @param object|Pods $this Current Pods object.
+		 */
 		do_action( 'pods_pods_fetch', $id, $this );
 
 		if ( !empty( $id ) )

@@ -3195,6 +3195,15 @@ class Pods implements Iterator {
 
 		$output = ob_get_clean();
 
+		/**
+		 * Filter the HTML output of filters()
+		 *
+		 * @since unknown
+		 *
+		 * @param string $output
+		 * @param array $params Params array passed to filters().
+		 * @param object|Pods $this Current Pods object.
+		 */
 		return apply_filters( 'pods_pods_filters', $output, $params, $this );
 	}
 

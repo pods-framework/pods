@@ -2358,6 +2358,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/reset/
 	 */
 	public function reset ( $row = null ) {
+		/**
+		 * Runs directly before the Pods object is reset by reset()
+		 *
+		 * @since unknown
+		 *
+		 * @param int|string|null The ID of the row being reset to or null if being reset to the beginningg.
+		 * @param object|Pods $this Current Pods object.
+		 */
 		do_action( 'pods_pods_reset', $row, $this );
 
 		$this->data->reset( $row );
@@ -2398,6 +2406,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/total-found/
 	 */
 	public function total_found () {
+		/**
+		 * Runs directly before the value of total_found() is determined and returned.
+		 *
+		 * @since unknown
+		 *
+		 * @param object|Pods $this Current Pods object.
+		 *
+		 */
 		do_action( 'pods_pods_total_found', $this );
 
 		$this->data->total_found();

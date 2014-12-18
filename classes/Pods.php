@@ -682,7 +682,7 @@ class Pods implements Iterator {
 			 * Override the way realted fields are output
 			 *
 			 * @param string $output How to output related fields. Default is 'arrays'. Options: id|name|object|array|pod
-			 * @param array|object $row Current row being outputed.
+			 * @param array|object $row Current row being outputted.
 			 * @param array $params Params array passed to field().
 			 * @param object|Pods   $this Current Pods object.
 			 */
@@ -974,6 +974,19 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
+					/**
+					 * Modify value returned by field() after its retrieved, but before its validated or formatted
+					 *
+					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_name}"
+					 * 
+					 * @since unknown
+					 *
+					 * @param array|string|null $value Value retrieved.
+					 * @param array|object $row Current row being outputted.
+					 * @param array $params Params array passed to field().
+					 * @param object|Pods $this Current Pods object.
+					 *
+					 */
 					$v = apply_filters( 'pods_pods_field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v )
@@ -1057,6 +1070,7 @@ class Pods implements Iterator {
 					if ( $simple ) {
 						if ( null === $params->single )
 							$params->single = false;
+
 
 						$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
 					}

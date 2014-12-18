@@ -978,7 +978,7 @@ class Pods implements Iterator {
 					 * Modify value returned by field() after its retrieved, but before its validated or formatted
 					 *
 					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_name}"
-					 * 
+					 *
 					 * @since unknown
 					 *
 					 * @param array|string|null $value Value retrieved.
@@ -1607,6 +1607,19 @@ class Pods implements Iterator {
 			}
 		}
 
+		/**
+		 * Modify value returned by field() directly before output.
+		 *
+		 * Will not run if value was null
+		 *
+		 * @since unknown
+		 *
+		 * @param array|string|null $value Value to be returned.
+		 * @param array|object $row Current row being outputted.
+		 * @param array $params Params array passed to field().
+		 * @param object|Pods $this Current Pods object.
+		 *
+		 */
 		$value = apply_filters( 'pods_pods_field', $value, $this->row, $params, $this );
 
 		return $value;

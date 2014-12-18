@@ -678,6 +678,14 @@ class Pods implements Iterator {
 			$params->output = 'ids';
 		}
 		elseif ( null === $params->output ) {
+			/**
+			 * Override the way realted fields are output
+			 *
+			 * @param string $output How to output related fields. Default is 'arrays'. Options: id|name|object|array|pod
+			 * @param array|object $row Current row being outputed.
+			 * @param array $params Params array passed to field().
+			 * @param object|Pods   $this Current Pods object.
+			 */
 			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->row, $params, $this );
 		}
 

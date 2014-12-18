@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, curtismchale, Desertsnowman, dan.stefan, Shelob9, mikedamage, logikal16, jchristopher
+Contributors: sc0ttkclark, pglewis, Shelob9, jamesgol, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8

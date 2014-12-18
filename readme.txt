@@ -182,7 +182,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added a "pre_select" hook in PodsData.
 * Improved traversal regex in Pods::find() to have better handling for variation of backticks.
 * Removed usages of the deprecated WordPress function like_escape().
-* Remove redundant file/class chacks for Pods Templates.
+* Remove redundant file/class checks for Pods Templates.
 * Implement glotpress-grunt for manging translations.
 * Fixed: Issue where get_current_screen(), in some contexts was used as an object, when it was null.
 * Improved: Styling of shortcode insert button.
@@ -195,7 +195,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Improved: Handling of required fields.
 * Changed the default of $display_errors in Pods class to true.
 * Allowed save_post_meta to delete single meta elements instead of update.
-* Fixed: An issue preventing fields from being sorted by orderby
+* Fixed: An issue preventing fields from being sorted by orderby.
 * Fixed: Issue where fields, storing one value, returned arrays, instead of strings.
 * Allowed extending the link category taxonomy, if in use.
 * Added join as an acceptable tag for Pods shortcodes.

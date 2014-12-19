@@ -560,7 +560,7 @@ function pods_access ( $privs, $method = 'OR' ) {
             if ( 0 === strpos( $priv, 'manage_' ) )
                 $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
 
-            if ( isset( $approved_privs[ $priv ] ) )
+            if ( !isset( $approved_privs[ $priv ] ) )
                 return false;
         }
 

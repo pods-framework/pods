@@ -396,7 +396,15 @@ if ( 0 < $pod->id() ) {
                                 if ( 0 < $max_length )
                                     $extra .= ' maxlength="' . $max_length . '"';
 
-                                if ( pods_v( 'readonly', $field[ 'options' ], pods_v( 'readonly', $field, false ) ) ) {
+                                /**
+                                 * Filter that lets you make the title field readonly
+                                 *
+                                 * @param Pods $pod Current Pods object.
+                                 * @param PodsUI $obj Current PodsUI object.
+                                 *
+                                 * @since 2.5
+                                 */
+                                if ( pods_v( 'readonly', $field[ 'options' ], pods_v( 'readonly', $field, false ) ) || apply_filters( 'pods_ui_form_title_readonly', false, $pod, $obj ) ) {
                             ?>
                                     <div id="titlediv">
                                         <div id="titlewrap">

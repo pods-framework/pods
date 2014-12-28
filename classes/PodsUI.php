@@ -2054,12 +2054,16 @@ class PodsUI {
     }
 
     /**
-     * @param bool $full Whether to get ALL data or use pagination
+     * Get find() params based on current UI action
      *
-     * @return bool
+     * @param null|array $params
+     * @param null|string $action
      */
-    public function get_data ( $params = null ) {
-        $action = $this->action;
+    public function get_params( $params = null, $action = null ) {
+
+        if ( null === $action ) {
+            $action = $this->action;
+        }
 
         $defaults = array(
             'full' => false,
@@ -2075,6 +2079,8 @@ class PodsUI {
 
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';
+
+        $params_override = false;
 
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
@@ -2100,13 +2106,17 @@ class PodsUI {
                 $this->orderby = (array) $this->orderby;
 
                 foreach ( $this->orderby as $order ) {
-                    if ( false === strpos( ' ', $order ) && !isset( $orderby[ $order ] ) )
+                    if ( false !== strpos( $order, ' ' ) ) {
+                        $orderby[] = $order;
+                    }
+                    elseif ( !isset( $orderby[ $order ] ) ) {
                         $orderby[ $order ] = $this->orderby_dir;
+                    }
                 }
             }
 
             $find_params = array(
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
+                'where' => pods_v( $action, $this->where, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'pagination' => true,
@@ -2119,18 +2129,74 @@ class PodsUI {
                 'sql' => $sql
             );
 
-            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+            $params_override = true;
+        }
+        else {
+            $orderby = '';
 
-            if ( $params->full )
-                $find_params[ 'limit' ] = -1;
+            if ( !empty( $this->orderby ) ) {
+                $orderby = '`' . $this->orderby . '` '
+                       . ( false === strpos( $this->orderby, ' ' ) ? strtoupper( $this->orderby_dir ) : '' );
+            }
 
+            $find_params = array(
+                'table' => $this->sql[ 'table' ],
+                'id' => $this->sql[ 'field_id' ],
+                'index' => $this->sql[ 'field_index' ],
+                'where' => pods_v( $action, $this->where, null, true ),
+                'orderby' => $orderby,
+                'page' => (int) $this->page,
+                'pagination' => true,
+                'limit' => (int) $this->limit,
+                'search' => $this->searchable,
+                'search_query' => $this->search,
+                'fields' => $this->fields[ 'search' ]
+            );
+        }
+
+        if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
+            $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+
+        if ( $params_override ) {
             $find_params = array_merge( $find_params, (array) $this->params );
+        }
 
-            // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                pods_debug( $find_params );
+        if ( $params->full )
+            $find_params[ 'limit' ] = -1;
 
+        // Debug purposes
+        if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            pods_debug( $find_params );
+
+        return $find_params;
+    }
+
+    /**
+     * @param bool $full Whether to get ALL data or use pagination
+     *
+     * @return bool
+     */
+    public function get_data ( $params = null ) {
+        $action = $this->action;
+
+        $defaults = array(
+            'full' => false,
+            'flatten' => true,
+            'fields' => null,
+            'type' => ''
+        );
+
+        if ( !empty( $params ) && is_array( $params ) )
+            $params = (object) array_merge( $defaults, $params );
+        else
+            $params = (object) $defaults;
+
+        if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
+            $action = 'manage';
+
+        $find_params = $this->get_params( $params );
+
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $this->pod->find( $find_params );
 
             if ( !$params->full ) {
@@ -2173,107 +2239,13 @@ class PodsUI {
             if ( empty( $this->sql[ 'table' ] ) )
                 return $this->data;
 
-            $orderby = array();
-
-            if ( !empty( $this->orderby ) ) {
-                $this->orderby = (array) $this->orderby;
-
-                foreach ( $this->orderby as $k => $order ) {
-                    if ( false === strpos( $order, ' ' ) ) {
-						if ( in_array( strtoupper( $order ), array( 'ASC', 'DESC' ) ) ) {
-							$orderby[ $k ] = $order;
-						}
-						elseif ( !isset( $orderby[ $order ] ) ) {
-                        	$orderby[ $order ] = $this->orderby_dir;
-						}
-					}
-					else {
-						$orderby[] = $order;
-					}
-                }
-            }
-
-			// Allow orderby array ( 'field' => 'asc|desc' )
-			if ( !empty( $orderby ) && is_array( $orderby ) ) {
-				foreach ( $orderby as $k => &$orderby_value ) {
-					if ( !is_numeric( $k ) ) {
-						$order = 'ASC';
-
-						if ( 'DESC' == strtoupper( $orderby_value ) )
-							$order = 'DESC';
-
-						if ( false !== strpos( $k, '.' ) ) {
-							$key = $k;
-
-							if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) )
-								$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-						}
-						else {
-							$key = "`t`.`{$k}`";
-						}
-
-						$orderby_value = $key;
-
-						if ( false === strpos( $orderby_value, ' ' ) )
-							$orderby_value .= ' ' . $order;
-					}
-				}
-			}
-
-			// Add prefix to $orderby if needed
-			if ( !empty( $orderby ) ) {
-				if ( !is_array( $orderby ) )
-					$orderby = array( $orderby );
-
-				foreach ( $orderby as &$prefix_orderby ) {
-					if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-						if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
-							$k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
-							$dir = 'DESC';
-						}
-						else {
-							$k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-							$dir = 'ASC';
-						}
-
-						$key = "`t`.`{$k}`";
-
-						$prefix_orderby = "{$key} {$dir}";
-					}
-				}
-			}
-
-            $find_params = array(
-                'table' => $this->sql[ 'table' ],
-                'id' => $this->sql[ 'field_id' ],
-                'index' => $this->sql[ 'field_index' ],
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
-                'orderby' => $orderby,
-                'page' => (int) $this->page,
-                'pagination' => true,
-                'limit' => (int) $this->limit,
-                'search' => $this->searchable,
-                'search_query' => $this->search,
-                'fields' => $this->fields[ 'search' ]
-            );
-
-            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
-
-            if ( $params->full )
-                $find_params[ 'limit' ] = -1;
-
-            // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                pods_debug( $find_params );
-
             $this->pods_data->select( $find_params );
 
             if ( !$params->full ) {
                 $this->data = $this->pods_data->data;
 
                 if ( !empty( $this->data ) ) {
-					$this->data_keys = array_keys( $this->data );
+					$this->data_keys = array_keys( $this->data[ 0 ] );
 				}
 
                 $this->total = $this->pods_data->total();
@@ -2283,7 +2255,7 @@ class PodsUI {
                 $this->data_full = $this->pods_data->data;
 
                 if ( !empty( $this->data_full ) ) {
-					$this->data_keys = array_keys( $this->data_full );
+					$this->data_keys = array_keys( $this->data_full[ 0 ] );
 				}
 
                 return $this->data_full;
@@ -2331,7 +2303,7 @@ class PodsUI {
 
             if ( !empty( $this->data ) ) {
                 if ( empty( $this->data_keys ) || count( $this->data ) != count( $this->data_keys ) ) {
-                    $this->data_keys = array_keys( $this->data );
+                    $this->data_keys = array_keys( $this->data[ 0 ] );
 				}
 
                 if ( count( $this->data ) == $this->total && isset( $this->data_keys[ $counter ] ) && isset( $this->data[ $this->data_keys[ $counter ] ] ) ) {

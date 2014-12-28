@@ -750,10 +750,11 @@ class PodsMeta {
     /**
      * @param $type
      * @param $name
+     * @param $default_fields
      *
      * @return array
      */
-    public function groups_get ( $type, $name ) {
+    public function groups_get ( $type, $name, $default_fields = null ) {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
@@ -774,8 +775,10 @@ class PodsMeta {
             $object = self::$user;
         elseif ( 'comment' == $type )
             $object = self::$comment;
+        elseif ( 'pod' == $type )
+            $object = self::$advanced_content_types;
 
-        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
+        if ( !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
             if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
@@ -785,6 +788,10 @@ class PodsMeta {
 
             if ( !empty( $pod ) )
                 $fields = $pod[ 'fields' ];
+        }
+
+        if ( null !== $default_fields ) {
+            $fields = $default_fields;
         }
 
         $defaults = array(
@@ -876,10 +883,11 @@ class PodsMeta {
 
             }
         }
-	if ( $pods_field_found ) {
-		// Only add the classes to forms that actually have pods fields
-		add_action( 'post_edit_form_tag', array( $this, 'add_class_submittable' ) );
-	}
+
+		if ( $pods_field_found ) {
+			// Only add the classes to forms that actually have pods fields
+			add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+		}
     }
 
     /**

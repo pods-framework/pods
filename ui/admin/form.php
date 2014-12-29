@@ -223,6 +223,20 @@ if ( 0 < $pod->id() ) {
                                                 <?php
                                                     }
                                                 ?>
+
+                                                <?php
+                                                    /**
+                                                     * Action that runs after the misc publish actions area for an Advanced Content Type
+                                                     *
+                                                     * Occurs at the end of #misc-publishing-actions
+                                                     *
+                                                     * @param Pods $pod Current Pods object.
+                                                     * @param PodsUI $obj Current PodsUI object.
+                                                     *
+                                                     * @since 2.5
+                                                     */
+                                                    do_action( 'pods_ui_form_misc_pub_actions', $pod, $obj );
+                                                ?>
                                             </div>
                                         <?php
                                             }
@@ -264,6 +278,20 @@ if ( 0 < $pod->id() ) {
 
                                     <div class="clear"></div>
                                 </div>
+
+                                <?php
+                                    /**
+                                     * Action that runs after the publish area for an Advanced Content Type
+                                     *
+                                     * Occurs at the end of #submitpost
+                                     *
+                                     * @param Pods $pod Current Pods object.
+                                     * @param PodsUI $obj Current PodsUI object.
+                                     *
+                                     * @since 2.5
+                                     */
+                                    do_action( 'pods_ui_form_publish_area', $pod, $obj );
+                                ?>
                                 <!-- /#major-publishing-actions -->
                             </div>
                             <!-- /#submitpost -->

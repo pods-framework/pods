@@ -1,5 +1,5 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, pglewis, Shelob9, jamesgol, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher
+Contributors: sc0ttkclark, pglewis, Shelob9, jamesgol, clubduece, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
@@ -145,34 +145,31 @@ Pods really wouldn't be where it is without all of the contributions both financ
 
 == Translations ==
 
-Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
-
-* sk_SK (Slovak) - Branco Radenovich ([WebHostingGeeks.com](http://webhostinggeeks.com/blog/))
-* nl_NL (Dutch) - [Ramon van Belzen](http://www.ramoonus.nl/)
-* pt_BR (Portuguese) - [Luciana](https://github.com/yammye)
-* And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
+Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
-= 2.5 - December 30, 2015 =
-* Major performance enhancements.
-* More unit tests--1,858 tests with a total of 13,420 assertions.
+
+= 2.5 - December 30, 2014 =
+* Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)
+* More unit tests -- now 1,858 tests with a total of 13,420 assertions covering all content type, storage type, and field variations (props to @sc0ttkclark, @clubduece, and @mordauk! it was a group effort)
+* Added Travis-CI / Scrutinizer-CI for all pushes and pull requests to unit test and check for other issues
 * Upgraded Code Mirror library
 * Upgraded qTip library
+* Updated translations -- Add your translations at http://wp-translate.org/projects/pods
 * Fixed: Added nonces for multiple actions in the admin area to avoid accidental / unwanted results
 * Fixed: Issue causing issues in admin with CodePress admin columns.
 * Fixed: Issue preventing Pods Template editor from working with certain xcache configurations.
-* Removed: pods_deep_copy()
 * Added: 'join' to the accepted tags for Pods Shortcode.
 * Added: 'pods_data_pre_select_params' filter.
 * Improve: PodsAPI::export_pod_item_lvl(), adding item ID to all steps.
-* Simplify logic when creating new PodsAPI object.
+* Simplify logic when creating new PodsAPI singleton internally.
 * Switch from Pods::do_hook() to apply_filters() or do_action() for 'pods_pods_fields', 'pods_pods_field_related_output_type', 'pods_pods_field_', 'pods_pods_field', 'pods_pods_fetch', 'pods_pods_reset', 'pods_pods_total_found', 'pods_pods_filters'
 * Fixed: YARRP support.
 * Ensure that pods_v_sanitized() passes the $strict argument to pods_v().
 * Prevent use of date_i18n() in PodsData when not needed.
 * Fixed: Issue where updating relationship to users in pods editor  threw an erroneous error.
 * Fixed: Hiding of text in title-prompt-text
-* Updated design of new Pod wizard to match MP6.
+* Updated design of new Pod wizard to match MP6 (props to @nikv!)
 * Fixed: Inline docs for pods_api_get_table_info_default_post_status filter
 * Fixed: Issue where Pods::field() showed cached data after saving via Pods::save(), without re-building the Pods Object.
 * Allowed PodsField_Pick to save names
@@ -203,6 +200,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed pods_error(): reversed logic that was emitting an error instead of throwing an exception when $display_errors is false
 * Fixed issue where user_url was created as a required field when extending users.
 * Add ability to use pods_group_add() in the ACT editor.
+* Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 * If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
 
 = 2.4.3 - June 23rd, 2014 =
@@ -210,8 +208,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: PodsUI data issue with Custom DB Table support
 * Fixed: Readonly fields and noncing now works properly, Pods 2.4.2 caused all forms with readonly fields to fail submission
 * Hardened: Further security hardening of the `[pods]` shortcode, added PODS_DISABLE_SHORTCODE constant to allow sites to disable the Pods shortcode altogether
-* Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
-* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
 
 = 2.4.2 - June 22nd, 2014 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods to fix a noncing issue with form saving, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/

@@ -2303,7 +2303,7 @@ class PodsUI {
 
             if ( !empty( $this->data ) ) {
                 if ( empty( $this->data_keys ) || count( $this->data ) != count( $this->data_keys ) ) {
-                    $this->data_keys = array_keys( $this->data[ 0 ] );
+                    $this->data_keys = array_keys( $this->data );
 				}
 
                 if ( count( $this->data ) == $this->total && isset( $this->data_keys[ $counter ] ) && isset( $this->data[ $this->data_keys[ $counter ] ] ) ) {

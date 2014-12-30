@@ -155,7 +155,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 == Changelog ==
 = 2.5 - December 30, 2015 =
 * Major performance enhancements.
-* More unit tests.
+* More unit tests--1,858 tests with a total of 13,420 assertions.
 * Upgraded Code Mirror library
 * Upgraded qTip library
 * Fixed: Added nonces for multiple actions in the admin area to avoid accidental / unwanted results

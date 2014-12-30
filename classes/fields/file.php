@@ -236,7 +236,7 @@ class PodsField_File extends PodsField {
 
                 foreach ( $attachments as $v ) {
                     if ( !is_array( $v ) )
-                        $values[] = $v;
+                        $value[] = $v;
                     elseif ( isset( $v[ 'ID' ] ) )
                         $value[] = wp_get_attachment_url( $v[ 'ID' ] );
                 }
@@ -601,6 +601,8 @@ class PodsField_File extends PodsField {
         );
 
         $api = pods_api();
+
+	    $api->display_errors = false;
 
         if ( !empty( $params->pod ) ) {
             $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );

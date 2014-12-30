@@ -120,8 +120,8 @@ class PodsAdmin {
 
                 wp_enqueue_script( 'pods-floatmenu' );
 
-                wp_enqueue_style( 'pods-qtip' );
-                wp_enqueue_script( 'jquery-qtip' );
+                wp_enqueue_style( 'jquery-qtip2' );
+                wp_enqueue_script( 'jquery-qtip2' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
                 wp_enqueue_script( 'pods' );
@@ -664,7 +664,7 @@ class PodsAdmin {
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
-        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
+        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox button" id="add_pod_button" title="Pods Shortcode"><img style="padding: 0px 6px 0px 0px; margin: -3px 0px 0px;" src="' . PODS_URL . 'ui/images/icon16.png" alt="' . __('Pods Shortcode' ,'pods') . '" />' . __('Pods Shortcode' ,'pods') . '</a>';
     }
 
     /**
@@ -813,7 +813,8 @@ class PodsAdmin {
                     'label' => __( 'Delete All Items', 'pods' ),
                     'confirm' => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
                     'callback' => array( $this, 'admin_setup_reset' ),
-					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' )
+					'restrict_callback' => array( $this, 'admin_setup_reset_restrict' ),
+					'nonce' => true
                 ),
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
@@ -1946,7 +1947,10 @@ class PodsAdmin {
             ),
             'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
             'actions_custom' => array(
-                'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
+                'toggle' => array(
+	                'callback' => array( $this, 'admin_components_toggle' ),
+                    'nonce' => true
+                )
             ),
             'filters_enhanced' => true,
             'views' => array(
@@ -2035,7 +2039,7 @@ class PodsAdmin {
             return;
         }
 
-        if ( 1 == pods_var( 'toggled' ) ) {
+        if ( '1' == pods_v( 'toggled' ) ) {
             $toggle = PodsInit::$components->toggle( $component );
 
             if ( true === $toggle )
@@ -2280,6 +2284,8 @@ class PodsAdmin {
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
         $api = pods_api();
+
+	    $api->display_errors = false;
 
         if ( 'upgrade' == $method->name )
             $output = (string) pods_upgrade( $params->version )->ajax( $params );

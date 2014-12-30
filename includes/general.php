@@ -29,7 +29,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
         $error = 'Database Error';
     }
 
-    if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {
+    if ( 1 == pods_v( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && pods_is_admin( array( 'pods' ) ) ) {
         $debug_sql = $sql;
 
         echo '<textarea cols="100" rows="24">';
@@ -134,7 +134,7 @@ function pods_error ( $error, $obj = null ) {
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 
     // throw error as Exception and return false if silent
-    if ( false !== $display_errors && !empty( $error ) ) {
+    if ( false === $display_errors && !empty( $error ) ) {
         $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
 
         if ( null !== $exception_bypass )
@@ -384,36 +384,46 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * @since 2.0
  */
 function pods_help ( $text, $url = null ) {
-    if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
-        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
-    if ( !wp_script_is( 'jquery-qtip', 'queue' ) && !wp_script_is( 'jquery-qtip', 'to_do' ) && !wp_script_is( 'jquery-qtip', 'done' ) )
-        wp_enqueue_script( 'jquery-qtip' );
 
-    if ( !wp_style_is( 'pods-qtip', 'registered' ) )
-        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-    if ( !wp_style_is( 'pods-qtip', 'queue' ) && !wp_style_is( 'pods-qtip', 'to_do' ) && !wp_style_is( 'pods-qtip', 'done' ) )
-        wp_enqueue_style( 'pods-qtip' );
+	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+	}
+	elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_script( 'jquery-qtip2' );
+	}
 
-    if ( !wp_script_is( 'pods-qtip-init', 'registered' ) )
-        wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
-            'jquery',
-            'jquery-qtip'
-        ), PODS_VERSION );
-    if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
-        wp_enqueue_script( 'pods-qtip-init' );
+	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
+	}
+	elseif ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_style( 'jquery-qtip2' );
+	}
 
-    if ( is_array( $text ) ) {
-        if ( isset( $text[ 1 ] ) )
-            $url = $text[ 1 ];
+	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
+		wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
+			'jquery',
+			'jquery-qtip2'
+		), PODS_VERSION );
+	}
+	elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
+		wp_enqueue_script( 'pods-qtip-init' );
+	}
 
-        $text = $text[ 0 ];
-    }
+	if ( is_array( $text ) ) {
+		if ( isset( $text[ 1 ] ) ) {
+			$url = $text[ 1 ];
+		}
 
-    if ( 'help' == $text )
-        return;
+		$text = $text[ 0 ];
+	}
 
-    if ( 0 < strlen( $url ) )
-        $text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	if ( 'help' == $text ) {
+		return;
+	}
+
+	if ( 0 < strlen( $url ) ) {
+		$text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+	}
 
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }
@@ -550,7 +560,7 @@ function pods_access ( $privs, $method = 'OR' ) {
             if ( 0 === strpos( $priv, 'manage_' ) )
                 $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
 
-            if ( isset( $approved_privs[ $priv ] ) )
+            if ( !isset( $approved_privs[ $priv ] ) )
                 return false;
         }
 
@@ -580,6 +590,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'id' => null,
         'slug' => null,
         'select' => null,
+        'join' => null,
         'order' => null,
         'orderby' => null,
         'limit' => null,
@@ -694,24 +705,8 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $pod ) )
         return '<p>Pod not found</p>';
 
-    $found = 0;
-
-    if ( !empty( $tags[ 'form' ] ) ) {
-		if ( 'user' == $pod->pod ) {
-			// Further hardening of User-based forms
-			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
-				return '';
-			}
-			// Only explicitly allow user edit forms
-			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
-				return '';
-			}
-		}
-
-        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
-	}
-    elseif ( empty( $id ) ) {
-        $params = array();
+	if ( empty( $id ) ) {
+		$params = array();
 
 		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
 			if ( 0 < strlen( $tags[ 'orderby' ] ) ) {
@@ -741,6 +736,9 @@ function pods_shortcode ( $tags, $content = null ) {
 			if ( 0 < strlen( $tags[ 'select' ] ) ) {
 				$params[ 'select' ] = $tags[ 'select' ];
 			}
+			if ( 0 < strlen( $tags[ 'join' ] ) ) {
+				$params[ 'join' ] = $tags[ 'join' ];
+			}
 		}
 
 		if ( !empty( $tags[ 'limit' ] ) ) {
@@ -755,21 +753,38 @@ function pods_shortcode ( $tags, $content = null ) {
 
 		$params[ 'pagination' ] = $tags[ 'pagination' ];
 
-        if ( 0 < (int) $tags[ 'offset' ] ) {
-            $params[ 'offset' ] = (int) $tags[ 'offset' ];
-        }
+		if ( 0 < (int) $tags[ 'offset' ] ) {
+			$params[ 'offset' ] = (int) $tags[ 'offset' ];
+		}
 
 		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
 			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
 			$params[ 'expires' ] = (int) $tags[ 'expires' ];
 		}
 
-        $params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
+		$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
 
-        $pod->find( $params );
+		$pod->find( $params );
 
-        $found = $pod->total();
-    }
+		$found = $pod->total();
+	} else {
+		$found = 0;
+	}
+
+    if ( !empty( $tags[ 'form' ] ) ) {
+		if ( 'user' == $pod->pod ) {
+			// Further hardening of User-based forms
+			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
+				return '';
+			}
+			// Only explicitly allow user edit forms
+			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				return '';
+			}
+		}
+
+        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+	}
     elseif ( !empty( $tags[ 'field' ] ) ) {
         if ( empty( $tags[ 'helper' ] ) )
             $return = $pod->display( $tags[ 'field' ] );
@@ -1077,11 +1092,11 @@ function pods_permission ( $options ) {
 
     if ( pods_is_admin() )
         $permission = true;
-    elseif ( 0 == pods_var( 'restrict_role', $options, 0 ) && 0 == pods_var( 'restrict_capability', $options, 0 ) && 0 == pods_var( 'admin_only', $options, 0 ) )
+    elseif ( 0 == pods_v( 'restrict_role', $options, 0 ) && 0 == pods_v( 'restrict_capability', $options, 0 ) && 0 == pods_v( 'admin_only', $options, 0 ) )
         $permission = true;
 
-    if ( !$permission && 1 == pods_var( 'restrict_role', $options, 0 ) ) {
-        $roles = pods_var( 'roles_allowed', $options );
+    if ( !$permission && 1 == pods_v( 'restrict_role', $options, 0 ) ) {
+        $roles = pods_v( 'roles_allowed', $options );
 
         if ( !is_array( $roles ) )
             $roles = explode( ',', $roles );
@@ -1097,8 +1112,8 @@ function pods_permission ( $options ) {
         }
     }
 
-    if ( !$permission && 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
-        $capabilities = pods_var( 'capability_allowed', $options );
+    if ( !$permission && 1 == pods_v( 'restrict_capability', $options, 0 ) ) {
+        $capabilities = pods_v( 'capability_allowed', $options );
 
         if ( !is_array( $capabilities ) )
             $capabilities = explode( ',', $capabilities );
@@ -1145,7 +1160,7 @@ function pods_has_permissions ( $options ) {
     if ( isset( $options[ 'options' ] ) )
         $options = $options[ 'options' ];
 
-    if ( 1 == pods_var( 'restrict_role', $options, 0 ) || 1 == pods_var( 'restrict_capability', $options, 0 ) || 1 == pods_var( 'admin_only', $options, 0 ) )
+    if ( 1 == pods_v( 'restrict_role', $options, 0 ) || 1 == pods_v( 'restrict_capability', $options, 0 ) || 1 == pods_v( 'admin_only', $options, 0 ) )
         return true;
 
     return false;
@@ -1796,7 +1811,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 			}
 
 			$no_conflict[ 'action' ] = array(
-				array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
+				array( 'edited_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
 				array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
 			);
 		}

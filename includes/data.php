@@ -110,7 +110,15 @@ function pods_sanitize_like( $input ) {
 		}
 	}
 	else {
-		$output = like_escape( pods_sanitize( $input ) );
+		global $wpdb;
+
+		if ( pods_version_check( 'wp', '4.0', '<' ) ) {
+			// like_escape is deprecated in WordPress 4.0
+			$output = like_escape( pods_sanitize( $input ) );
+		}
+		else {
+			$output = $wpdb->esc_like( pods_sanitize( $input ) );
+		}
 	}
 
 	return $output;
@@ -350,426 +358,418 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 	if ( null === $type || '' === $type ) {
 		// Invalid $type
-	}
-	elseif ( is_array( $type ) ) {
+	} elseif ( is_array( $type ) ) {
 		if ( isset( $type[ $var ] ) ) {
 			$output = $type[ $var ];
 		}
-	}
-	elseif ( is_object( $type ) ) {
+	} elseif ( is_object( $type ) ) {
 		if ( isset( $type->{$var} ) ) {
 			$output = $type->{$var};
 		}
-	}
-	else {
+	} else {
 		$type = strtolower( (string) $type );
-
-		if ( 'get' == $type && isset( $_GET[ $var ] ) ) {
-			$output = pods_unslash( $_GET[ $var ] );
-		}
-		elseif ( 'post' == $type && isset( $_POST[ $var ] ) ) {
-			$output = pods_unslash( $_POST[ $var ] );
-		}
-		elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) ) {
-			$output = pods_unslash( $_REQUEST[ $var ] );
-		}
-		elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
-			$url = parse_url( pods_current_url() );
-			$uri = trim( $url[ 'path' ], '/' );
-			$uri = array_filter( explode( '/', $uri ) );
-
-			if ( 'first' == $var ) {
-				$var = 0;
-			}
-			elseif ( 'last' == $var ) {
-				$var = -1;
-			}
-
-			if ( is_numeric( $var ) ) {
-				$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
-			}
-		}
-		elseif ( 'url-relative' == $type ) {
-			$url_raw = pods_current_url();
-			$prefix = get_site_url();
-
-			if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix ) {
-				$url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
-			}
-
-			$url = parse_url( $url_raw );
-			$uri = trim( $url[ 'path' ], '/' );
-			$uri = array_filter( explode( '/', $uri ) );
-
-			if ( 'first' == $var ) {
-				$var = 0;
-			}
-			elseif ( 'last' == $var ) {
-				$var = -1;
-			}
-
-			if ( is_numeric( $var ) ) {
-				$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
-			}
-		}
-		elseif ( 'template-url' == $type ) {
-			$output = get_template_directory_uri();
-		}
-		elseif ( 'stylesheet-url' == $type ) {
-			$output = get_stylesheet_directory_uri();
-		}
-		elseif ( 'site-url' == $type ) {
-			$blog_id = $scheme = null;
-			$path = '';
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$blog_id = $var[ 0 ];
+		switch ( $type ) {
+			case 'get':
+				if ( isset( $_GET[ $var ] ) ) {
+					$output = pods_unslash( $_GET[ $var ] );
 				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$path = $var[ 1 ];
+				break;
+			case 'post':
+				if ( isset( $_POST[ $var ] ) ) {
+					$output = pods_unslash( $_POST[ $var ] );
 				}
-				elseif ( isset( $var[ 2 ] ) ) {
-					$scheme = $var[ 2 ];
+				break;
+			case 'request':
+				if ( isset( $_REQUEST[ $var ] ) ) {
+					$output = pods_unslash( $_REQUEST[ $var ] );
 				}
-			}
-			else {
-				$blog_id = $var;
-			}
+				break;
+			case 'url':
+			case 'uri':
+				$url = parse_url( pods_current_url() );
+				$uri = trim( $url[ 'path' ], '/' );
+				$uri = array_filter( explode( '/', $uri ) );
 
-			$output = get_site_url( $blog_id, $path, $scheme );
-		}
-		elseif ( 'home-url' == $type ) {
-			$blog_id = $scheme = null;
-			$path = '';
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$blog_id = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$path = $var[ 1 ];
-				}
-				elseif ( isset( $var[ 2 ] ) ) {
-					$scheme = $var[ 2 ];
-				}
-			}
-			else {
-				$blog_id = $var;
-			}
-
-			$output = get_home_url( $blog_id, $path, $scheme );
-		}
-		elseif ( 'admin-url' == $type ) {
-			$blog_id = $scheme = null;
-			$path = '';
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$blog_id = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$path = $var[ 1 ];
-				}
-				elseif ( isset( $var[ 2 ] ) ) {
-					$scheme = $var[ 2 ];
-				}
-			}
-			else {
-				$blog_id = $var;
-			}
-
-			$output = get_admin_url( $blog_id, $path, $scheme );
-		}
-		elseif ( 'includes-url' == $type ) {
-			$output = includes_url( $var );
-		}
-		elseif ( 'content-url' == $type ) {
-			$output = content_url( $var );
-		}
-		elseif ( 'plugins-url' == $type ) {
-			$path = $plugin = '';
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$path = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$plugin = $var[ 1 ];
-				}
-			}
-			else {
-				$path = $var;
-			}
-
-			$output = plugins_url( $path, $plugin );
-		}
-		elseif ( 'network-site-url' == $type ) {
-			$path = '';
-			$scheme = null;
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$path = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$scheme = $var[ 1 ];
-				}
-			}
-			else {
-				$path = $var;
-			}
-
-			$output = network_site_url( $path, $scheme );
-		}
-		elseif ( 'network-home-url' == $type ) {
-			$path = '';
-			$scheme = null;
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$path = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$scheme = $var[ 1 ];
-				}
-			}
-			else {
-				$path = $var;
-			}
-
-			$output = network_home_url( $path, $scheme );
-		}
-		elseif ( 'network-admin-url' == $type ) {
-			$path = '';
-			$scheme = null;
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$path = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$scheme = $var[ 1 ];
-				}
-			}
-			else {
-				$path = $var;
-			}
-
-			$output = network_admin_url( $path, $scheme );
-		}
-		elseif ( 'user-admin-url' == $type ) {
-			$path = '';
-			$scheme = null;
-
-			if ( is_array( $var ) ) {
-				if ( isset( $var[ 0 ] ) ) {
-					$path = $var[ 0 ];
-				}
-				elseif ( isset( $var[ 1 ] ) ) {
-					$scheme = $var[ 1 ];
-				}
-			}
-			else {
-				$path = $var;
-			}
-
-			$output = user_admin_url( $path, $scheme );
-		}
-		elseif ( 'prefix' == $type ) {
-			global $wpdb;
-
-			$output = $wpdb->prefix;
-		}
-		elseif ( 'server' == $type && !pods_strict() ) {
-			if ( isset( $_SERVER[ $var ] ) ) {
-				$output = pods_unslash( $_SERVER[ $var ] );
-			}
-			elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) ) {
-				$output = pods_unslash( $_SERVER[ strtoupper( $var ) ] );
-			}
-		}
-		elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) ) {
-			$output = $_SESSION[ $var ];
-		}
-		elseif ( in_array( $type, array( 'global', 'globals' ) ) && isset( $GLOBALS[ $var ] ) ) {
-			$output = $GLOBALS[ $var ];
-		}
-		elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) ) {
-			$output = pods_unslash( $_COOKIE[ $var ] );
-		}
-		elseif ( 'constant' == $type && defined( $var ) ) {
-			$output = constant( $var );
-		}
-		elseif ( 'user' == $type && is_user_logged_in() ) {
-			$user = get_userdata( get_current_user_id() );
-
-			if ( isset( $user->{$var} ) ) {
-				$value = $user->{$var};
-			}
-			elseif ( 'role' == $var ) {
-				$value = '';
-
-				if ( !empty( $user->roles ) ) {
-					$value = array_shift( $user->roles );
-				}
-			}
-			else {
-				$value = get_user_meta( $user->ID, $var );
-			}
-
-			if ( is_array( $value ) && !empty( $value ) ) {
-				$output = $value;
-			}
-			elseif ( !is_array( $value ) && 0 < strlen( $value ) ) {
-				$output = $value;
-			}
-		}
-		elseif ( 'option' == $type ) {
-			$output = get_option( $var, $default );
-		}
-		elseif ( 'site-option' == $type ) {
-			$output = get_site_option( $var, $default );
-		}
-		elseif ( 'transient' == $type ) {
-			$output = get_transient( $var );
-		}
-		elseif ( 'site-transient' == $type ) {
-			$output = get_site_transient( $var );
-		}
-		elseif ( 'cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
-			$group = 'default';
-			$force = false;
-
-			if ( !is_array( $var ) ) {
-				$var = explode( '|', $var );
-			}
-
-			if ( isset( $var[ 0 ] ) ) {
-				if ( isset( $var[ 1 ] ) ) {
-					$group = $var[ 1 ];
+				if ( 'first' == $var ) {
+					$var = 0;
+				} elseif ( 'last' == $var ) {
+					$var = - 1;
 				}
 
-				if ( isset( $var[ 2 ] ) ) {
-					$force = $var[ 2 ];
+				if ( is_numeric( $var ) ) {
+					$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
+				}
+				break;
+			case 'url-relative':
+				$url_raw = pods_current_url();
+				$prefix  = get_site_url();
+
+				if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix ) {
+					$url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
 				}
 
-				$var = $var[ 0 ];
+				$url = parse_url( $url_raw );
+				$uri = trim( $url[ 'path' ], '/' );
+				$uri = array_filter( explode( '/', $uri ) );
 
-				$output = wp_cache_get( $var, $group, $force );
-			}
-		}
-		elseif ( 'pods-transient' == $type ) {
-			$callback = null;
-
-			if ( !is_array( $var ) ) {
-				$var = explode( '|', $var );
-			}
-
-			if ( isset( $var[ 0 ] ) ) {
-				if ( isset( $var[ 1 ] ) ) {
-					$callback = $var[ 1 ];
+				if ( 'first' == $var ) {
+					$var = 0;
+				} elseif ( 'last' == $var ) {
+					$var = - 1;
 				}
 
-				$var = $var[ 0 ];
+				if ( is_numeric( $var ) ) {
+					$output = ( $var < 0 ) ? pods_v( count( $uri ) + $var, $uri ) : pods_v( $var, $uri );
+				}
+				break;
+			case 'template-url':
+				$output = get_template_directory_uri();
+				break;
+			case 'stylesheet-url':
+				$output = get_stylesheet_directory_uri();
+				break;
+			case 'site-url':
+				$blog_id = $scheme = null;
+				$path    = '';
 
-				$output = pods_transient_get( $var, $callback );
-			}
-		}
-		elseif ( 'pods-site-transient' == $type ) {
-			$callback = null;
-
-			if ( !is_array( $var ) ) {
-				$var = explode( '|', $var );
-			}
-
-			if ( isset( $var[ 0 ] ) ) {
-				if ( isset( $var[ 1 ] ) ) {
-					$callback = $var[ 1 ];
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$blog_id = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$path = $var[ 1 ];
+					} elseif ( isset( $var[ 2 ] ) ) {
+						$scheme = $var[ 2 ];
+					}
+				} else {
+					$blog_id = $var;
 				}
 
-				$var = $var[ 0 ];
+				$output = get_site_url( $blog_id, $path, $scheme );
+				break;
+			case 'home-url':
+				$blog_id = $scheme = null;
+				$path    = '';
 
-				$output = pods_site_transient_get( $var, $callback );
-			}
-		}
-		elseif ( 'pods-cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
-			$group = 'default';
-			$callback = null;
-
-			if ( !is_array( $var ) ) {
-				$var = explode( '|', $var );
-			}
-
-			if ( isset( $var[ 0 ] ) ) {
-				if ( isset( $var[ 1 ] ) ) {
-					$group = $var[ 1 ];
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$blog_id = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$path = $var[ 1 ];
+					} elseif ( isset( $var[ 2 ] ) ) {
+						$scheme = $var[ 2 ];
+					}
+				} else {
+					$blog_id = $var;
 				}
 
-				if ( isset( $var[ 2 ] ) ) {
-					$callback = $var[ 2 ];
+				$output = get_home_url( $blog_id, $path, $scheme );
+				break;
+			case 'admin-url':
+				$blog_id = $scheme = null;
+				$path    = '';
+
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$blog_id = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$path = $var[ 1 ];
+					} elseif ( isset( $var[ 2 ] ) ) {
+						$scheme = $var[ 2 ];
+					}
+				} else {
+					$blog_id = $var;
 				}
 
-				$var = $var[ 0 ];
+				$output = get_admin_url( $blog_id, $path, $scheme );
+				break;
+			case 'includes-url':
+				$output = includes_url( $var );
+				break;
+			case 'content-url':
+				$output = content_url( $var );
+				break;
+			case 'plugins-url':
+				$path = $plugin = '';
 
-				$output = pods_cache_get( $var, $group, $callback );
-			}
-		}
-		elseif ( 'pods-option-cache' == $type ) {
-			$group = 'default';
-			$callback = null;
-
-			if ( !is_array( $var ) ) {
-				$var = explode( '|', $var );
-			}
-
-			if ( isset( $var[ 0 ] ) ) {
-				if ( isset( $var[ 1 ] ) ) {
-					$group = $var[ 1 ];
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$path = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$plugin = $var[ 1 ];
+					}
+				} else {
+					$path = $var;
 				}
 
-				if ( isset( $var[ 2 ] ) ) {
-					$callback = $var[ 2 ];
+				$output = plugins_url( $path, $plugin );
+				break;
+			case 'network-site-url':
+				$path   = '';
+				$scheme = null;
+
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$path = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$scheme = $var[ 1 ];
+					}
+				} else {
+					$path = $var;
 				}
 
-				$var = $var[ 0 ];
+				$output = network_site_url( $path, $scheme );
+				break;
+			case 'network-home-url':
+				$path   = '';
+				$scheme = null;
 
-				$output = pods_option_cache_get( $var, $group, $callback );
-			}
-		}
-		elseif ( 'date' == $type ) {
-			$var = explode( '|', $var );
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$path = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$scheme = $var[ 1 ];
+					}
+				} else {
+					$path = $var;
+				}
 
-			if ( !empty( $var ) ) {
-				$output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
-			}
-		}
-		elseif ( in_array( $type, array( 'pods', 'pods_display' ) ) ) {
-			/**
-			 * @var $pods Pods
-			 */
-			global $pods;
+				$output = network_home_url( $path, $scheme );
+				break;
+			case 'network-admin-url':
+				$path   = '';
+				$scheme = null;
 
-			if ( is_object( $pods ) && 'Pods' == get_class( $pods ) ) {
-				if ( 'pods' == $type ) {
-					$output = $pods->field( $var );
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$path = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$scheme = $var[ 1 ];
+					}
+				} else {
+					$path = $var;
+				}
 
-					if ( is_array( $output ) ) {
-						$options = array(
-							'field' => $var,
-							'fields' => $pods->fields
-						);
+				$output = network_admin_url( $path, $scheme );
+				break;
+			case 'user-admin-url':
+				$path   = '';
+				$scheme = null;
 
-						$output = pods_serial_comma( $output, $options );
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 0 ] ) ) {
+						$path = $var[ 0 ];
+					} elseif ( isset( $var[ 1 ] ) ) {
+						$scheme = $var[ 1 ];
+					}
+				} else {
+					$path = $var;
+				}
+
+				$output = user_admin_url( $path, $scheme );
+				break;
+			case 'prefix':
+				global $wpdb;
+
+				$output = $wpdb->prefix;
+				break;
+			case 'server':
+				if ( ! pods_strict() ) {
+					if ( isset( $_SERVER[ $var ] ) ) {
+						$output = pods_unslash( $_SERVER[ $var ] );
+					} elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) ) {
+						$output = pods_unslash( $_SERVER[ strtoupper( $var ) ] );
 					}
 				}
-				elseif ( 'pods_display' == $type ) {
-					$output = $pods->display( $var );
+				break;
+			case 'session':
+				if ( isset( $_SESSION[ $var ] ) )
+					$output = $_SESSION[ $var ];
+				break;
+			case 'global':
+			case 'globals':
+				if ( isset( $GLOBALS[ $var ] ) )
+					$output = $GLOBALS[ $var ];
+				break;
+			case 'cookie':
+				if ( isset( $_COOKIE[ $var ] ) )
+					$output = pods_unslash( $_COOKIE[ $var ] );
+				break;
+			case 'constant':
+				if ( defined( $var ) )
+					$output = constant( $var );
+				break;
+			case 'user':
+				if ( is_user_logged_in() ) {
+					$user = get_userdata( get_current_user_id() );
+
+					if ( isset( $user->{$var} ) ) {
+						$value = $user->{$var};
+					} elseif ( 'role' == $var ) {
+						$value = '';
+
+						if ( ! empty( $user->roles ) ) {
+							$value = array_shift( $user->roles );
+						}
+					} else {
+						$value = get_user_meta( $user->ID, $var );
+					}
+
+					if ( is_array( $value ) && ! empty( $value ) ) {
+						$output = $value;
+					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
+						$output = $value;
+					}
 				}
-			}
-		}
-		else {
-			$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
+				break;
+			case 'option':
+				$output = get_option( $var, $default );
+				break;
+			case 'site-option':
+				$output = get_site_option( $var, $default );
+				break;
+			case 'transient':
+				$output = get_transient( $var );
+				break;
+			case 'site-transient':
+				$output = get_site_transient( $var );
+				break;
+			case 'cache':
+				if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+					$group = 'default';
+					$force = false;
+
+					if ( ! is_array( $var ) ) {
+						$var = explode( '|', $var );
+					}
+
+					if ( isset( $var[ 0 ] ) ) {
+						if ( isset( $var[ 1 ] ) ) {
+							$group = $var[ 1 ];
+						}
+
+						if ( isset( $var[ 2 ] ) ) {
+							$force = $var[ 2 ];
+						}
+
+						$var = $var[ 0 ];
+
+						$output = wp_cache_get( $var, $group, $force );
+					}
+				}
+				break;
+			case 'pods-transient':
+				$callback = null;
+
+				if ( ! is_array( $var ) ) {
+					$var = explode( '|', $var );
+				}
+
+				if ( isset( $var[ 0 ] ) ) {
+					if ( isset( $var[ 1 ] ) ) {
+						$callback = $var[ 1 ];
+					}
+
+					$var = $var[ 0 ];
+
+					$output = pods_transient_get( $var, $callback );
+				}
+				break;
+			case 'pods-site-transient':
+				$callback = null;
+
+				if ( ! is_array( $var ) ) {
+					$var = explode( '|', $var );
+				}
+
+				if ( isset( $var[ 0 ] ) ) {
+					if ( isset( $var[ 1 ] ) ) {
+						$callback = $var[ 1 ];
+					}
+
+					$var = $var[ 0 ];
+
+					$output = pods_site_transient_get( $var, $callback );
+				}
+				break;
+			case 'pods-cache':
+				if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+					$group    = 'default';
+					$callback = null;
+
+					if ( ! is_array( $var ) ) {
+						$var = explode( '|', $var );
+					}
+
+					if ( isset( $var[ 0 ] ) ) {
+						if ( isset( $var[ 1 ] ) ) {
+							$group = $var[ 1 ];
+						}
+
+						if ( isset( $var[ 2 ] ) ) {
+							$callback = $var[ 2 ];
+						}
+
+						$var = $var[ 0 ];
+
+						$output = pods_cache_get( $var, $group, $callback );
+					}
+				}
+				break;
+			case 'pods-option-cache':
+				$group    = 'default';
+				$callback = null;
+
+				if ( ! is_array( $var ) ) {
+					$var = explode( '|', $var );
+				}
+
+				if ( isset( $var[ 0 ] ) ) {
+					if ( isset( $var[ 1 ] ) ) {
+						$group = $var[ 1 ];
+					}
+
+					if ( isset( $var[ 2 ] ) ) {
+						$callback = $var[ 2 ];
+					}
+
+					$var = $var[ 0 ];
+
+					$output = pods_option_cache_get( $var, $group, $callback );
+				}
+				break;
+			case 'date':
+				$var = explode( '|', $var );
+
+				if ( ! empty( $var ) ) {
+					$output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
+				}
+				break;
+			case 'pods':
+			case 'pods_display':
+				/**
+				 * @var $pods Pods
+				 */
+				global $pods;
+
+				if ( is_object( $pods ) && 'Pods' == get_class( $pods ) ) {
+					if ( 'pods' === $type ) {
+						$output = $pods->field( $var );
+
+						if ( is_array( $output ) ) {
+							$options = array(
+								'field'  => $var,
+								'fields' => $pods->fields
+							);
+
+							$output = pods_serial_comma( $output, $options );
+						}
+					} elseif ( 'pods_display' === $type ) {
+						$output = $pods->display( $var );
+					}
+				}
+				break;
+			default:
+				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
 		}
 	}
 
@@ -796,12 +796,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 	if ( null !== $params->allowed ) {
 		if ( is_array( $params->allowed ) ) {
 			// Not in array and is not the same array
-			if ( !in_array( $output, $params->allowed ) && ( !is_array( $output ) || $output !== $params->allowed ) ) {
+			if ( ! in_array( $output, $params->allowed ) && ( ! is_array( $output ) || $output !== $params->allowed ) ) {
 				$output = $default;
 			}
-		}
-		// Value doesn't match
-		elseif ( $output !== $params->allowed ) {
+		} elseif ( $output !== $params->allowed ) {
+			// Value doesn't match
 			$output = $default;
 		}
 	}
@@ -825,7 +824,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
  */
 function pods_v_sanitized( $var = null, $type = 'get', $default = null, $strict = false, $params = array() ) {
 
-	$output = pods_v( $var, $type, $default, $params );
+	$output = pods_v( $var, $type, $default, $strict, $params );
 
 	$output = pods_sanitize( $output, $params );
 
@@ -1604,10 +1603,9 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
     if ( !empty( $params->fields ) && is_array( $params->fields ) && isset( $params->fields[ $params->field ] ) ) {
         $params->field = $params->fields[ $params->field ];
 
-        $tableless_field_types = PodsForm::tableless_field_types();
-        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+	    $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-        if ( !empty( $params->field ) && is_array( $params->field ) && in_array( $params->field[ 'type' ], $tableless_field_types ) ) {
+        if ( !empty( $params->field ) && is_array( $params->field ) && in_array( $params->field[ 'type' ], PodsForm::tableless_field_types() ) ) {
             if ( in_array( $params->field[ 'type' ], PodsForm::file_field_types() ) ) {
                 if ( null === $params->field_index )
                     $params->field_index = 'guid';

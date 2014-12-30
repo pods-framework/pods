@@ -173,7 +173,7 @@ class PodsMeta {
 
 			if ( $has_fields ) {
 				// Handle Term Editor
-				add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
 				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 
 				if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
@@ -401,11 +401,7 @@ class PodsMeta {
 
     public function integrations () {
         // Codepress Admin Columns 2.x
-        add_filter( 'cac/meta_keys/storage_key=post', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=link', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=media', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=user', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
-        add_filter( 'cac/meta_keys/storage_key=comment', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
+		add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
         add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
         add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
 
@@ -416,10 +412,10 @@ class PodsMeta {
     }
 
     public function cpac_meta_keys_get ( $meta_fields, $obj ) {
-        return $this->cpac_meta_keys( $meta_fields, $obj->key, $obj->type );
+        return $this->cpac_meta_keys( $meta_fields, $obj->key );
     }
 
-    public function cpac_meta_keys ( $meta_fields, $cac_key, $cac_type = null ) {
+    public function cpac_meta_keys ( $meta_fields, $cac_key ) {
         $object_type = 'post_type';
         $object = $cac_key;
 
@@ -671,8 +667,8 @@ class PodsMeta {
                 add_action( $pod[ 'object' ] . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
             }
 
-            if ( !has_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
-                add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+            if ( !has_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
+                add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
                 add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
             }
         }
@@ -754,10 +750,11 @@ class PodsMeta {
     /**
      * @param $type
      * @param $name
+     * @param $default_fields
      *
      * @return array
      */
-    public function groups_get ( $type, $name ) {
+    public function groups_get ( $type, $name, $default_fields = null ) {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
@@ -778,8 +775,10 @@ class PodsMeta {
             $object = self::$user;
         elseif ( 'comment' == $type )
             $object = self::$comment;
+        elseif ( 'pod' == $type )
+            $object = self::$advanced_content_types;
 
-        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
+        if ( !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
             if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
@@ -789,6 +788,10 @@ class PodsMeta {
 
             if ( !empty( $pod ) )
                 $fields = $pod[ 'fields' ];
+        }
+
+        if ( null !== $default_fields ) {
+            $fields = $default_fields;
         }
 
         $defaults = array(
@@ -848,6 +851,7 @@ class PodsMeta {
             $post_type = $post->post_type;
 
         $groups = $this->groups_get( 'post_type', $post_type );
+        $pods_field_found = false;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
@@ -866,6 +870,7 @@ class PodsMeta {
                 $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;
 
             if ( $field_found ) {
+                $pods_field_found = true;
                 add_meta_box(
                     'pods-meta-' . sanitize_title( $group[ 'label' ] ),
                     $group[ 'label' ],
@@ -878,6 +883,20 @@ class PodsMeta {
 
             }
         }
+
+		if ( $pods_field_found ) {
+			// Only add the classes to forms that actually have pods fields
+			add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+		}
+    }
+
+    /**
+     *
+     * Called by 'post_edit_form_tag' action to include the classes in the <form> tag
+     *
+     */
+    public function add_class_submittable () {
+        echo ' class="pods-submittable pods-form"';
     }
 
     /**
@@ -947,7 +966,7 @@ class PodsMeta {
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
-            <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
+            <tr class="form-field pods-field pods-field-input <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php
@@ -955,8 +974,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
+			<div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+			</div>
                 </td>
             </tr>
         <?php
@@ -978,6 +999,8 @@ class PodsMeta {
 
     <script type="text/javascript">
         jQuery( function ( $ ) {
+            $( document ).Pods( 'validate' );
+            $( document ).Pods( 'submit_meta' );
             $( document ).Pods( 'dependency', true );
         } );
     </script>
@@ -2442,7 +2465,6 @@ class PodsMeta {
             return false;
 
         $reserved_post_types = array(
-			'nav_menu_item',
 			'revision'
         );
 

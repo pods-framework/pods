@@ -118,6 +118,8 @@ class Pod
 {
     private $new;
 
+	public static $deprecated_notice = true;
+
     public $body_classes;
 
     public $ui = array();
@@ -129,6 +131,10 @@ class Pod
     public $meta_extra = '';
 
     function __construct ($type = null, $id = null) {
+	    if ( self::$deprecated_notice ) {
+		    pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
+	    }
+
         pods_deprecated('Pod (class)', '2.0', 'pods (function)');
 
         $this->new = pods( $type, $id );
@@ -143,24 +149,32 @@ class Pod
         $name = (string) $name;
 
         if ( 'data' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
+	        }
 
             $var = $this->new->row();
         }
         elseif ( '_data' == $name )
             $var = $this->new->data;
         elseif ( 'total' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
+	        }
 
             $var = $this->new->total();
         }
         elseif ( 'total_rows' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
+	        }
 
             $var = $this->new->total_found();
         }
         elseif ( 'zebra' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
+	        }
 
             $var = $this->new->zebra();
         }
@@ -222,8 +236,12 @@ class PodAPI
 {
     private $new;
 
+	public static $deprecated_notice = true;
+
     function __construct ( $type = null, $format = null ) {
-        pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
+	    if ( self::$deprecated_notice ) {
+		    pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
+	    }
 
         $this->new = pods_api( $type, $format );
     }

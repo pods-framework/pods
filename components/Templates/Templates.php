@@ -15,22 +15,15 @@
  * @subpackage Templates
  */
 
-if ( class_exists( 'Pods_Templates' ) ){
+// Pull in the functions
+require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
+require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );
 
-	// Pull in the functions
-	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-view_template.php' );
-	require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.php' );
+// Pull in the Frontier Template System
+require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
 
-	// dont run if the Frontier Template Editor is already running.
-	if ( class_exists( 'Pods_Frontier_Template_Editor' ) || class_exists( 'Pods_Templates_Frontier' ) )
-		return;
+Pods_Templates_Frontier::get_instance();
 
-	// Pull in the Frontier Template System
-	require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
-
-	Pods_Templates_Frontier::get_instance();
-	return;
-}
 
 class Pods_Templates extends PodsComponent {
 

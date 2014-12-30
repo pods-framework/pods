@@ -4,6 +4,11 @@
  */
 class PodsUI {
 
+	/**
+	 * @var null Nonce for security
+	 */
+	private $_nonce = null;
+
     // internal
     /**
      * @var bool|PodsData
@@ -427,6 +432,9 @@ class PodsUI {
      * @since 2.0
      */
     public function __construct ( $options, $deprecated = false ) {
+
+		$this->_nonce = pods_v( '_wpnonce', 'request' );
+
         $object = null;
 
         if ( is_object( $options ) ) {
@@ -1317,7 +1325,7 @@ class PodsUI {
                 $this->save();
             $this->edit( ( 'duplicate' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) ? true : false );
         }
-        elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) ) {
+        elseif ( 'delete' == $this->action && !in_array( $this->action, $this->actions_disabled ) && false !== wp_verify_nonce( $this->_nonce, 'pods-ui-action-delete' ) ) {
             $this->delete( $this->id );
             $this->manage();
         }
@@ -1354,7 +1362,7 @@ class PodsUI {
 					$row = $this->get_row();
 				}
 
-				if ( $this->restricted( $this->action, $row ) ) {
+				if ( $this->restricted( $this->action, $row ) || ( $more_args && ! empty( $more_args[ 'nonce' ] ) && false === wp_verify_nonce( $this->_nonce, 'pods-ui-action-' . $this->action ) ) ) {
 					return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 				}
 				elseif ( $more_args && false !== $this->callback_action( true, $this->action, $this->id, $row ) ) {
@@ -1639,6 +1647,7 @@ class PodsUI {
 		}
 
 		$pod =& $this->pod;
+		$obj =& $this;
 
 		$fields = array();
 
@@ -2045,12 +2054,16 @@ class PodsUI {
     }
 
     /**
-     * @param bool $full Whether to get ALL data or use pagination
+     * Get find() params based on current UI action
      *
-     * @return bool
+     * @param null|array $params
+     * @param null|string $action
      */
-    public function get_data ( $params = null ) {
-        $action = $this->action;
+    public function get_params( $params = null, $action = null ) {
+
+        if ( null === $action ) {
+            $action = $this->action;
+        }
 
         $defaults = array(
             'full' => false,
@@ -2066,6 +2079,8 @@ class PodsUI {
 
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';
+
+        $params_override = false;
 
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
@@ -2091,13 +2106,17 @@ class PodsUI {
                 $this->orderby = (array) $this->orderby;
 
                 foreach ( $this->orderby as $order ) {
-                    if ( false === strpos( ' ', $order ) && !isset( $orderby[ $order ] ) )
+                    if ( false !== strpos( $order, ' ' ) ) {
+                        $orderby[] = $order;
+                    }
+                    elseif ( !isset( $orderby[ $order ] ) ) {
                         $orderby[ $order ] = $this->orderby_dir;
+                    }
                 }
             }
 
             $find_params = array(
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
+                'where' => pods_v( $action, $this->where, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'pagination' => true,
@@ -2110,18 +2129,74 @@ class PodsUI {
                 'sql' => $sql
             );
 
-            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+            $params_override = true;
+        }
+        else {
+            $orderby = '';
 
-            if ( $params->full )
-                $find_params[ 'limit' ] = -1;
+            if ( !empty( $this->orderby ) ) {
+                $orderby = '`' . $this->orderby . '` '
+                       . ( false === strpos( $this->orderby, ' ' ) ? strtoupper( $this->orderby_dir ) : '' );
+            }
 
+            $find_params = array(
+                'table' => $this->sql[ 'table' ],
+                'id' => $this->sql[ 'field_id' ],
+                'index' => $this->sql[ 'field_index' ],
+                'where' => pods_v( $action, $this->where, null, true ),
+                'orderby' => $orderby,
+                'page' => (int) $this->page,
+                'pagination' => true,
+                'limit' => (int) $this->limit,
+                'search' => $this->searchable,
+                'search_query' => $this->search,
+                'fields' => $this->fields[ 'search' ]
+            );
+        }
+
+        if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
+            $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
+
+        if ( $params_override ) {
             $find_params = array_merge( $find_params, (array) $this->params );
+        }
 
-            // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                pods_debug( $find_params );
+        if ( $params->full )
+            $find_params[ 'limit' ] = -1;
 
+        // Debug purposes
+        if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
+            pods_debug( $find_params );
+
+        return $find_params;
+    }
+
+    /**
+     * @param bool $full Whether to get ALL data or use pagination
+     *
+     * @return bool
+     */
+    public function get_data ( $params = null ) {
+        $action = $this->action;
+
+        $defaults = array(
+            'full' => false,
+            'flatten' => true,
+            'fields' => null,
+            'type' => ''
+        );
+
+        if ( !empty( $params ) && is_array( $params ) )
+            $params = (object) array_merge( $defaults, $params );
+        else
+            $params = (object) $defaults;
+
+        if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
+            $action = 'manage';
+
+        $find_params = $this->get_params( $params );
+
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $this->pod->find( $find_params );
 
             if ( !$params->full ) {
@@ -2129,8 +2204,9 @@ class PodsUI {
 
                 $this->data = $data;
 
-                if ( !empty( $this->data ) )
+                if ( !empty( $this->data ) ) {
                     $this->data_keys = array_keys( $this->data );
+                }
 
                 $this->total = $this->pod->total();
                 $this->total_found = $this->pod->total_found();
@@ -2163,100 +2239,6 @@ class PodsUI {
 
             if ( empty( $this->sql[ 'table' ] ) )
                 return $this->data;
-
-            $orderby = array();
-
-            if ( !empty( $this->orderby ) ) {
-                $this->orderby = (array) $this->orderby;
-
-                foreach ( $this->orderby as $k => $order ) {
-                    if ( false === strpos( $order, ' ' ) ) {
-						if ( in_array( strtoupper( $order ), array( 'ASC', 'DESC' ) ) ) {
-							$orderby[ $k ] = $order;
-						}
-						elseif ( !isset( $orderby[ $order ] ) ) {
-                        	$orderby[ $order ] = $this->orderby_dir;
-						}
-					}
-					else {
-						$orderby[] = $order;
-					}
-                }
-            }
-
-			// Allow orderby array ( 'field' => 'asc|desc' )
-			if ( !empty( $orderby ) && is_array( $orderby ) ) {
-				foreach ( $orderby as $k => &$orderby_value ) {
-					if ( !is_numeric( $k ) ) {
-						$order = 'ASC';
-
-						if ( 'DESC' == strtoupper( $orderby_value ) )
-							$order = 'DESC';
-
-						if ( false !== strpos( $k, '.' ) ) {
-							$key = $k;
-
-							if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) )
-								$key = '`' . str_replace( '.', '`.`', $key ) . '`';
-						}
-						else {
-							$key = "`t`.`{$k}`";
-						}
-
-						$orderby_value = $key;
-
-						if ( false === strpos( $orderby_value, ' ' ) )
-							$orderby_value .= ' ' . $order;
-					}
-				}
-			}
-
-			// Add prefix to $orderby if needed
-			if ( !empty( $orderby ) ) {
-				if ( !is_array( $orderby ) )
-					$orderby = array( $orderby );
-
-				foreach ( $orderby as &$prefix_orderby ) {
-					if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-						if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
-							$k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
-							$dir = 'DESC';
-						}
-						else {
-							$k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-							$dir = 'ASC';
-						}
-
-						$key = "`t`.`{$k}`";
-
-						$prefix_orderby = "{$key} {$dir}";
-					}
-				}
-			}
-
-            $find_params = array(
-                'table' => $this->sql[ 'table' ],
-                'id' => $this->sql[ 'field_id' ],
-                'index' => $this->sql[ 'field_index' ],
-                'where' => pods_var_raw( $action, $this->where, null, null, true ),
-                'orderby' => $orderby,
-                'page' => (int) $this->page,
-                'pagination' => true,
-                'limit' => (int) $this->limit,
-                'search' => $this->searchable,
-                'search_query' => $this->search,
-                'fields' => $this->fields[ 'search' ]
-            );
-
-            if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $find_params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
-
-            if ( $params->full )
-                $find_params[ 'limit' ] = -1;
-
-            // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                pods_debug( $find_params );
 
             $this->pods_data->select( $find_params );
 
@@ -2646,6 +2628,8 @@ class PodsUI {
                     if ( !empty( $this->data ) && !empty( $this->actions_bulk ) ) {
                 ?>
                     <div class="alignleft actions">
+	                    <?php wp_nonce_field( 'pods-ui-action-bulk' ); ?>
+
                         <select name="action_bulk<?php echo $this->num; ?>">
                             <option value="-1" selected="selected"><?php _e( 'Bulk Actions', 'pods' ); ?></option>
 
@@ -2688,17 +2672,6 @@ class PodsUI {
                     </form>
 				<?php
                     }
-                    /*
-                    elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && is_developer() ) {
-        ?>
-                    <div class="alignleft actions">
-                        <select name="action">
-                            <option value="-1" selected="selected"><?php _e('Bulk Actions', 'pods'); ?></option>
-                            <option value="delete"><?php _e('Delete', 'pods'); ?></option>
-                        </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
-                    </div>
-        <?php
-                    }*/
                     elseif ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) {
                         ?>
                         <div class="alignleft actions">
@@ -2706,7 +2679,7 @@ class PodsUI {
                             <?php
                             foreach ( $this->export[ 'formats' ] as $format => $separator ) {
                                 ?>
-                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format ), self::$allowed, $this->exclusion() ); ?>';" />
+                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ); ?>';" />
                                 <?php
                             }
                             ?>
@@ -2962,6 +2935,7 @@ class PodsUI {
                 jQuery( 'form#posts-filter [name="pg"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action_bulk<?php echo $this->num; ?>"]' ).prop( 'disabled', true );
+	            jQuery( 'form#posts-filter [name="_wpnonce"]' ).prop( 'disabled', true );
 
                 jQuery( 'form#posts-filter' ).submit();
 
@@ -3544,10 +3518,11 @@ class PodsUI {
                                         }
 
                                         if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
-                                            $link = pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+                                            $link = pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ], '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), self::$allowed, $this->exclusion() );
 
-                                            if ( !empty( $this->action_links[ 'delete' ] ) )
-                                                $link = $this->do_template( $this->action_links[ 'delete' ], $row );
+                                            if ( !empty( $this->action_links[ 'delete' ] ) ) {
+	                                            $link = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links[ 'delete' ], $row ) );
+                                            }
 
                                             $actions[ 'delete' ] = '<span class="delete"><a href="' . $link . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
                                         }
@@ -3572,7 +3547,8 @@ class PodsUI {
                                                         if ( !isset( $custom_data[ 'link' ] ) ) {
                                                             $vars = array(
                                                                 'action' => $custom_action,
-                                                                'id' => $row[ $this->sql[ 'field_id' ] ]
+                                                                'id' => $row[ $this->sql[ 'field_id' ] ],
+                                                                '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action )
                                                             );
 
                                                             if ( 'toggle' == $custom_action ) {
@@ -3582,8 +3558,9 @@ class PodsUI {
 
                                                             $custom_data[ 'link' ] = pods_var_update( $vars, self::$allowed, $this->exclusion() );
 
-                                                            if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) )
-                                                                $custom_data[ 'link' ] = $this->do_template( $this->action_links[ $custom_action ], $row );
+                                                            if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) ) {
+	                                                            $custom_data[ 'link' ] = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
+                                                            }
                                                         }
 
                                                         $confirm = '';

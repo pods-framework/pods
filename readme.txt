@@ -158,6 +158,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * More unit tests.
 * Upgraded Code Mirror library
 * Upgraded qTip library
+* Fixed: Added nonces for multiple actions in the admin area to avoid accidental / unwanted results
 * Fixed: Issue causing issues in admin with CodePress admin columns.
 * Fixed: Issue preventing Pods Template editor from working with certain xcache configurations.
 * Removed: pods_deep_copy()

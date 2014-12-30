@@ -39,3 +39,9 @@ node_modules/*
 
 # WP Tests dir
 wp-tests
+
+# Composer
+vendor/
+
+# Local PHPUnit config
+phpunit.xml

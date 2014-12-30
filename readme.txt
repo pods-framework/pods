@@ -153,7 +153,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * And more in progress! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods/dev
 
 == Changelog ==
-= 2.5 - October, 13, 1982 =
+= 2.5 - December 30, 2015 =
 * Major performance enhancements.
 * More unit tests.
 * Upgraded Code Mirror library

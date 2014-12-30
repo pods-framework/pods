@@ -750,10 +750,11 @@ class PodsMeta {
     /**
      * @param $type
      * @param $name
+     * @param $default_fields
      *
      * @return array
      */
-    public function groups_get ( $type, $name ) {
+    public function groups_get ( $type, $name, $default_fields = null ) {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
@@ -774,8 +775,10 @@ class PodsMeta {
             $object = self::$user;
         elseif ( 'comment' == $type )
             $object = self::$comment;
+        elseif ( 'pod' == $type )
+            $object = self::$advanced_content_types;
 
-        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
+        if ( !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
             if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
@@ -785,6 +788,10 @@ class PodsMeta {
 
             if ( !empty( $pod ) )
                 $fields = $pod[ 'fields' ];
+        }
+
+        if ( null !== $default_fields ) {
+            $fields = $default_fields;
         }
 
         $defaults = array(
@@ -844,6 +851,7 @@ class PodsMeta {
             $post_type = $post->post_type;
 
         $groups = $this->groups_get( 'post_type', $post_type );
+        $pods_field_found = false;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
@@ -862,6 +870,7 @@ class PodsMeta {
                 $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;
 
             if ( $field_found ) {
+                $pods_field_found = true;
                 add_meta_box(
                     'pods-meta-' . sanitize_title( $group[ 'label' ] ),
                     $group[ 'label' ],
@@ -874,10 +883,20 @@ class PodsMeta {
 
             }
         }
-	if ( $field_found ) {
-		// Only add the classes to forms that actually have pods fields
-		add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
-	}
+
+		if ( $pods_field_found ) {
+			// Only add the classes to forms that actually have pods fields
+			add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+		}
+    }
+
+    /**
+     *
+     * Called by 'post_edit_form_tag' action to include the classes in the <form> tag
+     *
+     */
+    public function add_class_submittable () {
+        echo ' class="pods-submittable pods-form"';
     }
 
     /**

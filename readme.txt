@@ -146,6 +146,7 @@ Pods really wouldn't be where it is without all of the contributions both financ
 == Translations ==
 
 Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
+ Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
 

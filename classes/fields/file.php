@@ -602,6 +602,8 @@ class PodsField_File extends PodsField {
 
         $api = pods_api();
 
+	    $api->display_errors = false;
+
         if ( !empty( $params->pod ) ) {
             $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
             $field = $api->load_field( array( 'id' => (int) $params->field ) );

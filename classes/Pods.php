@@ -511,7 +511,18 @@ class Pods implements Iterator {
 			}
 		}
 
+		/**
+		 * Modify the field data before returning
+		 *
+		 * @since unknown
+		 *
+		 * @param array $field_data The data for the field.
+		 * @param string|null $field The specific field that data is being return for, if set when method is called or null.
+		 * @param string|null $option Value of option param when method was called. Can be used to get a list of available items from a relationship field.
+		 * @param Pods|object $this The current Pods class instance.
+		 */
 		return apply_filters( 'pods_pods_fields', $field_data, $field, $option, $this );
+
 	}
 
 	/**
@@ -667,6 +678,14 @@ class Pods implements Iterator {
 			$params->output = 'ids';
 		}
 		elseif ( null === $params->output ) {
+			/**
+			 * Override the way realted fields are output
+			 *
+			 * @param string $output How to output related fields. Default is 'arrays'. Options: id|name|object|array|pod
+			 * @param array|object $row Current row being outputted.
+			 * @param array $params Params array passed to field().
+			 * @param object|Pods   $this Current Pods object.
+			 */
 			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->row, $params, $this );
 		}
 
@@ -955,6 +974,19 @@ class Pods implements Iterator {
 				}
 
 				if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
+					/**
+					 * Modify value returned by field() after its retrieved, but before its validated or formatted
+					 *
+					 * Filter name is set dynamically with name of field: "pods_pods_field_{field_name}"
+					 *
+					 * @since unknown
+					 *
+					 * @param array|string|null $value Value retrieved.
+					 * @param array|object $row Current row being outputted.
+					 * @param array $params Params array passed to field().
+					 * @param object|Pods $this Current Pods object.
+					 *
+					 */
 					$v = apply_filters( 'pods_pods_field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $this );
 
 					if ( null !== $v )
@@ -1038,6 +1070,7 @@ class Pods implements Iterator {
 					if ( $simple ) {
 						if ( null === $params->single )
 							$params->single = false;
+
 
 						$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
 					}
@@ -1574,6 +1607,19 @@ class Pods implements Iterator {
 			}
 		}
 
+		/**
+		 * Modify value returned by field() directly before output.
+		 *
+		 * Will not run if value was null
+		 *
+		 * @since unknown
+		 *
+		 * @param array|string|null $value Value to be returned.
+		 * @param array|object $row Current row being outputted.
+		 * @param array $params Params array passed to field().
+		 * @param object|Pods $this Current Pods object.
+		 *
+		 */
 		$value = apply_filters( 'pods_pods_field', $value, $this->row, $params, $this );
 
 		return $value;
@@ -2281,6 +2327,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/fetch/
 	 */
 	public function fetch ( $id = null, $explicit_set = true ) {
+		/**
+		 * Runs directly before an item is fetched by fetch()
+		 *
+		 * @since unknown
+		 *
+		 * @param int|string|null $id Item ID being fetched or null.
+		 * @param object|Pods $this Current Pods object.
+		 */
 		do_action( 'pods_pods_fetch', $id, $this );
 
 		if ( !empty( $id ) )
@@ -2304,6 +2358,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/reset/
 	 */
 	public function reset ( $row = null ) {
+		/**
+		 * Runs directly before the Pods object is reset by reset()
+		 *
+		 * @since unknown
+		 *
+		 * @param int|string|null The ID of the row being reset to or null if being reset to the beginningg.
+		 * @param object|Pods $this Current Pods object.
+		 */
 		do_action( 'pods_pods_reset', $row, $this );
 
 		$this->data->reset( $row );
@@ -2344,6 +2406,14 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/total-found/
 	 */
 	public function total_found () {
+		/**
+		 * Runs directly before the value of total_found() is determined and returned.
+		 *
+		 * @since unknown
+		 *
+		 * @param object|Pods $this Current Pods object.
+		 *
+		 */
 		do_action( 'pods_pods_total_found', $this );
 
 		$this->data->total_found();
@@ -2733,10 +2803,12 @@ class Pods implements Iterator {
 
 		$fetch = false;
 
-		if ( null === $id ) {
+		if ( null === $id || ( $this->row && $id == $this->id() ) ) {
 			$fetch = true;
 
-			$id = $this->id();
+			if ( null === $id ) {
+				$id = $this->id();
+			}
 		}
 
 		$data = (array) $this->do_hook( 'save', $data, $id );
@@ -2761,13 +2833,6 @@ class Pods implements Iterator {
 			$params = array_merge( $params, $default );
 
 		$id = $this->api->save_pod_item( $params );
-
-		if ( isset( $this->row ) ) {
-			// On a change wipe out the saved results or else we will return the wrong results on future lookups
-			$this->row_number = -1;
-			$this->row = null;
-			$fetch = true;
-		}
 
 		if ( 0 < $id && $fetch )
 			$this->fetch( $id, false );
@@ -3130,6 +3195,15 @@ class Pods implements Iterator {
 
 		$output = ob_get_clean();
 
+		/**
+		 * Filter the HTML output of filters()
+		 *
+		 * @since unknown
+		 *
+		 * @param string $output
+		 * @param array $params Params array passed to filters().
+		 * @param object|Pods $this Current Pods object.
+		 */
 		return apply_filters( 'pods_pods_filters', $output, $params, $this );
 	}
 

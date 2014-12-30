@@ -201,6 +201,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added join as an acceptable tag for Pods shortcodes.
 * Fixed pods_error(): reversed logic that was emitting an error instead of throwing an exception when $display_errors is false
 * Fixed issue where user_url was created as a required field when extending users.
+* Add ability to use pods_group_add() in the ACT editor.
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes

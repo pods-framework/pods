@@ -2204,8 +2204,9 @@ class PodsUI {
 
                 $this->data = $data;
 
-                if ( !empty( $this->data ) )
+                if ( !empty( $this->data ) ) {
                     $this->data_keys = array_keys( $this->data );
+                }
 
                 $this->total = $this->pod->total();
                 $this->total_found = $this->pod->total_found();
@@ -2245,7 +2246,7 @@ class PodsUI {
                 $this->data = $this->pods_data->data;
 
                 if ( !empty( $this->data ) ) {
-					$this->data_keys = array_keys( $this->data[ 0 ] );
+					$this->data_keys = array_keys( $this->data );
 				}
 
                 $this->total = $this->pods_data->total();
@@ -2255,7 +2256,7 @@ class PodsUI {
                 $this->data_full = $this->pods_data->data;
 
                 if ( !empty( $this->data_full ) ) {
-					$this->data_keys = array_keys( $this->data_full[ 0 ] );
+					$this->data_keys = array_keys( $this->data_full );
 				}
 
                 return $this->data_full;
@@ -2303,7 +2304,7 @@ class PodsUI {
 
             if ( !empty( $this->data ) ) {
                 if ( empty( $this->data_keys ) || count( $this->data ) != count( $this->data_keys ) ) {
-                    $this->data_keys = array_keys( $this->data[ 0 ] );
+                    $this->data_keys = array_keys( $this->data );
 				}
 
                 if ( count( $this->data ) == $this->total && isset( $this->data_keys[ $counter ] ) && isset( $this->data[ $this->data_keys[ $counter ] ] ) ) {

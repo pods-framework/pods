@@ -24,11 +24,11 @@ foreach ( $groups as $g => $group ) {
             continue;
         }
         elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $group[ 'fields' ], $pod, $pod->id() ) ) {
-            if ( pods_var( 'hidden', $field[ 'options' ], false ) ) {
-                $group[ 'fields' ][ $k ][ 'type' ] = 'hidden';
+            if ( ! empty( $field[ 'options' ][ 'hidden' ] ) || ! empty( $field[ 'hidden' ] ) ) {
+                $field[ 'type' ] = 'hidden';
             }
-            elseif ( pods_var( 'read_only', $field[ 'options' ], false ) ) {
-                $group[ 'fields' ][ $k ][ 'readonly' ] = true;
+            elseif ( ! empty( $field[ 'options' ][ 'read_only' ] ) || ! empty( $field[ 'read_only' ] ) ) {
+                $field[ 'readonly' ] = true;
             }
             else {
                 unset( $group[ 'fields' ][ $k ] );
@@ -37,15 +37,17 @@ foreach ( $groups as $g => $group ) {
             }
 	    }
 	    elseif ( !pods_has_permissions( $field[ 'options' ] ) ) {
-            if ( pods_var( 'hidden', $field[ 'options' ], false ) ) {
-                $group[ 'fields' ][ $k ][ 'type' ] = 'hidden';
+            if ( ! empty( $field[ 'options' ][ 'hidden' ] ) || ! empty( $field[ 'hidden' ] ) ) {
+                $field[ 'type' ] = 'hidden';
             }
-            elseif ( pods_var( 'read_only', $field[ 'options' ], false ) ) {
-                $group[ 'fields' ][ $k ][ 'readonly' ] = true;
+            elseif ( ! empty( $field[ 'options' ][ 'read_only' ] ) || ! empty( $field[ 'read_only' ] ) ) {
+                $field[ 'readonly' ] = true;
             }
 	    }
 
-        if ( !pods_var( 'readonly', $field, false ) ) {
+        $group[ 'fields' ][ $k ] = $field;
+
+        if ( empty( $field[ 'options' ][ 'read_only' ] ) && empty( $field[ 'read_only' ] ) ) {
             $submittable_fields[ $field[ 'name' ]] = $group[ 'fields' ][ $k ];
         }
 
@@ -548,8 +550,9 @@ if ( 0 < $pod->id() ) {
                                 <table class="form-table pods-metabox">
                                     <?php
                                                 foreach ( $group[ 'fields' ] as $field ) {
-                                                    if ( 'hidden' == $field[ 'type' ] || $more === $field[ 'name' ] || !isset( $group_fields[ $field[ 'name' ] ] ) )
-                                                continue;
+                                                    if ( 'hidden' == $field[ 'type' ] || $more === $field[ 'name' ] || ! isset( $group_fields[ $field[ 'name' ] ] ) ) {
+                                                        continue;
+                                                    }
                                     ?>
                                         <tr class="form-field pods-field pods-field-input <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>

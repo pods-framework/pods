@@ -118,8 +118,8 @@ else {
                     'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
                     'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
                     'sslverify' => false, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-                    'requires' => '3.4', // which version of WordPress does your plugin require?
-                    'tested' => '3.6', // which version of WordPress is your plugin tested up to?
+                    'requires' => '3.8', // which version of WordPress does your plugin require?
+                    'tested' => '4.1', // which version of WordPress is your plugin tested up to?
                     'version' => $version
                 );
 

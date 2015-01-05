@@ -143,12 +143,14 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
    the editor. You probably shouldn't touch them. */
 
 .CodeMirror {
-  line-height: 1;
-  position: relative;
-  overflow: hidden;
-  background: white;
+  background: none repeat scroll 0 0 white;
   color: black;
+  line-height: 1;
+  margin: -6px -12px -12px;
+  overflow: hidden;
+  position: relative;
 }
+
 
 .CodeMirror-scroll {
   /* 30px is the magic margin used to hide the element's real scrollbars */

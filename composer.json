@@ -1,62 +1,59 @@
 {
-	"name" : "pods-framework/pods",
-	"description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
-	"type" : "wordpress-plugin",
-	"keywords" : [ "pods", "custom", "fields" ],
-	"homepage" : "http://pods.io/",
-	"license" : "GPL-2.0+",
-	"authors" : [
-		{
-			"name" : "Scott Kingsley Clark",
-			"email" : "scott@pods.io",
-			"homepage" : "http://scottkclark.com/",
-			"role" : "Lead Developer"
-		},
-		{
-			"name" : "Phil Lewis",
-			"email" : "phil@pods.io",
-			"role" : "Developer"
-		},
-		{
-			"name" : "Josh Pollock",
-			"email" : "josh@pods.io",
-			"role" : "Developer"
-		},
-		{
-			"name" : "Dan Stefan Oprean",
-			"role" : "Developer"
-		},
-		{
-			"name" : "David Cramer",
-			"role" : "Developer"
-		},
-		{
-			"name" : "Mike Green",
-			"role" : "Developer"
-		},
-		{
-			"name" : "Jonathan Christopher",
-			"role" : "Developer"
-		},
-		{
-			"name" : "Matt Gibbs",
-			"role" : "Developer"
-		}
-	],
-	"support": {
-		"issues" : "https://github.com/pods-framework/pods-gravity-forms/issues",
-		"source" : "https://github.com/pods-framework/pods-gravity-forms"
-	},
-	"require" : {
-		"composer/installers" : "~1.0.0",
-		"php" : ">=5.2.4"
-	},
-	"require-dev": {
-		"satooshi/php-coveralls": "dev-master",
-		"phpunit/phpunit": "4.2.x",
-		"mockery/mockery": "dev-master"
-	},
-	"extra" : {
-		"installer-name" : "pods"
-	}
+    "name" : "pods-framework/pods",
+    "type" : "wordpress-plugin",
+    "description" : "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
+    "keywords" : [ "pods", "custom", "fields" ],
+    "homepage" : "http://pods.io/",
+    "license" : "GPL-2.0+",
+    "authors" : [
+        {
+            "name" : "Scott Kingsley Clark",
+            "email" : "scott@pods.io",
+            "homepage" : "http://scottkclark.com/",
+            "role" : "Lead Developer"
+        },
+        {
+            "name" : "Phil Lewis",
+            "email" : "phil@pods.io",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Josh Pollock",
+            "email" : "josh@pods.io",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Dan Stefan Oprean",
+            "role" : "Developer"
+        },
+        {
+            "name" : "David Cramer",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Mike Green",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Jonathan Christopher",
+            "role" : "Developer"
+        },
+        {
+            "name" : "Matt Gibbs",
+            "role" : "Developer"
+        }
+    ],
+    "require" : {
+        "composer/installers" : "~1.0.0",
+        "php" : ">=5.2.4"
+    },
+    "require-dev": {
+        "satooshi/php-coveralls": "dev-master",
+        "phpunit/phpunit": "4.3.x",
+        "phpunit/php-invoker": "1.1.3",
+        "mockery/mockery": "dev-master"
+    },
+    "extra" : {
+        "installer-name" : "pods"
+    }
 }

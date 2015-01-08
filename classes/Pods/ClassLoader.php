@@ -137,6 +137,25 @@ class Pods_ClassLoader {
 
 			return true;
 		}
+		// Fallback for Pods 1.x and 2.x classes
+		elseif ( 0 === strpos( $className, 'Pod' ) ) {
+			$two_dot_oh = str_replace( 'Pods', 'Pods_', $className );
+			$one_dot_oh = str_replace( 'Pod', 'Pods_', $className );
+
+			if ( $file = $this->findFile( $two_dot_oh ) ) {
+				$this->forwardClass( $two_dot_oh, $className );
+
+				require $file;
+
+				return true;
+			} elseif ( $file = $this->findFile( $one_dot_oh ) ) {
+				$this->forwardClass( $one_dot_oh, $className );
+
+				require $file;
+
+				return true;
+			}
+		}
 
 		return null;
 
@@ -192,6 +211,8 @@ class Pods_ClassLoader {
 
 		eval( "
 			class {$fromClass} extends {$toClass} {
+
+				public static \$classLoader_forward_class = '{$fromClass}';
 
 				public function __construct() {
 

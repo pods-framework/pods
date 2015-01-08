@@ -102,14 +102,14 @@
                         if ( 'undefined' != typeof field_name && null !== field_name && '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
                             var val = $el.val();
 
-                            if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
-                                if ( $el.is( '.pods-boolean' ) )
-                                    val = 0;
-                                else
-                                    return true; // This input isn't a boolean, continue the loop
-                            }
-                            else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
-                                return true; // This input is not checked, continue the loop
+							if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
+								if ( 1 == val )
+									val = 0;
+								else
+									return true; // This input isn't a boolean, continue the loop
+							}
+							else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
+								return true; // This input is not checked, continue the loop
 
                             if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
                                 $el.trigger( 'change' );

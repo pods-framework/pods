@@ -15,6 +15,13 @@ $RECYCLE.BIN/
 *.sublime-project
 *.sublime-workspace
 
+# Dropbox
+.dropbox
+.dropbox.attr
+
+# SASS
+.sass-cache/*
+
 # PhpStorm
 .idea
 
@@ -27,21 +34,8 @@ build/
 tmp/
 tests/clover.xml
 
-# Dropbox
-.dropbox
-.dropbox.attr
+# Grunt
+node_modules
 
-# SASS
-.sass-cache/*
-
-# Node
-node_modules/*
-
-# WP Tests dir
-wp-tests
-
-# Composer
-vendor/
-
-# Local PHPUnit config
+# PHPunit config
 phpunit.xml

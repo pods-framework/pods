@@ -1,27 +1,46 @@
 {
   "name": "Pods",
   "version": "3.0.0",
-  "description": "Pods Framework",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
+  "author": "Pods Foundation, Inc",
+  "homepage": "http://pods.io/",
+  "bugs": "https://github.com/pods-framework/pods/issues",
   "repository": {
     "type": "git",
     "url": "git://github.com/pods-framework/pods.git"
   },
-  "author": "",
-  "license": "GPL",
-  "bugs": {
-    "url": "https://github.com/pods-framework/pods/issues"
-  },
+  "licenses": [
+    {
+      "type": "GPL-2.0+",
+      "url": "https://github.com/pods-framework/pods/blob/master/license.txt"
+    }
+  ],
+  "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
-    "grunt": "~0.4.2",
+    "css-parse": "^2.0.0",
+    "glob": "^4.0.2",
+    "grunt": "^0.4.5",
+    "grunt-autoprefixer": "^1.0.1",
+    "grunt-combine-media-queries": "^1.0.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-imagemin": "^0.8.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-csscomb": "^3.0.0",
+    "grunt-githooks": "^0.3.0",
+    "grunt-newer": "^0.7.0",
     "grunt-cli": "~0.1.11",
-    "grunt-contrib-sass": "~0.6.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-imagemin": "^0.6.1",
-    "grunt-glotpress": "^0.1.1"
+    "grunt-glotpress": "^0.1.1",
+    "grunt-phpcs": "^0.2.3",
+    "grunt-shell": "^1.1.1",
+    "grunt-spritesmith": "^2.20.0",
+    "grunt-update-submodules": "^0.4.1",
+    "grunt-wp-i18n": "^0.4.8",
+    "load-grunt-tasks": "^0.6.0"
   }
 }

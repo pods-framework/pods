@@ -46,6 +46,20 @@ class Pods_Field_Avatar extends
 	}
 
 	/**
+	 * Run hooks needed for Avatar integration
+	 */
+	public function init_hooks() {
+
+		// WP avatar hook
+		add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 4 );
+
+		// BuddyPress avatar hooks
+		add_filter( 'bp_core_fetch_avatar', array( $this, 'bp_core_fetch_avatar' ), 10, 9 );
+		add_filter( 'bp_core_fetch_avatar_url', array( $this, 'bp_core_fetch_avatar_url' ), 10, 2 );
+
+	}
+
+	/**
 	 * {@inheritDocs}
 	 */
 	public function options() {

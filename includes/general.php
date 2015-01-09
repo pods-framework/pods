@@ -78,7 +78,7 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
  * @param string $message The notice / error message shown
  * @param string $type    Message type
  *
- * @return void
+ * @return bool
  */
 function pods_message( $message, $type = null ) {
 	if ( empty( $type ) || ! in_array( $type, array( 'notice', 'error' ) ) ) {
@@ -87,13 +87,20 @@ function pods_message( $message, $type = null ) {
 
 	$class = '';
 
+	$error = false;
+
 	if ( 'notice' == $type ) {
 		$class = 'updated';
 	} elseif ( 'error' == $type ) {
 		$class = 'error';
+
+		$error = true;
 	}
 
 	echo '<div id="message" class="' . $class . ' fade"><p>' . $message . '</p></div>' . PHP_EOL;
+
+	return $error;
+
 }
 
 /**
@@ -933,7 +940,7 @@ function pods_shortcode ( $tags, $content = null ) {
 		}
 
 		return $return;
-	} 
+	}
 
 	if ( empty( $id ) && false !== $tags['filters'] && 'before' == $tags['filters_location'] ) {
 		$return .= $pod->filters( $tags['filters'], $tags['filters_label'] );

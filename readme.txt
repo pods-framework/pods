@@ -115,6 +115,9 @@ We also do our best to integrate and play nicely with other projects:
  * [WPML](http://wpml.org/)
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
+ * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://github.com/pods-framework/pods-gravity-forms)
+ * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
+ * [WordPress JSON REST API (WP-API)](http://wp-api.org) Using the [Pods JSON API](https://github.com/pods-framework/pods-json-api)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)

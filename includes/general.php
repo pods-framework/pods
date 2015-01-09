@@ -493,33 +493,41 @@ function pods_deprecated( $function, $version, $replacement = null ) {
  * @since 2.0
  */
 function pods_help( $text, $url = null ) {
-	if ( ! wp_script_is( 'jquery-qtip', 'registered' ) ) {
-		wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
-	}
-	if ( ! wp_script_is( 'jquery-qtip', 'queue' ) && ! wp_script_is( 'jquery-qtip', 'to_do' ) && ! wp_script_is( 'jquery-qtip', 'done' ) ) {
-		wp_enqueue_script( 'jquery-qtip' );
+
+	// qtip2 JS
+	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/vendor/jquery-qtip2/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
 	}
 
-	if ( ! wp_style_is( 'pods-qtip', 'registered' ) ) {
-		wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-	}
-	if ( ! wp_style_is( 'pods-qtip', 'queue' ) && ! wp_style_is( 'pods-qtip', 'to_do' ) && ! wp_style_is( 'pods-qtip', 'done' ) ) {
-		wp_enqueue_style( 'pods-qtip' );
+	if ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_script( 'jquery-qtip2' );
 	}
 
-	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
-		wp_register_script( 'pods-qtip-init',
-			PODS_URL . 'ui/js/qtip.js',
+	// qtip2 CSS
+	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/js/vendor/jquery-qtip2/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
+	}
+
+	if ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
+		wp_enqueue_style( 'jquery-qtip2' );
+	}
+
+	// Pods qtip2 JS
+	if ( ! wp_script_is( 'pods-qtip2', 'registered' ) ) {
+		wp_register_script( 'pods-qtip2',
+			PODS_URL . 'ui/js/pods-qtip2.js',
 			array(
 				'jquery',
-				'jquery-qtip'
+				'jquery-qtip2'
 			),
 			PODS_VERSION );
 	}
-	if ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
-		wp_enqueue_script( 'pods-qtip-init' );
+
+	if ( ! wp_script_is( 'pods-qtip2', 'queue' ) && ! wp_script_is( 'pods-qtip2', 'to_do' ) && ! wp_script_is( 'pods-qtip2', 'done' ) ) {
+		wp_enqueue_script( 'pods-qtip2' );
 	}
 
+	// Detect URL / Text from array
 	if ( is_array( $text ) ) {
 		if ( isset( $text[1] ) ) {
 			$url = $text[1];
@@ -528,7 +536,8 @@ function pods_help( $text, $url = null ) {
 		$text = $text[0];
 	}
 
-	if ( 'help' == $text ) {
+	// No help set, return
+	if ( 'help' == $text || empty( $text ) ) {
 		return;
 	}
 
@@ -537,6 +546,7 @@ function pods_help( $text, $url = null ) {
 	}
 
 	echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
+
 }
 
 /**

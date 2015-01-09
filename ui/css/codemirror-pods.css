@@ -1,4 +1,1 @@
-/* Fix conflict with debug bar codemirror */
-.CodeMirror-gutter {
-    position: static;
-}
+.CodeMirror-gutter{position:static}

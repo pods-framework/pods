@@ -1,0 +1,1 @@
+jQuery(document).ready(function($){$(".pods-qtip").qtip({content:{attr:"alt"},style:{classes:"ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded"},show:{effect:function(){$(this).fadeIn("fast")}},hide:{fixed:!0,delay:300},position:{my:"bottom left",adjust:{y:-14}}})});

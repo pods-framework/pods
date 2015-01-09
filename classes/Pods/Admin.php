@@ -121,9 +121,9 @@ class Pods_Admin {
 
 		wp_register_style( 'pods-wizard', PODS_URL . 'ui/css/pods-wizard.css', array(), PODS_VERSION );
 
-		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
+		wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery-pods-upgrade.js', array(), PODS_VERSION );
 
-		wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery.pods.migrate.js', array(), PODS_VERSION );
+		wp_register_script( 'pods-migrate', PODS_URL . 'ui/js/jquery-pods-migrate.js', array(), PODS_VERSION );
 
 		if ( isset( $_GET['page'] ) ) {
 			$page = $_GET['page'];
@@ -156,17 +156,7 @@ class Pods_Admin {
 					wp_enqueue_style( 'pods-admin' );
 				}
 
-				if ( 'pods-advanced' == $page ) {
-					wp_register_style( 'pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0' );
-					wp_enqueue_style( 'pods-advanced' );
-
-					wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
-					wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
-					wp_enqueue_script( 'jquery-ui-dialog' );
-
-					wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
-					wp_enqueue_script( 'pods-advanced' );
-				} elseif ( 'pods-packages' == $page ) {
+				if ( 'pods-packages' == $page ) {
 					wp_enqueue_style( 'pods-wizard' );
 				} elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_v( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
 					wp_enqueue_style( 'pods-wizard' );
@@ -768,21 +758,12 @@ class Pods_Admin {
 	}
 
 	/**
-	 * Enqueue assets for Media Library Popup
-	 */
-	public function register_media_assets() {
-
-		if ( 'pods_media_attachment' == pods_v( 'inlineId' ) ) {
-			wp_enqueue_style( 'pods-attach' );
-		}
-
-	}
-
-	/**
 	 * Output Pods shortcode popup window
 	 */
 	public function mce_popup() {
+
 		pods_view( PODS_DIR . 'ui/admin/shortcode.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**

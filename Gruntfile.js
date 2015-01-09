@@ -27,9 +27,9 @@ module.exports = function(grunt) {
 			dist: {
 				files: [{
 					expand: true,
-					cwd: 'ui/css/',
-					src: ['ui/css/**/*.css'],
-					dest: 'ui/css/'
+					cwd: 'sources/css/',
+					src: ['sources/css/*.css'],
+					dest: 'sources/css/'
 				}]
 			}
 		},
@@ -44,48 +44,23 @@ module.exports = function(grunt) {
 						'bower_components/neat/app/assets/stylesheets'
 					]*/
 				},
-				files: {
-					'ui/css/style.css': 'sources/sass/style.scss'
-				}
-			}
-		},
-
-		autoprefixer: {
-			options: {
-				browsers: ['> 1%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1']
-			},
-			dist: {
-				src:  'ui/css/style.css'
-			}
-		},
-
-		cmq: {
-			options: {
-				log: false
-			},
-			dist: {
-				files: {
-					'ui/css/style.css': 'ui/css/style.css'
-				}
+				files: [ {
+					expand : true,
+					cwd : 'sources/sass/',
+					src : ['sources/sass/*.scss'],
+					dest : 'sources/css/',
+					ext : '.css'
+				} ]
 			}
 		},
 
 		cssmin: {
 			minify: {
 				expand: true,
-				cwd: 'ui/css/',
-				src: ['*.css', '!*.min.css'],
+				cwd: 'sources/css/',
+				src: '*.css',
 				dest: 'ui/css/',
-				ext: '.min.css'
-			}
-		},
-
-		concat: {
-			dist: {
-				src: [
-					'ui/js/concat/*.js'
-				],
-				dest: 'ui/js/pods.js'
+				ext: '.css'
 			}
 		},
 
@@ -96,10 +71,10 @@ module.exports = function(grunt) {
 				},
 				files: [{
 					expand: true,
-					cwd: 'ui/js/',
-					src: ['**/*.js', '!**/*.min.js', '!partials/*.js'],
+					cwd: 'sources/js/',
+					src: '*.js',
 					dest: 'ui/js/',
-					ext: '.min.js'
+					ext: '.js'
 				}]
 			}
 		},
@@ -108,7 +83,7 @@ module.exports = function(grunt) {
 			dynamic: {
 				files: [{
 					expand: true,
-					cwd: 'ui/images/',
+					cwd: 'sources/images/',
 					src: ['**/*.{png,jpg,gif}'],
 					dest: 'ui/images/'
 				}]
@@ -118,7 +93,7 @@ module.exports = function(grunt) {
 		watch: {
 
 			scripts: {
-				files: ['ui/js/**/*.js'],
+				files: ['sources/js/*.js'],
 				tasks: ['javascript'],
 				options: {
 					spawn: false
@@ -126,7 +101,7 @@ module.exports = function(grunt) {
 			},
 
 			css: {
-				files: ['sources/sass/**/*.scss'],
+				files: ['sources/sass/*.scss'],
 				tasks: ['styles'],
 				options: {
 					spawn: false,
@@ -152,8 +127,8 @@ module.exports = function(grunt) {
 		},
 
 		clean: {
-			js: ['ui/js/project*', 'ui/js/**/*.min.js'],
-			css: ['ui/css/style.css', 'ui/css/style.min.css']
+			js: ['ui/js/*.js'],
+			css: ['ui/css/*.css']
 		},
 
 		makepot: {
@@ -210,10 +185,11 @@ module.exports = function(grunt) {
 
 	});
 
-	grunt.registerTask('styles', ['sass', 'autoprefixer', 'cmq', 'csscomb', 'cssmin']);
-	grunt.registerTask('javascript', ['concat', 'uglify']);
+	grunt.registerTask('styles', ['sass', 'csscomb', 'cssmin']);
+	grunt.registerTask('javascript', ['uglify']);
 	grunt.registerTask('imageminnewer', ['newer:imagemin']);
 	grunt.registerTask('i18n', ['makepot', 'glotpress_download']);
-	grunt.registerTask('default', ['update_submodules', 'sprite', 'styles', 'javascript', 'imageminnewer', 'i18n']);
+	//grunt.registerTask('default', ['sprite', 'styles', 'javascript', 'imageminnewer', 'i18n']);
+	grunt.registerTask('default', ['sprite', 'styles', 'javascript', 'imageminnewer']);
 
 };

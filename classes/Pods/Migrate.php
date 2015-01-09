@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * All functionality for importing data from or exporting data to different formats
+ *
  * @package Pods
  */
 class Pods_Migrate {
@@ -67,6 +68,7 @@ class Pods_Migrate {
 	 * @since   2.0
 	 */
 	function __construct( $type = null, $delimiter = null, $data = null ) {
+
 		if ( ! empty( $type ) && in_array( $type, $this->types ) ) {
 			$this->type = $type;
 		}
@@ -78,12 +80,14 @@ class Pods_Migrate {
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
+
 	}
 
 	/**
 	 * @param $data
 	 */
 	function set_data( $data ) {
+
 		$defaults = array(
 			'items'   => array(),
 			'columns' => array(),
@@ -91,6 +95,7 @@ class Pods_Migrate {
 		);
 
 		$this->data = array_merge( $defaults, (array) $data );
+
 	}
 
 	/**
@@ -103,6 +108,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	function import( $data = null, $type = null, $delimiter = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -120,15 +126,19 @@ class Pods_Migrate {
 		}
 
 		return $this->import_pod_items();
+
 	}
 
 	/**
 	 * @param array  $data Array of data
 	 * @param string $type Export Type (php, json, sv, xml)
 	 *
+	 * @stub
+	 *
 	 * @return bool
 	 */
 	public function import_pod_items( $data = null, $type = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -137,7 +147,10 @@ class Pods_Migrate {
 			$this->type = $type;
 		}
 
+		// @todo Needs work
+
 		return false;
+
 	}
 
 	/**
@@ -147,6 +160,7 @@ class Pods_Migrate {
 	 * @return null
 	 */
 	public function parse( $data = null, $type = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -160,6 +174,7 @@ class Pods_Migrate {
 		}
 
 		return $this->parsed;
+
 	}
 
 	/**
@@ -168,6 +183,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function parse_json( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -201,6 +217,7 @@ class Pods_Migrate {
 		$this->parsed = $data;
 
 		return $this->parsed;
+
 	}
 
 	/**
@@ -210,6 +227,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function parse_sv( $data = null, $delimiter = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -250,6 +268,7 @@ class Pods_Migrate {
 		$this->parsed = $data;
 
 		return $this->parsed;
+
 	}
 
 	/**
@@ -263,6 +282,7 @@ class Pods_Migrate {
 	 * @return array|mixed
 	 */
 	public function str_getcsv( $line, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
+
 		$line = str_replace( "\r\n", "\n", $line );
 		$line = str_replace( "\r", "\n", $line );
 
@@ -282,6 +302,7 @@ class Pods_Migrate {
 		}
 
 		return $data;
+
 	}
 
 	/**
@@ -290,6 +311,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function parse_xml( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -371,6 +393,7 @@ class Pods_Migrate {
 		$this->parsed = $data;
 
 		return $this->parsed;
+
 	}
 
 	/**
@@ -381,6 +404,7 @@ class Pods_Migrate {
 	 * @todo For much much later
 	 */
 	public function parse_sql( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
 		}
@@ -388,6 +412,7 @@ class Pods_Migrate {
 		$this->parsed = $data;
 
 		return $this->parsed;
+
 	}
 
 	/**
@@ -398,6 +423,7 @@ class Pods_Migrate {
 	 * @param string $delimiter Delimiter for export type 'sv'
 	 */
 	public function export( $data = null, $type = null, $delimiter = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -415,15 +441,18 @@ class Pods_Migrate {
 		}
 
 		return $this->built;
+
 	}
 
 	/**
 	 * @param array $data Array of data
 	 */
 	public function export_pod_items( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
+
 	}
 
 	/**
@@ -433,6 +462,7 @@ class Pods_Migrate {
 	 * @return null
 	 */
 	public function build( $data = null, $type = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -446,6 +476,7 @@ class Pods_Migrate {
 		}
 
 		return $this->data;
+
 	}
 
 	/**
@@ -454,6 +485,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function build_json( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -502,6 +534,7 @@ class Pods_Migrate {
 		$this->built = @json_encode( $data );
 
 		return $this->built;
+
 	}
 
 	/**
@@ -511,6 +544,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function build_sv( $data = null, $delimiter = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -574,6 +608,7 @@ class Pods_Migrate {
 		$this->built = $head . $lines;
 
 		return $this->built;
+
 	}
 
 	/**
@@ -582,6 +617,7 @@ class Pods_Migrate {
 	 * @return bool
 	 */
 	public function build_xml( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -613,6 +649,7 @@ class Pods_Migrate {
 		$this->built = $head . $lines . $foot;
 
 		return $this->built;
+
 	}
 
 	/**
@@ -624,6 +661,7 @@ class Pods_Migrate {
 	 * @return string
 	 */
 	public function build_xml_level( $item, $column, $level = 2, $column_name = '' ) {
+
 		$column = pods_clean_name( $column, false, false );
 
 		$line = '';
@@ -675,6 +713,7 @@ class Pods_Migrate {
 		$line .= "</{$column}>\r\n";
 
 		return $line;
+
 	}
 
 	/**
@@ -683,6 +722,7 @@ class Pods_Migrate {
 	 * @return mixed
 	 */
 	public function build_sql( $data = null ) {
+
 		if ( ! empty( $data ) ) {
 			$this->set_data( $data );
 		}
@@ -690,12 +730,14 @@ class Pods_Migrate {
 		$this->built = $data;
 
 		return $this->built;
+
 	}
 
 	/**
 	 * Save export to a file
 	 */
 	public function save() {
+
 		$extension = 'txt';
 
 		if ( 'sv' == $this->type ) {
@@ -749,6 +791,7 @@ class Pods_Migrate {
 		}
 
 		return $attachment['guid'];
+
 	}
 
 	/*
@@ -778,6 +821,7 @@ class Pods_Migrate {
 	 * @param bool $output
 	 */
 	public function heres_the_beef( $import, $output = true ) {
+
 		global $wpdb;
 
 		$api = pods_api();
@@ -1126,5 +1170,7 @@ class Pods_Migrate {
 			echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <strong style=\'color:green;\'>Import Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . " minute(s)<br /><strong>Rows Imported:</strong> " . $result_count . ( false !== $paginated ? "<br /><br />" . $paginated : '' ) . "';</script>\n";
 			echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <strong style='color:green;'>Import Complete</strong>\n";
 		}
+
 	}
+
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package Pods
  */
@@ -62,6 +61,8 @@ class Pods_Field {
 	 */
 	public function __construct() {
 
+		// Hulk questions himself
+
 	}
 
 	/**
@@ -73,6 +74,7 @@ class Pods_Field {
 	 * @see   Pods_Field::ui_options
 	 */
 	public function options() {
+
 		$options = array( /*
             'option_name' => array(
                 'label' => 'Option Label',
@@ -112,6 +114,7 @@ class Pods_Field {
 		);
 
 		return $options;
+
 	}
 
 	/**
@@ -123,7 +126,9 @@ class Pods_Field {
 	 * @see   Pods_Field::options
 	 */
 	public function ui_options() {
+
 		return $this->options();
+
 	}
 
 	/**
@@ -135,9 +140,11 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function schema( $options = null ) {
+
 		$schema = 'VARCHAR(255)';
 
 		return $schema;
+
 	}
 
 	/**
@@ -149,9 +156,11 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function prepare( $options = null ) {
+
 		$format = self::$prepare;
 
 		return $format;
+
 	}
 
 	/**
@@ -167,7 +176,9 @@ class Pods_Field {
 	 * @since 2.3
 	 */
 	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return $value;
+
 	}
 
 	/**
@@ -183,7 +194,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return $value;
+
 	}
 
 	/**
@@ -200,6 +213,7 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -207,6 +221,7 @@ class Pods_Field {
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
@@ -224,7 +239,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
+
 		return (array) $value;
+
 	}
 
 	/**
@@ -240,7 +257,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return false;
+
 	}
 
 	/**
@@ -258,7 +277,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		return true;
+
 	}
 
 	/**
@@ -276,7 +297,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		return $value;
+
 	}
 
 	/**
@@ -295,7 +318,9 @@ class Pods_Field {
 	 * @since 2.3
 	 */
 	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		return null;
+
 	}
 
 	/**
@@ -309,11 +334,13 @@ class Pods_Field {
 	 * @param array  $pod
 	 * @param object $params
 	 *
-	 * @since void
+	 * @return void
 	 *
 	 * @since 2.0
 	 */
 	public function post_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+		// Actions that need to happen after saving to the DB
 
 	}
 
@@ -325,11 +352,13 @@ class Pods_Field {
 	 * @param null   $options
 	 * @param string $pod
 	 *
-	 * @since void
+	 * @return void
 	 *
 	 * @since 2.0
 	 */
 	public function pre_delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Actions that need to happen before deleting from the DB
 
 	}
 
@@ -341,11 +370,13 @@ class Pods_Field {
 	 * @param array  $options
 	 * @param array  $pod
 	 *
-	 * @since void
+	 * @return void
 	 *
 	 * @since 2.3
 	 */
 	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Custom delete handling when value is deleted from the DB
 
 	}
 
@@ -357,11 +388,13 @@ class Pods_Field {
 	 * @param array  $options
 	 * @param array  $pod
 	 *
-	 * @since void
+	 * @return void
 	 *
 	 * @since 2.0
 	 */
 	public function post_delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Actions that need to happen after deleting from the DB
 
 	}
 
@@ -380,6 +413,9 @@ class Pods_Field {
 	 * @since 2.0
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		return $value;
+
 	}
+
 }

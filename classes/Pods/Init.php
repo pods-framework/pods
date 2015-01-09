@@ -86,11 +86,13 @@ class Pods_Init {
 	 * @since 2.3.5
 	 */
 	public static function init() {
+
 		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new Pods_Init();
 		}
 
 		return self::$instance;
+
 	}
 
 	/**
@@ -102,6 +104,7 @@ class Pods_Init {
 	 * @since   1.8.9
 	 */
 	function __construct() {
+
 		self::$version      = get_option( 'pods_framework_version' );
 		self::$version_last = get_option( 'pods_framework_version_last' );
 		self::$db_version   = get_option( 'pods_framework_db_version' );
@@ -127,38 +130,17 @@ class Pods_Init {
 
 		add_action( 'init', array( $this, 'activate_install' ), 9 );
 
-		if ( ! empty( self::$version ) ) {
-			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
+        if ( !empty( self::$version ) ) {
+	        $this->run();
+        }
 
-			add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
-
-			add_action( 'init', array( $this, 'core' ), 11 );
-
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-			add_action( 'login_enqueue_scripts', array( $this, 'register_assets' ), 15 );
-
-			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
-
-			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
-			add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
-
-			if ( is_admin() ) {
-				add_action( 'init', array( $this, 'admin_init' ), 12 );
-			}
-
-			// Register widgets
-			add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-
-			// Show admin bar links
-			add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
-		}
 	}
 
 	/**
 	 * Load the plugin textdomain and set default constants
 	 */
 	public function plugins_loaded() {
+
 		if ( ! defined( 'PODS_LIGHT' ) ) {
 			define( 'PODS_LIGHT', false );
 		}
@@ -168,32 +150,38 @@ class Pods_Init {
 		}
 
 		load_plugin_textdomain( 'pods', false, dirname( plugin_basename( PODS_DIR . 'init.php' ) ) . '/languages/' );
+
 	}
 
 	/**
 	 * Load Pods Components
 	 */
 	public function load_components() {
+
 		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
 			self::$components = pods_components();
 		}
+
 	}
 
 	/**
 	 * Load Pods Meta
 	 */
 	public function load_meta() {
+
 		self::$meta = pods_meta()->core();
 
 		if ( pods_developer() ) {
 			self::$metadata = new Pods_Metadata();
 		}
+
 	}
 
 	/**
 	 * Set up the Pods core
 	 */
 	public function core() {
+
 		// Session start
 		pods_session_start();
 
@@ -238,29 +226,38 @@ class Pods_Init {
 
 		$this->register_pods();
 
+		// Hook into avatars
 		$avatar = Pods_Form::field_loader( 'avatar' );
 
 		if ( method_exists( $avatar, 'get_avatar' ) ) {
+			// WP avatar hook
 			add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
 		}
 
 		// BuddyPress avatar hooks
 		add_filter( 'bp_core_fetch_avatar', array( $avatar, 'bp_core_fetch_avatar' ), 10, 9 );
 		add_filter( 'bp_core_fetch_avatar_url', array( $avatar, 'bp_core_fetch_avatar_url' ), 10, 2 );
+
 	}
 
 	/**
 	 * Register Scripts and Styles
 	 */
 	public function register_assets() {
+
 		if ( ! wp_style_is( 'jquery-ui', 'registered' ) ) {
 			wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
 		}
 
 		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
-		wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2012-07-03' );
-		wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
+	    if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
+		    wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
+	    }
+
+	    if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
+		    wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
+	    }
 
 		wp_register_script( 'pods-form', PODS_URL . 'ui/js/jquery.pods.form.js', array( 'jquery' ), PODS_VERSION );
 
@@ -271,25 +268,25 @@ class Pods_Init {
 		wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
-		wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '3.19' );
-		wp_register_style( 'pods-codemirror-pods', PODS_URL . 'ui/css/codemirror-pods.css', array(), '3.19' );
-		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '3.19', true );
-		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/utils/loadmode.js', array( 'pods-codemirror' ), '3.19', true );
+        wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '4.8' );
+        wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
+        wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
+	    wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.1.1' );
 		}
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_script( 'jquery-ui-timepicker',
-				PODS_URL . 'ui/js/jquery.ui.timepicker.min.js',
-				array(
-					'jquery',
-					'jquery-ui-core',
-					'jquery-ui-datepicker',
-					'jquery-ui-slider'
-				),
-				'1.1.1' );
+            wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
+                'jquery',
+                'jquery-ui-core',
+                'jquery-ui-datepicker',
+                'jquery-ui-slider'
+            ), '1.1.1' );
 		}
 
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
@@ -363,7 +360,9 @@ class Pods_Init {
 	 * Include Admin
 	 */
 	public function admin_init() {
+
 		self::$admin = pods_admin();
+
 	}
 
 	/**
@@ -371,6 +370,7 @@ class Pods_Init {
 	 */
 	public function setup_content_types( $force = false ) {
 
+		// @todo Needs hook doc
 		do_action( 'pods_setup_content_types' );
 
 		$api = pods_api();
@@ -393,10 +393,10 @@ class Pods_Init {
 
 		$existing_post_types = get_post_types();
 		$existing_taxonomies = get_taxonomies();
-		$existing_comments   = array();
+		$existing_comment_types   = array();
 
 		if ( function_exists( 'get_comment_types' ) ) {
-			$existing_comments = get_comment_types();
+			$existing_comment_types = get_comment_types();
 		}
 
 		$pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
@@ -409,7 +409,7 @@ class Pods_Init {
 			$force = true;
 		} elseif ( ! empty( $pods_cpt_ct ) && empty( $pods_cpt_ct['taxonomies'] ) && ! empty( $taxonomies ) ) {
 			$force = true;
-		} elseif ( ! empty( $pods_cpt_ct ) && empty( $pods_cpt_ct['comment_types'] ) && ! empty( $comments ) ) {
+		} elseif ( ! empty( $pods_cpt_ct ) && empty( $pods_cpt_ct['comment_types'] ) && ! empty( $comment_types ) ) {
 			$force = true;
 		}
 
@@ -419,7 +419,15 @@ class Pods_Init {
 			 */
 			global $wp_query;
 
-			$reserved_query_vars = array_keys( $wp_query->fill_query_vars( array() ) );
+			$reserved_query_vars = array(
+				'post_type',
+				'taxonomy',
+				'output'
+			);
+
+			if ( is_object( $wp_query ) ) {
+				$reserved_query_vars = array_merge( $reserved_query_vars, array_keys( $wp_query->fill_query_vars( array() ) ) );
+			}
 
 			$pods_cpt_ct = array(
 				'post_types'    => array(),
@@ -428,7 +436,7 @@ class Pods_Init {
 			);
 
 			$pods_post_types      = $pods_taxonomies = $pods_comment_types = array();
-			$supported_post_types = $supported_taxonomies = $supported_comment_post_types = array();
+			$supported_post_types = $supported_taxonomies = $supported_comment_types = array();
 
 			foreach ( $post_types as $post_type ) {
 				// Post Type exists already

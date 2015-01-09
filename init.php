@@ -47,11 +47,11 @@ else {
 	}
 
     if ( !defined( 'PODS_GITHUB_BRANCH' ) ) {
-        define( 'PODS_GITHUB_BRANCH', '3.0-unstable' );
+        define( 'PODS_GITHUB_BRANCH', 'release/3.0' );
 	}
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-        define( 'PODS_WP_VERSION_MINIMUM', '3.6' );
+        define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
 	}
 
     if ( !defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
@@ -132,17 +132,18 @@ else {
             require_once( PODS_DIR . 'includes/media.php' );
 
         // @todo Allow user to opt-in to future betas easily
-        if ( is_admin() && PODS_GITHUB_UPDATE ) {
+        if ( PODS_GITHUB_UPDATE ) {
             $update = admin_url( 'update.php' );
             $update = str_replace( get_site_url(), '', $update );
 
             $update_network = network_admin_url( 'update.php' );
             $update_network = str_replace( get_site_url(), '', $update_network );
 
-            if ( isset( $_GET[ 'pods_force_refresh' ] ) ||
+            if ( is_admin() &&
+                 ( isset( $_GET[ 'pods_force_refresh' ] ) ||
                    ( 'update-selected' == pods_v( 'action' ) &&
                      ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) ||
-                       false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) {
+                       false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) ) {
 
                 // Configuration
                 $user = 'pods-framework';

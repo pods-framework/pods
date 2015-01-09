@@ -1105,16 +1105,69 @@ class Pods_Field_Pick extends
 		$labels = array();
 
 		foreach ( $data as $v => $l ) {
-			if ( ! in_array( $l, $labels ) && ( $value == $v || ( is_array( $value ) && in_array( $v, $value ) ) ) ) {
+			if ( $value == $v || $value == $l || ( is_array( $value ) && ( in_array( $v, $value ) || in_array( $l, $value ) ) ) ) {
 				$labels[] = $l;
 			}
 		}
 
+		$labels = array_unique( $labels );
+
+		// @todo Needs hook doc
 		$labels = apply_filters( 'pods_field_pick_value_to_label', $labels, $name, $value, $options, $pod, $id );
 
 		$labels = pods_serial_comma( $labels );
 
 		return $labels;
+
+	}
+
+	/**
+	 * Get the value from a pick label
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $label   The label of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return string
+	 *
+	 * @since 3.0
+	 */
+	public function label_to_value( $name, $label = null, $options = null, $pod = null, $id = null ) {
+
+		$data = pods_v( 'data', $options, null, true );
+
+		$object_params = array(
+			'name'    => $name, // The name of the field
+			'label'   => $label, // The value of the field
+			'options' => $options, // Field options
+			'pod'     => $pod, // Pod data
+			'id'      => $id, // Item ID
+			'context' => 'label_to_value', // Data context
+		);
+
+		if ( null !== $data ) {
+			$data = (array) $data;
+		} else {
+			$data = $this->get_object_data( $object_params );
+		}
+
+		$values = array();
+
+		foreach ( $data as $v => $l ) {
+			if ( $label == $v || $label == $l || ( is_array( $label ) && ( in_array( $v, $label ) || in_array( $l, $label ) ) ) ) {
+				$values[] = $l;
+			}
+		}
+
+		$values = array_unique( $values );
+
+		// @todo Needs hook doc
+		$values = apply_filters( 'pods_field_pick_label_to_value', $values, $name, $label, $options, $pod, $id );
+
+		return $values;
+
 	}
 
 	/**
@@ -1177,6 +1230,7 @@ class Pods_Field_Pick extends
 	 * @return array|bool Object data
 	 */
 	public function get_object_data( $object_params = null ) {
+
 		global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
 		$current_language = false;
@@ -1192,6 +1246,7 @@ class Pods_Field_Pick extends
 		$object_params = array_merge( array(
 				'name'        => '', // The name of the field
 				'value'       => '', // The value of the field
+				'label'       => '', // The label of the value
 				'options'     => array(), // Field options
 				'pod'         => '', // Pod data
 				'id'          => '', // Item ID
@@ -1206,6 +1261,7 @@ class Pods_Field_Pick extends
 
 		$name        = $object_params['name'];
 		$value       = $object_params['value'];
+		$label       = $object_params['label'];
 		$options     = $object_params['options'];
 		$pod         = $object_params['pod'];
 		$id          = $object_params['id'];
@@ -1214,11 +1270,12 @@ class Pods_Field_Pick extends
 		$page        = min( 1, (int) $object_params['page'] );
 		$limit       = (int) $object_params['limit'];
 
+		// @todo Needs hook doc
 		$data  = apply_filters( 'pods_field_pick_object_data', null, $name, $value, $options, $pod, $id, $object_params );
 		$items = array();
 
 		if ( ! isset( $options[self::$type . '_object'] ) ) {
-			$data = pods_var_raw( 'data', $options, array(), null, true );
+			$data = pods_v( 'data', $options, array(), true );
 		}
 
 		$simple = false;
@@ -1229,6 +1286,7 @@ class Pods_Field_Pick extends
 			if ( 'custom-simple' == $options[self::$type . '_object'] ) {
 				$custom = pods_v( self::$type . '_custom', $options, '' );
 
+				// @todo Needs hook doc
 				$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id, $object_params );
 
 				if ( ! empty( $custom ) ) {
@@ -1265,7 +1323,7 @@ class Pods_Field_Pick extends
 				$simple = true;
 			} elseif ( isset( self::$related_objects[ $options[self::$type . '_object'] ] ) && isset( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'] ) && is_callable( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'] ) ) {
 				$data = call_user_func_array( self::$related_objects[ $options[self::$type . '_object'] ]['data_callback'],
-					array( $name, $value, $options, $pod, $id ) );
+					array( $name, $value, $options, $pod, $id, $label ) );
 
 				$simple = true;
 
@@ -1336,6 +1394,14 @@ class Pods_Field_Pick extends
 					} else {
 						$params['where'][] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
 					}
+				} elseif ( 'label_to_value' == $context ) {
+					$label = pods_sanitize( $label );
+
+					if ( is_array( $label ) ) {
+						$params['where'][] = "`t`.`{$search_data->field_index}` IN ( '" . implode( "', '", $label ) . "' )";
+					} else {
+						$params['where'][] = "`t`.`{$search_data->field_index}` = '" . $label . "'";
+					}
 				}
 
 				/* not needed yet
@@ -1396,10 +1462,13 @@ class Pods_Field_Pick extends
 						$limit = 30;
 					}
 
+					// @todo Needs hook doc
 					$params['limit'] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
 
 					if ( is_array( $value ) && $params['limit'] < count( $value ) ) {
 						$params['limit'] = count( $value );
+					} elseif ( is_array( $label ) && $params['limit'] < count( $label ) ) {
+						$params['limit'] = count( $label );
 					}
 
 					$params['page']  = $page;
@@ -1428,6 +1497,7 @@ class Pods_Field_Pick extends
 							$lookup_where['comment_author_email'] = "`t`.`comment_author_email` LIKE '%" . pods_sanitize_like( $data_params['query'] ) . "%'";
 						}
 
+						// @todo Needs hook doc
 						$lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params['query'], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
 						if ( ! empty( $lookup_where ) ) {
@@ -1485,6 +1555,7 @@ class Pods_Field_Pick extends
 					}
 				}
 
+				// @todo Needs hook doc
 				$params = apply_filters( 'pods_form_ui_field_pick_search_params', $params, $search_data, $data_params['query'], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
 				$results = $search_data->select( $params );
@@ -1496,6 +1567,8 @@ class Pods_Field_Pick extends
 						if ( is_array( $ids ) && isset( $ids[0] ) && is_array( $ids[0] ) ) {
 							$ids = wp_list_pluck( $ids, $search_data->field_id );
 						}
+
+						$ids = array_map( 'absint', $ids );
 
 						if ( is_array( $ids ) ) {
 							$ids = implode( ', ', $ids );
@@ -1509,6 +1582,29 @@ class Pods_Field_Pick extends
 						}
 
 						$params['where'] .= "`t`.`{$search_data->field_id}` IN ( " . $ids . " )";
+
+						$results = $search_data->select( $params );
+					} elseif ( ! empty( $label ) ) {
+						$labels = $label;
+
+						if ( is_array( $labels ) && isset( $labels[0] ) && is_array( $labels[0] ) ) {
+							$labels = wp_list_pluck( $labels, $search_data->field_index );
+						}
+
+						$labels = pods_sanitize( $labels );
+
+						if ( is_array( $labels ) ) {
+							$labels = implode( "', '", $labels );
+						}
+
+						if ( is_array( $params['where'] ) ) {
+							$params['where'] = implode( ' AND ', $params['where'] );
+						}
+						if ( ! empty( $params['where'] ) ) {
+							$params['where'] .= ' AND ';
+						}
+
+						$params['where'] .= "`t`.`{$search_data->field_index}` IN ( '" . $labels . "' )";
 
 						$results = $search_data->select( $params );
 					}
@@ -1537,7 +1633,7 @@ class Pods_Field_Pick extends
 				$ids = array();
 
 				if ( ! empty( $results ) ) {
-					$display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
+					$display_filter = pods_v( 'display_filter', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) );
 
 					foreach ( $results as $result ) {
 						$result = get_object_vars( $result );
@@ -1621,7 +1717,7 @@ class Pods_Field_Pick extends
 						}
 
 						if ( 0 < strlen( $display_filter ) ) {
-							$display_filter_args = pods_var( 'display_filter_args', pods_var_raw( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
+							$display_filter_args = pods_v( 'display_filter_args', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) );
 
 							$args = array(
 								$display_filter,
@@ -1684,10 +1780,11 @@ class Pods_Field_Pick extends
 				}
 			}
 
-			return $items;
+			$data = $items;
 		}
 
 		return $data;
+
 	}
 
 	/**

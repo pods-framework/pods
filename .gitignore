@@ -33,8 +33,10 @@ build/
 tmp/
 tests/clover.xml
 
-# Grunt
+# NPM
+composer.lock
 node_modules
+npm-debug.log
 
 # PHPunit config
 phpunit.xml

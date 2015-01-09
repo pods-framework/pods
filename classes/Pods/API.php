@@ -6520,7 +6520,8 @@ class Pods_API {
 			pods_transient_set( 'pods_pod_' . $pod['name'], $pod );
 		}
 
-		pods_transient_set( 'pods_flush_rewrites', 1 );
+		delete_option( 'pods_flush_rewrites' );
+		add_option( 'pods_flush_rewrites', 1, '', 'yes' );
 	}
 
 	/**

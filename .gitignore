@@ -29,7 +29,6 @@ $RECYCLE.BIN/
 *.pydevproject
 .project
 .metadata
-bin/
 build/
 tmp/
 tests/clover.xml

@@ -3,5 +3,9 @@
 
 # Ignore
 /tests export-ignore
+/sources export-ignore
 kill-travis.php export-ignore
-/assets export-ignore
+.travis.yml export-ignore
+Gruntfile.js export-ignore
+package.json export-ignore
+phpunit.xml.dist export-ignore

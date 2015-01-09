@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * A class to quickly and efficiently handle a large amount of options that need init, validation, and defaults set
+ *
  * @package Pods
  */
 class Pods_Array implements
@@ -23,9 +24,11 @@ class Pods_Array implements
 	 * @since   2.0
 	 */
 	public function __construct( $container ) {
+
 		if ( is_array( $container ) || is_object( $container ) ) {
 			$this->__container = & $container;
 		}
+
 	}
 
 	/**
@@ -38,6 +41,7 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function offsetSet( $offset, $value ) {
+
 		if ( is_array( $this->__container ) ) {
 			$this->__container[ $offset ] = $value;
 		} else {
@@ -45,6 +49,7 @@ class Pods_Array implements
 		}
 
 		return $value;
+
 	}
 
 	/**
@@ -56,6 +61,7 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function offsetGet( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			if ( isset( $this->__container[ $offset ] ) ) {
 				return $this->__container[ $offset ];
@@ -68,6 +74,7 @@ class Pods_Array implements
 		}
 
 		return null;
+
 	}
 
 	/**
@@ -79,11 +86,13 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function offsetExists( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			return isset( $this->__container[ $offset ] );
 		}
 
 		return isset( $this->__container->$offset );
+
 	}
 
 	/**
@@ -94,11 +103,13 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function offsetUnset( $offset ) {
+
 		if ( is_array( $this->__container ) ) {
 			unset( $this->__container[ $offset ] );
 		} else {
 			unset( $this->__container->$offset );
 		}
+
 	}
 
 	/**
@@ -113,6 +124,7 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function validate( $offset, $default = null, $type = null, $extra = null ) {
+
 		if ( ! $this->offsetExists( $offset ) ) {
 			$this->offsetSet( $offset, $default );
 		}
@@ -179,6 +191,7 @@ class Pods_Array implements
 		$this->offsetSet( $offset, $value );
 
 		return $value;
+
 	}
 
 	/**
@@ -189,11 +202,13 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function dump() {
+
 		if ( is_array( $this->__container ) ) {
 			return $this->__container;
 		}
 
 		return get_object_vars( $this->__container );
+
 	}
 
 	/**
@@ -202,7 +217,9 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function __set( $offset, $value ) {
+
 		return $this->offsetSet( $offset, $value );
+
 	}
 
 	/**
@@ -211,7 +228,9 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function __get( $offset ) {
+
 		return $this->offsetGet( $offset );
+
 	}
 
 	/**
@@ -220,7 +239,9 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function __isset( $offset ) {
+
 		return $this->offsetExists( $offset );
+
 	}
 
 	/**
@@ -229,6 +250,9 @@ class Pods_Array implements
 	 * @since 2.0
 	 */
 	public function __unset( $offset ) {
+
 		$this->offsetUnset( $offset );
+
 	}
+
 }

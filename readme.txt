@@ -113,6 +113,8 @@ We also do our best to integrate and play nicely with other projects:
  * [Polylang](http://wordpress.org/plugins/polylang/)
  * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
  * [WPML](http://wpml.org/)
+ * [Conductor](https://conductorplugin.com/)
+ * [Timber](http://upstatement.com/timber/)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)

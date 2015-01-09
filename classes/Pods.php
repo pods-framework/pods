@@ -145,16 +145,28 @@ class Pods implements Iterator {
 	public $ui = array();
 
 	/**
-	 * @var mixed SEO related vars for Pod Pages
+	 * @var string|null SEO related vars for Pod Pages
 	 */
 	public $page_template;
 
+	/**
+	 * @var array|null Body classes to use for Pod Pages
+	 */
 	public $body_classes;
 
+	/**
+	 * @var array Array of meta name=>content for <head>
+	 */
 	public $meta = array();
 
+	/**
+	 * @var array Array of meta property name=>content for <head>
+	 */
 	public $meta_properties = array();
 
+	/**
+	 * @var string Extra meta string to add to <head>
+	 */
 	public $meta_extra = '';
 
 	/**
@@ -416,7 +428,7 @@ class Pods implements Iterator {
 	public function next() {
 
 		if ( $this->iterator ) {
-			$this->row_number ++;
+			$this->row_number++;
 
 			return null;
 		}
@@ -861,6 +873,15 @@ class Pods implements Iterator {
 				$params->raw = true;
 			}
 
+			if ( null === $params->single ) {
+				if ( ! empty( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+					$params->single = true;
+				}
+				else {
+					$params->single = false;
+				}
+			}
+
 			$value = $this->row[ $params->name ];
 		} elseif ( empty( $value ) ) {
 			$object_field_found = false;
@@ -1036,8 +1057,6 @@ class Pods implements Iterator {
 					}
 
 					if ( in_array( $this->pod_data['type'], array( 'post_type', 'media' ) ) ) {
-						$id = $this->id();
-
 						// Support for WPML 'duplicated' translation handling
 						if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data['name'] ) ) {
 							$master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
@@ -1279,7 +1298,7 @@ class Pods implements Iterator {
 									'orderby'    => $params->orderby,
 									'pagination' => false,
 									'search'     => false,
-									'limit'      => - 1
+									'limit'      => -1
 								);
 
 								// Output types
@@ -1562,8 +1581,8 @@ class Pods implements Iterator {
 
 					$post_temp = true;
 
-					$old_post = $GLOBALS['post'];
-					$old_ID   = $GLOBALS['post_ID'];
+					$old_post = $post;
+					$old_ID   = $post_ID;
 
 					$post    = get_post( $id );
 					$post_ID = $id;
@@ -1588,6 +1607,8 @@ class Pods implements Iterator {
 					$value = Pods_Form::display( $field_data['type'], $value, $params->name, $field_data, $this->pod_data, $id );
 				}
 
+				// Reset globals
+				// @todo Should we use wp_reset_postdata() here, will it affect other things people are doing?
 				if ( $post_temp ) {
 					$post    = $old_post;
 					$post_ID = $old_ID;
@@ -1944,7 +1965,7 @@ class Pods implements Iterator {
 					$params['where'] = "{$id} < `t`.`{$this->data->field_id}`";
 				}
 			} elseif ( ! isset( $params['offset'] ) ) {
-				if ( ! empty( $this->params ) && - 1 < $this->row_number ) {
+				if ( ! empty( $this->params ) && -1 < $this->row_number ) {
 					$params['offset'] = $this->row_number + 1;
 				} else {
 					$params['offset'] = 1;
@@ -2171,7 +2192,7 @@ class Pods implements Iterator {
 		$params->limit = (int) $params->limit;
 
 		if ( 0 == $params->limit ) {
-			$params->limit = - 1;
+			$params->limit = -1;
 		}
 
 		$this->limit      = (int) $params->limit;
@@ -3464,7 +3485,7 @@ class Pods implements Iterator {
 		$thank_you = $params['thank_you'];
 		$fields_only = $params['fields_only'];
 
-		Pods_Form::$form_counter ++;
+		Pods_Form::$form_counter++;
 
 		ob_start();
 

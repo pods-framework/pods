@@ -25,7 +25,7 @@ $router = pods_v( $form_field_type . '_attachment_tab', $options, 'browse' );
 $file_limit = 1;
 
 // @todo: File limit not yet supported in the UI, it's either single or multiple
-if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) )
+if ( 'single' != pods_v( $form_field_type . '_format_type', $options, 'single' ) )
 	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 
 $limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
@@ -76,8 +76,9 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 					$mime = explode( '/', $mime );
 					$mime = $mime[0];
 
-					if ( ! in_array( $mime, $new_limit_types ) )
+					if ( ! in_array( $mime, $new_limit_types ) ) {
 						$new_limit_types[] = $mime;
+					}
 
 					$found = true;
 				}
@@ -93,7 +94,7 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 }
 
 if ( empty( $value ) )
-	$value = array(); 
+	$value = array();
 else
 	$value = (array) $value;
 ?>
@@ -111,7 +112,7 @@ else
 
             $link = wp_get_attachment_url( $attachment->ID );
 
-			echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title );
+			echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title, $linked );
 		}
 		?></ul>
 
@@ -124,8 +125,6 @@ else
 
 <script type="text/javascript">
 	jQuery(function($) {
-		//$( '#<?php echo esc_js( $css_id ); ?>' ).PodsForm( 'media', { max_limit: <?php echo esc_js( $file_limit ); ?> } );
-
 		var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
 			$list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo esc_js( $css_id ); ?> ul.pods-files-list'),
 			title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
@@ -233,9 +232,9 @@ else
 						}
 
 						<?php if ( !empty( $limit_types ) ) : ?>
-						if('<?php echo implode( '\' != attachment.attributes.type || \'', explode( ',', $limit_types ) ); ?>' != attachment.attributes.type) {
-							return;
-						}
+                            if ( '<?php echo implode( '\' != attachment.attributes.type && \'', explode( ',', $limit_types ) ); ?>' != attachment.attributes.type ) {
+	                            return;
+                            }
 						<?php endif; ?>
 
 						// set our object properties
@@ -244,7 +243,7 @@ else
 							icon : attachment_thumbnail,
 							name : attachment.attributes.title,
 							filename : attachment.filename,
-							guid : attachment.guid
+                            link: attachment.attributes.url
 						};
 
 						var tmpl = Handlebars.compile($('script#<?php echo esc_js( $css_id ); ?>-handlebars').html());

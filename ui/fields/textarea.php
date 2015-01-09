@@ -10,7 +10,7 @@ if ( pods_v( 'readonly', $options, false ) ) {
 	$attributes['class'] .= ' pods-form-ui-read-only';
 }
 
-$rows = (int) pods_v( 'paragraph_rows', $options, 0 );
+$rows = (int) pods_v( Pods_Form::$field_type . '_rows', $options, 0 );
 
 if ( 0 < $rows ) {
 	$attributes['rows'] = $rows;

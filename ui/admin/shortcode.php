@@ -387,298 +387,298 @@ jQuery(function($) {
 </style>
 
 <div id="pods_shortcode_form" style="display: none;">
-<div class="wrap pods-shortcode">
-<div>
-<div class="pods-header">
-	<h3 class="popup-header"><?php _e( 'Pods &raquo; Embed', 'pods' ); ?></h3>
-</div>
+	<div class="wrap pods-shortcode">
+		<div>
+			<div class="pods-header">
+				<h3 class="popup-header"><?php _e( 'Pods &raquo; Embed', 'pods' ); ?></h3>
+			</div>
 
-<form id="pods_shortcode_form_element">
-<div class="pods-select">
-	<label for="pods_use_case_selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
+			<form id="pods_shortcode_form_element">
+				<div class="pods-select">
+					<label for="pods_use_case_selector"><?php _e( 'What would you like to do?', 'pods' ); ?></label>
 
-	<select id="pods_use_case_selector">
-		<option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
-		<option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
-		<option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
-		<option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
-		<option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
-		<option value="view"><?php _e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
-		<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
-			<option value="page"><?php _e( 'Embed content from a Pods Page', 'pods' ); ?></option>
-		<?php } ?>
-	</select>
-</div>
+					<select id="pods_use_case_selector">
+						<option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
+						<option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
+						<option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
+						<option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
+						<option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
+						<option value="view"><?php _e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
+						<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+							<option value="page"><?php _e( 'Embed content from a Pods Page', 'pods' ); ?></option>
+						<?php } ?>
+					</select>
+				</div>
 
-<div class="pods-section hide">
-	<?php
-	$api       = pods_api();
-	$all_pods  = $api->load_pods( array( 'names' => true ) );
-	$pod_count = count( $all_pods );
-	?>
-	<label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
+				<div class="pods-section hide">
+					<?php
+					$api       = pods_api();
+					$all_pods  = $api->load_pods( array( 'names' => true ) );
+					$pod_count = count( $all_pods );
+					?>
+					<label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
 
-	<?php if ( $pod_count > 0 ) { ?>
-		<select id="pod_select" name="pod_select">
-			<?php foreach ( $all_pods as $pod_name => $pod_label ) { ?>
-				<option value="<?php echo $pod_name; ?>">
-					<?php echo $pod_label . ' (' . $pod_name . ')'; ?>
-				</option>
-			<?php } ?>
-		</select>
-	<?php
-	} else {
-		?>
-		<strong class="red" id="pod_select"><?php _e( 'None Found', 'pods' ); ?></strong>
-	<?php } ?>
-</div>
+					<?php if ( $pod_count > 0 ) { ?>
+						<select id="pod_select" name="pod_select">
+							<?php foreach ( $all_pods as $pod_name => $pod_label ) { ?>
+								<option value="<?php echo $pod_name; ?>">
+									<?php echo $pod_label . ' (' . $pod_name . ')'; ?>
+								</option>
+							<?php } ?>
+						</select>
+					<?php
+					} else {
+						?>
+						<strong class="red" id="pod_select"><?php _e( 'None Found', 'pods' ); ?></strong>
+					<?php } ?>
+				</div>
 
-<?php if ( class_exists( 'Pods_Templates' ) ) { ?>
-	<div class="pods-section hide">
-		<?php
-		$templates      = $api->load_templates();
-		$template_count = count( $templates );
-		?>
-		<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+				<?php if ( class_exists( 'Pods_Templates' ) ) { ?>
+					<div class="pods-section hide">
+						<?php
+						$templates      = $api->load_templates();
+						$template_count = count( $templates );
+						?>
+						<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
 
-		<select id="pod_template" name="pod_template">
-			<option value="" SELECTED>- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
+						<select id="pod_template" name="pod_template">
+							<option value="" SELECTED>- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
 
-			<?php foreach ( $templates as $tmpl ) { ?>
-				<option value="<?php echo $tmpl['name']; ?>">
-					<?php echo $tmpl['name']; ?>
-				</option>
-			<?php } ?>
-		</select>
+							<?php foreach ( $templates as $tmpl ) { ?>
+								<option value="<?php echo $tmpl[ 'name' ]; ?>">
+									<?php echo $tmpl[ 'name' ]; ?>
+								</option>
+							<?php } ?>
+						</select>
+					</div>
+				<?php
+				} else {
+					?>
+					<div class="pods-section hide">
+						<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
+
+						<input type="text" id="pod_template" name="pod_template" />
+					</div>
+				<?php
+				}
+				?>
+
+				<div class="pods-section hide">
+					<label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
+
+					<textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
+				</div>
+
+				<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+					<div class="pods-section hide">
+						<?php
+						$pages      = $api->load_pages();
+						$page_count = count( $pages );
+						?>
+						<label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
+
+						<select id="pods_page" name="pods_page">
+							<?php foreach ( $pages as $tmpl ) { ?>
+								<option value="<?php echo $tmpl[ 'name' ]; ?>">
+									<?php echo $tmpl[ 'name' ]; ?>
+								</option>
+							<?php } ?>
+						</select>
+					</div>
+				<?php } ?>
+
+				<div class="pods-section hide">
+					<label for="pod_slug"><?php _e( 'ID or Slug', 'pods' ); ?></label>
+
+					<input type="text" id="pod_slug" name="pod_slug" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_limit"><?php _e( 'Limit', 'pods' ); ?></label>
+
+					<input type="text" id="pod_limit" name="pod_limit" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_orderby"><?php _e( 'Order By', 'pods' ); ?></label>
+
+					<input type="text" id="pod_orderby" name="pod_orderby" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_where"><?php _e( 'Where', 'pods' ); ?></label>
+
+					<input type="text" name="pod_where" id="pod_where" />
+				</div>
+
+				<div class="pods-section">
+					<label for="pod_field"><?php _e( 'Field', 'pods' ); ?></label>
+
+					<input type="text" name="pod_field" id="pod_field" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_fields"><?php _e( 'Fields (comma-separated)', 'pods' ); ?></label>
+
+					<input type="text" id="pod_fields" name="pod_fields" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_label"><?php _e( 'Submit Label', 'pods' ); ?></label>
+
+					<input type="text" id="pod_label" name="pod_label" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_thank_you"><?php _e( 'Thank You URL upon submission', 'pods' ); ?></label>
+
+					<input type="text" id="pod_thank_you" name="pod_thank_you" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_view"><?php _e( 'File to include', 'pods' ); ?></label>
+
+					<input type="text" name="pod_view" id="pod_view" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
+
+					<?php
+					$cache_modes = array(
+						'none'           => __( 'Disable Caching', 'pods' ),
+						'cache'          => __( 'Object Cache', 'pods' ),
+						'transient'      => __( 'Transient', 'pods' ),
+						'site-transient' => __( 'Site Transient', 'pods' )
+					);
+
+					$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
+					?>
+					<select id="pod_cache_mode" name="pod_cache_mode">
+						<?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
+							<option value="<?php echo $cache_mode_option; ?>"<?php echo( $default_cache_mode == $cache_mode_option ? ' SELECTED' : '' ); ?>>
+								<?php echo esc_html( $cache_mode_label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+
+					<input type="text" name="pod_expires" id="pod_expires" value="<?php echo( 60 * 5 ); ?>" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters"><?php _e( 'Filters', 'pods' ); ?></label>
+
+					<input type="text" name="pod_filters" id="pod_filters" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters_location"><?php _e( 'Filters Location', 'pods' ); ?></label>
+
+					<?php
+					$locations = array(
+						'before' => __( 'Before (default)', 'pods' ),
+						'after'  => __( 'After', 'pods' ),
+						'both'   => __( 'Both', 'pods' )
+					);
+
+					$filters_location = 'before';
+					?>
+					<select id="pod_filters_location" name="pod_filters_location">
+						<?php foreach ( $locations as $location_value => $location_label ): ?>
+							<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $filters_location ); ?>>
+								<?php echo esc_html( $location_label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_filters_label"><?php _e( 'Filters Label', 'pods' ); ?></label>
+
+					<input type="text" name="pod_filters_label" id="pod_filters_label" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination"><?php _e( 'Show Pagination links', 'pods' ); ?></label>
+
+					<input type="checkbox" name="pod_pagination" id="pod_pagination" value="1" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_label"><?php _e( 'Pagination Label', 'pods' ); ?></label>
+
+					<input type="text" name="pod_pagination_label" id="pod_pagination_label" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_location"><?php _e( 'Pagination Location', 'pods' ); ?></label>
+
+					<?php
+					$locations = array(
+						'before' => __( 'Before', 'pods' ),
+						'after'  => __( 'After (default)', 'pods' ),
+						'both'   => __( 'Both', 'pods' )
+					);
+
+					$pagination_location = 'after';
+					?>
+					<select id="pod_pagination_location" name="pod_pagination_location">
+						<?php foreach ( $locations as $location_value => $location_label ): ?>
+							<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $pagination_location ); ?>>
+								<?php echo esc_html( $location_label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_pagination_type"><?php _e( 'Pagination Type', 'pods' ); ?></label>
+
+					<?php
+					$pagination_types = array(
+						'advanced' => __( 'Advanced (default)', 'pods' ),
+						'simple'   => __( 'Simple', 'pods' ),
+						'paginate' => __( 'Paginate (paginate_links plain type)', 'pods' ),
+						'list'     => __( 'List (paginate_links list type)', 'pods' )
+					);
+
+					$pagination_type = 'advanced';
+					?>
+					<select id="pod_pagination_type" name="pod_pagination_type">
+						<?php foreach ( $pagination_types as $pagination_type_value => $pagination_type_label ): ?>
+							<option value="<?php echo $pagination_type_value; ?>"<?php selected( $pagination_type_value, $pagination_type ); ?>>
+								<?php echo esc_html( $pagination_type_label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_before"><?php _e( 'Before Text', 'pods' ); ?></label>
+
+					<input type="text" name="pod_before" id="pod_before" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_after"><?php _e( 'After Text', 'pods' ); ?></label>
+
+					<input type="text" name="pod_after" id="pod_after" />
+				</div>
+
+				<div class="pods-section hide">
+					<label for="pod_shortcodes"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
+
+					<input type="checkbox" name="pod_shortcodes" id="pod_shortcodes" value="1" />
+				</div>
+
+				<div class="pods-section" style="text-align: right;">
+					<a class="button-primary" id="pods_insert_shortcode" href="#insert-shortcode"><?php _e( 'Insert', 'pods' ); ?></a>
+				</div>
+			</form>
+		</div>
 	</div>
-<?php
-} else {
-	?>
-	<div class="pods-section hide">
-		<label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
-
-		<input type="text" id="pod_template" name="pod_template" />
-	</div>
-<?php
-}
-?>
-
-<div class="pods-section hide">
-	<label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
-
-	<textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10"></textarea>
-</div>
-
-<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
-	<div class="pods-section hide">
-		<?php
-		$pages      = $api->load_pages();
-		$page_count = count( $pages );
-		?>
-		<label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
-
-		<select id="pods_page" name="pods_page">
-			<?php foreach ( $pages as $tmpl ) { ?>
-				<option value="<?php echo $tmpl['name']; ?>">
-					<?php echo $tmpl['name']; ?>
-				</option>
-			<?php } ?>
-		</select>
-	</div>
-<?php } ?>
-
-<div class="pods-section hide">
-	<label for="pod_slug"><?php _e( 'ID or Slug', 'pods' ); ?></label>
-
-	<input type="text" id="pod_slug" name="pod_slug" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_limit"><?php _e( 'Limit', 'pods' ); ?></label>
-
-	<input type="text" id="pod_limit" name="pod_limit" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_orderby"><?php _e( 'Order By', 'pods' ); ?></label>
-
-	<input type="text" id="pod_orderby" name="pod_orderby" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_where"><?php _e( 'Where', 'pods' ); ?></label>
-
-	<input type="text" name="pod_where" id="pod_where" />
-</div>
-
-<div class="pods-section">
-	<label for="pod_field"><?php _e( 'Field', 'pods' ); ?></label>
-
-	<input type="text" name="pod_field" id="pod_field" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_fields"><?php _e( 'Fields (comma-separated)', 'pods' ); ?></label>
-
-	<input type="text" id="pod_fields" name="pod_fields" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_label"><?php _e( 'Submit Label', 'pods' ); ?></label>
-
-	<input type="text" id="pod_label" name="pod_label" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_thank_you"><?php _e( 'Thank You URL upon submission', 'pods' ); ?></label>
-
-	<input type="text" id="pod_thank_you" name="pod_thank_you" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_view"><?php _e( 'File to include', 'pods' ); ?></label>
-
-	<input type="text" name="pod_view" id="pod_view" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
-
-	<?php
-	$cache_modes = array(
-		'none'           => __( 'Disable Caching', 'pods' ),
-		'cache'          => __( 'Object Cache', 'pods' ),
-		'transient'      => __( 'Transient', 'pods' ),
-		'site-transient' => __( 'Site Transient', 'pods' )
-	);
-
-	$default_cache_mode = apply_filters( 'pods_shortcode_default_cache_mode', 'none' );
-	?>
-	<select id="pod_cache_mode" name="pod_cache_mode">
-		<?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
-			<option value="<?php echo $cache_mode_option; ?>"<?php echo( $default_cache_mode == $cache_mode_option ? ' SELECTED' : '' ); ?>>
-				<?php echo esc_html( $cache_mode_label ); ?>
-			</option>
-		<?php endforeach; ?>
-	</select>
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
-
-	<input type="text" name="pod_expires" id="pod_expires" value="<?php echo( 60 * 5 ); ?>" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_filters"><?php _e( 'Filters', 'pods' ); ?></label>
-
-	<input type="text" name="pod_filters" id="pod_filters" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_filters_location"><?php _e( 'Filters Location', 'pods' ); ?></label>
-
-	<?php
-	$locations = array(
-		'before' => __( 'Before (default)', 'pods' ),
-		'after'  => __( 'After', 'pods' ),
-		'both'   => __( 'Both', 'pods' )
-	);
-
-	$filters_location = 'before';
-	?>
-	<select id="pod_filters_location" name="pod_filters_location">
-		<?php foreach ( $locations as $location_value => $location_label ): ?>
-			<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $filters_location ); ?>>
-				<?php echo esc_html( $location_label ); ?>
-			</option>
-		<?php endforeach; ?>
-	</select>
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_filters_label"><?php _e( 'Filters Label', 'pods' ); ?></label>
-
-	<input type="text" name="pod_filters_label" id="pod_filters_label" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_pagination"><?php _e( 'Show Pagination links', 'pods' ); ?></label>
-
-	<input type="checkbox" name="pod_pagination" id="pod_pagination" value="1" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_pagination_label"><?php _e( 'Pagination Label', 'pods' ); ?></label>
-
-	<input type="text" name="pod_pagination_label" id="pod_pagination_label" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_pagination_location"><?php _e( 'Pagination Location', 'pods' ); ?></label>
-
-	<?php
-	$locations = array(
-		'before' => __( 'Before', 'pods' ),
-		'after'  => __( 'After (default)', 'pods' ),
-		'both'   => __( 'Both', 'pods' )
-	);
-
-	$pagination_location = 'after';
-	?>
-	<select id="pod_pagination_location" name="pod_pagination_location">
-		<?php foreach ( $locations as $location_value => $location_label ): ?>
-			<option value="<?php echo $location_value; ?>"<?php selected( $location_value, $pagination_location ); ?>>
-				<?php echo esc_html( $location_label ); ?>
-			</option>
-		<?php endforeach; ?>
-	</select>
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_pagination_type"><?php _e( 'Pagination Type', 'pods' ); ?></label>
-
-	<?php
-	$pagination_types = array(
-		'advanced' => __( 'Advanced (default)', 'pods' ),
-		'simple'   => __( 'Simple', 'pods' ),
-		'paginate' => __( 'Paginate (paginate_links plain type)', 'pods' ),
-		'list'     => __( 'List (paginate_links list type)', 'pods' )
-	);
-
-	$pagination_type = 'advanced';
-	?>
-	<select id="pod_pagination_type" name="pod_pagination_type">
-		<?php foreach ( $pagination_types as $pagination_type_value => $pagination_type_label ): ?>
-			<option value="<?php echo $pagination_type_value; ?>"<?php selected( $pagination_type_value, $pagination_type ); ?>>
-				<?php echo esc_html( $pagination_type_label ); ?>
-			</option>
-		<?php endforeach; ?>
-	</select>
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_before"><?php _e( 'Before Text', 'pods' ); ?></label>
-
-	<input type="text" name="pod_before" id="pod_before" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_after"><?php _e( 'After Text', 'pods' ); ?></label>
-
-	<input type="text" name="pod_after" id="pod_after" />
-</div>
-
-<div class="pods-section hide">
-	<label for="pod_shortcodes"><?php _e( 'Enable Shortcodes in output', 'pods' ); ?></label>
-
-	<input type="checkbox" name="pod_shortcodes" id="pod_shortcodes" value="1" />
-</div>
-
-<div class="pods-section" style="text-align: right;">
-	<a class="button-primary" id="pods_insert_shortcode" href="#insert-shortcode"><?php _e( 'Insert', 'pods' ); ?></a>
-</div>
-</form>
-</div>
-</div>
 </div>

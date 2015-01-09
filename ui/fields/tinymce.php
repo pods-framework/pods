@@ -1,13 +1,19 @@
 <?php
-$settings                  = array();
+$settings = array();
+
 $settings['textarea_name'] = $name;
 $settings['media_buttons'] = false;
-if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
+
+if (
+    !( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
+    && !( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )
+    && !( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN )
+          && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
 ) {
 	$settings['media_buttons'] = (boolean) pods_v( 'wysiwyg_media_buttons', $options, true );
 }
 
-$rows = (int) pods_v( 'wysiwyg_rows', $options, 0 );
+$rows = (int) pods_v( Pods_Form::$field_type . '_rows', $options, 0 );
 
 if ( 0 < $rows ) {
 	$settings['textarea_rows'] = $rows;

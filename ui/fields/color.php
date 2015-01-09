@@ -16,8 +16,6 @@ if ( ! is_admin() ) {
 
 }
 
-wp_enqueue_script( 'wp-color-picker' );
-
 $attributes             = array();
 $attributes['type']     = 'text';
 $attributes['value']    = $value;
@@ -28,8 +26,6 @@ $attributes             = Pods_Form::merge_attributes( $attributes, $name, $form
 
 <script type="text/javascript">
 	jQuery(function() {
-		//$( '#<?php echo esc_js( $css_id ); ?>' ).PodsForm( 'color' );
-
 		jQuery('#color_<?php echo $attributes[ 'id' ]; ?>').hide();
 
 		var pods_wp_color_obj_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?> = jQuery('#<?php echo $attributes[ 'id' ]; ?>').wpColorPicker();

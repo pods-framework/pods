@@ -1,9 +1,9 @@
 <?php
-echo $before_widget;
+	echo $before_widget;
 
-if ( ! empty( $title ) ) {
-	echo $before_title . $title . $after_title;
-}
+	if ( ! empty( $title ) ) {
+		echo $before_title . $title . $after_title;
+	}
 
     if ( !empty( $before_content ) )
         echo $before_content;
@@ -13,4 +13,4 @@ if ( ! empty( $title ) ) {
     if ( !empty( $after_content ) )
         echo $after_content;
 
-echo $after_widget;
+	echo $after_widget;

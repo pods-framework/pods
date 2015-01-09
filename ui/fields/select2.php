@@ -35,12 +35,14 @@ if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $p
 
 $options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
+// @todo Needs hook doc
 do_action( 'pods_form_ui_select2_before', $value, $name, $options, $pod );
 ?>
 <div class="pods-select2">
 	<input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 </div>
 <?php
+// @todo Needs hook doc
 do_action( 'pods_form_ui_select2_after', $value, $name, $options, $pod );
 
 $select2_args = array();
@@ -87,20 +89,26 @@ $select2_args = array();
 					try {
 						$dropdown = $element.select2( 'dropdown' );
 					}
-					catch () {
+					catch ( e ) {
 						$dropdown = $( '.select2-drop-active' );
 					}
 
-					// hide/show the dropdown appropriately
-					if ( $.isEmptyObject( data ) ) {
+					// Only show the dropdown if there is at least one unselected potential match
+					$dropdown.hide();
 
-						// No potential matches; a new tag is being added.  Hide the dropdown
-						$dropdown.hide();
-					}
-					else {
+					// Any potential matches?
+					if ( !$.isEmptyObject( data ) ) {
 
-						// Potential matches, make sure the dropdown is visible
-						$dropdown.show();
+						// If there are any unselected potential matches then we want to show the dropdown
+						$.each( data, function( i, this_element ) {
+
+							// Is this one unselected?
+							// 'val' return will be an array of string ids
+							if ( 0 > $element.select2( 'val' ).indexOf( this_element.id + '' ) ) {
+								$dropdown.show();
+								return false; // Break out of the each loop
+							}
+						} );
 					}
 
 					// Not an exact match for something existing?
@@ -227,6 +235,7 @@ $select2_args = array();
 						<?php
 							}
 
+							// @todo Needs hook doc
 							do_action( 'pods_form_ui_select2_js_data', $value, $name, $options, $pod );
 						?>
 					};
@@ -243,7 +252,7 @@ $select2_args = array();
 			?>
 		});
 
-		<?php if ( 'multi' == pods_v( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) { ?>
+		<?php if ( 'single' != pods_v( $form_field_type . '_format_type', $options, 'single' ) && 1 != $pick_limit ) { ?>
 		$element.select2('container').find('ul.select2-choices').sortable({
 			containment : 'parent',
 			start : function() {

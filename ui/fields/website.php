@@ -3,7 +3,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == pods_v( 'website_html5', $options ) ) {
+if ( 1 == pods_v( Pods_Form::$field_type . '_html5', $options ) ) {
 	$type = 'url';
 }
 

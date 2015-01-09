@@ -145,8 +145,8 @@ if ( empty( $value ) )
 				$title = basename( $attachment->guid );
 
             $link = wp_get_attachment_url( $attachment->ID );
-            
-			echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title );
+
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
 		}
 		?></ul>
 

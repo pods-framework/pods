@@ -1,7 +1,6 @@
 <?php
 wp_enqueue_script( 'pods-codemirror' );
 wp_enqueue_style( 'pods-codemirror' );
-wp_enqueue_style( 'pods-codemirror-pods' );
 wp_enqueue_script( 'pods-codemirror-loadmode' );
 
 $type                   = 'textarea';
@@ -22,9 +21,6 @@ $attributes             = Pods_Form::merge_attributes( $attributes, $name, $form
 		CodeMirror.modeURL = "<?php echo PODS_URL ?>ui/js/codemirror/mode/%N/%N.js";
 		if('undefined' == typeof codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ) ?>) {
 
-			// Get the width of the parent table cell element
-			var width = $textarea_<?php echo pods_clean_name($attributes['name']) ?>.width();
-
 			codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea(document.getElementById("<?php echo $attributes[ 'id' ] ?>"),{
 				lineNumbers : true,
 				matchBrackets : true,
@@ -39,12 +35,6 @@ $attributes             = Pods_Form::merge_attributes( $attributes, $name, $form
 					$textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val(value);
 				}
 			});
-
-			// Hack to fix percentage problems with percentage based sizes and long code lines on Webkit based browsers, https://github.com/pods-framework/pods/issues/1887
-			// TODO: Find a way to make this solution work for window resizing.
-			if(navigator.userAgent.match(/Chrome/)) {
-				codemirror_<?php echo pods_clean_name($attributes['name']) ?>.setSize(width);
-			}
 
 			CodeMirror.autoLoadMode(codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,'php');
 		}

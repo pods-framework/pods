@@ -4,44 +4,44 @@
 		<div id="icon-pods" class="icon32"><br /></div>
 
 		<?php
-		$default = 'settings';
+			$default = 'settings';
 
-		$tabs = array(
-			'settings' => __( 'Settings', 'pods' ),
-			'tools' => __( 'Tools', 'pods' ),
-			'reset' => __( 'Cleanup &amp; Reset', 'pods' )
-		);
+			$tabs = array(
+				'settings' => __( 'Settings', 'pods' ),
+				'tools' => __( 'Tools', 'pods' ),
+				'reset' => __( 'Cleanup &amp; Reset', 'pods' )
+			);
 		?>
 
 		<h2 class="nav-tab-wrapper">
 			<?php
-			foreach ( $tabs as $tab => $label ) {
-				$class = '';
+				foreach ( $tabs as $tab => $label ) {
+					$class = '';
 
-				if ( $tab == pods_v( 'tab', 'get', $default ) ) {
-					$class = ' nav-tab-active';
+					if ( $tab == pods_v( 'tab', 'get', $default ) ) {
+						$class = ' nav-tab-active';
 
-					$label = 'Pods ' . $label;
-				}
+						$label = 'Pods ' . $label;
+					}
 
-				$url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
-				?>
+					$url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
+			?>
 				<a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
 					<?php echo $label; ?>
 				</a>
 			<?php
-			}
+				}
 			?>
 		</h2>
 		<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
 		<?php
-		wp_nonce_field( 'pods-settings' );
+			wp_nonce_field( 'pods-settings' );
 
-		$tab = pods_v( 'tab', 'get', $default );
-		$tab = sanitize_title( $tab );
+			$tab = pods_v( 'tab', 'get', $default );
+			$tab = sanitize_title( $tab );
 
-		echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
+			echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );
 		?>
 	</form>
 </div>

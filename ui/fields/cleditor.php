@@ -10,8 +10,6 @@ $attributes             = Pods_Form::merge_attributes( $attributes, $name, $form
 <textarea<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
 <script>
 	jQuery(function($) {
-		//$( '#<?php echo esc_js( $css_id ); ?>' ).PodsForm( 'cleditor' );
-
 		var $textarea = $('textarea#<?php echo $attributes[ 'id' ]; ?>');
 		var editorWidth = $textarea.outerWidth();
 		$textarea.cleditor({

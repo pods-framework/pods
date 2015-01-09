@@ -19,23 +19,23 @@
 				<?php
 				$depends_on = false;
 
-				foreach ($options as $field_name => $field_option) {
-				$field_option = Pods_Form::field_setup( $field_option, null, $field_option['type'] );
+				foreach ( $options as $field_name => $field_option) {
+					$field_option = Pods_Form::field_setup( $field_option, null, $field_option['type'] );
 
-				$depends = Pods_Form::dependencies( $field_option );
+					$depends = Pods_Form::dependencies( $field_option );
 
-				if (( ! empty( $depends_on ) || ! empty( $depends ) ) && $depends_on != $depends) {
-				if ( ! empty( $depends_on ) ) {
+					if (( ! empty( $depends_on ) || ! empty( $depends ) ) && $depends_on != $depends) {
+						if ( ! empty( $depends_on ) ) {
 					?>
 					</tbody>
 				<?php
-				}
+						}
 
-				if (! empty( $depends )) {
+						if (! empty( $depends )) {
 				?>
 				<tbody class="pods-field-option-container <?php echo $depends; ?>">
 					<?php
-					}
+						}
 					}
 
 					if ( ! is_array( $field_option['group'] ) ) {

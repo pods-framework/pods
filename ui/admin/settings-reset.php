@@ -1,52 +1,52 @@
 <?php
-global $pods_init;
+	global $pods_init;
 
-if ( isset( $_POST[ '_wpnonce' ] ) && false !== wp_verify_nonce( $_POST[ '_wpnonce' ], 'pods-settings' ) ) {
-	if ( isset( $_POST[ 'pods_cleanup_1x' ] ) ) {
-		pods_upgrade( '2.0.0' )->cleanup();
+	if ( isset( $_POST[ '_wpnonce' ] ) && false !== wp_verify_nonce( $_POST[ '_wpnonce' ], 'pods-settings' ) ) {
+		if ( isset( $_POST[ 'pods_cleanup_1x' ] ) ) {
+			pods_upgrade( '2.0.0' )->cleanup();
 
-		pods_redirect( pods_var_update( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
-	} elseif ( isset( $_POST[ 'pods_reset' ] ) ) {
-		$pods_init->reset();
-		$pods_init->setup();
+			pods_redirect( pods_var_update( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
+		} elseif ( isset( $_POST[ 'pods_reset' ] ) ) {
+			$pods_init->reset();
+			$pods_init->setup();
 
-		pods_redirect( pods_var_update( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
-	} elseif ( isset( $_POST[ 'pods_reset_deactivate' ] ) ) {
-		$pods_init->reset();
+			pods_redirect( pods_var_update( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
+		} elseif ( isset( $_POST[ 'pods_reset_deactivate' ] ) ) {
+			$pods_init->reset();
 
-		deactivate_plugins( PODS_DIR . 'init.php' );
+			deactivate_plugins( PODS_DIR . 'init.php' );
 
-		pods_redirect( 'index.php' );
-	} elseif ( 1 == pods_v( 'pods_reset_success' ) ) {
-		pods_message( 'Pods 2.x settings and data have been reset.' );
-	} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
-		pods_message( 'Pods 1.x data has been deleted.' );
+			pods_redirect( 'index.php' );
+		} elseif ( 1 == pods_v( 'pods_reset_success' ) ) {
+			pods_message( 'Pods 2.x settings and data have been reset.' );
+		} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
+			pods_message( 'Pods 1.x data has been deleted.' );
+		}
 	}
-}
 
-// Monday Mode
-$monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
+	// Monday Mode
+	$monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
-if ( 1 == date_i18n( 'N' ) && (int) date_i18n( 'G' ) < 15 ) {
-	$monday_mode = 1;
-}
-
-// Reset Weekend
-if ( pods_var( 'pods_reset_weekend', 'post', pods_v( 'pods_reset_weekend', 'get', 0, true ), null, true ) ) {
-
-	if ( $monday_mode ) {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
-		pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
-	} else {
-		$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/xhrBDcQq2DM?autoplay=1" frameborder="0" allowfullscreen></iframe>';
-		pods_message( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html, 'error' );
+	if ( 1 == date_i18n( 'N' ) && (int) date_i18n( 'G' ) < 15 ) {
+		$monday_mode = 1;
 	}
-}
 
-$old_version = get_option( 'pods_version' );
+	// Reset Weekend
+	if ( pods_v( 'pods_reset_weekend', 'post', pods_v( 'pods_reset_weekend', 'get', 0, true ), true ) ) {
 
-if ( ! empty( $old_version ) ) {
-	?>
+		if ( $monday_mode ) {
+			$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+			pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );
+		} else {
+			$html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/xhrBDcQq2DM?autoplay=1" frameborder="0" allowfullscreen></iframe>';
+			pods_message( 'Oops, sorry! You can only reset the weekend on a Monday before the end of the work day. Somebody call the Waaambulance!' . $html, 'error' );
+		}
+	}
+
+	$old_version = get_option( 'pods_version' );
+
+	if ( ! empty( $old_version ) ) {
+?>
 	<h3><?php _e( 'Delete Pods 1.x data', 'pods' ); ?></h3>
 
 	<p><?php _e( 'This will delete all of your Pods 1.x data, it\'s only recommended if you\'ve verified your data has been properly migrated into Pods 2.x.', 'pods' ); ?></p>
@@ -80,8 +80,8 @@ if ( ! empty( $old_version ) ) {
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 <?php
-} else {
-	?>
+	} else {
+?>
 	<h3><?php _e( 'Reset Pods', 'pods' ); ?></h3>
 
 	<p><?php _e( 'This will reset Pods settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
@@ -104,10 +104,10 @@ if ( ! empty( $old_version ) ) {
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 <?php
-}
+	}
 
-if ( $monday_mode ) {
-	?>
+	if ( $monday_mode ) {
+?>
 	<hr />
 
 	<h3>Reset Weekend</h3>
@@ -120,5 +120,4 @@ if ( $monday_mode ) {
 		<input type="submit" class="button button-primary" name="pods_reset_weekend" value=" reset_weekend( '<?php echo date_i18n( 'Y-m-d', strtotime( '-3 days' ) ); ?> 19:00:00' ); " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 <?php
-}
-?>
+	}

@@ -154,6 +154,14 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+= 2.5.1 - August 29 1997 =
+* Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
+* Fixed: Missing gradients in UI.
+* Fixed: Use of anonymous function in PodsMeta.php causing issues with old versions of PHP.
+* Fixed: Issue where hidden fields were being shown for admin users, when they should have been hidden.
+* Fixed: Issue where PodsAPI::delete_field() was unable to delete fields in certain situations.
+* Fixed: Issue with pods_version_check() usage that was causing a deprecated core function to run, when it was supposed to prevent it from running.
+* Fixed: Issue with pods_error() that was causing it to display AJAX errors improperly.
 
 = 2.5 - December 30, 2014 =
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)

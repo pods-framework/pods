@@ -4546,7 +4546,7 @@ class PodsAPI {
         if ( !isset( $params->id ) )
             $params->id = 0;
 
-        $field = $this->load_field( array( 'name' => $params->name, 'id' => $params->id ) );
+        $field = $this->load_field( array( 'name' => $params->name, 'id' => $params->id, 'pod' => $params->pod, 'pod_id' => $params->pod_id ) );
 
         if ( false === $field )
             return pods_error( __( 'Field not found', 'pods' ), $this );

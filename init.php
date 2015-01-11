@@ -3,7 +3,7 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.5
+Version: 2.5.1-alpha-1
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
@@ -37,7 +37,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 }
 else {
     // Current version
-    define( 'PODS_VERSION', '2.5' );
+    define( 'PODS_VERSION', '2.5.1-a-1' );
 
     // Version tracking between DB updates themselves
     define( 'PODS_DB_VERSION', '2.3.5' );
@@ -118,8 +118,8 @@ else {
                     'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
                     'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
                     'sslverify' => false, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-                    'requires' => '3.4', // which version of WordPress does your plugin require?
-                    'tested' => '3.6', // which version of WordPress is your plugin tested up to?
+                    'requires' => '3.8', // which version of WordPress does your plugin require?
+                    'tested' => '4.1', // which version of WordPress is your plugin tested up to?
                     'version' => $version
                 );
 

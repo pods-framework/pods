@@ -112,12 +112,12 @@ function pods_sanitize_like( $input ) {
 	else {
 		global $wpdb;
 
-		if ( pods_version_check( 'wp', '4.0', '<' ) ) {
-			// like_escape is deprecated in WordPress 4.0
-			$output = like_escape( pods_sanitize( $input ) );
+		if ( pods_version_check( 'wp', '4.0' ) ) {
+			$output = $wpdb->esc_like( pods_sanitize( $input ) );
 		}
 		else {
-			$output = $wpdb->esc_like( pods_sanitize( $input ) );
+			// like_escape is deprecated in WordPress 4.0
+			$output = like_escape( pods_sanitize( $input ) );
 		}
 	}
 
@@ -228,16 +228,21 @@ function pods_unsanitize( $input, $params = array() ) {
 		$output = (object) $output;
 	}
 	elseif ( is_array( $input ) ) {
-		$n_params = (array) $params;
+		$n_params             = (array) $params;
 		$n_params[ 'nested' ] = true;
 
 		foreach ( $input as $key => $val ) {
 			$output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, $n_params );
 		}
 	}
-	// @todo Figure out what to do to unescape mysql_real_escape_string
 	else {
-		$output = ( pods_version_check( 'wp', '3.6' ) ? stripslashes( $input ) : stripslashes( $input ) );
+		// @todo Figure out what to do to unescape mysql_real_escape_string
+		if ( pods_version_check( 'wp', '3.6' ) ) {
+			$output = stripslashes( $input );
+		}
+		else {
+			$output = stripslashes( $input );
+		}
 	}
 
 	return $output;
@@ -280,9 +285,14 @@ function pods_unslash( $input ) {
 			$output[ $key ] = pods_unslash( $val );
 		}
 	}
-	// @todo Figure out what to do to unescape mysql_real_escape_string
 	else {
-		$output = ( pods_version_check( 'wp', '3.6' ) ? wp_unslash( $input ) : stripslashes( $input ) );
+		// @todo Figure out what to do to unescape mysql_real_escape_string
+		if ( pods_version_check( 'wp', '3.6' ) ) {
+			$output = wp_unslash( $input );
+		}
+		else {
+			$output = stripslashes( $input );
+		}
 	}
 
 	return $output;

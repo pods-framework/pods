@@ -15,7 +15,7 @@ $groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[
 $group_fields = array();
 $submittable_fields = array();
 
-foreach ( $groups as $g => $group ) {
+foreach ( $groups as &$group ) {
     // unset fields
     foreach ( $group[ 'fields' ] as $k => $field ) {
         if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {

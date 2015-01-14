@@ -162,6 +162,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Issue where PodsAPI::delete_field() was unable to delete fields in certain situations.
 * Fixed: Issue with pods_version_check() usage that was causing a deprecated core function to run, when it was supposed to prevent it from running.
 * Fixed: Issue with pods_error() that was causing it to display AJAX errors improperly.
+* Fixed: Issue preventing public, publicly queryable & rewrite with front from saving choices in advanced options.
 
 = 2.5 - December 30, 2014 =
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)

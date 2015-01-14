@@ -15,7 +15,7 @@ $groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[
 $group_fields = array();
 $submittable_fields = array();
 
-foreach ( $groups as &$group ) {
+foreach ( $groups as $g => $group ) {
     // unset fields
     foreach ( $group[ 'fields' ] as $k => $field ) {
         if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {
@@ -51,6 +51,7 @@ foreach ( $groups as &$group ) {
 
         $group_fields[ $field[ 'name' ] ] = $group[ 'fields' ][ $k ];
     }
+    $groups[ $g ] = $group;
 }
 
 if ( !isset( $thank_you_alt ) )

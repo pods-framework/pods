@@ -51,6 +51,7 @@ foreach ( $groups as $g => $group ) {
 
         $group_fields[ $field[ 'name' ] ] = $group[ 'fields' ][ $k ];
     }
+    $groups[ $g ] = $group;
 }
 
 if ( !isset( $thank_you_alt ) )

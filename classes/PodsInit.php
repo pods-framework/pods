@@ -267,8 +267,7 @@ class PodsInit {
             'capability_type' => 'pods_pod',
             'has_archive' => false,
             'hierarchical' => false,
-            'supports' => array( 'title', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+            'supports' => array( 'title', 'author' )
         );
 
         $args = self::object_label_fix( $args, 'post_type' );
@@ -285,8 +284,7 @@ class PodsInit {
             'capability_type' => 'pods_pod',
             'has_archive' => false,
             'hierarchical' => true,
-            'supports' => array( 'title', 'editor', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+            'supports' => array( 'title', 'editor', 'author' )
         );
 
         $args = self::object_label_fix( $args, 'post_type' );

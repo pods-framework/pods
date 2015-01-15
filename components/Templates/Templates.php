@@ -71,8 +71,7 @@ class Pods_Templates extends PodsComponent {
 			'rewrite' => false,
 			'has_archive' => false,
 			'hierarchical' => false,
-			'supports' => array( 'title', 'author', 'revisions' ),
-			'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+			'supports' => array( 'title', 'author', 'revisions' )
 		);
 
 		if ( !pods_is_admin() )

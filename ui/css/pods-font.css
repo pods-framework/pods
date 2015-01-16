@@ -42,7 +42,7 @@
     content: "a";
 }
 
-#toplevel_page_pods-add-new .wp-menu-image:before {
+.dashicons-pods:before {
     margin-top: 3px;
     font-family: "pods" !important;
     font-size: 22px;

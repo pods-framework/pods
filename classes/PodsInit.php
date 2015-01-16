@@ -270,7 +270,8 @@ class PodsInit {
             'capability_type' => 'pods_pod',
             'has_archive' => false,
             'hierarchical' => false,
-            'supports' => array( 'title', 'author' )
+            'supports' => array( 'title', 'author' ),
+            'menu_icon' => 'dashicons-pods'
         );
 
         $args = self::object_label_fix( $args, 'post_type' );
@@ -287,7 +288,8 @@ class PodsInit {
             'capability_type' => 'pods_pod',
             'has_archive' => false,
             'hierarchical' => true,
-            'supports' => array( 'title', 'editor', 'author' )
+            'supports' => array( 'title', 'editor', 'author' ),
+            'menu_icon' => 'dashicons-pods'
         );
 
         $args = self::object_label_fix( $args, 'post_type' );

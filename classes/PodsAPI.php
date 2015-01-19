@@ -6634,7 +6634,7 @@ class PodsAPI {
         $ids = array_unique( array_filter( $ids ) );
 
 	    $idstring = implode( ',', $ids );
-	    if ( isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
+	    if ( 0 != $pod_id && 0 != $field_id && isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
 		    // Check cache first, no point in running the same query multiple times
 		    return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
 	    }
@@ -6777,7 +6777,8 @@ class PodsAPI {
             if ( 0 < $related_pick_limit && !empty( $related_ids ) )
                 $related_ids = array_slice( $related_ids, 0, $related_pick_limit );
         }
-	    if ( ! empty( $related_ids ) ) {
+	    if ( 0 != $pod_id && 0 != $field_id && ! empty( $related_ids ) ) {
+                    // Only cache if $pod_id and $field_id were passed 
 		    self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
 	    }
 

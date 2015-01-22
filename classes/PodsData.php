@@ -2868,10 +2868,17 @@ class PodsData {
                 $joined_index = $table_info[ 'meta_field_index' ];
             }
             elseif ( $meta_data_table ) {
+                if ( $traverse[ 'id' ] !== $traverse[ 'pick_val' ] ) {
+                    // This must be a relationship
+                    $joined_id = 'related_item_id';
+                } else {
+                    $joined_id = $traverse_recurse[ 'joined_id' ];
+                }
+
                 $the_join = "
-                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`related_item_id`
-                ";
+                     LEFT JOIN `{$table_info['pod_table']}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info['pod_field_id']}` = `{$traverse_recurse['rel_alias']}`.`{$joined_id}`
+                 ";
             }
             else {
                 $the_join = "

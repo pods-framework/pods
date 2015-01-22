@@ -977,7 +977,7 @@ class PodsAPI {
                         'alias' => array(),
                         'hidden' => true,
 						'options' => array(
-							'taxonomy_format_type' => 'multi'
+							'pick_format_type' => 'multi'
 						)
                     );
                 }
@@ -3424,6 +3424,16 @@ class PodsAPI {
 		// Save terms for taxonomies associated to a post type
         if ( 0 < $params->id && 'post_type' == $pod[ 'type' ] && !empty( $post_term_data ) ) {
 			foreach ( $post_term_data as $post_taxonomy => $post_terms ) {
+                $post_terms = (array) $post_terms;
+
+                foreach ( $post_terms as $k => $v ) {
+                    if ( ! preg_match( '/[^0-9]/', $v ) ) {
+                        $v = (int) $v;
+                    }
+
+                    $post_terms[ $k ] = $v;
+                }
+
 				wp_set_object_terms( $params->id, $post_terms, $post_taxonomy );
 			}
 		}
@@ -4217,7 +4227,7 @@ class PodsAPI {
             if ( $flatten && is_array( $data[ $field[ 'name' ] ] ) )
                 $data[ $field[ 'name' ] ] = pods_serial_comma( $data[ $field[ 'name' ] ], array( 'field' => $field[ 'name' ], 'fields' => $export_fields, 'and' => '' ) );
         }
-        
+
 	$data[ 'id' ] = (int) $pod->id();
         return $data;
     }
@@ -6778,7 +6788,7 @@ class PodsAPI {
                 $related_ids = array_slice( $related_ids, 0, $related_pick_limit );
         }
 	    if ( 0 != $pod_id && 0 != $field_id && ! empty( $related_ids ) ) {
-                    // Only cache if $pod_id and $field_id were passed 
+                    // Only cache if $pod_id and $field_id were passed
 		    self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] = $related_ids;
 	    }
 
@@ -6929,7 +6939,7 @@ class PodsAPI {
 
         return $related_ids;
     }
-	
+
 	/**
 	 *
 	 * Load the information about an objects MySQL table

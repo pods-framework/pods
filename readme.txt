@@ -154,7 +154,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
-= 2.5.1 - January, 22 2015 =
+= 2.5.1 - January 22nd, 2015 =
 * Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
 * Fixed: Missing gradients in UI.
 * Fixed: Use of anonymous function in PodsMeta.php causing issues with old versions of PHP.
@@ -167,7 +167,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: If block in Frontier.
 * Fixed: Issue with custom taxonomy joins preventing "custom_tax.d.custom_field" type where clauses from working.
 
-= 2.5 - December 30, 2014 =
+= 2.5 - December 30th, 2014 =
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)
 * More unit tests -- now 1,858 tests with a total of 13,420 assertions covering all content type, storage type, and field variations (props to @sc0ttkclark, @clubduece, and @mordauk! it was a group effort)
 * Added Travis-CI / Scrutinizer-CI for all pushes and pull requests to unit test and check for other issues

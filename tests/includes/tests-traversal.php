@@ -342,9 +342,13 @@ namespace Pods_Unit_Tests;
 
 			$data = array();
 
+			$api = pods_api();
+
 			foreach ( self::$builds as $pod_type => $objects ) {
 				foreach ( $objects as $object => $storage_types ) {
 					foreach ( $storage_types as $storage_type => $pod ) {
+						$pod[ 'object_fields' ] = $api->get_wp_object_fields( $pod_type, $pod );
+
 						foreach ( $pod[ 'fields' ] as $field_name => $field ) {
 							if ( in_array( $field[ 'type' ], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) && empty( $field[ 'pick_val' ] ) ) {
 								if ( empty( $field[ 'pick_object' ] ) ) {
@@ -355,6 +359,24 @@ namespace Pods_Unit_Tests;
 							}
 
 							$pod_name = $pod[ 'name' ];
+							$field_name = $field[ 'name' ];
+
+							$data[] = array(
+								build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name' ) ) ),
+								array(
+									'pod_type'     => $pod_type,
+									'storage_type' => $storage_type,
+									'pod'          => $pod,
+									'field'        => $field
+								)
+							);
+						}
+
+						// Non-Pod Taxonomy field
+						if ( 'post_type' == $pod_type ) {
+							$field = $pod[ 'object_fields' ][ 'test_non_pod_ct' ];
+
+							$pod_name   = $pod[ 'name' ];
 							$field_name = $field[ 'name' ];
 
 							$data[] = array(
@@ -735,7 +757,7 @@ namespace Pods_Unit_Tests;
 			}
 
 			// @todo other field type coverage for relational
-			if ( 'pick' == $field_type ) {
+			if ( in_array( $field_type, array( 'pick', 'taxonomy' ) ) ) {
 				if ( !isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 					$this->assertTrue( false, sprintf( 'No related item found [%s]', $variant_id ) );
 
@@ -750,10 +772,27 @@ namespace Pods_Unit_Tests;
 				$check_display_value = $check_value;
 				$check_display_index = $check_index;
 
-				if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] ) {
+				$field_data = array();
+
+				if ( isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) ) {
+					$field_data = $pod[ 'fields' ][ $field[ 'name' ] ];
+				}
+				elseif ( isset( $pod[ 'object_fields' ][ $field[ 'name' ] ] ) ) {
+					$field_data = $pod[ 'object_fields' ][ $field[ 'name' ] ];
+				}
+				elseif ( ! empty( $field ) ) {
+					$field_data = $field;
+				}
+				else {
+					$this->assertTrue( false, sprintf( 'No related field data found [%s]', $variant_id ) );
+
+					return;
+				}
+
+				if ( ! empty( $field_data[ 'pick_format_type' ] ) && 'multi' == $field_data[ 'pick_format_type' ] ) {
 					$check_value = (array) $check_value;
 
-					if ( 'multi' == $pod[ 'fields' ][ $field[ 'name' ] ][ 'pick_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
+					if ( 'multi' == $field_data[ 'pick_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
 						$check_indexes = array();
 
 						$check_indexes[] = $check_index;
@@ -796,7 +835,7 @@ namespace Pods_Unit_Tests;
 						$this->assertEquals( $check_value, $p->field( $traverse_id ), sprintf( 'Related Item field value not as expected (%s) [%s]', $traverse_id, $variant_id ) );
 						$this->assertEquals( $check_index, $p->field( $traverse_index ), sprintf( 'Related Item index field value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
 
-						if ( 'meta' == $storage_type ) {
+						if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
 							$check_value = array_map( 'absint', (array) $check_value );
 							$check_index = (array) $check_index;
 
@@ -900,7 +939,7 @@ namespace Pods_Unit_Tests;
 							$this->assertEquals( $check_value, $p->field( $related_traverse_id, true ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_id, $variant_id ) );
 							$this->assertEquals( $check_index, $p->field( $related_traverse_index, true ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 
-							if ( 'meta' == $storage_type ) {
+							if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
 								$check_value = array_map( 'absint', (array) $check_value );
 								$check_index = (array) $check_index;
 
@@ -944,7 +983,7 @@ namespace Pods_Unit_Tests;
 						if ( 'field' == $method ) {
 							$this->assertEquals( $check_related_value, $p->field( $related_traverse_index ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 
-							if ( 'meta' == $storage_type ) {
+							if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
 								$check_related_value = (array) $check_related_value;
 
 								$this->assertEquals( $check_related_value, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), sprintf( 'Deep Related Item field meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
@@ -957,6 +996,7 @@ namespace Pods_Unit_Tests;
 					}
 				}
 			}
+			// Other field assertions
 			elseif ( isset( $data[ 'data' ][ $field[ 'name' ] ] ) ) {
 				$check_value = $data[ 'data' ][ $field[ 'name' ] ];
 

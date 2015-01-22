@@ -91,6 +91,8 @@ class PodsAdmin {
      */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
+        
+        wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
 
@@ -156,6 +158,8 @@ class PodsAdmin {
                 }
             }
         }
+
+        wp_enqueue_style( 'pods-font' );
     }
 
     /**
@@ -277,7 +281,7 @@ class PodsAdmin {
                             if ( null === $parent_page ) {
                                 $parent_page = $page;
 
-                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png', '58.5' );
+                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, 'dashicons-pods', '58.5' );
                             }
 
                             $all_title = $plural_label;
@@ -298,7 +302,7 @@ class PodsAdmin {
                             if ( null === $parent_page ) {
                                 $parent_page = $page;
 
-                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png', '58.5' );
+                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, 'dashicons-pods', '58.5' );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -498,7 +502,7 @@ class PodsAdmin {
                     if ( 'pods-upgrade' == $parent )
                         $menu = __( 'Pods Upgrade', 'pods' );
 
-                    add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
+                    add_menu_page( $menu, $menu, 'read', $parent, null, 'dashicons-pods' );
                 }
 
                 add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
@@ -795,7 +799,6 @@ class PodsAdmin {
             'row' => $row,
             'total' => count( $pods ),
             'total_found' => count( $pods ),
-            'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Pods',
             'item' => 'Pod',
             'fields' => array(
@@ -1913,7 +1916,6 @@ class PodsAdmin {
             'data' => $components,
             'total' => count( $components ),
             'total_found' => count( $components ),
-            'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Components',
             'item' => 'Component',
             'fields' => array(

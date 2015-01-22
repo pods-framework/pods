@@ -58,7 +58,7 @@ class Pods_Helpers extends PodsComponent {
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'author', 'revisions' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+            'menu_icon' => 'dashicons-pods'
         );
 
         if ( !pods_is_admin() )

@@ -886,7 +886,7 @@ class PodsMeta {
 
 		if ( $pods_field_found ) {
 			// Only add the classes to forms that actually have pods fields
-			add_action( 'post_edit_form_tag', function() { echo ' class="pods-submittable pods-form"'; } );
+			add_action( 'post_edit_form_tag', array( $this, 'add_class_submittable' ) );
 		}
     }
 

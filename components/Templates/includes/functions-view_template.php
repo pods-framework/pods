@@ -95,12 +95,11 @@ function frontier_if_block( $atts, $code ) {
 
 	}
 
-	if ( $field_data !== null ){
-
+	if ( ! empty( $field_data ) || isset( $atts[ 'value' ] ) ) {
 		// theres a field - let go deeper
 		if ( isset( $atts[ 'value' ] ) ) {
 
-			// check if > or < are present
+			// check if + or - are present
 			if( substr( $atts[ 'value' ], 0, 1) === '+' ){
 				// is greater
 				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) + 1;
@@ -121,12 +120,14 @@ function frontier_if_block( $atts, $code ) {
 
 			if ( $field_data == $atts[ 'value' ] ) {
 				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-			}
-			else {
+			} else {
 				if ( isset( $code[ 1 ] ) ) {
 					$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
 					return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+				} else {
+					// Value did not match, nothing should be displayed
+					return '';
 				}
 			}
 		}

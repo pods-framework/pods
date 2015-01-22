@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jamesgol, clubduece, dan.stefan, De
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 2.5
+Tested up to: 4.1.1
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,11 @@ We also do our best to integrate and play nicely with other projects:
  * [Polylang](http://wordpress.org/plugins/polylang/)
  * [YARPP](http://wordpress.org/plugins/yet-another-related-posts-plugin/)
  * [WPML](http://wpml.org/)
+ * [Conductor](https://conductorplugin.com/)
+ * [Timber](http://upstatement.com/timber/)
+ * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://github.com/pods-framework/pods-gravity-forms)
+ * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
+ * [WordPress JSON REST API (WP-API)](http://wp-api.org) Using the [Pods JSON API](https://github.com/pods-framework/pods-json-api)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
@@ -149,8 +154,20 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+= 2.5.1 - January 22nd, 2015 =
+* Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
+* Fixed: Missing gradients in UI.
+* Fixed: Use of anonymous function in PodsMeta.php causing issues with old versions of PHP.
+* Fixed: Issue where hidden fields were being shown for admin users, when they should have been hidden.
+* Fixed: Issue where PodsAPI::delete_field() was unable to delete fields in certain situations.
+* Fixed: Issue with pods_version_check() usage that was causing a deprecated core function to run, when it was supposed to prevent it from running.
+* Fixed: Issue with pods_error() that was causing it to display AJAX errors improperly.
+* Fixed: Issue preventing public, publicly queryable & rewrite with front from saving choices in advanced options.
+* Fixed: Magic tag for custom taxonomy, which was showing no content in Pods Templates in 2.5.
+* Fixed: If block in Frontier.
+* Fixed: Issue with custom taxonomy joins preventing "custom_tax.d.custom_field" type where clauses from working.
 
-= 2.5 - December 30, 2014 =
+= 2.5 - December 30th, 2014 =
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)
 * More unit tests -- now 1,858 tests with a total of 13,420 assertions covering all content type, storage type, and field variations (props to @sc0ttkclark, @clubduece, and @mordauk! it was a group effort)
 * Added Travis-CI / Scrutinizer-CI for all pushes and pull requests to unit test and check for other issues

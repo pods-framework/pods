@@ -4,15 +4,16 @@
 	var Pos         = CodeMirror.Pos;
 
 	function getFields(cm, option) {
-		
+
 		var cur = cm.getCursor(), token = cm.getTokenAt(cur),
 		result = [];
-		if(option === 'fields'){
+		if(option.type === 'fields'){
 			var typeclass = '.pod-field-row',
 				wrap = {start: "{@", end: "}"},
 				prefix = token.string.split('@')[1],
 				start = ((token.start-1)+token.string.split('@')[0].length);
-		}else if(option === 'each'){
+		}else if(option.type === 'each'){
+			console.log( 'each' );
 			var typeclass = '.pod-field-each',
 				wrap = {start: "[each ", end: "]"},
 				prefix = token.string.slice(6),
@@ -64,11 +65,11 @@ function podFields(cm, e) {
 			if(prefix){
 				if(token.type === 'mustache'){
 					if(hidehints === false){
-						CodeMirror.showHint(cm, CodeMirror.hint.podfield, 'fields');
+						CodeMirror.showHint(cm, CodeMirror.hint.podfield, { type : 'fields'} );
 					}
 				}else if(prefix.indexOf('[l') == 0 || prefix.indexOf('[@') == 0){
 					if(hidehints === false){
-						CodeMirror.showHint(cm, CodeMirror.hint.podfield, 'each');
+						CodeMirror.showHint(cm, CodeMirror.hint.podfield, {type : 'each'} );
 					}					
 				}else{
 					hidehints = false;

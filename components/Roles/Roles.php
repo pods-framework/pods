@@ -83,7 +83,6 @@ class Pods_Roles extends PodsComponent {
             'data' => $roles,
             'total' => count( $roles ),
             'total_found' => count( $roles ),
-            'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Roles',
             'item' => 'Role',
             'fields' => array(

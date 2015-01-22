@@ -17,102 +17,113 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public static $supported_types = array(
 		'post_type' => array(
-			'object' => array(
+			'object'  => array(
 				'%d',
-			    'post',
-			    'page',
-			    'nav_menu_item'
+				'post',
+				'page',
+				'nav_menu_item'
 			),
-		    // @todo Figure out how to split test meta/table for existing objects
+			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'meta',
-			    'table'
+				'table'
 			),
-	        'data' => array(
+			'data'    => array(
 				'post_status' => 'publish'
-	        )
-		),
-	    'taxonomy' => array(
-		    'object' => array(
-			    '%d',
-		        'category',
-		        'post_tag',
-		        'nav_menu'
-		    ),
-		    // @todo Figure out how to split test meta/table for existing objects
-			'storage' => array(
-			    'table',
-			    'none'
+			),
+			'options' => array(
+				'built_in_taxonomies_category'        => 1,
+				'built_in_taxonomies_post_tag'        => 1,
+				'built_in_taxonomies_nav_menu'        => 1,
+				'built_in_taxonomies_test_non_pod_ct' => 1
 			)
-	    ),
-	    'user' => array(
-		    // @todo Figure out how to split test meta/table for existing objects
-			'storage' => array(
-			    'meta',
-		        'table'
+		),
+		'taxonomy'  => array(
+			'object'  => array(
+				'%d',
+				'category',
+				'post_tag',
+				'nav_menu'
 			),
-	        'fields' => array(
-		        array(
-			        'name' => 'avatar',
-			        'type' => 'avatar'
-		        )
-	        ),
-	        'data' => array(
+			// @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+				'table',
+				'none'
+			),
+			'options' => array(
+				'built_in_post_types_post'          => 1,
+				'built_in_post_types_page'          => 1,
+				'built_in_post_types_nav_menu_item' => 1
+			)
+		),
+		'user'      => array(
+			// @todo Figure out how to split test meta/table for existing objects
+			'storage' => array(
+				'meta',
+				'table'
+			),
+			'fields'  => array(
+				array(
+					'name' => 'avatar',
+					'type' => 'avatar'
+				)
+			),
+			'data'    => array(
 				'display_name' => 'User %s',
-				'user_login' => 'User-%s',
-				'user_email' => '%s@user.com',
-			    'user_pass' => '%s'
-	        )
-	    ),
-	    'media' => array(
-		    // @todo Figure out how to split test meta/table for existing objects
+				'user_login'   => 'User-%s',
+				'user_email'   => '%s@user.com',
+				'user_pass'    => '%s'
+			)
+		),
+		'media'     => array(
+			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
-			    'meta',
-		        'table'
+				'meta',
+				'table'
 			),
-	        'data' => array(
+			'data'    => array(
 				'post_status' => 'inherit',
-				'post_type' => 'attachment'
-	        )
-	    ),
-	    'comment' => array(
-		    // @todo Figure out how to split test meta/table for existing objects
+				'post_type'   => 'attachment'
+			)
+		),
+		'comment'   => array(
+			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
-			    'meta',
-		        'table'
+				'meta',
+				'table'
 			),
-	        'data' => array(
-				'comment_author' => 'Comment %s',
+			'data'    => array(
+				'comment_author'       => 'Comment %s',
 				'comment_author_email' => '%s@comment.com',
-				'comment_author_url' => 'http://comment.com',
-				'comment_content' => '%s',
-				'comment_post_ID' => 1,
-				'comment_type' => 'comment',
-			    'comment_approved' => 1,
-			    'comment_date' => '2014-11-11 00:00:00'
-	        )
-	    ),
-	    'pod' => array(
-		    'object' => array(
-			    '%d'
-		    ),
-			'storage' => array(
-		        'table'
+				'comment_author_url'   => 'http://comment.com',
+				'comment_content'      => '%s',
+				'comment_post_ID'      => 1,
+				'comment_type'         => 'comment',
+				'comment_approved'     => 1,
+				'comment_date'         => '2014-11-11 00:00:00'
+			)
+		),
+		'pod'       => array(
+			'object'  => array(
+				'%d'
 			),
-	        'fields' => array(
-		        array(
-			        'name' => 'name',
-			        'type' => 'text'
-		        ),
-		        array(
-			        'name' => 'author',
-			        'type' => 'pick',
-				    'pick_object' => 'user',
-				    'pick_val' => '',
-				    'pick_format_type' => 'single'
-		        )
-	        )
-	    )
+			'storage' => array(
+				'table'
+			),
+			'fields'  => array(
+				array(
+					'name' => 'name',
+					'type' => 'text'
+				),
+				array(
+					'name'             => 'author',
+					'type'             => 'pick',
+					'pick_object'      => 'user',
+					'pick_val'         => '',
+					'pick_format_type' => 'single'
+				)
+			)
+		)
 	);
 
 	/**
@@ -413,6 +424,20 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public static function _initialize_config() {
 
+		// Setup non-Pod taxonomy
+		$args = array(
+			'hierarchical' => true,
+			'show_ui'      => true,
+			'query_var'    => true,
+			'labels'       => array(
+				'name'          => 'Non-Pod Taxonomy',
+				'singular_name' => 'Non-Pod Taxonomy'
+			)
+		);
+
+		register_taxonomy( 'test_non_pod_ct', array( 'post', 'page', 'nav_menu_item' ), $args );
+
+		// Setup Pods API
 		$api = pods_api();
 
 		$test_pod = 1;
@@ -443,6 +468,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 			foreach ( $objects as $object ) {
 				$object_pod = $main_pod;
+
+				// @todo Fix for 3.x to be merge instead
+				if ( ! empty( $options[ 'options' ] ) ) {
+					$object_pod[ 'options' ] = $options[ 'options' ];
+				}
 
 				$pod_object = $object;
 
@@ -539,6 +569,22 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	 */
 	public static function _initialize_data() {
 
+		// Insert test data for Non-Pod Taxonomy
+		$term = wp_insert_term( 'Non-Pod Term', 'test_non_pod_ct' );
+
+		self::$related_items[ 'test_non_pod_ct' ] = array(
+			'pod' => 'test_non_pod_ct',
+			'id' => (int) $term[ 'term_id' ],
+		    'field_index' => 'name',
+		    'field_id' => 'term_id',
+			'data' => array(
+				'name' => 'Non-Pod Term'
+			)
+		);
+
+		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
+
+
 		$related_author = 0;
 		$related_media = 0;
 
@@ -552,7 +598,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			// Get latest, as we're updating as we go
 			$item_data = self::$related_items[ $item ];
 
-			if ( ! empty( $item_data[ 'is_build' ] ) ) {
+			if ( ! empty( $item_data[ 'is_build' ] ) || 'test_non_pod_ct' == $item ) {
 				continue;
 			}
 			elseif ( '%s' != $item ) {
@@ -573,6 +619,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				$item_data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
 				$item_data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
+
+				// Add term id for the Non-Pod Taxonomy field
+				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
+					$item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				}
 
 				if ( 'media' == $item_data[ 'pod' ] ) {
 					// Create new attachment from sample image
@@ -696,6 +747,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
 							}
 
+							// Add term id for the Non-Pod Taxonomy field
+							if ( 'post_type' == $pod_type ) {
+								$pod_item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+							}
+
 							$id = $p->add( $pod_item_data[ 'data' ] );
 
 							if ( 'post_type' == $pod_type ) {
@@ -713,7 +769,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 		// Go over related field items and save relations to them too
 		foreach ( self::$related_items as $r_item => $r_item_data ) {
-			if ( '%s' == $r_item ) {
+			if ( in_array( $r_item, array( '%s', 'test_non_pod_ct' ) ) ) {
 				continue;
 			}
 
@@ -723,11 +779,23 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 					$save_data = array_merge( $r_item_data[ 'sub_data' ][ $item_id ], $r_item_data[ 'sub_rel_data' ] );
 
+					// Add term id for the Non-Pod Taxonomy field
+					// @todo This should be working on it's own
+					if ( 'post_type' == $p->pod_data[ 'type' ] ) {
+						$save_data[ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+					}
+
 					$p->save( $save_data );
 				}
 			}
 			else {
 				$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
+
+				// Add term id for the Non-Pod Taxonomy field
+				// @todo This should be working on it's own
+				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
+					$r_item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				}
 
 				$p->save( $r_item_data[ 'data' ] );
 			}

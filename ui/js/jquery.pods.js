@@ -181,7 +181,7 @@
                             var val = $el.val();
 
                             if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
-                                if ( $el.is( '.pods-boolean' ) )
+                                if ( $el.is( '.pods-boolean' ) || $el.is( '.pods-form-ui-field-type-boolean') )
                                     val = 0;
                                 else
                                     return true; // This input isn't a boolean, continue the loop

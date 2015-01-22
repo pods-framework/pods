@@ -230,7 +230,10 @@ class PodsInit {
         wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '4.8' );
         wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
         wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
-	    wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
+	    wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 
         if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
             wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.1.1' );
@@ -268,7 +271,7 @@ class PodsInit {
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+            'menu_icon' => 'dashicons-pods'
         );
 
         $args = self::object_label_fix( $args, 'post_type' );
@@ -286,7 +289,7 @@ class PodsInit {
             'has_archive' => false,
             'hierarchical' => true,
             'supports' => array( 'title', 'editor', 'author' ),
-            'menu_icon' => PODS_URL . 'ui/images/icon16.png'
+            'menu_icon' => 'dashicons-pods'
         );
 
         $args = self::object_label_fix( $args, 'post_type' );

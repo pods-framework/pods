@@ -977,7 +977,7 @@ class PodsAPI {
                         'alias' => array(),
                         'hidden' => true,
 						'options' => array(
-							'taxonomy_format_type' => 'multi'
+							'pick_format_type' => 'multi'
 						)
                     );
                 }

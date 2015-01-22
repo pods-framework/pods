@@ -163,6 +163,9 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Issue with pods_version_check() usage that was causing a deprecated core function to run, when it was supposed to prevent it from running.
 * Fixed: Issue with pods_error() that was causing it to display AJAX errors improperly.
 * Fixed: Issue preventing public, publicly queryable & rewrite with front from saving choices in advanced options.
+* Fixed: Magic tag for custom taxonomy, which was showing no content in Pods Templates in 2.5.
+* Fixed: If block in Frontier.
+* Fixed: Issue with custom taxonomy joins preventing "custom_tax.d.custom_field" type where clauses from working.
 
 = 2.5 - December 30, 2014 =
 * Major performance enhancements can now make things run up to 400% faster (props to @jamesgol!)

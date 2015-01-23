@@ -119,6 +119,7 @@ class PodsInit {
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
+        add_action( 'init', array( $this, 'flush_rewrite_rules' ), 99 );
 
         if ( !empty( self::$version ) ) {
 	        $this->run();
@@ -730,6 +731,14 @@ class PodsInit {
             self::$content_types_registered[ 'post_types' ][] = $post_type;
         }
 
+    }
+
+	/**
+     * Check if we need to flush WordPress rewrite rules
+     * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
+     *
+     */
+    public function flush_rewrite_rules() {
         $flush = pods_transient_get( 'pods_flush_rewrites' );
 
         if ( 1 == $flush ) {

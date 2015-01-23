@@ -156,6 +156,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 == Changelog ==
 = 2.5.1.1 - January 22nd, 2015 =
 * Fixed missing files for font icon.
+
 = 2.5.1 - January 22nd, 2015 =
 * Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
 * Fixed: Missing gradients in UI.

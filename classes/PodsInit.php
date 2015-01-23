@@ -119,7 +119,7 @@ class PodsInit {
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
-        add_action( 'init', array( $this, 'flush_rewrite_rules' ), 99 );
+        add_action( 'plugins_loaded', array( $this, 'flush_rewrite_rules' ) );
 
         if ( !empty( self::$version ) ) {
 	        $this->run();

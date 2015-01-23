@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.1.1
-Stable tag: 2.5.1
+Stable tag: 2.5.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,6 +154,9 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+= 2.5.1.1 - January 22nd, 2015 =
+* Fixed missing files for font icon.
+
 = 2.5.1 - January 22nd, 2015 =
 * Fixed: Issue preventing fields from being sorted by weight or by orderby, that was affecting image multi-select image field ordering.
 * Fixed: Missing gradients in UI.

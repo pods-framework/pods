@@ -91,24 +91,31 @@ module.exports = function (grunt) {
 				src: [ 'README.md' ],
 				overwrite: true,
 				replacements: [{
-					from: "<%= pkg.last_version %>",
-					to: "<%= pkg.version %>"
+					from: /~Current Version:\s*(.*)~/,
+					to: "~Current Version: <%= pkg.version %>~"
+				}, {
+					from: /Latest Stable Release:\s*\[(.*)\]\s*\(https:\/\/github.com\/pods-framework\/pods\/releases\/tag\/(.*)\s*\)/,
+					to: "Latest Stable Release: [<%= pkg.git_tag %>](https://github.com/pods-framework/pods/releases/tag/<%= pkg.git_tag %>)",
 				}]
 			},
 			reamde_txt: {
 				src: [ 'readme.txt' ],
 				overwrite: true,
 				replacements: [{
-					from: "<%= pkg.last_version %>",
-					to: "<%= pkg.version %>"
+					from: /Stable tag: (.*)/,
+					to: "Stable tag: <%= pkg.version %>"
 				}]
+
 			},
 			init_php: {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: "<%= pkg.last_version %>",
-					to: "<%= pkg.version %>"
+					from: /Version:\s*(.*)/,
+					to: "Version: <%= pkg.version %>"
+				}, {
+					from: /define\(\s*'PODS_VERSION',\s*'(.*)'\s*\);/,
+					to: "define( 'PODS_VERSION', '<%= pkg.version %>' );"
 				}]
 			}
 		},

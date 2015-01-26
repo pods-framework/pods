@@ -2,6 +2,7 @@
   "name": "Pods",
   "version": "2.5.2",
   "last_version": "2.5.1.1",
+  "git_tag": "2.x/2.5.2",
   "description": "Pods Framework",
   "main": "index.js",
   "scripts": {

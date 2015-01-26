@@ -87,8 +87,24 @@ module.exports = function (grunt) {
 			}
 		},
 		replace: {
-			version: {
-				src: [ 'README.md', 'readme.txt', 'init.php' ],
+			reamde_md: {
+				src: [ 'README.md' ],
+				overwrite: true,
+				replacements: [{
+					from: "<%= pkg.last_version %>",
+					to: "<%= pkg.version %>"
+				}]
+			},
+			reamde_txt: {
+				src: [ 'readme.txt' ],
+				overwrite: true,
+				replacements: [{
+					from: "<%= pkg.last_version %>",
+					to: "<%= pkg.version %>"
+				}]
+			},
+			init_php: {
+				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
 					from: "<%= pkg.last_version %>",
@@ -132,7 +148,8 @@ module.exports = function (grunt) {
 	grunt.registerTask( 'default', [ 'glotpress_download' ]);
 
 	//release tasks
-	grunt.registerTask( 'pre_vcs', [ 'replace:version', 'glotpress_download' ] );
+	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );
+	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 

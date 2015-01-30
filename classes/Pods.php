@@ -2095,6 +2095,7 @@ class Pods implements Iterator {
 			$new_id = $pod->id();
 
 		$new_id = $this->do_hook( 'last_id', $new_id, $pod, $params_override );
+		return $new_id;
 	}
 
 	/**

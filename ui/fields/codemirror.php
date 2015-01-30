@@ -29,12 +29,12 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
                 indentWithTabs : false,
                 lineWrapping : true,
                 enterMode : "keep",
-                tabMode : "shift",
-                onBlur : function () {
-                    var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
-                    $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val( value );
-                }
+                tabMode : "shift"
             } );
+            codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'blur', function() {
+                var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
+                $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val( value );
+            });
 
             CodeMirror.autoLoadMode( codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, 'php' );
         }

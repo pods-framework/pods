@@ -130,6 +130,7 @@ class Pods_Templates_Frontier {
 			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 			wp_enqueue_script( 'pods-codemirror-mode-xml' );
 			wp_enqueue_script( 'pods-codemirror-mode-html' );
+			wp_enqueue_script( 'pods-codemirror-mode-css' );
 		}
 
 	}

@@ -257,13 +257,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" id="label" class="manage-column field-label">
-                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                    <span>Label<?php pods_help( __( "<h4>Label</h4>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                    <span>Name<?php pods_help( __( "<h4>Name</h4>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                    <span>Field Type<?php pods_help( __( "<h4>Field Types</h4>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
                 </th>
             </tr>
         </thead>
@@ -273,13 +273,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" class="manage-column field-label">
-                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                    <span>Label<?php pods_help( __( "<h4>Label</h4>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-machine-name">
-                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                    <span>Name<?php pods_help( __( "<h4>Name</h4>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-field-type">
-                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                    <span>Field Type<?php pods_help( __( "<h4>Field Types</h4>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
                 </th>
             </tr>
         </tfoot>

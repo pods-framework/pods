@@ -21,7 +21,7 @@
     <?php
         include_once( ABSPATH . WPINC . '/feed.php' );
 
-        $feed = fetch_feed( 'http://pods.io/forums/forum/general-discussion/pods-2-x/feed/' );
+        $feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
 
         if ( !is_wp_error( $feed ) ) {
             $max_items = $feed->get_item_quantity( 6 );

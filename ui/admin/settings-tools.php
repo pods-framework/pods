@@ -68,6 +68,20 @@
     $theme = wp_get_theme( $stylesheet );
     $theme_name = $theme->get( 'Name' );
 
+    $opcode_cache = array (
+            'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
+            'Memcached' => class_exists ( 'eaccelerator_put') ? 'Yes' : 'No',
+            'Redis' => class_exists( 'xcache_set' ) ? 'Yes' : 'No',
+        );
+
+    $object_cache = array (
+            'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
+            'Apcu' => function_exists( 'apcu_cache_info' ) ? 'Yes' : 'No',
+            'Memcache' => class_exists ( 'Memcache') ? 'Yes' : 'No',
+            'Memcached' => class_exists ( 'Memcached') ? 'Yes' : 'No',
+            'Redis' => class_exists( 'Redis' ) ? 'Yes' : 'No',
+        );
+
     $versions = array(
         'WordPress Version' => $wp,
         'PHP Version' => $php,
@@ -78,6 +92,8 @@
         'Session Save Path Exists' => ( file_exists( session_save_path() ) ? 'Yes' : 'No' ),
         'Session Save Path Writeable' => ( is_writable( session_save_path() ) ? 'Yes' : 'No' ),
         'Session Max Lifetime' => ini_get( 'session.gc_maxlifetime' ),
+        'Opcode Cache'=> $opcode_cache,
+        'Object Cache'=> $object_cache,
         'WPDB Prefix' => $wpdb->prefix,
         'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),
         'WP Memory Limit' => WP_MEMORY_LIMIT,

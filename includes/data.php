@@ -913,10 +913,10 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$url[ 'path' ] = '/' . implode( '/', $uri ) . '/';
 				$url[ 'path' ] = trim( $url[ 'path' ], '/' );
 
-				$ret = http_build_url( $url );
+				$ret = esc_url( http_build_url( $url ) );
 			}
 			else {
-				$ret = add_query_arg( array( $var => $value ) );
+				$ret = esc_url( add_query_arg( array( $var => $value ) ) );
 			}
 		}
 		elseif ( 'server' == $type ) {

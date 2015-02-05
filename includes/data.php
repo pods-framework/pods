@@ -1149,7 +1149,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 
 	$url = add_query_arg( $query_args, null, $url );
 
-	return $url;
+	return esc_url( $url );
 
 }
 

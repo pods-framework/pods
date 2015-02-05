@@ -2384,7 +2384,7 @@ class PodsData {
 			// Setup field casting from field name
 			if ( false === strpos( $field_name, '`' ) && false === strpos( $field_name, '(' ) && false === strpos( $field_name, ' ' ) ) {
 				// Handle field naming if Pod-based
-				if ( !empty( $pod ) && false === strpos( $field_name, '.' ) ) {
+				if ( !empty( $pod ) && false !== strpos( $field_name, '.' ) ) {
 					$field_cast = '';
 
 					$tableless_field_types = PodsForm::tableless_field_types();

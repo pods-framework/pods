@@ -913,10 +913,10 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$url[ 'path' ] = '/' . implode( '/', $uri ) . '/';
 				$url[ 'path' ] = trim( $url[ 'path' ], '/' );
 
-				$ret = esc_url( http_build_url( $url ) );
+				$ret = http_build_url( $url );
 			}
 			else {
-				$ret = esc_url( add_query_arg( array( $var => $value ) ) );
+				$ret = add_query_arg( array( $var => $value ) );
 			}
 		}
 		elseif ( 'server' == $type ) {
@@ -1149,7 +1149,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 
 	$url = add_query_arg( $query_args, null, $url );
 
-	return esc_url( $url );
+	return $url;
 
 }
 

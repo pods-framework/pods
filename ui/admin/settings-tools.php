@@ -9,7 +9,7 @@
 				$api->load_pods();
 			}
 
-            pods_redirect( pods_var_update( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
+            pods_redirect( pods_query_arg( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
         }
     }
     elseif ( 1 == pods_var( 'pods_clearcache' ) )
@@ -30,7 +30,7 @@
 ?>
 
 <p class="submit">
-    <a href="<?php echo $update; ?>" class="button button-primary"><?php esc_html_e( 'Force Plugin Refresh/Update from GitHub', 'pods' ); ?></a>
+    <a href="<?php echo esc_url( $update ); ?>" class="button button-primary"><?php esc_html_e( 'Force Plugin Refresh/Update from GitHub', 'pods' ); ?></a>
 </p>
 
 <hr />
@@ -106,17 +106,17 @@
     );
 
     foreach ( $versions as $what => $version ) {
-        echo '<p><strong>' . $what . '</strong>: ';
+        echo '<p><strong>' . esc_html( $what ) . '</strong>: ';
 
         if ( is_array( $version ) ) {
             echo '</p><ul class="ul-disc">';
 
             foreach ( $version as $what_v => $v ) {
-                echo '<li><strong>' . $what_v . '</strong>: ' . $v . '</li>';
+                echo '<li><strong>' . esc_html( $what_v ) . '</strong>: ' . esc_html( $v ) . '</li>';
             }
 
             echo '</ul>';
         }
         else
-            echo $version . '</p>';
+            echo esc_html( $version ) . '</p>';
     }

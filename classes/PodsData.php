@@ -646,7 +646,7 @@ class PodsData {
 
             // Debug purposes
             if ( ( 1 == pods_v( 'pods_debug_sql', 'get', 0 ) || 1 == pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) ) )
-                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) . '</textarea>';
+                echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) ) . '</textarea>';
 
             if ( empty( $this->sql ) )
                 return array();
@@ -2044,7 +2044,7 @@ class PodsData {
                 $params = array_merge( $params, $sql );
 
             if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $params->sql ) . '</textarea>';
+                echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $params->sql ) ) . '</textarea>';
         }
 
         $params->sql = trim( $params->sql );

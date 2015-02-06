@@ -81,7 +81,7 @@ if ( !isset( $label ) )
 $do = 'save';
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
+<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
@@ -120,12 +120,12 @@ $do = 'save';
 
                         if ( !empty( $depends ) ) {
             ?>
-                <tbody class="pods-field-option-container <?php echo $depends; ?>">
+                <tbody class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
             <?php
                         }
                     }
             ?>
-                <tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                <tr valign="top" class="pods-field-option pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
                     <th>
                         <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
                     </th>
@@ -164,6 +164,6 @@ $do = 'save';
     } );
 
     var pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo pods_slash( pods_var_update( array( 'do' => $do ) ) ); ?>';
+        document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => $do ) ) ); ?>';
     }
 </script>

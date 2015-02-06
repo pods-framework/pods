@@ -273,12 +273,12 @@ class Pods_Deprecated
         $save_button = '<input ' . $atts . '/>';
 ?>
     <div>
-    <input type="hidden" class="form num id" value="<?php echo $id; ?>" />
-    <input type="hidden" class="form txt pod" value="<?php echo $pod; ?>" />
-    <input type="hidden" class="form txt pod_id" value="<?php echo $pod_id; ?>" />
+    <input type="hidden" class="form num id" value="<?php echo esc_attr( $id ); ?>" />
+    <input type="hidden" class="form txt pod" value="<?php echo esc_attr( $pod ); ?>" />
+    <input type="hidden" class="form txt pod_id" value="<?php echo esc_attr( $pod_id ); ?>" />
     <input type="hidden" class="form txt form_count" value="1" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($pod, $uri_hash, $public_fields, 1); ?>" />
-    <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo esc_attr( pods_generate_key($pod, $uri_hash, $public_fields, 1) ); ?>" />
+    <input type="hidden" class="form txt uri_hash" value="<?php echo esc_attr( $uri_hash ); ?>" />
     <?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, $this); ?>
     </div>
 <?php

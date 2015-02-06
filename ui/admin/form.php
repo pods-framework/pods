@@ -129,7 +129,7 @@ if ( 0 < $pod->id() ) {
 }
 ?>
 
-<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax">
+<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax">
     <div class="pods-submittable-fields">
         <?php
             echo PodsForm::field( 'action', 'pods_admin', 'hidden' );
@@ -193,7 +193,7 @@ if ( 0 < $pod->id() ) {
                                         ?>
                                             <div id="minor-publishing-actions">
                                                 <div id="preview-action">
-                                                    <a class="button" href="<?php echo $pod->field( 'detail_url' ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+                                                    <a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
                                                 </div>
                                                 <div class="clear"></div>
                                             </div>
@@ -253,7 +253,7 @@ if ( 0 < $pod->id() ) {
                                         if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', (array) $obj->actions_disabled ) && !in_array( 'delete', (array) $obj->actions_hidden ) ) {
                                     ?>
                                         <div id="delete-action">
-                                            <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                            <a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
                                         </div>
                                         <!-- /#delete-action -->
                                     <?php } ?>
@@ -347,7 +347,7 @@ if ( 0 < $pod->id() ) {
                                     <?php
                                         if ( 0 < $prev ) {
                                     ?>
-                                        <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
+                                        <a class="previous-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $prev ), null, 'do' ) ); ?>">
                                             <span>&laquo;</span>
                                             <?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
                                         </a>
@@ -356,7 +356,7 @@ if ( 0 < $pod->id() ) {
 
                                         if ( 0 < $next ) {
                                     ?>
-                                        <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ); ?>">
+                                        <a class="next-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $next ), null, 'do' ) ); ?>">
                                             <?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
                                             <span>&raquo;</span>
                                         </a>
@@ -423,7 +423,7 @@ if ( 0 < $pod->id() ) {
                                 $max_length = (int) pods_var( 'maxlength', $field[ 'options' ], pods_var( $field[ 'type' ] . '_max_length', $field[ 'options' ], 0 ), null, true );
 
                                 if ( 0 < $max_length )
-                                    $extra .= ' maxlength="' . $max_length . '"';
+                                    $extra .= ' maxlength="' . esc_attr( $max_length ) . '"';
 
                                 /**
                                  * Filter that lets you make the title field readonly
@@ -438,7 +438,7 @@ if ( 0 < $pod->id() ) {
                                     <div id="titlediv">
                                         <div id="titlewrap">
                                             <h3><?php echo esc_html( $pod->index() ); ?></h3>
-                                            <input type="hidden" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
+                                            <input type="hidden" name="pods_field_<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" autocomplete="off"<?php echo $extra; ?> />
                                         </div>
                                         <!-- /#titlewrap -->
                                     </div>
@@ -463,7 +463,7 @@ if ( 0 < $pod->id() ) {
 									?>
                                     <div id="titlewrap">
                                         <label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here', 'pods' ), $pod, $fields ); ?></label>
-                                        <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off"<?php echo $extra; ?> />
+                                        <input type="text" name="pods_field_<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" data-name-clean="pods-field-<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo esc_attr( $pod->pod_data[ 'field_index' ] ); ?>" autocomplete="off"<?php echo $extra; ?> />
 										<?php
 											/**
 											 * Action that runs after the title field of the editor for an Advanced Content Type
@@ -524,7 +524,7 @@ if ( 0 < $pod->id() ) {
 								 */
 								do_action( 'pods_act_editor_before_metabox', $pod );
 						?>
-                        <div id="pods-meta-box-<?php echo sanitize_title( $group[ 'label' ] ); ?>" class="postbox" style="">
+                        <div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group[ 'label' ] ) ); ?>" class="postbox">
                             <div class="handlediv" title="Click to toggle"><br /></div>
                             <h3 class="hndle">
                                 <span>
@@ -552,7 +552,7 @@ if ( 0 < $pod->id() ) {
                                                     if ( 'hidden' == $field[ 'type' ] || $more === $field[ 'name' ] || !isset( $group_fields[ $field[ 'name' ] ] ) )
                                                 continue;
                                     ?>
-                                        <tr class="form-field pods-field pods-field-input <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                                        <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                                             <td>
                                                 <?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
@@ -613,7 +613,7 @@ if ( 0 < $pod->id() ) {
 
 <script type="text/javascript">
     if ( 'undefined' == typeof ajaxurl ) {
-        var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
+        var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
     }
 
     jQuery( function ( $ ) {
@@ -630,8 +630,8 @@ if ( 0 < $pod->id() ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
-        var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
+        var thank_you = '<?php echo esc_js( $thank_you ); ?>';
+        var thank_you_alt = '<?php echo esc_js( $thank_you_alt ); ?>';
 
         if ( 'undefined' != typeof pods_form_thank_you && null !== pods_form_thank_you ) {
             thank_you = pods_form_thank_you;

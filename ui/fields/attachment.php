@@ -76,21 +76,26 @@ else
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
         foreach ( $value as $val ) {
-            $attachment = get_post( $val );
+            $attachment = get_post( $val, ARRAY_A );
 
-            if ( empty( $attachment ) )
+            if ( empty( $attachment ) ) {
                 continue;
+            }
 
-            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+            $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
 
-            $title = $attachment->post_title;
+            $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+            $attachment[ 'thumbnail' ] = $thumb[ 0 ];
 
-            if ( 0 == $title_editable )
-                $title = basename( $attachment->guid );
+            $attachment[ 'link' ] = '';
 
-			$link = wp_get_attachment_url( $attachment->ID );
+            if ( $linked ) {
+                $attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
+            }
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+            $attachment = apply_filters( 'pods_media_attachment', $attachment );
+
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $attachment[ 'ID' ], $attachment[ 'thumbnail' ], $attachment[ 'post_title' ] );
         }
         ?></ul>
 

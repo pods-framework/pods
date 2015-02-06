@@ -896,7 +896,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo esc_js( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
+        var thank_you = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
     }
@@ -913,7 +913,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
-        var default_select = '<?php echo esc_js( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        var default_select = '<?php echo str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();

@@ -161,7 +161,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 if ( !$fields_only ) {
 ?>
         <p class="pods-submit">
-            <img class="waiting" src="<?php echo esc_url( admin_url() . '/images/wpspin_light.gif' ); ?>" alt="">
+            <img class="waiting" src="<?php echo esc_url( admin_url( '/images/wpspin_light.gif' ) ); ?>" alt="">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
 
             <?php do_action( 'pods_form_after_submit', $pod, $fields, $params ); ?>
@@ -174,7 +174,7 @@ if ( !$fields_only ) {
         var pods_form_init = true;
 
         if ( 'undefined' == typeof ajaxurl ) {
-            var ajaxurl = '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>';
+            var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
         }
 
         jQuery( function ( $ ) {

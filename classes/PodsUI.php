@@ -2679,7 +2679,7 @@ class PodsUI {
                             <?php
                             foreach ( $this->export[ 'formats' ] as $format => $separator ) {
                                 ?>
-                                <input type="button" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " class="button" onclick="document.location='<?php echo esc_js( pods_query_arg( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
+                                <input type="button" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " class="button" onclick="document.location='<?php echo pods_slash( pods_query_arg( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
                                 <?php
                             }
                             ?>

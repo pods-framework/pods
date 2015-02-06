@@ -613,7 +613,7 @@ if ( 0 < $pod->id() ) {
 
 <script type="text/javascript">
     if ( 'undefined' == typeof ajaxurl ) {
-        var ajaxurl = '<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>';
+        var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
     }
 
     jQuery( function ( $ ) {

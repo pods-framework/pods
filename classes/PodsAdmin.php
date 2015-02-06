@@ -565,8 +565,8 @@ class PodsAdmin {
         echo '<div class="error fade"><p>';
         echo sprintf(
             __( '<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href="%s">Upgrade Wizard</a>.', 'pods' ),
-            PODS_VERSION,
-            admin_url( 'admin.php?page=pods-upgrade' )
+            esc_html( PODS_VERSION ),
+            esc_url( admin_url( 'admin.php?page=pods-upgrade' ) )
         );
         echo '</p></div>';
     }

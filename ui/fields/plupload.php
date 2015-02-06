@@ -34,7 +34,7 @@ $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
     'container' => $css_id,
     'browse_button' => $css_id . '-upload',
-    'url' => admin_url( 'admin-ajax.php', 'relative' ) . '?pods_ajax=1',
+    'url' => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
     'file_data_name' => 'Filedata',
     'multiple_queues' => false,
     'max_file_size' => wp_max_upload_size() . 'b',

@@ -113,6 +113,6 @@
     } );
 
     var pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo esc_js( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
+        document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
     }
 </script>

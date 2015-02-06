@@ -93,6 +93,9 @@ function pods_message ( $message, $type = null ) {
     echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 }
 
+global $pods_errors;
+$pods_errors = array();
+
 /**
  * Error Handling which throws / displays errors
  *
@@ -107,6 +110,9 @@ function pods_message ( $message, $type = null ) {
  * @since 2.0
  */
 function pods_error ( $error, $obj = null ) {
+
+    global $pods_errors;
+
     $display_errors = false;
 
     if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
@@ -135,11 +141,13 @@ function pods_error ( $error, $obj = null ) {
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 
     // throw error as Exception and return false if silent
-    if ( false === $display_errors && !empty( $error ) ) {
+    if ( $pods_errors !== $error && false === $display_errors && !empty( $error ) ) {
         $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
 
         if ( null !== $exception_bypass )
             return $exception_bypass;
+
+        $pods_errors = $error;
 
         set_exception_handler( 'pods_error' );
 

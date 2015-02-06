@@ -18,7 +18,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
     jQuery( function ( $ ) {
         $textarea_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = jQuery( 'textarea#<?php echo esc_js( $attributes[ 'id' ] ); ?>' );
 
-        CodeMirror.modeURL = "<?php echo PODS_URL ?>ui/js/codemirror/mode/%N/%N.js";
+        CodeMirror.modeURL = "<?php echo esc_js( PODS_URL ); ?>ui/js/codemirror/mode/%N/%N.js";
         if ( 'undefined' == typeof codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> ) {
 
             codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo esc_js( $attributes[ 'id' ] ); ?>" ), {

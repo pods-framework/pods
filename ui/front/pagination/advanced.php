@@ -56,7 +56,7 @@
 
     if ( ( $params->page + 100 ) < $params->total ) {
         ?>
-        <a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => ( $params->page + 100 ) ) ) ); ?>" class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 100 ); ?> <?php  echo $params->link_class ?>"><?php echo ( $params->page + 100 ); ?></a>
+        <a href="<?php echo esc_url( pods_query_arg( array( $params->page_var => ( $params->page + 100 ) ) ) ); ?>" class="pods-pagination-number pods-pagination-<?php echo esc_attr( $params->page + 100 ); ?> <?php echo esc_attr( $params->link_class ); ?>"><?php echo ( $params->page + 100 ); ?></a>
         <?php
     }
 

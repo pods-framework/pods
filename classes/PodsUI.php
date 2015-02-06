@@ -3830,7 +3830,7 @@ class PodsUI {
             $singular_label = strtolower( $this->item );
             $plural_label = strtolower( $this->items );
             ?>
-        <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ) . ' ' . _n( $singular_label, $plural_label, $this->total_found, 'pods' ) . $this->extra[ 'total' ] ?></span>
+        <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ) . ' ' . _n( $singular_label, $plural_label, $this->total_found, 'pods' ) . $this->extra[ 'total' ]; ?></span>
         <?php
         }
 

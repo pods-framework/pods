@@ -1,7 +1,7 @@
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
     <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
-    <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+    <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
     <h3>Pods Support</h3>
 
@@ -21,7 +21,7 @@
     <?php
         include_once( ABSPATH . WPINC . '/feed.php' );
 
-        $feed = fetch_feed( 'http://pods.io/forums/forum/general-discussion/pods-2-x/feed/' );
+        $feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
 
         if ( !is_wp_error( $feed ) ) {
             $max_items = $feed->get_item_quantity( 6 );

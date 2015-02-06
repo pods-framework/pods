@@ -401,35 +401,32 @@ class PodsMeta {
 
     public function integrations () {
         // Codepress Admin Columns 2.x
-		add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys_get' ), 10, 2 );
+		add_filter( 'cac/storage_model/meta_keys', array( $this, 'cpac_meta_keys' ), 10, 2 );
         add_filter( 'cac/post_types', array( $this, 'cpac_post_types' ), 10, 1 );
         add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
-
-        // Codepress Admin Columns 1.x
-        add_filter( 'cpac-get-meta-by-type', array( $this, 'cpac_meta_keys' ), 10, 2 );
-        add_filter( 'cpac-get-post-types', array( $this, 'cpac_post_types' ), 10, 1 );
-        add_filter( 'cpac_get_column_value_custom_field', array( $this, 'cpac_meta_values' ), 10, 5 );
     }
 
-    public function cpac_meta_keys_get ( $meta_fields, $obj ) {
-        return $this->cpac_meta_keys( $meta_fields, $obj->key );
-    }
 
-    public function cpac_meta_keys ( $meta_fields, $cac_key ) {
+    public function cpac_meta_keys ( $meta_fields, $storage_model ) {
         $object_type = 'post_type';
-        $object = $cac_key;
+        $object = $storage_model->key;
 
-        if ( !empty( $cac_type ) )
-            $object_type = $cac_key;
-
-        if ( in_array( $cac_key, array( 'wp-links', 'link' ) ) )
+        if ( in_array( $storage_model->key, array( 'wp-links', 'link' ) ) ) {
             $object_type = $object = 'link';
-        elseif ( in_array( $cac_key, array( 'wp-media', 'media' ) ) )
+        }
+        elseif ( in_array( $storage_model->key, array( 'wp-media', 'media' ) ) ) {
             $object_type = $object = 'media';
-        elseif ( in_array( $cac_key, array( 'wp-users', 'user' ) ) )
+        }
+        elseif ( in_array( $storage_model->key, array( 'wp-users', 'user' ) ) ) {
             $object_type = $object = 'user';
-        elseif ( in_array( $cac_key, array( 'wp-comments', 'comment' ) ) )
+        }
+        elseif ( in_array( $storage_model->key, array( 'wp-comments', 'comment' ) ) ) {
             $object_type = $object = 'comment';
+        }
+        elseif ( 'taxonomy' === $storage_model->type ) {
+            $object_type = 'taxonomy';
+            $object = $storage_model->taxonomy;
+        }
 
         if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
             self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
@@ -474,14 +471,22 @@ class PodsMeta {
         $object_type = 'post_type';
         $object = $obj->storage_model->key;
 
-        if ( in_array( $obj->storage_model->type, array( 'wp-links', 'link' ) ) )
+        if ( in_array( $obj->storage_model->type, array( 'wp-links', 'link' ) ) ) {
             $object_type = $object = 'link';
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-media', 'media' ) ) )
+        }
+        elseif ( in_array( $obj->storage_model->type, array( 'wp-media', 'media' ) ) ) {
             $object_type = $object = 'media';
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-users', 'user' ) ) )
+        }
+        elseif ( in_array( $obj->storage_model->type, array( 'wp-users', 'user' ) ) ) {
             $object_type = $object = 'user';
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-comments', 'comment' ) ) )
+        }
+        elseif ( in_array( $obj->storage_model->type, array( 'wp-comments', 'comment' ) ) ) {
             $object_type = $object = 'comment';
+        }
+        elseif ( 'taxonomy' === $obj->storage_model->type ) {
+            $object_type = 'taxonomy';
+            $object = $obj->storage_model->taxonomy;
+        }
 
         $field = substr( $obj->options->field, 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->options->field ) : $obj->options->field;
         $field_type = $obj->options->field_type;
@@ -493,8 +498,16 @@ class PodsMeta {
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) )
+
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
                 $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, true );
+            }
+
+            elseif ( 'taxonomy' === $pod['type'] ) {
+                $podterms = pods( $pod['name'] );
+                $podterms->fetch( $id );
+                $meta = $podterms->field( $field );
+            }
 
             $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
         }
@@ -966,7 +979,7 @@ class PodsMeta {
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
-            <tr class="form-field pods-field pods-field-input <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?> <?php echo $depends; ?>">
+            <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?> <?php echo esc_attr( $depends ); ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php
@@ -1381,7 +1394,7 @@ class PodsMeta {
 
                 if ( !is_object( $tag ) ) {
             ?>
-                <div class="form-field pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <div class="form-field pods-field"<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                     <?php
                         echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                         echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -1392,7 +1405,7 @@ class PodsMeta {
                 }
                 else {
             ?>
-                <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                     <td>
                         <?php
@@ -1581,7 +1594,7 @@ class PodsMeta {
                     }
                     else {
             ?>
-                <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+                <tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                     <td>
                         <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
@@ -1753,7 +1766,7 @@ class PodsMeta {
                     pods_no_conflict_off( 'comment' );
                 }
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>  pods-field"<?php echo ( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?>  pods-field"<?php echo ( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                 <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -1820,7 +1833,7 @@ class PodsMeta {
 
                 ob_start();
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?> pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?> pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
                 <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -1943,7 +1956,7 @@ class PodsMeta {
                 }
                 else {
         ?>
-            <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+            <tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>

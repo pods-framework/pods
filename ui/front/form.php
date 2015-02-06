@@ -64,7 +64,7 @@ $field_prefix = '';
 if ( !$fields_only ) {
 	$field_prefix = 'pods_field_';
 ?>
-	<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
+	<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
 		<div class="pods-submittable-fields">
 			<?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
 			<?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
@@ -109,7 +109,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 						 */
 						do_action( 'pods_form_pre_field', $field, $fields, $pod, $params );
 				?>
-					<li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+					<li class="pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
 						<div class="pods-field-label">
 							<?php echo PodsForm::label( $field_prefix . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
 						</div>
@@ -161,7 +161,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 if ( !$fields_only ) {
 ?>
         <p class="pods-submit">
-            <img class="waiting" src="<?php echo admin_url() . '/images/wpspin_light.gif' ?>" alt="">
+            <img class="waiting" src="<?php echo esc_url( admin_url( '/images/wpspin_light.gif' ) ); ?>" alt="">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
 
             <?php do_action( 'pods_form_after_submit', $pod, $fields, $params ); ?>
@@ -174,7 +174,7 @@ if ( !$fields_only ) {
         var pods_form_init = true;
 
         if ( 'undefined' == typeof ajaxurl ) {
-            var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
+            var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
         }
 
         jQuery( function ( $ ) {

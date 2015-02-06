@@ -5,12 +5,12 @@
 		if ( isset( $_POST[ 'pods_cleanup_1x' ] ) ) {
 			pods_upgrade( '2.0.0' )->cleanup();
 
-			pods_redirect( pods_var_update( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
+			pods_redirect( pods_query_arg( array( 'pods_cleanup_1x_success' => 1 ), array( 'page', 'tab' ) ) );
 		} elseif ( isset( $_POST[ 'pods_reset' ] ) ) {
 			$pods_init->reset();
 			$pods_init->setup();
 
-			pods_redirect( pods_var_update( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
+			pods_redirect( pods_query_arg( array( 'pods_reset_success' => 1 ), array( 'page', 'tab' ) ) );
 		} elseif ( isset( $_POST[ 'pods_reset_deactivate' ] ) ) {
 			$pods_init->reset();
 
@@ -113,7 +113,7 @@
 
     <p class="submit">
         <?php $confirm = "Are you sure you want to Reset your Weekend?\n\nThere is no going back, you cannot reclaim anything you've gained throughout your weekend.\n\nYou are about to be groundhoggin' it"; ?>
-        <input type="submit" class="button button-primary" name="pods_reset_weekend" value=" reset_weekend( '<?php echo date_i18n( 'Y-m-d', strtotime( '-3 days' ) ); ?> 19:00:00' ); " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
+        <input type="submit" class="button button-primary" name="pods_reset_weekend" value=" reset_weekend( '<?php echo esc_js( date_i18n( 'Y-m-d', strtotime( '-3 days' ) ) ); ?> 19:00:00' ); " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php
     }

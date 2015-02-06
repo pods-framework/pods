@@ -32,7 +32,7 @@
 
                             if ( !empty( $depends ) ) {
                 ?>
-                    <tbody class="pods-field-option-container <?php echo $depends; ?>">
+                    <tbody class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
                 <?php
                             }
                         }
@@ -40,7 +40,7 @@
                         if ( !is_array( $field_option[ 'group' ] ) ) {
                             $value = pods_var_raw( $field_name, $settings, $field_option[ 'default' ] );
                 ?>
-                    <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo $field_name; ?>">
+                    <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
                         <th>
                             <?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option[ 'label' ], $field_option[ 'help' ], $field_option ); ?>
                         </th>
@@ -52,7 +52,7 @@
                         }
                         else {
                 ?>
-                    <tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo $field_name; ?>">
+                    <tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
                         <th class="pods-field-option-group-label">
                             <?php echo $field_option[ 'label' ]; ?>
                         </th>
@@ -71,7 +71,7 @@
 
                                         $value = pods_var_raw( $field_group_name, $settings, $field_group_option[ 'default' ] );
                                 ?>
-                                    <li class="<?php echo $depends_option; ?>">
+                                    <li class="<?php echo esc_attr( $depends_option ); ?>">
                                         <?php echo PodsForm::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
                                     </li>
                                 <?php
@@ -113,6 +113,6 @@
     } );
 
     var pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo pods_slash( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
+        document.location = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
     }
 </script>

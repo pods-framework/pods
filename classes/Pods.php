@@ -2095,6 +2095,7 @@ class Pods implements Iterator {
 			$new_id = $pod->id();
 
 		$new_id = $this->do_hook( 'last_id', $new_id, $pod, $params_override );
+		return $new_id;
 	}
 
 	/**
@@ -3057,7 +3058,7 @@ class Pods implements Iterator {
 
 		$this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
 
-		$url = pods_var_update( null, null, $this->page_var );
+		$url = pods_query_arg( null, null, $this->page_var );
 
 		$append = '?';
 
@@ -3441,7 +3442,7 @@ class Pods implements Iterator {
 			if ( 1 < PodsForm::$form_counter )
 				$success .= PodsForm::$form_counter;
 
-			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
+			$thank_you = pods_query_arg( array( 'success*' => null, $success => 1 ) );
 
 			if ( 1 == pods_v( $success, 'get', 0 ) ) {
 				$message = __( 'Form submitted successfully', 'pods' );

@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
     <script>
-        var PODS_URL = '<?php echo PODS_URL; ?>';
+        var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
     </script>
     <div id="icon-pods" class="icon32"><br /></div>
 
@@ -8,7 +8,7 @@
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin" />
             <input type="hidden" name="method" value="add_pod" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'pods-add_pod' ); ?>" />
+            <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'pods-add_pod' ) ); ?>" />
             <input type="hidden" name="create_extend" id="pods_create_extend" value="create" />
 
             <h2 class="italicized">
@@ -18,15 +18,15 @@
                     $all_pods = pods_api()->load_pods( array( 'key_names' => true ) );
 
                     if ( !empty( $all_pods ) ) {
-                        $link = pods_var_update( array( 'page' => 'pods', 'action' . $obj->num => 'manage' ) );
+                        $link = pods_query_arg( array( 'page' => 'pods', 'action' . $obj->num => 'manage' ) );
                 ?>
-                    <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>
+                    <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>
                 <?php
                     }
                 ?>
             </h2>
 
-            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
             <div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first">
                 <div id="pods-wizard-heading">
@@ -274,13 +274,13 @@
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                         <?php
                                             $taxonomies = get_taxonomies();
-                                            
-                                            //Add Support for built-in taxonomy "link_category" 
+
+                                            //Add Support for built-in taxonomy "link_category"
                                             //if links are in use.
-                                            $bookmarkcount = count(get_bookmarks()); 
+                                            $bookmarkcount = count(get_bookmarks());
                                             if ($bookmarkcount < 1){
                                                 $ignore = array( 'link_category' );
-                                            } 
+                                            }
 
                                             foreach ( $taxonomies as $taxonomy => $label ) {
                                                 if ( in_array( $taxonomy, $ignore ) ) {

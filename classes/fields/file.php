@@ -489,7 +489,7 @@ class PodsField_File extends PodsField {
         $editable = (boolean) $editable;
         $linked = (boolean) $linked;
         ?>
-    <li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
+    <li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
@@ -498,7 +498,7 @@ class PodsField_File extends PodsField {
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">
-                <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+                <img class="pinkynail" src="<?php echo esc_url( $icon ); ?>" alt="Icon" />
             </li>
 
             <li class="pods-file-col pods-file-name">
@@ -515,7 +515,7 @@ class PodsField_File extends PodsField {
 			<?php
 				if ( $linked ) {
 			?>
-            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>" target="_blank">Download</a></li>
+            	<li class="pods-file-col pods-file-download"><a href="<?php echo esc_url( $link ); ?>" target="_blank">Download</a></li>
 			<?php
 				}
 			?>

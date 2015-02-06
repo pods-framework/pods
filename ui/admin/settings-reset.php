@@ -106,13 +106,13 @@
 ?>
     <hr />
 
-    <h3>Reset Weekend</h3>
+    <h3><?php __( 'Reset Weekend', 'pods' ); ?></h3>
 
-    <p>This feature has been exclusively built for Pods to help developers suffering from "Monday", and allows them to reset the weekend.</p>
-    <p>By resetting the weekend, you will be sent back to Friday night and the weekend you've just spent will be erased. You will retain all of your memories of the weekend, and be able to relive it in any way you wish.</p>
+    <p><?php __( 'This feature has been exclusively built for Pods to help developers suffering from "Monday", and allows them to reset the weekend.', 'pods' ); ?></p>
+    <p><?php __( "By resetting the weekend, you will be sent back to Friday night and the weekend you've just spent will be erased. You will retain all of your memories of the weekend, and be able to relive it in any way you wish.", 'pods'); ?></p>
 
     <p class="submit">
-        <?php $confirm = "Are you sure you want to Reset your Weekend?\n\nThere is no going back, you cannot reclaim anything you've gained throughout your weekend.\n\nYou are about to be groundhoggin' it"; ?>
+        <?php $confirm = __( "Are you sure you want to Reset your Weekend?\n\nThere is no going back, you cannot reclaim anything you've gained throughout your weekend.\n\nYou are about to be groundhoggin' it", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="pods_reset_weekend" value=" reset_weekend( '<?php echo date_i18n( 'Y-m-d', strtotime( '-3 days' ) ); ?> 19:00:00' ); " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php

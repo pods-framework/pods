@@ -933,7 +933,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         postdata = {
             action : 'pods_admin',
             method : 'load_sister_fields',
-            _wpnonce : '<?php echo wp_create_nonce( 'pods-load_sister_fields' ); ?>',
+            _wpnonce : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
             pod : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
             related_pod : related_pod_name
         };

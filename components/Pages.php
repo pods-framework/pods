@@ -942,7 +942,7 @@ class Pods_Pages extends PodsComponent {
 
         if ( !defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || !PODS_DISABLE_VERSION_OUTPUT ) {
             ?>
-        <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
+        <!-- Pods Framework <?php echo esc_html( PODS_VERSION ); ?> -->
         <?php
         }
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) ) {

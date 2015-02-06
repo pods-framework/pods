@@ -1,7 +1,7 @@
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
     <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
-    <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+    <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
     <h3>Pods Support</h3>
 

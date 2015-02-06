@@ -91,7 +91,7 @@ class PodsAdmin {
      */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
-        
+
         wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
@@ -111,7 +111,7 @@ class PodsAdmin {
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
                 ?>
             <script type="text/javascript">
-                var PODS_URL = "<?php echo PODS_URL; ?>";
+                var PODS_URL = "<?php echo esc_js( PODS_URL ); ?>";
             </script>
             <?php
                 wp_enqueue_script( 'jquery' );
@@ -699,12 +699,12 @@ class PodsAdmin {
 
         if ( 'pods-add-new' == $_GET[ 'page' ] ) {
             if ( isset( $_GET[ 'action' ] ) && 'add' != $_GET[ 'action' ] )
-                pods_redirect( pods_var_update( array( 'page' => 'pods', 'action' => $_GET[ 'action' ] ) ) );
+                pods_redirect( pods_query_arg( array( 'page' => 'pods', 'action' => $_GET[ 'action' ] ) ) );
             else
                 $_GET[ 'action' ] = 'add';
         }
         elseif ( isset( $_GET[ 'action' ] ) && 'add' == $_GET[ 'action' ] )
-            pods_redirect( pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
+            pods_redirect( pods_query_arg( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
 
         $types = array(
             'post_type' => __( 'Post Type (extended)', 'pods' ),
@@ -822,7 +822,7 @@ class PodsAdmin {
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
             'action_links' => array(
-                'add' => pods_var_update( array( 'page' => 'pods-add-new', 'action' => '', 'id' => '', 'do' => '' ) )
+                'add' => pods_query_arg( array( 'page' => 'pods-add-new', 'action' => '', 'id' => '', 'do' => '' ) )
             ),
             'search' => false,
             'searchable' => false,
@@ -1714,7 +1714,7 @@ class PodsAdmin {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
         if ( 0 < $new_id )
-            pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
+            pods_redirect( pods_query_arg( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
     }
 
 	/**
@@ -1901,9 +1901,9 @@ class PodsAdmin {
             );
 
             if ( !empty( $component_data[ 'category' ] ) ) {
-                $category_url = pods_var_update( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
+                $category_url = pods_query_arg( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
 
-                $component_data[ 'category' ] = '<a href="' . $category_url . '">' . $component_data[ 'category' ] . '</a>';
+                $component_data[ 'category' ] = '<a href="' . esc_url( $category_url ) . '">' . $component_data[ 'category' ] . '</a>';
             }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
@@ -2079,7 +2079,7 @@ class PodsAdmin {
 
             pods_transient_clear( 'pods_components' );
 
-            $url = pods_var_update( array( 'toggled' => null ) );
+            $url = pods_query_arg( array( 'toggled' => null ) );
 
             pods_redirect( $url );
         }

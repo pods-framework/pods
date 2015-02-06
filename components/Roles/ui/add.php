@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
     <script>
-        var PODS_URL = '<?php echo PODS_URL; ?>';
+        var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
     </script>
     <div id="icon-pods" class="icon32"><br /></div>
 
@@ -13,7 +13,7 @@
 
             <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Add New Role', 'pods' ); ?></h2>
 
-            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
             <div id="pods-wizard-box" class="pods-wizard-steps-2">
                 <div id="pods-wizard-heading">
@@ -81,7 +81,7 @@
 
                                                 $zebra = ( !$zebra );
                                                 ?>
-                                                <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
+                                                <li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
                                                     <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                 </li>
                                                 <?php

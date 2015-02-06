@@ -24,16 +24,16 @@
                         $label = 'Pods ' . $label;
                     }
 
-                    $url = pods_var_update( array( 'tab' => $tab ), array( 'page' ) );
+                    $url = pods_query_arg( array( 'tab' => $tab ), array( 'page' ) );
             ?>
-                <a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
+                <a href="<?php echo esc_url( $url ); ?>" class="nav-tab<?php echo esc_attr( $class ); ?>">
                     <?php echo $label; ?>
                 </a>
             <?php
                 }
             ?>
         </h2>
-        <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+        <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
         <?php
             wp_nonce_field( 'pods-settings' );

@@ -154,6 +154,8 @@ function pods_error ( $error, $obj = null ) {
         throw new Exception( $error );
     }
 
+    $pods_errors = array();
+
     $die_bypass = apply_filters( 'pods_error_die', null, $error );
 
     if ( null !== $die_bypass )

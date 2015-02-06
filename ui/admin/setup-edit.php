@@ -955,36 +955,39 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
                     var select_container = default_select.match( /<select[^<]*>/g );
 
-                    if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
-                        if ( window.console ) console.log( d );
-                        if ( window.console ) console.log( json );
+                    if ( 'object' != typeof json || ! jQuery.isEmptyObject( json ) ) {
+                        if ( 'object' != typeof json ) {
+                            if ( window.console ) console.log( d );
+                            if ( window.console ) console.log( json );
 
-                        select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
-                    }
-                    else {
+                            select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
+                        }
+
                         select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
 
                         for ( var field_id in json ) {
-                            var field_name = json[ field_id ];
+                            var field_name = json[field_id];
 
                             select_container += '<option value="' + field_id + '">' + field_name + '</option>';
                         }
+
+                        select_container += '</select>';
+
+                        $el.find( '.pods-sister-field' ).html( select_container );
+
+                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
                     }
-
-                    select_container += '</select>';
-
-                    $el.find( '.pods-sister-field' ).html( select_container );
-
-                    jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
-
-                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                    else {
+                        // None found
+                        $el.find( '.pods-sister-field' ).html( default_select );
+                    }
                 }
                 else {
                     // None found
                     $el.find( '.pods-sister-field' ).html( default_select );
-
-                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
                 }
+
+                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
             },
             error : function () {
                 // None found

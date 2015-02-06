@@ -46,4 +46,4 @@ We're able to focus more on Pods when we have some cash to help keep the lights 
 
 <em>Please submit all pull requests against [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0) branch.</em>
 
-~Current Version: 2.5.1.1~
+~Current Version: 2.5.2-a-1~

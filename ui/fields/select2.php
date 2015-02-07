@@ -59,7 +59,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 }
             ?>};
 
-        var $element = $('#<?php echo esc_js( $attributes[ 'id' ] ); ?>'; );
+        var $element = $('#<?php echo esc_js( $attributes[ 'id' ] ); ?>' );
 
         $element.select2( {
 			<?php

@@ -644,6 +644,10 @@ class PodsAdmin {
      * @return string
      */
     public function media_button ( $context = null ) {
+        // If shortcodes are disabled don't show the button
+        if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
+            return '';
+        }
 
 		/**
 		 * Filter to remove Pods shortcode button from the post editor.

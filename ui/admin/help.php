@@ -74,7 +74,7 @@
 
             if ( 0 < $max_items ) {
     ?>
-        <h3><?php _e( 'Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</a>', 'pods' ) ?></h3>
+        <h3><?php _e( 'Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</a>', 'pods' ); ?></h3>
 
         <ul class="ul-disc">
             <?php

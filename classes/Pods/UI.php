@@ -4825,7 +4825,7 @@ class Pods_UI {
 
 		$callback_args[] = $this;
 
-		$callback = call_user_func_array( array( $this, 'apply_filters' ), $callback_args );
+		$callback = call_user_func_array( 'apply_filters', $callback_args );
 
 		if ( null === $callback ) {
 			$callback = false;
@@ -4875,7 +4875,7 @@ class Pods_UI {
 
 		$callback_args[] = $this;
 
-		$callback = call_user_func_array( array( $this, 'apply_filters' ), $callback_args );
+		$callback = call_user_func_array( 'apply_filters', $callback_args );
 
 		if ( null === $callback ) {
 			$callback = false;
@@ -4930,7 +4930,7 @@ class Pods_UI {
 
 		$callback_args[] = $this;
 
-		$callback = call_user_func_array( array( $this, 'apply_filters' ), $callback_args );
+		$callback = call_user_func_array( 'apply_filters', $callback_args );
 
 		if ( null === $callback ) {
 			$callback = false;

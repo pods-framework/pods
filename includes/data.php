@@ -61,7 +61,7 @@ function pods_sanitize( $input, $params = array() ) {
 		global $wpdb;
 
 		$output = $wpdb->prepare( $params['type'], $output );
-	} // @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
+	} // @todo Switch this full over to esc_sql once we get sanitization sane again in Pods_API so we *don't* have to unsanitize in various places
 	elseif ( function_exists( 'wp_slash' ) ) {
 		$output = wp_slash( $input );
 	} else {

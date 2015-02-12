@@ -396,7 +396,7 @@ class Pods_API {
 	 *
 	 */
 	public function save_user_meta( $id, $user_meta = null, $strict = false, $fields = array() ) {
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
 		$conflicted = pods_no_conflict_check( 'user' );
 
@@ -535,7 +535,7 @@ class Pods_API {
 	 * @since 2.0
 	 */
 	public function save_comment_meta( $id, $comment_meta = null, $strict = false, $fields = array() ) {
-		$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
 
 		$conflicted = pods_no_conflict_check( 'comment' );
 
@@ -2043,7 +2043,7 @@ class Pods_API {
 				 * 		Field data to be saved
 				 *
 			     *		@type array $fields An array of fields in the Pod, 'value' key stores the *new* value if it's been set to save
-				 * 		@type obj $params Parameters sent to PodsAPI::save_pod_item
+				 * 		@type obj $params Parameters sent to Pods_API::save_pod_item
 				 * 		@type array	$pod Information about the Pod, including id, name, label, etc
 				 * 		@type array $fields_active An array of fields that are currently being saved. If saving via WP admin all fields will be included. If saving via API, only specified fields will be included. You must add additonal fields to thsi array before saving.
 				 *      @type array $object_fields An array of the WP Object fields for the Pod (WP-based content types).
@@ -2640,7 +2640,7 @@ class Pods_API {
 			 * 		Field data that was saved
 			 *
 			 *		@type array $fields An array of fields in the Pod, 'value' key stores the *new* value if it's been set to save
-			 * 		@type obj $params Parameters sent to PodsAPI::save_pod_item
+			 * 		@type obj $params Parameters sent to Pods_API::save_pod_item
 			 * 		@type array	$pod Information about the Pod, including id, name, label, etc
 			 * 		@type array $fields_active An array of fields that are currently being saved. If saving via WP admin all fields will be included. If saving via API, only specified fields will be included. You must add additonal fields to thsi array before saving.
 			 *      @type array $object_fields An array of the WP Object fields for the Pod (WP-based content types).
@@ -5878,7 +5878,7 @@ class Pods_API {
 				 * @param  array  $info       Array of information about the object.
 				 * @param  string $object     Type of object
 				 * @param  string $name       Name of pod to load
-				 * @param  array  $pod        Array with Pod information. Result of PodsAPI::load_pod()
+				 * @param  array  $pod        Array with Pod information. Result of Pods_API::load_pod()
 				 * @param  array  $field      Array with field information
 				 *
 				 * @since unknown
@@ -6629,7 +6629,7 @@ class Pods_API {
 		$name = (string) $name;
 
 		if ( ! isset( $this->deprecated ) ) {
-			$this->deprecated = new PodsAPI_Deprecated( $this );
+			$this->deprecated = new Pods_API_Deprecated( $this );
 		}
 
 		$var = null;
@@ -6654,7 +6654,7 @@ class Pods_API {
 		$name = (string) $name;
 
 		if ( ! isset( $this->deprecated ) ) {
-			$this->deprecated = new PodsAPI_Deprecated( $this );
+			$this->deprecated = new Pods_API_Deprecated( $this );
 		}
 
 		if ( method_exists( $this->deprecated, $name ) ) {

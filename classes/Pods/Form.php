@@ -1677,7 +1677,7 @@ class Pods_Form {
 		static $object_types = null;
 
 		if ( null === $object_types ) {
-			$object_types = PodsForm::field_method( 'pick', 'simple_objects' );
+			$object_types = Pods_Form::field_method( 'pick', 'simple_objects' );
 		}
 
 		return $object_types;

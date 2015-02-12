@@ -772,8 +772,6 @@ class Pods implements Iterator {
 
 		$params->full_name = $params->name;
 
-		$id = $this->id();
-
 		$value = null;
 
 		if ( isset( $this->row_override[ $params->name ] ) ) {
@@ -797,6 +795,8 @@ class Pods implements Iterator {
 
 			return 0;
 		}
+
+		$id = $this->id();
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
 		$simple_tableless_objects = Pods_Form::simple_tableless_objects();

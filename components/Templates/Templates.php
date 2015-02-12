@@ -85,7 +85,7 @@ class Pods_Templates extends Pods_Component {
 		if ( !pods_is_admin() )
 			$args[ 'capability_type' ] = 'pods_template';
 
-		$args = PodsInit::object_label_fix( $args, 'post_type' );
+		$args = Pods_Init::object_label_fix( $args, 'post_type' );
 
 		register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
@@ -280,7 +280,7 @@ class Pods_Templates extends Pods_Component {
 			'type' => 'post_type'
 		);
 
-		if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+		if ( isset( Pods_Meta::$post_types[ $pod[ 'name' ] ] ) )
 			return;
 
 		$fields = array(

@@ -255,7 +255,7 @@ class Pods_Init {
 
 		wp_register_script( 'pods-form', PODS_URL . 'ui/js/jquery-pods-form.js', array( 'jquery' ), PODS_VERSION );
 
-		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery-pods.js', array( 'jquery', 'pods-json', 'jquery-qtip' ), PODS_VERSION );
+		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery-pods.js', array( 'jquery', 'jquery-json', 'jquery-qtip2' ), PODS_VERSION );
 
 		wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
 

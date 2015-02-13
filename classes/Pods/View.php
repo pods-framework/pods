@@ -281,7 +281,7 @@ class Pods_View {
 		 * identifier, we can add a version_compare function here.
 		 */
 		if ( is_string( $value ) && preg_match( '/^C:[0-9]+:.+\}/s', $value ) ) {
-				$value = unserialize( $value );
+			$value = unserialize( $value );
 		}
 
 		// @todo Needs hook doc

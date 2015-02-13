@@ -215,7 +215,7 @@ class Pods_Object_Pod extends
 						$this->_is_fallback = true;
 
 						// Add labels
-						$object = array_merge( $object, get_object_vars( $taxonomy->labels ) );
+						$object = array_merge( get_object_vars( $taxonomy->labels ),  $object );
 
 						// @todo Import object settings and match up to Pod options
 						/*unset( $taxonomy->name );

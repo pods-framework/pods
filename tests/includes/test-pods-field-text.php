@@ -2,7 +2,7 @@
 namespace Pods_Unit_Tests;
     use PodsField_Text;
 
-require_once PODS_TEST_PLUGIN_DIR . '/classes/fields/text.php';
+require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods/Field/Text.php';
 
 /**
  * @group pods_field

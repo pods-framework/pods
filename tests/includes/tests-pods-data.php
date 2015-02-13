@@ -2,7 +2,7 @@
 namespace Pods_Unit_Tests;
 use stdClass;
 
-require_once PODS_TEST_PLUGIN_DIR . '/classes/PodsData.php';
+require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods/Data.php';
 
 /**
  * Class Test_PodsData

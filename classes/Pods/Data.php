@@ -1990,10 +1990,10 @@ class Pods_Data {
 
 					$get_table_data = true;
 				} elseif ( 'taxonomy' == $this->pod_data['type'] ) {
-					$taxonomy = $this->pod_data['object'];
-
-					if ( empty( $taxonomy ) ) {
-						$taxonomy = $this->pod_data['name'];
+					if ( ! empty ( $this->pod_data[ 'object' ] ) ) {
+						$taxonomy = $this->pod_data[ 'object' ];
+					} else {
+						$taxonomy = $this->pod_data[ 'name' ];
 					}
 
 					// Taxonomies are registered during init, so they aren't available before then

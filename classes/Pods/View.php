@@ -275,6 +275,15 @@ class Pods_View {
 			}
 		}
 
+
+		/**
+		 * @todo Whenever WordPress fixes is_serialized (trac bug #17375) so that it recognizes 'C' as a valid
+		 * identifier, we can add a version_compare function here.
+		 */
+		if ( is_string( $value ) && preg_match( '/^C:[0-9]+:.+\}/s', $value ) ) {
+				$value = unserialize( $value );
+		}
+
 		// @todo Needs hook doc
 		$value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
 

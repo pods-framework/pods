@@ -46,7 +46,7 @@
     "require" : {
         "composer/installers" : "~1.0.0",
         "php" : ">=5.2.4",
-        "webdevstudios/cmb2": "dev-trunk"
+        "webdevstudios/cmb2": "2.0.1"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master",

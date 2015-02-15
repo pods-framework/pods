@@ -45,7 +45,8 @@
     ],
     "require" : {
         "composer/installers" : "~1.0.0",
-        "php" : ">=5.2.4"
+        "php" : ">=5.2.4",
+        "webdevstudios/cmb2": "dev-trunk"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master",
@@ -54,6 +55,9 @@
         "mockery/mockery": "dev-master"
     },
     "extra" : {
-        "installer-name" : "pods"
+        "installer-name" : "pods",
+        "installer-paths": {
+            "vendor/webdevstudios/cmb2": ["webdevstudios/cmb2"]
+        }
     }
 }

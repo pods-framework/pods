@@ -1131,6 +1131,7 @@ class Pods_Admin {
 				'delete'    => array( $this, 'admin_setup_groups_delete' )
 			),
 			'action_links'     => array(
+				'add'    => pods_query_arg( array( 'action_group' => 'add' ) ),
 				'edit'   => pods_query_arg( array( 'id_group' => '{@id}', 'action_group' => 'edit' ) ),
 				'delete' => pods_query_arg( array( 'id_group' => '{@id}', 'action_group' => 'delete' ) )
 			),

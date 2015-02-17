@@ -353,6 +353,7 @@ class PodsField_Pick extends PodsField {
         }
 
         if ( empty( self::$related_objects ) ) {
+                // Do a complete build of related_objects
             $new_data_loaded = true;
 
             // Custom

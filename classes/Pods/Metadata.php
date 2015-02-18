@@ -10,12 +10,7 @@ class Pods_Metadata {
 	public static $cmb2_types = array();
 
 	public function __construct() {
-
-		/**
-		 * Get the CMB2 bootstrap
-		 */
-		require_once PODS_DIR . 'includes/cmb2/init.php';
-
+		
 		add_filter( 'cmb2_meta_boxes', array( $this, 'metaboxes' ) );
 		add_filter( 'cmb2_show_on', array( $this, 'group_show_on' ), 10, 3 );
 

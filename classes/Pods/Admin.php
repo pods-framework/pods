@@ -2036,7 +2036,6 @@ class Pods_Admin {
 		$theme_name = $theme->get( 'Name' );
 		$theme_version = $theme->get( 'Version' );
 
-
 		$versions = array(
 			'WordPress Version' => $wp,
 			'PHP Version' => $php,

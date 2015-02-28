@@ -515,6 +515,12 @@ class PodsAdmin {
 
     /**
      * Set the correct parent_file to highlight the correct top level menu
+     *
+     * @param $parent_file The parent file
+     *
+     * @return mixed|string
+     *
+     * @since unknown
      */
     public function parent_file ( $parent_file ) {
         global $current_screen;

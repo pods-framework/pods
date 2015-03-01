@@ -663,10 +663,19 @@ class PodsField_Pick extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
 
-        if ( is_object( $pod ) && isset( $pod->fields ) && isset( $pod->pod_data[ 'object_fields' ] ) )
-            $fields = array_merge( $pod->fields, $pod->pod_data[ 'object_fields' ] );
-        elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) )
-            $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
+        if ( is_object( $pod ) && isset( $pod->fields ) ) {
+	        $fields = $pod->fields;
+
+	        if ( ! empty( $pod->pod_data[ 'object_fields' ] ) ) {
+		        $fields = array_merge( $fields, $pod->pod_data[ 'object_fields' ] );
+	        }
+        } elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) ) {
+	        $fields = $pod[ 'fields' ];
+
+	        if ( ! empty( $pod[ 'object_fields' ] ) ) {
+		        $fields = array_merge( $fields, $pod[ 'object_fields' ] );
+	        }
+        }
 
         return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
     }

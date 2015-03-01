@@ -2035,6 +2035,7 @@ class Pods_Admin {
 		$stylesheet = get_stylesheet();
 		$theme = wp_get_theme( $stylesheet );
 		$theme_name = $theme->get( 'Name' );
+		$theme_version = $theme->get( 'Version' );
 		
 		$opcode_cache = array (
 			'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
@@ -2069,7 +2070,7 @@ class Pods_Admin {
 			'Pods Install Location' => PODS_DIR,
 			'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
 			'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
-			'Currently Active Theme' => $theme_name,
+			'Currently Active Theme' => $theme_name . ': ' . $theme_version,
 			'Currently Active Plugins' => $plugins
 		);
 

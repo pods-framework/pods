@@ -754,7 +754,8 @@ function pods_shortcode ( $tags, $content = null ) {
 			}
 		}
 
-		if ( ! empty( $params ) ) {
+		// Forms require params set
+		if ( ! empty( $params ) || empty( $tags[ 'form' ] ) ) {
 			if ( !empty( $tags[ 'limit' ] ) ) {
 				$params[ 'limit' ] = (int) $tags[ 'limit' ];
 			}

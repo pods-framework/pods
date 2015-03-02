@@ -224,9 +224,8 @@ class PodsAdmin {
                                 $parent_page = $page = 'pods-manage-' . $pod[ 'name' ];
 
                                 if ( empty( $menu_position ) )
-                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
-                                else
-                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
+                                    $menu_position = null;
+                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 
                                 $all_title = $plural_label;
                                 $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
@@ -251,9 +250,8 @@ class PodsAdmin {
                                 $parent_page = $page;
 
                                 if ( empty( $menu_position ) )
-                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
-                                else
-                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
+                                    $menu_position = null;
+                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -355,9 +353,8 @@ class PodsAdmin {
                         add_theme_page( $page_title, $menu_label, 'read', $menu_slug );
                     elseif ( 'objects' == $menu_location ) {
                         if ( empty( $menu_position ) )
-                            add_object_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon );
-                        else
-                            add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
+                            $menu_position = null;
+                        add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
@@ -397,9 +394,8 @@ class PodsAdmin {
                         add_theme_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
                     elseif ( 'objects' == $menu_location ) {
                         if ( empty( $menu_position ) )
-                            add_object_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon );
-                        else
-                            add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
+                            $menu_position = null;
+                        add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );

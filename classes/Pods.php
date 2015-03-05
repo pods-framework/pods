@@ -749,7 +749,7 @@ class Pods implements Iterator {
 			elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
 				$value = get_permalink( $this->id() );
 			elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
-				$value = get_term_link( $this->id(), $this->pod_data[ 'name' ] );
+				$value = get_term_link( (int) $this->id(), $this->pod_data[ 'name' ] );
 			elseif ( 'user' == $this->pod_data[ 'type' ] )
 				$value = get_author_posts_url( $this->id() );
 			elseif ( 'comment' == $this->pod_data[ 'type' ] )
@@ -1468,7 +1468,7 @@ class Pods implements Iterator {
 											elseif ( 'post' == $object_type )
 												$value[] = get_permalink( $item_id );
 											elseif ( 'taxonomy' == $object_type )
-												$value[] = get_term_link( $item_id, $object );
+												$value[] = get_term_link( (int) $item_id, $object );
 											elseif ( 'user' == $object_type )
 												$value[] = get_author_posts_url( $item_id );
 											elseif ( 'comment' == $object_type )

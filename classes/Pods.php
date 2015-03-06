@@ -1608,6 +1608,7 @@ class Pods implements Iterator {
 					$post = $old_post;
 					$post_ID = $old_ID;
 				}
+				
 			}
 			else {
 				$value = PodsForm::value(

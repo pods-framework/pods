@@ -4,9 +4,15 @@
  * @package Pods
  */
 class Pods_Metadata {
-
+	
+	/**
+	 * @var bool
+	 */ 
 	public static $in_field = false;
-
+	
+	/**
+	 * @var array
+	 */ 
 	public static $cmb2_types = array();
 
 	public function __construct() {

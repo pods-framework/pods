@@ -18,6 +18,9 @@ class Pods_Widget_Field extends
 
 	/**
 	 * Output of widget
+	 *
+	 * @param array $args Pod args
+	 * @param array $instance
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );

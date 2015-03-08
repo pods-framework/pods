@@ -25,7 +25,7 @@ class PodsUpgrade {
     protected $version = null;
 
     /**
-     *
+     * Build the upgrade process
      */
     function __construct() {
         $this->api = pods_api();
@@ -35,7 +35,7 @@ class PodsUpgrade {
     }
 
     /**
-     *
+     * Install the update
      */
     public function install( $_blog_id = null ) {
         /**
@@ -84,7 +84,7 @@ class PodsUpgrade {
     }
 
     /**
-     *
+     * Get DB Tables
      */
     public function get_tables() {
         /**
@@ -102,7 +102,7 @@ class PodsUpgrade {
     }
 
     /**
-     *
+     * Get upgrade progress
      */
     function get_progress() {
         $methods = get_class_methods( $this );
@@ -137,6 +137,8 @@ class PodsUpgrade {
     }
 
     /**
+     * Update upgrade process
+     * 
      * @param $method
      * @param $v
      * @param null $x
@@ -156,6 +158,8 @@ class PodsUpgrade {
     }
 
     /**
+     * Check upgrade process
+     * 
      * @param $method
      * @param null $x
      *
@@ -175,7 +179,7 @@ class PodsUpgrade {
     }
 
     /**
-     *
+     * Upgrade process complete
      */
     public function upgraded() {
         if ( empty( $this->version ) )
@@ -195,7 +199,7 @@ class PodsUpgrade {
     }
 
     /**
-     *
+     * Cleanup DB options/tables
      */
     public function cleanup() {
         /**

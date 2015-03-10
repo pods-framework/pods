@@ -1,8 +1,8 @@
 <?php
 
-   echo $before_widget;
+    echo $before_widget;
    
-   if ( ! empty( $title ) ) {
+    if ( ! empty( $title ) ) {
 	echo $before_title . $title . $after_title;
     }
 

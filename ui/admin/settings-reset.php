@@ -61,7 +61,7 @@
 	<h3><?php _e( 'Reset Pods 2.x', 'pods' ); ?></h3>
 
 	<p><?php _e( 'This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it\'s data, and performs a fresh install.', 'pods' ); ?></p>
-	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
+	<p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified. Any custom fields stored using the table storage component, content in Advanced Content Types, and relationships between posts will be lost.', 'pods' ); ?></p>
 
 	<p class="submit">
 		<?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install.", 'pods' ); ?>

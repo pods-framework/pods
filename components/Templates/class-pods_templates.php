@@ -429,7 +429,7 @@ class Pods_Templates_Frontier {
 
 	
 
-	/***
+	/**
 	 * Get the current URL
 	 *
 	 * @param null $src
@@ -444,7 +444,7 @@ class Pods_Templates_Frontier {
 		return trailingslashit( plugins_url( $path , __FILE__ ) );
 	}
 
-	/***
+	/**
 	 * Get the current plugin path
 	 *
 	 * @param null $src

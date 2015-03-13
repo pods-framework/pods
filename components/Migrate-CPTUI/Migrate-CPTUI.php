@@ -127,7 +127,10 @@ class Pods_Migrate_CPTUI extends
 	}
 
 	/**
+	 * 
+	 * @param $post_type
 	 *
+	 * @return bool|int
 	 *
 	 * @since 2.0
 	 */
@@ -217,6 +220,9 @@ class Pods_Migrate_CPTUI extends
 
 	/**
 	 *
+	 * @param $taxonomy
+	 *
+	 * @return bool|int
 	 *
 	 * @since 2.0
 	 */

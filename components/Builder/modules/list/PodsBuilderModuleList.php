@@ -197,6 +197,8 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 
 		/**
 		 * Module Output
+		 * 
+		 * @param object $fields Pods Fields 
 		 */
 		function _render( $fields ) {
 			$args = array(

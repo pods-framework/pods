@@ -478,6 +478,8 @@ class Pods_Templates extends Pods_Component {
 	 *
 	 * @param string $code The template string to parse
 	 * @param object $obj The Pods object
+	 * 
+	 * @return mixed|void
 	 *
 	 * @since 1.8.5
 	 */

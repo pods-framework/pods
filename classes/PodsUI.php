@@ -857,7 +857,12 @@ class PodsUI {
 
         $options->validate( 'orderby_dir', strtoupper( pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
 
-        $orderby = pods_var_raw( 'orderby' . $options->num, 'get', $this->orderby, null, true );
+	    $orderby = $this->orderby;
+
+	    // Enforce strict DB column name usage
+	    if ( ! empty( $_GET[ 'orderby' . $options->num ] ) ) {
+		    $orderby = pods_clean_name( $_GET[ 'orderby' . $options->num ], true, false );
+	    }
 
         if ( !empty( $orderby ) ) {
             $orderby = array(

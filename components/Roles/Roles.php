@@ -131,7 +131,10 @@ class Pods_Roles extends
 
 		pods_ui( $ui );
 	}
-
+	
+	/**
+	 * @param $obj
+	 */
 	function admin_add( $obj ) {
 		global $wp_roles;
 
@@ -146,6 +149,10 @@ class Pods_Roles extends
 		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
+	/**
+	 * @param $duplicate
+	 * @param $obj
+	 */
 	function admin_edit( $duplicate, $obj ) {
 		global $wp_roles;
 
@@ -175,7 +182,11 @@ class Pods_Roles extends
 
 		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
-
+	
+	/**
+	 * @param $id
+	 * @param $obj
+	 */
 	function admin_delete( $id, $obj ) {
 		global $wp_roles;
 
@@ -383,6 +394,9 @@ class Pods_Roles extends
 		return $avail_roles[ $role ];
 	}
 
+	/**
+	 * @return array|mixed|void
+	 */
 	function get_capabilities() {
 		global $wp_roles;
 
@@ -420,6 +434,9 @@ class Pods_Roles extends
 		return $capabilities;
 	}
 
+	/**
+	 * @return array
+	 */
 	function get_capability_group_map() {
 		$defaults_capability_group = array(
 			'activate_plugins'       => 'plugins',
@@ -586,7 +603,10 @@ class Pods_Roles extends
 
 		return $capability_group_map;
 	}
-
+	
+	/**
+	 * @return array
+	 */
 	function get_grouped_capabilities() {
 		$capabilities         = $this->get_capabilities();
 		$capability_group_map = $this->get_capability_group_map();
@@ -613,7 +633,10 @@ class Pods_Roles extends
 
 		return $grouped_capabilities;
 	}
-
+	
+	/**
+	 * @return array
+	 */
 	function get_wp_capabilities() {
 		$defaults = array(
 			'activate_plugins',
@@ -670,7 +693,10 @@ class Pods_Roles extends
 
 		return $defaults;
 	}
-
+	
+	/**
+	 * @return array|mixed|void
+	 */
 	function get_default_capabilities() {
 		$capabilities = array(
 			'read'
@@ -684,6 +710,11 @@ class Pods_Roles extends
 		return $capabilities;
 	}
 
+	/**
+	 * @param $capabilities Deprecated Capabilities 
+	 *
+	 * @return array
+	 */
 	function remove_deprecated_capabilities( $capabilities ) {
 		$deprecated_capabilities = array(
 			'level_0',

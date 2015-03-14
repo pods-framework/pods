@@ -248,7 +248,11 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Change post title placeholder text
+	 * 
+	 * @param $text
+	 * @param $post
 	 *
+	 * @return string|void
 	 * @since 2.0
 	 */
 	public function set_title_text ( $text, $post ) {

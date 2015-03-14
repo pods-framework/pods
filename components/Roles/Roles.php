@@ -711,7 +711,7 @@ class Pods_Roles extends
 	}
 
 	/**
-	 * @param $capabilities Deprecated Capabilities 
+	 * @param $capabilities WordPress Capabilities 
 	 *
 	 * @return array
 	 */

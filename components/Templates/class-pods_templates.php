@@ -47,6 +47,7 @@ class Pods_Templates_Frontier {
 	 * @var      string
 	 */
 	protected $plugin_screen_hook_suffix = null;
+	
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 *

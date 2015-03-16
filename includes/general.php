@@ -716,6 +716,8 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $pod ) )
         return '<p>Pod not found</p>';
 
+	$found = 0;
+
 	if ( empty( $id ) ) {
 		$params = array();
 
@@ -752,34 +754,35 @@ function pods_shortcode ( $tags, $content = null ) {
 			}
 		}
 
-		if ( !empty( $tags[ 'limit' ] ) ) {
-			$params[ 'limit' ] = (int) $tags[ 'limit' ];
+		// Forms require params set
+		if ( ! empty( $params ) || empty( $tags[ 'form' ] ) ) {
+			if ( !empty( $tags[ 'limit' ] ) ) {
+				$params[ 'limit' ] = (int) $tags[ 'limit' ];
+			}
+
+			$params[ 'search' ] = $tags[ 'search' ];
+
+			if ( 0 < absint( $tags[ 'page' ] ) ) {
+				$params[ 'page' ] = absint( $tags[ 'page' ] );
+			}
+
+			$params[ 'pagination' ] = $tags[ 'pagination' ];
+
+			if ( 0 < (int) $tags[ 'offset' ] ) {
+				$params[ 'offset' ] = (int) $tags[ 'offset' ];
+			}
+
+			if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
+				$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
+				$params[ 'expires' ] = (int) $tags[ 'expires' ];
+			}
+
+			$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
+
+			$pod->find( $params );
+
+			$found = $pod->total();
 		}
-
-		$params[ 'search' ] = $tags[ 'search' ];
-
-		if ( 0 < absint( $tags[ 'page' ] ) ) {
-			$params[ 'page' ] = absint( $tags[ 'page' ] );
-		}
-
-		$params[ 'pagination' ] = $tags[ 'pagination' ];
-
-		if ( 0 < (int) $tags[ 'offset' ] ) {
-			$params[ 'offset' ] = (int) $tags[ 'offset' ];
-		}
-
-		if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
-			$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
-			$params[ 'expires' ] = (int) $tags[ 'expires' ];
-		}
-
-		$params = apply_filters( 'pods_shortcode_findrecords_params', $params, $pod, $tags );
-
-		$pod->find( $params );
-
-		$found = $pod->total();
-	} else {
-		$found = 0;
 	}
 
     if ( !empty( $tags[ 'form' ] ) ) {

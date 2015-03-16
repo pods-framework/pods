@@ -89,12 +89,16 @@ function pods_ui_manage ($obj)
         }
         if(pods_ui_var('sort'.$object->ui['num'])===false&&$object->ui['user_sort']!==false&&pods_ui_var('sort'.$object->ui['unique_md5'],'user')!==false&&0<strlen(pods_ui_var('sort'.$object->ui['unique_md5'],'user')))
         {
-            $object->ui['sort'] = $object->ui['reorder_sort'] = pods_ui_var('sort'.$object->ui['unique_md5'],'user');
+	        $sort = pods_ui_var('sort'.$object->ui['unique_md5'],'user');
+	        $sort = explode( ' ', $sort );
+	        $sort = pods_clean_name( $sort[0] );
+
+            $object->ui['sort'] = $object->ui['reorder_sort'] = $sort;
         }
         if(pods_ui_var('sort'.$object->ui['num'])!==false)
         {
             $dir = (pods_ui_var('sortdir'.$object->ui['num'])!==false?pods_ui_var('sortdir'.$object->ui['num']):'asc');
-            $sort = pods_ui_var('sort'.$object->ui['num']);
+            $sort = pods_clean_name(pods_ui_var('sort'.$object->ui['num']));
             if(in_array($sort,array('created','modified')))
                 $sort = 'p.`'.$sort.'`';
             $object->ui['sort'] = trim($sort.' '.strtoupper($dir).','.$object->ui['sort'],' ,');
@@ -109,7 +113,7 @@ function pods_ui_manage ($obj)
     $object->ui['reorder_limit'] = (isset($object->ui['reorder_limit'])?$object->ui['reorder_limit']:1000);
     if($object->ui['user_per_page']!==false&&pods_ui_var('limit'.$object->ui['unique_md5'],'user')!==false&&0<pods_ui_var('limit'.$object->ui['unique_md5'],'user'))
     {
-        $object->ui['limit'] = $object->ui['reorder_limit'] = pods_ui_var('limit'.$object->ui['unique_md5'],'user');
+        $object->ui['limit'] = $object->ui['reorder_limit'] = intval(pods_ui_var('limit'.$object->ui['unique_md5'],'user'));
     }
     if(pods_ui_var('limit'.$object->ui['num'])!==false&&0<intval(pods_ui_var('limit'.$object->ui['num'])))
     {

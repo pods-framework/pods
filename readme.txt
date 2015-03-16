@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.1
-Tested up to: 3.9
+Tested up to: 4.1
 Stable tag: 1.14.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -48,7 +48,10 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.14.7 - April 8th, 2014 =
+= 1.14.7 - March 14th, 2015 =
+* Security Update: We recommend all Pods 1.x/2.x installations be updated to the latest version of Pods
+* or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
+* Fixed: Pods UI orderby now strictly enforces Database column format
 * Fixed: MySQL calls are now using wrapper functions for compatibility with WP 3.9 and it's MySQLi support
 * Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
 * Security Update Reminder: 1.9.6 Security Update information can be found at: http://pods.io/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/

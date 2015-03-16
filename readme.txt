@@ -154,7 +154,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
-= 2.5.1.2 - March 14th, 2015 =
+= 2.5.1.2 - March 16th, 2015 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods
 * or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
 * Fixed: Pods UI orderby now strictly enforces Database column format

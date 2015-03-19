@@ -127,6 +127,7 @@ class Pods_Migrate_CPTUI extends
 	}
 
 	/**
+	 * Migrate a post type
 	 * 
 	 * @param $post_type
 	 *
@@ -219,7 +220,8 @@ class Pods_Migrate_CPTUI extends
 	}
 
 	/**
-	 *
+	 * Migrate a single Taxonomy
+	 * 
 	 * @param $taxonomy
 	 *
 	 * @return bool|int
@@ -293,7 +295,8 @@ class Pods_Migrate_CPTUI extends
 	}
 
 	/**
-	 *
+	 * Delete any unnecessary options
+	 * 
 	 * @since 2.0
 	 */
 	public function clean() {

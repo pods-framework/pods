@@ -635,6 +635,8 @@ class Pods_Roles extends
 	}
 	
 	/**
+	 * Get a list of default WordPress roles in an array
+	 * 
 	 * @return array
 	 */
 	function get_wp_capabilities() {
@@ -711,6 +713,8 @@ class Pods_Roles extends
 	}
 
 	/**
+	 * Delete Deprecated WordPress user levels
+	 * 
 	 * @param $capabilities WordPress Capabilities 
 	 *
 	 * @return array

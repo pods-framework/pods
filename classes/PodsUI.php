@@ -73,6 +73,7 @@ class PodsUI {
         'action',
         'action_bulk',
         'action_bulk_ids',
+        '_wpnonce',
         'view',
         'export',
         'export_type',
@@ -855,7 +856,7 @@ class PodsUI {
         }
         $options->validate( 'sql', $this->sql, 'array_merge' );
 
-        $options->validate( 'orderby_dir', strtoupper( pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
+        $options->validate( 'orderby_dir', strtoupper( pods_v( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
 
 	    $orderby = $this->orderby;
 
@@ -2087,39 +2088,42 @@ class PodsUI {
 
         $params_override = false;
 
-        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
-            $orderby = array();
+        $orderby = array();
 
-            $limit = $this->limit;
+        $limit = $this->limit;
 
-            $sql = null;
+        $sql = null;
 
-            if ( 'reorder' == $this->action ) {
-                if ( !empty( $this->reorder[ 'orderby' ] ) )
-                    $orderby[ $this->reorder[ 'orderby' ] ] = $this->reorder[ 'orderby_dir' ];
-                else
-                    $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+	    if ( 'reorder' == $this->action ) {
+		    if ( ! empty( $this->reorder[ 'orderby' ] ) ) {
+			    $orderby[ $this->reorder[ 'orderby' ] ] = $this->reorder[ 'orderby_dir' ];
+		    } else {
+			    $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+		    }
 
-                if ( !empty( $this->reorder[ 'limit' ] ) )
-                    $limit = $this->reorder[ 'limit' ];
+		    if ( ! empty( $this->reorder[ 'limit' ] ) ) {
+			    $limit = $this->reorder[ 'limit' ];
+		    }
 
-                if ( !empty( $this->reorder[ 'sql' ] ) )
-                    $sql = $this->reorder[ 'sql' ];
-            }
+		    if ( ! empty( $this->reorder[ 'sql' ] ) ) {
+			    $sql = $this->reorder[ 'sql' ];
+		    }
+	    }
 
-            if ( !empty( $this->orderby ) ) {
-                $this->orderby = (array) $this->orderby;
+        if ( !empty( $this->orderby ) ) {
+            $this->orderby = (array) $this->orderby;
 
-                foreach ( $this->orderby as $order ) {
-                    if ( false !== strpos( $order, ' ' ) ) {
-                        $orderby[] = $order;
-                    }
-                    elseif ( !isset( $orderby[ $order ] ) ) {
-                        $orderby[ $order ] = $this->orderby_dir;
-                    }
+            foreach ( $this->orderby as $k => $order ) {
+                if ( false !== strpos( $order, ' ' ) || 'default' == $k ) {
+                    $orderby[] = $order;
+                }
+                elseif ( !isset( $orderby[ $order ] ) ) {
+                    $orderby[ $order ] = $this->orderby_dir;
                 }
             }
+        }
 
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $find_params = array(
                 'where' => pods_v( $action, $this->where, null, true ),
                 'orderby' => $orderby,
@@ -2137,13 +2141,6 @@ class PodsUI {
             $params_override = true;
         }
         else {
-            $orderby = '';
-
-            if ( !empty( $this->orderby ) ) {
-                $orderby = '`' . $this->orderby . '` '
-                       . ( false === strpos( $this->orderby, ' ' ) ? strtoupper( $this->orderby_dir ) : '' );
-            }
-
             $find_params = array(
                 'table' => $this->sql[ 'table' ],
                 'id' => $this->sql[ 'field_id' ],
@@ -2152,10 +2149,11 @@ class PodsUI {
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'pagination' => true,
-                'limit' => (int) $this->limit,
+                'limit' => (int) $limit,
                 'search' => $this->searchable,
                 'search_query' => $this->search,
-                'fields' => $this->fields[ 'search' ]
+                'fields' => $this->fields[ 'search' ],
+                'sql' => $sql
             );
         }
 
@@ -2346,7 +2344,10 @@ class PodsUI {
 		}
 
         if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && !empty( $this->bulk ) ) {
-			if ( false !== $this->callback_bulk( $this->action_bulk, $this->bulk ) ) {
+	        if ( empty( $_REQUEST[ '_wpnonce' . $this->num ] ) || false === wp_verify_nonce( $_REQUEST[ '_wpnonce' . $this->num ], 'pods-ui-action-bulk' ) ) {
+		        pods_message( __( 'Invalid bulk request, please try again.', 'pods' ) );
+	        }
+	        elseif ( false !== $this->callback_bulk( $this->action_bulk, $this->bulk ) ) {
 				return null;
 			}
             elseif ( 'delete' == $this->action_bulk ) {
@@ -2405,7 +2406,8 @@ class PodsUI {
                     'pg' . $this->num,
                     'action' . $this->num,
                     'action_bulk' . $this->num,
-                    'action_bulk_ids' . $this->num
+                    'action_bulk_ids' . $this->num,
+	                '_wpnonce' . $this->num
                 );
 
                 $filters = $this->filters;
@@ -2633,7 +2635,7 @@ class PodsUI {
                     if ( !empty( $this->data ) && !empty( $this->actions_bulk ) ) {
                 ?>
                     <div class="alignleft actions">
-	                    <?php wp_nonce_field( 'pods-ui-action-bulk' ); ?>
+	                    <?php wp_nonce_field( 'pods-ui-action-bulk', '_wpnonce' . $this->num, false ); ?>
 
                         <select name="action_bulk<?php echo esc_attr( $this->num ); ?>">
                             <option value="-1" selected="selected"><?php _e( 'Bulk Actions', 'pods' ); ?></option>
@@ -2937,10 +2939,10 @@ class PodsUI {
                     jQuery( this ).remove();
                 } );
 
-                jQuery( 'form#posts-filter [name="pg"]' ).prop( 'disabled', true );
-                jQuery( 'form#posts-filter [name="action"]' ).prop( 'disabled', true );
+                jQuery( 'form#posts-filter [name="pg<?php echo esc_attr( $this->num ); ?>"]' ).prop( 'disabled', true );
+                jQuery( 'form#posts-filter [name="action<?php echo esc_attr( $this->num ); ?>"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action_bulk<?php echo esc_attr( $this->num ); ?>"]' ).prop( 'disabled', true );
-	            jQuery( 'form#posts-filter [name="_wpnonce"]' ).prop( 'disabled', true );
+	            jQuery( 'form#posts-filter [name="_wpnonce<?php echo esc_attr( $this->num ); ?>"]' ).prop( 'disabled', true );
 
                 jQuery( 'form#posts-filter' ).submit();
 
@@ -2965,7 +2967,8 @@ class PodsUI {
                         'pg' . $this->num,
                         'action' . $this->num,
                         'action_bulk' . $this->num,
-                        'action_bulk_ids' . $this->num
+                        'action_bulk_ids' . $this->num,
+                        '_wpnonce' . $this->num
                     );
 
                     foreach ( $filters as $filter ) {
@@ -3854,7 +3857,12 @@ class PodsUI {
                         var pageInput = $( 'input.current-page' );
                         var currentPage = pageInput.val();
                         pageInput.closest( 'form' ).submit( function ( e ) {
-                            if ( (1 > $( 'select[name="action"]' ).length || $( 'select[name="action"]' ).val() == -1) && (1 > $( 'select[name="action_bulk"]' ).length || $( 'select[name="action_bulk"]' ).val() == -1) && pageInput.val() == currentPage ) {
+                            if (
+	                            ( 1 > $( 'select[name="action<?php echo esc_attr( $this->num ); ?>"]' ).length
+	                              || $( 'select[name="action<?php echo esc_attr( $this->num ); ?>"]' ).val() == -1 )
+	                            && ( 1 > $( 'select[name="action_bulk<?php echo esc_attr( $this->num ); ?>"]' ).length
+	                                 || $( 'select[name="action_bulk<?php echo esc_attr( $this->num ); ?>"]' ).val() == -1 )
+	                            && pageInput.val() == currentPage ) {
                                 pageInput.val( '1' );
                             }
                         } );

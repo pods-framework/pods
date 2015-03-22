@@ -2579,7 +2579,7 @@ class PodsUI {
 
                             $options = array();
                             $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
-                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $filter_field[ 'options' ][ 'input_helper' ], null, true );
+                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $options[ 'options' ][ 'input_helper' ], null, true );
                     ?>
                         <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
                             <?php echo $filter_field[ 'label' ]; ?>

@@ -266,7 +266,12 @@ class Pods_Meta {
 		}
 
 		add_action( 'init', array( $this, 'enqueue' ), 9 );
-
+		
+		/**
+		 * Fires after the all the Pods Meta Core functions are loaded
+		 * 
+		 * @since 2.0
+		 */ 
 		do_action( 'pods_meta_init' );
 
 		return $this;

@@ -395,6 +395,8 @@ class Pods_Roles extends
 	}
 
 	/**
+	 * Get WordPress and Pods capabilities 
+	 * 
 	 * @return array|mixed|void
 	 */
 	function get_capabilities() {

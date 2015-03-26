@@ -983,6 +983,9 @@ class Pods_Pages extends
 	public function wp_head() {
 		global $pods;
 
+		/**
+		 * Fires off in the Pod Head.
+		 */ 
 		do_action( 'pods_wp_head' );
 
 		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || ! PODS_DISABLE_VERSION_OUTPUT ) {

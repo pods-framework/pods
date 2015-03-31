@@ -189,7 +189,11 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Remove unused row actions
+	 * 
+	 * @param $actions
+	 * @param $post
 	 *
+	 * @return mixed
 	 * @since 2.0.5
 	 */
 	function remove_row_actions ( $actions, $post ) {
@@ -214,6 +218,9 @@ class Pods_Templates extends Pods_Component {
 	/**
 	 * Remove unused bulk actions
 	 *
+	 * @param $actions
+	 *
+	 * @return mixed
 	 * @since 2.0.5
 	 */
 	public function remove_bulk_actions ( $actions ) {

@@ -1457,6 +1457,8 @@ class PodsField_Pick extends PodsField {
 
                             if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
                                 $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `d`.`{$search_data->field_index}`";
+                            elseif ( 'meta' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] )
+                                $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
                             else
                                 $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
                         }

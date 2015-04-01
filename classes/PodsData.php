@@ -673,6 +673,9 @@ class PodsData {
 
             foreach ( $data as $data_key => $data_value ) {
                 $this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
+                if ( isset( $this->pod_data[ 'object_fields' ][ $data_key ] ) ) {
+                    $this->fields[ $data_key ] = $this->pod_data[ 'object_fields' ][ $data_key ];
+                }
             }
 
             $this->fields = PodsForm::fields_setup( $this->fields );

@@ -2278,9 +2278,7 @@ class Pods implements Iterator {
 	public function find( $params = null, $limit = 15, $where = null, $sql = null ) {
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-
-		// PGL: Todo why is this not calling PodsForm::simple_tableless_objects() ?
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		$this->params = $params;
 

@@ -1,4 +1,4 @@
-<h3>Pods Support</h3>
+<h3><?php _e('Pods Support', 'pods'); ?></h3>
 
 <p>There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:</p>
 <ul class="ul-disc">
@@ -8,14 +8,14 @@
 
 	<li>To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.</li>
 
-	<li>Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?</li>
+	<li><?php _e("Pods is open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?"); ?></li>
 </ul>
 
 <hr />
 
-<h3>Recommended Plugins</h3>
+<h3><?php _e('Recommended Plugins'); ?></h3>
 
-<p>These plugins work together with Pods to bring your site even more organization and functionality.</p>
+<p><?php _e('These plugins work together with Pods to bring your site even more organization and functionality.'); ?></p>
 
 <ul class="ul-disc">
 	<li><a href="http://wordpress.org/extend/plugins/codepress-admin-columns/" target="_blank">CodePress Admin Columns</a> - <em>Change the columns shown on the manage tables for Post Types, Taxonomies, and others areas</em></li>

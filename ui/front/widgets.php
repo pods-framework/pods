@@ -1,16 +1,19 @@
 <?php
-	echo $before_widget;
 
-	if ( ! empty( $title ) ) {
-		echo $before_title . $title . $after_title;
-	}
+echo $before_widget;
 
-    if ( !empty( $before_content ) )
-        echo $before_content;
+if ( ! empty( $title ) ) {
+	echo $before_title . $title . $after_title;
+}
 
-    echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+if ( !empty( $before_content ) ) {
+	echo $before_content;
+}
 
-    if ( !empty( $after_content ) )
-        echo $after_content;
+echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
 
-	echo $after_widget;
+if ( !empty( $after_content ) ) {
+	echo $after_content;
+}
+
+echo $after_widget;

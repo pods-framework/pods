@@ -13,9 +13,9 @@
 
 <hr />
 
-<h3><?php _e('Recommended Plugins'); ?></h3>
+<h3><?php _e('Recommended Plugins', 'pods'); ?></h3>
 
-<p><?php _e('These plugins work together with Pods to bring your site even more organization and functionality.'); ?></p>
+<p><?php _e('These plugins work together with Pods to bring your site even more organization and functionality.', 'pods'); ?></p>
 
 <ul class="ul-disc">
 	<li><a href="http://wordpress.org/extend/plugins/codepress-admin-columns/" target="_blank">CodePress Admin Columns</a> - <em>Change the columns shown on the manage tables for Post Types, Taxonomies, and others areas</em></li>

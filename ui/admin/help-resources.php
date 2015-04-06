@@ -1,8 +1,8 @@
 <h3><?php _e('Pods Support', 'pods'); ?></h3>
 
-<p>There are many resources available to help you learn to use Pods on our site, <a href="http://pods.io/" target="_blank">Pods.io</a>:</p>
+<p><?php _e('There are many resources available to help you learn to use Pods on our site,', 'pods'); ?><a href="http://pods.io/" target="_blank">Pods.io</a>:</p>
 <ul class="ul-disc">
-	<li>To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>.
+	<li><?php _e('To learn more about using Pods, see the', 'pods'); ?><a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>.
 
 	<li>To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>.
 

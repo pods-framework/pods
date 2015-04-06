@@ -2654,7 +2654,7 @@ class PodsUI {
                             ?>
                         </select>
 
-                        <input type="submit" id="doaction_bulk<?php echo esc_attr( $this->num ); ?>" class="button-secondary action" value="<?php _e( 'Apply', 'pods' ); ?>">
+                        <input type="submit" id="doaction_bulk<?php echo esc_attr( $this->num ); ?>" class="button-secondary action" value="<?php esc_attr_e( 'Apply', 'pods' ); ?>">
                     </div>
                 <?php
                     }
@@ -2674,8 +2674,8 @@ class PodsUI {
 							$link = $this->action_links[ 'manage' ];
 						}
                         ?>
-                        <input type="button" value="<?php _e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
-                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo esc_js( $link ); ?>';" />
+                        <input type="button" value="<?php esc_attr_e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
+                        <input type="button" value="<?php esc_attr_e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo esc_js( $link ); ?>';" />
                     </form>
 				<?php
                     }
@@ -3476,7 +3476,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php _e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'view' == $default_action ) {
@@ -3485,7 +3485,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php _e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
@@ -3504,7 +3504,7 @@ class PodsUI {
                                             if ( !empty( $this->action_links[ 'view' ] ) )
                                                 $link = $this->do_template( $this->action_links[ 'view' ], $row );
 
-                                            $actions[ 'view' ] = '<span class="view"><a href="' . esc_url( $link ) . '" title="' . __( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
+                                            $actions[ 'view' ] = '<span class="view"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
                                         }
 
                                         if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
@@ -3513,7 +3513,7 @@ class PodsUI {
                                             if ( !empty( $this->action_links[ 'edit' ] ) )
                                                 $link = $this->do_template( $this->action_links[ 'edit' ], $row );
 
-                                            $actions[ 'edit' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
+                                            $actions[ 'edit' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
                                         }
 
                                         if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
@@ -3522,7 +3522,7 @@ class PodsUI {
                                             if ( !empty( $this->action_links[ 'duplicate' ] ) )
                                                 $link = $this->do_template( $this->action_links[ 'duplicate' ], $row );
 
-                                            $actions[ 'duplicate' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . __( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
+                                            $actions[ 'duplicate' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
                                         }
 
                                         if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
@@ -3532,7 +3532,7 @@ class PodsUI {
 	                                            $link = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links[ 'delete' ], $row ) );
                                             }
 
-                                            $actions[ 'delete' ] = '<span class="delete"><a href="' . esc_url( $link ) . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
+                                            $actions[ 'delete' ] = '<span class="delete"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . esc_attr(__( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
                                         }
 
                                         if ( is_array( $this->actions_custom ) ) {
@@ -3845,12 +3845,12 @@ class PodsUI {
         if ( false !== $this->pagination ) {
             if ( 1 < $total_pages ) {
                 ?>
-            <a class="first-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php _e( 'Go to the first page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' ); ?>">&laquo;</a>
-            <a class="prev-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php _e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) ); ?>">&lsaquo;</a>
+            <a class="first-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the first page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=1' ); ?>">&laquo;</a>
+            <a class="prev-page<?php echo esc_attr( ( 1 < $this->page ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the previous page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . max( $this->page - 1, 1 ) ); ?>">&lsaquo;</a>
             <?php
                 if ( true == $header ) {
                     ?>
-                <span class="paging-input"><input class="current-page" title="<?php _e( 'Current page', 'pods' ); ?>" type="text" name="pg<?php echo esc_attr( $this->num ); ?>" value="<?php echo esc_attr( $this->page ); ?>" size="<?php echo esc_attr( strlen( $total_pages ) ); ?>"> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
+                <span class="paging-input"><input class="current-page" title="<?php esc_attr_e( 'Current page', 'pods' ); ?>" type="text" name="pg<?php echo esc_attr( $this->num ); ?>" value="<?php echo esc_attr( $this->page ); ?>" size="<?php echo esc_attr( strlen( $total_pages ) ); ?>"> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
                 <script>
 
                     jQuery( document ).ready( function ( $ ) {
@@ -3876,8 +3876,8 @@ class PodsUI {
                 <?php
                 }
                 ?>
-            <a class="next-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php _e( 'Go to the next page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) ); ?>">&rsaquo;</a>
-            <a class="last-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php _e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages ); ?>">&raquo;</a>
+            <a class="next-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the next page', 'pods' ); ?>" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . min( $this->page + 1, $total_pages ) ); ?>">&rsaquo;</a>
+            <a class="last-page<?php echo esc_attr( ( $this->page < $total_pages ) ? '' : ' disabled' ); ?>" title="<?php esc_attr_e( 'Go to the last page', 'pods' ); ?>'" href="<?php echo esc_url( $request_uri . ( $append ? '&' : '?' ) . 'pg' . $this->num . '=' . $total_pages ); ?>">&raquo;</a>
             <?php
             }
         }

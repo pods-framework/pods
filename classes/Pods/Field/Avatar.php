@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Avatar extends
-	Pods_Field {
+class Pods_Field_Avatar extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,7 +38,7 @@ class Pods_Field_Avatar extends
 	public static $pod_types = array( 'user' );
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -60,9 +59,10 @@ class Pods_Field_Avatar extends
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$sizes = get_intermediate_image_sizes();
 
 		$image_sizes = array();
@@ -119,29 +119,43 @@ class Pods_Field_Avatar extends
 			)
 		);
 
+		if ( ! pods_version_check( 'wp', '3.5' ) ) {
+			unset( $options[ self::$type . '_modal_title' ] );
+			unset( $options[ self::$type . '_modal_add_button' ] );
+
+			$options[ self::$type . '_attachment_tab' ][ 'default' ] = 'type';
+			$options[ self::$type . '_attachment_tab' ][ 'data' ] = array(
+				'type'    => __( 'Upload File', 'pods' ),
+				'library' => __( 'Media Library', 'pods' )
+			);
+		}
+
 		return $options;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$schema = false;
 
 		return $schema;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return $value;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( ! is_admin() ) {
@@ -164,7 +178,11 @@ class Pods_Field_Avatar extends
 			$field_type = 'plupload';
 		} elseif ( 'attachment' == pods_v( self::$type . '_uploader', $options ) ) {
 			// @todo test frontend media modal
-			$field_type = 'media';
+			if ( ! pods_version_check( 'wp', '3.5' ) || ! is_admin() ) {
+				$field_type = 'attachment';
+			} else {
+				$field_type = 'media';
+			}
 		} else {
 			// Support custom File Uploader integration
 			do_action( 'pods_form_ui_field_avatar_uploader_' . pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
@@ -177,37 +195,41 @@ class Pods_Field_Avatar extends
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return false;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		// check file size
 		// check file extensions
 		return true;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		return $value;
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		if ( empty( $value ) ) {
 			return;
 		}
 
-		if ( ! empty( $value ) && isset( $value['ID'] ) ) {
+		if ( ! empty( $value ) && isset( $value[ 'ID' ] ) ) {
 			$value = array( $value );
 		}
 
@@ -219,15 +241,16 @@ class Pods_Field_Avatar extends
 	/**
 	 * Take over the avatar served from WordPress
 	 *
-	 * @param string            $avatar      Default Avatar Image output from WordPress
+	 * @param string $avatar Default Avatar Image output from WordPress
 	 * @param int|string|object $id_or_email A user ID, email address, or comment object
-	 * @param int               $size        Size of the avatar image
-	 * @param string            $default     URL to a default image to use if no avatar is available
-	 * @param string            $alt         Alternate text to use in image tag. Defaults to blank
+	 * @param int $size Size of the avatar image
+	 * @param string $default URL to a default image to use if no avatar is available
+	 * @param string $alt Alternate text to use in image tag. Defaults to blank
 	 *
 	 * @return string <img> tag for the user's avatar
 	 */
 	public function get_avatar( $avatar, $id_or_email, $size, $default = '', $alt = '' ) {
+
 		// Don't replace for the Avatars section of the Discussion settings page
 		if ( is_admin() ) {
 			$current_screen = get_current_screen();
@@ -263,16 +286,16 @@ class Pods_Field_Avatar extends
 				$user = current( Pods_Meta::$user );
 
 				if ( empty( $avatar_field ) ) {
-					foreach ( $user['fields'] as $field ) {
-						if ( 'avatar' == $field['type'] ) {
-							$avatar_field = $field['name'];
+					foreach ( $user[ 'fields' ] as $field ) {
+						if ( 'avatar' == $field[ 'type' ] ) {
+							$avatar_field = $field[ 'name' ];
 
 							pods_transient_set( 'pods_avatar_field', $avatar_field );
 
 							break;
 						}
 					}
-				} elseif ( ! isset( $user['fields'][ $avatar_field ] ) ) {
+				} elseif ( ! isset( $user[ 'fields' ][ $avatar_field ] ) ) {
 					$avatar_field = false;
 				}
 
@@ -286,7 +309,7 @@ class Pods_Field_Avatar extends
 						);
 
 						if ( ! empty( $alt ) ) {
-							$attributes['alt'] = $alt;
+							$attributes[ 'alt' ] = $alt;
 						}
 
 						$user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
@@ -320,19 +343,19 @@ class Pods_Field_Avatar extends
 	public function bp_core_fetch_avatar( $value, $params, $item_id, $avatar_dir, $css_id, $html_width, $html_height, $avatar_folder_url, $avatar_folder_dir ) {
 
 		// We only want to override user avatars
-		if ( strtolower( $params['object'] ) != 'user' ) {
+		if ( strtolower( $params[ 'object' ] ) != 'user' ) {
 			return $value;
 		}
 
 		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
-		$avatar_url   = pods_image_url( pods( 'user', $item_id )->field( $avatar_field ) );
+		$avatar_url = pods_image_url( pods( 'user', $item_id )->field( $avatar_field ) );
 
 		// Use the BuddyPress default if nothing set via Pods
 		if ( empty( $avatar_url ) ) {
 			return $value;
 		}
 
-		return '<img src="' . $avatar_url . '" class="' . esc_attr( $params['class'] ) . '"' . $css_id . $html_width . $html_height . $params['alt'] . $params['title'] . ' />';
+		return '<img src="' . $avatar_url . '" class="' . esc_attr( $params[ 'class' ] ) . '"' . $css_id . $html_width . $html_height . $params[ 'alt' ] . $params[ 'title' ] . ' />';
 	}
 
 	/**
@@ -344,19 +367,19 @@ class Pods_Field_Avatar extends
 	public function bp_core_fetch_avatar_url( $value, $params ) {
 
 		// We only want to override user avatars
-		if ( strtolower( $params['object'] ) != 'user' ) {
+		if ( strtolower( $params[ 'object' ] ) != 'user' ) {
 			return $value;
 		}
 
 		$avatar_field = ''; // Todo: I think we could use a protected get_avatar_field() method
-		$avatar_url   = pods_image_url( pods( 'user', $params['item_id'] )->field( $avatar_field ) );
+		$avatar_url = pods_image_url( pods( 'user', $params[ 'item_id' ] )->field( $avatar_field ) );
 
 		// Use the BuddyPress default if nothing set via Pods
 		if ( empty( $avatar_url ) ) {
 			return $value;
 		}
 
-		return pods_image_url( pods( 'user', $params['item_id'] )->field( $avatar_field ) );
+		return pods_image_url( pods( 'user', $params[ 'item_id' ] )->field( $avatar_field ) );
 	}
 
 }

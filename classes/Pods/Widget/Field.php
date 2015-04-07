@@ -19,10 +19,7 @@ class Pods_Widget_Field extends WP_Widget {
 	}
 
 	/**
-	 * Output of widget
-	 *
-	 * @param array $args
-	 * @param array $instance
+	 * {@inheritdoc}
 	 */
 	public function widget( $args, $instance ) {
 
@@ -47,10 +44,7 @@ class Pods_Widget_Field extends WP_Widget {
 	}
 
 	/**
-	 * @param array $new_instance
-	 * @param array $old_instance
-	 *
-	 * @return array
+	 * {@inheritdoc}
 	 */
 	public function update( $new_instance, $old_instance ) {
 
@@ -68,9 +62,7 @@ class Pods_Widget_Field extends WP_Widget {
 	}
 
 	/**
-	 * @param array $instance
-	 *
-	 * @return string|void
+	 * {@inheritdoc}
 	 */
 	public function form( $instance ) {
 

@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Password extends
-	Pods_Field {
+class Pods_Field_Password extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,17 @@ class Pods_Field_Password extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_max_length' => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
@@ -57,25 +57,28 @@ class Pods_Field_Password extends
 				'help'    => __( 'Set to -1 for no limit', 'pods' )
 			)
 			/*,
-						self::$type . '_size' => array(
-							'label' => __( 'Field Size', 'pods' ),
-							'default' => 'medium',
-							'type' => 'pick',
-							'data' => array(
-								'small' => __( 'Small', 'pods' ),
-								'medium' => __( 'Medium', 'pods' ),
-								'large' => __( 'Large', 'pods' )
-							)
-						)*/
+			self::$type . '_size' => array(
+				'label' => __( 'Field Size', 'pods' ),
+				'default' => 'medium',
+				'type' => 'pick',
+				'data' => array(
+					'small' => __( 'Small', 'pods' ),
+					'medium' => __( 'Medium', 'pods' ),
+					'large' => __( 'Large', 'pods' )
+				)
+			)
+			*/
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
@@ -85,35 +88,39 @@ class Pods_Field_Password extends
 		}
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
 			$value = implode( ' ', $value );
 		}
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/password.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		$errors = array();
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
@@ -123,7 +130,7 @@ class Pods_Field_Password extends
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				if ( 1 == pods_v( 'required', $options ) ) {
-					$errors[] = __( 'This field is required.', 'pods' );
+					$errors[ ] = __( 'This field is required.', 'pods' );
 				}
 			}
 		}
@@ -133,12 +140,14 @@ class Pods_Field_Password extends
 		}
 
 		return true;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
@@ -146,5 +155,7 @@ class Pods_Field_Password extends
 		}
 
 		return $value;
+
 	}
+
 }

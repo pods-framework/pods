@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Color extends
-	Pods_Field {
+class Pods_Field_Color extends Pods_Field {
 
 	/**
 	 * Field Type Identifier
@@ -31,16 +30,17 @@ class Pods_Field_Color extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable' => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -54,28 +54,34 @@ class Pods_Field_Color extends
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$schema = 'VARCHAR(7)';
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -84,27 +90,29 @@ class Pods_Field_Color extends
 
 		$field_type = 'color';
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 
 			$field_type = 'text';
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		$errors = array();
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
@@ -116,13 +124,13 @@ class Pods_Field_Color extends
 
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				if ( 1 == pods_v( 'required', $options ) ) {
-					$errors[] = __( 'This field is required.', 'pods' );
+					$errors[ ] = __( 'This field is required.', 'pods' );
 				} else {
 					// @todo Ask for a specific format in error message
-					$errors[] = __( 'Invalid value provided for this field.', 'pods' );
+					$errors[ ] = __( 'Invalid value provided for this field.', 'pods' );
 				}
 			} elseif ( 3 != strlen( $color ) && 6 != strlen( $color ) && 1 != empty( $color ) ) {
-				$errors[] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
+				$errors[ ] = __( 'Invalid Hex Color value provided for this field.', 'pods' );
 			}
 		}
 
@@ -131,12 +139,14 @@ class Pods_Field_Color extends
 		}
 
 		return true;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$value = str_replace( '#', '', $value );
 
 		if ( 0 < strlen( $value ) ) {
@@ -144,16 +154,20 @@ class Pods_Field_Color extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		if ( ! empty( $value ) ) {
 			$value = $value . ' <span style="display:inline-block;width:25px;height:25px;border:1px solid #333;background-color:' . $value . '"></span>';
 		}
 
 		return $value;
+
 	}
+
 }

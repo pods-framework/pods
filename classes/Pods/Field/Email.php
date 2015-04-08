@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Email extends
-	Pods_Field {
+class Pods_Field_Email extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,17 @@ class Pods_Field_Email extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable' => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -71,25 +71,28 @@ class Pods_Field_Email extends
 				'type'    => 'boolean'
 			)
 			/*,
-						self::$type . '_size' => array(
-							'label' => __( 'Field Size', 'pods' ),
-							'default' => 'medium',
-							'type' => 'pick',
-							'data' => array(
-								'small' => __( 'Small', 'pods' ),
-								'medium' => __( 'Medium', 'pods' ),
-								'large' => __( 'Large', 'pods' )
-							)
-						)*/
+			self::$type . '_size' => array(
+				'label' => __( 'Field Size', 'pods' ),
+				'default' => 'medium',
+				'type' => 'pick',
+				'data' => array(
+					'small' => __( 'Small', 'pods' ),
+					'medium' => __( 'Medium', 'pods' ),
+					'large' => __( 'Large', 'pods' )
+				)
+			)
+			*/
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		$schema = 'VARCHAR(' . $length . ')';
@@ -99,12 +102,14 @@ class Pods_Field_Email extends
 		}
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -113,34 +118,38 @@ class Pods_Field_Email extends
 
 		$field_type = 'email';
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 
 			$field_type = 'text';
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return false;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		$errors = array();
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
@@ -148,13 +157,13 @@ class Pods_Field_Email extends
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			$label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-			if ( 0 == strlen( $value ) && 1 == pods_var( 'required', $options ) ) {
-				$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
+			if ( 0 == strlen( $value ) && 1 == pods_v( 'required', $options ) ) {
+				$errors[ ] = sprintf( __( '%s is required', 'pods' ), $label );
 			} else {
-				if ( strlen( $check ) < 1 ) {
-					$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
+				$errors[ ] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
 				}
 			}
 		}
@@ -164,12 +173,14 @@ class Pods_Field_Email extends
 		}
 
 		return true;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		if ( ! is_email( $value ) ) {
 			$value = '';
 		}
@@ -181,12 +192,16 @@ class Pods_Field_Email extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		return '<a href="mailto:' . esc_attr( $value ) . '">' . $value . '</a>';
+
 	}
+
 }

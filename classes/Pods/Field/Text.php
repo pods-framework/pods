@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Text extends
-	Pods_Field {
+class Pods_Field_Text extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -49,6 +48,7 @@ class Pods_Field_Text extends
 	 * {@inheritDocs}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable'        => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -89,25 +89,28 @@ class Pods_Field_Text extends
 				'help'    => __( 'Set to -1 for no limit', 'pods' )
 			)
 			/*,
-						self::$type . '_size' => array(
-							'label' => __( 'Field Size', 'pods' ),
-							'default' => 'medium',
-							'type' => 'pick',
-							'data' => array(
-								'small' => __( 'Small', 'pods' ),
-								'medium' => __( 'Medium', 'pods' ),
-								'large' => __( 'Large', 'pods' )
-							)
-						)*/
+			self::$type . '_size' => array(
+				'label' => __( 'Field Size', 'pods' ),
+				'default' => 'medium',
+				'type' => 'pick',
+				'data' => array(
+					'small' => __( 'Small', 'pods' ),
+					'medium' => __( 'Medium', 'pods' ),
+					'large' => __( 'Large', 'pods' )
+				)
+			)
+			*/
 		);
 
 		return $options;
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function schema( $options = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
 
 		$schema = 'LONGTEXT';
@@ -121,12 +124,14 @@ class Pods_Field_Text extends
 		}
 
 		return $schema;
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		if ( 1 == pods_v( self::$type . '_allow_shortcode', $options ) ) {
@@ -134,35 +139,39 @@ class Pods_Field_Text extends
 		}
 
 		return $value;
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
 			$value = implode( ' ', $value );
 		}
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		$errors = array();
 
 		$check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
@@ -172,7 +181,7 @@ class Pods_Field_Text extends
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				if ( 1 == pods_v( 'required', $options ) ) {
-					$errors[] = __( 'This field is required.', 'pods' );
+					$errors[ ] = __( 'This field is required.', 'pods' );
 				}
 			}
 		}
@@ -182,12 +191,14 @@ class Pods_Field_Text extends
 		}
 
 		return true;
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		$length = (int) pods_v( self::$type . '_max_length', $options, 255 );
@@ -197,12 +208,14 @@ class Pods_Field_Text extends
 		}
 
 		return $value;
+
 	}
 
 	/**
 	 * {@inheritDocs}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		if ( 0 == pods_v( self::$type . '_allow_html', $options, 0, true ) ) {
@@ -210,17 +223,19 @@ class Pods_Field_Text extends
 		}
 
 		return $value;
+
 	}
 
 	/**
 	 * Strip HTML based on options
 	 *
 	 * @param string $value
-	 * @param array  $options
+	 * @param array $options
 	 *
 	 * @return string
 	 */
 	public function strip_html( $value, $options = null ) {
+
 		if ( is_array( $value ) ) {
 			$value = @implode( ' ', $value );
 		}
@@ -231,31 +246,23 @@ class Pods_Field_Text extends
 			return $value;
 		}
 
-		if ( 0 == pods_v( self::$type . '_allow_html', $options ) ) {
+		if ( 1 == pods_v( self::$type . '_allow_html', $options, 0, true ) ) {
+			$allowed_html_tags = '';
+
+			if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_html_tags = explode( ' ', trim( pods_v( self::$type . '_allowed_html_tags', $options ) ) );
+				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+			}
+
+			if ( ! empty( $allowed_html_tags ) && '<>' != $allowed_html_tags ) {
+				$value = strip_tags( $value, $allowed_html_tags );
+			}
+		} else {
 			$value = strip_tags( $value );
-		} elseif ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
-			$allowed_tags = trim( preg_replace( '[\<\>\/\,]', ' ', $allowed_tags ) );
-			$allowed_tags = explode( ' ', $allowed_tags );
-			// Handle issue with self-closing tags in strip_tags
-			// @link http://www.php.net/strip_tags#88991
-			if ( in_array( 'br', $allowed_tags ) ) {
-				$allowed_tags[] = 'br /';
-			}
-
-			if ( in_array( 'hr', $allowed_tags ) ) {
-				$allowed_tags[] = 'hr /';
-			}
-
-			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
-
-			if ( ! empty( $allowed_tags ) ) {
-				$allowed_tags = '<' . implode( '><', $allowed_tags ) . '>';
-
-				$value = strip_tags( $value, $allowed_tags );
-			}
 		}
 
 		return $value;
+
 	}
+
 }

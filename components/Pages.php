@@ -985,6 +985,8 @@ class Pods_Pages extends
 
 		/**
 		 * Fires off in the Pod Head.
+		 * 
+		 * @since unknown
 		 */ 
 		do_action( 'pods_wp_head' );
 

@@ -798,7 +798,6 @@ class Pods_Field_Pick extends Pods_Field {
 			self::$related_data[ $options[ 'id' ] ] = array();
 		}
 
-		// ToDo: what's up with table_info
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects ) ) {
 			$related_pod = self::$api->load_pod( array( 'name' => $related_val ), false );
 
@@ -982,7 +981,6 @@ class Pods_Field_Pick extends Pods_Field {
 		$related_val = pods_v( self::$type . '_val', $options, $related_object, true ); // pod name, post type name, taxonomy name, etc..
 		$related_sister_id = (int) pods_v( 'sister_id', $options, 0 );
 
-		// ToDo: what's up with table_info
 		if ( ! empty( $related_sister_id ) && ! in_array( $related_object, $simple_tableless_objects ) ) {
 			$related_pod = self::$api->load_pod( array( 'name' => $related_val ), false );
 
@@ -1908,8 +1906,6 @@ class Pods_Field_Pick extends Pods_Field {
 	}
 
 	/**
-	 * ToDo: The method still needs doing but it doesn't appear that 2.x has changed since 2013
-	 *
 	 * Handle autocomplete AJAX
 	 *
 	 * @since 2.3

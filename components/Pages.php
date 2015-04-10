@@ -863,6 +863,8 @@ class Pods_Pages extends
 			 * 
 			 * @param object $pods_page Current Pods page
 			 * @param string $content The page content 
+			 * 
+			 * @since unknown
 			 */ 
 			do_action( 'pods_content_pre', $pods_page, $content );
 
@@ -883,6 +885,8 @@ class Pods_Pages extends
 			 * 
 			 * @param object $pods_page Current Pods page
 			 * @param string $content The page content 
+			 * 
+			 * @since unknown
 			 */ 
 			do_action( 'pods_content_post', $pods_page, $content );
 

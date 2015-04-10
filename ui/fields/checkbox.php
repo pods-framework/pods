@@ -1,7 +1,7 @@
 <?php
-$options['data'] = (array) pods_var_raw( 'data', $options, array(), null, true );
+$options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
-$data_count = count( $options['data'] );
+$data_count = count( $options[ 'data' ] );
 
 if ( 0 < $data_count ) {
 
@@ -12,14 +12,14 @@ if ( 0 < $data_count ) {
 	<?php
 	}
 
-	$counter      = 1;
+	$counter = 1;
 	$primary_name = $name;
-	$primary_id   = 'pods-form-ui-' . Pods_Form::clean( $name );
+	$primary_id = 'pods-form-ui-' . Pods_Form::clean( $name );
 
-	foreach ( $options['data'] as $val => $label ) {
+	foreach ( $options[ 'data' ] as $val => $label ) {
 		if ( is_array( $label ) ) {
-			if ( isset( $label['label'] ) ) {
-				$label = $label['label'];
+			if ( isset( $label[ 'label' ] ) ) {
+				$label = $label[ 'label' ];
 			} else {
 				$label = $val;
 			}
@@ -27,14 +27,14 @@ if ( 0 < $data_count ) {
 
 		$attributes = array();
 
-		$attributes['type']     = 'checkbox';
-		$attributes['tabindex'] = 2;
+		$attributes[ 'type' ] = 'checkbox';
+		$attributes[ 'tabindex' ] = 2;
 
 		if ( ( ! is_array( $value ) && (string) $val === (string) $value ) || ( is_array( $value ) && ( in_array( $val, $value ) || in_array( (string) $val, $value ) ) ) ) {
-			$attributes['checked'] = 'CHECKED';
+			$attributes[ 'checked' ] = 'CHECKED';
 		}
 
-		$attributes['value'] = $val;
+		$attributes[ 'value' ] = $val;
 
 		if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) ) {
 			$name = $primary_name . '[' . ( $counter - 1 ) . ']';
@@ -53,21 +53,21 @@ if ( 0 < $data_count ) {
 		}
 
 		if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) ) {
-			$attributes['class'] .= ' pods-dependent-multi';
+			$attributes[ 'class' ] .= ' pods-dependent-multi';
 		}
 
 		if ( strlen( $label ) < 1 ) {
-			$attributes['class'] .= ' pods-form-ui-no-label';
+			$attributes[ 'class' ] .= ' pods-form-ui-no-label';
 		}
 
 		if ( pods_v( 'readonly', $options, false ) ) {
-			$attributes['readonly'] = 'READONLY';
+			$attributes[ 'readonly' ] = 'READONLY';
 
-			$attributes['class'] .= ' pods-form-ui-read-only';
+			$attributes[ 'class' ] .= ' pods-form-ui-read-only';
 		}
 
 		if ( 1 < $data_count ) {
-			$attributes['id'] = $primary_id . $counter;
+			$attributes[ 'id' ] = $primary_id . $counter;
 		}
 
 		if ( 1 == pods_v( 'grouped', $options, 0, true ) ) {
@@ -86,7 +86,7 @@ if ( 0 < $data_count ) {
 					$help = '';
 				}
 
-				echo Pods_Form::label( $attributes['id'], $label, $help );
+				echo Pods_Form::label( $attributes[ 'id' ], $label, $help );
 			}
 			?>
 		</div>

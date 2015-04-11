@@ -133,7 +133,11 @@ class Pods_Roles extends
 	}
 	
 	/**
+	 * Add a role or capability
+	 * 
 	 * @param $obj
+	 * 
+	 * @since unknown
 	 */
 	function admin_add( $obj ) {
 		global $wp_roles;
@@ -150,8 +154,12 @@ class Pods_Roles extends
 	}
 
 	/**
+	 * Edit the roles and capabilities in the admin.
+	 * 
 	 * @param $duplicate
 	 * @param $obj
+	 * 
+	 * @since unknown
 	 */
 	function admin_edit( $duplicate, $obj ) {
 		global $wp_roles;
@@ -184,8 +192,12 @@ class Pods_Roles extends
 	}
 	
 	/**
+	 * Delete a role.
+	 * 
 	 * @param $id
 	 * @param $obj
+	 * 
+	 * @since unknown
 	 */
 	function admin_delete( $id, $obj ) {
 		global $wp_roles;
@@ -437,7 +449,10 @@ class Pods_Roles extends
 	}
 
 	/**
+	 * Get the capability group map.
+	 * 
 	 * @return array
+	 * @since unknown
 	 */
 	function get_capability_group_map() {
 		$defaults_capability_group = array(
@@ -607,7 +622,10 @@ class Pods_Roles extends
 	}
 	
 	/**
+	 * Get grouped capabilities.
+	 * 
 	 * @return array
+	 * @since unknown
 	 */
 	function get_grouped_capabilities() {
 		$capabilities         = $this->get_capabilities();
@@ -640,6 +658,7 @@ class Pods_Roles extends
 	 * Get a list of default WordPress roles in an array
 	 * 
 	 * @return array
+	 * @since unknown
 	 */
 	function get_wp_capabilities() {
 		$defaults = array(
@@ -699,7 +718,10 @@ class Pods_Roles extends
 	}
 	
 	/**
+	 * Get default WordPress capabilities.
+	 * 
 	 * @return array|mixed|void
+	 * @since unknown
 	 */
 	function get_default_capabilities() {
 		$capabilities = array(
@@ -720,6 +742,7 @@ class Pods_Roles extends
 	 * @param $capabilities WordPress Capabilities 
 	 *
 	 * @return array
+	 * @since unknown
 	 */
 	function remove_deprecated_capabilities( $capabilities ) {
 		$deprecated_capabilities = array(

@@ -4,7 +4,7 @@ $depends_on = false;
 foreach ( $field_options as $field_name => $field_option ) {
 	if ( false !== strpos( $field_name, 'helper' ) && ! class_exists( 'Pods_Helpers' ) ) {
 		continue;
-	} elseif ( $field_option['developer_mode'] && ! pods_developer() ) {
+	} elseif ( $field_option[ 'developer_mode' ] && ! pods_developer() ) {
 		continue;
 	}
 
@@ -20,58 +20,58 @@ foreach ( $field_options as $field_name => $field_option ) {
 		}
 		if ( ! empty( $depends ) ) {
 			?>
-			<div class="pods-field-option-container <?php echo $depends; ?>">
+			<div class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
 		<?php
 		}
 	}
 
-	if ( ! is_array( $field_option['group'] ) ) {
+	if ( ! is_array( $field_option[ 'group' ] ) ) {
 		$row_name = $field_name;
 
 		if ( ! isset( $pods_tab_form ) ) {
 			$row_name = 'field_data[' . $pods_i . '][' . $field_name . ']';
 		}
 
-		$value = $field_option['default'];
+		$value = $field_option[ 'default' ];
 
-		if ( isset( $field_option['value'] ) && 0 < strlen( $field_option['value'] ) ) {
-			$value = $field_option['value'];
+		if ( isset( $field_option[ 'value' ] ) && 0 < strlen( $field_option[ 'value' ] ) ) {
+			$value = $field_option[ 'value' ];
 		} else {
 			$value = pods_v( $field_name, $field, $value );
 		}
 
-		if ( in_array( $field_option['type'], Pods_Form::file_field_types() ) ) {
-			if ( is_array( $value ) && ! isset( $value['id'] ) ) {
+		if ( in_array( $field_option[ 'type' ], Pods_Form::file_field_types() ) ) {
+			if ( is_array( $value ) && ! isset( $value[ 'id' ] ) ) {
 				foreach ( $value as $k => $v ) {
-					if ( isset( $v['id'] ) ) {
-						$value[ $k ] = $v['id'];
+					if ( isset( $v[ 'id' ] ) ) {
+						$value[ $k ] = $v[ 'id' ];
 					}
 				}
 			}
 		}
 		?>
 		<div class="pods-field-option">
-			<?php echo Pods_Form::row( $row_name, $value, $field_option['type'], $field_option ); ?>
+			<?php echo Pods_Form::row( $row_name, $value, $field_option[ 'type' ], $field_option ); ?>
 		</div>
 	<?php
 	} else {
 		?>
 		<div class="pods-field-option-group">
 			<p class="pods-field-option-group-label">
-				<?php echo $field_option['label']; ?>
+				<?php echo $field_option[ 'label' ]; ?>
 			</p>
 
 			<div class="pods-pick-values pods-pick-checkbox">
 				<ul>
 					<?php
-					foreach ( $field_option['group'] as $field_group_name => $field_group_option ) {
+					foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
 						$field_group_option = (array) $field_group_option;
 
-						if ( 'boolean' != $field_group_option['type'] ) {
+						if ( 'boolean' != $field_group_option[ 'type' ] ) {
 							continue;
 						}
 
-						$field_group_option['boolean_yes_label'] = $field_group_option['label'];
+						$field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
 						$depends_option = Pods_Form::dependencies( $field_group_option, ( ! isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 
@@ -81,17 +81,17 @@ foreach ( $field_options as $field_name => $field_option ) {
 							$row_name = 'field_data[' . $pods_i . '][' . $field_group_name . ']';
 						}
 
-						$value = $field_group_option['default'];
+						$value = $field_group_option[ 'default' ];
 
-						if ( isset( $field_group_option['value'] ) && 0 < strlen( $field_group_option['value'] ) ) {
-							$value = $field_group_option['value'];
+						if ( isset( $field_group_option[ 'value' ] ) && 0 < strlen( $field_group_option[ 'value' ] ) ) {
+							$value = $field_group_option[ 'value' ];
 						} else {
 							$value = pods_v( $field_group_name, $field, $value );
 						}
 
 						?>
-						<li class="<?php echo $depends_option; ?>">
-							<?php echo Pods_Form::field( $row_name, $value, $field_group_option['type'], $field_group_option ); ?>
+						<li class="<?php echo esc_attr( $depends_option ); ?>">
+							<?php echo Pods_Form::field( $row_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
 						</li>
 					<?php
 					}

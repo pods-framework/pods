@@ -26,6 +26,8 @@ class PodsUpgrade {
 
     /**
      * Build the upgrade process
+     * 
+     * @since unknown
      */
     function __construct() {
         $this->api = pods_api();
@@ -55,7 +57,7 @@ class PodsUpgrade {
 
         $pods_version = get_option( 'pods_version' );
 
-        /**
+	/**
 	     * Fires when Pods Installs during the upgrade process 
 	     *
 	     * @param int $pods_version The current version number of Pods
@@ -97,6 +99,8 @@ class PodsUpgrade {
 
     /**
      * Get DB Tables
+     * 
+     * @since unknown
      */
     public function get_tables() {
         /**
@@ -115,6 +119,8 @@ class PodsUpgrade {
 
     /**
      * Get upgrade progress
+     * 
+     * @since unknown
      */
     function get_progress() {
         $methods = get_class_methods( $this );
@@ -131,9 +137,12 @@ class PodsUpgrade {
     }
 
     /**
+     * Run Upgrade AJAX
+     * 
      * @param $params
      *
      * @return mixed|void
+     * @since unknown
      */
     public function ajax( $params ) {
         if ( !isset( $params->step ) )
@@ -154,6 +163,8 @@ class PodsUpgrade {
      * @param $method
      * @param $v
      * @param null $x
+     * 
+     * @since unknown
      */
     public function update_progress( $method, $v, $x = null ) {
         if ( empty( $this->version ) )
@@ -176,6 +187,7 @@ class PodsUpgrade {
      * @param null $x
      *
      * @return bool
+     * @since unknown
      */
     public function check_progress( $method, $x = null ) {
         $method = str_replace( 'migrate_', '', $method );
@@ -192,6 +204,8 @@ class PodsUpgrade {
 
     /**
      * Upgrade process complete
+     * 
+     * @since unknown
      */
     public function upgraded() {
         if ( empty( $this->version ) )
@@ -212,6 +226,8 @@ class PodsUpgrade {
 
     /**
      * Cleanup DB options/tables
+     * 
+     * @since unknown
      */
     public function cleanup() {
         /**

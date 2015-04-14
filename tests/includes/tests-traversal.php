@@ -717,11 +717,6 @@ namespace Pods_Unit_Tests;
 			$pod = $options[ 'pod' ];
 
 			$field = $options[ 'field' ];
-
-			if ( ! is_object( $field ) && ! empty( $field[ 'options' ] ) ) {
-				$field = array_merge( $field[ 'options' ], $field );
-			}
-
 			$field_type = $field[ 'type' ];
 
 			$related_pod = array();
@@ -794,6 +789,10 @@ namespace Pods_Unit_Tests;
 					$this->assertTrue( false, sprintf( 'No related field data found [%s]', $variant_id ) );
 
 					return;
+				}
+
+				if ( ! is_object( $field_data ) && ! empty( $field_data[ 'options' ] ) ) {
+					$field_data = array_merge( $field_data[ 'options' ], $field_data );
 				}
 
 				if ( ! empty( $field_data[ $field_type . '_format_type' ] ) && 'multi' == $field_data[ $field_type . '_format_type' ] ) {

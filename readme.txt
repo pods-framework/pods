@@ -15,7 +15,7 @@ Pods is a framework for creating, managing, and deploying customized content typ
 Check out http://pods.io/ for our User Guide, Forums, and other resources to help you develop with Pods.
 
 = Introduction =
-[youtube http://www.youtube.com/watch?v=tkBDNOAQJxg]
+[youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
 
 = Content types that evolve with your needs =
 Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.

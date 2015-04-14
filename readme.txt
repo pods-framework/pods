@@ -154,6 +154,29 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+= 2.5.2 April 15, 2015 =
+* FIXED: Issues with default values for number and other types of fields.
+* FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
+* FIXED: Issue preventing proper display of fields in a related CPT via Pods::field()
+* FIXED: Issue preventing codemirror from being enqueued in Pods templates and therefore breaking Pods tempaltes editor in certain configurations.
+* ADDED: Added caching info to debug info.
+* FIXED: Bug that was causing Pods to overwrite admin menus.
+* FIXED: Issue preventing ongoing compatibility with Admin Columns.
+* IMPROVED: Style of components filter bar.
+* IMPROVED: Proper sanitization/ escaping of URLs.
+* FIXED: Shortcode button was outputted in post editor when shortcodes were disabled. This will no longer happen.
+* IMPROVED: Translation strings in ui/admin/help
+* IMPROVED: Gradients in Pods wizard.
+* FIXED: Issue preventing associated taxonomies to be fetched via Pods::field() and therefore magic tags.
+* IMPROVED: Icon font used for Pods admin icon.
+* IMPROVED: Elaborated on what data is and isn't deleted when Pods data is reset.
+* ADDED: Compatibility with Github updater plugin.
+* UPDATED: New youtube video in reame.
+* ADDED: Ability to use .permalink traversal for taxonomy term archive links.
+
+
+
+
 = 2.5.1.2 - March 16th, 2015 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods
 * or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/

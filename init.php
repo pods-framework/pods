@@ -177,5 +177,7 @@ function pods_deactivate_pods_ui () {
             wp_redirect( $_SERVER[ 'REQUEST_URI' ] );
             die();
         }
+	    
     }
+
 }

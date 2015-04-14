@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
 <script>
-	var PODS_URL = '<?php echo PODS_URL; ?>';
+	var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 </script>
 <div id="icon-pods" class="icon32"><br /></div>
 
@@ -14,7 +14,7 @@
 
 <h2 class="italicized"><?php _e( 'Migrate: Packages', 'pods' ); ?></h2>
 
-<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
 <div id="pods-wizard-box" class="pods-wizard-steps-2" data-step-process="1">
 <div id="pods-wizard-heading">
@@ -34,10 +34,10 @@
 <?php
 $api = pods_api();
 
-$pods          = $api->load_pods( array( 'fields' => false ) );
+$pods = $api->load_pods( array( 'fields' => false ) );
 $pod_templates = $api->load_templates();
-$pod_pages     = $api->load_pages();
-$pod_helpers   = $api->load_helpers();
+$pod_pages = $api->load_pages();
+$pod_helpers = $api->load_helpers();
 
 $export = true;
 
@@ -106,7 +106,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 		<?php
 		if ( ! empty( $pods ) ) {
-			$data      = $pods;
+			$data = $pods;
 			$data_name = 'pods';
 			?>
 			<div class="stuffbox pods-package-import-group">
@@ -115,7 +115,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 				<div class="inside pods-manage-field pods-dependency">
 					<div class="pods-field-option-group">
 						<p>
-							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo $data_name; ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
 						</p>
 
 						<div class="pods-pick-values pods-pick-checkbox pods-zebra">
@@ -130,8 +130,8 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 									$zebra = ( ! $zebra );
 									?>
-									<li class="pods-zebra-<?php echo $class; ?>">
-										<?php echo Pods_Form::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+									<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+										<?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( ! empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
 									</li>
 								<?php
 								}
@@ -145,7 +145,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 		}
 
 		if ( ! empty( $pod_templates ) ) {
-			$data      = $pod_templates;
+			$data = $pod_templates;
 			$data_name = 'templates';
 			?>
 			<div class="stuffbox pods-package-import-group">
@@ -154,7 +154,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 				<div class="inside pods-manage-field pods-dependency">
 					<div class="pods-field-option-group">
 						<p>
-							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo $data_name; ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
 						</p>
 
 						<div class="pods-pick-values pods-pick-checkbox pods-zebra">
@@ -169,8 +169,8 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 									$zebra = ( ! $zebra );
 									?>
-									<li class="pods-zebra-<?php echo $class; ?>">
-										<?php echo Pods_Form::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+									<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+										<?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( ! empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
 									</li>
 								<?php
 								}
@@ -184,7 +184,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 		}
 
 		if ( ! empty( $pod_pages ) ) {
-			$data      = $pod_pages;
+			$data = $pod_pages;
 			$data_name = 'pages';
 			?>
 			<div class="stuffbox pods-package-import-group">
@@ -193,7 +193,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 				<div class="inside pods-manage-field pods-dependency">
 					<div class="pods-field-option-group">
 						<p>
-							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo $data_name; ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
 						</p>
 
 						<div class="pods-pick-values pods-pick-checkbox pods-zebra">
@@ -208,8 +208,8 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 									$zebra = ( ! $zebra );
 									?>
-									<li class="pods-zebra-<?php echo $class; ?>">
-										<?php echo Pods_Form::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+									<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+										<?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( ! empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
 									</li>
 								<?php
 								}
@@ -223,7 +223,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 		}
 
 		if ( ! empty( $pod_helpers ) ) {
-			$data      = $pod_helpers;
+			$data = $pod_helpers;
 			$data_name = 'helpers';
 			?>
 			<div class="stuffbox pods-package-import-group">
@@ -232,7 +232,7 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 				<div class="inside pods-manage-field pods-dependency">
 					<div class="pods-field-option-group">
 						<p>
-							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo $data_name; ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+							<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
 						</p>
 
 						<div class="pods-pick-values pods-pick-checkbox pods-zebra">
@@ -247,8 +247,8 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 									$zebra = ( ! $zebra );
 									?>
-									<li class="pods-zebra-<?php echo $class; ?>">
-										<?php echo Pods_Form::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+									<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+										<?php echo Pods_Form::field( $data_name . '[' . $item[ 'id' ] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item[ 'name' ] . ( ! empty( $item[ 'label' ] ) ? ' (' . $item[ 'label' ] . ')' : '' ) ) ); ?>
 									</li>
 								<?php
 								}
@@ -277,7 +277,8 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 
 <div id="pods-wizard-actions">
 	<div id="pods-wizard-toolbar">
-		<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Continue', 'pods' ); ?></a>
+		<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
+		<a href="#next" id="pods-wizard-next" class="button button-primary" data-again="<?php esc_attr_e( 'Process Again', 'pods' ); ?>" data-next="<?php esc_attr_e( 'Continue', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Continue', 'pods' ); ?></a>
 	</div>
 	<div id="pods-wizard-finished">
 
@@ -290,30 +291,30 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 </div>
 
 <script type="text/javascript">
-	var pods_admin_wizard_callback = function(step,completed) {
-		console.log(step);
-		console.log(completed);
+	var pods_admin_wizard_callback = function ( step, completed ) {
+		console.log( step );
+		console.log( completed );
 
-		if(2 == step || !step) {
-			jQuery('#pods-wizard-panel-2 div#import-export-results').slideUp('fast',function() {
-				jQuery('#pods-wizard-panel-2 div#import-export-results div.inside').html('');
-			});
+		if ( 2 == step || !step ) {
+			jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideUp( 'fast', function () {
+				jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( '' );
+			} );
 		}
 
 		return true;
 	}
 
-	var pods_admin_submit_callback = function(id) {
-		jQuery('#pods-wizard-panel-2 div#import-export-results div.inside').html(id);
-		jQuery('#pods-wizard-panel-2 div#import-export-results').slideDown('fast');
+	var pods_admin_submit_callback = function ( id ) {
+		jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( id );
+		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).slideDown( 'fast' );
 
-		jQuery('#pods-wizard-next').css('cursor','pointer');
-		jQuery('#pods-wizard-next').prop('disabled',false);
-		jQuery('#pods-wizard-next').text(jQuery('#pods-wizard-next').data('again'));
+		jQuery( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+		jQuery( '#pods-wizard-next' ).prop( 'disabled', false );
+		jQuery( '#pods-wizard-next' ).text( jQuery( '#pods-wizard-next' ).data( 'again' ) );
 
 		window.location.hash = 'import-export';
 
-		if('export' == jQuery('#pods-form-ui-import-export').val()) {
+		if ( 'export' == jQuery( '#pods-form-ui-import-export' ).val() ) {
 			// @todo We need copy/paste functionality here
 			//jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).select();
 		}
@@ -321,36 +322,36 @@ if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( 
 		return false;
 	};
 
-	var pods_admin_option_select_callback = function($opt) {
-		jQuery('#pods-form-ui-import-export').val($opt.data('opt'));
+	var pods_admin_option_select_callback = function ( $opt ) {
+		jQuery( '#pods-form-ui-import-export' ).val( $opt.data( 'opt' ) );
 	};
 
-	var pods_admin_wizard_startover_callback = function() {
-		jQuery('#pods-wizard-panel-2 div#import-export-results').hide();
-		jQuery('#pods-wizard-panel-2 div#import-export-results div.inside').html('');
+	var pods_admin_wizard_startover_callback = function () {
+		jQuery( '#pods-wizard-panel-2 div#import-export-results' ).hide();
+		jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( '' );
 	};
 
-	jQuery(function($) {
-		$(document).Pods('validate');
-		$(document).Pods('submit');
-		$(document).Pods('wizard');
-		$(document).Pods('dependency');
-		$(document).Pods('advanced');
-		$(document).Pods('confirm');
-		$(document).Pods('sluggable');
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'wizard' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'advanced' );
+		$( document ).Pods( 'confirm' );
+		$( document ).Pods( 'sluggable' );
 
 		var toggle_all = {};
 
-		$('.pods-wizard-toggle-all').on('click',function(e) {
+		$( '.pods-wizard-toggle-all' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			if('undefined' == typeof toggle_all[ $(this).data('toggle') ]) {
-				toggle_all[ $(this).data('toggle') ] = true;
+			if ( 'undefined' == typeof toggle_all[$( this ).data( 'toggle' )] ) {
+				toggle_all[$( this ).data( 'toggle' )] = true;
 			}
 
-			$(this).closest('.pods-field-option-group').find('.pods-field.pods-boolean input[type="checkbox"]').prop('checked',( !toggle_all[ $(this).data('toggle') ] ));
+			$( this ).closest( '.pods-field-option-group' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', ( !toggle_all[$( this ).data( 'toggle' )] ) );
 
-			toggle_all[ $(this).data('toggle') ] = ( !toggle_all[ $(this).data('toggle') ] );
-		});
-	});
+			toggle_all[$( this ).data( 'toggle' )] = ( !toggle_all[$( this ).data( 'toggle' )] );
+		} );
+	} );
 </script>

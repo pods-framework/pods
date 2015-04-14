@@ -715,8 +715,10 @@ namespace Pods_Unit_Tests;
 			$pod_type = $options[ 'pod_type' ];
 			$storage_type = $options[ 'storage_type' ];
 			$pod = $options[ 'pod' ];
+
 			$field = $options[ 'field' ];
 			$field_type = $field[ 'type' ];
+
 			$related_pod = array();
 			$related_pod_field = array();
 
@@ -789,10 +791,14 @@ namespace Pods_Unit_Tests;
 					return;
 				}
 
+				if ( ! is_object( $field_data ) && ! empty( $field_data[ 'options' ] ) ) {
+					$field_data = array_merge( $field_data[ 'options' ], $field_data );
+				}
+
 				if ( ! empty( $field_data[ $field_type . '_format_type' ] ) && 'multi' == $field_data[ $field_type . '_format_type' ] ) {
 					$check_value = (array) $check_value;
 
-					if ( 'multi' == $field_data[ $field_type . '_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
+					if ( !empty( $related_data[ 'limit' ] ) ) {
 						$check_indexes = array();
 
 						$check_indexes[] = $check_index;
@@ -802,6 +808,8 @@ namespace Pods_Unit_Tests;
 						}
 
 						$check_index = $check_indexes;
+					} else {
+						$check_index = (array) $check_index;
 					}
 
 					$check_display_value = pods_serial_comma( $check_value );
@@ -832,8 +840,8 @@ namespace Pods_Unit_Tests;
 
 				if ( ! $deep ) {
 					if ( 'field' == $method ) {
-						$this->assertEquals( $check_value, $p->field( $traverse_id ), sprintf( 'Related Item field value not as expected (%s) [%s]', $traverse_id, $variant_id ) );
-						$this->assertEquals( $check_index, $p->field( $traverse_index ), sprintf( 'Related Item index field value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
+						$this->assertEquals( $check_value, $p->field( $traverse_id ), sprintf( 'Related Item field value not as expected (%s) [%s] {%s should be %s}', $traverse_id, $variant_id, var_export( $p->field( $traverse_id ), true ), var_export( $check_value, true ) ) );
+						$this->assertEquals( $check_index, $p->field( $traverse_index ), sprintf( 'Related Item index field value not as expected (%s) [%s] {%s should be %s}', $traverse_index, $variant_id, var_export( $p->field( $traverse_index ), true ), var_export( $check_index, true ) ) );
 
 						if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
 							$check_value = array_map( 'absint', (array) $check_value );

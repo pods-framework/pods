@@ -2652,7 +2652,7 @@ class PodsUI {
                             ?>
                         </select>
 
-                        <input type="submit" id="doaction_bulk<?php echo $this->num; ?>" class="button-secondary action" value="<?php _e( 'Apply', 'pods' ); ?>">
+                        <input type="submit" id="<?php echo esc_attr( 'doaction_bulk' . $this->num );  ?>" class="button-secondary action" value="<?php esc_attr_e( 'Apply', 'pods' ); ?>">
                     </div>
                 <?php
                     }

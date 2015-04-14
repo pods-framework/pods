@@ -450,6 +450,11 @@ class PodsField_Number extends PodsField {
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
 
+	if ( null === $value ) {
+		// Don't enforce a default value here
+		return null;
+	}
+
         if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '.';
             $dot = ',';

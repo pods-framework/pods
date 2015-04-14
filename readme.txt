@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.1.1
-Stable tag: 2.5.1.1
+Stable tag: 2.5.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -154,6 +154,11 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+= 2.5.1.2 - March 16th, 2015 =
+* Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods
+* or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
+* Fixed: Pods UI orderby now strictly enforces Database column format
+
 = 2.5.1.1 - January 22nd, 2015 =
 * Fixed missing files for font icon.
 

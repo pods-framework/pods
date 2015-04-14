@@ -19,8 +19,7 @@ if ( class_exists( 'Pods_Pages' ) ) {
 	return;
 }
 
-class Pods_Pages extends
-	Pods_Component {
+class Pods_Pages extends Pods_Component {
 
 	/**
 	 * Current Pod Page
@@ -59,9 +58,10 @@ class Pods_Pages extends
 	static $content_called = false;
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
+
 		add_shortcode( 'pods-content', array( $this, 'shortcode' ) );
 
 		$args = array(
@@ -80,7 +80,7 @@ class Pods_Pages extends
 		);
 
 		if ( ! pods_is_admin() ) {
-			$args['capability_type'] = 'pods_page';
+			$args[ 'capability_type' ] = 'pods_page';
 		}
 
 		$args = Pods_Init::object_label_fix( $args, 'post_type' );
@@ -108,29 +108,32 @@ class Pods_Pages extends
 
 			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
 		}
+
 	}
 
 	/**
 	 * Pod Page Content Shortcode support for use anywhere that supports WP Shortcodes
 	 *
-	 * @param array  $tags    An associative array of shortcode properties
+	 * @param array $tags An associative array of shortcode properties
 	 * @param string $content Not currently used
 	 *
 	 * @return string
 	 * @since 2.3.9
 	 */
 	public function shortcode( $tags, $content = null ) {
-		if ( ! isset( $tags['page'] ) || empty( $tags['page'] ) ) {
-			$tags['page'] = null;
+
+		if ( ! isset( $tags[ 'page' ] ) || empty( $tags[ 'page' ] ) ) {
+			$tags[ 'page' ] = null;
 		}
 
-		$pods_page = Pods_Pages::exists( $tags['page'] );
+		$pods_page = Pods_Pages::exists( $tags[ 'page' ] );
 
 		if ( empty( $pods_page ) ) {
 			return '<p>Pods Page not found</p>';
 		}
 
 		return Pods_Pages::content( true, $pods_page );
+
 	}
 
 	/**
@@ -141,9 +144,11 @@ class Pods_Pages extends
 	 * @return array
 	 */
 	public function disable_builder_layout( $post_types ) {
-		$post_types[] = $this->object_type;
+
+		$post_types[ ] = $this->object_type;
 
 		return $post_types;
+
 	}
 
 	/**
@@ -155,6 +160,7 @@ class Pods_Pages extends
 	 * @since 2.0.2
 	 */
 	public function setup_updated_messages( $messages ) {
+
 		global $post, $post_ID;
 
 		$post_type = get_post_type_object( $this->object_type );
@@ -167,7 +173,7 @@ class Pods_Pages extends
 			3  => __( 'Custom field deleted.', 'pods' ),
 			4  => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
 			/* translators: %s: date and time of the revision */
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET[ 'revision' ] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET[ 'revision' ], false ) ) : false,
 			6  => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
 			8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
@@ -184,17 +190,18 @@ class Pods_Pages extends
 		);
 
 		if ( false === (boolean) $post_type->public ) {
-			$messages[ $post_type->name ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][6]  = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
+			$messages[ $post_type->name ][ 1 ] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][ 6 ] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][ 8 ] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][ 9 ] = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
 				$labels->singular_name,
 				// translators: Publish box date format, see http://php.net/date
 				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
-			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][ 10 ] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 
 		return $messages;
+
 	}
 
 	/**
@@ -203,7 +210,9 @@ class Pods_Pages extends
 	 * @since 2.0
 	 */
 	public function admin_assets() {
+
 		wp_enqueue_style( 'pods-admin' );
+
 	}
 
 	/**
@@ -212,7 +221,9 @@ class Pods_Pages extends
 	 * @since 2.0.1
 	 */
 	public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+
 		remove_filter( 'content_save_pre', 'balanceTags', 50 );
+
 	}
 
 	/**
@@ -221,26 +232,28 @@ class Pods_Pages extends
 	 * @since 2.0.5
 	 */
 	public function remove_row_actions( $actions, $post ) {
+
 		global $current_screen;
 
 		if ( ! is_object( $current_screen ) || $this->object_type != $current_screen->post_type ) {
 			return $actions;
 		}
 
-		if ( isset( $actions['view'] ) ) {
-			unset( $actions['view'] );
+		if ( isset( $actions[ 'view' ] ) ) {
+			unset( $actions[ 'view' ] );
 		}
 
-		if ( isset( $actions['inline hide-if-no-js'] ) ) {
-			unset( $actions['inline hide-if-no-js'] );
+		if ( isset( $actions[ 'inline hide-if-no-js' ] ) ) {
+			unset( $actions[ 'inline hide-if-no-js' ] );
 		}
 
 		// W3 Total Cache
-		if ( isset( $actions['pgcache_purge'] ) ) {
-			unset( $actions['pgcache_purge'] );
+		if ( isset( $actions[ 'pgcache_purge' ] ) ) {
+			unset( $actions[ 'pgcache_purge' ] );
 		}
 
 		return $actions;
+
 	}
 
 	/**
@@ -249,11 +262,13 @@ class Pods_Pages extends
 	 * @since 2.0.5
 	 */
 	public function remove_bulk_actions( $actions ) {
-		if ( isset( $actions['edit'] ) ) {
-			unset( $actions['edit'] );
+
+		if ( isset( $actions[ 'edit' ] ) ) {
+			unset( $actions[ 'edit' ] );
 		}
 
 		return $actions;
+
 	}
 
 	/**
@@ -262,6 +277,7 @@ class Pods_Pages extends
 	 * @since 2.0
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+
 		$old_post = $id;
 
 		if ( ! is_object( $id ) ) {
@@ -288,6 +304,7 @@ class Pods_Pages extends
 
 			self::flush_rewrites();
 		}
+
 	}
 
 	/**
@@ -296,7 +313,9 @@ class Pods_Pages extends
 	 * @since 2.0
 	 */
 	public function set_title_text( $text, $post ) {
+
 		return __( 'Enter URL here', 'pods' );
+
 	}
 
 	/**
@@ -305,6 +324,7 @@ class Pods_Pages extends
 	 * @since 2.0
 	 */
 	public function edit_page_form() {
+
 		global $post_type;
 
 		if ( $this->object_type != $post_type ) {
@@ -312,6 +332,7 @@ class Pods_Pages extends
 		}
 
 		add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+
 	}
 
 	/**
@@ -323,6 +344,7 @@ class Pods_Pages extends
 	 * @return mixed
 	 */
 	public function post_type_link( $post_link, $post ) {
+
 		if ( empty( $post ) || $this->object_type != $post->post_type ) {
 			return $post_link;
 		}
@@ -334,6 +356,7 @@ class Pods_Pages extends
 		}
 
 		return $post_link;
+
 	}
 
 	/**
@@ -342,12 +365,13 @@ class Pods_Pages extends
 	 * @since 2.0
 	 */
 	public function add_meta_boxes() {
+
 		$pod = array(
 			'name' => $this->object_type,
 			'type' => 'post_type'
 		);
 
-		if ( isset( Pods_Meta::$post_types[ $pod['name'] ] ) ) {
+		if ( isset( Pods_Meta::$post_types[ $pod[ 'name' ] ] ) ) {
 			return;
 		}
 
@@ -423,7 +447,7 @@ class Pods_Pages extends
 				$associated_pods[ $pod_name ] = $pod_label . ' (' . $pod_name . ')';
 			}
 		} else {
-			$associated_pods[0] = __( 'None Found', 'pods' );
+			$associated_pods[ 0 ] = __( 'None Found', 'pods' );
 		}
 
 		$fields = array(
@@ -532,19 +556,21 @@ class Pods_Pages extends
 		);
 
 		pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
+
 	}
 
 	/**
 	 * Get the fields
 	 *
-	 * @param null   $_null
-	 * @param int    $post_ID
+	 * @param null $_null
+	 * @param int $post_ID
 	 * @param string $meta_key
-	 * @param bool   $single
+	 * @param bool $single
 	 *
 	 * @return array|bool|int|mixed|null|string|void
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+
 		if ( 'code' == $meta_key ) {
 			$post = get_post( $post_ID );
 
@@ -554,19 +580,21 @@ class Pods_Pages extends
 		}
 
 		return $_null;
+
 	}
 
 	/**
 	 * Save the fields
 	 *
 	 * @param        $_null
-	 * @param int    $post_ID
+	 * @param int $post_ID
 	 * @param string $meta_key
-	 * @param null   $meta_value
+	 * @param null $meta_value
 	 *
 	 * @return bool|int|null
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+
 		if ( 'code' == $meta_key ) {
 			$post = get_post( $post_ID );
 
@@ -597,6 +625,7 @@ class Pods_Pages extends
 		}
 
 		return $_null;
+
 	}
 
 	/**
@@ -607,6 +636,7 @@ class Pods_Pages extends
 	 * @since 2.3.4
 	 */
 	public static function flush_rewrites() {
+
 		$args = array(
 			'post_type'      => '_pods_page',
 			'nopaging'       => true,
@@ -631,6 +661,7 @@ class Pods_Pages extends
 		$pod_page_rewrites = array_flip( $pod_page_rewrites );
 
 		return $pod_page_rewrites;
+
 	}
 
 	/**
@@ -643,22 +674,23 @@ class Pods_Pages extends
 	 * @return array|bool
 	 */
 	public static function exists( $uri = null ) {
+
 		if ( null === $uri ) {
 			$uri = parse_url( pods_current_url() );
-			$uri = $uri['path'];
+			$uri = $uri[ 'path' ];
 		} else {
 			$uri = explode( '?', $uri );
-			$uri = explode( '#', $uri[0] );
-			$uri = $uri[0];
+			$uri = explode( '#', $uri[ 0 ] );
+			$uri = $uri[ 0 ];
 		}
 
 		$home = parse_url( get_home_url() );
 
-		if ( ! empty( $home ) && isset( $home['path'] ) && '/' != $home['path'] ) {
-			$uri = substr( $uri, strlen( $home['path'] ) );
+		if ( ! empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] ) {
+			$uri = substr( $uri, strlen( $home[ 'path' ] ) );
 		}
 
-		$uri       = trim( $uri, '/' );
+		$uri = trim( $uri, '/' );
 		$uri_depth = count( array_filter( explode( '/', $uri ) ) ) - 1;
 
 		$pods_page_exclusions = array(
@@ -712,6 +744,10 @@ class Pods_Pages extends
 			if ( ! empty( $pod_page_rewrites ) ) {
 				foreach ( $pod_page_rewrites as $pod_page => $pod_page_id ) {
 					if ( ! apply_filters( 'pods_page_regex_matching', false ) ) {
+						if ( false === strpos( $pod_page, '*' ) ) {
+							continue;
+						}
+
 						$depth_check = strlen( $pod_page ) - strlen( str_replace( '/', '', $pod_page ) );
 
 						$pod_page = preg_quote( $pod_page, '/' );
@@ -735,7 +771,7 @@ class Pods_Pages extends
 				if ( ! empty( $found_rewrite_page_id ) ) {
 					$object = get_post( $found_rewrite_page_id, ARRAY_A );
 
-					if ( empty( $object ) || '_pods_page' != $object['post_type'] ) {
+					if ( empty( $object ) || '_pods_page' != $object[ 'post_type' ] ) {
 						$object = false;
 					}
 				}
@@ -746,24 +782,24 @@ class Pods_Pages extends
 
 		if ( ! empty( $object ) ) {
 			$object = array(
-				'id'            => $object['ID'],
-				'uri'           => $object['post_title'],
-				'code'          => $object['post_content'],
-				'phpcode'       => $object['post_content'], // phpcode is deprecated
-				'precode'       => get_post_meta( $object['ID'], 'precode', true ),
-				'page_template' => get_post_meta( $object['ID'], 'page_template', true ),
-				'title'         => get_post_meta( $object['ID'], 'page_title', true ),
+				'id'            => $object[ 'ID' ],
+				'uri'           => $object[ 'post_title' ],
+				'code'          => $object[ 'post_content' ],
+				'phpcode'       => $object[ 'post_content' ], // phpcode is deprecated
+				'precode'       => get_post_meta( $object[ 'ID' ], 'precode', true ),
+				'page_template' => get_post_meta( $object[ 'ID' ], 'page_template', true ),
+				'title'         => get_post_meta( $object[ 'ID' ], 'page_title', true ),
 				'options'       => array(
-					'admin_only'              => (boolean) get_post_meta( $object['ID'], 'admin_only', true ),
-					'restrict_role'           => (boolean) get_post_meta( $object['ID'], 'restrict_role', true ),
-					'restrict_capability'     => (boolean) get_post_meta( $object['ID'], 'restrict_capability', true ),
-					'roles_allowed'           => get_post_meta( $object['ID'], 'roles_allowed', true ),
-					'capability_allowed'      => get_post_meta( $object['ID'], 'capability_allowed', true ),
-					'restrict_redirect'       => (boolean) get_post_meta( $object['ID'], 'restrict_redirect', true ),
-					'restrict_redirect_login' => (boolean) get_post_meta( $object['ID'], 'restrict_redirect_login', true ),
-					'restrict_redirect_url'   => get_post_meta( $object['ID'], 'restrict_redirect_url', true ),
-					'pod'                     => get_post_meta( $object['ID'], 'pod', true ),
-					'pod_slug'                => get_post_meta( $object['ID'], 'pod_slug', true ),
+					'admin_only'              => (boolean) get_post_meta( $object[ 'ID' ], 'admin_only', true ),
+					'restrict_role'           => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_role', true ),
+					'restrict_capability'     => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_capability', true ),
+					'roles_allowed'           => get_post_meta( $object[ 'ID' ], 'roles_allowed', true ),
+					'capability_allowed'      => get_post_meta( $object[ 'ID' ], 'capability_allowed', true ),
+					'restrict_redirect'       => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_redirect', true ),
+					'restrict_redirect_login' => (boolean) get_post_meta( $object[ 'ID' ], 'restrict_redirect_login', true ),
+					'restrict_redirect_url'   => get_post_meta( $object[ 'ID' ], 'restrict_redirect_url', true ),
+					'pod'                     => get_post_meta( $object[ 'ID' ], 'pod', true ),
+					'pod_slug'                => get_post_meta( $object[ 'ID' ], 'pod_slug', true ),
 				)
 			);
 
@@ -775,12 +811,14 @@ class Pods_Pages extends
 		}
 
 		return false;
+
 	}
 
 	/**
 	 * Check if a Pod Page exists
 	 */
 	public function page_check() {
+
 		if ( self::$checked ) {
 			return;
 		}
@@ -788,10 +826,10 @@ class Pods_Pages extends
 		global $pods;
 
 		// Fix any global confusion wherever this runs
-		if ( isset( $pods ) && ! isset( $GLOBALS['pods'] ) ) {
-			$GLOBALS['pods'] =& $pods;
-		} elseif ( ! isset( $pods ) && isset( $GLOBALS['pods'] ) ) {
-			$pods =& $GLOBALS['pods'];
+		if ( isset( $pods ) && ! isset( $GLOBALS[ 'pods' ] ) ) {
+			$GLOBALS[ 'pods' ] =& $pods;
+		} elseif ( ! isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) ) {
+			$pods =& $GLOBALS[ 'pods' ];
 		}
 
 		if ( ! defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) || ! PODS_DISABLE_POD_PAGE_CHECK ) {
@@ -819,6 +857,7 @@ class Pods_Pages extends
 
 			self::$checked = true;
 		}
+
 	}
 
 	/**
@@ -829,6 +868,7 @@ class Pods_Pages extends
 	 * @return string
 	 */
 	public static function content( $return = false, $pods_page = false ) {
+
 		if ( empty( $pods_page ) ) {
 			$pods_page = self::$exists;
 		}
@@ -846,14 +886,14 @@ class Pods_Pages extends
 			global $pods;
 
 			// Fix any global confusion wherever this runs
-			if ( isset( $pods ) && ! isset( $GLOBALS['pods'] ) ) {
-				$GLOBALS['pods'] =& $pods;
-			} elseif ( ! isset( $pods ) && isset( $GLOBALS['pods'] ) ) {
-				$pods =& $GLOBALS['pods'];
+			if ( isset( $pods ) && ! isset( $GLOBALS[ 'pods' ] ) ) {
+				$GLOBALS[ 'pods' ] =& $pods;
+			} elseif ( ! isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) ) {
+				$pods =& $GLOBALS[ 'pods' ];
 			}
 
-			if ( 0 < strlen( trim( $pods_page['code'] ) ) ) {
-				$content = trim( $pods_page['code'] );
+			if ( 0 < strlen( trim( $pods_page[ 'code' ] ) ) ) {
+				$content = trim( $pods_page[ 'code' ] );
 			}
 
 			ob_start();
@@ -888,19 +928,21 @@ class Pods_Pages extends
 		}
 
 		echo $content;
+
 	}
 
 	/**
 	 * Run any precode for current Pod Page
 	 */
 	public function precode() {
+
 		global $pods;
 
 		// Fix any global confusion wherever this runs
-		if ( isset( $pods ) && ! isset( $GLOBALS['pods'] ) ) {
-			$GLOBALS['pods'] =& $pods;
-		} elseif ( ! isset( $pods ) && isset( $GLOBALS['pods'] ) ) {
-			$pods =& $GLOBALS['pods'];
+		if ( isset( $pods ) && ! isset( $GLOBALS[ 'pods' ] ) ) {
+			$GLOBALS[ 'pods' ] =& $pods;
+		} elseif ( ! isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) ) {
+			$pods =& $GLOBALS[ 'pods' ];
 		}
 
 		if ( false !== self::$exists ) {
@@ -927,8 +969,8 @@ class Pods_Pages extends
 					}
 				}
 
-				if ( 0 < strlen( trim( self::$exists['precode'] ) ) ) {
-					$content = self::$exists['precode'];
+				if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) ) {
+					$content = self::$exists[ 'precode' ];
 				}
 
 				if ( false !== $content && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
@@ -938,13 +980,13 @@ class Pods_Pages extends
 				}
 
 				do_action( 'pods_page_precode', self::$exists, $pods, $content );
-			} elseif ( self::$exists['restrict_redirect'] ) {
+			} elseif ( self::$exists[ 'restrict_redirect' ] ) {
 				$redirect_url = '';
 
-				if ( self::$exists['restrict_redirect_login'] ) {
+				if ( self::$exists[ 'restrict_redirect_login' ] ) {
 					$redirect_url = wp_login_url( pods_current_url() );
-				} elseif ( ! empty( self::$exists['restrict_redirect_url'] ) ) {
-					$redirect_url = self::$exists['restrict_redirect_url'];
+				} elseif ( ! empty( self::$exists[ 'restrict_redirect_url' ] ) ) {
+					$redirect_url = self::$exists[ 'restrict_redirect_url' ];
 				}
 
 				if ( ! empty( $redirect_url ) ) {
@@ -963,19 +1005,21 @@ class Pods_Pages extends
 				remove_action( 'wp', array( $this, 'silence_404' ), 1 );
 			}
 		}
+
 	}
 
 	/**
 	 *
 	 */
 	public function wp_head() {
+
 		global $pods;
 
 		do_action( 'pods_wp_head' );
 
 		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || ! PODS_DISABLE_VERSION_OUTPUT ) {
 			?>
-			<!-- Pods Framework <?php echo PODS_VERSION; ?> -->
+			<!-- Pods Framework <?php echo esc_html( PODS_VERSION ); ?> -->
 		<?php
 		}
 		if ( ( ! defined( 'PODS_DISABLE_META' ) || ! PODS_DISABLE_META ) && is_object( $pods ) && ! is_wp_error( $pods ) ) {
@@ -1003,6 +1047,7 @@ class Pods_Pages extends
 				echo $pods->meta_extra;
 			}
 		}
+
 	}
 
 	/**
@@ -1013,9 +1058,10 @@ class Pods_Pages extends
 	 * @return mixed|void
 	 */
 	public function wp_title( $title, $sep, $seplocation ) {
+
 		global $pods;
 
-		$page_title = trim( self::$exists['title'] );
+		$page_title = trim( self::$exists[ 'title' ] );
 
 		if ( 0 < strlen( $page_title ) ) {
 			if ( is_object( $pods ) && ! is_wp_error( $pods ) ) {
@@ -1024,8 +1070,8 @@ class Pods_Pages extends
 
 			$title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
 		} elseif ( strlen( trim( $title ) ) < 1 ) {
-			$uri = explode( '?', $_SERVER['REQUEST_URI'] );
-			$uri = preg_replace( '@^([/]?)(.*?)([/]?)$@', '$2', $uri[0] );
+			$uri = explode( '?', $_SERVER[ 'REQUEST_URI' ] );
+			$uri = preg_replace( '@^([/]?)(.*?)([/]?)$@', '$2', $uri[ 0 ] );
 			$uri = preg_replace( '@(-|_)@', ' ', $uri );
 			$uri = explode( '/', $uri );
 
@@ -1036,11 +1082,12 @@ class Pods_Pages extends
 			}
 		}
 
-		if ( ( ! defined( 'PODS_DISABLE_META' ) || ! PODS_DISABLE_META ) && is_object( $pods ) && ! is_wp_error( $pods ) && isset( $pods->meta ) && is_array( $pods->meta ) && isset( $pods->meta['title'] ) ) {
-			$title = $pods->meta['title'];
+		if ( ( ! defined( 'PODS_DISABLE_META' ) || ! PODS_DISABLE_META ) && is_object( $pods ) && ! is_wp_error( $pods ) && isset( $pods->meta ) && is_array( $pods->meta ) && isset( $pods->meta[ 'title' ] ) ) {
+			$title = $pods->meta[ 'title' ];
 		}
 
 		return apply_filters( 'pods_title', $title, $sep, $seplocation, self::$exists );
+
 	}
 
 	/**
@@ -1049,59 +1096,66 @@ class Pods_Pages extends
 	 * @return mixed|void
 	 */
 	public function body_class( $classes ) {
+
 		global $pods;
 
 		if ( defined( 'PODS_DISABLE_BODY_CLASSES' ) && PODS_DISABLE_BODY_CLASSES ) {
 			return $classes;
 		}
 
-		$classes[] = 'pods';
+		$classes[ ] = 'pods';
 
-		$uri = explode( '?', self::$exists['uri'] );
-		$uri = explode( '#', $uri[0] );
+		$uri = explode( '?', self::$exists[ 'uri' ] );
+		$uri = explode( '#', $uri[ 0 ] );
 
-		$class = str_replace( array( '*', '/' ), array( '_w_', '-' ), $uri[0] );
+		$class = str_replace( array( '*', '/' ), array( '_w_', '-' ), $uri[ 0 ] );
 		$class = sanitize_title( $class );
 		$class = str_replace( array( '_', '--', '--' ), '-', $class );
 		$class = trim( $class, '-' );
 
-		$classes[] = 'pod-page-' . $class;
+		$classes[ ] = 'pod-page-' . $class;
 
 		if ( is_object( $pods ) && ! is_wp_error( $pods ) ) {
-			$class     = sanitize_title( $pods->pod );
-			$class     = str_replace( array( '_', '--', '--' ), '-', $class );
-			$class     = trim( $class, '-' );
-			$classes[] = 'pod-' . $class;
+			$class = sanitize_title( $pods->pod );
+			$class = str_replace( array( '_', '--', '--' ), '-', $class );
+			$class = trim( $class, '-' );
+			$classes[ ] = 'pod-' . $class;
 		}
 
 		if ( is_object( $pods ) && ! is_wp_error( $pods ) && isset( $pods->body_classes ) ) {
-			$classes[] = $pods->body_classes;
+			$classes[ ] = $pods->body_classes;
 		}
 
 		return apply_filters( 'pods_body_class', $classes, $uri );
+
 	}
 
 	/**
 	 * @return string
 	 */
 	public function status_header() {
-		return $_SERVER['SERVER_PROTOCOL'] . ' 200 OK';
+
+		return $_SERVER[ 'SERVER_PROTOCOL' ] . ' 200 OK';
+
 	}
 
 	/**
 	 *
 	 */
 	public function silence_404() {
+
 		global $wp_query;
 
-		$wp_query->query_vars['error'] = '';
-		$wp_query->is_404              = false;
+		$wp_query->query_vars[ 'error' ] = '';
+		$wp_query->is_404 = false;
+
 	}
 
 	/**
 	 *
 	 */
 	public function template_redirect() {
+
 		global $pods;
 
 		if ( false !== self::$exists ) {
@@ -1114,7 +1168,7 @@ class Pods_Pages extends
 			 * get_sidebar()
 			 * get_footer()
 			 */
-			$template = self::$exists['page_template'];
+			$template = self::$exists[ 'page_template' ];
 			$template = apply_filters( 'pods_page_template', $template, self::$exists );
 
 			$render_function = apply_filters( 'pods_template_redirect', null, $template, self::$exists );
@@ -1128,28 +1182,28 @@ class Pods_Pages extends
 			} elseif ( ( ! defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || ! PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && ! is_wp_error( $pods ) && isset( $pods->page_template ) && ! empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
 				$template = $pods->page_template;
 				// found the template and included it, we're good to go!
-			} elseif ( ! empty( self::$exists['page_template'] ) && '' != locate_template( array( self::$exists['page_template'] ), true ) ) {
-				$template = self::$exists['page_template'];
+			} elseif ( ! empty( self::$exists[ 'page_template' ] ) && '' != locate_template( array( self::$exists[ 'page_template' ] ), true ) ) {
+				$template = self::$exists[ 'page_template' ];
 				// found the template and included it, we're good to go!
 			} else {
 				$default_templates = array();
 
-				$uri = explode( '?', self::$exists['uri'] );
-				$uri = explode( '#', $uri[0] );
+				$uri = explode( '?', self::$exists[ 'uri' ] );
+				$uri = explode( '#', $uri[ 0 ] );
 
-				$page_path = explode( '/', $uri[0] );
+				$page_path = explode( '/', $uri[ 0 ] );
 
 				while ( $last = array_pop( $page_path ) ) {
 					$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
 					$sanitized = sanitize_title( $file_name );
 
-					$default_templates[] = 'pods/page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[] = 'pods-page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[ ] = 'pods/page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[ ] = 'pods-page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[ ] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[ ] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
 				}
 
-				$default_templates[] = 'pods.php';
+				$default_templates[ ] = 'pods.php';
 
 				$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
 
@@ -1174,6 +1228,7 @@ class Pods_Pages extends
 
 			exit;
 		}
+
 	}
 }
 
@@ -1186,11 +1241,13 @@ class Pods_Pages extends
  * @since 1.7.5
  */
 function is_pod_page( $uri = null ) {
-	if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists['uri'] || $uri == Pods_Pages::$exists['id'] ) ) {
+
+	if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] || $uri == Pods_Pages::$exists[ 'id' ] ) ) {
 		return true;
 	}
 
 	return false;
+
 }
 
 /**
@@ -1202,11 +1259,13 @@ function is_pod_page( $uri = null ) {
  * @since 2.3.7
  */
 function is_pod_page_template( $template = null ) {
-	if ( false !== Pods_Pages::$exists && $template == Pods_Pages::$exists['page_template'] ) {
+
+	if ( false !== Pods_Pages::$exists && $template == Pods_Pages::$exists[ 'page_template' ] ) {
 		return true;
 	}
 
 	return false;
+
 }
 
 /**
@@ -1216,13 +1275,15 @@ function is_pod_page_template( $template = null ) {
  * @since 2.3.3
  */
 function get_pod_page_uri() {
+
 	$pod_page = Pods_Pages::exists();
 
 	if ( ! empty( $pod_page ) ) {
-		return $pod_page['uri'];
+		return $pod_page[ 'uri' ];
 	}
 
 	return false;
+
 }
 
 /**
@@ -1237,7 +1298,9 @@ function get_pod_page_uri() {
  * @since 1.7.5
  */
 function pod_page_exists( $uri = null ) {
+
 	return Pods_Pages::exists( $uri );
+
 }
 
 /**
@@ -1250,7 +1313,9 @@ function pod_page_exists( $uri = null ) {
  * @since 1.7.0
  */
 function pods_content( $return = false, $pods_page = false ) {
+
 	return Pods_Pages::content( $return, $pods_page );
+
 }
 
 /**
@@ -1264,7 +1329,9 @@ function pods_content( $return = false, $pods_page = false ) {
  * @since 2.3.4
  */
 function pods_page_length_sort( $a, $b ) {
+
 	return strlen( $b ) - strlen( $a );
+
 }
 
 /**
@@ -1275,10 +1342,12 @@ function pods_page_length_sort( $a, $b ) {
  * @since 2.3.4
  */
 function pods_page_flush_rewrites() {
+
 	return Pods_Pages::flush_rewrites();
+
 }
 
 /*
  * Deprecated global variable
  */
-$GLOBALS['pod_page_exists'] =& Pods_Pages::$exists;
+$GLOBALS[ 'pod_page_exists' ] =& Pods_Pages::$exists;

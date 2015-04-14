@@ -832,8 +832,8 @@ namespace Pods_Unit_Tests;
 
 				if ( ! $deep ) {
 					if ( 'field' == $method ) {
-						$this->assertEquals( $check_value, $p->field( $traverse_id ), sprintf( 'Related Item field value not as expected (%s) [%s]', $traverse_id, $variant_id ) );
-						$this->assertEquals( $check_index, $p->field( $traverse_index ), sprintf( 'Related Item index field value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
+						$this->assertEquals( $check_value, $p->field( $traverse_id ), sprintf( 'Related Item field value not as expected (%s) [%s] {%s should be %s}', $traverse_id, $variant_id, var_export( $p->field( $traverse_id, true ) ), var_export( $check_value, true ) ) );
+						$this->assertEquals( $check_index, $p->field( $traverse_index ), sprintf( 'Related Item index field value not as expected (%s) [%s] {%s should be %s}', $traverse_index, $variant_id, var_export( $p->field( $traverse_index, true ) ), var_export( $check_index, true ) ) );
 
 						if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
 							$check_value = array_map( 'absint', (array) $check_value );

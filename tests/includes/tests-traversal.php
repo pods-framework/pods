@@ -798,7 +798,7 @@ namespace Pods_Unit_Tests;
 				if ( ! empty( $field_data[ $field_type . '_format_type' ] ) && 'multi' == $field_data[ $field_type . '_format_type' ] ) {
 					$check_value = (array) $check_value;
 
-					if ( 'multi' == $field_data[ $field_type . '_format_type' ] && !empty( $related_data[ 'limit' ] ) ) {
+					if ( !empty( $related_data[ 'limit' ] ) ) {
 						$check_indexes = array();
 
 						$check_indexes[] = $check_index;
@@ -808,6 +808,8 @@ namespace Pods_Unit_Tests;
 						}
 
 						$check_index = $check_indexes;
+					} else {
+						$check_index = (array) $check_value;
 					}
 
 					$check_display_value = pods_serial_comma( $check_value );

@@ -715,8 +715,15 @@ namespace Pods_Unit_Tests;
 			$pod_type = $options[ 'pod_type' ];
 			$storage_type = $options[ 'storage_type' ];
 			$pod = $options[ 'pod' ];
+
 			$field = $options[ 'field' ];
+
+			if ( ! is_object( $field ) && ! empty( $field[ 'options' ] ) ) {
+				$field = array_merge( $field[ 'options' ], $field );
+			}
+
 			$field_type = $field[ 'type' ];
+
 			$related_pod = array();
 			$related_pod_field = array();
 

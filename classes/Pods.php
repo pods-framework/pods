@@ -1201,7 +1201,7 @@ class Pods implements Iterator {
 							if ( empty( $ids ) ) {
 								return false;
 							} // @todo This should return array() if not $params->single
-							elseif ( 0 < $last_limit ) {
+							elseif ( 0 < $last_limit && 'taxonomy' !== $last_type ) {
 								$ids = array_slice( $ids, 0, $last_limit );
 							}
 
@@ -1246,6 +1246,7 @@ class Pods implements Iterator {
 
 							if ( !empty( $table[ 'join' ] ) )
 								$join = (array) $table[ 'join' ];
+
 
 							if ( !empty( $table[ 'where' ] ) || !empty( $ids ) ) {
 								foreach ( $ids as $id ) {
@@ -1300,13 +1301,19 @@ class Pods implements Iterator {
 								}
 
 								if ( empty( $related_obj ) ) {
-									if ( !is_object( $this->alt_data ) )
+									if ( !is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data( null, 0, true, true );
+									}
 
 									$item_data = $this->alt_data->select( $sql );
 								}
-								else
+								else {
+
 									$item_data = $related_obj->find( $sql )->data();
+
+								}
+
+
 
 								$items = array();
 
@@ -1608,7 +1615,7 @@ class Pods implements Iterator {
 					$post = $old_post;
 					$post_ID = $old_ID;
 				}
-				
+
 			}
 			else {
 				$value = PodsForm::value(
@@ -1619,6 +1626,18 @@ class Pods implements Iterator {
 					$this->pod_data,
 					$this->id()
 				);
+			}
+
+		}
+
+		if ( empty( $value ) && 'taxonomy' == $last_object && in_array( $field, array( 'permalink', 'the_permalink' ) ) ) {
+			if ( isset( $ids ) && is_array( $ids ) && 1 !== count( $ids ) ) {
+				foreach( $ids as $term_id ) {
+					$value[] = get_term_link( (int) $term_id, $object );
+				}
+
+			} else {
+				$value = get_term_link( (int) $id, $object );
 			}
 		}
 

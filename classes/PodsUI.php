@@ -860,18 +860,18 @@ class PodsUI {
 
 	    $orderby = $this->orderby;
 
-	    // Enforce strict DB column name usage
-	    if ( ! empty( $_GET[ 'orderby' . $options->num ] ) ) {
-		    $orderby = pods_clean_name( $_GET[ 'orderby' . $options->num ], true, false );
-	    }
-
-        if ( !empty( $orderby ) ) {
+	    if ( ! empty( $orderby ) ) {
             $orderby = array(
                 'default' => $orderby
             );
-        }
-        else
-            $orderby = array();
+	    } else {
+		    $orderby = array();
+	    }
+
+	    // Enforce strict DB column name usage
+	    if ( ! empty( $_GET[ 'orderby' . $options->num ] ) ) {
+		    $orderby[] = pods_clean_name( $_GET[ 'orderby' . $options->num ], true, false );
+	    }
 
         $options->validate( 'orderby', $orderby, 'array_merge' );
         $options->validate( 'sortable', $this->sortable, 'boolean' );

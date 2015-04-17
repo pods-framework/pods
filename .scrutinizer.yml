@@ -1,0 +1,5 @@
+# .scrutinizer.yml
+tools:
+    php_code_sniffer:
+        config:
+            standard: "WordPress" # Other Values: PSR2, PEAR, Zend, WordPress

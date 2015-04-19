@@ -33,8 +33,8 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * @since 2.0
      */
     public function __construct () {
-        $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
-        $this->taxonomies = (array) get_option( 'cpt_custom_tax_types', array() );
+        $this->post_types = (array) get_option( 'cptui_post_types', array() );
+        $this->taxonomies = (array) get_option( 'cptui_taxonomies', array() );
     }
 
     /**
@@ -107,14 +107,14 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( 1 == pods_var( 'cleanup', $params, 0 ) ) {
             if ( !empty( $post_types ) )
-                update_option( 'cpt_custom_post_types', $post_types );
+                update_option( 'cptui_post_types', $post_types );
             else
-                delete_option( 'cpt_custom_post_types' );
+                delete_option( 'cptui_post_types' );
 
             if ( !empty( $taxonomies ) )
-                update_option( 'cpt_custom_tax_types', $taxonomies );
+                update_option( 'cptui_taxonomies', $taxonomies );
             else
-                delete_option( 'cpt_custom_tax_types' );
+                delete_option( 'cptui_taxonomies' );
         }
     }
 
@@ -275,7 +275,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * @since 2.0
      */
     public function clean () {
-        delete_option( 'cpt_custom_post_types' );
-        delete_option( 'cpt_custom_tax_types' );
+        delete_option( 'cptui_post_types' );
+        delete_option( 'cptui_taxonomies' );
     }
 }

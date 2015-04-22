@@ -1939,7 +1939,7 @@ class PodsData {
                     $row = get_object_vars( (object) @current( $current_row ) );
 
                     if ( is_array( $this->row ) && !empty( $this->row ) )
-                        $this->row = array_merge( $row, $this->row );
+                        $this->row = array_merge( $this->row, $row );
                     else
                         $this->row = $row;
                 }

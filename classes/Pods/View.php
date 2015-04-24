@@ -584,7 +584,6 @@ class Pods_View {
 
 		// Keep it safe, stay thirsty my friends
 		$_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
-		$_view = preg_replace( '/\/+/', '/', $_view );
 
 		if ( empty( $_view ) ) {
 			return false;

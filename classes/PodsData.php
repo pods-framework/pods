@@ -632,7 +632,7 @@ class PodsData {
 
         // Get from cache if enabled
         if ( null !== pods_v( 'expires', $params, null, false ) ) {
-            $cache_key = md5( serialize( $params ) );
+            $cache_key = md5( (string) $this->pod . serialize( $params ) );
 
             $results = pods_view_get( $cache_key, pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
 

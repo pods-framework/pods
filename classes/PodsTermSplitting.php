@@ -30,6 +30,7 @@ class Pods_Term_Splitting {
 			}
 		}
 
+		// Track down all fields related to the target taxonomy and update stored term IDs as necessary
 		self::update_relationships_to_term( $term_id, $new_term_id, $taxonomy );
 
 	}
@@ -103,8 +104,7 @@ class Pods_Term_Splitting {
 	}
 
 	/**
-	 * Build the $all_relationships, $post_relationships, $comment_relationships, $user_relationships, and
-	 * $settings_relationships arrays
+	 * Track down all fields related to the target taxonomy and update stored term IDs as necessary
 	 *
 	 * @param $term_id
 	 * @param $new_term_id
@@ -140,11 +140,11 @@ class Pods_Term_Splitting {
 						break;
 
 					case 'comment':
-						self::update_commentmeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						self::update_commentmeta( $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'user':
-						self::update_usermeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						self::update_usermeta( $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'settings':
@@ -235,12 +235,11 @@ class Pods_Term_Splitting {
 	/**
 	 * Called for all fields related to the target taxonomy that are in a comment Pod
 	 *
-	 * @param string $pod_name
 	 * @param string $field_name
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_commentmeta( $pod_name, $field_name, $term_id, $new_term_id ) {
+	public static function update_commentmeta( $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -281,12 +280,11 @@ class Pods_Term_Splitting {
 	/**
 	 * Called for all fields related to the target taxonomy that are in a user Pod
 	 *
-	 * @param string $pod_name
 	 * @param string $field_name
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_usermeta( $pod_name, $field_name, $term_id, $new_term_id ) {
+	public static function update_usermeta( $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;

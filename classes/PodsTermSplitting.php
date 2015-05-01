@@ -22,11 +22,11 @@ class Pods_Term_Splitting {
 		// Is the taxonomy a Pod?
 		if ( is_array( $taxonomy_pod ) ) {
 
-			//self::update_podsrel_taxonomy( $taxonomy_pod[ 'pod_id' ], $term_id, $new_term_id );
+			self::update_podsrel_taxonomy( $taxonomy_pod[ 'pod_id' ], $term_id, $new_term_id );
 
 			// Update the Pods table if the taxonomy is a table based Pod
 			if ( 'table' == $taxonomy_pod[ 'storage' ] ) {
-				//self::update_pod_table( $taxonomy_pod[ 'pod_table' ], $term_id, $new_term_id );
+				self::update_pod_table( $taxonomy_pod[ 'pod_table' ], $term_id, $new_term_id );
 			}
 		}
 

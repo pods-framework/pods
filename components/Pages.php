@@ -421,7 +421,7 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'pod_slug',
                 'label' => __( 'Wildcard Slug', 'pods' ),
-                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v( 2, "url" ) in PHP.', 'pods' ),
+                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, "url" ) in PHP.', 'pods' ),
                 'type' => 'text',
                 'excludes-on' => array( 'pod' => 0 )
             )

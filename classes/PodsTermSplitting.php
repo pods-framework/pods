@@ -18,184 +18,339 @@ class Pods_Term_Splitting {
 	 */
 	public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
 
-		self::update_pod_table( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_podsrel( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_post_type_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_comment_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_user_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_setting_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
-		self::update_serialized( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
+		// Get the Pod information if the taxonomy is a Pod
+		$taxonomy_pod = self::get_pod_info( $taxonomy );
 
-		// ToDo: optionally store _pods_term_split_{$term_id}_{$taxonomy}
+		// Is the taxonomy a Pod?
+		if ( is_array( $taxonomy_pod ) ) {
+
+			//self::update_podsrel_taxonomy( $taxonomy_pod[ 'pod_id' ], $term_id, $new_term_id );
+
+			// Update the Pods table if the taxonomy is a table based Pod
+			if ( 'table' == $taxonomy_pod[ 'storage' ] ) {
+				//self::update_pod_table( $taxonomy_pod[ 'pod_table' ], $term_id, $new_term_id );
+			}
+		}
+
+		self::update_relationships_to_term( $term_id, $new_term_id, $taxonomy );
 
 	}
 
 	/**
-	 * @param int $term_id ID of the formerly shared term.
-	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
-	 * @param int $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy Taxonomy for the split term.
+	 * Return the Pod information for the specified taxonomy, or null if the taxonomy isn't a Pod
 	 *
-	 * @return bool false on error
+	 * @param string $taxonomy
+	 *
+	 * @return array|bool|mixed|null
 	 */
-	public static function update_pod_table( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function get_pod_info( $taxonomy ) {
+
+		$pod_info = null;
+
+		if ( pods_api()->pod_exists( $taxonomy ) ) {
+
+			// Load the taxonomy Pod
+			$params = array(
+				'name'       => $taxonomy,
+				'table_info' => true
+			);
+			$pod_info = pods_api()->load_pod( $params, false );
+		}
+
+		return $pod_info;
+
+	}
+
+	/**
+	 * @param int $pod_id
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created.
+	 */
+	public static function update_podsrel_taxonomy( $pod_id, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
 
-		// Early exit if the taxonomy isn't a Pod
-		if ( ! pods_api()->pod_exists( $taxonomy ) ) {
-			return true;
-		}
-
-		// The taxonomy is a Pod, load it
-		$params = array(
-			'name'       => $taxonomy,
-			'table_info' => true
+		// UPDATE {$wpdb->prefix}podsrel SET item_id = {$new_term_id} WHERE pod_id = {$pod_id} AND item_id = {$term_id}
+		$table = "{$wpdb->prefix}podsrel";
+		$data = array( 'item_id' => $new_term_id );
+		$where = array(
+			'pod_id' => $pod_id,
+			'item_id' => $term_id
 		);
-		$pod = pods_api()->load_pod( $params, false );
-		if ( empty( $pod ) ) {
-			return false; // Something went wrong loading the Pod
-		}
+		$format = '%d';
+		$where_format = '%d';
 
-		// We only need to update if table storage is on
-		if ( 'table' !== $pod[ 'storage' ] ) {
-			return true;
-		}
+		$wpdb->update( $table, $data, $where, $format, $where_format );
+
+	}
+
+	/**
+	 * @param string $pod_table
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created.
+	 */
+	public static function update_pod_table( $pod_table, $term_id, $new_term_id ) {
+
+		/** @global wpdb $wpdb */
+		global $wpdb;
 
 		// Prime the values and update
-		$table = $pod[ 'pod_table' ];
-		$data = array('id' => $new_term_id );
+		$data = array( 'id' => $new_term_id );
 		$where = array( 'id' => $term_id );
 		$format = '%d';
 		$where_format = '%d';
-		$result = $wpdb->update( $table, $data, $where, $format, $where_format );
+		$wpdb->update( $pod_table, $data, $where, $format, $where_format );
 
-		if ( false === $result ) {
-			return false;
-		} else {
-			return true;
+	}
+
+	/**
+	 * Build the $all_relationships, $post_relationships, $comment_relationships, $user_relationships, and
+	 * $settings_relationships arrays
+	 *
+	 * @param $term_id
+	 * @param $new_term_id
+	 * @param string $taxonomy
+	 */
+	public static function update_relationships_to_term( $term_id, $new_term_id, $taxonomy )  {
+
+		// Loop through all Pods
+		$all_pods = pods_api()->load_pods();
+		foreach ( $all_pods as $this_pod_id => $this_pod ) {
+
+			// Loop through all fields in this Pod
+			foreach ( $this_pod[ 'fields' ] as $this_field_name => $this_field ) {
+
+				// Ignore everything except relationship fields to this taxonomy
+				if ( 'pick' != $this_field[ 'type' ] || 'taxonomy' != $this_field[ 'pick_object' ] || $taxonomy != $this_field[ 'pick_val' ] ) {
+					continue;
+				}
+
+				// Update the term ID in podsrel everywhere it is the value for this field
+				self::update_podsrel_related_term( $this_field[ 'id' ], $term_id, $new_term_id );
+
+				// Fix-up any special-case relationships that store term IDs in their own meta table and/or serialized
+				switch ( $this_pod[ 'type' ] ) {
+
+					case 'post_type':
+						self::update_postmeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						break;
+
+					case 'comment':
+						self::update_commentmeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						break;
+
+					case 'user':
+						self::update_usermeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						break;
+
+					case 'settings':
+						self::update_setting_meta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						break;
+				}
+			}
 		}
 
 	}
 
 	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
+	 * @param int $field_id
+	 * @param int $term_id
+	 * @param int $new_term_id
 	 */
-	public static function update_podsrel( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function update_podsrel_related_term( $field_id, $term_id, $new_term_id ) {
 
-		// Check if Pod $taxonomy exists and is a taxonomy
-		// UPDATE {$wpdb->prefix}podsrel SET item_id = {$new_term_id} WHERE pod_id = {$pod_id} AND item_id = {$term_id}
-		
-		// Find all Relationship Fields with pick_type = 'taxonomy' and pick_val = {$taxonomy}
+		/** @global wpdb $wpdb */
+		global $wpdb;
+
 		// UPDATE {$wpdb->prefix}podsrel SET related_item_id = {$new_term_id} WHERE field_id = {$field_id} AND related_item_id = {$term_id}
+		$table = "{$wpdb->prefix}podsrel";
+		$data = array( 'related_item_id' => $new_term_id );
+		$where = array(
+			'field_id'        => $field_id,
+			'related_item_id' => $term_id
+		);
+		$format = '%d';
+		$where_format = '%d';
+
+		$wpdb->update( $table, $data, $where, $format, $where_format );
 
 	}
 
 	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
+	 * Called for all fields related to the target taxonomy that are in a post_type
+	 *
+	 * @param string $pod_name
+	 * @param string $field_name
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_post_type_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function update_postmeta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
-		// Find all Relationship Fields with pick_type = 'taxonomy' and pick_val = {$taxonomy} AND are on Pods with type = 'post_type'
-		
-		// UPDATE {$wpdb->postmeta} SET meta_value = $new_term_id WHERE meta_key = {$field_name} AND meta_value = {$term_id}
-		
-		// $find_serialized = pods_sanitize_like( ';i:' . $term_id . ';' );
-		// $pod_name = $field['pod_name']
-		// SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_pods_{$field_name}' AND post_id IN ( SELECT ID FROM {$wpdb->posts} WHERE post_type = '{$pod_name}' ) AND meta_value LIKE '%{$find_serialized}%'
-		
-		// Loop through each meta record
-		// Replace the $term_id with $new_term_id in array
-		// update_post_meta( $meta_row->post_id, '_pods_' . $field_name, $new_meta_value );
+		/** @global wpdb $wpdb */
+		global $wpdb;
+
+		// Fix up the non-serialized data
+		$wpdb->query(
+			"
+			UPDATE
+				{$wpdb->postmeta} AS meta
+				LEFT JOIN {$wpdb->posts} AS t
+				ON meta.post_id = t.ID
+			SET
+				meta_value = '{$new_term_id}'
+			WHERE
+				meta_key = '{$field_name}'
+				AND meta_value = '{$term_id}'
+				AND t.post_type = '$pod_name'
+			"
+		);
+
+		// Fix up the serialized data
+		$meta_key = sprintf( '_pods_%s', $field_name );
+		$target_serialized = sprintf( ';i:%s;', $term_id );
+		$replace_serialized = sprintf( ';i:%s;', $new_term_id );
+
+		$wpdb->query( $wpdb->prepare(
+			"
+			UPDATE
+			    {$wpdb->postmeta} AS meta
+			    LEFT JOIN {$wpdb->posts} AS t
+				ON meta.post_id = t.ID
+			SET
+				meta.meta_value = REPLACE( meta.meta_value, '{$target_serialized}', '{$replace_serialized}' )
+			WHERE
+			    meta.meta_key = '{$meta_key}'
+				AND t.post_type = '{$pod_name}'
+				AND meta_value LIKE '%%%s%%'
+			",
+			pods_sanitize_like( $target_serialized )
+		) );
 
 	}
 
 	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
+	 * Called for all fields related to the target taxonomy that are in a comment Pod
+	 *
+	 * @param string $pod_name
+	 * @param string $field_name
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_comment_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function update_commentmeta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
-		// Find all Relationship Fields with pick_type = 'taxonomy' and pick_val = {$taxonomy} AND are on Pods with type = 'comment'
-		
-		// UPDATE {$wpdb->commentmeta} SET meta_value = $new_term_id WHERE meta_key = {$field_name} AND meta_value = {$term_id}
-		
-		// $find_serialized = pods_sanitize_like( ';i:' . $term_id . ';' );
-		// $pod_name = $field['pod_name']
-		// SELECT comment_id, meta_value FROM {$wpdb->commentmeta} WHERE meta_key = '_pods_{$field_name}' AND comment_id IN ( SELECT comment_ID FROM {$wpdb->comments} WHERE comment_type = '{$pod_name}' OR comment_type = '' ) AND meta_value LIKE '%{$find_serialized}%'
-		// Note: Comment type might be empty for normal 'comment' which is all that Pods officially supports right now
-		
-		// Loop through each meta record
-		// Replace the $term_id with $new_term_id in array
-		// update_comment_meta( $meta_row->comment_id, '_pods_' . $field_name, $new_meta_value );
-		
+		/** @global wpdb $wpdb */
+		global $wpdb;
+
+		// Fix up the non-serialized data
+		$wpdb->query(
+			"
+			UPDATE
+				{$wpdb->commentmeta}
+			SET
+				meta_value = '{$new_term_id}'
+			WHERE
+				meta_key = '{$field_name}'
+				AND meta_value = '{$term_id}'
+			"
+		);
+
+		// Fix up the serialized data
+		$meta_key = sprintf( '_pods_%s', $field_name );
+		$target_serialized = sprintf( ';i:%s;', $term_id );
+		$replace_serialized = sprintf( ';i:%s;', $new_term_id );
+
+		$wpdb->query( $wpdb->prepare(
+			"
+			UPDATE
+			    {$wpdb->commentmeta}
+			SET
+				meta_value = REPLACE( meta_value, '{$target_serialized}', '{$replace_serialized}' )
+			WHERE
+			    meta_key = '{$meta_key}'
+				AND meta_value LIKE '%%%s%%'
+			",
+			pods_sanitize_like( $target_serialized )
+		) );
+
 	}
 
 	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
+	 * Called for all fields related to the target taxonomy that are in a user Pod
+	 *
+	 * @param string $pod_name
+	 * @param string $field_name
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_user_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function update_usermeta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
-		// Find all Relationship Fields with pick_type = 'taxonomy' and pick_val = {$taxonomy} AND are on Pods with type = 'user'
-		
-		// UPDATE {$wpdb->usermeta} SET meta_value = $new_term_id WHERE meta_key = {$field_name} AND meta_value = {$term_id}
-		
-		// $find_serialized = pods_sanitize_like( ';i:' . $term_id . ';' );
-		// $pod_name = $field['pod_name']
-		// SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = '_pods_{$field_name}' AND meta_value LIKE '%{$find_serialized}%'
-		
-		// Loop through each meta record
-		// Replace the $term_id with $new_term_id in array
-		// update_user_meta( $meta_row->user_id, '_pods_' . $field_name, $new_meta_value );
-		
+		/** @global wpdb $wpdb */
+		global $wpdb;
+
+		// Fix up the non-serialized data
+		$wpdb->query(
+			"
+			UPDATE
+				{$wpdb->usermeta}
+			SET
+				meta_value = '{$new_term_id}'
+			WHERE
+				meta_key = '{$field_name}'
+				AND meta_value = '{$term_id}'
+			"
+		);
+
+		// Fix up the serialized data
+		$meta_key = sprintf( '_pods_%s', $field_name );
+		$target_serialized = sprintf( ';i:%s;', $term_id );
+		$replace_serialized = sprintf( ';i:%s;', $new_term_id );
+
+		$wpdb->query( $wpdb->prepare(
+			"
+			UPDATE
+			    {$wpdb->usermeta}
+			SET
+				meta_value = REPLACE( meta_value, '{$target_serialized}', '{$replace_serialized}' )
+			WHERE
+			    meta_key = '{$meta_key}'
+				AND meta_value LIKE '%%%s%%'
+			",
+			pods_sanitize_like( $target_serialized )
+		) );
+
 	}
 
 	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
+	 * Called for all fields related to the target taxonomy that are in a user Pod
+	 *
+	 * @param string $pod_name
+	 * @param string $field_name
+	 * @param int $term_id ID of the formerly shared term.
+	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_setting_meta( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public static function update_setting_meta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
-		// Find all Relationship Fields with pick_type = 'taxonomy' and pick_val = {$taxonomy} AND are on Pods with type = 'setting'
-		
-		// $find_serialized = pods_sanitize_like( ';i:' . $term_id . ';' );
-		// $pod_name = $field['pod_name']
-		// if ( 'multiple' == $field['pick_format_type'] )
-		// SELECT option_value FROM {$wpdb->options} WHERE option_name = '{pod_name}_{$field_name}' AND option_value LIKE '%{$find_serialized}%'
-		// else
-		// UPDATE {$wpdb->options} SET option_value = {$new_term_id} WHERE option_name = '{pod_name}_{$field_name}' AND option_value = {$term_id}'
-		
-		// if ( 'multiple' == $field['pick_format_type'] )
-		// $value = get_option( $pod_name . '_' . $field_name )
-		// Replace the $term_id with $new_term_id in array
-		// update_option( $pod_name . '_' . $field_name, $new_value );
-		
-	}
+		/** @global wpdb $wpdb */
+		global $wpdb;
 
-	/**
-	 * @param int    $term_id          ID of the formerly shared term.
-	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
-	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
-	 * @param string $taxonomy         Taxonomy for the split term.
-	 */
-	public static function update_serialized( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+		$option_name = sprintf( '%s_%s', $pod_name, $field_name );
+		$target_serialized = sprintf( ';i:%s;', $term_id );
+		$replace_serialized = sprintf( ';i:%s;', $new_term_id );
 
-		// See stuff above
-		
+		$wpdb->query( $wpdb->prepare(
+			"
+			UPDATE
+				{$wpdb->options}
+			SET
+				option_value = REPLACE( option_value, '{$target_serialized}', '{$replace_serialized}' )
+			WHERE
+				option_name = '{$option_name}'
+				AND option_value LIKE '%%%s%%'
+			",
+			pods_sanitize_like( $target_serialized )
+		) );
+
 	}
 
 }

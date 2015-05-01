@@ -9,8 +9,6 @@ class Pods_Term_Splitting {
 	 *
 	 * Fires after a previously shared taxonomy term is split into two separate terms.
 	 *
-	 * @since 4.2.0
-	 *
 	 * @param int    $term_id          ID of the formerly shared term.
 	 * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
 	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.

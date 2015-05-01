@@ -114,6 +114,11 @@ class Pods_Term_Splitting {
 
 		// Loop through all Pods
 		$all_pods = pods_api()->load_pods();
+
+		if ( !is_array( $all_pods ) ) {
+			return;
+		}
+
 		foreach ( $all_pods as $this_pod_id => $this_pod ) {
 
 			// Loop through all fields in this Pod

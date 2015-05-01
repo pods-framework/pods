@@ -2518,6 +2518,10 @@ class Pods_UI {
 			    'search_query' => $this->search,
 			    'fields'       => $this->fields[ 'search' ]
 		    );
+
+			if ( ! empty( $this->sql['select'] ) ) {
+				$find_params['select'] = $this->sql['select'];
+			}
 	    }
 
 	    if ( empty( $find_params[ 'where' ] ) && $this->restricted( $this->action ) ) {

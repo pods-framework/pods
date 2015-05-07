@@ -21,12 +21,11 @@ class Pods_Term_Splitting {
 
 		// Is the taxonomy a Pod?
 		if ( is_array( $taxonomy_pod ) ) {
-
-			self::update_podsrel_taxonomy( $taxonomy_pod[ 'pod_id' ], $term_id, $new_term_id );
+			self::update_podsrel_taxonomy( $taxonomy_pod['pod_id'], $term_id, $new_term_id );
 
 			// Update the Pods table if the taxonomy is a table based Pod
-			if ( 'table' == $taxonomy_pod[ 'storage' ] ) {
-				self::update_pod_table( $taxonomy_pod[ 'pod_table' ], $term_id, $new_term_id );
+			if ( 'table' == $taxonomy_pod['storage'] ) {
+				self::update_pod_table( $taxonomy_pod['pod_table'], $term_id, $new_term_id );
 			}
 		}
 
@@ -122,21 +121,21 @@ class Pods_Term_Splitting {
 		foreach ( $all_pods as $this_pod_id => $this_pod ) {
 
 			// Loop through all fields in this Pod
-			foreach ( $this_pod[ 'fields' ] as $this_field_name => $this_field ) {
+			foreach ( $this_pod['fields'] as $this_field_name => $this_field ) {
 
 				// Ignore everything except relationship fields to this taxonomy
-				if ( 'pick' != $this_field[ 'type' ] || 'taxonomy' != $this_field[ 'pick_object' ] || $taxonomy != $this_field[ 'pick_val' ] ) {
+				if ( 'pick' != $this_field['type'] || 'taxonomy' != $this_field['pick_object'] || $taxonomy != $this_field['pick_val'] ) {
 					continue;
 				}
 
 				// Update the term ID in podsrel everywhere it is the value for this field
-				self::update_podsrel_related_term( $this_field[ 'id' ], $term_id, $new_term_id );
+				self::update_podsrel_related_term( $this_field['id'], $term_id, $new_term_id );
 
 				// Fix-up any special-case relationships that store term IDs in their own meta table and/or serialized
-				switch ( $this_pod[ 'type' ] ) {
+				switch ( $this_pod['type'] ) {
 
 					case 'post_type':
-						self::update_postmeta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						self::update_postmeta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'comment':
@@ -148,7 +147,7 @@ class Pods_Term_Splitting {
 						break;
 
 					case 'settings':
-						self::update_setting_meta( $this_pod[ 'name' ], $this_field_name, $term_id, $new_term_id );
+						self::update_setting_meta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
 						break;
 				}
 			}
@@ -168,7 +167,9 @@ class Pods_Term_Splitting {
 
 		// UPDATE {$wpdb->prefix}podsrel SET related_item_id = {$new_term_id} WHERE field_id = {$field_id} AND related_item_id = {$term_id}
 		$table = "{$wpdb->prefix}podsrel";
-		$data = array( 'related_item_id' => $new_term_id );
+		$data = array(
+			'related_item_id' => $new_term_id
+		);
 		$where = array(
 			'field_id'        => $field_id,
 			'related_item_id' => $term_id
@@ -194,20 +195,26 @@ class Pods_Term_Splitting {
 		global $wpdb;
 
 		// Fix up the non-serialized data
-		$wpdb->query(
+		$wpdb->query( $wpdb->prepare(
 			"
 			UPDATE
 				{$wpdb->postmeta} AS meta
 				LEFT JOIN {$wpdb->posts} AS t
 				ON meta.post_id = t.ID
 			SET
-				meta_value = '{$new_term_id}'
+				meta_value = %s
 			WHERE
-				meta_key = '{$field_name}'
-				AND meta_value = '{$term_id}'
-				AND t.post_type = '$pod_name'
-			"
-		);
+				meta_key = %s
+				AND meta_value = %s
+				AND t.post_type = %s
+			",
+			$new_term_id,
+			$field_name,
+			$term_id,
+			$pod_name
+		) );
+
+		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -218,15 +225,19 @@ class Pods_Term_Splitting {
 			"
 			UPDATE
 			    {$wpdb->postmeta} AS meta
-			    LEFT JOIN {$wpdb->posts} AS t
+		    LEFT JOIN {$wpdb->posts} AS t
 				ON meta.post_id = t.ID
 			SET
-				meta.meta_value = REPLACE( meta.meta_value, '{$target_serialized}', '{$replace_serialized}' )
+				meta.meta_value = REPLACE( meta.meta_value, %s, %s )
 			WHERE
-			    meta.meta_key = '{$meta_key}'
-				AND t.post_type = '{$pod_name}'
+			    meta.meta_key = %s
+				AND t.post_type = %s
 				AND meta_value LIKE '%%%s%%'
 			",
+			$target_serialized,
+			$replace_serialized,
+			$meta_key,
+			$pod_name,
 			pods_sanitize_like( $target_serialized )
 		) );
 
@@ -245,17 +256,25 @@ class Pods_Term_Splitting {
 		global $wpdb;
 
 		// Fix up the non-serialized data
-		$wpdb->query(
-			"
-			UPDATE
-				{$wpdb->commentmeta}
-			SET
-				meta_value = '{$new_term_id}'
-			WHERE
-				meta_key = '{$field_name}'
-				AND meta_value = '{$term_id}'
-			"
+		$wpdb->update(
+			$wpdb->commentmeta,
+			array(
+				'meta_value' => $new_term_id
+			),
+			array(
+				'meta_key' => $field_name,
+				'meta_value' => $term_id
+			),
+			array(
+				'%s'
+			),
+			array(
+				'%s',
+				'%s'
+			)
 		);
+
+		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -267,11 +286,14 @@ class Pods_Term_Splitting {
 			UPDATE
 			    {$wpdb->commentmeta}
 			SET
-				meta_value = REPLACE( meta_value, '{$target_serialized}', '{$replace_serialized}' )
+				meta_value = REPLACE( meta_value, %s, %s )
 			WHERE
-			    meta_key = '{$meta_key}'
+			    meta_key = %s
 				AND meta_value LIKE '%%%s%%'
 			",
+			$target_serialized,
+			$replace_serialized,
+			$meta_key,
 			pods_sanitize_like( $target_serialized )
 		) );
 
@@ -290,17 +312,25 @@ class Pods_Term_Splitting {
 		global $wpdb;
 
 		// Fix up the non-serialized data
-		$wpdb->query(
-			"
-			UPDATE
-				{$wpdb->usermeta}
-			SET
-				meta_value = '{$new_term_id}'
-			WHERE
-				meta_key = '{$field_name}'
-				AND meta_value = '{$term_id}'
-			"
+		$wpdb->update(
+			$wpdb->usermeta,
+			array(
+				'meta_value' => $new_term_id
+			),
+			array(
+				'meta_key' => $field_name,
+				'meta_value' => $term_id
+			),
+			array(
+				'%s'
+			),
+			array(
+				'%s',
+				'%s'
+			)
 		);
+
+		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -312,11 +342,14 @@ class Pods_Term_Splitting {
 			UPDATE
 			    {$wpdb->usermeta}
 			SET
-				meta_value = REPLACE( meta_value, '{$target_serialized}', '{$replace_serialized}' )
+				meta_value = REPLACE( meta_value, %s, %s )
 			WHERE
-			    meta_key = '{$meta_key}'
+			    meta_key = %s
 				AND meta_value LIKE '%%%s%%'
 			",
+			$target_serialized,
+			$replace_serialized,
+			$meta_key,
 			pods_sanitize_like( $target_serialized )
 		) );
 
@@ -335,6 +368,7 @@ class Pods_Term_Splitting {
 		/** @global wpdb $wpdb */
 		global $wpdb;
 
+		// @todo Needs integer length in serialized check and a string version
 		$option_name = sprintf( '%s_%s', $pod_name, $field_name );
 		$target_serialized = sprintf( ';i:%s;', $term_id );
 		$replace_serialized = sprintf( ';i:%s;', $new_term_id );
@@ -344,11 +378,14 @@ class Pods_Term_Splitting {
 			UPDATE
 				{$wpdb->options}
 			SET
-				option_value = REPLACE( option_value, '{$target_serialized}', '{$replace_serialized}' )
+				option_value = REPLACE( option_value, %s, %s )
 			WHERE
-				option_name = '{$option_name}'
+				option_name = %s
 				AND option_value LIKE '%%%s%%'
 			",
+			$target_serialized,
+			$replace_serialized,
+			$option_name,
 			pods_sanitize_like( $target_serialized )
 		) );
 

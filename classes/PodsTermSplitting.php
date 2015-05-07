@@ -52,7 +52,7 @@ class Pods_Term_Splitting {
 
 		// Is the taxonomy a Pod?
 		if ( is_array( $taxonomy_pod ) ) {
-			$this->update_podsrel_taxonomy( $taxonomy_pod[ 'pod_id' ] );
+			$this->update_podsrel_taxonomy( $taxonomy_pod[ 'id' ] );
 
 			// Update the Pods table if the taxonomy is a table based Pod
 			if ( 'table' == $taxonomy_pod[ 'storage' ] ) {

@@ -73,7 +73,7 @@ class Pods_Term_Splitting {
 	 *
 	 * @return array|bool|mixed|null
 	 */
-	public function get_pod_info() {
+	private function get_pod_info() {
 
 		$pod_info = null;
 
@@ -94,7 +94,7 @@ class Pods_Term_Splitting {
 	/**
 	 * @param int $pod_id
 	 */
-	public function update_podsrel_taxonomy( $pod_id ) {
+	private function update_podsrel_taxonomy( $pod_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -122,7 +122,7 @@ class Pods_Term_Splitting {
 	/**
 	 * @param string $pod_table
 	 */
-	public function update_pod_table( $pod_table ) {
+	private function update_pod_table( $pod_table ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -145,7 +145,7 @@ class Pods_Term_Splitting {
 	/**
 	 * Track down all fields related to the target taxonomy and update stored term IDs as necessary
 	 */
-	public function update_relationships_to_term() {
+	private function update_relationships_to_term() {
 
 		// Loop through all Pods
 		$all_pods = pods_api()->load_pods();
@@ -194,7 +194,7 @@ class Pods_Term_Splitting {
 	/**
 	 * @param int $field_id
 	 */
-	public function update_podsrel_related_term( $field_id ) {
+	private function update_podsrel_related_term( $field_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -226,7 +226,7 @@ class Pods_Term_Splitting {
 	 * @param string $pod_name
 	 * @param string $field_name
 	 */
-	public function update_postmeta( $pod_name, $field_name ) {
+	private function update_postmeta( $pod_name, $field_name ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -295,7 +295,7 @@ class Pods_Term_Splitting {
 	 *
 	 * @param string $field_name
 	 */
-	public function update_commentmeta( $field_name ) {
+	private function update_commentmeta( $field_name ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -351,7 +351,7 @@ class Pods_Term_Splitting {
 	 *
 	 * @param string $field_name
 	 */
-	public function update_usermeta( $field_name ) {
+	private function update_usermeta( $field_name ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -408,7 +408,7 @@ class Pods_Term_Splitting {
 	 * @param string $pod_name
 	 * @param string $field_name
 	 */
-	public function update_setting_meta( $pod_name, $field_name ) {
+	private function update_setting_meta( $pod_name, $field_name ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;

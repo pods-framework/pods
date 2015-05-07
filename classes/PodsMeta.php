@@ -191,6 +191,18 @@ class PodsMeta {
 			}
         }
 
+        /**
+         * Fires after a previously shared taxonomy term is split into two separate terms.
+         *
+         * @since 4.2.0
+         *
+         * @param int    $term_id          ID of the formerly shared term.
+         * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
+         * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
+         * @param string $taxonomy         Taxonomy for the split term.
+         */
+        add_action( 'split_shared_term', array( $this, 'split_shared_term' ), 10, 4 );
+
         // Handle Delete
         add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
@@ -2785,6 +2797,23 @@ class PodsMeta {
 
             $this->delete_object( 'taxonomy', $id, $taxonomy );
         }
+    }
+
+    /**
+     * Hook the split_shared_term action and point it to this method
+     *
+     * Fires after a previously shared taxonomy term is split into two separate terms.
+     *
+     * @param int    $term_id          ID of the formerly shared term.
+     * @param int    $new_term_id      ID of the new term created for the $term_taxonomy_id.
+     * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
+     * @param string $taxonomy         Taxonomy for the split term.
+     */
+    public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+
+        require_once( PODS_DIR . 'classes/PodsTermSplitting.php' );
+        Pods_Term_Splitting::split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy );
+
     }
 
     public function delete_user ( $id ) {

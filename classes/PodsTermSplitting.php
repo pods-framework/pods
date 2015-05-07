@@ -6,19 +6,19 @@
 class Pods_Term_Splitting {
 
 	/** @var int ID of the formerly shared term */
-	var $term_id;
+	private $term_id;
 
 	/** @var int ID of the new term created for the $term_taxonomy_id */
-	var $new_term_id;
+	private $new_term_id;
 
 	/** @var string Taxonomy for the split term */
-	var $taxonomy;
+	private $taxonomy;
 
 	/** @var string */
-	var $progress_option_name;
+	private $progress_option_name;
 
 	/** @var array */
-	var $previous_progress = array();
+	private $previous_progress = array();
 
 	/**
 	 * @param int $term_id ID of the formerly shared term.

@@ -14,23 +14,23 @@ class Pods_Term_Splitting {
 	 * @param int    $term_taxonomy_id ID for the term_taxonomy row affected by the split.
 	 * @param string $taxonomy         Taxonomy for the split term.
 	 */
-	public static function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
+	public function split_shared_term( $term_id, $new_term_id, $term_taxonomy_id, $taxonomy ) {
 
 		// Get the Pod information if the taxonomy is a Pod
-		$taxonomy_pod = self::get_pod_info( $taxonomy );
+		$taxonomy_pod = $this->get_pod_info( $taxonomy );
 
 		// Is the taxonomy a Pod?
 		if ( is_array( $taxonomy_pod ) ) {
-			self::update_podsrel_taxonomy( $taxonomy_pod['pod_id'], $term_id, $new_term_id );
+			$this->update_podsrel_taxonomy( $taxonomy_pod['pod_id'], $term_id, $new_term_id );
 
 			// Update the Pods table if the taxonomy is a table based Pod
 			if ( 'table' == $taxonomy_pod['storage'] ) {
-				self::update_pod_table( $taxonomy_pod['pod_table'], $term_id, $new_term_id );
+				$this->update_pod_table( $taxonomy_pod['pod_table'], $term_id, $new_term_id );
 			}
 		}
 
 		// Track down all fields related to the target taxonomy and update stored term IDs as necessary
-		self::update_relationships_to_term( $term_id, $new_term_id, $taxonomy );
+		$this->update_relationships_to_term( $term_id, $new_term_id, $taxonomy );
 
 	}
 
@@ -41,7 +41,7 @@ class Pods_Term_Splitting {
 	 *
 	 * @return array|bool|mixed|null
 	 */
-	public static function get_pod_info( $taxonomy ) {
+	public function get_pod_info( $taxonomy ) {
 
 		$pod_info = null;
 
@@ -64,7 +64,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created.
 	 */
-	public static function update_podsrel_taxonomy( $pod_id, $term_id, $new_term_id ) {
+	public function update_podsrel_taxonomy( $pod_id, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -88,7 +88,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created.
 	 */
-	public static function update_pod_table( $pod_table, $term_id, $new_term_id ) {
+	public function update_pod_table( $pod_table, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -109,7 +109,7 @@ class Pods_Term_Splitting {
 	 * @param $new_term_id
 	 * @param string $taxonomy
 	 */
-	public static function update_relationships_to_term( $term_id, $new_term_id, $taxonomy )  {
+	public function update_relationships_to_term( $term_id, $new_term_id, $taxonomy )  {
 
 		// Loop through all Pods
 		$all_pods = pods_api()->load_pods();
@@ -129,25 +129,25 @@ class Pods_Term_Splitting {
 				}
 
 				// Update the term ID in podsrel everywhere it is the value for this field
-				self::update_podsrel_related_term( $this_field['id'], $term_id, $new_term_id );
+				$this->update_podsrel_related_term( $this_field['id'], $term_id, $new_term_id );
 
 				// Fix-up any special-case relationships that store term IDs in their own meta table and/or serialized
 				switch ( $this_pod['type'] ) {
 
 					case 'post_type':
-						self::update_postmeta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
+						$this->update_postmeta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'comment':
-						self::update_commentmeta( $this_field_name, $term_id, $new_term_id );
+						$this->update_commentmeta( $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'user':
-						self::update_usermeta( $this_field_name, $term_id, $new_term_id );
+						$this->update_usermeta( $this_field_name, $term_id, $new_term_id );
 						break;
 
 					case 'settings':
-						self::update_setting_meta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
+						$this->update_setting_meta( $this_pod['name'], $this_field_name, $term_id, $new_term_id );
 						break;
 				}
 			}
@@ -160,7 +160,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id
 	 * @param int $new_term_id
 	 */
-	public static function update_podsrel_related_term( $field_id, $term_id, $new_term_id ) {
+	public function update_podsrel_related_term( $field_id, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -189,7 +189,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_postmeta( $pod_name, $field_name, $term_id, $new_term_id ) {
+	public function update_postmeta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -213,8 +213,6 @@ class Pods_Term_Splitting {
 			$term_id,
 			$pod_name
 		) );
-
-		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -250,7 +248,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_commentmeta( $field_name, $term_id, $new_term_id ) {
+	public function update_commentmeta( $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -273,8 +271,6 @@ class Pods_Term_Splitting {
 				'%s'
 			)
 		);
-
-		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -306,7 +302,7 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_usermeta( $field_name, $term_id, $new_term_id ) {
+	public function update_usermeta( $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
@@ -329,8 +325,6 @@ class Pods_Term_Splitting {
 				'%s'
 			)
 		);
-
-		// @todo Needs integer length in serialized check and a string version
 
 		// Fix up the serialized data
 		$meta_key = sprintf( '_pods_%s', $field_name );
@@ -363,12 +357,11 @@ class Pods_Term_Splitting {
 	 * @param int $term_id ID of the formerly shared term.
 	 * @param int $new_term_id ID of the new term created for the $term_taxonomy_id.
 	 */
-	public static function update_setting_meta( $pod_name, $field_name, $term_id, $new_term_id ) {
+	public function update_setting_meta( $pod_name, $field_name, $term_id, $new_term_id ) {
 
 		/** @global wpdb $wpdb */
 		global $wpdb;
 
-		// @todo Needs integer length in serialized check and a string version
 		$option_name = sprintf( '%s_%s', $pod_name, $field_name );
 		$target_serialized = sprintf( ';i:%s;', $term_id );
 		$replace_serialized = sprintf( ';i:%s;', $new_term_id );

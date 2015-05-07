@@ -213,7 +213,6 @@ class Pods_Term_Splitting {
 			);
 			$format = '%d';
 			$where_format = '%d';
-
 			$wpdb->update( $table, $data, $where, $format, $where_format );
 
 			$this->append_progress( $task );
@@ -238,17 +237,17 @@ class Pods_Term_Splitting {
 
 			$wpdb->query( $wpdb->prepare(
 				"
-			UPDATE
-				{$wpdb->postmeta} AS meta
-				LEFT JOIN {$wpdb->posts} AS t
-				ON meta.post_id = t.ID
-			SET
-				meta_value = %s
-			WHERE
-				meta_key = %s
-				AND meta_value = %s
-				AND t.post_type = %s
-			",
+				UPDATE
+					{$wpdb->postmeta} AS meta
+					LEFT JOIN {$wpdb->posts} AS t
+					ON meta.post_id = t.ID
+				SET
+					meta_value = %s
+				WHERE
+					meta_key = %s
+					AND meta_value = %s
+					AND t.post_type = %s
+				",
 				$this->new_term_id,
 				$field_name,
 				$this->term_id,
@@ -305,23 +304,15 @@ class Pods_Term_Splitting {
 		$task = "update_commentmeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$wpdb->update(
-				$wpdb->commentmeta,
-				array(
-					'meta_value' => $this->new_term_id
-				),
-				array(
-					'meta_key'   => $field_name,
-					'meta_value' => $this->term_id
-				),
-				array(
-					'%s'
-				),
-				array(
-					'%s',
-					'%s'
-				)
+			$table = $wpdb->commentmeta;
+			$data = array( 'meta_value' => $this->new_term_id );
+			$where = array(
+				'meta_key'   => $field_name,
+				'meta_value' => $this->term_id
 			);
+			$format = '%s';
+			$where_format = array( '%s', '%s' );
+			$wpdb->update( $table, $data, $where, $format, $where_format );
 
 			$this->append_progress( $task );
 		}
@@ -329,6 +320,7 @@ class Pods_Term_Splitting {
 		// Fix up the serialized data
 		$task = "update_commentmeta_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
+
 			$meta_key = sprintf( '_pods_%s', $field_name );
 			$target_serialized = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
@@ -367,23 +359,16 @@ class Pods_Term_Splitting {
 		// Fix up the unserialized data
 		$task = "update_usermeta_{$field_name}_unserialized";
 		if ( ! $this->have_done( $task ) ) {
-			$wpdb->update(
-				$wpdb->usermeta,
-				array(
-					'meta_value' => $this->new_term_id
-				),
-				array(
-					'meta_key'   => $field_name,
-					'meta_value' => $this->term_id
-				),
-				array(
-					'%s'
-				),
-				array(
-					'%s',
-					'%s'
-				)
+
+			$table = $wpdb->usermeta;
+			$data = array( 'meta_value' => $this->new_term_id );
+			$where = array(
+				'meta_key'   => $field_name,
+				'meta_value' => $this->term_id
 			);
+			$format = '%s';
+			$where_format = array( '%s', '%s' );
+			$wpdb->update( $table, $data, $where, $format, $where_format );
 
 			$this->append_progress( $task );
 		}
@@ -391,6 +376,7 @@ class Pods_Term_Splitting {
 		// Fix up the serialized data
 		$task = "update_usermeta_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
+
 			$meta_key = sprintf( '_pods_%s', $field_name );
 			$target_serialized = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
@@ -427,10 +413,30 @@ class Pods_Term_Splitting {
 		/** @global wpdb $wpdb */
 		global $wpdb;
 
+		$option_name = "{$pod_name}_{$field_name}";
+
+		// Fix up the unserialized data
+		$task = "update_setting_meta_{$pod_name}_{$field_name}_unserialized";
+		if ( ! $this->have_done( $task ) ) {
+
+			// UPDATE {$wpdb->options} SET option_value = '{$new_term_id}' WHERE option_name = '{$pod_name}_{$field_name}' AND option_value = '{$term_id}'
+			$table = $wpdb->options;
+			$data = array( 'option_value' => $this->new_term_id );
+			$where = array(
+				'option_name'  => $option_name,
+				'option_value' => $this->term_id
+			);
+			$format = '%s';
+			$where_format = array( '%s', '%s' );
+			$wpdb->update( $table, $data, $where, $format, $where_format );
+
+			$this->append_progress( $task );
+		}
+
+		// Fix up the serialized data
 		$task = "update_setting_meta_{$pod_name}_{$field_name}_serialized";
 		if ( ! $this->have_done( $task ) ) {
 
-			$option_name = sprintf( '%s_%s', $pod_name, $field_name );
 			$target_serialized = sprintf( ';i:%s;', $this->term_id );
 			$replace_serialized = sprintf( ';i:%s;', $this->new_term_id );
 
@@ -463,6 +469,7 @@ class Pods_Term_Splitting {
 	private function have_done( $task_name ) {
 
 		return in_array( $task_name, $this->previous_progress );
+
 	}
 
 	/**
@@ -489,11 +496,8 @@ class Pods_Term_Splitting {
 
 		// Note: we don't want autoload set and you cannot specify autoload via update_option
 		if ( ! empty( $current_progress ) && is_array( $current_progress ) ) {
-
 			update_option( $this->progress_option_name, $updated_progress );
-		}
-		else {
-
+		} else {
 			add_option( $this->progress_option_name, $updated_progress, '', false );
 		}
 

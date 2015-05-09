@@ -3792,6 +3792,7 @@ class PodsAPI {
                 $object_type = 'post';
 
             delete_metadata( $object_type, $id, $field[ 'name' ] );
+            delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
 
             if ( !empty( $related_ids ) ) {
                 update_metadata( $object_type, $id, '_pods_' . $field[ 'name' ], $related_ids );

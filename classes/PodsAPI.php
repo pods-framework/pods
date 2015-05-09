@@ -3800,7 +3800,7 @@ class PodsAPI {
                     add_metadata( $object_type, $id, $field[ 'name' ], $related_id );
                 }
             }
-            else
+            if ( 1 < count( $related_ids ) )
                 delete_metadata( $object_type, $id, '_pods_' . $field[ 'name' ] );
         }
         // Custom Settings Pages (options-based)

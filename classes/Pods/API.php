@@ -3902,7 +3902,9 @@ class Pods_API {
 				foreach ( $related_ids as $rel_id ) {
 					add_metadata( $object_type, $related_id, $related_field['name'], $rel_id );
 				}
-			} else {
+			} 
+			
+			if ( 1 < count( $related_ids ) ) {
 				delete_metadata( $object_type, $related_id, '_pods_' . $related_field['name'] );
 			}
 		} // Custom Settings Pages (options-based)

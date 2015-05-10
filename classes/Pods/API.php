@@ -2859,6 +2859,8 @@ class Pods_API {
 			}
 
 			delete_metadata( $object_type, $id, $field['name'] );
+			delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
+
 
 			if ( ! empty( $related_ids ) ) {
 				update_metadata( $object_type, $id, '_pods_' . $field['name'], $related_ids );
@@ -2866,7 +2868,7 @@ class Pods_API {
 				foreach ( $related_ids as $related_id ) {
 					add_metadata( $object_type, $id, $field['name'], $related_id );
 				}
-			} else {
+			} if ( 1 < count( $related_ids ) ) {
 				delete_metadata( $object_type, $id, '_pods_' . $field['name'] );
 			}
 		} // Custom Settings Pages (options-based)
@@ -3902,9 +3904,7 @@ class Pods_API {
 				foreach ( $related_ids as $rel_id ) {
 					add_metadata( $object_type, $related_id, $related_field['name'], $rel_id );
 				}
-			} 
-			
-			if ( 1 < count( $related_ids ) ) {
+			} else {
 				delete_metadata( $object_type, $related_id, '_pods_' . $related_field['name'] );
 			}
 		} // Custom Settings Pages (options-based)

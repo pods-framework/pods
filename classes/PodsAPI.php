@@ -3792,7 +3792,10 @@ class PodsAPI {
                 $object_type = 'post';
 
             delete_metadata( $object_type, $id, $field[ 'name' ] );
-            delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
+            
+            if ( 1 < count( $related_ids ) ) {
+            	delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
+            }
 
             if ( !empty( $related_ids ) ) {
                 update_metadata( $object_type, $id, '_pods_' . $field[ 'name' ], $related_ids );
@@ -3801,8 +3804,6 @@ class PodsAPI {
                     add_metadata( $object_type, $id, $field[ 'name' ], $related_id );
                 }
             }
-            if ( 1 < count( $related_ids ) )
-                delete_metadata( $object_type, $id, '_pods_' . $field[ 'name' ] );
         }
         // Custom Settings Pages (options-based)
         elseif ( 'settings' == $pod[ 'type' ] ) {

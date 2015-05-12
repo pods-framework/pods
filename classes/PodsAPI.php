@@ -3794,16 +3794,16 @@ class PodsAPI {
             delete_metadata( $object_type, $id, $field[ 'name' ] );
             delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
             
-            if ( 1 < count( $related_ids ) ) {
-
-	            if ( !empty( $related_ids ) ) {
-	                update_metadata( $object_type, $id, '_pods_' . $field[ 'name' ], $related_ids );
+            if ( !empty( $related_ids ) ) {
+            	
+		if ( 1 < count( $related_ids ) ) {
+			add_metadata( $object_type, $id, '_pods_' . $field[ 'name' ], $related_ids );
+		}
 	
-	                foreach ( $related_ids as $related_id ) {
-	                    add_metadata( $object_type, $id, $field[ 'name' ], $related_id );
-	                }
-	            }
-            }
+		foreach ( $related_ids as $related_id ) {
+			add_metadata( $object_type, $id, $field[ 'name' ], $related_id );
+		}
+	     }
         }
         // Custom Settings Pages (options-based)
         elseif ( 'settings' == $pod[ 'type' ] ) {

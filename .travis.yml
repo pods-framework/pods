@@ -31,6 +31,12 @@ matrix:
     - php: nightly
       env: WP_VERSION=latest WP_MULTISITE=1
 
+  include:
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=1
+
 before_script:
     - travis_retry composer self-update
     - travis_retry composer install --no-interaction --prefer-source

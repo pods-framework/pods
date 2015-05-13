@@ -172,7 +172,6 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * IMPROVED: Elaborated on what data is and isn't deleted when Pods data is reset.
 * ADDED: Compatibility with Github updater plugin.
 * UPDATED: New youtube video in readme.
-* ADDED: Ability to use .permalink traversal for taxonomy term archive links.
 * ADDED: Support for term splitting in WordPress 4.2.
 * REMOVED: Extra meta data with _pods_ prefix
 * FIXED: Issue where multiple post type Pods objects called in same session were treated as the same in cache.

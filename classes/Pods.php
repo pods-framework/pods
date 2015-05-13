@@ -1597,7 +1597,7 @@ class Pods implements Iterator {
 
 					$value = call_user_func_array( 'apply_filters', $args );
 				}
-				elseif( isset( $field ) && isset( $item ) && isset( $field ) && 'permalink' == $field && 'taxonomy' == $object_type && is_array( $item ) && isset( $item[ 'taxonomy' ] ) && isset( $item[ 'term_id' ] )  ) {
+				elseif( isset( $field ) && isset( $item ) && 'permalink' == $field && 'taxonomy' == $object_type && is_array( $item ) && isset( $item[ 'taxonomy' ] ) && isset( $item[ 'term_id' ] )  ) {
 					$value = get_term_link( (int) $item[ 'term_id' ], $item[ 'taxonomy' ] );
 				}
 				elseif ( 1 == pods_v( 'display_process', $field_data[ 'options' ], 1 ) ) {

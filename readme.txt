@@ -154,7 +154,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
-= 2.5.2 April 15, 2015 =
+= 2.5.2 May 13, 2015 =
 * FIXED: Issues with default values for number and other types of fields.
 * FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
 * FIXED: Issue preventing proper display of fields in a related CPT via Pods::field()
@@ -171,11 +171,13 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * IMPROVED: Icon font used for Pods admin icon.
 * IMPROVED: Elaborated on what data is and isn't deleted when Pods data is reset.
 * ADDED: Compatibility with Github updater plugin.
-* UPDATED: New youtube video in reame.
+* UPDATED: New youtube video in readme.
 * ADDED: Ability to use .permalink traversal for taxonomy term archive links.
-
-
-
+* ADDED: Support for term splitting in WordPress 4.2.
+* REMOVED: Extra meta data with _pods_ prefix
+* FIXED: Issue where multiple post type Pods objects called in same session were treated as the same in cache.
+* FIXED: Double slashing in PodsView class.
+* IMPROVED: URL escaping in PodsUI
 
 = 2.5.1.2 - March 16th, 2015 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods

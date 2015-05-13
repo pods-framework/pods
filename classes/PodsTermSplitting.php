@@ -473,7 +473,7 @@ class Pods_Term_Splitting {
 	}
 
 	/**
-	 * @return mixed|void
+	 * @return array
 	 */
 	private function get_progress() {
 

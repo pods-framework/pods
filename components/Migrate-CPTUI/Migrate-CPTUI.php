@@ -199,7 +199,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
             return false;
 
         if ( $pod[ 'name' ] != $params[ 'name' ] )
-            $this->api->rename_wp_object( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+            $this->api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
 
         return $id;
     }
@@ -265,7 +265,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
             return false;
 
         if ( $pod[ 'name' ] != $params[ 'name' ] )
-            $this->api->rename_wp_object( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+            $this->api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
 
         return $id;
     }

@@ -76,25 +76,30 @@ else
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
         foreach ( $value as $val ) {
-            $attachment = get_post( $val );
+            $attachment = get_post( $val, ARRAY_A );
 
-            if ( empty( $attachment ) )
+            if ( empty( $attachment ) ) {
                 continue;
+            }
 
-            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+            $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
 
-            $title = $attachment->post_title;
+            $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+            $attachment[ 'thumbnail' ] = $thumb[ 0 ];
 
-            if ( 0 == $title_editable )
-                $title = basename( $attachment->guid );
+            $attachment[ 'link' ] = '';
 
-			$link = wp_get_attachment_url( $attachment->ID );
+            if ( $linked ) {
+                $attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
+            }
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
+            $attachment = apply_filters( 'pods_media_attachment', $attachment );
+
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $attachment[ 'ID' ], $attachment[ 'thumbnail' ], $attachment[ 'post_title' ] );
         }
         ?></ul>
 
-    <a class="button pods-file-add pods-media-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+    <a class="button pods-file-add pods-media-add" href="<?php echo esc_url( admin_url( 'media-upload.php?inlineId=pods_media_attachment' . $the_post_id . '&tab=' . $tab . '&TB_iframe=1&width=640&height=1500&pods_pod=' . $pod->pod . '&pods_pod_id=' . $pod->pod . '&pods_field=' . $options[ 'name' ] . '&pods_field_id=' .$options[ 'id' ] . '&pods_uri_hash=' .$uri_hash . '&pods_field_nonce=' . $field_nonce ) ); ?>"><?php echo pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
@@ -131,7 +136,7 @@ else
             } );
         } );
 
-        var maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
+        var maxFiles_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         // hook the add link
         $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'a.pods-file-add', function ( e ) {
@@ -148,7 +153,7 @@ else
             pods_file_context = trigger.parent().find( 'ul.pods-files' );
             pods_file_thickbox_modder = setInterval( function () {
                 if ( pods_file_context )
-                    pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> );
+                    pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> );
             }, 500 );
 
             tb_show( 'Attach a file', e.target.href, false );

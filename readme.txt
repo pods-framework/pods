@@ -15,7 +15,7 @@ Pods is a framework for creating, managing, and deploying customized content typ
 Check out http://pods.io/ for our User Guide, Forums, and other resources to help you develop with Pods.
 
 = Introduction =
-[youtube http://www.youtube.com/watch?v=tkBDNOAQJxg]
+[youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
 
 = Content types that evolve with your needs =
 Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
@@ -154,6 +154,31 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
+= 2.5.2 May 14, 2015 =
+* FIXED: Issues with default values for number and other types of fields.
+* FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
+* FIXED: Issue preventing proper display of fields in a related CPT via Pods::field()
+* FIXED: Issue preventing codemirror from being enqueued in Pods templates and therefore breaking Pods tempaltes editor in certain configurations.
+* ADDED: Added caching info to debug info.
+* FIXED: Bug that was causing Pods to overwrite admin menus.
+* FIXED: Issue preventing ongoing compatibility with Admin Columns.
+* IMPROVED: Style of components filter bar.
+* IMPROVED: Proper sanitization/ escaping of URLs.
+* FIXED: Shortcode button was outputted in post editor when shortcodes were disabled. This will no longer happen.
+* IMPROVED: Translation strings in ui/admin/help
+* IMPROVED: Gradients in Pods wizard.
+* FIXED: Issue preventing associated taxonomies to be fetched via Pods::field() and therefore magic tags.
+* IMPROVED: Icon font used for Pods admin icon.
+* IMPROVED: Elaborated on what data is and isn't deleted when Pods data is reset.
+* ADDED: Compatibility with Github updater plugin.
+* UPDATED: New youtube video in readme.
+* ADDED: Support for term splitting in WordPress 4.2.
+* REMOVED: Extra meta data with _pods_ prefix
+* FIXED: Issue where multiple post type Pods objects called in same session were treated as the same in cache.
+* FIXED: Double slashing in PodsView class.
+* IMPROVED: URL escaping in PodsUI
+
 = 2.5.1.2 - March 16th, 2015 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods
 * or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/

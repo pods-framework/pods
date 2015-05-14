@@ -27,7 +27,7 @@ wp_enqueue_style( 'pods-form' );
 							?>
 								<div id="minor-publishing-actions">
 									<div id="preview-action">
-										<a class="button" href="<?php echo $pod->field( 'detail_url' ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+										<a class="button" href="<?php echo esc_url( $pod->field( 'detail_url' ) ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
 									</div>
 									<div class="clear"></div>
 								</div>
@@ -73,7 +73,7 @@ wp_enqueue_style( 'pods-form' );
 							if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
 						?>
 							<div id="delete-action">
-								<a class="submitdelete deletion" href="<?php echo pods_query_arg( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+								<a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
 							</div>
 							<!-- /#delete-action -->
 						<?php } ?>
@@ -110,7 +110,7 @@ wp_enqueue_style( 'pods-form' );
 							<?php
 							if ( 0 < $prev ) {
 								?>
-								<a class="previous-item" href="<?php echo pods_query_arg( array( 'id' => $prev ), null, 'do' ); ?>">
+								<a class="previous-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $prev ), null, 'do' ) ); ?>">
 									<span>&laquo;</span>
 									<?php echo sprintf( __( 'Previous %s', 'pods' ), $singular_label ); ?>
 								</a>
@@ -119,7 +119,7 @@ wp_enqueue_style( 'pods-form' );
 
 							if ( 0 < $next ) {
 								?>
-								<a class="next-item" href="<?php echo pods_query_arg( array( 'id' => $next ), null, 'do' ); ?>">
+								<a class="next-item" href="<?php echo esc_url( pods_query_arg( array( 'id' => $next ), null, 'do' ) ); ?>">
 									<?php echo sprintf( __( 'Next %s', 'pods' ), $singular_label ); ?>
 									<span>&raquo;</span>
 								</a>
@@ -204,7 +204,7 @@ wp_enqueue_style( 'pods-form' );
 										$value = $pod->display( $field[ 'name' ] );
 									}
 							?>
-								<tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+								<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
 									<th scope="row" valign="top">
 										<strong><?php echo $field[ 'label' ]; ?></strong>
 									</th>

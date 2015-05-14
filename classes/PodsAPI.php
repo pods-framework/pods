@@ -977,7 +977,7 @@ class PodsAPI {
                         'alias' => array(),
                         'hidden' => true,
 						'options' => array(
-							'pick_format_type' => 'multi'
+							'taxonomy_format_type' => 'multi'
 						)
                     );
                 }
@@ -6558,7 +6558,7 @@ class PodsAPI {
 
         // Verify required fields
         if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) && 'slug' != $type ) {
-            if ( '' == $value || null === $value || array() === $value || 0 === $value || '0' === $value || 0.00 === $value || '0.00' === $value )
+            if ( '' == $value || null === $value || array() === $value )
                 return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 
             if ( 'multi' == pods_var( 'pick_format_type', $options[ 'options' ] ) && 'autocomplete' != pods_var( 'pick_format_multi', $options[ 'options' ] ) ) {
@@ -6582,7 +6582,7 @@ class PodsAPI {
 
         // @todo move this to after pre-save preparations
         // Verify unique fields
-        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) && '' !== $value && null !== $value && array() !== $value && 0 !== $value && '0' !== $value && 0.00 !== $value && '0.00' !== $value ) {
+        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) && '' !== $value && null !== $value && array() !== $value ) {
             if ( empty( $pod ) )
                 return false;
 

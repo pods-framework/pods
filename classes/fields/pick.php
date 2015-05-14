@@ -339,15 +339,23 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function setup_related_objects ( $force = false ) {
-	    if ( !$force && ! empty( self::$related_objects ) ) {
-		    // Check if we've already been setup
-		    return false;
-	    }
-        $related_objects = pods_transient_get( 'pods_related_objects' );
+        $new_data_loaded = false;
 
-        if ( !$force && !empty( $related_objects ) )
-            self::$related_objects = $related_objects;
-        else {
+        if ( ! $force && empty( self::$related_objects ) ) {
+            // Only load transient if we aren't forcing a refresh
+            self::$related_objects = pods_transient_get( 'pods_related_objects' );
+            if ( false !== self::$related_objects ) {
+                $new_data_loaded = true;
+            }
+        } elseif ( $force ) {
+	        // If we are rebuilding, make sure we start with a clean slate
+	        self::$related_objects = array();
+        }
+
+        if ( empty( self::$related_objects ) ) {
+                // Do a complete build of related_objects
+            $new_data_loaded = true;
+
             // Custom
             self::$related_objects[ 'custom-simple' ] = array(
                 'label' => __( 'Simple (custom defined list)', 'pods' ),
@@ -541,9 +549,12 @@ class PodsField_Pick extends PodsField {
         }
 
         foreach ( self::$custom_related_objects as $object => $related_object ) {
-            self::$related_objects[ $object ] = $related_object;
+            if ( ! isset( self::$related_objects[ $object ] ) ) {
+                $new_data_loaded = true;
+                self::$related_objects[ $object ] = $related_object;
+            }
         }
-	    return true;
+	    return $new_data_loaded;
     }
 
     /**
@@ -652,10 +663,19 @@ class PodsField_Pick extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
 
-        if ( is_object( $pod ) && isset( $pod->fields ) && isset( $pod->pod_data[ 'object_fields' ] ) )
-            $fields = array_merge( $pod->fields, $pod->pod_data[ 'object_fields' ] );
-        elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) )
-            $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
+        if ( is_object( $pod ) && isset( $pod->fields ) ) {
+	        $fields = $pod->fields;
+
+	        if ( ! empty( $pod->pod_data[ 'object_fields' ] ) ) {
+		        $fields = array_merge( $fields, $pod->pod_data[ 'object_fields' ] );
+	        }
+        } elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) ) {
+	        $fields = $pod[ 'fields' ];
+
+	        if ( ! empty( $pod[ 'object_fields' ] ) ) {
+		        $fields = array_merge( $fields, $pod[ 'object_fields' ] );
+	        }
+        }
 
         return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
     }
@@ -1437,6 +1457,8 @@ class PodsField_Pick extends PodsField {
 
                             if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
                                 $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `d`.`{$search_data->field_index}`";
+                            elseif ( 'meta' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] )
+                                $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `{$search_data->field_index}`.`meta_value` AS {$search_data->field_index}";
                             else
                                 $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
                         }

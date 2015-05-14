@@ -632,7 +632,7 @@ class PodsData {
 
         // Get from cache if enabled
         if ( null !== pods_v( 'expires', $params, null, false ) ) {
-            $cache_key = md5( serialize( $params ) );
+            $cache_key = md5( (string) $this->pod . serialize( $params ) );
 
             $results = pods_view_get( $cache_key, pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
 
@@ -646,7 +646,7 @@ class PodsData {
 
             // Debug purposes
             if ( ( 1 == pods_v( 'pods_debug_sql', 'get', 0 ) || 1 == pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) ) )
-                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) . '</textarea>';
+                echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $this->sql ) ) . '</textarea>';
 
             if ( empty( $this->sql ) )
                 return array();
@@ -673,6 +673,9 @@ class PodsData {
 
             foreach ( $data as $data_key => $data_value ) {
                 $this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
+                if ( isset( $this->pod_data[ 'object_fields' ][ $data_key ] ) ) {
+                    $this->fields[ $data_key ] = $this->pod_data[ 'object_fields' ][ $data_key ];
+                }
             }
 
             $this->fields = PodsForm::fields_setup( $this->fields );
@@ -1939,7 +1942,7 @@ class PodsData {
                     $row = get_object_vars( (object) @current( $current_row ) );
 
                     if ( is_array( $this->row ) && !empty( $this->row ) )
-                        $this->row = array_merge( $row, $this->row );
+                        $this->row = array_merge( $this->row, $row );
                     else
                         $this->row = $row;
                 }
@@ -2044,7 +2047,7 @@ class PodsData {
                 $params = array_merge( $params, $sql );
 
             if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
-                echo '<textarea cols="100" rows="24">' . str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $params->sql ) . '</textarea>';
+                echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $params->sql ) ) . '</textarea>';
         }
 
         $params->sql = trim( $params->sql );

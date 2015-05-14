@@ -577,9 +577,15 @@ class Pods implements Iterator {
 		$value = $this->field( $params );
 
 		if ( is_array( $value ) ) {
+			$fields = $this->fields;
+
+	        if ( isset( $this->pod_data[ 'object_fields' ] ) ) {
+		        $fields = array_merge( $fields, $this->pod_data[ 'object_fields' ] );
+	        }
+
 			$serial_params = array(
 				'field' => $params->name,
-				'fields' => $this->fields
+				'fields' => $fields
 			);
 
 			if ( !empty( $params->serial_params ) && is_array( $params->serial_params ) )
@@ -750,7 +756,7 @@ class Pods implements Iterator {
 				$value = get_comment_link( $this->id() );
 		}
 
-		$field_data = false;
+		$field_data = $last_field_data = false;
 		$field_type = false;
 
 		$first_field = explode( '.', $params->name );
@@ -1145,32 +1151,26 @@ class Pods implements Iterator {
 
 						// Tableless handler
 						if ( $field_exists && ( !in_array( $all_fields[ $pod ][ $field ][ 'type' ], array( 'pick', 'taxonomy' ) ) || !$simple ) ) {
-
 							$type = $all_fields[ $pod ][ $field ][ 'type' ];
 							$pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
 							$pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
 
 							if ( 'table' == $pick_object ) {
-
 								$pick_val = pods_v( 'pick_table', $all_fields[ $pod ][ $field ][ 'options' ], $pick_val, true );
 							}
 							elseif ( '__current__' == $pick_val ) {
-
 								$pick_val = $pod;
 							}
 
 							$last_limit = 0;
 
 							if ( in_array( $type, $tableless_field_types ) ) {
-
 								$single_multi = pods_v( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
 								if ( 'multi' == $single_multi ) {
-
 									$last_limit = (int) pods_v( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
 								}
 								else {
-
 									$last_limit = 1;
 								}
 							}
@@ -1185,11 +1185,10 @@ class Pods implements Iterator {
 
 							// Get related IDs
 							if ( !isset( $all_fields[ $pod ][ $field ][ 'pod_id' ] ) ) {
-
 								$all_fields[ $pod ][ $field ][ 'pod_id' ] = 0;
 							}
-							if ( isset( $all_fields[ $pod ][ $field ][ 'id' ] ) ) {
 
+							if ( isset( $all_fields[ $pod ][ $field ][ 'id' ] ) ) {
 								$ids = $this->api->lookup_related_items(
 									$all_fields[ $pod ][ $field ][ 'id' ],
 									$all_fields[ $pod ][ $field ][ 'pod_id' ],
@@ -1200,27 +1199,21 @@ class Pods implements Iterator {
 
 							// No items found
 							if ( empty( $ids ) ) {
-
 								return false;
 							} // @todo This should return array() if not $params->single
 							elseif ( 0 < $last_limit ) {
-
 								$ids = array_slice( $ids, 0, $last_limit );
 							}
 
 							// Get $pod if related to a Pod
 							if ( !empty( $pick_object ) && ( !empty( $pick_val ) || in_array( $pick_object, array( 'user', 'media', 'comment' ) ) ) ) {
-
 								if ( 'pod' == $pick_object ) {
-
 									$pod = $pick_val;
 								}
 								else {
-
 									$check = $this->api->get_table_info( $pick_object, $pick_val );
 
 									if ( !empty( $check ) && !empty( $check[ 'pod' ] ) ) {
-
 										$pod = $check[ 'pod' ][ 'name' ];
 									}
 								}
@@ -1533,6 +1526,10 @@ class Pods implements Iterator {
 									$value = current( $value );
 							}
 
+							if ( $last_options ) {
+								$last_field_data = $last_options;
+							}
+
 							break;
 						}
 					}
@@ -1554,6 +1551,10 @@ class Pods implements Iterator {
 
 		if ( $params->single && is_array( $value ) && 1 == count( $value ) )
 			$value = current( $value );
+
+		if ( ! empty( $last_field_data ) ) {
+			$field_data = $last_field_data;
+		}
 
 		// @todo Expand this into traversed fields too
 		if ( !empty( $field_data ) && ( $params->display || !$params->raw ) && !$params->in_form && !$params->raw_display ) {
@@ -2095,6 +2096,7 @@ class Pods implements Iterator {
 			$new_id = $pod->id();
 
 		$new_id = $this->do_hook( 'last_id', $new_id, $pod, $params_override );
+		return $new_id;
 	}
 
 	/**
@@ -3057,7 +3059,7 @@ class Pods implements Iterator {
 
 		$this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
 
-		$url = pods_var_update( null, null, $this->page_var );
+		$url = pods_query_arg( null, null, $this->page_var );
 
 		$append = '?';
 
@@ -3441,7 +3443,7 @@ class Pods implements Iterator {
 			if ( 1 < PodsForm::$form_counter )
 				$success .= PodsForm::$form_counter;
 
-			$thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
+			$thank_you = pods_query_arg( array( 'success*' => null, $success => 1 ) );
 
 			if ( 1 == pods_v( $success, 'get', 0 ) ) {
 				$message = __( 'Form submitted successfully', 'pods' );

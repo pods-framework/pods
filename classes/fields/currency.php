@@ -626,6 +626,11 @@ class PodsField_Currency extends PodsField {
 
 		global $wp_locale;
 
+		if ( null === $value ) {
+			// Don't enforce a default value here
+			return null;
+		}
+
 		if ( '9.999,99' == pods_v( self::$type . '_format', $options ) ) {
 			$thousands = '.';
 			$dot = ',';

@@ -10,6 +10,8 @@ php:
 env:
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=4.2 WP_MULTISITE=0
+    - WP_VERSION=4.2 WP_MULTISITE=1
     - WP_VERSION=4.1 WP_MULTISITE=0
     - WP_VERSION=4.1 WP_MULTISITE=1
     - WP_VERSION=4.0 WP_MULTISITE=0
@@ -19,6 +21,21 @@ env:
     - WP_VERSION=3.8 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=1
 
+matrix:
+  allow_failures:
+    - php: nightly
+    
+  include:
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=1
+
+  include:
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=1
 
 before_script:
     - travis_retry composer self-update

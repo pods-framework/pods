@@ -119,6 +119,7 @@ class PodsInit {
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
+        add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
         if ( !empty( self::$version ) ) {
 	        $this->run();
@@ -233,7 +234,8 @@ class PodsInit {
         wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
         wp_register_script( 'pods-codemirror-hints', PODS_URL . 'ui/js/codemirror/addon/mode/show-hint.js', array( 'pods-codemirror' ), '4.8', true );
         wp_register_script( 'pods-codemirror-mode-xml', PODS_URL . 'ui/js/codemirror/mode/xml/xml.js', array( 'pods-codemirror' ), '4.8', true );
-	    wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
+        wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
         if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
             wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.1.1' );
@@ -730,6 +732,14 @@ class PodsInit {
             self::$content_types_registered[ 'post_types' ][] = $post_type;
         }
 
+    }
+
+	/**
+     * Check if we need to flush WordPress rewrite rules
+     * This gets run during 'init' action late in the game to give other plugins time to register their rewrite rules
+     *
+     */
+    public function flush_rewrite_rules() {
         $flush = pods_transient_get( 'pods_flush_rewrites' );
 
         if ( 1 == $flush ) {

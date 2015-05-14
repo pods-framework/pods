@@ -283,7 +283,7 @@
         font-weight: normal;
         color: #5a5a5a;
         font-size: 1.8em;
-        background: url(<?php echo PODS_URL; ?>ui/images/icon32.png) top left no-repeat;
+        background: url(<?php echo esc_url( PODS_URL ); ?>ui/images/icon32.png) top left no-repeat;
         padding: 8px 0 5px 36px;
         margin-top: 0;
     }
@@ -346,8 +346,8 @@
                     <?php if ( $pod_count > 0 ) { ?>
                         <select id="pod_select" name="pod_select">
                             <?php foreach ( $all_pods as $pod_name => $pod_label ) { ?>
-                                <option value="<?php echo $pod_name; ?>">
-                                    <?php echo $pod_label . ' (' . $pod_name . ')'; ?>
+                                <option value="<?php echo esc_attr( $pod_name ); ?>">
+                                    <?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -371,8 +371,8 @@
                             <option value="" SELECTED>- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
 
                             <?php foreach ( $templates as $tmpl ) { ?>
-                                <option value="<?php echo $tmpl[ 'name' ]; ?>">
-                                    <?php echo $tmpl[ 'name' ]; ?>
+                                <option value="<?php echo esc_attr( $tmpl[ 'name' ] ); ?>">
+                                    <?php echo esc_html( $tmpl[ 'name' ] ); ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -405,9 +405,9 @@
                         <label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
 
                         <select id="pods_page" name="pods_page">
-                            <?php foreach ( $pages as $tmpl ) { ?>
-                                <option value="<?php echo $tmpl[ 'name' ]; ?>">
-                                    <?php echo $tmpl[ 'name' ]; ?>
+                            <?php foreach ( $pages as $page ) { ?>
+                                <option value="<?php echo esc_attr( $page[ 'name' ] ); ?>">
+                                    <?php echo esc_html( $page[ 'name' ] ); ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -483,7 +483,7 @@
                     ?>
                     <select id="pod_cache_mode" name="pod_cache_mode">
                         <?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
-                            <option value="<?php echo $cache_mode_option; ?>"<?php echo ( $default_cache_mode == $cache_mode_option ? ' SELECTED' : '' ); ?>>
+                            <option value="<?php echo esc_attr( $cache_mode_option ); ?>"<?php selected( $default_cache_mode, $cache_mode_option ); ?>>
                                 <?php echo esc_html( $cache_mode_label ); ?>
                             </option>
                         <?php endforeach; ?>

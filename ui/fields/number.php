@@ -31,14 +31,14 @@ else {
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
-        $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {
+        $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).on( 'blur', function () {
             if ( !/^[0-9\<?php
-            echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
+            echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
             ?>\-]$/.test( $( this ).val() ) ) {
                 var newval = $( this )
                     .val()
                     .replace( /[^0-9\<?php
-                              echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
+                              echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
                               ?>\-]/g, '' );
                 $( this ).val( newval );
             }

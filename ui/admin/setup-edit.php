@@ -141,8 +141,8 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 <div class="pods-submittable-fields">
     <input type="hidden" name="action" value="pods_admin" />
     <input type="hidden" name="method" value="save_pod" />
-    <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'pods-save_pod' ); ?>" />
-    <input type="hidden" name="id" value="<?php echo (int) $pod[ 'id' ]; ?>" />
+    <input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'pods-save_pod' ) ); ?>" />
+    <input type="hidden" name="id" value="<?php echo esc_attr( (int) $pod[ 'id' ] ); ?>" />
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
     <h2>
@@ -201,7 +201,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
                     if ( $tab == $default )
                         $class = ' nav-tab-active';
             ?>
-                <a href="#pods-<?php echo $tab; ?>" class="nav-tab<?php echo $class; ?> pods-nav-tab-link">
+                <a href="#pods-<?php echo esc_attr( $tab ); ?>" class="nav-tab<?php echo esc_attr( $class ); ?> pods-nav-tab-link">
                     <?php echo $label; ?>
                 </a>
             <?php
@@ -229,7 +229,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 ?>
 
 <div id="poststuff">
-<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 <!-- /inner-sidebar -->
 <div id="post-body" class="meta-box-holder columns-2">
 <div id="post-body-content" class="pods-nav-tab-group">
@@ -305,7 +305,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     $pods_i++;
                 }
             ?>
-            <tr class="no-items<?php echo ( 1 < $pods_i ? ' hidden' : '' ); ?>">
+            <tr class="no-items<?php echo esc_attr( 1 < $pods_i ? ' hidden' : '' ); ?>">
                 <td class="colspanchange" colspan="4">No fields have been added yet</td>
             </tr>
         </tbody>
@@ -779,7 +779,7 @@ foreach ( $tabs as $tab => $tab_label ) {
     if ( in_array( $tab, array( 'manage-fields', 'labels', 'advanced', 'extra-fields' ) ) || !isset( $tab_options[ $tab ] ) || empty( $tab_options[ $tab ] ) )
         continue;
 ?>
-    <div id="pods-<?php echo $tab; ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
+    <div id="pods-<?php echo esc_attr( $tab ); ?>" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
         <?php
             $fields = $tab_options[ $tab ];
             $field_options = PodsForm::fields_setup( $fields );
@@ -801,7 +801,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     <p><a href="http://pods.io/docs/comparisons/compare-storage-types/" target="_blank"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
 
     <p class="submit">
-        <a href="<?php echo pods_var_update( array( 'enable_extra_fields' => 1 ) ); ?>" class="button-primary"><?php _e( 'Enable Extra Fields', 'pods' ); ?></a>
+        <a href="<?php echo esc_url( pods_query_arg( array( 'enable_extra_fields' => 1 ) ) ); ?>" class="button-primary"><?php _e( 'Enable Extra Fields', 'pods' ); ?></a>
     </p>
 </div>
 <?php
@@ -814,13 +814,13 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     <div id="side-info-field" class="inner-sidebar">
         <div id="side-sortables">
             <div id="submitdiv" class="postbox pods-no-toggle">
-                <h3><span>Manage <small>(<a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
+                <h3><span>Manage <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
                 </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">
                         <div id="major-publishing-actions">
                             <div id="delete-action">
-                                <a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'delete' ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>"> Delete Pod </a>
+                                <a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'delete' ) ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>"> Delete Pod </a>
                             </div>
                             <div id="publishing-action">
                                 <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
@@ -896,7 +896,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
-        var thank_you = '<?php echo pods_slash( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
+        var thank_you = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
     }
@@ -913,7 +913,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
 
-        var default_select = '<?php echo pods_slash( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        var default_select = '<?php echo str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ); ?>';
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
@@ -933,8 +933,8 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         postdata = {
             action : 'pods_admin',
             method : 'load_sister_fields',
-            _wpnonce : '<?php echo wp_create_nonce( 'pods-load_sister_fields' ); ?>',
-            pod : '<?php echo pods_var( 'name', $pod ); ?>',
+            _wpnonce : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
+            pod : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
             related_pod : related_pod_name
         };
 
@@ -955,36 +955,39 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
                     var select_container = default_select.match( /<select[^<]*>/g );
 
-                    if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
-                        if ( window.console ) console.log( d );
-                        if ( window.console ) console.log( json );
+                    if ( 'object' != typeof json || ! jQuery.isEmptyObject( json ) ) {
+                        if ( 'object' != typeof json ) {
+                            if ( window.console ) console.log( d );
+                            if ( window.console ) console.log( json );
 
-                        select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
-                    }
-                    else {
+                            select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
+                        }
+
                         select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
 
                         for ( var field_id in json ) {
-                            var field_name = json[ field_id ];
+                            var field_name = json[field_id];
 
                             select_container += '<option value="' + field_id + '">' + field_name + '</option>';
                         }
+
+                        select_container += '</select>';
+
+                        $el.find( '.pods-sister-field' ).html( select_container );
+
+                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
                     }
-
-                    select_container += '</select>';
-
-                    $el.find( '.pods-sister-field' ).html( select_container );
-
-                    jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
-
-                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                    else {
+                        // None found
+                        $el.find( '.pods-sister-field' ).html( default_select );
+                    }
                 }
                 else {
                     // None found
                     $el.find( '.pods-sister-field' ).html( default_select );
-
-                    pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
                 }
+
+                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
             },
             error : function () {
                 // None found

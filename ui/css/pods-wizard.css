@@ -460,10 +460,7 @@
 #pods-wizard-box #pods-wizard-actions .button.button-primary {
   right: 0;
   color: #fff;
-  background: #2581ac;
-  background: -webkit-gradient(linear, left top, left bottom, from(#278ab8), to(#22789f));
-  background: -moz-linear-gradient(center top, #278ab8 0%, #22789f 100%);
-  background: -moz-gradient(center top, #278ab8 0%, #22789f 100%);
+  background: #278ab8;
   -webkit-border-top-left-radius: 0;
   -webkit-border-top-right-radius: 0;
   -webkit-border-bottom-right-radius: 8px;
@@ -483,10 +480,7 @@
 #pods-wizard-box #pods-wizard-actions .button.button-secondary {
   left: 0;
   color: black;
-  background: #c9c9c9;
-  background: -webkit-gradient(linear, left top, left bottom, from(#f7f7f7), to(#f7f7f7));
-  background: -moz-linear-gradient(center top, #dfdfdf 0%, #b2b2b2 100%);
-  background: -moz-gradient(center top, #dfdfdf 0%, #b2b2b2 100%);
+  background: #f7f7f7;
   -webkit-border-top-left-radius: 0;
   -webkit-border-top-right-radius: 0;
   -webkit-border-bottom-right-radius: 0;

@@ -3,13 +3,13 @@ global $wpdb;
 ?>
 <div class="wrap pods-admin">
     <script>
-        var PODS_URL = '<?php echo PODS_URL; ?>';
+        var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
     </script>
     <div id="icon-pods" class="icon32"><br /></div>
 
     <h2 class="italicized"><?php _e( 'Upgrade Pods', 'pods' ); ?></h2>
 
-    <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+    <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
     <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>" data-version="<?php echo $new_version; ?>">
         <div id="pods-wizard-heading">
@@ -35,10 +35,10 @@ global $wpdb;
                 <div class="pods-wizard-content pods-wizard-grey">
                     <p>
                         <?php
-                            $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>.', 'pods' )
+                            $intro = __( 'Welcome to Pods 2.x! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>.', 'pods' )
                                 . ' ' . __( 'Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
 
-                            echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
+                            echo $intro;
                         ?>
                     </p>
                 </div>
@@ -66,11 +66,11 @@ global $wpdb;
                         $pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
                         $count = count( $pods );
                         ?>
-                        <tr class="pods-wizard-table-<?php echo ( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">
+                        <tr class="pods-wizard-table-<?php echo esc_attr( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
-                            <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
+                            <td class="pods-wizard-right pods-wizard-count"><?php echo esc_attr( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
                                 <?php _e( 'Pods', 'pods' ); ?>
                                 <span class="pods-wizard-info"></span>
@@ -78,7 +78,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="fields">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -88,7 +88,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="relationships">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -98,7 +98,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="index">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -108,7 +108,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="templates">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -118,7 +118,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pages">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -128,7 +128,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="helpers">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -139,9 +139,9 @@ global $wpdb;
                         <?php
                         foreach ( $pods as $pod ) {
                             ?>
-                            <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
+                            <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo esc_attr( $pod->name ); ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
-                                    <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                    <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                                 </td>
                                 <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                                 <td class="pods-wizard-name">
@@ -174,7 +174,7 @@ global $wpdb;
                     <tbody><!-- complete|pending|active <i></i> -->
                         <tr class="pods-wizard-table-pending" data-upgrade="1_x">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -184,7 +184,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
@@ -194,7 +194,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="fields">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -204,7 +204,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="relationships">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -214,7 +214,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="settings">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -224,7 +224,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="templates">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -234,7 +234,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pages">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -244,7 +244,7 @@ global $wpdb;
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="helpers">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -255,9 +255,9 @@ global $wpdb;
                         <?php
                         foreach ( $pods as $pod ) {
                             ?>
-                            <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
+                            <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo esc_attr( $pod->name ); ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
-                                    <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                    <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                                 </td>
                                 <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                                 <td class="pods-wizard-name">
@@ -270,7 +270,7 @@ global $wpdb;
                         ?>
                         <tr class="pods-wizard-table-pending" data-upgrade="cleanup">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">

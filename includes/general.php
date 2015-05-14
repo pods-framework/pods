@@ -769,8 +769,9 @@ function pods_shortcode ( $tags, $content = null ) {
 	}
     $tags = apply_filters( 'pods_shortcode', $tags );
 
-	$tags[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
-	$tags[ 'search' ] = (boolean) $tags[ 'search' ];
+	$tags[ 'pagination' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
+	$tags[ 'search' ]     = filter_var($tags[ 'search' ], FILTER_VALIDATE_BOOLEAN);
+	
 	if ( empty( $content ) ) {
 		$content = null;
 	}

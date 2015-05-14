@@ -154,6 +154,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
  Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
 = 2.5.2 May 14, 2015 =
 * FIXED: Issues with default values for number and other types of fields.
 * FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.

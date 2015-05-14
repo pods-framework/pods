@@ -39,7 +39,7 @@ We're able to focus more on Pods when we have some cash to help keep the lights 
 
 ## Developer Notes
 
-* Latest Stable Release: [2.x/2.5.1.2](https://github.com/pods-framework/pods/releases/tag/2.x%2F2.5.1.2)
+* Latest Stable Release: [](https://github.com/pods-framework/pods/releases/tag/)
 * Stable Branch: [master](https://github.com/pods-framework/pods/tree/master)
 * 2.x Development Branch: [2.x](https://github.com/pods-framework/pods/tree/2.x)
 * 3.0 Development Branch: [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0)

@@ -2121,8 +2121,12 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 * @link http://pods.io/docs/find/
 	 */
-	public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
-
+	public function find ( $params = null, $limit = 0, $where = null, $sql = null ) {
+        
+        // we only set a default limit if a pagination is set to true
+		if (!empty($params['pagination'])) {
+			$limit = 15;
+		}
 		$tableless_field_types = PodsForm::tableless_field_types();
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 

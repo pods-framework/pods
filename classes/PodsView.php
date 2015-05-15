@@ -605,7 +605,8 @@ class PodsView {
 			// Allow includes within plugins directory too for plugins utilizing this
 			if ( file_exists( $_view ) ) {
 				$located = $_view;
-			} else {
+			}
+			else {
 				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
 			}
 		}

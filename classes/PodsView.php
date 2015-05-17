@@ -600,12 +600,15 @@ class PodsView {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
 		}
-		// Allow includes within plugins directory too for plugins utilizing this
-		elseif ( file_exists( $_view ) ) {
-			$located = $_view;
-		}
-		else {
-			$located = apply_filters( 'pods_view_locate_template', $located, $_view );
+
+		if ( ! $located ) {
+			// Allow includes within plugins directory too for plugins utilizing this
+			if ( file_exists( $_view ) ) {
+				$located = $_view;
+			}
+			else {
+				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
+			}
 		}
 
 		return $located;

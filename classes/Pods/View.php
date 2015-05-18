@@ -612,8 +612,9 @@ class Pods_View {
 			} elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
-		} elseif ( file_exists( $_view ) ) {
-			// Allow includes within plugins directory too for plugins utilizing this
+		}
+		// Allow includes within plugins directory too for plugins utilizing this
+		elseif ( file_exists( $_view ) ) {
 			$located = $_view;
 		}
 		else {

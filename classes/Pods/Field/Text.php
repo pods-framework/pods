@@ -38,14 +38,7 @@ class Pods_Field_Text extends Pods_Field {
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
-	 */
-	public function __construct() {
-
-	}
-
-	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
 
@@ -107,7 +100,7 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 
@@ -128,7 +121,7 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -143,10 +136,11 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
+		$options         = (array) $options;
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -168,7 +162,7 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -195,7 +189,7 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -212,7 +206,7 @@ class Pods_Field_Text extends Pods_Field {
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
@@ -245,6 +239,8 @@ class Pods_Field_Text extends Pods_Field {
 		if ( empty( $value ) ) {
 			return $value;
 		}
+
+		$options = (array) $options;
 
 		if ( 1 == pods_v( self::$type . '_allow_html', $options, 0, true ) ) {
 			$allowed_html_tags = '';

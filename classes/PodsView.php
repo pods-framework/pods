@@ -586,7 +586,10 @@ class PodsView {
 
 		$located = false;
 
-		if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
+		if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) &&
+		     false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) &&
+		     false === strpos( $_real_view, PODS_DIR )
+		) {
 			$_real_view = trim( $_real_view, '/' );
 
 			if ( empty( $_real_view ) ) {

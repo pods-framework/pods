@@ -8,8 +8,7 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 }
 
 if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
-	class PodsBuilderModuleField extends
-		LayoutModule {
+	class PodsBuilderModuleField extends LayoutModule {
 
 		var $_name = '';
 		var $_var = 'pods-builder-field';
@@ -21,11 +20,13 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 		 * Register the Module
 		 */
 		public function PodsBuilderModuleField() {
+
 			$this->_name        = __( 'Pods - Field Value', 'pods' );
 			$this->_description = __( "Display a single Pod item's field value", 'pods' );
 			$this->module_path  = dirname( __FILE__ );
 
 			$this->LayoutModule();
+
 		}
 
 		/**
@@ -36,6 +37,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 		 * @return mixed
 		 */
 		function _get_defaults( $defaults ) {
+
 			$new_defaults = array(
 				'pod_type' => '',
 				'slug'     => '',
@@ -44,27 +46,31 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
+
 		}
 
 		/**
 		 * Output something before the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _before_table_edit( $form, $results = true ) {
+
 			?>
 			<p><?php echo $this->_description; ?></p>
-		<?php
+			<?php
+
 		}
 
 		/**
 		 * Output something at the start of the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _start_table_edit( $form, $results = true ) {
+
 			$api      = pods_api();
 			$all_pods = $api->load_pods( array( 'names' => true ) );
 
@@ -105,24 +111,31 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 				</td>
 			</tr>
 		<?php
+
 		}
 
 		/**
 		 * Module Output
+		 *
+		 * @param $fields
 		 */
 		function _render( $fields ) {
+
 			$args = array(
-				'name'  => trim( pods_v( 'pod_type', $fields['data'], '' ) ),
-				'slug'  => trim( pods_v( 'slug', $fields['data'], '' ) ),
-				'field' => trim( pods_v( 'field', $fields['data'], '' ) )
+				'name'  => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
+				'slug'  => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
+				'field' => trim( pods_var_raw( 'field', $fields[ 'data' ], '' ) )
 			);
 
-			if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {
+			if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) ) {
 				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
 			}
+
 		}
 
+
 	}
+
 }
 
 new PodsBuilderModuleField();

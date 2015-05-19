@@ -212,7 +212,7 @@ class Pods_Field {
 	 *
 	 * @since 2.0
 	 */
-	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+	public function input( $name, $value = null, $options = array(), $pod = null, $id = null ) {
 
 		$options         = (array) $options;
 		$form_field_type = Pods_Form::$field_type;

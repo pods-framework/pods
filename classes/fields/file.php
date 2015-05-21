@@ -498,7 +498,7 @@ class PodsField_File extends PodsField {
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">
-                <img class="pinkynail" src="<?php echo esc_url( $icon ); ?>" alt="Icon" />
+                <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
             </li>
 
             <li class="pods-file-col pods-file-name">

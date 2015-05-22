@@ -157,7 +157,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 = 2.5.2 May 14, 2015 =
 * FIXED: Issues with default values for number and other types of fields.
-* FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
+* FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewrite rules now flush on wp_loaded.
 * FIXED: Issue preventing proper display of fields in a related CPT via Pods::field()
 * FIXED: Issue preventing codemirror from being enqueued in Pods templates and therefore breaking Pods tempaltes editor in certain configurations.
 * ADDED: Added caching info to debug info.
@@ -278,7 +278,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Inline docs for 'pods_meta_default_box_title' filter and normalized args across each usage.
 * Added: Item ID to pods_api::export() item array.
 * Fixed: Update from GitHub functionality.
-* Fixed: Issue where extended custom post types had diffrent names then original post type due to use of dashes in names.
+* Fixed: Issue where extended custom post types had different names then original post type due to use of dashes in names.
 * Improved UX for select2 field adding new items.
 * Fixed: $params with unslashed data in Pods_Admin::admin_ajax()
 * Fixed: Unwarranted base_dir warnings.

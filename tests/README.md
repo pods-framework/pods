@@ -1,4 +1,4 @@
-# Pods Framework Unit Tests [![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=master)](http://travis-ci.org/pods-framework/pods) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
+# Pods Framework Unit Tests [![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods) [![Coverage Status](https://coveralls.io/repos/pods-framework/pods/badge.png)](https://coveralls.io/r/pods-framework/pods) #
 
 
 This folder contains all the tests for Pods Framework.

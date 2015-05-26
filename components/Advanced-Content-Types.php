@@ -18,11 +18,10 @@ if ( class_exists( 'Pods_Advanced_Content_Types' ) ) {
 	return;
 }
 
-class Pods_Advanced_Content_Types extends
-	Pods_Component {
+class Pods_Advanced_Content_Types extends Pods_Component {
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -41,7 +40,7 @@ class Pods_Advanced_Content_Types extends
 	 */
 	public function add_pod_type( $data ) {
 
-		$data['pod'] = __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' );
+		$data[ 'pod' ] = __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' );
 
 		return $data;
 

@@ -6,7 +6,7 @@
 		echo esc_html( $label );
 	}
 
-	if ( 1 == pods_var( 'required', $options ) ) {
+	if ( 1 == pods_v( 'required', $options ) ) {
 		echo ' <abbr title="required" class="required">*</abbr>';
 	}
 

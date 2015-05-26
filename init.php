@@ -8,8 +8,10 @@ Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
+GitHub Plugin URI: https://github.com/pods-framework/pods
+GitHub Branch: release/3.0
 
-Copyright 2009-2014  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2015  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -210,7 +212,7 @@ else {
                     // the zip url of the github repo
                     'sslverify'          => false,
                     // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-                    'requires'           => '3.6',
+                    'requires'           => '3.8',
                     // which version of WordPress does your plugin require?
                     'version'            => $version
                 );

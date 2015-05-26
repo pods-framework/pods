@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_HTML extends
-	Pods_Field {
+class Pods_Field_HTML extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,17 @@ class Pods_Field_HTML extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			'output_options'         => array(
 				'label' => __( 'Output Options', 'pods' ),
@@ -109,25 +109,31 @@ class Pods_Field_HTML extends
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		return false;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		if ( strlen( trim( $value ) ) < 1 ) {
 			$value = pods_v( self::$type . '_content', $options );
 		}
 
 		if ( 1 == pods_v( self::$type . '_oembed', $options, 0 ) ) {
-			$embed = $GLOBALS['wp_embed'];
+
+			/** @var WP_Embed $embed */
+			$embed = $GLOBALS[ 'wp_embed' ];
 			$value = $embed->run_shortcode( $value );
 			$value = $embed->autoembed( $value );
 		}
@@ -153,21 +159,27 @@ class Pods_Field_HTML extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		echo '<div class="pods-form-ui-' . Pods_Form::clean( $name ) . ' pods-form-html">' . $this->display( $value, $name, $options, $pod, $id ) . '</div>';
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = wp_trim_words( $value );
 
 		return $value;
+
 	}
+
 }

@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Date extends
-	Pods_Field {
+class Pods_Field_Date extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,17 @@ class Pods_Field_Date extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable'  => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -77,24 +77,24 @@ class Pods_Field_Date extends
 					'y'         => date_i18n( 'Y' )
 				)
 			),
-			self::$type . '_year_range' => array(
-				'label' => __( 'Year Range', 'pods' ),
+			self::$type . '_year_range'  => array(
+				'label'   => __( 'Year Range', 'pods' ),
 				'default' => 'c-10:c+10',
-				'type' => 'text',
-				'help' => __( 'The range of years displayed in the year drop-down: either relative to today\'s year ("-nn:+nn"), relative to the currently selected year ("c-nn:c+nn"), absolute ("nnnn:nnnn"), or combinations of these formats ("nnnn:-nn").', 'pods' )
+				'type'    => 'text',
+				'help'    => __( 'The range of years displayed in the year drop-down: either relative to today\'s year ("-nn:+nn"), relative to the currently selected year ("c-nn:c+nn"), absolute ("nnnn:nnnn"), or combinations of these formats ("nnnn:-nn").', 'pods' )
 			),
-			self::$type . '_min_date' => array(
-				'label' => __( 'Min Date', 'pods' ),
+			self::$type . '_min_date'    => array(
+				'label'   => __( 'Min Date', 'pods' ),
 				'default' => '',
-				'type' => 'text',
-				'help' => __( 'The minimum selectable date. When empty, there is no minimum.', 'pods' )
+				'type'    => 'text',
+				'help'    => __( 'The minimum selectable date. When empty, there is no minimum.', 'pods' )
 			),
-			self::$type . '_max_date' => array(
-				'label' => __( 'Max Date', 'pods' ),
+			self::$type . '_max_date'    => array(
+				'label'   => __( 'Max Date', 'pods' ),
 				'default' => '',
-				'type' => 'text',
-				'help' => __( 'The maximum selectable date. When empty, there is no maximum.', 'pods' )
-			), 
+				'type'    => 'text',
+				'help'    => __( 'The maximum selectable date. When empty, there is no maximum.', 'pods' )
+			),
 			self::$type . '_allow_empty' => array(
 				'label'   => __( 'Allow empty value?', 'pods' ),
 				'default' => 1,
@@ -109,7 +109,7 @@ class Pods_Field_Date extends
 
 		// Check if PHP DateTime::createFromFormat exists for additional supported formats
 		if ( method_exists( 'DateTime', 'createFromFormat' ) || apply_filters( 'pods_form_ui_field_datetime_custom_formatter', false ) ) {
-			$options[ self::$type . '_format' ]['data'] = array_merge( $options[ self::$type . '_format' ]['data'],
+			$options[ self::$type . '_format' ][ 'data' ] = array_merge( $options[ self::$type . '_format' ][ 'data' ],
 				array(
 					'dmy'      => date_i18n( 'd/m/Y' ),
 					'dmy_dash' => date_i18n( 'd-m-Y' ),
@@ -119,29 +119,33 @@ class Pods_Field_Date extends
 				) );
 		}
 
-		$options[ self::$type . '_format' ]['data']    = apply_filters( 'pods_form_ui_field_date_format_options', $options[ self::$type . '_format' ]['data'] );
-		$options[ self::$type . '_format' ]['default'] = apply_filters( 'pods_form_ui_field_date_format_default', $options[ self::$type . '_format' ]['default'] );
+		$options[ self::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_date_format_options', $options[ self::$type . '_format' ][ 'data' ] );
+		$options[ self::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_date_format_default', $options[ self::$type . '_format' ][ 'default' ] );
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$schema = 'DATE NOT NULL default "0000-00-00"';
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		$format = $this->format( $options );
 
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
-			$date       = $this->createFromFormat( 'Y-m-d', (string) $value );
+			$date = $this->createFromFormat( 'Y-m-d', (string) $value );
 			$date_local = $this->createFromFormat( $format, (string) $value );
 
 			if ( false !== $date ) {
@@ -158,12 +162,14 @@ class Pods_Field_Date extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -175,30 +181,37 @@ class Pods_Field_Date extends
 
 		$field_type = 'date';
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 
 				$field_type = 'text';
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 
 			$field_type = 'text';
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$format = $this->format( $options );
 
-		if ( ! empty( $value ) && ( 0 == pods_v( self::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
+		if ( ! empty( $value ) && ( 0 == pods_v( self::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array(
+						'0000-00-00',
+						'0000-00-00 00:00:00',
+						'00:00:00'
+					) ) )
+		) {
 			$value = $this->convert_date( $value, 'Y-m-d', $format );
 		} elseif ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) ) {
 			$value = '0000-00-00';
@@ -207,19 +220,27 @@ class Pods_Field_Date extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = $this->display( $value, $name, $options, $pod, $id );
 
-		if ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
+		if ( 1 == pods_v( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array(
+						'0000-00-00',
+						'0000-00-00 00:00:00',
+						'00:00:00'
+					) ) )
+		) {
 			$value = false;
 		}
 
 		return $value;
+
 	}
 
 	/**
@@ -231,6 +252,7 @@ class Pods_Field_Date extends
 	 * @since 2.0
 	 */
 	public function format( $options ) {
+
 		$date_format = array(
 			'mdy'       => 'm/d/Y',
 			'mdy_dash'  => 'm-d-Y',
@@ -255,6 +277,7 @@ class Pods_Field_Date extends
 		$format = $date_format[ pods_v( self::$type . '_format', $options, 'ymd_dash', true ) ];
 
 		return $format;
+
 	}
 
 	/**
@@ -264,6 +287,7 @@ class Pods_Field_Date extends
 	 * @return DateTime
 	 */
 	public function createFromFormat( $format, $date ) {
+
 		$datetime = false;
 
 		if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
@@ -285,6 +309,7 @@ class Pods_Field_Date extends
 		}
 
 		return apply_filters( 'pods_form_ui_field_date_formatter', $datetime, $format, $date );
+
 	}
 
 	/**
@@ -297,6 +322,7 @@ class Pods_Field_Date extends
 	 * @return string
 	 */
 	public function convert_date( $value, $new_format, $original_format = 'Y-m-d' ) {
+
 		if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
 			$date = $this->createFromFormat( $original_format, (string) $value );
 
@@ -310,5 +336,7 @@ class Pods_Field_Date extends
 		}
 
 		return $value;
+
 	}
+
 }

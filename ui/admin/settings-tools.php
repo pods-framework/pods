@@ -1,15 +1,15 @@
 <?php
-    if ( !empty( $_POST ) ) {
-        if ( isset( $_POST[ 'clearcache' ] ) ) {
-			$api = pods_api();
+if ( ! empty( $_POST ) ) {
+	if ( isset( $_POST[ 'clearcache' ] ) ) {
+		$api = pods_api();
 
-            $api->cache_flush_pods();
+		$api->cache_flush_pods();
 
-			if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
-				$api->load_pods();
-			}
+		if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
+			$api->load_pods();
+		}
 
-		pods_redirect( pods_var_update( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
+		pods_redirect( pods_query_arg( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
 	}
 } elseif ( 1 == pods_v( 'pods_clearcache' ) ) {
 	pods_message( 'Pods transients and cache have been cleared.' );
@@ -31,17 +31,17 @@ if ( PODS_GITHUB_UPDATE ) {
 	?>
 
 	<p class="submit">
-		<a href="<?php echo $update; ?>" class="button button-primary"><?php esc_html_e( 'Force Plugin Refresh/Update from GitHub', 'pods' ); ?></a>
+		<a href="<?php echo esc_url( $update ); ?>" class="button button-primary"><?php esc_html_e( 'Force Plugin Refresh/Update from GitHub', 'pods' ); ?></a>
 	</p>
 
 	<hr />
 
 <?php } ?>
 
-	<h3><?php _e( 'Clear Pods Cache', 'pods' ); ?></h3>
+<h3><?php _e( 'Clear Pods Cache', 'pods' ); ?></h3>
 
-	<p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods. ', 'pods' ); ?></p>
+<p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods. ', 'pods' ); ?></p>
 
-	<p class="submit">
-		<input type="submit" class="button button-primary" name="clearcache" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
-	</p>
+<p class="submit">
+	<input type="submit" class="button button-primary" name="clearcache" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />
+</p>

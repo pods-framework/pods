@@ -8,8 +8,7 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 }
 
 if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
-	class PodsBuilderModuleForm extends
-		LayoutModule {
+	class PodsBuilderModuleForm extends LayoutModule {
 
 		var $_name = '';
 		var $_var = 'pods-builder-form';
@@ -21,6 +20,7 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 		 * Register the Module
 		 */
 		public function PodsBuilderModuleForm() {
+
 			$this->_name        = __( 'Pods - Form', 'pods' );
 			$this->_description = __( 'Display a form for creating and editing Pod items', 'pods' );
 			$this->module_path  = dirname( __FILE__ );
@@ -36,6 +36,7 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 		 * @return mixed
 		 */
 		function _get_defaults( $defaults ) {
+
 			$new_defaults = array(
 				'pod_type'  => '',
 				'slug'      => '',
@@ -52,9 +53,10 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 		 * Output something before the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _before_table_edit( $form, $results = true ) {
+
 			?>
 			<p><?php echo $this->_description; ?></p>
 		<?php
@@ -64,9 +66,10 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 		 * Output something at the start of the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _start_table_edit( $form, $results = true ) {
+
 			$api      = pods_api();
 			$all_pods = $api->load_pods( array( 'names' => true ) );
 
@@ -127,20 +130,21 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 
 		/**
 		 * Module Output
-		 * 
-		 * @param object $fields Pods Fields
+		 *
+		 * @param $fields
 		 */
 		function _render( $fields ) {
+
 			$args = array(
-				'name'      => trim( pods_v( 'pod_type', $fields['data'], '' ) ),
-				'slug'      => trim( pods_v( 'slug', $fields['data'], '' ) ),
-				'fields'    => trim( pods_v( 'fields', $fields['data'], '' ) ),
-				'label'     => trim( pods_var_raw( 'label', $fields['data'], __( 'Submit', 'pods' ), null, true ) ),
-				'thank_you' => trim( pods_v( 'thank_you', $fields['data'], '' ) ),
+				'name'      => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
+				'slug'      => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
+				'fields'    => trim( pods_var_raw( 'fields', $fields[ 'data' ], '' ) ),
+				'label'     => trim( pods_var_raw( 'label', $fields[ 'data' ], __( 'Submit', 'pods' ), null, true ) ),
+				'thank_you' => trim( pods_var_raw( 'thank_you', $fields[ 'data' ], '' ) ),
 				'form'      => 1
 			);
 
-			if ( 0 < strlen( $args['name'] ) ) {
+			if ( 0 < strlen( $args[ 'name' ] ) ) {
 				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
 			}
 		}

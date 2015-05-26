@@ -584,6 +584,7 @@ class Pods_View {
 
 		// Keep it safe, stay thirsty my friends
 		$_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
+		$_view = preg_replace( '/\/+/', '/', $_view );
 
 		if ( empty( $_view ) ) {
 			return false;
@@ -597,10 +598,7 @@ class Pods_View {
 
 		$located = false;
 
-		if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) &&
-		     false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) &&
-		     false === strpos( $_real_view, PODS_DIR )
-		) {
+		if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
 			$_real_view = trim( $_real_view, '/' );
 
 			if ( empty( $_real_view ) ) {
@@ -612,17 +610,16 @@ class Pods_View {
 			} elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
-		}
-		// Allow includes within plugins directory too for plugins utilizing this
+		} // Allow includes within plugins directory too for plugins utilizing this
 		elseif ( file_exists( $_view ) ) {
 			$located = $_view;
-		}
-		else {
+		} else {
 			// @todo Needs hook doc
 			$located = apply_filters( 'pods_view_locate_template', $located, $_view );
 		}
 
 		return $located;
+
 	}
 
 	/**
@@ -706,4 +703,5 @@ class Pods_View {
 		return true;
 
 	}
+
 }

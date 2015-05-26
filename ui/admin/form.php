@@ -638,11 +638,11 @@ if ( 0 < $pod->id() ) {
             thank_you = pods_form_thank_you;
         }
 
-	    if ( isNaN( id ) ) {
-		    document.location = thank_you_alt.replace( 'X_ID_X', String( 0 ) );
-	    }
-	    else {
-		    document.location = thank_you.replace( 'X_ID_X', String( id ) );
-	    }
+        if ( isNaN( id ) ) {
+            document.location = thank_you_alt.replace( 'X_ID_X', String( 0 ) );
+        }
+        else {
+            document.location = thank_you.replace( 'X_ID_X', String( id ) );
+        }
     }
 </script>

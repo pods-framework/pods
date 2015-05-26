@@ -228,7 +228,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Inline docs for 'pods_meta_default_box_title' filter and normalized args across each usage.
 * Added: Item ID to pods_api::export() item array.
 * Fixed: Update from GitHub functionality.
-* Fixed: Issue where extended custom post types had diffrent names then original post type due to use of dashes in names.
+* Fixed: Issue where extended custom post types had different names then original post type due to use of dashes in names.
 * Improved UX for select2 field adding new items.
 * Fixed: $params with unslashed data in Pods_Admin::admin_ajax()
 * Fixed: Unwarranted base_dir warnings.

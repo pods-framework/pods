@@ -1,4 +1,7 @@
 <?php
+/**
+ * Website Admin Field
+ */ 
 $attributes = array();
 
 $type = 'text';

@@ -203,7 +203,11 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Remove unused row actions
+	 * 
+	 * @param $actions
+	 * @param $post
 	 *
+	 * @return mixed
 	 * @since 2.0.5
 	 *
 	 * @param $actions
@@ -238,6 +242,9 @@ class Pods_Templates extends Pods_Component {
 	/**
 	 * Remove unused bulk actions
 	 *
+	 * @param $actions
+	 *
+	 * @return mixed
 	 * @since 2.0.5
 	 *
 	 * @param $actions
@@ -288,7 +295,11 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Change post title placeholder text
+	 * 
+	 * @param $text
+	 * @param $post
 	 *
+	 * @return string|void
 	 * @since 2.0
 	 *
 	 * @param $text
@@ -535,6 +546,8 @@ class Pods_Templates extends Pods_Component {
 	 *
 	 * @param string $code The template string to parse
 	 * @param object $obj The Pods object
+	 * 
+	 * @return mixed|void
 	 *
 	 * @since 1.8.5
 	 *

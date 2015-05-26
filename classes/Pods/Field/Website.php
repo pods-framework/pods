@@ -282,7 +282,7 @@ class Pods_Field_Website extends Pods_Field {
 	}
 
 	/**
-	 * Build an url
+	 * Build a url
 	 *
 	 * @param array|string $url
 	 *

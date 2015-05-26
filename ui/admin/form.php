@@ -542,24 +542,25 @@ foreach ( $fields as $field ) {
 		var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
 	}
 
-	jQuery(function($) {
-		$(document).Pods('validate');
-		$(document).Pods('submit');
-		$(document).Pods('dependency');
-		$(document).Pods('confirm');
-		$(document).Pods('exit_confirm');
-	});
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'confirm' );
+		$( document ).Pods( 'exit_confirm' );
+	} );
 
-	var pods_admin_submit_callback = function(id) {
-		id = parseInt(id);
-		var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
-		var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
+	var pods_admin_submit_callback = function ( id ) {
 
-		if('NaN' == id) {
-			document.location = thank_you_alt.replace('X_ID_X',0);
+		id = parseInt( id, 10 );
+		var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
+		var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';
+
+		if ( isNaN( id ) ) {
+			document.location = thank_you_alt.replace( 'X_ID_X', String( 0 ) );
 		}
 		else {
-			document.location = thank_you.replace('X_ID_X',id);
+			document.location = thank_you.replace( 'X_ID_X', String( id ) );
 		}
 	}
 </script>

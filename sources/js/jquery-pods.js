@@ -163,7 +163,7 @@
                                 if ( 0 < id.length ) {
                                     id = parseInt( id[ 0 ] );
 
-                                    if ( 'NaN' == id )
+                                    if ( isNaN( id ) )
                                         id = 0;
                                 }
                                 else
@@ -277,7 +277,7 @@
                                 if ( 0 < id.length ) {
                                     id = parseInt( id[ 0 ] );
 
-                                    if ( 'NaN' == id )
+                                    if ( isNaN( id ) )
                                         id = 0;
                                 }
                                 else
@@ -1462,7 +1462,7 @@
                             else if ( 3 == field_array.length ) {
                                 the_field = parseInt( field_array[ 2 ].replace( '[', '' ).replace( ']', '' ) );
 
-                                if ( 'NaN' == the_field )
+                                if ( isNaN( the_field ) )
                                     field_data[ field_name ] = val;
                                 else {
                                     if ( 'undefined' == typeof field_data[ field_name ] )

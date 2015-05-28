@@ -32,15 +32,9 @@
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-csscomb": "^3.0.0",
-    "grunt-githooks": "^0.3.0",
     "grunt-newer": "^0.7.0",
     "grunt-cli": "~0.1.11",
     "grunt-glotpress": "^0.1.1",
-    "grunt-phpcs": "^0.2.3",
-    "grunt-shell": "^1.1.1",
-    "grunt-spritesmith": "^2.20.0",
-    "grunt-update-submodules": "^0.4.1",
-    "grunt-wp-i18n": "^0.4.8",
     "load-grunt-tasks": "^0.6.0"
   }
 }

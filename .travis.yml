@@ -6,7 +6,6 @@ php:
     - 5.5
     - 5.6
     - hhvm
-    - nightly
 
 env:
     - WP_VERSION=latest WP_MULTISITE=0
@@ -21,17 +20,22 @@ env:
     - WP_VERSION=3.9 WP_MULTISITE=1
     - WP_VERSION=3.8 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=1
-    
+
 matrix:
-    allow_failures:	
-     - php: nightly	
-    
+    allow_failures:
+     - php: nightly
+
     include:
     - php: nightly
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: nightly
       env: WP_VERSION=latest WP_MULTISITE=1
 
+  include:
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: nightly
+      env: WP_VERSION=latest WP_MULTISITE=1
 
 before_script:
     - travis_retry composer self-update
@@ -44,5 +48,6 @@ script:
 
 branches:
     only:
+        - master
         - 2.x
         - release/3.0

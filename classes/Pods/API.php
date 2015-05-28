@@ -3854,15 +3854,16 @@ class Pods_API {
 			}
 
 			delete_metadata( $object_type, $related_id, $related_field['name'] );
+			delete_metadata( $object_type, $related_id, '_pods_' . $related_field['name'] );
 
 			if ( ! empty( $related_ids ) ) {
-				update_metadata( $object_type, $related_id, '_pods_' . $related_field['name'], $related_ids );
+				if ( 1 < count( $related_ids ) ) {
+					add_metadata( $object_type, $related_id, '_pods_' . $related_field['name'], $related_ids );
+				}
 
 				foreach ( $related_ids as $rel_id ) {
 					add_metadata( $object_type, $related_id, $related_field['name'], $rel_id );
 				}
-			} else {
-				delete_metadata( $object_type, $related_id, '_pods_' . $related_field['name'] );
 			}
 		} // Custom Settings Pages (options-based)
 		elseif ( 'settings' == $related_pod['type'] ) {

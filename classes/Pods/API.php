@@ -1696,7 +1696,7 @@ class Pods_API {
 		$tableless_field_types    = Pods_Form::tableless_field_types();
 		$repeatable_field_types   = Pods_Form::repeatable_field_types();
 		$block_field_types        = Pods_Form::block_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		// @deprecated 2.0
 		if ( isset( $params->datatype ) ) {
@@ -3128,7 +3128,7 @@ class Pods_API {
 	 */
 	private function export_pod_item_level( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		$object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
@@ -6240,7 +6240,7 @@ class Pods_API {
 
 		$fields = array_merge( $pod['fields'], $pod['object_fields'] );
 
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		foreach ( $import_data as $key => $data_row ) {
 			$data = array();

@@ -114,9 +114,7 @@ class Pods_Admin {
 
 		wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
 
-		wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
-
-		wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
+		wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/pods-floatmenu.js', array(), PODS_VERSION );
 
 		wp_register_style( 'pods-manage', PODS_URL . 'ui/css/pods-manage.css', array(), PODS_VERSION );
 

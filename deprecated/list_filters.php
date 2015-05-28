@@ -5,7 +5,7 @@
 			$filters = explode( ',', $filters );
 		}
 		foreach ( $filters as $field_name ) {
-			$field = $this->api->load_column( array( 'name' => $field_name, 'pod' => $this->pod ) );
+			$field = pods_api()->load_field( array( 'name' => $field_name, 'pod' => $this->pod ) );
 			if ( empty( $field ) ) {
 				continue;
 			}
@@ -13,7 +13,7 @@
 				$pick_object = $field['pick_object'];
 				$pick_val    = $field['pick_val'];
 				if ( 'pod' == $pick_object ) {
-					$pick_pod    = $this->api->load_pod( array( 'name' => $pick_val ) );
+					$pick_pod    = pods_api()->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['object'];
 				}

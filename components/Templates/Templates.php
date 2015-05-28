@@ -203,7 +203,7 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Remove unused row actions
-	 * 
+	 *
 	 * @param $actions
 	 * @param $post
 	 *
@@ -295,7 +295,7 @@ class Pods_Templates extends Pods_Component {
 
 	/**
 	 * Change post title placeholder text
-	 * 
+	 *
 	 * @param $text
 	 * @param $post
 	 *
@@ -481,7 +481,7 @@ class Pods_Templates extends Pods_Component {
 		);
 
 		if ( empty( $code ) && ! empty( $template_name ) ) {
-			$template_obj = $obj->api->load_template( array( 'name' => $template_name ) );
+			$template_obj = pods_api()->load_template( array( 'name' => $template_name ) );
 
 			if ( ! empty( $template_obj ) ) {
 				$template = $template_obj;
@@ -546,7 +546,7 @@ class Pods_Templates extends Pods_Component {
 	 *
 	 * @param string $code The template string to parse
 	 * @param object $obj The Pods object
-	 * 
+	 *
 	 * @return mixed|void
 	 *
 	 * @since 1.8.5

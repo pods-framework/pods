@@ -11,11 +11,6 @@ class Pods_Meta {
 	static $instance = null;
 
 	/**
-	 * @var Pods_API
-	 */
-	private $api;
-
-	/**
 	 * @var Pods
 	 */
 	private static $current_pod;
@@ -107,11 +102,7 @@ class Pods_Meta {
 	 *
 	 * @since 2.0
 	 */
-	function __construct() {
-
-		$this->api = pods_api();
-
-	}
+	function __construct() {}
 
 	/**
 	 * @return \Pods_Meta
@@ -142,7 +133,7 @@ class Pods_Meta {
 
 		if ( is_admin() && apply_filters( 'pods_meta_form_handler', true, 'taxonomy' ) ) {
 			// Handle Term Editor
-			$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
+			$taxonomies = pods_api()->load_pods( array( 'type' => 'taxonomy' ) );
 
 			foreach ( $taxonomies as $taxonomy ) {
 				$taxonomy_name = $taxonomy[ 'name' ];
@@ -259,7 +250,7 @@ class Pods_Meta {
 
 		// @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option
 		/*if ( !empty( $settings ) ) {
-			$settings = $this->api->load_pods( array( 'type' => 'setting' ) );
+			$settings = pods_api()->load_pods( array( 'type' => 'setting' ) );
 
             foreach ( $settings as $setting_pod ) {
                 foreach ( $setting_pod[ 'fields' ] as $option ) {

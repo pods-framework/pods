@@ -305,7 +305,7 @@ class Pods_Object_Field extends
 				$this->_table_info = pods_api()->get_table_info( 'post_type', 'attachment' );
 			} // Load Related object table info
 			elseif ( in_array( $this->_object['type'], Pods_Form::tableless_field_types() ) ) {
-				$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+				$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 				if ( 'taxonomy' == $this->_object['type'] ) {
 					$this->_table_info = pods_api()->get_table_info( 'taxonomy', $this->_object['object'], $this->_object['name'] );
@@ -459,7 +459,7 @@ class Pods_Object_Field extends
 		}
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 		$file_field_types         = Pods_Form::file_field_types();
 
 		if ( ! isset( $this->traversal[ $traverse_recurse['pod'] ] ) ) {
@@ -837,7 +837,7 @@ class Pods_Object_Field extends
 		}
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		$params = (object) $options;
 
@@ -1548,7 +1548,7 @@ class Pods_Object_Field extends
 			global $wpdb;
 
 			$tableless_field_types    = Pods_Form::tableless_field_types();
-			$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+			$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 			$params->pod_id = $pod['id'];
 			$params->pod    = $pod['name'];

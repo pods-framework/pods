@@ -1,4 +1,8 @@
 /* Fix conflict with debug bar codemirror */
-.CodeMirror-gutter {
+/* line 2, ../sass/codemirror-pods.scss */
+.CodeMirror-gutter
+{
     position: static;
 }
+
+/*# sourceMappingURL=codemirror-pods.css.map */

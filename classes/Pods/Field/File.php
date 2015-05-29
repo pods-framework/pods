@@ -413,6 +413,8 @@ class Pods_Field_File extends Pods_Field {
 
 		if ( empty( $icon ) ) {
 			$icon = '{{icon}}';
+		} else {
+			$icon = esc_url( $icon );
 		}
 
 		if ( empty( $name ) ) {
@@ -435,7 +437,7 @@ class Pods_Field_File extends Pods_Field {
 				<?php } ?>
 
 				<li class="pods-file-col pods-file-icon">
-					<a href="<?php echo esc_url( $url ); ?>"><img class="pinkynail" src="<?php echo esc_url( $icon ); ?>" alt="Icon" /></a>
+					<a href="<?php echo esc_url( $url ); ?>"><img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" /></a>
 				</li>
 
 				<li class="pods-file-col pods-file-name">

@@ -53,7 +53,7 @@
     "require-dev": {
         "composer/installers": "~1.0.0",
         "satooshi/php-coveralls": "dev-master",
-        "phpunit/phpunit": "4.3.x",
+        "phpunit/phpunit": "4.7.x",
         "mockery/mockery": "0.9.4",
         "webdevstudios/cmb2": "~2.0.6"
     },

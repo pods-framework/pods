@@ -17,9 +17,15 @@ WP_CORE_DIR=/tmp/wordpress/
 set -ex
 
 install_wp() {
+	echo "Installing WordPress for Unit Tests"
+
 	if [ $WP_CORE_DIR == '' && -z TRAVIS_JOB_ID ]; then
+		echo "Removing existing core WordPress directory"
+
 		rm -rf $WP_CORE_DIR
 	fi
+
+	echo "Downloading WordPress"
 
 	mkdir -p $WP_CORE_DIR
 
@@ -33,9 +39,13 @@ install_wp() {
 	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
 
 	wget -nv -O $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
+
+	echo "WordPress installed"
 }
 
 install_test_suite() {
+	echo "Installing Tests Suite for Unit Tests"
+
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
 		local ioption='-i .bak'
@@ -45,8 +55,12 @@ install_test_suite() {
 
 	# set up testing suite
 	if [ $WP_TESTS_DIR == '' && -z TRAVIS_JOB_ID ]; then
+		echo "Removing existing Tests Suite directory"
+
 		rm -rf $WP_TESTS_DIR
 	fi
+
+	echo "Downloading Tests Suite"
 
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
@@ -58,9 +72,13 @@ install_test_suite() {
 	sed $ioption "s/yourusernamehere/$DB_USER/" wp-tests-config.php
 	sed $ioption "s/yourpasswordhere/$DB_PASS/" wp-tests-config.php
 	sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+
+	echo "Tests Suite installed"
 }
 
 install_db() {
+	echo "Setting up Database for Unit Tests"
+
 	# parse DB_HOST for port or socket references
 	local PARTS=(${DB_HOST//\:/ })
 	local DB_HOSTNAME=${PARTS[0]};
@@ -78,12 +96,18 @@ install_db() {
 	fi
 
 	if [ -z TRAVIS_JOB_ID ]; then
+		echo "Removing existing Database"
+
 		# drop database
 		mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA -e "DROP DATABASE IF EXISTS $DB_NAME"
 	fi
 
+	echo "Creating Database"
+
 	# create database
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+
+	echo "Database set up"
 }
 
 install_wp

@@ -1,16 +1,13 @@
-/* line 1, ../sass/pods-front.scss */
 #ui-datepicker-div
 {
     font-size: 14px !important;
 }
 
-/* line 5, ../sass/pods-front.scss */
 .ui-slider-handle
 {
     z-index: 0 !important;
 }
 
-/* line 9, ../sass/pods-front.scss */
 a.button
 {
     font-size: 12px;
@@ -20,7 +17,7 @@ a.button
 
     white-space: nowrap;
 
-    color: #464646;
+    color: #464646; 
     border: 1px solid #bbb;
     -webkit-border-radius: 10px;
        -moz-border-radius: 10px;
@@ -35,8 +32,6 @@ a.button
 
          -o-border-radius: 10px;
 }
-
-/* line 29, ../sass/pods-front.scss */
 a.button:hover
 {
     text-decoration: none;
@@ -44,11 +39,9 @@ a.button:hover
     color: black;
     border-color: #666;
 }
-
-/* line 35, ../sass/pods-front.scss */
 a.button:active
 {
-    text-decoration: none;
+    text-decoration: none; 
 
     color: #333;
     border-color: #999;
@@ -64,7 +57,6 @@ a.button:active
     text-shadow: 0 -1px 0 #fff;
 }
 
-/* line 51, ../sass/pods-front.scss */
 .button-primary
 {
     font-size: 12px;
@@ -78,7 +70,7 @@ a.button:active
     white-space: nowrap;
     text-decoration: none;
 
-    color: #fff;
+    color: #fff; 
     border: 1px solid #21759b;
     border-bottom-color: #1e6a8d;
     -webkit-border-radius: 11px;
@@ -97,17 +89,13 @@ a.button:active
 
          -o-border-radius: 11px;
 }
-
-/* line 79, ../sass/pods-front.scss */
 .button-primary:hover
 {
     text-decoration: none;
 
-    color: #eaf2fa;
+    color: #eaf2fa; 
     border-color: #13455b;
 }
-
-/* line 85, ../sass/pods-front.scss */
 .button-primary:active
 {
     text-decoration: none;
@@ -126,74 +114,66 @@ a.button:active
     text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
 }
 
-/* line 101, ../sass/pods-front.scss */
 a.delete
 {
-    font-size: 12px;
+    font-size: 12px; 
 
     color: #bf1300;
 }
 
-/* line 106, ../sass/pods-front.scss */
 h3.hndle
 {
     margin-left: 23px;
 }
 
-/* line 110, ../sass/pods-front.scss */
 form.pods-manage ol
 {
-    margin-left: 0;
+    margin-left: 0; 
     padding-left: 0;
 
     list-style: none;
 }
 
-/* line 116, ../sass/pods-front.scss */
 form.pods-manage .inside
 {
     padding: 20px;
 }
 
-/* line 120, ../sass/pods-front.scss */
 .pods-field label
 {
     display: block;
 
-    padding: 0 0 4px 2px;
+    padding: 0 0 4px 2px; 
 
     cursor: pointer;
 }
 
-/* line 126, ../sass/pods-front.scss */
-.pods-field input,
-.pods-field textarea
+.pods-field input
 {
     display: block;
 }
 
-/* line 130, ../sass/pods-front.scss */
 .pods-field textarea
 {
     font-family: monospace;
+
+    display: block;
 
     height: 100%;
 
     resize: none;
 }
 
-/* line 136, ../sass/pods-front.scss */
 .pods-field p.pods-field-comment
 {
     font-size: .9em;
     font-style: italic;
 
-    margin: 5px 0 0 2px !important;
+    margin: 5px 0 0 2px !important; 
 
     color: #aaa;
 }
 
-/* line 143, ../sass/pods-front.scss */
 .pods-pick select
 {
     display: block;
@@ -201,13 +181,10 @@ form.pods-manage .inside
     min-width: 125px;
 }
 
-/* line 148, ../sass/pods-front.scss */
 .pods-boolean
 {
     position: relative;
 }
-
-/* line 152, ../sass/pods-front.scss */
 .pods-boolean input
 {
     position: absolute;
@@ -216,35 +193,30 @@ form.pods-manage .inside
 
     display: block;
 
-    width: auto;
+    width: auto; 
     height: auto;
     margin: 7px 7px 0 0;
     padding: 0;
 }
-
-/* line 163, ../sass/pods-front.scss */
 .pods-boolean label
 {
     margin-left: 20px;
 }
 
-/* line 167, ../sass/pods-front.scss */
 .pods-file label
 {
     padding-bottom: 8px;
 }
 
-/* line 171, ../sass/pods-front.scss */
 .pods-file input
 {
     display: none;
 }
 
-/* line 175, ../sass/pods-front.scss */
 ul.pods-files
 {
     margin: 0;
-    padding: 0;
+    padding: 0; 
 
     list-style: none;
 
@@ -253,26 +225,20 @@ ul.pods-files
     border-radius: 3px;
     background: #fbfbfb;
 }
-
-/* line 185, ../sass/pods-front.scss */
 ul.pods-files li
 {
     position: relative;
 
     margin: 0;
-    padding-bottom: 10px;
+    padding-bottom: 10px; 
 
     border-bottom: 1px solid #dfdfdf;
     background: #fff;
 }
-
-/* line 193, ../sass/pods-front.scss */
 ul.pods-files li span
 {
     display: inline-block;
 }
-
-/* line 197, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-reorder
 {
     position: absolute;
@@ -281,16 +247,12 @@ ul.pods-files li span.pods-file-reorder
 
     width: 30px;
 }
-
-/* line 204, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-reorder img
 {
-    display: block;
+    display: block; 
 
     cursor: move;
 }
-
-/* line 209, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-thumb
 {
     position: absolute;
@@ -299,24 +261,18 @@ ul.pods-files li span.pods-file-thumb
 
     width: 45px;
 }
-
-/* line 216, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-thumb .pinkynail
 {
     float: none;
 
     max-width: 40px;
-    max-height: 40px;
+    max-height: 40px; 
     margin: 0;
 }
-
-/* line 223, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-name
 {
     padding: 5px 35px 0 85px;
 }
-
-/* line 227, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-remove
 {
     position: absolute;
@@ -325,114 +281,88 @@ ul.pods-files li span.pods-file-remove
 
     width: 25px;
 }
-
-/* line 234, ../sass/pods-front.scss */
 ul.pods-files li span.pods-file-remove img
 {
-    display: block;
+    display: block; 
 
     cursor: pointer;
 }
 
-/* line 239, ../sass/pods-front.scss */
 .pods-pick-checkbox ul,
 .pods-pick-radio ul
 {
-    margin-left: 0;
+    margin-left: 0; 
     padding-left: 0;
 }
 
-/* line 244, ../sass/pods-front.scss */
 .pods-pick-values
 {
     overflow: auto;
 
     min-width: 125px;
-    padding: 2px 0;
+    padding: 2px 0; 
 
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     background: #fff;
 }
-
-/* line 253, ../sass/pods-front.scss */
 .pods-pick-values ul
 {
     overflow: auto;
 }
-
-/* line 257, ../sass/pods-front.scss */
 .pods-pick-values li
 {
     line-height: 1em;
 
     margin: 0;
-    padding: 3px 6px 2px;
+    padding: 3px 6px 2px; 
 
     border-bottom: 1px solid #f4f4f4;
 }
-
-/* line 264, ../sass/pods-front.scss */
 .pods-pick-values li:nth-child(even)
 {
     background: #fcfcfc;
 }
-
-/* line 268, ../sass/pods-front.scss */
 .pods-pick-values label
 {
     padding-bottom: 3px;
 }
-
-/* line 272, ../sass/pods-front.scss */
 .pods-pick-values li:last-of-type
 {
     border-bottom: 0;
 }
-
-/* line 276, ../sass/pods-front.scss */
 .pods-pick-values li .pods-field
 {
     padding: 3px 0 2px;
 }
-
-/* line 280, ../sass/pods-front.scss */
 .pods-pick-values li .pods-boolean input
 {
     top: 0;
 }
-
-/* line 284, ../sass/pods-front.scss */
 .pods-pick-values li:hover
 {
     background: #ffffd8;
 }
 
-/* line 288, ../sass/pods-front.scss */
 select.pods-pick-multi
 {
     height: auto !important;
 }
 
-/* line 292, ../sass/pods-front.scss */
 .pods-field,
 p.pods-add-file
 {
     padding: 10px 0;
 }
 
-/* line 296, ../sass/pods-front.scss */
 div.pods-textfield input,
 .pods-textarea textarea
 {
     width: 100%;
 }
 
-/* line 300, ../sass/pods-front.scss */
 .pods-date input,
 .pods-number input
 {
     min-width: 125px;
 }
-
-/*# sourceMappingURL=pods-front.css.map */

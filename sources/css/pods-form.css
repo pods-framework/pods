@@ -7,12 +7,11 @@
 	Holds all the base form Sass
 */
 /* === Loop Rows === */
-/* line 8, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field
 {
     overflow: hidden;
 
-    min-width: 390px;
+    min-width: 390px; 
     margin: 0 0 15px 0;
     padding: 8px 0;
 
@@ -31,7 +30,6 @@
             border-bottom-left-radius: 3px;
     background: #fff;
 }
-/* line 17, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat
 {
     display: block;
@@ -39,40 +37,34 @@
     overflow: hidden;
 
     margin: 5px 0;
-    padding: 5px 10px;
+    padding: 5px 10px; 
 
     border-bottom: 1px solid #efefef;
 }
-/* line 25, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat:last-of-type
 {
-    margin-bottom: 0;
+    margin-bottom: 0; 
     padding-bottom: 0;
 
     border-bottom: 0 none;
 }
-/* line 32, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat:first-of-type
 {
-    margin-top: 0;
+    margin-top: 0; 
     padding-top: 0;
 }
-/* line 37, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat .CodeMirror
 {
     width: 100% !important;
 }
-/* line 41, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat textarea
 {
     width: 100%;
 }
-/* line 44, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-single-repeat select
 {
     margin-top: 5px;
 }
-/* line 51, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-repeat-handle
 {
     font-size: 25px;
@@ -90,22 +82,19 @@
 
     color: rgba(125, 125, 125, .5);
 }
-/* line 63, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-repeat-handle:hover
 {
     color: #7d7d7d;
 }
-/* line 69, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-repeat-name
 {
-    float: left;
+    float: left; 
 
     width: 85%;
 }
-/* line 74, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-repeat-delete
 {
-    font-size: 25px;
+    font-size: 25px; 
 
     float: right;
 
@@ -115,74 +104,68 @@
 
     color: rgba(139, 0, 0, .3);
 }
-/* line 82, ../sass/partials/_forms.scss */
 .pods-form-ui-row-type-repeat .pods-repeating-field .pods-repeat-delete:hover
 {
-    cursor: pointer;
+    cursor: pointer; 
 
     color: rgba(139, 0, 0, .8);
 }
-/* line 92, ../sass/partials/_forms.scss */
+
 .pods-form-ui-row-type-repeat .pods-collapse
 {
-    display: block;
+    display: block; 
     overflow: hidden;
 
     max-height: 80px;
 }
-/* line 99, ../sass/partials/_forms.scss */
+
 .pods-form-ui-row-type-repeat .pods-field-add
 {
     margin-top: 15px;
 }
 
 /* === FRONT FORM === */
-/* line 109, ../sass/partials/_forms.scss */
 .pods-form-front ul.pods-form-fields
 {
-    margin: 0;
+    margin: 0; 
 
     list-style: none;
 }
-/* line 115, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-field-label
 {
-    float: left;
+    float: left; 
 
     width: 20%;
     min-width: 150px;
     padding-top: 10px;
 }
-/* line 123, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-field-input
 {
-    float: left;
+    float: left; 
 
     width: 75%;
     min-width: 200px;
 }
-/* line 128, ../sass/partials/_forms.scss */
 .pods-form-front .pods-field-input input
 {
     width: 95%;
 }
-/* line 132, ../sass/partials/_forms.scss */
 .pods-form-front .pods-field-input .quicktags-toolbar input
 {
     display: inline-block;
 
     width: auto;
 }
-/* line 138, ../sass/partials/_forms.scss */
 .pods-form-front .pods-field-input .pods-boolean input
 {
     width: auto;
 }
-/* line 142, ../sass/partials/_forms.scss */
 .pods-form-front .pods-field-input select
 {
     min-width: 200px;
-    margin-top: 10px;
+    margin-top: 10px; 
 
     border: 1px solid #ccc;
     -webkit-border-top-left-radius: 3px;
@@ -198,50 +181,48 @@
     -moz-border-radius-bottomleft: 3px;
             border-bottom-left-radius: 3px;
 }
-/* line 150, ../sass/partials/_forms.scss */
 .pods-form-front .pods-field-input .CodeMirror
 {
     width: auto;
 }
-/* line 157, ../sass/partials/_forms.scss */
+
 .pods-form-front table.pods-metabox
 {
     width: 100%;
 }
-/* line 161, ../sass/partials/_forms.scss */
+
 .pods-form-front ul.pods-files li.pods-file-icon img
 {
     width: 40px;
 }
-/* line 165, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-file-add
 {
     display: block;
 
     margin: 10px;
 }
-/* line 170, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-submit
 {
     float: right;
 }
-/* line 174, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-validate-error-message
 {
     padding: 5px 10px 4px;
 }
-/* line 178, ../sass/partials/_forms.scss */
+
 .pods-form-front .pods-submittable-fields:after,
 .pods-form-front li.pods-field:after
 {
-    display: block;
+    display: block; 
     visibility: hidden;
     clear: both;
 
     content: '.';
 }
 
-/* line 186, ../sass/partials/_forms.scss */
 .pods-form-front-success
 {
     margin: 10px 0;
@@ -253,26 +234,25 @@
 }
 
 /* === FORM TABLE === */
-/* line 199, ../sass/partials/_forms.scss */
 .form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
 .form-table tr.pods-field.pods-form-ui-row-type-file > td
 {
     padding: 0;
 }
-/* line 204, ../sass/partials/_forms.scss */
+
 .form-table tr.pods-field > td
 {
     line-height: inherit;
 
     padding: 10px 0;
 }
-/* line 209, ../sass/partials/_forms.scss */
+
 .form-table tr:last-child > th,
 .form-table tr:last-child > td
 {
     border-bottom: none;
 }
-/* line 217, ../sass/partials/_forms.scss */
+
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
 .form-table.pods-form-ui-table-type-file tr.form-field > td
 {
@@ -282,72 +262,65 @@
 /**
 	This should hold all the field Sass for Pods
 **/
-/* line 19, ../sass/partials/_fields.scss */
 .pods-field label
 {
     display: inline-block;
 
-    padding: 0 0 4px 2px;
+    padding: 0 0 4px 2px; 
 
     cursor: pointer;
 }
-/* line 26, ../sass/partials/_fields.scss */
+
 .pods-field input,
 .pods-field textarea
 {
     display: block;
 }
-/* line 32, ../sass/partials/_fields.scss */
+
 .pods-field .quicktags-toolbar input
 {
     display: inline-block;
 
     width: auto;
 }
-/* line 41, ../sass/partials/_fields.scss */
+
 .pods-field p.pods-field-comment
 {
     font-size: .9em;
     font-style: italic;
 
-    margin: 5px 0 0 2px !important;
+    margin: 5px 0 0 2px !important; 
 
     color: #aaa;
 }
 
-/* line 52, ../sass/partials/_fields.scss */
 .pods-field-option
 {
     display: block;
     clear: both;
     overflow: hidden;
 
-    min-height: 26px;
+    min-height: 26px; 
     padding: 10px 10px 10px 10px;
 
     border-bottom: 1px solid #ccc;
 }
-/* line 60, ../sass/partials/_fields.scss */
 .pods-field-option:hover
 {
     background: #f8f8f8;
 }
-/* line 64, ../sass/partials/_fields.scss */
 .pods-field-option:nth-child(even)
 {
     background: #fcfcfc;
 }
-/* line 66, ../sass/partials/_fields.scss */
 .pods-field-option:nth-child(even):hover
 {
     background: #f8f8f8;
 }
-/* line 72, ../sass/partials/_fields.scss */
 .pods-field-option:first-child
 {
     margin-top: -5px;
 }
-/* line 76, ../sass/partials/_fields.scss */
 .pods-field-option label
 {
     font-size: 14px !important;
@@ -355,11 +328,10 @@
     float: left;
 
     width: 30%;
-    margin-top: 7px;
+    margin-top: 7px; 
 
     color: black;
 }
-/* line 85, ../sass/partials/_fields.scss */
 .pods-field-option input
 {
     font-size: 14px;
@@ -370,67 +342,62 @@
 
     border-color: #c9c9c9;
 }
-/* line 93, ../sass/partials/_fields.scss */
 .pods-field-option select
 {
-    font-size: 13px;
+    font-size: 13px; 
 
     float: right;
 
     width: 65%;
 }
-/* line 98, ../sass/partials/_fields.scss */
 .pods-field-option select:focus
 {
     background: #ffc;
 }
-/* line 104, ../sass/partials/_fields.scss */
 .pods-field-option small
 {
     font-size: 12px;
 
-    display: inline-block;
+    display: inline-block; 
 
     margin-top: 6px;
 }
 
 /* === MANAGE FIELDS === */
-/* line 117, ../sass/partials/_fields.scss */
 div.pods-manage-field div
 {
     overflow: hidden;
 }
-/* line 121, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field-option,
 div.pods-manage-field .pods-field-option-group
 {
-    padding: 10px;
+    padding: 10px; 
 
     border-bottom: 1px solid #dfdfdf;
     background: #fcfcfc;
 }
-/* line 127, ../sass/partials/_fields.scss */
 div.pods-manage-field .pods-field-option:nth-child(even),
 div.pods-manage-field .pods-field-option-group:nth-child(even)
 {
     background: #fff;
 }
-/* line 134, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field
 {
     position: relative;
 }
-/* line 138, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field-option label,
 div.pods-manage-field .pods-field-option-group .pods-field-option-group-label
 {
     float: left;
 
     width: 30%;
-    max-width: 150px;
+    max-width: 150px; 
     padding-top: 4px;
 }
-/* line 148, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field-option input[type='text'],
 div.pods-manage-field .pods-field-option select,
 div.pods-manage-field .pods-field-option textarea
@@ -439,22 +406,22 @@ div.pods-manage-field .pods-field-option textarea
     float: left;
 
     width: 65%;
-    max-width: 300px;
+    max-width: 300px; 
     margin-left: 22px;
 }
-/* line 158, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field-option div select
 {
     float: none;
 
     width: 100%;
 }
-/* line 167, ../sass/partials/_fields.scss */
+
 div.pods-manage-field .pods-field-option-group p.pods-field-option-group-label
 {
     margin-top: 0;
 }
-/* line 175, ../sass/partials/_fields.scss */
+
 div.pods-manage-field input[type='radio']
 {
     position: absolute;
@@ -468,64 +435,56 @@ div.pods-manage-field input[type='radio']
 
     vertical-align: middle;
 }
-/* line 186, ../sass/partials/_fields.scss */
+
 div.pods-manage-field input.pods-form-ui-no-label
 {
     position: relative;
 }
 
 /* === PODS FORM === */
-/* line 197, ../sass/partials/_fields.scss */
 .pods-form
 {
     overflow: hidden;
 }
-/* line 200, ../sass/partials/_fields.scss */
 .pods-form .pods-validate-error-message
 {
     font-weight: bold;
 
-    display: inline-block;
+    display: inline-block; 
 
     padding: 2px 0 5px;
 
     color: #790000;
 }
-/* line 208, ../sass/partials/_fields.scss */
 .pods-form div.pods-form-ui-field-type-avatar:after
 {
-    display: block;
+    display: block; 
     visibility: hidden;
     clear: both;
 
     content: '.';
 }
-/* line 212, ../sass/partials/_fields.scss */
 .pods-form img.waiting
 {
     display: none;
 
     vertical-align: middle;
 }
-/* line 218, ../sass/partials/_fields.scss */
 .pods-form .pods-field-input textarea
 {
     width: 95%;
     min-height: 200px;
 }
-/* line 224, ../sass/partials/_fields.scss */
 .pods-form .pods-field table.pods-metabox
 {
     width: 95%;
 }
 
 /* === BOOLEAN INPUTS === */
-/* line 2, ../sass/partials/fields/_boolean.scss */
 .pods-boolean
 {
     position: relative;
 }
-/* line 5, ../sass/partials/fields/_boolean.scss */
 .pods-boolean input
 {
     position: absolute;
@@ -534,44 +493,39 @@ div.pods-manage-field input.pods-form-ui-no-label
 
     display: block;
 
-    width: auto;
+    width: auto; 
     min-height: 16px;
     margin: 1px 7px 0 0;
     padding: 0;
 }
-/* line 16, ../sass/partials/fields/_boolean.scss */
 .pods-boolean label
 {
     margin-left: 20px;
     padding-top: 1px;
 }
-/* line 21, ../sass/partials/fields/_boolean.scss */
 .pods-boolean:hover
 {
     background: #ffffd8;
 }
 
-/* line 30, ../sass/partials/fields/_boolean.scss */
 .pods-manage-field .pods-field-option .pods-field.pods-boolean
 {
     display: block;
     float: left;
 
     width: 65%;
-    max-width: 300px;
+    max-width: 300px; 
     margin-left: 22px;
 }
-/* line 42, ../sass/partials/fields/_boolean.scss */
+
 .pods-manage-field .pods-field.pods-boolean
 {
     margin: 5px 0;
 }
-/* line 45, ../sass/partials/fields/_boolean.scss */
 .pods-manage-field .pods-field.pods-boolean:hover
 {
     background: #ffffd8;
 }
-/* line 49, ../sass/partials/fields/_boolean.scss */
 .pods-manage-field .pods-field.pods-boolean label
 {
     display: block;
@@ -579,26 +533,23 @@ div.pods-manage-field input.pods-form-ui-no-label
 
     width: auto;
     max-width: 100%;
-    margin-left: 20px;
+    margin-left: 20px; 
     padding-top: 0;
     padding-top: 0;
 }
-/* line 55, ../sass/partials/fields/_boolean.scss */
 .pods-manage-field .pods-field.pods-boolean input
 {
     top: 0;
 }
 
 /* === PODS DATE === */
-/* line 4, ../sass/partials/fields/_date.scss */
 .pods-date input
 {
     min-width: 125px;
 }
-/* line 7, ../sass/partials/fields/_date.scss */
 .pods-date input.pods-date-field.hasDatepicker
 {
-    width: 150px;
+    width: 150px; 
     padding-top: 6px !important;
     padding-left: 25px !important;
 
@@ -608,14 +559,13 @@ div.pods-manage-field input.pods-form-ui-no-label
 }
 
 /* === PODS PICK === */
-/* line 2, ../sass/partials/fields/_pick.scss */
 .pods-pick-values
 {
     overflow: auto;
 
     min-width: 125px;
     max-height: 200px;
-    padding: 2px 0;
+    padding: 2px 0; 
 
     border: 1px solid #dfdfdf;
     -webkit-border-top-left-radius: 3px;
@@ -632,155 +582,136 @@ div.pods-manage-field input.pods-form-ui-no-label
             border-bottom-left-radius: 3px;
     background: #fff;
 }
-/* line 11, ../sass/partials/fields/_pick.scss */
 .pods-pick-values ul
 {
     overflow: auto;
 
     margin: 0;
 }
-/* line 17, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li
 {
     line-height: 1em;
 
     margin: 0;
-    padding: 3px 6px 2px;
+    padding: 3px 6px 2px; 
 
     border-bottom: 1px solid #f4f4f4;
 }
-/* line 24, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li:nth-child(even)
 {
     background: #fcfcfc;
 }
-/* line 27, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li:last-of-type
 {
     border-bottom: 0;
 }
-/* line 31, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li .pods-field
 {
     padding: 3px 0 2px;
 }
-/* line 36, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li .pods-boolean input
 {
     top: 5px;
 }
-/* line 40, ../sass/partials/fields/_pick.scss */
 .pods-pick-values li:hover
 {
     background: #ffffd8;
 }
-/* line 47, ../sass/partials/fields/_pick.scss */
 .pods-pick-values label
 {
     display: block;
 
-    padding-top: 3px;
+    padding-top: 3px; 
     padding-bottom: 3px;
 }
 
-/* line 59, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values
 {
     display: block;
     float: left;
 
     width: 65%;
-    max-width: 300px;
+    max-width: 300px; 
     margin-left: 22px;
 }
-/* line 66, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values label
 {
     display: block;
 
-    margin-left: 20px;
+    margin-left: 20px; 
     padding-top: 0;
 }
-/* line 73, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values ul
 {
     overflow: auto;
 
     margin: 5px 0;
 }
-/* line 77, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values ul .pods-field.pods-boolean
 {
     margin: 0;
 }
-/* line 83, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values li
 {
     position: relative;
 }
-/* line 88, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values.pods-zebra
 {
     width: 100%;
     max-width: 100%;
 }
-/* line 92, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean
 {
     padding: 3px;
 }
-/* line 99, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values li.pods-zebra-odd
 {
     display: block;
     float: left;
-    clear: both;
+    clear: both; 
 
     width: 50%;
 }
-/* line 107, ../sass/partials/fields/_pick.scss */
 .pods-manage-field .pods-pick-values li.pods-zebra-even
 {
     display: block;
     float: left;
-    clear: none;
+    clear: none; 
 
     width: 50%;
 }
-/* line 123, ../sass/partials/fields/_pick.scss */
+
 .pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean
 {
     float: none;
 
     width: auto;
-    max-width: 100%;
+    max-width: 100%; 
     margin-left: 0;
 }
-/* line 131, ../sass/partials/fields/_pick.scss */
+
 .pods-manage-field .pods-field-option .pods-pick-values label
 {
     float: none;
 
     width: auto;
-    max-width: 100%;
+    max-width: 100%; 
     padding-top: 0;
 }
 
-/* line 146, ../sass/partials/fields/_pick.scss */
 .pods-form div.pods-form-ui-field-type-pick:after
 {
-    display: block;
+    display: block; 
     visibility: hidden;
     clear: both;
 
     content: '.';
 }
 
-/* line 152, ../sass/partials/fields/_pick.scss */
 select.pods-form-ui-field-type-pick[multiple]
 {
     width: 100%;
-    max-height: 200px;
+    max-height: 200px; 
 
     border: 1px solid #dfdfdf;
     -webkit-border-top-left-radius: 3px;
@@ -799,29 +730,27 @@ select.pods-form-ui-field-type-pick[multiple]
 }
 
 /* === SELECT 2 === */
-/* line 4, ../sass/partials/fields/_select2.scss */
 .pods-manage-field .pods-select2
 {
     display: block;
     float: left;
 
-    width: 65%;
+    width: 65%; 
     margin-left: 22px;
 }
-/* line 12, ../sass/partials/fields/_select2.scss */
+
 .pods-manage-field .pods-form-ui-field-type-select2
 {
     width: auto;
     min-width: 30%;
     min-height: 28px;
 }
-/* line 19, ../sass/partials/fields/_select2.scss */
+
 .pods-manage-field .pods-select2 .select2-container-multi .select2-choices .select2-search-field input
 {
     height: auto;
 }
 
-/* line 25, ../sass/partials/fields/_select2.scss */
 .pods-form-ui-field-type-select2
 {
     width: auto;
@@ -829,44 +758,38 @@ select.pods-form-ui-field-type-pick[multiple]
     min-height: 28px;
 }
 
-/* line 31, ../sass/partials/fields/_select2.scss */
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input
 {
     height: auto;
 }
 
 /* === PODS NUMBER === */
-/* line 3, ../sass/partials/fields/_number.scss */
 .pods-number input
 {
     min-width: 125px;
 }
 
 /* === PODS SLIDER FIELD === */
-/* line 2, ../sass/partials/fields/_slider.scss */
 .pods-slider-field
 {
     max-width: 300px;
 }
 
-/* line 8, ../sass/partials/fields/_slider.scss */
 .pods-manage-field .pods-slider-field
 {
     display: block;
     float: left;
 
     width: 65%;
-    max-width: 300px;
+    max-width: 300px; 
     margin-left: 22px;
 }
 
-/* line 4, ../sass/partials/fields/_wysiwyg.scss */
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea
 {
     width: 100%;
 }
 
-/* line 4, ../sass/partials/fields/_file.scss */
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file
 {
     display: block;
@@ -877,19 +800,16 @@ select.pods-form-ui-field-type-pick[multiple]
     margin-left: 22px;
     padding-bottom: 8px;
 }
-/* line 12, ../sass/partials/fields/_file.scss */
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table
 {
     margin-top: 0;
 }
-/* line 15, ../sass/partials/fields/_file.scss */
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table tr.form-field td
 {
     padding: 0;
 
     border-bottom: none;
 }
-/* line 22, ../sass/partials/fields/_file.scss */
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-files li.pods-file-name
 {
     right: 30px;
@@ -897,55 +817,47 @@ select.pods-form-ui-field-type-pick[multiple]
 
     overflow: hidden;
 
-    white-space: nowrap;
+    white-space: nowrap; 
     text-overflow: ellipsis;
 }
 
-/* line 39, ../sass/partials/fields/_file.scss */
 .pods-form div.pods-form-ui-field-type-file:after
 {
-    display: block;
+    display: block; 
     visibility: hidden;
     clear: both;
 
     content: '.';
 }
 
-/* line 3, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper
 {
     float: left;
 
     margin: 8px 5px 0 30px;
 }
-/* line 7, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox
 {
     float: left;
 
     margin-bottom: 5px;
 }
-/* line 12, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox.pods-checkbox-column-one
 {
     width: 100%;
 }
-/* line 15, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox.pods-checkbox-column-two
 {
     width: 50%;
 }
-/* line 18, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox.pods-checkbox-column-three
 {
     width: 33%;
 }
-/* line 21, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper .pods-single-checkbox.pods-checkbox-column-four
 {
     width: 25%;
 }
-/* line 27, ../sass/partials/fields/_checkbox.scss */
 .pods-field-option .pods-checkbox-wrapper input[type='checkbox']
 {
     float: left;
@@ -953,13 +865,12 @@ select.pods-form-ui-field-type-pick[multiple]
     width: 10px;
     margin: 8px 5px 0 0;
 }
-/* line 37, ../sass/partials/fields/_checkbox.scss */
+
 .pods-field-option .pods-field input[type=checkbox]:focus + label
 {
     background: #ffc;
 }
 
-/* line 46, ../sass/partials/fields/_checkbox.scss */
 .pods-manage-field input[type='checkbox']
 {
     position: absolute;
@@ -974,36 +885,32 @@ select.pods-form-ui-field-type-pick[multiple]
     vertical-align: middle;
 }
 
-/* line 5, ../sass/pods-form.scss */
 #post-body
 {
     border: none;
     background: none;
 }
 
-/* line 10, ../sass/pods-form.scss */
 .pods-admin #navigation-actions .previous-item
 {
     display: block;
     float: left;
 
-    width: 50%;
+    width: 50%; 
 
     text-align: left;
 }
 
-/* line 17, ../sass/pods-form.scss */
 .pods-admin #navigation-actions .next-item
 {
     display: block;
     float: right;
 
-    width: 50%;
+    width: 50%; 
 
     text-align: right;
 }
 
-/* line 24, ../sass/pods-form.scss */
 .pods-pick select
 {
     display: block;
@@ -1011,27 +918,23 @@ select.pods-form-ui-field-type-pick[multiple]
     min-width: 125px;
 }
 
-/* line 30, ../sass/pods-form.scss */
 select.pods-pick-multi
 {
     height: auto !important;
 }
 
-/* line 34, ../sass/pods-form.scss */
 .pods-field,
 p.pods-add-file
 {
     padding: 10px 0;
 }
 
-/* line 38, ../sass/pods-form.scss */
 div.pods-textfield input,
 .pods-textarea textarea
 {
     width: 100%;
 }
 
-/* line 43, ../sass/pods-form.scss */
 textarea.pods-form-ui-field-type-paragraph
 {
     font-family: monospace;
@@ -1041,20 +944,17 @@ textarea.pods-form-ui-field-type-paragraph
     resize: vertical;
 }
 
-/* line 49, ../sass/pods-form.scss */
 input.pods-form-ui-field-type-color
 {
     width: 80px;
 }
 
-/* line 53, ../sass/pods-form.scss */
 .form-table tr.pods-field:last-child > th,
 .form-table tr.pods-field:last-child > td
 {
     border-bottom: none;
 }
 
-/* line 58, ../sass/pods-form.scss */
 .form-table tr.pods-field > td
 {
     line-height: inherit;
@@ -1062,28 +962,24 @@ input.pods-form-ui-field-type-color
     padding: 10px 0;
 }
 
-/* line 63, ../sass/pods-form.scss */
 .form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
 .form-table tr.pods-field.pods-form-ui-row-type-file > td
 {
     padding: 0;
 }
 
-/* line 68, ../sass/pods-form.scss */
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
 .form-table.pods-form-ui-table-type-file tr.form-field > td
 {
     padding: 0 10px;
 }
 
-/* line 73, ../sass/pods-form.scss */
 .pods-field .wp-editor-container
 {
     background-color: #fff;
 }
 
 /* Codemirror */
-/* line 78, ../sass/pods-form.scss */
 .pods-field .CodeMirror
 {
     width: 95%;
@@ -1092,23 +988,19 @@ input.pods-form-ui-field-type-color
     background-color: #fff;
 }
 
-/* line 84, ../sass/pods-form.scss */
 .pods-form-ui-row-type-hidden
 {
     display: none;
     visibility: hidden;
 }
 
-/* line 89, ../sass/pods-form.scss */
 .pods-meta div.pods-form-ui-field-type-avatar:after,
 .pods-meta div.pods-form-ui-field-type-file:after,
 .pods-meta div.pods-form-ui-field-type-pick:after
 {
-    display: block;
+    display: block; 
     visibility: hidden;
     clear: both;
 
     content: '.';
 }
-
-/*# sourceMappingURL=pods-form.css.map */

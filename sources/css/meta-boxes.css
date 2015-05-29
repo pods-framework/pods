@@ -1,4 +1,3 @@
-/* line 1, ../sass/meta-boxes.scss */
 table.DMB_metabox td,
 table.DMB_metabox th
 {
@@ -6,62 +5,54 @@ table.DMB_metabox th
     /* Optional borders between fields */
 }
 
-/* line 4, ../sass/meta-boxes.scss */
 table.DMB_metabox th
 {
-    font-weight: bold;
+    font-weight: bold; 
 
     text-align: right;
 }
 
-/* line 8, ../sass/meta-boxes.scss */
 table.DMB_metabox th label
 {
-    display: block;
+    display: block; 
 
     margin-top: 6px;
 }
 
-/* line 12, ../sass/meta-boxes.scss */
 p.DMB_metabox_description
 {
     font-style: italic;
 
-    margin: 2px 0 !important;
+    margin: 2px 0 !important; 
 
     color: #aaa;
 }
 
-/* line 17, ../sass/meta-boxes.scss */
 span.DMB_metabox_description
 {
-    font-style: italic;
+    font-style: italic; 
 
     color: #aaa;
 }
 
-/* line 21, ../sass/meta-boxes.scss */
 input.DMB_text_small
 {
     width: 100px;
     margin-right: 15px;
 }
 
-/* line 25, ../sass/meta-boxes.scss */
 input.DMB_text_money
 {
     width: 90px;
     margin-right: 15px;
 }
 
-/* line 29, ../sass/meta-boxes.scss */
 input.DMB_text_medium
 {
     width: 230px;
     margin-right: 15px;
 }
 
-/* line 33, ../sass/meta-boxes.scss */
 table.DMB_metabox input,
 table.DMB_metabox textarea
 {
@@ -70,7 +61,6 @@ table.DMB_metabox textarea
     padding: 5px;
 }
 
-/* line 37, ../sass/meta-boxes.scss */
 table.DMB_metabox li
 {
     font-size: 11px;
@@ -81,13 +71,11 @@ table.DMB_metabox li
     margin: 0 10px;
 }
 
-/* line 43, ../sass/meta-boxes.scss */
 table.DMB_metabox ul
 {
     padding-top: 5px;
 }
 
-/* line 46, ../sass/meta-boxes.scss */
 table.DMB_metabox select
 {
     font-size: 11px;
@@ -95,29 +83,25 @@ table.DMB_metabox select
     padding: 5px 10px;
 }
 
-/* line 50, ../sass/meta-boxes.scss */
 table.DMB_metabox input:focus,
 table.DMB_metabox textarea:focus
 {
     background: #fffff8;
 }
 
-/* line 53, ../sass/meta-boxes.scss */
 .DMB_metabox_title
 {
-    font: italic 24px/35px Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif;
+    font: italic 24px/35px Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif; 
 
     margin: 0 0 5px 0;
     padding: 5px 0 0 0;
 }
 
-/* line 58, ../sass/meta-boxes.scss */
 .DMB_radio_inline
 {
     padding: 4px 0 0 0;
 }
 
-/* line 61, ../sass/meta-boxes.scss */
 .DMB_radio_inline_option
 {
     display: inline;
@@ -125,49 +109,41 @@ table.DMB_metabox textarea:focus
     padding-right: 18px;
 }
 
-/* line 65, ../sass/meta-boxes.scss */
 table.DMB_metabox input[type='radio']
 {
     margin-right: 3px;
 }
 
-/* line 68, ../sass/meta-boxes.scss */
 table.DMB_metabox input[type='checkbox']
 {
     margin-right: 6px;
 }
 
-/* line 71, ../sass/meta-boxes.scss */
 table.DMB_metabox .mceLayout
 {
     border: 1px solid #dfdfdf !important;
 }
 
-/* line 74, ../sass/meta-boxes.scss */
 table.DMB_metabox .meta_mce
 {
     width: 97%;
 }
 
-/* line 77, ../sass/meta-boxes.scss */
 table.DMB_metabox .meta_mce textarea
 {
     width: 100%;
 }
 
-/* line 80, ../sass/meta-boxes.scss */
 table.DMB_metabox .DMB_upload_status
 {
     margin: 10px 0 0 0;
 }
 
-/* line 83, ../sass/meta-boxes.scss */
 table.DMB_metabox .DMB_upload_status .img_status
 {
     position: relative;
 }
 
-/* line 86, ../sass/meta-boxes.scss */
 table.DMB_metabox .DMB_upload_status .img_status img
 {
     max-width: 350px;
@@ -175,23 +151,19 @@ table.DMB_metabox .DMB_upload_status .img_status img
 
     border: 1px solid #dfdfdf;
     -moz-border-radius: 2px;
-         border-radius: 2px;
+         border-radius: 2px; 
     background: #fafafa;
 }
 
-/* line 94, ../sass/meta-boxes.scss */
 table.DMB_metabox .DMB_upload_status .img_status .remove_file_button
 {
     width: 16px;
-    height: 16px;
+    height: 16px; 
 
     text-indent: -9999px;
 }
 
-/* line 101, ../sass/meta-boxes.scss */
 table.DMB_metabox thead tr
 {
     border-bottom: 1px solid #ccc;
 }
-
-/*# sourceMappingURL=meta-boxes.css.map */

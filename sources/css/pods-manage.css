@@ -1,48 +1,46 @@
-/* line 1, ../sass/pods-manage.scss */
 ol.form-fields
 {
-    margin: 0;
+    margin: 0; 
     padding-left: 0;
 
     list-style: none;
 }
 
-/* line 7, ../sass/pods-manage.scss */
 .chzn-container
 {
     display: block;
 }
 
-/* line 11, ../sass/pods-manage.scss */
 ul.ui-sortable li
 {
     cursor: move;
 }
-
-/* line 15, ../sass/pods-manage.scss */
 ul.ui-sortable li:hover
 {
     background: #ffffd8;
 }
 
-/* line 19, ../sass/pods-manage.scss */
 .ui-slider-handle
 {
     z-index: 0 !important;
 }
 
-/* line 23, ../sass/pods-manage.scss */
 form.pods-manage .pods-field label
 {
     display: inline-block;
 
-    padding: 0 0 4px 2px;
+    padding: 0 0 4px 2px; 
 
     cursor: pointer;
 }
 
-/* line 29, ../sass/pods-manage.scss */
-form.pods-manage .pods-field input,
+form.pods-manage .pods-field input
+{
+    display: block;
+
+    width: 100%;
+}
+
 .pods-field textarea
 {
     display: block;
@@ -50,7 +48,6 @@ form.pods-manage .pods-field input,
     width: 100%;
 }
 
-/* line 34, ../sass/pods-manage.scss */
 form.pods-manage .pods-field textarea
 {
     font-family: monospace;
@@ -60,18 +57,16 @@ form.pods-manage .pods-field textarea
     resize: none;
 }
 
-/* line 40, ../sass/pods-manage.scss */
 form.pods-manage .pods-field p.pods-field-comment
 {
     font-size: .9em;
     font-style: italic;
 
-    margin: 5px 0 0 2px !important;
+    margin: 5px 0 0 2px !important; 
 
     color: #aaa;
 }
 
-/* line 47, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick select
 {
     display: block;
@@ -80,15 +75,12 @@ form.pods-manage .pods-pick select
     padding: 4px;
 }
 
-/* line 53, ../sass/pods-manage.scss */
 form.pods-manage .pods-boolean
 {
     position: relative;
 
     cursor: pointer;
 }
-
-/* line 58, ../sass/pods-manage.scss */
 form.pods-manage .pods-boolean input
 {
     position: absolute;
@@ -97,35 +89,30 @@ form.pods-manage .pods-boolean input
 
     display: block;
 
-    width: auto;
+    width: auto; 
     height: auto;
     margin: 1px 7px 0 0;
     padding: 0;
 }
-
-/* line 69, ../sass/pods-manage.scss */
 form.pods-manage .pods-boolean label
 {
     margin-left: 20px;
 }
 
-/* line 73, ../sass/pods-manage.scss */
 form.pods-manage .pods-file label
 {
     padding-bottom: 8px;
 }
 
-/* line 77, ../sass/pods-manage.scss */
 form.pods-manage .pods-file input
 {
     display: none;
 }
 
-/* line 81, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files
 {
     margin: 0;
-    padding: 0;
+    padding: 0; 
 
     list-style: none;
 
@@ -134,27 +121,21 @@ form.pods-manage ul.pods-files
     border-radius: 3px;
     background: #fbfbfb;
 }
-
-/* line 91, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li
 {
     position: relative;
 
     margin: 0;
-    padding-bottom: 10px;
+    padding-bottom: 10px; 
 
     border-bottom: 1px solid #dfdfdf;
     background: #fff;
 }
-
-/* line 99, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span
 {
     display: inline-block;
     float: none;
 }
-
-/* line 104, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-reorder
 {
     position: absolute;
@@ -163,16 +144,12 @@ form.pods-manage ul.pods-files li span.pods-file-reorder
 
     width: 30px;
 }
-
-/* line 111, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-reorder img
 {
-    display: block;
+    display: block; 
 
     cursor: move;
 }
-
-/* line 116, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-thumb
 {
     position: absolute;
@@ -181,24 +158,18 @@ form.pods-manage ul.pods-files li span.pods-file-thumb
 
     width: 45px;
 }
-
-/* line 123, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail
 {
     float: none;
 
     max-width: 40px !important;
-    max-height: 40px !important;
+    max-height: 40px !important; 
     margin: 0;
 }
-
-/* line 130, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-name
 {
     padding: 11px 35px 0 85px;
 }
-
-/* line 134, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-remove
 {
     position: absolute;
@@ -207,144 +178,117 @@ form.pods-manage ul.pods-files li span.pods-file-remove
 
     width: 25px;
 }
-
-/* line 141, ../sass/pods-manage.scss */
 form.pods-manage ul.pods-files li span.pods-file-remove img
 {
-    display: block;
+    display: block; 
 
     cursor: pointer;
 }
 
-/* line 146, ../sass/pods-manage.scss */
 .plupload-queue
 {
     width: 250px;
 }
 
-/* line 150, ../sass/pods-manage.scss */
 .plupload-progress
 {
     position: relative;
 }
-
-/* line 154, ../sass/pods-manage.scss */
 .plupload-progress .progress-bar
 {
     position: absolute;
 
     width: 0;
     height: 14px;
-    margin-left: 10px;
+    margin-left: 10px; 
 
     background: #4d4d4d;
 }
-
-/* line 162, ../sass/pods-manage.scss */
 .plupload-progress .file-name
 {
     vertical-align: top;
 }
 
-/* line 166, ../sass/pods-manage.scss */
 .pods-inline-files .plupload-progress
 {
     width: 150px;
 }
 
-/* line 170, ../sass/pods-manage.scss */
 .pods-inline-files li
 {
     margin-top: 10px;
 }
-
-/* line 174, ../sass/pods-manage.scss */
 .pods-inline-files li .file-name
 {
     vertical-align: top !important;
 }
-
-/* line 178, ../sass/pods-manage.scss */
 .pods-inline-files li .remove
 {
     cursor: pointer;
 }
 
-/* line 182, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values
 {
     overflow: auto;
 
     min-width: 125px;
-    padding: 2px 0;
+    padding: 2px 0; 
 
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     background: #fff;
 }
-
-/* line 191, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values ul
 {
     overflow: auto;
 }
-
-/* line 195, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li
 {
     line-height: 1em;
 
     margin: 0;
-    padding: 3px 6px 2px;
+    padding: 3px 6px 2px; 
 
     border-bottom: 1px solid #f4f4f4;
 }
-
-/* line 202, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li:nth-child(even)
 {
     background: #fcfcfc;
 }
-
-/* line 206, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values label
 {
-    padding-top: 3px;
+    padding-top: 3px; 
     padding-bottom: 3px;
 }
-
-/* line 211, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li:last-of-type
 {
     border-bottom: 0;
 }
-
-/* line 215, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li .pods-field
 {
     padding: 3px 0 2px;
 }
-
-/* line 219, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li .pods-boolean input
 {
     top: 5px;
 }
-
-/* line 223, ../sass/pods-manage.scss */
 form.pods-manage .pods-pick-values li:hover
 {
     background: #ffffd8;
 }
 
-/* line 227, ../sass/pods-manage.scss */
 form.pods-manage select.pods-pick-multi
 {
     height: auto !important;
 }
 
-/* line 231, ../sass/pods-manage.scss */
-form.pods-manage .pods-field,
+form.pods-manage .pods-field
+{
+    clear: both;
+
+    padding: 10px 0;
+}
+
 p.pods-add-file
 {
     clear: both;
@@ -352,48 +296,49 @@ p.pods-add-file
     padding: 10px 0;
 }
 
-/* line 236, ../sass/pods-manage.scss */
 form.pods-manage .pods-textfield input,
 .pods-textarea textarea
 {
     width: 100%;
 }
 
-/* line 240, ../sass/pods-manage.scss */
-form.pods-manage .pods-textfield input,
-form.pods-manage .pods-textarea textarea
+form.pods-manage .pods-textfield input
 {
     padding: 5px 7px;
 
     color: #808080;
 }
 
-/* line 245, ../sass/pods-manage.scss */
 form.pods-manage .pods-textarea textarea
 {
-    resize: vertical;
+    padding: 5px 7px;
+
+    resize: vertical; 
+
+    color: #808080;
 }
 
-/* line 249, ../sass/pods-manage.scss */
 form.pods-manage .pods-textfield input:focus,
 form.pods-manage .pods-textarea textarea:focus
 {
-    color: #000;
+    color: #000; 
     border-color: #a0a0a0;
     box-shadow: 0 0 5px rgba(0, 0, 0, .1);
 }
 
-/* line 255, ../sass/pods-manage.scss */
-form.pods-manage .pods-date input,
+form.pods-manage .pods-date input
+{
+    min-width: 125px;
+}
+
 .pods-number input
 {
     min-width: 125px;
 }
 
-/* line 259, ../sass/pods-manage.scss */
 form.pods-manage .pods-date input.pods-date-field.hasDatepicker
 {
-    width: 150px;
+    width: 150px; 
     padding-top: 6px !important;
     padding-left: 25px !important;
 
@@ -402,21 +347,18 @@ form.pods-manage .pods-date input.pods-date-field.hasDatepicker
     background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
 }
 
-/* line 267, ../sass/pods-manage.scss */
 form.pods-manage ul.ui-sortable li:hover
 {
-    cursor: move;
+    cursor: move; 
 
     background: #ffffd8;
 }
 
-/* line 272, ../sass/pods-manage.scss */
 form.pods-manage .pods-slider-field
 {
     margin: 10px 0;
 }
 
-/* line 276, ../sass/pods-manage.scss */
 form.pods-manage .pods-slider-field-display
 {
     padding: 10px 0;
@@ -425,19 +367,15 @@ form.pods-manage .pods-slider-field-display
 /**
  * Plupload queue
  */
-/* line 284, ../sass/pods-manage.scss */
 table.plupload-queue tr.hide
 {
     display: none;
 }
 
-/* line 288, ../sass/pods-manage.scss */
 table.plupload-queue td.progress
 {
     width: 175px;
 }
-
-/* line 292, ../sass/pods-manage.scss */
 table.plupload-queue td.progress .progress-bar
 {
     width: 0;
@@ -446,10 +384,7 @@ table.plupload-queue td.progress .progress-bar
     background: black;
 }
 
-/* line 298, ../sass/pods-manage.scss */
 tr.form-field .pods-boolean input
 {
     width: 20%;
 }
-
-/*# sourceMappingURL=pods-manage.css.map */

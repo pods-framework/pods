@@ -2,12 +2,12 @@
 {
     font-family: 'pods';
     font-weight: normal;
-    font-style: normal;
+    font-style: normal; 
 
     src: url('fonts/pods.eot');
     src: url('fonts/pods.eot?#iefix') format('embedded-opentype'), url('fonts/pods.woff') format('woff'), url('fonts/pods.ttf') format('truetype'), url('fonts/pods.svg#pods') format('svg');
 }
-/* line 15, ../sass/pods-font.scss */
+
 [data-icon]:before
 {
     font-family: 'pods' !important;
@@ -24,7 +24,6 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 28, ../sass/pods-font.scss */
 [class^='pods-icon-']:before,
 [class*=' pods-icon-']:before
 {
@@ -41,13 +40,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 41, ../sass/pods-font.scss */
 .pods-icon-dashicon:before
 {
     content: 'c';
 }
 
-/* line 45, ../sass/pods-font.scss */
 .dashicons-pods:before
 {
     font-family: 'pods' !important;
@@ -55,5 +52,3 @@
 
     content: 'c';
 }
-
-/*# sourceMappingURL=pods-font.css.map */

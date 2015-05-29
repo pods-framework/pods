@@ -17,7 +17,7 @@ WP_CORE_DIR=/tmp/wordpress/
 set -ex
 
 install_wp() {
-	if [ $WP_CORE_DIR == '' ]; then
+	if [ $WP_CORE_DIR == '' && -z TRAVIS_JOB_ID ]; then
 		rm -rf $WP_CORE_DIR
 	fi
 
@@ -44,7 +44,7 @@ install_test_suite() {
 	fi
 
 	# set up testing suite
-	if [ $WP_TESTS_DIR == '' ]; then
+	if [ $WP_TESTS_DIR == '' && -z TRAVIS_JOB_ID ]; then
 		rm -rf $WP_TESTS_DIR
 	fi
 
@@ -77,8 +77,10 @@ install_db() {
 		fi
 	fi
 
-	# drop database
-	mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA -e "DROP DATABASE IF EXISTS $DB_NAME"
+	if [ -z TRAVIS_JOB_ID ]; then
+		# drop database
+		mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA -e "DROP DATABASE IF EXISTS $DB_NAME"
+	fi
 
 	# create database
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA

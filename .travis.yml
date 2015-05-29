@@ -1,5 +1,7 @@
 language: php
 
+sudo: false
+
 php:
     - 5.3
     - 5.4
@@ -12,9 +14,7 @@ env:
     - WP_VERSION=4.2 WP_MULTISITE=0
     - WP_VERSION=4.2 WP_MULTISITE=1
     - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=1
     - WP_VERSION=4.0 WP_MULTISITE=0
-    - WP_VERSION=4.0 WP_MULTISITE=1
 
 matrix:
     allow_failures:

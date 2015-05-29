@@ -2,10 +2,13 @@
 * text=auto
 
 # Ignore
-/tests export-ignore
 /sources export-ignore
-kill-travis.php export-ignore
+/tests export-ignore
 .travis.yml export-ignore
+composer.json export-ignore
+CONTRIBUTING.md export-ignore
 Gruntfile.js export-ignore
+git-workflow.md export-ignore
+kill-travis.php export-ignore
 package.json export-ignore
 phpunit.xml.dist export-ignore

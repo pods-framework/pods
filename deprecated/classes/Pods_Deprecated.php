@@ -107,7 +107,7 @@ class Pods_Deprecated {
 
 			// Replace the input helper name with the helper code
 			if ( ! empty( $field['input_helper'] ) ) {
-				$helper                = $this->obj->api->load_helper( array( 'name' => $field['input_helper'] ) );
+				$helper                = pods_api()->load_helper( array( 'name' => $field['input_helper'] ) );
 				$field['input_helper'] = '';
 
 				if ( ! empty( $helper ) ) {
@@ -129,7 +129,7 @@ class Pods_Deprecated {
 				$pick_val     = $field['pick_val'];
 
 				if ( 'pod' == $pick_object ) {
-					$pick_pod    = $this->obj->api->load_pod( array( 'name' => $pick_val ) );
+					$pick_pod    = pods_api()->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['name'];
 				}

@@ -65,7 +65,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
 	try {
 		$params = pods_unslash( (array) $_POST );
-		$id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
+		$id     = pods_api()->process_form( $params, $pod, $submittable_fields, $thank_you );
 
 		$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 		$error   = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );

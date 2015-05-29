@@ -474,7 +474,7 @@ class Pods_Helpers extends Pods_Component {
 			$params->name = null;
 		}
 
-		$helper = $obj->api->load_helper( array( 'name' => $params->helper ) );
+		$helper = pods_api()->load_helper( array( 'name' => $params->helper ) );
 
 		ob_start();
 

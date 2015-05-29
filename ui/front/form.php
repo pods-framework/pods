@@ -47,7 +47,7 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 	try {
-		$id = $pod->api->process_form( $_POST, $pod, $submittable_fields, $thank_you );
+		$id = pods_api()->process_form( $_POST, $pod, $submittable_fields, $thank_you );
 	}
 	catch ( Exception $e ) {
 		echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';

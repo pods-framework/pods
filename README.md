@@ -3,7 +3,7 @@
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
-## 3.0 Is In Development & Is Not Functional
+## 3.0 Is In Development and Is Not Functional
 Please only use this branch to contribute to development. If you are developing you <strong>must run composer update</strong> before use. Once we reach beta we will provide regular builds for easy testing. In the meantime, you must have Composer installed and before use, run either:
 
 `composer update` <-- Install with unit tests. Must have test suite installed first.

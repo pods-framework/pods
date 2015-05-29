@@ -37,7 +37,6 @@ tests/clover.xml
 composer.lock
 /node_modules/
 /vendor/
-/components/
 npm-debug.log
 
 # PHPunit config

@@ -4,9 +4,13 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
 
-[![Wordpress plugin](http://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
-[![Wordpress](http://img.shields.io/wordpress/plugin/dt/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
-[![Wordpress rating](http://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin downloads](https://img.shields.io/wordpress/plugin/dt/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin rating](https://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+
+[![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
+[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
@@ -42,7 +46,7 @@ There are various ways you can contribute:
 
 ## Donations
 
-We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Donate now!](http://podsfoundation.org/donate/)
+We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://pods.io/friends-of-pods/)
 
 ## Developer Notes
 

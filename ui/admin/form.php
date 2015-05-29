@@ -660,19 +660,17 @@ if ( 0 < $id ) {
 	}
 
 	var pods_admin_submit_callback = function ( id ) {
-		id = parseInt( id );
-		var thank_you = '<?php echo pods_slash( $thank_you ); ?>';
-		var thank_you_alt = '<?php echo pods_slash( $thank_you_alt ); ?>';
 
-		if ( 'undefined' != typeof pods_form_thank_you && null !== pods_form_thank_you ) {
-			thank_you = pods_form_thank_you;
-		}
+		id = parseInt( id, 10 );
+		var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
+		var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';
 
 		if ( isNaN( id ) ) {
-			document.location = thank_you_alt.replace( 'X_ID_X', 0 );
+			document.location = thank_you_alt.replace( 'X_ID_X', String( 0 ) );
 		}
 		else {
-			document.location = thank_you.replace( 'X_ID_X', id );
+			document.location = thank_you.replace( 'X_ID_X', String( id ) );
 		}
+
 	}
 </script>

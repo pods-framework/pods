@@ -6,7 +6,7 @@ require PODS_TEST_PLUGIN_DIR . '/components/Migrate-Packages/Migrate-Packages.ph
 require PODS_TEST_PLUGIN_DIR . '/components/Advanced-Content-Types.php';
 require PODS_TEST_PLUGIN_DIR . '/components/Table-Storage.php';
 
-require PODS_TEST_PLUGIN_DIR . '/classes/fields/pick.php';
+require PODS_TEST_PLUGIN_DIR . '/classes/Pods/Field/Pick.php';
 
 class Pods_UnitTestCase extends \WP_UnitTestCase {
 	/**

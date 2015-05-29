@@ -2,7 +2,7 @@
 namespace Pods_Unit_Tests;
 use PodsField_Boolean;
 
-require PODS_TEST_PLUGIN_DIR . '/classes/fields/boolean.php';
+require PODS_TEST_PLUGIN_DIR . '/classes/Pods/Field/Boolean.php';
 
 /**
  * Class Test_PodsField_Boolean

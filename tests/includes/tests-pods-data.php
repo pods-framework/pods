@@ -2,7 +2,7 @@
 namespace Pods_Unit_Tests;
 use stdClass;
 
-require_once PODS_TEST_PLUGIN_DIR . '/classes/PodsData.php';
+require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods/Data.php';
 
 /**
  * Class Test_PodsData
@@ -128,7 +128,7 @@ class Test_PodsData extends Pods_UnitTestCase
     {
         $this->markTestIncomplete( 'not yet implemented' );
     }
-    
+
     public function test_pods_var_raw()
     {
         $this->markTestIncomplete( 'not yet implemented' );

@@ -19,7 +19,7 @@ set -ex
 install_wp() {
 	echo "Installing WordPress for Unit Tests"
 
-	if [ $WP_CORE_DIR == '' && -z TRAVIS_JOB_ID ]; then
+	if [ $WP_CORE_DIR == '' ] && [ -z TRAVIS_JOB_ID ]; then
 		echo "Removing existing core WordPress directory"
 
 		rm -rf $WP_CORE_DIR
@@ -54,7 +54,7 @@ install_test_suite() {
 	fi
 
 	# set up testing suite
-	if [ $WP_TESTS_DIR == '' && -z TRAVIS_JOB_ID ]; then
+	if [ $WP_TESTS_DIR == '' ] && [ -z TRAVIS_JOB_ID ]; then
 		echo "Removing existing Tests Suite directory"
 
 		rm -rf $WP_TESTS_DIR

@@ -1,14 +1,22 @@
-# [Pods Framework](http://pods.io/) #
-[![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=release/3.0)](http://travis-ci.org/pods-framework/pods) [![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
+# [Pods Framework](http://pods.io) #
+[![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=release/3.0)](http://travis-ci.org/pods-framework/pods)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0)
+[![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
+
+[![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin downloads](https://img.shields.io/wordpress/plugin/dt/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![WordPress Plugin rating](https://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+
+[![Project Stats](https://www.openhub.net/p/CMB2/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
+[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
-## 3.0 Is In Development and Is Not Functional
-Please only use this branch to contribute to development. If you are developing you <strong>must run composer update</strong> before use. Once we reach beta we will provide regular builds for easy testing. In the meantime, you must have Composer installed and before use, run either:
+## 3.0 is in development and is not production-ready
 
-`composer update` <-- Install with unit tests. Must have test suite installed first.
-
-`composer update --no-dev` <-- Install without tests.
+Please only use this branch to contribute to development. 
 
 ## Description
 
@@ -46,11 +54,8 @@ We're able to focus more on Pods when we have some cash to help keep the lights 
 
 ## Developer Notes
 
-* Latest Stable Release: [2.x/2.5](https://github.com/pods-framework/pods/releases/tag/2.x%2F2.5)
 * Stable Branch: [master](https://github.com/pods-framework/pods/tree/master)
 * 2.x Development Branch: [2.x](https://github.com/pods-framework/pods/tree/2.x)
 * 3.0 Development Branch: [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0)
 
 <em>Please submit all pull requests against [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0) branch.</em>
-
-~Current Version: 3.0-a-8~

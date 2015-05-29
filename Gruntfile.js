@@ -23,6 +23,9 @@ module.exports = function ( grunt ) {
 		'!phpunit.xml.dist'
 	];
 
+	// load all grunt tasks in package.json matching the `grunt-*` pattern
+	require( 'load-grunt-tasks' )( grunt );
+
 	// Project configuration.
 	grunt.initConfig( {
 		pkg : grunt.file.readJSON( 'package.json' ),
@@ -243,16 +246,6 @@ module.exports = function ( grunt ) {
 		}
 
 	} );
-
-	//load modules
-	grunt.loadNpmTasks( 'grunt-glotpress' );
-	grunt.loadNpmTasks( 'grunt-contrib-clean' );
-	grunt.loadNpmTasks( 'grunt-contrib-copy' );
-	grunt.loadNpmTasks( 'grunt-git' );
-	grunt.loadNpmTasks( 'grunt-text-replace' );
-	grunt.loadNpmTasks( 'grunt-svn-checkout' );
-	grunt.loadNpmTasks( 'grunt-push-svn' );
-	grunt.loadNpmTasks( 'grunt-remove' );
 
 	//release tasks
 	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );

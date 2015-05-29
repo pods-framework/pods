@@ -84,14 +84,16 @@ else {
         if ( file_exists( $cmb2_init_path ) ) {
             require_once( $cmb2_init_path );
         } else {
-            if ( is_admin() && current_user_can( 'edit_options' ) ) {
-                add_action( 'admin_notices', function () { ?>
-                    <div class="updated">
-                        <p><?php _e( 'Pods was not installed correctly. Please download a demo build or reinstall from WordPress.org, or run composer update.', 'pods' ); ?></p>
-                    </div>
-                <?php
+            if ( is_admin() ) {
+                add_action( 'admin_notices', function () {
+	                if ( current_user_can( 'edit_options' ) ) {
+		                ?>
+		                <div class="updated">
+			                <p><?php _e( 'Pods was not installed correctly. Please download a demo build or reinstall from WordPress.org, or run composer update.', 'pods' ); ?></p>
+		                </div>
+	                <?php
+	                }
                 });
-
             }
         }
 

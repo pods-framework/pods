@@ -1,0 +1,29 @@
+{
+    "name": "webdevstudios/cmb2",
+    "description": "CMB2 is a metabox, custom fields, and forms library for WordPress that will blow your mind.",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "WebDevStudios",
+            "email": "contact@webdevstudios.com",
+            "homepage": "https://github.com/WebDevStudios",
+            "role": "Developer"
+        }
+    ],
+    "keywords": ["wordpress", "plugin", "metabox"],
+    "homepage": "https://github.com/WebDevStudios/CMB2",
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/WebDevStudios/CMB2/issues",
+        "source": "http://wordpress.org/support/plugin/cmb2"
+    },
+    "require": {
+        "php": ">5.2.4"
+    },
+    "suggest": {
+        "composer/installers": "~1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    }
+}

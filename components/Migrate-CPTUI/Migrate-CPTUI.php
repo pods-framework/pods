@@ -200,30 +200,28 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 			}
 		}
 
-		if ( ! is_object( $this->api ) ) {
-			$this->api = pods_api();
-		}
+		$api = pods_api();
 
-		$pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+		$pod = $api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
 
 		if ( ! empty( $pod ) ) {
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
 		}
 
-		$id = (int) $this->api->save_pod( $params );
+		$id = (int) $api->save_pod( $params );
 
 		if ( empty( $id ) ) {
 			return false;
 		}
 
-		$pod = $this->api->load_pod( array( 'id' => $id ), false );
+		$pod = $api->load_pod( array( 'id' => $id ), false );
 
 		if ( empty( $pod ) ) {
 			return false;
 		}
 
 		if ( $pod[ 'name' ] != $params[ 'name' ] ) {
-			$this->api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+			$api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
 		}
 
 		return $id;
@@ -272,30 +270,26 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 			}
 		}
 
-		if ( ! is_object( $this->api ) ) {
-			$this->api = pods_api();
-		}
-
-		$pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+		$pod = $api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
 
 		if ( ! empty( $pod ) ) {
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
 		}
 
-		$id = (int) $this->api->save_pod( $params );
+		$id = (int) $api->save_pod( $params );
 
 		if ( empty( $id ) ) {
 			return false;
 		}
 
-		$pod = $this->api->load_pod( array( 'id' => $id ), false );
+		$pod = $api->load_pod( array( 'id' => $id ), false );
 
 		if ( empty( $pod ) ) {
 			return false;
 		}
 
 		if ( $pod[ 'name' ] != $params[ 'name' ] ) {
-			$this->api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+			$api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
 		}
 
 		return $id;

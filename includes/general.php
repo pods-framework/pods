@@ -12,7 +12,6 @@
  * @param string $results_error (optional) Throw an error if a records are found
  * @param string $no_results_error (optional) Throw an error if no records are found
  *
- * @internal param string $query The SQL query
  * @return array|bool|mixed|null|void
  * @since    2.0
  */
@@ -193,8 +192,6 @@ $pods_debug = 0;
  * @param mixed $debug The error message to be thrown / displayed
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
  * @param string $prefix
- *
- * @internal param bool $identifier If set to true, an identifying # will be output
  *
  * @return void
  *

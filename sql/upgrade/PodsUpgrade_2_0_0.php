@@ -450,7 +450,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                 if ( empty( $pod_params[ 'label' ] ) )
                     $pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
 
-                $pod_id = $this->api->save_pod( $pod_params );
+                $pod_id = pods_api()->save_pod( $pod_params );
 
                 if ( 0 < $pod_id )
                     $last_id = $pod_type->id;
@@ -500,7 +500,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         }
 
         // We were off the grid, so let's flush and allow for resync
-        $this->api->cache_flush_pods();
+        pods_api()->cache_flush_pods();
 
         $this->update_progress( __FUNCTION__, true );
 
@@ -513,6 +513,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
     public function migrate_relationships() {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
+
+	    $api = pods_api();
 
         $migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
         $migration_limit = max( $migration_limit, 100 );
@@ -545,7 +547,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
             foreach ( $pod_types as $type ) {
                 $type->name = pods_clean_name( $type->name );
 
-                $types[ $type->id ] = $this->api->load_pod( array( 'name' => $type->name ), false );
+                $types[ $type->id ] = $api->load_pod( array( 'name' => $type->name ), false );
 
                 if ( empty( $types[ $type->id ] ) )
                     return pods_error( sprintf( __( 'Pod <strong>%s</strong> not found, relationships cannot be migrated', 'pods' ), $type->name ) );
@@ -605,7 +607,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                         $old_field = $old_field[ 0 ];
 
-                        $related_field = $this->api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
+                        $related_field = $api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
 
                         if ( empty( $related_field ) )
                             continue;
@@ -614,7 +616,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                         $related_field_id = $related_field[ 'id' ];
                     }
                     elseif ( 'pod' == $field[ 'pick_object' ] && 0 < strlen( $field[ 'pick_val' ] ) ) {
-                        $related_pod = $this->api->load_pod( array( 'name' => $field[ 'pick_val' ] ), __METHOD__ );
+                        $related_pod = $api->load_pod( array( 'name' => $field[ 'pick_val' ] ), __METHOD__ );
 
                         if ( empty( $related_pod ) )
                             continue;
@@ -754,10 +756,12 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         $results = array();
 
         if ( !empty( $templates ) ) {
+	        $api = pods_api();
+
             foreach ( $templates as $template ) {
                 unset( $template->id );
 
-                $results[] = $this->api->save_template( $template );
+                $results[] = $api->save_template( $template );
             }
         }
 
@@ -776,10 +780,12 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         $pages = pods_query( "SELECT * FROM `@wp_pod_pages`", false );
 
         if ( !empty( $pages ) ) {
+	        $api = pods_api();
+
             foreach ( $pages as $page ) {
                 unset( $page->id );
 
-                $this->api->save_page( $page );
+                $api->save_page( $page );
             }
         }
 
@@ -800,6 +806,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         $notice = false;
 
         if ( !empty( $helpers ) ) {
+	        $api = pods_api();
+
             foreach ( $helpers as $helper ) {
                 unset( $helper->id );
 
@@ -809,7 +817,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
                     $notice = true;
                 }
 
-                $this->api->save_helper( $helper );
+                $api->save_helper( $helper );
             }
         }
 
@@ -852,7 +860,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         if ( true === $this->check_progress( __FUNCTION__, $pod ) )
             return '1';
 
-        $pod_data = $this->api->load_pod( array( 'name' => $pod ), __METHOD__ );
+        $pod_data = pods_api()->load_pod( array( 'name' => $pod ), __METHOD__ );
 
         if ( empty( $pod_data ) )
             return pods_error( sprintf( __( 'Pod <strong>%s</strong> not found, items cannot be migrated', 'pods' ), $pod ) );
@@ -928,7 +936,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
         $_GET = $oldget;
 
-        $this->api->cache_flush_pods();
+        pods_api()->cache_flush_pods();
 
         return '1';
     }

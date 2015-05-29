@@ -305,7 +305,7 @@ class Pods_Object_Field extends
 				$this->_table_info = pods_api()->get_table_info( 'post_type', 'attachment' );
 			} // Load Related object table info
 			elseif ( in_array( $this->_object['type'], Pods_Form::tableless_field_types() ) ) {
-				$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+				$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 				if ( 'taxonomy' == $this->_object['type'] ) {
 					$this->_table_info = pods_api()->get_table_info( 'taxonomy', $this->_object['object'], $this->_object['name'] );
@@ -382,6 +382,12 @@ class Pods_Object_Field extends
 
 		global $wpdb;
 
+		static $api = null;
+
+		if ( ! $api ) {
+			$api = pods_api();
+		}
+
 		$defaults = array(
 			'pod'             => null,
 			'fields'          => array(),
@@ -416,7 +422,7 @@ class Pods_Object_Field extends
 				$pod_data = array();
 
 				if ( in_array( $traverse_recurse['pod'], array( 'user', 'comment' ) ) ) {
-					$pod = $this->api->load_pod( array( 'name' => $traverse_recurse['pod'] ) );
+					$pod = $api->load_pod( array( 'name' => $traverse_recurse['pod'] ) );
 
 					if ( ! empty( $pod ) && $pod['type'] == $pod ) {
 						$pod_data = $pod;
@@ -430,10 +436,10 @@ class Pods_Object_Field extends
 						'type'          => $traverse_recurse['pod'],
 						'storage'       => ( 'taxonomy' == $traverse_recurse['pod'] ? 'none' : 'meta' ),
 						'fields'        => array(),
-						'object_fields' => $this->api->get_wp_object_fields( $traverse_recurse['pod'] )
+						'object_fields' => $api->get_wp_object_fields( $traverse_recurse['pod'] )
 					);
 
-					$pod_data = array_merge( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
+					$pod_data = array_merge( $api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
 				}
 
 				$traverse_recurse['pod'] = $pod_data['name'];
@@ -441,7 +447,7 @@ class Pods_Object_Field extends
 				return $joins;
 			}
 		} else {
-			$pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse['pod'] ), __METHOD__ );
+			$pod_data = $api->load_pod( array( 'name' => $traverse_recurse['pod'] ), __METHOD__ );
 
 			if ( empty( $pod_data ) ) {
 				return $joins;
@@ -453,7 +459,7 @@ class Pods_Object_Field extends
 		}
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 		$file_field_types         = Pods_Form::file_field_types();
 
 		if ( ! isset( $this->traversal[ $traverse_recurse['pod'] ] ) ) {
@@ -506,7 +512,7 @@ class Pods_Object_Field extends
 			$last = end( $traverse_recurse['fields'] );
 
 			if ( 'post_type' == $pod_data['type'] && ! isset( $pod_data['object_fields'] ) ) {
-				$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data );
+				$pod_data['object_fields'] = $api->get_wp_object_fields( 'post_type', $pod_data );
 			}
 
 			if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
@@ -522,7 +528,7 @@ class Pods_Object_Field extends
 				$pod_data['fields'][ $field ] = Pods_Form::field_setup( array( 'name' => $field ) );
 			} else {
 				if ( 'post_type' == $pod_data['type'] ) {
-					$pod_data['object_fields'] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );
+					$pod_data['object_fields'] = $api->get_wp_object_fields( 'post_type', $pod_data, true );
 
 					if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
 						$pod_data['fields'][ $field ] = $pod_data['object_fields'][ $field ];
@@ -538,11 +544,11 @@ class Pods_Object_Field extends
 		$traverse = $pod_data['fields'][ $field ];
 
 		if ( 'taxonomy' == $traverse['type'] ) {
-			$traverse['table_info'] = $this->api->get_table_info( $traverse['type'], $traverse['name'] );
+			$traverse['table_info'] = $api->get_table_info( $traverse['type'], $traverse['name'] );
 		} elseif ( in_array( $traverse['type'], $file_field_types ) ) {
-			$traverse['table_info'] = $this->api->get_table_info( 'post_type', 'attachment' );
+			$traverse['table_info'] = $api->get_table_info( 'post_type', 'attachment' );
 		} elseif ( ! in_array( $traverse['type'], $tableless_field_types ) ) {
-			$traverse['table_info'] = $this->api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
+			$traverse['table_info'] = $api->get_table_info( $pod_data['type'], $pod_data['name'], $pod_data['name'], $pod_data );
 		} elseif ( empty( $traverse['table_info'] ) || ( in_array( $traverse['pick_object'], $simple_tableless_objects ) && ! empty( $traverse_recurse['last_table_info'] ) ) ) {
 			if ( in_array( $traverse['pick_object'], $simple_tableless_objects ) && ! empty( $traverse_recurse['last_table_info'] ) ) {
 				$traverse['table_info'] = $traverse_recurse['last_table_info'];
@@ -553,7 +559,7 @@ class Pods_Object_Field extends
 			} elseif ( ! in_array( $traverse['type'], $tableless_field_types ) && isset( $traverse_recurse['last_table_info'] ) && ! empty( $traverse_recurse['last_table_info'] ) && 0 == $traverse_recurse['depth'] ) {
 				$traverse['table_info'] = $traverse_recurse['last_table_info'];
 			} else {
-				$traverse['table_info'] = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
+				$traverse['table_info'] = $api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
 			}
 		}
 
@@ -831,7 +837,7 @@ class Pods_Object_Field extends
 		}
 
 		$tableless_field_types    = Pods_Form::tableless_field_types();
-		$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+		$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 		$params = (object) $options;
 
@@ -1542,7 +1548,7 @@ class Pods_Object_Field extends
 			global $wpdb;
 
 			$tableless_field_types    = Pods_Form::tableless_field_types();
-			$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+			$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 			$params->pod_id = $pod['id'];
 			$params->pod    = $pod['name'];

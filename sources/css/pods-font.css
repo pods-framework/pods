@@ -1,0 +1,54 @@
+@font-face
+{
+    font-family: 'pods';
+    font-weight: normal;
+    font-style: normal; 
+
+    src: url('fonts/pods.eot');
+    src: url('fonts/pods.eot?#iefix') format('embedded-opentype'), url('fonts/pods.woff') format('woff'), url('fonts/pods.ttf') format('truetype'), url('fonts/pods.svg#pods') format('svg');
+}
+
+[data-icon]:before
+{
+    font-family: 'pods' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    line-height: 1;
+
+    content: attr(data-icon);
+    text-transform: none !important;
+
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+[class^='pods-icon-']:before,
+[class*=' pods-icon-']:before
+{
+    font-family: 'pods' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    line-height: 1;
+
+    text-transform: none !important;
+
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.pods-icon-dashicon:before
+{
+    content: 'c';
+}
+
+.dashicons-pods:before
+{
+    font-family: 'pods' !important;
+    font-size: 20px;
+
+    content: 'c';
+}

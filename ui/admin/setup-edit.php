@@ -73,7 +73,7 @@ $field_defaults = array(
 $pick_object = Pods_Form::field_method( 'pick', 'related_objects', true );
 
 $tableless_field_types = Pods_Form::tableless_field_types();
-$simple_tableless_objects = Pods_Form::field_method( 'pick', 'simple_objects' );
+$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 $bidirectional_objects = Pods_Form::field_method( 'pick', 'bidirectional_objects' );
 
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );

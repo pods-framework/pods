@@ -50,7 +50,7 @@ There are various ways you can contribute:
 
 ## Donations
 
-We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Donate now!](http://podsfoundation.org/donate/)
+We're able to focus more on Pods when we have some cash to help keep the lights on, want to help? [Become a Friend of Pods!](https://pods.io/friends-of-pods/)
 
 ## Developer Notes
 

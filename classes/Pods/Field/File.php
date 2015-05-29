@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_File extends
-	Pods_Field {
+class Pods_Field_File extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -12,7 +11,7 @@ class Pods_Field_File extends
 	 * @var string
 	 * @since 2.0
 	 */
-    public static $group = 'Relationships / Media';
+	public static $group = 'Relationships / Media';
 
 	/**
 	 * Field Type Identifier
@@ -28,7 +27,7 @@ class Pods_Field_File extends
 	 * @var string
 	 * @since 2.0
 	 */
-    public static $label = 'File / Image / Video';
+	public static $label = 'File / Image / Video';
 
 	/**
 	 * API caching for fields that need it during validate/save
@@ -39,7 +38,7 @@ class Pods_Field_File extends
 	protected static $api = false;
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -51,21 +50,24 @@ class Pods_Field_File extends
 	 * @since 2.3
 	 */
 	public function admin_init() {
+
 		// AJAX for Uploads
 		add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
 		add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$sizes = get_intermediate_image_sizes();
 
 		$image_sizes = array();
 
 		foreach ( $sizes as $size ) {
-			$image_sizes[$size] = ucwords( str_replace( '-', ' ', $size ) );
+			$image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
 		}
 
 		$options = array(
@@ -178,33 +180,37 @@ class Pods_Field_File extends
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$schema = false;
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		if ( is_array( $value ) && ! empty( $value ) ) {
-			if ( isset( $value['ID'] ) ) {
-				$value = wp_get_attachment_url( $value['ID'] );
+			if ( isset( $value[ 'ID' ] ) ) {
+				$value = wp_get_attachment_url( $value[ 'ID' ] );
 			} else {
 				$attachments = $value;
-				$value       = array();
+				$value = array();
 
 				foreach ( $attachments as $v ) {
 					if ( ! is_array( $v ) ) {
-						$value[] = $v;
-					} elseif ( isset( $v['ID'] ) ) {
-						$value[] = wp_get_attachment_url( $v['ID'] );
+						$value[ ] = $v;
+					} elseif ( isset( $v[ 'ID' ] ) ) {
+						$value[ ] = wp_get_attachment_url( $v[ 'ID' ] );
 					}
 				}
 
@@ -213,12 +219,14 @@ class Pods_Field_File extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( ! is_admin() ) {
@@ -254,35 +262,43 @@ class Pods_Field_File extends
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return false;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		// check file size
 		// check file extensions
 		return true;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		return $value;
+
 	}
 
 	/**
-	 * S{@inheritDocs}
+	 * S{@inheritdoc}
 	 */
 	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		if ( empty( self::$api ) ) {
 			self::$api = pods_api();
 		}
@@ -292,12 +308,12 @@ class Pods_Field_File extends
 			$title = false;
 
 			if ( is_array( $id ) ) {
-				if ( isset( $id['title'] ) && 0 < strlen( trim( $id['title'] ) ) ) {
-					$title = trim( $id['title'] );
+				if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) ) {
+					$title = trim( $id[ 'title' ] );
 				}
 
-				if ( isset( $id['id'] ) ) {
-					$id = (int) $id['id'];
+				if ( isset( $id[ 'id' ] ) ) {
+					$id = (int) $id[ 'id' ];
 				} else {
 					$id = 0;
 				}
@@ -317,39 +333,43 @@ class Pods_Field_File extends
 				self::$api->save_wp_object( 'media', $attachment_data );
 			}
 		}
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		if ( empty( $value ) ) {
 			return null;
 		}
 
-		if ( ! empty( $value ) && isset( $value['ID'] ) ) {
+		if ( ! empty( $value ) && isset( $value[ 'ID' ] ) ) {
 			$value = array( $value );
 		}
 
 		$image_size = apply_filters( 'pods_form_ui_field_file_ui_image_size', 'thumbnail', $id, $value, $name, $options, $pod );
 
 		return $this->images( $id, $value, $name, $options, $pod, $image_size );
+
 	}
 
 	/**
 	 * Return image(s) markup
 	 *
-	 * @param int    $id
-	 * @param mixed  $value
+	 * @param int $id
+	 * @param mixed $value
 	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
+	 * @param array $options
+	 * @param array $pod
 	 * @param string $image_size
 	 *
 	 * @return string
 	 * @since 2.3
 	 */
 	public function images( $id, $value, $name = null, $options = null, $pod = null, $image_size = null ) {
+
 		$images = '';
 
 		if ( empty( $value ) || ! is_array( $value ) ) {
@@ -361,15 +381,16 @@ class Pods_Field_File extends
 		}
 
 		return $images;
+
 	}
 
 	/**
 	 * Handle file row output for uploaders
 	 *
-	 * @param array  $attributes
-	 * @param int    $limit
-	 * @param bool   $editable
-	 * @param int    $id
+	 * @param array $attributes
+	 * @param int $limit
+	 * @param bool $editable
+	 * @param int $id
 	 * @param string $icon
 	 * @param string $name
 	 *
@@ -377,13 +398,14 @@ class Pods_Field_File extends
 	 * @since 2.0
 	 */
 	public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
+
 		// Preserve current file type
 		$field_type = Pods_Form::$field_type;
 
 		ob_start();
 
 		if ( empty( $id ) ) {
-			$id  = '{{id}}';
+			$id = '{{id}}';
 			$url = '{{guid}}';
 		} else {
 			$url = get_attached_file( $id );
@@ -391,6 +413,8 @@ class Pods_Field_File extends
 
 		if ( empty( $icon ) ) {
 			$icon = '{{icon}}';
+		} else {
+			$icon = esc_url( $icon );
 		}
 
 		if ( empty( $name ) ) {
@@ -402,10 +426,10 @@ class Pods_Field_File extends
 		}
 
 		$editable = (boolean) $editable;
-		$linked   = (boolean) $linked;
+		$linked = (boolean) $linked;
 		?>
-		<li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
-			<?php echo Pods_Form::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
+		<li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
+			<?php echo Pods_Form::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
 			<ul class="pods-file-meta media-item">
 				<?php if ( 1 != $limit ) { ?>
@@ -413,13 +437,13 @@ class Pods_Field_File extends
 				<?php } ?>
 
 				<li class="pods-file-col pods-file-icon">
-					<a href="<?php echo $url; ?>"><img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" /></a>
+					<a href="<?php echo esc_url( $url ); ?>"><img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" /></a>
 				</li>
 
 				<li class="pods-file-col pods-file-name">
 					<?php
 					if ( $editable ) {
-						echo Pods_Form::field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
+						echo Pods_Form::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
 					} else {
 						echo( empty( $name ) ? '{{name}}' : $name );
 					}
@@ -432,7 +456,7 @@ class Pods_Field_File extends
 				if ( $linked ) {
 					?>
 					<li class="pods-file-col pods-file-download">
-						<a href="<?php echo $link; ?>" target="_blank"><?php _e('Download'); ?></a></li>
+						<a href="<?php echo esc_url( $link ); ?>" target="_blank"><?php _e( 'Download' ); ?></a></li>
 				<?php
 				}
 				?>
@@ -442,6 +466,7 @@ class Pods_Field_File extends
 		Pods_Form::$field_type = $field_type;
 
 		return ob_get_clean();
+
 	}
 
 	/**
@@ -450,6 +475,7 @@ class Pods_Field_File extends
 	 * @since 2.3
 	 */
 	public function admin_ajax_upload() {
+
 		pods_session_start();
 
 		// Sanitize input
@@ -460,9 +486,9 @@ class Pods_Field_File extends
 				continue;
 			}
 
-			unset( $params[$key] );
+			unset( $params[ $key ] );
 
-			$params[str_replace( '_podsfix_', '', $key )] = $value;
+			$params[ str_replace( '_podsfix_', '', $key ) ] = $value;
 		}
 
 		$params = (object) $params;
@@ -472,22 +498,22 @@ class Pods_Field_File extends
 		);
 
 		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
-			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), Pods_Init::$admin );
 		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
-			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), Pods_Init::$admin );
 		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
-			pods_error( __('Invalid AJAX request','pods'), Pods_Init::$admin );
+			pods_error( __( 'Invalid AJAX request', 'pods' ), Pods_Init::$admin );
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
-		if ( is_ssl() && empty( $_COOKIE[SECURE_AUTH_COOKIE] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			$_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];
-		} elseif ( empty( $_COOKIE[AUTH_COOKIE] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
-			$_COOKIE[AUTH_COOKIE] = $_REQUEST['auth_cookie'];
+		if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && ! empty( $_REQUEST[ 'auth_cookie' ] ) ) {
+			$_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+		} elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && ! empty( $_REQUEST[ 'auth_cookie' ] ) ) {
+			$_COOKIE[ AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
 		}
 
-		if ( empty( $_COOKIE[LOGGED_IN_COOKIE] ) && ! empty( $_REQUEST['logged_in_cookie'] ) ) {
-			$_COOKIE[LOGGED_IN_COOKIE] = $_REQUEST['logged_in_cookie'];
+		if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && ! empty( $_REQUEST[ 'logged_in_cookie' ] ) ) {
+			$_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST[ 'logged_in_cookie' ];
 		}
 
 		global $current_user;
@@ -518,7 +544,7 @@ class Pods_Field_File extends
 			pods_error( __( 'Unauthorized request', 'pods' ), Pods_Init::$admin );
 		}
 
-		$pod   = array();
+		$pod = array();
 		$field = array(
 			'type'    => 'file',
 			'options' => array()
@@ -526,15 +552,17 @@ class Pods_Field_File extends
 
 		$api = pods_api();
 
+		$api->display_errors = false;
+
 		if ( ! empty( $params->pod ) ) {
-			$pod   = $api->load_pod( array( 'id' => (int) $params->pod ) );
+			$pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
 			$field = $api->load_field( array( 'id' => (int) $params->field ) );
 
-			if ( empty( $pod ) || empty( $field ) || $pod['id'] != $field['pod_id'] || ! isset( $pod['fields'][$field['name']] ) ) {
+			if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || ! isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) ) {
 				pods_error( __( 'Invalid field request', 'pods' ), Pods_Init::$admin );
 			}
 
-			if ( ! in_array( $field['type'], Pods_Form::file_field_types() ) ) {
+			if ( ! in_array( $field[ 'type' ], Pods_Form::file_field_types() ) ) {
 				pods_error( __( 'Invalid field', 'pods' ), Pods_Init::$admin );
 			}
 		}
@@ -552,9 +580,9 @@ class Pods_Field_File extends
 		 * Upload a new file (advanced - returns URL and ID)
 		 */
 		if ( 'upload' == $method ) {
-			$file = $_FILES['Filedata'];
+			$file = $_FILES[ 'Filedata' ];
 
-			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field );
+			$limit_size = pods_v( $field[ 'type' ] . '_restrict_filesize', $field );
 
 			if ( ! empty( $limit_size ) ) {
 				if ( false !== stripos( $limit_size, 'MB' ) ) {
@@ -572,15 +600,15 @@ class Pods_Field_File extends
 					$limit_size = wp_max_upload_size();
 				}
 
-				if ( 0 < $limit_size && $limit_size < $file['size'] ) {
+				if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
 					$error = __( 'File size too large, max size is %s', 'pods' );
-					$error = sprintf( $error, pods_v( $field['type'] . '_restrict_filesize', $field ) );
+					$error = sprintf( $error, pods_v( $field[ 'type' ] . '_restrict_filesize', $field ) );
 
 					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
 				}
 			}
 
-			$limit_file_type = pods_v( $field['type'] . '_type', $field, 'images' );
+			$limit_file_type = pods_v( $field[ 'type' ] . '_type', $field, 'images' );
 
 			if ( 'images' == $limit_file_type ) {
 				$limit_types = 'jpg,jpeg,png,gif';
@@ -593,10 +621,15 @@ class Pods_Field_File extends
 			} elseif ( 'any' == $limit_file_type ) {
 				$limit_types = '';
 			} else {
-				$limit_types = pods_v( $field['type'] . '_allowed_extensions', $field, '', true );
+				$limit_types = pods_v( $field[ 'type' ] . '_allowed_extensions', $field, '', true );
 			}
 
-			$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
+			$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
+						'',
+						',',
+						',',
+						','
+					), $limit_types ), ',' );
 
 			$mime_types = wp_get_mime_types();
 
@@ -628,7 +661,7 @@ class Pods_Field_File extends
 
 							foreach ( $type as $t ) {
 								if ( ! in_array( $t, $new_limit_types ) ) {
-									$new_limit_types[] = $t;
+									$new_limit_types[ ] = $t;
 								}
 							}
 
@@ -637,7 +670,7 @@ class Pods_Field_File extends
 					}
 
 					if ( ! $found ) {
-						$new_limit_types[] = $limit_type;
+						$new_limit_types[ ] = $limit_type;
 					}
 				}
 
@@ -656,9 +689,9 @@ class Pods_Field_File extends
 				foreach ( $limit_types as $limit_type ) {
 					$limit_type = '.' . trim( $limit_type, ' .' );
 
-					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
+					$pos = ( strlen( $file[ 'name' ] ) - strlen( $limit_type ) );
 
-					if ( $pos === stripos( $file['name'], $limit_type ) ) {
+					if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
 						$ok = true;
 
 						break;
@@ -676,30 +709,30 @@ class Pods_Field_File extends
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
 
 			if ( null === $custom_handler ) {
-				$linked = pods_var( $field['type'] . '_linked', $field['options'], 0 );
+				$linked = pods_v( $field[ 'type' ] . '_linked', $field[ 'options' ], 0 );
 
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
 				if ( is_object( $attachment_id ) ) {
 					$errors = array();
 
-					foreach ( $attachment_id->errors['upload_error'] as $error_code => $error_message ) {
-						$errors[] = '[' . $error_code . '] ' . $error_message;
+					foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
+						$errors[ ] = '[' . $error_code . '] ' . $error_message;
 					}
 
 					pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
 				} else {
 					$attachment = get_post( $attachment_id, ARRAY_A );
 
-					$attachment['filename'] = basename( $attachment['guid'] );
+					$attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
 
-					$thumb                   = wp_get_attachment_image_src( $attachment['ID'], 'thumbnail', true );
-					$attachment['thumbnail'] = $thumb[0];
+					$thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+					$attachment[ 'thumbnail' ] = $thumb[ 0 ];
 
-					$attachment['link'] = '';
+					$attachment[ 'link' ] = '';
 
 					if ( $linked ) {
-						$attachment['link'] = wp_get_attachment_url( $attachment['ID'] );
+						$attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
 					}
 
 					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
@@ -710,5 +743,7 @@ class Pods_Field_File extends
 		}
 
 		die(); // KBAI!
+
 	}
+
 }

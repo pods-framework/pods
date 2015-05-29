@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Heading extends
-	Pods_Field {
+class Pods_Field_Heading extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,17 @@ class Pods_Field_Heading extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			'output_options'         => array(
 				'label' => __( 'Output Options', 'pods' ),
@@ -58,7 +58,7 @@ class Pods_Field_Heading extends
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+							__( 'Transforms less beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize'
 						)
 					),
@@ -91,25 +91,29 @@ class Pods_Field_Heading extends
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		return false;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		if ( strlen( trim( $value ) ) < 1 ) {
 			$value = pods_v( self::$type . '_content', $options );
 		}
 
 		if ( strlen( trim( $value ) ) < 1 ) {
-			$value = $options['label'];
+			$value = $options[ 'label' ];
 		}
 
 		if ( 1 == pods_v( self::$type . '_wptexturize', $options, 1 ) ) {
@@ -129,12 +133,14 @@ class Pods_Field_Heading extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		$field_type = 'heading';
@@ -142,14 +148,18 @@ class Pods_Field_Heading extends
 		$value = $this->display( $value, $name, $options, $pod, $id );
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = wp_trim_words( $value );
 
 		return $value;
+
 	}
+
 }

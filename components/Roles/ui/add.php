@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
 	<script>
-		var PODS_URL = '<?php echo PODS_URL; ?>';
+		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
@@ -13,7 +13,7 @@
 
 			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Add New Role', 'pods' ); ?></h2>
 
-			<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
 			<div id="pods-wizard-box" class="pods-wizard-steps-2">
 				<div id="pods-wizard-heading">
@@ -48,7 +48,10 @@
 								<div class="pods-field-option">
 									<?php
 									echo Pods_Form::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-									echo Pods_Form::field( 'role_name', pods_v( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+									echo Pods_Form::field( 'role_name', pods_v( 'role_name', 'post' ), 'db', array(
+											'attributes' => array( 'data-sluggable' => 'role_label' ),
+											'class'      => 'pods-validate pods-validate-required pods-slugged-lower'
+										) );
 									?>
 								</div>
 							</div>
@@ -60,11 +63,14 @@
 						</div>
 
 						<div class="stuffbox">
-							<h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?> <strong class="pods-slugged" data-sluggable="role_label"></strong></label></h3>
+							<h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?>
+									<strong class="pods-slugged" data-sluggable="role_label"></strong></label></h3>
 
 							<div class="inside pods-manage-field pods-dependency">
 								<div class="pods-field-option-group">
-									<p><a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a></p>
+									<p>
+										<a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+									</p>
 								</div>
 
 								<?php
@@ -77,7 +83,7 @@
 										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 											<ul data-group="<?php echo esc_attr( $group ); ?>">
 												<?php
-												$zebra         = false;
+												$zebra = false;
 												$group_checked = true;
 
 												foreach ( $capabilities as $capability ) {
@@ -93,7 +99,7 @@
 
 													$zebra = ( ! $zebra );
 													?>
-													<li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
+													<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 														<?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
 													</li>
 												<?php
@@ -102,12 +108,12 @@
 											</ul>
 										</div>
 										<script type="text/javascript">
-											jQuery(function($) {
-												$('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').prop('checked',<?php echo $group_checked ? 'true' : 'false'; ?>);
-												$('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').click(function() {
-													$('ul[data-group="<?php echo esc_js( $group ) ?>"] input[type="checkbox"]').prop('checked',$(this).prop('checked'));
-												});
-											});
+											jQuery( function ( $ ) {
+												$( 'input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]' ).prop( 'checked', <?php echo $group_checked ? 'true' : 'false'; ?> );
+												$( 'input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]' ).click( function () {
+													$( 'ul[data-group="<?php echo esc_js( $group ) ?>"] input[type="checkbox"]' ).prop( 'checked', $( this ).prop( 'checked' ) );
+												} );
+											} );
 										</script>
 									</div>
 								<?php
@@ -142,7 +148,8 @@
 
 					<div id="pods-wizard-actions">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
+							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
 						</div>
 						<div id="pods-wizard-finished">
 
@@ -154,38 +161,38 @@
 	</form>
 </div>
 <script type="text/javascript">
-	var pods_admin_submit_callback = function(id) {
-		id = parseInt(id);
+	var pods_admin_submit_callback = function ( id ) {
+		id = parseInt( id );
 		document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';
 	}
 
-	jQuery(function($) {
-		$(document).Pods('validate');
-		$(document).Pods('submit');
-		$(document).Pods('wizard');
-		$(document).Pods('dependency');
-		$(document).Pods('advanced');
-		$(document).Pods('confirm');
-		$(document).Pods('sluggable');
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'wizard' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'advanced' );
+		$( document ).Pods( 'confirm' );
+		$( document ).Pods( 'sluggable' );
 
 		var toggle_all = true;
 
-		$('#toggle-all').on('click',function(e) {
+		$( '#toggle-all' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			$('.pods-field.pods-boolean input[type="checkbox"]').prop('checked',toggle_all);
+			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
 			toggle_all = ( !toggle_all );
-		});
+		} );
 
-		$('#add-capability').on('click',function(e) {
+		$( '#add-capability' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			var new_id = $('ul#custom-capabilities li').length;
-			var html = $('ul#custom-capabilities li.pods-repeater').html().replace('--1',new_id);
+			var new_id = $( 'ul#custom-capabilities li' ).length;
+			var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( '--1', new_id );
 
-			$('ul#custom-capabilities').append('<li id="capability-' + new_id + '">' + html + '</li>');
-			$('li#capability-' + new_id + ' input').focus();
-		});
-	});
+			$( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
+			$( 'li#capability-' + new_id + ' input' ).focus();
+		} );
+	} );
 </script>

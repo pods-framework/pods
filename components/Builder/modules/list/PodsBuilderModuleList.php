@@ -8,8 +8,7 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 }
 
 if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
-	class PodsBuilderModuleList extends
-		LayoutModule {
+	class PodsBuilderModuleList extends LayoutModule {
 
 		var $_name = '';
 		var $_var = 'pods-builder-list';
@@ -21,11 +20,13 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 		 * Register the Module
 		 */
 		public function PodsBuilderModuleList() {
+
 			$this->_name        = __( 'Pods - List Items', 'pods' );
 			$this->_description = __( 'Display multiple Pod items', 'pods' );
 			$this->module_path  = dirname( __FILE__ );
 
 			$this->LayoutModule();
+
 		}
 
 		/**
@@ -36,6 +37,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 		 * @return mixed
 		 */
 		function _get_defaults( $defaults ) {
+
 			$new_defaults = array(
 				'pod_type'        => '',
 				'template'        => '',
@@ -49,27 +51,31 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
+
 		}
 
 		/**
 		 * Output something before the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _before_table_edit( $form, $results = true ) {
+
 			?>
 			<p><?php echo $this->_description; ?></p>
 		<?php
+
 		}
 
 		/**
 		 * Output something at the start of the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _start_table_edit( $form, $results = true ) {
+
 			$api      = pods_api();
 			$all_pods = $api->load_pods( array( 'names' => true ) );
 
@@ -103,7 +109,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				);
 
 				foreach ( $all_templates as $template ) {
-					$templates[ $template['name'] ] = $template['name'];
+					$templates[ $template[ 'name' ] ] = $template[ 'name' ];
 				}
 				?>
 				<tr>
@@ -140,7 +146,10 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 					<label for="template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
 				</td>
 				<td>
-					<?php $form->add_text_area( 'template_custom', array( 'style' => 'width:90%; max-width:100%; min-height:100px;', 'rows' => '8' ) ); ?>
+					<?php $form->add_text_area( 'template_custom', array(
+						'style' => 'width:90%; max-width:100%; min-height:100px;',
+						'rows'  => '8'
+					) ); ?>
 				</td>
 			</tr>
 			<tr>
@@ -193,32 +202,36 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				</td>
 			</tr>
 		<?php
+
 		}
 
 		/**
 		 * Module Output
-		 * 
-		 * @param object $fields Pods Fields 
+		 *
+		 * @param $fields
 		 */
 		function _render( $fields ) {
+
 			$args = array(
-				'name'       => trim( pods_v( 'pod_type', $fields['data'], '' ) ),
-				'template'   => trim( pods_v( 'template', $fields['data'], '' ) ),
-				'limit'      => (int) pods_v( 'limit', $fields['data'], 15, true ),
-				'orderby'    => trim( pods_v( 'orderby', $fields['data'], '' ) ),
-				'where'      => trim( pods_v( 'where', $fields['data'], '' ) ),
-				'expires'    => (int) trim( pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
-				'cache_mode' => trim( pods_v( 'cache_mode', $fields['data'], 'transient', true ) )
+				'name'       => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
+				'template'   => trim( pods_var_raw( 'template', $fields[ 'data' ], '' ) ),
+				'limit'      => (int) pods_var_raw( 'limit', $fields[ 'data' ], 15, null, true ),
+				'orderby'    => trim( pods_var_raw( 'orderby', $fields[ 'data' ], '' ) ),
+				'where'      => trim( pods_var_raw( 'where', $fields[ 'data' ], '' ) ),
+				'expires'    => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
+				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields[ 'data' ], 'transient', null, true ) )
 			);
 
-			$content = trim( pods_v( 'template_custom', $fields['data'], '' ) );
+			$content = trim( pods_var_raw( 'template_custom', $fields[ 'data' ], '' ) );
 
-			if ( 0 < strlen( $args['name'] ) && ( 0 < strlen( $args['template'] ) || 0 < strlen( $content ) ) ) {
+			if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
 				echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
 			}
+
 		}
 
 	}
+
 }
 
 new PodsBuilderModuleList();

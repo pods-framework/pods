@@ -1,14 +1,15 @@
 <?php
-$field = array_merge( $field_settings['field_defaults'], $field );
+$field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
 $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );
 ?>
-<tr id="row-<?php echo $pods_i; ?>" class="pods-manage-row pods-field-new pods-field-<?php echo esc_attr( pods_v( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top" data-row="<?php echo $pods_i; ?>">
+<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-new pods-field-<?php echo esc_attr( pods_v( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top" data-row="<?php echo esc_attr( $pods_i ); ?>">
 <th scope="row" class="check-field pods-manage-sort">
-	<img src="<?php echo PODS_URL; ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
+	<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
 </th>
 <td class="pods-manage-row-label">
-	<strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
+	<strong>
+		<a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
 			<?php _e( 'New Field', 'pods' ); ?>
 		</a> <abbr title="required" class="required hidden">*</abbr> </strong>
 
@@ -23,8 +24,8 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
                 <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
             </span>
 	</div>
-	<div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
-		<input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="" class="field_data" />
+	<div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo esc_attr( $pods_i ); ?>">
+		<input type="hidden" name="field_data_json[<?php echo esc_attr( $pods_i ); ?>]" value="" class="field_data" />
 
 		<div class="pods-manage-field pods-dependency">
 			<div class="pods-tabbed">
@@ -33,7 +34,12 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 					$default = 'basic';
 
 					foreach ( $field_tabs as $tab => $label ) {
-						if ( ! in_array( $tab, array( 'basic', 'additional-field', 'advanced' ) ) && ( ! isset( $field_tab_options[ $tab ] ) || empty( $field_tab_options[ $tab ] ) ) ) {
+						if ( ! in_array( $tab, array(
+									'basic',
+									'additional-field',
+									'advanced'
+								) ) && ( ! isset( $field_tab_options[ $tab ] ) || empty( $field_tab_options[ $tab ] ) )
+						) {
 							continue;
 						}
 
@@ -49,8 +55,8 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 							$extra_classes = ' pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-' . implode( ' pods-excludes-on-field-data-type-', $no_additional );
 						}
 						?>
-						<li class="pods-tab<?php echo $extra_classes; ?>">
-							<a href="#pods-<?php echo $tab; ?>-options-<?php echo $pods_i; ?>" class="pods-tab-link<?php echo $class; ?>">
+						<li class="pods-tab<?php echo esc_attr( $extra_classes ); ?>">
+							<a href="#pods-<?php echo esc_attr( $tab ); ?>-options-<?php echo esc_attr( $pods_i ); ?>" class="pods-tab-link<?php echo esc_attr( $class ); ?>">
 								<?php echo $label; ?>
 							</a>
 						</li>
@@ -60,14 +66,20 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 				</ul>
 
 				<div class="pods-tab-group">
-					<div id="pods-basic-options-<?php echo $pods_i; ?>" class="pods-tab pods-basic-options">
+					<div id="pods-basic-options-<?php echo esc_attr( $pods_i ); ?>" class="pods-tab pods-basic-options">
 						<div class="pods-field-option">
 							<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][label]', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
 							<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][label]', pods_v( 'label', $field, '' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) ); ?>
 						</div>
 						<div class="pods-field-option">
 							<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][name]', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this field throughout WordPress', 'pods' ) ); ?>
-							<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][name]', pods_v( 'name', $field, '' ), 'db', array( 'attributes' => array( 'maxlength' => 50, 'data-sluggable' => 'field_data[' . $pods_i . '][label]' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) ); ?>
+							<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][name]', pods_v( 'name', $field, '' ), 'db', array(
+									'attributes' => array(
+										'maxlength'      => 50,
+										'data-sluggable' => 'field_data[' . $pods_i . '][label]'
+									),
+									'class'      => 'pods-validate pods-validate-required pods-slugged-lower'
+								) ); ?>
 						</div>
 						<div class="pods-field-option">
 							<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][description]', __( 'Description', 'pods' ), __( 'help', 'pods' ) ); ?>
@@ -75,12 +87,19 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 						</div>
 						<div class="pods-field-option">
 							<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][type]', __( 'Field Type', 'pods' ), __( 'help', 'pods' ) ); ?>
-							<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][type]', pods_v( 'type', $field, '' ), 'pick', array( 'data' => pods_v( 'field_types_select', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
+							<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][type]', pods_v( 'type', $field, '' ), 'pick', array(
+									'data'  => pods_v( 'field_types_select', $field_settings ),
+									'class' => 'pods-dependent-toggle'
+								) ); ?>
 						</div>
 						<div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
 							<div class="pods-field-option">
 								<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][pick_object]', __( 'Related To', 'pods' ), __( 'help', 'pods' ) ); ?>
-								<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][pick_object]', $pick_object, 'pick', array( 'required' => true, 'data' => pods_v( 'pick_object', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
+								<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][pick_object]', $pick_object, 'pick', array(
+										'required' => true,
+										'data'     => pods_v( 'pick_object', $field_settings ),
+										'class'    => 'pods-dependent-toggle'
+									) ); ?>
 							</div>
 							<div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-custom-simple">
 								<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][pick_custom]', __( 'Custom Defined Options', 'pods' ), __( 'One option per line, use <em>value|Label</em> for separate values and labels', 'pods' ) ); ?>
@@ -88,9 +107,12 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 							</div>
 							<div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-table">
 								<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][pick_table]', __( 'Related Table', 'pods' ), __( 'help', 'pods' ) ); ?>
-								<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][pick_table]', pods_v( 'pick_table', $field, '' ), 'pick', array( 'required' => true, 'data' => pods_v( 'pick_table', $field_settings ) ) ); ?>
+								<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][pick_table]', pods_v( 'pick_table', $field, '' ), 'pick', array(
+										'required' => true,
+										'data'     => pods_v( 'pick_table', $field_settings )
+									) ); ?>
 							</div>
-							<div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-<?php echo str_replace( '_', '-', implode( ' pods-depends-on-field-data-pick-object-', $bidirectional_objects ) ); ?>" data-dependency-trigger="pods_sister_field">
+							<div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-<?php echo esc_attr( str_replace( '_', '-', implode( ' pods-depends-on-field-data-pick-object-', $bidirectional_objects ) ) ); ?>" data-dependency-trigger="pods_sister_field">
 								<?php echo Pods_Form::label( 'field_data[' . $pods_i . '][sister_id]', __( 'Bi-directional Field', 'pods' ), __( 'Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected.', 'pods' ) ); ?>
 
 								<div class="pods-sister-field">
@@ -106,13 +128,21 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 							<div class="pods-pick-values pods-pick-checkbox">
 								<ul>
 									<li>
-										<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
+										<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array(
+												'class'             => 'pods-dependent-toggle',
+												'boolean_yes_label' => __( 'Required', 'pods' ),
+												'help'              => __( 'help', 'pods' )
+											) ); ?>
 									</li>
 									<?php
-									if ( 'table' == $pod['storage'] ) {
+									if ( 'table' == $pod[ 'storage' ] ) {
 										?>
 										<li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
-											<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
+											<?php echo Pods_Form::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array(
+													'class'             => 'pods-dependent-toggle',
+													'boolean_yes_label' => __( 'Unique', 'pods' ),
+													'help'              => __( 'help', 'pods' )
+												) ); ?>
 										</li>
 									<?php
 									}
@@ -130,7 +160,7 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 							continue;
 						}
 						?>
-						<div id="pods-<?php echo $tab; ?>-options-<?php echo $pods_i; ?>" class="pods-tab pods-<?php echo $tab; ?>-options">
+						<div id="pods-<?php echo esc_attr( $tab ); ?>-options-<?php echo esc_attr( $pods_i ); ?>" class="pods-tab pods-<?php echo esc_attr( $tab ); ?>-options">
 							<?php
 							$field_tab_fields = $field_tab_options[ $tab ];
 
@@ -138,9 +168,9 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 								foreach ( $field_tab_fields as $field_type => $field_type_fields ) {
 									$first_field = current( $field_type_fields );
 									?>
-									<div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo sanitize_title( $field_type ); ?>">
+									<div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo esc_attr( sanitize_title( $field_type ) ); ?>">
 										<?php
-										if ( ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+										if ( ! isset( $first_field[ 'name' ] ) && ! isset( $first_field[ 'label' ] ) ) {
 											foreach ( $field_type_fields as $group_name => $group_fields ) {
 												?>
 												<h4><?php echo $group_name; ?></h4>
@@ -161,7 +191,7 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 							} else {
 								$first_field = current( $field_tab_fields );
 
-								if ( ! isset( $first_field['name'] ) && ! isset( $first_field['label'] ) ) {
+								if ( ! isset( $first_field[ 'name' ] ) && ! isset( $first_field[ 'label' ] ) ) {
 									foreach ( $field_tab_fields as $group_name => $group_fields ) {
 										?>
 										<h4><?php echo $group_name; ?></h4>
@@ -188,7 +218,8 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 						<a class="submitdelete deletion" href="#delete-field"><?php _e( 'Delete Field', 'pods' ); ?></a>
 					</div>
 					<p class="pods-manage-row-save">
-						<a class="pods-manage-row-cancel" href="#cancel-edit-field"><?php _e( 'Cancel', 'pods' ); ?></a> &nbsp;&nbsp; <a href="#save-field" class="button-primary pods-button-update"><?php _e( 'Update Field', 'pods' ); ?></a><a href="#save-field" class="button-primary pods-button-add"><?php _e( 'Add Field', 'pods' ); ?></a>
+						<a class="pods-manage-row-cancel" href="#cancel-edit-field"><?php _e( 'Cancel', 'pods' ); ?></a> &nbsp;&nbsp;
+						<a href="#save-field" class="button-primary pods-button-update"><?php _e( 'Update Field', 'pods' ); ?></a><a href="#save-field" class="button-primary pods-button-add"><?php _e( 'Add Field', 'pods' ); ?></a>
 					</p>
 				</div>
 			</div>
@@ -203,7 +234,7 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 	$type = 'Unknown';
 
 	if ( isset( $field_types[ pods_v( 'type', $field ) ] ) ) {
-		$type = $field_types[ pods_v( 'type', $field ) ]['label'];
+		$type = $field_types[ pods_v( 'type', $field ) ][ 'label' ];
 	}
 
 	echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v( 'type', $field ) . ']</span>';
@@ -211,7 +242,7 @@ $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val',
 	if ( 'pick' == pods_v( 'type', $field ) && '' != pods_v( 'pick_object', $field, '' ) ) {
 		$pick_object_name = null;
 
-		foreach ( $field_settings['pick_object'] as $object => $object_label ) {
+		foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
 			if ( null !== $pick_object_name ) {
 				break;
 			}

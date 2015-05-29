@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Paragraph extends
-	Pods_Field {
+class Pods_Field_Paragraph extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -39,16 +38,10 @@ class Pods_Field_Paragraph extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
-	 */
-	public function __construct() {
-
-	}
-
-	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable'        => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -82,7 +75,7 @@ class Pods_Field_Paragraph extends
 						'default' => 1,
 						'type'    => 'boolean',
 						'help'    => array(
-							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
+							__( 'Transforms less-beautiful text characters into stylized equivalents.', 'pods' ),
 							'http://codex.wordpress.org/Function_Reference/wptexturize'
 						)
 					),
@@ -138,7 +131,7 @@ class Pods_Field_Paragraph extends
 		);
 
 		if ( function_exists( 'Markdown' ) ) {
-			$options['output_options']['group'][ self::$type . '_allow_markdown' ] = array(
+			$options[ 'output_options' ][ 'group' ][ self::$type . '_allow_markdown' ] = array(
 				'label'   => __( 'Allow Markdown Syntax?', 'pods' ),
 				'default' => 0,
 				'type'    => 'boolean'
@@ -146,12 +139,14 @@ class Pods_Field_Paragraph extends
 		}
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, - 1, true );
 
 		$schema = 'LONGTEXT';
@@ -165,16 +160,20 @@ class Pods_Field_Paragraph extends
 		}
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		if ( 1 == pods_v( self::$type . '_oembed', $options, 0 ) ) {
-			$embed = $GLOBALS['wp_embed'];
+
+			/** @var WP_Embed $embed */
+			$embed = $GLOBALS[ 'wp_embed' ];
 			$value = $embed->run_shortcode( $value );
 			$value = $embed->autoembed( $value );
 		}
@@ -204,66 +203,74 @@ class Pods_Field_Paragraph extends
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
 			$value = implode( "\n", $value );
 		}
 
-		if ( isset( $options['name'] ) && false === Pods_Form::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
+		if ( isset( $options[ 'name' ] ) && false === Pods_Form::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
 			if ( pods_v( 'read_only', $options, false ) ) {
-				$options['readonly'] = true;
+				$options[ 'readonly' ] = true;
 			} else {
 				return;
 			}
 		} elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
-			$options['readonly'] = true;
+			$options[ 'readonly' ] = true;
 		}
 
 		pods_view( PODS_DIR . 'ui/fields/textarea.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		$length = (int) pods_v( self::$type . '_max_length', $options, - 1, true );
 
-		if ( 0 < $length ) {
-			$value = substr( $value, 0, $length );
+		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
+			$value = pods_mb_substr( $value, 0, $length );
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = $this->strip_html( $value, $options );
 
 		$value = wp_trim_words( $value );
 
 		return $value;
+
 	}
 
 	/**
 	 * Strip HTML based on options
 	 *
 	 * @param string $value
-	 * @param array  $options
+	 * @param array $options
 	 *
 	 * @return string
 	 */
 	public function strip_html( $value, $options = null ) {
+
 		if ( is_array( $value ) ) {
 			$value = @implode( ' ', $value );
 		}
@@ -274,32 +281,29 @@ class Pods_Field_Paragraph extends
 			return $value;
 		}
 
-		if ( 0 == pods_v( self::$type . '_allow_html', $options ) ) {
+		if ( 1 == pods_v( self::$type . '_allow_html', $options ) ) {
+			$allowed_html_tags = '';
+
+			if ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
+				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+				$allowed_tags = explode( ' ', $allowed_tags );
+				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+				if ( ! empty( $allowed_tags ) ) {
+					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				}
+			}
+
+			if ( ! empty( $allowed_html_tags ) ) {
+				$value = strip_tags( $value, $allowed_html_tags );
+			}
+		} else {
 			$value = strip_tags( $value );
-		} elseif ( 0 < strlen( pods_v( self::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_v( self::$type . '_allowed_html_tags', $options );
-			$allowed_tags = trim( preg_replace( '/[^\<\>\/\,]/', ' ', $allowed_tags ) );
-			$allowed_tags = explode( ' ', $allowed_tags );
-
-			// Handle issue with self-closing tags in strip_tags
-			// @link http://www.php.net/strip_tags#88991
-			if ( in_array( 'br', $allowed_tags ) ) {
-				$allowed_tags[] = 'br /';
-			}
-
-			if ( in_array( 'hr', $allowed_tags ) ) {
-				$allowed_tags[] = 'hr /';
-			}
-
-			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
-
-			if ( ! empty( $allowed_tags ) ) {
-				$allowed_tags = '<' . implode( '><', $allowed_tags ) . '>';
-
-				$value = strip_tags( $value, $allowed_tags );
-			}
 		}
 
 		return $value;
+
 	}
+
 }

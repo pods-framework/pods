@@ -1435,7 +1435,7 @@ class Pods_API {
 			}
 
 			if ( empty( $pod ) ) {
-				return pods_error( __( 'Pod not found', 'pod' ), $this );
+				return pods_error( __( 'Pod not found', 'pods' ), $this );
 			}
 
 			if ( isset( $load_params->old_name ) ) {

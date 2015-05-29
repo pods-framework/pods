@@ -21,6 +21,7 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
 	add_filter( 'pods_allow_deprecated', '__return_true' );
+	add_filter( 'pods_error_die', '__return_false' );
 
 	require PODS_TEST_PLUGIN_FILE;
 }

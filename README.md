@@ -1,5 +1,12 @@
 # [Pods Framework](http://pods.io) #
-[![Build Status](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods) [![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
+[![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
+[![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
+
+[![Wordpress plugin](http://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![Wordpress](http://img.shields.io/wordpress/plugin/dt/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
+[![Wordpress rating](http://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
@@ -39,12 +46,8 @@ We're able to focus more on Pods when we have some cash to help keep the lights 
 
 ## Developer Notes
 
-* Latest Stable Release: [2.x/2.5.1.2](https://github.com/pods-framework/pods/releases/tag/2.x%2F2.5.1.2)
 * Stable Branch: [master](https://github.com/pods-framework/pods/tree/master)
 * 2.x Development Branch: [2.x](https://github.com/pods-framework/pods/tree/2.x)
 * 3.0 Development Branch: [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0)
 
 <em>Please submit all pull requests against [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0) branch.</em>
-
-Current Version: 2.5.2
-

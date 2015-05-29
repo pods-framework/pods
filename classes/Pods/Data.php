@@ -2077,13 +2077,15 @@ class Pods_Data {
 
 					$get_table_data = true;
 				} elseif ( 'comment' == $this->pod_data['type'] ) {
-					$this->row = get_comment( $id, ARRAY_A );
+					$this->row = get_comment( $id );
 
 					// No slug handling here
 
 					if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
 						$this->row = false;
 					} else {
+						$this->row = get_object_vars( $this->row );
+
 						$current_row_id = $this->row['comment_ID'];
 					}
 

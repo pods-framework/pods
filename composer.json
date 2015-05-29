@@ -53,9 +53,9 @@
     "require-dev": {
         "composer/installers": "~1.0.0",
         "satooshi/php-coveralls": "dev-master",
-        "phpunit/phpunit": "4.7.x",
+        "phpunit/phpunit": "4.6.x",
         "mockery/mockery": "0.9.4",
-        "webdevstudios/cmb2": "~2.0.6"
+        "webdevstudios/cmb2": "~2.0.7"
     },
     "extra": {
         "installer-name": "pods",

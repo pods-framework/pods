@@ -20,22 +20,24 @@ $RECYCLE.BIN/
 .dropbox.attr
 
 # SASS
-.sass-cache/*
+/.sass-cache/
 
 # PhpStorm
-.idea
+/.idea/
 
 # Eclipse
 *.pydevproject
 .project
 .metadata
-build/
-tmp/
+/build/
+/tmp/
 tests/clover.xml
 
-# NPM
+# NPM / Composer
 composer.lock
-node_modules
+/node_modules/
+/vendor/
+/components/
 npm-debug.log
 
 # PHPunit config

@@ -2887,7 +2887,7 @@ class Pods_API {
 			}
 
 			delete_metadata( $object_type, $id, $field['name'] );
-			delete_metadata( $object_type, $id, '_pods_' . $field[ 'field' ] );
+			delete_metadata( $object_type, $id, '_pods_' . $field['name'] );
 
 			if ( ! empty( $related_ids ) ) {
 				if ( 1 < count( $related_ids ) ) {

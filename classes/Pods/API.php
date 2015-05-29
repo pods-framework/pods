@@ -2401,7 +2401,7 @@ class Pods_API {
 			if ( ! in_array( $pod['type'], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
 				$params->id = $this->save_wp_object( $object_type, $object_data, array(), false, true );
 			} elseif ( 'taxonomy' == $pod['type'] ) {
-				$term = pods_v( $object_fields['name']['name'], $object_data, '', true );
+				$term = pods_v( 'name', $object_data, '', true );
 
 				if ( !isset( $term_data ) ) {
 					$term_data = array();

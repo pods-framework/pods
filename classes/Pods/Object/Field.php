@@ -308,7 +308,7 @@ class Pods_Object_Field extends
 				$simple_tableless_objects = Pods_Form::simple_tableless_objects();
 
 				if ( 'taxonomy' == $this->_object['type'] ) {
-					$this->_table_info = pods_api()->get_table_info( 'taxonomy', $this->_object['object'], $this->_object['name'] );
+					$this->_table_info = pods_api()->get_table_info( 'taxonomy', $this->_object['name'] );
 				} elseif ( ! in_array( $this->_object['pick_object'], $simple_tableless_objects ) ) {
 					$this->_table_info = pods_api()->get_table_info( $this->_object['pick_object'], $this->_object['pick_val'], null, null, $this );
 				}

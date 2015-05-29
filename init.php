@@ -91,7 +91,7 @@ else {
 		                <div class="updated">
 			                <p><?php _e( 'Pods was not installed correctly. Please download a demo build or reinstall from WordPress.org, or run composer update.', 'pods' ); ?></p>
 		                </div>
-	                <?php
+	                    <?php
 	                }
                 });
             }

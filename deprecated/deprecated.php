@@ -24,12 +24,14 @@ if ( ! function_exists( 'json_encode' ) ) {
 if ( ! function_exists( 'wp_send_json' ) ) {
 	function wp_send_json( $response ) {
 		@header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
+
 		echo json_encode( $response );
+
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			wp_die();
-		} else {
-			die;
 		}
+
+		die();
 	}
 }
 
@@ -119,6 +121,8 @@ function pod_query( $sql, $error = 'SQL failed', $results_error = null, $no_resu
 class Pod {
 	private $new;
 
+	public static $deprecated_notice = true;
+
 	public $body_classes;
 
 	public $ui = array();
@@ -130,7 +134,9 @@ class Pod {
 	public $meta_extra = '';
 
 	function __construct( $type = null, $id = null ) {
-		pods_deprecated( 'Pod (class)', '2.0', 'pods (function)' );
+	    if ( self::$deprecated_notice ) {
+		    pods_deprecated( 'Pod (class)', '2.0', 'pods (function)' );
+	    }
 
 		$this->new = pods( $type, $id );
 	}
@@ -144,22 +150,30 @@ class Pod {
 		$name = (string) $name;
 
 		if ( 'data' == $name ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
+	        }
 
 			$var = $this->new->row();
 		} elseif ( '_data' == $name ) {
 			$var = $this->new->data;
 		}
 		elseif ( 'total' == $name ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
+	        }
 
 			$var = $this->new->total();
 		} elseif ( 'total_rows' == $name ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
+	        }
 
 			$var = $this->new->total_found();
 		} elseif ( 'zebra' == $name ) {
-			pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
+	        if ( self::$deprecated_notice ) {
+		        pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
+	        }
 
 			$var = $this->new->zebra();
 		} else {
@@ -222,7 +236,9 @@ class PodAPI {
 	private $new;
 
 	function __construct( $type = null, $format = null ) {
-		pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
+	    if ( self::$deprecated_notice ) {
+		    pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
+	    }
 
 		$this->new = pods_api( $type, $format );
 	}
@@ -272,10 +288,12 @@ function pods_ui_manage( $obj ) {
  */
 function pods_ui_access( $object, $access, $what ) {
 	pods_deprecated( 'pods_ui_access', '2.0' );
+
 	if ( is_array( $access ) ) {
 		foreach ( $access as $field => $match ) {
 			if ( is_array( $match ) ) {
 				$okay = false;
+
 				foreach ( $match as $the_field => $the_match ) {
 					if ( $object->get_field( $the_field ) == $the_match ) {
 						$okay = true;

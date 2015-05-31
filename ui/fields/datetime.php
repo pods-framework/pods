@@ -77,7 +77,7 @@ if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) ) {
 	$args[ 'ampm' ] = true;
 }
 
-$html5_format = 'Y-m-d\TH:i:s';
+$html5_format = 'Y-m-d H:i:s';
 
 if ( 'c' == $format_value ) {
 	$args[ 'ampm' ] = false;

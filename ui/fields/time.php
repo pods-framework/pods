@@ -48,7 +48,7 @@ if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) ) {
 	$args[ 'ampm' ] = true;
 }
 
-$html5_format = '\TH:i:s';
+$html5_format = 'H:i:s';
 
 if ( 24 == pods_v( $form_field_type . '_type', $options, 12 ) ) {
 	$args[ 'ampm' ] = false;

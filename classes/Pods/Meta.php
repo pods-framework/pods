@@ -3050,7 +3050,7 @@ class Pods_Meta {
             $pod->row[ $meta_key ] = $meta_value;
 
             if ( isset( $pod->fields[ $key ] ) ) {
-                if ( in_array( $pod->fields[ $key ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) )
+                if ( in_array( $pod->fields[ $key ][ 'type' ], Pods_Form::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) )
                     unset( $meta_cache[ '_pods_' . $key ] );
             }
         }

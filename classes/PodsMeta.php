@@ -2707,6 +2707,8 @@ class PodsMeta {
         if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
             self::$current_field_pod = pods( $object[ 'name' ] );
 
+        $pod = self::$current_field_pod;
+
         if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null) {
 
             $key = $meta_key;
@@ -2722,8 +2724,6 @@ class PodsMeta {
             }
 
         }
-
-        $pod = self::$current_field_pod;
 
         $pod->save( $meta_key, $meta_value, $object_id );
 

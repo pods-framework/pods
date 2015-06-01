@@ -750,6 +750,20 @@ function pods_shortcode( $tags, $content = null ) {
 		return '';
 	}
 
+	// For enforcing pagination parameters when not displaying pagination
+	$page = 1;
+	$offset = 0;
+
+	if ( isset( $tags['page'] ) ) {
+		$page = (int) $tags['page'];
+		$page = max( $page, 1 );
+	}
+
+	if ( isset( $tags['offset'] ) ) {
+		$offset = (int) $tags['offset'];
+		$offset = max( $offset, 0 );
+	}
+
 	$defaults = array(
 		'name'                => null,
 		'id'                  => null,
@@ -940,19 +954,31 @@ function pods_shortcode( $tags, $content = null ) {
 
 				$params[ 'search' ] = (boolean) $tags[ 'search' ];
 
-				if ( 0 < absint( $tags[ 'page' ] ) ) {
-					$params[ 'page' ] = absint( $tags[ 'page' ] );
-				}
-
 				$params[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
 
-				if ( 0 < (int) $tags[ 'offset' ] ) {
-					$params[ 'offset' ] = (int) $tags[ 'offset' ];
+				// If we aren't displaying pagination, we need to enforce page/offset
+				if ( ! $params['pagination'] ) {
+					$params['page']   = $page;
+					$params['offset'] = $offset;
+
+					// Force pagination on, we need it and we're enforcing page/offset
+					$params['pagination'] = true;
+				} else {
+					// If we are displaying pagination, allow page/offset override only if *set*
+
+					if ( isset( $tags['page'] ) ) {
+						$params['page'] = (int) $tags['page'];
+						$params['page'] = max( $params['page'], 1 );
+					}
+
+					if ( isset( $tags['offset'] ) ) {
+						$params['offset'] = (int) $tags['offset'];
+						$params['offset'] = max( $params['offset'], 0 );
+					}
 				}
 
 				if ( ! empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
 					$params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
-
 					$params[ 'expires' ] = (int) $tags[ 'expires' ];
 				}
 

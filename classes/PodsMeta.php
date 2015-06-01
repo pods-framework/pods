@@ -2707,6 +2707,22 @@ class PodsMeta {
         if ( !is_object( self::$current_field_pod ) || self::$current_field_pod->pod != $object[ 'name' ] )
             self::$current_field_pod = pods( $object[ 'name' ] );
 
+        if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null) {
+
+            $key = $meta_key;
+            if(false !== strpos( $meta_key, '.' )){
+                $key = current( explode( '.', $meta_key ) );
+            }
+
+            $pod->row[ $meta_key ] = $meta_value;
+
+            if ( isset( $pod->fields[ $key ] ) ) {
+                if ( in_array( $pod->fields[ $key ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) )
+                    unset( $meta_cache[ '_pods_' . $key ] );
+            }
+
+        }
+
         $pod = self::$current_field_pod;
 
         $pod->save( $meta_key, $meta_value, $object_id );

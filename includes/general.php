@@ -780,6 +780,9 @@ function pods_shortcode ( $tags, $content = null ) {
 			if ( ! $params['pagination'] ) {
 				$params['page']   = $page;
 				$params['offset'] = $offset;
+
+				// Force pagination on, we need it and we're enforcing page/offset
+				$params['pagination'] = true;
 			} else {
 				// If we are displaying pagination, allow page/offset override only if *set*
 

@@ -31,7 +31,11 @@ define( 'PODS_TEST_DIR', dirname( __FILE__ ) );
 error_reporting( E_ALL & ~E_DEPRECATED & ~E_STRICT );
 
 function _manually_load_plugin() {
-	require PODS_TEST_PLUGIN_DIR . '/init.php';
+	add_filter( 'pods_allow_deprecated', '__return_true' );
+	add_filter( 'pods_error_die', '__return_false' );
+	add_filter( 'pods_error_exception', '__return_false' );
+
+	require PODS_TEST_PLUGIN_FILE;
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

@@ -2721,6 +2721,22 @@ class PodsMeta {
 
         $pod = self::$current_field_pod;
 
+        if ( ( isset( $pod->fields[ $meta_key ] ) || false !== strpos( $meta_key, '.' ) ) && $pod->row !== null) {
+
+            $key = $meta_key;
+            if(false !== strpos( $meta_key, '.' )){
+                $key = current( explode( '.', $meta_key ) );
+            }
+
+            $pod->row[ $meta_key ] = $meta_value;
+
+            if ( isset( $pod->fields[ $key ] ) ) {
+                if ( in_array( $pod->fields[ $key ][ 'type' ], PodsForm::tableless_field_types() ) && isset( $meta_cache[ '_pods_' . $key ] ) )
+                    unset( $meta_cache[ '_pods_' . $key ] );
+            }
+
+        }
+
         $pod->save( $meta_key, $meta_value, $object_id );
 
         return $object_id;

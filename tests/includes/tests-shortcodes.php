@@ -28,11 +28,13 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 			'type'   => 'number'
 		);
 		pods_api()->save_field( $params );
+
 	}
 
 	public function tearDown() {
 
 		pods_api()->delete_pod( array( 'id' => $this->pod_id ) );
+
 	}
 
 	/**
@@ -44,19 +46,19 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 		$this->pod->add( array( 'name' => 'Tatooine', 'number_of_moons' => 5 ) );
 
 		//test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
 
 		//add another item
 		$this->pod->add( array( 'name' => 'Alderaan', 'number_of_moons' => 7 ) );
 
 		//test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
 
 		//add third item
 		$this->pod->add( array( 'name' => 'Hoth', 'number_of_moons' => 5 ) );
 
 		//test shortcode
-		$this->assertEquals( '55', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
+		$this->assertEquals( '55', do_shortcode( '[pods name="planet" where="t.number_of_moons=5"]{@number_of_moons}[/pods]' ) );
 
 		// Test the pagination parameter
 		/** @see http://php.net/manual/en/filter.filters.validate.php FILTER_VALIDATE_BOOLEAN */
@@ -79,6 +81,11 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 		// Not enough records to trigger pagination even if on
 		$this->assertNotContains( '<a', do_shortcode(  '[pods name="planet" pagination="1" limit="100"]~[/pods]' ) );
 
+
+		/** @link https://github.com/pods-framework/pods/pull/2807 */
+		$this->assertEquals( '57', do_shortcode('[pods name="planet" page="1" limit="2"]{@number_of_moons}[/pods]') );
+		$this->assertEquals( '5', do_shortcode('[pods name="planet" page="2" limit="2"]{@number_of_moons}[/pods]') );
+
 	}
 
 	/**
@@ -93,7 +100,8 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 		$this->pod->add( array( 'name' => 'Dagobah', 'number_of_moons' => 5 ) );
 
 		//test shortcode
-		$this->assertEquals( '5', do_shortcode( '[pods name ="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );
+		$this->assertEquals( '5', do_shortcode( '[pods name="planet" where="t.number_of_moons=5" field="number_of_moons"]' ) );
+
 	}
 
 }

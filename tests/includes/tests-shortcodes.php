@@ -76,6 +76,10 @@ class Test_Shortcodes extends Pods_UnitTestCase {
 		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=-1 limit="2"]~[/pods]' ) );
 		$this->assertEquals( '~~', do_shortcode( '[pods name="planet" pagination=xyzzy limit="2"]~[/pods]' ) );
 
+		/** @link https://github.com/pods-framework/pods/pull/2807 */
+		$this->assertEquals( '57', do_shortcode('[pods name="planet" page="1" limit="2"]{@number_of_moons}[/pods]') );
+		$this->assertEquals( '5', do_shortcode('[pods name="planet" page="2" limit="2"]{@number_of_moons}[/pods]') );
+
 		// Not enough records to trigger pagination even if on
 		$this->assertNotContains( '<a', do_shortcode( '[pods name="planet" pagination="1" limit="100"]~[/pods]' ) );
 

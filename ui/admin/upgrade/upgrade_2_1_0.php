@@ -3,15 +3,15 @@ global $wpdb;
 ?>
 <div class="wrap pods-admin">
 	<script>
-		var PODS_URL = '<?php echo PODS_URL; ?>';
+		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
 	<h2 class="italicized"><?php _e( 'Upgrade Pods', 'pods' ); ?></h2>
 
-	<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+	<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-	<div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>" data-version="<?php echo $new_version; ?>">
+	<div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo esc_attr( wp_create_nonce( 'pods-upgrade' ) ); ?>" data-version="<?php echo esc_attr( $new_version ); ?>">
 		<div id="pods-wizard-heading">
 			<ul>
 				<li class="pods-wizard-menu-current" data-step="1">
@@ -62,7 +62,7 @@ global $wpdb;
 					<tbody>
 						<tr class="pods-wizard-table-pending" data-upgrade="relationships">
 							<td class="pods-wizard-right pods-wizard-status">
-								<i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+								<i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
 							</td>
 							<td class="pods-wizard-right pods-wizard-count">&mdash;</td>
 							<td class="pods-wizard-name">
@@ -92,7 +92,7 @@ global $wpdb;
 					<tbody><!-- complete|pending|active <i></i> -->
 						<tr class="pods-wizard-table-pending" data-upgrade="relationships">
 							<td class="pods-wizard-right pods-wizard-status">
-								<i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+								<i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
 							</td>
 							<td class="pods-wizard-right pods-wizard-count">&mdash;</td>
 							<td class="pods-wizard-name">
@@ -102,7 +102,7 @@ global $wpdb;
 						</tr>
 						<tr class="pods-wizard-table-pending" data-upgrade="cleanup">
 							<td class="pods-wizard-right pods-wizard-status">
-								<i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
+								<i><img src="<?php echo esc_url( PODS_URL ); ?>ui/images/spinner.gif" alt="Loading..." /></i>
 							</td>
 							<td class="pods-wizard-right pods-wizard-count">&mdash;</td>
 							<td class="pods-wizard-name">
@@ -118,7 +118,8 @@ global $wpdb;
 		</div>
 		<div id="pods-wizard-actions">
 			<div id="pods-wizard-toolbar">
-				<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Start using Pods', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
+				<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
+				<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Start using Pods', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
 			</div>
 			<div id="pods-wizard-finished">
 				<?php _e( 'Upgrade Complete!', 'pods' ); ?>
@@ -128,20 +129,20 @@ global $wpdb;
 </div>
 
 <script>
-	var pods_admin_wizard_callback = function(step) {
-		jQuery('#pods-wizard-start, #pods-wizard-next').hide();
+	var pods_admin_wizard_callback = function ( step ) {
+		jQuery( '#pods-wizard-start, #pods-wizard-next' ).hide();
 
-		if(step == 2) {
-			jQuery('#pods-wizard-box').PodsUpgrade('prepare');
+		if ( step == 2 ) {
+			jQuery( '#pods-wizard-box' ).PodsUpgrade( 'prepare' );
 
 			return false;
 		}
-		else if(step == 3) {
-			jQuery('#pods-wizard-box').PodsUpgrade('migrate');
+		else if ( step == 3 ) {
+			jQuery( '#pods-wizard-box' ).PodsUpgrade( 'migrate' );
 		}
 	}
 
-	jQuery(function($) {
-		$('#pods-wizard-box').Pods('wizard');
-	});
+	jQuery( function ( $ ) {
+		$( '#pods-wizard-box' ).Pods( 'wizard' );
+	} );
 </script>

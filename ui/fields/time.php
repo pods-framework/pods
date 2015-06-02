@@ -17,7 +17,7 @@ $time_format_24 = array(
 	'hh_mm_ss' => 'HH:mm:ss'
 );
 
-$time_format    = apply_filters( 'pods_form_ui_field_time_js_formats', $time_format );
+$time_format = apply_filters( 'pods_form_ui_field_time_js_formats', $time_format );
 $time_format_24 = apply_filters( 'pods_form_ui_field_time_js_formats_24', $time_format_24 );
 
 wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -33,8 +33,8 @@ if ( 1 == pods_v( $form_field_type . '_html5', $options ) ) {
 	$type = $form_field_type;
 }
 
-$attributes['type']     = $type;
-$attributes['tabindex'] = 2;
+$attributes[ 'type' ] = $type;
+$attributes[ 'tabindex' ] = 2;
 
 $format = Pods_Form::field_method( 'time', 'format', $options );
 
@@ -44,23 +44,29 @@ $args = array(
 	'timeFormat' => $time_format[ pods_v( $form_field_type . '_format', $options, 'h_mma', true ) ]
 );
 
-if ( false !== stripos( $args['timeFormat'], 'tt' ) ) {
-	$args['ampm'] = true;
+if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) ) {
+	$args[ 'ampm' ] = true;
 }
 
-$html5_format = '\TH:i:s';
+$html5_format = 'H:i:s';
 
 if ( 24 == pods_v( $form_field_type . '_type', $options, 12 ) ) {
-	$args['ampm']       = false;
-	$args['timeFormat'] = $time_format_24[ pods_v( $form_field_type . '_format_24', $options, 'hh_mm', true ) ];
+	$args[ 'ampm' ] = false;
+	$args[ 'timeFormat' ] = $time_format_24[ pods_v( $form_field_type . '_format_24', $options, 'hh_mm', true ) ];
 }
 
-$date         = Pods_Form::field_method( 'time', 'createFromFormat', $format, (string) $value );
+$date = Pods_Form::field_method( 'time', 'createFromFormat', $format, (string) $value );
 $date_default = Pods_Form::field_method( 'time', 'createFromFormat', 'H:i:s', (string) $value );
 
 $formatted_date = $value;
 
-if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '', '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array(
+			'',
+			'0000-00-00',
+			'0000-00-00 00:00:00',
+			'00:00:00'
+		) )
+) {
 	$formatted_date = $value = '';
 } elseif ( 'text' != $type ) {
 	$formatted_date = $value;
@@ -78,54 +84,54 @@ if ( 1 == pods_v( $form_field_type . '_allow_empty', $options, 1 ) && in_array( 
 
 $args = apply_filters( 'pods_form_ui_field_time_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
-$attributes['value'] = $value;
+$attributes[ 'value' ] = $value;
 
 $attributes = Pods_Form::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
 <input<?php Pods_Form::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <script>
-	jQuery(function() {
-		var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode( $args ); ?>;
+	jQuery( function () {
+		var <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
 
 		<?php
 			if ( 'text' != $type ) {
 		?>
-		if('undefined' == typeof pods_test_time_field_<?php echo $type; ?>) {
+		if ( 'undefined' == typeof pods_test_time_field_<?php echo esc_js( $type ); ?> ) {
 			// Test whether or not the browser supports date inputs
-			function pods_test_time_field_<?php echo $type; ?> () {
-				var input = jQuery('<input/>',{
-					'type' : '<?php echo $type; ?>',
+			function pods_test_time_field_<?php echo esc_js( $type ); ?> () {
+				var input = jQuery( '<input/>', {
+					'type' : '<?php echo esc_js( $type ); ?>',
 					css : {
 						position : 'absolute',
 						display : 'none'
 					}
-				});
+				} );
 
-				jQuery('body').append(input);
+				jQuery( 'body' ).append( input );
 
-				var bool = input.prop('type') !== 'text';
+				var bool = input.prop( 'type' ) !== 'text';
 
-				if(bool) {
+				if ( bool ) {
 					var smile = ":)";
-					input.val(smile);
+					input.val( smile );
 
 					return (input.val() != smile);
 				}
 			}
 		}
 
-		if(!pods_test_time_field_<?php echo $type; ?>()) {
-			jQuery('input#<?php echo $attributes[ 'id' ]; ?>').val('<?php echo $formatted_date; ?>');
-			jQuery('input#<?php echo $attributes[ 'id' ]; ?>').<?php echo $method; ?>( <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args );
+		if ( !pods_test_time_field_<?php echo esc_js( $type ); ?>() ) {
+			jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).val( '<?php echo esc_js( $formatted_date ); ?>' );
+			jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
 		}
 		<?php
 			}
 			else {
 		?>
-		jQuery('input#<?php echo $attributes[ 'id' ]; ?>').<?php echo $method; ?>( <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args );
+		jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
 		<?php
 			}
 		?>
-	});
+	} );
 </script>

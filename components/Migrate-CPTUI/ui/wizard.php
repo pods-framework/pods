@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
 	<script>
-		var PODS_URL = '<?php echo PODS_URL; ?>';
+		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
@@ -14,7 +14,7 @@
 
 			<h2 class="italicized"><?php _e( 'Migrate: Import from Custom Post Type UI', 'pods' ); ?></h2>
 
-			<img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+			<img src="<?php echo esc_url( PODS_URL ); ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
 			<div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first">
 				<div id="pods-wizard-heading">
@@ -61,12 +61,11 @@
 						</div>
 
 						<div class="stuffbox">
-							<h3><label for="link_name"><?php _e( 'Choose Post Types to Import', 'pods' ); ?></label></h3>
+							<h3><label for="link_name"><?php _e( 'Choose Post Types to Import', 'pods' ); ?></label>
+							</h3>
 
 							<div class="inside pods-manage-field pods-dependency">
-								<?php
-								if ( ! empty( $post_types ) ) {
-									?>
+								<?php if ( ! empty( $post_types ) ) { ?>
 									<div class="pods-field-option-group">
 										<p class="pods-field-option-group-label">
 											<?php _e( 'Available Post Types', 'pods' ); ?>
@@ -76,7 +75,7 @@
 											<ul>
 												<?php
 												foreach ( $post_types as $post_type ) {
-													$post_type_name  = pods_v( 'name', $post_type );
+													$post_type_name = pods_v( 'name', $post_type );
 													$post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
 													?>
 													<li>
@@ -84,29 +83,22 @@
 															<?php echo Pods_Form::field( 'post_type[' . $post_type_name . ']', pods_v( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
 														</div>
 													</li>
-												<?php
-												}
-												?>
+												<?php } ?>
 											</ul>
 										</div>
 									</div>
-								<?php
-								} else {
-									?>
+								<?php } else { ?>
 									<p class="padded"><?php _e( 'No Post Types were found.', 'pods' ); ?></p>
-								<?php
-								}
-								?>
+								<?php } ?>
 							</div>
 						</div>
 
 						<div class="stuffbox">
-							<h3><label for="link_name"><?php _e( 'Choose Taxonomies to Import', 'pods' ); ?></label></h3>
+							<h3><label for="link_name"><?php _e( 'Choose Taxonomies to Import', 'pods' ); ?></label>
+							</h3>
 
 							<div class="inside pods-manage-field pods-dependency">
-								<?php
-								if ( ! empty( $taxonomies ) ) {
-									?>
+								<?php if ( ! empty( $taxonomies ) ) { ?>
 									<div class="pods-field-option-group">
 										<p class="pods-field-option-group-label">
 											<?php _e( 'Available Taxonomies', 'pods' ); ?>
@@ -116,7 +108,7 @@
 											<ul>
 												<?php
 												foreach ( $taxonomies as $taxonomy ) {
-													$taxonomy_name  = pods_v( 'name', $taxonomy );
+													$taxonomy_name = pods_v( 'name', $taxonomy );
 													$taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
 													?>
 													<li>
@@ -128,20 +120,17 @@
 											</ul>
 										</div>
 									</div>
-								<?php
-								} else {
-									?>
+								<?php } else { ?>
 									<p class="padded"><?php _e( 'No Taxonomies were found.', 'pods' ); ?></p>
-								<?php
-								}
-								?>
+								<?php } ?>
 							</div>
 						</div>
 					</div>
 
 					<div id="pods-wizard-actions">
 						<div id="pods-wizard-toolbar">
-							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+							<a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
+							<a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
 						</div>
 						<div id="pods-wizard-finished">
 
@@ -153,21 +142,21 @@
 	</form>
 </div>
 <script type="text/javascript">
-	var pods_admin_submit_callback = function(id) {
-		id = parseInt(id);
+	var pods_admin_submit_callback = function ( id ) {
+		id = parseInt( id );
 		document.location = 'admin.php?page=pods&do=create';
-	}
+	};
 
-	var pods_admin_option_select_callback = function($opt) {
-		jQuery('#pods_cleanup').val($opt.data('opt'));
-	}
+	var pods_admin_option_select_callback = function ( $opt ) {
+		jQuery( '#pods_cleanup' ).val( $opt.data( 'opt' ) );
+	};
 
-	jQuery(function($) {
-		$(document).Pods('validate');
-		$(document).Pods('submit');
-		$(document).Pods('wizard');
-		$(document).Pods('dependency');
-		$(document).Pods('advanced');
-		$(document).Pods('confirm');
-	});
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'wizard' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'advanced' );
+		$( document ).Pods( 'confirm' );
+	} );
 </script>

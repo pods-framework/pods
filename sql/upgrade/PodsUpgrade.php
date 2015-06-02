@@ -28,15 +28,13 @@ class PodsUpgrade {
      * Build the upgrade process
      */
     function __construct() {
-        $this->api = pods_api();
-
         $this->get_tables();
         $this->get_progress();
     }
 
     /**
      * Install the update
-     * 
+     *
      * @param null $_blog_id
      */
     public function install( $_blog_id = null ) {
@@ -54,7 +52,7 @@ class PodsUpgrade {
         $pods_version = get_option( 'pods_version' );
 
         /**
-	     * Fires when Pods Installs during the upgrade process 
+	     * Fires when Pods Installs during the upgrade process
 	     *
 	     * @param int $pods_version The current version number of Pods
 	     * @param int $_blog_id Current blog id
@@ -146,7 +144,7 @@ class PodsUpgrade {
 
     /**
      * Update upgrade process
-     * 
+     *
      * @param $method
      * @param $v
      * @param null $x
@@ -167,7 +165,7 @@ class PodsUpgrade {
 
     /**
      * Check upgrade process
-     * 
+     *
      * @param $method
      * @param null $x
      *

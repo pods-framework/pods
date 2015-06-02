@@ -18,14 +18,15 @@ if ( class_exists( 'Pods_Roles' ) ) {
 	return;
 }
 
-class Pods_Roles extends
-	Pods_Component {
+class Pods_Roles extends Pods_Component {
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
+
 		add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
+
 	}
 
 	/**
@@ -34,7 +35,9 @@ class Pods_Roles extends
 	 * @since 2.0
 	 */
 	public function admin_assets() {
+
 		wp_enqueue_style( 'pods-wizard' );
+
 	}
 
 	/**
@@ -47,10 +50,15 @@ class Pods_Roles extends
 	 * @since 2.0
 	 */
 	public function admin( $options, $component ) {
+
 		global $wp_roles;
 
 		// Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
-		if ( class_exists( 'RGForms' ) && ! has_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) ) ) {
+		if ( class_exists( 'RGForms' ) && ! has_filter( 'members_get_capabilities', array(
+					'RGForms',
+					'members_get_capabilities'
+				) )
+		) {
 			add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
 		}
 
@@ -70,11 +78,11 @@ class Pods_Roles extends
 			);
 
 			if ( $default_role == $key ) {
-				$roles[ $key ]['label'] .= ' (site default)';
+				$roles[ $key ][ 'label' ] .= ' (site default)';
 			}
 
 			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
-				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
+				$roles[ $key ][ 'users' ] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
 			}
 		}
 
@@ -114,39 +122,42 @@ class Pods_Roles extends
 		);
 
 		if ( isset( $roles[ pods_v( 'id', 'get', - 1 ) ] ) ) {
-			$ui['row'] = $roles[ pods_v( 'id', 'get', - 1 ) ];
+			$ui[ 'row' ] = $roles[ pods_v( 'id', 'get', - 1 ) ];
 		}
 
 		if ( ! pods_is_admin( array( 'pods_roles_add' ) ) ) {
-			$ui['actions_disabled'][] = 'add';
+			$ui[ 'actions_disabled' ][ ] = 'add';
 		}
 
 		if ( ! pods_is_admin( array( 'pods_roles_edit' ) ) ) {
-			$ui['actions_disabled'][] = 'edit';
+			$ui[ 'actions_disabled' ][ ] = 'edit';
 		}
 
 		if ( count( $roles ) < 2 || ! pods_is_admin( array( 'pods_roles_delete' ) ) ) {
-			$ui['actions_disabled'][] = 'delete';
+			$ui[ 'actions_disabled' ][ ] = 'delete';
 		}
 
 		pods_ui( $ui );
+
 	}
-	
+
 	/**
 	 * @param $obj
 	 */
 	function admin_add( $obj ) {
+
 		global $wp_roles;
 
 		$capabilities = $this->get_capabilities();
 
 		$defaults = $this->get_default_capabilities();
 
-		$component = $obj->x['component'];
+		$component = $obj->x[ 'component' ];
 
 		$method = 'add'; // ajax_add
 
 		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
@@ -154,6 +165,7 @@ class Pods_Roles extends
 	 * @param $obj
 	 */
 	function admin_edit( $duplicate, $obj ) {
+
 		global $wp_roles;
 
 		$id = $obj->id;
@@ -167,8 +179,8 @@ class Pods_Roles extends
 				continue;
 			}
 
-			$role_name         = $key;
-			$role_label        = $wp_roles->role_names[ $key ];
+			$role_name = $key;
+			$role_label = $wp_roles->role_names[ $key ];
 			$role_capabilities = $role->capabilities;
 		}
 
@@ -176,18 +188,20 @@ class Pods_Roles extends
 			return $obj->error( __( 'Role not found, cannot edit it.', 'pods' ) );
 		}
 
-		$component = $obj->x['component'];
+		$component = $obj->x[ 'component' ];
 
 		$method = 'edit'; // ajax_edit
 
 		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
-	
+
 	/**
 	 * @param $id
 	 * @param $obj
 	 */
 	function admin_delete( $id, $obj ) {
+
 		global $wp_roles;
 
 		$id = $obj->id;
@@ -199,7 +213,7 @@ class Pods_Roles extends
 		$default_role = get_option( 'default_role' );
 
 		if ( $id == $default_role ) {
-			return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ]['name'] ) );
+			return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ][ 'name' ] ) );
 		}
 
 		$wp_user_search = new WP_User_Search( '', '', $id );
@@ -233,21 +247,22 @@ class Pods_Roles extends
 			);
 
 			if ( $default_role == $key ) {
-				$roles[ $key ]['label'] .= ' (site default)';
+				$roles[ $key ][ 'label' ] .= ' (site default)';
 			}
 
 			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
-				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
+				$roles[ $key ][ 'users' ] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
 			}
 		}
 
-		$name = $obj->data[ $id ]['label'] . ' (' . $obj->data[ $id ]['name'] . ')';
+		$name = $obj->data[ $id ][ 'label' ] . ' (' . $obj->data[ $id ][ 'name' ] . ')';
 
-		$obj->data        = $roles;
-		$obj->total       = count( $roles );
+		$obj->data = $roles;
+		$obj->total = count( $roles );
 		$obj->total_found = count( $roles );
 
 		$obj->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
+
 	}
 
 	/**
@@ -258,9 +273,10 @@ class Pods_Roles extends
 	 * @return mixed|void
 	 */
 	public function ajax_add( $params ) {
+
 		global $wp_roles;
 
-		$role_name  = pods_v( 'role_name', $params );
+		$role_name = pods_v( 'role_name', $params );
 		$role_label = pods_v( 'role_label', $params );
 
 		$params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
@@ -295,6 +311,7 @@ class Pods_Roles extends
 		}
 
 		return add_role( $role_name, $role_label, $capabilities );
+
 	}
 
 	/**
@@ -307,6 +324,7 @@ class Pods_Roles extends
 	 * @return bool|mixed|void
 	 */
 	public function ajax_edit( $params ) {
+
 		global $wp_roles;
 
 		$capabilities = $this->get_capabilities();
@@ -323,9 +341,9 @@ class Pods_Roles extends
 		/**
 		 * @var $role WP_Role
 		 */
-		$role              = $wp_roles->role_objects[ $params->id ];
-		$role_name         = $params->id;
-		$role_label        = $wp_roles->role_names[ $params->id ];
+		$role = $wp_roles->role_objects[ $params->id ];
+		$role_name = $params->id;
+		$role_label = $wp_roles->role_names[ $params->id ];
 		$role_capabilities = $role->capabilities;
 
 		$new_capabilities = array();
@@ -335,7 +353,7 @@ class Pods_Roles extends
 				continue;
 			}
 
-			$new_capabilities[] = esc_attr( $capability );
+			$new_capabilities[ ] = esc_attr( $capability );
 
 			if ( ! $role->has_cap( $capability ) ) {
 				$role->add_cap( $capability );
@@ -351,7 +369,7 @@ class Pods_Roles extends
 				continue;
 			}
 
-			$new_capabilities[] = esc_attr( $capability );
+			$new_capabilities[ ] = esc_attr( $capability );
 
 			if ( ! $role->has_cap( $capability ) ) {
 				$role->add_cap( $capability );
@@ -365,6 +383,7 @@ class Pods_Roles extends
 		}
 
 		return true;
+
 	}
 
 	/**
@@ -375,11 +394,12 @@ class Pods_Roles extends
 	 * @return array
 	 */
 	function count_users( $role ) {
+
 		$count_users = count_users();
 
 		$avail_roles = array();
 
-		foreach ( $count_users['avail_roles'] as $count_role => $count ) {
+		foreach ( $count_users[ 'avail_roles' ] as $count_role => $count ) {
 			$avail_roles[ $count_role ] = $count;
 		}
 
@@ -392,14 +412,11 @@ class Pods_Roles extends
 		}
 
 		return $avail_roles[ $role ];
+
 	}
 
-	/**
-	 * Get WordPress and Pods capabilities 
-	 * 
-	 * @return array|mixed|void
-	 */
 	function get_capabilities() {
+
 		global $wp_roles;
 
 		$default_caps = $this->get_wp_capabilities();
@@ -434,12 +451,11 @@ class Pods_Roles extends
 		$capabilities = array_unique( $capabilities );
 
 		return $capabilities;
+
 	}
 
-	/**
-	 * @return array
-	 */
 	function get_capability_group_map() {
+
 		$defaults_capability_group = array(
 			'activate_plugins'       => 'plugins',
 			'add_users'              => 'users',
@@ -499,65 +515,73 @@ class Pods_Roles extends
 			'pods_roles_edit'   => 'pods'
 		);
 
-		$pods_components                  = pods_components();
+		$pods_components = pods_components();
 		$pods_components_capability_group = $pods_components->admin_capabilities( array() );
 		$pods_components_capability_group = array_keys( array_flip( $pods_components_capability_group ) );
 		$pods_components_capability_group = array_fill_keys( $pods_components_capability_group, 'pods' );
 
 		$pods_capability_group = array();
 
-		$pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'taxonomy', 'settings' ) ) );
+		$pods = pods_api()->load_pods( array(
+				'type' => array(
+					'pod',
+					'table',
+					'post_type',
+					'taxonomy',
+					'settings'
+				)
+			) );
 
-		$pods_capability_group['pods']            = 'pods';
-		$pods_capability_group['pods_content']    = 'pods';
-		$pods_capability_group['pods_settings']   = 'pods';
-		$pods_capability_group['pods_components'] = 'pods';
+		$pods_capability_group[ 'pods' ] = 'pods';
+		$pods_capability_group[ 'pods_content' ] = 'pods';
+		$pods_capability_group[ 'pods_settings' ] = 'pods';
+		$pods_capability_group[ 'pods_components' ] = 'pods';
 
 		foreach ( $pods as $pod ) {
-			if ( 'settings' == $pod['type'] ) {
-				$pods_capability_group[ 'pods_edit_' . $pod['name'] ] = $pod['name'];
-			} elseif ( 'post_type' == $pod['type'] ) {
+			if ( 'settings' == $pod[ 'type' ] ) {
+				$pods_capability_group[ 'pods_edit_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+			} elseif ( 'post_type' == $pod[ 'type' ] ) {
 				$capability_type = pods_var( 'capability_type_custom', $pod, pods_var_raw( 'name', $pod ) );
 
 				if ( 'custom' == pods_var( 'capability_type', $pod ) && 0 < strlen( $capability_type ) ) {
-					$pods_capability_group[ 'read_' . $capability_type ]   = $pod['name'];
-					$pods_capability_group[ 'edit_' . $capability_type ]   = $pod['name'];
-					$pods_capability_group[ 'delete_' . $capability_type ] = $pod['name'];
+					$pods_capability_group[ 'read_' . $capability_type ] = $pod[ 'name' ];
+					$pods_capability_group[ 'edit_' . $capability_type ] = $pod[ 'name' ];
+					$pods_capability_group[ 'delete_' . $capability_type ] = $pod[ 'name' ];
 
 					if ( 1 == pods_var( 'capability_type_extra', $pod, 1 ) ) {
-						$pods_capability_group[ 'read_private_' . $capability_type . 's' ]     = $pod['name'];
-						$pods_capability_group[ 'edit_' . $capability_type . 's' ]             = $pod['name'];
-						$pods_capability_group[ 'edit_others_' . $capability_type . 's' ]      = $pod['name'];
-						$pods_capability_group[ 'edit_private_' . $capability_type . 's' ]     = $pod['name'];
-						$pods_capability_group[ 'edit_published_' . $capability_type . 's' ]   = $pod['name'];
-						$pods_capability_group[ 'publish_' . $capability_type . 's' ]          = $pod['name'];
-						$pods_capability_group[ 'delete_' . $capability_type . 's' ]           = $pod['name'];
-						$pods_capability_group[ 'delete_private_' . $capability_type . 's' ]   = $pod['name'];
-						$pods_capability_group[ 'delete_published_' . $capability_type . 's' ] = $pod['name'];
-						$pods_capability_group[ 'delete_others_' . $capability_type . 's' ]    = $pod['name'];
+						$pods_capability_group[ 'read_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'edit_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'edit_others_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'edit_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'edit_published_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'publish_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'delete_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'delete_private_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'delete_published_' . $capability_type . 's' ] = $pod[ 'name' ];
+						$pods_capability_group[ 'delete_others_' . $capability_type . 's' ] = $pod[ 'name' ];
 					}
 				}
-			} elseif ( 'taxonomy' == $pod['type'] ) {
+			} elseif ( 'taxonomy' == $pod[ 'type' ] ) {
 				if ( 1 == pods_var( 'capabilities', $pod, 0 ) ) {
 					$capability_type = pods_var( 'capability_type_custom', $pod, pods_var_raw( 'name', $pod ) . 's' );
 
-					$pods_capability_group[ 'manage_' . $capability_type ] = $pod['name'];
-					$pods_capability_group[ 'edit_' . $capability_type ]   = $pod['name'];
-					$pods_capability_group[ 'delete_' . $capability_type ] = $pod['name'];
-					$pods_capability_group[ 'assign_' . $capability_type ] = $pod['name'];
+					$pods_capability_group[ 'manage_' . $capability_type ] = $pod[ 'name' ];
+					$pods_capability_group[ 'edit_' . $capability_type ] = $pod[ 'name' ];
+					$pods_capability_group[ 'delete_' . $capability_type ] = $pod[ 'name' ];
+					$pods_capability_group[ 'assign_' . $capability_type ] = $pod[ 'name' ];
 				}
 			} else {
-				$pods_capability_group[ 'pods_add_' . $pod['name'] ]  = $pod['name'];
-				$pods_capability_group[ 'pods_edit_' . $pod['name'] ] = $pod['name'];
+				$pods_capability_group[ 'pods_add_' . $pod[ 'name' ] ] = $pod[ 'name' ];
+				$pods_capability_group[ 'pods_edit_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 
-				if ( isset( $pod['fields']['author'] ) && 'pick' == $pod['fields']['author']['type'] && 'user' == $pod['fields']['author']['pick_object'] ) {
-					$pods_capability_group[ 'pods_edit_others_' . $pod['name'] ] = $pod['name'];
+				if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] ) {
+					$pods_capability_group[ 'pods_edit_others_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 				}
 
-				$pods_capability_group[ 'pods_delete_' . $pod['name'] ] = $pod['name'];
+				$pods_capability_group[ 'pods_delete_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 
-				if ( isset( $pod['fields']['author'] ) && 'pick' == $pod['fields']['author']['type'] && 'user' == $pod['fields']['author']['pick_object'] ) {
-					$pods_capability_group[ 'pods_delete_others_' . $pod['name'] ] = $pod['name'];
+				if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] ) {
+					$pods_capability_group[ 'pods_delete_others_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 				}
 
 				$actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod );
@@ -589,14 +613,14 @@ class Pods_Roles extends
 					}
 
 					if ( ! in_array( 'export', $actions_disabled ) ) {
-						$pods_capability_group[ 'pods_export_' . $pod['name'] ] = $pod['name'];
+						$pods_capability_group[ 'pods_export_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 					}
 
 					if ( ! in_array( 'reorder', $actions_disabled ) ) {
-						$pods_capability_group[ 'pods_reorder_' . $pod['name'] ] = $pod['name'];
+						$pods_capability_group[ 'pods_reorder_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 					}
 				} elseif ( 1 == pods_var( 'ui_export', $pod, 0 ) ) {
-					$pods_capability_group[ 'pods_export_' . $pod['name'] ] = $pod['name'];
+					$pods_capability_group[ 'pods_export_' . $pod[ 'name' ] ] = $pod[ 'name' ];
 				}
 			}
 		}
@@ -604,13 +628,12 @@ class Pods_Roles extends
 		$capability_group_map = array_merge( $defaults_capability_group, $pods_roles_capability_group, $pods_components_capability_group, $pods_capability_group );
 
 		return $capability_group_map;
+
 	}
-	
-	/**
-	 * @return array
-	 */
+
 	function get_grouped_capabilities() {
-		$capabilities         = $this->get_capabilities();
+
+		$capabilities = $this->get_capabilities();
 		$capability_group_map = $this->get_capability_group_map();
 
 		$grouped_capabilities = array();
@@ -634,14 +657,11 @@ class Pods_Roles extends
 		ksort( $grouped_capabilities );
 
 		return $grouped_capabilities;
+
 	}
-	
-	/**
-	 * Get a list of default WordPress roles in an array
-	 * 
-	 * @return array
-	 */
+
 	function get_wp_capabilities() {
+
 		$defaults = array(
 			'activate_plugins',
 			'add_users',
@@ -696,12 +716,11 @@ class Pods_Roles extends
 		);
 
 		return $defaults;
+
 	}
-	
-	/**
-	 * @return array|mixed|void
-	 */
+
 	function get_default_capabilities() {
+
 		$capabilities = array(
 			'read'
 		);
@@ -712,16 +731,11 @@ class Pods_Roles extends
 		$capabilities = apply_filters( 'pods_roles_default_capabilities', $capabilities );
 
 		return $capabilities;
+
 	}
 
-	/**
-	 * Delete Deprecated WordPress user levels
-	 * 
-	 * @param $capabilities WordPress Capabilities 
-	 *
-	 * @return array
-	 */
 	function remove_deprecated_capabilities( $capabilities ) {
+
 		$deprecated_capabilities = array(
 			'level_0',
 			'level_1',
@@ -739,5 +753,7 @@ class Pods_Roles extends
 		$capabilities = array_diff( $capabilities, $deprecated_capabilities );
 
 		return $capabilities;
+
 	}
+
 }

@@ -96,7 +96,7 @@ class Test_PodsField_Text extends Pods_UnitTestCase
     public function test_method_schema_returns_varchar_default() {
         $this->assertEquals( 'VARCHAR(255)', $this->field->schema() );
     }
-    
+
     /**
      * @covers  PodsField_Text::schema
      * @depends test_method_exists_schema

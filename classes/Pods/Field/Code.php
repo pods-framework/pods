@@ -5,8 +5,7 @@
  *
  * @package Pods\Fields
  */
-class Pods_Field_Code extends
-	Pods_Field {
+class Pods_Field_Code extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -41,16 +40,17 @@ class Pods_Field_Code extends
 	public static $prepare = '%s';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			self::$type . '_repeatable' => array(
 				'label'             => __( 'Repeatable Field', 'pods' ),
@@ -95,9 +95,10 @@ class Pods_Field_Code extends
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, - 1, true );
 
 		$schema = 'LONGTEXT';
@@ -111,23 +112,27 @@ class Pods_Field_Code extends
 		}
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		if ( 1 == pods_v( self::$type . '_allow_shortcode', $options, 0 ) ) {
 			$value = do_shortcode( $value );
 		}
 
 		return $value;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
-	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+	public function input( $name, $value = null, $options = array(), $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		if ( is_array( $value ) ) {
@@ -140,12 +145,14 @@ class Pods_Field_Code extends
 		do_action( 'pods_form_ui_field_code', $field_type, $name, $value, $options, $pod, $id );
 
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$length = (int) pods_v( self::$type . '_max_length', $options, - 1, true );
 
 		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
@@ -153,5 +160,7 @@ class Pods_Field_Code extends
 		}
 
 		return $value;
+
 	}
+
 }

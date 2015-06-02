@@ -3,8 +3,7 @@
 /**
  * @package Pods\Fields
  */
-class Pods_Field_Loop extends
-	Pods_Field {
+class Pods_Field_Loop extends Pods_Field {
 
 	/**
 	 * Field Type Group
@@ -31,16 +30,17 @@ class Pods_Field_Loop extends
 	public static $label = 'Loop (Repeatable)';
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function options() {
+
 		$options = array(
 			'loop_limit' => array(
 				'label'   => __( 'Loop Limit', 'pods' ),
@@ -51,21 +51,25 @@ class Pods_Field_Loop extends
 		);
 
 		return $options;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
+
 		$schema = 'LONGTEXT';
 
 		return $schema;
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		$fields = null;
 
 		if ( is_object( $pod ) && isset( $pod->fields ) ) {
@@ -73,32 +77,37 @@ class Pods_Field_Loop extends
 		}
 
 		return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$form_field_type = Pods_Form::$field_type;
 
 		pods_view( PODS_DIR . 'ui/fields/loop.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
 		$value = $this->simple_value( $value, $options );
 
 		return $this->display( $value, $name, $options, $pod, $id );
+
 	}
 
 	/**
 	 * Convert a simple value to the correct value
 	 *
-	 * @param mixed   $value   Value of the field
-	 * @param array   $options Field options
-	 * @param boolean $raw     Whether to return the raw list of keys (true) or convert to key=>value (false)
+	 * @param mixed $value Value of the field
+	 * @param array $options Field options
+	 * @param boolean $raw Whether to return the raw list of keys (true) or convert to key=>value (false)
 	 *
 	 * @return mixed
 	 */
@@ -107,4 +116,5 @@ class Pods_Field_Loop extends
 		return $value;
 
 	}
+
 }

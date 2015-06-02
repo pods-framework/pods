@@ -18,11 +18,10 @@ if ( class_exists( 'Pods_Table_Storage' ) ) {
 	return;
 }
 
-class Pods_Table_Storage extends
-	Pods_Component {
+class Pods_Table_Storage extends Pods_Component {
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -47,7 +46,7 @@ class Pods_Table_Storage extends
 	 */
 	public function add_pod_type( $data ) {
 
-		$data['taxonomy'] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
+		$data[ 'taxonomy' ] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
 
 		return $data;
 

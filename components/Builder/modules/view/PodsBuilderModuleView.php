@@ -8,8 +8,7 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 }
 
 if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
-	class PodsBuilderModuleView extends
-		LayoutModule {
+	class PodsBuilderModuleView extends LayoutModule {
 
 		var $_name = '';
 		var $_var = 'pods-builder-view';
@@ -21,11 +20,13 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		 * Register the Module
 		 */
 		public function PodsBuilderModuleView() {
+
 			$this->_name        = __( 'Pods - View', 'pods' );
 			$this->_description = __( "Include a file from a theme, with caching options", 'pods' );
 			$this->module_path  = dirname( __FILE__ );
 
 			$this->LayoutModule();
+
 		}
 
 		/**
@@ -36,6 +37,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		 * @return mixed
 		 */
 		function _get_defaults( $defaults ) {
+
 			$new_defaults = array(
 				'view'       => '',
 				'expires'    => 0,
@@ -43,27 +45,31 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
+
 		}
 
 		/**
 		 * Output something before the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _before_table_edit( $form, $results = true ) {
+
 			?>
 			<p><?php echo $this->_description; ?></p>
 		<?php
+
 		}
 
 		/**
 		 * Output something at the start of the table form
 		 *
 		 * @param object $form Form class
-		 * @param bool   $results
+		 * @param bool $results
 		 */
 		function _start_table_edit( $form, $results = true ) {
+
 			?>
 			<tr>
 				<td valign="top">
@@ -99,24 +105,30 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 				</td>
 			</tr>
 		<?php
+
 		}
 
 		/**
 		 * Module Output
+		 *
+		 * @param $fields
 		 */
 		function _render( $fields ) {
+
 			$args = array(
-				'view'       => trim( pods_v( 'view', $fields['data'], '' ) ),
-				'expires'    => (int) trim( pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
-				'cache_mode' => trim( pods_v( 'cache_mode', $fields['data'], 'transient', true ) )
+				'view'       => trim( pods_var_raw( 'view', $fields[ 'data' ], '' ) ),
+				'expires'    => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
+				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields[ 'data' ], 'transient', null, true ) )
 			);
 
-			if ( 0 < strlen( $args['view'] ) && 'none' != $args['cache_mode'] ) {
+			if ( 0 < strlen( $args[ 'view' ] ) && 'none' != $args[ 'cache_mode' ] ) {
 				echo pods_shortcode( $args );
 			}
+
 		}
 
 	}
+
 }
 
 new PodsBuilderModuleView();

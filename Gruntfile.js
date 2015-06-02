@@ -1,195 +1,275 @@
-module.exports = function(grunt) {
+module.exports = function ( grunt ) {
+
+	//setup file list for copying/ not copying for SVN
+	files_list = [
+		'**',
+		'!.git/**',
+		'!.sass-cache/**',
+		'!bin/**',
+		'!node_modules/**',
+		'!release/**',
+		'!sources/**',
+		'!tests/**',
+		'!.gitattributes',
+		'!.gitignore',
+		'!.gitmodules',
+		'!.travis.yml',
+		'!composer.json',
+		'!composer.lock',
+		'!CONTRIBUTING.md',
+		'!Gruntfile.js',
+		'!git-workflow.md',
+		'!package.json',
+		'!phpunit.xml.dist'
+	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
-	require('load-grunt-tasks')(grunt);
+	require( 'load-grunt-tasks' )( grunt );
 
-	grunt.initConfig({
+	// Project configuration.
+	grunt.initConfig( {
+		pkg : grunt.file.readJSON( 'package.json' ),
 
-		pkg: grunt.file.readJSON('package.json'),
-
-		githooks: {
-			all: {
-				'pre-commit': 'default'
-			}
-		},
-
-		sprite: {
-			all: {
-				'src': 'sources/images/sprites/*.png',
-				'destImg': 'ui/images/sprites.png',
-				'destCSS': 'sources/sass/partials/_sprites.scss',
-				'imgPath': 'ui/images/sprites.png',
-				'algorithm': 'binary-tree'
-			}
-		},
-
-		csscomb: {
-			dist: {
-				files: [{
-					expand: true,
-					cwd: 'sources/css/',
-					src: ['sources/css/*.css'],
-					dest: 'sources/css/'
-				}]
-			}
-		},
-
-		sass: {
-			dist: {
-				options: {
-					style: 'expanded',
-					lineNumbers: true
-					/*loadPath: [
-						'bower_components/bourbon/app/assets/stylesheets',
-						'bower_components/neat/app/assets/stylesheets'
-					]*/
-				},
-				files: [ {
-					expand : true,
-					cwd : 'sources/sass/',
-					src : ['sources/sass/*.scss'],
-					dest : 'sources/css/',
-					ext : '.css'
-				} ]
-			}
-		},
-
-		cssmin: {
-			minify: {
-				expand: true,
-				cwd: 'sources/css/',
-				src: '*.css',
-				dest: 'ui/css/',
-				ext: '.css'
-			}
-		},
-
-		uglify: {
-			build: {
-				options: {
-					mangle: false
-				},
-				files: [{
-					expand: true,
-					cwd: 'sources/js/',
-					src: '*.js',
-					dest: 'ui/js/',
-					ext: '.js'
-				}]
-			}
-		},
-
-		imagemin: {
-			dynamic: {
-				files: [{
-					expand: true,
-					cwd: 'sources/images/',
-					src: ['**/*.{png,jpg,gif}'],
-					dest: 'ui/images/'
-				}]
-			}
-		},
-
-		watch: {
-
-			scripts: {
-				files: ['sources/js/*.js'],
-				tasks: ['javascript'],
-				options: {
-					spawn: false
-				}
-			},
-
-			css: {
-				files: ['sources/sass/*.scss'],
-				tasks: ['styles'],
-				options: {
-					spawn: false,
-					livereload: true
-				}
-			},
-
-			sprite: {
-				files: ['ui/images/sprites/*.png'],
-				tasks: ['sprite', 'styles'],
-				options: {
-					spawn: false,
-					livereload: true
-				}
-			}
-
-		},
-
-		shell: {
-			grunt: {
-				command: ''
-			}
-		},
-
-		clean: {
-			js: ['ui/js/*.js'],
-			css: ['ui/css/*.css']
-		},
-
-		makepot: {
-			pods: {
-				options: {
-					cwd: '/',
-					domainPath: '/languages/',
-					potFilename: 'pods.pot',
-					type: 'wp-plugin'
-				}
-			}
-		},
-
-		addtextdomain: {
-			pods: {
-				options: {
-					textdomain: 'pods'
-				},
-				target: {
-					files: {
-						src: ['*.php']
+		csscomb : {
+			dist : {
+				files : [
+					{
+						expand : true,
+						cwd : 'sources/css/',
+						src : ['*.css'],
+						dest : 'sources/css/'
 					}
-				}
-			}
-		},
-
-		update_submodules: {
-
-			default: {
-				options: {
-					// default command line parameters will be used: --init --recursive
-				}
-			},
-			withCustomParameters: {
-				options: {
-					params: '--force' // specifies your own command-line parameters
-				}
-			}
-
-		},
-
-		phpcs: {
-			application: {
-				dir: [
-					'**/*.php',
-					'!**/node_modules/**'
 				]
+			}
+		},
+
+		sass : {
+			dist : {
+				options  : {
+					style : 'expanded',
+					lineNumbers : true
+				},
+				files : [
+					{
+						expand : true,
+						cwd    : 'sources/sass/',
+						src    : ['*.scss'],
+						dest   : 'sources/css/',
+						ext    : '.css'
+					}
+				]
+			}
+		},
+
+		cssmin : {
+			minify : {
+				expand : true,
+				cwd : 'sources/css/',
+				src : '*.css',
+				dest : 'ui/css/',
+				ext : '.css'
+			}
+		},
+
+		uglify : {
+			build : {
+				options  : {
+					mangle : false
+				},
+				files : [
+					{
+						expand : true,
+						cwd : 'sources/js/',
+						src : '*.js',
+						dest : 'ui/js/',
+						ext : '.js'
+					}
+				]
+			}
+		},
+
+		imagemin : {
+			dynamic : {
+				files : [
+					{
+						expand : true,
+						cwd    : 'sources/images/',
+						src    : ['**/*.{png,jpg,gif}'],
+						dest   : 'ui/images/'
+					}
+				]
+			}
+		},
+
+		watch : {
+			scripts : {
+				files : ['sources/js/*.js'],
+				tasks : ['javascript'],
+				options : {
+					spawn : false
+				}
 			},
+
+			css : {
+				files : ['sources/sass/*.scss'],
+				tasks : ['styles'],
+				options : {
+					spawn : false,
+					livereload : true
+				}
+			}
+		},
+
+		clean : {
+			js : ['ui/js/*.js'],
+			css : ['ui/css/*.css'],
+			post_build: [
+				'build'
+			]
+		},
+
+		copy: {
+			svn_trunk: {
+				options : {
+					mode :true
+				},
+				src:  files_list,
+				dest: 'build/<%= pkg.name %>/trunk/'
+			},
+			svn_tag: {
+				options : {
+					mode :true
+				},
+				src:  files_list,
+				dest: 'build/<%= pkg.name %>/tags/<%= pkg.version %>/'
+			}
+		},
+
+		gittag: {
+			addtag: {
+				options: {
+					tag: '2.x/<%= pkg.version %>',
+					message: 'Version <%= pkg.version %>'
+				}
+			}
+		},
+
+		gitcommit: {
+			commit: {
+				options: {
+					message: 'Version <%= pkg.version %>',
+					noVerify: true,
+					noStatus: false,
+					allowEmpty: true
+				},
+				files: {
+					src: [ 'README.md', 'readme.txt', 'init.php', 'package.json', 'languages/**' ]
+				}
+			}
+		},
+
+		gitpush: {
+			push: {
+				options: {
+					tags: true,
+					remote: 'origin',
+					branch: 'master'
+				}
+			}
+		},
+
+		replace: {
+			reamde_md: {
+				src: [ 'README.md' ],
+				overwrite: true,
+				replacements: [{
+					from: /~Current Version:\s*(.*)~/,
+					to: "~Current Version: <%= pkg.version %>~"
+				}, {
+					from: /Latest Stable Release:\s*\[(.*)\]\s*\(https:\/\/github.com\/pods-framework\/pods\/releases\/tag\/(.*)\s*\)/,
+					to: "Latest Stable Release: [<%= pkg.git_tag %>](https://github.com/pods-framework/pods/releases/tag/<%= pkg.git_tag %>)"
+				}]
+			},
+			reamde_txt: {
+				src: [ 'readme.txt' ],
+				overwrite: true,
+				replacements: [{
+					from: /Stable tag: (.*)/,
+					to: "Stable tag: <%= pkg.version %>"
+				}]
+
+			},
+			init_php: {
+				src: [ 'init.php' ],
+				overwrite: true,
+				replacements: [{
+					from: /Version:\s*(.*)/,
+					to: "Version: <%= pkg.version %>"
+				}, {
+					from: /define\(\s*'PODS_VERSION',\s*'(.*)'\s*\);/,
+					to: "define( 'PODS_VERSION', '<%= pkg.version %>' );"
+				}]
+			}
+		},
+
+		svn_checkout: {
+			make_local: {
+				repos: [
+					{
+						path: [ 'release' ],
+						repo: 'http://plugins.svn.wordpress.org/pods'
+					}
+				]
+			}
+		},
+
+		push_svn: {
 			options: {
-				bin: '~/phpcs/scripts/phpcs',
-				standard: 'WordPress'
+				remove: true
+			},
+			main: {
+				src: 'release/<%= pkg.name %>',
+				dest: 'http://plugins.svn.wordpress.org/pods',
+				tmp: 'build/make_svn'
+			}
+		},
+
+		glotpress_download : {
+			core : {
+				options : {
+					domainPath : 'languages',
+					url        : 'http://wp-translate.org',
+					slug       : 'pods',
+					textdomain : 'pods'
+				}
 			}
 		}
 
-	});
+	} );
 
-	grunt.registerTask('styles', ['sass', 'csscomb', 'cssmin']);
-	grunt.registerTask('javascript', ['uglify']);
-	grunt.registerTask('imageminnewer', ['newer:imagemin']);
-	grunt.registerTask('i18n', ['makepot', 'glotpress_download']);
-	//grunt.registerTask('default', ['sprite', 'styles', 'javascript', 'imageminnewer', 'i18n']);
-	grunt.registerTask('default', ['sprite', 'styles', 'javascript', 'imageminnewer']);
+	//release tasks
+	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );
+	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download' ] );
+	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
+	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
+	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
+
+	grunt.registerTask( 'styles', [
+		'sass',
+		'csscomb',
+		'cssmin'
+	] );
+
+	grunt.registerTask( 'javascript', ['uglify'] );
+
+	grunt.registerTask( 'imageminnewer', ['newer:imagemin'] );
+
+	//register default task
+	grunt.registerTask( 'default', [
+		'styles',
+		'javascript',
+		'imageminnewer',
+		'glotpress_download'
+	] );
 
 };

@@ -44,7 +44,9 @@ class Pods_Deprecated {
 	 * @since 1.2.0
 	 */
 	public function set_field( $name, $data = null ) {
-		pods_deprecated( 'Pods::set_field', '2.0' );
+	    if ( Pod::$deprecated_notice ) {
+			pods_deprecated( 'Pods::set_field', '2.0' );
+	    }
 
 		$this->obj->row[ $name ] = $data;
 
@@ -57,7 +59,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function showform( $id = null, $public_fields = null, $label = 'Save changes' ) {
-		pods_deprecated( 'Pods::showform', '2.0' );
+	    if ( Pod::$deprecated_notice ) {
+			pods_deprecated( 'Pods::showform', '2.0' );
+	    }
 
 		$public_columns =& $public_fields;
 
@@ -107,7 +111,7 @@ class Pods_Deprecated {
 
 			// Replace the input helper name with the helper code
 			if ( ! empty( $field['input_helper'] ) ) {
-				$helper                = $this->obj->api->load_helper( array( 'name' => $field['input_helper'] ) );
+				$helper                = pods_api()->load_helper( array( 'name' => $field['input_helper'] ) );
 				$field['input_helper'] = '';
 
 				if ( ! empty( $helper ) ) {
@@ -129,7 +133,7 @@ class Pods_Deprecated {
 				$pick_val     = $field['pick_val'];
 
 				if ( 'pod' == $pick_object ) {
-					$pick_pod    = $this->obj->api->load_pod( array( 'name' => $pick_val ) );
+					$pick_pod    = pods_api()->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['name'];
 				}
@@ -279,7 +283,12 @@ class Pods_Deprecated {
 		$save_button = '<input ' . $atts . '/>';
 		?>
 		<div>
-			<input type="hidden" class="form num id" value="<?php echo $id; ?>" /> <input type="hidden" class="form txt pod" value="<?php echo $pod; ?>" /> <input type="hidden" class="form txt pod_id" value="<?php echo $pod_id; ?>" /> <input type="hidden" class="form txt form_count" value="1" /> <input type="hidden" class="form txt token" value="<?php echo pods_generate_key( $pod, $uri_hash, $public_fields, 1 ); ?>" /> <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
+    <input type="hidden" class="form num id" value="<?php echo esc_attr( $id ); ?>" />
+    <input type="hidden" class="form txt pod" value="<?php echo esc_attr( $pod ); ?>" />
+    <input type="hidden" class="form txt pod_id" value="<?php echo esc_attr( $pod_id ); ?>" />
+    <input type="hidden" class="form txt form_count" value="1" />
+    <input type="hidden" class="form txt token" value="<?php echo esc_attr( pods_generate_key($pod, $uri_hash, $public_fields, 1) ); ?>" />
+    <input type="hidden" class="form txt uri_hash" value="<?php echo esc_attr( $uri_hash ); ?>" />
 			<?php echo apply_filters( 'pods_showform_save_button', $save_button, $save_button_atts, $this ); ?>
 		</div>
 		<?php
@@ -294,7 +303,9 @@ class Pods_Deprecated {
 	 * @return array
 	 */
 	public function get_dropdown_values( $params ) {
-		pods_deprecated( 'Pods::get_dropdown_values', '2.0' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::get_dropdown_values', '2.0' );
+	    }
 
 		global $wpdb;
 
@@ -349,7 +360,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function publicForm( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
-		pods_deprecated( 'Pods::publicForm', '2.0', 'Pods::form' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::publicForm', '2.0', 'Pods::form' );
+	    }
 
 		if ( ! empty( $fields ) ) {
 			// Just update field name here, form() will handle the rest
@@ -382,7 +395,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function build_field_html( $field ) {
-		pods_deprecated( 'Pods::build_field_html', '2.0' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::build_field_html', '2.0' );
+	    }
 
 		include PODS_DIR . 'deprecated/input_fields.php';
 	}
@@ -394,7 +409,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function fetchRecord() {
-		pods_deprecated( 'Pods::fetchRecord', '2.0', 'Pods::fetch' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::fetchRecord', '2.0', 'Pods::fetch' );
+	    }
 
 		return $this->obj->fetch();
 	}
@@ -409,7 +426,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function get_field( $name, $orderby = null ) {
-		pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
+	    }
 
 		$value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby, 'deprecated' => true ) );
 
@@ -433,7 +452,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function get_pod_id() {
-		pods_deprecated( 'Pods::get_pod_id', '2.0' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::get_pod_id', '2.0' );
+	    }
 
 		if ( ! empty( $this->obj->row ) ) {
 			return $this->obj->row[ $this->obj->data->field_id ];
@@ -449,7 +470,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function findRecords( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
-		pods_deprecated( 'Pods::findRecords', '2.0', 'Pods::find' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::findRecords', '2.0', 'Pods::find' );
+	    }
 
 		$find = array(
 			' p.created',
@@ -525,7 +548,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function getRecordById( $id ) {
-		pods_deprecated( 'Pods::getRecordById', '2.0', 'Pods::fetch_item' );
+	    if ( Pod::$deprecated_notice ) {
+            pods_deprecated( 'Pods::getRecordById', '2.0', 'Pods::fetch_item' );
+	    }
 
 		return $this->obj->fetch_item( $id );
 	}
@@ -536,7 +561,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function getTotalRows() {
-		pods_deprecated( 'Pods::getTotalRows', '2.0', 'Pods::total_found' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::getTotalRows', '2.0', 'Pods::total_found' );
+	    }
 
 		return $this->obj->total_found();
 	}
@@ -547,7 +574,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function resetPointer( $row_number = 0 ) {
-		pods_deprecated( 'Pods::resetPointer', '2.0', 'Pods::reset' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::resetPointer', '2.0', 'Pods::reset' );
+	    }
 
 		return $this->obj->reset( $row_number );
 	}
@@ -558,7 +587,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function getPagination( $label = 'Go to page:' ) {
-		pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
+	    }
 
 		echo $this->obj->pagination( array( 'type' => 'advanced', 'label' => $label ) );
 	}
@@ -569,7 +600,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since 2.0
 	 */
 	public function getFilters( $filters = null, $label = 'Filter', $action = '' ) {
-		pods_deprecated( 'Pods::getFilters', '2.0', 'Pods::filters' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::getFilters', '2.0', 'Pods::filters' );
+	    }
 
 		$params = array(
 			'fields' => $filters,
@@ -594,7 +627,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function pod_helper( $helper_name, $value = null, $name = null ) {
-		pods_deprecated( 'Pods::pod_helper', '2.0', 'Pods::helper' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::pod_helper', '2.0', 'Pods::helper' );
+	    }
 
 		$params = array(
 			'helper'     => $helper_name,
@@ -612,7 +647,9 @@ class Pods_Deprecated {
 	 * @deprecated deprecated since version 2.0
 	 */
 	public function showTemplate( $template_name, $code = null ) {
-		pods_deprecated( 'Pods::showTemplate', '2.0', 'Pods::template' );
+	    if ( Pod::$deprecated_notice ) {
+		    pods_deprecated( 'Pods::showTemplate', '2.0', 'Pods::template' );
+	    }
 
 		return $this->obj->template( $template_name, $code, true );
 	}

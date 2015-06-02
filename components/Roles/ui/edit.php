@@ -1,6 +1,6 @@
 <div class="wrap pods-admin">
 	<script>
-		var PODS_URL = '<?php echo PODS_URL; ?>';
+		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
 	</script>
 	<div id="icon-pods" class="icon32"><br /></div>
 
@@ -15,7 +15,7 @@
 			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
 			<?php
-			if ( isset( $_GET['do'] ) ) {
+			if ( isset( $_GET[ 'do' ] ) ) {
 				$action = __( 'saved', 'pods' );
 
 				if ( 'create' == pods_v( 'do', 'get', 'save' ) ) {
@@ -44,7 +44,8 @@
 									<div id="minor-publishing">
 										<div id="major-publishing-actions">
 											<div id="publishing-action">
-												<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" /> <input type="submit" name="publish" id="publish" class="button-primary" value="<?php esc_attr_e( 'Save', 'pods' ); ?>" accesskey="p" />
+												<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+												<input type="submit" name="publish" id="publish" class="button-primary" value="<?php esc_attr_e( 'Save', 'pods' ); ?>" accesskey="p" />
 											</div>
 											<!-- /#publishing-action -->
 
@@ -93,7 +94,7 @@
 											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 												<ul data-group="<?php echo esc_attr( $group ); ?>">
 													<?php
-													$zebra         = false;
+													$zebra = false;
 													$group_checked = true;
 
 													foreach ( $capabilities as $capability ) {
@@ -109,7 +110,7 @@
 
 														$zebra = ( ! $zebra );
 														?>
-														<li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php echo Pods_Form::field( 'capabilities[' . $capability . ']', pods_v( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
 														</li>
 													<?php
@@ -118,12 +119,12 @@
 												</ul>
 											</div>
 											<script type="text/javascript">
-												jQuery(function($) {
-													$('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').prop('checked',<?php echo $group_checked ? 'true' : 'false'; ?>);
-													$('input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]').click(function() {
-														$('ul[data-group="<?php echo esc_js( $group ) ?>"] input[type="checkbox"]').prop('checked',$(this).prop('checked'));
-													});
-												});
+												jQuery( function ( $ ) {
+													$( 'input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]' ).prop( 'checked', <?php echo $group_checked ? 'true' : 'false'; ?> );
+													$( 'input[name="<?php echo 'groups[' . esc_js( $group ) . ']'; ?>"]' ).click( function () {
+														$( 'ul[data-group="<?php echo esc_js( $group ) ?>"] input[type="checkbox"]' ).prop( 'checked', $( this ).prop( 'checked' ) );
+													} );
+												} );
 											</script>
 										</div>
 									<?php
@@ -147,7 +148,9 @@
 												</li>
 											</ul>
 
-											<p><a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a></p>
+											<p>
+												<a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+											</p>
 										</div>
 									</div>
 								</div>
@@ -177,38 +180,38 @@
 </div>
 
 <script type="text/javascript">
-	var pods_admin_submit_callback = function(id) {
-		id = parseInt(id);
+	var pods_admin_submit_callback = function ( id ) {
+		id = parseInt( id );
 		document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
-	}
+	};
 
-	jQuery(function($) {
-		$(document).Pods('validate');
-		$(document).Pods('submit');
-		$(document).Pods('wizard');
-		$(document).Pods('dependency');
-		$(document).Pods('advanced');
-		$(document).Pods('confirm');
-		$(document).Pods('sluggable');
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'wizard' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'advanced' );
+		$( document ).Pods( 'confirm' );
+		$( document ).Pods( 'sluggable' );
 
 		var toggle_all = true;
 
-		$('#toggle-all').on('click',function(e) {
+		$( '#toggle-all' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			$('.pods-field.pods-boolean input[type="checkbox"]').prop('checked',toggle_all);
+			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
 			toggle_all = ( !toggle_all );
-		});
+		} );
 
-		$('#add-capability').on('click',function(e) {
+		$( '#add-capability' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			var new_id = $('ul#custom-capabilities li').length;
-			var html = $('ul#custom-capabilities li.pods-repeater').html().replace(/\-\-1/g,new_id);
+			var new_id = $( 'ul#custom-capabilities li' ).length;
+			var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( /\-\-1/g, new_id );
 
-			$('ul#custom-capabilities').append('<li id="capability-' + new_id + '">' + html + '</li>');
-			$('li#capability-' + new_id + ' input').focus();
-		});
-	});
+			$( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
+			$( 'li#capability-' + new_id + ' input' ).focus();
+		} );
+	} );
 </script>

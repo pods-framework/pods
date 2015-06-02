@@ -63,6 +63,84 @@
                     }
                 } );
             },
+            submit_meta : function () {
+                var $submitbutton;
+
+                // Verify required fields in WordPress posts with CPT
+                $( 'form.pods-submittable' ).on( 'submit', function ( e ) {
+                    var $submittable = $( this );
+
+                    pods_changed = false;
+
+                    /* e.preventDefault(); */
+
+                    var postdata = {};
+                    var field_data = {};
+
+                    var valid_form = true;
+
+                    var field_id = 0,
+                        field_index = 0;
+
+                    // See if we have any instances of tinyMCE and save them
+                    if ( 'undefined' != typeof tinyMCE )
+                        tinyMCE.triggerSave();
+
+                    $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
+                        var $el = $( this );
+                        var field_name = $el.prop( 'name' );
+
+                        if ( 'undefined' != typeof field_name && null !== field_name && '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
+                            var val = $el.val();
+
+                            if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
+                                if ( 1 == val )
+                                    val = 0;
+                                else
+                                    return true; // This input isn't a boolean, continue the loop
+                            }
+                            else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
+                                return true; // This input is not checked, continue the loop
+
+                            if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ( '' == $el.val() ) ) {
+                                $el.trigger( 'change' );
+
+                                if ( false !== valid_form )
+                                    $el.focus();
+
+                                valid_form = false;
+                            }
+                            if ( null !== val ) {
+                                postdata[field_name] = val;
+                            }
+                        }
+                    } );
+
+                    if ( 'undefined' != typeof pods_admin_submit_validation )
+                        valid_form = pods_admin_submit_validation( valid_form, $submittable );
+
+                    if ( false === valid_form ) {
+                        $submittable.addClass( 'invalid-form' );
+
+                        // re-enable the submit button
+                        $( $submittable ).find( 'input[type=submit], button[type=submit]' ).each( function () {
+                            var $submitbutton = $( this );
+
+                            $submitbutton.css( 'cursor', 'pointer' );
+                            $submitbutton.prop( 'disabled', false );
+                            $submitbutton.parent().find( '.waiting' ).fadeOut();
+                        } );
+
+                        pods_form_field_names = [];
+
+                        return false;
+                    }
+                    else
+                        $submittable.removeClass( 'invalid-form' );
+
+                    return true;
+                } );
+            },
             submit : function () {
                 var $submitbutton;
 
@@ -103,7 +181,7 @@
                             var val = $el.val();
 
 							if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
-								if ( 1 == val )
+                                if ( $el.is( '.pods-boolean' ) || $el.is( '.pods-form-ui-field-type-boolean') )
 									val = 0;
 								else
 									return true; // This input isn't a boolean, continue the loop
@@ -120,7 +198,9 @@
                                 valid_form = false;
                             }
 
-                            postdata[ field_name ] = val;
+                            if ( null !== val ) {
+								postdata[ field_name ] = val;
+							}
                         }
                     } );
 
@@ -163,7 +243,7 @@
                                 if ( 0 < id.length ) {
                                     id = parseInt( id[ 0 ] );
 
-                                    if ( 'NaN' == id )
+                                    if ( isNaN( id ) )
                                         id = 0;
                                 }
                                 else
@@ -277,7 +357,7 @@
                                 if ( 0 < id.length ) {
                                     id = parseInt( id[ 0 ] );
 
-                                    if ( 'NaN' == id )
+                                    if ( isNaN( id ) )
                                         id = 0;
                                 }
                                 else
@@ -769,7 +849,7 @@
 				}
 
                 var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' ),
-					dependent_specific = dependent_flag + '-' + val.replace( /\s/gi, '-' );
+					dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( dependent_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -878,7 +958,7 @@
                 } );
 
                 var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var exclude_specific = exclude_flag + '-' + val.replace( /\s/gi, '-' );
+                var exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( exclude_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -987,7 +1067,7 @@
                 } );
 
                 var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var wildcard_value = val.replace( /\s/gi, '-' );
+                var wildcard_value = val.replace( /\_/gi, '-' );
 
                 $current.find( wildcard_flag ).each( function () {
                     var $dependent_el = $( this ),
@@ -1074,7 +1154,7 @@
                     var $field = $el;
 
                     var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\s/gi, '-' );
+                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( dependent_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -1138,7 +1218,7 @@
                     } );
 
                     var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\s/gi, '-' );
+                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( exclude_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -1462,7 +1542,7 @@
                             else if ( 3 == field_array.length ) {
                                 the_field = parseInt( field_array[ 2 ].replace( '[', '' ).replace( ']', '' ) );
 
-                                if ( 'NaN' == the_field )
+                                if ( isNaN( the_field ) )
                                     field_data[ field_name ] = val;
                                 else {
                                     if ( 'undefined' == typeof field_data[ field_name ] )

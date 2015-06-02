@@ -3,13 +3,15 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 3.0 Alpha 8
+Version: 3.0 Alpha 9
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
+GitHub Plugin URI: https://github.com/pods-framework/pods
+GitHub Branch: release/3.0
 
-Copyright 2009-2014  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2015  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,21 +39,13 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 }
 else {
     // Current version
-    define( 'PODS_VERSION', '3.0-a-8' );
+    define( 'PODS_VERSION', '3.0-a-9' );
 
     // Version tracking between DB updates themselves
     define( 'PODS_DB_VERSION', '2.3.5' );
 
-    if ( ! defined( 'PODS_GITHUB_UPDATE' ) ) {
-        define( 'PODS_GITHUB_UPDATE', false );
-    }
-
-    if ( ! defined( 'PODS_GITHUB_BRANCH' ) ) {
-        define( 'PODS_GITHUB_BRANCH', 'release/3.0' );
-    }
-
     if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-        define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
+        define( 'PODS_WP_VERSION_MINIMUM', '4.0' );
     }
 
     if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
@@ -71,14 +65,14 @@ else {
      *
      * @since 3.0.0
      */
-    define( 'PODS_CMB2_VERSION', '2.0.2' );
+    define( 'PODS_CMB2_VERSION', '2.0.6' );
 
     /**
      * Path to the vendor directory in Pods
      *
      * @since 3.0.0
      */
-    define( 'PODS_VENDOR_DIR', PODS_DIR . 'vendor' );
+    define( 'PODS_VENDOR_DIR', PODS_DIR . 'includes/vendor' );
 
     // Prevent conflicts with old Pods UI plugin
     if ( function_exists( 'pods_ui_manage' ) ) {
@@ -86,7 +80,7 @@ else {
     } else {
         global $pods, $pods_init, $pods_form;
 
-        $cmb2_init_path = PODS_VENDOR_DIR . '/webdevstudios/cmb2/init.php';
+        $cmb2_init_path = PODS_VENDOR_DIR . '/cmb2/init.php';
         if ( file_exists( $cmb2_init_path ) ) {
             require_once( $cmb2_init_path );
         } else {
@@ -118,10 +112,6 @@ else {
             'PodsInit'            => 'Pods_Init',
             'PodsMeta'            => 'Pods_Meta',
             'PodsMigrate'         => 'Pods_Migrate',
-            'PodsObject'          => 'Pods_Object',
-            'PodsObject_Field'    => 'Pods_Object_Field',
-            'PodsObject_Group'    => 'Pods_Object_Group',
-            'PodsObject_Pod'      => 'Pods_Object_Pod',
             'PodsUI'              => 'Pods_UI',
             'PodsView'            => 'Pods_View',
             'PodsWidgetField'     => 'Pods_Widget_Field',
@@ -159,64 +149,6 @@ else {
 
         if ( ! defined( 'PODS_MEDIA' ) || PODS_MEDIA ) {
             require_once( PODS_DIR . 'includes/media.php' );
-        }
-
-        // @todo Allow user to opt-in to future betas easily
-        if ( PODS_GITHUB_UPDATE ) {
-            $update = admin_url( 'update.php' );
-            $update = str_replace( get_site_url(), '', $update );
-
-            $update_network = network_admin_url( 'update.php' );
-            $update_network = str_replace( get_site_url(), '', $update_network );
-
-            if ( is_admin() &&
-                 ( isset( $_GET['pods_force_refresh'] ) ||
-                   ( 'update-selected' == pods_v( 'action' ) &&
-                     ( false !== strpos( $_SERVER['REQUEST_URI'], $update ) ||
-                       false !== strpos( $_SERVER['REQUEST_URI'], $update_network ) ) ) )
-            ) {
-
-                // Configuration
-                $user   = 'pods-framework';
-                $repo   = 'pods';
-                $branch = PODS_GITHUB_BRANCH;
-
-                // GitHub Plugin Updater
-                // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-                require_once( PODS_DIR . 'includes/updater.php' );
-
-                $version = PODS_VERSION;
-
-                if ( isset( $_GET['pods_force_refresh'] ) ) {
-                    $version = '0.1';
-                }
-
-                if ( 'update-selected' == pods_v( 'action' ) && ( false !== strpos( $_SERVER['REQUEST_URI'], $update ) || false !== strpos( $_SERVER['REQUEST_URI'], $update_network ) ) ) {
-                    $version = '0.1';
-                }
-
-                $config = array(
-                    'slug'               => PODS_SLUG,
-                    // this is the slug of your plugin
-                    'proper_folder_name' => dirname( PODS_SLUG ),
-                    // this is the name of the folder your plugin lives in
-                    'api_url'            => 'https://api.github.com/repos/' . $user . '/' . $repo,
-                    // the github API url of your github repo
-                    'raw_url'            => 'https://raw.github.com/' . $user . '/' . $repo . '/' . $branch,
-                    // the github raw url of your github repo
-                    'github_url'         => 'https://github.com/' . $user . '/' . $repo,
-                    // the github url of your github repo
-                    'zip_url'            => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch,
-                    // the zip url of the github repo
-                    'sslverify'          => false,
-                    // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-                    'requires'           => '3.6',
-                    // which version of WordPress does your plugin require?
-                    'version'            => $version
-                );
-
-                new WPGitHubUpdater( $config );
-            }
         }
 
         if ( ! defined( 'SHORTINIT' ) || ! SHORTINIT ) {

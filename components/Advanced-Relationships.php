@@ -18,14 +18,15 @@ if ( class_exists( 'Pods_Advanced_Relationships' ) ) {
 	return;
 }
 
-class Pods_Advanced_Relationships extends
-	Pods_Component {
+class Pods_Advanced_Relationships extends Pods_Component {
 
 	/**
-	 * {@inheritDocs}
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
+
 		add_action( 'pods_form_ui_field_pick_related_objects_other', array( $this, 'add_related_objects' ) );
+
 	}
 
 	/**
@@ -34,73 +35,76 @@ class Pods_Advanced_Relationships extends
 	 * @since 2.3
 	 */
 	public function add_related_objects() {
-		Pods_Field_Pick::$related_objects['table'] = array(
+
+		Pods_Field_Pick::$related_objects[ 'table' ] = array(
 			'label' => __( 'Database Tables', 'pods' ),
 			'group' => __( 'Advanced Objects', 'pods' )
 		);
 
 		if ( is_multisite() ) {
-			Pods_Field_Pick::$related_objects['site'] = array(
+			Pods_Field_Pick::$related_objects[ 'site' ] = array(
 				'label' => __( 'Multisite Sites', 'pods' ),
 				'group' => __( 'Advanced Objects', 'pods' )
 			);
 
-			Pods_Field_Pick::$related_objects['network'] = array(
+			Pods_Field_Pick::$related_objects[ 'network' ] = array(
 				'label' => __( 'Multisite Networks', 'pods' ),
 				'group' => __( 'Advanced Objects', 'pods' )
 			);
 		}
 
-		Pods_Field_Pick::$related_objects['theme'] = array(
+		Pods_Field_Pick::$related_objects[ 'theme' ] = array(
 			'label'         => __( 'Themes', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_themes' )
 		);
 
-		Pods_Field_Pick::$related_objects['page-template'] = array(
+		Pods_Field_Pick::$related_objects[ 'page-template' ] = array(
 			'label'         => __( 'Page Templates', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_page_templates' )
 		);
 
-		Pods_Field_Pick::$related_objects['sidebar'] = array(
+		Pods_Field_Pick::$related_objects[ 'sidebar' ] = array(
 			'label'         => __( 'Sidebars', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_sidebars' )
 		);
 
-		Pods_Field_Pick::$related_objects['post-types'] = array(
+		Pods_Field_Pick::$related_objects[ 'post-types' ] = array(
 			'label'         => __( 'Post Type Objects', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_post_types' )
 		);
 
-		Pods_Field_Pick::$related_objects['taxonomies'] = array(
+		Pods_Field_Pick::$related_objects[ 'taxonomies' ] = array(
 			'label'         => __( 'Taxonomy Objects', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
 			'data_callback' => array( $this, 'data_taxonomies' )
 		);
+
 	}
 
 	/**
 	 * Data callback for Themes
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
 	 *
 	 * @return array
 	 *
 	 * @since 2.3
 	 */
 	public function data_themes( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$data = array();
 
 		$themes = wp_get_themes( array( 'allowed' => true ) );
@@ -110,22 +114,24 @@ class Pods_Advanced_Relationships extends
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
 	}
 
 	/**
 	 * Data callback for Page Templates
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
 	 *
 	 * @return array
 	 *
 	 * @since 2.3
 	 */
 	public function data_page_templates( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$data = array();
 
 		if ( ! function_exists( 'get_page_templates' ) ) {
@@ -135,11 +141,11 @@ class Pods_Advanced_Relationships extends
 		$page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
 		if ( ! in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) ) {
-			$page_templates['Page (WP Default)'] = 'page.php';
+			$page_templates[ 'Page (WP Default)' ] = 'page.php';
 		}
 
 		if ( ! in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) ) {
-			$page_templates['Index (WP Fallback)'] = 'index.php';
+			$page_templates[ 'Index (WP Fallback)' ] = 'index.php';
 		}
 
 		ksort( $page_templates );
@@ -151,49 +157,53 @@ class Pods_Advanced_Relationships extends
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
 	}
 
 	/**
 	 * Data callback for Sidebars
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
 	 *
 	 * @return array
 	 *
 	 * @since 2.3
 	 */
 	public function data_sidebars( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$data = array();
 
 		global $wp_registered_sidebars;
 
 		if ( ! empty( $wp_registered_sidebars ) ) {
 			foreach ( $wp_registered_sidebars as $sidebar ) {
-				$data[ $sidebar['id'] ] = $sidebar['name'];
+				$data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
 			}
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
 	}
 
 	/**
 	 * Data callback for Post Types
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
 	 *
 	 * @return array
 	 *
 	 * @since 2.3
 	 */
 	public function data_post_types( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$data = array();
 
 		$post_types = get_post_types( array(), 'objects' );
@@ -209,22 +219,24 @@ class Pods_Advanced_Relationships extends
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
 	}
 
 	/**
 	 * Data callback for Taxonomies
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
 	 *
 	 * @return array
 	 *
 	 * @since 2.3
 	 */
 	public function data_taxonomies( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
 		$data = array();
 
 		$taxonomies = get_taxonomies( array(), 'objects' );
@@ -240,6 +252,7 @@ class Pods_Advanced_Relationships extends
 		}
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
 	}
 
 }

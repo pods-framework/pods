@@ -2,19 +2,15 @@
 /**
  * Pods_Templates_Frontier
  *
- * @package   Pods_Templates_Frontier
+ * @package    Pods
+ * @category   Components
+ * @subpackage Templates
  * @author    David Cramer <david@digilab.co.za>
  * @license   GPL-2.0+
  * @link
  * @copyright 2014 David Cramer
  */
 
-/**
- * Plugin class.
- *
- * @package Pods_Templates_Frontier
- * @author  David Cramer <david@digilab.co.za>
- */
 if ( class_exists( 'Pods_Frontier_Template_Editor' ) || class_exists( 'Pods_Templates_Frontier' ) ) {
 	return;
 }

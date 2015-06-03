@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 wp_enqueue_script( 'jquery-ui-slider' );
 wp_enqueue_style( 'jquery-ui' );
 

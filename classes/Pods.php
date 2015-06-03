@@ -1,6 +1,7 @@
 <?php
 /**
  * @package Pods
+ * @category Display
  */
 class Pods implements Iterator {
 

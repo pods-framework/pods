@@ -10,8 +10,9 @@
  *
  * Tableless Mode: No
  *
- * @package    Pods\Components
- * @subpackage Advanced Content Types
+ * @package    Pods
+ * @category   Components
+ * @subpackage Table Storage
  */
 
 if ( class_exists( 'Pods_Table_Storage' ) ) {

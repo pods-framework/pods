@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 $depends_on = false;
 
 foreach ( $field_options as $field_name => $field_option ) {

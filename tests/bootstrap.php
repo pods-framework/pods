@@ -2,8 +2,8 @@
 /**
  * Bootstrap the plugin unit testing environment.
  *
- * @package WordPress
- * @subpackage Fields API
+ * @package Pods
+ * @category Tests
 */
 
 // Support for:

@@ -1,3 +1,10 @@
+<?php
+/**
+ * @package    Pods
+ * @category   Components
+ * @subpackage Templates
+ */
+?>
 <div class="pod-queries-tools">
 	<?php
 	if ( empty( $atts ) ) {

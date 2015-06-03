@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Display
+ */
+?>
 <span class="pods-pagination-simple <?php echo esc_attr( $params->class ); ?>">
     <?php
 

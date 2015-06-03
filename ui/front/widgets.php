@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Display
+ */
+
 echo $before_widget;
 
 if ( ! empty( $title ) ) {

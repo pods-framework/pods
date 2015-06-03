@@ -10,7 +10,8 @@
  *
  * Tableless Mode: No
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Advanced Relationships
  */
 

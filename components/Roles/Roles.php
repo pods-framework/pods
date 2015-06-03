@@ -10,7 +10,8 @@
  *
  * Category: Tools
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Roles
  */
 

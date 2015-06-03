@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 if ( is_array( $value ) ) {
 	$value = implode( ',', $value );
 }

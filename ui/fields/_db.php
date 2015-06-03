@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = Pods_Form::clean( $value, false, true );

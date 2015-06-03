@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 $field->defaults( $field_settings[ 'field_defaults' ] );
 
 // Migrate pick object when saving

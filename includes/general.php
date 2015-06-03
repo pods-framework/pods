@@ -1,7 +1,9 @@
 <?php
 /**
- * @package Pods\Global\Functions\General
+ * @package Pods
+ * @category Utilities
  */
+
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
  *

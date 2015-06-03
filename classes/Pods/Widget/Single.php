@@ -1,7 +1,7 @@
 <?php
-
 /**
- * @package Pods\Widgets
+ * @package Pods
+ * @category Widgets
  */
 class Pods_Widget_Single extends WP_Widget {
 

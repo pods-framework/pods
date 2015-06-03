@@ -1,7 +1,7 @@
 <?php
-
 /**
- * @package Pods\Fields
+ * @package Pods
+ * @category Field Types
  */
 class Pods_Field_File extends Pods_Field {
 

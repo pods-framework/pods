@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package    Pods
+ * @category   Components
+ * @subpackage Templates
+ */
 
 add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
 

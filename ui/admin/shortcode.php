@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+?>
 <script type="text/javascript">
 var pods_shortcode_first = true;
 

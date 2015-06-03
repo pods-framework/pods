@@ -2,7 +2,9 @@
 /**
  * Utility function for processing frontier based templates
  *
- * @package Pods_Frontier_Template_Editor\view_template
+ * @package    Pods
+ * @category   Components
+ * @subpackage Templates
  */
 
 // add filters

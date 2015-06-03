@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 if ( ! empty( $_POST ) ) {
 	if ( isset( $_POST[ 'clearcache' ] ) ) {
 		$api = pods_api();

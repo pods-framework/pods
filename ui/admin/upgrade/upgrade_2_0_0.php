@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 global $wpdb;
 ?>
 <div class="wrap pods-admin">

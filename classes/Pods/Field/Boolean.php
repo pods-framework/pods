@@ -1,9 +1,7 @@
 <?php
-
 /**
- * Handles boolean field type data and operations.
- *
- * @package Pods\Fields
+ * @package Pods
+ * @category Field Types
  */
 class Pods_Field_Boolean extends Pods_Field {
 

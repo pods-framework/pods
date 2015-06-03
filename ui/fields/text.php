@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $attributes               = array();
 $attributes[ 'type' ]     = 'text';
 $attributes[ 'value' ]    = $value;

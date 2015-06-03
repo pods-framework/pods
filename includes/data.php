@@ -1,7 +1,9 @@
 <?php
 /**
- * @package Pods\Global\Functions\Data
+ * @package Pods
+ * @category Data
  */
+
 /**
  * Filter input and return sanitized output
  *

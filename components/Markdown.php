@@ -10,7 +10,8 @@
  *
  * Category: Field Types
  *
- * @package Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Markdown
  */
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
 

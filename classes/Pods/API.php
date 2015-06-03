@@ -1,6 +1,7 @@
 <?php
 /**
  * @package Pods
+ * @category API
  */
 class Pods_API {
 

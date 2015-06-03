@@ -3,7 +3,9 @@
  *
  * registered assets for pods_templates
  *
- * @package Pods_templates
+ * @package    Pods
+ * @category   Components
+ * @subpackage Templates
  * @author David Cramer david@digilab.co.za
  * @license GPL-2.0+
  * @link

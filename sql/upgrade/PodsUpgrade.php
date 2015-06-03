@@ -1,6 +1,7 @@
 <?php
 /**
- * @package Pods\Upgrade
+ * @package Pods
+ * @category Upgrade
  */
 class PodsUpgrade {
 

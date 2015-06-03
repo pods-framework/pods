@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 wp_enqueue_style( 'wp-color-picker' );
 
 if ( ! is_admin() ) {

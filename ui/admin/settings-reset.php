@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 global $pods_init;
 
 if ( isset( $_POST[ '_wpnonce' ] ) && false !== wp_verify_nonce( $_POST[ '_wpnonce' ], 'pods-settings' ) ) {

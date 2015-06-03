@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $settings                    = array();
 $settings[ 'textarea_name' ] = $name;
 $settings[ 'media_buttons' ] = false;

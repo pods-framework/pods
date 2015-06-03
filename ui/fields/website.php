@@ -1,7 +1,12 @@
 <?php
 /**
+ * @package  Pods
+ * @category Field Types
+ */
+
+/**
  * Website Admin Field
- */ 
+ */
 $attributes = array();
 
 $type = 'text';

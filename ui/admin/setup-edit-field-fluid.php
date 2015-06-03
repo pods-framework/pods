@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
 $pick_object = trim( pods_v( 'pick_object', $field ) . '-' . pods_v( 'pick_val', $field ), '-' );

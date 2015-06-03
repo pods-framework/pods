@@ -1,6 +1,8 @@
 <?php
-
 /**
+ * @package Pods
+ * @category Utilities
+ *
  * Class PodsClassLoader, PSR-0 compatible autoloader.
  *
  * Example usage:

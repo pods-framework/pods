@@ -1,3 +1,10 @@
+<?php
+/**
+ * @package    Pods
+ * @category   Components
+ * @subpackage Roles
+ */
+?>
 <div class="wrap pods-admin">
 	<script>
 		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';

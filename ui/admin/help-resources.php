@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+?>
 <h3>Pods Support</h3>
 
 <p>There are many resources available to help you learn to use Pods on our site,

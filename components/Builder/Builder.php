@@ -10,7 +10,8 @@
  *
  * Plugin: pods-builder/pods-builder.php
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Builder
  */
 

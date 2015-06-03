@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Display
+ */
+?>
 <span class="pods-pagination-advanced <?php echo $params->class ?>">
     <?php if ( 1 === $params->show_label ) { ?>
 	    <span class="pods-pagination-label"><?php echo $params->label; ?></span>

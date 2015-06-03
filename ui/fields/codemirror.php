@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 wp_enqueue_script( 'pods-codemirror' );
 wp_enqueue_style( 'pods-codemirror' );
 wp_enqueue_script( 'pods-codemirror-loadmode' );

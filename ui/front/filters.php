@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Display
+ */
+?>
 <form method="get" class="pods-form-filters pods-form-filters-<?php echo esc_attr( $pod->pod ); ?>" action="<?php echo esc_attr( $action ); ?>">
 	<input type="hidden" name="type" value="<?php echo esc_attr( $pod->pod ); ?>" />
 

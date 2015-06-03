@@ -1,6 +1,7 @@
 <?php
 /**
  * @package Pods
+ * @category Field Types
  */
 class Pods_Field {
 

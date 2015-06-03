@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Display
+ */
+?>
 <div class="pods-pagination-paginate <?php echo $params->class ?>">
 	<?php
 	$args = array(

@@ -3,6 +3,7 @@
  * All functionality for importing data from or exporting data to different formats
  *
  * @package Pods
+ * @category Utilities
  */
 class Pods_Migrate {
 

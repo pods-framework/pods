@@ -13,7 +13,8 @@
  *
  * External: pods-helpers/pods-helpers.php
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Helpers
  */
 

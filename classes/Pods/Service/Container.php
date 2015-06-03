@@ -1,7 +1,8 @@
 <?php
-
 /**
  * @package Pods
+ * @category Utilities
+ *
  * Class Pods_Service_Container
  */
 class Pods_Service_Container implements

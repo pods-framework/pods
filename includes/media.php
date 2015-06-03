@@ -1,7 +1,9 @@
 <?php
 /**
- * @package Pods\Global\Functions\Media
+ * @package Pods
+ * @category Media
  */
+
 /**
  * Get the Attachment ID for a specific image field
  *

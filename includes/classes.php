@@ -1,7 +1,9 @@
 <?php
 /**
- * @package Pods\Global\Functions\Classes
+ * @package Pods
+ * @category Utilities
  */
+
 /**
  * Include and Init the PodsObject class
  *

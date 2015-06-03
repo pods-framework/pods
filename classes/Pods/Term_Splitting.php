@@ -1,7 +1,7 @@
 <?php
-
 /**
  * @package Pods
+ * @category Utilities
  */
 class Pods_Term_Splitting {
 

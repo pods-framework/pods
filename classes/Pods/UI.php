@@ -1,7 +1,7 @@
 <?php
-
 /**
  * @package Pods
+ * @category Display
  */
 class Pods_UI {
 

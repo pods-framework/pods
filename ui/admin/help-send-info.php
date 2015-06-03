@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+?>
 <style type="text/css">
 	#pods-send-info-preview {
 		border: 1px solid #DDD;

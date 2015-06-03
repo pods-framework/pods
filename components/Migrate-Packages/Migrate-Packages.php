@@ -12,7 +12,8 @@
  *
  * Plugin: pods-migrate-packages/pods-migrate-packages.php
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Migrate-Packages
  */
 

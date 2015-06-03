@@ -1,22 +1,21 @@
 <?php
-
 /**
  * @package Pods
  */
 class Pods_Metadata {
-	
+
 	/**
 	 * @var bool
-	 */ 
+	 */
 	public static $in_field = false;
-	
+
 	/**
 	 * @var array
-	 */ 
+	 */
 	public static $cmb2_types = array();
 
 	public function __construct() {
-		
+
 		add_filter( 'cmb2_meta_boxes', array( $this, 'metaboxes' ) );
 		add_filter( 'cmb2_show_on', array( $this, 'group_show_on' ), 10, 3 );
 

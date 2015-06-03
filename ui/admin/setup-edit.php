@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 wp_enqueue_script( 'post', false, array(), false, true );
 
 global $pods_i;

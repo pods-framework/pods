@@ -1,6 +1,8 @@
 <?php
 /**
- * @package Pods\Deprecated
+ * @package Pods
+ * @category Deprecated
+ * @deprecated 2.0.0
  */
 
 // JSON support

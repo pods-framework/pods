@@ -3,6 +3,7 @@
  * The base component class, all components should extend this.
  *
  * @package Pods
+ * @category Utilities
  */
 class Pods_Component {
 

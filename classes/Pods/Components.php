@@ -3,6 +3,7 @@
  * Component managing class
  *
  * @package Pods
+ * @category Utilities
  */
 class Pods_Components {
 

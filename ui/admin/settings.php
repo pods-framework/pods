@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+?>
 <div class="wrap pods-admin">
 	<form action="" method="post">
 

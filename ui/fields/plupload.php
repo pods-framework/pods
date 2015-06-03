@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 global $post_ID;
 
 wp_enqueue_script( 'pods-handlebars' );

@@ -1,7 +1,7 @@
 <?php
-
 /**
  * @package Pods
+ * @category Object Types
  *
  * Class Pods_Object_Group
  */

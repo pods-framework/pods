@@ -1,3 +1,10 @@
+<?php
+/**
+ * @package Pods
+ * @category Deprecated
+ * @deprecated 2.0.0
+ */
+?>
 <form method="get" class="filterbox filterbox_<?php echo esc_attr( $this->pod ); ?>" action="<?php echo esc_attr( $action ); ?>">
 	<?php
 	if ( ! empty( $filters ) ) {

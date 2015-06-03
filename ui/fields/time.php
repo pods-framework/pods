@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $time_format = array(
 	'h_mm_A'     => 'h:mm:ss TT',
 	'h_mm_ss_A'  => 'h:mm TT',

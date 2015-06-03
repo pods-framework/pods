@@ -1,8 +1,9 @@
 <?php
-
 /**
  * @package Pods
- * Class Pods_Service
+ * @category Utilities
+ *
+ * Class Pods_Service_Definition
  */
 class Pods_Service_Definition {
 

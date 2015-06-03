@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+
 wp_enqueue_script( 'pods' );
 wp_enqueue_style( 'pods-form' );
 

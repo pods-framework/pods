@@ -1,6 +1,7 @@
 <?php
 /**
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Builder
  */
 if ( ! class_exists( 'LayoutModule' ) ) {

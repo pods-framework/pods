@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+?>
 <label<?php Pods_Form::attributes( $attributes, $name, 'label' ); ?>>
 	<?php
 	if ( apply_filters( 'pods_form_ui_label_allow_html', true, $options ) ) {

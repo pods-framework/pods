@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 wp_enqueue_style( 'pods-select2' );
 wp_enqueue_script( 'pods-select2' );
 

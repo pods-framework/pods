@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $date_format = array(
 	'mdy'       => 'mm/dd/yy',
 	'mdy_dash'  => 'mm-dd-yy',

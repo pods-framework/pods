@@ -1,3 +1,9 @@
+<?php
+/**
+ * @package  Pods
+ * @category Admin
+ */
+?>
 <style type="text/css">
 	ol.pods_list_widget_form {
 		list-style: none;

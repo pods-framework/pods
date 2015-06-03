@@ -12,8 +12,9 @@
  *
  * Plugin: pods-migrate-custom-post-type-ui/pods-migrate-custom-post-type-ui.php
  *
- * @package    Pods\Components
- * @subpackage Migrate-Cptui
+ * @package    Pods
+ * @category   Components
+ * @subpackage Migrate-CPTUI
  */
 
 if ( class_exists( 'Pods_Migrate_CPTUI' ) ) {

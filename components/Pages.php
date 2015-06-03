@@ -11,7 +11,8 @@
  * Menu Page: edit.php?post_type=_pods_page
  * Menu Add Page: post-new.php?post_type=_pods_page
  *
- * @package    Pods\Components
+ * @package    Pods
+ * @category   Components
  * @subpackage Pages
  */
 
@@ -897,13 +898,13 @@ class Pods_Pages extends Pods_Component {
 			}
 
 			ob_start();
-			
+
 			/**
-			 * Fires before the pods content 
-			 * 
+			 * Fires before the pods content
+			 *
 			 * @param object $pods_page Current Pods page
-			 * @param string $content The page content 
-			 */ 
+			 * @param string $content The page content
+			 */
 			do_action( 'pods_content_pre', $pods_page, $content );
 
 			if ( 0 < strlen( $content ) ) {
@@ -917,13 +918,13 @@ class Pods_Pages extends Pods_Component {
 					echo $content;
 				}
 			}
-			
+
 			/**
 			 * Fires after the Pods Content
-			 * 
+			 *
 			 * @param object $pods_page Current Pods page
-			 * @param string $content The page content 
-			 */ 
+			 * @param string $content The page content
+			 */
 			do_action( 'pods_content_post', $pods_page, $content );
 
 			$content = ob_get_clean();
@@ -1029,7 +1030,7 @@ class Pods_Pages extends Pods_Component {
 
 		/**
 		 * Fires off in the Pod Head.
-		 */ 
+		 */
 		do_action( 'pods_wp_head' );
 
 		if ( ! defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || ! PODS_DISABLE_VERSION_OUTPUT ) {

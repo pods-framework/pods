@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $field_number = Pods_Form::field_loader( 'number' );
 
 $value = $field_number->format( $value, $name, $options, $pod, $id );

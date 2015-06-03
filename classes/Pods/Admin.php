@@ -1,7 +1,7 @@
 <?php
-
 /**
  * @package Pods
+ * @category Admin
  */
 class Pods_Admin {
 

@@ -3,6 +3,7 @@
  * A class to quickly and efficiently handle a large amount of options that need init, validation, and defaults set
  *
  * @package Pods
+ * @category Utilities
  */
 class Pods_Array implements
 	ArrayAccess {

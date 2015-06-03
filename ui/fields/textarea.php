@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package  Pods
+ * @category Field Types
+ */
+
 $type                     = 'textarea';
 $attributes               = array();
 $attributes[ 'tabindex' ] = 2;

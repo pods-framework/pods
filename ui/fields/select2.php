@@ -123,7 +123,7 @@ $select2_args = array();
 						} ).length ) {
 						return {
 							// Simply use the new tag term as the id
-							//we might want to append 'new' to all newly created term IDs for processing in PodsAPI.php
+							//we might want to append 'new' to all newly created term IDs for processing in Pods/API.php
 							id : term.trim(),
 							text : term.trim()
 						};

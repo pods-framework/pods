@@ -19,7 +19,7 @@ class Pods_API_Deprecated {
 	var $use_pod_id = false;
 
 	/**
-	 * Constructor - PodsAPI Deprecated functionality (pre 2.0)
+	 * Constructor - Pods_API Deprecated functionality (pre 2.0)
 	 *
 	 * @param object $obj The Pods_API object
 	 *

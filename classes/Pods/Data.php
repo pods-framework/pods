@@ -929,8 +929,10 @@ class Pods_Data {
 
 		if ( ! empty( $params->join ) ) {
 			$params->join = array_merge( (array) $this->join, (array) $params->join );
-		} elseif ( false === $params->strict ) {
-			$params->join = $this->join;
+		} elseif ( false === $params->strict && ! empty( $this->join ) ) {
+			$params->join = (array) $this->join;
+		} else {
+			$params->join = array();
 		}
 
 		$params->where_defaulted = false;
@@ -3018,6 +3020,8 @@ class Pods_Data {
 			$meta_data_table = true;
 		}
 
+		$traverse = false;
+
 		// Fallback to meta table if the pod type supports it
 		if ( ! isset( $pod_data['fields'][$field] ) ) {
 			$last = end( $traverse_recurse['fields'] );
@@ -3027,15 +3031,15 @@ class Pods_Data {
 			}
 
 			if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][$field] ) && in_array( $pod_data['object_fields'][$field]['type'], $tableless_field_types ) ) {
-				$pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
+				$traverse = $pod_data[ 'object_fields' ][ $field ]; // @todo Indirect modification
 			} elseif ( 'meta_value' === $last && in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
-				$pod_data['fields'][$field] = Pods_Form::field_setup( array( 'name' => $field ) );
+				$traverse = Pods_Form::field_setup( array( 'name' => $field ) ); // @todo Indirect modification
 			} else {
 				if ( 'post_type' == $pod_data['type'] ) {
 					$pod_data['object_fields'] = $api->get_wp_object_fields( 'post_type', $pod_data, true );
 
 					if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][$field] ) && in_array( $pod_data['object_fields'][$field]['type'], $tableless_field_types ) ) {
-						$pod_data['fields'][$field] = $pod_data['object_fields'][$field];
+						$traverse = $pod_data['object_fields'][$field]; // @todo Indirect modification
 					} else {
 						return $joins;
 					}
@@ -3047,7 +3051,9 @@ class Pods_Data {
             return $joins;
 	    }
 
-		$traverse = $pod_data['fields'][$field];
+		if ( ! empty( $traverse ) ) {
+			$traverse = $pod_data['fields'][ $field ];
+		}
 
 		if ( 'taxonomy' == $traverse['type'] ) {
 			$traverse['table_info'] = $api->get_table_info( $traverse['type'], $traverse['name'] );
@@ -3076,9 +3082,6 @@ class Pods_Data {
 		if ( isset( $this->traversal[$traverse_recurse['pod']][$traverse['name']] ) ) {
 			$traverse = array_merge( $traverse, (array) $this->traversal[$traverse_recurse['pod']][$traverse['name']] );
 		}
-
-		// @todo Needs hook doc
-        $traverse = apply_filters( 'pods_data_traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ), $this );
 
 		if ( empty( $traverse ) ) {
 			return $joins;

@@ -360,7 +360,7 @@ class Pods_Form {
 				continue;
 			}
 
-			$classes[ ] = in_array( $t, $button_shorthand ) ? 'button-' . $t : $t;
+			$classes[] = in_array( $t, $button_shorthand ) ? 'button-' . $t : $t;
 		}
 
 		$class = implode( ' ', array_unique( $classes ) );
@@ -917,31 +917,31 @@ class Pods_Form {
 		$classes = array();
 
 		if ( ! empty( $depends_on ) ) {
-			$classes[ ] = 'pods-depends-on';
+			$classes[] = 'pods-depends-on';
 
 			foreach ( $depends_on as $depends => $on ) {
-				$classes[ ] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
+				$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
 				if ( ! is_bool( $on ) ) {
 					$on = (array) $on;
 
 					foreach ( $on as $o ) {
-						$classes[ ] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+						$classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
 					}
 				}
 			}
 		}
 
 		if ( ! empty( $excludes_on ) ) {
-			$classes[ ] = 'pods-excludes-on';
+			$classes[] = 'pods-excludes-on';
 
 			foreach ( $excludes_on as $excludes => $on ) {
-				$classes[ ] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
+				$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
 
 				$on = (array) $on;
 
 				foreach ( $on as $o ) {
-					$classes[ ] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
+					$classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
 				}
 			}
 		}
@@ -1360,7 +1360,7 @@ class Pods_Form {
 				$has_ajax = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
 
 				if ( false !== $has_ajax ) {
-					$admin_field_types[ ] = $field_type;
+					$admin_field_types[] = $field_type;
 				}
 			}
 
@@ -1539,9 +1539,9 @@ class Pods_Form {
 		);
 
 		if ( pods_developer() ) {
-			$field_types[ ] = 'loop';
-			$field_types[ ] = 'heading';
-			$field_types[ ] = 'html';
+			$field_types[] = 'loop';
+			$field_types[] = 'heading';
+			$field_types[] = 'html';
 		}
 
 		$field_types = array_merge( $field_types, array_keys( self::$field_types ) );

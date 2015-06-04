@@ -2517,7 +2517,7 @@ class Pods_UI {
 
 			foreach ( $this->orderby as $order ) {
 				if ( false !== strpos( $order, ' ' ) ) {
-					$orderby[ ] = $order;
+					$orderby[] = $order;
 				} elseif ( ! isset( $orderby[ $order ] ) ) {
 					$orderby[ $order ] = $this->orderby_dir;
 				}

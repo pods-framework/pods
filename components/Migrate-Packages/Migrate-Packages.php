@@ -263,7 +263,7 @@ class Pods_Migrate_Packages extends Pods_Component {
 								continue;
 							}
 
-							$found_fields[ ] = $new_field[ 'name' ];
+							$found_fields[] = $new_field[ 'name' ];
 
 							if ( 'pick' == $field_type ) {
 								$new_field[ 'pick_object' ] = 'pod';
@@ -387,12 +387,14 @@ class Pods_Migrate_Packages extends Pods_Component {
 					}
 
 					if ( isset( $existing_fields[ $field[ 'name' ] ] ) ) {
-						if ( $existing_field = pods_api()->load_field( array(
-								'name' => $field[ 'name' ],
-								'pod'  => $pod[ 'name' ]
-							) )
-						) {
-							$pod[ 'fields' ][ $k ][ 'id' ] = $existing_field[ 'id' ];
+						$existing_field = pods_api()->load_field( array(
+							'name'   => $field['name'],
+							'pod'    => $pod['name'],
+							'output' => OBJECT
+						) );
+
+						if ( $existing_field->is_valid() ) {
+							$pod[ 'fields' ][ $k ][ 'id' ] = $existing_field->id;
 						}
 					}
 

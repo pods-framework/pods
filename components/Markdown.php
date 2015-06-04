@@ -1250,10 +1250,10 @@ if ( ! function_exists( 'Markdown' ) && ! defined( 'MARKDOWN_VERSION' ) ) :
 					# Construct list of allowed token expressions.
 					$token_relist = array();
 					if ( isset( $this->em_strong_relist[ "$em$strong" ] ) ) {
-						$token_relist[ ] = $this->em_strong_relist[ "$em$strong" ];
+						$token_relist[] = $this->em_strong_relist[ "$em$strong" ];
 					}
-					$token_relist[ ] = $em_re;
-					$token_relist[ ] = $strong_re;
+					$token_relist[] = $em_re;
+					$token_relist[] = $strong_re;
 
 					# Construct master expression from list.
 					$token_re = '{(' . implode( '|', $token_relist ) . ')}';

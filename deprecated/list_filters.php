@@ -12,10 +12,12 @@
 			$filters = explode( ',', $filters );
 		}
 		foreach ( $filters as $field_name ) {
-			$field = pods_api()->load_field( array( 'name' => $field_name, 'pod' => $this->pod ) );
-			if ( empty( $field ) ) {
+			$field = pods_api()->load_field( array( 'name' => $field_name, 'pod' => $this->pod, 'output' => OBJECT ) );
+
+			if ( empty( $field ) || $field->is_valid() ) {
 				continue;
 			}
+
 			if ( 'pick' == $field['type'] && ! empty( $field['pick_object'] ) ) {
 				$pick_object = $field['pick_object'];
 				$pick_val    = $field['pick_val'];
@@ -62,7 +64,7 @@
 					'column'       => $pick_column_id,
 					'column_name'  => $field_name,
 					'join'         => $pick_join,
-					'orderby'      => $field['options']['pick_orderby'],
+					'orderby'      => $field['pick_orderby'],
 					'where'        => $pick_where
 				);
 				$field_data  = $this->get_dropdown_values( $pick_params );

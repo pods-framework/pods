@@ -288,7 +288,7 @@ class Pods_Templates_Frontier {
 	 */
 	public function element_instance_id( $id, $process ) {
 
-		$this->element_instances[ $id ][ $process ][ ] = true;
+		$this->element_instances[ $id ][ $process ][] = true;
 		$count                                         = count( $this->element_instances[ $id ][ $process ] );
 		if ( $count > 1 ) {
 			return $id . ( $count - 1 );
@@ -337,7 +337,7 @@ class Pods_Templates_Frontier {
 							$index = 1;
 							$value = array();
 							while ( isset( $atts[ $variable . '_' . $index ] ) ) {
-								$value[ ] = $this->process_value( $conf[ 'type' ], $atts[ $variable . '_' . $index ] );
+								$value[] = $this->process_value( $conf[ 'type' ], $atts[ $variable . '_' . $index ] );
 								$index ++;
 							}
 						} elseif ( isset( $atts[ $variable ] ) ) {
@@ -347,7 +347,7 @@ class Pods_Templates_Frontier {
 								}
 								$value = $atts[ $variable ];
 							} else {
-								$value[ ] = $this->process_value( $conf[ 'type' ], $atts[ $variable ] );
+								$value[] = $this->process_value( $conf[ 'type' ], $atts[ $variable ] );
 							}
 						}
 					} else {
@@ -389,7 +389,7 @@ class Pods_Templates_Frontier {
 			if ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.php' ) ) {
 				ob_start();
 				include $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.php';
-				$this->element_header_styles[ ] = ob_get_clean();
+				$this->element_header_styles[] = ob_get_clean();
 				add_action( 'wp_head', array( $this, 'header_styles' ) );
 			} else {
 				if ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.css' ) ) {
@@ -400,7 +400,7 @@ class Pods_Templates_Frontier {
 			if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.php' ) ) {
 				ob_start();
 				include $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.php';
-				$this->element_footer_scripts[ ] = ob_get_clean();
+				$this->element_footer_scripts[] = ob_get_clean();
 			} else {
 				if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.js' ) ) {
 					wp_enqueue_script( $this->plugin_slug . '-' . $slug . '-script', $this->get_url( 'assets/js/scripts-' . $slug . '.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );

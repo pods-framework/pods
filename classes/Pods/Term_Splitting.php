@@ -80,11 +80,7 @@ class Pods_Term_Splitting {
 		if ( pods_api()->pod_exists( $this->taxonomy ) ) {
 
 			// Load the taxonomy Pod
-			$params = array(
-				'name'       => $this->taxonomy,
-				'table_info' => true
-			);
-			$pod_info = pods_api()->load_pod( $params, false );
+			$pod_info = pods_api()->load_pod( array( 'name' => $this->taxonomy ), false );
 		}
 
 		return $pod_info;

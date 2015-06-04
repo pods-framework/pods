@@ -208,9 +208,9 @@ class Pods_Field_File extends Pods_Field {
 
 				foreach ( $attachments as $v ) {
 					if ( ! is_array( $v ) ) {
-						$value[ ] = $v;
+						$value[] = $v;
 					} elseif ( isset( $v[ 'ID' ] ) ) {
-						$value[ ] = wp_get_attachment_url( $v[ 'ID' ] );
+						$value[] = wp_get_attachment_url( $v[ 'ID' ] );
 					}
 				}
 
@@ -555,8 +555,8 @@ class Pods_Field_File extends Pods_Field {
 		$api->display_errors = false;
 
 		if ( ! empty( $params->pod ) ) {
-			$pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
-			$field = $api->load_field( array( 'id' => (int) $params->field ) );
+			$pod = $api->load_pod( array( 'id' => (int) $params->pod, 'output' => OBJECT ) );
+			$field = $api->load_field( array( 'id' => (int) $params->field, 'output' => OBJECT ) );
 
 			if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || ! isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) ) {
 				pods_error( __( 'Invalid field request', 'pods' ), Pods_Init::$admin );
@@ -661,7 +661,7 @@ class Pods_Field_File extends Pods_Field {
 
 							foreach ( $type as $t ) {
 								if ( ! in_array( $t, $new_limit_types ) ) {
-									$new_limit_types[ ] = $t;
+									$new_limit_types[] = $t;
 								}
 							}
 
@@ -670,7 +670,7 @@ class Pods_Field_File extends Pods_Field {
 					}
 
 					if ( ! $found ) {
-						$new_limit_types[ ] = $limit_type;
+						$new_limit_types[] = $limit_type;
 					}
 				}
 
@@ -709,7 +709,7 @@ class Pods_Field_File extends Pods_Field {
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
 
 			if ( null === $custom_handler ) {
-				$linked = pods_v( $field[ 'type' ] . '_linked', $field[ 'options' ], 0 );
+				$linked = pods_v( $field[ 'type' ] . '_linked', 0 );
 
 				$attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
@@ -717,7 +717,7 @@ class Pods_Field_File extends Pods_Field {
 					$errors = array();
 
 					foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
-						$errors[ ] = '[' . $error_code . '] ' . $error_message;
+						$errors[] = '[' . $error_code . '] ' . $error_message;
 					}
 
 					pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );

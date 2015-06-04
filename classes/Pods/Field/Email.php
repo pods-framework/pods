@@ -160,10 +160,10 @@ class Pods_Field_Email extends Pods_Field {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-			if ( 0 == strlen( $value ) && 1 == pods_v( 'required', $options ) ) {
-				$errors[ ] = sprintf( __( '%s is required', 'pods' ), $label );
-			} else {
-				$errors[ ] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
+				if ( 0 == strlen( $value ) && 1 == pods_v( 'required', $options ) ) {
+					$errors[] = sprintf( __( '%s is required', 'pods' ), $label );
+				} else {
+				$errors[] = sprintf( __( 'Invalid e-mail provided for %s', 'pods' ), $label );
 				}
 			}
 		}

@@ -245,7 +245,7 @@ class Pods_Admin {
 									$submenu_items[ $menu_location_custom ] = array();
 								}
 
-								$submenu_items[ $menu_location_custom ][ ] = array(
+								$submenu_items[ $menu_location_custom ][] = array(
 									$menu_location_custom,
 									$page_title,
 									$menu_label,
@@ -306,7 +306,7 @@ class Pods_Admin {
 							) );
 						}
 					} else {
-						$submenu[ ] = $pod;
+						$submenu[] = $pod;
 					}
 				}
 
@@ -428,7 +428,7 @@ class Pods_Admin {
 							$submenu_items[ $menu_location_custom ] = array();
 						}
 
-						$submenu_items[ $menu_location_custom ][ ] = array(
+						$submenu_items[ $menu_location_custom ][] = array(
 							$menu_location_custom,
 							$page_title,
 							$menu_label,
@@ -500,7 +500,7 @@ class Pods_Admin {
 							$submenu_items[ $menu_location_custom ] = array();
 						}
 
-						$submenu_items[ $menu_location_custom ][ ] = array(
+						$submenu_items[ $menu_location_custom ][] = array(
 							$menu_location_custom,
 							$page_title,
 							$menu_label,
@@ -1466,7 +1466,7 @@ class Pods_Admin {
 			$meta = array();
 
 			if ( ! empty( $component_data[ 'Version' ] ) ) {
-				$meta[ ] = 'Version ' . $component_data[ 'Version' ];
+				$meta[] = 'Version ' . $component_data[ 'Version' ];
 			}
 
 			if ( empty( $component_data[ 'Author' ] ) ) {
@@ -1478,10 +1478,10 @@ class Pods_Admin {
 				$component_data[ 'Author' ] = '<a href="' . $component_data[ 'AuthorURI' ] . '">' . $component_data[ 'Author' ] . '</a>';
 			}
 
-			$meta[ ] = sprintf( __( 'by %s', 'pods' ), $component_data[ 'Author' ] );
+			$meta[] = sprintf( __( 'by %s', 'pods' ), $component_data[ 'Author' ] );
 
 			if ( ! empty( $component_data[ 'URI' ] ) ) {
-				$meta[ ] = '<a href="' . $component_data[ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
+				$meta[] = '<a href="' . $component_data[ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
 			}
 
 			$component_data[ 'Description' ] = wpautop( trim( make_clickable( strip_tags( $component_data[ 'Description' ], 'em,strong' ) ) ) );
@@ -1814,56 +1814,56 @@ class Pods_Admin {
 			)
 		) );
 
-		$capabilities[ ] = 'pods';
-		$capabilities[ ] = 'pods_content';
-		$capabilities[ ] = 'pods_settings';
-		$capabilities[ ] = 'pods_components';
+		$capabilities[] = 'pods';
+		$capabilities[] = 'pods_content';
+		$capabilities[] = 'pods_settings';
+		$capabilities[] = 'pods_components';
 
 		foreach ( $pods as $pod ) {
 			if ( 'settings' == $pod[ 'type' ] ) {
-				$capabilities[ ] = 'pods_edit_' . $pod[ 'name' ];
+				$capabilities[] = 'pods_edit_' . $pod[ 'name' ];
 			} elseif ( 'post_type' == $pod[ 'type' ] ) {
 				$capability_type = pods_v( 'capability_type_custom', $pod, pods_v( 'name', $pod ) );
 
 				if ( 'custom' == pods_v( 'capability_type', $pod ) && 0 < strlen( $capability_type ) ) {
-					$capabilities[ ] = 'read_' . $capability_type;
-					$capabilities[ ] = 'edit_' . $capability_type;
-					$capabilities[ ] = 'delete_' . $capability_type;
+					$capabilities[] = 'read_' . $capability_type;
+					$capabilities[] = 'edit_' . $capability_type;
+					$capabilities[] = 'delete_' . $capability_type;
 
 					if ( 1 == pods_v( 'capability_type_extra', $pod, 1 ) ) {
-						$capabilities[ ] = 'read_private_' . $capability_type . 's';
-						$capabilities[ ] = 'edit_' . $capability_type . 's';
-						$capabilities[ ] = 'edit_others_' . $capability_type . 's';
-						$capabilities[ ] = 'edit_private_' . $capability_type . 's';
-						$capabilities[ ] = 'edit_published_' . $capability_type . 's';
-						$capabilities[ ] = 'publish_' . $capability_type . 's';
-						$capabilities[ ] = 'delete_' . $capability_type . 's';
-						$capabilities[ ] = 'delete_private_' . $capability_type . 's';
-						$capabilities[ ] = 'delete_published_' . $capability_type . 's';
-						$capabilities[ ] = 'delete_others_' . $capability_type . 's';
+						$capabilities[] = 'read_private_' . $capability_type . 's';
+						$capabilities[] = 'edit_' . $capability_type . 's';
+						$capabilities[] = 'edit_others_' . $capability_type . 's';
+						$capabilities[] = 'edit_private_' . $capability_type . 's';
+						$capabilities[] = 'edit_published_' . $capability_type . 's';
+						$capabilities[] = 'publish_' . $capability_type . 's';
+						$capabilities[] = 'delete_' . $capability_type . 's';
+						$capabilities[] = 'delete_private_' . $capability_type . 's';
+						$capabilities[] = 'delete_published_' . $capability_type . 's';
+						$capabilities[] = 'delete_others_' . $capability_type . 's';
 					}
 				}
 			} elseif ( 'taxonomy' == $pod[ 'type' ] ) {
 				if ( 1 == pods_v( 'capabilities', $pod, 0 ) ) {
 					$capability_type = pods_var( 'capability_type_custom', $pod, pods_v( 'name', $pod ) . 's' );
 
-					$capabilities[ ] = 'manage_' . $capability_type;
-					$capabilities[ ] = 'edit_' . $capability_type;
-					$capabilities[ ] = 'delete_' . $capability_type;
-					$capabilities[ ] = 'assign_' . $capability_type;
+					$capabilities[] = 'manage_' . $capability_type;
+					$capabilities[] = 'edit_' . $capability_type;
+					$capabilities[] = 'delete_' . $capability_type;
+					$capabilities[] = 'assign_' . $capability_type;
 				}
 			} else {
-				$capabilities[ ] = 'pods_add_' . $pod[ 'name' ];
-				$capabilities[ ] = 'pods_edit_' . $pod[ 'name' ];
+				$capabilities[] = 'pods_add_' . $pod[ 'name' ];
+				$capabilities[] = 'pods_edit_' . $pod[ 'name' ];
 
 				if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] ) {
-					$capabilities[ ] = 'pods_edit_others_' . $pod[ 'name' ];
+					$capabilities[] = 'pods_edit_others_' . $pod[ 'name' ];
 				}
 
-				$capabilities[ ] = 'pods_delete_' . $pod[ 'name' ];
+				$capabilities[] = 'pods_delete_' . $pod[ 'name' ];
 
 				if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] ) {
-					$capabilities[ ] = 'pods_delete_others_' . $pod[ 'name' ];
+					$capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
 				}
 
 				$actions_enabled = pods_v( 'ui_actions_enabled', $pod );
@@ -1895,14 +1895,14 @@ class Pods_Admin {
 					}
 
 					if ( ! in_array( 'export', $actions_disabled ) ) {
-						$capabilities[ ] = 'pods_export_' . $pod[ 'name' ];
+						$capabilities[] = 'pods_export_' . $pod[ 'name' ];
 					}
 
 					if ( ! in_array( 'reorder', $actions_disabled ) ) {
-						$capabilities[ ] = 'pods_reorder_' . $pod[ 'name' ];
+						$capabilities[] = 'pods_reorder_' . $pod[ 'name' ];
 					}
 				} elseif ( 1 == pods_v( 'ui_export', $pod, 0 ) ) {
-					$capabilities[ ] = 'pods_export_' . $pod[ 'name' ];
+					$capabilities[] = 'pods_export_' . $pod[ 'name' ];
 				}
 			}
 		}
@@ -2058,10 +2058,10 @@ class Pods_Admin {
 			$the_pods = $api->load_pods();
 		} elseif ( is_array( $pod ) ) {
 			foreach ( $pod as $p ) {
-				$the_pods[ ] = $api->load_pod( $p );
+				$the_pods[] = $api->load_pod( $p );
 			}
 		} else {
-			$the_pods[ ] = $api->load_pod( $pod );
+			$the_pods[] = $api->load_pod( $pod );
 		}
 
 		$configuration = array();
@@ -2837,7 +2837,7 @@ class Pods_Admin {
 		$meta = array();
 
 		if ( ! empty( $components[ $slug ][ 'Version' ] ) ) {
-			$meta[ ] = 'Version ' . $components[ $slug ][ 'Version' ];
+			$meta[] = 'Version ' . $components[ $slug ][ 'Version' ];
 		}
 
 		if ( empty( $components[ $slug ][ 'Author' ] ) ) {
@@ -2848,10 +2848,10 @@ class Pods_Admin {
 			$components[ $slug ][ 'Author' ] = '<a href="' . $components[ $slug ][ 'AuthorURI' ] . '">' . $components[ $slug ][ 'Author' ] . '</a>';
 		}
 
-		$meta[ ] = sprintf( __( 'by %s', 'pods' ), $components[ $slug ][ 'Author' ] );
+		$meta[] = sprintf( __( 'by %s', 'pods' ), $components[ $slug ][ 'Author' ] );
 
 		if ( ! empty( $components[ $slug ][ 'URI' ] ) ) {
-			$meta[ ] = '<a href="' . $components[ $slug ][ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
+			$meta[] = '<a href="' . $components[ $slug ][ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
 		}
 
 		$components[ $slug ][ 'description' ] = wpautop( trim( make_clickable( strip_tags( $components[ $slug ][ 'Description' ], 'em,strong' ) ) ) );

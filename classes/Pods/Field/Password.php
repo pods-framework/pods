@@ -130,7 +130,7 @@ class Pods_Field_Password extends Pods_Field {
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				if ( 1 == pods_v( 'required', $options ) ) {
-					$errors[ ] = __( 'This field is required.', 'pods' );
+					$errors[] = __( 'This field is required.', 'pods' );
 				}
 			}
 		}

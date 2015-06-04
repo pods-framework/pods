@@ -621,7 +621,7 @@ class Pods_Field_Pick extends Pods_Field {
 					continue;
 				}
 
-				$simple_objects[ ] = $object;
+				$simple_objects[] = $object;
 			}
 
 			self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
@@ -646,7 +646,7 @@ class Pods_Field_Pick extends Pods_Field {
 					continue;
 				}
 
-				$bidirectional_objects[ ] = $object;
+				$bidirectional_objects[] = $object;
 			}
 
 			self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
@@ -936,7 +936,7 @@ class Pods_Field_Pick extends Pods_Field {
 
 				if ( 0 < $related_pick_limit && ! empty( $bidirectional_ids ) && ! in_array( $id, $bidirectional_ids ) ) {
 					while ( $related_pick_limit <= count( $bidirectional_ids ) ) {
-						$remove_ids[ ] = (int) array_pop( $bidirectional_ids );
+						$remove_ids[] = (int) array_pop( $bidirectional_ids );
 					}
 				}
 
@@ -945,7 +945,7 @@ class Pods_Field_Pick extends Pods_Field {
 
 				// Add to related items
 				if ( ! in_array( $id, $bidirectional_ids ) ) {
-					$bidirectional_ids[ ] = $id;
+					$bidirectional_ids[] = $id;
 				} // Nothing to change
 				elseif ( empty( $remove_ids ) ) {
 					continue;
@@ -1189,7 +1189,7 @@ class Pods_Field_Pick extends Pods_Field {
 
 		foreach ( $data as $v => $l ) {
 			if ( $value == $v || $value == $l || ( is_array( $value ) && ( in_array( $v, $value ) || in_array( $l, $value ) ) ) ) {
-				$labels[ ] = $l;
+				$labels[] = $l;
 			}
 		}
 
@@ -1240,7 +1240,7 @@ class Pods_Field_Pick extends Pods_Field {
 
 		foreach ( $data as $v => $l ) {
 			if ( $label == $v || $label == $l || ( is_array( $label ) && ( in_array( $v, $label ) || in_array( $l, $label ) ) ) ) {
-				$values[ ] = $l;
+				$values[] = $l;
 			}
 		}
 
@@ -1488,17 +1488,17 @@ class Pods_Field_Pick extends Pods_Field {
 					if ( is_array( $value ) ) {
 						$value = array_map( 'absint', $value );
 
-						$params[ 'where' ][ ] = "`t`.`{$search_data->field_id}` IN ( " . implode( ', ', $value ) . " )";
+						$params[ 'where' ][] = "`t`.`{$search_data->field_id}` IN ( " . implode( ', ', $value ) . " )";
 					} else {
-						$params[ 'where' ][ ] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
+						$params[ 'where' ][] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
 					}
 				} elseif ( 'label_to_value' == $context ) {
 					$label = pods_sanitize( $label );
 
 					if ( is_array( $label ) ) {
-						$params[ 'where' ][ ] = "`t`.`{$search_data->field_index}` IN ( '" . implode( "', '", $label ) . "' )";
+						$params[ 'where' ][] = "`t`.`{$search_data->field_index}` IN ( '" . implode( "', '", $label ) . "' )";
 					} else {
-						$params[ 'where' ][ ] = "`t`.`{$search_data->field_index}` = '" . $label . "'";
+						$params[ 'where' ][] = "`t`.`{$search_data->field_index}` = '" . $label . "'";
 					}
 				}
 
@@ -1615,20 +1615,20 @@ class Pods_Field_Pick extends Pods_Field {
 						$lookup_where = apply_filters( 'pods_form_ui_field_pick_autocomplete_lookup', $lookup_where, $data_params[ 'query' ], $name, $value, $options, $pod, $id, $object_params, $search_data );
 
 						if ( ! empty( $lookup_where ) ) {
-							$params[ 'where' ][ ] = implode( ' OR ', $lookup_where );
+							$params[ 'where' ][] = implode( ' OR ', $lookup_where );
 						}
 
 						$orderby = array();
-						$orderby[ ] = "(`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%' ) DESC";
+						$orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . pods_sanitize_like( $data_params[ 'query' ] ) . "%' ) DESC";
 
 						$pick_orderby = pods_v( self::$type . '_orderby', $options, null, true );
 
 						if ( 0 < strlen( $pick_orderby ) ) {
-							$orderby[ ] = $pick_orderby;
+							$orderby[] = $pick_orderby;
 						}
 
-						$orderby[ ] = "`t`.`{$search_data->field_index}`";
-						$orderby[ ] = "`t`.`{$search_data->field_id}`";
+						$orderby[] = "`t`.`{$search_data->field_index}`";
+						$orderby[] = "`t`.`{$search_data->field_id}`";
 
 						$params[ 'orderby' ] = $orderby;
 					}
@@ -1660,11 +1660,11 @@ class Pods_Field_Pick extends Pods_Field {
 								continue;
 							}
 
-							$where[ ] = $wpdb->base_prefix . ( ( is_multisite() && ! is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
+							$where[] = $wpdb->base_prefix . ( ( is_multisite() && ! is_main_site() ) ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . pods_sanitize_like( $role ) . '\"%"';
 						}
 
 						if ( ! empty( $where ) ) {
-							$params[ 'where' ][ ] = implode( ' OR ', $where );
+							$params[ 'where' ][] = implode( ' OR ', $where );
 						}
 					}
 				}
@@ -1845,7 +1845,7 @@ class Pods_Field_Pick extends Pods_Field {
 							if ( ! empty( $display_filter_args ) ) {
 								foreach ( (array) $display_filter_args as $display_filter_arg ) {
 									if ( isset( $result[ $display_filter_arg ] ) ) {
-										$args[ ] = $result[ $display_filter_arg ];
+										$args[] = $result[ $display_filter_arg ];
 									}
 								}
 							}
@@ -1860,7 +1860,7 @@ class Pods_Field_Pick extends Pods_Field {
 						}
 
 						if ( 'admin_ajax_relationship' == $context ) {
-							$items[ ] = array(
+							$items[] = array(
 								'id'    => $result[ $search_data->field_id ],
 								'text'  => $result[ $search_data->field_index ],
 								'image' => ''
@@ -1869,7 +1869,7 @@ class Pods_Field_Pick extends Pods_Field {
 							$data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
 						}
 
-						$ids[ ] = $result[ $search_data->field_id ];
+						$ids[] = $result[ $search_data->field_id ];
 					}
 				}
 			}
@@ -1890,7 +1890,7 @@ class Pods_Field_Pick extends Pods_Field {
 		if ( 'admin_ajax_relationship' == $context ) {
 			if ( empty( $items ) && ! empty( $data ) ) {
 				foreach ( $data as $k => $v ) {
-					$items[ ] = array(
+					$items[] = array(
 						'id'    => $k,
 						'text'  => $v,
 						'image' => ''
@@ -2020,7 +2020,7 @@ class Pods_Field_Pick extends Pods_Field {
 			$new_items = array();
 
 			foreach ( $items as $id => $text ) {
-				$new_items[ ] = array(
+				$new_items[] = array(
 					'id'    => $id,
 					'text'  => $text,
 					'image' => ''

@@ -68,7 +68,7 @@ function pods_do_hook( $scope, $name, $args = null, $obj = null ) {
 	array_unshift( $args, "pods_{$scope}_{$name}" );
 
 	// Add object
-	$args[ ] = $obj;
+	$args[] = $obj;
 
 	// Run apply_filters and give it all the arguments
 	$args = call_user_func_array( 'apply_filters', $args );
@@ -286,11 +286,11 @@ function pods_debug_backtrace() {
 					$arg = 'CALLABLE: ' . get_class( $arg[ 0 ] ) . '::' . $arg[ 1 ];
 				}
 
-				$backtrace_level[ 'args' ][ ] = $arg;
+				$backtrace_level[ 'args' ][] = $arg;
 			}
 		}
 
-		$backtrace[ ] = $backtrace_level;
+		$backtrace[] = $backtrace_level;
 	}
 
 	pods_debug( $backtrace );
@@ -1406,11 +1406,11 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 		);
 
 		if ( current_user_can( 'read_private_' . $type . 's' ) ) {
-			$status[ ] = 'private';
+			$status[] = 'private';
 		}
 
 		if ( current_user_can( 'edit_' . $type . 's' ) ) {
-			$status[ ] = 'draft';
+			$status[] = 'draft';
 		}
 	}
 

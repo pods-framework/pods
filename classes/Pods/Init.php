@@ -544,7 +544,7 @@ class Pods_Init {
 
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
-						$cpt_supports[ ] = $cpt_support;
+						$cpt_supports[] = $cpt_support;
 					}
 				}
 
@@ -627,7 +627,7 @@ class Pods_Init {
 				if ( $pods_post_types[ $post_type_name ][ 'menu_position' ] < 1 || in_array( $pods_post_types[ $post_type_name ][ 'menu_position' ], $cpt_positions ) ) {
 					unset( $pods_post_types[ $post_type_name ][ 'menu_position' ] );
 				} else {
-					$cpt_positions[ ] = $pods_post_types[ $post_type_name ][ 'menu_position' ];
+					$cpt_positions[] = $pods_post_types[ $post_type_name ][ 'menu_position' ];
 
 					// This would be nice if WP supported floats in menu_position
 					// $pods_post_types[ $post_type_name ][ 'menu_position' ] = $pods_post_types[ $post_type_name ][ 'menu_position' ] . '.1';
@@ -645,10 +645,10 @@ class Pods_Init {
 					}
 
 					if ( false !== (boolean) pods_v( 'built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
-						$cpt_taxonomies[ ] = $taxonomy;
+						$cpt_taxonomies[] = $taxonomy;
 
 						if ( isset( $supported_post_types[ $taxonomy ] ) && ! in_array( $post_type_name, $supported_post_types[ $taxonomy ] ) ) {
-							$supported_post_types[ $taxonomy ][ ] = $post_type_name;
+							$supported_post_types[ $taxonomy ][] = $post_type_name;
 						}
 					}
 				}
@@ -755,10 +755,10 @@ class Pods_Init {
 					}
 
 					if ( false !== (boolean) pods_v( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
-						$ct_post_types[ ] = $post_type;
+						$ct_post_types[] = $post_type;
 
 						if ( isset( $supported_taxonomies[ $post_type ] ) && ! in_array( $taxonomy_name, $supported_taxonomies[ $post_type ] ) ) {
-							$supported_taxonomies[ $post_type ][ ] = $taxonomy_name;
+							$supported_taxonomies[ $post_type ][] = $taxonomy_name;
 						}
 					}
 				}
@@ -848,7 +848,7 @@ class Pods_Init {
 				if ( $pods_comment_types[ $comment_type_name ][ 'menu_position' ] < 1 || in_array( $pods_comment_types[ $comment_type_name ][ 'menu_position' ], $ct_positions ) ) {
 					unset( $pods_comment_types[ $comment_type_name ][ 'menu_position' ] );
 				} else {
-					$ct_positions[ ] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ];
+					$ct_positions[] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ];
 
 					// This would be nice if WP supported floats in menu_position
 					// $pods_comment_types[ $comment_type_name ][ 'menu_position' ] = $pods_comment_types[ $comment_type_name ][ 'menu_position' ] . '.1';
@@ -952,7 +952,7 @@ class Pods_Init {
 				self::$content_types_registered[ 'taxonomies' ] = array();
 			}
 
-			self::$content_types_registered[ 'taxonomies' ][ ] = $taxonomy;
+			self::$content_types_registered[ 'taxonomies' ][] = $taxonomy;
 		}
 
 		foreach ( $pods_cpt_ct[ 'post_types' ] as $post_type => $options ) {
@@ -983,7 +983,7 @@ class Pods_Init {
 				self::$content_types_registered[ 'post_types' ] = array();
 			}
 
-			self::$content_types_registered[ 'post_types' ][ ] = $post_type;
+			self::$content_types_registered[ 'post_types' ][] = $post_type;
 		}
 
 		if ( function_exists( 'register_comment_type' ) ) {
@@ -1015,7 +1015,7 @@ class Pods_Init {
 					self::$content_types_registered[ 'comment_types' ] = array();
 				}
 
-				self::$content_types_registered[ 'comment_types' ][ ] = $comment_type;
+				self::$content_types_registered[ 'comment_types' ][] = $comment_type;
 			}
 		}
 

@@ -1948,7 +1948,7 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
 
 		if ( ! empty( $orphans ) ) {
 			foreach ( $orphans as $orphan ) {
-				$new[ ] = $orphan;
+				$new[] = $orphan;
 			}
 		}
 	}

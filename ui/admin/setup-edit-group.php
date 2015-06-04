@@ -138,7 +138,7 @@ $no_additional = array();
 
 foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type_fields ) {
 	if ( empty( $field_type_fields ) ) {
-		$no_additional[ ] = $field_type;
+		$no_additional[] = $field_type;
 	}
 }
 ?>

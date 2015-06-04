@@ -284,7 +284,7 @@ function frontier_template_once_blocks( $atts, $code ) {
 	if ( in_array( $blockhash, $frontier_once_hashes ) ) {
 		return '';
 	}
-	$frontier_once_hashes[ ] = $blockhash;
+	$frontier_once_hashes[] = $blockhash;
 
 	return pods_do_shortcode( frontier_decode_template( $code, $atts ), array(
 		'each',

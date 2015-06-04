@@ -1154,7 +1154,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ], 'single' );
 						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
@@ -1166,7 +1166,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ], 'single' );
 						}
 
 						if ( $simple && ! is_array( $value ) && 'single' != $single_multi ) {
@@ -1207,7 +1207,8 @@ class Pods implements Iterator {
 						$fields = $api->load_fields( array(
 							'name'          => $lookup,
 							'type'          => $tableless_field_types,
-							'object_fields' => true
+							'object_fields' => true,
+						    'output'        => OBJECT,
 							// @todo support object fields too
 						) );
 
@@ -1238,7 +1239,7 @@ class Pods implements Iterator {
 					$single_multi = 'single';
 
 					if ( isset( $this->fields[$params->name] ) ) {
-						$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+						$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ], 'single' );
 					}
 
 					if ( 'single' != $this->fields[$params->name][$this->fields[$params->name]['type'] . '_format_type'] ) {
@@ -1274,7 +1275,7 @@ class Pods implements Iterator {
 							$pick_val    = $all_fields[$pod][$field]['pick_val'];
 
 							if ( 'table' == $pick_object ) {
-								$pick_val = pods_v_sanitized( 'pick_table', $all_fields[$pod][$field]['options'], $pick_val, null, true );
+								$pick_val = pods_v_sanitized( 'pick_table', $all_fields[$pod][$field], $pick_val, null, true );
 							} elseif ( '__current__' == $pick_val ) {
 								$pick_val = $pod;
 							}
@@ -1733,7 +1734,7 @@ class Pods implements Iterator {
 					}
 
 					$value = call_user_func_array( 'apply_filters', $args );
-				} elseif ( 1 == pods_v( 'display_process', $field_data[ 'options' ], 1 ) ) {
+				} elseif ( 1 == pods_v( 'display_process', $field_data, 1 ) ) {
 					$value = Pods_Form::display(
 						$field_data[ 'type' ],
 						$value,

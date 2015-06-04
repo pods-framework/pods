@@ -116,7 +116,7 @@ class Pods_Templates extends Pods_Component {
 
 	public function disable_builder_layout( $post_types ) {
 
-		$post_types[ ] = $this->object_type;
+		$post_types[] = $this->object_type;
 
 		return $post_types;
 	}

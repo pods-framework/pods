@@ -317,7 +317,7 @@ class Pods_Meta {
 			$data = array();
 
 			foreach ( $pod as $p ) {
-				$data[ ] = $this->register( $type, $p );
+				$data[] = $this->register( $type, $p );
 			}
 
 			return $data;
@@ -351,7 +351,7 @@ class Pods_Meta {
 			$data = array();
 
 			foreach ( $pod as $p ) {
-				$data[ ] = $this->register_field( $p, $field );
+				$data[] = $this->register_field( $p, $field );
 			}
 
 			return $data;
@@ -466,7 +466,7 @@ class Pods_Meta {
 				}
 
 				if ( ! in_array( $field, $meta_fields ) ) {
-					$meta_fields[ ] = $field;
+					$meta_fields[] = $field;
 				}
 			}
 		}
@@ -814,7 +814,7 @@ class Pods_Meta {
 		$group = apply_filters( 'pods_meta_group_add_' . $pod[ 'type' ], $group, $pod, $label, $fields );
 		$group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
-		self::$groups[ $pod[ 'type' ] ][ $object_name ][ ] = $group;
+		self::$groups[ $pod[ 'type' ] ][ $object_name ][] = $group;
 
 		// Hook it up!
 		if ( 'post_type' == $pod[ 'type' ] ) {
@@ -1190,7 +1190,7 @@ class Pods_Meta {
 				}
 
 				if ( 'hidden' == $field[ 'type' ] ) {
-					$hidden_fields[ ] = array(
+					$hidden_fields[] = array(
 						'field' => $field,
 						'value' => $value
 					);
@@ -1917,7 +1917,7 @@ class Pods_Meta {
 						}
 
 						if ( 'hidden' == $field[ 'type' ] ) {
-							$hidden_fields[ ] = array(
+							$hidden_fields[] = array(
 								'field' => $field,
 								'value' => $value
 							);
@@ -2347,7 +2347,7 @@ class Pods_Meta {
 				}
 
 				if ( 'hidden' == $field[ 'type' ] ) {
-					$hidden_fields[ ] = array(
+					$hidden_fields[] = array(
 						'field' => $field,
 						'value' => $value
 					);
@@ -2984,7 +2984,7 @@ class Pods_Meta {
 		// Return first created by Pods, save extended for later
 		foreach ( $objects as $pod ) {
 			if ( $object_name == $pod[ 'object' ] ) {
-				$recheck[ ] = $pod;
+				$recheck[] = $pod;
 			}
 
 			if ( '' == $pod[ 'object' ] && $object_name == $pod[ 'name' ] ) {

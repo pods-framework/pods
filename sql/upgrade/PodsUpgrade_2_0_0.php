@@ -608,13 +608,13 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                         $old_field = $old_field[ 0 ];
 
-                        $related_field = $api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
+                        $related_field = $api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod, 'output' => OBJECT ) );
 
-                        if ( empty( $related_field ) )
+                        if ( empty( $related_field ) || ! $related_field->is_valid() )
                             continue;
 
-                        $related_pod_id = $related_field[ 'pod_id' ];
-                        $related_field_id = $related_field[ 'id' ];
+                        $related_pod_id = $related_field->pod_id;
+                        $related_field_id = $related_field->id;
                     }
                     elseif ( 'pod' == $field[ 'pick_object' ] && 0 < strlen( $field[ 'pick_val' ] ) ) {
                         $related_pod = $api->load_pod( array( 'name' => $field[ 'pick_val' ] ), __METHOD__ );

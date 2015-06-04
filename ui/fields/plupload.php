@@ -111,7 +111,7 @@ if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
 
 				foreach ( $type as $t ) {
 					if ( ! in_array( $t, $new_limit_types ) ) {
-						$new_limit_types[ ] = $t;
+						$new_limit_types[] = $t;
 					}
 				}
 
@@ -120,7 +120,7 @@ if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
 		}
 
 		if ( ! $found ) {
-			$new_limit_types[ ] = $limit_type;
+			$new_limit_types[] = $limit_type;
 		}
 	}
 

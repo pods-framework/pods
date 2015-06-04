@@ -80,7 +80,7 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 			$mime = $mime[ 0 ];
 
 			if ( ! in_array( $mime, $new_limit_types ) ) {
-				$new_limit_types[ ] = $mime;
+				$new_limit_types[] = $mime;
 			}
 		} else {
 			$found = false;
@@ -91,7 +91,7 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 					$mime = $mime[ 0 ];
 
 					if ( ! in_array( $mime, $new_limit_types ) ) {
-						$new_limit_types[ ] = $mime;
+						$new_limit_types[] = $mime;
 					}
 
 					$found = true;
@@ -99,7 +99,7 @@ if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'a
 			}
 
 			if ( ! $found ) {
-				$new_limit_types[ ] = $limit_type;
+				$new_limit_types[] = $limit_type;
 			}
 		}
 	}

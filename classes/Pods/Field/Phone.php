@@ -177,9 +177,9 @@ class Pods_Field_Phone extends Pods_Field {
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
 				if ( 1 == pods_v( 'required', $options ) ) {
-					$errors[ ] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
+					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
-					$errors[ ] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
+					$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
 				}
 			}
 		}

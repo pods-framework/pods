@@ -127,15 +127,15 @@ class Pods_Roles extends Pods_Component {
 		}
 
 		if ( ! pods_is_admin( array( 'pods_roles_add' ) ) ) {
-			$ui[ 'actions_disabled' ][ ] = 'add';
+			$ui[ 'actions_disabled' ][] = 'add';
 		}
 
 		if ( ! pods_is_admin( array( 'pods_roles_edit' ) ) ) {
-			$ui[ 'actions_disabled' ][ ] = 'edit';
+			$ui[ 'actions_disabled' ][] = 'edit';
 		}
 
 		if ( count( $roles ) < 2 || ! pods_is_admin( array( 'pods_roles_delete' ) ) ) {
-			$ui[ 'actions_disabled' ][ ] = 'delete';
+			$ui[ 'actions_disabled' ][] = 'delete';
 		}
 
 		pods_ui( $ui );
@@ -354,7 +354,7 @@ class Pods_Roles extends Pods_Component {
 				continue;
 			}
 
-			$new_capabilities[ ] = esc_attr( $capability );
+			$new_capabilities[] = esc_attr( $capability );
 
 			if ( ! $role->has_cap( $capability ) ) {
 				$role->add_cap( $capability );
@@ -370,7 +370,7 @@ class Pods_Roles extends Pods_Component {
 				continue;
 			}
 
-			$new_capabilities[ ] = esc_attr( $capability );
+			$new_capabilities[] = esc_attr( $capability );
 
 			if ( ! $role->has_cap( $capability ) ) {
 				$role->add_cap( $capability );

@@ -146,7 +146,7 @@ class Pods_Pages extends Pods_Component {
 	 */
 	public function disable_builder_layout( $post_types ) {
 
-		$post_types[ ] = $this->object_type;
+		$post_types[] = $this->object_type;
 
 		return $post_types;
 
@@ -1119,7 +1119,7 @@ class Pods_Pages extends Pods_Component {
 			return $classes;
 		}
 
-		$classes[ ] = 'pods';
+		$classes[] = 'pods';
 
 		$uri = explode( '?', self::$exists[ 'uri' ] );
 		$uri = explode( '#', $uri[ 0 ] );
@@ -1129,17 +1129,17 @@ class Pods_Pages extends Pods_Component {
 		$class = str_replace( array( '_', '--', '--' ), '-', $class );
 		$class = trim( $class, '-' );
 
-		$classes[ ] = 'pod-page-' . $class;
+		$classes[] = 'pod-page-' . $class;
 
 		if ( is_object( $pods ) && ! is_wp_error( $pods ) ) {
 			$class = sanitize_title( $pods->pod );
 			$class = str_replace( array( '_', '--', '--' ), '-', $class );
 			$class = trim( $class, '-' );
-			$classes[ ] = 'pod-' . $class;
+			$classes[] = 'pod-' . $class;
 		}
 
 		if ( is_object( $pods ) && ! is_wp_error( $pods ) && isset( $pods->body_classes ) ) {
-			$classes[ ] = $pods->body_classes;
+			$classes[] = $pods->body_classes;
 		}
 
 		return apply_filters( 'pods_body_class', $classes, $uri );
@@ -1213,13 +1213,13 @@ class Pods_Pages extends Pods_Component {
 					$file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
 					$sanitized = sanitize_title( $file_name );
 
-					$default_templates[ ] = 'pods/page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[ ] = 'pods-page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[ ] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-					$default_templates[ ] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[] = 'pods/page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[] = 'pods-page-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+					$default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
 				}
 
-				$default_templates[ ] = 'pods.php';
+				$default_templates[] = 'pods.php';
 
 				$default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
 

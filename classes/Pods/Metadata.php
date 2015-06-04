@@ -95,7 +95,7 @@ class Pods_Metadata {
 			);
 
 			if ( 'user' == $type ) {
-				$pods_meta_box[ 'object_types' ][ ] = 'user';
+				$pods_meta_box[ 'object_types' ][] = 'user';
 			}
 
 			foreach ( $object_groups as $name => $groups ) {
@@ -104,7 +104,7 @@ class Pods_Metadata {
 				$pods_group_meta_box[ 'id' ] .= '_' . $name;
 
 				if ( 'post_type' == $type ) {
-					$pods_group_meta_box[ 'object_types' ][ ] = $name;
+					$pods_group_meta_box[ 'object_types' ][] = $name;
 				} elseif ( 'user' != $type ) {
 					$pods_group_meta_box[ 'show_on' ] = array(
 						'key'   => 'options-page',

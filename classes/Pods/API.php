@@ -2535,7 +2535,7 @@ class Pods_API {
 					$value_ids = array();
 
 					$is_file_field = in_array( $type, Pods_Form::file_field_types() );
-					$is_taggable   = ( in_array( $type, Pods_Form::tableless_field_types() ) && 1 == pods_v( $type . '_taggable', $fields[$field]['options'] ) );
+					$is_taggable   = ( in_array( $type, Pods_Form::tableless_field_types() ) && 1 == pods_v( $type . '_taggable', $fields[$field] ) );
 
 					// @todo Handle simple relationships eventually
 					foreach ( $values as $v ) {
@@ -5764,7 +5764,7 @@ class Pods_API {
 			$info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
 			if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_v( 'type', $info[ 'pod' ] ) ) {
-				$info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_v( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', true );
+				$info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_v( 'pod_index', $info[ 'pod' ], 'id', true );
 
 				$slug_field = get_posts( array(
 					'post_type' => '_pods_field',
@@ -5788,7 +5788,7 @@ class Pods_API {
 				}
 
 				if ( 1 == pods_v( 'hierarchical', $info[ 'pod' ][ 'options' ], 0 ) ) {
-					$parent_field = pods_v( 'pod_parent', $info[ 'pod' ][ 'options' ], 'id', true );
+					$parent_field = pods_v( 'pod_parent', $info[ 'pod' ], 'id', true );
 
 					if ( !empty( $parent_field ) && isset( $info[ 'pod' ][ 'fields' ][ $parent_field ] ) ) {
 						$info[ 'object_hierarchical' ] = true;

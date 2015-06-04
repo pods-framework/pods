@@ -344,7 +344,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		}
 	} else {
 		if ( ! empty( $entries ) ) {
-			if ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_uploader' ] && 'multi' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_format_type' ] ) {
+			if ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == pods_v( 'file_uploader', $pod->fields[ $atts[ 'field' ] ] ) && 'multi' == pods_v( 'file_format_type', $pod->fields[ $atts[ 'field' ] ] ) ) {
 				$template = frontier_decode_template( $content, $atts );
 				foreach ( $entries as $key => $entry ) {
 					$content = str_replace( '{_index}', $key, $template );

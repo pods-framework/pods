@@ -59,21 +59,24 @@ function pq_loadpod( $podname = false ) {
 function pq_tunnel_pod_field( $fields, $prefix = null ) {
 
 	$out = array();
+
 	// return out if fields are empty
 	if ( empty( $fields ) ) {
 		return $out;
 	}
+
 	foreach ( $fields as $name => $field ) {
 		$out[] = $prefix . $name;
-		if ( $field[ 'type' ] === 'file' && $field[ 'options' ][ 'file_uploader' ] == 'attachment' ) {
-
+		if ( 'file' == $field[ 'type' ] && 'attachment' == pods_v( 'file_uploader', $field ) ) {
 			$out[] = $prefix . $name . '._src';
 			$out[] = $prefix . $name . '._img';
 
 			$sizes = get_intermediate_image_sizes();
+
 			foreach ( $sizes as &$size ) {
 				$out[] = $prefix . $name . '._src.' . $size;
 			}
+
 			if ( 'multi' != $field[ 'options' ][ 'file_format_type' ] ) {
 				foreach ( $sizes as &$size ) {
 					$out[] = $prefix . $name . '._src_relative.' . $size;
@@ -82,10 +85,12 @@ function pq_tunnel_pod_field( $fields, $prefix = null ) {
 					$out[] = $prefix . $name . '._src_schemeless.' . $size;
 				}
 			}
+
 			foreach ( $sizes as &$size ) {
 				$out[] = $prefix . $name . '._img.' . $size;
 			}
 		}
+
 		if ( ! empty( $field[ 'table_info' ] ) ) {
 			if ( ! empty( $field[ 'table_info' ][ 'pod' ] ) ) {
 				if ( false === strpos( $prefix, $name . '.' ) ) {

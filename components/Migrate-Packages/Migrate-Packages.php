@@ -674,12 +674,6 @@ class Pods_Migrate_Packages extends Pods_Component {
 			}
 
 			foreach ( $export[ 'pods' ] as &$pod ) {
-				if ( isset( $pod[ 'options' ] ) ) {
-					$pod = array_merge( $pod, $pod[ 'options' ] );
-
-					unset( $pod[ 'options' ] );
-				}
-
 				foreach ( $pod as $option => $option_value ) {
 					if ( in_array( $option, $options_ignore ) || null === $option_value ) {
 						unset( $pod[ $option ] );
@@ -696,12 +690,6 @@ class Pods_Migrate_Packages extends Pods_Component {
 
 				if ( ! empty( $pod[ 'fields' ] ) ) {
 					foreach ( $pod[ 'fields' ] as &$field ) {
-						if ( isset( $field[ 'options' ] ) ) {
-							$field = array_merge( $field, $field[ 'options' ] );
-
-							unset( $field[ 'options' ] );
-						}
-
 						foreach ( $field as $option => $option_value ) {
 							if ( in_array( $option, $options_ignore ) || null === $option_value ) {
 								unset( $field[ $option ] );

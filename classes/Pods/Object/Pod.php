@@ -2,8 +2,15 @@
 /**
  * @package Pods
  * @category Object Types
- *
+ */
+
+/**
  * Class Pods_Object_Pod
+ *
+ * @property Pods_Object_Field[] $object_fields Object Fields
+ * @property Pods_Object_Field[] $fields Fields
+ * @property Pods_Object_Group[] $groups Object Groups
+ * @property array $table_info Table information for Object
  */
 class Pods_Object_Pod extends
 	Pods_Object {
@@ -353,7 +360,7 @@ class Pods_Object_Pod extends
 	 *
 	 * @return bool Whether the object is a fallback or not
 	 *
-	 * @since 3.0
+	 * @since 3.0.0
 	 */
 	public function is_fallback() {
 

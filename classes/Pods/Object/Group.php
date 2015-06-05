@@ -2,8 +2,12 @@
 /**
  * @package Pods
  * @category Object Types
- *
+ */
+
+/**
  * Class Pods_Object_Group
+ *
+ * @property Pods_Object_Field[] $fields Fields
  */
 class Pods_Object_Group extends
 	Pods_Object {
@@ -260,7 +264,7 @@ class Pods_Object_Group extends
 		 *
 		 * @param array $tabs The Pods edit field tabs setup
 		 *
-		 * @since unknown
+		 * @since 2.4.0
 		 */
 		$tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $this );
 

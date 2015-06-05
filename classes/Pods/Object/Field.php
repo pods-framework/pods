@@ -2,8 +2,14 @@
 /**
  * @package Pods
  * @category Object Types
- *
+ */
+
+/**
  * Class Pods_Object_Field
+ *
+ * @property int|string $sister_id Sister ID
+ * @property Pods_Object_Field[] $fields Fields
+ * @property array $table_info Table information for Object
  */
 class Pods_Object_Field extends
 	Pods_Object {
@@ -21,13 +27,13 @@ class Pods_Object_Field extends
 	 * @var array
 	 */
 	protected $_deprecated_keys = array(
-		'pod_id'          => 'parent_id',
 		'sister_field_id' => 'sister_id',
 		'ID'              => 'id',
 		'post_title'      => 'label',
 		'post_name'       => 'name',
 		'post_content'    => 'description',
-		'post_parent'     => 'parent_id'
+		'post_parent'     => 'parent_id',
+		'pod_id'          => 'parent_id'
 	);
 
 	/**
@@ -339,7 +345,7 @@ class Pods_Object_Field extends
 	 *
 	 * @param object $params (optional) Parameters from build()
 	 *
-	 * @since 2.0
+	 * @since 3.0.0
 	 */
 	public function traverse_build( $fields = null, $params = null ) {
 
@@ -376,7 +382,7 @@ class Pods_Object_Field extends
 	 *
 	 * @return array Array of table joins
 	 *
-	 * @since 2.0
+	 * @since 3.0.0
 	 */
 	public function traverse_recurse( $traverse_recurse ) {
 
@@ -783,7 +789,7 @@ class Pods_Object_Field extends
 	 *
 	 * @return string Field Input HTML
 	 *
-	 * @since 2.3.10
+	 * @since 3.0.0
 	 */
 	public function input( $field, $input_name = null, $value = null, $options = array(), $pod = null, $id = null ) {
 

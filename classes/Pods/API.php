@@ -4312,40 +4312,6 @@ class Pods_API {
 
 		$_pods = get_posts( $args );
 
-		$export_ignore = array(
-			'object_type',
-			'object_name',
-			'table',
-			'meta_table',
-			'pod_table',
-			'field_id',
-			'field_index',
-			'field_slug',
-			'field_type',
-			'field_parent',
-			'field_parent_select',
-			'meta_field_id',
-			'meta_field_index',
-			'meta_field_value',
-			'pod_field_id',
-			'pod_field_index',
-			'object_fields',
-			'join',
-			'where',
-			'where_default',
-			'orderby',
-			'pod',
-			'recurse',
-			'table_info',
-			'attributes',
-			'group',
-			'grouped',
-			'developer_mode',
-			'dependency',
-			'depends-on',
-			'excludes-on'
-		);
-
 		$total_fields = 0;
 
 		if ( isset( $params->count ) && $params->count ) {
@@ -4357,9 +4323,9 @@ class Pods_API {
 				} elseif ( isset( $params->names_ids ) && $params->names_ids ) {
 					$the_pods[$pod->ID] = $pod->post_name;
 				} else {
-					$pod = $this->load_pod( $pod );
+					$pod = pods_object_pod( $pod );
 
-					$total_fields += count( $pod['fields'] );
+					$total_fields += count( $pod->fields );
 
 					if ( isset( $params->key_names ) && $params->key_names ) {
 						$the_pods[$pod['name']] = $pod;

@@ -4040,7 +4040,7 @@ class Pods_API {
 	 * @param array|object $params An associative array of parameters or pod name as a string
 	 * @param bool         $strict Makes sure the pod exists, throws an error if it doesn't work
 	 *
-	 * @return array|bool|mixed|void
+	 * @return Pods_Object_Pod|bool|mixed|void
 	 * @since 1.7.9
 	 */
 	public function load_pod( $params, $strict = true ) {

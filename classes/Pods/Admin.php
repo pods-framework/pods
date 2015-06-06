@@ -849,7 +849,7 @@ class Pods_Admin {
 	 */
 	public function admin_setup() {
 
-		$all_pods = pods_api()->load_pods( array( 'fields' => false ) );
+		$all_pods = pods_api()->load_pods( array( 'output' => OBJECT ) );
 
 		$view = pods_v( 'view', 'get', 'all', true );
 
@@ -901,16 +901,19 @@ class Pods_Admin {
 
 		$data = array();
 
+		/**
+		 * @var $the_pod Pods_Object_Pod
+		 */
 		foreach ( $all_pods as $the_pod ) {
 			$pod = array(
-				'id'          => $the_pod[ 'id' ],
-				'label'       => $the_pod[ 'label' ],
-				'name'        => $the_pod[ 'name' ],
-				'object'      => $the_pod[ 'object' ],
-				'type'        => $the_pod[ 'type' ],
-				'real_type'   => $the_pod[ 'type' ],
-				'storage'     => $the_pod[ 'storage' ],
-				'field_count' => count( $the_pod[ 'fields' ] )
+				'id'          => $the_pod->id,
+				'label'       => $the_pod->label,
+				'name'        => $the_pod->name,
+				'object'      => $the_pod->object,
+				'type'        => $the_pod->type,
+				'real_type'   => $the_pod->type,
+				'storage'     => $the_pod->storage,
+				'field_count' => $the_pod->field_count()
 			);
 
 			if ( isset( $types[ $pod[ 'type' ] ] ) ) {
@@ -1101,17 +1104,15 @@ class Pods_Admin {
 	 */
 	public function admin_setup_reset( $obj, $id ) {
 
-		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
+		$pod = pods_api()->load_pod( array( 'id' => $id, 'output' => OBJECT ), false );
 
-		if ( empty( $pod ) ) {
-			// ToDo: deprecated
-			return $obj->error( __( 'Pod not found.', 'pods' ) );
+		if ( empty( $pod ) || ! $pod->is_valid() ) {
+			return pods_message( __( 'Pod not found.', 'pods' ), 'error' );
 		}
 
-		pods_api()->reset_pod( array( 'id' => $id ) );
+		$pod->reset();
 
-		// ToDo: deprecated
-		$obj->message( __( 'Pod reset successfully.', 'pods' ) );
+		pods_message( __( 'Pod reset successfully.', 'pods' ) );
 
 		$obj->manage();
 
@@ -1151,22 +1152,20 @@ class Pods_Admin {
 	 */
 	public function admin_setup_delete( $id, $obj ) {
 
-		$pod = pods_api()->load_pod( array( 'id' => $id ), false );
+		$pod = pods_api()->load_pod( array( 'id' => $id, 'output' => OBJECT ), false );
 
-		if ( empty( $pod ) ) {
-			// ToDo: Deprecated
-			return $obj->error( __( 'Pod not found.', 'pods' ) );
+		if ( empty( $pod ) || ! $pod->is_valid() ) {
+			return pods_message( __( 'Pod not found.', 'pods' ), 'error' );
 		}
 
-		pods_api()->delete_pod( array( 'id' => $id ) );
+		unset( $obj->data[ $pod->id ] );
 
-		unset( $obj->data[ $pod[ 'id' ] ] );
+		$pod->delete();
 
 		$obj->total       = count( $obj->data );
 		$obj->total_found = count( $obj->data );
 
-		// ToDo: Deprecated
-		$obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+		pods_message( __( 'Pod deleted successfully.', 'pods' ) );
 
 		return null;
 
@@ -1195,7 +1194,7 @@ class Pods_Admin {
 			)
 		);
 
-		$total_fields = count( self::$admin_row->fields() );
+		$total_fields = self::$admin_row->field_count();
 
 		$ui = array(
 			'num'              => 'group',
@@ -1218,7 +1217,7 @@ class Pods_Admin {
 				'delete' => pods_query_arg( array( 'id_group' => '{@id}', 'action_group' => 'delete' ) )
 			),
 			'params'           => array(
-				'where' => 't.post_parent = ' . self::$admin_row[ 'id' ]
+				'where' => 't.post_parent = ' . (int) self::$admin_row->id
 			),
 			'search'           => false,
 			'searchable'       => false,
@@ -1341,8 +1340,7 @@ class Pods_Admin {
 		$group = pods_object_group( null, $obj->id );
 
 		if ( ! $group->is_valid() ) {
-			// ToDo: Deprecated
-			return $obj->error( __( 'Field Group not found.', 'pods' ) );
+			return pods_message( __( 'Field Group not found.', 'pods' ), 'error' );
 		}
 
 		$new_id = $group->duplicate();
@@ -1375,8 +1373,7 @@ class Pods_Admin {
 		$group = pods_object_group( null, $obj->id );
 
 		if ( ! $group->is_valid() ) {
-			// ToDo: Deprecated
-			return $obj->error( __( 'Field Group not found.', 'pods' ) );
+			return pods_message( __( 'Field Group not found.', 'pods' ), 'error' );
 		}
 
 		$group->delete();
@@ -1386,8 +1383,7 @@ class Pods_Admin {
 		$obj->total       = count( $obj->data );
 		$obj->total_found = count( $obj->data );
 
-		// ToDo: Deprecated
-		$obj->message( __( 'Field Group deleted successfully.', 'pods' ) );
+		pods_message( __( 'Field Group deleted successfully.', 'pods' ) );
 
 		return null;
 	}

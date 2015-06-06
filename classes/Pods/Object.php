@@ -186,7 +186,15 @@ class Pods_Object implements
 	 */
 	public function __construct( $name, $id = 0, $live = false, $parent = null ) {
 
-		$id = $this->load( $name, $id, $parent );
+		if ( is_serialized( $name ) ) {
+			$this->unserialize( $name );
+
+			if ( $this->is_valid() ) {
+				$id = $this->_object[ 'id' ];
+			}
+		} else {
+			$id = $this->load( $name, $id, $parent );
+		}
 
 		if ( 0 < $id ) {
 			$this->_live = $live;
@@ -1668,10 +1676,8 @@ class Pods_Object implements
 	public function serialize() {
 
 		$array = array(
-			'_object'        => $this->_object,
-			'_meta'          => $this->_meta,
-			'_fields'        => $this->_fields,
-			'_object_fields' => $this->_object_fields
+			'_object' => $this->_object,
+			'_meta'   => $this->_meta
 		);
 
 		return serialize( $array );
@@ -1689,9 +1695,9 @@ class Pods_Object implements
 	 */
 	public function unserialize( $data ) {
 
-		$object = @unserialize( $data );
+		$object = maybe_unserialize( $data );
 
-		if ( ! empty( $object ) ) {
+		if ( ! empty( $object ) && ( is_object( $object ) || is_array( $object ) ) ) {
 			$object = (object) $object;
 
 			if ( isset( $object->_object ) ) {
@@ -1700,14 +1706,6 @@ class Pods_Object implements
 
 			if ( isset( $object->_meta ) ) {
 				$this->_meta = $object->_meta;
-			}
-
-			if ( isset( $object->_fields ) ) {
-				$this->_fields = $object->_fields;
-			}
-
-			if ( isset( $object->_object_fields ) ) {
-				$this->_object_fields = $object->_object_fields;
 			}
 		}
 

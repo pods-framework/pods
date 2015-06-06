@@ -2123,3 +2123,55 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 	return $filtered;
 
 }
+
+/**
+ * Serialize an array of Pods_Object objects
+ *
+ * @param Pods_Object[] $objects An array of Pods_Object objects
+ *
+ * @return string[]
+ *
+ * @since 3.0.0
+ */
+function pods_objects_serialize( $objects ) {
+
+	$serialized_objects = array();
+
+	foreach ( $objects as $k => $object ) {
+		$serialized_objects[ $k ] = $object->serialize();
+	}
+
+	return $serialized_objects;
+
+}
+
+/**
+ * Unserialize an array of Pods_Object objects
+ *
+ * @param string[] $serialized_objects An array of serialized Pods_Object objects
+ * @param string $callback Callback function to use for setting up the Pods_Object objects
+ *
+ * @return Pods_Object[]
+ *
+ * @since 3.0.0
+ */
+function pods_objects_unserialize( $serialized_objects, $callback = 'pods_object' ) {
+
+	$unserialized_objects = array();
+
+	if ( is_callable( $callback ) ) {
+		/**
+		 * @var $object Pods_Object
+		 */
+		foreach ( $serialized_objects as $k => $serialized_object ) {
+			$object = call_user_func( $callback, $serialized_object );
+
+			if ( $object->is_valid() ) {
+				$unserialized_objects[ $k ] = $object;
+			}
+		}
+	}
+
+	return $unserialized_objects;
+
+}

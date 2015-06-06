@@ -1032,7 +1032,7 @@ class Pods_Object implements
 			$this->_fields = array();
 
 			if ( $this->is_custom() ) {
-				if ( isset( $this->_object['_fields'] ) && ! empty( $this->_object['_fields'] ) ) {
+				if ( ! empty( $this->_object['_fields'] ) ) {
 					foreach ( $this->_object['_fields'] as $object_field ) {
 						$object_field = pods_object_field( $object_field, 0, $this->_live, $this->_object['id'] );
 
@@ -1044,7 +1044,7 @@ class Pods_Object implements
 			} else {
 				$find_args = array(
 					'post_type'      => '_pods_field',
-					'posts_per_page' => - 1,
+					'posts_per_page' => -1,
 					'nopaging'       => true,
 					'post_parent'    => $this->_object['id'],
 					'orderby'        => 'menu_order',
@@ -1068,6 +1068,43 @@ class Pods_Object implements
 		}
 
 		return $this->_fields( 'fields', $field, $option, $alt );
+
+	}
+
+	/**
+	 * Return total number of fields
+	 *
+	 * @return int
+	 *
+	 * @since 3.0.0
+	 */
+	public function field_count() {
+
+		$total_fields = 0;
+
+		if ( ! $this->is_valid() ) {
+			return $total_fields;
+		}
+
+		if ( ! empty( $this->_fields ) ) {
+			$total_fields = count( $this->_fields );
+		} elseif ( $this->is_custom() ) {
+			if ( ! empty( $this->_object['_fields'] ) ) {
+				$total_fields = count( $this->_object['fields'] );
+			}
+		} else {
+			$find_args = array(
+				'post_type'      => '_pods_field',
+				'posts_per_page' => 1,
+				'post_parent'    => $this->_object['id'],
+			);
+
+			$query = new WP_Query( $find_args );
+
+			$total_fields = $query->found_posts;
+		}
+
+		return $total_fields;
 
 	}
 

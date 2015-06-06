@@ -50,19 +50,11 @@ class Pods_API {
 	 * @var array
 	 * @since 2.5
 	 */
-	private $fields_cache = array();
-
-	/**
-	 * @var array
-	 * @since 2.5
-	 *
-	 */
 	private static $table_info_cache = array();
 
 	/**
 	 * @var array
 	 * @since 2.5
-	 *
 	 */
 	private static $related_item_cache = array();
 
@@ -4126,6 +4118,7 @@ class Pods_API {
 	 * $params['names'] boolean Return only an array of name => label
 	 * $params['ids'] boolean Return only an array of ID => label
 	 * $params['key_names'] boolean Return pods keyed by name
+	 * $params['output'] string OBJECT|ARRAY_A
 	 *
 	 * @param array $params An associative array of parameters
 	 *
@@ -4217,7 +4210,7 @@ class Pods_API {
 				);
 			}
 
-			$cache_key = '';
+			$cache_key .= '_options_' . serialize( $params->options );
 		}
 
 		if ( isset( $params->where ) && is_array( $params->where ) ) {
@@ -4280,7 +4273,7 @@ class Pods_API {
 			$cache_key = 'pods' . $pre_key . $cache_key;
 		}
 
-		if ( pods_api_cache() && ! empty( $cache_key ) && ( 'pods' . ( ! empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+		if ( pods_api_cache() && ! empty( $cache_key ) && ( 'pods_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
 			$the_pods = pods_transient_get( $cache_key );
 
 			if ( false === $the_pods ) {
@@ -4290,7 +4283,7 @@ class Pods_API {
 			if ( ! is_array( $the_pods ) && 'none' == $the_pods ) {
 				return array();
 			} elseif ( false !== $the_pods ) {
-				return $the_pods;
+				return pods_objects_unserialize( $the_pods, 'pods_object_pod' );
 			}
 		}
 
@@ -4336,27 +4329,14 @@ class Pods_API {
 			}
 		}
 
-		if ( ( ! function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && ! empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
-			// Too many Pods can cause issues with the DB when caching is not enabled
-			if ( 15 < count( $the_pods ) || 75 < count( $total_fields ) ) {
+		if ( pods_api_cache() ) {
+			if ( ( isset( $params->refresh ) && $params->refresh ) && ! empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
 				pods_transient_clear( $cache_key );
 
-				if ( pods_api_cache() ) {
-					if ( empty( $the_pods ) && ( ! isset( $params->count ) || ! $params->count ) ) {
-						pods_cache_set( $cache_key, 'none', 'pods' );
-					} else {
-						pods_cache_set( $cache_key, $the_pods, 'pods' );
-					}
-				}
-			} else {
-				pods_cache_clear( $cache_key, 'pods' );
-
-				if ( pods_api_cache() ) {
-					if ( empty( $the_pods ) && ( ! isset( $params->count ) || ! $params->count ) ) {
-						pods_transient_set( $cache_key, 'none' );
-					} else {
-						pods_transient_set( $cache_key, $the_pods );
-					}
+				if ( empty( $the_pods ) && ( ! isset( $params->count ) || ! $params->count ) ) {
+					pods_transient_set( $cache_key, 'none' );
+				} else {
+					pods_transient_set( $cache_key, pods_objects_serialize( $the_pods ) );
 				}
 			}
 		}
@@ -4504,6 +4484,21 @@ class Pods_API {
 	 */
 	public function load_fields( $params, $strict = false ) {
 
+		/**
+		 * @var $sitepress SitePress
+		 */
+		global $sitepress, $icl_adjust_id_url_filter_off;
+
+		$current_language = false;
+
+		// WPML support
+		if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off ) {
+			$current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+		} // Polylang support
+		elseif ( function_exists( 'pll_current_language' ) ) {
+			$current_language = pll_current_language( 'slug' );
+		}
+
 		$params = (object) pods_sanitize( $params );
 
 		if ( empty( $params->pod ) ) {
@@ -4541,16 +4536,63 @@ class Pods_API {
 			$params->options = array();
 		}
 
+		$cache_key = '';
+
+		if ( ! empty( $current_language ) ) {
+			$cache_key .= '_' . $current_language;
+		}
+
+		if ( ! empty( $params->pod ) ) {
+			$cache_key .= '_pod_' . $params->pod;
+		}
+
+		if ( ! empty( $params->pod_id ) ) {
+			$cache_key .= '_pod_id_' . $params->pod_id;
+		}
+
+		if ( ! empty( $params->name ) ) {
+			$cache_key .= '_name_' . trim( implode( '', $params->name ) );
+		}
+
+		if ( ! empty( $params->id ) ) {
+			$cache_key .= '_id_' . trim( implode( '', $params->id ) );
+		}
+
+		if ( ! empty( $params->type ) ) {
+			$cache_key .= '_type_' . trim( implode( '', $params->type ) );
+		}
+
+		if ( ! empty( $params->where ) ) {
+			$cache_key .= '_where_' . trim( implode( '', $params->where ) );
+		}
+
+		if ( ! empty( $params->options ) ) {
+			$cache_key .= '_options_' . trim( implode( '', $params->options ) );
+		}
+
 		if ( empty( $params->output ) || ! in_array( $params->output, array( OBJECT, ARRAY_A ) ) ) {
 			$params->output = ARRAY_A;
 		}
 
-		// @todo Get away from using md5/serialize, I'm sure we can cache specific parts
-	    $cache_key = md5( serialize( $params ) );
+		if ( empty( $cache_key ) ) {
+			$cache_key = 'pods_fields_all';
+		} else {
+			$cache_key = 'pods_fields' . $cache_key;
+		}
 
-		if ( isset( $this->fields_cache[ $cache_key ] ) ) {
-		    return $this->fields_cache[ $cache_key ];
-	    }
+		if ( pods_api_cache() && ! empty( $cache_key ) && ( 'pods_field_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+			$the_fields = pods_transient_get( $cache_key );
+
+			if ( false === $the_fields ) {
+				$the_fields = pods_cache_get( $cache_key, 'pods' );
+			}
+
+			if ( ! is_array( $the_fields ) && 'none' == $the_fields ) {
+				return array();
+			} elseif ( false !== $the_fields ) {
+				return pods_objects_unserialize( $the_fields, 'pods_object_field' );
+			}
+		}
 
 		$fields = array();
 
@@ -4681,9 +4723,17 @@ class Pods_API {
 			}
 		}
 
-	    if ( isset( $cache_key ) ) {
-		    $this->fields_cache[ $cache_key ] = $fields;
-	    }
+		if ( pods_api_cache() ) {
+			if ( ( isset( $params->refresh ) && $params->refresh ) && ! empty( $cache_key ) && ( empty( $meta_query ) ) && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+				pods_transient_clear( $cache_key );
+
+				if ( empty( $fields ) && ( ! isset( $params->count ) || ! $params->count ) ) {
+					pods_transient_set( $cache_key, 'none' );
+				} else {
+					pods_transient_set( $cache_key, pods_objects_serialize( $fields ) );
+				}
+			}
+		}
 
 		return $fields;
 	}

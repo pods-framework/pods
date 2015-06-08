@@ -3702,7 +3702,7 @@ class Pods_UI {
 			return pods_message( __( '<strong>Error:</strong> Invalid Configuration - Missing "fields" definition.', 'pods' ), 'error' );
 		}
 		?>
-		<table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo esc_attr( ( 1 == $reorder && $this->reorder ) ? ' id="admin_ui_reorder"' : '' ); ?>>
+		<table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo ( 1 == $reorder && $this->reorder ) ? ' id="admin_ui_reorder"' : ''; ?>>
 		<thead>
 		<tr>
 			<?php
@@ -3763,7 +3763,7 @@ class Pods_UI {
 					if ( $fields[$field]['sortable'] ) {
 						?>
 							<th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo esc_attr( $id ); ?> sortable<?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
-								<a href="<?php echo esc_url( pods_query_arg( array(
+								<a href="<?php echo esc_url_raw( pods_query_arg( array(
 									'orderby' . $this->num     => $field,
 									'orderby_dir' . $this->num => $dir
 								),
@@ -3819,7 +3819,7 @@ class Pods_UI {
 						if ( $fields[$field]['sortable'] ) {
 							?>
 							<th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
-								<a href="<?php echo esc_url( pods_query_arg( array(
+								<a href="<?php echo esc_url_raw( pods_query_arg( array(
 								'orderby' . $this->num     => $field,
 								'orderby_dir' . $this->num => $dir
 								),
@@ -3843,7 +3843,7 @@ class Pods_UI {
 		<?php
 		}
 		?>
-		<tbody id="the-list"<?php echo esc_attr( ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : '' ); ?>>
+		<tbody id="the-list"<?php echo ( true === $reorder && ! in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : ''; ?>>
 		<?php
 		if ( ! empty( $this->data ) && is_array( $this->data ) ) {
 			$counter = 0;
@@ -4022,7 +4022,7 @@ class Pods_UI {
 							}
 							?>
 							<td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>">
-							<strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+							<strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
 						<?php
 						} elseif ( ! in_array( 'view', $this->actions_disabled ) && ! in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder['on'] ) && 'view' == $default_action ) {
 							$link = pods_query_arg( array(
@@ -4035,7 +4035,7 @@ class Pods_UI {
 							}
 							?>
 							<td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>">
-							<strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+							<strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
 						<?php
 						} else {
 							?>

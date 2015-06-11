@@ -124,7 +124,7 @@ module.exports = function ( grunt ) {
 			make_local: {
 				repos: [
 					{
-						path: [ 'release' ],
+						path: [ 'release/<%= pkg.version %>' ],
 						repo: 'http://plugins.svn.wordpress.org/pods'
 					}
 				]

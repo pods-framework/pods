@@ -1333,7 +1333,7 @@ function pods_clean_name ( $orig, $lower = true, $trim_underscores = false ) {
  *
  * @return string Sanitized name
  *
- * @since 2.5.4
+ * @since 2.5.3
  */
 function pods_js_name( $orig, $lower = true ) {
 

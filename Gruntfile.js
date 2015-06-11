@@ -136,7 +136,7 @@ module.exports = function ( grunt ) {
 				remove: true
 			},
 			main: {
-				src: 'release/<%= pkg.name %>',
+				src: 'release/<%= pkg.version %>',
 				dest: 'http://plugins.svn.wordpress.org/pods',
 				tmp: 'build/make_svn'
 			}

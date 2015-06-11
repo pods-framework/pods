@@ -1367,8 +1367,6 @@ function pods_clean_name ( $orig, $lower = true, $trim_underscores = false ) {
 		$str = trim( $str, '_' );
 	}
 
-	$str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
-
 	return $str;
 }
 

@@ -136,7 +136,7 @@ else
             } );
         } );
 
-        var maxFiles_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = <?php echo esc_js( $file_limit ); ?>;
+        var maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         // hook the add link
         $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'a.pods-file-add', function ( e ) {
@@ -153,7 +153,7 @@ else
             pods_file_context = trigger.parent().find( 'ul.pods-files' );
             pods_file_thickbox_modder = setInterval( function () {
                 if ( pods_file_context )
-                    pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> );
+                    pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> );
             }, 500 );
 
             tb_show( 'Attach a file', e.target.href, false );

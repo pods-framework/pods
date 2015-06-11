@@ -27,9 +27,9 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
     jQuery( function () {
         jQuery( '#color_<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).hide();
 
-        var pods_wp_color_obj_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = jQuery( '#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).wpColorPicker();
+        var pods_wp_color_obj_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = jQuery( '#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).wpColorPicker();
 
-        pods_wp_color_obj_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>.parents( '.wp-picker-container' ).find( '.iris-slider-offset' ).removeClass( 'ui-widget-content ui-slider-vertical' );
+        pods_wp_color_obj_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.parents( '.wp-picker-container' ).find( '.iris-slider-offset' ).removeClass( 'ui-widget-content ui-slider-vertical' );
 
         jQuery( '#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).on( 'focus blur', function () {
             jQuery( '#color_<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).slideToggle();
@@ -39,7 +39,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
             var color = jQuery( this ).val();
 
             if ( '' != color.replace( '#', '' ) && color.match( '#' ) )
-                pods_wp_color_obj_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>.wpColorPicker( 'color', color );
+                pods_wp_color_obj_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.wpColorPicker( 'color', color );
         } );
     } );
 </script>

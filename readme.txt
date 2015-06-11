@@ -155,29 +155,55 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.5.2 May 14, 2015 =
-* FIXED: Issues with default values for number and other types of fields.
-* FIXED: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
-* FIXED: Issue preventing proper display of fields in a related CPT via Pods::field()
-* FIXED: Issue preventing codemirror from being enqueued in Pods templates and therefore breaking Pods tempaltes editor in certain configurations.
-* ADDED: Added caching info to debug info.
-* FIXED: Bug that was causing Pods to overwrite admin menus.
-* FIXED: Issue preventing ongoing compatibility with Admin Columns.
-* IMPROVED: Style of components filter bar.
-* IMPROVED: Proper sanitization/ escaping of URLs.
-* FIXED: Shortcode button was outputted in post editor when shortcodes were disabled. This will no longer happen.
-* IMPROVED: Translation strings in ui/admin/help
-* IMPROVED: Gradients in Pods wizard.
-* FIXED: Issue preventing associated taxonomies to be fetched via Pods::field() and therefore magic tags.
-* IMPROVED: Icon font used for Pods admin icon.
-* IMPROVED: Elaborated on what data is and isn't deleted when Pods data is reset.
-* ADDED: Compatibility with Github updater plugin.
-* UPDATED: New youtube video in readme.
-* ADDED: Support for term splitting in WordPress 4.2.
-* REMOVED: Extra meta data with _pods_ prefix
-* FIXED: Issue where multiple post type Pods objects called in same session were treated as the same in cache.
-* FIXED: Double slashing in PodsView class.
-* IMPROVED: URL escaping in PodsUI
+= 2.5.3 - June 11, 2015 =
+* Added: Support for Term Splitting in WP 4.2 (#2856, #2660)
+* Added: Support for Pod and Field names with dashes and prefixes with underscores (#3012, #3021, #3022)
+* Added: Add git workflow and a link to it from contributing.md (#2490, #2496)
+* Added: Unit tests for PodsField_Boolean (#2473, #2474)
+* Added: Unit test to create pod factory object and moves fixture set up from traversal tests to test case. (#2445)
+* Added: Additional Pods_Field_Text tests added to incorrect text dependencies. (#2388)
+* Fixed: Fixes for Drag and Drop Reorder Action not working in ACT's (#3015, #3016)
+* Fixed: Fix for pagination handling in shortcodes. Shortcodes currently use 'pagination' for two contexts (display and data) but if page or offset is supplied, it's only meant for one context (display). (#2807, #3004)
+* Fixed: Update post field in pod instance before saving, related to MetaData (post field) not flushing after saving (#3000, #3002, #3003)
+* Fixed: Corrects Delete not working for Edit Items (#2752, #2991)
+* Fixed: Corrects ACT - Admin Order DESC not working && SQL error if order by an relationship field (#2843, #2989)
+* Fixed: Composer: updated for phpunit 4.7 (#2987, #2988, #2783)
+* Fixed: ui/js/jquery.pods.js fixes (#2971, #2972)
+* Fixed: Remove `@internal` phpDoc for pods_query() (#2970, #2969, #2975)
+* Fixed: Fix for ACT editor not staying on current item after saving (#2968, #2942, #2974)
+* Fixed: Fix for over escaping icon URL in file fields previewer (#2957, #2956, #2955, #2978)
+* Fixed: Fix for symlinked pods in local deve environment (#2946, #2945, #2949)
+* Fixed: Removed Vestiges of Old Updater (#2940, #2983)
+* Fixed: Clarify help text as to what does and doesn't get deleted on reset (#2792, #2778)
+* Fixed: Missing $ in PodsInit line 494 (#2475, #2476)
+* Fixed: Trim off whitespace when saving custom fields; code in classes/fields/pick.php already does this. (#2386, #2343)
+* Fixed: Updated Taxonomy to get called after cache is flushed (#2264, #2375, #2382)
+* Fixed: Cleared old unit tests from EDD (#2380)
+* Fixed: Allow fields to be sorted by orderby; Two separate but connected issues. First if orderby is passed then the $data array is never populated. Then looping through $ids will always give it results sorted by priority in the relationships field (data returned by lookup_related_items) (#2350, #2277)
+
+= 2.5.2 - May 14, 2015 =
+* Fixed: Issues with default values for number and other types of fields.
+* Fixed: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
+* Fixed: Issue preventing proper display of fields in a related CPT via Pods::field()
+* Fixed: Issue preventing codemirror from being enqueued in Pods templates and therefore breaking Pods tempaltes editor in certain configurations.
+* Added: Added caching info to debug info.
+* Fixed: Bug that was causing Pods to overwrite admin menus.
+* Fixed: Issue preventing ongoing compatibility with Admin Columns.
+* Improved: Style of components filter bar.
+* Improved: Proper sanitization/ escaping of URLs.
+* Fixed: Shortcode button was outputted in post editor when shortcodes were disabled. This will no longer happen.
+* Improved: Translation strings in ui/admin/help
+* Improved: Gradients in Pods wizard.
+* Fixed: Issue preventing associated taxonomies to be fetched via Pods::field() and therefore magic tags.
+* Improved: Icon font used for Pods admin icon.
+* Improved: Elaborated on what data is and isn't deleted when Pods data is reset.
+* Added: Compatibility with Github updater plugin.
+* Updated: New youtube video in readme.
+* Added: Support for term splitting in WordPress 4.2.
+* Removed: Extra meta data with _pods_ prefix
+* Fixed: Issue where multiple post type Pods objects called in same session were treated as the same in cache.
+* Fixed: Double slashing in PodsView class.
+* Improved: URL escaping in PodsUI
 
 = 2.5.1.2 - March 16th, 2015 =
 * Security Update: We recommend all Pods 2.x installations be updated to the latest version of Pods

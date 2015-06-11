@@ -7,7 +7,7 @@ module.exports = function ( grunt ) {
 		'!.sass-cache/**',
 		'!bin/**',
 		'!node_modules/**',
-		'!release/**',
+		'!build/**',
 		'!sources/**',
 		'!tests/**',
 		'!.gitattributes',
@@ -124,8 +124,8 @@ module.exports = function ( grunt ) {
 			make_local: {
 				repos: [
 					{
-						path: [ 'release' ],
-						repo: 'http://plugins.svn.wordpress.org/pods'
+						path: [ 'build' ],
+						repo: 'http://plugins.svn.wordpress.org/<%= pkg.name %>'
 					}
 				]
 			}
@@ -136,8 +136,8 @@ module.exports = function ( grunt ) {
 				remove: true
 			},
 			main: {
-				src: 'release',
-				dest: 'http://plugins.svn.wordpress.org/pods',
+				src: 'build/<%= pkg.name %>',
+				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>',
 				tmp: 'build/make_svn'
 			}
 		},
@@ -147,8 +147,16 @@ module.exports = function ( grunt ) {
 				options : {
 					domainPath : 'languages',
 					url        : 'http://wp-translate.org',
-					slug       : 'pods',
-					textdomain : 'pods'
+					slug       : '<%= pkg.name %>',
+					textdomain : '<%= pkg.name %>'
+				}
+			}
+		},
+
+		mkdir : {
+			release : {
+				options : {
+					create: [ 'build' ]
 				}
 			}
 		}
@@ -157,7 +165,7 @@ module.exports = function ( grunt ) {
 
 	//release tasks
 	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );
-	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download' ] );
+	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'mkdir:release' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );

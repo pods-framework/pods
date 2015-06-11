@@ -1,5 +1,5 @@
 {
-  "name": "Pods",
+  "name": "pods",
   "version": "2.5.3",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
@@ -25,6 +25,7 @@
     "grunt-contrib-copy": "^0.8.0",
     "grunt-git": "^0.3.4",
     "grunt-glotpress": "^0.1.1",
+    "grunt-mkdir": "^0.1.2",
     "grunt-newer": "^0.7.0",
     "grunt-push-svn": "^0.2.1",
     "grunt-remove": "^0.1.0",

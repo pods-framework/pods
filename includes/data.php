@@ -1297,7 +1297,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
 }
 
 /**
- * Return a lowercase alphanumeric name (with underscores)
+ * Return a lowercase alphanumeric name (use pods_js_name if you want "_" instead of "-" )
  *
  * @param string $orig Input string to clean
  * @param boolean $lower Force lowercase

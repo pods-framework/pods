@@ -9,7 +9,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).change( function () {
-            var newval = $( this ).val().toLowerCase().replace( /([- ])/g, '_' ).replace( /([^0-9a-z_])/g, '' ).replace( /(_){2,}/g, '_' ).replace( /_$/, '' );
+	        var newval = $( this ).val().toLowerCase().replace( /(\s)/g, '_' ).replace( /([^0-9a-z_\-])/g, '' ).replace( /(_){2,}/g, '_' ).replace( /_$/, '' );
             $( this ).val( newval );
         } );
     } );

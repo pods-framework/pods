@@ -453,7 +453,7 @@ class Pods_Components {
 				}
 
 				if ( empty( $component_data['Class'] ) ) {
-					$component_data['Class'] = 'Pods_' . pods_clean_name( basename( $component, '.php' ), false );
+					$component_data['Class'] = 'Pods_' . pods_js_name( basename( $component, '.php' ), false );
 				}
 
 				if ( empty( $component_data['ID'] ) ) {

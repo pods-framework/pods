@@ -1198,7 +1198,7 @@ class PodsData {
             $haystack = preg_replace( '/\w\(/', ' ', $haystack );
             $haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
 
-            preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
+            preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
             $found = (array) @current( $found );
             $find = $replace = $traverse = array();
@@ -2275,7 +2275,7 @@ class PodsData {
 					$haystack = preg_replace( '/\w\(/', ' ', $haystack );
 					$haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
 
-					preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
+					preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
 					$found = (array) @current( $found );
 

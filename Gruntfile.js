@@ -30,6 +30,12 @@ module.exports = function ( grunt ) {
 	grunt.initConfig( {
 		pkg : grunt.file.readJSON( 'package.json' ),
 
+		clean: {
+			post_build: [
+				'build'
+			]
+		},
+
 		copy: {
 			svn_trunk: {
 				options : {

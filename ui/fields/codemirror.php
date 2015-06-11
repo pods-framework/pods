@@ -18,15 +18,15 @@ $attributes               = Pods_Form::merge_attributes( $attributes, $name, $fo
 <div class="code-footer"><!-- Placeholder --></div>
 
 <script>
-	var $textarea_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>, codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>;
+	var $textarea_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>, codemirror_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>;
 
 	jQuery( function ( $ ) {
-		$textarea_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = jQuery( 'textarea#<?php echo esc_js( $attributes[ 'id' ] ); ?>' );
+		$textarea_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = jQuery( 'textarea#<?php echo esc_js( $attributes[ 'id' ] ); ?>' );
 
 		CodeMirror.modeURL = "<?php echo esc_js( PODS_URL ); ?>ui/js/vendor/codemirror/mode/%N/%N.js";
-		if ( 'undefined' == typeof codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> ) {
+		if ( 'undefined' == typeof codemirror_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> ) {
 
-			codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo esc_js( $attributes[ 'id' ] ); ?>" ), {
+			codemirror_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo esc_js( $attributes[ 'id' ] ); ?>" ), {
 				lineNumbers : true,
 				matchBrackets : true,
 				mode : "application/x-httpd-php",
@@ -41,7 +41,7 @@ $attributes               = Pods_Form::merge_attributes( $attributes, $name, $fo
 				}
 			} );
 
-			CodeMirror.autoLoadMode( codemirror_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>, 'php' );
+			CodeMirror.autoLoadMode( codemirror_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>, 'php' );
 		}
 	} );
 </script>

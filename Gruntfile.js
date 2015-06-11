@@ -124,7 +124,7 @@ module.exports = function ( grunt ) {
 			make_local: {
 				repos: [
 					{
-						path: [ 'release/<%= pkg.version %>' ],
+						path: [ 'release' ],
 						repo: 'http://plugins.svn.wordpress.org/pods'
 					}
 				]
@@ -136,7 +136,7 @@ module.exports = function ( grunt ) {
 				remove: true
 			},
 			main: {
-				src: 'release/<%= pkg.version %>',
+				src: 'release',
 				dest: 'http://plugins.svn.wordpress.org/pods',
 				tmp: 'build/make_svn'
 			}

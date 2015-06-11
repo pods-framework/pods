@@ -1342,7 +1342,7 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 }
 
 /**
- * Return a lowercase alphanumeric name (with underscores)
+ * Return a lowercase alphanumeric name (use pods_js_name if you want "_" instead of "-" )
  *
  * @param string $orig Input string to clean
  * @param boolean $lower Force lowercase
@@ -1352,17 +1352,16 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
  *
  * @since 1.2.0
  */
-function pods_clean_name( $orig, $lower = true, $trim_underscores = true ) {
+function pods_clean_name ( $orig, $lower = true, $trim_underscores = false ) {
 
-	$str = preg_replace( "/([\- ])/", "_", trim( $orig ) );
+	$str = trim( $orig );
+	$str = preg_replace( '/([^0-9a-zA-Z\-_])/', "", $str );
+	$str = preg_replace( '/(_){2,}/', "_", $str );
+	$str = preg_replace( '/(-){2,}/', "-", $str );
 
 	if ( $lower ) {
 		$str = strtolower( $str );
 	}
-
-	$str = preg_replace( "/([^0-9a-zA-Z_])/", "", $str );
-	$str = preg_replace( "/(_){2,}/", "_", $str );
-	$str = trim( $str );
 
 	if ( $trim_underscores ) {
 		$str = trim( $str, '_' );
@@ -1371,7 +1370,24 @@ function pods_clean_name( $orig, $lower = true, $trim_underscores = true ) {
 	$str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
 
 	return $str;
+}
 
+/**
+ * Return a lowercase alphanumeric name (with underscores) for safe Javascript variable names
+ *
+ * @param string $orig Input string to clean
+ * @param boolean $lower Force lowercase
+ *
+ * @return string Sanitized name
+ *
+ * @since 2.5.4
+ */
+function pods_js_name( $orig, $lower = true ) {
+
+	$str = pods_clean_name( $orig, $lower );
+	$str = str_replace( '-', '_', $str );
+
+	return $str;
 }
 
 /**

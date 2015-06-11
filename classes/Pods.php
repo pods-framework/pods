@@ -3227,7 +3227,6 @@ class Pods implements Iterator {
 	 * @param string $helper Helper name
 	 * @param string $value Value to run the helper on
 	 * @param string $name Field name
-	 * @internal param array $params An associative array of parameters
 	 *
 	 * @return mixed Anything returned by the helper
 	 * @since 2.0

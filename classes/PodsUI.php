@@ -2113,8 +2113,8 @@ class PodsUI {
         if ( !empty( $this->orderby ) ) {
             $this->orderby = (array) $this->orderby;
 
-            foreach ( $this->orderby as $k => $order ) {
-                if ( false !== strpos( $order, ' ' ) || 'default' == $k ) {
+            foreach ( $this->orderby as $order ) {
+                if ( false !== strpos( $order, ' ' ) ) {
                     $orderby[] = $order;
                 }
                 elseif ( !isset( $orderby[ $order ] ) ) {
@@ -3227,7 +3227,7 @@ class PodsUI {
         if ( false === $table_fields || empty( $table_fields ) )
             return $this->error( __( '<strong>Error:</strong> Invalid Configuration - Missing "fields" definition.', 'pods' ) );
         ?>
-        <table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo esc_attr( ( 1 == $reorder && $this->reorder ) ? ' id="admin_ui_reorder"' : '' ); ?>>
+        <table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo ( 1 == $reorder && $this->reorder ) ? ' id="admin_ui_reorder"' : ''; ?>>
             <thead>
                 <tr>
                     <?php
@@ -3276,7 +3276,7 @@ class PodsUI {
                             if ( $fields[ $field ][ 'sortable' ] ) {
                                 ?>
                                 <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo esc_attr( $id ); ?> sortable<?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
-                                    <a href="<?php echo esc_url( pods_query_arg( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ) ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
+                                    <a href="<?php echo esc_url_raw( pods_query_arg( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ) ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
                                 </th>
                                 <?php
                             }
@@ -3320,7 +3320,7 @@ class PodsUI {
 
                                 if ( $fields[ $field ][ 'sortable' ] ) {
                                     ?>
-                                    <th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>><a href="<?php echo esc_url( pods_query_arg( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ) ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
+                                    <th scope="col" class="manage-column column-<?php echo esc_attr( $id ); ?> sortable <?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>><a href="<?php echo esc_url_raw( pods_query_arg( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ) ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
                                     <?php
                                 }
                                 else {
@@ -3336,7 +3336,7 @@ class PodsUI {
                 <?php
             }
             ?>
-            <tbody id="the-list"<?php echo esc_attr( ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : '' ); ?>>
+            <tbody id="the-list"<?php echo ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : ''; ?>>
                 <?php
                 if ( !empty( $this->data ) && is_array( $this->data ) ) {
                     $counter = 0;
@@ -3480,7 +3480,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'view' == $default_action ) {
@@ -3489,7 +3489,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {

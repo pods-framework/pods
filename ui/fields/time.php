@@ -46,7 +46,7 @@
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
         $args[ 'ampm' ] = true;
 
-    $html5_format = '\TH:i:s';
+    $html5_format = 'H:i:s';
 
     if ( 24 == pods_var( $form_field_type . '_type', $options, 12 ) ) {
         $args[ 'ampm' ] = false;
@@ -83,7 +83,7 @@
 
 <script>
     jQuery( function () {
-        var <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
+        var <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
 
         <?php
             if ( 'text' != $type ) {
@@ -114,13 +114,13 @@
 
             if ( !pods_test_time_field_<?php echo esc_js( $type ); ?>() ) {
                 jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).val( '<?php echo esc_js( $formatted_date ); ?>' );
-                jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
+                jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args );
             }
         <?php
             }
             else {
         ?>
-            jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
+            jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args );
         <?php
             }
         ?>

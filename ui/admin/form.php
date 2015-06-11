@@ -251,9 +251,13 @@ if ( 0 < $pod->id() ) {
                                 <div id="major-publishing-actions">
                                     <?php
                                         if ( pods_is_admin( array( 'pods', 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', (array) $obj->actions_disabled ) && !in_array( 'delete', (array) $obj->actions_hidden ) ) {
+                                            $link = pods_query_arg( array(
+                                                'action' => 'delete',
+                                                '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' )
+                                            ) );
                                     ?>
                                         <div id="delete-action">
-                                            <a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                            <a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
                                         </div>
                                         <!-- /#delete-action -->
                                     <?php } ?>
@@ -518,7 +522,7 @@ if ( 0 < $pod->id() ) {
 								 *
 								 * Occurs at the top of #normal-sortables
 								 *
-								 * @param obj $pod Current Pods object.
+								 * @param Pods $pod Current Pods object.
 								 *
 								 * @since 2.4.1
 								 */
@@ -629,17 +633,20 @@ if ( 0 < $pod->id() ) {
     }
 
     var pods_admin_submit_callback = function ( id ) {
-        id = parseInt( id );
-        var thank_you = '<?php echo esc_js( $thank_you ); ?>';
-        var thank_you_alt = '<?php echo esc_js( $thank_you_alt ); ?>';
+
+        id = parseInt( id, 10 );
+        var thank_you = '<?php echo esc_url_raw( $thank_you ); ?>';
+        var thank_you_alt = '<?php echo esc_url_raw( $thank_you_alt ); ?>';
 
         if ( 'undefined' != typeof pods_form_thank_you && null !== pods_form_thank_you ) {
             thank_you = pods_form_thank_you;
         }
 
-        if ( 'NaN' == id )
-            document.location = thank_you_alt.replace( 'X_ID_X', 0 );
-        else
-            document.location = thank_you.replace( 'X_ID_X', id );
+        if ( isNaN( id ) ) {
+            document.location = thank_you_alt.replace( 'X_ID_X', String( 0 ) );
+        }
+        else {
+            document.location = thank_you.replace( 'X_ID_X', String( id ) );
+        }
     }
 </script>

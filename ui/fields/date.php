@@ -73,7 +73,7 @@
 
 <script>
     jQuery( function () {
-        var <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
+        var <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
 
         <?php
             if ( 'text' != $type ) {
@@ -104,13 +104,13 @@
 
             if ( !pods_test_date_field_<?php echo esc_js( $type ); ?>() ) {
                 jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).val( '<?php echo esc_js( $formatted_date ); ?>' );
-                jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
+                jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args );
             }
         <?php
             }
             else {
         ?>
-            jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>_args );
+            jQuery( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args );
         <?php
             }
         ?>

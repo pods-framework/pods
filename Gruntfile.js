@@ -1,45 +1,35 @@
-module.exports = function (grunt) {
+module.exports = function ( grunt ) {
 
 	//setup file list for copying/ not copying for SVN
 	files_list = [
 		'**',
-		'!node_modules/**',
-		'!release/**',
 		'!.git/**',
 		'!.sass-cache/**',
-		'!Gruntfile.js',
-		'!package.json',
-		'!.gitignore',
-		'!.gitmodules',
 		'!bin/**',
+		'!node_modules/**',
+		'!release/**',
+		'!sources/**',
 		'!tests/**',
 		'!.gitattributes',
+		'!.gitignore',
+		'!.gitmodules',
 		'!.travis.yml',
-		'!composer.lock',
 		'!composer.json',
+		'!composer.lock',
 		'!CONTRIBUTING.md',
+		'!Gruntfile.js',
 		'!git-workflow.md',
+		'!package.json',
 		'!phpunit.xml.dist'
 	];
 
+	// load all grunt tasks in package.json matching the `grunt-*` pattern
+	require( 'load-grunt-tasks' )( grunt );
+
 	// Project configuration.
-	grunt.initConfig({
-		pkg     : grunt.file.readJSON( 'package.json' ),
-		glotpress_download : {
-			core : {
-				options : {
-					domainPath : 'languages',
-					url        : 'http://wp-translate.org',
-					slug       : 'pods',
-					textdomain : 'pods'
-				}
-			}
-		},
-		clean: {
-			post_build: [
-				'build'
-			]
-		},
+	grunt.initConfig( {
+		pkg : grunt.file.readJSON( 'package.json' ),
+
 		copy: {
 			svn_trunk: {
 				options : {
@@ -56,6 +46,7 @@ module.exports = function (grunt) {
 				dest: 'build/<%= pkg.name %>/tags/<%= pkg.version %>/'
 			}
 		},
+
 		gittag: {
 			addtag: {
 				options: {
@@ -64,6 +55,7 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+
 		gitcommit: {
 			commit: {
 				options: {
@@ -77,6 +69,7 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+
 		gitpush: {
 			push: {
 				options: {
@@ -86,6 +79,7 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+
 		replace: {
 			reamde_md: {
 				src: [ 'README.md' ],
@@ -119,6 +113,7 @@ module.exports = function (grunt) {
 				}]
 			}
 		},
+
 		svn_checkout: {
 			make_local: {
 				repos: [
@@ -129,6 +124,7 @@ module.exports = function (grunt) {
 				]
 			}
 		},
+
 		push_svn: {
 			options: {
 				remove: true
@@ -138,29 +134,31 @@ module.exports = function (grunt) {
 				dest: 'http://plugins.svn.wordpress.org/pods',
 				tmp: 'build/make_svn'
 			}
+		},
+
+		glotpress_download : {
+			core : {
+				options : {
+					domainPath : 'languages',
+					url        : 'http://wp-translate.org',
+					slug       : 'pods',
+					textdomain : 'pods'
+				}
+			}
 		}
-	});
 
-	//load modules
-	grunt.loadNpmTasks( 'grunt-glotpress' );
-	grunt.loadNpmTasks( 'grunt-contrib-clean' );
-	grunt.loadNpmTasks( 'grunt-contrib-copy' );
-	grunt.loadNpmTasks( 'grunt-git' );
-	grunt.loadNpmTasks( 'grunt-text-replace' );
-	grunt.loadNpmTasks( 'grunt-svn-checkout' );
-	grunt.loadNpmTasks( 'grunt-push-svn' );
-	grunt.loadNpmTasks( 'grunt-remove' );
-
-	//register default task
-	grunt.registerTask( 'default', [ 'glotpress_download' ]);
+	} );
 
 	//release tasks
 	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );
 	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
-
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
 
+	//register default task
+	grunt.registerTask( 'default', [
+		'glotpress_download'
+	] );
 
 };

@@ -12,7 +12,6 @@
  * @param string $results_error (optional) Throw an error if a records are found
  * @param string $no_results_error (optional) Throw an error if no records are found
  *
- * @internal param string $query The SQL query
  * @return array|bool|mixed|null|void
  * @since 2.0
  */
@@ -179,7 +178,6 @@ $pods_debug = 0;
  * @param mixed $debug The error message to be thrown / displayed
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
  * @param string $prefix
- * @internal param bool $identifier If set to true, an identifying # will be output
  *
  * @return void
  *
@@ -596,6 +594,20 @@ function pods_shortcode ( $tags, $content = null ) {
 		return '';
 	}
 
+	// For enforcing pagination parameters when not displaying pagination
+	$page = 1;
+	$offset = 0;
+
+	if ( isset( $tags['page'] ) ) {
+		$page = (int) $tags['page'];
+		$page = max( $page, 1 );
+	}
+
+	if ( isset( $tags['offset'] ) ) {
+		$offset = (int) $tags['offset'];
+		$offset = max( $offset, 0 );
+	}
+
     $defaults = array(
         'name' => null,
         'id' => null,
@@ -639,8 +651,8 @@ function pods_shortcode ( $tags, $content = null ) {
 
     $tags = apply_filters( 'pods_shortcode', $tags );
 
-	$tags[ 'pagination' ] = (boolean) $tags[ 'pagination' ];
-	$tags[ 'search' ] = (boolean) $tags[ 'search' ];
+	$tags[ 'pagination' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
+	$tags[ 'search' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
 
     if ( empty( $content ) )
         $content = null;
@@ -762,14 +774,27 @@ function pods_shortcode ( $tags, $content = null ) {
 
 			$params[ 'search' ] = $tags[ 'search' ];
 
-			if ( 0 < absint( $tags[ 'page' ] ) ) {
-				$params[ 'page' ] = absint( $tags[ 'page' ] );
-			}
-
 			$params[ 'pagination' ] = $tags[ 'pagination' ];
 
-			if ( 0 < (int) $tags[ 'offset' ] ) {
-				$params[ 'offset' ] = (int) $tags[ 'offset' ];
+			// If we aren't displaying pagination, we need to enforce page/offset
+			if ( ! $params['pagination'] ) {
+				$params['page']   = $page;
+				$params['offset'] = $offset;
+
+				// Force pagination on, we need it and we're enforcing page/offset
+				$params['pagination'] = true;
+			} else {
+				// If we are displaying pagination, allow page/offset override only if *set*
+
+				if ( isset( $tags['page'] ) ) {
+					$params['page'] = (int) $tags['page'];
+					$params['page'] = max( $params['page'], 1 );
+				}
+
+				if ( isset( $tags['offset'] ) ) {
+					$params['offset'] = (int) $tags['offset'];
+					$params['offset'] = max( $params['offset'], 0 );
+				}
 			}
 
 			if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {

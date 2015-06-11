@@ -586,13 +586,27 @@ class PodsView {
 
 		$located = false;
 
-		if ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
+		// Is the view's file somewhere within the plugin directory tree?
+		// Note: we explicitly whitelist PODS_DIR for the case of symlinks (see issue #2945)
+		if ( false !== strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) ||
+		     false !== strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ||
+		     false !== strpos( $_real_view, PODS_DIR )
+		) {
+			if ( file_exists( $_view ) ) {
+				$located = $_view;
+			}
+			else {
+				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
+			}
+
+		} else { // The view's file is outside the plugin directory
 			$_real_view = trim( $_real_view, '/' );
 
 			if ( empty( $_real_view ) ) {
 				return false;
 			}
 
+			// Allow views in the theme or child theme
 			if ( file_exists( realpath( get_stylesheet_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_stylesheet_directory() . '/' . $_real_view );
 			}
@@ -600,15 +614,9 @@ class PodsView {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
 		}
-		// Allow includes within plugins directory too for plugins utilizing this
-		elseif ( file_exists( $_view ) ) {
-			$located = $_view;
-		}
-		else {
-			$located = apply_filters( 'pods_view_locate_template', $located, $_view );
-		}
 
 		return $located;
+
 	}
 
 	/**

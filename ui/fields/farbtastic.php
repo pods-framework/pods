@@ -24,7 +24,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
     jQuery( function () {
         jQuery( '#color_<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).hide();
 
-        var pods_farbtastic_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?> = jQuery.farbtastic(
+        var pods_farbtastic_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = jQuery.farbtastic(
                 '#color_<?php echo esc_js( $attributes[ 'id' ] ); ?>',
                 function ( color ) {
                     pods_pickColor( '#<?php echo esc_js( $attributes[ 'id' ] ); ?>', color );
@@ -41,7 +41,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
             pods_farbastic_changing = true;
 
             if ( '' != color.replace( '#', '' ) && color.match( '#' ) )
-                pods_farbtastic_<?php echo esc_js( pods_clean_name( $attributes[ 'id' ] ) ); ?>.setColor( color );
+                pods_farbtastic_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.setColor( color );
 
             pods_farbastic_changing = false;
         } );

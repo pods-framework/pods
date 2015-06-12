@@ -148,6 +148,7 @@ module.exports = function ( grunt ) {
 		mkdir: {
 			build: {
 				options: {
+					mode: 0755,
 					create: [ 'build' ]
 				}
 			}
@@ -157,7 +158,7 @@ module.exports = function ( grunt ) {
 
 	//release tasks
 	grunt.registerTask( 'version_number', [ 'replace:reamdme_txt', 'replace:init_php' ] );
-	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'mkdir:build' ] );
+	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'clean:post_build', 'mkdir:build' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );

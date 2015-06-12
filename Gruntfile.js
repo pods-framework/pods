@@ -10,6 +10,7 @@ module.exports = function ( grunt ) {
 		'!build/**',
 		'!sources/**',
 		'!tests/**',
+		'!vendor/**',
 		'!.gitattributes',
 		'!.gitignore',
 		'!.gitmodules',
@@ -41,6 +42,7 @@ module.exports = function ( grunt ) {
 
 		copy: {
 			svn_trunk: {
+				expand: true,
 				options: {
 					mode:true
 				},
@@ -48,6 +50,7 @@ module.exports = function ( grunt ) {
 				dest: 'build/<%= pkg.name %>/trunk/'
 			},
 			svn_tag: {
+				expand: true,
 				options: {
 					mode:true
 				},
@@ -127,10 +130,15 @@ module.exports = function ( grunt ) {
 			options: {
 				remove: true
 			},
-			main: {
-				src: 'build/<%= pkg.name %>',
-				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>',
-				tmp: 'build/push_svn'
+			trunk: {
+				src: 'build/<%= pkg.name %>/trunk',
+				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
+				tmp: 'build/push_svn/trunk'
+			},
+			tag: {
+				src: 'build/<%= pkg.name %>/tags/<%= pkg.version %>',
+				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %>',
+				tmp: 'build/push_svn/tag'
 			}
 		},
 

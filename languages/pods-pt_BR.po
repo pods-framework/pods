@@ -405,27 +405,15 @@ msgstr ""
 msgid "The following are settings provided for advanced site configurations."
 msgstr ""
 
-#: ui/admin/settings-tools.php:21
-msgid "Force an update of this beta from GitHub"
-msgstr ""
-
-#: ui/admin/settings-tools.php:23
-msgid "This tool lets you update your Pods installation to the latest alpha/beta/release candidate, usually only when you've been instructed to do so."
-msgstr ""
-
-#: ui/admin/settings-tools.php:33
-msgid "Force Plugin Refresh/Update from GitHub"
-msgstr ""
-
-#: ui/admin/settings-tools.php:40 ui/admin/settings-tools.php:45
+#: ui/admin/settings-tools.php:19 ui/admin/settings-tools.php:24
 msgid "Clear Pods Cache"
 msgstr ""
 
-#: ui/admin/settings-tools.php:42
+#: ui/admin/settings-tools.php:21
 msgid "This tool will clear all of the transients/cache that are used by Pods. "
 msgstr ""
 
-#: ui/admin/settings-tools.php:50
+#: ui/admin/settings-tools.php:29
 msgid "Debug Information"
 msgstr ""
 
@@ -1854,7 +1842,7 @@ msgstr ""
 msgid "User Capability"
 msgstr ""
 
-#: classes/fields/file.php:612 classes/fields/pick.php:1830
+#: classes/fields/file.php:616 classes/fields/pick.php:1830
 #: classes/fields/pick.php:1832
 msgid "Invalid field request"
 msgstr ""
@@ -1867,7 +1855,7 @@ msgstr ""
 msgid "Uses these capabilties for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}"
 msgstr ""
 
-#: classes/fields/file.php:615 classes/fields/pick.php:1834
+#: classes/fields/file.php:619 classes/fields/pick.php:1834
 #: classes/fields/pick.php:1836 classes/fields/pick.php:1838
 msgid "Invalid field"
 msgstr ""
@@ -1880,7 +1868,7 @@ msgstr ""
 msgid "Custom Capability"
 msgstr ""
 
-#: classes/fields/file.php:654
+#: classes/fields/file.php:658
 msgid "File size too large, max size is %s"
 msgstr ""
 
@@ -1892,7 +1880,7 @@ msgstr ""
 msgid "Custom User Capability"
 msgstr ""
 
-#: classes/fields/file.php:745
+#: classes/fields/file.php:749
 msgid "File type not allowed, please use one of the following: %s"
 msgstr ""
 
@@ -2027,7 +2015,7 @@ msgstr ""
 msgid "Embed [shortcodes] that help transform your static content into dynamic content."
 msgstr ""
 
-#: includes/data.php:1650
+#: includes/data.php:1668
 msgid "and"
 msgstr ""
 
@@ -2039,7 +2027,7 @@ msgstr ""
 msgid "Changes double line-breaks in the text into HTML paragraphs"
 msgstr ""
 
-#: includes/general.php:132
+#: includes/general.php:131
 msgid "The following issue occurred:"
 msgstr ""
 
@@ -2052,7 +2040,7 @@ msgstr ""
 msgid "Allowed HTML Tags"
 msgstr ""
 
-#: includes/general.php:134
+#: includes/general.php:133
 msgid "The following issues occurred:"
 msgstr ""
 
@@ -2064,7 +2052,7 @@ msgstr ""
 msgid "Format: strong em a ul ol li b i"
 msgstr ""
 
-#: includes/general.php:138
+#: includes/general.php:137
 msgid "An unknown error has occurred"
 msgstr ""
 
@@ -2076,7 +2064,7 @@ msgstr ""
 msgid "Allow Markdown Syntax?"
 msgstr ""
 
-#: includes/general.php:379
+#: includes/general.php:377
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead."
 msgstr ""
 
@@ -2088,7 +2076,7 @@ msgstr ""
 msgid "US"
 msgstr ""
 
-#: includes/general.php:381
+#: includes/general.php:379
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available."
 msgstr ""
 
@@ -2100,7 +2088,7 @@ msgstr ""
 msgid "International"
 msgstr ""
 
-#: includes/general.php:436 ui/admin/setup-edit.php:801
+#: includes/general.php:434 ui/admin/setup-edit.php:801
 msgid "Find out more"
 msgstr ""
 
@@ -2112,7 +2100,7 @@ msgstr ""
 msgid "Any (no validation available)"
 msgstr ""
 
-#: includes/general.php:967 includes/general.php:986 includes/general.php:1006
+#: includes/general.php:992 includes/general.php:1011 includes/general.php:1031
 msgid "NOTICE"
 msgstr ""
 
@@ -2124,7 +2112,7 @@ msgstr ""
 msgid "Phone Options"
 msgstr ""
 
-#: includes/general.php:967 includes/general.php:986 includes/general.php:1006
+#: includes/general.php:992 includes/general.php:1011 includes/general.php:1031
 msgid "requires a minimum of"
 msgstr ""
 
@@ -2136,7 +2124,7 @@ msgstr ""
 msgid "Enable Phone Extension?"
 msgstr ""
 
-#: includes/general.php:968 includes/general.php:987 includes/general.php:1007
+#: includes/general.php:993 includes/general.php:1012 includes/general.php:1032
 msgid "to function. You are currently running"
 msgstr ""
 
@@ -2148,7 +2136,7 @@ msgstr ""
 msgid "The %s field is required."
 msgstr ""
 
-#: includes/general.php:969
+#: includes/general.php:994
 msgid "Please upgrade your WordPress to continue."
 msgstr ""
 
@@ -2160,7 +2148,7 @@ msgstr ""
 msgid "Invalid phone number provided for the field %s."
 msgstr ""
 
-#: includes/general.php:988
+#: includes/general.php:1013
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue."
 msgstr ""
 
@@ -2172,7 +2160,7 @@ msgstr ""
 msgid "Selection Type"
 msgstr ""
 
-#: includes/general.php:1008
+#: includes/general.php:1033
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue."
 msgstr ""
 
@@ -2185,20 +2173,12 @@ msgstr ""
 msgid "Single Select"
 msgstr ""
 
-#: includes/updater.php:427
-msgid "The plugin has been updated, but could not be reactivated. Please reactivate it manually."
-msgstr ""
-
 #: classes/PodsAdmin.php:1202
 msgid "Default - Add to associated Post Type(s) menus"
 msgstr ""
 
 #: classes/fields/pick.php:131
 msgid "Multiple Select"
-msgstr ""
-
-#: includes/updater.php:428
-msgid "Plugin reactivated successfully."
 msgstr ""
 
 #: classes/PodsAdmin.php:1203 classes/PodsAdmin.php:1301
@@ -2465,7 +2445,7 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: ui/admin/form.php:342 ui/admin/view.php:105
+#: ui/admin/form.php:346 ui/admin/view.php:105
 msgid "Navigate"
 msgstr ""
 
@@ -2478,7 +2458,7 @@ msgstr ""
 msgid "Post Types"
 msgstr ""
 
-#: ui/admin/form.php:352 ui/admin/view.php:115
+#: ui/admin/form.php:356 ui/admin/view.php:115
 msgid "Previous %s"
 msgstr ""
 
@@ -2492,7 +2472,7 @@ msgstr ""
 msgid "Taxonomies"
 msgstr ""
 
-#: ui/admin/form.php:360 ui/admin/view.php:123
+#: ui/admin/form.php:364 ui/admin/view.php:123
 msgid "Next %s"
 msgstr ""
 
@@ -2505,7 +2485,7 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: ui/admin/form.php:465
+#: ui/admin/form.php:469
 msgid "Enter name here"
 msgstr ""
 
@@ -2522,7 +2502,7 @@ msgstr ""
 msgid "Other WP Objects"
 msgstr ""
 
-#: ui/admin/form.php:533 ui/admin/upgrade/upgrade_2_0_0.php:85
+#: ui/admin/form.php:537 ui/admin/upgrade/upgrade_2_0_0.php:85
 #: ui/admin/upgrade/upgrade_2_0_0.php:201 ui/admin/view.php:188
 msgid "Fields"
 msgstr ""
@@ -2846,7 +2826,7 @@ msgstr ""
 msgid "Component disabled"
 msgstr ""
 
-#: classes/PodsAdmin.php:2277 classes/fields/file.php:595
+#: classes/PodsAdmin.php:2277 classes/fields/file.php:599
 #: classes/fields/pick.php:1811
 msgid "Unauthorized request"
 msgstr ""
@@ -3037,7 +3017,7 @@ msgstr ""
 msgid "example.com"
 msgstr ""
 
-#: classes/Pods.php:3431 classes/PodsAdmin.php:621
+#: classes/Pods.php:3430 classes/PodsAdmin.php:621
 #: ui/admin/components-admin.php:99
 msgid "Save Changes"
 msgstr ""
@@ -3050,7 +3030,7 @@ msgstr ""
 msgid "example.com (force removal of www)"
 msgstr ""
 
-#: classes/Pods.php:3449
+#: classes/Pods.php:3448
 msgid "Form submitted successfully"
 msgstr ""
 
@@ -3062,7 +3042,7 @@ msgstr ""
 msgid "www.example.com (force www if no sub-domain provided)"
 msgstr ""
 
-#: classes/Pods.php:3721
+#: classes/Pods.php:3720
 msgid "ID"
 msgstr ""
 
@@ -3074,8 +3054,8 @@ msgstr ""
 msgid "Invalid website provided for the field %s."
 msgstr ""
 
-#: classes/Pods.php:3814 classes/PodsAdmin.php:1393 classes/PodsUI.php:3539
-#: ui/admin/form.php:256 ui/admin/setup-edit-field-fluid.php:23
+#: classes/Pods.php:3813 classes/PodsAdmin.php:1393 classes/PodsUI.php:3539
+#: ui/admin/form.php:260 ui/admin/setup-edit-field-fluid.php:23
 #: ui/admin/setup-edit-field.php:73 ui/admin/view.php:76
 msgid "Delete"
 msgstr ""

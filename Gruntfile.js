@@ -48,14 +48,6 @@ module.exports = function ( grunt ) {
 				},
 				src:  files_list,
 				dest: 'build/<%= pkg.name %>/trunk/'
-			},
-			svn_tag: {
-				expand: true,
-				options: {
-					mode:true
-				},
-				src:  files_list,
-				dest: 'build/<%= pkg.name %>/tags/<%= pkg.version %>/'
 			}
 		},
 
@@ -130,15 +122,17 @@ module.exports = function ( grunt ) {
 			options: {
 				remove: true
 			},
-			trunk: {
+			main: {
 				src: 'build/<%= pkg.name %>/trunk',
 				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
 				tmp: 'build/push_svn/trunk'
-			},
-			tag: {
-				src: 'build/<%= pkg.name %>/tags/<%= pkg.version %>',
-				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %>',
-				tmp: 'build/push_svn/tag'
+			}
+		},
+
+		svn_copy: {
+			options: {},
+			files: {
+				'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk' : 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %>'
 			}
 		},
 

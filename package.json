@@ -30,6 +30,7 @@
     "grunt-push-svn": "^0.2.1",
     "grunt-remove": "^0.1.0",
     "grunt-svn-checkout": "^0.1.1",
+    "grunt-svn-copy": "^0.1.4",
     "grunt-text-replace": "^0.4.0",
     "load-grunt-tasks": "^0.6.0"
   }

@@ -19,8 +19,11 @@ module.exports = function ( grunt ) {
 		'!CONTRIBUTING.md',
 		'!Gruntfile.js',
 		'!git-workflow.md',
+		'!grunt-workflow.md',
 		'!package.json',
-		'!phpunit.xml.dist'
+		'!phpcs.ruleset.xml',
+		'!phpunit.xml.dist',
+		'!README.md'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
@@ -28,7 +31,7 @@ module.exports = function ( grunt ) {
 
 	// Project configuration.
 	grunt.initConfig( {
-		pkg : grunt.file.readJSON( 'package.json' ),
+		pkg: grunt.file.readJSON( 'package.json' ),
 
 		clean: {
 			post_build: [
@@ -38,15 +41,15 @@ module.exports = function ( grunt ) {
 
 		copy: {
 			svn_trunk: {
-				options : {
-					mode :true
+				options: {
+					mode:true
 				},
 				src:  files_list,
 				dest: 'build/<%= pkg.name %>/trunk/'
 			},
 			svn_tag: {
-				options : {
-					mode :true
+				options: {
+					mode:true
 				},
 				src:  files_list,
 				dest: 'build/<%= pkg.name %>/tags/<%= pkg.version %>/'
@@ -57,7 +60,7 @@ module.exports = function ( grunt ) {
 			addtag: {
 				options: {
 					tag: '2.x/<%= pkg.version %>',
-					message: 'Version <%= pkg.version %>'
+					message: 'Pods <%= pkg.version %>'
 				}
 			}
 		},
@@ -65,13 +68,13 @@ module.exports = function ( grunt ) {
 		gitcommit: {
 			commit: {
 				options: {
-					message: 'Version <%= pkg.version %>',
+					message: 'Pods <%= pkg.version %>',
 					noVerify: true,
 					noStatus: false,
 					allowEmpty: true
 				},
 				files: {
-					src: [ 'README.md', 'readme.txt', 'init.php', 'package.json', 'languages/**' ]
+					src: [ 'readme.txt', 'init.php', 'package.json', 'Gruntfile.js', 'languages/**' ]
 				}
 			}
 		},
@@ -87,18 +90,7 @@ module.exports = function ( grunt ) {
 		},
 
 		replace: {
-			reamde_md: {
-				src: [ 'README.md' ],
-				overwrite: true,
-				replacements: [{
-					from: /~Current Version:\s*(.*)~/,
-					to: "~Current Version: <%= pkg.version %>~"
-				}, {
-					from: /Latest Stable Release:\s*\[(.*)\]\s*\(https:\/\/github.com\/pods-framework\/pods\/releases\/tag\/(.*)\s*\)/,
-					to: "Latest Stable Release: [<%= pkg.git_tag %>](https://github.com/pods-framework/pods/releases/tag/<%= pkg.git_tag %>)"
-				}]
-			},
-			reamde_txt: {
+			reamdme_txt: {
 				src: [ 'readme.txt' ],
 				overwrite: true,
 				replacements: [{
@@ -138,24 +130,24 @@ module.exports = function ( grunt ) {
 			main: {
 				src: 'build/<%= pkg.name %>',
 				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>',
-				tmp: 'build/make_svn'
+				tmp: 'build/push_svn'
 			}
 		},
 
-		glotpress_download : {
-			core : {
-				options : {
-					domainPath : 'languages',
-					url        : 'http://wp-translate.org',
-					slug       : '<%= pkg.name %>',
-					textdomain : '<%= pkg.name %>'
+		glotpress_download: {
+			core: {
+				options: {
+					domainPath: 'languages',
+					url       : 'http://wp-translate.org',
+					slug      : '<%= pkg.name %>',
+					textdomain: '<%= pkg.name %>'
 				}
 			}
 		},
 
-		mkdir : {
-			release : {
-				options : {
+		mkdir: {
+			build: {
+				options: {
 					create: [ 'build' ]
 				}
 			}
@@ -164,8 +156,8 @@ module.exports = function ( grunt ) {
 	} );
 
 	//release tasks
-	grunt.registerTask( 'version_number', [ 'replace:reamde_md', 'replace:reamde_txt', 'replace:init_php' ] );
-	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'mkdir:release' ] );
+	grunt.registerTask( 'version_number', [ 'replace:reamdme_txt', 'replace:init_php' ] );
+	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'mkdir:build' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );

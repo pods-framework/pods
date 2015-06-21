@@ -1010,10 +1010,10 @@ class PodsData {
                             else
                                 $fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
                         }
-                        elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) )
-                            $fieldfield = $fieldfield . '.`meta_value`';
+                        elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) && 'meta' == $pod['storage'] )
+	                        $fieldfield = $fieldfield . '.`meta_value`';
                         else
-                            $fieldfield = '`t`.' . $fieldfield;
+	                        $fieldfield = '`t`.' . $fieldfield;
 
                         if ( isset( $this->aliases[ $field ] ) )
                             $fieldfield = '`' . $this->aliases[ $field ] . '`';
@@ -1038,7 +1038,7 @@ class PodsData {
                         else
                             $fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
                     }
-                    elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $params->index ] ) )
+                    elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $params->index ] ) && 'meta' == $pod['storage'] )
                         $fieldfield = '`' . $params->index . '`.`meta_value`';
 
                     if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
@@ -1081,12 +1081,12 @@ class PodsData {
                 elseif ( in_array( $attributes[ 'type' ], $file_field_types ) )
                     $filterfield = $filterfield . '.`post_title`';
                 elseif ( isset( $params->fields[ $field ] ) ) {
-                    if ( $params->meta_fields )
+                    if ( $params->meta_fields && 'meta' == $pod['storage'] )
                         $filterfield = $filterfield . '.`meta_value`';
                     else
                         $filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
                 }
-                elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) )
+                elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) && 'meta' == $pod['storage'] )
                     $filterfield = $filterfield . '.`meta_value`';
                 else
                     $filterfield = '`t`.' . $filterfield;
@@ -2394,10 +2394,10 @@ class PodsData {
 
 					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
 						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`t`.`{$field_name}`";
-							else
+							if ( 'meta' == $pod[ 'storage' ] )
 								$field_cast = "`{$field_name}`.`meta_value`";
+							else
+								$field_cast = "`t`.`{$field_name}`";
 						}
 						else {
 							$table = pods_api()->get_table_info( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $pod[ 'fields' ][ $field_name ][ 'pick_val' ] );
@@ -2412,10 +2412,10 @@ class PodsData {
 							if ( isset( $pod[ 'object_fields' ][ $field_name ] ) )
 								$field_cast = "`t`.`{$field_name}`";
 							elseif ( isset( $pod[ 'fields' ][ $field_name ] ) ) {
-								if ( 'table' == $pod[ 'storage' ] )
-									$field_cast = "`d`.`{$field_name}`";
-								else
+								if ( 'meta' == $pod['storage'] )
 									$field_cast = "`{$field_name}`.`meta_value`";
+								else
+									$field_cast = "`d`.`{$field_name}`";
 							}
 							else {
 								foreach ( $pod[ 'object_fields' ] as $object_field => $object_field_opt ) {
@@ -2428,17 +2428,18 @@ class PodsData {
 							}
 						}
 						elseif ( isset( $pod[ 'fields' ][ $field_name ] ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`t`.`{$field_name}`";
-							else
+							if ( 'meta' == $pod['storage'] )
 								$field_cast = "`{$field_name}`.`meta_value`";
+							else
+								$field_cast = "`t`.`{$field_name}`";
 						}
 
 						if ( empty( $field_cast ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`{$field_name}`";
-							else
+							if ( 'meta' == $pod['storage'] ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
+							}
+							else
+								$field_cast = "`t`.`{$field_name}`";
 						}
 					}
 				}

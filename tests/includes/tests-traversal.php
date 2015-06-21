@@ -28,61 +28,35 @@ namespace Pods_Unit_Tests;
 		 */
 		public function test_find_base( $variant_id, $options ) {
 
-			// Suppress MySQL errors
-			add_filter( 'pods_error_die', '__return_false' );
+			$this->_test_find_base( $variant_id, $options );
 
-			//global $wpdb;
-			//$wpdb->suppress_errors( true );
-			//$wpdb->hide_errors();
+		}
 
-			// Options
-			$pod_type = $options[ 'pod_type' ];
-			$storage_type = $options[ 'storage_type' ];
-			$pod = $options[ 'pod' ];
+		/**
+		 * @group traversal
+		 * @group traversal-find
+		 * @group traversal-shallow
+		 * @group traversal-find-shallow
+		 * @group traversal-query-fields
+		 *
+		 * @covers Pods::valid
+		 * @covers Pods::find
+		 * @covers Pods::total
+		 * @covers Pods::total_found
+		 * @covers Pods::fetch
+		 * @covers Pods::id
+		 * @covers PodsData::select
+		 * @covers PodsData::build
+		 * @covers PodsData::query
+		 *
+		 * @dataProvider data_provider_base
+		 *
+		 * @param string $variant_id Testing variant identification
+		 * @param array $options Data config to test
+		 */
+		public function test_find_base_query_fields( $variant_id, $options ) {
 
-			// Do setup for Pod (tearDown / setUp) per storage type
-			if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' != $storage_type ) {
-				return;
-
-				// @todo do magic
-				$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
-			}
-
-			// Base find() $params
-			$params = array(
-				'limit' => 1
-			);
-
-			$p = pods( $pod[ 'name' ] );
-
-			$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
-			$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-			$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
-
-			$where = array();
-
-			$data = self::$related_items[ $pod[ 'name' ] ];
-			$data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
-			$data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
-
-			$prefix = '`t`.';
-
-			$check_value = $data[ 'id' ];
-			$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
-
-			$where[] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
-			$where[] = $prefix . $data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
-
-			$params[ 'where' ] = implode( ' AND ', $where );
-
-			$p->find( $params );
-
-			$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
-			$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
-
-			$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
-
-			$this->assertEquals( (string) $data[ 'id' ], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
+			$this->_test_find_base( $variant_id, $options, true );
 
 		}
 
@@ -527,6 +501,87 @@ namespace Pods_Unit_Tests;
 
 		}
 
+		/***
+		 * Handle all find() base tests based on variations
+		 *
+		 * @param string $variant_id Testing variant identification
+		 * @param array $options Data config to test
+		 * @param boolean $query_fields Whether to test query_fields WHERE syntax
+		 */
+		private function _test_find_base( $variant_id, $options, $query_fields = false ) {
+
+			// Suppress MySQL errors
+			add_filter( 'pods_error_die', '__return_false' );
+
+			//global $wpdb;
+			//$wpdb->suppress_errors( true );
+			//$wpdb->hide_errors();
+
+			// Options
+			$pod_type = $options[ 'pod_type' ];
+			$storage_type = $options[ 'storage_type' ];
+			$pod = $options[ 'pod' ];
+
+			// Do setup for Pod (tearDown / setUp) per storage type
+			if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' != $storage_type ) {
+				return;
+
+				// @todo do magic
+				$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
+			}
+
+			// Base find() $params
+			$params = array(
+				'limit' => 1
+			);
+
+			$p = pods( $pod[ 'name' ] );
+
+			$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
+			$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
+			$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
+
+			$where = array();
+
+			$data = self::$related_items[ $pod[ 'name' ] ];
+			$data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
+			$data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
+
+			$prefix = '`t`.';
+
+			$check_value = $data[ 'id' ];
+			$check_index = $data[ 'data' ][ $data[ 'field_index' ] ];
+
+			if ( $query_fields ) {
+				$where[] = array(
+					'field' => $data[ 'field_id' ],
+					'value' => (int) $check_value
+				);
+
+				$where[] = array(
+					'field' => $data[ 'field_index' ],
+					'value' => $check_index
+				);
+			} else {
+				$where[] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
+				$where[] = $prefix . '`' . $data[ 'field_index' ] . '` = "' . pods_sanitize( $check_index ) . '"';
+
+				$where = implode( ' AND ', $where );
+			}
+
+			$params[ 'where' ] = $where;
+
+			$p->find( $params );
+
+			$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
+			$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
+
+			$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
+
+			$this->assertEquals( (string) $data[ 'id' ], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
+
+		}
+
 		/**
 		 * Handle all find() tests based on variations
 		 *
@@ -621,7 +676,7 @@ namespace Pods_Unit_Tests;
 								'compare' => 'NOT EXISTS'
 							);
 						} else {
-							$related_where[] = $prefix . $related_data[ 'field_id' ] . ' IS NULL';
+							$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` IS NULL';
 						}
 					}
 
@@ -638,16 +693,15 @@ namespace Pods_Unit_Tests;
 							)
 						);
 
-						$where[] = array(
-							'relation' => 'OR',
-							$related_where
-						);
+						$related_where['relation'] = 'OR';
 					} else {
 						$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value
-					                       . ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+					                       . ' AND ' . $prefix . '`' . $related_data[ 'field_index' ] . '` = "' . pods_sanitize( $check_index ) . '"';
 
-						$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
+						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
+
+					$where[] = $related_where;
 				}
 				else {
 					// Related pod traversal
@@ -708,11 +762,11 @@ namespace Pods_Unit_Tests;
 						if ( empty( $check_value ) ) {
 							if ( $query_fields ) {
 								$related_where[] = array(
-									'field'   => $field_name . '.' . $related_pod_field[ 'name' ] . $related_pod_data[ 'field_id' ],
+									'field'   => $field_name . '.' . $related_pod_field[ 'name' ] . '.' . $related_pod_data[ 'field_id' ],
 									'compare' => 'NOT EXISTS'
 								);
 							} else {
-								$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
+								$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` IS NULL';
 							}
 						}
 
@@ -720,11 +774,11 @@ namespace Pods_Unit_Tests;
 							$related_where[] = array(
 								'relation' => 'AND',
 								array(
-									'field' => $field_name . '.' . $related_pod_field[ 'name' ] . $related_pod_data[ 'field_id' ],
+									'field' => $field_name . '.' . $related_pod_field[ 'name' ] . '.' . $related_pod_data[ 'field_id' ],
 									'value' => (int) $check_value
 								),
 								array(
-									'field' => $field_name . '.' . $related_pod_field[ 'name' ] . $related_pod_data[ 'field_index' ],
+									'field' => $field_name . '.' . $related_pod_field[ 'name' ] . '.' . $related_pod_data[ 'field_index' ],
 									'value' => $check_index
 								)
 							);
@@ -732,7 +786,7 @@ namespace Pods_Unit_Tests;
 							$related_where['relation'] = 'OR';
 						} else {
 							$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value
-							                   . ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
+							                   . ' AND ' . $prefix . $related_prefix . '`' . $related_pod_data[ 'field_index' ] . '` = "' . pods_sanitize( $check_index ) . '"';
 
 							$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 						}
@@ -824,242 +878,6 @@ namespace Pods_Unit_Tests;
 			}
 
 			$params[ 'where' ] = $where;
-
-			$p->find( $params );
-
-			$debug_related = count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` = %d AND `pod_id` = %d AND `field_id` = %d", $check_value, $pod[ 'id' ], $field[ 'id' ] ) ) ) . ' related items';
-
-			if ( $deep ) {
-				$debug_related .= ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` = %d AND `pod_id` = %d AND `field_id` = %d", $podsrel_item_id, $podsrel_pod_id, $podsrel_field_id ) ) ) . ' deep related items';
-			}
-
-			$debug = sprintf( '%s | %s | %s', $p->sql, print_r( $where, true ), $debug_related );
-
-			$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s', $variant_id, $debug ) );
-			$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s', $variant_id, $debug ) );
-
-			$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
-
-			$this->assertEquals( (string) $data[ 'id' ], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
-
-		}
-
-		/**
-		 * Handle all find() tests based on variations for query_fields array syntax
-		 *
-		 * @param string $variant_id Testing variant identification
-		 * @param array $options Data config to test
-		 * @param boolean $deep Whether to test deep traversal
-		 */
-		private function _test_find_traversal_query_fields( $variant_id, $options, $deep ) {
-
-			// Suppress MySQL errors
-			add_filter( 'pods_error_die', '__return_false' );
-
-			global $wpdb;
-			//$wpdb->suppress_errors( true );
-			//$wpdb->hide_errors();
-
-			// Options
-			$pod_type = $options[ 'pod_type' ];
-			$storage_type = $options[ 'storage_type' ];
-			$pod = $options[ 'pod' ];
-			$field = $options[ 'field' ];
-			$field_name = $field[ 'name' ];
-			$field_type = $field[ 'type' ];
-			$related_pod = array();
-			$related_pod_field = array();
-
-			if ( $deep ) {
-				$related_pod = $options[ 'related_pod' ];
-				$related_pod_field = $options[ 'related_pod_field' ];
-			}
-
-			// Do setup for Pod (tearDown / setUp) per storage type
-			if ( in_array( $pod_type, array( 'user', 'media', 'comment' ) ) && 'meta' != $storage_type ) {
-				return;
-
-				// @todo do magic
-				$this->assertTrue( false, sprintf( 'Pod / Storage type requires new setUp() not yet built to continue [%s]', $variant_id ) );
-			}
-
-			// Base find() $params
-			$params = array(
-				'limit' => 1
-			);
-
-			$p = pods( $pod[ 'name' ] );
-
-			$this->assertTrue( is_object( $p ), sprintf( 'Pod not object [%s]', $variant_id ) );
-			$this->assertTrue( $p->valid(), sprintf( 'Pod object not valid [%s]', $variant_id ) );
-			$this->assertInstanceOf( 'Pods', $p, sprintf( 'Pod object not a Pod [%s]', $variant_id ) );
-
-			$where = array();
-
-			$data = self::$related_items[ $pod[ 'name' ] ];
-			$data[ 'field_id' ] = $p->pod_data[ 'field_id' ];
-			$data[ 'field_index' ] = $p->pod_data[ 'field_index' ];
-
-			$podsrel_pod_id = $pod[ 'id' ];
-			$podsrel_field_id = $field[ 'id' ];
-			$podsrel_item_id = $data[ 'id' ];
-
-			$prefix = $suffix = '';
-
-			if ( in_array( $field_type, array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
-				if ( !isset( self::$related_items[ $field_name ] ) ) {
-					$this->assertTrue( false, sprintf( 'No related item found [%s]', $variant_id ) );
-
-					return;
-				}
-
-				$related_data = self::$related_items[ $field_name ];
-
-				$podsrel_item_id = $related_data[ 'id' ];
-
-				$prefix = '`' . $field_name . '`.';
-
-				if ( ! $deep ) {
-					$check_value = $related_data[ 'id' ];
-					$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
-
-					if ( isset( $field[ $field_type . '_format_type' ] ) && 'multi' == $field[ $field_type . '_format_type' ] ) {
-						$check_value = (array) $check_value;
-						$check_value = current( $check_value );
-					}
-
-					$related_where = array();
-
-					if ( empty( $check_value ) ) {
-						$related_where[] = array(
-							'field'   => $field_name . '.' . $related_data[ 'field_id' ],
-							'compare' => 'NOT EXISTS'
-						);
-					}
-
-					$related_where[] = $prefix . '`' . $related_data[ 'field_id' ] . '` = ' . (int) $check_value
-					                   . ' AND ' . $prefix . $related_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
-
-					$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
-				}
-				else {
-					// Related pod traversal
-					$related_pod_type = $related_pod[ 'type' ];
-					$related_pod_storage_type = $related_pod[ 'storage' ];
-
-					$related_prefix = $related_suffix = '';
-
-					if ( in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
-						if ( $field_name == $related_pod_field[ 'name' ] && !isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
-							$this->assertTrue( false, sprintf( 'No deep related item found [%s] | %s', $variant_id, print_r( $related_data[ 'data' ], true ) ) );
-
-							return;
-						}
-
-						$related_object = $related_pod_field[ 'name' ];
-
-						if ( ! empty( $related_pod_field[ 'pick_val' ] ) ) {
-							$related_object = $related_pod_field[ 'pick_val' ];
-						}
-
-						$related_prefix = $related_pod_field[ 'name' ] . '.';
-
-						if ( isset( self::$related_items[ $related_pod_field[ 'name' ] ] ) ) {
-							$related_pod_data = self::$related_items[ $related_pod_field[ 'name' ] ];
-						}
-						elseif ( isset( self::$related_items[ $related_object ] ) ) {
-							$related_pod_data = self::$related_items[ $related_object ];
-						}
-						else {
-							var_dump( array( '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
-
-							$this->assertTrue( false, sprintf( 'Invalid deep related item [%s]', $variant_id ) );
-
-							return;
-						}
-
-						$podsrel_pod_id = $related_pod[ 'id' ];
-						$podsrel_field_id = $related_pod_field[ 'id' ];
-						$podsrel_item_id = $related_pod_data[ 'id' ];
-
-						$check_value = $related_pod_data[ 'id' ];
-
-						$check_index = '';
-
-						if ( isset( $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ] ) ) {
-							$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
-						}
-
-						if ( isset( $related_pod_field[ $field_type . '_format_type' ] ) && 'multi' == $related_pod_field[ $field_type . '_format_type' ] ) {
-							$check_value = (array) $check_value;
-							$check_value = current( $check_value );
-						}
-
-						$related_where = array();
-
-						// Temporarily check against null too, recursive data not saved fully yet
-						if ( empty( $check_value ) ) {
-							$related_where[] = $prefix . $related_prefix . $related_pod_data[ 'field_id' ] . ' IS NULL';
-						}
-
-						$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` = ' . (int) $check_value
-						                   . ' AND ' . $prefix . $related_prefix . $related_pod_data[ 'field_index' ] . ' = "' . pods_sanitize( $check_index ) . '"';
-
-						$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
-					}
-					elseif ( 'none' != $related_pod_storage_type ) {
-						if ( 'pod' == $related_pod_type ) {
-							$related_prefix = 't.';
-						}
-						elseif ( 'table' == $related_pod_storage_type ) {
-							$related_prefix = '`d`.';
-						}
-						elseif ( 'meta' == $related_pod_storage_type ) {
-							$related_suffix = '.meta_value';
-						}
-
-						$check_related_value = '';
-
-						if ( isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
-							$check_related_value = $related_data[ 'data' ][ $related_pod_field[ 'name' ] ];
-						}
-
-						$related_where = array();
-
-						// Temporarily check against null too, recursive data not saved fully yet
-						if ( '.meta_value' == $related_suffix && '' == $check_related_value ) {
-							$related_where[] = $prefix . $related_prefix . $related_pod_field[ 'name' ] . $related_suffix . ' IS NULL';
-						}
-
-						$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field[ 'name' ] . '`' . $related_suffix . ' = "' . pods_sanitize( $check_related_value ) . '"';
-
-						$where[] = '( ' . implode( ' OR ', $related_where ) . ' )';
-					}
-				}
-			}
-			elseif ( 'none' != $storage_type && $field_name != $data[ 'field_index' ] ) {
-				if ( 'pod' == $pod_type ) {
-					$prefix = 't.';
-				}
-				elseif ( 'table' == $storage_type ) {
-					$prefix = '`d`.';
-				}
-				elseif ( 'meta' == $storage_type ) {
-					$suffix = '.meta_value';
-				}
-
-				$check_value = $data[ 'data' ][ $field_name ];
-
-				$where[] = $prefix . '`' . $field_name . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
-			}
-
-			$prefix = '`t`.';
-
-			$check_value = $data[ 'id' ];
-
-			$where[] = $prefix . '`' . $data[ 'field_id' ] . '`' . ' = ' . (int) $check_value;
-
-			$params[ 'where' ] = implode( ' AND ', $where );
 
 			$p->find( $params );
 

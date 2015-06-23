@@ -885,7 +885,7 @@ class PodsData {
 	    }
 
         if ( !empty( $params->orderby ) ) {
-	        if ( 'post_type' == $pod[ 'type' ] && is_array( $params->orderby ) ) {
+	        if ( 'post_type' == $pod[ 'type' ] && 'meta' == $pod[ 'storage_type' ] && is_array( $params->orderby ) ) {
 
 		        foreach ( $params->orderby as $i => $orderby ) {
 			        if ( strpos( $orderby, '.meta_value_num' ) ) {
@@ -893,6 +893,7 @@ class PodsData {
 			        } elseif ( strpos( $params->orderby, '.meta_value_date' ) ) {
 				        $params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_date', '.meta_value', $orderby  ) . ' AS DATE)';
 			        }
+			        
 		        }
 
 	        }

@@ -862,16 +862,25 @@ class PodsData {
 			}
 		}
 
-	    // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
-	    if ( ! empty( $params->where ) ) {
-		    $params->where = $this->query_fields( (array) $params->where, $pod, $params );
-	    }
+        if ( empty( $params->where ) ) {
+            $params->where = array();
+        } else {
+            $params->where = (array) $params->where;
+        }
 
-	    if ( empty( $params->where ) ) {
-		    $params->where = array();
-	    } else {
-		    $params->where = (array) $params->where;
-	    }
+        // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
+        if ( ! empty( $params->where ) ) {
+            foreach ( $params->where as $field => $where ) {
+                if ( is_array( $where ) ) {
+                    if ( $where['compare'] == 'ALL' && is_array( $where['value'] ) ) {
+                        $field             = self::_get_field_cast( $field, $where, $pod );
+                        $params->having[]  = 'count(DISTINCT ' . $field . ') = ' . count( $where['value'] );
+                        $params->groupby[] = '`t`.ID';
+                    }
+                }
+            }
+            $params->where = $this->query_fields( (array) $params->where, $pod, $params );
+        }
 
 	    // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
 	    if ( ! empty( $params->having ) ) {
@@ -2386,69 +2395,11 @@ class PodsData {
 		if ( empty( $field_cast ) ) {
 			// Setup field casting from field name
 			if ( false === strpos( $field_name, '`' ) && false === strpos( $field_name, '(' ) && false === strpos( $field_name, ' ' ) ) {
-				// Handle field naming if Pod-based
-				if ( !empty( $pod ) && false === strpos( $field_name, '.' ) ) {
-					$field_cast = '';
-
-					$tableless_field_types = PodsForm::tableless_field_types();
-
-					if ( isset( $pod[ 'fields' ][ $field_name ] ) && in_array( $pod[ 'fields' ][ $field_name ][ 'type' ], $tableless_field_types ) ) {
-						if ( in_array( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $simple_tableless_objects ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`t`.`{$field_name}`";
-							else
-								$field_cast = "`{$field_name}`.`meta_value`";
-						}
-						else {
-							$table = pods_api()->get_table_info( $pod[ 'fields' ][ $field_name ][ 'pick_object' ], $pod[ 'fields' ][ $field_name ][ 'pick_val' ] );
-
-							if ( !empty( $table ) )
-								$field_cast = "`{$field_name}`.`" . $table[ 'field_index' ] . '`';
-						}
-					}
-
-					if ( empty( $field_cast ) ) {
-						if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) ) {
-							if ( isset( $pod[ 'object_fields' ][ $field_name ] ) )
-								$field_cast = "`t`.`{$field_name}`";
-							elseif ( isset( $pod[ 'fields' ][ $field_name ] ) ) {
-								if ( 'table' == $pod[ 'storage' ] )
-									$field_cast = "`d`.`{$field_name}`";
-								else
-									$field_cast = "`{$field_name}`.`meta_value`";
-							}
-							else {
-								foreach ( $pod[ 'object_fields' ] as $object_field => $object_field_opt ) {
-									if ( $object_field == $field_name || in_array( $field_name, $object_field_opt[ 'alias' ] ) ) {
-										$field_cast = "`t`.`{$object_field}`";
-
-										break;
-									}
-								}
-							}
-						}
-						elseif ( isset( $pod[ 'fields' ][ $field_name ] ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`t`.`{$field_name}`";
-							else
-								$field_cast = "`{$field_name}`.`meta_value`";
-						}
-
-						if ( empty( $field_cast ) ) {
-							if ( 'table' == $pod[ 'storage' ] )
-								$field_cast = "`{$field_name}`";
-							else
-								$field_cast = "`{$field_name}`.`meta_value`";
-						}
-					}
-				}
-				else {
-					$field_cast = '`' . str_replace( '.', '`.`', $field_name ) . '`';
-				}
-			}
-			else {
-				$field_cast = $field_name;
-			}
+                // Handle field naming if Pod-based
+                $field_cast = self::_get_field_cast($field, $q, $pod);
+            } else {
+                $field_cast = $field_name;
+            }
 
 			// Cast field if needed
 			if ( 'CHAR' != $field_type ) {
@@ -2467,18 +2418,20 @@ class PodsData {
 		}
 
         // Restrict to supported comparisons
-        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) )
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE', 'ALL' ) ) )
             $field_compare = '=';
 
         // Restrict to supported array comparisons
-        if ( is_array( $field_value ) && !in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+        if ( is_array( $field_value ) && !in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'ALL' ) ) ) {
             if ( in_array( $field_compare, array( '!=', 'NOT LIKE' ) ) )
                 $field_compare = 'NOT IN';
+            else if ( in_array( $field_compare, array( 'ALL' ) ) )
+                $field_compare = 'ALL';
             else
                 $field_compare = 'IN';
         }
         // Restrict to supported string comparisons
-        elseif ( !is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+        elseif ( !is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'ALL' ) ) ) {
             $check_value = preg_split( '/[,\s]+/', $field_value );
 
             if ( 1 < count( $check_value ) )
@@ -2501,6 +2454,12 @@ class PodsData {
             }
         }
 
+        if ( $field_compare == 'ALL' ) {
+            if ( 1 == count( $field_value ) ) {
+                $field_compare = '=';
+            }
+        }
+
 		// Empty array handling
 		if ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
 			$field_compare = 'EXISTS';
@@ -2516,7 +2475,6 @@ class PodsData {
 			'sanitize_format' => $field_sanitize_format,
 			'cast' => $field_cast
 		);
-
         // Make the query
         if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) ) {
 			if ( $field_sanitize ) {
@@ -2533,8 +2491,10 @@ class PodsData {
 			else {
             	$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
 			}
-		}
-        elseif ( in_array( $field_compare, array( 'IN', 'NOT IN' ) ) ) {
+        } elseif ( in_array( $field_compare, array( 'IN', 'NOT IN', 'NOT IN', 'ALL' ) ) ) {
+            if ( $field_compare == 'ALL' ) {
+                $field_compare = 'IN';
+            }
 			if ( $field_sanitize ) {
             	$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . ' )', $field_value );
 			}
@@ -2550,12 +2510,12 @@ class PodsData {
             	$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value[ 0 ] . '" AND "' . $field_value[ 1 ] . '"';
 			}
 		}
-        elseif ( 'EXISTS' == $field_compare )
+        elseif ('EXISTS' == $field_compare)
             $field_query = $field_cast . ' IS NOT NULL';
-        elseif ( 'NOT EXISTS' == $field_compare )
+        elseif ('NOT EXISTS' == $field_compare)
             $field_query = $field_cast . ' IS NULL';
 
-        $field_query = apply_filters( 'pods_data_field_query', $field_query, $q );
+        $field_query = apply_filters('pods_data_field_query', $field_query, $q);
 
         return $field_query;
     }
@@ -3020,5 +2980,76 @@ class PodsData {
         $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
 
         return $sql;
+    }
+
+    /*
+     * Build the field alias
+     * @since x.x.x
+     */
+    private static function _get_field_cast( $field, $q, $pod = null ) {
+        $simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+        $field_name = trim( pods_var_raw( 'field', $q, pods_var_raw( 'key', $q, $field, null, true ), null, true ) );
+        if ( ! empty( $pod ) && false === strpos( $field_name, '.' ) ) {
+            $field_cast = '';
+
+            $tableless_field_types = PodsForm::tableless_field_types();
+
+            if ( isset( $pod['fields'][ $field_name ] ) && in_array( $pod['fields'][ $field_name ]['type'], $tableless_field_types ) ) {
+                if ( in_array( $pod['fields'][ $field_name ]['pick_object'], $simple_tableless_objects ) ) {
+                    if ( 'table' == $pod['storage'] ) {
+                        $field_cast = "`t`.`{$field_name}`";
+                    } else {
+                        $field_cast = "`{$field_name}`.`meta_value`";
+                    }
+                } else {
+                    $table = pods_api()->get_table_info( $pod['fields'][ $field_name ]['pick_object'], $pod['fields'][ $field_name ]['pick_val'] );
+
+                    if ( ! empty( $table ) ) {
+                        $field_cast = "`{$field_name}`.`" . $table['field_index'] . '`';
+                    }
+                }
+            }
+
+            if ( empty( $field_cast ) ) {
+                if ( ! in_array( $pod['type'], array( 'pod', 'table' ) ) ) {
+                    if ( isset( $pod['object_fields'][ $field_name ] ) ) {
+                        $field_cast = "`t`.`{$field_name}`";
+                    } elseif ( isset( $pod['fields'][ $field_name ] ) ) {
+                        if ( 'table' == $pod['storage'] ) {
+                            $field_cast = "`d`.`{$field_name}`";
+                        } else {
+                            $field_cast = "`{$field_name}`.`meta_value`";
+                        }
+                    } else {
+                        foreach ( $pod['object_fields'] as $object_field => $object_field_opt ) {
+                            if ( $object_field == $field_name || in_array( $field_name, $object_field_opt['alias'] ) ) {
+                                $field_cast = "`t`.`{$object_field}`";
+
+                                break;
+                            }
+                        }
+                    }
+                } elseif ( isset( $pod['fields'][ $field_name ] ) ) {
+                    if ( 'table' == $pod['storage'] ) {
+                        $field_cast = "`t`.`{$field_name}`";
+                    } else {
+                        $field_cast = "`{$field_name}`.`meta_value`";
+                    }
+                }
+
+                if ( empty( $field_cast ) ) {
+                    if ( 'table' == $pod['storage'] ) {
+                        $field_cast = "`{$field_name}`";
+                    } else {
+                        $field_cast = "`{$field_name}`.`meta_value`";
+                    }
+                }
+            }
+        } else {
+            $field_cast = '`' . str_replace( '.', '`.`', $field_name ) . '`';
+        }
+
+        return $field_cast;
     }
 }

@@ -890,10 +890,10 @@ class PodsData {
 		        foreach ( $params->orderby as $i => $orderby ) {
 			        if ( strpos( $orderby, '.meta_value_num' ) ) {
 				        $params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_num', '.meta_value', $orderby ) . ' AS DECIMAL)';
-			        } elseif ( strpos( $params->orderby, '.meta_value_date' ) ) {
+			        } elseif ( strpos( $orderby, '.meta_value_date' ) ) {
 				        $params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_date', '.meta_value', $orderby  ) . ' AS DATE)';
 			        }
-			        
+
 		        }
 
 	        }

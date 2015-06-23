@@ -2467,18 +2467,20 @@ class PodsData {
 		}
 
         // Restrict to supported comparisons
-        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) )
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE', 'ALL' ) ) )
             $field_compare = '=';
 
         // Restrict to supported array comparisons
-        if ( is_array( $field_value ) && !in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+        if ( is_array( $field_value ) && !in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'ALL' ) ) ) {
             if ( in_array( $field_compare, array( '!=', 'NOT LIKE' ) ) )
                 $field_compare = 'NOT IN';
+            else if ( in_array( $field_compare, array( 'ALL' ) ) )
+                $field_compare = 'ALL';
             else
                 $field_compare = 'IN';
         }
         // Restrict to supported string comparisons
-        elseif ( !is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+        elseif ( !is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'ALL' ) ) ) {
             $check_value = preg_split( '/[,\s]+/', $field_value );
 
             if ( 1 < count( $check_value ) )
@@ -2498,6 +2500,12 @@ class PodsData {
                     $field_compare = '!=';
                 else
                     $field_compare = '=';
+            }
+        }
+
+        if ( $field_compare == 'ALL' ) {
+            if ( 1 == count( $field_value ) ) {
+                $field_compare = '=';
             }
         }
 
@@ -2534,7 +2542,13 @@ class PodsData {
             	$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
 			}
 		}
-        elseif ( in_array( $field_compare, array( 'IN', 'NOT IN' ) ) ) {
+        elseif ( in_array( $field_compare, array( 'IN', 'NOT IN', 'ALL' ) ) ) {
+
+            if ( $field_compare == 'ALL' ) {
+                $field_compare = 'IN';
+                $params->having[] = 'COUNT(DISTINCT ' . $field_cast . ') = ' . count( $field_value );
+                $params->groupby[] = '`t`.`ID`';
+            }
 			if ( $field_sanitize ) {
             	$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . ' )', $field_value );
 			}

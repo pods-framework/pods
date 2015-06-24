@@ -666,6 +666,10 @@ class Pods_Pages extends PodsComponent {
 	        return $object;
 	    }
 
+	    if ( false === strpos( $uri, '*' ) && ! apply_filters( 'pods_page_regex_matching', false ) ) {
+		    $object = pods_by_title( $uri, ARRAY_A, '_pods_page', 'publish' );
+	    }
+
         $wildcard = false;
 
         if ( empty( $object ) ) {

@@ -661,10 +661,10 @@ class Pods_Pages extends PodsComponent {
                 return false;
         }
 
-        $object = false;
-
-        if ( false === strpos( $uri, '*' ) && !apply_filters( 'pods_page_regex_matching', false ) )
-            $object = pods_by_title( $uri, ARRAY_A, '_pods_page', 'publish' );
+        $object = apply_filters( 'pods_page_exists', false, $uri );
+	    if ( !empty ( $object ) ) {
+	        return $object;
+	    }
 
         $wildcard = false;
 

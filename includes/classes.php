@@ -11,7 +11,7 @@
  * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
  * @param bool $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
  *
- * @return bool|\Pods
+ * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
  * @since 2.0
  * @link http://pods.io/docs/pods/
  */

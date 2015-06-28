@@ -466,11 +466,7 @@ namespace Pods_Unit_Tests;
 								$related_pod = current( self::$builds[ $field[ 'pick_object' ] ][ $field[ 'pick_val' ] ] );
 
 								foreach ( $related_pod[ 'fields' ] as $related_pod_field ) {
-									if ( empty( $related_pod_field[ 'pick_val' ] ) ) {
-										if ( empty( $related_pod_field[ 'pick_object' ] ) ) {
-											continue;
-										}
-
+									if ( empty( $related_pod_field[ 'pick_val' ] ) && ! empty( $related_pod_field[ 'pick_object' ] ) ) {
 										$related_pod_field[ 'pick_val' ] = $related_pod_field[ 'pick_object' ];
 									}
 
@@ -480,7 +476,7 @@ namespace Pods_Unit_Tests;
 									$related_pod_field_name = $related_pod_field[ 'name' ];
 
 									$data_deep[] = array(
-										build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name', 'related_pod_name', 'related_field_name' ) ) ),
+										build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name', 'related_pod_name', 'related_pod_field_name' ) ) ),
 										array(
 											'pod_type'          => $pod_type,
 											'storage_type'      => $storage_type,
@@ -490,6 +486,52 @@ namespace Pods_Unit_Tests;
 											'related_pod_field' => $related_pod_field
 										)
 									);
+
+									continue; // To be continued..
+
+									if ( ! in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
+										continue;
+									}
+
+									if ( empty( $related_pod_field[ 'pick_val' ] ) ) {
+										if ( empty( $related_pod_field[ 'pick_object' ] ) ) {
+											continue;
+										}
+
+										$related_pod_field[ 'pick_val' ] = $related_pod_field[ 'pick_object' ];
+									}
+
+									// Related pod traversal
+									if ( isset( self::$builds[ $related_pod_field[ 'pick_object' ] ] ) && isset( self::$builds[ $related_pod_field[ 'pick_object' ] ][ $related_pod_field[ 'pick_val' ] ] ) && isset( self::$related_items[ $related_pod_field[ 'pick_val' ] ] ) ) {
+										$sub_related_pod = current( self::$builds[ $related_pod_field[ 'pick_object' ] ][ $related_pod_field[ 'pick_val' ] ] );
+
+										foreach ( $sub_related_pod[ 'fields' ] as $sub_related_pod_field ) {
+											if ( empty( $sub_related_pod_field[ 'pick_val' ] ) ) {
+												if ( empty( $sub_related_pod_field[ 'pick_object' ] ) ) {
+													continue;
+												}
+
+												$sub_related_pod_field[ 'pick_val' ] = $sub_related_pod_field[ 'pick_object' ];
+											}
+
+											$sub_related_pod_name = $sub_related_pod[ 'name' ];
+											$sub_related_pod_field_name = $sub_related_pod_field[ 'name' ];
+
+											$data_deep[] = array(
+												build_query( compact( array( 'pod_type', 'storage_type', 'pod_name', 'field_name', 'related_pod_name', 'related_pod_field_name', 'sub_related_pod_name', 'sub_related_pod_field_name' ) ) ),
+												array(
+													'pod_type'              => $pod_type,
+													'storage_type'          => $storage_type,
+													'pod'                   => $pod,
+													'field'                 => $field,
+													'related_pod'           => $related_pod,
+													'related_pod_field'     => $related_pod_field,
+													'sub_related_pod'       => $sub_related_pod,
+													'sub_related_pod_field' => $sub_related_pod_field
+												)
+											);
+										}
+									}
 								}
 							}
 						}

@@ -1299,9 +1299,16 @@ class PodsData {
             ";
 
 			if ( !$params->calc_rows ) {
+				// Handle COUNT() SELECT
+				$total_sql_select = "COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )";
+
+				// If 'having' is set, we have to select all so it has access to anything it needs
+				if ( ! empty( $params->having ) ) {
+					$total_sql_select .= ', ' . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' );
+				}
+
 				$this->total_sql = "
-					SELECT
-					COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
+					SELECT {$total_sql_select}
 					FROM {$params->table} AS `t`
 					" . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
 					" . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "

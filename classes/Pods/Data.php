@@ -1124,7 +1124,7 @@ class Pods_Data {
 							} else {
 								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
 							}
-						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$field] ) ) {
+						} elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) && 'meta' == $pod['storage'] ) {
 							$fieldfield = $fieldfield . '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
@@ -1155,7 +1155,7 @@ class Pods_Data {
 						} else {
 							$fieldfield = '`' . $params->pod_table_prefix . '`.`' . $params->index . '`';
 						}
-					} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$params->index] ) ) {
+					} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$params->index] ) && 'meta' == $pod['storage'] ) {
 						$fieldfield = '`' . $params->index . '`.`meta_value`';
 					}
 
@@ -1205,12 +1205,12 @@ class Pods_Data {
 				} elseif ( in_array( $attributes['type'], $file_field_types ) ) {
 					$filterfield = $filterfield . '.`post_title`';
 				} elseif ( isset( $params->fields[$field] ) ) {
-					if ( $params->meta_fields ) {
+					if ( $params->meta_fields && 'meta' == $pod['storage'] ) {
 						$filterfield = $filterfield . '.`meta_value`';
 					} else {
 						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
 					}
-				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$field] ) ) {
+				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[$field] ) && 'meta' == $pod['storage'] ) {
 					$filterfield = $filterfield . '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
@@ -1438,9 +1438,16 @@ class Pods_Data {
             ";
 
 			if ( ! $params->calc_rows ) {
+				// Handle COUNT() SELECT
+				$total_sql_select = "COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )";
+
+				// If 'having' is set, we have to select all so it has access to anything it needs
+				if ( ! empty( $params->having ) ) {
+					$total_sql_select .= ', ' . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' );
+				}
+
 				$this->total_sql = "
-					SELECT
-					COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
+					SELECT {$total_sql_select}
 					FROM {$params->table} AS `t`
 					" . ( ! empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
 					" . ( ! empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "
@@ -2671,10 +2678,10 @@ class Pods_Data {
 
 					if ( isset( $pod['fields'][$field_name] ) && in_array( $pod['fields'][$field_name]['type'], $tableless_field_types ) ) {
 						if ( in_array( $pod['fields'][$field_name]['pick_object'], $simple_tableless_objects ) ) {
-							if ( 'table' == $pod['storage'] ) {
-								$field_cast = "`t`.`{$field_name}`";
-							} else {
+							if ( 'meta' == $pod['storage'] ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
+							} else {
+								$field_cast = "`t`.`{$field_name}`";
 							}
 						} elseif ( in_array( $pod['fields'][$field_name]['pick_object'], $file_field_types ) ) {
 							$field_cast = "`{$field_name}`.`post_title`"; // @todo Is this right?

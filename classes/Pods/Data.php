@@ -2699,10 +2699,10 @@ class Pods_Data {
 							if ( isset( $pod['object_fields'][$field_name] ) ) {
 								$field_cast = "`t`.`{$field_name}`";
 							} elseif ( isset( $pod['fields'][$field_name] ) ) {
-								if ( 'table' == $pod['storage'] ) {
-									$field_cast = "`d`.`{$field_name}`";
-								} else {
+								if ( 'meta' == $pod['storage'] ) {
 									$field_cast = "`{$field_name}`.`meta_value`";
+								} else {
+									$field_cast = "`d`.`{$field_name}`";
 								}
 							} else {
 								foreach ( $pod['object_fields'] as $object_field => $object_field_opt ) {
@@ -2713,15 +2713,19 @@ class Pods_Data {
 									}
 								}
 							}
+						} elseif ( isset( $pod['fields'][ $field_name ] ) ) {
+							if ( 'meta' == $pod['storage'] ) {
+								$field_cast = "`{$field_name}`.`meta_value`";
+							} else {
+								$field_cast = "`t`.`{$field_name}`";
+							}
 						}
 
 						if ( empty( $field_cast ) ) {
-							if ( isset( $pod['fields'][$field_name] ) && 'table' == $pod['storage'] ) {
-								$field_cast = "`t`.`{$field_name}`";
-							} elseif ( 'meta' == $pod['storage'] ) {
+							if ( 'meta' == $pod['storage'] ) {
 								$field_cast = "`{$field_name}`.`meta_value`";
 							} else {
-								$field_cast = "`{$field_name}`";
+								$field_cast = "`t`.`{$field_name}`";
 							}
 						}
 					}
@@ -2750,19 +2754,19 @@ class Pods_Data {
 		}
 
 		// Restrict to supported comparisons
-		if ( ! in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) ) {
+		if ( ! in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'ALL', 'BETWEEN', 'NOT BETWEEN', 'EXISTS', 'NOT EXISTS', 'REGEXP', 'NOT REGEXP', 'RLIKE' ) ) ) {
 			$field_compare = '=';
 		}
 
 		// Restrict to supported array comparisons
-		if ( is_array( $field_value ) && ! in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+		if ( is_array( $field_value ) && ! in_array( $field_compare, array( 'IN', 'NOT IN', 'ALL', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
 			if ( in_array( $field_compare, array( '!=', 'NOT LIKE' ) ) ) {
 				$field_compare = 'NOT IN';
 			} else {
 				$field_compare = 'IN';
 			}
 		} // Restrict to supported string comparisons
-		elseif ( ! is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+		elseif ( ! is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'ALL', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
 			$check_value = preg_split( '/[,\s]+/', $field_value );
 
 			if ( 1 < count( $check_value ) ) {
@@ -2787,8 +2791,12 @@ class Pods_Data {
 			}
 		}
 
+	    // Single array handling
+	    if ( 1 == count( $field_value ) && $field_compare == 'ALL' ) {
+		    $field_compare = '=';
+	    }
 		// Empty array handling
-		if ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
+		elseif ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'ALL', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
 			$field_compare = 'EXISTS';
 		}
 
@@ -2816,7 +2824,19 @@ class Pods_Data {
 			} else {
 				$field_query = $field_cast . ' ' . $field_compare . ' "' . $field_value . '"';
 			}
-		} elseif ( in_array( $field_compare, array( 'IN', 'NOT IN' ) ) ) {
+		} elseif ( in_array( $field_compare, array( 'IN', 'NOT IN', 'ALL' ) ) ) {
+			if ( $field_compare == 'ALL' ) {
+		        $field_compare = 'IN';
+
+		        if ( ! empty( $pod ) ) {
+			        $params->having[] = 'COUNT( DISTINCT ' . $field_cast . ' ) = ' . count( $field_value );
+
+			        if ( empty( $params->groupby ) || ( ! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby ) && ! in_array( 't.' . $pod['field_id'] . '', $params->groupby ) ) ) {
+				        $params->groupby[] = '`t`.`' . $pod['field_id'] . '`';
+			        }
+		        }
+	        }
+
 			if ( $field_sanitize ) {
 				$field_query = $wpdb->prepare( $field_cast . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_sanitize_format, count( $field_value ) ), 1 ) . ' )', $field_value );
 			} else {

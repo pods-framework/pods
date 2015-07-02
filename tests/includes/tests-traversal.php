@@ -708,8 +708,13 @@ namespace Pods_Unit_Tests;
 					$check_value = $related_data[ 'id' ];
 					$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
 
+					$check_multi_value = (array) $check_value;
+
 					if ( ! empty( $field[ $field_type . '_format_type' ] ) && 'multi' == $field[ $field_type . '_format_type' ] ) {
 						$check_value = (array) $check_value;
+
+						$check_multi_value = $check_value;
+
 						$check_value = current( $check_value );
 					}
 
@@ -727,7 +732,7 @@ namespace Pods_Unit_Tests;
 					}
 
 					if ( $query_fields ) {
-						$related_where[] = array(
+						$related_where_set = array(
 							'relation' => 'AND',
 							array(
 								'field' => $field_name . '.' . $related_data[ 'field_id' ],
@@ -738,6 +743,17 @@ namespace Pods_Unit_Tests;
 								'value' => $check_index
 							)
 						);
+
+						// Test IN / ALL (ALL uses IN logic in part of it)
+						if ( 1 < count( $check_multi_value ) ) {
+							$related_where_set[] = array(
+								'field' => $field_name . '.' . $related_data[ 'field_id' ],
+								'value' => $check_multi_value,
+								'compare' => 'ALL'
+							);
+						}
+
+						$related_where[] = $related_where_set;
 
 						$related_where['relation'] = 'OR';
 					} else {

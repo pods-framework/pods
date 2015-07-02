@@ -197,7 +197,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'display_name' => 'Related user',
 				'user_login' => 'related-user',
 				'user_email' => 'related@user.com',
-			    'user_pass' => 'changeme'
+			    'user_pass' => 'changeme',
+				'test_text_field' => 'Test related user text field'
 			)
 		),
 		'test_rel_post' => array(
@@ -209,7 +210,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related post',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related post text field'
 			)
 		),
 	    'test_rel_pages' => array(
@@ -222,7 +224,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related page',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related page text field'
 			),
 	        'sub_data' => array(
 
@@ -239,7 +242,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'field_author' => false,
 			'data' => array(
 				'name' => 'Related post tag',
-				'description' => '%s'
+				'description' => '%s',
+				'test_text_field' => 'Test related tag text field'
 			)
 		),
 	    'test_rel_media' => array(
@@ -251,7 +255,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related media',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related media text field'
 			)
 		),
 	    'test_rel_comment' => array(
@@ -268,7 +273,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID' => 1,
 				'comment_type' => 'comment',
 			    'comment_approved' => 1,
-			    'comment_date' => '2014-11-11 00:00:00'
+			    'comment_date' => '2014-11-11 00:00:00',
+				'test_text_field' => 'Test related comment text field'
 			)
 		),
 	    'avatar' => array(
@@ -280,7 +286,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related media',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test avatar text field'
 			)
 		),
 	    '%s' => array(
@@ -714,7 +721,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							}
 
 							foreach ( self::$supported_fields as $field ) {
-								if ( in_array( $field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) && isset( self::$related_items[ $field[ 'name' ] ] ) ) {
+								if ( isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 									$pod_item_data[ 'data' ][ $field[ 'name' ] ] = self::$related_items[ $field[ 'name' ] ][ 'id' ];
 								}
 							}

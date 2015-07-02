@@ -774,6 +774,15 @@ class PodsAPI {
 
         if ( 'post_type' == $object ) {
             $fields = array(
+	            'ID' => array(
+		            'name' => 'ID',
+		            'label' => 'ID',
+		            'type' => 'number',
+		            'alias' => array( 'id' ),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
+	            ),
                 'post_title' => array(
                     'name' => 'post_title',
                     'label' => 'Title',
@@ -939,7 +948,10 @@ class PodsAPI {
                     'name' => 'menu_order',
                     'label' => 'Menu Order',
                     'type' => 'number',
-                    'alias' => array()
+                    'alias' => array(),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
                 ),
                 'post_type' => array(
                     'name' => 'post_type',
@@ -985,6 +997,15 @@ class PodsAPI {
         }
         elseif ( 'user' == $object ) {
             $fields = array(
+	            'ID' => array(
+		            'name' => 'ID',
+		            'label' => 'ID',
+		            'type' => 'number',
+		            'alias' => array( 'id' ),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
+	            ),
                 'user_login' => array(
                     'name' => 'user_login',
                     'label' => 'Title',
@@ -1050,6 +1071,15 @@ class PodsAPI {
         }
         elseif ( 'comment' == $object ) {
             $fields = array(
+	            'comment_ID' => array(
+		            'name' => 'comment_ID',
+		            'label' => 'ID',
+		            'type' => 'number',
+		            'alias' => array( 'id', 'ID', 'comment_id' ),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
+	            ),
                 'comment_content' => array(
                     'name' => 'comment_content',
                     'label' => 'Content',
@@ -1060,7 +1090,10 @@ class PodsAPI {
                     'name' => 'comment_approved',
                     'label' => 'Approved',
                     'type' => 'number',
-                    'alias' => array( 'approved' )
+                    'alias' => array( 'approved' ),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
                 ),
                 'comment_post_ID' => array(
                     'name' => 'comment_post_ID',
@@ -1131,6 +1164,15 @@ class PodsAPI {
         }
         elseif ( 'taxonomy' == $object ) {
             $fields = array(
+	            'term_id' => array(
+		            'name' => 'term_id',
+		            'label' => 'ID',
+		            'type' => 'number',
+		            'alias' => array( 'id', 'ID' ),
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
+	            ),
                 'name' => array(
                     'name' => 'name',
                     'label' => 'Title',
@@ -1169,22 +1211,31 @@ class PodsAPI {
                     'name' => 'term_taxonomy_id',
                     'label' => 'Term Taxonomy ID',
                     'type' => 'number',
-                    'alias' => array( 'term_taxonomy_id' ),
-                    'hidden' => true
+                    'alias' => array(),
+                    'hidden' => true,
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
                 ),
                 'term_group' => array(
                     'name' => 'term_group',
                     'label' => 'Term Group',
                     'type' => 'number',
-                    'alias' => array( 'term_group' ),
-                    'hidden' => true
+                    'alias' => array( 'group' ),
+                    'hidden' => true,
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
                 ),
                 'count' => array(
                     'name' => 'count',
                     'label' => 'Count',
                     'type' => 'number',
-                    'alias' => array( 'count' ),
-                    'hidden' => true
+                    'alias' => array(),
+                    'hidden' => true,
+	                'options' => array(
+                        'number_format' => '9999.99'
+	                )
                 )
             );
         }

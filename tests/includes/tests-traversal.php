@@ -182,6 +182,8 @@ namespace Pods_Unit_Tests;
 		 */
 		public function test_find_deep_traversal_query_fields( $variant_id, $options ) {
 
+			$this->markTestIncomplete( 'query_fields does not yet support traversal auto handling of prefix/suffix' );
+
 			$this->_test_find_traversal( $variant_id, $options, true, true );
 
 		}
@@ -488,6 +490,8 @@ namespace Pods_Unit_Tests;
 									);
 
 									continue; // To be continued..
+
+									// @todo Handle one more level deeper
 
 									if ( ! in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
 										continue;

@@ -1406,7 +1406,7 @@ class PodsMeta {
 
                 if ( !is_object( $tag ) ) {
             ?>
-                <div class="form-field pods-field"<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <div class="form-field pods-field" style="<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? 'display:none;' : '' ); ?>">
                     <?php
                         echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                         echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -1417,7 +1417,7 @@ class PodsMeta {
                 }
                 else {
             ?>
-                <tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+                <tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>" style="<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? 'display:none;' : '' ); ?>">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                     <td>
                         <?php
@@ -1778,7 +1778,7 @@ class PodsMeta {
                     pods_no_conflict_off( 'comment' );
                 }
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?>  pods-field"<?php echo ( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?>  pods-field" style="<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? 'display:none;' : '' ); ?>">
                 <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -1845,7 +1845,7 @@ class PodsMeta {
 
                 ob_start();
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?> pods-field"<?php echo( 'hidden' == $field[ 'type' ] ? ' style="display:none;"' : '' ); ?>>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field[ 'name' ] ); ?> pods-field" style="<?php echo esc_attr( 'hidden' == $field[ 'type' ] ? 'display:none;' : '' ); ?>">
                 <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );

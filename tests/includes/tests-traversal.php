@@ -708,7 +708,7 @@ namespace Pods_Unit_Tests;
 					$check_value = $related_data[ 'id' ];
 					$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
 
-					if ( isset( $field[ $field_type . '_format_type' ] ) && 'multi' == $field[ $field_type . '_format_type' ] ) {
+					if ( ! empty( $field[ $field_type . '_format_type' ] ) && 'multi' == $field[ $field_type . '_format_type' ] ) {
 						$check_value = (array) $check_value;
 						$check_value = current( $check_value );
 					}
@@ -748,6 +748,8 @@ namespace Pods_Unit_Tests;
 					}
 
 					$where[] = $related_where;
+
+					//var_dump( array( 1, $related_where, $check_value, $check_index ) );
 				}
 				else {
 					// Related pod traversal
@@ -780,7 +782,7 @@ namespace Pods_Unit_Tests;
 							$related_pod_data = self::$related_items[ $related_object ];
 						}
 						else {
-							var_dump( array( '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
+							//var_dump( array( 2, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 
 							$this->assertTrue( false, sprintf( 'Invalid deep related item [%s]', $variant_id ) );
 
@@ -799,7 +801,7 @@ namespace Pods_Unit_Tests;
 							$check_index = $related_pod_data[ 'data' ][ $related_pod_data[ 'field_index' ] ];
 						}
 
-						if ( isset( $related_pod_field[ $field_type . '_format_type' ] ) && 'multi' == $related_pod_field[ $field_type . '_format_type' ] ) {
+						if ( ! empty( $related_pod_field[ $related_pod_field[ 'type' ] . '_format_type' ] ) && 'multi' == $related_pod_field[ $related_pod_field[ 'type' ] . '_format_type' ] ) {
 							$check_value = (array) $check_value;
 							$check_value = current( $check_value );
 						}
@@ -814,6 +816,8 @@ namespace Pods_Unit_Tests;
 							} else {
 								$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data[ 'field_id' ] . '` IS NULL';
 							}
+
+							//var_dump( array( 3, $related_where, 'empty $check_value' ) );
 						}
 
 						if ( $query_fields ) {
@@ -836,6 +840,8 @@ namespace Pods_Unit_Tests;
 
 							$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 						}
+
+						//var_dump( array( 4, $related_where, $check_value, $check_index ) );
 					}
 					elseif ( 'none' != $related_pod_storage_type ) {
 						if ( 'pod' == $related_pod_type ) {
@@ -855,7 +861,7 @@ namespace Pods_Unit_Tests;
 						}
 
 						// Temporarily check against null too, recursive data not saved fully yet
-						if ( '.meta_value' == $related_suffix && '' == $check_related_value ) {
+						if ( '.`meta_value`' == $related_suffix && '' == $check_related_value ) {
 							if ( $query_fields ) {
 								$related_where[] = array(
 									'field'   => $field_name . '.' . $related_pod_field[ 'name' ],
@@ -878,11 +884,15 @@ namespace Pods_Unit_Tests;
 
 							$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 						}
+
+						//var_dump( array( 5, $related_where, $related_suffix, $check_related_value, self::$related_items[ $field_name ] ) );
 					}
 
 					if ( ! empty( $related_where ) ) {
 						$where[] = $related_where;
 					}
+
+					//var_dump( array( 6, $where ) );
 				}
 			}
 			elseif ( 'none' != $storage_type && $field_name != $data[ 'field_index' ] ) {
@@ -1152,7 +1162,7 @@ namespace Pods_Unit_Tests;
 							$related_pod_data = self::$related_items[ $related_pod[ 'name' ] ];
 						}*/
 						else {
-							var_dump( array( '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
+							//var_dump( array( 7, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 
 							$this->assertTrue( false, sprintf( 'Invalid related item [%s]', $variant_id ) );
 
@@ -1174,30 +1184,28 @@ namespace Pods_Unit_Tests;
 						$check_display_value = $check_value;
 						$check_display_index = $check_index;
 
-						if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ $field_type . '_format_type' ] ) {
+						if ( ! empty( $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ $related_pod_field[ 'type' ] . '_format_type' ] ) && 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ $related_pod_field[ 'type' ] . '_format_type' ] ) {
 							$check_value = (array) $check_value;
 
-							if ( 'multi' == $related_pod[ 'fields' ][ $related_pod_field[ 'name' ] ][ $field_type . '_format_type' ] && !empty( $related_pod_data[ 'limit' ] ) ) {
-								$check_indexes = array();
+							$check_indexes = array();
 
-								$check_indexes[] = $check_index;
+							$check_indexes[] = $check_index;
 
-								for ( $x = 1; $x < $related_pod_data[ 'limit' ]; $x++ ) {
-									$check_indexes[] = $check_index . ' (' . $x . ')';
-								}
-
-								$check_index = $check_indexes;
+							for ( $x = 1; $x < $related_pod_data[ 'limit' ]; $x++ ) {
+								$check_indexes[] = $check_index . ' (' . $x . ')';
 							}
+
+							$check_index = $check_indexes;
 
 							$check_display_value = pods_serial_comma( $check_value );
 							$check_display_index = pods_serial_comma( $check_index );
 						}
 
 						if ( 'field' == $method ) {
-							$this->assertEquals( $check_value, $p->field( $related_traverse_id, true ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_id, $variant_id ) );
-							$this->assertEquals( $check_index, $p->field( $related_traverse_index, true ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+							$this->assertEquals( $check_value, $p->field( $related_traverse_id, ! is_array( $check_value ) ), sprintf( 'Deep Related Item field value not as expected (%s) [%s] | %s', $related_traverse_id, $variant_id, var_export( array( '$check_value' => $check_value, '$p->field( $related_traverse_id, true )' => $p->field( $related_traverse_id, ! is_array( $check_value ) ) ), true ) ) );
+							$this->assertEquals( $check_index, $p->field( $related_traverse_index, ! is_array( $check_index ) ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array( '$check_index' => $check_index, '$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_value ) ) ), true ) ) );
 
-							if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
+							if ( 'meta' == $storage_type && 'taxonomy' != $related_pod_field[ 'type' ] ) {
 								$check_value = array_map( 'absint', (array) $check_value );
 								$check_index = (array) $check_index;
 
@@ -1230,26 +1238,34 @@ namespace Pods_Unit_Tests;
 						}
 					}
 					elseif ( 'none' != $related_pod_storage_type ) {
-						$check_related_value = '';
+						$check_related_value = $check_related_value_display = '';
 
 						if ( isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
 							$check_related_value = $related_data[ 'data' ][ $related_pod_field[ 'name' ] ];
+
+							$check_related_value_display = $check_related_value;
+
+							if ( is_array( $check_value ) ) {
+								$check_related_value = array_fill( 0, count( $check_value ), $check_related_value );
+
+								$check_related_value_display = pods_serial_comma( $check_related_value );
+							}
 						}
 
 						$related_traverse_index = $prefix . $related_pod_field[ 'name' ];
 
 						if ( 'field' == $method ) {
-							$this->assertEquals( $check_related_value, $p->field( $related_traverse_index ), sprintf( 'Deep Related Item field value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+							$this->assertEquals( $check_related_value, $p->field( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf( 'Deep Related Item related field index not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array( '$check_related_value' => $check_related_value, '$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_related_value ) ), '$related_data' => $related_data ), true ) ) );
 
-							if ( 'meta' == $storage_type && 'taxonomy' != $field_type ) {
+							if ( 'meta' == $storage_type && 'taxonomy' != $related_pod_field[ 'type' ] ) {
 								$check_related_value = (array) $check_related_value;
 
-								$this->assertEquals( $check_related_value, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), sprintf( 'Deep Related Item field meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
-								$this->assertEquals( current( $check_related_value ), get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ), sprintf( 'Deep Related Item field single meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+								$this->assertEquals( $check_related_value, get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index ), sprintf( 'Deep Related Item related field meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+								$this->assertEquals( current( $check_related_value ), get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_index, true ), sprintf( 'Deep Related Item related field single meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 							}
 						}
 						elseif ( 'display' == $method ) {
-							$this->assertEquals( $check_related_value, $p->display( $related_traverse_index ), sprintf( 'Deep Related Item field display value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
+							$this->assertEquals( $check_related_value_display, $p->display( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf( 'Deep Related Item related field display value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array( '$check_related_value' => $check_related_value, '$p->display( $related_traverse_index, true )' => $p->display( $related_traverse_index, ! is_array( $check_related_value ) ), '$related_data' => $related_data ), true ) ) );
 						}
 					}
 				}

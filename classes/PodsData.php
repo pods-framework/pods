@@ -2550,8 +2550,13 @@ class PodsData {
 	        if ( $field_compare == 'ALL' ) {
 		        $field_compare = 'IN';
 
-		        $params->having[] = 'COUNT(DISTINCT ' . $field_cast . ') = ' . count( $field_value );
-		        $params->groupby[] = '`t`.`ID`';
+		        if ( ! empty( $pod ) ) {
+			        $params->having[] = 'COUNT( DISTINCT ' . $field_cast . ' ) = ' . count( $field_value );
+
+			        if ( empty( $params->groupby ) || ( ! in_array( '`t`.`' . $pod['field_id'] . '`', $params->groupby ) && ! in_array( 't.' . $pod['field_id'] . '', $params->groupby ) ) ) {
+				        $params->groupby[] = '`t`.`' . $pod['field_id'] . '`';
+			        }
+		        }
 	        }
 
 			if ( $field_sanitize ) {

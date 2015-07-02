@@ -751,8 +751,6 @@ namespace Pods_Unit_Tests;
 								'value' => $check_multi_index,
 								'compare' => 'ALL'
 							);
-
-							var_dump( $related_data );
 						} else {
 							$related_where_set[] = array(
 								'field' => $field_name . '.' . $related_data[ 'field_id' ],

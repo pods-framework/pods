@@ -709,13 +709,17 @@ namespace Pods_Unit_Tests;
 					$check_index = $related_data[ 'data' ][ $related_data[ 'field_index' ] ];
 
 					$check_multi_value = (array) $check_value;
+					$check_multi_index = (array) $check_index;
 
 					if ( ! empty( $field[ $field_type . '_format_type' ] ) && 'multi' == $field[ $field_type . '_format_type' ] ) {
-						$check_value = (array) $check_value;
+						// Only go and get it if you need it
+						if ( $query_fields ) {
+							$check_multi_value = (array) array_keys( $related_data[ 'sub_data' ] );
+							$check_multi_index = (array) wp_list_pluck( $related_data[ 'sub_data' ], $related_data[ 'field_index' ] );
+						}
 
-						$check_multi_value = $check_value;
-
-						$check_value = current( $check_value );
+						$check_value = current( $check_multi_value );
+						$check_index = current( $check_multi_index );
 					}
 
 					$related_where = array();
@@ -732,17 +736,7 @@ namespace Pods_Unit_Tests;
 					}
 
 					if ( $query_fields ) {
-						$related_where_set = array(
-							'relation' => 'AND',
-							array(
-								'field' => $field_name . '.' . $related_data[ 'field_id' ],
-								'value' => (int) $check_value
-							),
-							array(
-								'field' => $field_name . '.' . $related_data[ 'field_index' ],
-								'value' => $check_index
-							)
-						);
+						$related_where_set = array();
 
 						// Test IN / ALL (ALL uses IN logic in part of it)
 						if ( 1 < count( $check_multi_value ) ) {
@@ -751,7 +745,27 @@ namespace Pods_Unit_Tests;
 								'value' => $check_multi_value,
 								'compare' => 'ALL'
 							);
+
+							$related_where_set[] = array(
+								'field' => $field_name . '.' . $related_data[ 'field_index' ],
+								'value' => $check_multi_index,
+								'compare' => 'ALL'
+							);
+
+							var_dump( $related_data );
+						} else {
+							$related_where_set[] = array(
+								'field' => $field_name . '.' . $related_data[ 'field_id' ],
+								'value' => (int) $check_value
+							);
+
+							$related_where_set[] = array(
+								'field' => $field_name . '.' . $related_data[ 'field_index' ],
+								'value' => $check_index
+							);
 						}
+
+						$related_where_set['relation'] = 'AND';
 
 						$related_where[] = $related_where_set;
 

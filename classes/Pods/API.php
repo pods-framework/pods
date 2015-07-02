@@ -747,6 +747,13 @@ class Pods_API {
 
 		if ( 'post_type' == $object ) {
 			$fields = array(
+				'ID'                    => array(
+					'name'          => 'ID',
+					'label'         => 'ID',
+					'type'          => 'number',
+					'alias'         => array( 'id' ),
+					'number_format' => '9999.99'
+				),
 				'post_title'            => array(
 					'name'                => 'post_title',
 					'label'               => 'Title',
@@ -899,10 +906,11 @@ class Pods_API {
 					'hidden' => true
 				),
 				'menu_order'            => array(
-					'name'  => 'menu_order',
-					'label' => 'Menu Order',
-					'type'  => 'number',
-					'alias' => array()
+					'name'          => 'menu_order',
+					'label'         => 'Menu Order',
+					'type'          => 'number',
+					'alias'         => array(),
+					'number_format' => '9999.99'
 				),
 				'post_type'             => array(
 					'name'   => 'post_type',
@@ -945,6 +953,13 @@ class Pods_API {
 			}
 		} elseif ( 'user' == $object ) {
 			$fields = array(
+	            'ID'             => array(
+		            'name'          => 'ID',
+		            'label'         => 'ID',
+		            'type'          => 'number',
+		            'alias'         => array( 'id' ),
+		            'number_format' => '9999.99'
+	            ),
 				'user_login'      => array(
 					'name'     => 'user_login',
 					'label'    => 'Title',
@@ -999,6 +1014,13 @@ class Pods_API {
 			);
 		} elseif ( 'comment' == $object ) {
 			$fields = array(
+	            'comment_ID'       => array(
+		            'name'          => 'comment_ID',
+		            'label'         => 'ID',
+		            'type'          => 'number',
+		            'alias'         => array( 'id', 'ID', 'comment_id' ),
+		            'number_format' => '9999.99'
+	            ),
 				'comment_content'  => array(
 					'name'  => 'comment_content',
 					'label' => 'Content',
@@ -1006,10 +1028,11 @@ class Pods_API {
 					'alias' => array( 'content' )
 				),
 				'comment_approved' => array(
-					'name'  => 'comment_approved',
-					'label' => 'Approved',
-					'type'  => 'number',
-					'alias' => array( 'approved' )
+					'name'          => 'comment_approved',
+					'label'         => 'Approved',
+					'type'          => 'number',
+					'alias'         => array( 'approved' ),
+					'number_format' => '9999.99'
 				),
 				'comment_post_ID'  => array(
 					'name'  => 'comment_post_ID',
@@ -1077,6 +1100,13 @@ class Pods_API {
 			);
 		} elseif ( 'taxonomy' == $object ) {
 			$fields = array(
+				'term_id'          => array(
+					'name'          => 'term_id',
+					'label'         => 'ID',
+					'type'          => 'number',
+					'alias'         => array( 'id', 'ID' ),
+					'number_format' => '9999.99'
+				),
 				'name'             => array(
 					'name'  => 'name',
 					'label' => 'Title',
@@ -1112,25 +1142,28 @@ class Pods_API {
 					'hidden'      => true
 				),
 				'term_taxonomy_id' => array(
-					'name'   => 'term_taxonomy_id',
-					'label'  => 'Term Taxonomy ID',
-					'type'   => 'number',
-					'alias'  => array( 'term_taxonomy_id' ),
-					'hidden' => true
+					'name'          => 'term_taxonomy_id',
+					'label'         => 'Term Taxonomy ID',
+					'type'          => 'number',
+					'alias'         => array(),
+					'hidden'        => true,
+					'number_format' => '9999.99'
 				),
 				'term_group'       => array(
-					'name'   => 'term_group',
-					'label'  => 'Term Group',
-					'type'   => 'number',
-					'alias'  => array( 'term_group' ),
-					'hidden' => true
+					'name'          => 'term_group',
+					'label'         => 'Term Group',
+					'type'          => 'number',
+					'alias'         => array( 'group' ),
+					'hidden'        => true,
+					'number_format' => '9999.99'
 				),
 				'count'            => array(
-					'name'   => 'count',
-					'label'  => 'Count',
-					'type'   => 'number',
-					'alias'  => array( 'count' ),
-					'hidden' => true
+					'name'          => 'count',
+					'label'         => 'Count',
+					'type'          => 'number',
+					'alias'         => array(),
+					'hidden'        => true,
+					'number_format' => '9999.99'
 				)
 			);
 		}

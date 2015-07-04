@@ -8,7 +8,7 @@ class PodsWidgetView extends WP_Widget {
      * Register the widget
      */
     public function PodsWidgetView () {
-        $this->WP_Widget(
+	    parent::WP_Widget(
             'pods_widget_view',
             'Pods - View',
             array( 'classname' => 'pods_widget_view', 'description' => "Include a file from a theme, with caching options" ),

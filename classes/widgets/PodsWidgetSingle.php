@@ -8,7 +8,7 @@ class PodsWidgetSingle extends WP_Widget {
      * Register the widget
      */
     public function PodsWidgetSingle () {
-        $this->WP_Widget(
+	    parent::WP_Widget(
             'pods_widget_single',
             'Pods - Single Item',
             array( 'classname' => 'pods_widget_single', 'description' => 'Display a Single Pod Item' ),

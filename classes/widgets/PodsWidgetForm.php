@@ -5,7 +5,7 @@
 class PodsWidgetForm extends WP_Widget {
 
     public function PodsWidgetForm () {
-	    parent::WP_Widget(
+	    parent::__construct(
             'pods_widget_form',
             'Pods - Form',
             array( 'classname' => 'pods_widget_form', 'description' => 'Display a form for creating and editing Pod items' ),

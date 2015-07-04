@@ -8,7 +8,7 @@ class PodsWidgetField extends WP_Widget {
      * Register the widget
      */
     public function PodsWidgetField () {
-	    parent::WP_Widget(
+	    parent::__construct(
             'pods_widget_field',
             'Pods - Field Value',
             array( 'classname' => 'pods_widget_field', 'description' => "Display a single Pod item's field value" ),

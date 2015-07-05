@@ -978,7 +978,20 @@ class Pods_Data {
 		}
 
 		if ( ! empty( $params->orderby ) ) {
+			if ( 'post_type' == $pod[ 'type' ] && 'meta' == $pod[ 'storage' ] && is_array( $params->orderby ) ) {
+				foreach ( $params->orderby as $i => $orderby ) {
+					if ( strpos( $orderby, '.meta_value_num' ) ) {
+						$params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_num', '.meta_value', $orderby ) . ' AS DECIMAL)';
+					} elseif ( strpos( $orderby, '.meta_value_date' ) ) {
+						$params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_date', '.meta_value', $orderby  ) . ' AS DATE)';
+					}
+
+				}
+
+			}
+			
 			$params->orderby = (array) $params->orderby;
+
 		} else {
 			$params->orderby = array();
 		}

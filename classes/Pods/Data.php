@@ -978,6 +978,8 @@ class Pods_Data {
 		}
 
 		if ( ! empty( $params->orderby ) ) {
+			$params->orderby = (array) $params->orderby;
+			
 			if ( 'post_type' == $pod[ 'type' ] && 'meta' == $pod[ 'storage' ] && is_array( $params->orderby ) ) {
 				foreach ( $params->orderby as $i => $orderby ) {
 					if ( strpos( $orderby, '.meta_value_num' ) ) {
@@ -989,8 +991,7 @@ class Pods_Data {
 				}
 
 			}
-			
-			$params->orderby = (array) $params->orderby;
+
 
 		} else {
 			$params->orderby = array();

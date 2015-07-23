@@ -44,7 +44,7 @@ before_script:
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    - vendor/bin/phpunit
+    - vendor/bin/phpunit --coverage-clover=coverage.clover
 
 branches:
     only:

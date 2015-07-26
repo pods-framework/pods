@@ -2,7 +2,7 @@ filter:
     excluded_paths: [vendor/*, tests/*, .tx/*, languages/*, includes/libraries/*, bin/*, assets/*, templates/* ]
     
 before_commands:
-    - 'composer install --dev --prefer-source'
+    - 'composer install --no-interaction --prefer-source'
     
 tools:
     external_code_coverage:

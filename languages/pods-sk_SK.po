@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Pods Framework package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2014-06-25 08:42:58+0000\n"
+"PO-Revision-Date: 2015-08-04 18:13:03+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: GlotPress/1.0-alpha-1000\n"
+"X-Generator: GlotPress/1.0-alpha-1100\n"
 "Project-Id-Version: Pods Framework\n"
 
 #: classes/PodsUI.php:2352
@@ -121,19 +121,19 @@ msgstr ""
 
 #: ui/admin/setup-edit.php:630
 msgid "Associated Post Types"
-msgstr ""
+msgstr "Pridruzene Post Typy"
 
 #: ui/admin/setup-edit.php:668
 msgid "Detail Page URL"
-msgstr ""
+msgstr "Detail Page URL"
 
 #: ui/admin/setup-edit.php:682
 msgid "Title Field"
-msgstr ""
+msgstr "Nazov pola"
 
 #: ui/admin/setup-edit.php:682
 msgid "If you delete the \"name\" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field."
-msgstr ""
+msgstr "Ak odstranite \"name\" pola, musime specifikovat pole pouzit ako primarny pole nazvu. Toto pole bude sluzit ako index obsahu. Najcastejsie toto pole predstavuje nazov osoby, miesta , vec, alebo zhrnutie pole. "
 
 #: ui/admin/setup-edit.php:700
 msgid "No Hierarchical Fields found"
@@ -145,19 +145,19 @@ msgstr ""
 
 #: ui/admin/setup-edit.php:722
 msgid "Pre-Save Helper(s)"
-msgstr ""
+msgstr "Pre-Save Helper (y)"
 
 #: ui/admin/setup-edit.php:736
 msgid "Post-Save Helper(s)"
-msgstr ""
+msgstr "Post-Save Helper (y)"
 
 #: ui/admin/setup-edit.php:750
 msgid "Pre-Delete Helper(s)"
-msgstr ""
+msgstr "Pre-Delete Helper (y)"
 
 #: ui/admin/setup-edit.php:764
 msgid "Post-Delete Helper(s)"
-msgstr ""
+msgstr "Post-Delete Helper (y)"
 
 #: ui/admin/setup-edit.php:797
 msgid "Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table."
@@ -173,7 +173,7 @@ msgstr ""
 
 #: ui/admin/setup-edit.php:823
 msgid "Are you sure you want to delete this Pod? All fields and data will be removed."
-msgstr ""
+msgstr "Ste si isti, ze chcete zmazat tuto Pod Vsetky polia a data budu odstranene."
 
 #: ui/admin/setup-edit.php:931
 msgid "Loading available fields.."
@@ -189,19 +189,19 @@ msgstr ""
 
 #: ui/admin/shortcode.php:318
 msgid "Pods &raquo; Embed"
-msgstr ""
+msgstr "Pods» Embed "
 
 #: ui/admin/shortcode.php:323
 msgid "What would you like to do?"
-msgstr ""
+msgstr "Co chcete robit?"
 
 #: ui/admin/shortcode.php:327
 msgid "List multiple Pod items"
-msgstr ""
+msgstr "Zoznam viac Pod poloziek"
 
 #: ui/admin/shortcode.php:328
 msgid "Display a field from a single Pod item"
-msgstr ""
+msgstr "Zobrazit pola z jednej Pod polozku"
 
 #: ui/admin/shortcode.php:329
 msgid "Display a field from this item"
@@ -221,15 +221,15 @@ msgstr ""
 
 #: ui/admin/shortcode.php:418 ui/admin/widgets/form.php:43
 msgid "ID or Slug"
-msgstr ""
+msgstr "ID alebo Slug"
 
 #: ui/admin/shortcode.php:500
 msgid "Insert"
-msgstr ""
+msgstr "Vlozit"
 
 #: ui/admin/upgrade/backup.php:1
 msgid "We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below."
-msgstr ""
+msgstr "Odporucame zalohovat databazu hore, moze to naozaj usetrit do prekernej situacie, alebo naozaj podivne situacii, ze nemusi byt v ocakavani. Pozrite sa na niekolko moznosti, si myslime, ze su <em> skvele </ em> nizsie."
 
 #: ui/admin/upgrade/backup.php:7
 msgid "Receive 25% off"
@@ -237,35 +237,35 @@ msgstr ""
 
 #: ui/admin/upgrade/backup.php:9
 msgid "Coupon Code"
-msgstr ""
+msgstr "Kod poukazky"
 
 #: ui/admin/upgrade/backup.php:12
 msgid "The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations."
-msgstr ""
+msgstr "all-in-one WordPress zalohovanie plugin pre jednoduche zalohovanie, obnovenie a prejst na lubovolny pocet miestnych alebo vonkajsich miestach."
 
 #: ui/admin/upgrade/backup.php:17
 msgid "1 free month"
-msgstr ""
+msgstr "1 mesiac zadarmo"
 
 #: ui/admin/upgrade/backup.php:19
 msgid "Click to sign up"
-msgstr ""
+msgstr "Kliknite pre prihlasenie"
 
 #: ui/admin/upgrade/backup.php:22
 msgid "A service that provides realtime continuous backups, restores, and security scanning."
-msgstr ""
+msgstr "sluzbu, ktora poskytuje v realnom case kontinualne zalohovanie, obnovenie a zabezpecenie skenovania."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:10 ui/admin/upgrade/upgrade_2_1_0.php:10
 msgid "Upgrade Pods"
-msgstr ""
+msgstr "Aktualizacia Pods"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:18 ui/admin/upgrade/upgrade_2_1_0.php:18
 msgid "Getting Started"
-msgstr ""
+msgstr "Zaciname"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:22 ui/admin/upgrade/upgrade_2_1_0.php:22
 msgid "Prepare"
-msgstr ""
+msgstr "Pripravte"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:39
 msgid "Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that."
@@ -273,66 +273,66 @@ msgstr ""
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:53
 msgid "We will prepare all of your Pods, Settings, and Content for migration. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for Migration."
-msgstr ""
+msgstr "Pripravime vsetky vase Pods, nastavenia a obsahu pre migraciu. Pokial budu najdene chyby, ktore sa zobrazi pod za Vas komentar. Uistite sa, ze zalohovat databazu pred pokracovanim k dalsiemu kroku pre migraciu."
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:61
 msgid "Preparing Your Content for Migration"
-msgstr ""
+msgstr "Priprava obsahu pre migraciu"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:95 ui/admin/upgrade/upgrade_2_0_0.php:211
 #: ui/admin/upgrade/upgrade_2_1_0.php:71 ui/admin/upgrade/upgrade_2_1_0.php:101
 msgid "Relationships"
-msgstr ""
+msgstr "Vztahy"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:105
 msgid "Item Indexes"
-msgstr ""
+msgstr "Polozka Indexes"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:115
 #: ui/admin/upgrade/upgrade_2_0_0.php:231
 msgid "Templates"
-msgstr ""
+msgstr "Sablony"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:125
 #: ui/admin/upgrade/upgrade_2_0_0.php:241
 msgid "Pod Pages"
-msgstr ""
+msgstr "Pod stranky"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:135
 #: ui/admin/upgrade/upgrade_2_0_0.php:251
 msgid "Helpers"
-msgstr ""
+msgstr "Pomocnici"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:148
 #: ui/admin/upgrade/upgrade_2_0_0.php:264
 msgid "Content"
-msgstr ""
+msgstr "Obsah"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:163
 msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.x architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
-msgstr ""
+msgstr "Pocas tohto procesu bude vasa Pods, Nastavenie, a obsah sa stahoval do optimalizovaneho struky 2.x. architektury. Budeme neodstrani ziadne z vasich starych dat, budu tabulky zostanu, kym sa nerozhodnete je cistit po uspesnom upgradu. "
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:171
 msgid "Migrating Your Content"
-msgstr ""
+msgstr "Migracia vasho obsahu"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:181
 msgid "1.x Updates"
-msgstr ""
+msgstr "1.x aktualizacie"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:277
 #: ui/admin/upgrade/upgrade_2_1_0.php:111
 msgid "Cleanup"
-msgstr ""
+msgstr "vycistenie"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:123
 msgid "Start using Pods"
-msgstr ""
+msgstr "Zacat pouzivat struky"
 
 #: ui/admin/upgrade/upgrade_2_0_0.php:292
 msgid "Migration Complete!"
-msgstr ""
+msgstr "Migracia Kompletne!"
 
 #: ui/admin/upgrade/upgrade_2_1_0.php:39
 msgid "We need to run a few updates to your database to optimize your relationship data."
@@ -372,15 +372,15 @@ msgstr ""
 
 #: ui/fields/plupload.php:43
 msgid "Allowed Files"
-msgstr ""
+msgstr "Povolene subory"
 
 #: ui/fields/plupload.php:272
 msgid "There was an issue with the file upload, please try again."
-msgstr ""
+msgstr "Doslo k problemu s upload, prosim skuste to znova."
 
 #: ui/fields/select2.php:158 ui/fields/select2.php:165
 msgid "Start Typing..."
-msgstr ""
+msgstr "Zacnite pisat ..."
 
 #: ui/admin/settings-reset.php:91
 msgid "Reset Pods settings and data"
@@ -403,7 +403,7 @@ msgstr ""
 
 #: ui/admin/settings-settings.php:1
 msgid "The following are settings provided for advanced site configurations."
-msgstr ""
+msgstr "su nasledujuce nastavenia pre pokrocilych webe konfiguracie."
 
 #: ui/admin/settings-tools.php:19 ui/admin/settings-tools.php:24
 msgid "Clear Pods Cache"
@@ -415,27 +415,27 @@ msgstr ""
 
 #: ui/admin/settings-tools.php:29
 msgid "Debug Information"
-msgstr ""
+msgstr "Debug Information"
 
 #: ui/admin/settings.php:12
 msgid "Cleanup &amp; Reset"
-msgstr ""
+msgstr "Cleanup & Reset"
 
 #: ui/admin/setup-add.php:16
 msgid "Add New Pod"
-msgstr ""
+msgstr "Pridat novy Pod"
 
 #: ui/admin/setup-add.php:23 ui/admin/setup-edit.php:817
 msgid "Back to Manage"
-msgstr ""
+msgstr "Spat na Sprava"
 
 #: ui/admin/setup-add.php:35
 msgid "Create or Extend"
-msgstr ""
+msgstr "Vytvorit alebo rozsirit"
 
 #: ui/admin/setup-add.php:39
 msgid "Configure"
-msgstr ""
+msgstr "Konfiguracia"
 
 #: ui/admin/setup-add.php:48
 msgid "Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments."
@@ -447,7 +447,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:57
 msgid "Create New"
-msgstr ""
+msgstr "Vytvorit novy"
 
 #: ui/admin/setup-add.php:59
 msgid "Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>."
@@ -455,11 +455,11 @@ msgstr ""
 
 #: ui/admin/setup-add.php:65
 msgid "Extend Existing"
-msgstr ""
+msgstr "Rozsirenie existujucej"
 
 #: ui/admin/setup-add.php:67
 msgid "Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>."
-msgstr ""
+msgstr "Rozsirit existujuci typ obsahu do WordPress, vratane <strong>Post Types</strong> (Prispevky, stranky, atd), <strong>Taxonomia</strong> (kategorie, slova, atd), <strong>Media</strong>, <strong>Uzivatelske</strong>, alebo <strong>Komentare</strong>."
 
 #: ui/admin/setup-add.php:76
 msgid "Creating a new Content Type allows you to control exactly what that content type does, how it acts like, the fields it has, and the way you manage it."
@@ -471,7 +471,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:84 ui/admin/setup-add.php:224
 msgid "Content Type"
-msgstr ""
+msgstr "Typ obsahu"
 
 #: ui/admin/setup-add.php:84 ui/admin/setup-add.php:224
 msgid "<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best."
@@ -479,11 +479,11 @@ msgstr ""
 
 #: ui/admin/setup-add.php:87
 msgid "Custom Post Type (like Posts or Pages)"
-msgstr ""
+msgstr "Vlastne Post Type (ako prispevky alebo stranky)"
 
 #: ui/admin/setup-add.php:88
 msgid "Custom Taxonomy (like Categories or Tags)"
-msgstr ""
+msgstr "Vlastne Taxonomia (ako kategorie alebo znacky)"
 
 #: ui/admin/setup-add.php:107 ui/admin/setup-add.php:309
 msgid "Enable Extra Fields?"
@@ -503,7 +503,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:124 ui/admin/setup-edit.php:334
 msgid "Singular Label"
-msgstr ""
+msgstr "Singular Label"
 
 #: ui/admin/setup-add.php:124
 msgid "<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content."
@@ -511,7 +511,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:130
 msgid "Plural Label"
-msgstr ""
+msgstr "Mnozne cislo Label"
 
 #: ui/admin/setup-add.php:130
 msgid "<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content."
@@ -547,15 +547,15 @@ msgstr ""
 
 #: ui/admin/setup-add.php:199 ui/admin/setup-add.php:335
 msgid "Meta Based (WP Default)"
-msgstr ""
+msgstr "Meta Based (WP predvolene)"
 
 #: ui/admin/setup-add.php:200 ui/admin/setup-add.php:336
 msgid "Table Based"
-msgstr ""
+msgstr "Tabulka zaklade"
 
 #: ui/admin/setup-add.php:215
 msgid "Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming."
-msgstr ""
+msgstr "Rozsirenie existujucej typ obsahu umoznuje pridat pole do nej a vyuzit architektury struky pre riadenie a pripadne pre motivov."
 
 #: ui/admin/setup-add.php:218
 msgid "Extend an Existing Content Type"
@@ -563,11 +563,11 @@ msgstr ""
 
 #: ui/admin/setup-add.php:227
 msgid "Post Types (Posts, Pages, etc..)"
-msgstr ""
+msgstr "Prispevok Typy (Prispevky, stranky, atd.)"
 
 #: ui/admin/setup-add.php:270 ui/admin/setup-edit.php:856
 msgid "Post Type"
-msgstr ""
+msgstr "Post Type"
 
 #: ui/admin/setup-add.php:270
 msgid "<h6>Post Types</h6> WordPress can hold and display many different types of content. Internally, these are all stored in the same place, in the wp_posts table. These are differentiated by a column called post_type."
@@ -575,7 +575,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:299 ui/admin/setup-edit.php:857
 msgid "Taxonomy"
-msgstr ""
+msgstr "Taxonomia"
 
 #: ui/admin/setup-add.php:299
 msgid "<h6>Taxonomies</h6> A taxonomy is a way to group Post Types."
@@ -583,17 +583,17 @@ msgstr ""
 
 #: ui/admin/setup-edit-field-fluid.php:8 ui/admin/setup-edit-field.php:48
 msgid "Move"
-msgstr ""
+msgstr "Presunut"
 
 #: ui/admin/setup-edit-field-fluid.php:11
 #: ui/admin/setup-edit-field-fluid.php:17 ui/admin/setup-edit-field.php:51
 #: ui/admin/setup-edit-field.php:67
 msgid "Edit this field"
-msgstr ""
+msgstr "Upravit toto pole"
 
 #: ui/admin/setup-edit-field-fluid.php:12
 msgid "New Field"
-msgstr ""
+msgstr "Nove pole"
 
 #: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
 msgid "Duplicate this field"
@@ -601,27 +601,27 @@ msgstr ""
 
 #: ui/admin/setup-edit-field-fluid.php:23 ui/admin/setup-edit-field.php:73
 msgid "Delete this field"
-msgstr ""
+msgstr "Zmazat tento plan"
 
 #: ui/admin/setup-edit-field-fluid.php:66
 msgid "You will use this name to programatically reference this field throughout WordPress"
-msgstr ""
+msgstr "Budete pouzivat tento nazov k programatically odkazovat na toto pole v celom WordPress"
 
 #: ui/admin/setup-edit-field-fluid.php:74
 msgid "Field Type"
-msgstr ""
+msgstr "Pole Typ"
 
 #: ui/admin/setup-edit-field-fluid.php:79
 msgid "Related To"
-msgstr ""
+msgstr "vztahujuce sa na"
 
 #: ui/admin/setup-edit-field-fluid.php:83
 msgid "Custom Defined Options"
-msgstr ""
+msgstr "Vlastne definovane moznosti"
 
 #: ui/admin/setup-edit-field-fluid.php:83
 msgid "One option per line, use <em>value|Label</em> for separate values and labels"
-msgstr ""
+msgstr "Jednou z moznosti na riadku, pouzite <em> hodnotu | Label </ em> pre jednotlive hodnoty a stitky"
 
 #: ui/admin/setup-edit-field-fluid.php:87
 msgid "Related Table"
@@ -637,28 +637,28 @@ msgstr ""
 
 #: ui/admin/setup-edit-field-fluid.php:100
 msgid "Options"
-msgstr ""
+msgstr "Moznosti"
 
 #: ui/admin/setup-edit-field-fluid.php:106
 msgid "Required"
-msgstr ""
+msgstr "Povinne"
 
 #: ui/admin/setup-edit-field-fluid.php:112
 msgid "Unique"
-msgstr ""
+msgstr "Unique"
 
 #: ui/admin/setup-edit-field-fluid.php:187
 msgid "Delete Field"
-msgstr ""
+msgstr "Odstranit Field"
 
 #: ui/admin/setup-edit-field-fluid.php:190
 msgid "Update Field"
-msgstr ""
+msgstr "Aktualizacia Field"
 
 #: ui/admin/setup-edit-field-fluid.php:190 ui/admin/setup-edit.php:242
 #: ui/admin/setup-edit.php:315
 msgid "Add Field"
-msgstr ""
+msgstr "Pridat pole"
 
 #: ui/admin/setup-edit.php:15
 msgid "Extra fields were successfully enabled for this Custom Taxonomy."
@@ -667,7 +667,7 @@ msgstr ""
 #: ui/admin/setup-edit.php:50 ui/admin/setup-edit.php:51
 #: ui/admin/setup-edit.php:53
 msgid "Other"
-msgstr ""
+msgstr "Dalsi"
 
 #: ui/admin/setup-edit.php:92
 msgid "-- Select Table --"
@@ -679,105 +679,105 @@ msgstr ""
 
 #: ui/admin/setup-edit.php:260 ui/admin/setup-edit.php:276
 msgid "<h6>Label</h6>The label is the descriptive name to identify the Pod field."
-msgstr ""
+msgstr "<h6> Label </ h6> stitok je popisny nazov pre identifikaciu Pod pole."
 
 #: ui/admin/setup-edit.php:263 ui/admin/setup-edit.php:279
 msgid "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically."
-msgstr ""
+msgstr "<h6> Meno </ h6> Atribut name je to, co sa pouziva na identifikaciu a pristup k Pod pole programatically."
 
 #: ui/admin/setup-edit.php:266 ui/admin/setup-edit.php:282
 msgid "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc."
-msgstr ""
+msgstr "Typy <h6> pole </ h6> typy poli sa pouzivaju na urcenie, aky druh dat bude ulozena v Pod. Oni mozu siahat od, data, text, subory, atd"
 
 #: ui/admin/setup-edit.php:342
 msgid "Add New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "Pridat novy <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> polozka </ span>"
 
 #: ui/admin/setup-edit.php:346
 msgid "New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "Nova <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> C </ span>"
 
 #: ui/admin/setup-edit.php:354
 msgid "Edit <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "Upravit <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> polozka </ span>"
 
 #: ui/admin/setup-edit.php:358
 msgid "Update <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "Aktualizacia <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> C </ span>"
 
 #: ui/admin/setup-edit.php:366
 msgid "View <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "Zobrazit <span class=\"pods-slugged\" data-sluggable=\"label_singular\"> polozka </ span>"
 
 #: ui/admin/setup-edit.php:370
 msgid "All <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr ""
+msgstr "Vsetky <span class=\"pods-slugged\" data-sluggable=\"label\"> Polozky </ span>"
 
 #: ui/admin/setup-edit.php:374
 msgid "Search <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr ""
+msgstr "Hladat <span class=\"pods-slugged\" data-sluggable=\"label\"> Polozky </ span>"
 
 #: ui/admin/setup-edit.php:378
 msgid "Not Found"
-msgstr ""
+msgstr "Not Found"
 
 #: ui/admin/setup-edit.php:386
 msgid "Not Found in Trash"
-msgstr ""
+msgstr "Nebolo najdene v kosi"
 
 #: ui/admin/setup-edit.php:394
 msgid "Popular <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
-msgstr ""
+msgstr "Oblubene <span class=\"pods-slugged\" data-sluggable=\"label\"> Polozky </ span>"
 
 #: ui/admin/setup-edit.php:398
 msgid "Separate <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> with commas"
-msgstr ""
+msgstr "Samostatne <span class=\"pods-slugged-lower\" data-sluggable=\"label\"> poloziek </ span> s ciarkami"
 
 #: ui/admin/setup-edit.php:402
 msgid "Add or remove <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
-msgstr ""
+msgstr "Pridat alebo odobrat <span class=\"pods-slugged-lower\" data-sluggable=\"label\"> polozky </ span>"
 
 #: ui/admin/setup-edit.php:406
 msgid "Choose from the most used"
-msgstr ""
+msgstr "Vyberte si z najpouzivanejsich"
 
 #: ui/admin/setup-edit.php:441
 msgid "Supports"
-msgstr ""
+msgstr "Podpora"
 
 #: ui/admin/setup-edit.php:448 ui/admin/widgets/field.php:15
 #: ui/admin/widgets/form.php:15 ui/admin/widgets/list.php:17
 #: ui/admin/widgets/single.php:17 ui/admin/widgets/view.php:15
 msgid "Title"
-msgstr ""
+msgstr "Nazov"
 
 #: ui/admin/setup-edit.php:458
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: ui/admin/setup-edit.php:463
 msgid "Featured Image"
-msgstr ""
+msgstr "Najlepsi obrazok"
 
 #: ui/admin/setup-edit.php:468
 msgid "Excerpt"
-msgstr ""
+msgstr "Vypis"
 
 #: ui/admin/setup-edit.php:473
 msgid "Trackbacks"
-msgstr ""
+msgstr "Spatne odkazy"
 
 #: ui/admin/setup-edit.php:478
 msgid "Custom Fields"
-msgstr ""
+msgstr "Vlastne pole"
 
 #: ui/admin/setup-edit.php:488
 msgid "Revisions"
-msgstr ""
+msgstr "Revizia"
 
 #: ui/admin/setup-edit.php:493
 msgid "Page Attributes"
-msgstr ""
+msgstr "Page Attributes"
 
 #: ui/admin/setup-edit.php:505
 msgid "Genesis: SEO"
@@ -813,19 +813,19 @@ msgstr ""
 
 #: ui/admin/setup-edit.php:549
 msgid "Built-in Taxonomies"
-msgstr ""
+msgstr "Built-in Taxonomia"
 
 #: ui/admin/setup-edit.php:601
 msgid "Allow Front Prepend"
-msgstr ""
+msgstr "Povolit Front predradit"
 
 #: ui/admin/setup-edit.php:601
 msgid "Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)"
-msgstr ""
+msgstr "Umoznuje permalinks byt prepended s prednou zakladnou (priklad: ak vase permalink struktura je / blog /, potom sa vase odkazy budu: Checked-> / novinky /, Nekontrolovana-> / blog / news /)"
 
 #: ui/admin/setup-edit.php:605
 msgid "Hierarchical Permalinks"
-msgstr ""
+msgstr "Hierarchicke Permalinks"
 
 #: ui/admin/setup-edit.php:615
 msgid "Custom Query Var Name"
@@ -833,15 +833,15 @@ msgstr ""
 
 #: classes/PodsAPI.php:4721
 msgid "$params->pod_id instead of $params->datatype_id"
-msgstr ""
+msgstr "$ params-> pod_id miesto $ params-> datatype_id"
 
 #: classes/PodsUI.php:3721 classes/PodsUI.php:3739
 msgid "Show on screen"
-msgstr ""
+msgstr "Zobrazit na obrazovke"
 
 #: components/Migrate-CPTUI/ui/wizard.php:15
 msgid "Migrate: Import from Custom Post Type UI"
-msgstr ""
+msgstr "Migracia: Import z vlastnej Post Type UI"
 
 #: classes/PodsAPI.php:4734
 msgid "Pod Item not found"
@@ -849,32 +849,32 @@ msgstr ""
 
 #: classes/PodsUI.php:3852
 msgid "Go to the first page"
-msgstr ""
+msgstr "Prejst na prvu stranku"
 
 #: components/Migrate-CPTUI/ui/wizard.php:23
 msgid "Setup"
-msgstr ""
+msgstr "Nastavenia"
 
 #: classes/PodsAPI.php:4777
 msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
-msgstr ""
+msgstr "Pre-delete pomocnici su zastarane, pouzite akciu pods_pre_delete_pod_item_% s namiesto"
 
 #: classes/PodsUI.php:3853
 msgid "Go to the previous page"
-msgstr ""
+msgstr "Prejst na predchadzajucu stranku"
 
 #: components/Migrate-CPTUI/ui/wizard.php:27
 #: ui/admin/upgrade/upgrade_2_0_0.php:26
 msgid "Migrate"
-msgstr ""
+msgstr "Preniest"
 
 #: classes/PodsAPI.php:4814
 msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
-msgstr ""
+msgstr "Post-delete pomocnici su zastarane, pouzite akciu pods_post_delete_pod_item_% s namiesto"
 
 #: classes/PodsUI.php:3857
 msgid "Current page"
-msgstr ""
+msgstr "Aktualna stranka"
 
 #: components/Migrate-CPTUI/ui/wizard.php:35
 msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
@@ -884,15 +884,15 @@ msgstr ""
 #: ui/admin/setup-edit.php:855 ui/admin/upgrade/upgrade_2_0_0.php:75
 #: ui/admin/upgrade/upgrade_2_0_0.php:191
 msgid "Pods"
-msgstr ""
+msgstr "Pods"
 
 #: classes/PodsUI.php:3857 classes/PodsUI.php:3879
 msgid "of"
-msgstr ""
+msgstr "z"
 
 #: components/Migrate-CPTUI/ui/wizard.php:40
 msgid "Import Only"
-msgstr ""
+msgstr "Importovat iba"
 
 #: classes/PodsAPI.php:5178
 #: components/Builder/modules/field/PodsBuilderModuleField.php:77
@@ -903,15 +903,15 @@ msgstr ""
 #: ui/admin/widgets/form.php:26 ui/admin/widgets/list.php:28
 #: ui/admin/widgets/single.php:28
 msgid "Pod"
-msgstr ""
+msgstr "Pod"
 
 #: classes/PodsUI.php:3883
 msgid "Go to the next page"
-msgstr ""
+msgstr "Prejst na dalsiu stranku"
 
 #: components/Migrate-CPTUI/ui/wizard.php:42
 msgid "This will import your Custom Post Types and Taxonomies."
-msgstr ""
+msgstr "Toto bude importovat vlastne Rozmiestnit typy a taxonomii."
 
 #: classes/PodsAPI.php:5187
 msgid "Pod Fields"
@@ -919,11 +919,11 @@ msgstr ""
 
 #: classes/PodsUI.php:3884
 msgid "Go to the last page"
-msgstr ""
+msgstr "Prejst na poslednu stranku"
 
 #: components/Migrate-CPTUI/ui/wizard.php:49
 msgid "Import and Clean Up"
-msgstr ""
+msgstr "Import a Clean Up"
 
 #: classes/PodsAPI.php:5191
 msgid "Pod Field"
@@ -935,15 +935,15 @@ msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:51
 msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
-msgstr ""
+msgstr "Toto bude importovat vlastne Rozmiestnit typy a taxonomii, a potom odstranit z vlastnej UI Post typ."
 
 #: classes/PodsAPI.php:5717
 msgid "Either Field Name or Field ID / Pod ID are required"
-msgstr ""
+msgstr "Bud pola Nazov alebo pola ID / Pod ID je nutne vyplnit"
 
 #: classes/fields/avatar.php:72 classes/fields/file.php:93
 msgid "Attachments (WP Media Library)"
-msgstr ""
+msgstr "Prilohy (WP Media Library)"
 
 #: components/Migrate-CPTUI/ui/wizard.php:60
 msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
@@ -955,65 +955,65 @@ msgstr ""
 
 #: classes/fields/avatar.php:73 classes/fields/file.php:94
 msgid "Plupload"
-msgstr ""
+msgstr "Plupload"
 
 #: components/Migrate-CPTUI/ui/wizard.php:64
 msgid "Choose Post Types to Import"
-msgstr ""
+msgstr "Vyberte posta Typy Import"
 
 #: classes/PodsAPI.php:6002
 msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
-msgstr ""
+msgstr "Bud Field Name / Polne ID / Field Type, alebo Pod Meno / Pod ID je nutne vyplnit"
 
 #: classes/fields/avatar.php:79 classes/fields/file.php:100
 msgid "Attachments Default Tab"
-msgstr ""
+msgstr "Prilohy Vychodiskova Tab"
 
 #: components/Migrate-CPTUI/ui/wizard.php:72
 msgid "Available Post Types"
-msgstr ""
+msgstr "Dostupne Post Typy"
 
 #: classes/PodsAPI.php:6063
 msgid "Object type is required"
-msgstr ""
+msgstr "Typ objektu je nutne"
 
 #: classes/fields/avatar.php:85 classes/fields/avatar.php:120
 #: classes/fields/file.php:106 classes/fields/file.php:195
 msgid "Upload File"
-msgstr ""
+msgstr "Nahrat subor"
 
 #: components/Migrate-CPTUI/ui/wizard.php:97
 msgid "No Post Types were found."
-msgstr ""
+msgstr "Ziadne posta Typy Neboli najdene."
 
 #: classes/PodsAPI.php:6066
 msgid "Either Object ID or Name are required"
-msgstr ""
+msgstr "Bud Object ID alebo nazov musi"
 
 #: classes/fields/avatar.php:86 classes/fields/avatar.php:121
 #: classes/fields/file.php:107 classes/fields/file.php:196
 msgid "Media Library"
-msgstr ""
+msgstr "Kniznica medii"
 
 #: components/Migrate-CPTUI/ui/wizard.php:105
 msgid "Choose Taxonomies to Import"
-msgstr ""
+msgstr "Vyberte Taxonomia Import"
 
 #: classes/PodsAPI.php:6083
 msgid "Object not found"
-msgstr ""
+msgstr "Objekt nebol najdeny"
 
 #: classes/fields/avatar.php:90 classes/fields/file.php:127
 msgid "Restrict File Size"
-msgstr ""
+msgstr "Obmedzit velkost suboru"
 
 #: components/Migrate-CPTUI/ui/wizard.php:113
 msgid "Available Taxonomies"
-msgstr ""
+msgstr "Dostupne Taxonomia"
 
 #: classes/PodsAPI.php:6126
 msgid "Pods Object type is required"
-msgstr ""
+msgstr "Pods Typ objektu je nutne"
 
 #: classes/fields/avatar.php:96 classes/fields/file.php:170
 msgid "Add Button Text"
@@ -1021,18 +1021,18 @@ msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:136
 msgid "No Taxonomies were found."
-msgstr ""
+msgstr "Ziadne Taxonomia Neboli najdene."
 
 #: classes/PodsAPI.php:6379
 msgid "Pod name required"
-msgstr ""
+msgstr "Pod nazov potrebna"
 
 #: classes/fields/avatar.php:97 classes/fields/avatar.php:109
 #: classes/fields/file.php:171 classes/fields/file.php:183
 #: ui/fields/attachment.php:102 ui/fields/media.php:132 ui/fields/media.php:145
 #: ui/fields/plupload.php:159
 msgid "Add File"
-msgstr ""
+msgstr "Pridat subor"
 
 #: components/Migrate-CPTUI/ui/wizard.php:146
 #: components/Migrate-Packages/ui/wizard.php:279
@@ -1040,11 +1040,11 @@ msgstr ""
 #: ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:123
 msgid "Start Over"
-msgstr ""
+msgstr "Zacat znova"
 
 #: classes/PodsAPI.php:6381
 msgid "Item ID required"
-msgstr ""
+msgstr "Polozka ID potrebna"
 
 #: classes/fields/avatar.php:101 classes/fields/file.php:175
 msgid "Modal Title"
@@ -1054,11 +1054,11 @@ msgstr ""
 #: ui/admin/setup-add.php:354 ui/admin/upgrade/upgrade_2_0_0.php:289
 #: ui/admin/upgrade/upgrade_2_1_0.php:123
 msgid "Next Step"
-msgstr ""
+msgstr "Dalsi krok"
 
 #: classes/PodsAPI.php:6445
 msgid "Related Pod not found"
-msgstr ""
+msgstr "Suvisiace Pod nebol najdeny"
 
 #: classes/fields/avatar.php:103 classes/fields/file.php:177
 #: ui/fields/media.php:144
@@ -1069,11 +1069,11 @@ msgstr ""
 #: components/Migrate-Packages/ui/wizard.php:279
 #: components/Roles/ui/add.php:122 ui/admin/setup-add.php:354
 msgid "Finished"
-msgstr ""
+msgstr "Hotovo"
 
 #: classes/PodsAPI.php:6562
 msgid "%s is empty"
-msgstr ""
+msgstr "% s je prazdny"
 
 #: classes/fields/avatar.php:107 classes/fields/file.php:181
 msgid "Modal Add Button Text"
@@ -1083,7 +1083,7 @@ msgstr ""
 #: components/Migrate-Packages/ui/wizard.php:279
 #: components/Roles/ui/add.php:122 ui/admin/setup-add.php:354
 msgid "Processing"
-msgstr ""
+msgstr "Spracovanie"
 
 #: classes/PodsAPI.php:6578 classes/fields/email.php:190
 msgid "%s is required"
@@ -1100,11 +1100,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:6605
 msgid "%s needs to be unique"
-msgstr ""
+msgstr "% s je potrebne byt jedinecny"
 
 #: classes/fields/boolean.php:56
 msgid "Checkbox"
-msgstr ""
+msgstr "Zaskrtavacie policko"
 
 #: components/Migrate-Packages/ui/wizard.php:23
 msgid "Choose"
@@ -1112,11 +1112,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:7893
 msgid "Invalid submission"
-msgstr ""
+msgstr "Neplatny predlozenie"
 
 #: classes/fields/boolean.php:57 classes/fields/pick.php:145
 msgid "Radio Buttons"
-msgstr ""
+msgstr "Radio Buttons"
 
 #: components/Migrate-Packages/ui/wizard.php:27
 msgid "Import / Export"
@@ -1124,11 +1124,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:7905
 msgid "Access denied for your session, please refresh and try again."
-msgstr ""
+msgstr "Pristup bol odmietnuty pre relaciu, prosim, osviezi a skuste to znova."
 
 #: classes/fields/boolean.php:58 classes/fields/pick.php:144
 msgid "Drop Down"
-msgstr ""
+msgstr "Drop Down"
 
 #: components/Migrate-Packages/ui/wizard.php:50
 #: components/Migrate-Packages/ui/wizard.php:85
@@ -1138,11 +1138,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:7908
 msgid "Access denied, please refresh and try again."
-msgstr ""
+msgstr "Pristup bol odmietnuty, je nutne aktualizovat a skuste to znova."
 
 #: classes/fields/boolean.php:63
 msgid "Yes Label"
-msgstr ""
+msgstr "Ano Label"
 
 #: components/Migrate-Packages/ui/wizard.php:56
 msgid "Import"
@@ -1151,11 +1151,11 @@ msgstr ""
 #: classes/PodsAdmin.php:231 classes/PodsAdmin.php:843
 #: classes/PodsAdmin.php:1965
 msgid "All"
-msgstr ""
+msgstr "Vsetko"
 
 #: classes/fields/boolean.php:68
 msgid "No Label"
-msgstr ""
+msgstr "No Label"
 
 #: components/Migrate-Packages/ui/wizard.php:58
 msgid "Import a package of Pods, Fields, and other settings from another site."
@@ -1166,7 +1166,7 @@ msgstr ""
 #: classes/PodsUI.php:3520 ui/admin/setup-edit-field-fluid.php:17
 #: ui/admin/setup-edit-field.php:67 ui/admin/setup-edit.php:350
 msgid "Edit"
-msgstr ""
+msgstr "Upravit"
 
 #: classes/fields/code.php:59 classes/fields/color.php:49
 #: classes/fields/currency.php:91 classes/fields/date.php:58
@@ -1188,7 +1188,7 @@ msgstr ""
 #: classes/PodsAdmin.php:1390 classes/PodsInit.php:839 classes/PodsUI.php:927
 #: classes/PodsUI.php:948 ui/admin/setup-edit.php:338
 msgid "Add New"
-msgstr ""
+msgstr "Pridat nove"
 
 #: classes/fields/code.php:62 classes/fields/color.php:52
 #: classes/fields/currency.php:94 classes/fields/date.php:61
@@ -1207,13 +1207,13 @@ msgstr ""
 #: classes/PodsAdmin.php:286 classes/PodsAdmin.php:307 classes/PodsUI.php:926
 #: components/Roles/ui/edit.php:39 ui/admin/form.php:183 ui/admin/view.php:17
 msgid "Manage"
-msgstr ""
+msgstr "Sprava"
 
 #: classes/fields/code.php:68 classes/fields/html.php:58
 #: classes/fields/paragraph.php:67 classes/fields/text.php:67
 #: classes/fields/wysiwyg.php:91
 msgid "Output Options"
-msgstr ""
+msgstr "Vystupne volby"
 
 #: components/Migrate-Packages/ui/wizard.php:112
 msgid "Choose which Pods to export"
@@ -1227,7 +1227,7 @@ msgstr ""
 #: classes/fields/paragraph.php:112 classes/fields/text.php:70
 #: classes/fields/wysiwyg.php:130
 msgid "Allow Shortcodes?"
-msgstr ""
+msgstr "Povolit shortcodes?"
 
 #: components/Migrate-Packages/ui/wizard.php:117
 #: components/Migrate-Packages/ui/wizard.php:156
@@ -1238,7 +1238,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:429
 msgid "Components"
-msgstr ""
+msgstr "Sucasti"
 
 #: classes/fields/code.php:79 classes/fields/currency.php:185
 #: classes/fields/email.php:67 classes/fields/number.php:113
@@ -1246,7 +1246,7 @@ msgstr ""
 #: classes/fields/phone.php:92 classes/fields/text.php:90
 #: classes/fields/website.php:80
 msgid "Maximum Length"
-msgstr ""
+msgstr "Maximalna dlzka"
 
 #: components/Migrate-Packages/ui/wizard.php:151
 msgid "Choose which Pod Templates to export"
@@ -1255,7 +1255,7 @@ msgstr ""
 #: classes/PodsAdmin.php:434 classes/PodsAdmin.php:457
 #: ui/admin/components-admin.php:10 ui/admin/upgrade/upgrade_2_0_0.php:221
 msgid "Settings"
-msgstr ""
+msgstr "Nastavenia"
 
 #: classes/fields/code.php:82 classes/fields/currency.php:188
 #: classes/fields/email.php:70 classes/fields/number.php:116
@@ -1271,12 +1271,12 @@ msgstr ""
 
 #: classes/PodsAdmin.php:439 classes/PodsAdmin.php:462
 msgid "Help"
-msgstr ""
+msgstr "Pomocnik"
 
 #: classes/fields/color.php:163 classes/fields/password.php:152
 #: classes/fields/text.php:204
 msgid "This field is required."
-msgstr ""
+msgstr "Toto pole je vyzadovane."
 
 #: components/Migrate-Packages/ui/wizard.php:229
 msgid "Choose which Pod Helpers to export"
@@ -1284,11 +1284,11 @@ msgstr ""
 
 #: classes/PodsAdmin.php:452 ui/admin/upgrade/upgrade_2_1_0.php:26
 msgid "Upgrade"
-msgstr ""
+msgstr "Upgrade"
 
 #: classes/fields/color.php:166
 msgid "Invalid value provided for this field."
-msgstr ""
+msgstr "Neplatna hodnota stanovena pre tuto oblast."
 
 #: components/Migrate-Packages/ui/wizard.php:270
 msgid "Results"
@@ -1296,11 +1296,11 @@ msgstr ""
 
 #: classes/PodsAdmin.php:496
 msgid "Pods Admin"
-msgstr ""
+msgstr "Pods Admin"
 
 #: classes/fields/color.php:170
 msgid "Invalid Hex Color value provided for this field."
-msgstr ""
+msgstr "Neplatna Hex Color hodnota stanovena pre tuto oblast."
 
 #: components/Migrate-Packages/ui/wizard.php:279
 msgid "Process Again"
@@ -1308,7 +1308,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:499
 msgid "Pods Upgrade"
-msgstr ""
+msgstr "Pods Upgrade"
 
 #: classes/fields/currency.php:104 classes/fields/number.php:71
 msgid "Freeform Number"
@@ -1328,27 +1328,27 @@ msgstr ""
 
 #: components/Pages.php:290
 msgid "Enter URL here"
-msgstr ""
+msgstr "Zadajte URL here"
 
 #: classes/PodsAdmin.php:716
 msgid "Post Type (extended)"
-msgstr ""
+msgstr "Prispevok Type (rozsirene)"
 
 #: classes/fields/currency.php:110
 msgid "Currency Sign"
-msgstr ""
+msgstr "Mena Sign"
 
 #: components/Pages.php:346
 msgid "-- Page Template --"
-msgstr ""
+msgstr "- Page Template -"
 
 #: classes/PodsAdmin.php:717
 msgid "Taxonomy (extended)"
-msgstr ""
+msgstr "Taxonomia (rozsirene)"
 
 #: classes/fields/currency.php:137
 msgid "Currency Placement"
-msgstr ""
+msgstr "Mena umiestnenie"
 
 #: components/Pages.php:348
 msgid "Custom (uses only Pod Page content)"
@@ -1356,7 +1356,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:718
 msgid "Custom Post Type"
-msgstr ""
+msgstr "Vlastne Post Type"
 
 #: classes/fields/currency.php:141
 msgid "Before (ex. $100)"
@@ -1368,7 +1368,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:719
 msgid "Custom Taxonomy"
-msgstr ""
+msgstr "Vlastne Taxonomia"
 
 #: classes/fields/currency.php:142
 msgid "After (ex. 100$)"
@@ -1380,7 +1380,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:720
 msgid "User (extended)"
-msgstr ""
+msgstr "Uzivatel (rozsirene)"
 
 #: classes/fields/currency.php:143
 msgid "None (ex. 100)"
@@ -1392,7 +1392,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:721
 msgid "Media (extended)"
-msgstr ""
+msgstr "Media (rozsirene)"
 
 #: classes/fields/currency.php:144
 msgid "Before with Currency Code after (ex. $100 USD)"
@@ -1401,33 +1401,33 @@ msgstr ""
 #: components/Pages.php:366 ui/admin/setup-add.php:138
 #: ui/admin/setup-edit.php:414
 msgid "Page Title"
-msgstr ""
+msgstr "Nazov stranky"
 
 #: classes/PodsAdmin.php:722
 msgid "Comments (extended)"
-msgstr ""
+msgstr "Komentare (predlzena)"
 
 #: classes/fields/currency.php:148 classes/fields/number.php:77
 #: classes/fields/phone.php:67 classes/fields/pick.php:136
 #: classes/fields/pick.php:152 classes/fields/website.php:67
 msgid "Format"
-msgstr ""
+msgstr "Format"
 
 #: components/Pages.php:371
 msgid "Page Code"
-msgstr ""
+msgstr "Page Code"
 
 #: classes/PodsAdmin.php:723
 msgid "Advanced Content Type"
-msgstr ""
+msgstr "Advanced Content Type"
 
 #: classes/fields/currency.php:152 classes/fields/number.php:81
 msgid "Localized Default"
-msgstr ""
+msgstr "Lokalizovana Default"
 
 #: components/Pages.php:384
 msgid "Page Precode"
-msgstr ""
+msgstr "Stranka Precode"
 
 #: classes/PodsAdmin.php:724 ui/admin/setup-add.php:89
 msgid "Custom Settings Page"
@@ -1435,17 +1435,17 @@ msgstr ""
 
 #: classes/fields/currency.php:162 classes/fields/number.php:90
 msgid "Decimals"
-msgstr ""
+msgstr "Pocet desatinnych miest"
 
 #: components/Pages.php:386
 msgid "Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default."
-msgstr ""
+msgstr "Precode bude bezat pred vas motiv vystupy stranku. Ocakava sa, ze tato hodnota bude blok PHP. Musite otvorit tag PHP tu, ako sme neotvarajte ju pre vas v predvolenom nastaveni."
 
 #: classes/PodsAdmin.php:732 components/Roles/Roles.php:90
 #: components/Roles/ui/add.php:43 ui/admin/setup-edit-field-fluid.php:62
 #: ui/admin/setup-edit.php:330
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 #: classes/fields/currency.php:167 classes/fields/number.php:95
 msgid "Slider Increment (Step)"
@@ -1453,13 +1453,13 @@ msgstr ""
 
 #: components/Pages.php:390
 msgid "Page Template"
-msgstr ""
+msgstr "Page Template"
 
 #: classes/PodsAdmin.php:733 classes/PodsAdmin.php:1930 classes/PodsUI.php:958
 #: components/Roles/Roles.php:91 components/Roles/ui/add.php:50
 #: ui/admin/setup-edit-field-fluid.php:66
 msgid "Name"
-msgstr ""
+msgstr "Meno"
 
 #: classes/fields/currency.php:173 classes/fields/number.php:101
 msgid "Minimum Number"
@@ -1467,7 +1467,7 @@ msgstr ""
 
 #: components/Pages.php:396
 msgid "Page"
-msgstr ""
+msgstr "Stranka"
 
 #: classes/PodsAdmin.php:734 classes/PodsAdmin.php:845
 msgid "Type"
@@ -1484,11 +1484,11 @@ msgstr ""
 #: classes/PodsAdmin.php:736 ui/admin/setup-add.php:196
 #: ui/admin/setup-add.php:332
 msgid "Storage Type"
-msgstr ""
+msgstr "Storage Type"
 
 #: classes/fields/currency.php:503 classes/fields/number.php:350
 msgid "%s is not numeric"
-msgstr ""
+msgstr "% s nie je ciselna"
 
 #: components/Pages.php:415
 msgid "Associated Pod"
@@ -1500,7 +1500,7 @@ msgstr ""
 
 #: classes/fields/date.php:67 classes/fields/datetime.php:67
 msgid "Date Format"
-msgstr ""
+msgstr "Format datumu"
 
 #: components/Pages.php:423
 msgid "Wildcard Slug"
@@ -1523,7 +1523,7 @@ msgstr ""
 #: classes/fields/email.php:73 classes/fields/phone.php:98
 #: classes/fields/time.php:109 classes/fields/website.php:86
 msgid "Enable HTML5 Input Field?"
-msgstr ""
+msgstr "Povolit HTML5 vstupne pole?"
 
 #: components/Pages.php:430
 msgid "Pod Association"
@@ -1538,7 +1538,7 @@ msgstr[2] ""
 
 #: classes/fields/datetime.php:84 classes/fields/time.php:66
 msgid "Time Format Type"
-msgstr ""
+msgstr "Format casu Type"
 
 #: components/Pages.php:444
 msgid "<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones."
@@ -1550,7 +1550,7 @@ msgstr ""
 
 #: classes/fields/datetime.php:89 classes/fields/time.php:70
 msgid "12 hour"
-msgstr ""
+msgstr "12 hodin"
 
 #: components/Pages.php:468 components/Templates/Templates.php:291
 msgid "<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles."
@@ -1562,7 +1562,7 @@ msgstr ""
 
 #: classes/fields/datetime.php:90 classes/fields/time.php:71
 msgid "24 hour"
-msgstr ""
+msgstr "24 hodin"
 
 #: components/Pages.php:490
 msgid "Redirect if Restricted?"
@@ -1575,7 +1575,7 @@ msgstr ""
 #: classes/fields/datetime.php:95 classes/fields/datetime.php:114
 #: classes/fields/time.php:76 classes/fields/time.php:94
 msgid "Time Format"
-msgstr ""
+msgstr "Format casu"
 
 #: components/Pages.php:497
 msgid "Redirect to WP Login page"
@@ -1610,7 +1610,7 @@ msgstr[2] ""
 
 #: classes/PodsAdmin.php:968
 msgid "Post Type Description"
-msgstr ""
+msgstr "Prispevok Typ Popis"
 
 #: classes/fields/file.php:81
 msgid "Single File"
@@ -1622,7 +1622,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:969
 msgid "A short descriptive summary of what the post type is."
-msgstr ""
+msgstr "kratky popisny prehlad toho, co po typ."
 
 #: classes/fields/file.php:82
 msgid "Multiple Files"
@@ -1630,19 +1630,19 @@ msgstr ""
 
 #: components/Roles/Roles.php:92 components/Roles/ui/add.php:26
 msgid "Capabilities"
-msgstr ""
+msgstr "Moznosti"
 
 #: classes/PodsAdmin.php:974 classes/PodsAdmin.php:1181
 msgid "Show Admin UI"
-msgstr ""
+msgstr "Zobrazit Administrator UI"
 
 #: classes/fields/file.php:87
 msgid "File Uploader"
-msgstr ""
+msgstr "File Uploader"
 
 #: components/Roles/Roles.php:163 components/Roles/Roles.php:296
 msgid "Role not found, cannot edit it."
-msgstr ""
+msgstr "Uloha nebol najdeny, mozete ho upravovat."
 
 #: classes/PodsAdmin.php:975 classes/PodsAdmin.php:982
 #: classes/PodsAdmin.php:990 classes/PodsAdmin.php:996
@@ -1696,19 +1696,19 @@ msgstr ""
 #: ui/admin/setup-edit.php:736 ui/admin/setup-edit.php:750
 #: ui/admin/setup-edit.php:764
 msgid "help"
-msgstr ""
+msgstr "help"
 
 #: classes/fields/file.php:111
 msgid "Editable Title"
-msgstr ""
+msgstr "Editable Title"
 
 #: components/Roles/Roles.php:178
 msgid "Role not found, it cannot be deleted."
-msgstr ""
+msgstr "Uloha nebol najdeny, nemozno odstranit."
 
 #: classes/PodsAdmin.php:981 classes/PodsAdmin.php:1349
 msgid "Show Admin Menu in Dashboard"
-msgstr ""
+msgstr "Zobrazit Admin Menu v paneli"
 
 #: classes/fields/file.php:116
 msgid "Link to File in editor"
@@ -1716,7 +1716,7 @@ msgstr ""
 
 #: components/Roles/Roles.php:183
 msgid "You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first."
-msgstr ""
+msgstr "Nemozete odstranit <strong>%s</strong> role, musite nastavit novu predvolenu ulohu pre web ako prvy."
 
 #: classes/PodsAdmin.php:989 classes/PodsAdmin.php:1357
 msgid "Parent Menu ID (optional)"
@@ -1728,25 +1728,25 @@ msgstr ""
 
 #: components/Roles/Roles.php:232
 msgid "role removed from site."
-msgstr ""
+msgstr "role boli z miesta odstranene."
 
 #: classes/PodsAdmin.php:995 classes/PodsAdmin.php:1189
 #: ui/admin/setup-edit.php:418
 msgid "Menu Name"
-msgstr ""
+msgstr "Menu Name"
 
 #: classes/fields/file.php:133
 msgid "Restrict File Types"
-msgstr ""
+msgstr "Obmedzit typy suborov"
 
 #: components/Roles/Roles.php:269
 msgid "Role name is required"
-msgstr ""
+msgstr "Uloha meno je vyzadovane"
 
 #: classes/PodsAdmin.php:1002 classes/PodsAdmin.php:1218
 #: classes/PodsAdmin.php:1315 classes/PodsAdmin.php:1363
 msgid "Menu Position"
-msgstr ""
+msgstr "Menu Position"
 
 #: classes/fields/file.php:139
 msgid "Images (jpg, jpeg, png, gif)"
@@ -1754,11 +1754,11 @@ msgstr ""
 
 #: components/Roles/Roles.php:272
 msgid "Role label is required"
-msgstr ""
+msgstr "Uloha stitok je potrebne"
 
 #: classes/PodsAdmin.php:1009
 msgid "Menu Icon"
-msgstr ""
+msgstr "Menu Icon"
 
 #: classes/fields/file.php:140
 msgid "Video (mpg, mov, flv, mp4, etc..)"
@@ -1766,7 +1766,7 @@ msgstr ""
 
 #: components/Roles/ui/add.php:14
 msgid "Roles &amp; Capabilities: Add New Role"
-msgstr ""
+msgstr "Uloha a moznosti: Pridat novu rolu"
 
 #: classes/PodsAdmin.php:1010
 msgid "URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href=\"http://pods.io/docs/build/special-magic-tags/#site-tags\" target=\"_blank\">site tag</a> type <a href=\"http://pods.io/docs/build/special-magic-tags/\" target=\"_blank\">special magic tags</a>. For example, for a file in your theme directory, use \"{@template-url}/path/to/image.png\". You may also use the name of a <a href=\"http://melchoyce.github.io/dashicons/\" target=\"_blank\">Dashicon</a>. For example, to use the empty star icon, use \"dashicons-star-empty\"."
@@ -1778,11 +1778,11 @@ msgstr ""
 
 #: components/Roles/ui/add.php:22
 msgid "Naming"
-msgstr ""
+msgstr "Pomenovanie"
 
 #: classes/PodsAdmin.php:1016 classes/PodsAdmin.php:1232
 msgid "Show in Navigation Menus"
-msgstr ""
+msgstr "Zobrazit v menu navigacie"
 
 #: classes/fields/file.php:142
 msgid "Text (txt, csv, tsv, rtx, etc..)"
@@ -1790,55 +1790,55 @@ msgstr ""
 
 #: components/Roles/ui/add.php:34
 msgid "Roles allow you to specify which capabilities a user should be able to do within WordPress."
-msgstr ""
+msgstr "Uloha umoznuju urcit, ktore schopnosti uzivatel by mal byt schopny robit v ramci WordPress."
 
 #: classes/PodsAdmin.php:1023
 msgid "Show in Admin Bar \"New\" Menu"
-msgstr ""
+msgstr "Show in Admin Bar \"New\" Menu"
 
 #: classes/fields/file.php:143
 msgid "Any Type (no restriction)"
-msgstr ""
+msgstr "Kazdy typ (bez obmedzenia)"
 
 #: components/Roles/ui/add.php:38
 msgid "Name your new Role"
-msgstr ""
+msgstr "Nazov vasej novej ulohe"
 
 #: classes/PodsAdmin.php:1033 ui/admin/setup-edit.php:574
 msgid "Public"
-msgstr ""
+msgstr "Verejna"
 
 #: classes/fields/file.php:144
 msgid "Other (customize allowed extensions)"
-msgstr ""
+msgstr "Dalsie (upravit povolena rozsirenie)"
 
 #: components/Roles/ui/add.php:43
 msgid "Users will see this as the name of their role"
-msgstr ""
+msgstr "Uzivatelia budu vidiet ako nazov svojej role"
 
 #: classes/PodsAdmin.php:1040
 msgid "Publicly Queryable"
-msgstr ""
+msgstr "Verejne Queryable"
 
 #: classes/fields/file.php:150
 msgid "Allowed File Extensions"
-msgstr ""
+msgstr "Povolene pripon suborov"
 
 #: components/Roles/ui/add.php:50
 msgid "You will use this name to programatically reference this role throughout WordPress"
-msgstr ""
+msgstr "Budete pouzivat tento nazov k programatically odkazovat tuto ulohu v celom WordPress"
 
 #: classes/PodsAdmin.php:1047
 msgid "Exclude from Search"
-msgstr ""
+msgstr "Vylucit z vyhladavania"
 
 #: classes/fields/file.php:151
 msgid "Separate file extensions with a comma (ex. jpg,png,mp4,mov)"
-msgstr ""
+msgstr "Samostatne pripony suborov s ciarkou (napr. jpg, png, mp4, mov)"
 
 #: components/Roles/ui/add.php:59
 msgid "Choose below which Capabilities you would like this new user role to have."
-msgstr ""
+msgstr "Vyberte, pod ktoru schopnosti si prajete novy uzivatel role mat."
 
 #: classes/PodsAdmin.php:1054
 msgid "User Capability"
@@ -1847,11 +1847,11 @@ msgstr ""
 #: classes/fields/file.php:616 classes/fields/pick.php:1830
 #: classes/fields/pick.php:1832
 msgid "Invalid field request"
-msgstr ""
+msgstr "Neplatny pole poziadavku"
 
 #: components/Roles/ui/add.php:63 components/Roles/ui/edit.php:74
 msgid "Assign the Capabilities for"
-msgstr ""
+msgstr "Priradit schopnosti pre"
 
 #: classes/PodsAdmin.php:1055
 msgid "Uses these capabilties for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}"
@@ -1860,11 +1860,11 @@ msgstr ""
 #: classes/fields/file.php:619 classes/fields/pick.php:1834
 #: classes/fields/pick.php:1836 classes/fields/pick.php:1838
 msgid "Invalid field"
-msgstr ""
+msgstr "Neplatny pole"
 
 #: components/Roles/ui/add.php:67 components/Roles/ui/edit.php:82
 msgid "Toggle All Capabilities on / off"
-msgstr ""
+msgstr "Prepnut vsetkych moznosti on / off"
 
 #: classes/PodsAdmin.php:1061
 msgid "Custom Capability"
@@ -1872,11 +1872,11 @@ msgstr ""
 
 #: classes/fields/file.php:658
 msgid "File size too large, max size is %s"
-msgstr ""
+msgstr "Subor je prilis velky, maximalna velkost je% s"
 
 #: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
 msgid "Custom Capabilities"
-msgstr ""
+msgstr "Vlastne schopnosti"
 
 #: classes/PodsAdmin.php:1066
 msgid "Custom User Capability"
@@ -1884,11 +1884,11 @@ msgstr ""
 
 #: classes/fields/file.php:749
 msgid "File type not allowed, please use one of the following: %s"
-msgstr ""
+msgstr "Typ suboru nie je povoleny, prosim, pouzite jednu z nasledujucich moznosti:% s"
 
 #: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:113
 msgid "These capabilities will automatically be created and assigned to this role"
-msgstr ""
+msgstr "Tieto schopnosti budu automaticky vytvorene a priradene k tejto ulohe"
 
 #: classes/PodsAdmin.php:1073
 msgid "Additional User Capabilities"
@@ -1897,11 +1897,11 @@ msgstr ""
 #: classes/fields/html.php:61 classes/fields/paragraph.php:70
 #: classes/fields/text.php:76
 msgid "Allow HTML?"
-msgstr ""
+msgstr "Povolit HTML?"
 
 #: components/Roles/ui/edit.php:15
 msgid "Roles &amp; Capabilities: Edit Role"
-msgstr ""
+msgstr "Uloha a moznosti: Upravit rolu"
 
 #: classes/PodsAdmin.php:1074
 msgid "Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s"
@@ -1910,11 +1910,11 @@ msgstr ""
 #: classes/fields/html.php:67 classes/fields/paragraph.php:76
 #: classes/fields/wysiwyg.php:94
 msgid "Enable oEmbed?"
-msgstr ""
+msgstr "Povolit oEmbed?"
 
 #: components/Roles/ui/edit.php:30
 msgid "Choose below which Capabilities you would like this existing user role to have."
-msgstr ""
+msgstr "Vyberte, pod ktoru schopnosti si prajete existujuce uzivatelske role mat."
 
 #: classes/PodsAdmin.php:1080
 msgid "Enable Archive Page"
@@ -1923,12 +1923,12 @@ msgstr ""
 #: classes/fields/html.php:71 classes/fields/paragraph.php:80
 #: classes/fields/wysiwyg.php:98
 msgid "Embed videos, images, tweets, and other content."
-msgstr ""
+msgstr "Vlozit videa, obrazky, tweety, a iny obsah."
 
 #: components/Roles/ui/edit.php:47 ui/admin/form-settings.php:79
 #: ui/admin/form.php:120
 msgid "Save"
-msgstr ""
+msgstr "Ulozit"
 
 #: classes/PodsAdmin.php:1081
 msgid "If enabled, creates an archive page with list of of items in this custom post type. Functions like a category page for posts. Can be controlled with a template in your theme called \"archive-{$post-type}.php\"."
@@ -1937,11 +1937,11 @@ msgstr ""
 #: classes/fields/html.php:76 classes/fields/paragraph.php:85
 #: classes/fields/wysiwyg.php:103
 msgid "Enable wptexturize?"
-msgstr ""
+msgstr "Povolit wptexturize?"
 
 #: components/Table-Storage.php:47
 msgid "Taxonomies (Categories, Tags, etc..)"
-msgstr ""
+msgstr "Taxonomia (kategorie, znacky, atd.)"
 
 #: classes/PodsAdmin.php:1088
 msgid "Archive Page Slug Override"
@@ -1954,7 +1954,7 @@ msgstr ""
 
 #: components/Templates/Templates.php:248
 msgid "Enter template name here"
-msgstr ""
+msgstr "Zadajte nazov predlohy tu"
 
 #: classes/PodsAdmin.php:1089
 msgid "If archive page is enabled, you can override the slug used by WordPress, which defaults to the name of the post type."
@@ -1963,21 +1963,21 @@ msgstr ""
 #: classes/fields/html.php:85 classes/fields/paragraph.php:94
 #: classes/fields/wysiwyg.php:112
 msgid "Enable convert_chars?"
-msgstr ""
+msgstr "Povolit convert_chars?"
 
 #: components/Templates/Templates.php:282
 msgid "Show to Admins Only?"
-msgstr ""
+msgstr "Ukazat Admins len?"
 
 #: classes/PodsAdmin.php:1095 ui/admin/setup-edit.php:578
 #: ui/admin/setup-edit.php:687
 msgid "Hierarchical"
-msgstr ""
+msgstr "Hierarchicke"
 
 #: classes/fields/html.php:89 classes/fields/paragraph.php:98
 #: classes/fields/wysiwyg.php:116
 msgid "Converts text into valid XHTML and Unicode"
-msgstr ""
+msgstr "Prevedie text do validneho XHTML a Unicode"
 
 #: components/Templates/Templates.php:422
 msgid "You do not have access to view this content."
@@ -1990,7 +1990,7 @@ msgstr ""
 #: classes/fields/html.php:94 classes/fields/paragraph.php:103
 #: classes/fields/wysiwyg.php:121
 msgid "Enable wpautop?"
-msgstr ""
+msgstr "Povolit wpautop?"
 
 #: components/Templates/class-pods_templates.php:208
 msgid "Pod Reference"
@@ -1998,7 +1998,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1103 ui/admin/setup-edit.php:583
 msgid "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
-msgstr ""
+msgstr "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
 
 #: classes/fields/html.php:98
 msgid "Changes double line-breaks in the text into HTML htmls"
@@ -2010,24 +2010,24 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1110 ui/admin/setup-edit.php:587
 msgid "<strong>Label: </strong> Parent"
-msgstr ""
+msgstr "<strong>Label: </strong> Parent"
 
 #: classes/fields/html.php:108 classes/fields/paragraph.php:117
 #: classes/fields/wysiwyg.php:135
 msgid "Embed [shortcodes] that help transform your static content into dynamic content."
-msgstr ""
+msgstr "Embed [shortcodes], ktore pomahaju transformovat svoj staticky obsah do dynamickeho obsahu."
 
 #: includes/data.php:1668
 msgid "and"
-msgstr ""
+msgstr "a"
 
 #: classes/PodsAdmin.php:1117 ui/admin/setup-edit.php:592
 msgid "Rewrite"
-msgstr ""
+msgstr "Prepisat"
 
 #: classes/fields/paragraph.php:107 classes/fields/wysiwyg.php:125
 msgid "Changes double line-breaks in the text into HTML paragraphs"
-msgstr ""
+msgstr "Zmeni dvojite linie pruhov v texte do HTML odsekoch"
 
 #: includes/general.php:131
 msgid "The following issue occurred:"
@@ -2040,7 +2040,7 @@ msgstr ""
 #: classes/fields/paragraph.php:124 classes/fields/text.php:84
 #: classes/fields/wysiwyg.php:142
 msgid "Allowed HTML Tags"
-msgstr ""
+msgstr "Povolene HTML tagy"
 
 #: includes/general.php:133
 msgid "The following issues occurred:"
@@ -2048,7 +2048,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1125 ui/admin/setup-edit.php:597
 msgid "Custom Rewrite Slug"
-msgstr ""
+msgstr "Vlastne prepis Slug"
 
 #: classes/fields/paragraph.php:128 classes/fields/wysiwyg.php:145
 msgid "Format: strong em a ul ol li b i"
@@ -2056,7 +2056,7 @@ msgstr ""
 
 #: includes/general.php:137
 msgid "An unknown error has occurred"
-msgstr ""
+msgstr "Vyskytla sa neznama chyba"
 
 #: classes/PodsAdmin.php:1126
 msgid "Changes the first segment of the URL, which by default is the name of the Pod. For example, if your Pod is called \"foo\", if this field is left blank, your link will be \"example.com/foo/post_slug\", but if you were to enter \"bar\" your link will be \"example.com/bar/post_slug\"."
@@ -2064,7 +2064,7 @@ msgstr ""
 
 #: classes/fields/paragraph.php:150 classes/fields/wysiwyg.php:167
 msgid "Allow Markdown Syntax?"
-msgstr ""
+msgstr "Povolit Markdown syntaxe?"
 
 #: includes/general.php:377
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead."
@@ -2072,11 +2072,11 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1132
 msgid "Rewrite with Front"
-msgstr ""
+msgstr "Prepisat s prednou"
 
 #: classes/fields/phone.php:71
 msgid "US"
-msgstr ""
+msgstr "US"
 
 #: includes/general.php:379
 msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available."
@@ -2088,47 +2088,47 @@ msgstr ""
 
 #: classes/fields/phone.php:76
 msgid "International"
-msgstr ""
+msgstr "International"
 
 #: includes/general.php:434 ui/admin/setup-edit.php:801
 msgid "Find out more"
-msgstr ""
+msgstr "Viac informacii"
 
 #: classes/PodsAdmin.php:1140
 msgid "Rewrite Feeds"
-msgstr ""
+msgstr "Prepisat Kanaly"
 
 #: classes/fields/phone.php:77
 msgid "Any (no validation available)"
-msgstr ""
+msgstr "Vsetky (bez overenia k dispozicii)"
 
 #: includes/general.php:992 includes/general.php:1011 includes/general.php:1031
 msgid "NOTICE"
-msgstr ""
+msgstr "UPOZORNENIE"
 
 #: classes/PodsAdmin.php:1148
 msgid "Rewrite Pages"
-msgstr ""
+msgstr "Rewrite stranky"
 
 #: classes/fields/phone.php:82
 msgid "Phone Options"
-msgstr ""
+msgstr "Moznosti telefonu"
 
 #: includes/general.php:992 includes/general.php:1011 includes/general.php:1031
 msgid "requires a minimum of"
-msgstr ""
+msgstr "vyzaduje minimalne"
 
 #: classes/PodsAdmin.php:1156 ui/admin/setup-edit.php:610
 msgid "Query Var"
-msgstr ""
+msgstr "Otazka Var"
 
 #: classes/fields/phone.php:85
 msgid "Enable Phone Extension?"
-msgstr ""
+msgstr "Povolit Telefon rozsirenie?"
 
 #: includes/general.php:993 includes/general.php:1012 includes/general.php:1032
 msgid "to function. You are currently running"
-msgstr ""
+msgstr "fungovat. Tie su v sucasnosti bezi"
 
 #: classes/PodsAdmin.php:1157
 msgid "The Query Var is used in the URL and underneath the WordPress Rewrite API to tell WordPress what page or post type you are on. For a list of reserved Query Vars, read <a href=\"http://codex.wordpress.org/WordPress_Query_Vars\">WordPress Query Vars</a> from the WordPress Codex."
@@ -2140,11 +2140,11 @@ msgstr ""
 
 #: includes/general.php:994
 msgid "Please upgrade your WordPress to continue."
-msgstr ""
+msgstr "Prosim, aktualizujte svoj WordPress pokracovat."
 
 #: classes/PodsAdmin.php:1163
 msgid "Exportable"
-msgstr ""
+msgstr "exportovatelne"
 
 #: classes/fields/phone.php:199
 msgid "Invalid phone number provided for the field %s."
@@ -2152,7 +2152,7 @@ msgstr ""
 
 #: includes/general.php:1013
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue."
-msgstr ""
+msgstr "Prosim aktualizaciu (alebo mat svojho poskytovatela hostingu upgrade pre Vas) Vasa verzia PHP pokracovat."
 
 #: classes/PodsAdmin.php:1170
 msgid "Default Status"
@@ -2160,11 +2160,11 @@ msgstr ""
 
 #: classes/fields/pick.php:125
 msgid "Selection Type"
-msgstr ""
+msgstr "Vyber Typ"
 
 #: includes/general.php:1033
 msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue."
-msgstr ""
+msgstr "Prosim aktualizaciu (alebo mat svojho poskytovatela hostingu upgrade pre vas) vase MySQL verzia pokracovat."
 
 #: classes/PodsAdmin.php:1196 classes/PodsAdmin.php:1296
 #: ui/admin/setup-add.php:150
@@ -2173,7 +2173,7 @@ msgstr ""
 
 #: classes/fields/pick.php:130
 msgid "Single Select"
-msgstr ""
+msgstr "Single Select"
 
 #: classes/PodsAdmin.php:1202
 msgid "Default - Add to associated Post Type(s) menus"
@@ -2181,7 +2181,7 @@ msgstr ""
 
 #: classes/fields/pick.php:131
 msgid "Multiple Select"
-msgstr ""
+msgstr "Multiple Select"
 
 #: classes/PodsAdmin.php:1203 classes/PodsAdmin.php:1301
 msgid "Add to Settings menu"
@@ -2189,11 +2189,11 @@ msgstr ""
 
 #: classes/fields/pick.php:146 classes/fields/pick.php:162
 msgid "Autocomplete"
-msgstr ""
+msgstr "Automaticke dokoncovanie"
 
 #: sql/upgrade/PodsUpgrade.php:128
 msgid "Invalid upgrade process."
-msgstr ""
+msgstr "Neplatny proces upgradu."
 
 #: classes/PodsAdmin.php:1204 classes/PodsAdmin.php:1302
 msgid "Add to Appearances menu"
@@ -2205,7 +2205,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade.php:131
 msgid "Invalid upgrade method."
-msgstr ""
+msgstr "Neplatny aktualizacia metoda."
 
 #: classes/PodsAdmin.php:1205
 msgid "Make a top-level menu item"
@@ -2213,11 +2213,11 @@ msgstr ""
 
 #: classes/fields/pick.php:160
 msgid "Checkboxes"
-msgstr ""
+msgstr "Zaskrtavacie pole"
 
 #: sql/upgrade/PodsUpgrade.php:134
 msgid "Upgrade method not found."
-msgstr ""
+msgstr "Aktualizacia metoda nie je najdeny."
 
 #: classes/PodsAdmin.php:1206 classes/PodsAdmin.php:1303
 msgid "Make a new top-level menu item below Settings"
@@ -2225,14 +2225,14 @@ msgstr ""
 
 #: classes/fields/pick.php:161
 msgid "Multi Select"
-msgstr ""
+msgstr "Multi Select"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:22 sql/upgrade/PodsUpgrade_2_0_0.php:44
 #: sql/upgrade/PodsUpgrade_2_0_0.php:66 sql/upgrade/PodsUpgrade_2_0_0.php:88
 #: sql/upgrade/PodsUpgrade_2_0_0.php:110 sql/upgrade/PodsUpgrade_2_0_0.php:132
 #: sql/upgrade/PodsUpgrade_2_0_0.php:154 sql/upgrade/PodsUpgrade_2_0_0.php:183
 msgid "Table not found, it cannot be migrated"
-msgstr ""
+msgstr "Nebola najdena tabulka, nemozno migrovat"
 
 #: classes/PodsAdmin.php:1207 classes/PodsAdmin.php:1304
 msgid "Add a submenu item to another menu"
@@ -2244,7 +2244,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:178 sql/upgrade/PodsUpgrade_2_0_0.php:836
 msgid "Invalid Pod."
-msgstr ""
+msgstr "Neplatny Pod."
 
 #: classes/PodsAdmin.php:1212 classes/PodsAdmin.php:1309
 msgid "Custom Menu Location"
@@ -2256,12 +2256,12 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:197
 msgid "Pod not found, it cannot be migrated"
-msgstr ""
+msgstr "Pod nebol najdeny, nemozno migrovat"
 
 #: classes/PodsAdmin.php:1225 classes/PodsAdmin.php:1322
 #: classes/PodsAdmin.php:1370
 msgid "Menu Icon URL"
-msgstr ""
+msgstr "Menu Icon URL"
 
 #: classes/fields/pick.php:182
 msgid "Default Select Text"
@@ -2269,11 +2269,11 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:216
 msgid "is a field in the table, but was not found in this pod - the field data will not be migrated."
-msgstr ""
+msgstr "je pole v tabulke, ale nebol najdeny v tejto struku - poli udaje nebudu prenesene."
 
 #: classes/PodsAdmin.php:1239
 msgid "Allow in Tagcloud Widget"
-msgstr ""
+msgstr "Povolit v tagcloud Widget"
 
 #: classes/fields/pick.php:183
 msgid "This is the text use for the default \"no selection\" dropdown item, if empty, it will default to \"-- Select One --\""
@@ -2281,7 +2281,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:221
 msgid "is a field in this pod, but was not found in the table - the field data will not be migrated."
-msgstr ""
+msgstr "je pole v tomto module, ale nebol najdeny v tabulke - poli udaje nebudu prenesene."
 
 #: classes/PodsAdmin.php:1249
 msgid "Show Taxonomy column on Post Types"
@@ -2289,7 +2289,7 @@ msgstr ""
 
 #: classes/fields/pick.php:192
 msgid "Selection Limit"
-msgstr ""
+msgstr "Vyber Limit"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:551
 msgid "Pod <strong>%s</strong> not found, relationships cannot be migrated"
@@ -2305,7 +2305,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:819
 msgid "Input Helpers may not function in our new forms, we have imported and disabled them for your review."
-msgstr ""
+msgstr "Vstupne Pomocnici nemusi fungovat v nasich novych foriem, sme doviezli a zdravotne postihnutych je pre vasu kontrolu."
 
 #: classes/PodsAdmin.php:1260
 msgid "Single Value Taxonomy"
@@ -2317,7 +2317,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:841
 msgid "Table not found, items cannot be migrated"
-msgstr ""
+msgstr "Nebola najdena tabulka, ktore nemozno migrovat"
 
 #: classes/PodsAdmin.php:1261
 msgid "Use a drop-down for the input instead of the WordPress default"
@@ -2329,7 +2329,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:844
 msgid "New table not found, items cannot be migrated"
-msgstr ""
+msgstr "Nova tabulka nebola najdena, ktore nemozno migrovat"
 
 #: classes/PodsAdmin.php:1268
 msgid "Single Value Taxonomy - Required"
@@ -2341,7 +2341,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:847
 msgid "Pod Types table not found, items cannot be migrated"
-msgstr ""
+msgstr "Pod Typy tabulka nebola najdena, ktore nemozno migrovat"
 
 #: classes/PodsAdmin.php:1269
 msgid "A term will be selected by default in the Post Editor, not optional"
@@ -2353,7 +2353,7 @@ msgstr ""
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:850
 msgid "Pod table not found, items cannot be migrated"
-msgstr ""
+msgstr "Pod stol nebol najdeny, ktore nemozno migrovat"
 
 #: classes/PodsAdmin.php:1284 classes/PodsAdmin.php:1338
 msgid "Admin UI Style"
@@ -2361,7 +2361,7 @@ msgstr ""
 
 #: classes/fields/pick.php:220
 msgid "Display Field in Selection List"
-msgstr ""
+msgstr "Zobrazit polia v zozname pre vyber"
 
 #: sql/upgrade/PodsUpgrade_2_0_0.php:858
 msgid "Pod <strong>%s</strong> not found, items cannot be migrated"
@@ -2389,7 +2389,7 @@ msgstr ""
 
 #: ui/admin/form-settings.php:55 ui/admin/form.php:87
 msgid "<strong>Error:</strong> %s %s successfully."
-msgstr ""
+msgstr "<strong>Chyba: </strong> %s %s uspesne."
 
 #: classes/PodsAdmin.php:1291 classes/PodsAdmin.php:1344
 msgid "Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)"
@@ -2397,7 +2397,7 @@ msgstr ""
 
 #: classes/fields/pick.php:250
 msgid "Customized <em>WHERE</em>"
-msgstr ""
+msgstr "Customized <em> KDE </ em>"
 
 #: ui/admin/form-settings.php:70 ui/admin/form.php:111
 msgid "<strong>Error:</strong> %s not %s."
@@ -2409,7 +2409,7 @@ msgstr ""
 
 #: classes/fields/pick.php:262
 msgid "Customized <em>ORDER BY</em>"
-msgstr ""
+msgstr "Customized <em> ORDER BY </ em>"
 
 #: ui/admin/form.php:76 ui/admin/form.php:104 ui/admin/setup-edit.php:223
 msgid "duplicated"
@@ -2421,7 +2421,7 @@ msgstr ""
 
 #: classes/fields/pick.php:274
 msgid "Customized <em>GROUP BY</em>"
-msgstr ""
+msgstr "Customized <em> GROUP BY </ em>"
 
 #: ui/admin/form.php:213 ui/admin/view.php:47
 msgid "Created on"
@@ -2445,11 +2445,11 @@ msgstr ""
 
 #: classes/fields/pick.php:362
 msgid "Custom"
-msgstr ""
+msgstr "Vlastne"
 
 #: ui/admin/form.php:346 ui/admin/view.php:105
 msgid "Navigate"
-msgstr ""
+msgstr "Navigacia"
 
 #: classes/PodsAdmin.php:1385
 msgid "Actions Available"
@@ -2458,7 +2458,7 @@ msgstr ""
 #: classes/fields/pick.php:418 ui/admin/setup-edit.php:636
 #: ui/admin/setup-edit.php:856
 msgid "Post Types"
-msgstr ""
+msgstr "Prispevok Typy"
 
 #: ui/admin/form.php:356 ui/admin/view.php:115
 msgid "Previous %s"
@@ -2467,12 +2467,12 @@ msgstr ""
 #: classes/PodsAdmin.php:1392 classes/PodsUI.php:929 classes/PodsUI.php:3529
 #: ui/admin/setup-edit-field-fluid.php:20 ui/admin/setup-edit-field.php:70
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicitne"
 
 #: classes/fields/pick.php:453 ui/admin/setup-edit.php:555
 #: ui/admin/setup-edit.php:857
 msgid "Taxonomies"
-msgstr ""
+msgstr "Taxonomia"
 
 #: ui/admin/form.php:364 ui/admin/view.php:123
 msgid "Next %s"
@@ -2480,21 +2480,21 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1394 classes/PodsUI.php:931
 msgid "Reorder"
-msgstr ""
+msgstr "Zmenit poradie"
 
 #: classes/fields/pick.php:460 components/Roles/Roles.php:94
 #: ui/admin/setup-add.php:230
 msgid "Users"
-msgstr ""
+msgstr "Uzivatelia"
 
 #: ui/admin/form.php:469
 msgid "Enter name here"
-msgstr ""
+msgstr "Zadajte meno tu"
 
 #: classes/PodsAdmin.php:1395 classes/PodsUI.php:2689
 #: components/Migrate-Packages/ui/wizard.php:69
 msgid "Export"
-msgstr ""
+msgstr "Export"
 
 #: classes/fields/pick.php:461 classes/fields/pick.php:467
 #: classes/fields/pick.php:474 classes/fields/pick.php:481
@@ -2507,7 +2507,7 @@ msgstr ""
 #: ui/admin/form.php:537 ui/admin/upgrade/upgrade_2_0_0.php:85
 #: ui/admin/upgrade/upgrade_2_0_0.php:201 ui/admin/view.php:188
 msgid "Fields"
-msgstr ""
+msgstr "Pole"
 
 #: classes/PodsAdmin.php:1401
 msgid "Reorder Field"
@@ -2519,7 +2519,7 @@ msgstr ""
 
 #: ui/admin/help.php:3
 msgid "Pods Help"
-msgstr ""
+msgstr "Pods Pomoc"
 
 #: classes/PodsAdmin.php:1402
 msgid "This is the field that will be reordered on, it should be numeric."
@@ -2531,7 +2531,7 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:48
 msgid "Delete Pods 1.x data"
-msgstr ""
+msgstr "Odstranit Pods 1.x data"
 
 #: classes/PodsAdmin.php:1408
 msgid "Admin Table Columns"
@@ -2539,11 +2539,11 @@ msgstr ""
 
 #: classes/fields/pick.php:480 ui/admin/setup-add.php:229
 msgid "Media"
-msgstr ""
+msgstr "Media"
 
 #: ui/admin/settings-reset.php:50
 msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.x."
-msgstr ""
+msgstr "Toto zmaze vsetky data struky 1.x, je to len odporucit, ak overite data boli spravne prenesene do struky 2.x."
 
 #: classes/PodsAdmin.php:1416
 msgid "Search Filters"
@@ -2552,7 +2552,7 @@ msgstr ""
 #: classes/fields/pick.php:486 ui/admin/setup-add.php:231
 #: ui/admin/setup-edit.php:483
 msgid "Comments"
-msgstr ""
+msgstr "Komentare"
 
 #: ui/admin/settings-reset.php:53
 msgid ""
@@ -2563,7 +2563,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1485
 msgid "Basic"
-msgstr ""
+msgstr "Zakladny"
 
 #: classes/fields/pick.php:492
 msgid "Image Sizes"
@@ -2571,11 +2571,11 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:54
 msgid "Delete Pods 1.x settings and data"
-msgstr ""
+msgstr "Odstranit Pods 1.x nastavenia a data"
 
 #: classes/PodsAdmin.php:1486
 msgid "Additional Field Options"
-msgstr ""
+msgstr "Dalsie pola Options"
 
 #: classes/fields/pick.php:499
 msgid "Navigation Menus"
@@ -2583,24 +2583,24 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:59
 msgid "Reset Pods 2.x"
-msgstr ""
+msgstr "Reset Pods 2.x"
 
 #: classes/PodsAdmin.php:1487 classes/PodsAdmin.php:1971
 #: ui/admin/setup-add.php:164 ui/admin/setup-add.php:327
 msgid "Advanced"
-msgstr ""
+msgstr "Advanced"
 
 #: classes/fields/pick.php:504 ui/admin/setup-edit.php:498
 msgid "Post Formats"
-msgstr ""
+msgstr "Prispevok formaty"
 
 #: ui/admin/settings-reset.php:61
 msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it's data, and performs a fresh install."
-msgstr ""
+msgstr "Toto neodstrani ziadne struky 1.x dat, to jednoducho resetuje strukov 2.x nastavenia, odstrani vsetky jej udaje, a vykona novu instalaciu."
 
 #: classes/PodsAdmin.php:1548
 msgid "Visual"
-msgstr ""
+msgstr "Vizualne"
 
 #: classes/fields/pick.php:509
 msgid "Post Status"
@@ -2613,7 +2613,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1551
 msgid "Additional CSS Classes"
-msgstr ""
+msgstr "Dalsie CSS triedy"
 
 #: classes/fields/pick.php:518
 msgid "Countries"
@@ -2628,7 +2628,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1558
 msgid "Input Helper"
-msgstr ""
+msgstr "Vstupne Helper"
 
 #: classes/fields/pick.php:519 classes/fields/pick.php:526
 #: classes/fields/pick.php:533 classes/fields/pick.php:540
@@ -2637,11 +2637,11 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:66
 msgid "Reset Pods 2.x settings and data"
-msgstr ""
+msgstr "Obnovit Pods 2.x nastavenia a data"
 
 #: classes/PodsAdmin.php:1565
 msgid "Values"
-msgstr ""
+msgstr "Hodnoty"
 
 #: classes/fields/pick.php:525
 msgid "US States"
@@ -2649,11 +2649,11 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:71 ui/admin/settings-reset.php:78
 msgid "Deactivate and Delete Pods 2.x data"
-msgstr ""
+msgstr "Deaktivovat a odstranenie struky 2.x dat"
 
 #: classes/PodsAdmin.php:1568
 msgid "Default Value"
-msgstr ""
+msgstr "Predvolena hodnota"
 
 #: classes/fields/pick.php:532
 msgid "Calendar - Days of Week"
@@ -2661,11 +2661,11 @@ msgstr ""
 
 #: ui/admin/settings-reset.php:73
 msgid "This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed."
-msgstr ""
+msgstr "Toto zmaze struky 2.x nastavenia, data a deaktivovat sam raz urobil. Vasa databaza bude to, ako keby Pods 2.x nikdy neexistoval."
 
 #: classes/PodsAdmin.php:1575
 msgid "Set Default Value via Parameter"
-msgstr ""
+msgstr "Nastavit predvolene hodnota pomocou parametra"
 
 #: classes/fields/pick.php:539
 msgid "Calendar - Months of Year"
@@ -2680,7 +2680,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1581
 msgid "Visibility"
-msgstr ""
+msgstr "Viditelnost"
 
 #: classes/fields/pick.php:844
 msgid "The %s field is required and cannot be removed by the %s field"
@@ -2693,11 +2693,11 @@ msgstr ""
 #: classes/PodsAdmin.php:1584 components/Pages.php:517
 #: components/Templates/Templates.php:313
 msgid "Restrict Access"
-msgstr ""
+msgstr "Obmedzit pristup"
 
 #: classes/fields/pick.php:1071
 msgid "-- Select One --"
-msgstr ""
+msgstr "- vyberte jednu moznost -"
 
 #: ui/admin/settings-reset.php:86
 msgid "This will reset Pods settings, removes all of it's data, and performs a fresh install."
@@ -2725,7 +2725,7 @@ msgstr ""
 #: classes/PodsAdmin.php:1603 components/Pages.php:466
 #: components/Templates/Templates.php:289
 msgid "Restrict access by Capability?"
-msgstr ""
+msgstr "Obmedzit pristup zdatnosti?"
 
 #: classes/PodsAdmin.php:1610
 msgid "Hide field from UI"
@@ -2750,15 +2750,15 @@ msgstr ""
 #: classes/PodsAdmin.php:1656 components/Pages.php:477
 #: components/Templates/Templates.php:300
 msgid "Capability Allowed"
-msgstr ""
+msgstr "schopnost dovolila"
 
 #: classes/PodsAdmin.php:1657
 msgid "Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own."
-msgstr ""
+msgstr "CSV zoznam cababilities, napriklad add_podname_item, najdete v roli a schopnosti komponentov pre kompletny zoznam a sposob, ako pridat svoj vlastny."
 
 #: classes/PodsAdmin.php:1758 classes/PodsAdmin.php:1800
 msgid "Pod not found."
-msgstr ""
+msgstr "Pod nebol najdeny."
 
 #: classes/PodsAdmin.php:1762
 msgid "Pod reset successfully."
@@ -2766,15 +2766,15 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1809
 msgid "Pod deleted successfully."
-msgstr ""
+msgstr "Pod uspesne zmazany."
 
 #: classes/PodsAdmin.php:1889
 msgid "by %s"
-msgstr ""
+msgstr "% s"
 
 #: classes/PodsAdmin.php:1892
 msgid "Visit component site"
-msgstr ""
+msgstr "Navstivte komponenty stranky"
 
 #: classes/PodsAdmin.php:1938 classes/PodsAdmin.php:1975
 msgid "Category"
@@ -2782,7 +2782,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1946 ui/admin/setup-edit-field-fluid.php:70
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: classes/PodsAdmin.php:1967
 msgid "Field Types"
@@ -2790,7 +2790,7 @@ msgstr ""
 
 #: classes/PodsAdmin.php:1968 ui/admin/settings.php:11
 msgid "Tools"
-msgstr ""
+msgstr "Nastroje"
 
 #: classes/PodsAdmin.php:1969
 msgid "Integration"
@@ -2822,20 +2822,20 @@ msgstr ""
 
 #: classes/PodsAdmin.php:2054 classes/PodsAdmin.php:2093
 msgid "Component enabled"
-msgstr ""
+msgstr "povolene Component"
 
 #: classes/PodsAdmin.php:2056 classes/PodsAdmin.php:2095
 msgid "Component disabled"
-msgstr ""
+msgstr "Component zakazane"
 
 #: classes/PodsAdmin.php:2277 classes/fields/file.php:599
 #: classes/fields/pick.php:1811
 msgid "Unauthorized request"
-msgstr ""
+msgstr "Neopravnene ziadosti"
 
 #: classes/PodsAdmin.php:2288
 msgid "Access denied"
-msgstr ""
+msgstr "Pristup bol odmietnuty"
 
 #: classes/PodsInit.php:781 components/Helpers.php:112 components/Pages.php:161
 #: components/Templates/Templates.php:127
@@ -2913,124 +2913,124 @@ msgstr ""
 
 #: classes/PodsInit.php:829 classes/PodsUI.php:915
 msgid "Items"
-msgstr ""
+msgstr "Polozky"
 
 #: classes/PodsInit.php:830 classes/PodsUI.php:914
 msgid "Item"
-msgstr ""
+msgstr "Polozka"
 
 #: classes/PodsInit.php:840 classes/PodsInit.php:862 classes/PodsUI.php:938
 msgid "Add New %s"
-msgstr ""
+msgstr "Pridat novy% s"
 
 #: classes/PodsInit.php:841
 msgid "New %s"
-msgstr ""
+msgstr "Novy% s"
 
 #: classes/PodsInit.php:843 classes/PodsInit.php:860 classes/PodsInit.php:1326
 #: classes/PodsUI.php:939
 msgid "Edit %s"
-msgstr ""
+msgstr "Upravit% s"
 
 #: classes/PodsInit.php:844 classes/PodsInit.php:845 classes/PodsUI.php:941
 #: classes/PodsUI.php:952 ui/admin/form.php:85 ui/admin/form.php:109
 #: ui/admin/form.php:196 ui/admin/view.php:30
 msgid "View %s"
-msgstr ""
+msgstr "Zobrazit% s"
 
 #: classes/PodsInit.php:846 classes/PodsInit.php:857
 msgid "All %s"
-msgstr ""
+msgstr "Vsetky% s"
 
 #: classes/PodsInit.php:847 classes/PodsInit.php:855 classes/PodsUI.php:943
 msgid "Search %s"
-msgstr ""
+msgstr "Hladat% s"
 
 #: classes/PodsInit.php:848
 msgid "No %s Found"
-msgstr ""
+msgstr "Ziadna% s nenajdeny"
 
 #: classes/PodsInit.php:849
 msgid "No %s Found in Trash"
-msgstr ""
+msgstr "Ziadna% s najdeny v kosi"
 
 #: classes/Pods.php:3072
 msgid "Go to page:"
-msgstr ""
+msgstr "Prejst na stranku:"
 
 #: classes/PodsInit.php:850 classes/PodsInit.php:858
 msgid "Parent %s"
-msgstr ""
+msgstr "Parent% s"
 
 #: classes/Pods.php:3074
 msgid "&laquo; First"
-msgstr ""
+msgstr "« First "
 
 #: classes/PodsInit.php:851
 msgid "Parent %s:"
-msgstr ""
+msgstr "Parent% s:"
 
 #: classes/Pods.php:3075
 msgid "&lsaquo; Previous"
-msgstr ""
+msgstr "<Predchadzajuce"
 
 #: classes/PodsInit.php:856
 msgid "Popular %s"
-msgstr ""
+msgstr "Popularny% s"
 
 #: classes/fields/website.php:71
 msgid "http://example.com/"
-msgstr ""
+msgstr "http://example.com/"
 
 #: classes/Pods.php:3076
 msgid "Next &rsaquo;"
-msgstr ""
+msgstr "Dalsi>"
 
 #: classes/PodsInit.php:859
 msgid "Parent %s :"
-msgstr ""
+msgstr "Parent% s:"
 
 #: classes/fields/website.php:72
 msgid "http://example.com/ (remove www)"
-msgstr ""
+msgstr "http://example.com/ (odstranenie www)"
 
 #: classes/Pods.php:3077
 msgid "Last &raquo;"
-msgstr ""
+msgstr "Posledna» "
 
 #: classes/PodsInit.php:861
 msgid "Update %s"
-msgstr ""
+msgstr "Aktualizacia% s"
 
 #: classes/fields/website.php:73
 msgid "http://www.example.com/ (force www if no sub-domain provided)"
-msgstr ""
+msgstr "http://www.example.com/ (sila www pokial nie je sub-domeny k dispozicii)"
 
 #: classes/Pods.php:3195 classes/PodsUI.php:932 classes/PodsUI.php:2598
 #: classes/PodsUI.php:2823
 msgid "Search"
-msgstr ""
+msgstr "Hladat"
 
 #: classes/PodsInit.php:863
 msgid "New %s Name"
-msgstr ""
+msgstr "Novy% s Meno"
 
 #: classes/fields/website.php:74
 msgid "example.com"
-msgstr ""
+msgstr "example.com"
 
 #: classes/Pods.php:3430 classes/PodsAdmin.php:621
 #: ui/admin/components-admin.php:99
 msgid "Save Changes"
-msgstr ""
+msgstr "Ulozit zmeny"
 
 #: classes/PodsInit.php:864
 msgid "Separate %s with commas"
-msgstr ""
+msgstr "Samostatny% s ciarkou"
 
 #: classes/fields/website.php:75
 msgid "example.com (force removal of www)"
-msgstr ""
+msgstr "example.com (sila odstranenie www)"
 
 #: classes/Pods.php:3448
 msgid "Form submitted successfully"
@@ -3038,19 +3038,19 @@ msgstr ""
 
 #: classes/PodsInit.php:865
 msgid "Add or remove %s"
-msgstr ""
+msgstr "Pridat alebo odstranit% s"
 
 #: classes/fields/website.php:76
 msgid "www.example.com (force www if no sub-domain provided)"
-msgstr ""
+msgstr "www.example.com (sila www pokial nie je sub-domeny k dispozicii)"
 
 #: classes/Pods.php:3720
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: classes/PodsInit.php:866
 msgid "Choose from the most used %s"
-msgstr ""
+msgstr "Vyberte si z najpouzivanejsich% s"
 
 #: classes/fields/website.php:187
 msgid "Invalid website provided for the field %s."
@@ -3060,31 +3060,31 @@ msgstr ""
 #: ui/admin/form.php:260 ui/admin/setup-edit-field-fluid.php:23
 #: ui/admin/setup-edit-field.php:73 ui/admin/view.php:76
 msgid "Delete"
-msgstr ""
+msgstr "Odstranit"
 
 #: classes/PodsMeta.php:617
 msgid "Object required to add a Pods meta group"
-msgstr ""
+msgstr "Objekt nutne pridat meta struky skupinu"
 
 #: classes/fields/wysiwyg.php:67 ui/admin/setup-edit.php:453
 msgid "Editor"
-msgstr ""
+msgstr "Editor"
 
 #: classes/PodsAPI.php:347
 msgid "User data is required but is either invalid or empty"
-msgstr ""
+msgstr "Uzivatelske data je nutne, ale je bud neplatny alebo prazdne"
 
 #: classes/PodsMeta.php:854 ui/admin/view.php:186
 msgid "More Fields"
-msgstr ""
+msgstr "Dalsie pole"
 
 #: classes/fields/wysiwyg.php:74
 msgid "TinyMCE (WP Default)"
-msgstr ""
+msgstr "TinyMCE (WP predvolene)"
 
 #: classes/PodsAPI.php:485
 msgid "Comment data is required but is either invalid or empty"
-msgstr ""
+msgstr "Komentar udaje je nutne, ale je bud neplatny alebo prazdne"
 
 #: classes/PodsMigrate.php:640 classes/PodsMigrate.php:673
 msgid "There was an issue saving the export file in your uploads folder."
@@ -3092,15 +3092,15 @@ msgstr ""
 
 #: classes/fields/wysiwyg.php:75
 msgid "CLEditor"
-msgstr ""
+msgstr "CLEditor"
 
 #: classes/PodsAPI.php:641
 msgid "Taxonomy term data is required but is either invalid or empty"
-msgstr ""
+msgstr "Taxonomia dlhodobe udaje je nutne, ale je bud neplatny alebo prazdne"
 
 #: classes/PodsUI.php:500
 msgid "<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information."
-msgstr ""
+msgstr "<strong>Chyba:</strong> Pods UI potrebuje struky objekt alebo definicie tabulky bezat, najdete v Uzivatelskej prirucke pre viac informacii."
 
 #: classes/fields/wysiwyg.php:80
 msgid "Editor Options"
@@ -3113,7 +3113,7 @@ msgstr ""
 #: classes/PodsUI.php:930 classes/PodsUI.php:933 classes/PodsUI.php:3511
 #: ui/admin/setup-edit.php:362
 msgid "View"
-msgstr ""
+msgstr "Zobrazit"
 
 #: classes/fields/wysiwyg.php:84
 msgid "Enable Media Buttons?"
@@ -3144,11 +3144,11 @@ msgstr ""
 
 #: components/Advanced-Content-Types.php:40
 msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
-msgstr ""
+msgstr "Advanced Content Type (oddelene od WP, ??prazdny bridlice, vo svojej vlastnej tabulky)"
 
 #: classes/PodsAPI.php:1264
 msgid "Please choose whether to Create or Extend a Content Type"
-msgstr ""
+msgstr "Prosim vyberte, ci chcete vytvorit alebo rozsirit typ obsahu"
 
 #: classes/PodsUI.php:942 classes/PodsUI.php:953
 msgid "Reorder %s"
@@ -3160,7 +3160,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1379
 msgid "Post Type %s already exists, try extending it instead"
-msgstr ""
+msgstr "Prispevok Typ% s uz existuje, skuste sa predlzuje jeho miesto"
 
 #: classes/PodsUI.php:947 classes/PodsUI.php:950
 msgid "Save New %s"
@@ -3179,7 +3179,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1388
 msgid "Taxonomy %s already exists, try extending it instead"
-msgstr ""
+msgstr "Taxonomia% s uz existuje, skuste sa predlzuje jeho miesto"
 
 #: classes/PodsUI.php:949
 msgid "Save %s"
@@ -3191,7 +3191,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1460
 msgid "Pod %s already exists, you cannot rename %s to that"
-msgstr ""
+msgstr "Pod% s uz existuje, nemozno premenovat% s ako"
 
 #: classes/PodsUI.php:951
 msgid "Delete this %s"
@@ -3203,7 +3203,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1463 classes/PodsAPI.php:1466
 msgid "Pod %s cannot be renamed, it extends an existing WP Object"
-msgstr ""
+msgstr "Pod% s nemozno premenovat, ze rozsiruje existujuce WP objekt"
 
 #: classes/PodsUI.php:1372 classes/PodsUI.php:1527
 msgid "<strong>Error:</strong> You do not have access to this %s."
@@ -3215,7 +3215,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1470
 msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
-msgstr ""
+msgstr "Pod pomocou% s uz existuje, nemozete znovu objekt na viac struky"
 
 #: classes/PodsUI.php:1434 classes/PodsUI.php:1482 classes/PodsUI.php:1762
 #: classes/PodsUI.php:2379
@@ -3228,11 +3228,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:1472
 msgid "Pod %s already exists"
-msgstr ""
+msgstr "Pod% s uz existuje"
 
 #: classes/PodsUI.php:1524 classes/PodsUI.php:1652
 msgid "<strong>Error:</strong> %s not found."
-msgstr ""
+msgstr "<strong>Chyba:</strong> %s nebol najdeny."
 
 #: components/Advanced-Relationships.php:69
 msgid "Sidebars"
@@ -3240,7 +3240,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1640
 msgid "Post Type %s already exists, you cannot rename %s to that"
-msgstr ""
+msgstr "Prispevok Typ% s uz existuje, nemozno premenovat% s ako"
 
 #: classes/PodsUI.php:1791
 msgid "<strong>Success!</strong> %s reordered successfully."
@@ -3252,7 +3252,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:1646
 msgid "Taxonomy %s already exists, you cannot rename %s to that"
-msgstr ""
+msgstr "Taxonomia% s uz existuje, nemozno premenovat% s ako"
 
 #: classes/PodsUI.php:1793
 msgid "<strong>Error:</strong> %s has not been reordered."
@@ -3264,13 +3264,13 @@ msgstr ""
 
 #: classes/PodsAPI.php:1655
 msgid "Pod name cannot be empty"
-msgstr ""
+msgstr "Pod nazov nemoze byt prazdny"
 
 #: classes/PodsUI.php:1809 components/Roles/ui/edit.php:19
 #: ui/admin/form-settings.php:48 ui/admin/form-settings.php:67
 #: ui/admin/form.php:71 ui/admin/form.php:99 ui/admin/setup-edit.php:218
 msgid "saved"
-msgstr ""
+msgstr "ulozit"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:22
 msgid "Pods - Field Value"
@@ -3278,12 +3278,12 @@ msgstr ""
 
 #: classes/PodsAPI.php:1755
 msgid "Cannot save Pod"
-msgstr ""
+msgstr "Nemozno ulozit Pod"
 
 #: classes/PodsUI.php:1811 components/Roles/ui/edit.php:22 ui/admin/form.php:74
 #: ui/admin/form.php:102 ui/admin/setup-edit.php:221
 msgid "created"
-msgstr ""
+msgstr "vytvoril"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:23
 msgid "Display a single Pod item's field value"
@@ -3291,13 +3291,13 @@ msgstr ""
 
 #: classes/PodsAPI.php:1787
 msgid "Cannot add Database Table for Pod"
-msgstr ""
+msgstr "Nemozno pridat databazovej tabulky pre Pod"
 
 #: classes/PodsUI.php:1881 components/Roles/ui/edit.php:24
 #: ui/admin/form-settings.php:54 ui/admin/form-settings.php:69
 #: ui/admin/form.php:82 ui/admin/form.php:106 ui/admin/setup-edit.php:225
 msgid "<strong>Success!</strong> %s %s successfully."
-msgstr ""
+msgstr "<strong>Uspech!</strong>%s %s uspesne."
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:84
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:86
@@ -3309,11 +3309,11 @@ msgstr ""
 #: ui/admin/widgets/field.php:38 ui/admin/widgets/form.php:38
 #: ui/admin/widgets/list.php:40 ui/admin/widgets/single.php:40
 msgid "None Found"
-msgstr ""
+msgstr "Ziadne Najdene"
 
 #: classes/PodsAPI.php:1794
 msgid "Cannot update Database Table for Pod"
-msgstr ""
+msgstr "Nemozno aktualizovat databazove tabulky pre Pod"
 
 #: classes/PodsUI.php:1884
 msgid "<strong>Error:</strong> %s has not been %s."
@@ -3324,24 +3324,24 @@ msgstr ""
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:91
 #: ui/admin/widgets/field.php:44 ui/admin/widgets/single.php:46
 msgid "Slug or ID"
-msgstr ""
+msgstr "Slug alebo ID"
 
 #: classes/PodsAPI.php:2011
 msgid "Cannot save the %s field"
-msgstr ""
+msgstr "Nie je mozne ulozit% s pola"
 
 #: classes/PodsUI.php:1906
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"id\" definition."
-msgstr ""
+msgstr "<strong>Chyba:</strong> Invalid Configuration - Missing \"id\". Definicia"
 
 #: components/Builder/modules/field/PodsBuilderModuleField.php:98
 #: ui/admin/shortcode.php:442 ui/admin/widgets/field.php:51
 msgid "Field"
-msgstr ""
+msgstr "Pole"
 
 #: classes/PodsAPI.php:2124
 msgid "Pod ID or name is required"
-msgstr ""
+msgstr "Pod ID alebo nazov je vyzadovany"
 
 #: classes/PodsUI.php:1917
 msgid "<strong>Deleted:</strong> %s has been deleted."
@@ -3357,7 +3357,7 @@ msgstr ""
 #: classes/PodsAPI.php:5707 classes/PodsAPI.php:5933 classes/PodsAPI.php:6421
 #: classes/PodsAPI.php:7623
 msgid "Pod not found"
-msgstr ""
+msgstr "Pod nebol najdeny"
 
 #: classes/PodsUI.php:1919 classes/PodsUI.php:1962
 msgid "<strong>Error:</strong> %s has not been deleted."
@@ -3370,7 +3370,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:2172
 msgid "Field %s already exists, you cannot rename %s to that"
-msgstr ""
+msgstr "Pole% s uz existuje, nemozno premenovat% s ako"
 
 #: classes/PodsUI.php:1965
 msgid "<strong>Deleted:</strong> %s have been deleted."
@@ -3379,11 +3379,11 @@ msgstr ""
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:100
 #: ui/admin/shortcode.php:448 ui/admin/widgets/form.php:49
 msgid "Fields (comma-separated)"
-msgstr ""
+msgstr "Pole (oddeleny ciarkou)"
 
 #: classes/PodsAPI.php:2175
 msgid "Field %s already exists"
-msgstr ""
+msgstr "Pole% s uz existuje"
 
 #: classes/PodsUI.php:2028
 msgid "<strong>Success:</strong> Your export is ready, you can download it <a href=\"%s\" target=\"_blank\">here</a>"
@@ -3397,13 +3397,13 @@ msgstr ""
 #: classes/PodsAPI.php:2313 classes/PodsAPI.php:2316 classes/PodsAPI.php:2319
 #: classes/PodsAPI.php:2382 classes/PodsAPI.php:2388 classes/PodsAPI.php:2391
 msgid "%s is reserved for internal Pods usage, please try a different name"
-msgstr ""
+msgstr "% s je vyhradene pre interne pouzitie struky, skuste iny nazov"
 
 #: classes/PodsUI.php:2560 classes/PodsUI.php:2899 classes/PodsUI.php:3086
 #: classes/fields/boolean.php:64 classes/fields/boolean.php:243
 #: classes/fields/boolean.php:267
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:116
 #: ui/admin/shortcode.php:460 ui/admin/widgets/form.php:61
@@ -3412,13 +3412,13 @@ msgstr ""
 
 #: classes/PodsAPI.php:2323
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
-msgstr ""
+msgstr "% s je vyhradene pre interne WordPress alebo struky pouzitie, prosim, skuste iny nazov. Tiez zvazte, ake WordPress a Pods Vam vstavany-in."
 
 #: classes/PodsUI.php:2561 classes/PodsUI.php:2900 classes/PodsUI.php:3087
 #: classes/fields/boolean.php:69 classes/fields/boolean.php:245
 #: classes/fields/boolean.php:268
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:22
 msgid "Pods - List Items"
@@ -3426,11 +3426,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:2331
 msgid "This pod already has an internal WordPress permalink field"
-msgstr ""
+msgstr "Tato pod uz ma vnutornu WordPress permalink pole"
 
 #: classes/PodsUI.php:2620
 msgid "Reset Filters"
-msgstr ""
+msgstr "Obnovit filtre"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:23
 msgid "Display multiple Pod items"
@@ -3438,7 +3438,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:2348
 msgid "This pod already has a permalink field"
-msgstr ""
+msgstr "Tato pod uz ma pole permalink"
 
 #: classes/PodsUI.php:2645
 msgid "Bulk Actions"
@@ -3452,11 +3452,11 @@ msgstr ""
 #: ui/admin/widgets/list.php:54 ui/admin/widgets/list.php:82
 #: ui/admin/widgets/single.php:62 ui/admin/widgets/single.php:84
 msgid "Custom Template"
-msgstr ""
+msgstr "Vlastne sablony"
 
 #: classes/PodsAPI.php:2384 classes/PodsAPI.php:2400
 msgid "%s is not editable"
-msgstr ""
+msgstr "% s nie je editovatelny"
 
 #: classes/PodsUI.php:2661 classes/PodsUI.php:3752
 msgid "Apply"
@@ -3471,54 +3471,54 @@ msgstr ""
 #: ui/admin/widgets/list.php:67 ui/admin/widgets/single.php:59
 #: ui/admin/widgets/single.php:75
 msgid "Template"
-msgstr ""
+msgstr "Sablona"
 
 #: classes/PodsAPI.php:2398
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
-msgstr ""
+msgstr "% s je vyhradene pre interne WordPress alebo struky pouzitie, prosim, skuste iny nazov"
 
 #: classes/PodsUI.php:2681
 msgid "Update Order"
-msgstr ""
+msgstr "Aktualizacia Objednat"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:145
 #: ui/admin/shortcode.php:424 ui/admin/widgets/list.php:94
 msgid "Limit"
-msgstr ""
+msgstr "Limit"
 
 #: classes/PodsAPI.php:2436
 msgid "Cannot save Field"
-msgstr ""
+msgstr "Nemozno ulozit pole"
 
 #: classes/PodsUI.php:2682 ui/admin/setup-edit-field-fluid.php:190
 msgid "Cancel"
-msgstr ""
+msgstr "Zrusit"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:153
 #: ui/admin/shortcode.php:430 ui/admin/widgets/list.php:100
 msgid "Order By"
-msgstr ""
+msgstr "Zoradit podla"
 
 #: classes/PodsAPI.php:2469 classes/PodsAPI.php:2476 classes/PodsAPI.php:2488
 msgid "Cannot create new field"
-msgstr ""
+msgstr "Nie je mozne vytvorit nove pole"
 
 #: classes/PodsUI.php:2715
 msgid "Please use the search filter(s) above to display data"
-msgstr ""
+msgstr "Prosim, pouzite vyhladavaci filter (y) vyssie pre zobrazenie dat"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:161
 #: ui/admin/shortcode.php:436 ui/admin/widgets/list.php:106
 msgid "Where"
-msgstr ""
+msgstr "Kde"
 
 #: classes/PodsAPI.php:2652
 msgid "Name must be given to save an Object"
-msgstr ""
+msgstr "Meno musi byt venovana ulozit objekt"
 
 #: classes/PodsUI.php:2715
 msgid "or click on an Export to download a full copy of the data"
-msgstr ""
+msgstr "alebo kliknite na Export pre stiahnutie kopie dat"
 
 #: components/Builder/modules/list/PodsBuilderModuleList.php:169
 #: components/Builder/modules/view/PodsBuilderModuleView.php:76
@@ -3529,7 +3529,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:2655
 msgid "Type must be given to save an Object"
-msgstr ""
+msgstr "Typ musi byt venovana ulozit objekt"
 
 #: classes/PodsUI.php:2817
 msgid "Reset"
@@ -3544,7 +3544,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:3169
 msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
-msgstr ""
+msgstr "Pre-save pomocnici su zastarane, pouzite akciu pods_pre_save_pod_item_% s namiesto"
 
 #: classes/PodsUI.php:2848 classes/PodsUI.php:2849 classes/PodsUI.php:2857
 #: classes/PodsUI.php:2911 classes/PodsUI.php:2965
@@ -3560,7 +3560,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:3224 classes/PodsMeta.php:2036
 msgid "There was an issue validating the field %s"
-msgstr ""
+msgstr "Doslo k problemu overovanie pole% s"
 
 #: classes/PodsUI.php:2858
 msgid "Add Filter"
@@ -3575,7 +3575,7 @@ msgstr ""
 
 #: classes/PodsAPI.php:3651
 msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
-msgstr ""
+msgstr "Post-usetrite pomocnici su zastarane, pouzite akciu pods_post_save_pod_item_% s namiesto"
 
 #: classes/PodsUI.php:2916
 msgid "Remove Filter"
@@ -3607,7 +3607,7 @@ msgstr ""
 #: classes/PodsAPI.php:3992 classes/PodsAPI.php:4562 classes/PodsAPI.php:5739
 #: classes/PodsAPI.php:5752
 msgid "Field not found"
-msgstr ""
+msgstr "Pole nebol najdeny"
 
 #: classes/PodsUI.php:3140
 msgid "Search Text"
@@ -3619,16 +3619,16 @@ msgstr ""
 
 #: classes/PodsAPI.php:4253 classes/PodsAPI.php:4727
 msgid "$params->pod instead of $params->datatype"
-msgstr ""
+msgstr "$ params-> pod miesto $ params-> datatype"
 
 #: classes/PodsUI.php:3200
 msgid "No %s found"
-msgstr ""
+msgstr "Ziadne% s najdeny"
 
 #: components/Builder/modules/single/PodsBuilderModuleSingle.php:23
 #: ui/admin/shortcode.php:326
 msgid "Display a single Pod item"
-msgstr ""
+msgstr "Zobrazit jediny Pod polozku"
 
 #: classes/PodsAPI.php:4261
 msgid "$params->pod is required"
@@ -3636,7 +3636,7 @@ msgstr ""
 
 #: classes/PodsUI.php:3228
 msgid "<strong>Error:</strong> Invalid Configuration - Missing \"fields\" definition."
-msgstr ""
+msgstr "<strong>Chyba:</strong> Invalid Configuration - Missing\"fields\". Definicia"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:22
 msgid "Pods - View"
@@ -3648,7 +3648,7 @@ msgstr ""
 
 #: classes/PodsUI.php:3483 classes/PodsUI.php:3520
 msgid "Edit this item"
-msgstr ""
+msgstr "Upravit tuto polozku"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:23
 #: ui/admin/shortcode.php:331
@@ -3657,11 +3657,11 @@ msgstr ""
 
 #: classes/PodsAPI.php:4455
 msgid "Pod unable to be deleted"
-msgstr ""
+msgstr "Pod nemozno odstranit"
 
 #: classes/PodsUI.php:3492 classes/PodsUI.php:3511
 msgid "View this item"
-msgstr ""
+msgstr "Zobrazit tuto polozku"
 
 #: components/Builder/modules/view/PodsBuilderModuleView.php:68
 #: ui/admin/shortcode.php:466 ui/admin/widgets/view.php:21
@@ -3670,31 +3670,31 @@ msgstr ""
 
 #: classes/PodsAPI.php:4576
 msgid "Field unable to be deleted"
-msgstr ""
+msgstr "Pole nemozno odstranit"
 
 #: classes/PodsUI.php:3529
 msgid "Duplicate this item"
-msgstr ""
+msgstr "Duplikovat tuto polozku"
 
 #: components/Helpers.php:233
 msgid "Enter helper name here"
-msgstr ""
+msgstr "Zadajte nazov pomocnu tu"
 
 #: classes/PodsAPI.php:4614
 msgid "%s Object not found"
-msgstr ""
+msgstr "%s objekt nebol nájdený"
 
 #: classes/PodsUI.php:3539
 msgid "Delete this item"
-msgstr ""
+msgstr "Odstranit tuto polozku"
 
 #: components/Helpers.php:267
 msgid "Helper Type"
-msgstr ""
+msgstr "Helper Type"
 
 #: classes/PodsAPI.php:4619
 msgid "%s Object not deleted"
-msgstr ""
+msgstr "%s objekt neodstráni"
 
 #: classes/PodsUI.php:3539
 msgid "You are about to permanently delete this item\\n Choose \\'Cancel\\' to stop, \\'OK\\' to delete."
@@ -3702,27 +3702,27 @@ msgstr ""
 
 #: components/Helpers.php:281
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
 #: classes/PodsAPI.php:4709
 msgid "$params->id instead of $params->tbl_row_id"
-msgstr ""
+msgstr "$ params-> id miesto $ params-> tbl_row_id"
 
 #: classes/PodsUI.php:3549
 msgid "Enable"
-msgstr ""
+msgstr "Povolit"
 
 #: components/Helpers.php:286
 msgid "Helper"
-msgstr ""
+msgstr "Helper"
 
 #: classes/PodsAPI.php:4715
 msgid "$params->id instead of $params->pod_id"
-msgstr ""
+msgstr "$ params-> id miesto $ params-> pod_id"
 
 #: classes/PodsUI.php:3550
 msgid "Disable"
-msgstr ""
+msgstr "Zakazat"
 
 #: components/Migrate-CPTUI/Migrate-CPTUI.php:189
 #: components/Migrate-CPTUI/Migrate-CPTUI.php:255

@@ -161,7 +161,7 @@ module.exports = function ( grunt ) {
 	//release tasks
 	grunt.registerTask( 'version_number', [ 'replace:reamdme_txt', 'replace:init_php' ] );
 	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'clean:post_build', 'mkdir:build' ] );
-	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn' ] );
+	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
 

@@ -132,7 +132,10 @@ module.exports = function ( grunt ) {
 		svn_copy: {
 			options: {},
 			files: {
-				'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk' : 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %>'
+				// This is switched, dest = source and src = target, svn_copy code is wrong
+				// See: https://github.com/ColmMcBarron/grunt-svn-copy/issues/1
+				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
+				src: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %> -m "<%= pkg.name %>/<%= pkg.version %>"'
 			}
 		},
 

@@ -4,11 +4,24 @@
  */
 class PodsWidgetSingle extends WP_Widget {
 
-    /**
-     * Register the widget
-     */
-    public function PodsWidgetSingle () {
-        $this->WP_Widget(
+	/**
+	 * Register the widget
+	 *
+	 * @since 2.5.4
+	 *
+	 * Note: params are totally ignored. Included for the sake of strict standards.
+	 *
+	 *
+	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
+	 *                                a portion of the widget's class name will be used Has to be unique.
+	 * @param string $name            Name for the widget displayed on the configuration page.
+	 * @param array  $widget_options  Optional. Widget options. See {@see wp_register_sidebar_widget()} for
+	 *                                information on accepted arguments. Default empty array.
+	 * @param array  $control_options Optional. Widget control options. See {@see wp_register_widget_control()}
+	 *                                for information on accepted arguments. Default empty array.
+	 */
+	public function __construct( $id_base = 'pods_widget_single', $name = 'Pods - Single Item', $widget_options = array(), $control_options = array() ) {
+	    parent::__construct(
             'pods_widget_single',
             'Pods - Single Item',
             array( 'classname' => 'pods_widget_single', 'description' => 'Display a Single Pod Item' ),

@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jimtrue, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.2.2
-Stable tag: 2.5.3
+Tested up to: 4.3
+Stable tag: 2.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,7 +155,17 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.5.3 - June 11, 2015 =
+= 2.5.4 - August 10th, 2015 =
+* Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)
+* Added: Query_field tests (meta_query syntax for where) (#3033, #3032, #1662, #2689)
+* Added: Support for autoCAST()ing meta_value orderby for dates and numbers (#3043, #3041, #3058)
+* Added: Feature/pods page export support. Added 'pods_page_exists' filter to allow Pods Page content to be supplied from another source (eg exported files) (#3049, #3054)
+* Added: Copy of EDDs scrutinizer (#2917, #3072)
+* Removed: PHP4-style constructor removed in Pods Widgets (#3055, #3056, #3057)
+* Fixed: PHP Doc Improvement (#3039, #3040)
+* Fixed: Style escaping which created a quote encoding bug in PodsMeta.php. (#3053, #3032)
+
+= 2.5.3 - June 11th, 2015 =
 * Added: Support for Term Splitting in WP 4.2 (#2856, #2660)
 * Added: Support for Pod and Field names with dashes and prefixes with underscores (#3012, #3021, #3022)
 * Added: Add git workflow and a link to it from contributing.md (#2490, #2496)
@@ -181,7 +191,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Fixed: Cleared old unit tests from EDD (#2380)
 * Fixed: Allow fields to be sorted by orderby; Two separate but connected issues. First if orderby is passed then the $data array is never populated. Then looping through $ids will always give it results sorted by priority in the relationships field (data returned by lookup_related_items) (#2350, #2277)
 
-= 2.5.2 - May 14, 2015 =
+= 2.5.2 - May 14th, 2015 =
 * Fixed: Issues with default values for number and other types of fields.
 * Fixed: Issue where Pods update was causing WP-API endpoints to 404. Rewirte rules now flush on wp_loaded.
 * Fixed: Issue preventing proper display of fields in a related CPT via Pods::field()

@@ -155,6 +155,16 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.5.4 - August 10, 2015 =
+* Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)
+* Added: Query_field tests (meta_query syntax for where) (#3033, #3032, #1662, #2689)
+* Added: Support for autoCAST()ing meta_value orderby for dates and numbers (#3043, #3041, #3058)
+* Added: Feature/pods page export support. Added 'pods_page_exists' filter to allow Pods Page content to be supplied from another source (eg exported files) (#3049, #3054)
+* Added: Copy of EDDs scrutinizer (#2917, #3072)
+* Removed: PHP4-style constructor removed in Pods Widgets (#3055, #3056, #3057)
+* Fixed: PHP Doc Improvement (#3039, #3040)
+* Fixed: Style escaping which created a quote encoding bug in PodsMeta.php. (#3053, #3032)
+
 = 2.5.3 - June 11, 2015 =
 * Added: Support for Term Splitting in WP 4.2 (#2856, #2660)
 * Added: Support for Pod and Field names with dashes and prefixes with underscores (#3012, #3021, #3022)

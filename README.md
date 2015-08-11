@@ -2,7 +2,7 @@
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=release/3.0)](http://travis-ci.org/pods-framework/pods)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0)
 [![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=release/3.0)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=release/3.0)
-[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/master/license.txt)
+[![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/release/3.0/license.txt)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
@@ -39,7 +39,7 @@ If you find an issue that you believe to be a *bug*, [let us know](https://githu
 
 ## Contributions Welcome
 
-Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](https://github.com/pods-framework/pods/blob/master/CONTRIBUTING.md) to this repository.
+Anyone is welcome to contribute to Pods Framework. Please read the [guidelines for contributing](https://github.com/pods-framework/pods/blob/release/3.0/CONTRIBUTING.md) to this repository.
 
 There are various ways you can contribute:
 

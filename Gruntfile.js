@@ -109,22 +109,13 @@ module.exports = function ( grunt ) {
 				src: [ 'README.md' ],
 				overwrite: true,
 				replacements: [{
-					from: /\?branch=([\.\d\w\-]*)/g,
+					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
 					to: "?branch=master"
 				}, {
-					from: /\?b=([\.\d\w\-]*)/g,
+					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
 					to: "?b=master"
 				}, {
-					from: /\/blob\/([\.\d\w\-]*)\//g,
-					to: "/blob/master/"
-				}, {
-					from: /\?branch=release\/([\.\d\w\-]*)/g,
-					to: "?branch=master"
-				}, {
-					from: /\?b=release\/([\.\d\w\-]*)/g,
-					to: "?b=master"
-				}, {
-					from: /\/blob\/release\/([\.\d\w\-]*)\//g,
+					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
 					to: "/blob/master/"
 				}]
 
@@ -133,10 +124,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: ([\.\d\w\-]*)/,
-					to: "GitHub Branch: master"
-				}, {
-					from: /GitHub Branch: release\/([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
 					to: "GitHub Branch: master"
 				}]
 			},
@@ -144,22 +132,13 @@ module.exports = function ( grunt ) {
 				src: [ 'README.md' ],
 				overwrite: true,
 				replacements: [{
-					from: /\?branch=([\.\d\w\-]*)/g,
+					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
 					to: "?branch=2.x"
 				}, {
-					from: /\?b=([\.\d\w\-]*)/g,
+					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
 					to: "?b=2.x"
 				}, {
-					from: /\/blob\/([\.\d\w\-]*)\//g,
-					to: "/blob/2.x/"
-				}, {
-					from: /\?branch=release\/([\.\d\w\-]*)/g,
-					to: "?branch=2.x"
-				}, {
-					from: /\?b=release\/([\.\d\w\-]*)/g,
-					to: "?b=2.x"
-				}, {
-					from: /\/blob\/release\/([\.\d\w\-]*)\//g,
+					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
 					to: "/blob/2.x/"
 				}]
 
@@ -168,10 +147,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: ([\.\d\w\-]*)/,
-					to: "GitHub Branch: 2.x"
-				}, {
-					from: /GitHub Branch: release\/([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
 					to: "GitHub Branch: 2.x"
 				}]
 			},
@@ -179,22 +155,13 @@ module.exports = function ( grunt ) {
 				src: [ 'README.md' ],
 				overwrite: true,
 				replacements: [{
-					from: /\?branch=([\.\d\w\-]*)/g,
+					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
 					to: "?branch=release/3.0"
 				}, {
-					from: /\?b=([\.\d\w\-]*)/g,
+					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
 					to: "?b=release/3.0"
 				}, {
-					from: /\/blob\/([\.\d\w\-]*)\//g,
-					to: "/blob/release/3.0/"
-				}, {
-					from: /\?branch=release\/([\.\d\w\-]*)/g,
-					to: "?branch=release/3.0"
-				}, {
-					from: /\?b=release\/([\.\d\w\-]*)/g,
-					to: "?b=release/3.0"
-				}, {
-					from: /\/blob\/release\/([\.\d\w\-]*)\//g,
+					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
 					to: "/blob/release/3.0/"
 				}]
 
@@ -203,10 +170,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: ([\.\d\w\-]*)/,
-					to: "GitHub Branch: release/3.0"
-				}, {
-					from: /GitHub Branch: release\/([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
 					to: "GitHub Branch: release/3.0"
 				}]
 			}

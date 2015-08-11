@@ -177,7 +177,7 @@ module.exports = function ( grunt ) {
 		},
 
 		replace: {
-			reamdme_txt: {
+			version_reamdme_txt: {
 				src: [ 'readme.txt' ],
 				overwrite: true,
 				replacements: [{
@@ -186,15 +186,107 @@ module.exports = function ( grunt ) {
 				}]
 
 			},
-			init_php: {
+			version_init_php: {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /Version:\s*(.*)/,
+					from: /Version: (.*)/,
 					to: "Version: <%= pkg.version %>"
 				}, {
-					from: /define\(\s*'PODS_VERSION',\s*'(.*)'\s*\);/,
+					from: /define\( 'PODS_VERSION', '([\.\d\w\-]*)' \);/,
 					to: "define( 'PODS_VERSION', '<%= pkg.version %>' );"
+				}]
+			},
+			branchfix_master_reamdme_md: {
+				src: [ 'README.md' ],
+				overwrite: true,
+				replacements: [{
+					from: /\?branch=([\.\d\w\-]*)/g,
+					to: "?branch=master"
+				}, {
+					from: /\?b=([\.\d\w\-]*)/g,
+					to: "?b=master"
+				}, {
+					from: /\/blob\/([\.\d\w\-]*)\//g,
+					to: "/blob/master/"
+				}, {
+					from: /\?branch=release\/([\.\d\w\-]*)/g,
+					to: "?branch=master"
+				}, {
+					from: /\?b=release\/([\.\d\w\-]*)/g,
+					to: "?b=master"
+				}, {
+					from: /\/blob\/release\/([\.\d\w\-]*)\//g,
+					to: "/blob/master/"
+				}]
+
+			},
+			branchfix_master_init_php: {
+				src: [ 'init.php' ],
+				overwrite: true,
+				replacements: [{
+					from: /GitHub Branch: ([\.\d\w\-]*)/,
+					to: "GitHub Branch: master"
+				}, {
+					from: /GitHub Branch: release\/([\.\d\w\-]*)/,
+					to: "GitHub Branch: master"
+				}]
+			},
+			branchfix_2x_reamdme_md: {
+				src: [ 'README.md' ],
+				overwrite: true,
+				replacements: [{
+					from: /\?branch=([\.\d\w\-]*)/g,
+					to: "?branch=2.x"
+				}, {
+					from: /\?b=([\.\d\w\-]*)/g,
+					to: "?b=2.x"
+				}, {
+					from: /\/blob\/([\.\d\w\-]*)\//g,
+					to: "/blob/2.x/"
+				}, {
+					from: /\?branch=release\/([\.\d\w\-]*)/g,
+					to: "?branch=2.x"
+				}, {
+					from: /\?b=release\/([\.\d\w\-]*)/g,
+					to: "?b=2.x"
+				}, {
+					from: /\/blob\/release\/([\.\d\w\-]*)\//g,
+					to: "/blob/2.x/"
+				}]
+
+			},
+			branchfix_2x_init_php: {
+				src: [ 'init.php' ],
+				overwrite: true,
+				replacements: [{
+					from: /GitHub Branch: ([\.\d\w\-]*)/,
+					to: "GitHub Branch: 2.x"
+				}, {
+					from: /GitHub Branch: release\/([\.\d\w\-]*)/,
+					to: "GitHub Branch: 2.x"
+				}]
+			},
+			branchfix_release_reamdme_md: {
+				src: [ 'README.md' ],
+				overwrite: true,
+				replacements: [{
+					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
+					to: "?branch=release/3.0"
+				}, {
+					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
+					to: "?b=release/3.0"
+				}, {
+					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
+					to: "/blob/release/3.0/"
+				}]
+			},
+			branchfix_release_init_php: {
+				src: [ 'init.php' ],
+				overwrite: true,
+				replacements: [{
+					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					to: "GitHub Branch: release/3.0"
 				}]
 			}
 		},
@@ -224,7 +316,10 @@ module.exports = function ( grunt ) {
 		svn_copy: {
 			options: {},
 			files: {
-				'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk' : 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %>'
+				// This is switched, dest = source and src = target, svn_copy code is wrong
+				// See: https://github.com/ColmMcBarron/grunt-svn-copy/issues/1
+				dest: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/trunk',
+				src: 'http://plugins.svn.wordpress.org/<%= pkg.name %>/tags/<%= pkg.version %> -m "<%= pkg.name %>/<%= pkg.version %>"'
 			}
 		},
 
@@ -250,10 +345,15 @@ module.exports = function ( grunt ) {
 
 	} );
 
-	//release tasks
-	grunt.registerTask( 'version_number', [ 'replace:reamdme_txt', 'replace:init_php' ] );
-	grunt.registerTask( 'pre_vcs', [ 'version_number', 'glotpress_download', 'clean:post_build', 'mkdir:build' ] );
-	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'copy:svn_tag', 'push_svn' ] );
+	// branch related tasks
+	grunt.registerTask( 'branch_name_master', [ 'replace:branchfix_master_reamdme_md', 'replace:branchfix_master_init_php' ] );
+	grunt.registerTask( 'branch_name_2x', [ 'replace:branchfix_2x_reamdme_md', 'replace:branchfix_2x_init_php' ] );
+	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_reamdme_md', 'replace:branchfix_release_init_php' ] );
+
+	// release tasks
+	grunt.registerTask( 'version_number', [ 'replace:version_reamdme_txt', 'replace:version_init_php' ] );
+	grunt.registerTask( 'pre_vcs', [ 'branch_name_master', 'version_number', 'glotpress_download', 'clean:post_build', 'mkdir:build' ] );
+	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
 
@@ -267,7 +367,7 @@ module.exports = function ( grunt ) {
 
 	grunt.registerTask( 'imageminnewer', ['newer:imagemin'] );
 
-	//register default task
+	// register default task
 	grunt.registerTask( 'default', [
 		'styles',
 		'javascript',

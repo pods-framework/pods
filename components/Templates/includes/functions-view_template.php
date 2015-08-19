@@ -320,13 +320,13 @@ function frontier_do_subtemplate( $atts, $content ) {
 	);
 
 	$entries = $pod->field( $atts[ 'field' ] );
-	if ( ! empty( $pod->fields[ $atts[ 'field' ] ][ 'table_info' ] ) ) {
-		if ( ! empty( $entries ) ) {
+	if ( ! empty( $entries ) ) {
+		if ( ! empty( $pod->fields[ $atts[ 'field' ] ][ 'table_info' ] ) || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] ) {
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ] );
 
 				$subatts = array(
-					'id'  => $entry[ $subpod->pod_data[ 'field_id' ] ],
+					'id'  => $entry[ $subpod->api->pod_data[ 'field_id' ] ],
 					'pod' => $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ]
 				);
 
@@ -334,40 +334,44 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$template = str_replace( '{_index}', $key, $template );
 				$template = str_replace( '{@' . $atts[ 'field' ] . '.', '{@', $template );
 
+				// Kludge to work with taxonomies, pending a better solution: see issue #3018
+				$target_id = null;
+				if ( isset( $entry[ 'ID'] ) ) {
+					$target_id = $entry[ 'ID' ];
+				} elseif ( isset( $entry[ 'term_id' ] ) ) {
+					$target_id = $entry[ 'term_id' ];
+				}
+
 				$out .= pods_shortcode( array(
 					'name'  => $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ],
-					'slug'  => $entry[ 'ID' ],
+					'slug'  => $target_id,
 					'index' => $key
 				), $template );
 
 			}
-		}
-	} else {
-		if ( ! empty( $entries ) ) {
-			if ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == pods_v( 'file_uploader', $pod->fields[ $atts[ 'field' ] ] ) && 'multi' == pods_v( 'file_format_type', $pod->fields[ $atts[ 'field' ] ] ) ) {
-				$template = frontier_decode_template( $content, $atts );
-				foreach ( $entries as $key => $entry ) {
-					$content = str_replace( '{_index}', $key, $template );
-					$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $content );
-					$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry[ 'ID' ], $content );
-					$content = str_replace( '{@' . $atts[ 'field' ] . '}', '{@image_attachment.' . $entry[ 'ID' ] . '}', $content );
+		} elseif ( 'file' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] && 'attachment' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_uploader' ] && 'multi' == $pod->fields[ $atts[ 'field' ] ][ 'options' ][ 'file_format_type' ] ) {
+			$template = frontier_decode_template( $content, $atts );
+			foreach ( $entries as $key => $entry ) {
+				$content = str_replace( '{_index}', $key, $template );
+				$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $content );
+				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry[ 'ID' ], $content );
+				$content = str_replace( '{@' . $atts[ 'field' ] . '}', '{@image_attachment.' . $entry[ 'ID' ] . '}', $content );
 
-					$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), array(
-						'each',
-						'pod_sub_template',
-						'once',
-						'pod_once_template',
-						'before',
-						'pod_before_template',
-						'after',
-						'pod_after_template',
-						'if',
-						'pod_if_field'
-					) );
-				}
+				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), array(
+					'each',
+					'pod_sub_template',
+					'once',
+					'pod_once_template',
+					'before',
+					'pod_before_template',
+					'after',
+					'pod_after_template',
+					'if',
+					'pod_if_field'
+				) );
 			}
-		}
 
+		}
 	}
 
 	return pods_do_shortcode( $out, array(
@@ -382,7 +386,6 @@ function frontier_do_subtemplate( $atts, $content ) {
 		'if',
 		'pod_if_field'
 	) );
-
 }
 
 /**

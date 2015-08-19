@@ -13,11 +13,13 @@ function pods_mysql_num_rows( $result ) {
 	 */
 	global $wpdb;
 
-	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli ) {
+	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli && $result instanceof mysqli_result ) {
 		return mysqli_num_rows( $result );
+	} elseif ( is_resource( $result ) ) {
+		return mysql_num_rows( $result );
 	}
 
-	return mysql_num_rows( $result );
+	return 0;
 
 }
 
@@ -45,11 +47,13 @@ function pods_mysql_fetch_assoc( $result ) {
 	 */
 	global $wpdb;
 
-	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli ) {
+	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli && $result instanceof mysqli_result ) {
 		return mysqli_fetch_assoc( $result );
+	} elseif ( is_resource( $result ) ) {
+		return mysql_fetch_assoc( $result );
 	}
 
-	return mysql_fetch_assoc( $result );
+	return false;
 
 }
 
@@ -87,11 +91,13 @@ function pods_mysql_fetch_array( $result ) {
 	 */
 	global $wpdb;
 
-	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli ) {
+	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli && $result instanceof mysqli_result ) {
 		return mysqli_fetch_array( $result );
+	} elseif ( is_resource( $result ) ) {
+		return mysql_fetch_array( $result );
 	}
 
-	return mysql_fetch_array( $result );
+	return false;
 
 }
 
@@ -112,11 +118,13 @@ function pods_mysql_data_seek( $result, $row_number ) {
 	 */
 	global $wpdb;
 
-	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli ) {
+	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli && $result instanceof mysqli_result ) {
 		return mysqli_data_seek( $result, $row_number );
+	} elseif ( is_resource( $result ) ) {
+		return mysql_data_seek( $result, $row_number );
 	}
 
-	return mysql_data_seek( $result, $row_number );
+	return false;
 
 }
 
@@ -250,7 +258,7 @@ function pods_mysql_result( $result, $row = 0, $field = 0 ) {
 	 */
 	global $wpdb;
 
-	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli ) {
+	if ( isset( $wpdb->use_mysqli ) && $wpdb->use_mysqli && $result instanceof mysqli_result ) {
 		if ( false === $result ) {
 			return false;
 		}
@@ -288,9 +296,11 @@ function pods_mysql_result( $result, $row = 0, $field = 0 ) {
 		}
 
 		return $line[ $field ];
+	} elseif ( is_resource( $result ) ) {
+		return mysql_result( $result, $row );
 	}
 
-	return mysql_result( $result, $row );
+	return false;
 
 }
 

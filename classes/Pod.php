@@ -692,7 +692,7 @@ class Pod
                 }
             }
 
-            if (is_resource($this->result) && 0 < pods_mysql_num_rows($this->result)) {
+            if (0 < pods_mysql_num_rows($this->result)) {
                 $this->data = pods_mysql_fetch_assoc($this->result);
                 $this->data['type'] = $datatype;
                 return $this->data;
@@ -965,7 +965,7 @@ class Pod
      */
     function getTotalRows() {
         if (false === is_numeric($this->total_rows)) {
-            if (is_resource($this->total_rows) && $row = pods_mysql_fetch_array($this->total_rows))
+            if ($row = pods_mysql_fetch_array($this->total_rows))
                 $this->total_rows = $row[0];
             else
                 $this->total_rows = 0;

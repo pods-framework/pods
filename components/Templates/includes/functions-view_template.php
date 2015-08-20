@@ -233,6 +233,18 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 	$entries = $pod->field( $atts[ 'field' ] );
 	if ( ! empty( $entries ) ) {
+
+		/**
+		 * Note on the change below for issue #3018:
+		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
+		 *
+		 * calling field() above for a taxonomy object field will populate
+		 * $pod->fields[ $field_name ] for the object field's data, in this
+		 * case a taxonomy object field. Without calling
+		 * $pod->field( $field_name ), it would not normally be available in
+		 * the $pod->fields array and is something to not expect to be there in
+		 * 3.0 as this was unintentional.
+		 */
 		if ( ! empty( $pod->fields[ $atts[ 'field' ] ][ 'table_info' ] ) || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ] ) {
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $pod->fields[ $atts[ 'field' ] ][ 'pick_val' ] );
@@ -248,7 +260,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 				// Kludge to work with taxonomies, pending a better solution: see issue #3018
 				$target_id = null;
-				if ( isset( $entry[ 'ID'] ) ) {
+				if ( isset( $entry[ 'ID' ] ) ) {
 					$target_id = $entry[ 'ID' ];
 				} elseif ( isset( $entry[ 'term_id' ] ) ) {
 					$target_id = $entry[ 'term_id' ];

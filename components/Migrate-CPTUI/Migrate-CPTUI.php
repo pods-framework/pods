@@ -57,11 +57,11 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     public function __construct() {
 
         $this->post_option_name = $this->get_option_name( $this->post_option_name_list );
-        if ( ! isnull( $this->post_option_name ) ) {
+        if ( ! is_null( $this->post_option_name ) ) {
             $this->post_types = (array) get_option( $this->post_option_name, array() );
         }
         $this->taxonomy_option_name = $this->get_option_name( $this->taxonomy_option_name_list );
-        if ( ! isnull( $this->taxonomy_option_name ) ) {
+        if ( ! is_null( $this->taxonomy_option_name ) ) {
             $this->taxonomies = (array) get_option( $this->taxonomy_option_name, array() );
         }
     }
@@ -136,21 +136,21 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( 1 == pods_var( 'cleanup', $params, 0 ) ) {
             if ( ! empty( $post_types ) ) {
-                if ( ! isnull( $this->post_option_name ) ) {
+                if ( ! is_null( $this->post_option_name ) ) {
                     update_option( $this->post_option_name, $post_types );
                 }
             } else {
-                if ( ! isnull( $this->post_option_name ) ) {
+                if ( ! is_null( $this->post_option_name ) ) {
                     delete_option( $this->post_option_name );
                 }
             }
 
             if ( ! empty( $taxonomies ) ) {
-                if ( ! isnull( $this->taxonomy_option_name ) ) {
+                if ( ! is_null( $this->taxonomy_option_name ) ) {
                     update_option( $this->taxonomy_option_name, $taxonomies );
                 }
             } else {
-                if ( ! isnull( $this->taxonomy_option_name ) ) {
+                if ( ! is_null( $this->taxonomy_option_name ) ) {
                     delete_option( $this->taxonomy_option_name );
                 }
             }
@@ -315,11 +315,11 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      */
     public function clean() {
 
-        if ( ! isnull( $this->post_option_name ) ) {
+        if ( ! is_null( $this->post_option_name ) ) {
             delete_option( $this->post_option_name );
         }
 
-        if ( ! isnull( $this->taxonomy_option_name ) ) {
+        if ( ! is_null( $this->taxonomy_option_name ) ) {
             delete_option( $this->taxonomy_option_name );
         }
 

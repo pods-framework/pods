@@ -23,20 +23,49 @@ if ( class_exists( 'Pods_Migrate_CPTUI' ) ) {
 
 class Pods_Migrate_CPTUI extends Pods_Component {
 
+	/** @var array
+	 *
+	 *  Support option names for multiple versions, list from newest to oldest
+	 */
+	private $post_option_name_list = array(
+		'cptui_post_types',
+		'cpt_custom_post_types'
+	);
+
+	/** @var array
+	 *
+	 *  Support option names for multiple versions, list from newest to oldest
+	 */
+	private $taxonomy_option_name_list = array(
+		'cptui_taxonomies',
+		'cpt_custom_tax_types'
+	);
+
 	/** @var Pods_API|null */
 	private $api = null;
 
-	private $post_types = null;
+	private $post_option_name = null;
 
-	private $taxonomies = null;
+	private $taxonomy_option_name = null;
+
+	private $post_types = array();
+
+	private $taxonomies = array();
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
-		$this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
-		$this->taxonomies = (array) get_option( 'cpt_custom_tax_types', array() );
+		$this->post_option_name = $this->get_option_name( $this->post_option_name_list );
+		if ( ! isnull( $this->post_option_name ) ) {
+			$this->post_types = (array) get_option( $this->post_option_name, array() );
+		}
+
+		$this->taxonomy_option_name = $this->get_option_name( $this->taxonomy_option_name_list );
+		if ( ! isnull( $this->taxonomy_option_name ) ) {
+			$this->taxonomies = (array) get_option( $this->taxonomy_option_name, array() );
+		}
 
 	}
 
@@ -124,15 +153,23 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 
 		if ( 1 == pods_v( 'cleanup', $params, 0 ) ) {
 			if ( ! empty( $post_types ) ) {
-				update_option( 'cpt_custom_post_types', $post_types );
+				if ( ! isnull( $this->post_option_name ) ) {
+					update_option( $this->post_option_name, $post_types );
+				}
 			} else {
-				delete_option( 'cpt_custom_post_types' );
+				if ( ! isnull( $this->post_option_name ) ) {
+					delete_option( $this->post_option_name );
+				}
 			}
 
 			if ( ! empty( $taxonomies ) ) {
-				update_option( 'cpt_custom_tax_types', $taxonomies );
+				if ( ! isnull( $this->taxonomy_option_name ) ) {
+					update_option( $this->taxonomy_option_name, $taxonomies );
+				}
 			} else {
-				delete_option( 'cpt_custom_tax_types' );
+				if ( ! isnull( $this->taxonomy_option_name ) ) {
+					delete_option( $this->taxonomy_option_name );
+				}
 			}
 		}
 
@@ -159,7 +196,8 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 			'show_ui'                  => (int) pods_v( 'show_ui', $post_type ),
 			'has_archive'              => (int) pods_v( 'has_archive', $post_type ),
 			'exclude_from_search'      => (int) pods_v( 'exclude_from_search', $post_type ),
-			'capability_type'          => pods_v( 'capability_type', $post_type ), //--!! Needs sanity checking?
+			'capability_type'          => pods_v( 'capability_type', $post_type ),
+			//--!! Needs sanity checking?
 			'hierarchical'             => (int) pods_v( 'hierarchical', $post_type ),
 			'rewrite'                  => (int) pods_v( 'rewrite', $post_type ),
 			'rewrite_custom_slug'      => pods_v( 'rewrite_slug', $post_type ),
@@ -230,9 +268,11 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 	}
 
 	/**
-	 *
-	 *
 	 * @since 2.0
+	 *
+	 * @param $taxonomy
+	 *
+	 * @return bool|int|mixed|void
 	 */
 	private function migrate_taxonomy( $taxonomy ) {
 
@@ -271,26 +311,26 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 			}
 		}
 
-		$pod = $api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+		$pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
 
 		if ( ! empty( $pod ) ) {
 			return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
 		}
 
-		$id = (int) $api->save_pod( $params );
+		$id = (int) $this->api->save_pod( $params );
 
 		if ( empty( $id ) ) {
 			return false;
 		}
 
-		$pod = $api->load_pod( array( 'id' => $id ), false );
+		$pod = $this->api->load_pod( array( 'id' => $id ), false );
 
 		if ( empty( $pod ) ) {
 			return false;
 		}
 
 		if ( $pod[ 'name' ] != $params[ 'name' ] ) {
-			$api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+			$this->api->rename_wp_object_type( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
 		}
 
 		return $id;
@@ -303,9 +343,32 @@ class Pods_Migrate_CPTUI extends Pods_Component {
 	 */
 	public function clean() {
 
-		delete_option( 'cpt_custom_post_types' );
-		delete_option( 'cpt_custom_tax_types' );
+		if ( ! isnull( $this->post_option_name ) ) {
+			delete_option( $this->post_option_name );
+		}
 
+		if ( ! isnull( $this->taxonomy_option_name ) ) {
+			delete_option( $this->taxonomy_option_name );
+		}
+
+	}
+
+	/**
+	 * @param array $option_name_list List of possible option names.
+	 *
+	 * @return null|string The first found option name, or NULL if none were
+	 *                     found
+	 */
+	private function get_option_name( $option_name_list ) {
+
+		$option_name_list = (array) $option_name_list;
+		foreach ( $option_name_list as $this_option_name ) {
+			if ( null !== get_option( $this_option_name, null ) ) {
+				return $this_option_name;
+			}
+		}
+
+		return null;
 	}
 
 }

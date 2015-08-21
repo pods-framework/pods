@@ -45,9 +45,9 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
     private $taxonomy_option_name = null;
 
-    private $post_types = null;
+    private $post_types = array();
 
-    private $taxonomies = null;
+    private $taxonomies = array();
 
     /**
      * Do things like register scripts and stylesheets
@@ -57,11 +57,13 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     public function __construct() {
 
         $this->post_option_name = $this->get_option_name( $this->post_option_name_list );
+        if ( ! isnull( $this->post_option_name ) ) {
+            $this->post_types = (array) get_option( $this->post_option_name, array() );
+        }
         $this->taxonomy_option_name = $this->get_option_name( $this->taxonomy_option_name_list );
-
-        $this->post_types = (array) get_option( $this->post_option_name, array() );
-        $this->taxonomies = (array) get_option( $this->taxonomy_option_name, array() );
-
+        if ( ! isnull( $this->taxonomy_option_name ) ) {
+            $this->taxonomies = (array) get_option( $this->taxonomy_option_name, array() );
+        }
     }
 
     /**
@@ -134,15 +136,23 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( 1 == pods_var( 'cleanup', $params, 0 ) ) {
             if ( ! empty( $post_types ) ) {
-                update_option( $this->post_option_name, $post_types );
+                if ( ! isnull( $this->post_option_name ) ) {
+                    update_option( $this->post_option_name, $post_types );
+                }
             } else {
-                delete_option( $this->post_option_name );
+                if ( ! isnull( $this->post_option_name ) ) {
+                    delete_option( $this->post_option_name );
+                }
             }
 
             if ( ! empty( $taxonomies ) ) {
-                update_option( $this->taxonomy_option_name, $taxonomies );
+                if ( ! isnull( $this->taxonomy_option_name ) ) {
+                    update_option( $this->taxonomy_option_name, $taxonomies );
+                }
             } else {
-                delete_option( $this->taxonomy_option_name );
+                if ( ! isnull( $this->taxonomy_option_name ) ) {
+                    delete_option( $this->taxonomy_option_name );
+                }
             }
         }
     }
@@ -305,8 +315,14 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      */
     public function clean() {
 
-        delete_option( $this->post_option_name );
-        delete_option( $this->taxonomy_option_name );
+        if ( ! isnull( $this->post_option_name ) ) {
+            delete_option( $this->post_option_name );
+        }
+
+        if ( ! isnull( $this->taxonomy_option_name ) ) {
+            delete_option( $this->taxonomy_option_name );
+        }
+
     }
 
     /**
@@ -325,6 +341,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         }
 
         return null;
+
     }
 
 }

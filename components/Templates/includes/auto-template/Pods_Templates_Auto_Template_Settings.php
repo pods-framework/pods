@@ -1,5 +1,5 @@
 <?php
-if ( class_exists( 'Pods_PFAT class' ) ) {
+if ( class_exists( 'Pods_PFAT' ) ) {
 	return;
 }
 

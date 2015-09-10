@@ -196,8 +196,7 @@
 
 /* === VISIBILITY === */
 @mixin pods-visibility-hidden {
-	content: '.';
-	visibility: hidden;
+	content: '\00a0';
 	clear: both;
 	display: block;
 }

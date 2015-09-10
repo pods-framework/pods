@@ -428,10 +428,9 @@ div.pods-manage-field input.pods-form-ui-no-label
 .pods-form div.pods-form-ui-field-type-avatar:after
 {
     display: block; 
-    visibility: hidden;
     clear: both;
 
-    content: '.';
+    content: '\00a0';
 }
 .pods-form img.waiting
 {
@@ -671,10 +670,9 @@ div.pods-manage-field input.pods-form-ui-no-label
 .pods-form div.pods-form-ui-field-type-pick:after
 {
     display: block; 
-    visibility: hidden;
     clear: both;
 
-    content: '.';
+    content: '\00a0';
 }
 
 select.pods-form-ui-field-type-pick[multiple]
@@ -793,10 +791,9 @@ select.pods-form-ui-field-type-pick[multiple]
 .pods-form div.pods-form-ui-field-type-file:after
 {
     display: block; 
-    visibility: hidden;
     clear: both;
 
-    content: '.';
+    content: '\00a0';
 }
 
 .pods-field-option .pods-checkbox-wrapper

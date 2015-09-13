@@ -22,6 +22,10 @@ require_once( plugin_dir_path( __FILE__ ) . '/includes/functions-pod_reference.p
 // Pull in the Frontier Template System
 require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
 
+//Pull in Auto Template
+require_once( dirname( __FILE__ ) . '/includes/auto-template/Pods_Templates_Auto_Template_Settings.php' );
+new Pods_Templates_Auto_Template_Settings();
+
 Pods_Templates_Frontier::get_instance();
 
 
@@ -99,6 +103,7 @@ class Pods_Templates extends PodsComponent {
 			add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
 
 			add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
+
 		}
 	}
 

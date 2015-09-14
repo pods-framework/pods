@@ -155,6 +155,16 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
+= 2.5.5 - September 14th, 2015 =
+* Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus
+* Fixed: Drop External code coverage - timeout in Scrutinizer.  (#3091) Kudos to @Ramoonus
+* Fixed: Changed Content property to fix spacing issues with AutoComplete Field where the formatted selection fields have awkward spacing between the selection box and the selection list. (#3098, #3097, #3099) Kudos to @nicdford
+* Fixed: Issue where [each] tag traversal did not work with Taxonomy in Pods Templates. Related notes regarding pod->object_fields for taxonomy added for 3.0 notes. (#3106, #3018, #3107, #3111) Major thanks to @pglewis 
+* Fixed: `permalink` field traversal has only been working for 
+post types, not for related taxonomies. (#2779, #3114, #3115) Kudos to @pglewis
+* Added: Support for CPT UI 1.0.x in CPT UI migration component by adding support for multiple possible option names for post types and taxonomies. (#3112, #3109, #3113, #3116, #3117) Kudos to @pglewis
+* Added: Merged Auto Template into Pods Template Component.  (#3125, #3105) Major thanks to @Shelob9 both for the original plugin and for incorporating this into Pods Templates.
+
 = 2.5.4 - August 10th, 2015 =
 * Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)
 * Added: Query_field tests (meta_query syntax for where) (#3033, #3032, #1662, #2689)

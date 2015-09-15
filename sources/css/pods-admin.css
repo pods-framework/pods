@@ -372,11 +372,9 @@ div.pods-manage-field .pods-field-option select,
 div.pods-manage-field .pods-field-option textarea
 {
     display: block;
-    float: left;
 
     width: 65%;
-    max-width: 300px; 
-    margin-left: 22px;
+    max-width: 300px;
 }
 
 div.pods-manage-field .pods-field-option div select
@@ -479,11 +477,9 @@ div.pods-manage-field input.pods-form-ui-no-label
 .pods-manage-field .pods-field-option .pods-field.pods-boolean
 {
     display: block;
-    float: left;
 
     width: 65%;
-    max-width: 300px; 
-    margin-left: 22px;
+    max-width: 300px;
 }
 
 .pods-manage-field .pods-field.pods-boolean
@@ -596,11 +592,9 @@ div.pods-manage-field input.pods-form-ui-no-label
 .pods-manage-field .pods-pick-values
 {
     display: block;
-    float: left;
 
     width: 65%;
-    max-width: 300px; 
-    margin-left: 22px;
+    max-width: 300px;
 }
 .pods-manage-field .pods-pick-values label
 {
@@ -700,10 +694,8 @@ select.pods-form-ui-field-type-pick[multiple]
 .pods-manage-field .pods-select2
 {
     display: block;
-    float: left;
 
-    width: 65%; 
-    margin-left: 22px;
+    width: 65%;
 }
 
 .pods-manage-field .pods-form-ui-field-type-select2
@@ -745,11 +737,9 @@ select.pods-form-ui-field-type-pick[multiple]
 .pods-manage-field .pods-slider-field
 {
     display: block;
-    float: left;
 
     width: 65%;
-    max-width: 300px; 
-    margin-left: 22px;
+    max-width: 300px;
 }
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea
@@ -760,11 +750,9 @@ select.pods-form-ui-field-type-pick[multiple]
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file
 {
     display: block;
-    float: left;
 
     width: 65%;
     max-width: 300px;
-    margin-left: 22px;
     padding-bottom: 8px;
 }
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table

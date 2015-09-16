@@ -834,7 +834,7 @@ msgstr "分层永久链接"
 msgid "Custom Query Var Name"
 msgstr "字段一查询参数名称"
 
-#: classes/PodsAPI.php:4721
+#: classes/PodsAPI.php:4772
 msgid "$params->pod_id instead of $params->datatype_id"
 msgstr "用 $params->pod_id 代替 $params->datatype_id"
 
@@ -846,7 +846,7 @@ msgstr "在屏幕上显示"
 msgid "Migrate: Import from Custom Post Type UI"
 msgstr "迁移：从Custom Post Type UI导入"
 
-#: classes/PodsAPI.php:4734
+#: classes/PodsAPI.php:4785
 msgid "Pod Item not found"
 msgstr "Pod条目未找到"
 
@@ -858,7 +858,7 @@ msgstr "回首页"
 msgid "Setup"
 msgstr "设置"
 
-#: classes/PodsAPI.php:4777
+#: classes/PodsAPI.php:4828
 msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
 msgstr "Pre-delete 提示已被启用，使用pods_pre_delete_pod_item_%s代替。"
 
@@ -871,7 +871,7 @@ msgstr "上一页"
 msgid "Migrate"
 msgstr "迁移"
 
-#: classes/PodsAPI.php:4814
+#: classes/PodsAPI.php:4865
 msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
 msgstr "Post-delete 提示已被启用，使用pods_post_delete_pod_item_%s代替。"
 
@@ -883,7 +883,7 @@ msgstr "当前页"
 msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
 msgstr "Custom Post Type UI 为创建自定义文章和分类提供了接口，你可以直接导入数据到Pods 2.0"
 
-#: classes/PodsAPI.php:5174 classes/fields/pick.php:391
+#: classes/PodsAPI.php:5225 classes/fields/pick.php:391
 #: ui/admin/setup-edit.php:855 ui/admin/upgrade/upgrade_2_0_0.php:75
 #: ui/admin/upgrade/upgrade_2_0_0.php:191
 msgid "Pods"
@@ -897,7 +897,7 @@ msgstr "/"
 msgid "Import Only"
 msgstr "只导入"
 
-#: classes/PodsAPI.php:5178
+#: classes/PodsAPI.php:5229
 #: components/Builder/modules/field/PodsBuilderModuleField.php:77
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:79
 #: components/Builder/modules/list/PodsBuilderModuleList.php:82
@@ -916,7 +916,7 @@ msgstr "下一页"
 msgid "This will import your Custom Post Types and Taxonomies."
 msgstr "此操作将导入自定义文章和分类"
 
-#: classes/PodsAPI.php:5187
+#: classes/PodsAPI.php:5238
 msgid "Pod Fields"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr "倒尾页"
 msgid "Import and Clean Up"
 msgstr "导入和清理"
 
-#: classes/PodsAPI.php:5191
+#: classes/PodsAPI.php:5242
 msgid "Pod Field"
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr "头像上传"
 msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
 msgstr "此操作将导入自定义文件和分类，然后从Custom Post Type UI移除。"
 
-#: classes/PodsAPI.php:5717
+#: classes/PodsAPI.php:5768
 msgid "Either Field Name or Field ID / Pod ID are required"
 msgstr "项名称和项ID / Pod ID为必填项"
 
@@ -952,7 +952,7 @@ msgstr "附件（WP媒体库）"
 msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
 msgstr "从下面选择需要导入到Pod2.0的自定义文章和分类"
 
-#: classes/PodsAPI.php:5765
+#: classes/PodsAPI.php:5816
 msgid "Pod for field not found"
 msgstr "未找到字段"
 
@@ -964,7 +964,7 @@ msgstr "Plupload"
 msgid "Choose Post Types to Import"
 msgstr "选择导入的文章类型"
 
-#: classes/PodsAPI.php:6002
+#: classes/PodsAPI.php:6053
 msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
 msgstr "项名称/项 ID/项类型, 或Pod名称/ Pod ID为必填项"
 
@@ -976,7 +976,7 @@ msgstr "附加默认选项卡"
 msgid "Available Post Types"
 msgstr "可用的文章类型"
 
-#: classes/PodsAPI.php:6063
+#: classes/PodsAPI.php:6114
 msgid "Object type is required"
 msgstr "对象类型为必填项"
 
@@ -989,7 +989,7 @@ msgstr "上传文件"
 msgid "No Post Types were found."
 msgstr "没有找到文章类型"
 
-#: classes/PodsAPI.php:6066
+#: classes/PodsAPI.php:6117
 msgid "Either Object ID or Name are required"
 msgstr "对象ID和名称都为必填项"
 
@@ -1002,7 +1002,7 @@ msgstr "媒体库"
 msgid "Choose Taxonomies to Import"
 msgstr "选择导出分类"
 
-#: classes/PodsAPI.php:6083
+#: classes/PodsAPI.php:6134
 msgid "Object not found"
 msgstr "对象未找到"
 
@@ -1014,7 +1014,7 @@ msgstr "限制文件大小"
 msgid "Available Taxonomies"
 msgstr "可用分类"
 
-#: classes/PodsAPI.php:6126
+#: classes/PodsAPI.php:6177
 msgid "Pods Object type is required"
 msgstr "Pods 对象类型为必填项"
 
@@ -1026,7 +1026,7 @@ msgstr "添加按钮文本"
 msgid "No Taxonomies were found."
 msgstr "分类未找到"
 
-#: classes/PodsAPI.php:6379
+#: classes/PodsAPI.php:6430
 msgid "Pod name required"
 msgstr "Pod 名称为必填项"
 
@@ -1045,7 +1045,7 @@ msgstr "添加文件"
 msgid "Start Over"
 msgstr "重新开始"
 
-#: classes/PodsAPI.php:6381
+#: classes/PodsAPI.php:6432
 msgid "Item ID required"
 msgstr "项ID为必填项"
 
@@ -1059,7 +1059,7 @@ msgstr "模式标题"
 msgid "Next Step"
 msgstr "下一步"
 
-#: classes/PodsAPI.php:6445
+#: classes/PodsAPI.php:6496
 msgid "Related Pod not found"
 msgstr "相关Pod未找到"
 
@@ -1074,7 +1074,7 @@ msgstr "附加一个文件"
 msgid "Finished"
 msgstr "已结束"
 
-#: classes/PodsAPI.php:6562
+#: classes/PodsAPI.php:6613
 msgid "%s is empty"
 msgstr "%s为空"
 
@@ -1088,7 +1088,7 @@ msgstr "模式添加文本"
 msgid "Processing"
 msgstr "处理中"
 
-#: classes/PodsAPI.php:6578 classes/fields/email.php:190
+#: classes/PodsAPI.php:6629 classes/fields/email.php:190
 msgid "%s is required"
 msgstr "%s为必填项"
 
@@ -1101,7 +1101,7 @@ msgstr "输入类型"
 msgid "Migrate: Packages"
 msgstr "迁移：插件包"
 
-#: classes/PodsAPI.php:6605
+#: classes/PodsAPI.php:6656
 msgid "%s needs to be unique"
 msgstr "%s 不能重复"
 
@@ -1113,7 +1113,7 @@ msgstr "复选框"
 msgid "Choose"
 msgstr "选择"
 
-#: classes/PodsAPI.php:7893
+#: classes/PodsAPI.php:7944
 msgid "Invalid submission"
 msgstr "错误的提交"
 
@@ -1125,7 +1125,7 @@ msgstr "单选框"
 msgid "Import / Export"
 msgstr "导入/导出"
 
-#: classes/PodsAPI.php:7905
+#: classes/PodsAPI.php:7956
 msgid "Access denied for your session, please refresh and try again."
 msgstr "当前会话访问被拒绝，刷新重试。"
 
@@ -1139,7 +1139,7 @@ msgstr "下拉菜单"
 msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
 msgstr "数据包允许你在不同的Pods站点中相互导入/导出Pods、字段和其他设置。"
 
-#: classes/PodsAPI.php:7908
+#: classes/PodsAPI.php:7959
 msgid "Access denied, please refresh and try again."
 msgstr "访问被拒绝，刷新重试。"
 
@@ -3130,7 +3130,7 @@ msgstr "查看"
 msgid "Enable Media Buttons?"
 msgstr "是否启用媒体按钮？"
 
-#: classes/PodsAPI.php:850 classes/PodsAPI.php:861
+#: classes/PodsAPI.php:859 classes/PodsAPI.php:870
 msgid "Open"
 msgstr "打开"
 
@@ -3138,14 +3138,14 @@ msgstr "打开"
 msgid "Manage %s"
 msgstr "管理%s"
 
-#: classes/widgets/PodsWidgetForm.php:26 classes/widgets/PodsWidgetForm.php:42
-#: classes/widgets/PodsWidgetForm.php:53
+#: classes/widgets/PodsWidgetForm.php:43 classes/widgets/PodsWidgetForm.php:59
+#: classes/widgets/PodsWidgetForm.php:70
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:41
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:133
 msgid "Submit"
 msgstr "提交"
 
-#: classes/PodsAPI.php:851 classes/PodsAPI.php:862
+#: classes/PodsAPI.php:860 classes/PodsAPI.php:871
 msgid "Closed"
 msgstr "已关闭"
 
@@ -3157,7 +3157,7 @@ msgstr "复制%s"
 msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
 msgstr "高级内容类型"
 
-#: classes/PodsAPI.php:1264
+#: classes/PodsAPI.php:1315
 msgid "Please choose whether to Create or Extend a Content Type"
 msgstr "请选择新建还是扩展内容类型"
 
@@ -3169,7 +3169,7 @@ msgstr "排序%s"
 msgid "Database Tables"
 msgstr "数据表"
 
-#: classes/PodsAPI.php:1379
+#: classes/PodsAPI.php:1430
 msgid "Post Type %s already exists, try extending it instead"
 msgstr "文章类型%s已存在，请更改"
 
@@ -3188,7 +3188,7 @@ msgstr "新建%s"
 msgid "Advanced Objects"
 msgstr "高级对象"
 
-#: classes/PodsAPI.php:1388
+#: classes/PodsAPI.php:1439
 msgid "Taxonomy %s already exists, try extending it instead"
 msgstr "分类%s已存在，请更改"
 
@@ -3200,7 +3200,7 @@ msgstr "保存%s"
 msgid "Multisite Sites"
 msgstr "多站点"
 
-#: classes/PodsAPI.php:1460
+#: classes/PodsAPI.php:1511
 msgid "Pod %s already exists, you cannot rename %s to that"
 msgstr "Pod%s已存在，不能重新命名%s"
 
@@ -3212,7 +3212,7 @@ msgstr "删除%s"
 msgid "Multisite Networks"
 msgstr "多站点"
 
-#: classes/PodsAPI.php:1463 classes/PodsAPI.php:1466
+#: classes/PodsAPI.php:1514 classes/PodsAPI.php:1517
 msgid "Pod %s cannot be renamed, it extends an existing WP Object"
 msgstr "Pod%s不能重命名，他扩展了一个WP对象"
 
@@ -3224,7 +3224,7 @@ msgstr "<strong>错误：</strong> 你没有权限访问%s。"
 msgid "Themes"
 msgstr "主题"
 
-#: classes/PodsAPI.php:1470
+#: classes/PodsAPI.php:1521
 msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
 msgstr "Pod %s已经被使用，所以你不能跨多个Pods重新使用。"
 
@@ -3237,7 +3237,7 @@ msgstr "返回%s"
 msgid "Page Templates"
 msgstr "页面模版"
 
-#: classes/PodsAPI.php:1472
+#: classes/PodsAPI.php:1523
 msgid "Pod %s already exists"
 msgstr "Pod %s已存在"
 
@@ -3249,7 +3249,7 @@ msgstr "<strong>错误：</strong> %s 未找到。"
 msgid "Sidebars"
 msgstr "侧栏"
 
-#: classes/PodsAPI.php:1640
+#: classes/PodsAPI.php:1691
 msgid "Post Type %s already exists, you cannot rename %s to that"
 msgstr "文章类型 %s 已存在，不能重新命名%s。"
 
@@ -3261,7 +3261,7 @@ msgstr "<strong>成功！</strong> %s重新排序成功。"
 msgid "Post Type Objects"
 msgstr "文章类型对象"
 
-#: classes/PodsAPI.php:1646
+#: classes/PodsAPI.php:1697
 msgid "Taxonomy %s already exists, you cannot rename %s to that"
 msgstr "分类%s已存在，不能重新命名%s。"
 
@@ -3273,7 +3273,7 @@ msgstr "<strong>错误：</strong> %s 未重新排序。"
 msgid "Taxonomy Objects"
 msgstr "分类法对象"
 
-#: classes/PodsAPI.php:1655
+#: classes/PodsAPI.php:1706
 msgid "Pod name cannot be empty"
 msgstr "Pod不能为空"
 
@@ -3287,7 +3287,7 @@ msgstr "保存"
 msgid "Pods - Field Value"
 msgstr "Pods - 字段类型"
 
-#: classes/PodsAPI.php:1755
+#: classes/PodsAPI.php:1806
 msgid "Cannot save Pod"
 msgstr "不能保存pod"
 
@@ -3300,7 +3300,7 @@ msgstr "已创建"
 msgid "Display a single Pod item's field value"
 msgstr "显示一个单独的Pod条目值"
 
-#: classes/PodsAPI.php:1787
+#: classes/PodsAPI.php:1838
 msgid "Cannot add Database Table for Pod"
 msgstr "不能为Pod添加数据库表"
 
@@ -3322,7 +3322,7 @@ msgstr "<strong>成功！</strong> %s %s 已成功。"
 msgid "None Found"
 msgstr "未找到"
 
-#: classes/PodsAPI.php:1794
+#: classes/PodsAPI.php:1845
 msgid "Cannot update Database Table for Pod"
 msgstr "不能为Pod升级数据库表"
 
@@ -3337,7 +3337,7 @@ msgstr "<strong>错误：</strong> %s未被 %s。"
 msgid "Slug or ID"
 msgstr "别名或ID"
 
-#: classes/PodsAPI.php:2011
+#: classes/PodsAPI.php:2062
 msgid "Cannot save the %s field"
 msgstr "不能保存%s"
 
@@ -3350,7 +3350,7 @@ msgstr "<strong>错误：</strong> 无效配置 - 缺少 \"id\" 定义。"
 msgid "Field"
 msgstr "字段"
 
-#: classes/PodsAPI.php:2124
+#: classes/PodsAPI.php:2175
 msgid "Pod ID or name is required"
 msgstr "Pod ID或名称为必填项"
 
@@ -3362,11 +3362,11 @@ msgstr "<strong>已删除：</strong> %s 已被删除。"
 msgid "Pods - Form"
 msgstr "Pods表单"
 
-#: classes/PodsAPI.php:2139 classes/PodsAPI.php:2970 classes/PodsAPI.php:3917
-#: classes/PodsAPI.php:4042 classes/PodsAPI.php:4315 classes/PodsAPI.php:4437
-#: classes/PodsAPI.php:4548 classes/PodsAPI.php:4747 classes/PodsAPI.php:5219
-#: classes/PodsAPI.php:5707 classes/PodsAPI.php:5933 classes/PodsAPI.php:6421
-#: classes/PodsAPI.php:7623
+#: classes/PodsAPI.php:2190 classes/PodsAPI.php:3021 classes/PodsAPI.php:3968
+#: classes/PodsAPI.php:4093 classes/PodsAPI.php:4366 classes/PodsAPI.php:4488
+#: classes/PodsAPI.php:4599 classes/PodsAPI.php:4798 classes/PodsAPI.php:5270
+#: classes/PodsAPI.php:5758 classes/PodsAPI.php:5984 classes/PodsAPI.php:6472
+#: classes/PodsAPI.php:7674
 msgid "Pod not found"
 msgstr "Pod未找到"
 
@@ -3379,7 +3379,7 @@ msgstr "<strong>错误：</strong> %s 未被删除。"
 msgid "Display a form for creating and editing Pod items"
 msgstr "为创建和编辑Pod条目创建一个表单。"
 
-#: classes/PodsAPI.php:2172
+#: classes/PodsAPI.php:2223
 msgid "Field %s already exists, you cannot rename %s to that"
 msgstr "字段%s已存在，不能重新命名%s。"
 
@@ -3392,7 +3392,7 @@ msgstr "<strong>已删除：</strong> %s已被删除。"
 msgid "Fields (comma-separated)"
 msgstr "字段（英文逗号分隔）"
 
-#: classes/PodsAPI.php:2175
+#: classes/PodsAPI.php:2226
 msgid "Field %s already exists"
 msgstr "%s已存在"
 
@@ -3405,8 +3405,8 @@ msgstr "<strong>成功：</strong>导出文件已就绪，你可以点击<a href
 msgid "Submit Label"
 msgstr "提交标签"
 
-#: classes/PodsAPI.php:2313 classes/PodsAPI.php:2316 classes/PodsAPI.php:2319
-#: classes/PodsAPI.php:2382 classes/PodsAPI.php:2388 classes/PodsAPI.php:2391
+#: classes/PodsAPI.php:2364 classes/PodsAPI.php:2367 classes/PodsAPI.php:2370
+#: classes/PodsAPI.php:2433 classes/PodsAPI.php:2439 classes/PodsAPI.php:2442
 msgid "%s is reserved for internal Pods usage, please try a different name"
 msgstr "%s 被保留用于Pods内部，请尝试其他名称。"
 
@@ -3421,7 +3421,7 @@ msgstr "确认"
 msgid "Thank You URL upon submission"
 msgstr "提交后的感谢URL"
 
-#: classes/PodsAPI.php:2323
+#: classes/PodsAPI.php:2374
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
 msgstr "%s 被保留用于Pods或WordPress内部，请尝试其他名称，同事考虑一下WordPress和Pods的内置功能"
 
@@ -3435,7 +3435,7 @@ msgstr "取消"
 msgid "Pods - List Items"
 msgstr "Pods - 列表字段"
 
-#: classes/PodsAPI.php:2331
+#: classes/PodsAPI.php:2382
 msgid "This pod already has an internal WordPress permalink field"
 msgstr "此Pod已经含有WordPress内部固定链接域"
 
@@ -3447,7 +3447,7 @@ msgstr "重新搜索"
 msgid "Display multiple Pod items"
 msgstr "列出多个Pod字段"
 
-#: classes/PodsAPI.php:2348
+#: classes/PodsAPI.php:2399
 msgid "This pod already has a permalink field"
 msgstr "此Pod已经包含了一个固定链接域。"
 
@@ -3465,7 +3465,7 @@ msgstr "批量操作"
 msgid "Custom Template"
 msgstr "自定义模版"
 
-#: classes/PodsAPI.php:2384 classes/PodsAPI.php:2400
+#: classes/PodsAPI.php:2435 classes/PodsAPI.php:2451
 msgid "%s is not editable"
 msgstr "%s不可编辑"
 
@@ -3484,7 +3484,7 @@ msgstr "应用"
 msgid "Template"
 msgstr "模版"
 
-#: classes/PodsAPI.php:2398
+#: classes/PodsAPI.php:2449
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
 msgstr "%s 是一个WordPress或Pods保留的名称，换个试试。"
 
@@ -3497,7 +3497,7 @@ msgstr "更新排序"
 msgid "Limit"
 msgstr "限制"
 
-#: classes/PodsAPI.php:2436
+#: classes/PodsAPI.php:2487
 msgid "Cannot save Field"
 msgstr "不能保存字段"
 
@@ -3510,7 +3510,7 @@ msgstr "取消"
 msgid "Order By"
 msgstr "排序"
 
-#: classes/PodsAPI.php:2469 classes/PodsAPI.php:2476 classes/PodsAPI.php:2488
+#: classes/PodsAPI.php:2520 classes/PodsAPI.php:2527 classes/PodsAPI.php:2539
 msgid "Cannot create new field"
 msgstr "不能创建新字段"
 
@@ -3523,7 +3523,7 @@ msgstr "请使用搜索功能查找数据"
 msgid "Where"
 msgstr "那里"
 
-#: classes/PodsAPI.php:2652
+#: classes/PodsAPI.php:2703
 msgid "Name must be given to save an Object"
 msgstr "保存之前必须命名"
 
@@ -3538,7 +3538,7 @@ msgstr "点击导出下载完整数据副本"
 msgid "Cache Type"
 msgstr "缓存类型"
 
-#: classes/PodsAPI.php:2655
+#: classes/PodsAPI.php:2706
 msgid "Type must be given to save an Object"
 msgstr "保存之前必须设置一个类型"
 
@@ -3553,7 +3553,7 @@ msgstr "重置"
 msgid "Disable Caching"
 msgstr "禁用缓存"
 
-#: classes/PodsAPI.php:3169
+#: classes/PodsAPI.php:3220
 msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
 msgstr "Pre-save 提示已弃用，使用 pods_pre_save_pod_item_%s 代替。"
 
@@ -3569,7 +3569,7 @@ msgstr "高级过滤器"
 msgid "Object Cache"
 msgstr "对象缓存"
 
-#: classes/PodsAPI.php:3224 classes/PodsMeta.php:2036
+#: classes/PodsAPI.php:3275 classes/PodsMeta.php:2036
 msgid "There was an issue validating the field %s"
 msgstr "验证字段%s时出现了一个问题"
 
@@ -3584,7 +3584,7 @@ msgstr "添加过滤器"
 msgid "Transient"
 msgstr "临时"
 
-#: classes/PodsAPI.php:3651
+#: classes/PodsAPI.php:3702
 msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
 msgstr "Post-save 提示已弃用，使用 pods_post_save_pod_item_%s 代替。"
 
@@ -3599,7 +3599,7 @@ msgstr "移除过滤器"
 msgid "Site Transient"
 msgstr "网站临时"
 
-#: classes/PodsAPI.php:3923
+#: classes/PodsAPI.php:3974
 msgid "Pod not allowed to be duplicated"
 msgstr "Pod 不能重复"
 
@@ -3615,8 +3615,8 @@ msgstr "清理"
 msgid "Cache Expiration (in seconds)"
 msgstr "缓存过期（秒）"
 
-#: classes/PodsAPI.php:3992 classes/PodsAPI.php:4562 classes/PodsAPI.php:5739
-#: classes/PodsAPI.php:5752
+#: classes/PodsAPI.php:4043 classes/PodsAPI.php:4613 classes/PodsAPI.php:5790
+#: classes/PodsAPI.php:5803
 msgid "Field not found"
 msgstr "未找到字段"
 
@@ -3628,7 +3628,7 @@ msgstr "搜索文字"
 msgid "Pods - Single Item"
 msgstr "Pods - 单独项"
 
-#: classes/PodsAPI.php:4253 classes/PodsAPI.php:4727
+#: classes/PodsAPI.php:4304 classes/PodsAPI.php:4778
 msgid "$params->pod instead of $params->datatype"
 msgstr "用 $params->pod 代替 $params->datatype"
 
@@ -3641,7 +3641,7 @@ msgstr "%s 未找到"
 msgid "Display a single Pod item"
 msgstr "显示一个单独的Pod项"
 
-#: classes/PodsAPI.php:4261
+#: classes/PodsAPI.php:4312
 msgid "$params->pod is required"
 msgstr "$params->pod为必填字段"
 
@@ -3653,7 +3653,7 @@ msgstr "<strong>错误：</strong> 无效配置 - 缺少 \"fields\" 定义。"
 msgid "Pods - View"
 msgstr "Pods视图"
 
-#: classes/PodsAPI.php:4271
+#: classes/PodsAPI.php:4322
 msgid "Pod is required"
 msgstr "Pod 名称为必填字段"
 
@@ -3666,7 +3666,7 @@ msgstr "编辑"
 msgid "Include a file from a theme, with caching options"
 msgstr "从主题中包含文件，包括缓存选项"
 
-#: classes/PodsAPI.php:4455
+#: classes/PodsAPI.php:4506
 msgid "Pod unable to be deleted"
 msgstr "Pod 不能删除"
 
@@ -3679,7 +3679,7 @@ msgstr "查看"
 msgid "File to include"
 msgstr "包含文件"
 
-#: classes/PodsAPI.php:4576
+#: classes/PodsAPI.php:4627
 msgid "Field unable to be deleted"
 msgstr "字段不能删除"
 
@@ -3691,7 +3691,7 @@ msgstr "复制"
 msgid "Enter helper name here"
 msgstr "在这里输入帮助名称"
 
-#: classes/PodsAPI.php:4614
+#: classes/PodsAPI.php:4665
 msgid "%s Object not found"
 msgstr "未找到%s对象"
 
@@ -3703,7 +3703,7 @@ msgstr "删除"
 msgid "Helper Type"
 msgstr "帮助类型"
 
-#: classes/PodsAPI.php:4619
+#: classes/PodsAPI.php:4670
 msgid "%s Object not deleted"
 msgstr "%s 对象未删除"
 
@@ -3717,7 +3717,7 @@ msgstr ""
 msgid "Code"
 msgstr "代码"
 
-#: classes/PodsAPI.php:4709
+#: classes/PodsAPI.php:4760
 msgid "$params->id instead of $params->tbl_row_id"
 msgstr "用 $params->id 代替 $params->tbl_row_id"
 
@@ -3729,7 +3729,7 @@ msgstr "启用"
 msgid "Helper"
 msgstr "帮助"
 
-#: classes/PodsAPI.php:4715
+#: classes/PodsAPI.php:4766
 msgid "$params->id instead of $params->pod_id"
 msgstr "用 $params->id 代替 $params->pod_id"
 

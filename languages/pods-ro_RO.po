@@ -834,7 +834,7 @@ msgstr "Permalinkuri Ierarhice"
 msgid "Custom Query Var Name"
 msgstr ""
 
-#: classes/PodsAPI.php:4721
+#: classes/PodsAPI.php:4772
 msgid "$params->pod_id instead of $params->datatype_id"
 msgstr "$params->pod_id în loc de $params->datatype_id"
 
@@ -846,7 +846,7 @@ msgstr "Arată pe ecran"
 msgid "Migrate: Import from Custom Post Type UI"
 msgstr "Mutare: Importare din Tip Postare Personalizată UI"
 
-#: classes/PodsAPI.php:4734
+#: classes/PodsAPI.php:4785
 msgid "Pod Item not found"
 msgstr "Item-ul Pod nu a fost găsit"
 
@@ -858,7 +858,7 @@ msgstr "Mergi la prima pagină"
 msgid "Setup"
 msgstr "Setup"
 
-#: classes/PodsAPI.php:4777
+#: classes/PodsAPI.php:4828
 msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
 msgstr "Helpers pre-ștergere sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
@@ -871,7 +871,7 @@ msgstr "Mergi la pagina precedentă"
 msgid "Migrate"
 msgstr "Mută"
 
-#: classes/PodsAPI.php:4814
+#: classes/PodsAPI.php:4865
 msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
 msgstr "Helpers post-ștergere sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
@@ -883,7 +883,7 @@ msgstr "Pagina actuală"
 msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
 msgstr "Tipuri Postări Personalizate oferă o interfață pentru a crea Tipuri Postări Personalizate și Taxonomii Personalizate. Le poți importa împreună cu setările lor direct în Pods 2.0"
 
-#: classes/PodsAPI.php:5174 classes/fields/pick.php:391
+#: classes/PodsAPI.php:5225 classes/fields/pick.php:391
 #: ui/admin/setup-edit.php:855 ui/admin/upgrade/upgrade_2_0_0.php:75
 #: ui/admin/upgrade/upgrade_2_0_0.php:191
 msgid "Pods"
@@ -897,7 +897,7 @@ msgstr "de"
 msgid "Import Only"
 msgstr "Doar Import"
 
-#: classes/PodsAPI.php:5178
+#: classes/PodsAPI.php:5229
 #: components/Builder/modules/field/PodsBuilderModuleField.php:77
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:79
 #: components/Builder/modules/list/PodsBuilderModuleList.php:82
@@ -916,7 +916,7 @@ msgstr "Mergi la pagina următoare"
 msgid "This will import your Custom Post Types and Taxonomies."
 msgstr "Asta va importa Tipurile Postări Personalizate și Taxonomii."
 
-#: classes/PodsAPI.php:5187
+#: classes/PodsAPI.php:5238
 msgid "Pod Fields"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr "Mergi la ultima pagină"
 msgid "Import and Clean Up"
 msgstr "Importare și Curățare"
 
-#: classes/PodsAPI.php:5191
+#: classes/PodsAPI.php:5242
 msgid "Pod Field"
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr "Adaugă Avatar"
 msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
 msgstr "Asta va importa Tipurile Postare Personalizată și Taxonomii, apoi le va înlătura din Tipuri Postare Personalizată UI."
 
-#: classes/PodsAPI.php:5717
+#: classes/PodsAPI.php:5768
 msgid "Either Field Name or Field ID / Pod ID are required"
 msgstr "Numele Câmpului sau ID-ul Câmpului/ ID-ul Pod-ului sunt necesare"
 
@@ -952,7 +952,7 @@ msgstr "Atașamente (WP Librărie Media)"
 msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
 msgstr "Alege mai jos ce Tipuri Postare Personalizată și Taxonomii vrei importate în Pods 2.0"
 
-#: classes/PodsAPI.php:5765
+#: classes/PodsAPI.php:5816
 msgid "Pod for field not found"
 msgstr ""
 
@@ -964,7 +964,7 @@ msgstr "Plupload"
 msgid "Choose Post Types to Import"
 msgstr "Alege Tipuri Postări pentru importare"
 
-#: classes/PodsAPI.php:6002
+#: classes/PodsAPI.php:6053
 msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
 msgstr "Numele Câmpului/ ID-ul Câmpului/ Tipul Câmpului, sau Numele Pod-ului/ ID-ul Pod-ului sunt necesare"
 
@@ -976,7 +976,7 @@ msgstr "Filă Prestabilită Atașamente"
 msgid "Available Post Types"
 msgstr "Tipuri Postări Disponibile"
 
-#: classes/PodsAPI.php:6063
+#: classes/PodsAPI.php:6114
 msgid "Object type is required"
 msgstr "Tipul Obiectului este necesar"
 
@@ -989,7 +989,7 @@ msgstr "Adaugă Fișier"
 msgid "No Post Types were found."
 msgstr "Nu au fost găsite Tipuri Postări"
 
-#: classes/PodsAPI.php:6066
+#: classes/PodsAPI.php:6117
 msgid "Either Object ID or Name are required"
 msgstr "ID-ul Obiectului sau Numele sunt necesare"
 
@@ -1002,7 +1002,7 @@ msgstr "Librărie Media"
 msgid "Choose Taxonomies to Import"
 msgstr "Alege Taxonomii pentru a Importa"
 
-#: classes/PodsAPI.php:6083
+#: classes/PodsAPI.php:6134
 msgid "Object not found"
 msgstr "Obiectul nu a fost găsit"
 
@@ -1014,7 +1014,7 @@ msgstr "Restricționează Mărime Fișier"
 msgid "Available Taxonomies"
 msgstr "Taxonomii Disponibile"
 
-#: classes/PodsAPI.php:6126
+#: classes/PodsAPI.php:6177
 msgid "Pods Object type is required"
 msgstr "Tipul Obiectului Pods este necesar"
 
@@ -1026,7 +1026,7 @@ msgstr "Text Adăugare Buton"
 msgid "No Taxonomies were found."
 msgstr "Nu au fost găsite taxonomii"
 
-#: classes/PodsAPI.php:6379
+#: classes/PodsAPI.php:6430
 msgid "Pod name required"
 msgstr "Numele Pod-ului este necesar"
 
@@ -1045,7 +1045,7 @@ msgstr "Adaugă Fișier"
 msgid "Start Over"
 msgstr "Începe din nou"
 
-#: classes/PodsAPI.php:6381
+#: classes/PodsAPI.php:6432
 msgid "Item ID required"
 msgstr "ID-ul itemului este necesar"
 
@@ -1059,7 +1059,7 @@ msgstr "Titlu Modal"
 msgid "Next Step"
 msgstr "Următorul Pas"
 
-#: classes/PodsAPI.php:6445
+#: classes/PodsAPI.php:6496
 msgid "Related Pod not found"
 msgstr "Podul Înrudit nu a fost găsit"
 
@@ -1074,7 +1074,7 @@ msgstr "Atașează un fișier"
 msgid "Finished"
 msgstr "Terminat"
 
-#: classes/PodsAPI.php:6562
+#: classes/PodsAPI.php:6613
 msgid "%s is empty"
 msgstr "% este gol"
 
@@ -1088,7 +1088,7 @@ msgstr "Textul Modal Adaugă Buton"
 msgid "Processing"
 msgstr "În curs de procesare"
 
-#: classes/PodsAPI.php:6578 classes/fields/email.php:190
+#: classes/PodsAPI.php:6629 classes/fields/email.php:190
 msgid "%s is required"
 msgstr "%s este necesar"
 
@@ -1101,7 +1101,7 @@ msgstr "Tip Input"
 msgid "Migrate: Packages"
 msgstr "Mutare: Pachete"
 
-#: classes/PodsAPI.php:6605
+#: classes/PodsAPI.php:6656
 msgid "%s needs to be unique"
 msgstr "%s trebuie să fie unic"
 
@@ -1113,7 +1113,7 @@ msgstr "Căsuță de selectare"
 msgid "Choose"
 msgstr "Alege"
 
-#: classes/PodsAPI.php:7893
+#: classes/PodsAPI.php:7944
 msgid "Invalid submission"
 msgstr "Adăugare invalidă"
 
@@ -1125,7 +1125,7 @@ msgstr "Butoane Radio"
 msgid "Import / Export"
 msgstr "Importare / Exportare"
 
-#: classes/PodsAPI.php:7905
+#: classes/PodsAPI.php:7956
 msgid "Access denied for your session, please refresh and try again."
 msgstr "Acces respins pentru sesiunea ta, te rugăm dă refresh și încearcă din nou"
 
@@ -1139,7 +1139,7 @@ msgstr "Drop Down"
 msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
 msgstr "Pachetele îți permit să imporți/exporți Pods, Câmpuri și alte setări între orice siteuri Pods."
 
-#: classes/PodsAPI.php:7908
+#: classes/PodsAPI.php:7959
 msgid "Access denied, please refresh and try again."
 msgstr "Acces respins, te rugăm dă refresh și încearcă din nou."
 
@@ -3134,7 +3134,7 @@ msgstr "Vizualizează"
 msgid "Enable Media Buttons?"
 msgstr "Activează Butoane Media?"
 
-#: classes/PodsAPI.php:850 classes/PodsAPI.php:861
+#: classes/PodsAPI.php:859 classes/PodsAPI.php:870
 msgid "Open"
 msgstr "Deschide"
 
@@ -3142,14 +3142,14 @@ msgstr "Deschide"
 msgid "Manage %s"
 msgstr "Administrează %s"
 
-#: classes/widgets/PodsWidgetForm.php:26 classes/widgets/PodsWidgetForm.php:42
-#: classes/widgets/PodsWidgetForm.php:53
+#: classes/widgets/PodsWidgetForm.php:43 classes/widgets/PodsWidgetForm.php:59
+#: classes/widgets/PodsWidgetForm.php:70
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:41
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:133
 msgid "Submit"
 msgstr "Propune"
 
-#: classes/PodsAPI.php:851 classes/PodsAPI.php:862
+#: classes/PodsAPI.php:860 classes/PodsAPI.php:871
 msgid "Closed"
 msgstr "Închis"
 
@@ -3161,7 +3161,7 @@ msgstr "Dublează %s"
 msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
 msgstr "Tip Conținut Avansat (separat de WP, plăcuță goală, în propriul tabel)"
 
-#: classes/PodsAPI.php:1264
+#: classes/PodsAPI.php:1315
 msgid "Please choose whether to Create or Extend a Content Type"
 msgstr "Te rugăm alege dacă să Creezi sau să Extinzi un Tip de Conținut"
 
@@ -3173,7 +3173,7 @@ msgstr "Reordonare %s"
 msgid "Database Tables"
 msgstr ""
 
-#: classes/PodsAPI.php:1379
+#: classes/PodsAPI.php:1430
 msgid "Post Type %s already exists, try extending it instead"
 msgstr "Tipul Postării %s există deja, te rugăm să încerci o extindere înainte"
 
@@ -3192,7 +3192,7 @@ msgstr "Salvează Nou %s"
 msgid "Advanced Objects"
 msgstr "Obiecte Avansate"
 
-#: classes/PodsAPI.php:1388
+#: classes/PodsAPI.php:1439
 msgid "Taxonomy %s already exists, try extending it instead"
 msgstr "Taxonomia %s există deja, te rugăm să încerci o extindere înainte"
 
@@ -3204,7 +3204,7 @@ msgstr "Salvează %s"
 msgid "Multisite Sites"
 msgstr "Site-uri Multisite"
 
-#: classes/PodsAPI.php:1460
+#: classes/PodsAPI.php:1511
 msgid "Pod %s already exists, you cannot rename %s to that"
 msgstr "Pod-ul %s deja există, nu poți redenumi %s așa"
 
@@ -3216,7 +3216,7 @@ msgstr "Șterge asta %s"
 msgid "Multisite Networks"
 msgstr "Rețele Multisite"
 
-#: classes/PodsAPI.php:1463 classes/PodsAPI.php:1466
+#: classes/PodsAPI.php:1514 classes/PodsAPI.php:1517
 msgid "Pod %s cannot be renamed, it extends an existing WP Object"
 msgstr "Pod-ul %s nu poate fi redenumit, extinde un Obiect WP deja existent"
 
@@ -3228,7 +3228,7 @@ msgstr "<strong>Eroare:</strong> Nu ai acces la asta%s."
 msgid "Themes"
 msgstr "Teme"
 
-#: classes/PodsAPI.php:1470
+#: classes/PodsAPI.php:1521
 msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
 msgstr "Pod folosind %s există deja, nu poți refolosi un obiect la mai multe pods"
 
@@ -3241,7 +3241,7 @@ msgstr "Înapoi la %s"
 msgid "Page Templates"
 msgstr "Șabloane Pagină"
 
-#: classes/PodsAPI.php:1472
+#: classes/PodsAPI.php:1523
 msgid "Pod %s already exists"
 msgstr "Pod %s deja există."
 
@@ -3253,7 +3253,7 @@ msgstr "<strong>Eroare:</strong> %s nu a fost găsit."
 msgid "Sidebars"
 msgstr "Bări laterale"
 
-#: classes/PodsAPI.php:1640
+#: classes/PodsAPI.php:1691
 msgid "Post Type %s already exists, you cannot rename %s to that"
 msgstr "Tipul Postării %s deja există, nu poți redenumi %s așa"
 
@@ -3265,7 +3265,7 @@ msgstr "<strong>Succes!</strong> %s reordonat cu succes."
 msgid "Post Type Objects"
 msgstr ""
 
-#: classes/PodsAPI.php:1646
+#: classes/PodsAPI.php:1697
 msgid "Taxonomy %s already exists, you cannot rename %s to that"
 msgstr "Taxonomia %s deja există, nu poți redenumi %s așa"
 
@@ -3277,7 +3277,7 @@ msgstr "<strong>Eroare:</strong> %s nu a fost reordonat."
 msgid "Taxonomy Objects"
 msgstr ""
 
-#: classes/PodsAPI.php:1655
+#: classes/PodsAPI.php:1706
 msgid "Pod name cannot be empty"
 msgstr "Numele Pod-ului nu poate fi gol"
 
@@ -3291,7 +3291,7 @@ msgstr "salvat"
 msgid "Pods - Field Value"
 msgstr "Pods - Valorea Câmpului"
 
-#: classes/PodsAPI.php:1755
+#: classes/PodsAPI.php:1806
 msgid "Cannot save Pod"
 msgstr "Nu se poate salva Pod-ul."
 
@@ -3304,7 +3304,7 @@ msgstr "creat"
 msgid "Display a single Pod item's field value"
 msgstr "Afișează valoarea câmpului un singur item Pod"
 
-#: classes/PodsAPI.php:1787
+#: classes/PodsAPI.php:1838
 msgid "Cannot add Database Table for Pod"
 msgstr "Nu se poate adăuga Tabelul Bazei de Date pentru Pod"
 
@@ -3326,7 +3326,7 @@ msgstr "<strong>Succes!</strong> %s %s cu succes."
 msgid "None Found"
 msgstr "Niciunul Găsit"
 
-#: classes/PodsAPI.php:1794
+#: classes/PodsAPI.php:1845
 msgid "Cannot update Database Table for Pod"
 msgstr "Nu se poate actualiza Tabelul Bazei de Date pentru Pod"
 
@@ -3341,7 +3341,7 @@ msgstr ""
 msgid "Slug or ID"
 msgstr "Slug sau ID"
 
-#: classes/PodsAPI.php:2011
+#: classes/PodsAPI.php:2062
 msgid "Cannot save the %s field"
 msgstr "Nu se poate salva câmpul %s"
 
@@ -3354,7 +3354,7 @@ msgstr "<strong>Eroare:</strong> Configurare Invalidă - Lipsește definiția  \
 msgid "Field"
 msgstr "Câmp"
 
-#: classes/PodsAPI.php:2124
+#: classes/PodsAPI.php:2175
 msgid "Pod ID or name is required"
 msgstr "ID-ul pod sau numele este necesar"
 
@@ -3366,11 +3366,11 @@ msgstr ""
 msgid "Pods - Form"
 msgstr "Pods - Formă"
 
-#: classes/PodsAPI.php:2139 classes/PodsAPI.php:2970 classes/PodsAPI.php:3917
-#: classes/PodsAPI.php:4042 classes/PodsAPI.php:4315 classes/PodsAPI.php:4437
-#: classes/PodsAPI.php:4548 classes/PodsAPI.php:4747 classes/PodsAPI.php:5219
-#: classes/PodsAPI.php:5707 classes/PodsAPI.php:5933 classes/PodsAPI.php:6421
-#: classes/PodsAPI.php:7623
+#: classes/PodsAPI.php:2190 classes/PodsAPI.php:3021 classes/PodsAPI.php:3968
+#: classes/PodsAPI.php:4093 classes/PodsAPI.php:4366 classes/PodsAPI.php:4488
+#: classes/PodsAPI.php:4599 classes/PodsAPI.php:4798 classes/PodsAPI.php:5270
+#: classes/PodsAPI.php:5758 classes/PodsAPI.php:5984 classes/PodsAPI.php:6472
+#: classes/PodsAPI.php:7674
 msgid "Pod not found"
 msgstr "Pod nu a fost găsit"
 
@@ -3383,7 +3383,7 @@ msgstr ""
 msgid "Display a form for creating and editing Pod items"
 msgstr "Afișează o formă pentru crearea și editarea itemurilor Pods"
 
-#: classes/PodsAPI.php:2172
+#: classes/PodsAPI.php:2223
 msgid "Field %s already exists, you cannot rename %s to that"
 msgstr "Câmpul %s deja există, nu poți redenumi %s așa"
 
@@ -3396,7 +3396,7 @@ msgstr ""
 msgid "Fields (comma-separated)"
 msgstr "Câmpuri (separate de virgule)"
 
-#: classes/PodsAPI.php:2175
+#: classes/PodsAPI.php:2226
 msgid "Field %s already exists"
 msgstr "Câmpul %s deja există"
 
@@ -3409,8 +3409,8 @@ msgstr ""
 msgid "Submit Label"
 msgstr "Propune Etichetă"
 
-#: classes/PodsAPI.php:2313 classes/PodsAPI.php:2316 classes/PodsAPI.php:2319
-#: classes/PodsAPI.php:2382 classes/PodsAPI.php:2388 classes/PodsAPI.php:2391
+#: classes/PodsAPI.php:2364 classes/PodsAPI.php:2367 classes/PodsAPI.php:2370
+#: classes/PodsAPI.php:2433 classes/PodsAPI.php:2439 classes/PodsAPI.php:2442
 msgid "%s is reserved for internal Pods usage, please try a different name"
 msgstr "%s este rezervat pentru uz intern Pods, te rugăm încearcă un nume diferit"
 
@@ -3425,7 +3425,7 @@ msgstr "Da"
 msgid "Thank You URL upon submission"
 msgstr "URL Mulțumesc la propunere"
 
-#: classes/PodsAPI.php:2323
+#: classes/PodsAPI.php:2374
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
 msgstr "%s este rezervat pentru uz intern WordPress sau Pods, te rugăm încearcă un nume diferit. De asemenea ia în calcul ce îți sugerează WordPress și Pods."
 
@@ -3439,7 +3439,7 @@ msgstr "Nu"
 msgid "Pods - List Items"
 msgstr "Pods - Listează Itemurile"
 
-#: classes/PodsAPI.php:2331
+#: classes/PodsAPI.php:2382
 msgid "This pod already has an internal WordPress permalink field"
 msgstr "Acest pod are deja un câmp permalink WordPress intern."
 
@@ -3451,7 +3451,7 @@ msgstr "Resetează Filtrele"
 msgid "Display multiple Pod items"
 msgstr "Afișează mai multe itemuri Pods"
 
-#: classes/PodsAPI.php:2348
+#: classes/PodsAPI.php:2399
 msgid "This pod already has a permalink field"
 msgstr "Acest pod are deja un câmp permalink"
 
@@ -3469,7 +3469,7 @@ msgstr "Acțiuni Bulk"
 msgid "Custom Template"
 msgstr "Șablon Personalizat"
 
-#: classes/PodsAPI.php:2384 classes/PodsAPI.php:2400
+#: classes/PodsAPI.php:2435 classes/PodsAPI.php:2451
 msgid "%s is not editable"
 msgstr "%s nu poate fi editat"
 
@@ -3488,7 +3488,7 @@ msgstr "Aplică"
 msgid "Template"
 msgstr "Șablon"
 
-#: classes/PodsAPI.php:2398
+#: classes/PodsAPI.php:2449
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
 msgstr "%s este rezervat pentru uz intern WordPress sau Pods, te rugăm încearcă un nume diferit"
 
@@ -3501,7 +3501,7 @@ msgstr "Ordinea Actualizării"
 msgid "Limit"
 msgstr "Limită"
 
-#: classes/PodsAPI.php:2436
+#: classes/PodsAPI.php:2487
 msgid "Cannot save Field"
 msgstr "Nu se poate salva Câmpul"
 
@@ -3514,7 +3514,7 @@ msgstr "Anulează"
 msgid "Order By"
 msgstr "Ordonează După:"
 
-#: classes/PodsAPI.php:2469 classes/PodsAPI.php:2476 classes/PodsAPI.php:2488
+#: classes/PodsAPI.php:2520 classes/PodsAPI.php:2527 classes/PodsAPI.php:2539
 msgid "Cannot create new field"
 msgstr "Nu se poate crea câmp nou"
 
@@ -3527,7 +3527,7 @@ msgstr "Te rog folosește filtrul de căutare de deasupra pentru a afișa datele
 msgid "Where"
 msgstr "Unde"
 
-#: classes/PodsAPI.php:2652
+#: classes/PodsAPI.php:2703
 msgid "Name must be given to save an Object"
 msgstr "Un nume trebuie să fie dat pentru a salva un Obiect"
 
@@ -3542,7 +3542,7 @@ msgstr "sau dă click pe un Export pentru a downloada o copie întreagă a datel
 msgid "Cache Type"
 msgstr "Tip Cache"
 
-#: classes/PodsAPI.php:2655
+#: classes/PodsAPI.php:2706
 msgid "Type must be given to save an Object"
 msgstr "Un tip trebuie să fie dat pentru a salva un Obiect"
 
@@ -3557,7 +3557,7 @@ msgstr "Resetează"
 msgid "Disable Caching"
 msgstr "Dezactivează Caching"
 
-#: classes/PodsAPI.php:3169
+#: classes/PodsAPI.php:3220
 msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
 msgstr "Helpers pre-salvare sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
@@ -3573,7 +3573,7 @@ msgstr "Filtre Avansate"
 msgid "Object Cache"
 msgstr "Cache Obiect"
 
-#: classes/PodsAPI.php:3224 classes/PodsMeta.php:2036
+#: classes/PodsAPI.php:3275 classes/PodsMeta.php:2036
 msgid "There was an issue validating the field %s"
 msgstr "A fost o problemă cu validarea câmpului %s"
 
@@ -3588,7 +3588,7 @@ msgstr "Adaugă Filtru"
 msgid "Transient"
 msgstr "Tranzient"
 
-#: classes/PodsAPI.php:3651
+#: classes/PodsAPI.php:3702
 msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
 msgstr "Helpers post-salvare sunt dezaprobați, folosește acțiunea pods_pre_save_pod_item_%s în loc"
 
@@ -3603,7 +3603,7 @@ msgstr "Înlătură Filtrul"
 msgid "Site Transient"
 msgstr "Tranzient Site"
 
-#: classes/PodsAPI.php:3923
+#: classes/PodsAPI.php:3974
 msgid "Pod not allowed to be duplicated"
 msgstr "Nu este permisă duplicarea Pod-ului"
 
@@ -3619,8 +3619,8 @@ msgstr "Curăță"
 msgid "Cache Expiration (in seconds)"
 msgstr "Expirarea Cache ( în secunde)"
 
-#: classes/PodsAPI.php:3992 classes/PodsAPI.php:4562 classes/PodsAPI.php:5739
-#: classes/PodsAPI.php:5752
+#: classes/PodsAPI.php:4043 classes/PodsAPI.php:4613 classes/PodsAPI.php:5790
+#: classes/PodsAPI.php:5803
 msgid "Field not found"
 msgstr "Câmpul nu a fost găsit"
 
@@ -3632,7 +3632,7 @@ msgstr "Caută Text"
 msgid "Pods - Single Item"
 msgstr "Pods - Item Singular"
 
-#: classes/PodsAPI.php:4253 classes/PodsAPI.php:4727
+#: classes/PodsAPI.php:4304 classes/PodsAPI.php:4778
 msgid "$params->pod instead of $params->datatype"
 msgstr "$params->pod în loc de f $params->datatype"
 
@@ -3645,7 +3645,7 @@ msgstr "Niciun %s găsit"
 msgid "Display a single Pod item"
 msgstr "Afișează un singur item Pod"
 
-#: classes/PodsAPI.php:4261
+#: classes/PodsAPI.php:4312
 msgid "$params->pod is required"
 msgstr "$params->pod este necesar"
 
@@ -3657,7 +3657,7 @@ msgstr "<strong>Eroare:</strong> Configurare Invalida - Lipsește definiția \"f
 msgid "Pods - View"
 msgstr "Pods- Vizualizează"
 
-#: classes/PodsAPI.php:4271
+#: classes/PodsAPI.php:4322
 msgid "Pod is required"
 msgstr "Pod este necesar"
 
@@ -3670,7 +3670,7 @@ msgstr "Editează acest item"
 msgid "Include a file from a theme, with caching options"
 msgstr "Include un fișier dintr-o temă, cu opțiuni de caching"
 
-#: classes/PodsAPI.php:4455
+#: classes/PodsAPI.php:4506
 msgid "Pod unable to be deleted"
 msgstr "Pod nu poate fi șters"
 
@@ -3683,7 +3683,7 @@ msgstr "Vizualizează acest item"
 msgid "File to include"
 msgstr "Fișiere de inclus"
 
-#: classes/PodsAPI.php:4576
+#: classes/PodsAPI.php:4627
 msgid "Field unable to be deleted"
 msgstr "Câmpul nu a putut fi șters"
 
@@ -3695,7 +3695,7 @@ msgstr "Dublează acest item"
 msgid "Enter helper name here"
 msgstr "Introdu numele helper-ului aici"
 
-#: classes/PodsAPI.php:4614
+#: classes/PodsAPI.php:4665
 msgid "%s Object not found"
 msgstr "%s Obiectul nu a fost găsit"
 
@@ -3707,7 +3707,7 @@ msgstr "Șterge acest item"
 msgid "Helper Type"
 msgstr "Tip Helper"
 
-#: classes/PodsAPI.php:4619
+#: classes/PodsAPI.php:4670
 msgid "%s Object not deleted"
 msgstr "% Obiectul nu a fost șters"
 
@@ -3719,7 +3719,7 @@ msgstr "Esti pe cale să ștergi permanent acest item\\nAlege\\'Cancel\\' pentru
 msgid "Code"
 msgstr "Cod"
 
-#: classes/PodsAPI.php:4709
+#: classes/PodsAPI.php:4760
 msgid "$params->id instead of $params->tbl_row_id"
 msgstr "$params->id în loc de $params->tbl_row_id"
 
@@ -3731,7 +3731,7 @@ msgstr "Activează"
 msgid "Helper"
 msgstr "Helper"
 
-#: classes/PodsAPI.php:4715
+#: classes/PodsAPI.php:4766
 msgid "$params->id instead of $params->pod_id"
 msgstr "$params->id în loc de $params->pod_id"
 

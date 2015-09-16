@@ -21,20 +21,49 @@ if ( class_exists( 'Pods_Migrate_CPTUI' ) )
 
 class Pods_Migrate_CPTUI extends PodsComponent {
 
+    /** @var array
+     *
+     *  Support option names for multiple versions, list from newest to oldest
+     */
+    private $post_option_name_list = array(
+        'cptui_post_types',
+        'cpt_custom_post_types'
+    );
+
+    /** @var array
+     *
+     *  Support option names for multiple versions, list from newest to oldest
+     */
+    private $taxonomy_option_name_list = array(
+        'cptui_taxonomies',
+        'cpt_custom_tax_types'
+    );
+
     private $api = null;
 
-    private $post_types = null;
+    private $post_option_name = null;
 
-    private $taxonomies = null;
+    private $taxonomy_option_name = null;
+
+    private $post_types = array();
+
+    private $taxonomies = array();
 
     /**
      * Do things like register scripts and stylesheets
      *
      * @since 2.0
      */
-    public function __construct () {
-        $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
-        $this->taxonomies = (array) get_option( 'cpt_custom_tax_types', array() );
+    public function __construct() {
+
+        $this->post_option_name = $this->get_option_name( $this->post_option_name_list );
+        if ( ! is_null( $this->post_option_name ) ) {
+            $this->post_types = (array) get_option( $this->post_option_name, array() );
+        }
+        $this->taxonomy_option_name = $this->get_option_name( $this->taxonomy_option_name_list );
+        if ( ! is_null( $this->taxonomy_option_name ) ) {
+            $this->taxonomies = (array) get_option( $this->taxonomy_option_name, array() );
+        }
     }
 
     /**
@@ -106,15 +135,25 @@ class Pods_Migrate_CPTUI extends PodsComponent {
         }
 
         if ( 1 == pods_var( 'cleanup', $params, 0 ) ) {
-            if ( !empty( $post_types ) )
-                update_option( 'cpt_custom_post_types', $post_types );
-            else
-                delete_option( 'cpt_custom_post_types' );
+            if ( ! empty( $post_types ) ) {
+                if ( ! is_null( $this->post_option_name ) ) {
+                    update_option( $this->post_option_name, $post_types );
+                }
+            } else {
+                if ( ! is_null( $this->post_option_name ) ) {
+                    delete_option( $this->post_option_name );
+                }
+            }
 
-            if ( !empty( $taxonomies ) )
-                update_option( 'cpt_custom_tax_types', $taxonomies );
-            else
-                delete_option( 'cpt_custom_tax_types' );
+            if ( ! empty( $taxonomies ) ) {
+                if ( ! is_null( $this->taxonomy_option_name ) ) {
+                    update_option( $this->taxonomy_option_name, $taxonomies );
+                }
+            } else {
+                if ( ! is_null( $this->taxonomy_option_name ) ) {
+                    delete_option( $this->taxonomy_option_name );
+                }
+            }
         }
     }
 
@@ -274,8 +313,35 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      *
      * @since 2.0
      */
-    public function clean () {
-        delete_option( 'cpt_custom_post_types' );
-        delete_option( 'cpt_custom_tax_types' );
+    public function clean() {
+
+        if ( ! is_null( $this->post_option_name ) ) {
+            delete_option( $this->post_option_name );
+        }
+
+        if ( ! is_null( $this->taxonomy_option_name ) ) {
+            delete_option( $this->taxonomy_option_name );
+        }
+
     }
+
+    /**
+     * @param array $option_name_list List of possible option names.
+     *
+     * @return null|string The first found option name, or NULL if none were found
+     */
+    private function get_option_name( $option_name_list ) {
+
+        $option_name_list = (array) $option_name_list;
+
+        foreach ( $option_name_list as $this_option_name ) {
+            if ( null !== get_option( $this_option_name, null ) ) {
+                return $this_option_name;
+            }
+        }
+
+        return null;
+
+    }
+
 }

@@ -53,7 +53,7 @@
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master",
-        "phpunit/phpunit": "4.6.x",
+        "phpunit/phpunit": "4.8.x",
         "mockery/mockery": "0.9.4"
     },
     "extra": {

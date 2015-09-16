@@ -1455,7 +1455,7 @@ class Pods implements Iterator {
 
 											$params->raw_display = true;
 										}
-										elseif ( in_array( $field, array( '_link', 'detail_url' ) ) || ( in_array( $field, array( 'permalink', 'the_permalink' ) ) && 'post' == $object_type ) ) {
+										elseif ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) ) {
 											if ( 'pod' == $object_type ) {
 												if ( is_object( $related_obj ) ) {
 													$related_obj->fetch( $item_id );

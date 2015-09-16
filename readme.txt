@@ -155,7 +155,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.5.5 - September 14th, 2015 =
+= 2.5.5 - September 16th, 2015 =
 * Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus
 * Fixed: Drop External code coverage - timeout in Scrutinizer.  (#3091) Kudos to @Ramoonus
 * Fixed: Changed Content property to fix spacing issues with AutoComplete Field where the formatted selection fields have awkward spacing between the selection box and the selection list. (#3098, #3097, #3099) Kudos to @nicdford

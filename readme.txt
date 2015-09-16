@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jimtrue, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.3
+Tested up to: 4.4
 Stable tag: 2.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ Check out http://pods.io/ for our User Guide, Forums, and other resources to hel
 = Content types that evolve with your needs =
 Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
 
-We now give you the power you've never before had with a single plugin because we've reimagined how to manage content types from the ground up.
+We now give you the power you've never before had with a single plugin because we've re-imagined how to manage content types from the ground up.
 
 = Create new content types =
 With Pods, you can create entirely new content types:
@@ -150,8 +150,9 @@ Pods really wouldn't be where it is without all of the contributions both financ
 
 == Translations ==
 
-Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English! Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
- Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
+Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
+
+Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
 
@@ -159,11 +160,11 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus
 * Fixed: Drop External code coverage - timeout in Scrutinizer.  (#3091) Kudos to @Ramoonus
 * Fixed: Changed Content property to fix spacing issues with AutoComplete Field where the formatted selection fields have awkward spacing between the selection box and the selection list. (#3098, #3097, #3099) Kudos to @nicdford
-* Fixed: Issue where [each] tag traversal did not work with Taxonomy in Pods Templates. Related notes regarding pod->object_fields for taxonomy added for 3.0 notes. (#3106, #3018, #3107, #3111) Major thanks to @pglewis 
-* Fixed: `permalink` field traversal has only been working for 
-post types, not for related taxonomies. (#2779, #3114, #3115) Kudos to @pglewis
+* Fixed: Issue where [each] tag traversal did not work with Taxonomy in Pods Templates. Related notes regarding pod->object_fields for taxonomy added for 3.0 notes. (#3106, #3018, #3107, #3111) Major thanks to @pglewis
+* Fixed: `permalink` field traversal has only been working for post types, not for related taxonomies. (#2779, #3114, #3115) Kudos to @pglewis
 * Added: Support for CPT UI 1.0.x in CPT UI migration component by adding support for multiple possible option names for post types and taxonomies. (#3112, #3109, #3113, #3116, #3117) Kudos to @pglewis
 * Added: Merged Auto Template into Pods Template Component.  (#3125, #3105) Major thanks to @Shelob9 both for the original plugin and for incorporating this into Pods Templates.
+* Added: License.txt changes to sync with GPL v2 (#3130, #3133) Kudos to @Ramoonus
 
 = 2.5.4 - August 10th, 2015 =
 * Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)

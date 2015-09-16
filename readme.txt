@@ -155,7 +155,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 == Changelog ==
 
-= 2.5.5 - September 14th, 2015 =
+= 2.5.5 - September 15th, 2015 =
 * Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus
 * Fixed: Drop External code coverage - timeout in Scrutinizer.  (#3091) Kudos to @Ramoonus
 * Fixed: Changed Content property to fix spacing issues with AutoComplete Field where the formatted selection fields have awkward spacing between the selection box and the selection list. (#3098, #3097, #3099) Kudos to @nicdford
@@ -164,6 +164,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 post types, not for related taxonomies. (#2779, #3114, #3115) Kudos to @pglewis
 * Added: Support for CPT UI 1.0.x in CPT UI migration component by adding support for multiple possible option names for post types and taxonomies. (#3112, #3109, #3113, #3116, #3117) Kudos to @pglewis
 * Added: Merged Auto Template into Pods Template Component.  (#3125, #3105) Major thanks to @Shelob9 both for the original plugin and for incorporating this into Pods Templates.
+* Added: License.txt changes to sync with GPL v2 (#3130, #3133) Kudos to @Ramoonus
 
 = 2.5.4 - August 10th, 2015 =
 * Added: Support for Compare ALL with meta_query syntax. Kudos to @pcfreak30. (#3037, #3038)

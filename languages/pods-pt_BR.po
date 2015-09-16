@@ -834,7 +834,7 @@ msgstr "Permalinks Hierárquicos"
 msgid "Custom Query Var Name"
 msgstr ""
 
-#: classes/PodsAPI.php:4721
+#: classes/PodsAPI.php:4772
 msgid "$params->pod_id instead of $params->datatype_id"
 msgstr "$params->pod_id invés de $params->datatype_id"
 
@@ -846,7 +846,7 @@ msgstr "Exibir na tela"
 msgid "Migrate: Import from Custom Post Type UI"
 msgstr "Migrar: Importar de um Custom Post Type UI"
 
-#: classes/PodsAPI.php:4734
+#: classes/PodsAPI.php:4785
 msgid "Pod Item not found"
 msgstr "Ítem Pod não encontrado"
 
@@ -858,7 +858,7 @@ msgstr "Vai para a primeira página"
 msgid "Setup"
 msgstr "Configuração"
 
-#: classes/PodsAPI.php:4777
+#: classes/PodsAPI.php:4828
 msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
 msgstr "Helpers de Pré-Remoção está obsoleto, invés disso, use a ação pods_pre_delete_pod_item_%s "
 
@@ -871,7 +871,7 @@ msgstr "Vai para a página anterior"
 msgid "Migrate"
 msgstr "Migrar"
 
-#: classes/PodsAPI.php:4814
+#: classes/PodsAPI.php:4865
 msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
 msgstr "Helpers de Pós-Remoção está obsoleto, invés disso, use a ação pods_post_delete_pod_item_%s "
 
@@ -883,7 +883,7 @@ msgstr "página atual"
 msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
 msgstr "Custom Post Type UI fornece uma interface para criar Custom Post Types e Custom Taxonomies. Você pode importar estes e suas configurações direto para o Pods 2.0"
 
-#: classes/PodsAPI.php:5174 classes/fields/pick.php:391
+#: classes/PodsAPI.php:5225 classes/fields/pick.php:391
 #: ui/admin/setup-edit.php:855 ui/admin/upgrade/upgrade_2_0_0.php:75
 #: ui/admin/upgrade/upgrade_2_0_0.php:191
 msgid "Pods"
@@ -897,7 +897,7 @@ msgstr "de"
 msgid "Import Only"
 msgstr "Somente Importar"
 
-#: classes/PodsAPI.php:5178
+#: classes/PodsAPI.php:5229
 #: components/Builder/modules/field/PodsBuilderModuleField.php:77
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:79
 #: components/Builder/modules/list/PodsBuilderModuleList.php:82
@@ -916,7 +916,7 @@ msgstr "Vai para a próxima página"
 msgid "This will import your Custom Post Types and Taxonomies."
 msgstr "Irá importar os seus Custom Post Types e Taxonomies."
 
-#: classes/PodsAPI.php:5187
+#: classes/PodsAPI.php:5238
 msgid "Pod Fields"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr "Vai para a última página"
 msgid "Import and Clean Up"
 msgstr "Importar e Limpar"
 
-#: classes/PodsAPI.php:5191
+#: classes/PodsAPI.php:5242
 msgid "Pod Field"
 msgstr "Campo Pod"
 
@@ -940,7 +940,7 @@ msgstr "Uploader de Avatar"
 msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
 msgstr "Irá importar os seus Custom Post Types e Taxonomies, e então removê-los do Custom Post Type UI."
 
-#: classes/PodsAPI.php:5717
+#: classes/PodsAPI.php:5768
 msgid "Either Field Name or Field ID / Pod ID are required"
 msgstr "Ou Campo Nome ou Campo ID é requerido"
 
@@ -952,7 +952,7 @@ msgstr "Anexos (WP Biblioteca de Mídia)"
 msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
 msgstr "Escolher entre quais Custom Post Types e Taxonomies você deseja importar para o Pods 2.0"
 
-#: classes/PodsAPI.php:5765
+#: classes/PodsAPI.php:5816
 msgid "Pod for field not found"
 msgstr ""
 
@@ -964,7 +964,7 @@ msgstr ""
 msgid "Choose Post Types to Import"
 msgstr "Escolher Post Types para Importar"
 
-#: classes/PodsAPI.php:6002
+#: classes/PodsAPI.php:6053
 msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
 msgstr "Ou Campo Nome / Campo ID / Campo Tipo, ou Nome do Pod / ID do Pod são requeridos"
 
@@ -976,7 +976,7 @@ msgstr "Aba Padrão do Attachments "
 msgid "Available Post Types"
 msgstr "Post Types Disponíveis"
 
-#: classes/PodsAPI.php:6063
+#: classes/PodsAPI.php:6114
 msgid "Object type is required"
 msgstr "Tipo de Objeto é requerido"
 
@@ -989,7 +989,7 @@ msgstr "Enviar Arquivo"
 msgid "No Post Types were found."
 msgstr "Não foi encontrado nenhum Post Type."
 
-#: classes/PodsAPI.php:6066
+#: classes/PodsAPI.php:6117
 msgid "Either Object ID or Name are required"
 msgstr "ID ou Nome do Objeto são requeridos"
 
@@ -1002,7 +1002,7 @@ msgstr "Biblioteca de Mídia"
 msgid "Choose Taxonomies to Import"
 msgstr "Escolher Taxonomias para Importar"
 
-#: classes/PodsAPI.php:6083
+#: classes/PodsAPI.php:6134
 msgid "Object not found"
 msgstr "Objeto não encontrado"
 
@@ -1014,7 +1014,7 @@ msgstr "Restringir Tamanho de Arquivo"
 msgid "Available Taxonomies"
 msgstr "Taxonomias Disponíveis"
 
-#: classes/PodsAPI.php:6126
+#: classes/PodsAPI.php:6177
 msgid "Pods Object type is required"
 msgstr "Tipo de Objeto Pods é requerido"
 
@@ -1026,7 +1026,7 @@ msgstr "Adicionar Texto do Botão"
 msgid "No Taxonomies were found."
 msgstr "Nenhuma Taxonomia foi encontrada."
 
-#: classes/PodsAPI.php:6379
+#: classes/PodsAPI.php:6430
 msgid "Pod name required"
 msgstr "Nome do Pod requerido"
 
@@ -1045,7 +1045,7 @@ msgstr "Adicionar Arquivo"
 msgid "Start Over"
 msgstr "Recomeçar"
 
-#: classes/PodsAPI.php:6381
+#: classes/PodsAPI.php:6432
 msgid "Item ID required"
 msgstr "ID do Item requerido"
 
@@ -1059,7 +1059,7 @@ msgstr "Título Modal"
 msgid "Next Step"
 msgstr "Próximo Passo"
 
-#: classes/PodsAPI.php:6445
+#: classes/PodsAPI.php:6496
 msgid "Related Pod not found"
 msgstr "Pod Relacionado não encontrado"
 
@@ -1074,7 +1074,7 @@ msgstr "Anexar um arquivo"
 msgid "Finished"
 msgstr "Terminado"
 
-#: classes/PodsAPI.php:6562
+#: classes/PodsAPI.php:6613
 msgid "%s is empty"
 msgstr "%s está vazio"
 
@@ -1088,7 +1088,7 @@ msgstr "Texto do Botão de Adicionar Modal"
 msgid "Processing"
 msgstr "Processando"
 
-#: classes/PodsAPI.php:6578 classes/fields/email.php:190
+#: classes/PodsAPI.php:6629 classes/fields/email.php:190
 msgid "%s is required"
 msgstr "%s é requerido"
 
@@ -1101,7 +1101,7 @@ msgstr "Tipo Input"
 msgid "Migrate: Packages"
 msgstr "Migrar: Pacotes"
 
-#: classes/PodsAPI.php:6605
+#: classes/PodsAPI.php:6656
 msgid "%s needs to be unique"
 msgstr "%s precisa ser único"
 
@@ -1113,7 +1113,7 @@ msgstr "Checkbox"
 msgid "Choose"
 msgstr "Escolha"
 
-#: classes/PodsAPI.php:7893
+#: classes/PodsAPI.php:7944
 msgid "Invalid submission"
 msgstr "Submissão inválida"
 
@@ -1125,7 +1125,7 @@ msgstr "Botões de Rádio"
 msgid "Import / Export"
 msgstr "Importar / Exportar"
 
-#: classes/PodsAPI.php:7905
+#: classes/PodsAPI.php:7956
 msgid "Access denied for your session, please refresh and try again."
 msgstr "Acesso negado para a sua sessão, por favor atualize e tente novamente."
 
@@ -1139,7 +1139,7 @@ msgstr "Menu Suspenso"
 msgid "Packages allow you to import/export your Pods, Fields, and other settings between any Pods sites."
 msgstr "Pacotes permitem importar/exportar seus Pods, Campos, e outras configurações entre qualquer sites com Pods."
 
-#: classes/PodsAPI.php:7908
+#: classes/PodsAPI.php:7959
 msgid "Access denied, please refresh and try again."
 msgstr "Acesso negado, por favor atualize e tente novamente."
 
@@ -3132,7 +3132,7 @@ msgstr "Visualizar"
 msgid "Enable Media Buttons?"
 msgstr "Habilitar Botões de Mídia?"
 
-#: classes/PodsAPI.php:850 classes/PodsAPI.php:861
+#: classes/PodsAPI.php:859 classes/PodsAPI.php:870
 msgid "Open"
 msgstr "Aberto"
 
@@ -3140,14 +3140,14 @@ msgstr "Aberto"
 msgid "Manage %s"
 msgstr "Gerenciar %s"
 
-#: classes/widgets/PodsWidgetForm.php:26 classes/widgets/PodsWidgetForm.php:42
-#: classes/widgets/PodsWidgetForm.php:53
+#: classes/widgets/PodsWidgetForm.php:43 classes/widgets/PodsWidgetForm.php:59
+#: classes/widgets/PodsWidgetForm.php:70
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:41
 #: components/Builder/modules/form/PodsBuilderModuleForm.php:133
 msgid "Submit"
 msgstr "Enviar"
 
-#: classes/PodsAPI.php:851 classes/PodsAPI.php:862
+#: classes/PodsAPI.php:860 classes/PodsAPI.php:871
 msgid "Closed"
 msgstr "Fechado"
 
@@ -3159,7 +3159,7 @@ msgstr "Duplicar %s"
 msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
 msgstr "Content Type Avançado (separado do WP, em uma tabela separada)"
 
-#: classes/PodsAPI.php:1264
+#: classes/PodsAPI.php:1315
 msgid "Please choose whether to Create or Extend a Content Type"
 msgstr "Por favor escolha se quer Criar ou Extender um Content Type"
 
@@ -3171,7 +3171,7 @@ msgstr "Reordenar %s"
 msgid "Database Tables"
 msgstr ""
 
-#: classes/PodsAPI.php:1379
+#: classes/PodsAPI.php:1430
 msgid "Post Type %s already exists, try extending it instead"
 msgstr "Tipo de Post %s já existe, ao invés tente extendê-lo "
 
@@ -3190,7 +3190,7 @@ msgstr "Salvar Novo %s"
 msgid "Advanced Objects"
 msgstr "Objetos Avançados"
 
-#: classes/PodsAPI.php:1388
+#: classes/PodsAPI.php:1439
 msgid "Taxonomy %s already exists, try extending it instead"
 msgstr "Taxonomia %s já existe, ao invés tente extendê-la"
 
@@ -3202,7 +3202,7 @@ msgstr "Salvar %s"
 msgid "Multisite Sites"
 msgstr "Sites Multisite"
 
-#: classes/PodsAPI.php:1460
+#: classes/PodsAPI.php:1511
 msgid "Pod %s already exists, you cannot rename %s to that"
 msgstr "Pod %s já existe, você não pode renomear %s para isso"
 
@@ -3214,7 +3214,7 @@ msgstr "Apagar este %s"
 msgid "Multisite Networks"
 msgstr "Redes Multisite"
 
-#: classes/PodsAPI.php:1463 classes/PodsAPI.php:1466
+#: classes/PodsAPI.php:1514 classes/PodsAPI.php:1517
 msgid "Pod %s cannot be renamed, it extends an existing WP Object"
 msgstr "Pod %s não pode ser renomeado, este já extende um Objeto WP"
 
@@ -3226,7 +3226,7 @@ msgstr "<strong>Erro:</strong> Você não possui acesso a %s."
 msgid "Themes"
 msgstr "Temas"
 
-#: classes/PodsAPI.php:1470
+#: classes/PodsAPI.php:1521
 msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
 msgstr "Pod usando %s já existe, você não pode reusar um objeto entre múltiplos pods"
 
@@ -3239,7 +3239,7 @@ msgstr "Voltar para %s"
 msgid "Page Templates"
 msgstr "Templates de Página"
 
-#: classes/PodsAPI.php:1472
+#: classes/PodsAPI.php:1523
 msgid "Pod %s already exists"
 msgstr "Pod %s já existe"
 
@@ -3251,7 +3251,7 @@ msgstr "<strong>Erro:</strong> %s não encontrado."
 msgid "Sidebars"
 msgstr "Sidebars"
 
-#: classes/PodsAPI.php:1640
+#: classes/PodsAPI.php:1691
 msgid "Post Type %s already exists, you cannot rename %s to that"
 msgstr "Tipo de Post %s já existe, você não pode renomear %s para isso"
 
@@ -3263,7 +3263,7 @@ msgstr "<strong>Sucesso!</strong> %s reordenados com sucesso."
 msgid "Post Type Objects"
 msgstr ""
 
-#: classes/PodsAPI.php:1646
+#: classes/PodsAPI.php:1697
 msgid "Taxonomy %s already exists, you cannot rename %s to that"
 msgstr "Taxonomia %s já existe, você não pode renomear %s para isso"
 
@@ -3275,7 +3275,7 @@ msgstr "<strong>Erro:</strong> %s não foram reordenados."
 msgid "Taxonomy Objects"
 msgstr ""
 
-#: classes/PodsAPI.php:1655
+#: classes/PodsAPI.php:1706
 msgid "Pod name cannot be empty"
 msgstr "Nome do Pod não pode ser vazio"
 
@@ -3289,7 +3289,7 @@ msgstr "salvo"
 msgid "Pods - Field Value"
 msgstr "Pods - Valor do Campo"
 
-#: classes/PodsAPI.php:1755
+#: classes/PodsAPI.php:1806
 msgid "Cannot save Pod"
 msgstr "Não foi possível salvar o Pod"
 
@@ -3302,7 +3302,7 @@ msgstr "criado"
 msgid "Display a single Pod item's field value"
 msgstr "Exibir um único valor de campo do ítem Pod"
 
-#: classes/PodsAPI.php:1787
+#: classes/PodsAPI.php:1838
 msgid "Cannot add Database Table for Pod"
 msgstr "Não foi possível adicionar a Tabela para o Pod"
 
@@ -3324,7 +3324,7 @@ msgstr "<strong>Sucesso!</strong> %s %s com sucesso."
 msgid "None Found"
 msgstr "Não Encontrado"
 
-#: classes/PodsAPI.php:1794
+#: classes/PodsAPI.php:1845
 msgid "Cannot update Database Table for Pod"
 msgstr "Não foi possível atualizar a Tabela para o Pod"
 
@@ -3339,7 +3339,7 @@ msgstr ""
 msgid "Slug or ID"
 msgstr "Slug ou ID"
 
-#: classes/PodsAPI.php:2011
+#: classes/PodsAPI.php:2062
 msgid "Cannot save the %s field"
 msgstr "Não foi possível salvar o campo %s"
 
@@ -3352,7 +3352,7 @@ msgstr "<strong>Erro:</strong> Configuração Inválida - Falta a definição \"
 msgid "Field"
 msgstr "Campo"
 
-#: classes/PodsAPI.php:2124
+#: classes/PodsAPI.php:2175
 msgid "Pod ID or name is required"
 msgstr "ID do Pod ou nome é requerido"
 
@@ -3364,11 +3364,11 @@ msgstr ""
 msgid "Pods - Form"
 msgstr "Pods - Formulário"
 
-#: classes/PodsAPI.php:2139 classes/PodsAPI.php:2970 classes/PodsAPI.php:3917
-#: classes/PodsAPI.php:4042 classes/PodsAPI.php:4315 classes/PodsAPI.php:4437
-#: classes/PodsAPI.php:4548 classes/PodsAPI.php:4747 classes/PodsAPI.php:5219
-#: classes/PodsAPI.php:5707 classes/PodsAPI.php:5933 classes/PodsAPI.php:6421
-#: classes/PodsAPI.php:7623
+#: classes/PodsAPI.php:2190 classes/PodsAPI.php:3021 classes/PodsAPI.php:3968
+#: classes/PodsAPI.php:4093 classes/PodsAPI.php:4366 classes/PodsAPI.php:4488
+#: classes/PodsAPI.php:4599 classes/PodsAPI.php:4798 classes/PodsAPI.php:5270
+#: classes/PodsAPI.php:5758 classes/PodsAPI.php:5984 classes/PodsAPI.php:6472
+#: classes/PodsAPI.php:7674
 msgid "Pod not found"
 msgstr "Pod não encontrado"
 
@@ -3381,7 +3381,7 @@ msgstr ""
 msgid "Display a form for creating and editing Pod items"
 msgstr "Exibe um formulário para criar e editar ítens Pod"
 
-#: classes/PodsAPI.php:2172
+#: classes/PodsAPI.php:2223
 msgid "Field %s already exists, you cannot rename %s to that"
 msgstr "Campo %s já existe, você não pode renomear %s para isso"
 
@@ -3394,7 +3394,7 @@ msgstr ""
 msgid "Fields (comma-separated)"
 msgstr "Campos (separados por vírgula)"
 
-#: classes/PodsAPI.php:2175
+#: classes/PodsAPI.php:2226
 msgid "Field %s already exists"
 msgstr "Campo %s já existe"
 
@@ -3407,8 +3407,8 @@ msgstr ""
 msgid "Submit Label"
 msgstr "Rótulo de Envio"
 
-#: classes/PodsAPI.php:2313 classes/PodsAPI.php:2316 classes/PodsAPI.php:2319
-#: classes/PodsAPI.php:2382 classes/PodsAPI.php:2388 classes/PodsAPI.php:2391
+#: classes/PodsAPI.php:2364 classes/PodsAPI.php:2367 classes/PodsAPI.php:2370
+#: classes/PodsAPI.php:2433 classes/PodsAPI.php:2439 classes/PodsAPI.php:2442
 msgid "%s is reserved for internal Pods usage, please try a different name"
 msgstr "%s é reservado para uso interno do Pod, por favor tente um nome diferente"
 
@@ -3423,7 +3423,7 @@ msgstr "Sim"
 msgid "Thank You URL upon submission"
 msgstr "URL de Agradecimento ao enviar"
 
-#: classes/PodsAPI.php:2323
+#: classes/PodsAPI.php:2374
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
 msgstr "%s é reservado para uso interno do Pod ou do WordPress, por favor tente um nome diferente. Também considere o que o WordPress e o Pods fornecem prontos."
 
@@ -3437,7 +3437,7 @@ msgstr "Não"
 msgid "Pods - List Items"
 msgstr "Pods - Lista Itens"
 
-#: classes/PodsAPI.php:2331
+#: classes/PodsAPI.php:2382
 msgid "This pod already has an internal WordPress permalink field"
 msgstr "Este pod já tem um campo permalink interno do WordPress."
 
@@ -3449,7 +3449,7 @@ msgstr "Zerar filtros"
 msgid "Display multiple Pod items"
 msgstr "Exibe múltiplos ítens Pod"
 
-#: classes/PodsAPI.php:2348
+#: classes/PodsAPI.php:2399
 msgid "This pod already has a permalink field"
 msgstr "Este pod já tem um campo permalink"
 
@@ -3467,7 +3467,7 @@ msgstr "Ações em massa"
 msgid "Custom Template"
 msgstr "Template Customizado"
 
-#: classes/PodsAPI.php:2384 classes/PodsAPI.php:2400
+#: classes/PodsAPI.php:2435 classes/PodsAPI.php:2451
 msgid "%s is not editable"
 msgstr "%s não é editável"
 
@@ -3486,7 +3486,7 @@ msgstr "Aplicar"
 msgid "Template"
 msgstr ""
 
-#: classes/PodsAPI.php:2398
+#: classes/PodsAPI.php:2449
 msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
 msgstr "%s está reservado para uso interno do Wordpress ou do Pods, por favor tente um nome diferente"
 
@@ -3499,7 +3499,7 @@ msgstr "Ordem de atualização"
 msgid "Limit"
 msgstr "Limite"
 
-#: classes/PodsAPI.php:2436
+#: classes/PodsAPI.php:2487
 msgid "Cannot save Field"
 msgstr "Não foi possível salvar o Campo"
 
@@ -3512,7 +3512,7 @@ msgstr "Cancelar"
 msgid "Order By"
 msgstr ""
 
-#: classes/PodsAPI.php:2469 classes/PodsAPI.php:2476 classes/PodsAPI.php:2488
+#: classes/PodsAPI.php:2520 classes/PodsAPI.php:2527 classes/PodsAPI.php:2539
 msgid "Cannot create new field"
 msgstr "Não foi possível criar o novo campo"
 
@@ -3525,7 +3525,7 @@ msgstr "Por favor use o(s) filtro(s) de pesquisa acima para mostrar os dados"
 msgid "Where"
 msgstr ""
 
-#: classes/PodsAPI.php:2652
+#: classes/PodsAPI.php:2703
 msgid "Name must be given to save an Object"
 msgstr "Nome deve ser fornecido para salvar um Objeto"
 
@@ -3540,7 +3540,7 @@ msgstr "ou clique em Exportar para baixar uma cópia completa dos dados"
 msgid "Cache Type"
 msgstr "Tipo de Cache"
 
-#: classes/PodsAPI.php:2655
+#: classes/PodsAPI.php:2706
 msgid "Type must be given to save an Object"
 msgstr "Tipo deve ser fornecido para salvar um Objeto"
 
@@ -3555,7 +3555,7 @@ msgstr "Resetar"
 msgid "Disable Caching"
 msgstr "Desabilitar Cache"
 
-#: classes/PodsAPI.php:3169
+#: classes/PodsAPI.php:3220
 msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
 msgstr "Helpers de Pre-Salvamento está obsoleto, invés disso, use a ação pods_pre_save_pod_item_%s"
 
@@ -3571,7 +3571,7 @@ msgstr "Filtros Avançados"
 msgid "Object Cache"
 msgstr "Objecto Cache"
 
-#: classes/PodsAPI.php:3224 classes/PodsMeta.php:2036
+#: classes/PodsAPI.php:3275 classes/PodsMeta.php:2036
 msgid "There was an issue validating the field %s"
 msgstr "Ocorreu um problema ao validar o campo %s"
 
@@ -3586,7 +3586,7 @@ msgstr "Adicionar Filtro"
 msgid "Transient"
 msgstr "Transitório"
 
-#: classes/PodsAPI.php:3651
+#: classes/PodsAPI.php:3702
 msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
 msgstr "Helpers de Pós-Salvamento está obsoleto, invés disso, use a ação pods_post_save_pod_item_%s"
 
@@ -3601,7 +3601,7 @@ msgstr "Remover Filtro"
 msgid "Site Transient"
 msgstr "Site Transitório"
 
-#: classes/PodsAPI.php:3923
+#: classes/PodsAPI.php:3974
 msgid "Pod not allowed to be duplicated"
 msgstr "Pod não pode ser duplicado"
 
@@ -3617,8 +3617,8 @@ msgstr "Limpar"
 msgid "Cache Expiration (in seconds)"
 msgstr "Expiração de Cache (em segundos)"
 
-#: classes/PodsAPI.php:3992 classes/PodsAPI.php:4562 classes/PodsAPI.php:5739
-#: classes/PodsAPI.php:5752
+#: classes/PodsAPI.php:4043 classes/PodsAPI.php:4613 classes/PodsAPI.php:5790
+#: classes/PodsAPI.php:5803
 msgid "Field not found"
 msgstr "Campo não encontrado"
 
@@ -3630,7 +3630,7 @@ msgstr "Texto de Pesquisa"
 msgid "Pods - Single Item"
 msgstr "Pods - Item Único"
 
-#: classes/PodsAPI.php:4253 classes/PodsAPI.php:4727
+#: classes/PodsAPI.php:4304 classes/PodsAPI.php:4778
 msgid "$params->pod instead of $params->datatype"
 msgstr "$params->pod invés de $params->datatype"
 
@@ -3643,7 +3643,7 @@ msgstr "Nenhum %s encontrado"
 msgid "Display a single Pod item"
 msgstr "Exibe um item único de Pod"
 
-#: classes/PodsAPI.php:4261
+#: classes/PodsAPI.php:4312
 msgid "$params->pod is required"
 msgstr "$params->pod é requerido"
 
@@ -3655,7 +3655,7 @@ msgstr "<strong>Erro:</strong> Configuração Inválida - Falta as definições 
 msgid "Pods - View"
 msgstr "Pods - Visualizar"
 
-#: classes/PodsAPI.php:4271
+#: classes/PodsAPI.php:4322
 msgid "Pod is required"
 msgstr "Pod é requerido"
 
@@ -3668,7 +3668,7 @@ msgstr "Editar este ítem"
 msgid "Include a file from a theme, with caching options"
 msgstr "Incluir um arquivo do tema, com opções de cache"
 
-#: classes/PodsAPI.php:4455
+#: classes/PodsAPI.php:4506
 msgid "Pod unable to be deleted"
 msgstr "Pod não pôde ser deletado"
 
@@ -3681,7 +3681,7 @@ msgstr "Visualizar este ítem"
 msgid "File to include"
 msgstr "Arquivo para incluir"
 
-#: classes/PodsAPI.php:4576
+#: classes/PodsAPI.php:4627
 msgid "Field unable to be deleted"
 msgstr "Campo não pôde ser deletado"
 
@@ -3693,7 +3693,7 @@ msgstr "Duplicar este ítem"
 msgid "Enter helper name here"
 msgstr "Escreva o nome do helper aqui"
 
-#: classes/PodsAPI.php:4614
+#: classes/PodsAPI.php:4665
 msgid "%s Object not found"
 msgstr "Objeto %s não encontrado"
 
@@ -3705,7 +3705,7 @@ msgstr "Apagar este ítem"
 msgid "Helper Type"
 msgstr "Tipo Helper"
 
-#: classes/PodsAPI.php:4619
+#: classes/PodsAPI.php:4670
 msgid "%s Object not deleted"
 msgstr "Objeto %s não apagado"
 
@@ -3717,7 +3717,7 @@ msgstr "Você irá apagar este ítem permanentemente\\n Escolha \\'Cancel\\' par
 msgid "Code"
 msgstr "Código"
 
-#: classes/PodsAPI.php:4709
+#: classes/PodsAPI.php:4760
 msgid "$params->id instead of $params->tbl_row_id"
 msgstr "$params->id invés de $params->tbl_row_id"
 
@@ -3729,7 +3729,7 @@ msgstr "Habilitar"
 msgid "Helper"
 msgstr ""
 
-#: classes/PodsAPI.php:4715
+#: classes/PodsAPI.php:4766
 msgid "$params->id instead of $params->pod_id"
 msgstr "$params->id invés de $params->pod_id"
 

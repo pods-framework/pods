@@ -10,7 +10,7 @@
 [![WordPress Plugin rating](https://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
-[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
+[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358) [![Dockunit Status](https://dockunit.io/svg/pods-framework/pods?2.x)](https://dockunit.io/projects/pods-framework/pods#2.x)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 

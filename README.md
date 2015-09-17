@@ -1,5 +1,6 @@
 # [Pods Framework](http://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
+[![Dockunit Status](https://dockunit.io/svg/pods-framework/pods?2.x)](https://dockunit.io/projects/pods-framework/pods#2.x)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
 [![Code Coverage](https://scrutinizer-ci.com/g/pods-framework/pods/badges/coverage.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/2.x/license.txt)
@@ -10,7 +11,7 @@
 [![WordPress Plugin rating](https://img.shields.io/wordpress/plugin/r/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 
 [![Project Stats](https://www.openhub.net/p/pods-framework/widgets/project_thin_badge.gif)](https://www.openhub.net/p/pods-framework)
-[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358) [![Dockunit Status](https://dockunit.io/svg/pods-framework/pods?2.x)](https://dockunit.io/projects/pods-framework/pods#2.x)
+[![Bountysource Bounties](https://api.bountysource.com/badge/tracker?tracker_id=247358)](https://www.bountysource.com/teams/pods-framework/issues?tracker_ids=247358)
 
 **Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 

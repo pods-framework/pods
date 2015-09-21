@@ -7,7 +7,7 @@ php:
     - 5.4
     - 5.5
     - 5.6
-
+    
 env:
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
@@ -39,6 +39,12 @@ matrix:
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=1
+      
+## Cache composer bits
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 
 before_script:
     - travis_retry composer self-update

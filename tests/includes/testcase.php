@@ -105,7 +105,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		),
 		'pod'       => array(
 			'object'  => array(
-				'%d'
+				'%d',
+				'rel_pod',
 			),
 			'storage' => array(
 				'table'
@@ -180,6 +181,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'type' => 'pick',
 		    'pick_object' => 'comment',
 		    'pick_val' => '',
+		    'pick_format_type' => 'single'
+		),
+	    array(
+			'name' => 'test_rel_pod',
+			'type' => 'pick',
+		    'pick_object' => 'pod',
+		    'pick_val' => 'rel_pod',
 		    'pick_format_type' => 'single'
 		),
 	    array(
@@ -282,6 +290,16 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			    'comment_approved' => 1,
 			    'comment_date' => '2014-11-11 00:00:00',
 				'test_text_field' => 'Test related comment text field'
+			)
+		),
+	    'test_rel_pod' => array(
+			'pod' => 'rel_pod',
+		    'id' => 0,
+		    'field_index' => 'name',
+		    'field_id' => 'id',
+			'data' => array(
+				'name' => 'Related pod item',
+				'permalink' => 'related-pod-item'
 			)
 		),
 	    'avatar' => array(

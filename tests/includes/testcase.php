@@ -621,8 +621,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
 
-
 		$related_author = 0;
+		$related_pod_author = 0;
 		$related_media = 0;
 
 		// Get and store sample image for use later
@@ -703,6 +703,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				elseif ( 'test_rel_user' == $item ) {
 					$related_author = $id;
 				}
+				elseif ( 'author' == $item ) {
+					$related_pod_author = $id;
+				}
 				elseif ( 'test_rel_media' == $item ) {
 					$related_media = $id;
 				}
@@ -774,14 +777,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							if ( in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
 								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
 							}
-							elseif ( 'user' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
-							}
 							elseif ( 'comment' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
 							}
 							elseif ( 'pod' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
+								$pod_item_data[ 'data' ][ 'author' ] = $related_pod_author;
 							}
 
 							// Add term id for the Non-Pod Taxonomy field

@@ -126,7 +126,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					'pick_val'         => '',
 					'pick_format_type' => 'single'
 				)
-			)
+			),
+			'data' => array(
+				'permalink' => 'test-slug-%s'
+			),
 		)
 	);
 

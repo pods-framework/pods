@@ -4,23 +4,16 @@ sudo: false
 
 php:
     - 5.3
-    - 5.4
-    - 5.5
     - 5.6
-    
+
 env:
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
     - WP_VERSION=4.3 WP_MULTISITE=0
-    - WP_VERSION=4.3 WP_MULTISITE=1
     - WP_VERSION=4.2 WP_MULTISITE=0
-    - WP_VERSION=4.2 WP_MULTISITE=1
     - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=1
     - WP_VERSION=4.0 WP_MULTISITE=0
-    - WP_VERSION=4.0 WP_MULTISITE=1
     - WP_VERSION=3.9 WP_MULTISITE=0
-    - WP_VERSION=3.9 WP_MULTISITE=1
     - WP_VERSION=3.8 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=1
 
@@ -33,13 +26,9 @@ matrix:
     include:
     - php: nightly
       env: WP_VERSION=latest WP_MULTISITE=0
-    - php: nightly
-      env: WP_VERSION=latest WP_MULTISITE=1
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=latest WP_MULTISITE=1
-      
+
 ## Cache composer bits
 cache:
   directories:

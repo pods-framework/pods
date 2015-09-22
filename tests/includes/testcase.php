@@ -121,6 +121,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					'type' => 'slug'
 				),
 				array(
+					'name' => 'test_text_field',
+					'type' => 'test'
+				),
+				array(
 					'name'             => 'author',
 					'type'             => 'pick',
 					'pick_object'      => 'user',
@@ -299,7 +303,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'field_id' => 'id',
 			'data' => array(
 				'name' => 'Related pod item',
-				'permalink' => 'related-pod-item'
+				'permalink' => 'related-pod-item',
+				'test_text_field' => 'Test related pod text field'
 			)
 		),
 	    'avatar' => array(

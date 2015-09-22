@@ -116,6 +116,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					'type' => 'text'
 				),
 				array(
+					'name' => 'permalink',
+					'type' => 'slug'
+				),
+				array(
 					'name'             => 'author',
 					'type'             => 'pick',
 					'pick_object'      => 'user',

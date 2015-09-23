@@ -351,7 +351,7 @@ class Pods_Templates_Auto_Template_Settings {
 
 		$titles = array();
 
-		$templates = get_posts( array( 'post_type' => '_pods_template', 'order'=> 'ASC', 'orderby' => 'title'));
+		$templates = get_posts( array( 'post_type' => '_pods_template', 'order'=> 'ASC', 'orderby' => 'title', 'numberposts' => -1 ));
 		foreach ( $templates as $template ) {
 			$titles[ ] = $template->post_title;
 		}

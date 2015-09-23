@@ -1,9 +1,6 @@
 filter:
     excluded_paths: [vendor/*, tests/*, .tx/*, languages/*, includes/libraries/*, bin/*, assets/*, templates/* ]
-    
-before_commands:
-    - 'composer install --no-interaction --prefer-source'
-    
+
 tools:
 
     php_mess_detector: 

@@ -30,6 +30,10 @@ if ( class_exists( 'Pods_Templates' ) ) {
 	// Pull in the Frontier Template System
 	require_once( plugin_dir_path( __FILE__ ) . 'class-pods_templates.php' );
 
+	//Pull in Auto Template
+	require_once( dirname( __FILE__ ) . '/includes/auto-template/Pods_Templates_Auto_Template_Settings.php' );
+	new Pods_Templates_Auto_Template_Settings();
+
 	Pods_Templates_Frontier::get_instance();
 
 	return;

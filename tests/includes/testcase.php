@@ -106,7 +106,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		'pod'       => array(
 			'object'  => array(
 				'%d',
-				'rel_pod',
+				'test_act',
 			),
 			'storage' => array(
 				'table'
@@ -188,10 +188,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'pick_format_type' => 'single'
 		),
 	    array(
-			'name' => 'test_rel_pod',
+			'name' => 'test_rel_act',
 			'type' => 'pick',
 		    'pick_object' => 'pod',
-		    'pick_val' => 'rel_pod',
+		    'pick_val' => 'test_act',
 		    'pick_format_type' => 'single'
 		),
 	    array(
@@ -296,11 +296,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'test_text_field' => 'Test related comment text field'
 			)
 		),
-	    'test_rel_pod' => array(
-			'pod' => 'rel_pod',
+	    'test_rel_act' => array(
+			'pod' => 'test_act',
 		    'id' => 0,
 		    'field_index' => 'name',
 		    'field_id' => 'id',
+		    'field_author' => 'author',
 			'data' => array(
 				'name' => 'Related pod item',
 				'permalink' => 'related-pod-item',
@@ -622,7 +623,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
 
 		$related_author = 0;
-		$related_pod_author = 0;
 		$related_media = 0;
 
 		// Get and store sample image for use later
@@ -660,6 +660,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				// Add term id for the Non-Pod Taxonomy field
 				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
 					$item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				}
+
+				if ( 'user' == $p->pod_data[ 'type' ] ) {
+					$item_data[ 'data' ]['avatar'] = $related_media;
+				} elseif ( 'pod' == $p->pod_data[ 'type' ] ) {
+					$item_data[ 'data' ]['author'] = $related_author;
 				}
 
 				if ( 'media' == $item_data[ 'pod' ] ) {
@@ -702,9 +708,6 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				}
 				elseif ( 'test_rel_user' == $item ) {
 					$related_author = $id;
-				}
-				elseif ( 'author' == $item ) {
-					$related_pod_author = $id;
 				}
 				elseif ( 'test_rel_media' == $item ) {
 					$related_media = $id;
@@ -781,7 +784,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
 							}
 							elseif ( 'pod' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'author' ] = $related_pod_author;
+								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
 							}
 
 							// Add term id for the Non-Pod Taxonomy field

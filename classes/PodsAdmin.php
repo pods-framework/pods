@@ -920,6 +920,9 @@ class PodsAdmin {
         if ( $advanced )
             $tabs[ 'advanced' ] = __( 'Advanced Options', 'pods' );
 
+        if ( 'taxonomy' == pods_var( 'type', $pod ) && !$fields )
+            $tabs[ 'extra-fields' ] = __( 'Extra Fields', 'pods' );
+
 		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
 
 		/**

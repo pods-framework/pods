@@ -3342,6 +3342,8 @@ class PodsAPI {
 
         if ( 'comment' == $object_type )
             $object_ID = 'comment_ID';
+        elseif ( 'taxonomy' == $object_type )
+            $object_ID = 'term_id';
 
         $object_data = $object_meta = $post_term_data = array();
 
@@ -3498,13 +3500,19 @@ class PodsAPI {
             }
         }
 
-        if ( 'post_type' == $pod[ 'type' ] ) {
-            $post_type = $pod[ 'name' ];
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
+            $object_name = $pod[ 'name' ];
 
             if ( !empty( $pod[ 'object' ] ) )
-                $post_type = $pod[ 'object' ];
+                $object_name = $pod[ 'object' ];
 
-            $object_data[ 'post_type' ] = $post_type;
+            $object_name_field = 'post_type';
+
+            if ( 'taxonomy' == $pod['type'] ) {
+                $object_name_field = 'taxonomy';
+            }
+
+            $object_data[ $object_name_field ] = $object_name;
         }
 
         if ( ( 'meta' == $pod[ 'storage' ] || 'settings' == $pod[ 'type' ] || ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] ) ) && !in_array( $pod[ 'type' ], array( 'pod', 'table', '' ) ) ) {
@@ -3527,14 +3535,6 @@ class PodsAPI {
 				$fields_to_send[ $field ] = $field_data;
 			}
 
-	        if ( 'taxonomy' == $pod[ 'type' ] ) {
-                $object_data['taxonomy'] = $pod['name'];
-
-                if ( ! empty( $pod['object'] ) ) {
-                    $object_data['taxonomy'] = $pod['object'];
-                }
-            }
-
             $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true, $fields_to_send );
 
             if ( !empty( $params->id ) && 'settings' == $object_type )
@@ -3542,14 +3542,6 @@ class PodsAPI {
         }
         else {
             if ( ! in_array( $pod[ 'type' ], array( 'pod', 'table', '' ) ) ) {
-                if ( 'taxonomy' == $pod[ 'type' ] ) {
-                    $object_data['taxonomy'] = $pod['name'];
-
-                    if ( ! empty( $pod['object'] ) ) {
-                        $object_data['taxonomy'] = $pod['object'];
-                    }
-                }
-
                 $params->id = $this->save_wp_object( $object_type, $object_data, array(), false, true );
             }
 

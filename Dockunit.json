@@ -1,7 +1,7 @@
 {
   "containers": [
     {
-      "prettyName": "PHP 5.6 FPM WordPress 4.0",
+      "prettyName": "PHP 5.6 FPM",
       "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
       "beforeScripts": [
         "service mysql start",
@@ -11,7 +11,7 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 7.0 RC-1",
+      "prettyName": "PHP 7.0 RC-1 FPM",
       "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-1-fpm",
       "beforeScripts": [
         "service mysql start",

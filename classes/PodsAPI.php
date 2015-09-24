@@ -632,8 +632,6 @@ class PodsAPI {
         if ( !is_array( $term_meta ) )
             $term_meta = array();
 
-        $term_ID = (int) $term_meta['term_id'];
-
         if ( $sanitized ) {
             $term_data = pods_unsanitize( $term_data );
             $term_meta = pods_unsanitize( $term_meta );

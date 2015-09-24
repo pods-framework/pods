@@ -624,6 +624,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 		$related_author = 0;
 		$related_media = 0;
+		$related_avatar = 0;
 
 		// Get and store sample image for use later
 		$sample_image = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
@@ -659,13 +660,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				// Add term id for the Non-Pod Taxonomy field
 				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-					$item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
-				}
-
-				if ( 'user' == $p->pod_data[ 'type' ] ) {
-					$item_data[ 'data' ]['avatar'] = $related_media;
+					$item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
 				} elseif ( 'pod' == $p->pod_data[ 'type' ] ) {
-					$item_data[ 'data' ]['author'] = $related_author;
+					$item_data[ 'data' ][ 'author' ] = $related_author;
 				}
 
 				if ( 'media' == $item_data[ 'pod' ] ) {
@@ -711,6 +708,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				}
 				elseif ( 'test_rel_media' == $item ) {
 					$related_media = $id;
+				}
+				elseif ( 'avatar' == $item ) {
+					$related_avatar = $id;
 				}
 
 				$item_data[ 'id' ] = $id;
@@ -784,7 +784,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
 							}
 							elseif ( 'user' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'avatar' ] = $related_media;
+								$pod_item_data[ 'data' ][ 'avatar' ] = $related_avatar;
 							}
 							elseif ( 'pod' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
@@ -792,7 +792,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 							// Add term id for the Non-Pod Taxonomy field
 							if ( 'post_type' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+								$pod_item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
 							}
 
 							$id = $p->add( $pod_item_data[ 'data' ] );
@@ -816,31 +816,37 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				continue;
 			}
 
-			if ( is_array( $r_item_data[ 'id' ] ) ) {
-				foreach ( $r_item_data[ 'id' ] as $item_id ) {
-					$p = pods( $r_item_data[ 'pod' ], $item_id );
+			$r_item_data[ 'id' ] = (array) $r_item_data[ 'id' ];
 
-					$save_data = array_merge( $r_item_data[ 'sub_data' ][ $item_id ], $r_item_data[ 'sub_rel_data' ] );
+			$p = pods( $r_item_data['pod'] );
 
+			foreach ( $r_item_data[ 'id' ] as $item_id ) {
+				$item_id = (int) $item_id;
+
+				$sub = false;
+
+				if ( ! empty( $r_item_data[ 'sub_data' ][ $item_id ] ) ) {
+					$sub = true;
+
+					$save_data = array_merge( $r_item_data['sub_data'][ $item_id ], $r_item_data['sub_rel_data'] );
+				} else {
+					$save_data = $r_item_data['data'];
+				}
+
+				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
 					// Add term id for the Non-Pod Taxonomy field
 					// @todo This should be working on it's own
-					if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-						$save_data[ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
-					}
-
-					$p->save( $save_data );
-				}
-			}
-			else {
-				$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
-
-				// Add term id for the Non-Pod Taxonomy field
-				// @todo This should be working on it's own
-				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-					$r_item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+					$save_data[ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				} elseif ( 'user' == $p->pod_data[ 'type' ] ) {
+					// Avatar gets added after user is added, have to add it back
+					$save_data[ 'avatar' ] = (int) self::$related_items[ 'avatar' ][ 'id' ];
 				}
 
-				$p->save( $r_item_data[ 'data' ] );
+				if ( ! $sub ) {
+					self::$related_items[ $r_item ][ 'data' ] = array_merge( self::$related_items[ $r_item ][ 'data' ], $save_data );
+				}
+
+				$p->save( $save_data, null, $item_id );
 			}
 		}
 

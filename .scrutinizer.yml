@@ -3,6 +3,12 @@ filter:
     
 before_commands:
     - 'composer install --no-interaction --prefer-source'
+
+tools:
+    php_code_sniffer:
+        config:
+            # https://scrutinizer-ci.com/docs/tools/php/code-sniffer/standards
+            standard: WordPress
     
 tools:
 

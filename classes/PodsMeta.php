@@ -559,8 +559,17 @@ class PodsMeta {
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) )
-                $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, true );
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'taxonomy', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
+                $metadata_type = $pod['type'];
+
+                if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
+                    $metadata_type = 'post';
+                } elseif ( 'taxonomy' == $metadata_type ) {
+                    $metadata_type = 'term';
+                }
+
+                $meta = get_metadata( $metadata_type, $id, $field, true );
+            }
 
             $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
         }
@@ -2546,8 +2555,10 @@ class PodsMeta {
     public function get_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
         $meta_type = $object_type;
 
-        if ( 'post_type' == $meta_type )
+        if ( in_array( $meta_type, array( 'post_type', 'media' ) ) )
             $meta_type = 'post';
+        elseif ( 'taxonomy' == $meta_type )
+            $meta_type = 'term';
 
         if ( empty( $meta_key ) ) {
 			if ( !defined( 'PODS_ALLOW_FULL_META' ) || !PODS_ALLOW_FULL_META ) {

@@ -183,6 +183,9 @@ class PodsAPI {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
             $object_type = 'post';
 
+        if ( 'taxonomy' == $object_type )
+            $object_type = 'term';
+
         if ( empty( $id ) )
             return false;
 
@@ -228,7 +231,7 @@ class PodsAPI {
         if ( !isset( $post_data[ 'ID' ] ) || empty( $post_data[ 'ID' ] ) )
             $post_data[ 'ID' ] = wp_insert_post( $post_data, true );
         elseif ( 2 < count( $post_data ) || !isset( $post_data[ 'post_type' ] ) )
-            wp_update_post( $post_data );
+            $post_data[ 'ID' ] = wp_update_post( $post_data, true );
 
         if ( is_wp_error( $post_data[ 'ID' ] ) ) {
             if ( !$conflicted )
@@ -3825,7 +3828,7 @@ class PodsAPI {
 		}
 
         // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'user', 'comment' ) ) ) {
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
             $meta_type = $pod[ 'type' ];
 
             if ( 'post_type' == $meta_type )
@@ -3938,11 +3941,13 @@ class PodsAPI {
             $related_ids = array_slice( $related_ids, 0, $related_limit );
 
         // Post Types, Media, Users, and Comments (meta-based)
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
             $object_type = $pod[ 'type' ];
 
-            if ( 'post_type' == $object_type || 'media' == $object_type )
+            if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
                 $object_type = 'post';
+            elseif ( 'taxonomy' == $object_type )
+                $object_type = 'term';
 
             delete_metadata( $object_type, $id, $field[ 'name' ] );
 
@@ -5154,11 +5159,13 @@ class PodsAPI {
             pods_no_conflict_on( $related_pod[ 'type' ] );
 
         // Post Types, Media, Users, and Comments (meta-based)
-        if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+        if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
             $object_type = $related_pod[ 'type' ];
 
-            if ( 'post_type' == $object_type || 'media' == $object_type )
+            if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
                 $object_type = 'post';
+            elseif ( 'taxonomy' == $object_type )
+                $object_type = 'term';
 
             delete_metadata( $object_type, $related_id, $related_field[ 'name' ] );
 
@@ -6888,16 +6895,18 @@ class PodsAPI {
             if ( !is_array( $pod ) )
                 $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
 
-            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
+            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment', 'settings' ) ) ) {
                 $meta_type = $pod[ 'type' ];
 
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
+                if ( in_array( $meta_type, array( 'post_type', 'media' ) ) )
                     $meta_type = 'post';
+                elseif ( 'taxonomy' == $meta_type )
+                    $meta_type = 'term';
 
-                $no_conflict = pods_no_conflict_check( $meta_type );
+                $no_conflict = pods_no_conflict_check( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
 
                 if ( !$no_conflict )
-                    pods_no_conflict_on( $meta_type );
+                    pods_no_conflict_on( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
 
                 foreach ( $ids as $id ) {
                     if ( 'settings' == $meta_type ) {
@@ -6950,7 +6959,7 @@ class PodsAPI {
                 }
 
                 if ( !$no_conflict )
-                    pods_no_conflict_off( $meta_type );
+                    pods_no_conflict_off( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
             }
         }
 
@@ -7041,18 +7050,20 @@ class PodsAPI {
             if ( !is_array( $pod ) )
                 $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
 
-            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
+            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment', 'settings' ) ) ) {
                 $related_ids = array();
 
                 $meta_type = $pod[ 'type' ];
 
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
+                if ( in_array( $meta_type, array( 'post_type', 'media' ) ) )
                     $meta_type = 'post';
+                elseif ( 'taxonomy' == $meta_type )
+                    $meta_type = 'term';
 
-                $no_conflict = pods_no_conflict_check( $meta_type );
+                $no_conflict = pods_no_conflict_check( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
 
                 if ( !$no_conflict )
-                    pods_no_conflict_on( $meta_type );
+                    pods_no_conflict_on( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
 
                 if ( 'settings' == $meta_type ) {
                     $related_id = get_option( '_pods_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );
@@ -7103,7 +7114,7 @@ class PodsAPI {
                 }
 
                 if ( !$no_conflict )
-                    pods_no_conflict_off( $meta_type );
+                    pods_no_conflict_off( ( 'term' == $meta_type ? 'taxonomy' : $meta_type ) );
             }
         }
 

@@ -903,7 +903,7 @@ class PodsAdmin {
             $admin_ui = true;
         }
 
-        if ( 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'settings' != pods_var( 'type', $pod ) )
+        if ( ! function_exists( 'get_term_meta' ) && 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'taxonomy' == pods_var( 'type', $pod ) )
             $fields = false;
 
         $tabs = array();
@@ -919,9 +919,6 @@ class PodsAdmin {
 
         if ( $advanced )
             $tabs[ 'advanced' ] = __( 'Advanced Options', 'pods' );
-
-        if ( 'taxonomy' == pods_var( 'type', $pod ) && !$fields )
-            $tabs[ 'extra-fields' ] = __( 'Extra Fields', 'pods' );
 
 		$addtl_args = compact( array( 'fields', 'labels', 'admin_ui', 'advanced' ) );
 

@@ -111,7 +111,18 @@
                                                     'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' )
                                                 );
 
-                                                echo PodsForm::field( 'create_storage_taxonomy', pods_var_raw( 'create_storage_taxonomy', 'post', 'none', null, true ), 'pick', array( 'data' => $data ) );
+                                                $default = 'none';
+
+                                                if ( function_exists( 'get_term_meta' ) ) {
+                                                    $data = array(
+                                                        'meta' => __( 'Meta Based (WP Default)', 'pods' ),
+                                                        'table' => $data['table'],
+                                                    );
+
+                                                    $default = 'meta';
+                                                }
+
+                                                echo PodsForm::field( 'create_storage_taxonomy', pods_var_raw( 'create_storage_taxonomy', 'post', $default, null, true ), 'pick', array( 'data' => $data ) );
                                             ?>
                                         </div>
                                     <?php
@@ -231,6 +242,10 @@
                                                 'comment' => __( 'Comments', 'pods' )
                                             );
 
+                                            if ( function_exists( 'get_term_meta' ) ) {
+                                                $data[ 'taxonomy' ] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
+                                            }
+
                                             if ( isset( $all_pods[ 'media' ] ) && 'media' == $all_pods[ 'media' ][ 'type' ] )
                                                 unset( $data[ 'media' ] );
 
@@ -313,7 +328,18 @@
                                                     'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' )
                                                 );
 
-                                                echo PodsForm::field( 'extend_storage_taxonomy', pods_var_raw( 'extend_storage_taxonomy', 'post', 'none', null, true ), 'pick', array( 'data' => $data ) );
+                                                $default = 'none';
+
+                                                if ( function_exists( 'get_term_meta' ) ) {
+                                                    $data = array(
+                                                        'meta' => __( 'Meta Based (WP Default)', 'pods' ),
+                                                        'table' => $data['table'],
+                                                    );
+
+                                                    $default = 'meta';
+                                                }
+
+                                                echo PodsForm::field( 'extend_storage_taxonomy', pods_var_raw( 'extend_storage_taxonomy', 'post', $default, null, true ), 'pick', array( 'data' => $data ) );
                                             ?>
                                         </div>
                                     <?php

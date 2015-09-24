@@ -32,7 +32,9 @@ class Pods_Table_Storage extends PodsComponent {
             add_filter( 'pods_admin_setup_add_extend_storage', '__return_true' );
             add_filter( 'pods_admin_setup_add_extend_taxonomy_storage', '__return_true' );
 
-            add_filter( 'pods_admin_setup_add_extend_pod_type', array( $this, 'add_pod_type' ) );
+            if ( ! function_exists( 'get_term_meta' ) ) {
+                add_filter( 'pods_admin_setup_add_extend_pod_type', array( $this, 'add_pod_type' ) );
+            }
         }
     }
 

@@ -783,6 +783,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							elseif ( 'comment' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
 							}
+							elseif ( 'user' == $pod_type ) {
+								$pod_item_data[ 'data' ][ 'avatar' ] = $related_media;
+							}
 							elseif ( 'pod' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
 							}

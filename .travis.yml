@@ -7,8 +7,9 @@ php:
     - 5.6
 
 env:
-    - WP_VERSION=nightly WP_MULTISITE=0
-    - WP_VERSION=nightly WP_MULTISITE=1
+    - WP_VERSION=bleeding WP_MULTISITE=0
+    - WP_VERSION=bleeding WP_MULTISITE=1
+    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
     - WP_VERSION=4.3 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=1
@@ -17,8 +18,8 @@ matrix:
     allow_failures:
      - php: hhvm
      - php: 7.0
-     - env: WP_VERSION=nightly WP_MULTISITE=0
-     - env: WP_VERSION=nightly WP_MULTISITE=1
+     - env: WP_VERSION=bleeding WP_MULTISITE=0
+     - env: WP_VERSION=bleeding WP_MULTISITE=1
 
     include:
     - php: 7.0

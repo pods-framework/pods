@@ -29,7 +29,13 @@ install_wp() {
 
 	mkdir -p $WP_CORE_DIR
 
-	if [ $WP_VERSION == 'nightly' ]; then
+	if [ $WP_VERSION == 'bleeding' ]; then
+		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/master.zip
+		unzip /tmp/wordpress.zip -d /tmp/
+	elif [ $WP_VERSION == 'bleeding-maintenance' ]; then
+		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/4.3-branch.zip
+		unzip /tmp/wordpress.zip -d /tmp/
+	elif [ $WP_VERSION == 'nightly' ]; then
 		wget -nv -O /tmp/wordpress.zip https://wordpress.org/nightly-builds/wordpress-latest.zip
 		unzip /tmp/wordpress.zip -d /tmp/
 	else

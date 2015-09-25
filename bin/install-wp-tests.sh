@@ -10,6 +10,7 @@ DB_USER=$2
 DB_PASS=$3
 DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
+WP_MAINTENANCE_VERSION=${6-master}
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=/tmp/wordpress/
@@ -33,7 +34,9 @@ install_wp() {
 		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/master.zip
 		unzip /tmp/wordpress.zip -d /tmp/
 	elif [ $WP_VERSION == 'bleeding-maintenance' ]; then
-		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/4.3-branch.zip
+		local ARCHIVE_NAME="$WP_MAINTENANCE_VERSION-branch"
+
+		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/${ARCHIVE_NAME}.zip
 		unzip /tmp/wordpress.zip -d /tmp/
 	elif [ $WP_VERSION == 'nightly' ]; then
 		wget -nv -O /tmp/wordpress.zip https://wordpress.org/nightly-builds/wordpress-latest.zip

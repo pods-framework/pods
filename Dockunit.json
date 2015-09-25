@@ -11,12 +11,12 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 5.6 FPM + WordPress Nightly",
+      "prettyName": "PHP 5.6 FPM + WordPress Bleeding",
       "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
       "beforeScripts": [
         "service mysql start",
         "composer install",
-        "bash bin/install-wp-tests.sh wordpress_test root '' localhost nightly"
+        "bash bin/install-wp-tests.sh wordpress_test root '' localhost bleeding"
       ],
       "testCommand": "./vendor/bin/phpunit"
     },
@@ -31,12 +31,12 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 7.0 RC-1 + WordPress Nightly",
+      "prettyName": "PHP 7.0 RC-1 + WordPress Bleeding",
       "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-1-fpm",
       "beforeScripts": [
         "service mysql start",
         "composer install",
-        "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost nightly"
+        "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost bleeding"
       ],
       "testCommand": "./vendor/bin/phpunit"
     }

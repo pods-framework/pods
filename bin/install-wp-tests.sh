@@ -35,13 +35,13 @@ install_wp() {
 
 		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/${ARCHIVE_NAME}.zip
 		unzip /tmp/wordpress.zip -d /tmp/
-		mv -rf /tmp/WordPress-${ARCHIVE_NAME} /tmp/wordpress
+		mv -f /tmp/WordPress-${ARCHIVE_NAME} /tmp/wordpress
 	elif [ $WP_VERSION == 'bleeding-maintenance' ]; then
 		local ARCHIVE_NAME="$WP_MAINTENANCE_VERSION-branch"
 
 		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/${ARCHIVE_NAME}.zip
 		unzip /tmp/wordpress.zip -d /tmp/
-		mv -rf /tmp/WordPress-${ARCHIVE_NAME} /tmp/wordpress
+		mv -f /tmp/WordPress-${ARCHIVE_NAME} /tmp/wordpress
 	elif [ $WP_VERSION == 'nightly' ]; then
 		wget -nv -O /tmp/wordpress.zip https://wordpress.org/nightly-builds/wordpress-latest.zip
 		unzip /tmp/wordpress.zip -d /tmp/

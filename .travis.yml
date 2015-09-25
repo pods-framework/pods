@@ -7,24 +7,21 @@ php:
     - 5.6
 
 env:
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=nightly WP_MULTISITE=0
+    - WP_VERSION=nightly WP_MULTISITE=1
     - WP_VERSION=4.3 WP_MULTISITE=0
-    - WP_VERSION=4.2 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.0 WP_MULTISITE=0
-    - WP_VERSION=3.9 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=0
     - WP_VERSION=3.8 WP_MULTISITE=1
 
 matrix:
     allow_failures:
-     - php: nightly
      - php: hhvm
      - php: 7.0
+     - env: WP_VERSION=nightly WP_MULTISITE=0
+     - env: WP_VERSION=nightly WP_MULTISITE=1
 
     include:
-    - php: nightly
+    - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0

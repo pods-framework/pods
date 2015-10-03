@@ -1132,6 +1132,7 @@ class PodsInit {
 
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
+            add_action( 'init', array( $this, 'add_rest_support' ), 12 );
 	        add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
 	        if ( is_admin() ) {
@@ -1159,6 +1160,13 @@ class PodsInit {
 
         // Show admin bar links
         add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
+
+        if( function_exists( 'register_api_field' ) ) {
+
+            include_once( PODS_DIR . '/classes/PodsRESTFields.php' );
+            include_once( PODS_DIR . '/classes/PodsRESTHandlers.php' );
+
+        }
 
 	}
 
@@ -1328,6 +1336,53 @@ class PodsInit {
                     'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pods->id() )
                 ) );
             }
+        }
+
+    }
+
+    /**
+     * Add REST API support to post type and taxonomy objects.
+     *
+     * @uses "init"
+     *
+     * @since 2.5.6
+     */
+    public function add_rest_support() {
+        if( ! function_exists( 'register_api_field' ) ) {
+            return;
+
+        }
+
+
+        $pods = pods_api()->load_pods();
+
+        if ( ! empty( $pods ) && is_array( $pods ) ) {
+
+            foreach ( $pods as $pod ) {
+                $type = $pod[ 'type'];
+                if( in_array( $type, array(
+                        'post_type',
+                        'taxonomy'
+                    )
+                )
+                ) {
+                    if ( $pod && pods_rest_api_pod_extends_core_route( $pod ) ) {
+                        if ( 'post_type' == $type ) {
+                            PodsRESTHandlers::post_type_rest_support( $pod[ 'name' ], sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ) );
+                        }
+
+                        if ( 'taxonomy' == $type ) {
+                            PodsRESTHandlers::taxonomy_rest_support( $pod[ 'name' ], sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ) );
+                        }
+
+                        new PodsRESTFields( $pod[ 'name' ] );
+
+                    }
+
+                }
+
+            }
+
         }
 
     }

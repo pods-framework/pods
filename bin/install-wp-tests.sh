@@ -12,20 +12,37 @@ DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
-WP_CORE_DIR=/tmp/wordpress/
+WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
+
+download() {
+    if [ `which curl` ]; then
+        curl -s "$1" > "$2";
+    elif [ `which wget` ]; then
+        wget -nv -O "$2" "$1"
+    fi
+}
+
+if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
+	WP_TESTS_TAG="tags/$WP_VERSION"
+else
+	# http serves a single offer, whereas https serves multiple. we only want one
+	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
+	grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json
+	LATEST_VERSION=$(grep -o '"version":"[^"]*' /tmp/wp-latest.json | sed 's/"version":"//')
+	if [[ -z "$LATEST_VERSION" ]]; then
+		echo "Latest WordPress version could not be found"
+		exit 1
+	fi
+	WP_TESTS_TAG="tags/$LATEST_VERSION"
+fi
 
 set -ex
 
 install_wp() {
-	echo "Installing WordPress for Unit Tests"
 
-	if [ $WP_CORE_DIR == '' ] && [ -z TRAVIS_JOB_ID ]; then
-		echo "Removing existing core WordPress directory"
-
-		rm -rf $WP_CORE_DIR
+	if [ -d $WP_CORE_DIR ]; then
+		return;
 	fi
-
-	echo "Downloading WordPress"
 
 	mkdir -p $WP_CORE_DIR
 
@@ -35,17 +52,13 @@ install_wp() {
 		local ARCHIVE_NAME="wordpress-$WP_VERSION"
 	fi
 
-	wget -nv -O /tmp/wordpress.tar.gz https://wordpress.org/${ARCHIVE_NAME}.tar.gz
+	download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
 	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
 
-	wget -nv -O $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
-
-	echo "WordPress installed"
+	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 }
 
 install_test_suite() {
-	echo "Installing Tests Suite for Unit Tests"
-
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
 		local ioption='-i .bak'
@@ -53,32 +66,27 @@ install_test_suite() {
 		local ioption='-i'
 	fi
 
-	# set up testing suite
-	if [ $WP_TESTS_DIR == '' ] && [ -z TRAVIS_JOB_ID ]; then
-		echo "Removing existing Tests Suite directory"
-
-		rm -rf $WP_TESTS_DIR
+	# set up testing suite if it doesn't yet exist
+	if [ ! -d $WP_TESTS_DIR ]; then
+		# set up testing suite
+		mkdir -p $WP_TESTS_DIR
+		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
 	fi
 
-	echo "Downloading Tests Suite"
-
-	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
-	svn co --quiet https://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
 
-	wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
-	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php
-	sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" wp-tests-config.php
-	sed $ioption "s/yourusernamehere/$DB_USER/" wp-tests-config.php
-	sed $ioption "s/yourpasswordhere/$DB_PASS/" wp-tests-config.php
-	sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+	if [ ! -f wp-tests-config.php ]; then
+		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
+	fi
 
-	echo "Tests Suite installed"
 }
 
 install_db() {
-	echo "Setting up Database for Unit Tests"
-
 	# parse DB_HOST for port or socket references
 	local PARTS=(${DB_HOST//\:/ })
 	local DB_HOSTNAME=${PARTS[0]};
@@ -86,7 +94,7 @@ install_db() {
 	local EXTRA=""
 
 	if ! [ -z $DB_HOSTNAME ] ; then
-		if [[ "$DB_SOCK_OR_PORT" =~ ^[0-9]+$ ]] ; then
+		if [ $(echo $DB_SOCK_OR_PORT | grep -e '^[0-9]\{1,\}$') ]; then
 			EXTRA=" --host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
 		elif ! [ -z $DB_SOCK_OR_PORT ] ; then
 			EXTRA=" --socket=$DB_SOCK_OR_PORT"
@@ -95,19 +103,8 @@ install_db() {
 		fi
 	fi
 
-	if [ -z TRAVIS_JOB_ID ]; then
-		echo "Removing existing Database"
-
-		# drop database
-		mysql --user="$DB_USER" --password="$DB_PASS"$EXTRA -e "DROP DATABASE IF EXISTS $DB_NAME"
-	fi
-
-	echo "Creating Database"
-
 	# create database
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
-
-	echo "Database set up"
 }
 
 install_wp

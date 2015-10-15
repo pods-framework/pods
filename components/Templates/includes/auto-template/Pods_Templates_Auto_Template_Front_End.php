@@ -273,6 +273,18 @@ class Pods_Templates_Auto_Template_Front_End {
 
 		//prevent infinite loops caused by this method acting on post_content
 		remove_filter( 'the_content', array( $this, 'front' ) );
+
+		/**
+		 * Change which template -- by name -- to be used.
+		 *
+		 * @since 2.5.6
+		 *
+		 * @param string        $template_name  The name of a Pods Template to load.
+		 * @param Pods          $pods           Current Pods object.
+		 * @param bool|string   $append         Whether Template will be appended (true), prepended ("prepend") or replaced (false).
+		 */
+		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pods, $append );
+
 		$template = $pods->template( $template_name );
 		add_filter( 'the_content', array( $this, 'front' ) );
 

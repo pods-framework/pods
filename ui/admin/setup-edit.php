@@ -820,7 +820,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                     <div class="submitbox" id="submitpost">
                         <div id="major-publishing-actions">
                             <div id="delete-action">
-                                <a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'delete' ) ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>"> Delete Pod </a>
+                                <a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'delete', '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ) ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>"> <?php _e( 'Delete', 'pods' ); ?> Pod </a>
                             </div>
                             <div id="publishing-action">
                                 <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />

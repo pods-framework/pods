@@ -2454,7 +2454,7 @@ class PodsAdmin {
      * @access protected
      */
     protected function rest_admin() {
-        if( function_exists( 'register_rest_field' ) ) {
+        if( function_exists( 'register_api_field' ) ) {
             add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'add_rest_fields_to_field_editor' ), 12, 2 );
             add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
             add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );

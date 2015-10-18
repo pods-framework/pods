@@ -126,6 +126,7 @@ class PodsRESTHandlers {
 	 *
 	 * @since 2.5.6
 	 *
+	 * @param mixed $value Value to write
 	 * @param object $object The object from the response
 	 * @param string $field_name Name of field
 	 *

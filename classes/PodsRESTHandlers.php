@@ -15,7 +15,7 @@ class PodsRESTHandlers {
 	 *
 	 * @since 2.5.6
 	 *
-	 * @var \Pods
+	 * @var Pods
 	 */
 	private static $pod;
 
@@ -27,7 +27,7 @@ class PodsRESTHandlers {
 	 * @param $pod_name
 	 * @param $id
 	 *
-	 * @return bool|\Pods
+	 * @return bool|Pods
 	 */
 	protected static function get_pod( $pod_name, $id ) {
 		if ( ! self::$pod || self::$pod->pod != $pod_name ) {
@@ -49,7 +49,7 @@ class PodsRESTHandlers {
 	 *
 	 * @param array $object The object from the response
 	 * @param string $field_name Name of field
-	 * @param \WP_REST_Request $request Current request
+	 * @param WP_REST_Request $request Current request
 	 *
 	 * @return mixed
 	 */
@@ -60,9 +60,9 @@ class PodsRESTHandlers {
 		if ( $pod && pods_rest_api_field_allowed_to_extend( $field_name, $pod ) ) {
 			$params = null;
 			$field_data = $pod->fields( $field_name );
-			if( 'pick' == pods_v( 'type', $field_data ) ) {
+			if ( 'pick' == pods_v( 'type', $field_data ) ) {
 				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
-				if(  'array' == $output_type ) {
+				if (  'array' == $output_type ) {
 
 					$related_pod = $pod->field( $field_name, array( 'output' => 'pod' ) );
 					$fields = $related_pod->fields();
@@ -78,10 +78,10 @@ class PodsRESTHandlers {
 					 *
 					 * @param array $fields The fields to show
 					 * @param string $field_name The name of the field
-					 * @param object|\Pods $pod The Pods object for Pod relationship is from.
-					 * @param object|\Pods $pod The Pods object for Pod relationship is to.
+					 * @param object|Pods $pod The Pods object for Pod relationship is from.
+					 * @param object|Pods $pod The Pods object for Pod relationship is to.
 					 * @param int $id Current item ID
-					 * @param object||WP_REST_Request Current request object.
+					 * @param object|WP_REST_Request Current request object.
 					 */
 					$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
 
@@ -94,10 +94,10 @@ class PodsRESTHandlers {
 					 *
 					 * @param array $depth The depth.
 					 * @param string $field_name The name of the field
-					 * @param object|\Pods $pod The Pods object for Pod relationship is from.
-					 * @param object|\Pods $pod The Pods object for Pod relationship is to.
+					 * @param object|Pods $pod The Pods object for Pod relationship is from.
+					 * @param object|Pods $pod The Pods object for Pod relationship is to.
 					 * @param int $id Current item ID
-					 * @param object||WP_REST_Request Current request object.
+					 * @param object|WP_REST_Request Current request object.
 					 */
 					$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
 
@@ -109,6 +109,7 @@ class PodsRESTHandlers {
 
 					$data = $pod->api->export_pod_item( $related_pod, $params );
 					return $data;
+
 				}
 
 				$params = array();
@@ -116,6 +117,7 @@ class PodsRESTHandlers {
 			}
 
 			return $pod->field( $field_name, $params );
+
 		}
 
 	}
@@ -137,8 +139,9 @@ class PodsRESTHandlers {
 		$id = pods_v( 'id', $object );
 		$pod = self::get_pod( $pod_name, $id );
 		if ( $pod && pods_rest_api_field_allowed_to_extend( $field_name, $pod, false ) ) {
-			$saved_id = $pod->save( $field_name, $value, $id );
+			$pod->save( $field_name, $value, $id );
 			return $pod->field( $field_name );
+
 		}
 
 	}
@@ -189,7 +192,6 @@ class PodsRESTHandlers {
 			$wp_taxonomies[ $taxonomy_name ]->rest_base = $rest_base;
 			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 		}
-
 
 	}
 

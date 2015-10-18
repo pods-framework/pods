@@ -2103,7 +2103,7 @@ function pods_rest_api_field_allowed_to_extend( $field_name, $pod, $read = true 
 }
 
 /**
- * Check if a Pod supports extending core REST reponse
+ * Check if a Pod supports extending core REST response.
  *
  * @since 2.5.6
  *

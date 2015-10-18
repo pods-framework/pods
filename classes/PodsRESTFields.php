@@ -29,12 +29,12 @@ class PodsRESTFields {
 	 * @param string|object|Pods $pod Pods object
 	 */
 	public function __construct( $pod ) {
-		if( ! function_exists( 'register_api_field' ) ) {
+		if ( ! function_exists( 'register_api_field' ) ) {
 			return;
 		}
 
 		$this->set_pod( $pod );
-		if( $this->pod ) {
+		if(  $this->pod ) {
 			$this->add_fields();
 		}
 
@@ -50,20 +50,20 @@ class PodsRESTFields {
 	 * @param string|Pods $pod Pods object or name of Pods object
 	 */
 	private function set_pod( $pod ) {
-		if( is_string( $pod ) ) {
+		if ( is_string( $pod ) ) {
 			$this->set_pod( pods( $pod, null, true ) );
 
-		}else {
+		} else {
 			$type =  $pod->pod_data[ 'type' ];
 			if( in_array( $type, array(
-					'post_type',
-					'user',
-					'taxonomy'
+						'post_type',
+						'user',
+						'taxonomy'
+					)
 				)
-			)
 			) {
 				$this->pod = $pod;
-			}else{
+			} else{
 				$this->pod = false;
 			}
 		}
@@ -120,7 +120,7 @@ class PodsRESTFields {
 				break;
 		}
 
-		if( $read || $write ) {
+		if ( $read || $write ) {
 			register_api_field( $this->pod->pod, $field_name, $args );
 		}
 

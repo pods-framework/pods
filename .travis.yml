@@ -25,6 +25,10 @@ matrix:
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.6
+      env: DB=mariadb  
+      addons:  
+        mariadb: 10.1  
 
 ## Cache composer bits
 cache:

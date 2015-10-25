@@ -24,11 +24,18 @@ matrix:
     - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
-      env: WP_VERSION=latest WP_MULTISITE=0
+      env: WP_VERSION=latest WP_MULTISITE=
+    # MariaDB 10.1 euqla MySQL 5.6-5.7
     - php: 5.6
       env: DB=mariadb WP_VERSION=latest WP_MULTISITE=0
       addons:  
         mariadb: 10.1  
+    # MySQL 5.6
+    - php: 5.6
+      env: DB=mysql-5.6 WP_VERSION=latest WP_MULTISITE=0
+    # MySQL 5.7
+    - php: 5.6
+      env: DB=mysql-5.7-dmr WP_VERSION=latest WP_MULTISITE=0
 
 ## Cache composer bits
 cache:

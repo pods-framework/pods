@@ -7205,8 +7205,13 @@ class PodsAPI {
             $current_language = pods_sanitize( pll_current_language( 'slug' ) );
 
             if ( !empty( $current_language ) ) {
-                $current_language_t_id = (int) $polylang->get_language( $current_language )->term_id;
-                $current_language_tt_id = (int) $polylang->get_language( $current_language )->term_taxonomy_id;
+		if ( isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' )) {
+			$current_language_t_id = (int) $polylang->model->get_language( $current_language )->term_id;
+			$current_language_tt_id = (int) $polylang->model->get_language( $current_language )->term_taxonomy_id;
+		} else {
+			$current_language_t_id = (int) $polylang->get_language( $current_language )->term_id;
+			$current_language_tt_id = (int) $polylang->get_language( $current_language )->term_taxonomy_id;
+		}
             }
         }
 

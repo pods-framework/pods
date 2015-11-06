@@ -6,6 +6,13 @@ tools:
         config:
             # https://scrutinizer-ci.com/docs/tools/php/code-sniffer/standards
             standard: WordPress
+
+checks:
+    php:
+        custom_coding_standard:
+            git_repository: 'https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards'
+            git_version: 'b3d4d8eedd8b0b7f4fdf8764df1c8b23ff099334' # 0.8.0
+            ruleset_path: 'project.ruleset.xml.example'
     
 tools:
 

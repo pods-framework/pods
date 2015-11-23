@@ -10,9 +10,38 @@ DB_USER=$2
 DB_PASS=$3
 DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
+WP_MAINTENANCE_VERSION="4.3"
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=/tmp/wordpress/
+
+# Placeholder for download agent
+# @todo replace back to wget everywhere in this file
+download() {  
+	if [ `which curl` ]; 
+	then  curl -s "$1" > "$2";  
+	elif [ `which wget` ]; then  
+	get -nv -O "$2" "$1"  
+	fi  
+}  
+
+# Detect version tag
+# Format: N.N.N
+if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then  
+	WP_TESTS_TAG="tags/$WP_VERSION"  
+else  
+	# http serves a single offer, whereas https serves multiple. we only want one  
+	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json  
+	grep '[0-9]+\.[0-9]+(\.[0-9]+)?' /tmp/wp-latest.json  
+	LATEST_VERSION=$(grep -o '"version":"[^"]*' /tmp/wp-latest.json | sed 's/"version":"//')  
+	
+	if [[ -z "$LATEST_VERSION" ]]; then  
+		echo "Latest WordPress version could not be found"  
+		exit 1  
+	fi  
+
+	WP_TESTS_TAG="tags/$LATEST_VERSION"  
+fi  
 
 set -ex
 
@@ -29,7 +58,19 @@ install_wp() {
 
 	mkdir -p $WP_CORE_DIR
 
-	if [ $WP_VERSION == 'nightly' ]; then
+	if [ $WP_VERSION == 'bleeding' ]; then
+		local ARCHIVE_NAME="master"
+
+		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/${ARCHIVE_NAME}.zip
+		unzip /tmp/wordpress.zip -d /tmp/
+		mv -f /tmp/WordPress-${ARCHIVE_NAME}/* /tmp/wordpress/
+	elif [ $WP_VERSION == 'bleeding-maintenance' ]; then
+		local ARCHIVE_NAME="$WP_MAINTENANCE_VERSION-branch"
+
+		wget -nv -O /tmp/wordpress.zip https://github.com/WordPress/WordPress/archive/${ARCHIVE_NAME}.zip
+		unzip /tmp/wordpress.zip -d /tmp/
+		mv -f /tmp/WordPress-${ARCHIVE_NAME}/* /tmp/wordpress/
+	elif [ $WP_VERSION == 'nightly' ]; then
 		wget -nv -O /tmp/wordpress.zip https://wordpress.org/nightly-builds/wordpress-latest.zip
 		unzip /tmp/wordpress.zip -d /tmp/
 	else
@@ -51,7 +92,7 @@ install_wp() {
 install_test_suite() {
 	echo "Installing Tests Suite for Unit Tests"
 
-	# portable in-place argument for both GNU sed and Mac OSX sed
+	# portable in-place argument for both GNU sed and Mac OS X sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
 		local ioption='-i .bak'
 	else
@@ -69,7 +110,8 @@ install_test_suite() {
 
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
-	svn co --quiet https://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+	#svn co --quiet https://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+	svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes 
 
 	wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
 	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php

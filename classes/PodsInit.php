@@ -787,7 +787,7 @@ class PodsInit {
                 6 => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( get_permalink( $post_ID ) ), $labels[ 'view_item' ] ),
                 7 => sprintf( __( '%s saved.', 'pods' ), $labels[ 'singular_name' ] ),
                 8 => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels[ 'singular_name' ] ),
-                9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
+                9 => sprintf( __( '%s scheduled for: <strong>%s</strong>. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
                     $labels[ 'singular_name' ],
                     // translators: Publish box date format, see http://php.net/date
                     date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),

@@ -1,8 +1,11 @@
 filter:
     excluded_paths: [vendor/*, tests/*, .tx/*, languages/*, includes/libraries/*, bin/*, assets/*, templates/* ]
-    
-before_commands:
-    - 'composer install --no-interaction --prefer-source'
+
+tools:
+    php_code_sniffer:
+        config:
+            # https://scrutinizer-ci.com/docs/tools/php/code-sniffer/standards
+            standard: WordPress
     
 tools:
 
@@ -25,7 +28,6 @@ tools:
     php_pdepend: true
     php_loc:
         enabled: true
-        excluded_dirs: [vendor, tests, .tx, languages, includes/libraries, bin, assets, templates]
 
 checks:
     php:

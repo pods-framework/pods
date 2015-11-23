@@ -16,7 +16,6 @@ env:
 matrix:
     allow_failures:
      - php: hhvm
-     - php: 7.0
      - env: WP_VERSION=nightly WP_MULTISITE=0
      - env: WP_VERSION=nightly WP_MULTISITE=1
 

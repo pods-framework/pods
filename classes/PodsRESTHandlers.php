@@ -58,7 +58,7 @@ class PodsRESTHandlers {
 		$pod_name = pods_v( 'type', $object );
 		$id       = pods_v( 'id', $object );
 		$pod      = self::get_pod( $pod_name, $id );
-		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod ) ) {
+		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'read' ) ) {
 			$params     = null;
 			$field_data = $pod->fields( $field_name );
 			if ( 'pick' == pods_v( 'type', $field_data ) ) {
@@ -145,7 +145,7 @@ class PodsRESTHandlers {
 
 		$pod = self::get_pod( $pod_name, $id );
 
-		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, false ) ) {
+		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'write' ) ) {
 			$pod->save( $field_name, $value, $id );
 
 			return $pod->field( $field_name );

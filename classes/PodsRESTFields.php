@@ -79,8 +79,8 @@ class PodsRESTFields {
 		$fields = $this->pod->fields();
 
 		foreach ( $fields as $field_name => $field ) {
-			$read  = self::field_allowed_to_extend( $field_name, $this->pod, true );
-			$write = self::field_allowed_to_extend( $field_name, $this->pod, false );
+			$read  = self::field_allowed_to_extend( $field_name, $this->pod, 'read' );
+			$write = self::field_allowed_to_extend( $field_name, $this->pod, 'write' );
 
 			$this->register( $field_name, $read, $write );
 		}
@@ -135,11 +135,11 @@ class PodsRESTFields {
 	 *
 	 * @param string      $field_name The field name.
 	 * @param object|Pods $pod        Pods object.
-	 * @param bool|true   $read       Are we checking read or write?
+	 * @param string      $mode       Are we checking read or write?
 	 *
 	 * @return bool If supports, true, else false.
 	 */
-	public static function field_allowed_to_extend( $field_name, $pod, $read = true ) {
+	public static function field_allowed_to_extend( $field_name, $pod, $mode = 'read' ) {
 
 		$allowed = false;
 
@@ -149,16 +149,16 @@ class PodsRESTFields {
 			if ( array_key_exists( $field_name, $fields ) ) {
 				$pod_options = $pod->pod_data['options'];
 
-				$field = pods_v( $field_name, $fields, false );
-
-				if ( $read && pods_v( 'read_all', $pod_options, false ) ) {
+				if ( 'read' === $mode && pods_v( 'read_all', $pod_options, false ) ) {
 					$allowed = true;
-				} elseif ( ! $read && pods_v( 'write_all', $pod_options, false ) ) {
+				} elseif ( 'write' === $mode && pods_v( 'write_all', $pod_options, false ) ) {
 					$allowed = true;
-				} elseif ( $field && $read && 1 == (int) $pod->fields( $field_name, 'rest_read' ) ) {
-					$allowed = true;
-				} elseif ( ( ! $field || ! $read ) && 1 == (int) $pod->fields( $field_name, 'rest_write' ) ) {
-					$allowed = true;
+				} elseif ( isset( $fields[ $field_name ] ) ) {
+					if ( 'read' === $mode && 1 == (int) $pod->fields( $field_name, 'rest_read' ) ) {
+						$allowed = true;
+					} elseif ( 'write' === $mode && 1 == (int) $pod->fields( $field_name, 'rest_write' ) ) {
+						$allowed = true;
+					}
 				}
 			}
 		}

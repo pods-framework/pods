@@ -1,7 +1,7 @@
 {
   "containers": [
     {
-      "prettyName": "PHP 5.6 FPM WordPress 4.0",
+      "prettyName": "PHP 5.6 FPM + WordPress Latest",
       "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
       "beforeScripts": [
         "service mysql start",
@@ -11,12 +11,32 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 7.0 RC-1",
-      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-1-fpm",
+      "prettyName": "PHP 5.6 FPM + WordPress Nightly",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test root '' localhost nightly"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    },
+    {
+      "prettyName": "PHP 7.0 RC-4 + WordPress Latest",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-4-fpm",
       "beforeScripts": [
         "service mysql start",
         "composer install",
         "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost latest"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    },
+    {
+      "prettyName": "PHP 7.0 RC-4 + WordPress Nightly",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-4-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost nightly"
       ],
       "testCommand": "./vendor/bin/phpunit"
     }

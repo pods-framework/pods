@@ -69,6 +69,13 @@ class PodsAdmin {
                 'pods_admin_components'
             );
 
+            /**
+             * Admin AJAX Callbacks
+             *
+             * @since unknown
+             *
+             * @param array $pods_admin_ajax_actions Array of actions to handle
+             */
             $pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
             if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
@@ -1487,6 +1494,16 @@ class PodsAdmin {
             'advanced' => __( 'Advanced', 'pods' )
         );
 
+        /**
+         * Field option tabs
+         *
+         * Use to add new tabs, default tabs are added after this filter (IE you can't remove/modify them with this, kthanksbye).
+         *
+         * @since unknown
+         *
+         * @param array $tabs Tabs to add, starts empty
+         * @param object|Pod Current Pods object
+         */
         $tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $pod );
 
         $tabs = array_merge( $core_tabs, $tabs );
@@ -1703,6 +1720,14 @@ class PodsAdmin {
         if ( !class_exists( 'Pods_Helpers' ) )
             unset( $options[ 'advanced-options' ][ 'input_helper' ] );
 
+        /**
+         * Modify tabs and their contents for field options
+         *
+         * @since unknown
+         *
+         * @param array $options Tabs, indexed by label
+         * @param object|Pods Pods object for the Pod this UI is for.
+         */
         $options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod );
 
         return $options;
@@ -1733,6 +1758,8 @@ class PodsAdmin {
 	 * @param PodsUI $obj
 	 *
 	 * @since 2.3.10
+     *
+     * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
 
@@ -2260,6 +2287,14 @@ class PodsAdmin {
             'migrate' => array( 'priv' => true )
         );
 
+        /**
+         * AJAX Callbacks in field editor
+         *
+         * @since unknown
+         *
+         * @param array $method Callback method map
+         * @param object|PodsAdmin Class object
+         */
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
         if ( !isset( $params->method ) || !isset( $methods[ $params->method ] ) )

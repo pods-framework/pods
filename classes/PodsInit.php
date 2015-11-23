@@ -500,7 +500,7 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
-                
+
                 // YARPP doesn't use 'supports' array option (yet)
                 if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
                     $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
@@ -1141,6 +1141,7 @@ class PodsInit {
 		}
 		else {
 			$this->core();
+			$this->add_rest_support();
 			$this->setup_content_types();
 
 			if ( is_admin() ) {
@@ -1160,13 +1161,6 @@ class PodsInit {
 
         // Show admin bar links
         add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
-
-        if( function_exists( 'register_api_field' ) ) {
-
-            include_once( PODS_DIR . '/classes/PodsRESTFields.php' );
-            include_once( PODS_DIR . '/classes/PodsRESTHandlers.php' );
-
-        }
 
 	}
 
@@ -1348,41 +1342,60 @@ class PodsInit {
      * @since 2.5.6
      */
     public function add_rest_support() {
-        if( ! function_exists( 'register_api_field' ) ) {
-            return;
 
+        static $rest_support_added;
+
+        if ( ! function_exists( 'register_api_field' ) ) {
+            return;
         }
 
+        include_once( PODS_DIR . 'classes/PodsRESTFields.php' );
+        include_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
 
-        $pods = pods_api()->load_pods();
+        $rest_bases = pods_transient_get( 'pods_rest_bases' );
 
-        if ( ! empty( $pods ) && is_array( $pods ) ) {
+        if ( empty( $rest_bases ) ) {
+            $pods = pods_api()->load_pods();
 
-            foreach ( $pods as $pod ) {
-                $type = $pod[ 'type'];
-                if( in_array( $type, array(
-                        'post_type',
-                        'taxonomy'
-                    )
-                )
-                ) {
-                    if ( $pod && pods_rest_api_pod_extends_core_route( $pod ) ) {
-                        if ( 'post_type' == $type ) {
-                            PodsRESTHandlers::post_type_rest_support( $pod[ 'name' ], sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ) );
+            $rest_bases = array();
+
+            if ( ! empty( $pods ) && is_array( $pods ) ) {
+                foreach ( $pods as $pod ) {
+                    $type = $pod['type'];
+
+                    if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+                        if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
+                            $rest_bases[ $pod['name'] ] = array(
+                                'type' => $type,
+                                'base' => sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ),
+                            );
                         }
-
-                        if ( 'taxonomy' == $type ) {
-                            PodsRESTHandlers::taxonomy_rest_support( $pod[ 'name' ], sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ) );
-                        }
-
-                        new PodsRESTFields( $pod[ 'name' ] );
-
                     }
-
                 }
-
             }
 
+            if ( empty( $rest_bases ) ) {
+                $rest_bases = 'none';
+            }
+
+            pods_transient_set( 'pods_rest_bases', $rest_bases );
+        }
+
+        if ( empty( $rest_support_added ) && ! empty( $rest_bases ) && 'none' !== $rest_bases ) {
+            foreach ( $rest_bases as $pod_name => $pod_info ) {
+                $pod_type  = $pod_info['type'];
+                $rest_base = $pod_info['base'];
+
+                if ( 'post_type' == $pod_type ) {
+                    PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
+                } elseif ( 'taxonomy' == $pod_type ) {
+                    PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
+                }
+
+                new PodsRESTFields( $pod_name );
+            }
+
+            $rest_support_added = true;
         }
 
     }

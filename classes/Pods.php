@@ -1416,7 +1416,19 @@ class Pods implements Iterator {
 										// $field is 123x123, needs to be _src.123x123
 										$full_field = implode( '.', array_splice( $params->traverse, $key ) );
 
-										if ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
+										if ( is_array( $item ) && isset( $item[ $field ] ) ) {
+											if ( $table[ 'field_id' ] == $field )
+												$value[] = (int) $item[ $field ];
+											else
+												$value[] = $item[ $field ];
+										}
+										elseif ( is_object( $item ) && isset( $item->{$field} ) ) {
+											if ( $table[ 'field_id' ] == $field )
+												$value[] = (int) $item->{$field};
+											else
+												$value[] = $item->{$field};
+										}
+										elseif ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
 											$size = 'full';
 
 											if ( false !== strpos( $full_field, '_src.' ) && 5 < strlen( $full_field ) )
@@ -1472,18 +1484,6 @@ class Pods implements Iterator {
 												$value[] = '';
 
 											$params->raw_display = true;
-										}
-										elseif ( is_array( $item ) && isset( $item[ $field ] ) ) {
-											if ( $table[ 'field_id' ] == $field )
-												$value[] = (int) $item[ $field ];
-											else
-												$value[] = $item[ $field ];
-										}
-										elseif ( is_object( $item ) && isset( $item->{$field} ) ) {
-											if ( $table[ 'field_id' ] == $field )
-												$value[] = (int) $item->{$field};
-											else
-												$value[] = $item->{$field};
 										}
 										elseif ( in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment' ) ) ) {
 											$metadata_object_id = $item_id;

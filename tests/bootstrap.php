@@ -35,6 +35,10 @@ function _manually_load_plugin() {
 	add_filter( 'pods_error_die', '__return_false' );
 	add_filter( 'pods_error_exception', '__return_false' );
 
+	// Disable e-mails
+	add_filter( 'send_password_change_email', '__return_false' );
+	add_filter( 'send_email_change_email', '__return_false' );
+
 	require PODS_TEST_PLUGIN_FILE;
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

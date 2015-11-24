@@ -1033,18 +1033,26 @@ class Pods implements Iterator {
 					if ( !$no_conflict )
 						pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
-					if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+					if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
 						$id = $this->id();
 
-						// Support for WPML 'duplicated' translation handling
-						if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
-							$master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
+						$metadata_type = $this->pod_data['type'];
 
-							if ( 0 < $master_post_id )
-								$id = $master_post_id;
+						if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+							$metadata_type = 'post';
+
+							// Support for WPML 'duplicated' translation handling
+							if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
+								$master_post_id = (int) get_metadata( $metadata_type, $id, '_icl_lang_duplicate_of', true );
+
+								if ( 0 < $master_post_id )
+									$id = $master_post_id;
+							}
+						} elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
+							$metadata_type = 'term';
 						}
 
-						$value = get_post_meta( $id, $params->name, $params->single );
+						$value = get_metadata( $metadata_type, $id, $params->name, $params->single );
 
 						$single_multi = 'single';
 
@@ -1053,20 +1061,7 @@ class Pods implements Iterator {
 						}
 
 						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
-							$value = get_post_meta( $id, $params->name );
-						}
-					}
-					elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) ) {
-						$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
-
-						$single_multi = 'single';
-
-						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_v( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
-						}
-
-						if ( $simple && !is_array( $value ) && 'single' != $single_multi ) {
-							$value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name );
+							$value = get_metadata( $metadata_type, $id, $params->name );
 						}
 					}
 					elseif ( 'settings' == $this->pod_data[ 'type' ] )
@@ -1403,7 +1398,7 @@ class Pods implements Iterator {
 
 								$no_conflict = true;
 
-								if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) ) {
+								if ( in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment', 'settings' ) ) ) {
 									$no_conflict = pods_no_conflict_check( $object_type );
 
 									if ( !$no_conflict )
@@ -1490,25 +1485,31 @@ class Pods implements Iterator {
 
 											$params->raw_display = true;
 										}
-										elseif ( 'post' == $object_type ) {
-											// Support for WPML 'duplicated' translation handling
-											if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
-												$master_post_id = (int) get_post_meta( $item_id, '_icl_lang_duplicate_of', true );
+										elseif ( in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment' ) ) ) {
+											$metadata_object_id = $item_id;
 
-												if ( 0 < $master_post_id )
-													$item_id = $master_post_id;
+											$metadata_type = $object_type;
+
+											if ( 'post' == $object_type ) {
+												// Support for WPML 'duplicated' translation handling
+												if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
+													$master_post_id = (int) get_metadata( $metadata_type, $metadata_object_id, '_icl_lang_duplicate_of', true );
+
+													if ( 0 < $master_post_id )
+														$metadata_object_id = $master_post_id;
+												}
+											} elseif ( 'taxonomy' == $object_type ) {
+												$metadata_type = 'term';
 											}
 
-											$value[] = get_post_meta( $item_id, $field, true );
+											$value[] = get_metadata( $metadata_type, $metadata_object_id, $field, true );
 										}
-										elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
-											$value[] = get_metadata( $object_type, $item_id, $field, true );
 										elseif ( 'settings' == $object_type )
 											$value[] = get_option( $object . '_' . $field );
 									}
 								}
 
-								if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) && !$no_conflict )
+								if ( in_array( $object_type, array( 'post', 'taxonomy', 'user', 'comment', 'settings' ) ) && !$no_conflict )
 									pods_no_conflict_off( $object_type );
 
 								// Handle Simple Relationships

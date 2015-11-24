@@ -531,6 +531,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$pod[ 'name' ] = $pod_object . '_' . substr( $storage_type, 0, 3 ) . '_' . $test_pod;
 					}
 
+					if ( 'taxonomy' == $pod_type && 'none' == $storage_type && function_exists( 'get_term_meta' ) ) {
+						$storage_type = 'meta';
+					}
+
 					$pod[ 'storage' ] = $storage_type;
 
 					if ( 'none' != $storage_type ) {

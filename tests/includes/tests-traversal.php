@@ -655,6 +655,10 @@ namespace Pods_Unit_Tests;
 			$related_pod = array();
 			$related_pod_field = array();
 
+			if ( 'taxonomy' == $pod_type && 'none' == $storage_type && function_exists( 'get_term_meta' ) ) {
+				$storage_type = 'meta';
+			}
+
 			if ( $deep ) {
 				$related_pod = $options[ 'related_pod' ];
 				$related_pod_field = $options[ 'related_pod_field' ];
@@ -783,6 +787,10 @@ namespace Pods_Unit_Tests;
 					// Related pod traversal
 					$related_pod_type = $related_pod[ 'type' ];
 					$related_pod_storage_type = $related_pod[ 'storage' ];
+
+					if ( 'taxonomy' == $related_pod_type && 'none' == $related_pod_storage_type && function_exists( 'get_term_meta' ) ) {
+						$related_pod_storage_type = 'meta';
+					}
 
 					$related_prefix = $related_suffix = '';
 
@@ -1004,6 +1012,10 @@ namespace Pods_Unit_Tests;
 			$storage_type = $options[ 'storage_type' ];
 			$pod = $options[ 'pod' ];
 
+			if ( 'taxonomy' == $pod_type && 'none' == $storage_type && function_exists( 'get_term_meta' ) ) {
+				$storage_type = 'meta';
+			}
+
 			$field = $options[ 'field' ];
 			$field_type = $field[ 'type' ];
 
@@ -1012,7 +1024,13 @@ namespace Pods_Unit_Tests;
 
 			if ( $deep ) {
 				$related_pod = $options[ 'related_pod' ];
+				$related_pod_type = $related_pod[ 'type' ];
+				$related_pod_storage_type = $related_pod[ 'storage' ];
 				$related_pod_field = $options[ 'related_pod_field' ];
+
+				if ( 'taxonomy' == $related_pod_type && 'none' == $related_pod_storage_type && function_exists( 'get_term_meta' ) ) {
+					$related_pod_storage_type = 'meta';
+				}
 			}
 
 			// Do setup for Pod (tearDown / setUp) per storage type
@@ -1165,8 +1183,6 @@ namespace Pods_Unit_Tests;
 				}
 				else {
 					// Related pod traversal
-					$related_pod_storage_type = $related_pod[ 'storage' ];
-
 					if ( in_array( $related_pod_field[ 'type' ], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
 						if ( $field[ 'name' ] == $related_pod_field[ 'name' ] && !isset( $related_data[ 'data' ][ $related_pod_field[ 'name' ] ] ) ) {
 							$this->assertTrue( false, sprintf( 'No deep related item found [%s] | %s', $variant_id, print_r( $related_data[ 'data' ], true ) ) );

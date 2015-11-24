@@ -3,33 +3,34 @@ language: php
 sudo: false
 
 php:
-    - 5.3
-    - 5.6
+    - 7.0
 
 env:
     - WP_VERSION=bleeding WP_MULTISITE=0
-    - WP_VERSION=bleeding WP_MULTISITE=1
     - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
-    - WP_VERSION=4.3 WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
     - WP_VERSION=3.8 WP_MULTISITE=0
-    - WP_VERSION=3.8 WP_MULTISITE=1
 
 matrix:
     allow_failures:
-     - php: hhvm
-     - env: WP_VERSION=nightly WP_MULTISITE=0
-     - env: WP_VERSION=nightly WP_MULTISITE=1
+     - env: WP_VERSION=bleeding WP_MULTISITE=0
+     - env: WP_VERSION=bleeding-maintenance WP_MULTISITE=1
 
     include:
     - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
-      env: WP_VERSION=latest WP_MULTISITE=
-    # MariaDB 10.1 euqla MySQL 5.6-5.7
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.6
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.3
+      env: WP_VERSION=3.8 WP_MULTISITE=0
+    # MariaDB 10.1
     - php: 5.6
       env: DB=mariadb WP_VERSION=latest WP_MULTISITE=0
-      addons:  
-        mariadb: 10.1  
+      addons:
+        mariadb: 10.1
     # MySQL 5.6
     - php: 5.6
       env: DB=mysql-5.6 WP_VERSION=latest WP_MULTISITE=0

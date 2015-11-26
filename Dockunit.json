@@ -21,8 +21,8 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 7.0 RC-4 + WordPress Latest",
-      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-4-fpm",
+      "prettyName": "PHP 7.0 + WordPress Latest",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-fpm",
       "beforeScripts": [
         "service mysql start",
         "composer install",
@@ -31,8 +31,8 @@
       "testCommand": "./vendor/bin/phpunit"
     },
     {
-      "prettyName": "PHP 7.0 RC-4 + WordPress Nightly",
-      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-rc-4-fpm",
+      "prettyName": "PHP 7.0 + WordPress Nightly",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-fpm",
       "beforeScripts": [
         "service mysql start",
         "composer install",

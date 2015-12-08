@@ -107,6 +107,10 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function admin_init () {
+        //--!! Prototype testing only
+        add_action( 'wp_ajax_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+        add_action( 'wp_ajax_nopriv_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+
         // AJAX for Relationship lookups
         add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
@@ -757,6 +761,33 @@ class PodsField_Pick extends PodsField {
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
+        //--!! Add new button prototyping
+        if ( ! is_null( $pod ) && 'post_type' == $options[ 'pick_object' ] ) {
+            $url = add_query_arg(
+                array(
+                    'post_type'  => $options[ 'pick_val' ],
+                    'pods_modal' => '1',
+                    'TB_iframe'  => 'true',
+                    'width'      => '753',
+                    'height'     => '798',
+                ),
+                admin_url( 'post-new.php' )
+            );
+
+            $pods_relationship_popup_data = array(
+                'url'             => $url,
+                'field_type'      => $field_type,
+                'options'         => $options,
+                'form_field_type' => $form_field_type,
+                'id'              => $id,
+                'name'            => $name,
+                'value'           => $value
+            );
+            wp_localize_script( 'pods', 'pods_relationship_popup_data', $pods_relationship_popup_data );
+            ?>
+            <a href="#" id="pods-related-edit" class="button" style="margin-top: 1em;">Add New</a>
+        <?php }
     }
 
     /**
@@ -1776,6 +1807,42 @@ class PodsField_Pick extends PodsField {
         }
 
         return $data;
+    }
+
+    /**
+     * Proof of concept ajax call
+     */
+    public function admin_ajax_relationship_popup () {
+
+        $field_type = $_POST[ 'field_type' ];
+        $form_field_type = $_POST[ 'form_field_type' ];
+
+        $id = $_POST[ 'id' ];
+        $value = $_POST[ 'value' ];
+        $name = $_POST[ 'name' ];
+        $options = $_POST[ 'options' ];
+
+        $object_params = array(
+            'context'         => 'data',
+            'id'              => $id,
+            'name'            => $name,
+            'options'         => $options,
+            'value'           => $value
+        );
+        $results = $this->get_object_data( $object_params );
+
+        $options[ 'data' ] = $results;
+        $data = array(
+            'id'              => $id,
+            'value'           => $value,
+            'name'            => $name,
+            'options'         => $options,
+            'form_field_type' => $form_field_type
+        );
+        $output = pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', $data, false, 'cache', true );
+
+        echo $output;
+        die();
     }
 
     /**

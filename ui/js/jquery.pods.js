@@ -1849,6 +1849,36 @@
             }
         };
 
+    //--!! Ugly proof of concept code
+    /*global pods_relationship_popup_data */
+    $( '#pods-related-edit' ).on( 'click', function( e ) {
+
+        e.preventDefault();
+        tb_show( '', pods_relationship_popup_data.url );
+
+        // Fired when the popup unloads
+        $( '#TB_window' ).on( "tb_unload", function () {
+
+            var data = {
+                'action':          'pods_relationship_popup',
+                'field_type':      pods_relationship_popup_data.field_type,
+                'options':         pods_relationship_popup_data.options,
+                'form_field_type': pods_relationship_popup_data.form_field_type,
+                'id':              pods_relationship_popup_data.id,
+                'name':            pods_relationship_popup_data.name,
+                'value':           pods_relationship_popup_data.value
+            };
+
+            $.post( ajaxurl, data, function( response ) {
+                $('[name*="' + pods_relationship_popup_data.name + '"]').first().parents('div.pods-pick-checkbox').replaceWith( response )
+                //alert( response );
+            } );
+
+        } );
+
+    } );
+    //--!! End Ugly proof of concept code
+
     $.fn.Pods = function ( method ) {
         if ( methods[ method ] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );

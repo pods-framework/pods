@@ -1021,10 +1021,38 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
-			<div class="pods-submittable-fields">
-                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
-                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-			</div>
+			        <div class="pods-submittable-fields">
+                        <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
+                        <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+                    </div>
+                    <?php
+                    if ( 'pick' == $field[ 'type' ] && 'post_type' == $field[ 'pick_object' ] ) {
+                        $url = add_query_arg(
+                            array(
+                                'post_type'  => $field[ 'pick_val' ],
+                                'pods_modal' => '1',
+                                'TB_iframe'  => 'true',
+                                'width'      => '753',
+                                'height'     => '798',
+                            ),
+                            admin_url( 'post-new.php' )
+                        );
+
+                        $pick_format = 'pick_format_' . $field[ 'options' ]['pick_format_type' ];
+                        $field_type = $field[ 'options' ][ $pick_format ];
+                        $pods_relationship_popup_data = array(
+                            'url'             => $url,
+                            'field_type'      => $field_type,
+                            'options'         => $field,
+                            'id'              => $id,
+                            'name'            => 'pods_meta_' . $field[ 'name' ],
+                            'value'           => $value
+                        );
+                        wp_localize_script( 'pods', 'pods_relationship_popup_data', $pods_relationship_popup_data );
+
+                        ?>
+                        <a href="#" id="pods-related-edit" class="button" style="margin-top: 1em;">Add New</a>
+                    <?php } ?>
                 </td>
             </tr>
         <?php

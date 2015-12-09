@@ -461,3 +461,12 @@ div.row-actions.row-actions-toggle {
 .pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label{
     background: #ffffcc;
 }
+
+/*
+ * REST API Tab
+ */
+
+#pods-rest-api label[for="pods-form-ui-no-dependencies"] {
+    width: 100%;
+    max-width: initial;
+}

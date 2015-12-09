@@ -161,6 +161,7 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Added: Add REST API Support to Post Types, Taxonomies, Users. Read the update in https://github.com/pods-framework/pods/pull/3184 for step by step details. (#3184,#3182) [@Shelob9]
 * Added: Added compatibility with the latest Polylang version, using $polylang-model to get the current language and version. (#3223) [@JoryHogeveen]
 * Added: Inline hook docs in PodsAdmin class (#3180,#3179) [@Shelob9]
+* Added: Fixes to REST API Admin Tab (thanks @nicdford) to display always but also explain why it won't work if not able to work. (#3246,#3259) [@Shelob9,@nicdford]
 * Added: PHPunit support for clover-coverage FN (#3176) [@Ramoonus]
 * Added: Travis do not allow PHP7 to fail (#3235) [@Ramoonus]
 * Added: Tests for Mariadb and mysql 5.6+7 with PHP 5.6 Travis (#3212,#3208) [@Ramoonus]

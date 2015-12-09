@@ -1880,25 +1880,28 @@
      * Modal display and ajax updates
      */
     /*global pods_relationship_popup_data */
-    $( '#pods-related-edit' ).on( 'click', function( e ) {
+    $( '.pods-related-edit' ).on( 'click', function( e ) {
+
+        var field_name = $( this ).data( 'field-name' );
+        var popup_data = pods_relationship_popup_data[ field_name ];
 
         e.preventDefault();
-        tb_show( '', pods_relationship_popup_data.url );
+        tb_show( '', popup_data.url );
 
         // Fired when the popup unloads
         $( '#TB_window' ).on( "tb_unload", function () {
 
             var data = {
                 'action':          'pods_relationship_popup',
-                'field_type':      pods_relationship_popup_data.field_type,
-                'options':         pods_relationship_popup_data.options,
-                'id':              pods_relationship_popup_data.id,
-                'name':            pods_relationship_popup_data.name,
-                'value':           pods_relationship_popup_data.value
+                'field_type':      popup_data.field_type,
+                'options':         popup_data.options,
+                'id':              popup_data.id,
+                'name':            popup_data.name,
+                'value':           popup_data.value
             };
 
             $.post( ajaxurl, data, function( response ) {
-                var target_row = 'tr.pods-form-ui-row-name-' + pods_relationship_popup_data.options.name;
+                var target_row = 'tr.pods-form-ui-row-name-' + popup_data.options.name;
                 $( target_row ).find( 'div.pods-submittable-fields' ).html( response );
             } );
         } );

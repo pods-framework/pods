@@ -951,6 +951,8 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_post ( $post, $metabox ) {
+        static $pods_relationship_popup_data = array();
+
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
@@ -1040,7 +1042,7 @@ class PodsMeta {
 
                         $pick_format = 'pick_format_' . $field[ 'options' ]['pick_format_type' ];
                         $field_type = $field[ 'options' ][ $pick_format ];
-                        $pods_relationship_popup_data = array(
+                        $pods_relationship_popup_data[ $field[ 'name' ] ] = array(
                             'url'             => $url,
                             'field_type'      => $field_type,
                             'options'         => $field,
@@ -1048,10 +1050,10 @@ class PodsMeta {
                             'name'            => 'pods_meta_' . $field[ 'name' ],
                             'value'           => $value
                         );
+                        // Not ideal, this will result in multiple definitions for multiple pick fields, but the last one wins anyway.
                         wp_localize_script( 'pods', 'pods_relationship_popup_data', $pods_relationship_popup_data );
-
                         ?>
-                        <a href="#" id="pods-related-edit" class="button" style="margin-top: 1em;">Add New</a>
+                        <a href="#" id="pods-related-edit-<?= $field[ 'name' ]; ?>" class="button pods-related-edit" data-field-name="<?= $field[ 'name' ]; ?>" style="margin-top: 1em;">Add New</a>
                     <?php } ?>
                 </td>
             </tr>

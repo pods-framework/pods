@@ -1850,6 +1850,35 @@
         };
 
     //--!! Ugly proof of concept code
+
+    /**
+     * Close the modal on form submit, if one is open
+     */
+    $('form#post').on( 'submit', function( event ) {
+        var $_GET = {};
+        if(document.location.toString().indexOf('?') !== -1) {
+            var query = document.location
+                .toString()
+                // get the query string
+                .replace(/^.*?\?/, '')
+                // and remove any existing hash string (thanks, @vrijdenker)
+                .replace(/#.*$/, '')
+                .split('&');
+
+            for(var i=0, l=query.length; i<l; i++) {
+                var aux = decodeURIComponent(query[i]).split('=');
+                $_GET[aux[0]] = aux[1];
+            }
+        }
+        if ( $_GET[ 'pods_modal' ] || 0 ) {
+            $( '.tb-close-icon', parent.document ).click();
+        }
+    } );
+
+
+    /**
+     * Modal display and ajax updates
+     */
     /*global pods_relationship_popup_data */
     $( '#pods-related-edit' ).on( 'click', function( e ) {
 
@@ -1870,8 +1899,12 @@
             };
 
             $.post( ajaxurl, data, function( response ) {
-                $('[name*="' + pods_relationship_popup_data.name + '"]').first().parents('div.pods-pick-checkbox').replaceWith( response )
-                //alert( response );
+                $('[name*="' + pods_relationship_popup_data.name + '"]')
+                    .first()
+                    .parents('div.pods-submittable-fields')
+                    .children()
+                    .first()
+                    .replaceWith( response );
             } );
 
         } );

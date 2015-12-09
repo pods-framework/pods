@@ -1789,6 +1789,13 @@ class PodsField_Pick extends PodsField {
 
         $field_type = $_POST[ 'field_type' ];
         switch ( $field_type ) {
+            case 'dropdown':
+                $field_type = 'select';
+                break;
+            case 'radio':
+                $field_type = 'radio';
+                break;
+
             case 'checkbox':
                 $field_type = 'checkbox';
                 break;

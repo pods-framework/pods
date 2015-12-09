@@ -1892,23 +1892,16 @@
                 'action':          'pods_relationship_popup',
                 'field_type':      pods_relationship_popup_data.field_type,
                 'options':         pods_relationship_popup_data.options,
-                'form_field_type': pods_relationship_popup_data.form_field_type,
                 'id':              pods_relationship_popup_data.id,
                 'name':            pods_relationship_popup_data.name,
                 'value':           pods_relationship_popup_data.value
             };
 
             $.post( ajaxurl, data, function( response ) {
-                $('[name*="' + pods_relationship_popup_data.name + '"]')
-                    .first()
-                    .parents('div.pods-submittable-fields')
-                    .children()
-                    .first()
-                    .replaceWith( response );
+                var target_row = 'tr.pods-form-ui-row-name-' + pods_relationship_popup_data.options.name;
+                $( target_row ).find( 'div.pods-submittable-fields' ).html( response );
             } );
-
         } );
-
     } );
     //--!! End Ugly proof of concept code
 

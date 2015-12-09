@@ -761,33 +761,6 @@ class PodsField_Pick extends PodsField {
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
-
-        //--!! Add new button prototyping
-        if ( ! is_null( $pod ) && 'post_type' == $options[ 'pick_object' ] ) {
-            $url = add_query_arg(
-                array(
-                    'post_type'  => $options[ 'pick_val' ],
-                    'pods_modal' => '1',
-                    'TB_iframe'  => 'true',
-                    'width'      => '753',
-                    'height'     => '798',
-                ),
-                admin_url( 'post-new.php' )
-            );
-
-            $pods_relationship_popup_data = array(
-                'url'             => $url,
-                'field_type'      => $field_type,
-                'options'         => $options,
-                'form_field_type' => $form_field_type,
-                'id'              => $id,
-                'name'            => $name,
-                'value'           => $value
-            );
-            wp_localize_script( 'pods', 'pods_relationship_popup_data', $pods_relationship_popup_data );
-            ?>
-            <a href="#" id="pods-related-edit" class="button" style="margin-top: 1em;">Add New</a>
-        <?php }
     }
 
     /**
@@ -1815,7 +1788,19 @@ class PodsField_Pick extends PodsField {
     public function admin_ajax_relationship_popup () {
 
         $field_type = $_POST[ 'field_type' ];
-        $form_field_type = $_POST[ 'form_field_type' ];
+        switch ( $field_type ) {
+            case 'checkbox':
+                $field_type = 'checkbox';
+                break;
+
+            case 'multiselect':
+                $field_type = 'select';
+                break;
+
+            case 'autocomplete':
+                $field_type = 'select2';
+                break;
+        }
 
         $id = $_POST[ 'id' ];
         $value = $_POST[ 'value' ];
@@ -1831,13 +1816,15 @@ class PodsField_Pick extends PodsField {
         );
         $results = $this->get_object_data( $object_params );
 
+        $options = $options[ 'options' ];
+        $options[ 'grouped' ] = 1;
         $options[ 'data' ] = $results;
         $data = array(
             'id'              => $id,
             'value'           => $value,
             'name'            => $name,
             'options'         => $options,
-            'form_field_type' => $form_field_type
+            'form_field_type' => 'pick'
         );
         $output = pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', $data, false, 'cache', true );
 

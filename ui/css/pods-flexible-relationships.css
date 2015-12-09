@@ -1,0 +1,15 @@
+#wpadminbar, #adminmenuback, #adminmenuwrap, #preview-action, #wpfooter {
+	display: none;
+}
+
+html.wp-toolbar {
+	padding-top: 0 ;
+}
+
+#wpbody-content {
+	padding-bottom: 0;
+}
+
+.auto-fold #wpcontent, .auto-fold #wpfooter {
+	margin-left: 0;
+}

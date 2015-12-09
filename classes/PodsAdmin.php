@@ -2523,7 +2523,7 @@ class PodsAdmin {
 	    if ( ! function_exists( 'register_api_field' ) ) {
 		    $options[ 'rest-api' ] = array(
 			    'no_dependencies' => array(
-				    'label'      => __( 'Pods REST API support requires WordPress 4.3.1 or later and the <a href="https://wordpress.org/plugins/rest-api/" target="_blank">WordPress REST API 2.0-beta7</a> or later.', 'pods' ),
+				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta7</a>' ), 'pods' ),
 				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
 				    'type'       => 'html',
 			    ),

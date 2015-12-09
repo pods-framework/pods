@@ -169,6 +169,11 @@ class PodsAdmin {
             }
         }
 
+        // Flexible Relationships
+        if ( isset($_GET['pods_modal']) ) {
+            wp_enqueue_style( 'pods-flexible-relationships', PODS_URL . 'ui/css/pods-flexible-relationships.css', array(), '1.0' );
+        }
+
         wp_enqueue_style( 'pods-font' );
     }
 

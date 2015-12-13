@@ -1345,7 +1345,7 @@ class PodsInit {
 
         static $rest_support_added;
 
-        if ( ! function_exists( 'register_api_field' ) ) {
+        if ( ! function_exists( 'register_rest_field' ) ) {
             return;
         }
 

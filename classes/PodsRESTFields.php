@@ -29,7 +29,7 @@ class PodsRESTFields {
 	 */
 	public function __construct( $pod ) {
 
-		if ( ! function_exists( 'register_api_field' ) ) {
+		if ( ! function_exists( 'register_rest_field' ) ) {
 			return;
 		}
 
@@ -123,7 +123,7 @@ class PodsRESTFields {
 		}
 
 		if ( $read || $write ) {
-			register_api_field( $this->pod->pod, $field_name, $args );
+			register_rest_field( $this->pod->pod, $field_name, $args );
 		}
 
 	}

@@ -2452,15 +2452,13 @@ class PodsAdmin {
      * @access protected
      */
     protected function rest_admin() {
-	    if( function_exists( 'register_api_field' ) ) {
+	    if( function_exists( 'register_rest_field' ) ) {
 		    add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'add_rest_fields_to_field_editor' ), 12, 2 );
 		    add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12 );
 	    }
 
 	    add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
 	    add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
-
-
 
     }
 
@@ -2520,10 +2518,10 @@ class PodsAdmin {
      * @return array
      */
     public function add_rest_settings_tab_fields( $options, $pod ) {
-	    if ( ! function_exists( 'register_api_field' ) ) {
+	    if ( ! function_exists( 'register_rest_field' ) ) {
 		    $options[ 'rest-api' ] = array(
 			    'no_dependencies' => array(
-				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta7</a>' ), 'pods' ),
+				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
 				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
 				    'type'       => 'html',
 			    ),

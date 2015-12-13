@@ -1063,7 +1063,7 @@ namespace Pods_Unit_Tests;
 			} elseif ( 'taxonomy' == $pod_type ) {
 				$metadata_type = 'term';
 			} else {
-				$metadata_type = 'post';
+				$metadata_type = $pod_type;
 			}
 
 			// @todo other field type coverage for relational

@@ -2552,7 +2552,7 @@ class PodsAdmin {
 				    'depends-on'        => array( 'rest_enable' => true ),
 			    ),
 			    'write_all'   => array(
-				    'label'             => __( 'Allow All Fields To Be Update?', 'pods' ),
+				    'label'             => __( 'Allow All Fields To Be Updated?', 'pods' ),
 				    'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
 				    'type'              => 'boolean',
 				    'default'           => pods_v( 'name', $pod ),

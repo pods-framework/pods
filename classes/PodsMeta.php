@@ -753,6 +753,10 @@ class PodsMeta {
 
     public function object_get ( $type, $name ) {
         $object = self::$post_types;
+        
+        if ( 'term' == $type ) {
+        	$type = 'taxonomy';
+        }
 
         if ( 'taxonomy' == $type )
             $object = self::$taxonomies;
@@ -805,6 +809,8 @@ class PodsMeta {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
+        } elseif ( 'term' == $type ) {
+            $type = 'taxonomy';
         }
 
         do_action( 'pods_meta_groups', $type, $name );

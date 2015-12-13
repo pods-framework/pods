@@ -1855,8 +1855,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 			
 			if ( !pods_tableless() ) {
 				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
-					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 )
-					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 )
+					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
+					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
 					array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 )
 				) );
 			}

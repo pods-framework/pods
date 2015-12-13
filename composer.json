@@ -52,7 +52,6 @@
         "php": ">=5.2.4"
     },
     "require-dev": {
-        "satooshi/php-coveralls": "dev-master",
         "phpunit/phpunit": "4.8.x",
         "mockery/mockery": "0.9.4"
     },

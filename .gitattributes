@@ -12,3 +12,4 @@ git-workflow.md export-ignore
 kill-travis.php export-ignore
 package.json export-ignore
 phpunit.xml.dist export-ignore
+dockunit.json export-ignore

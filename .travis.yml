@@ -3,39 +3,40 @@ language: php
 sudo: false
 
 php:
-    - 5.3
-    - 5.4
-    - 5.5
-    - 5.6
+    - 7.0
 
 env:
+    - WP_VERSION=bleeding WP_MULTISITE=0
+    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
-    - WP_VERSION=4.2 WP_MULTISITE=0
-    - WP_VERSION=4.2 WP_MULTISITE=1
-    - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=1
-    - WP_VERSION=4.0 WP_MULTISITE=0
-    - WP_VERSION=4.0 WP_MULTISITE=1
-    - WP_VERSION=3.9 WP_MULTISITE=0
-    - WP_VERSION=3.9 WP_MULTISITE=1
-    - WP_VERSION=3.8 WP_MULTISITE=0
-    - WP_VERSION=3.8 WP_MULTISITE=1
 
 matrix:
     allow_failures:
-     - php: nightly
-     - php: hhvm
+     - env: WP_VERSION=bleeding WP_MULTISITE=0
+     - env: WP_VERSION=bleeding-maintenance WP_MULTISITE=0
 
     include:
-    - php: nightly
-      env: WP_VERSION=latest WP_MULTISITE=0
-    - php: nightly
-      env: WP_VERSION=latest WP_MULTISITE=1
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0
-    - php: hhvm
-      env: WP_VERSION=latest WP_MULTISITE=1
+    - php: 5.6
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.3
+      env: WP_VERSION=3.8 WP_MULTISITE=0
+    # MariaDB 10.1
+    - php: 5.6
+      env: DB=mariadb WP_VERSION=latest WP_MULTISITE=0
+      addons:
+        mariadb: 10.1
+    # MySQL 5.7
+    - php: 5.6
+      env: DB=mysql-5.7-dmr WP_VERSION=latest WP_MULTISITE=0
+
+## Cache composer bits
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 
 before_script:
     - travis_retry composer self-update

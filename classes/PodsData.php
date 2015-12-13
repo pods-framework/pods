@@ -364,7 +364,14 @@ class PodsData {
             $table[ 'id' ] = pods_var( 'id', $table[ 'pod' ], 0, null, true );
             $table[ 'name' ] = pods_var( 'name', $table[ 'pod' ], $table[ 'object_type' ], null, true );
             $table[ 'type' ] = pods_var_raw( 'type', $table[ 'pod' ], $table[ 'object_type' ], null, true );
-            $table[ 'storage' ] = pods_var_raw( 'storage', $table[ 'pod' ], ( 'taxonomy' == $table[ 'object_type' ] ? 'none' : 'meta' ), null, true );
+
+            $default_storage = 'meta';
+
+            if ( 'taxonomy' == $table[ 'type' ] && ! function_exists( 'get_term_meta' ) ) {
+                $default_storage = 'none';
+            }
+
+            $table[ 'storage' ] = pods_var_raw( 'storage', $table[ 'pod' ], $default_storage, null, true );
             $table[ 'fields' ] = pods_var_raw( 'fields', $table[ 'pod' ], array() );
             $table[ 'object_fields' ] = pods_var_raw( 'object_fields', $table[ 'pod' ], $this->api->get_wp_object_fields( $table[ 'object_type' ] ), null, true );
 
@@ -827,7 +834,7 @@ class PodsData {
 
         $params->meta_fields = false;
 
-        if ( !empty( $pod ) && !in_array( $pod[ 'type' ], array( 'pod', 'table', 'taxonomy' ) ) && 'meta' == $pod[ 'storage' ] )
+        if ( !empty( $pod ) && !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) && ( 'meta' == $pod[ 'storage' ] || ( 'none' == $pod[ 'storage' ] && function_exists( 'get_term_meta' ) ) ) )
             $params->meta_fields = true;
 
         if ( empty( $params->table ) )
@@ -2683,16 +2690,24 @@ class PodsData {
                 }
 
                 if ( empty( $pod_data ) ) {
+                    $default_storage = 'meta';
+
+                    if ( 'taxonomy' == $traverse_recurse['pod'] && ! function_exists( 'get_term_meta' ) ) {
+                        $default_storage = 'none';
+                    }
+
                     $pod_data = array(
                         'id' => 0,
                         'name' => '_table_' . $traverse_recurse[ 'pod' ],
                         'type' => $traverse_recurse[ 'pod' ],
-                        'storage' => ( 'taxonomy' == $traverse_recurse[ 'pod' ] ? 'none' : 'meta' ),
+                        'storage' => $default_storage,
                         'fields' => array(),
                         'object_fields' => $this->api->get_wp_object_fields( $traverse_recurse[ 'pod' ] )
                     );
 
                     $pod_data = array_merge( $this->api->get_table_info( $traverse_recurse[ 'pod' ], '' ), $pod_data );
+                } elseif ( 'taxonomy' == $pod_data['type'] && 'none' == $pod_data['storage'] && function_exists( 'get_term_meta' ) ) {
+                    $pod_data['storage'] = 'meta';
                 }
 
                 $traverse_recurse[ 'pod' ] = $pod_data[ 'name' ];
@@ -2767,7 +2782,7 @@ class PodsData {
 
             if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
-            elseif ( 'meta_value' === $last && in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
+            elseif ( 'meta_value' === $last && in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
             else {
                 if ( 'post_type' == $pod_data[ 'type' ] ) {
@@ -2868,7 +2883,20 @@ class PodsData {
         if ( 'taxonomy' == $traverse[ 'type' ] ) {
             $rel_tt_alias = 'rel_tt_' . $field_joined;
 
-            if ( $meta_data_table ) {
+            if ( pods_tableless() && function_exists( 'get_term_meta' ) ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+                ";
+
+                $joined_id = $table_info[ 'meta_field_id' ];
+                $joined_index = $table_info[ 'meta_field_index' ];
+            } elseif ( $meta_data_table ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`

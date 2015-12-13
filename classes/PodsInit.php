@@ -500,7 +500,7 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
-                
+
                 // YARPP doesn't use 'supports' array option (yet)
                 if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
                     $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
@@ -787,7 +787,7 @@ class PodsInit {
                 6 => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( get_permalink( $post_ID ) ), $labels[ 'view_item' ] ),
                 7 => sprintf( __( '%s saved.', 'pods' ), $labels[ 'singular_name' ] ),
                 8 => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels[ 'singular_name' ] ),
-                9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
+                9 => sprintf( __( '%s scheduled for: <strong>%s</strong>. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
                     $labels[ 'singular_name' ],
                     // translators: Publish box date format, see http://php.net/date
                     date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
@@ -849,6 +849,16 @@ class PodsInit {
             $labels[ 'not_found_in_trash' ] = pods_var_raw( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), null, true );
             $labels[ 'parent' ] = pods_var_raw( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), null, true );
             $labels[ 'parent_item_colon' ] = pods_var_raw( 'parent_item_colon', $labels, sprintf( __( 'Parent %s:', 'pods' ), $singular_label ), null, true );
+            $labels[ 'feature_image' ] = pods_var_raw( 'add_new', $labels, __( 'Featured Image', 'pods' ), null, true );
+            $labels[ 'set_featured_image' ] = pods_var_raw( 'add_new', $labels, __( 'Set featured image', 'pods' ), null, true );
+            $labels[ 'remove_featured_image' ] = pods_var_raw( 'add_new', $labels, __( 'Remove featured image', 'pods' ), null, true );
+            $labels[ 'use_featured_image' ] = pods_var_raw( 'add_new', $labels, __( 'Use as featured image', 'pods' ), null, true );
+            $labels[ 'archives' ] = pods_var_raw( 'archives', $labels, sprintf( __( '%s Archives', 'pods' ), $singular_label ), null, true );
+            $labels[ 'insert_into_item' ] = pods_var_raw( 'insert_into_item', $labels, sprintf( __( 'Insert into %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'uploaded_to_this_item' ] = pods_var_raw( 'uploaded_to_this_item', $labels, sprintf( __( 'Uploaded to this %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'filter_items_list' ] = pods_var_raw( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $singular_label ), null, true );
+            $labels[ 'items_list_navigation' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( 'Posts %s navigation', 'pods' ), $singular_label ), null, true );
+            $labels[ 'items_list' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( 'Posts %s', 'pods' ), $singular_label ), null, true );
         }
         elseif ( 'taxonomy' == $type ) {
             $labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $labels, $label, null, true );
@@ -864,6 +874,9 @@ class PodsInit {
             $labels[ 'separate_items_with_commas' ] = pods_var_raw( 'separate_items_with_commas', $labels, sprintf( __( 'Separate %s with commas', 'pods' ), $label ), null, true );
             $labels[ 'add_or_remove_items' ] = pods_var_raw( 'add_or_remove_items', $labels, sprintf( __( 'Add or remove %s', 'pods' ), $label ), null, true );
             $labels[ 'choose_from_most_used' ] = pods_var_raw( 'choose_from_most_used', $labels, sprintf( __( 'Choose from the most used %s', 'pods' ), $label ), null, true );
+            $labels[ 'no_terms' ] = pods_var_raw( 'no_terms', $labels, sprintf( __( 'No %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'items_list_navigation' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( 'Posts %s navigation', 'pods' ), $singular_label ), null, true );
+            $labels[ 'items_list' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( 'Posts %s', 'pods' ), $singular_label ), null, true );
         }
 
         $args[ 'labels' ] = $labels;
@@ -1132,6 +1145,7 @@ class PodsInit {
 
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
+            add_action( 'init', array( $this, 'add_rest_support' ), 12 );
 	        add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
 	        if ( is_admin() ) {
@@ -1140,6 +1154,7 @@ class PodsInit {
 		}
 		else {
 			$this->core();
+			$this->add_rest_support();
 			$this->setup_content_types();
 
 			if ( is_admin() ) {
@@ -1328,6 +1343,72 @@ class PodsInit {
                     'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pods->id() )
                 ) );
             }
+        }
+
+    }
+
+    /**
+     * Add REST API support to post type and taxonomy objects.
+     *
+     * @uses "init"
+     *
+     * @since 2.5.6
+     */
+    public function add_rest_support() {
+
+        static $rest_support_added;
+
+        if ( ! function_exists( 'register_api_field' ) ) {
+            return;
+        }
+
+        include_once( PODS_DIR . 'classes/PodsRESTFields.php' );
+        include_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
+
+        $rest_bases = pods_transient_get( 'pods_rest_bases' );
+
+        if ( empty( $rest_bases ) ) {
+            $pods = pods_api()->load_pods();
+
+            $rest_bases = array();
+
+            if ( ! empty( $pods ) && is_array( $pods ) ) {
+                foreach ( $pods as $pod ) {
+                    $type = $pod['type'];
+
+                    if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+                        if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
+                            $rest_bases[ $pod['name'] ] = array(
+                                'type' => $type,
+                                'base' => sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ),
+                            );
+                        }
+                    }
+                }
+            }
+
+            if ( empty( $rest_bases ) ) {
+                $rest_bases = 'none';
+            }
+
+            pods_transient_set( 'pods_rest_bases', $rest_bases );
+        }
+
+        if ( empty( $rest_support_added ) && ! empty( $rest_bases ) && 'none' !== $rest_bases ) {
+            foreach ( $rest_bases as $pod_name => $pod_info ) {
+                $pod_type  = $pod_info['type'];
+                $rest_base = $pod_info['base'];
+
+                if ( 'post_type' == $pod_type ) {
+                    PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
+                } elseif ( 'taxonomy' == $pod_type ) {
+                    PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
+                }
+
+                new PodsRESTFields( $pod_name );
+            }
+
+            $rest_support_added = true;
         }
 
     }

@@ -649,12 +649,7 @@ class PodsAPI {
             $term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
 		} elseif ( 2 < count( $term_data ) ) {
             $term_data['term_id'] = wp_update_term( $term_data['term_id'], $taxonomy, $term_data );
-        } else {
-			if ( !$conflicted )
-				pods_no_conflict_off( 'taxonomy' );
-
-			return pods_error( __( 'Taxonomy term data is required but is either invalid or empty', 'pods' ), $this );
-		}
+        }
 
         if ( is_wp_error( $term_data['term_id'] ) ) {
             if ( !$conflicted )

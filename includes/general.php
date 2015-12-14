@@ -1783,6 +1783,8 @@ function pods_is_plugin_active ( $plugin ) {
 function pods_no_conflict_check ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
+    elseif ( 'term' == $object_type )
+        $object_type = 'taxonomy';
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
@@ -1846,7 +1848,17 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
             // Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
-        		$no_conflict[ 'filter' ] = array();
+				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
+					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 )
+				) );
+			}
+			
+			if ( !pods_tableless() ) {
+				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
+					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
+					array( 'update_term_metadata', array( PodsInit::$meta, 'update_term_meta' ), 10, 5 ),
+					array( 'delete_term_metadata', array( PodsInit::$meta, 'delete_term_meta' ), 10, 5 )
+				) );
 			}
 
 			$no_conflict[ 'action' ] = array(
@@ -1981,6 +1993,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
+    elseif ( 'term' == $object_type )
+        $object_type = 'taxonomy';
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
         return false;

@@ -24,7 +24,6 @@
     "grunt-contrib-connect": "^0.11.2",
     "grunt-contrib-copy": "^0.8.1",
     "grunt-git": "^0.3.4",
-    "grunt-glotpress": "^0.2.1",
     "grunt-mkdir": "^0.1.2",
     "grunt-newer": "^0.7.0",
     "grunt-push-svn": "^0.2.1",

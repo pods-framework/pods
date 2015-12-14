@@ -2452,19 +2452,18 @@ class PodsAdmin {
     /**
      * Build UI for extending REST API, if makes sense to do so.
      *
-     * @todo maybe disable if default routes don't exist since WP < 4.5 and plugin isn't installed?
-     *
-     * @since 2.5.6
+     * @since 2.6.0
      *
      * @access protected
      */
     protected function rest_admin() {
-        if( function_exists( 'register_api_field' ) ) {
-            add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'add_rest_fields_to_field_editor' ), 12, 2 );
-            add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
-            add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
-            add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12 );
-        }
+	    if( function_exists( 'register_rest_field' ) ) {
+		    add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'add_rest_fields_to_field_editor' ), 12, 2 );
+		    add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12 );
+	    }
+
+	    add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
+	    add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
 
     }
 
@@ -2498,7 +2497,7 @@ class PodsAdmin {
     /**
      * Add a rest api tab.
      *
-     * @since 0.1.0
+     * @since 2.6.0
      *
      * @param array $tabs
      * @param array $pod
@@ -2506,9 +2505,8 @@ class PodsAdmin {
      * @return array
      */
     public function add_rest_settings_tab( $tabs, $pod ) {
-        if ( $this->restable_pod( $pod ) ) {
-            $tabs[ 'rest-api' ] = __( 'REST API', 'pods' );
-        }
+
+        $tabs[ 'rest-api' ] = __( 'REST API', 'pods' );
 
         return $tabs;
 
@@ -2525,43 +2523,61 @@ class PodsAdmin {
      * @return array
      */
     public function add_rest_settings_tab_fields( $options, $pod ) {
-        if( $this->restable_pod( $pod ) ) {
-            $options[ 'rest-api' ] = array(
-                'rest_enable' => array(
-                    'label' => __( 'Enable', 'pods' ),
-                    'help' => __( 'Add REST API support for this Pod.', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => '',
-                    'dependency' => true,
-                ),
-                'rest_base' => array(
-                    'label' => __( 'Rest Base', 'pods' ),
-                    'help' => __( 'This will form the url for the route.', 'pods' ),
-                    'type' => 'text',
-                    'default' => pods_v( 'name', $pod ),
-                    'boolean_yes_label' => '',
-                    'depends-on' => array( 'rest_enable' => true ),
-                ),
-                'read_all' => array(
-                    'label' => __( 'Show All Fields?', 'pods' ),
-                    'help' => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => '',
-                    'boolean_yes_label' => '',
-                    'depends-on' => array( 'rest_enable' => true ),
-                ),
-                'write_all' => array(
-                    'label' => __( 'Allow All Fields To Be Update?', 'pods' ),
-                    'help' => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => pods_v( 'name', $pod ),
-                    'boolean_yes_label' => '',
-                    'depends-on' => array( 'rest_enable' => true ),
-                )
+	    if ( ! function_exists( 'register_rest_field' ) ) {
+		    $options[ 'rest-api' ] = array(
+			    'no_dependencies' => array(
+				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
+				    'type'       => 'html',
+			    ),
+		    );
+	    } elseif ( $this->restable_pod( $pod ) ) {
+		    $options[ 'rest-api' ] = array(
+			    'rest_enable' => array(
+				    'label'      => __( 'Enable', 'pods' ),
+				    'help'       => __( 'Add REST API support for this Pod.', 'pods' ),
+				    'type'       => 'boolean',
+				    'default'    => '',
+				    'dependency' => true,
+			    ),
+			    'rest_base'   => array(
+				    'label'             => __( 'Rest Base', 'pods' ),
+				    'help'              => __( 'This will form the url for the route.', 'pods' ),
+				    'type'              => 'text',
+				    'default'           => pods_v( 'name', $pod ),
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    ),
+			    'read_all'    => array(
+				    'label'             => __( 'Show All Fields?', 'pods' ),
+				    'help'              => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'type'              => 'boolean',
+				    'default'           => '',
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    ),
+			    'write_all'   => array(
+				    'label'             => __( 'Allow All Fields To Be Updated?', 'pods' ),
+				    'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'type'              => 'boolean',
+				    'default'           => pods_v( 'name', $pod ),
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    )
 
-            );
+		    );
 
-        }
+	    } else {
+		    $options[ 'rest-api' ] = array(
+			    'not_restable' => array(
+				    'label'      => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>'), 'pods' ),
+				    'type'       => 'html',
+			    ),
+		    );
+
+	    }
+
 
         return $options;
 

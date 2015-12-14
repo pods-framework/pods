@@ -1058,9 +1058,11 @@ namespace Pods_Unit_Tests;
 
 			$this->assertEquals( (string) $data[ 'id' ], (string) $p->id(), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
 
-			$metadata_type = 'post';
-
-			if ( !in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
+			if ( 'post_type' == $pod_type || 'media' == $pod_type ) {
+				$metadata_type = 'post';
+			} elseif ( 'taxonomy' == $pod_type ) {
+				$metadata_type = 'term';
+			} else {
 				$metadata_type = $pod_type;
 			}
 

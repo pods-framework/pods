@@ -753,6 +753,10 @@ class PodsMeta {
 
     public function object_get ( $type, $name ) {
         $object = self::$post_types;
+        
+        if ( 'term' == $type ) {
+        	$type = 'taxonomy';
+        }
 
         if ( 'taxonomy' == $type )
             $object = self::$taxonomies;
@@ -805,6 +809,8 @@ class PodsMeta {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
+        } elseif ( 'term' == $type ) {
+            $type = 'taxonomy';
         }
 
         do_action( 'pods_meta_groups', $type, $name );
@@ -2500,6 +2506,13 @@ class PodsMeta {
      * @return bool|mixed
      */
     public function get_object ( $object_type, $object_id, $aux = '' ) {
+    	
+    	global $wpdb;
+    	
+    	if ( 'term' == $object_type ) {
+    		$object_type = 'taxonomy';
+    	}
+    	
         if ( 'post_type' == $object_type )
             $objects = self::$post_types;
         elseif ( 'taxonomy' == $object_type )
@@ -2534,8 +2547,20 @@ class PodsMeta {
 
             $object_name = $object->post_type;
         }
-        elseif ( 'taxonomy' == $object_type )
-            $object_name = $aux;
+        elseif ( 'taxonomy' == $object_type ) {
+            if ( pods_version_check( 'wp', '4.4' ) ) {
+            	$object = get_term( $object_id );
+
+            	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
+                	return false;
+            	
+            	$object_name = $object->taxonomy;
+            } elseif ( empty( $aux ) ) {
+            	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
+            } else { 
+            	$object_name = $aux;
+            }
+        }
         elseif ( 'settings' == $object_type )
             $object = $object_id;
         else

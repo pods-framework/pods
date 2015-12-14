@@ -814,8 +814,8 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     <div id="side-info-field" class="inner-sidebar">
         <div id="side-sortables">
             <div id="submitdiv" class="postbox pods-no-toggle">
-                <h2><span>Manage <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
-                </small></span></h2>
+                <h3><span>Manage <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
+                </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">
                         <div id="major-publishing-actions">

@@ -11,6 +11,7 @@
 			<directory prefix="tests-" suffix=".php">tests</directory>
 		</testsuite>
 	</testsuites>
+
     <filter>
 		<blacklist>
 			<directory suffix=".php">.</directory>
@@ -20,4 +21,9 @@
             <file>init.php</file>
         </whitelist>
     </filter>
+
+    <logging>
+    	<log type="coverage-clover" target="tests/clover.xml"/>
+    </logging>
+
 </phpunit>

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.4
-Stable tag: 2.5.5
+Stable tag: 2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,37 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
+= 2.6 - December 9th, 2015 =
+* Added: Support for Term Meta in WP 4.4 - Now create meta-based taxonomies and Pods just magically works! (#3169,#3163) [@sc0ttkclark]
+* Added: Add REST API Support to Post Types, Taxonomies, Users. Read the update in https://github.com/pods-framework/pods/pull/3184 for step by step details. (#3184,#3182) [@Shelob9]
+* Added: Added compatibility with the latest Polylang version, using $polylang-model to get the current language and version. (#3223) [@JoryHogeveen]
+* Added: Inline hook docs in PodsAdmin class (#3180,#3179) [@Shelob9]
+* Added: Fixes to REST API Admin Tab (thanks @nicdford) to display always but also explain why it won't work if not able to work. (#3246,#3259) [@Shelob9,@nicdford]
+* Added: PHPunit support for clover-coverage FN (#3176) [@Ramoonus]
+* Added: Travis do not allow PHP7 to fail (#3235) [@Ramoonus]
+* Added: Tests for Mariadb and mysql 5.6+7 with PHP 5.6 Travis (#3212,#3208) [@Ramoonus]
+* Added: Nonce and text translation to delete link in pod edit sidebar. Fixes issue where attempted to delete pod from edit page results in fatal error. (#3203,#3194) [@cpruitt]
+* Added: Use phpcs standard wordpress in scrutinizer (#3166) [@Ramoonus]
+* Added: phpunit support for clover-coverage (#3161) [@Ramoonus]
+* Added: Travis allow PHP7 to fail (#3153) [@Ramoonus]
+* Added: Travis include WordPress 4.3 in test matrix (#3152) [@Ramoonus]
+* Added: Travis cache composer (#3151) [@Ramoonus]
+* Added: Grunt ignore dockunit.json (#3150) [@Ramoonus]
+* Updated: Dockunit - replace PHP 7 rc1 with rc4 (#3201) [@Ramoonus]
+* Updated: Improve Contributing guidelines correcting wrong pull location and fixing correct release branch. (#3149,#3147) [@quasel]
+* Fixed: Scheduled post preview message/URL. When a post was scheduled, the status message displayed at the top of the edit post page was malformed where the string placeholders were numbered. (#3234) [@sparkdevelopment]
+* Fixed: Merged #3205 to fix install-wp-tests.sh (#3211,#3205) [@Ramoonus]
+* Fixed: Add pods_auto_template_name filter, by context to change auto template (#3199,#3200,#3198) [@Shelob9]
+* Fixed: Revert scrutinizer less is more (#3172,#3170) [@sc0ttkclark,@Ramoonus]
+* Fixed: Remove limit of 5 in get_template_titles Auto Template (#3157,#3160) [@jimtrue]
+* Fixed: Related_act.permalink calls to fix permalink/slug traversal in ACTs and related taxonomies (#3156,#3155,#2779) [@sc0ttkclark]
+* Fixed: Added option to deselect Auto Template for Archive views. There needed an 'empty' selection to correct issue where Template error wouldn't go away. (#3148,#3146,#3142,#3247) [@Sgillessen]
+* Fixed: Added Dockunit Badge (#3145) [@tlovett1]
+* Removed: Double exclude path in scrutinizer (#3228) [@Ramoonus]
+* Removed: Readme removed code coverage badge (#3220) [@Ramoonus]
+* Removed: Dump composer in Scrutinizer (#3204,#3167) [@Ramoonus]
+* Removed: Composer remove coveralls. Was not being used and needs phpunit support. Could also be replaced by php codesniffer or scrutinizer. (#3174) [@Ramoonus]
 
 = 2.5.5 - September 16th, 2015 =
 * Added: Unit testing for PHPUnit 4.8 support. (#3090, #3069) Kudos to @Ramoonus

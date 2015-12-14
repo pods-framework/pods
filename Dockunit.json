@@ -1,0 +1,44 @@
+{
+  "containers": [
+    {
+      "prettyName": "PHP 5.6 FPM + WordPress Latest",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test root '' localhost latest"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    },
+    {
+      "prettyName": "PHP 5.6 FPM + WordPress Nightly",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-5.6-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test root '' localhost nightly"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    },
+    {
+      "prettyName": "PHP 7.0 + WordPress Latest",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost latest"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    },
+    {
+      "prettyName": "PHP 7.0 + WordPress Nightly",
+      "image": "dockunit/prebuilt-images:php-mysql-phpunit-7.0-fpm",
+      "beforeScripts": [
+        "service mysql start",
+        "composer install",
+        "bash bin/install-wp-tests.sh wordpress_test2 root '' localhost nightly"
+      ],
+      "testCommand": "./vendor/bin/phpunit"
+    }
+  ]
+}

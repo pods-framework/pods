@@ -192,7 +192,7 @@ class Pods_Templates_Auto_Template_Settings {
 
 				}
 
-				$options[ 'pods-pfat' ][ 'pfat_archive' ][ 'data' ] = array_combine( $this->get_template_titles(), $this->get_template_titles() );
+				$options[ 'pods-pfat' ][ 'pfat_archive' ][ 'data' ] = array( null => __('No Archive view template', 'pods') ) + ( array_combine( $this->get_template_titles(), $this->get_template_titles() ) );
 				$options[ 'pods-pfat' ][ 'pfat_single' ][ 'data' ] = array_combine( $this->get_template_titles(), $this->get_template_titles() );
 			}
 
@@ -343,20 +343,26 @@ class Pods_Templates_Auto_Template_Settings {
 	/**
 	 * Get titles of all Pods Templates
 	 *
-	 * @return array Array of template names
+	 * @return string[] Array of template names
 	 *
 	 * @since 2.4.5
 	 */
 	public function get_template_titles() {
 
-		$titles = array();
+		static $template_titles;
 
-		$templates = get_posts( array( 'post_type' => '_pods_template', 'order'=> 'ASC', 'orderby' => 'title'));
-		foreach ( $templates as $template ) {
-			$titles[ ] = $template->post_title;
+		if ( empty( $template_titles ) ) {
+            $all_templates = (array) pods_api()->load_templates( array() );
+
+			$template_titles = array();
+
+            foreach ( $all_templates as $template ) {
+                $template_titles[] = $template['name'];
+            }
 		}
 
-		return $titles;
+		return $template_titles;
+
 	}
 
 

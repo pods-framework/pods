@@ -164,6 +164,7 @@ class PodsMeta {
 				$has_fields = true;
 
                 $taxonomy_name = $taxonomy[ 'name' ];
+
                 if ( !empty( $taxonomy[ 'object' ] ) )
                     $taxonomy_name = $taxonomy[ 'object' ];
 
@@ -510,14 +511,26 @@ class PodsMeta {
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
+                $metadata_type = $pod['type'];
 
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
-                $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, true );
+                if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
+                    $metadata_type = 'post';
+                } elseif ( 'taxonomy' == $metadata_type ) {
+                    $metadata_type = 'term';
+                }
+
+                if ( 'term' == $metadata_type && ! function_exists( 'get_term_meta' ) ) {
+                    $podterms = pods( $pod['name'], $id );
+
+                    $meta = $podterms->field( $field );
+                } else {
+                    $meta = get_metadata( $metadata_type, $id, $field, true );
+                }
             }
+            elseif ( 'taxonomy' == $pod['type'] ) {
+                $podterms = pods( $pod['name'], $id );
 
-            elseif ( 'taxonomy' === $pod['type'] ) {
-                $podterms = pods( $pod['name'] );
-                $podterms->fetch( $id );
                 $meta = $podterms->field( $field );
             }
 
@@ -546,8 +559,17 @@ class PodsMeta {
 
         // Add Pods fields
         if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) )
-                $meta = get_metadata( ( 'post_type' == $pod[ 'type' ] ? 'post' : $pod[ 'type' ] ), $id, $field, true );
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'taxonomy', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
+                $metadata_type = $pod['type'];
+
+                if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
+                    $metadata_type = 'post';
+                } elseif ( 'taxonomy' == $metadata_type ) {
+                    $metadata_type = 'term';
+                }
+
+                $meta = get_metadata( $metadata_type, $id, $field, true );
+            }
 
             $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
         }
@@ -731,6 +753,10 @@ class PodsMeta {
 
     public function object_get ( $type, $name ) {
         $object = self::$post_types;
+        
+        if ( 'term' == $type ) {
+        	$type = 'taxonomy';
+        }
 
         if ( 'taxonomy' == $type )
             $object = self::$taxonomies;
@@ -783,6 +809,8 @@ class PodsMeta {
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
+        } elseif ( 'term' == $type ) {
+            $type = 'taxonomy';
         }
 
         do_action( 'pods_meta_groups', $type, $name );
@@ -2448,6 +2476,13 @@ class PodsMeta {
      * @return bool|mixed
      */
     public function get_object ( $object_type, $object_id, $aux = '' ) {
+    	
+    	global $wpdb;
+    	
+    	if ( 'term' == $object_type ) {
+    		$object_type = 'taxonomy';
+    	}
+    	
         if ( 'post_type' == $object_type )
             $objects = self::$post_types;
         elseif ( 'taxonomy' == $object_type )
@@ -2482,8 +2517,20 @@ class PodsMeta {
 
             $object_name = $object->post_type;
         }
-        elseif ( 'taxonomy' == $object_type )
-            $object_name = $aux;
+        elseif ( 'taxonomy' == $object_type ) {
+            if ( pods_version_check( 'wp', '4.4' ) ) {
+            	$object = get_term( $object_id );
+
+            	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
+                	return false;
+            	
+            	$object_name = $object->taxonomy;
+            } elseif ( empty( $aux ) ) {
+            	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
+            } else { 
+            	$object_name = $aux;
+            }
+        }
         elseif ( 'settings' == $object_type )
             $object = $object_id;
         else
@@ -2533,8 +2580,10 @@ class PodsMeta {
     public function get_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
         $meta_type = $object_type;
 
-        if ( 'post_type' == $meta_type )
+        if ( in_array( $meta_type, array( 'post_type', 'media' ) ) )
             $meta_type = 'post';
+        elseif ( 'taxonomy' == $meta_type )
+            $meta_type = 'term';
 
         if ( empty( $meta_key ) ) {
 			if ( !defined( 'PODS_ALLOW_FULL_META' ) || !PODS_ALLOW_FULL_META ) {

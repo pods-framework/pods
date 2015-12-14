@@ -500,7 +500,7 @@ class PodsInit {
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true )
                 );
-                
+
                 // YARPP doesn't use 'supports' array option (yet)
                 if ( ! empty( $cpt_supports[ 'yarpp_support' ] ) ) {
                     $pods_post_types[ $post_type_name ][ 'yarpp_support' ] = true;
@@ -787,7 +787,7 @@ class PodsInit {
                 6 => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( get_permalink( $post_ID ) ), $labels[ 'view_item' ] ),
                 7 => sprintf( __( '%s saved.', 'pods' ), $labels[ 'singular_name' ] ),
                 8 => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels[ 'singular_name' ] ),
-                9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
+                9 => sprintf( __( '%s scheduled for: <strong>%s</strong>. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
                     $labels[ 'singular_name' ],
                     // translators: Publish box date format, see http://php.net/date
                     date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
@@ -1132,6 +1132,7 @@ class PodsInit {
 
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
+            add_action( 'init', array( $this, 'add_rest_support' ), 12 );
 	        add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
 	        if ( is_admin() ) {
@@ -1140,6 +1141,7 @@ class PodsInit {
 		}
 		else {
 			$this->core();
+			$this->add_rest_support();
 			$this->setup_content_types();
 
 			if ( is_admin() ) {
@@ -1328,6 +1330,72 @@ class PodsInit {
                     'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pods->id() )
                 ) );
             }
+        }
+
+    }
+
+    /**
+     * Add REST API support to post type and taxonomy objects.
+     *
+     * @uses "init"
+     *
+     * @since 2.5.6
+     */
+    public function add_rest_support() {
+
+        static $rest_support_added;
+
+        if ( ! function_exists( 'register_rest_field' ) ) {
+            return;
+        }
+
+        include_once( PODS_DIR . 'classes/PodsRESTFields.php' );
+        include_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
+
+        $rest_bases = pods_transient_get( 'pods_rest_bases' );
+
+        if ( empty( $rest_bases ) ) {
+            $pods = pods_api()->load_pods();
+
+            $rest_bases = array();
+
+            if ( ! empty( $pods ) && is_array( $pods ) ) {
+                foreach ( $pods as $pod ) {
+                    $type = $pod['type'];
+
+                    if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+                        if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
+                            $rest_bases[ $pod['name'] ] = array(
+                                'type' => $type,
+                                'base' => sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ),
+                            );
+                        }
+                    }
+                }
+            }
+
+            if ( empty( $rest_bases ) ) {
+                $rest_bases = 'none';
+            }
+
+            pods_transient_set( 'pods_rest_bases', $rest_bases );
+        }
+
+        if ( empty( $rest_support_added ) && ! empty( $rest_bases ) && 'none' !== $rest_bases ) {
+            foreach ( $rest_bases as $pod_name => $pod_info ) {
+                $pod_type  = $pod_info['type'];
+                $rest_base = $pod_info['base'];
+
+                if ( 'post_type' == $pod_type ) {
+                    PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
+                } elseif ( 'taxonomy' == $pod_type ) {
+                    PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
+                }
+
+                new PodsRESTFields( $pod_name );
+            }
+
+            $rest_support_added = true;
         }
 
     }

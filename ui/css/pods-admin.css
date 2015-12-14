@@ -79,6 +79,13 @@
     margin-bottom: 0px !important;
 }
 
+#poststuff h3 {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
 /*
  * Pods Tabbed
  */

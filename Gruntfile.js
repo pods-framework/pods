@@ -25,7 +25,7 @@ module.exports = function ( grunt ) {
 		'!phpcs.ruleset.xml',
 		'!phpunit.xml.dist',
 		'!README.md',
-		'Dockunit.json'
+		'!Dockunit.json'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern

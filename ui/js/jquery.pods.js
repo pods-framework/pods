@@ -1918,8 +1918,9 @@
                 // @todo: check status
 
                 // Update the DOM
-                var $parent_container = $( popup_anchor ).parent();
-                $parent_container.find( '.pods-pick-values' ).replaceWith( response ); // @todo: hardcoded constant
+                // @todo: hardcoded constant in the selector and potentially dodgy DOM traversal with first child
+                var $submittable_fields_container = $( popup_anchor ).parent().find( '.pods-submittable-fields' );
+                $submittable_fields_container.find( '>:first-child' ).replaceWith( response );
             };
         };
 

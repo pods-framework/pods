@@ -1894,11 +1894,12 @@
     // @todo: hard-coded class selector
     $( '.pods-related-edit' ).on( 'click', function( e ) {
 
-        var modal_popup_button = this;
-        var popup_url = modal_popup_button.href;
-        var pod_id = $( this ).data( 'pod-id' );
-        var field_id = $( this ).data( 'field-id' );
-        var item_id = $( this ).data( 'item-id' );
+        var $add_new_button = $( this );
+
+        var popup_url = $add_new_button.attr( 'href' );
+        var pod_id = $add_new_button.data( 'pod-id' );
+        var field_id = $add_new_button.data( 'field-id' );
+        var item_id = $add_new_button.data( 'item-id' );
 
         e.preventDefault();
         tb_show( '', popup_url );
@@ -1914,22 +1915,22 @@
             };
 
             // @todo: check failure as well?
-            $.post( ajaxurl, data, response_success( modal_popup_button ) );
+            $.post( ajaxurl, data, response_success( $add_new_button ) );
         } );
 
         /**
          * Return the callback function that handles a successful response from the ajax post call
          *
          * @returns {Function}
-         * @param modal_popup_button
+         * @param $add_new_button
          */
-        var response_success = function( modal_popup_button ) {
+        var response_success = function( $add_new_button ) {
 
             // We return a function to be used as the callback, this allows us to expose the target element as a passed param
             return function( response ) {
 
                 // Update the DOM
-                var $field_container = $( modal_popup_button ).parent().find( '.podsform-field-container' ); // @todo: hardcoded constant in the selector
+                var $field_container = $add_new_button.parent().find( '.podsform-field-container' ); // @todo: hardcoded constant in the selector
                 $field_container.html( response );
             };
         };

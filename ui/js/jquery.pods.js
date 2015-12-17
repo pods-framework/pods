@@ -1856,25 +1856,36 @@
      */
     $( 'form#post' ).on( 'submit', function( e ) {
 
-        // @todo: can we flag this without using the GET?
-        var $_GET = {};
-        if ( document.location.toString().indexOf( '?' ) !== -1 ) {
-            var query = document.location
-                .toString()
-                // get the query string
-                .replace( /^.*?\?/, '')
-                // and remove any existing hash string (thanks, @vrijdenker)
-                .replace( /#.*$/, '' )
-                .split( '&' );
-
-            for( var i = 0, l = query.length; i < l; i++ ) {
-                var aux = decodeURIComponent( query[ i ] ).split( '=' );
-                $_GET[ aux[ 0 ] ] = aux[ 1 ];
-            }
-        }
-        if ( $_GET[ 'pods_modal' ] || 0 ) {
+        if ( is_modal_window() ) {
             $( '.tb-close-icon', parent.document ).click();
         }
+
+        /**
+         * @returns {boolean}
+         */
+        function is_modal_window() {
+
+            // @todo: can we flag this without using the GET?
+            var $_GET = {};
+            if ( document.location.toString().indexOf( '?' ) !== -1 ) {
+                var query = document.location
+                    .toString()
+                    // get the query string
+                    .replace( /^.*?\?/, '')
+                    // and remove any existing hash string (thanks, @vrijdenker)
+                    .replace( /#.*$/, '' )
+                    .split( '&' );
+
+                for( var i = 0, l = query.length; i < l; i++ ) {
+                    var aux = decodeURIComponent( query[ i ] ).split( '=' );
+                    $_GET[ aux[ 0 ] ] = aux[ 1 ];
+                }
+            }
+
+            // @todo: even if we do stick with the GET, don't hard-code the string name here
+            return ( $_GET[ 'pods_modal' ] || 0 );
+        }
+
     } );
 
     /**

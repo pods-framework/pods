@@ -1918,9 +1918,8 @@
             return function( response ) {
 
                 // Update the DOM
-                // @todo: hardcoded constant in the selector and potentially dodgy DOM traversal with first child
-                var $submittable_fields_container = $( modal_popup_button ).parent().find( '.pods-submittable-fields' );
-                $submittable_fields_container.find( '>:first-child' ).replaceWith( response );
+                var $field_container = $( modal_popup_button ).parent().find( '.podsform-field-container' ); // @todo: hardcoded constant in the selector
+                $field_container.html( response );
             };
         };
 

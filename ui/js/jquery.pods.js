@@ -1849,12 +1849,14 @@
             }
         };
 
-    //--!! Ugly proof of concept code
+    //--!! Flexible relationships code
 
     /**
      * Close the modal on form submit, if one is open
      */
     $('form#post').on( 'submit', function( event ) {
+
+        // @todo: can we flag this without using the GET?
         var $_GET = {};
         if(document.location.toString().indexOf('?') !== -1) {
             var query = document.location
@@ -1879,7 +1881,6 @@
     /**
      * Modal display and ajax updates
      */
-    /*global pods_relationship_popup_data */
     // @todo: hard-coded class selector
     $( '.pods-related-edit' ).on( 'click', function( e ) {
 
@@ -1896,7 +1897,7 @@
         $( '#TB_window' ).on( "tb_unload", function () {
 
             var data = {
-                'action':   'pods_relationship_popup',
+                'action':   'pods_relationship_popup', // @todo: hardcoded constant
                 'pod_id':   pod_id,
                 'field_id': field_id,
                 'item_id':  item_id
@@ -1917,12 +1918,12 @@
 
                 // Update the DOM
                 var $parent_container = $( popup_anchor ).parent();
-                $parent_container.find( '.pods-pick-values' ).replaceWith( response );
+                $parent_container.find( '.pods-pick-values' ).replaceWith( response ); // @todo: hardcoded constant
             };
         };
 
     } );
-    //--!! End Ugly proof of concept code
+    //--!! End Flexible relationships code
 
     $.fn.Pods = function ( method ) {
         if ( methods[ method ] ) {

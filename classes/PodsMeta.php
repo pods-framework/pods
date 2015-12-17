@@ -1033,11 +1033,15 @@ class PodsMeta {
                         <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                     </div>
                     <?php
+                    // Flexible relationships support
+                    // @todo: support other content types
+                    // @todo: replace thickbox
+                    // @todo: CSS styling for the button to replace the inline
                     if ( 'pick' == $field[ 'type' ] && 'post_type' == $field[ 'pick_object' ] ) {
                         $url = add_query_arg(
                             array(
                                 'post_type'  => $field[ 'pick_val' ],
-                                'pods_modal' => '1',
+                                'pods_modal' => '1',    // @todo: No hard-coded constants, create a constant for the purpose
                                 'TB_iframe'  => 'true',
                                 'width'      => '753',
                                 'height'     => '798',

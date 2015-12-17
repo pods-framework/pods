@@ -1036,7 +1036,6 @@ class PodsMeta {
                     // Flexible relationships support
                     // @todo: support other content types
                     // @todo: replace thickbox
-                    // @todo: CSS styling for the button to replace the inline
                     if ( 'pick' == $field[ 'type' ] && 'post_type' == $field[ 'pick_object' ] ) {
                         $url = add_query_arg(
                             array(
@@ -1054,8 +1053,8 @@ class PodsMeta {
                             class="button pods-related-edit"
                             data-pod-id="<?php echo $field[ 'pod_id' ]; ?>"
                             data-field-id="<?php echo $field[ 'id']; ?>"
-                            data-item-id="<?php echo $id; ?>"
-                            style="margin-top: 1em;">Add New</a>
+                            data-item-id="<?php echo $id; ?>">
+                            Add New</a>
                     <?php } ?>
                 </td>
             </tr>

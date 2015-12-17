@@ -1883,8 +1883,8 @@
     // @todo: hard-coded class selector
     $( '.pods-related-edit' ).on( 'click', function( e ) {
 
-        var popup_anchor = this;
-        var popup_url = popup_anchor.href;
+        var modal_popup_button = this;
+        var popup_url = modal_popup_button.href;
         var pod_id = $( this ).data( 'pod-id' );
         var field_id = $( this ).data( 'field-id' );
         var item_id = $( this ).data( 'item-id' );
@@ -1902,24 +1902,24 @@
                 'item_id':  item_id
             };
 
-            $.post( ajaxurl, data, response_function( popup_anchor ) );
+            // @todo: check failure as well?
+            $.post( ajaxurl, data, response_success( modal_popup_button ) );
         } );
 
         /**
+         * Return the callback function that handles a successful response from the ajax post call
          *
-         * @param popup_anchor
          * @returns {Function}
+         * @param modal_popup_button
          */
-        var response_function = function( popup_anchor ) {
+        var response_success = function( modal_popup_button ) {
 
             // We return a function to be used as the callback, this allows us to expose the target element as a passed param
-            return function( response, status, xhr ) {
-
-                // @todo: check status
+            return function( response ) {
 
                 // Update the DOM
                 // @todo: hardcoded constant in the selector and potentially dodgy DOM traversal with first child
-                var $submittable_fields_container = $( popup_anchor ).parent().find( '.pods-submittable-fields' );
+                var $submittable_fields_container = $( modal_popup_button ).parent().find( '.pods-submittable-fields' );
                 $submittable_fields_container.find( '>:first-child' ).replaceWith( response );
             };
         };

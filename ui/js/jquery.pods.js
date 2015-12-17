@@ -1880,31 +1880,47 @@
      * Modal display and ajax updates
      */
     /*global pods_relationship_popup_data */
+    // @todo: hard-coded class selector
     $( '.pods-related-edit' ).on( 'click', function( e ) {
 
-        var field_name = $( this ).data( 'field-name' );
-        var popup_data = pods_relationship_popup_data[ field_name ];
+        var popup_anchor = this;
+        var popup_url = popup_anchor.href;
+        var pod_id = $( this ).data( 'pod-id' );
+        var field_id = $( this ).data( 'field-id' );
+        var item_id = $( this ).data( 'item-id' );
 
         e.preventDefault();
-        tb_show( '', popup_data.url );
+        tb_show( '', popup_url );
 
         // Fired when the popup unloads
         $( '#TB_window' ).on( "tb_unload", function () {
 
             var data = {
-                'action':          'pods_relationship_popup',
-                'field_type':      popup_data.field_type,
-                'options':         popup_data.options,
-                'id':              popup_data.id,
-                'name':            popup_data.name,
-                'value':           popup_data.value
+                'action':   'pods_relationship_popup',
+                'pod_id':   pod_id,
+                'field_id': field_id,
+                'item_id':  item_id
             };
 
-            $.post( ajaxurl, data, function( response ) {
-                var target_row = 'tr.pods-form-ui-row-name-' + popup_data.options.name;
-                $( target_row ).find( 'div.pods-submittable-fields' ).html( response );
-            } );
+            $.post( ajaxurl, data, response_function( popup_anchor ) );
         } );
+
+        /**
+         *
+         * @param popup_anchor
+         * @returns {Function}
+         */
+        var response_function = function( popup_anchor ) {
+
+            // We return a function to be used as the callback, this allows us to expose the target element as a passed param
+            return function( response, status, xhr ) {
+
+                // Update the DOM
+                var $parent_container = $( popup_anchor ).parent();
+                $parent_container.find( '.pods-pick-values' ).replaceWith( response );
+            };
+        };
+
     } );
     //--!! End Ugly proof of concept code
 

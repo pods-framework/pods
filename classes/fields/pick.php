@@ -1787,54 +1787,26 @@ class PodsField_Pick extends PodsField {
      */
     public function admin_ajax_relationship_popup () {
 
-        $field_type = $_POST[ 'field_type' ];
-        switch ( $field_type ) {
-            case 'dropdown':
-                $field_type = 'select';
-                break;
-            case 'radio':
-                $field_type = 'radio';
-                break;
+        $data = pods_unslash( (array) $_POST );
 
-            case 'checkbox':
-                $field_type = 'checkbox';
-                break;
-
-            case 'multiselect':
-                $field_type = 'select';
-                break;
-
-            case 'autocomplete':
-                $field_type = 'select2';
-                break;
-        }
-
-        $id = $_POST[ 'id' ];
-        $value = $_POST[ 'value' ];
-        $name = $_POST[ 'name' ];
-        $options = $_POST[ 'options' ];
-
-        $object_params = array(
-            'context'         => 'data',
-            'id'              => $id,
-            'name'            => $name,
-            'options'         => $options,
-            'value'           => $value
+        $params = array(
+            'pod_id' => $data[ 'pod_id' ],
+            'id'     => $data[ 'field_id' ]
         );
-        $results = $this->get_object_data( $object_params );
+        $field = pods_api()->load_field( $params );
 
-        $options = $options[ 'options' ];
-        $options[ 'grouped' ] = 1;
-        $options[ 'data' ] = $results;
-        $data = array(
-            'id'              => $id,
-            'value'           => $value,
-            'name'            => $name,
-            'options'         => $options,
-            'form_field_type' => 'pick'
+        $pod = pods( $field[ 'pod' ], $data[ 'item_id' ] );
+
+        $field_name = $field[ 'name' ];
+        $meta_field_name = 'pods_meta_' . $field_name;
+
+        $params = array(
+            'name'    => $field_name,
+            'in_form' => true
         );
-        $output = pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', $data, false, 'cache', true );
+        $value = $pod->field( $params);
 
+        $output = PodsForm::field( $meta_field_name, $value, 'pick', $field, $pod, $data[ 'item_id' ] );
         echo $output;
         die();
     }

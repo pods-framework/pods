@@ -753,7 +753,7 @@ class PodsMeta {
 
     public function object_get ( $type, $name ) {
         $object = self::$post_types;
-        
+
         if ( 'term' == $type ) {
         	$type = 'taxonomy';
         }
@@ -957,7 +957,6 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_post ( $post, $metabox ) {
-        static $pods_relationship_popup_data = array();
 
         wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
@@ -1045,21 +1044,14 @@ class PodsMeta {
                             ),
                             admin_url( 'post-new.php' )
                         );
-
-                        $pick_format = 'pick_format_' . $field[ 'options' ]['pick_format_type' ];
-                        $field_type = $field[ 'options' ][ $pick_format ];
-                        $pods_relationship_popup_data[ $field[ 'name' ] ] = array(
-                            'url'             => $url,
-                            'field_type'      => $field_type,
-                            'options'         => $field,
-                            'id'              => $id,
-                            'name'            => 'pods_meta_' . $field[ 'name' ],
-                            'value'           => $value
-                        );
-                        // Not ideal, this will result in multiple definitions for multiple pick fields, but the last one wins anyway.
-                        wp_localize_script( 'pods', 'pods_relationship_popup_data', $pods_relationship_popup_data );
                         ?>
-                        <a href="#" id="pods-related-edit-<?= $field[ 'name' ]; ?>" class="button pods-related-edit" data-field-name="<?= $field[ 'name' ]; ?>" style="margin-top: 1em;">Add New</a>
+                        <a href="<?php echo $url; ?>"
+                            id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"
+                            class="button pods-related-edit"
+                            data-pod-id="<?php echo $field[ 'pod_id' ]; ?>"
+                            data-field-id="<?php echo $field[ 'id']; ?>"
+                            data-item-id="<?php echo $id; ?>"
+                            style="margin-top: 1em;">Add New</a>
                     <?php } ?>
                 </td>
             </tr>
@@ -2506,13 +2498,13 @@ class PodsMeta {
      * @return bool|mixed
      */
     public function get_object ( $object_type, $object_id, $aux = '' ) {
-    	
+
     	global $wpdb;
-    	
+
     	if ( 'term' == $object_type ) {
     		$object_type = 'taxonomy';
     	}
-    	
+
         if ( 'post_type' == $object_type )
             $objects = self::$post_types;
         elseif ( 'taxonomy' == $object_type )
@@ -2553,11 +2545,11 @@ class PodsMeta {
 
             	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
                 	return false;
-            	
+
             	$object_name = $object->taxonomy;
             } elseif ( empty( $aux ) ) {
             	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
-            } else { 
+            } else {
             	$object_name = $aux;
             }
         }

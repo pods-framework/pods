@@ -13,3 +13,12 @@ html.wp-toolbar {
 .auto-fold #wpcontent, .auto-fold #wpfooter {
 	margin-left: 0;
 }
+
+#wpcontent {
+	padding: 0;
+	margin: 0 1.25em;
+}
+
+.wrap {
+	margin: 0;
+}

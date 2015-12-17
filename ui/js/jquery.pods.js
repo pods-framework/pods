@@ -1854,29 +1854,28 @@
     /**
      * Close the modal on form submit, if one is open
      */
-    $('form#post').on( 'submit', function( event ) {
+    $( 'form#post' ).on( 'submit', function( e ) {
 
         // @todo: can we flag this without using the GET?
         var $_GET = {};
-        if(document.location.toString().indexOf('?') !== -1) {
+        if ( document.location.toString().indexOf( '?' ) !== -1 ) {
             var query = document.location
                 .toString()
                 // get the query string
-                .replace(/^.*?\?/, '')
+                .replace( /^.*?\?/, '')
                 // and remove any existing hash string (thanks, @vrijdenker)
-                .replace(/#.*$/, '')
-                .split('&');
+                .replace( /#.*$/, '' )
+                .split( '&' );
 
-            for(var i=0, l=query.length; i<l; i++) {
-                var aux = decodeURIComponent(query[i]).split('=');
-                $_GET[aux[0]] = aux[1];
+            for( var i = 0, l = query.length; i < l; i++ ) {
+                var aux = decodeURIComponent( query[ i ] ).split( '=' );
+                $_GET[ aux[ 0 ] ] = aux[ 1 ];
             }
         }
         if ( $_GET[ 'pods_modal' ] || 0 ) {
             $( '.tb-close-icon', parent.document ).click();
         }
     } );
-
 
     /**
      * Modal display and ajax updates
@@ -1894,7 +1893,7 @@
         tb_show( '', popup_url );
 
         // Fired when the popup unloads
-        $( '#TB_window' ).on( "tb_unload", function () {
+        $( '#TB_window' ).on( 'tb_unload', function () {
 
             var data = {
                 'action':   'pods_relationship_popup', // @todo: hardcoded constant
@@ -1915,6 +1914,8 @@
 
             // We return a function to be used as the callback, this allows us to expose the target element as a passed param
             return function( response, status, xhr ) {
+
+                // @todo: check status
 
                 // Update the DOM
                 var $parent_container = $( popup_anchor ).parent();

@@ -253,8 +253,6 @@ class PodsForm {
 
         // @todo: early exit if we're already in a modal
 
-        ob_start();
-
         // Set the file name and args based on the content type of the relationship
         switch ( $field[ 'pick_object' ] ) {
             case 'post_type':
@@ -262,6 +260,11 @@ class PodsForm {
                 $query_args = array(
                     'post_type' => $field[ 'pick_val' ],
                 );
+                break;
+
+            case 'user':
+                $file_name = 'user-new.php';
+                $query_args = array();
                 break;
 
             // Something unsupported
@@ -286,6 +289,8 @@ class PodsForm {
             $query_args,
             admin_url( $file_name )
         );
+
+        ob_start();
         ?>
         <a href="<?php echo $url; ?>"
             id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"

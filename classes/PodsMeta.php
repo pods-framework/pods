@@ -1035,31 +1035,10 @@ class PodsMeta {
                         <div class="podsform-comment-container">
                             <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                         </div>
+                        <div class="podsform-flex-relationship-container">
+                            <?php echo PodsForm::flex_relationship( $field, $id ); ?>
+                        </div>
                     </div>
-                    <?php
-                    // Flexible relationships support
-                    // @todo: support other content types
-                    // @todo: replace thickbox
-                    if ( 'pick' == $field[ 'type' ] && $field[ 'options' ][ 'pick_flexible' ] && 'post_type' == $field[ 'pick_object' ] ) {
-                        $url = add_query_arg(
-                            array(
-                                'post_type'  => $field[ 'pick_val' ],
-                                'pods_modal' => '1',    // @todo: No hard-coded constants, create a constant for the purpose
-                                'TB_iframe'  => 'true',
-                                'width'      => '753',
-                                'height'     => '798',
-                            ),
-                            admin_url( 'post-new.php' )
-                        );
-                        ?>
-                        <a href="<?php echo $url; ?>"
-                            id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"
-                            class="button pods-related-edit"
-                            data-pod-id="<?php echo $field[ 'pod_id' ]; ?>"
-                            data-field-id="<?php echo $field[ 'id']; ?>"
-                            data-item-id="<?php echo $id; ?>">
-                            Add New</a>
-                    <?php } ?>
                 </td>
             </tr>
         <?php

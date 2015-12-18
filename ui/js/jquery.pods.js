@@ -1930,7 +1930,7 @@
             return function( response ) {
 
                 // Update the DOM
-                var $field_container = $add_new_button.parent().find( '.podsform-field-container' ); // @todo: hardcoded constant in the selector
+                var $field_container = $add_new_button.parent().siblings( '.podsform-field-container' );; // @todo: hardcoded constant in the selector
                 $field_container.html( response );
             };
         };

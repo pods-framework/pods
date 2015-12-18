@@ -229,6 +229,79 @@ class PodsForm {
     }
 
     /**
+     * Output a flexible relationship button
+     *
+     * @todo  : support other content types
+     * @todo  : replace thickbox
+     *
+     * @param array $field Field options array
+     *
+     * @param int   $item_id
+     *
+     * @return string Button HTML
+     *
+     * @since 2.7
+     */
+    public static function flex_relationship( $field, $item_id ) {
+
+        $output = '';
+
+        // Early exit if this isn't a flexible relationship enabled field
+        if ( 'pick' != $field[ 'type' ] || !$field[ 'options' ][ 'pick_flexible' ] ) {
+            return $output;
+        }
+
+        // @todo: early exit if we're already in a modal
+
+        ob_start();
+
+        // Set the file name and args based on the content type of the relationship
+        switch ( $field[ 'pick_object' ] ) {
+            case 'post_type':
+                $file_name = 'post-new.php';
+                $query_args = array(
+                    'post_type' => $field[ 'pick_val' ],
+                );
+                break;
+
+            // Something unsupported
+            default:
+                return $output;
+                break;
+        }
+
+        // Add args we always need
+        $query_args = array_merge(
+            $query_args,
+            array(
+                'pods_modal' => '1', // @todo: No hard-coded constants, create a constant for the purpose
+                'TB_iframe'  => 'true',
+                'width'      => '753',
+                'height'     => '798',
+            )
+        );
+
+        // Assemble the URL
+        $url = add_query_arg(
+            $query_args,
+            admin_url( $file_name )
+        );
+        ?>
+        <a href="<?php echo $url; ?>"
+            id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"
+            class="button pods-related-edit"
+            data-pod-id="<?php echo $field[ 'pod_id' ]; ?>"
+            data-field-id="<?php echo $field[ 'id' ]; ?>"
+            data-item-id="<?php echo $item_id; ?>"> Add New</a>
+        <?php
+
+        $output = ob_get_clean();
+
+        // @todo: add a filter
+        return $output;
+    }
+
+    /**
      * Output field type 'db'
      *
      * Used for field names and other places where only [a-z0-9_] is accepted

@@ -2,6 +2,7 @@
 /**
  * @var $form_field_type string
  * @var $options array
+ * @var $value mixed
  */
 global $post_ID;
 

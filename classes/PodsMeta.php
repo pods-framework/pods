@@ -1035,9 +1035,6 @@ class PodsMeta {
                         <div class="podsform-comment-container">
                             <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                         </div>
-                        <div class="podsform-flex-relationship-container">
-                            <?php echo PodsForm::flex_relationship( $field, $id ); ?>
-                        </div>
                     </div>
                 </td>
             </tr>

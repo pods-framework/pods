@@ -770,6 +770,8 @@ class PodsField_Pick extends PodsField {
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
+        echo PodsForm::flex_relationship( $options, $id );
     }
 
     /**

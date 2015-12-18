@@ -295,12 +295,16 @@ class PodsForm {
         ob_start();
 
         ?>
-        <a href="<?php echo $url; ?>"
-            id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"
-            class="button pods-related-edit"
-            data-pod-id="<?php echo $field[ 'pod_id' ]; ?>"
-            data-field-id="<?php echo $field[ 'id' ]; ?>"
-            data-item-id="<?php echo $item_id; ?>"> Add New</a>
+        <div class="podsform-flex-relationship-container">
+	        <a href="<?php echo esc_url( $url ); ?>"
+	            id="pods-related-edit-<?php echo esc_attr( $field[ 'name' ] ); ?>"
+	            class="button pods-related-edit"
+	            data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"
+	            data-field-id="<?php echo esc_attr( $field[ 'id' ] ); ?>"
+	            data-item-id="<?php echo esc_attr( $item_id ); ?>">
+		        Add New
+	        </a>
+	    </div>
         <?php
 
         $output = ob_get_clean();

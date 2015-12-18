@@ -1040,7 +1040,7 @@ class PodsMeta {
                     // Flexible relationships support
                     // @todo: support other content types
                     // @todo: replace thickbox
-                    if ( 'pick' == $field[ 'type' ] && 'post_type' == $field[ 'pick_object' ] ) {
+                    if ( 'pick' == $field[ 'type' ] && $field[ 'options' ][ 'pick_flexible' ] && 'post_type' == $field[ 'pick_object' ] ) {
                         $url = add_query_arg(
                             array(
                                 'post_type'  => $field[ 'pick_val' ],

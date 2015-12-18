@@ -168,6 +168,15 @@ class PodsField_Pick extends PodsField {
                 ),
                 'dependency' => true
             ),
+            self::$type . '_flexible'      => array(
+                'label'       => __( 'Flexible Relationships', 'pods' ),
+                'help'        => __( 'Enable Adding and Editing of related items in the form', 'pods' ),
+                'excludes-on' => array(
+                    self::$type . '_object' => array_merge( array( 'media', 'site', 'network' ), self::simple_objects() )
+                ),
+                'type'        => 'boolean',
+                'default'     => 0
+            ),
             self::$type . '_taggable' => array(
                 'label' => __( 'Taggable', 'pods' ),
                 'help' => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),

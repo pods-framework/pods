@@ -113,7 +113,21 @@ $url_new_args = array_merge( $url_new_args, array(
 ) );
 
 // Assemble the URL
-$url = add_query_arg( $url_new_args, admin_url( $url_new ) );
+$url = '';
+
+// @todo Add conditional to set url only if allowed
+if ( ! empty( $url_new ) ) {
+	$url = add_query_arg( $url_new_args, admin_url( $url_new ) );
+}
+
+$edit_url = '';
+
+// @todo Add conditional to set url only if allowed
+if ( ! empty( $url_edit ) ) {
+	$edit_url = add_query_arg( $url_edit_args, admin_url( $url_edit ) );
+}
+
+$select_url = '';
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes['class'], 'id' => $attributes['id'] ), $name, $form_field_type, $options ); ?>>
 	<ul class="pods-flexible-list pods-flexible-input"><?php // no extra space in ul or CSS:empty won't work
@@ -123,26 +137,32 @@ $url = add_query_arg( $url_new_args, admin_url( $url_new ) );
 		}
 		?></ul>
 
-	<a href="<?php echo esc_url( $url ); ?>"
-		id="<?php echo esc_attr( $css_id ); ?>-add"
-		class="button pods-flexible-add pods-related-edit"<?php // @todo Remove .pods-related-edit ?>
-		data-pod-id="<?php echo esc_attr( $field['pod_id'] ); ?>"
-		data-field-id="<?php echo esc_attr( $field['id'] ); ?>"
-		data-item-id="<?php echo esc_attr( $id ); ?>">
-		<?php echo esc_html( pods_v( $form_field_type . '_add_button', $options, __( 'Add New', 'pods' ) ) ); ?>
-	</a>
+	<?php // @todo Add conditional to show this only if allowed ?>
+	<?php if ( ! empty( $url ) ) { ?>
+		<a href="<?php echo esc_url( $url ); ?>"
+			id="<?php echo esc_attr( $css_id ); ?>-add"
+			class="button pods-flexible-add pods-related-edit"<?php // @todo Remove .pods-related-edit ?>
+			data-pod-id="<?php echo esc_attr( $field['pod_id'] ); ?>"
+			data-field-id="<?php echo esc_attr( $field['id'] ); ?>"
+			data-item-id="<?php echo esc_attr( $id ); ?>">
+			<?php echo esc_html( pods_v( $form_field_type . '_add_button', $options, __( 'Add New', 'pods' ) ) ); ?>
+		</a>
+	<?php } ?>
 
 	<?php // @todo Add conditional to show this only if allowed ?>
-	<a href="<?php echo esc_url( $url ); ?>"
-		id="<?php echo esc_attr( $css_id ); ?>-select"
-		class="button pods-flexible-select"
-		data-pod-id="<?php echo esc_attr( $field['pod_id'] ); ?>"
-		data-field-id="<?php echo esc_attr( $field['id'] ); ?>"
-		data-item-id="<?php echo esc_attr( $id ); ?>">
-		<?php echo esc_html( pods_v( $form_field_type . '_select_button', $options, __( 'Select from Existing', 'pods' ) ) ); ?>
-	</a>
+	<?php if ( ! empty( $select_url ) ) { ?>
+		<a href="<?php echo esc_url( $select_url ); ?>"
+			id="<?php echo esc_attr( $css_id ); ?>-select"
+			class="button pods-flexible-select"
+			data-pod-id="<?php echo esc_attr( $field['pod_id'] ); ?>"
+			data-field-id="<?php echo esc_attr( $field['id'] ); ?>"
+			data-item-id="<?php echo esc_attr( $id ); ?>">
+			<?php echo esc_html( pods_v( $form_field_type . '_select_button', $options, __( 'Select from Existing', 'pods' ) ) ); ?>
+		</a>
+	<?php } ?>
 </div>
 
 <script type="text/x-handlebars" id="<?php echo esc_attr( $css_id ); ?>-handlebars">
-	<?php echo $field_pick->markup( $attributes, $pick_limit, $title_editable, null, null, null, $linked ); ?>
+	<?php // @todo figure out what to do here ?>
+	<?php // echo $field_pick->markup( $attributes, $pick_limit, $title_editable, null, null, null, $linked ); ?>
 </script>

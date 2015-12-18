@@ -1854,7 +1854,7 @@
     /**
      * Close the modal on form submit, if one is open
      */
-    $( 'form#post, form#createuser' ).on( 'submit', function( e ) {
+    var pods_modal_submit = function( e ) {
 
         if ( is_modal_window() ) {
             $( '.tb-close-icon', parent.document ).click();
@@ -1871,12 +1871,12 @@
                 var query = document.location
                     .toString()
                     // get the query string
-                    .replace( /^.*?\?/, '')
+                    .replace( /^.*?\?/, '' )
                     // and remove any existing hash string (thanks, @vrijdenker)
                     .replace( /#.*$/, '' )
                     .split( '&' );
 
-                for( var i = 0, l = query.length; i < l; i++ ) {
+                for ( var i = 0, l = query.length; i < l; i++ ) {
                     var aux = decodeURIComponent( query[ i ] ).split( '=' );
                     $_GET[ aux[ 0 ] ] = aux[ 1 ];
                 }
@@ -1886,7 +1886,10 @@
             return ( $_GET[ 'pods_modal' ] || 0 );
         }
 
-    } );
+    };
+
+    $( '#addtag #submit' ).on( 'click', pods_modal_submit );
+    $( 'form#post, form#createuser' ).on( 'submit', pods_modal_submit );
 
     /**
      * Modal display and ajax updates

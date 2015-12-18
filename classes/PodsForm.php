@@ -260,6 +260,13 @@ class PodsForm {
                 );
                 break;
 
+            case 'taxonomy':
+                $file_name = 'edit-tags.php';
+                $query_args = array(
+                    'taxonomy' => $field[ 'pick_val' ],
+                );
+                break;
+
             case 'user':
                 $file_name = 'user-new.php';
                 $query_args = array();
@@ -283,12 +290,10 @@ class PodsForm {
         );
 
         // Assemble the URL
-        $url = add_query_arg(
-            $query_args,
-            admin_url( $file_name )
-        );
+        $url = add_query_arg( $query_args, admin_url( $file_name ) );
 
         ob_start();
+
         ?>
         <a href="<?php echo $url; ?>"
             id="pods-related-edit-<?php echo $field[ 'name' ]; ?>"

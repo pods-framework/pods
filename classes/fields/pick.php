@@ -1800,96 +1800,104 @@ class PodsField_Pick extends PodsField {
     /**
      * Handle row output for flexible input
      *
-     * @param array $attributes
-     * @param int $limit
-     * @param bool $editable
-     * @param int $id
-     * @param string $icon
-     * @param string $name
-     * @param bool $linked
-     * @param string $link
+     * @param array $params
+     *     array $attributes
+     *     int $limit
+     *     bool $editable
+     *     int $id
+     *     string $icon
+     *     string $name
+     *     bool $linked
+     *     string $link
      *
      * @return string
      * @since 2.0
      */
-    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
-        // Preserve current field type
-        $field_type = PodsForm::$field_type;
+	public function markup( $params ) {
 
-        ob_start();
+		$attributes = array();
+		$limit = 1;
+		$editable = true;
+		$id = null;
+		$icon = null;
+		$name = null;
+		$linked = false;
+		$link = null;
 
-        if ( empty( $id ) )
-            $id = '{{id}}';
+		// Preserve current field type
+		$field_type = PodsForm::$field_type;
 
-        if ( empty( $icon ) ) {
-	        $icon = '{{icon}}';
-        }else{
-	        $icon = esc_url( $icon );
-        }
+		ob_start();
 
-        if ( empty( $name ) )
-            $name = '{{name}}';
+		if ( empty( $id ) ) {
+			$id = '{{id}}';
+		}
 
-        if ( empty( $link ) )
-            $link = '{{link}}';
+		if ( empty( $icon ) ) {
+			$icon = '{{icon}}';
+		} else {
+			$icon = esc_url( $icon );
+		}
 
-        $edit_link = '{{edit_link}}';
+		if ( empty( $name ) ) {
+			$name = '{{name}}';
+		}
 
-        $editable = (boolean) $editable;
-        $linked = (boolean) $linked;
-        ?>
-    <li class="pods-flexible-item hidden" id="<?php echo esc_attr( $attributes['id'] ); ?>-item-<?php echo esc_attr( $id ); ?>">
-        <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
+		if ( empty( $link ) ) {
+			$link = '{{link}}';
+		}
 
-        <ul class="pods-flexible-item-meta">
-            <?php if ( 1 != $limit ) { ?>
-                <li class="pods-flexible-item-col pods-flexible-item-handle">Handle</li>
-            <?php } ?>
+		$edit_link = '{{edit_link}}';
 
-            <li class="pods-flexible-item-col pods-flexible-item-icon">
-                <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
-            </li>
+		$editable = (boolean) $editable;
+		$linked   = (boolean) $linked;
+	?>
+		<li class="pods-flexible-item hidden" id="<?php echo esc_attr( $attributes['id'] ); ?>-item-<?php echo esc_attr( $id ); ?>">
+			<?php echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
-            <li class="pods-flexible-item-col pods-flexible-item-name">
-                <?php
-                if ( $editable ) {
-	                echo PodsForm::field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
-                }
-                else
-                    echo ( empty( $name ) ? '{{name}}' : $name );
-                ?>
-            </li>
+			<ul class="pods-flexible-item-meta">
+				<?php if ( 1 != $limit ) { ?>
+					<li class="pods-flexible-item-col pods-flexible-item-handle">Handle</li>
+				<?php } ?>
 
-	        <?php
+				<li class="pods-flexible-item-col pods-flexible-item-icon">
+					<img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+				</li>
+
+				<li class="pods-flexible-item-col pods-flexible-item-name">
+					<?php echo( empty( $name ) ? '{{name}}' : $name ); ?>
+				</li>
+
+				<?php
 				if ( $linked ) {
-			?>
-            	<li class="pods-flexible-item-col pods-flexible-item-view">
-		            <a href="<?php echo esc_url( $link ); ?>" target="_blank"><?php _e( 'View', 'pods' ); ?></a>
-	            </li>
-			<?php
-				}
-			?>
+				?>
+					<li class="pods-flexible-item-col pods-flexible-item-view">
+						<a href="<?php echo esc_url( $link ); ?>" target="_blank"><?php _e( 'View', 'pods' ); ?></a>
+					</li>
+				<?php
+					}
+				?>
 
-			<?php
-				if ( $editable ) {
-			?>
-            	<li class="pods-flexible-item-col pods-flexible-item-edit">
-		            <a href="<?php echo esc_url( $edit_link ); ?>"><?php _e( 'Edit', 'pods' ); ?></a>
-	            </li>
-			<?php
-				}
-			?>
+				<?php
+					if ( $editable ) {
+				?>
+					<li class="pods-flexible-item-col pods-flexible-item-edit">
+						<a href="<?php echo esc_url( $edit_link ); ?>"><?php _e( 'Edit', 'pods' ); ?></a>
+					</li>
+				<?php
+					}
+				?>
 
-            <li class="pods-flexible-item-col pods-flexible-item-remove">
-	            <a href="#remove"><?php _e( 'Remove', 'pods' ); ?></a>
-            </li>
-        </ul>
-    </li>
-    <?php
-        PodsForm::$field_type = $field_type;
+				<li class="pods-flexible-item-col pods-flexible-item-remove">
+					<a href="#remove"><?php _e( 'Remove', 'pods' ); ?></a>
+				</li>
+			</ul>
+		</li>
+	<?php
+		PodsForm::$field_type = $field_type;
 
-        return ob_get_clean();
-    }
+		return ob_get_clean();
+	}
 
     /**
      * AJAX call to refresh relationship field markup (supports adding new records modally)

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var $form_field_type string
+ * @var $options array
+ */
 $pick_object = pods_v( 'pick_object', $options );
 $pick_val = pods_v( 'pick_val', $options );
 
@@ -89,6 +93,9 @@ wp_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
+/**
+ * @var $field_pick PodsField_Pick
+ */
 $field_pick = PodsForm::field_loader( 'pick' );
 
 $attributes = array();

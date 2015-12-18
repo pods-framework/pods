@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var $form_field_type string
+ * @var $options array
+ */
 global $post_ID;
 
 wp_enqueue_script( 'pods-handlebars' );
@@ -13,6 +17,9 @@ if ( is_admin() && !empty( $post_ID ) )
 
 wp_enqueue_media( $args );
 
+/**
+ * @var $field_file PodsField_File
+ */
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();

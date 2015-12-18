@@ -246,12 +246,10 @@ class PodsForm {
 
         $output = '';
 
-        // Early exit if this isn't a flexible relationship enabled field
-        if ( 'pick' != $field[ 'type' ] || !$field[ 'options' ][ 'pick_flexible' ] ) {
+        // Early exit if this isn't a flexible relationship enabled field or we're already in a modal
+        if ( 'pick' != $field[ 'type' ] || !$field[ 'options' ][ 'pick_flexible' ] || pods_is_modal_window() ) {
             return $output;
         }
-
-        // @todo: early exit if we're already in a modal
 
         // Set the file name and args based on the content type of the relationship
         switch ( $field[ 'pick_object' ] ) {
@@ -277,7 +275,7 @@ class PodsForm {
         $query_args = array_merge(
             $query_args,
             array(
-                'pods_modal' => '1', // @todo: No hard-coded constants, create a constant for the purpose
+                'pods_modal' => '1', // @todo: Replace string literal with defined constant
                 'TB_iframe'  => 'true',
                 'width'      => '753',
                 'height'     => '798',

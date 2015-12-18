@@ -1854,7 +1854,7 @@
     /**
      * Close the modal on form submit, if one is open
      */
-    $( 'form#post' ).on( 'submit', function( e ) {
+    $( 'form#post, form#createuser' ).on( 'submit', function( e ) {
 
         if ( is_modal_window() ) {
             $( '.tb-close-icon', parent.document ).click();

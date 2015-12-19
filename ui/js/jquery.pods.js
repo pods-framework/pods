@@ -237,6 +237,8 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
+                            $( document ).trigger( 'pods_submit_success' );
+
                             if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
                                 var id = d.match( /\d*$/, '' );
 
@@ -1863,7 +1865,7 @@
             // will make an ajax request for updated markup.  We have no
             // guarantee that what we're saving from the modal will complete
             // before our ajax update in all cases.  What we need are events on
-            // completion we could attache to.
+            // completion we could attach to.
             $( '.tb-close-icon', parent.document ).click();
         }
 
@@ -1897,6 +1899,7 @@
 
     $( '#addtag #submit' ).on( 'click', pods_modal_submit );
     $( 'form#post, form#createuser' ).on( 'submit', pods_modal_submit );
+    $( document ).on( 'pods_submit_success', pods_modal_submit );
 
     /**
      * Modal display and ajax updates

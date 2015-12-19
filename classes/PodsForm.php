@@ -275,6 +275,14 @@ class PodsForm {
                 $query_args = array();
                 break;
 
+            case 'pod':
+                $file_name = 'admin.php';
+                $query_args = array(
+                    'page'   => 'pods-manage-' . $field[ 'pick_val' ],
+                    'action' => 'add'
+                );
+                break;
+
             // Something unsupported
             default:
                 return $output;
@@ -287,7 +295,7 @@ class PodsForm {
             array(
                 'pods_modal' => '1', // @todo: Replace string literal with defined constant
                 'TB_iframe'  => 'true',
-                'width'      => '753',
+                'width'      => '1000',
                 'height'     => '798',
             )
         );

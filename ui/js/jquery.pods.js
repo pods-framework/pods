@@ -1921,8 +1921,10 @@
                 $field_container.html( response );
 
                 // Current implementation replaces the button, re-bind for modal
-                var $modal = $field_container.find( '.pods-modal' );
-                $modal.modal( $.getDataOptions( $modal, 'modal' ) );
+                var $modal_target = $field_container.find( '.pods-modal' );
+                if ( $modal_target.length > 0 ) {
+                    $modal_target.modal( $.getDataOptions( $modal_target, 'modal' ) );
+                }
             };
         };
 

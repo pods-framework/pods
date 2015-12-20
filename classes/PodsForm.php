@@ -305,7 +305,7 @@ class PodsForm {
         ?>
         <div class="podsform-flex-relationship-container">
 	        <a href="<?php echo esc_url( $url ); ?>"
-                data-modal-show="yes please, if it's no trouble"
+                data-modal-show="1"
 	            id="pods-related-add-new-<?php echo esc_attr( $field[ 'name' ] ); ?>"
 	            class="button pods-related-add-new pods-modal"
 	            data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"

@@ -222,6 +222,7 @@ class PodsInit {
 	    }
 
         wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery', 'pods-json', 'jquery-qtip2' ), PODS_VERSION, true );
+        wp_register_script( 'pods-modal', PODS_URL . 'ui/js/jquery.pods.modal.js', array( 'jquery' ), PODS_VERSION, true );
 
         wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
 
@@ -258,8 +259,8 @@ class PodsInit {
         wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
 
         wp_register_style( 'responsive-modal', PODS_URL . 'ui/js/responsive/modal.css', array(), '4.1.1' );
-        wp_register_script( 'responsive-core', PODS_URL . 'ui/js/responsive/responsive.core.js', array( 'pods' ), '4.1.1', true );
-        wp_register_script( 'responsive-modal', PODS_URL . 'ui/js/responsive/responsive.modal.js', array( 'pods', 'responsive-core' ), '4.1.1', true );
+        wp_register_script( 'responsive-core', PODS_URL . 'ui/js/responsive/responsive.core.js', array( 'pods-modal' ), '4.1.1', true );
+        wp_register_script( 'responsive-modal', PODS_URL . 'ui/js/responsive/responsive.modal.js', array( 'pods-modal', 'responsive-core' ), '4.1.1', true );
     }
 
     /**

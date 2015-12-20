@@ -231,9 +231,6 @@ class PodsForm {
     /**
      * Output a flexible relationship button
      *
-     * @todo  : support other content types
-     * @todo  : replace thickbox
-     *
      * @param array $field Field options array
      *
      * @param int   $item_id

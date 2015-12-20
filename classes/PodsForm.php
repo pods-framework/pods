@@ -247,7 +247,7 @@ class PodsForm {
         //  * Not admin
         //  * this isn't a flexible relationship enabled field
         //  * we're already in a modal
-        if ( ! is_admin() || 'pick' != $field[ 'type' ] || empty( $field[ 'pick_flexible' ] ) || pods_is_modal_window() ) {
+        if ( ! is_admin() || empty( $field[ 'type' ] ) || 'pick' != $field[ 'type' ] || empty( $field[ 'pick_flexible' ] ) || pods_is_modal_window() ) {
             return $output;
         }
 

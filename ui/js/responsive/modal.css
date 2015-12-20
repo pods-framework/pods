@@ -205,3 +205,79 @@ button.modal-direction:hover {
 	opacity: 1 !important;
 }
 
+.media {
+	height: 0;
+	height: auto;
+	margin-bottom: 1rem;
+	max-width: 100%;
+	overflow: hidden;
+	padding-bottom: 56.25%;
+	position: relative;
+}
+
+.media.media-scroll {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+::selection {
+	background: #b3d4fc;
+	text-shadow: none;
+}
+
+*, :before, :after {
+	box-sizing: inherit;
+}
+
+[data-lock], [data-lock] body {
+	height: 100%;
+	overflow: hidden;
+	-ms-touch-action: none;
+	touch-action: none;
+}
+
+.modal-ajax.container,
+.modal-iframe {
+	margin: 0 auto;
+}
+
+.modal-ajax.container,
+.modal-iframe {
+	max-width: 1140px;
+	width: calc(100% - 16px);
+}
+
+.clearfix:before,
+.modal-ajax.container:before,
+.modal-iframe:before,
+[class*="block-row-"]:before,
+.clearfix:after,
+.modal-ajax.container:after,
+.modal-iframe:after,
+[class*="block-row-"]:after {
+	content: "";
+	display: table;
+}
+
+.clearfix:after,
+.modal-ajax.container:after,
+.modal-iframe:after,
+[class*="block-row-"]:after {
+	clear: both;
+}
+
+.media iframe,
+.media object,
+.media embed,
+.media video {
+	background-color: transparent;
+	border: 0;
+	height: 100%;
+	left: 0;
+	margin: 0;
+	outline: none;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}

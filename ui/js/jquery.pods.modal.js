@@ -23,7 +23,7 @@
 		/**
 		 *
 		 */
-		related_edit_click: function ( e ) {
+		related_add_new_click: function ( e ) {
 
 			var $add_new_button = $( this );
 
@@ -81,6 +81,6 @@
 	$( document ).on( 'pods_submit_success', methods.update_submitted );
 
 	// Add new button click events
-	$( document ).on( 'click', '.pods-related-edit', methods.related_edit_click );
+	$( document ).on( 'click', '.pods-related-add-new', methods.related_add_new_click );
 
 } )( jQuery );

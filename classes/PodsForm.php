@@ -254,6 +254,9 @@ class PodsForm {
             return $output;
         }
 
+        wp_enqueue_style( 'responsive-modal' );
+        wp_enqueue_script( 'responsive-modal' );
+
         // Set the file name and args based on the content type of the relationship
         switch ( $field[ 'pick_object' ] ) {
             case 'post_type':
@@ -294,9 +297,6 @@ class PodsForm {
             $query_args,
             array(
                 'pods_modal' => '1', // @todo: Replace string literal with defined constant
-                'TB_iframe'  => 'true',
-                'width'      => '1000',
-                'height'     => '798',
             )
         );
 
@@ -308,8 +308,9 @@ class PodsForm {
         ?>
         <div class="podsform-flex-relationship-container">
 	        <a href="<?php echo esc_url( $url ); ?>"
+                data-modal-show="yes please, if it's no trouble"
 	            id="pods-related-edit-<?php echo esc_attr( $field[ 'name' ] ); ?>"
-	            class="button pods-related-edit"
+	            class="button pods-related-edit pods-modal"
 	            data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"
 	            data-field-id="<?php echo esc_attr( $field[ 'id' ] ); ?>"
 	            data-item-id="<?php echo esc_attr( $item_id ); ?>">

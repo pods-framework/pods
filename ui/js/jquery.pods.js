@@ -1858,43 +1858,17 @@
      */
     var pods_modal_submit = function( e ) {
 
-        if ( is_modal_window() ) {
+        // @todo: good chance we're in a race condition in some cases
+        // This will trigger the unload event for the modal, which in turn
+        // will make an ajax request for updated markup.  We have no
+        // guarantee that what we're saving from the modal will complete
+        // before our ajax update in all cases.  What we need are events on
+        // completion we could attach to.
 
-            // @todo: good chance we're in a race condition in some cases
-            // This will trigger the unload event for the modal, which in turn
-            // will make an ajax request for updated markup.  We have no
-            // guarantee that what we're saving from the modal will complete
-            // before our ajax update in all cases.  What we need are events on
-            // completion we could attach to.
-            $( '.tb-close-icon', parent.document ).click();
+        var $modal_target = parent.window.jQuery( '.pods-modal.showing-modal' );
+        if ( $modal_target.length > 0 ) {
+            $modal_target.modal( 'hide' );
         }
-
-        /**
-         * @returns {boolean}
-         */
-        function is_modal_window() {
-
-            // @todo: can we flag this without using the GET?
-            var $_GET = {};
-            if ( document.location.toString().indexOf( '?' ) !== -1 ) {
-                var query = document.location
-                    .toString()
-                    // get the query string
-                    .replace( /^.*?\?/, '' )
-                    // and remove any existing hash string (thanks, @vrijdenker)
-                    .replace( /#.*$/, '' )
-                    .split( '&' );
-
-                for ( var i = 0, l = query.length; i < l; i++ ) {
-                    var aux = decodeURIComponent( query[ i ] ).split( '=' );
-                    $_GET[ aux[ 0 ] ] = aux[ 1 ];
-                }
-            }
-
-            // @todo: even if we do stick with the GET, don't hard-code the string name here
-            return ( $_GET[ 'pods_modal' ] || 0 );
-        }
-
     };
 
     $( '#addtag #submit' ).on( 'click', pods_modal_submit );
@@ -1909,16 +1883,15 @@
 
         var $add_new_button = $( this );
 
-        var popup_url = $add_new_button.attr( 'href' );
         var pod_id = $add_new_button.data( 'pod-id' );
         var field_id = $add_new_button.data( 'field-id' );
         var item_id = $add_new_button.data( 'item-id' );
 
         e.preventDefault();
-        tb_show( '', popup_url );
 
-        // Fired when the popup unloads
-        $( '#TB_window' ).on( 'tb_unload', function () {
+        // Add a class and setup a handler function for when the popup unloads
+        $add_new_button.addClass( 'showing-modal' ).on( 'hidden.r.modal', function () {
+            $( this ).removeClass( 'showing-modal' );
 
             var data = {
                 'action'  : 'pods_relationship_popup', // @todo: hardcoded constant
@@ -1946,6 +1919,10 @@
                 // @todo: hardcoded constant in the selector
                 var $field_container = $add_new_button.parents( '.podsform-field-container' );
                 $field_container.html( response );
+
+                // Current implementation replaces the button, re-bind for modal
+                var $modal = $field_container.find( '.pods-modal' );
+                $modal.modal( $.getDataOptions( $modal, 'modal' ) );
             };
         };
 

@@ -237,6 +237,8 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
+                            $( document ).trigger( 'pods_submit_success' );
+
                             if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
                                 var id = d.match( /\d*$/, '' );
 
@@ -1848,98 +1850,6 @@
                 } );
             }
         };
-
-    //--!! Flexible relationships code
-
-    /**
-     * Close the modal on form submit, if one is open
-     */
-    var pods_modal_submit = function( e ) {
-
-        if ( is_modal_window() ) {
-            $( '.tb-close-icon', parent.document ).click();
-        }
-
-        /**
-         * @returns {boolean}
-         */
-        function is_modal_window() {
-
-            // @todo: can we flag this without using the GET?
-            var $_GET = {};
-            if ( document.location.toString().indexOf( '?' ) !== -1 ) {
-                var query = document.location
-                    .toString()
-                    // get the query string
-                    .replace( /^.*?\?/, '' )
-                    // and remove any existing hash string (thanks, @vrijdenker)
-                    .replace( /#.*$/, '' )
-                    .split( '&' );
-
-                for ( var i = 0, l = query.length; i < l; i++ ) {
-                    var aux = decodeURIComponent( query[ i ] ).split( '=' );
-                    $_GET[ aux[ 0 ] ] = aux[ 1 ];
-                }
-            }
-
-            // @todo: even if we do stick with the GET, don't hard-code the string name here
-            return ( $_GET[ 'pods_modal' ] || 0 );
-        }
-
-    };
-
-    $( '#addtag #submit' ).on( 'click', pods_modal_submit );
-    $( 'form#post, form#createuser' ).on( 'submit', pods_modal_submit );
-
-    /**
-     * Modal display and ajax updates
-     */
-    // @todo: hard-coded class selector
-    $( '.pods-related-edit' ).on( 'click', function( e ) {
-
-        var $add_new_button = $( this );
-
-        var popup_url = $add_new_button.attr( 'href' );
-        var pod_id = $add_new_button.data( 'pod-id' );
-        var field_id = $add_new_button.data( 'field-id' );
-        var item_id = $add_new_button.data( 'item-id' );
-
-        e.preventDefault();
-        tb_show( '', popup_url );
-
-        // Fired when the popup unloads
-        $( '#TB_window' ).on( 'tb_unload', function () {
-
-            var data = {
-                'action':   'pods_relationship_popup', // @todo: hardcoded constant
-                'pod_id':   pod_id,
-                'field_id': field_id,
-                'item_id':  item_id
-            };
-
-            // @todo: check failure as well?
-            $.post( ajaxurl, data, response_success( $add_new_button ) );
-        } );
-
-        /**
-         * Return the callback function that handles a successful response from the ajax post call
-         *
-         * @returns {Function}
-         * @param $add_new_button
-         */
-        var response_success = function( $add_new_button ) {
-
-            // We return a function to be used as the callback, this allows us to expose the target element as a passed param
-            return function( response ) {
-
-                // Update the DOM
-                var $field_container = $add_new_button.parent().siblings( '.podsform-field-container' );; // @todo: hardcoded constant in the selector
-                $field_container.html( response );
-            };
-        };
-
-    } );
-    //--!! End Flexible relationships code
 
     $.fn.Pods = function ( method ) {
         if ( methods[ method ] ) {

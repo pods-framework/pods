@@ -231,9 +231,6 @@ class PodsForm {
     /**
      * Output a flexible relationship button
      *
-     * @todo  : support other content types
-     * @todo  : replace thickbox
-     *
      * @param array $field Field options array
      *
      * @param int   $item_id
@@ -246,10 +243,16 @@ class PodsForm {
 
         $output = '';
 
-        // Early exit if this isn't a flexible relationship enabled field or we're already in a modal
-        if ( ! is_admin() || 'pick' != $field[ 'type' ] || !$field[ 'options' ][ 'pick_flexible' ] || pods_is_modal_window() ) {
+        // Early exit if any of:
+        //  * Not admin
+        //  * this isn't a flexible relationship enabled field
+        //  * we're already in a modal
+        if ( ! is_admin() || empty( $field[ 'type' ] ) || 'pick' != $field[ 'type' ] || empty( $field[ 'pick_flexible' ] ) || pods_is_modal_window() ) {
             return $output;
         }
+
+        wp_enqueue_style( 'responsive-modal' );
+        wp_enqueue_script( 'responsive-modal' );
 
         // Set the file name and args based on the content type of the relationship
         switch ( $field[ 'pick_object' ] ) {
@@ -272,6 +275,14 @@ class PodsForm {
                 $query_args = array();
                 break;
 
+            case 'pod':
+                $file_name = 'admin.php';
+                $query_args = array(
+                    'page'   => 'pods-manage-' . $field[ 'pick_val' ],
+                    'action' => 'add'
+                );
+                break;
+
             // Something unsupported
             default:
                 return $output;
@@ -283,9 +294,6 @@ class PodsForm {
             $query_args,
             array(
                 'pods_modal' => '1', // @todo: Replace string literal with defined constant
-                'TB_iframe'  => 'true',
-                'width'      => '753',
-                'height'     => '798',
             )
         );
 
@@ -296,15 +304,15 @@ class PodsForm {
 
         ?>
         <div class="podsform-flex-relationship-container">
-	        <a href="<?php echo esc_url( $url ); ?>"
-	            id="pods-related-edit-<?php echo esc_attr( $field[ 'name' ] ); ?>"
-	            class="button pods-related-edit"
-	            data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"
-	            data-field-id="<?php echo esc_attr( $field[ 'id' ] ); ?>"
-	            data-item-id="<?php echo esc_attr( $item_id ); ?>">
-		        Add New
-	        </a>
-	    </div>
+            <a href="<?php echo esc_url( $url ); ?>"
+                data-modal-show="1"
+                id="pods-related-add-new-<?php echo esc_attr( $field[ 'name' ] ); ?>"
+                class="button pods-related-add-new pods-modal"
+                data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"
+                data-field-id="<?php echo esc_attr( $field[ 'id' ] ); ?>"
+                data-item-id="<?php echo esc_attr( $item_id ); ?>"> Add New
+            </a>
+        </div>
         <?php
 
         $output = ob_get_clean();

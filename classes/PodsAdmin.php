@@ -2542,7 +2542,7 @@ class PodsAdmin {
 				    'dependency' => true,
 			    ),
 			    'rest_base'   => array(
-				    'label'             => __( 'Rest Base', 'pods' ),
+				    'label'             => __( 'REST Base', 'pods' ),
 				    'help'              => __( 'This will form the url for the route.', 'pods' ),
 				    'type'              => 'text',
 				    'default'           => pods_v( 'name', $pod ),

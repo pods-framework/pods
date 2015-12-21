@@ -1282,6 +1282,11 @@ class PodsData {
             $joins = array();
 
             if ( !empty( $find ) ) {
+                // See: "#3294 OrderBy Failing on PHP7"  Non-zero array keys
+                // here in PHP 7 cause odd behavior so just strip the keys
+                $find = array_values( $find );
+                $replace = array_values( $replace );
+
                 $params->select = preg_replace( $find, $replace, $params->select );
                 $params->where = preg_replace( $find, $replace, $params->where );
                 $params->groupby = preg_replace( $find, $replace, $params->groupby );

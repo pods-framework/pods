@@ -378,7 +378,46 @@ if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type',
         <?php echo PodsForm::label( 'label_not_found', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label_not_found', pods_var_raw( 'label_not_found', $pod ), 'text' ); ?>
     </div>
-
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_feature_image', __( 'Featured Image', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_feature_image', pods_var_raw( 'label_feature_image', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_set_featured_image', __( 'Set featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_set_featured_image', pods_var_raw( 'label_set_featured_image', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_remove_featured_image', __( 'Remove featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_remove_featured_image', pods_var_raw( 'label_remove_featured_image', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_use_featured_image', __( 'Use as featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_use_featured_image', pods_var_raw( 'label_use_featured_image', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_archives', __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Archives', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_archives', pods_var_raw( 'label_archives', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_insert_into_item', __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_insert_into_item', pods_var_raw( 'label_insert_into_item', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_uploaded_to_this_item', __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_uploaded_to_this_item', pods_var_raw( 'label_uploaded_to_this_item', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_filter_items_list', __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_filter_items_list', pods_var_raw( 'label_filter_items_list', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_items_list_navigation', __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_items_list_navigation', pods_var_raw( 'label_items_list_navigation', $pod ), 'text' ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'label_items_list', __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'label_items_list', pods_var_raw( 'label_items_list', $pod ), 'text' ); ?>
+    </div>
     <?php
     if ( in_array( pods_var( 'type', $pod ), array( 'post_type', 'pod' ) ) ) {
         ?>
@@ -586,6 +625,10 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <div class="pods-field-option">
             <?php echo PodsForm::label( 'label_parent', __( '<strong>Label: </strong> Parent', 'pods' ), __( 'help', 'pods' ) ); ?>
             <?php echo PodsForm::field( 'label_parent', pods_var_raw( 'label_parent', $pod ), 'text' ); ?>
+        </div>
+        <div class="pods-field-option">
+            <?php echo PodsForm::label( 'label_no_terms', __( 'No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+            <?php echo PodsForm::field( 'label_no_terms', pods_var_raw( 'label_no_terms', $pod ), 'text' ); ?>
         </div>
     </div>
     <div class="pods-field-option">

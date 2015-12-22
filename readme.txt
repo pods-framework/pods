@@ -156,6 +156,15 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.1 - December 22nd, 2015 =
+* Added: Additional Label support for Post Type / Taxonomy register functions (#3275) [@pcfreak30]
+* Fixed: Change Markup to Support CSS in WP 4.4 (Thanks to @nicdford we missed mentioning in 2.6 Change log) (#3277,#3270,#3279)
+* Fixed: Non-Zero Array Keys here in PHP7 cause odd behaviour so just strip the keys (#3294,#299) [@pglewis]
+* Fixed: Corrected Dashicons Link in the Menu Options panel of Edit Pods (#3287) [@benbrandt]
+* Fixed: Update Version number on 2.x (#3282) [@pglewis]
+* Fixed: Typo's Rest into REST (#3303) [@Ramoonus]
+* Fixed: Disable xdebug on Travis (#3284,#3283) [@pglewis]
+
 = 2.6 - December 9th, 2015 =
 * Added: Support for Term Meta in WP 4.4 - Now create meta-based taxonomies and Pods just magically works! (#3169,#3163) [@sc0ttkclark]
 * Added: Add REST API Support to Post Types, Taxonomies, Users. Read the update in https://github.com/pods-framework/pods/pull/3184 for step by step details. (#3184,#3182) [@Shelob9]

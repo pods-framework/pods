@@ -1,0 +1,283 @@
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 2147483647;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	touch-action: none;
+	background-color: rgba(0, 0, 0, 0.7);
+	-webkit-overflow-scrolling: touch;
+	-webkit-backface-visibility: hidden;
+	text-align: center;
+}
+
+.modal-overlay:before {
+	content: "";
+	display: inline-block;
+	height: 100%;
+	width: 1px;
+	margin-right: -1px;
+	vertical-align: middle;
+}
+
+[dir="rtl"] .modal-overlay:before {
+	margin-right: 0;
+	margin-left: -1px;
+}
+
+.modal-loader:after {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 3;
+	width: 12px;
+	height: 4px;
+	margin: auto;
+	content: "";
+	background-image: url(data:image/gif;base64,R0lGODlhDAAEAPABAP///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJMgABACwAAAAADAAEAAACCoQRqXm42h48MhUAIfkECTIAAQAsBAAAAAQABAAAAgSEjwkFACH5BAUyAAEALAgAAAAEAAQAAAIEhI8JBQA7);
+	image-rendering: optimizeSpeed;
+}
+
+.modal {
+	display: inline-block;
+	max-height: 95%;
+	max-width: 95%;
+	vertical-align: middle;
+	margin: 0 auto;
+	overflow: auto;
+}
+
+.modal-iframe,
+.modal-image {
+	overflow: hidden;
+}
+
+.modal-iframe .media,
+.modal-iframe iframe {
+	max-height: 100%;
+	max-width: 100%;
+}
+
+.modal-iframe .media {
+	background-color: #fff;
+	margin-bottom: 0;
+}
+
+.modal-iframe.iframe-full {
+	height: 95%;
+}
+
+.iframe-full .media {
+	height: 100%;
+	padding: 0;
+}
+
+.modal-image > img {
+	max-height: 100%;
+}
+
+.modal-content {
+	max-height: 100%;
+	overflow: auto;
+	padding: 1rem;
+	background-color: white;
+	text-align: left;
+}
+
+[dir="rtl"] .modal-content {
+	text-align: right;
+}
+
+.modal-header,
+.modal-footer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	color: #fff;
+}
+
+.modal-header {
+	padding: 0 4.555rem;
+}
+
+.modal-footer {
+	top: auto;
+	bottom: 0;
+}
+
+.modal-close {
+	position: fixed;
+	top: 1px;
+	right: 1px;
+	z-index: 2;
+	display: inline-block;
+	padding: 1.245rem;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: white;
+}
+
+[dir="rtl"] .modal-close {
+	right: auto;
+	left: 1px;
+}
+
+.modal-direction {
+	position: fixed;
+	top: 49%;
+	left: 0;
+	z-index: 2;
+	display: block;
+	width: 3rem;
+	padding: 1rem;
+	color: white;
+	font-size: 2rem;
+	font-weight: bold;
+	text-align: center;
+}
+
+[dir="rtl"] .modal-direction {
+	right: 0;
+}
+
+.modal-direction.next {
+	left: auto;
+	right: 0;
+}
+
+[dir="rtl"] .modal-direction.next {
+	right: auto;
+	left: 0;
+}
+
+button.modal-close,
+button.modal-direction {
+	background-color: transparent;
+	border: none;
+}
+
+button.modal-close:hover,
+button.modal-direction:hover {
+	text-decoration: underline;
+}
+
+.hidden {
+	display: none !important;
+}
+
+.visuallyhidden {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
+	clip: auto;
+	height: auto;
+	margin: 0;
+	overflow: visible;
+	position: static;
+	width: auto;
+}
+
+.fade-out,
+.fade-in {
+	transition: opacity .3s;
+}
+
+.fade-out {
+	opacity: 0 !important;
+}
+
+.fade-in {
+	opacity: 1 !important;
+}
+
+.media {
+	height: 0;
+	height: auto;
+	margin-bottom: 1rem;
+	max-width: 100%;
+	overflow: hidden;
+	padding-bottom: 56.25%;
+	position: relative;
+}
+
+.media.media-scroll {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+::selection {
+	background: #b3d4fc;
+	text-shadow: none;
+}
+
+*, :before, :after {
+	box-sizing: inherit;
+}
+
+[data-lock], [data-lock] body {
+	height: 100%;
+	overflow: hidden;
+	-ms-touch-action: none;
+	touch-action: none;
+}
+
+.modal-ajax.container,
+.modal-iframe {
+	margin: 0 auto;
+}
+
+.modal-ajax.container,
+.modal-iframe {
+	max-width: 1140px;
+	width: calc(100% - 16px);
+}
+
+.clearfix:before,
+.modal-ajax.container:before,
+.modal-iframe:before,
+[class*="block-row-"]:before,
+.clearfix:after,
+.modal-ajax.container:after,
+.modal-iframe:after,
+[class*="block-row-"]:after {
+	content: "";
+	display: table;
+}
+
+.clearfix:after,
+.modal-ajax.container:after,
+.modal-iframe:after,
+[class*="block-row-"]:after {
+	clear: both;
+}
+
+.media iframe,
+.media object,
+.media embed,
+.media video {
+	background-color: transparent;
+	border: 0;
+	height: 100%;
+	left: 0;
+	margin: 0;
+	outline: none;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}

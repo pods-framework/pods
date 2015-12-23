@@ -311,3 +311,7 @@ input.pods-form-ui-field-type-color {
     clear: both;
     display: block;
 }
+
+.pods-related-add-new {
+    margin-top: 1em !important;
+}

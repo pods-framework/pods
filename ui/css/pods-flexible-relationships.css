@@ -1,0 +1,24 @@
+#wpadminbar, #adminmenuback, #adminmenuwrap, #preview-action, #wpfooter {
+	display: none;
+}
+
+html.wp-toolbar {
+	padding-top: 0 ;
+}
+
+#wpbody-content {
+	padding-bottom: 0;
+}
+
+.auto-fold #wpcontent, .auto-fold #wpfooter {
+	margin-left: 0;
+}
+
+#wpcontent {
+	padding: 0;
+	margin: 0 1.25em;
+}
+
+.wrap {
+	margin: 0;
+}

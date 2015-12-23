@@ -229,6 +229,99 @@ class PodsForm {
     }
 
     /**
+     * Output a flexible relationship button
+     *
+     * @param array $field Field options array
+     *
+     * @param int   $item_id
+     *
+     * @return string Button HTML
+     *
+     * @since 2.7
+     */
+    public static function flex_relationship( $field, $item_id ) {
+
+        $output = '';
+
+        // Early exit if any of:
+        //  * Not admin
+        //  * this isn't a flexible relationship enabled field
+        //  * we're already in a modal
+        if ( ! is_admin() || empty( $field[ 'type' ] ) || 'pick' != $field[ 'type' ] || empty( $field[ 'pick_flexible' ] ) || pods_is_modal_window() ) {
+            return $output;
+        }
+
+        wp_enqueue_style( 'responsive-modal' );
+        wp_enqueue_script( 'responsive-modal' );
+
+        // Set the file name and args based on the content type of the relationship
+        switch ( $field[ 'pick_object' ] ) {
+            case 'post_type':
+                $file_name = 'post-new.php';
+                $query_args = array(
+                    'post_type' => $field[ 'pick_val' ],
+                );
+                break;
+
+            case 'taxonomy':
+                $file_name = 'edit-tags.php';
+                $query_args = array(
+                    'taxonomy' => $field[ 'pick_val' ],
+                );
+                break;
+
+            case 'user':
+                $file_name = 'user-new.php';
+                $query_args = array();
+                break;
+
+            case 'pod':
+                $file_name = 'admin.php';
+                $query_args = array(
+                    'page'   => 'pods-manage-' . $field[ 'pick_val' ],
+                    'action' => 'add'
+                );
+                break;
+
+            // Something unsupported
+            default:
+                return $output;
+                break;
+        }
+
+        // Add args we always need
+        $query_args = array_merge(
+            $query_args,
+            array(
+                'pods_modal' => '1', // @todo: Replace string literal with defined constant
+            )
+        );
+
+        // Assemble the URL
+        $url = add_query_arg( $query_args, admin_url( $file_name ) );
+
+        ob_start();
+
+        ?>
+        <div class="podsform-flex-relationship-container">
+            <a href="<?php echo esc_url( $url ); ?>"
+                data-modal-show="1"
+                id="pods-related-add-new-<?php echo esc_attr( $field[ 'name' ] ); ?>"
+                class="button pods-related-add-new pods-modal"
+                data-pod-id="<?php echo esc_attr( $field[ 'pod_id' ] ); ?>"
+                data-field-id="<?php echo esc_attr( $field[ 'id' ] ); ?>"
+                data-item-id="<?php echo esc_attr( $item_id ); ?>"> Add New
+            </a>
+        </div>
+        <?php
+
+        $output = ob_get_clean();
+
+        // @todo: add a filter
+        return $output;
+    }
+
+    /**
      * Output field type 'db'
      *
      * Used for field names and other places where only [a-z0-9_] is accepted

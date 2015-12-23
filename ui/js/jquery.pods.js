@@ -237,6 +237,8 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
+                            $( document ).trigger( 'pods_submit_success' );
+
                             if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
                                 var id = d.match( /\d*$/, '' );
 

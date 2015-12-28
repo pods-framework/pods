@@ -72,7 +72,7 @@
                         errors.push( "Pod" );
                     }
                     if ( !slug || !slug.length ) {
-                        errors.push( "ID or Slug" );
+                        errors.push( "Slug or ID" );
                     }
                     if ( !field || !field.length ) {
                         errors.push( "Field" );

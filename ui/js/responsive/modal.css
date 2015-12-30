@@ -9,7 +9,7 @@
 	height: 100%;
 	overflow: hidden;
 	touch-action: none;
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: rgba(0, 0, 0, 0.7);
 	-webkit-overflow-scrolling: touch;
 	-webkit-backface-visibility: hidden;
 	text-align: center;
@@ -36,11 +36,11 @@
 	bottom: 0;
 	left: 0;
 	z-index: 3;
-	width: 20px;
-	height: 20px;
+	width: 12px;
+	height: 4px;
 	margin: auto;
 	content: "";
-	background-image: url(../../../../../../wp-includes/images/spinner.gif);
+	background-image: url(data:image/gif;base64,R0lGODlhDAAEAPABAP///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJMgABACwAAAAADAAEAAACCoQRqXm42h48MhUAIfkECTIAAQAsBAAAAAQABAAAAgSEjwkFACH5BAUyAAEALAgAAAAEAAQAAAIEhI8JBQA7);
 	image-rendering: optimizeSpeed;
 }
 
@@ -71,7 +71,6 @@
 
 .modal-iframe.iframe-full {
 	height: 95%;
-	box-shadow: 0 0 15px rgba(0, 0, 0, .25);
 }
 
 .iframe-full .media {

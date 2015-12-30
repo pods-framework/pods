@@ -1017,7 +1017,7 @@ class PodsAdmin {
                 ),
                 'menu_icon' => array(
                     'label' => __( 'Menu Icon', 'pods' ),
-                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="http://melchoyce.github.io/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
                     'type' => 'text',
                     'default' => '',
                     'depends-on' => array( 'show_in_menu' => true )
@@ -2536,7 +2536,7 @@ class PodsAdmin {
 				    'dependency' => true,
 			    ),
 			    'rest_base'   => array(
-				    'label'             => __( 'Rest Base', 'pods' ),
+				    'label'             => __( 'REST Base', 'pods' ),
 				    'help'              => __( 'This will form the url for the route.', 'pods' ),
 				    'type'              => 'text',
 				    'default'           => pods_v( 'name', $pod ),

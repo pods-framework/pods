@@ -1,4 +1,10 @@
-#wpadminbar, #adminmenuback, #adminmenuwrap, #preview-action, #wpfooter {
+#wpadminbar, 
+#adminmenuback, 
+#adminmenuwrap, 
+#preview-action, 
+#wpfooter,
+body.edit-tags-php #col-right,
+body.edit-tags-php .search-form {
 	display: none;
 }
 
@@ -19,6 +25,8 @@ html.wp-toolbar {
 	margin: 0;
 }
 
-/*body.edit-tags-php #col-right { display: none; }*/
-
-/*body.edit-tags-php #col-left { width: 100%; }*/
+body.edit-tags-php #col-left,
+body.edit-tags-php #col-left input,
+body.edit-tags-php #col-left textarea { 
+	width: 100%; 
+}

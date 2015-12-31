@@ -243,7 +243,7 @@ else
                         }
 
                         <?php if ( !empty( $limit_types ) ) : ?>
-                            if ( '<?php echo esc_js( implode( '\' != attachment.attributes.type && \'', explode( ',', $limit_types ) ) ); ?>' != attachment.attributes.type )
+                            if ( '<?php echo implode( '\' != attachment.attributes.type && \'', explode( ',', pods_slash( $limit_types ) ) ); ?>' != attachment.attributes.type )
                                 return;
                         <?php endif; ?>
 

@@ -732,7 +732,13 @@ class PodsField_Pick extends PodsField {
         if ( 0 == pods_var( self::$type . '_ajax', $options, 1 ) )
             $ajax = false;
 
-        if ( 'single' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
+		$pick_object = pods_v( 'pick_object', $options );
+		$pick_val = pods_v( 'pick_val', $options );
+
+	    if ( 1 == pods_var( self::$type . '_flexible', $options, 0 ) && ! is_admin() && ! pods_is_modal_window() && ! empty( $pick_object) ) {
+	        $field_type = 'flexible';
+	    }
+        elseif ( 'single' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
             if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'select';
             elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
@@ -770,8 +776,6 @@ class PodsField_Pick extends PodsField {
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
-
-        echo PodsForm::flex_relationship( $options, $id );
     }
 
     /**
@@ -1792,6 +1796,108 @@ class PodsField_Pick extends PodsField {
 
         return $data;
     }
+
+    /**
+     * Handle row output for flexible input
+     *
+     * @param array $params
+     *     array $attributes
+     *     int $limit
+     *     bool $editable
+     *     int $id
+     *     string $icon
+     *     string $name
+     *     bool $linked
+     *     string $link
+     *
+     * @return string
+     * @since 2.0
+     */
+	public function markup( $params ) {
+
+		$attributes = array();
+		$limit = 1;
+		$editable = true;
+		$id = null;
+		$icon = null;
+		$name = null;
+		$linked = false;
+		$link = null;
+
+		// Preserve current field type
+		$field_type = PodsForm::$field_type;
+
+		ob_start();
+
+		if ( empty( $id ) ) {
+			$id = '{{id}}';
+		}
+
+		if ( empty( $icon ) ) {
+			$icon = '{{icon}}';
+		} else {
+			$icon = esc_url( $icon );
+		}
+
+		if ( empty( $name ) ) {
+			$name = '{{name}}';
+		}
+
+		if ( empty( $link ) ) {
+			$link = '{{link}}';
+		}
+
+		$edit_link = '{{edit_link}}';
+
+		$editable = (boolean) $editable;
+		$linked   = (boolean) $linked;
+	?>
+		<li class="pods-flexible-item hidden" id="<?php echo esc_attr( $attributes['id'] ); ?>-item-<?php echo esc_attr( $id ); ?>">
+			<?php echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
+
+			<ul class="pods-flexible-item-meta">
+				<?php if ( 1 != $limit ) { ?>
+					<li class="pods-flexible-item-col pods-flexible-item-handle">Handle</li>
+				<?php } ?>
+
+				<li class="pods-flexible-item-col pods-flexible-item-icon">
+					<img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+				</li>
+
+				<li class="pods-flexible-item-col pods-flexible-item-name">
+					<?php echo( empty( $name ) ? '{{name}}' : $name ); ?>
+				</li>
+
+				<?php
+				if ( $linked ) {
+				?>
+					<li class="pods-flexible-item-col pods-flexible-item-view">
+						<a href="<?php echo esc_url( $link ); ?>" target="_blank"><?php _e( 'View', 'pods' ); ?></a>
+					</li>
+				<?php
+					}
+				?>
+
+				<?php
+					if ( $editable ) {
+				?>
+					<li class="pods-flexible-item-col pods-flexible-item-edit">
+						<a href="<?php echo esc_url( $edit_link ); ?>"><?php _e( 'Edit', 'pods' ); ?></a>
+					</li>
+				<?php
+					}
+				?>
+
+				<li class="pods-flexible-item-col pods-flexible-item-remove">
+					<a href="#remove"><?php _e( 'Remove', 'pods' ); ?></a>
+				</li>
+			</ul>
+		</li>
+	<?php
+		PodsForm::$field_type = $field_type;
+
+		return ob_get_clean();
+	}
 
     /**
      * AJAX call to refresh relationship field markup (supports adding new records modally)

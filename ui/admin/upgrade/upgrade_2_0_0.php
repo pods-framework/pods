@@ -36,7 +36,7 @@ global $wpdb;
                     <p>
                         <?php
                             $intro = __( 'Welcome to Pods 2.x! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>.', 'pods' )
-                                . ' ' . __( 'Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
+                                . ' ' . __( 'Due to a number of optimizations in Pods 2.x, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
 
                             echo $intro;
                         ?>

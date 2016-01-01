@@ -107,6 +107,10 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function admin_init () {
+        //--!! Prototype testing only
+        add_action( 'wp_ajax_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+        add_action( 'wp_ajax_nopriv_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+
         // AJAX for Relationship lookups
         add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
@@ -163,6 +167,15 @@ class PodsField_Pick extends PodsField {
                     ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() ) // Disable for now
                 ),
                 'dependency' => true
+            ),
+            self::$type . '_flexible'      => array(
+                'label'       => __( 'Flexible Relationships', 'pods' ),
+                'help'        => __( 'Enable Adding and Editing of related items in the form', 'pods' ),
+                'excludes-on' => array(
+                    self::$type . '_object' => array_merge( array( 'media', 'site', 'network' ), self::simple_objects() )
+                ),
+                'type'        => 'boolean',
+                'default'     => 0
             ),
             self::$type . '_taggable' => array(
                 'label' => __( 'Taggable', 'pods' ),
@@ -757,6 +770,8 @@ class PodsField_Pick extends PodsField {
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
+        echo PodsForm::flex_relationship( $options, $id );
     }
 
     /**
@@ -1776,6 +1791,41 @@ class PodsField_Pick extends PodsField {
         }
 
         return $data;
+    }
+
+    /**
+     * AJAX call to refresh relationship field markup (supports adding new records modally)
+     *
+     * @since 2.7
+     */
+    public function admin_ajax_relationship_popup () {
+
+        $data = pods_unslash( (array) $_POST );
+
+        // Get the field information
+        $params = array(
+            'pod_id' => $data[ 'pod_id' ],
+            'id'     => $data[ 'field_id' ]
+        );
+        $field = pods_api()->load_field( $params );
+
+        // Get Pods object for this item
+        $pod = pods( $field[ 'pod' ], $data[ 'item_id' ] );
+
+        // Get the relationship field's value(s)
+        $field_name = $field[ 'name' ];
+        $params = array(
+            'name'    => $field_name,
+            'in_form' => true
+        );
+        $value = $pod->field( $params);
+
+        // Build the markup and return it to the caller
+        $meta_field_name = 'pods_meta_' . $field_name;
+        $output = PodsForm::field( $meta_field_name, $value, 'pick', $field, $pod, $data[ 'item_id' ] );
+        echo $output;
+
+        die();
     }
 
     /**

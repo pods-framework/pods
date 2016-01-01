@@ -19,7 +19,7 @@
 
 .pods-field label {
     cursor: pointer;
-    display: inline-block;
+    display: block;
     padding: 0 0 4px 2px;
 }
 
@@ -310,4 +310,8 @@ input.pods-form-ui-field-type-color {
     content: “\00a0”;
     clear: both;
     display: block;
+}
+
+.pods-related-add-new {
+    margin-top: 1em !important;
 }

@@ -717,6 +717,10 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( !empty( $tags[ 'id' ] ) ) {
             $id = $tags[ 'id' ];
 
+            if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+                $id = pods_evaluate_tags( $id );
+            }
+
             if ( is_numeric( $id ) )
                 $id = absint( $id );
         }

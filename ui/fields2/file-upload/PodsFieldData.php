@@ -8,7 +8,7 @@ class PodsUIFieldData {
 	private $export_data = array();
 
 	/**
-	 * PodsControlData constructor.
+	 * PodsFieldData constructor.
 	 *
 	 * @param string $field_type
 	 * @param array  $data

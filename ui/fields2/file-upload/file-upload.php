@@ -8,7 +8,7 @@ wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
 wp_enqueue_script( 'backbone' );
-wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.min.js', array( 'backbone' ), '2.4.4', true );
+wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
 
 wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
 wp_enqueue_script( 'backbone.wreqr', PODS_URL . 'ui/js/marionette/backbone.wreqr.min.js', array( 'backbone' ), '1.0.2', true );
@@ -70,13 +70,13 @@ foreach ( $value as $id ) {
 }
 
 $field_meta = array(
-	'attributes' => array(
+	'field_attributes' => array(
 		'id'         => $attributes[ 'id' ],
 		'class'      => $attributes[ 'class' ],
 		'name'       => $attributes[ 'name' ],
-		'name-clean' => $attributes[ 'data-name-clean' ]
+		'name_clean' => $attributes[ 'data-name-clean' ]
 	),
-	'options' => $options
+	'field_options' => $options
 );
 include_once PODS_DIR . 'ui/fields2/file-upload/templates/file-upload-tpl.php';
 include_once PODS_DIR . 'ui/fields2/file-upload/PodsFieldData.php';

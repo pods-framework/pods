@@ -22,13 +22,15 @@
 			this.modelData = this.getOption( 'modelData' );
 			this.fieldMeta = this.getOption( 'fieldMeta' );
 
+			this.childViewOptions = this.fieldMeta;
+
 			this.collection = new Backbone.Collection( this.modelData );
 			this.model = new app.FileUploadModel();
 		},
 
 		onShow: function () {
-			var listView = new app.FileUploadList( { collection: this.collection } );
-			var formView = new app.FileUploadForm( { model: this.model, fieldMeta: this.fieldMeta } );
+			var listView = new app.FileUploadList( { collection: this.collection, fieldMeta: this.fieldMeta } );
+			var formView = new app.FileUploadForm( { fieldMeta: this.fieldMeta } );
 
 			this.showChildView( 'list', listView );
 			this.showChildView( 'form', formView );

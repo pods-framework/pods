@@ -5,7 +5,7 @@
 </script>
 
 <script type="text/template" id="file-upload-item-template">
-	<input name="@todo" data-name-clean="@todo" id="@todo" class="@todo" type="hidden" value="<%- id %>">
+	<input name="<%- attributes.name %>[<%- id %>][id]" data-name-clean="<%- attributes.name_clean %>-id" id="<%- attributes.id %>-<%- id %>-id" class="<%- attributes.class %>" type="hidden" value="<%- id %>" />
 	<ul class="pods-file-meta media-item">
 		<li class="pods-file-col pods-file-handle">
 			Handle

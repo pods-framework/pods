@@ -75,7 +75,8 @@ $field_meta = array(
 		'class'      => $attributes[ 'class' ],
 		'name'       => $attributes[ 'name' ],
 		'name-clean' => $attributes[ 'data-name-clean' ]
-	)
+	),
+	'options' => $options
 );
 include_once PODS_DIR . 'ui/fields2/file-upload/templates/file-upload-tpl.php';
 include_once PODS_DIR . 'ui/fields2/file-upload/PodsFieldData.php';

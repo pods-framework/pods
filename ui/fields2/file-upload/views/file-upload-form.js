@@ -14,6 +14,15 @@
 
 		triggers: {
 			'click @ui.button_add': 'add:file'
+		},
+
+		serializeData: function () {
+			var data = {};
+
+			data.attributes = this.options.fieldMeta[ 'field_attributes' ];
+			data.options = this.options.fieldMeta['field_options'];
+
+			return data;
 		}
 
 	} );

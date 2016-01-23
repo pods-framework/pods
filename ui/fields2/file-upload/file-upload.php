@@ -69,6 +69,76 @@ foreach ( $value as $id ) {
 	);
 }
 
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
+
+if ( 'images' == $limit_file_type ) {
+	$limit_types = 'image';
+	$limit_extensions = 'jpg,jpeg,png,gif';
+}
+elseif ( 'video' == $limit_file_type ) {
+	$limit_types = 'video';
+	$limit_extensions = 'mpg,mov,flv,mp4';
+}
+elseif ( 'audio' == $limit_file_type ) {
+	$limit_types = 'audio';
+	$limit_extensions = 'mp3,m4a,wav,wma';
+}
+elseif ( 'text' == $limit_file_type ) {
+	$limit_types = 'text';
+	$limit_extensions = 'txt,rtx,csv,tsv';
+}
+elseif ( 'any' == $limit_file_type ) {
+	$limit_types = '';
+	$limit_extensions = '*';
+}
+else {
+	$limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
+}
+$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
+$limit_extensions = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_extensions ), ',' );
+$mime_types = wp_get_mime_types();
+
+if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ) ) ) {
+	$new_limit_types = array();
+
+	$limit_types = explode( ',', $limit_types );
+
+	foreach ( $limit_types as $k => $limit_type ) {
+		if ( isset( $mime_types[ $limit_type ] ) ) {
+			$mime = explode( '/', $mime_types[ $limit_type ] );
+			$mime = $mime[ 0 ];
+
+			if ( !in_array( $mime, $new_limit_types ) )
+				$new_limit_types[] = $mime;
+		}
+		else {
+			$found = false;
+
+			foreach ( $mime_types as $type => $mime ) {
+				if ( false !== strpos( $type, $limit_type ) ) {
+					$mime = explode( '/', $mime );
+					$mime = $mime[ 0 ];
+
+					if ( !in_array( $mime, $new_limit_types ) ) {
+						$new_limit_types[] = $mime;
+					}
+					$found = true;
+				}
+			}
+
+			if ( !$found )
+				$new_limit_types[] = $limit_type;
+		}
+	}
+
+	if ( !empty( $new_limit_types ) )
+		$limit_types = implode( ',', $new_limit_types );
+}
+
+$options[ 'limit_types' ] = $limit_types;
 $field_meta = array(
 	'field_attributes' => array(
 		'id'         => $attributes[ 'id' ],

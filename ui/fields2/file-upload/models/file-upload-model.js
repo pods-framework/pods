@@ -4,10 +4,11 @@
 
 	app.FileUploadModel = Backbone.Model.extend( {
 		defaults: {
-			'id'  : 0,
-			'name': 'undefined',
-			'icon': '',
-			'link': false
+			'id'      : 0,
+			'icon'    : '',
+			'name'    : 'undefined',
+			'filename': 'undefined',
+			'link'    : false
 		}
 	} );
 

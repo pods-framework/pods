@@ -15,13 +15,10 @@
 			add: 'itemAdded'
 		},
 
-		modelData: {},
 		fieldMeta: {},
 
 		initialize: function () {
 			this.fieldMeta = this.getOption( 'fieldMeta' );
-
-			this.childViewOptions = this.fieldMeta;
 
 			this.collection = new Backbone.Collection( this.getOption( 'modelData' ) );
 			this.model = new app.FileUploadModel();

@@ -50,7 +50,7 @@
 
 			// set our settings
 			media_object = wp.media( {
-				title   : 'title_id',
+				title   : field_options[ 'file_modal_title' ],
 				multiple: ( 1 != field_options[ 'file_limit' ] ),
 				library : {
 					type: field_options[ 'limit_types' ]
@@ -58,7 +58,7 @@
 				// Customize the submit button.
 				button  : {
 					// Set the text of the button.
-					text: childView.ui.button_add.text() // @todo
+					text: field_options[ 'file_modal_add_button' ]
 				}
 			} );
 

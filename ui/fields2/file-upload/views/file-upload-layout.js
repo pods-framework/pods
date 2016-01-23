@@ -46,7 +46,7 @@
 
 			var default_ext = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;
 
-			wp.Uploader.defaults.filters.mime_types[0].extensions = field_options[ 'limit_types' ];
+			wp.Uploader.defaults.filters.mime_types[0].extensions = field_options[ 'limit_extensions' ];
 
 			// set our settings
 			media_object = wp.media( {

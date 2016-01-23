@@ -139,6 +139,7 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
 }
 
 $options[ 'limit_types' ] = $limit_types;
+$options[ 'limit_extensions' ] = $limit_extensions;
 $field_meta = array(
 	'field_attributes' => array(
 		'id'         => $attributes[ 'id' ],

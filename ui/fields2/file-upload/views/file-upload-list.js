@@ -24,15 +24,11 @@
 
 		serializeData: function () {
 			var data = this.model.toJSON();
-			data.attributes = this.options.field_attributes;
-			data.options = this.options.field_options;
+
+			data.attributes = this.options[ 'field_attributes' ];
+			data.options = this.options['field_options'];
 
 			return data;
-		},
-
-		initialize: function ( options ) {
-			this.fieldAttributes = options.field_attributes;
-			this.fieldOptions = options.field_options;
 		}
 
 	} );

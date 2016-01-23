@@ -9,13 +9,13 @@
 		className: 'pods-file hidden',
 
 		ui: {
-			remove: '.pods-file-remove'
+			button_remove: '.pods-file-remove'
 		},
 
 		template: _.template( $( '#file-upload-item-template' ).html() ),
 
 		triggers: {
-			'click @ui.remove': 'remove:file'
+			'click @ui.button_remove': 'remove:file'
 		},
 
 		modelEvents: {

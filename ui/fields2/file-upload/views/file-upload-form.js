@@ -7,13 +7,13 @@
 		tagName : 'div',
 
 		ui: {
-			button: '.pods-file-add'
+			button_add: '.pods-file-add'
 		},
 
 		template: _.template( $( '#file-upload-form-template' ).html() ),
 
 		triggers: {
-			'click @ui.button': 'add:file'
+			'click @ui.button_add': 'add:file'
 		}
 
 	} );

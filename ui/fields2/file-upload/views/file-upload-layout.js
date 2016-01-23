@@ -58,7 +58,7 @@
 				// Customize the submit button.
 				button  : {
 					// Set the text of the button.
-					text: childView.ui.button.text() // @todo
+					text: childView.ui.button_add.text() // @todo
 				}
 			} );
 

@@ -3,14 +3,29 @@
 	'use strict';
 
 	app.FileUploadItem = Mn.LayoutView.extend( {
-		tagName  : 'li',
+
+		tagName: 'li',
+
 		className: 'pods-file hidden',
-		template : _.template( $( '#file-upload-item-template' ).html() ),
+
+		ui: {
+			remove: '.pods-file-remove'
+		},
+
+		template: _.template( $( '#file-upload-item-template' ).html() ),
+
+		triggers: {
+			'click @ui.remove': 'remove:file'
+		},
+
+		modelEvents: {
+			change: 'render'
+		},
 
 		serializeData: function () {
 			var data = this.model.toJSON();
-			data.attributes = this.fieldAttributes;
-			data.options = this.fieldOptions;
+			data.attributes = this.options.field_attributes;
+			data.options = this.options.field_options;
 
 			return data;
 		},

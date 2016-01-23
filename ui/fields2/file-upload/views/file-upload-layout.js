@@ -35,6 +35,10 @@
 			this.showChildView( 'form', formView );
 		},
 
+		onChildviewRemoveFile: function( childView ) {
+			this.collection.remove( childView.model );
+		},
+
 		onChildviewAddFile: function ( childView ) {
 			var media_object;
 			var field_options = this.fieldMeta[ 'field_options' ];

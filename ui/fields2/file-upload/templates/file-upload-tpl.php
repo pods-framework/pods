@@ -16,8 +16,8 @@
 		<li class="pods-file-col pods-file-name">
 			<input type="text" value="<%- name %>" tabindex="2" maxlength="255">
 		</li>
-		<li class="pods-file-col pods-file-delete">
-			<a href="#delete">Delete</a>
+		<li class="pods-file-col pods-file-remove pods-file-delete">
+			<a href="#remove">Remove</a>
 		</li>
 	</ul>
 </script>

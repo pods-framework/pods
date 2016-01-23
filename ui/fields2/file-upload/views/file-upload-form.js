@@ -12,14 +12,8 @@
 
 		template: _.template( $( '#file-upload-form-template' ).html() ),
 
-		fieldMeta: {},
-
 		triggers: {
 			'click @ui.button': 'add:file'
-		},
-
-		modelEvents: {
-			change: 'render'
 		}
 
 	} );

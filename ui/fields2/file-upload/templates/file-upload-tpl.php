@@ -1,4 +1,3 @@
-<?php /* @global $attributes, $button_text */ ?>
 <script type="text/template" id="file-upload-layout-template">
 	<div class="pods-ui-list"></div>
 	<div class="pods-ui-form"></div>
@@ -23,5 +22,5 @@
 </script>
 
 <script type="text/template" id="file-upload-form-template">
-	<a class="button pods-file-add pods-media-add" href="#" tabindex="2"><?php echo $button_text; ?></a>
+	<a class="button pods-file-add pods-media-add" href="#" tabindex="2"><%= options.file_modal_add_button %></a>
 </script>

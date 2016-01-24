@@ -31,6 +31,7 @@ wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views
 ), PODS_VERSION, true );
 
 $file_limit = 1;
+// @todo: File limit not yet supported in the UI, it's either single or multiple
 if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) ) {
 	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 }
@@ -138,6 +139,7 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
 		$limit_types = implode( ',', $new_limit_types );
 }
 
+$options[ 'file_limit' ] = $file_limit; // @todo Why is the $options version of the story wrong?
 $options[ 'limit_types' ] = $limit_types;
 $options[ 'limit_extensions' ] = $limit_extensions;
 $field_meta = array(

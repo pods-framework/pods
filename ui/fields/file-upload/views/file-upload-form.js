@@ -16,6 +16,8 @@
 			'click @ui.button_add': 'add:file'
 		},
 
+		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+		// worry about marshalling that data around.
 		serializeData: function () {
 			var data = {};
 

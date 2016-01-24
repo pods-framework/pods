@@ -22,6 +22,8 @@
 			change: 'render'
 		},
 
+		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+		// worry about marshalling that data around.
 		serializeData: function () {
 			var data = this.model.toJSON();
 
@@ -38,6 +40,8 @@
 		className: 'pods-files pods-files-list',
 		childView: app.FileUploadItem,
 
+		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+		// worry about marshalling that data around.
 		initialize: function ( options ) {
 			this.childViewOptions = options.fieldMeta;
 		},

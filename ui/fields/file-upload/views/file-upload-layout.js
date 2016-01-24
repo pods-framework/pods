@@ -18,6 +18,8 @@
 		fieldMeta: {},
 
 		initialize: function () {
+			// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+			// worry about marshalling that data around.
 			this.fieldMeta = this.getOption( 'fieldMeta' );
 
 			this.collection = new Backbone.Collection( this.getOption( 'modelData' ) );
@@ -25,6 +27,8 @@
 		},
 
 		onShow: function () {
+			// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+			// worry about marshalling that data around.
 			var listView = new app.FileUploadList( { collection: this.collection, fieldMeta: this.fieldMeta } );
 			var formView = new app.FileUploadForm( { fieldMeta: this.fieldMeta } );
 
@@ -37,6 +41,7 @@
 		},
 
 		onChildviewAddFile: function ( childView ) {
+			// @todo: move this into an implementation specific module, plupload support should plug-in as well
 			var media_object;
 			var field_options = this.fieldMeta[ 'field_options' ];
 

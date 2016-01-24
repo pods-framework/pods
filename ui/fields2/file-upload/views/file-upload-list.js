@@ -40,7 +40,27 @@
 
 		initialize: function ( options ) {
 			this.childViewOptions = options.fieldMeta;
+		},
+
+		onAttach: function() {
+
+			// @todo
+			// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
+
+			// @todo: turn this into a list view behavior
+
+			if ( 1 != this.options['fieldMeta'][ 'field_options' ][ 'file_limit' ] ) {
+				// init sortable
+				this.$el.sortable( {
+					containment : 'parent',
+					axis: 'y',
+					scrollSensitivity : 40,
+					tolerance : 'pointer',
+					opacity : 0.6
+				} );
+			}
 		}
+
 	} );
 
 }( jQuery, pods_ui ) );

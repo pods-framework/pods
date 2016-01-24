@@ -91,14 +91,15 @@ class PodsField_File extends PodsField {
                     'pods_form_ui_field_file_uploader_options',
                     array(
                         'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
-                        'plupload' => __( 'Plupload', 'pods' )
+                        'plupload'   => __( 'Plupload', 'pods' ),
+                        'file-upload' => __( 'Prototype File Upload (Media Library)', 'pods' )
                     )
                 ),
                 'dependency' => true
             ),
             self::$type . '_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
                 'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
@@ -173,13 +174,13 @@ class PodsField_File extends PodsField {
             ),
             self::$type . '_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),
             self::$type . '_modal_add_button' => array(
                 'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
+                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
@@ -280,6 +281,13 @@ class PodsField_File extends PodsField {
             ?>
         <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
         <?php
+            return;
+        }
+
+        // @todo: Hacked into place for new file upload prototype
+        if ( 'file-upload' == pods_v( self::$type . '_uploader', $options ) ) {
+            $field_type = 'file-upload';
+            pods_view( PODS_DIR . 'ui/fields/file-upload/file-upload.php', compact( array_keys( get_defined_vars() ) ) );
             return;
         }
 

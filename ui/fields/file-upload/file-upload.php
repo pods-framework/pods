@@ -21,10 +21,10 @@ wp_enqueue_script( 'pods-ui', PODS_URL . 'ui/js/pods-ui.js', array(
 ), PODS_VERSION, true );
 wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', array( 'pods-ui' ), PODS_VERSION, true );
 
-wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields2/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields2/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields2/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields2/file-upload/views/file-upload-layout.js', array(
+wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views/file-upload-layout.js', array(
 	'file-upload-model',
 	'file-upload-form',
 	'file-upload-list'
@@ -149,8 +149,8 @@ $field_meta = array(
 	),
 	'field_options' => $options
 );
-include_once PODS_DIR . 'ui/fields2/file-upload/templates/file-upload-tpl.php';
-include_once PODS_DIR . 'ui/fields2/file-upload/PodsFieldData.php';
+include_once PODS_DIR . 'ui/fields/file-upload/templates/file-upload-tpl.php';
+include_once PODS_DIR . 'ui/fields/file-upload/PodsFieldData.php';
 
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>

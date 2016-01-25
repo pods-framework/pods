@@ -5,10 +5,10 @@
 
 <script type="text/template" id="file-upload-item-template">
 	<input
-		name="<%- attributes.name %>[<%- id %>][id]"
-		data-name-clean="<%- attributes.name_clean %>-id"
-		id="<%- attributes.id %>-<%- id %>-id"
-		class="<%- attributes.class %>"
+		name="<%- attr.name %>[<%- id %>][id]"
+		data-name-clean="<%- attr.name_clean %>-id"
+		id="<%- attr.id %>-<%- id %>-id"
+		class="<%- attr.class %>"
 		type="hidden"
 		value="<%- id %>" />
 	<ul class="pods-file-meta media-item">
@@ -23,10 +23,10 @@
 		<li class="pods-file-col pods-file-name">
 			<% if ( 0 != options.file_edit_title ) { %>
 				<input
-					name="<%- attributes.name %>[<%- id %>][title]"
-					data-name-clean="<%- attributes.name_clean %>-title"
-					id="pods-form-ui-<%- attributes.name_clean %>-<%- id %>-title"
-					class="pods-form-ui-field-type-text pods-form-ui-field-name-<%- attributes.name_clean %>-title"
+					name="<%- attr.name %>[<%- id %>][title]"
+					data-name-clean="<%- attr.name_clean %>-title"
+					id="pods-form-ui-<%- attr.name_clean %>-<%- id %>-title"
+					class="pods-form-ui-field-type-text pods-form-ui-field-name-<%- attr.name_clean %>-title"
 					type="text"
 					value="<%- name %>"
 					tabindex="2"
@@ -38,6 +38,9 @@
 		<li class="pods-file-col pods-file-remove pods-file-delete">
 			<a href="#remove">Remove</a>
 		</li>
+		<% if ( 0 != options.file_linked ) { %>
+			<li class="pods-file-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li>
+		<% } %>
 	</ul>
 </script>
 

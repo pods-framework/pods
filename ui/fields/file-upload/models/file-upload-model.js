@@ -11,9 +11,8 @@
 		defaults: {
 			'id'      : 0,
 			'icon'    : '',
-			'name'    : 'undefined',
-			'filename': 'undefined',
-			'link'    : false
+			'name'    : '',
+			'link'    : ''
 		}
 	} );
 

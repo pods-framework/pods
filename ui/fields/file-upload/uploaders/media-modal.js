@@ -70,10 +70,9 @@
 				}
 
 				new_files.push( {
-					id      : attachment[ 'id' ],
+					id      : attachment.attributes.id,
 					icon    : attachment_thumbnail,
 					name    : attachment.attributes.title,
-					filename: attachment.filename,
 					link    : attachment.attributes.url
 				} );
 			} );

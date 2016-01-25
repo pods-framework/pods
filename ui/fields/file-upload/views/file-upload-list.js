@@ -25,7 +25,7 @@
 		serializeData: function () {
 			var data = this.model.toJSON();
 
-			data.attributes = this.options[ 'field_attributes' ];
+			data.attr = this.options[ 'field_attributes' ];
 			data.options = this.options[ 'field_options' ];
 
 			return data;

@@ -70,8 +70,8 @@ foreach ( $value as $id ) {
 
 	$model_data[] = array(
 		'id'   => $id,
-		'name' => $title,
 		'icon' => $thumb[ 0 ],
+		'name' => $title,
 		'link' => $link
 	);
 }

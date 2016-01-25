@@ -32,12 +32,13 @@
 			this.showChildView( 'form', formView );
 		},
 
-		onChildviewRemoveFile: function( childView ) {
+		onChildviewRemoveFile: function ( childView ) {
 			this.collection.remove( childView.model );
 		},
 
 		onChildviewAddFile: function ( childView ) {
-			app.MediaModal.go( this.fieldMeta[ 'field_options' ], this.collection );
+			var uploader = new app.MediaModal( this.fieldMeta[ 'field_options' ], this.collection );
+			uploader.go();
 		}
 
 	} );

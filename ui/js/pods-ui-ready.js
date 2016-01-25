@@ -5,7 +5,7 @@ jQuery( function ( $ ) {
 	var PODS_UI_FIELDS = '.pods-ui-field';
 	var SCRIPT_TARGETS = 'script.data';
 
-	var fields = [];
+	pods_ui.fields = {};
 
 	/**
 	 * @param container
@@ -38,6 +38,7 @@ jQuery( function ( $ ) {
 
 		return this.each( function () {
 			var data = {};
+			var field_id;
 			var defaults = {
 				field_type: 'hidden'
 			};
@@ -52,7 +53,8 @@ jQuery( function ( $ ) {
 
 			// Merge inline data with the defaults and startup the new control
 			data = $.extend( defaults, data );
-			fields.push( field_factory( this, data ) );
+			field_id = data[ 'field_meta' ][ 'field_attributes' ][ 'id' ];
+			pods_ui.fields[ field_id ] = field_factory( this, data );
 		} );
 
 	};

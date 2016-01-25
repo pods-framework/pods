@@ -21,8 +21,8 @@
 		serializeData: function () {
 			var data = {};
 
-			data.attributes = this.options.fieldMeta[ 'field_attributes' ];
-			data.options = this.options.fieldMeta['field_options'];
+			data.attributes = this.options.field_meta[ 'field_attributes' ];
+			data.options = this.options.field_meta['field_options'];
 
 			return data;
 		}

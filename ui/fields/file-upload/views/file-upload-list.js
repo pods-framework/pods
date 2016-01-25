@@ -47,7 +47,7 @@
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
 		// worry about marshalling that data around.
 		initialize: function ( options ) {
-			this.childViewOptions = options.fieldMeta;
+			this.childViewOptions = options.field_meta;
 		},
 
 		onAttach: function () {
@@ -57,7 +57,7 @@
 
 			// @todo: turn this into a list view behavior
 
-			if ( 1 != this.options[ 'fieldMeta' ][ 'field_options' ][ 'file_limit' ] ) {
+			if ( 1 != this.options[ 'field_meta' ][ 'field_options' ][ 'file_limit' ] ) {
 				// init sortable
 				this.$el.sortable( {
 					containment      : 'parent',

@@ -21,23 +21,32 @@
 	 *
 	 */
 	app.FileUploadCollection = Backbone.Collection.extend( {
+		url: '',
+
 		model: app.FileUploadModel,
 
-		initialize: function () {
+		field_meta: {},
+
+		initialize: function ( models, field_meta ) {
+			this.field_meta = field_meta;
+
+			// add() will always be called once per model in the collection
 			this.listenTo( this, 'add', this.onCollectionAdd );
 		},
 
 		onCollectionAdd: function ( model, collection, options ) {
-			// @todo: we need access to the field's options in the collection as well to get to the file upload limit
-			this.truncateToFileLimit( 1 );
+			this.truncateToFileLimit( this.field_meta[ 'field_options' ][ 'file_limit' ] );
 		},
 
-		truncateToFileLimit: function( limit ) {
+		truncateToFileLimit: function ( limit ) {
+			var first_model;
 
 			if ( limit != UNLIMITED_FILES && this.length > limit ) {
 
-				// Over the item limit, so destroy the top (oldest) item, LIFO-style
-				this.remove( this.at( 0 ) );
+				// We've gone over the item limit, so destroy the top (oldest) item, LIFO-style
+				// Note: calling destroy() directly on the model will send a REST DELETE request, this bypasses that behavior
+				first_model = this.at( 0 );
+				first_model.trigger( 'destroy', first_model );
 			}
 		}
 

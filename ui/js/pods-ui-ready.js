@@ -18,9 +18,9 @@ jQuery( function ( $ ) {
 
 			case 'file-upload':
 				field_control = new pods_ui.FileUploadLayout( {
-					el       : container,
-					fieldMeta: data[ 'field_meta' ],
-					modelData: data[ 'model_data' ]
+					el        : container,
+					field_meta: data[ 'field_meta' ],
+					model_data : data[ 'model_data' ]
 				} );
 				field_control.render();
 				field_control.triggerMethod( 'show' );

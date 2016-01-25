@@ -11,10 +11,6 @@
 			form: '.pods-ui-form'
 		},
 
-		collectionEvents: {
-			add: 'enforceFileLimit'
-		},
-
 		fieldMeta: {},
 
 		initialize: function () {
@@ -22,7 +18,7 @@
 			// worry about marshalling that data around.
 			this.fieldMeta = this.getOption( 'fieldMeta' );
 
-			this.collection = new Backbone.Collection( this.getOption( 'modelData' ) );
+			this.collection = new app.FileUploadCollection( this.getOption( 'modelData' ) );
 			this.model = new app.FileUploadModel();
 		},
 
@@ -38,17 +34,6 @@
 
 		onChildviewRemoveFile: function( childView ) {
 			this.collection.remove( childView.model );
-		},
-
-		enforceFileLimit: function() {
-			var file_limit = this.options['fieldMeta'][ 'field_options' ][ 'file_limit' ];
-
-			// Over the file limit?
-			if ( 0 != file_limit && this.collection.length > file_limit ) {
-				this.collection.reset( this.collection.last( file_limit ) );
-				this.render();
-				this.triggerMethod( 'show' );
-			}
 		},
 
 		onChildviewAddFile: function ( childView ) {

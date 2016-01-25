@@ -12,7 +12,7 @@
 		},
 
 		collectionEvents: {
-			add: 'itemAdded'
+			add: 'enforceFileLimit'
 		},
 
 		fieldMeta: {},
@@ -38,6 +38,17 @@
 
 		onChildviewRemoveFile: function( childView ) {
 			this.collection.remove( childView.model );
+		},
+
+		enforceFileLimit: function() {
+			var file_limit = this.options['fieldMeta'][ 'field_options' ][ 'file_limit' ];
+
+			// Over the file limit?
+			if ( 0 != file_limit && this.collection.length > file_limit ) {
+				this.collection.reset( this.collection.last( file_limit ) );
+				this.render();
+				this.triggerMethod( 'show' );
+			}
 		},
 
 		onChildviewAddFile: function ( childView ) {
@@ -111,10 +122,6 @@
 
 			// Reset the allowed file extensions
 			wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = default_ext;
-		},
-
-		itemAdded: function () {
-
 		}
 
 	} );

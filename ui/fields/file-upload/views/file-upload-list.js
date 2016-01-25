@@ -18,10 +18,6 @@
 			'click @ui.button_remove': 'remove:file'
 		},
 
-		modelEvents: {
-			change: 'render'
-		},
-
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
 		// worry about marshalling that data around.
 		serializeData: function () {
@@ -37,7 +33,9 @@
 
 	app.FileUploadList = Mn.CollectionView.extend( {
 		tagName  : 'ul',
+
 		className: 'pods-files pods-files-list',
+
 		childView: app.FileUploadItem,
 
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to

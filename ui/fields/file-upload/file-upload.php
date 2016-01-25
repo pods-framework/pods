@@ -24,10 +24,12 @@ wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', a
 wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-media', PODS_URL . 'ui/fields/file-upload/uploaders/media-modal.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views/file-upload-layout.js', array(
 	'file-upload-model',
 	'file-upload-form',
-	'file-upload-list'
+	'file-upload-list',
+	'file-upload-media'
 ), PODS_VERSION, true );
 
 $file_limit = 1;

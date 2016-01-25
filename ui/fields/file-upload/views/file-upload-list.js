@@ -6,7 +6,6 @@
 	 *
 	 */
 	app.FileUploadItem = Mn.LayoutView.extend( {
-
 		tagName: 'li',
 
 		className: 'pods-file hidden',

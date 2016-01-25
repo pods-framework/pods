@@ -33,10 +33,14 @@ wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views
 ), PODS_VERSION, true );
 
 $file_limit = 1;
-// @todo: File limit not yet supported in the UI, it's either single or multiple
 if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) ) {
 	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 }
+
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
+$linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
 $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) );
 
@@ -71,11 +75,6 @@ foreach ( $value as $id ) {
 		'link' => $link
 	);
 }
-
-$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
-
-$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
-$linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
 if ( 'images' == $limit_file_type ) {
 	$limit_types = 'image';

@@ -28,6 +28,7 @@
 		},
 
 		onCollectionAdd: function ( model, collection, options ) {
+			// @todo: we need access to the field's options in the collection as well to get to the file upload limit
 			this.truncateToFileLimit( 1 );
 		},
 

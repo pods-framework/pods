@@ -36,8 +36,15 @@
 			this.collection.remove( childView.model );
 		},
 
-		onChildviewAddFile: function ( childView ) {
-			var uploader = new app.MediaModal( this.fieldMeta[ 'field_options' ], this.collection );
+		onChildviewAddFile: function () {
+			var uploader = new app.MediaModal( this.fieldMeta[ 'field_options' ] );
+			var collection = this.collection;
+
+			// @todo: define a common interface for the method(s) to be called and event(s) to be fired
+			$( uploader ).on( 'select', function ( e, data_object ) {
+				collection.add( data_object[ 'new_files' ] );
+			} );
+
 			uploader.go();
 		}
 

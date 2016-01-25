@@ -2,7 +2,7 @@
 (function ( $, app ) {
 	'use strict';
 
-	app.MediaModal = function ( field_options, file_collection ) {
+	app.MediaModal = function ( field_options ) {
 
 		this.media_object = {};
 
@@ -42,6 +42,8 @@
 		};
 
 		this.onMediaSelect = function () {
+			var new_files = [];
+			var return_object = {};
 
 			var selection = this.media_object.state().get( 'selection' );
 			if ( !selection ) {
@@ -67,7 +69,7 @@
 					}
 				}
 
-				file_collection.add( {
+				new_files.push( {
 					id      : attachment[ 'id' ],
 					icon    : attachment_thumbnail,
 					name    : attachment.attributes.title,
@@ -75,6 +77,10 @@
 					link    : attachment.attributes.url
 				} );
 			} );
+
+			// Fire an event with an array of models to be added
+			return_object[ 'new_files' ] = new_files;
+			$( this ).trigger( 'select', return_object );
 		};
 
 	};

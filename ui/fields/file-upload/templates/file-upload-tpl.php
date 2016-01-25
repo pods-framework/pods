@@ -12,14 +12,8 @@
 		type="hidden"
 		value="<%- id %>" />
 	<ul class="pods-file-meta media-item">
-		<% if ( 1 != options.file_limit ) { %>
-			<li class="pods-file-col pods-file-handle">
-				Handle
-			</li>
-		<% } %>
-		<li class="pods-file-col pods-file-icon">
-			<img class="pinkynail" src="<%- icon %>" alt="Icon">
-		</li>
+		<% if ( 1 != options.file_limit ) { %><li class="pods-file-col pods-file-handle">Handle</li><% } %>
+		<li class="pods-file-col pods-file-icon"><img class="pinkynail" src="<%- icon %>" alt="Icon"></li>
 		<li class="pods-file-col pods-file-name">
 			<% if ( 0 != options.file_edit_title ) { %>
 				<input
@@ -35,12 +29,8 @@
 				<%- name %>
 			<% } %>
 		</li>
-		<li class="pods-file-col pods-file-remove pods-file-delete">
-			<a href="#remove">Remove</a>
-		</li>
-		<% if ( 0 != options.file_linked ) { %>
-			<li class="pods-file-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li>
-		<% } %>
+		<li class="pods-file-col pods-file-remove pods-file-delete"><a href="#remove">Remove</a></li>
+		<% if ( 0 != options.file_linked ) { %><li class="pods-file-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li><% } %>
 	</ul>
 </script>
 

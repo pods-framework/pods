@@ -7,13 +7,13 @@
 		tagName : 'div',
 
 		ui: {
-			button_add: '.pods-file-add'
+			add_button: '.pods-file-add'
 		},
 
 		template: _.template( $( '#file-upload-form-template' ).html() ),
 
 		triggers: {
-			'click @ui.button_add': 'add:file'
+			'click @ui.add_button': 'add:file'
 		},
 
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to

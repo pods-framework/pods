@@ -11,13 +11,15 @@
 		className: 'pods-file hidden',
 
 		ui: {
-			button_remove: '.pods-file-remove'
+			drag_handle  : '.pods-file-handle',
+			download_link: '.pods-file-download',
+			remove_button: '.pods-file-remove'
 		},
 
 		template: _.template( $( '#file-upload-item-template' ).html() ),
 
 		triggers: {
-			'click @ui.button_remove': 'remove:file'
+			'click @ui.remove_button': 'remove:file'
 		},
 
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to

@@ -21,8 +21,6 @@
 	 *
 	 */
 	app.FileUploadCollection = Backbone.Collection.extend( {
-		url: '',
-
 		model: app.FileUploadModel,
 
 		field_meta: {},

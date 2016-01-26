@@ -4,6 +4,8 @@
  * @var $options         array
  * @var $field_type      string
  */
+wp_enqueue_style( 'pods-attach' );
+
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 

@@ -50,7 +50,7 @@
 
 			// Setup the uploader and listen for add:files events
 			this.uploader = this.setUploader();
-			this.listenTo( this.uploader, 'added:files', this.onAddFiles );
+			this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
 		},
 
 		onShow: function () {

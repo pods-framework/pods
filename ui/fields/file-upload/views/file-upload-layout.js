@@ -36,7 +36,10 @@
 				Uploader = app.MediaModal;
 			}
 
-			this.uploader = new Uploader( this, options );
+			this.uploader = new Uploader( {
+				main_layout  : this,
+				field_options: options
+			} );
 			return this.uploader;
 		},
 
@@ -69,7 +72,7 @@
 
 		onChildviewAddFileClick: function () {
 			// Invoke the uploader
-			this.uploader.go();
+			this.uploader.invoke();
 		},
 
 		onAddedFiles: function ( data ) {

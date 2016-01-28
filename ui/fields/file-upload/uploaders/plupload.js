@@ -5,6 +5,9 @@
 	app.Plupload = app.PodsFileUploader.extend( {
 		plupload: {},
 
+		/**
+		 * plupload needs references to a couple of elements already in the DOM
+		 */
 		initialize: function () {
 			this.listenTo( this.main_layout, 'attached:view', this.onAttachedView );
 		},
@@ -19,14 +22,13 @@
 			}
 		},
 
-		go: function () {
+		// @todo:
+		// This should never be called for plupload as it intercepts the button click event itself
+		invoke: function () {
 
-			console.log( 'go' );
 			this.plupload.bind( 'FilesAdded', function ( up, files ) {
 				$.each( files, function ( index, file ) {
-					console.log( index );
-					console.log( file );
-					//$( '#pods-form-ui-pods-meta-single-file-1 ul.pods-files-queue' ).show();
+					// @todo
 				} );
 
 				up.refresh();

@@ -5,7 +5,7 @@
 	app.MediaModal = app.PodsFileUploader.extend( {
 		media_object: {},
 
-		go: function () {
+		invoke: function () {
 
 			if ( wp.Uploader.defaults.filters.mime_types === undefined ) {
 				wp.Uploader.defaults.filters.mime_types = [ { title: 'Allowed Files', extensions: '*' } ];
@@ -42,8 +42,8 @@
 
 		onMediaSelect: function () {
 			var new_files = [];
-
 			var selection = this.media_object.state().get( 'selection' );
+
 			if ( !selection ) {
 				return;
 			}

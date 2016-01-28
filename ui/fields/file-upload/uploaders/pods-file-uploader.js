@@ -30,6 +30,7 @@
 
 			Mn.Object.call( this, options );
 		}
+
 	} );
 
 }( jQuery, pods_ui ) );

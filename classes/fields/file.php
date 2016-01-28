@@ -91,15 +91,14 @@ class PodsField_File extends PodsField {
                     'pods_form_ui_field_file_uploader_options',
                     array(
                         'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
-                        'plupload'   => __( 'Plupload', 'pods' ),
-                        'file-upload' => __( 'Prototype File Upload (Media Library)', 'pods' )
+                        'plupload'   => __( 'Plupload', 'pods' )
                     )
                 ),
                 'dependency' => true
             ),
             self::$type . '_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
@@ -174,13 +173,13 @@ class PodsField_File extends PodsField {
             ),
             self::$type . '_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachments' ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),
             self::$type . '_modal_add_button' => array(
                 'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => array( 'file-upload', 'attachment' ) ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
@@ -284,12 +283,12 @@ class PodsField_File extends PodsField {
             return;
         }
 
-        // @todo: Hacked into place for new file upload prototype
-        if ( 'file-upload' == pods_v( self::$type . '_uploader', $options ) ) {
-            $field_type = 'file-upload';
-            pods_view( PODS_DIR . 'ui/fields/file-upload/file-upload.php', compact( array_keys( get_defined_vars() ) ) );
-            return;
-        }
+        // @todo: Now One Field to Rule Them All
+        $field_type = 'file-upload';
+        pods_view( PODS_DIR . 'ui/fields/file-upload/file-upload.php', compact( array_keys( get_defined_vars() ) ) );
+        return;
+
+        // @todo: we're short-circuiting for prototyping above.  The actions below will need to be woven in
 
         // Use plupload if attachment isn't available
         if ( 'attachment' == pods_var( self::$type . '_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )

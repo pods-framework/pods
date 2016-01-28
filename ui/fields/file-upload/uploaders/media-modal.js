@@ -2,11 +2,10 @@
 (function ( $, app ) {
 	'use strict';
 
-	app.MediaModal = function ( field_options ) {
+	app.MediaModal = app.PodsFileUploader.extend( {
+		media_object: {},
 
-		this.media_object = {};
-
-		this.go = function () {
+		go: function () {
 
 			if ( wp.Uploader.defaults.filters.mime_types === undefined ) {
 				wp.Uploader.defaults.filters.mime_types = [ { title: 'Allowed Files', extensions: '*' } ];
@@ -14,19 +13,19 @@
 
 			var default_ext = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;
 
-			wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = field_options[ 'limit_extensions' ];
+			wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.field_options.limit_extensions;
 
 			// set our settings
 			this.media_object = wp.media( {
-				title   : field_options[ 'file_modal_title' ],
-				multiple: ( 1 != field_options[ 'file_limit' ] ),
+				title   : this.field_options.file_modal_title,
+				multiple: ( 1 != this.field_options.file_limit ),
 				library : {
-					type: field_options[ 'limit_types' ]
+					type: this.field_options.limit_types
 				},
 				// Customize the submit button.
 				button  : {
 					// Set the text of the button.
-					text: field_options[ 'file_modal_add_button' ]
+					text: this.field_options.file_modal_add_button
 				}
 			} );
 
@@ -35,15 +34,14 @@
 
 			// open the frame
 			this.media_object.open();
-			this.media_object.content.mode( field_options[ 'file_attachment_tab' ] );
+			this.media_object.content.mode( this.field_options.file_attachment_tab );
 
 			// Reset the allowed file extensions
 			wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = default_ext;
-		};
+		},
 
-		this.onMediaSelect = function () {
+		onMediaSelect: function () {
 			var new_files = [];
-			var return_object = {};
 
 			var selection = this.media_object.state().get( 'selection' );
 			if ( !selection ) {
@@ -70,18 +68,17 @@
 				}
 
 				new_files.push( {
-					id      : attachment.attributes.id,
-					icon    : attachment_thumbnail,
-					name    : attachment.attributes.title,
-					link    : attachment.attributes.url
+					id  : attachment.attributes.id,
+					icon: attachment_thumbnail,
+					name: attachment.attributes.title,
+					link: attachment.attributes.url
 				} );
 			} );
 
 			// Fire an event with an array of models to be added
-			return_object[ 'new_files' ] = new_files;
-			$( this ).trigger( 'select', return_object );
-		};
+			this.trigger( 'added:files', new_files );
+		}
 
-	};
+	} );
 
 }( jQuery, pods_ui ) );

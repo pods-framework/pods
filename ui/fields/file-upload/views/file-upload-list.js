@@ -19,7 +19,7 @@
 		template: _.template( $( '#file-upload-item-template' ).html() ),
 
 		triggers: {
-			'click @ui.remove_button': 'remove:file'
+			'click @ui.remove_button': 'remove:file:click'
 		},
 
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to

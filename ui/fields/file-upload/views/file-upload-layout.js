@@ -2,6 +2,8 @@
 (function ( $, app ) {
 	'use strict';
 
+	var PLUPLOAD_UPLOADER = 'plupload';
+
 	app.FileUploadLayout = Mn.LayoutView.extend( {
 
 		template: _.template( $( '#file-upload-layout-template' ).html() ),
@@ -13,6 +15,31 @@
 
 		field_meta: {},
 
+		uploader: {},
+
+		childEvents: {
+			// This callback will be called whenever a child is attached or emits a `attach` event
+			attach: function ( layoutView ) {
+				this.trigger( 'attached:view', layoutView );
+			}
+		},
+
+		setUploader: function () {
+			var options = this.field_meta[ 'field_options' ];
+			var Uploader;
+
+			// Determine which uploader object to use
+			if ( PLUPLOAD_UPLOADER == options[ 'file_uploader' ] ) {
+				Uploader = app.Plupload;
+			}
+			else {
+				Uploader = app.MediaModal;
+			}
+
+			this.uploader = new Uploader( this, options );
+			return this.uploader;
+		},
+
 		initialize: function () {
 			// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
 			// worry about marshalling that data around.
@@ -20,6 +47,10 @@
 
 			this.collection = new app.FileUploadCollection( this.getOption( 'model_data' ), this.field_meta );
 			this.model = new app.FileUploadModel();
+
+			// Setup the uploader and listen for add:files events
+			this.uploader = this.setUploader();
+			this.listenTo( this.uploader, 'added:files', this.onAddFiles );
 		},
 
 		onShow: function () {
@@ -32,21 +63,19 @@
 			this.showChildView( 'form', formView );
 		},
 
-		onChildviewRemoveFile: function ( childView ) {
+		onChildviewRemoveFileClick: function ( childView ) {
 			this.collection.remove( childView.model );
 		},
 
-		onChildviewAddFile: function () {
-			var uploader = new app.MediaModal( this.field_meta[ 'field_options' ] );
-			var collection = this.collection;
+		onChildviewAddFileClick: function () {
+			// Invoke the uploader
+			this.uploader.go();
+		},
 
-			// @todo: define a common interface for the method(s) to be called and event(s) to be fired
-			$( uploader ).on( 'select', function ( e, data_object ) {
-				collection.add( data_object[ 'new_files' ] );
-			} );
-
-			uploader.go();
+		onAddedFiles: function ( data ) {
+			this.collection.add( data );
 		}
 
 	} );
+
 }( jQuery, pods_ui ) );

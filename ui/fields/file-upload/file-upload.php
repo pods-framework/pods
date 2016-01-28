@@ -13,12 +13,12 @@ wp_enqueue_script( 'backbone' );
 wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
 
 wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
-wp_enqueue_script( 'backbone.wreqr', PODS_URL . 'ui/js/marionette/backbone.wreqr.min.js', array( 'backbone' ), '1.0.2', true );
-//wp_enqueue_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
-//wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array( 'marionette', 'backbone.radio' ), '1.0.2', true );
+//wp_enqueue_script( 'backbone.wreqr', PODS_URL . 'ui/js/marionette/backbone.wreqr.min.js', array( 'backbone' ), '1.0.2', true );
+wp_enqueue_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
+wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array( 'marionette', 'backbone.radio' ), '1.0.2', true );
 
 wp_enqueue_script( 'pods-ui', PODS_URL . 'ui/js/pods-ui.js', array(
-	'backbone.wreqr',
+	'backbone.radio',
 	'marionette'
 ), PODS_VERSION, true );
 wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', array( 'pods-ui' ), PODS_VERSION, true );
@@ -26,12 +26,17 @@ wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', a
 wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-media', PODS_URL . 'ui/fields/file-upload/uploaders/media-modal.js', array( 'pods-ui' ), PODS_VERSION, true );
+
+wp_enqueue_script( 'pods-file-uploader', PODS_URL . 'ui/fields/file-upload/uploaders/pods-file-uploader.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-media', PODS_URL . 'ui/fields/file-upload/uploaders/media-modal.js', array( 'pods-ui', 'pods-file-uploader' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-plupload', PODS_URL . 'ui/fields/file-upload/uploaders/plupload.js', array( 'pods-ui', 'pods-file-uploader' ), PODS_VERSION, true );
+
 wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views/file-upload-layout.js', array(
 	'file-upload-model',
-	'file-upload-form',
 	'file-upload-list',
-	'file-upload-media'
+	'file-upload-form',
+	'file-upload-media',
+	'file-upload-plupload'
 ), PODS_VERSION, true );
 
 $file_limit = 1;
@@ -54,6 +59,7 @@ if ( empty( $value ) ) {
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
 $attributes = array_map( 'esc_attr', $attributes );
+$css_id = $attributes[ 'id' ];
 
 $model_data = array();
 foreach ( $value as $id ) {
@@ -145,6 +151,33 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
 $options[ 'file_limit' ] = $file_limit; // @todo Why is the $options version of the story wrong?
 $options[ 'limit_types' ] = $limit_types;
 $options[ 'limit_extensions' ] = $limit_extensions;
+
+// @todo: plupload specific options need accommodation
+if ( 'plupload' == $options[ 'file_uploader' ] ) {
+	wp_enqueue_script( 'plupload-all' );
+
+	$options[ 'plupload_init' ] = array(
+		'runtimes' => 'html5,silverlight,flash,html4',
+		'url' => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
+		'file_data_name' => 'Filedata',
+		'multiple_queues' => false,
+		'max_file_size' => wp_max_upload_size() . 'b',
+		'flash_swf_url' => includes_url( 'js/plupload/plupload.flash.swf' ),
+		'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
+		'filters' => array( array( 'title' => __( 'Allowed Files', 'pods' ), 'extensions' => '*' ) ),
+		'multipart' => true,
+		'urlstream_upload' => true,
+		'multipart_params' => array(
+			'_wpnonce' => $field_nonce,
+			'action' => 'pods_upload',
+			'method' => 'upload',
+			'pod' => ( !is_object( $pod ) ? '0' : $pod->pod_id ),
+			'field' => $options[ 'id' ],
+			'uri' => $uri_hash
+		),
+	);
+}
+
 $field_meta = array(
 	'field_attributes' => array(
 		'id'         => $attributes[ 'id' ],
@@ -154,6 +187,7 @@ $field_meta = array(
 	),
 	'field_options' => $options
 );
+
 include_once PODS_DIR . 'ui/fields/file-upload/templates/file-upload-tpl.php';
 include_once PODS_DIR . 'ui/fields/file-upload/PodsFieldData.php';
 

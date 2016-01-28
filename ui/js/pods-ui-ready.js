@@ -20,7 +20,7 @@ jQuery( function ( $ ) {
 				field_control = new pods_ui.FileUploadLayout( {
 					el        : container,
 					field_meta: data[ 'field_meta' ],
-					model_data : data[ 'model_data' ]
+					model_data: data[ 'model_data' ]
 				} );
 				field_control.render();
 				field_control.triggerMethod( 'show' );

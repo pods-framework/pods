@@ -35,6 +35,5 @@
 </script>
 
 <script type="text/template" id="file-upload-form-template">
-	<?php // @todo: Mark our button so it's distinguishable for testing purposes ?>
-	<a class="button pods-file-add pods-media-add" href="#" tabindex="2" style="background-color: #f8bbbb;"><%= options.file_add_button %></a>
+	<a class="button pods-file-add pods-media-add" href="#" tabindex="2"><%= options.file_add_button %></a>
 </script>

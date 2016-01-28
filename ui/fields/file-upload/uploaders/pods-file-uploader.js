@@ -16,33 +16,33 @@
 	 * @param {string} field_options.limit_types
 	 * @param {string} field_options.file_attachment_tab
 	 *
-	 * @param {object} field_options.plupload_init
-	 * @param {object} field_options.plupload_init.browse_button
+	 * @param {Object} field_options.plupload_init
+	 * @param {Object} field_options.plupload_init.browse_button
 	 *
 	 * @class
 	 */
 	app.PodsFileUploader = function ( main_layout, field_options ) {
-		// Magically set a couple properties
+		// Magically set a couple object properties
 		this.main_layout = main_layout;
 		this.field_options = field_options;
 
 		this.initialize.apply( this, null );
 	};
 
-	// Use Marionette's extend
+	// Use Marionette's extend so other objects can extend this one
 	app.PodsFileUploader.extend = Mn.extend;
 
-	// Ensure it can trigger events with Backbone.Events
+	// Ensure we can trigger/listenTo events with Backbone.Events
 	_.extend( app.PodsFileUploader.prototype, Backbone.Events, {
 
 		// no-op methods intended to be overridden by classes that extend from this base
-		initialize: function(){ return; },
-		go: function(){ return; },
+		initialize: function () { return; },
+		go: function () { return; },
 
 		destroy: function ( options ) {
 			this.stopListening();
 			return this;
 		}
-	});
+	} );
 
 }( jQuery, pods_ui ) );

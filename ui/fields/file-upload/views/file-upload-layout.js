@@ -23,7 +23,7 @@
 			/**
 			 * Called whenever a child is attached or emits an `attach` event.
 			 *
-			 * plupload need access to a couple of physical DOM nodes but we build them dynamically from a single
+			 * plupload needs access to a couple of physical DOM nodes but we build them dynamically from a single
 			 * template.  File uploaders can listen for this event and locate specific DOM elements they need once
 			 * they've been attached to the document.
 			 */
@@ -60,7 +60,7 @@
 			this.collection = new app.FileUploadCollection( this.getOption( 'model_data' ), this.field_meta );
 			this.model = new app.FileUploadModel();
 
-			// Setup the uploader and listen for add:files events
+			// Setup the uploader and listen for a response event
 			this.uploader = this.setUploader();
 			this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
 		},

@@ -3,7 +3,7 @@
 	'use strict';
 
 	/**
-	 *
+	 * Individual list items, representing a single file
 	 */
 	app.FileUploadItem = Mn.LayoutView.extend( {
 		tagName: 'li',
@@ -22,8 +22,12 @@
 			'click @ui.remove_button': 'remove:file:click'
 		},
 
-		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-		// worry about marshalling that data around.
+		/**
+		 * @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
+		 * worry about marshalling that data around.
+		 *
+		 * The return value here is what will be made available to the template
+		 */
 		serializeData: function () {
 			var data = this.model.toJSON();
 
@@ -36,7 +40,7 @@
 	} );
 
 	/**
-	 *
+	 * The file list container
 	 */
 	app.FileUploadList = Mn.CollectionView.extend( {
 		tagName: 'ul',

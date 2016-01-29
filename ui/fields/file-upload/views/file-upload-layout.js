@@ -10,8 +10,9 @@
 		template: _.template( $( '#file-upload-layout-template' ).html() ),
 
 		regions: {
-			list: '.pods-ui-list',
-			form: '.pods-ui-form'
+			list : '.pods-ui-file-list',
+			queue: '.pods-ui-file-queue',
+			form : '.pods-ui-form'
 		},
 
 		// @todo: things to be yanked when we abstract our field data needs
@@ -63,6 +64,7 @@
 			// Setup the uploader and listen for a response event
 			this.uploader = this.setUploader();
 			this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
+			this.listenTo( this.uploader, 'added:queue', this.onAddedQueue );
 		},
 
 		onShow: function () {
@@ -102,6 +104,12 @@
 		 */
 		onAddedFiles: function ( data ) {
 			this.collection.add( data );
+		},
+
+		onAddedQueue: function ( data ) {
+			var collection = new Backbone.Collection( data );
+			var view = new app.FileUploadQueue( { collection: collection } );
+			this.showChildView( 'queue', view );
 		}
 
 	} );

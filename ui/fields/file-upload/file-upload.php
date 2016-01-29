@@ -26,6 +26,7 @@ wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', a
 wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
+wp_enqueue_script( 'file-upload-queue', PODS_URL . 'ui/fields/file-upload/views/file-upload-queue.js', array( 'pods-ui' ), PODS_VERSION, true );
 
 wp_enqueue_script( 'pods-file-uploader', PODS_URL . 'ui/fields/file-upload/uploaders/pods-file-uploader.js', array( 'pods-ui' ), PODS_VERSION, true );
 wp_enqueue_script( 'file-upload-media', PODS_URL . 'ui/fields/file-upload/uploaders/media-modal.js', array( 'pods-ui', 'pods-file-uploader' ), PODS_VERSION, true );
@@ -35,6 +36,7 @@ wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views
 	'file-upload-model',
 	'file-upload-list',
 	'file-upload-form',
+	'file-upload-queue',
 	'file-upload-media',
 	'file-upload-plupload'
 ), PODS_VERSION, true );
@@ -155,6 +157,14 @@ $options[ 'limit_extensions' ] = $limit_extensions;
 // @todo: plupload specific options need accommodation
 if ( 'plupload' == $options[ 'file_uploader' ] ) {
 	wp_enqueue_script( 'plupload-all' );
+
+	$uid = @session_id();
+
+	if ( is_user_logged_in() )
+		$uid = 'user_' . get_current_user_id();
+
+	$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+	$field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
 	$options[ 'plupload_init' ] = array(
 		'runtimes' => 'html5,silverlight,flash,html4',

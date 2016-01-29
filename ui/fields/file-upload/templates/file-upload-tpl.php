@@ -1,5 +1,6 @@
 <script type="text/template" id="file-upload-layout-template">
-	<div class="pods-ui-list"></div>
+	<div class="pods-ui-file-list"></div>
+	<div class="pods-ui-file-queue"></div>
 	<div class="pods-ui-form"></div>
 </script>
 
@@ -31,6 +32,17 @@
 		</li>
 		<li class="pods-file-col pods-file-remove pods-file-delete"><a href="#remove">Remove</a></li>
 		<% if ( 0 != options.file_linked ) { %><li class="pods-file-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li><% } %>
+	</ul>
+</script>
+
+<script type="text/template" id="file-upload-queue-template">
+	<ul class="pods-file-meta media-item">
+		<li class="pods-file-col pods-progress"><div class="progress-bar" /></li>
+		<li class="pods-file-col pods-file-name"><%- filename %></li>
+	</ul>
+	<ul class="pods-files pods-files-queue">
+		<li class="pods-file" id="<%- id %>">
+		</li>
 	</ul>
 </script>
 

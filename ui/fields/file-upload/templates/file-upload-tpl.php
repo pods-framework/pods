@@ -40,10 +40,6 @@
 		<li class="pods-file-col pods-progress"><div class="progress-bar" /></li>
 		<li class="pods-file-col pods-file-name"><%- filename %></li>
 	</ul>
-	<ul class="pods-files pods-files-queue">
-		<li class="pods-file" id="<%- id %>">
-		</li>
-	</ul>
 </script>
 
 <script type="text/template" id="file-upload-form-template">

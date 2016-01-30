@@ -2,17 +2,27 @@
 (function ( $, app ) {
 	'use strict';
 
+	app.FileUploadQueueModel = Backbone.Model.extend( {
+		defaults: {
+			id: 0,
+			filename: '',
+			progress: 0
+		}
+	} );
+
 	/**
 	 *
 	 */
 	app.FileUploadQueueItem = Mn.LayoutView.extend( {
+		model: app.FileUploadQueueModel,
+
 		tagName: 'li',
 
 		attributes: function () {
 			// Return model data
 			return {
-				class: 'pods-file',
-				id   : this.model.get( 'item_id' )
+				class   : 'pods-file',
+				id      : this.model.get( 'id' )
 			};
 		},
 

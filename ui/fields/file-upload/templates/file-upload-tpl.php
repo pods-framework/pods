@@ -1,5 +1,6 @@
 <script type="text/template" id="file-upload-layout-template">
 	<div class="pods-ui-file-list"></div>
+	<div class="pods-ui-file-utility"></div>
 	<div class="pods-ui-form"></div>
 </script>
 
@@ -34,13 +35,14 @@
 	</ul>
 </script>
 
-<script type="text/template" id="file-upload-queue-template">
-	<ul class="pods-file-meta media-item">
-		<li class="pods-file-col pods-progress"><div class="progress-bar" /></li>
-		<li class="pods-file-col pods-file-name"><%- filename %></li>
-	</ul>
-</script>
-
 <script type="text/template" id="file-upload-form-template">
 	<a class="button pods-file-add pods-media-add" href="#" tabindex="2"><%= options.file_add_button %></a>
+</script>
+
+<script type="text/template" id="file-upload-queue-template">
+	<ul class="pods-file-meta media-item">
+		<li class="pods-file-col pods-progress"><div class="progress-bar"></div></li>
+		<li class="pods-file-col pods-file-name"><%- filename %></li>
+	</ul>
+	<div class="hidden error"></div>
 </script>

@@ -39,6 +39,7 @@ cache:
     # composer
     - vendor
     - $HOME/.composer/cache
+    - apt
 
 before_script:
     # if not HHVM, disable xdebug (speeds up things)

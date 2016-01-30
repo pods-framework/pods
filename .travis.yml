@@ -54,7 +54,7 @@ script:
 
 after_script:
     # Code Coverage for Scrutinizer
-    - if [[ "$COVERAGE" == "1" ]];; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml; fi
+    - if [[ "$COVERAGE" == "1" ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml; fi
     # Code Coverage with PHP CodeSniffer
     - if [[ "$PHPLINT" == "1" ]]; then vendor/bin/phpcs -v; fi
 

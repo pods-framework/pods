@@ -8,7 +8,6 @@ tools:
             standard: WordPress
     
 tools:
-
     php_mess_detector: 
         config:
             code_size_rules:
@@ -67,3 +66,7 @@ checks:
         no_error_suppression: false
         return_doc_comments: false
         property_assignments: false
+
+tools:
+    external_code_coverage:
+        timeout: 3600   # Timeout in seconds 1 hour is 3600 seconds 

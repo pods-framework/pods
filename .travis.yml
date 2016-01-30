@@ -6,10 +6,10 @@ php:
     - 7.0
 
 env:
-    - WP_VERSION=bleeding WP_MULTISITE=0
-    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=bleeding WP_MULTISITE=0
+    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
 
 matrix:
     allow_failures:

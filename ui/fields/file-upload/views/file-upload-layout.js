@@ -11,7 +11,6 @@
 
 		regions: {
 			list : '.pods-ui-file-list',
-			queue: '.pods-ui-file-queue',
 			form : '.pods-ui-form'
 		},
 

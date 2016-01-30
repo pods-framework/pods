@@ -1,6 +1,5 @@
 <script type="text/template" id="file-upload-layout-template">
 	<div class="pods-ui-file-list"></div>
-	<div class="pods-ui-file-queue"></div>
 	<div class="pods-ui-form"></div>
 </script>
 

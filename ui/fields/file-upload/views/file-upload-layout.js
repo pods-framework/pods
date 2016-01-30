@@ -64,7 +64,6 @@
 			// Setup the uploader and listen for a response event
 			this.uploader = this.setUploader();
 			this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
-			this.listenTo( this.uploader, 'added:queue', this.onAddedQueue );
 		},
 
 		onShow: function () {
@@ -104,12 +103,6 @@
 		 */
 		onAddedFiles: function ( data ) {
 			this.collection.add( data );
-		},
-
-		onAddedQueue: function ( data ) {
-			var collection = new Backbone.Collection( data );
-			var view = new app.FileUploadQueue( { collection: collection } );
-			this.showChildView( 'queue', view );
 		}
 
 	} );

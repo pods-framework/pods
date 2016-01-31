@@ -23,29 +23,33 @@
 		 * @param files
 		 */
 		onFilesAdded: function ( up, files ) {
-			var new_view,
-				file_queue = [];
+			var model,
+				collection,
+				view;
 
-			// Assemble the data for the file queue
+			// Assemble the collection data for the file queue
+			collection = new Backbone.Collection();
 			$.each( files, function ( index, file ) {
-				file_queue.push( {
+				model = new app.FileUploadQueueModel( {
 					id      : file.id,
 					filename: file.name
 				} );
+
+				collection.add( model );
 			} );
 
 			// Create a new view based on the collection
-			this.queue_collection = new Backbone.Collection( file_queue );
-			new_view = new app.FileUploadQueue( { collection: this.queue_collection } );
-			new_view.render();  // Generate the HTML, not attached to the DOM yet
+			view = new app.FileUploadQueue( { collection: collection } );
+			view.render();  // Generate the HTML, not attached to the DOM yet
 
 			// Reset the region in case any error messages are hanging around from a previous upload
 			// and show the new file upload queue
 			this.ui_region.reset();
-			this.ui_region.show( new_view );
+			this.ui_region.show( view );
 
-			// Stash a reference for other callbacks
-			this.queue_view = new_view;
+			// Stash references
+			this.queue_view = view;  // @todo: try to do everything through the collection
+			this.queue_collection = collection;
 
 			up.refresh();
 			up.start();
@@ -57,8 +61,10 @@
 		 * @param file
 		 */
 		onUploadProgress: function ( up, file ) {
-			var progress_bar = this.queue_view.$el.find( '#' + file.id + ' .progress-bar' );
-			progress_bar.css( 'width', file.percent + '%' );
+			var model = this.queue_collection.get( file.id );
+
+			model.set( { progress: file.percent } );
+			this.queue_view.render();
 		},
 
 		/**
@@ -68,11 +74,9 @@
 		 * @param resp
 		 */
 		onFilesUploaded: function ( up, file, resp ) {
-			var new_file = [],
-				file_div = $( '#' + file.id ),
-				progress_bar_column = file_div.find( '.pods-progress' ),
-				error_msg_container = file_div.find( '.error' ),
-				response = resp.response;
+			var response = resp.response,
+				new_file = [],
+				model = this.queue_collection.get( file.id );
 
 			// Error condition 1
 			if ( "Error: " == resp.response.substr( 0, 7 ) ) {
@@ -81,8 +85,11 @@
 					console.log( response );
 				}
 
-				progress_bar_column.hide();
-				error_msg_container.text( response );
+				model.set( {
+					progress : 0,
+					error_msg: response
+				} );
+				this.queue_view.render();
 			}
 			// Error condition 2
 			else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
@@ -91,8 +98,11 @@
 					console.log( response );
 				}
 
-				progress_bar_column.hide();
-				error_msg_container.text( response ).show();
+				model.set( {
+					progress : 0,
+					error_msg: response
+				} );
+				this.queue_view.render();
 			}
 			else {
 				var json = response.match( /{.*}$/ );
@@ -111,11 +121,14 @@
 					if ( window.console ) {
 						console.log( json );
 					}
-					error_msg_container.text( 'There was an issue with the file upload, please try again.' );
+
+					model.set( {
+						progress: 0,
+						error_msg: 'There was an issue with the file upload, please try again.'
+					} );
+					this.queue_view.render();
 					return;
 				}
-
-				file_div.fadeOut( 800 ).remove();
 
 				new_file = {
 					id  : json.ID,
@@ -124,6 +137,8 @@
 					link: json.link
 				};
 
+				// Remove the file from the upload queue model and trigger an event for the hosting container
+				model.trigger( 'destroy', model );
 				this.trigger( 'added:files', new_file );
 			}
 		},

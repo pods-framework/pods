@@ -4,9 +4,10 @@
 
 	app.FileUploadQueueModel = Backbone.Model.extend( {
 		defaults: {
-			id: 0,
-			filename: '',
-			progress: 0
+			id       : 0,
+			filename : '',
+			progress : 0,
+			error_msg: ''
 		}
 	} );
 
@@ -19,10 +20,9 @@
 		tagName: 'li',
 
 		attributes: function () {
-			// Return model data
 			return {
-				class   : 'pods-file',
-				id      : this.model.get( 'id' )
+				class: 'pods-file',
+				id   : this.model.get( 'id' )
 			};
 		},
 

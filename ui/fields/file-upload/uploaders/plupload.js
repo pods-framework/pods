@@ -48,7 +48,6 @@
 			this.ui_region.show( view );
 
 			// Stash references
-			this.queue_view = view;  // @todo: try to do everything through the collection
 			this.queue_collection = collection;
 
 			up.refresh();
@@ -64,7 +63,6 @@
 			var model = this.queue_collection.get( file.id );
 
 			model.set( { progress: file.percent } );
-			this.queue_view.render();
 		},
 
 		/**
@@ -89,7 +87,6 @@
 					progress : 0,
 					error_msg: response
 				} );
-				this.queue_view.render();
 			}
 			// Error condition 2
 			else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
@@ -102,7 +99,6 @@
 					progress : 0,
 					error_msg: response
 				} );
-				this.queue_view.render();
 			}
 			else {
 				var json = response.match( /{.*}$/ );
@@ -126,7 +122,6 @@
 						progress: 0,
 						error_msg: 'There was an issue with the file upload, please try again.'
 					} );
-					this.queue_view.render();
 					return;
 				}
 

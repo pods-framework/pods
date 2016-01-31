@@ -19,6 +19,8 @@
 
 		tagName: 'li',
 
+		template: _.template( $( '#file-upload-queue-template' ).html() ),
+
 		attributes: function () {
 			return {
 				class: 'pods-file',
@@ -26,7 +28,14 @@
 			};
 		},
 
-		template: _.template( $( '#file-upload-queue-template' ).html() )
+		modelEvents: {
+			'change': 'onModelChanged'
+		},
+
+		onModelChanged: function() {
+			this.render();
+		}
+
 	} );
 
 	/**

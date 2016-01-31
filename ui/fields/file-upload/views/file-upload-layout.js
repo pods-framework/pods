@@ -65,7 +65,7 @@
 			this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
 		},
 
-		onShow: function () {
+		onRender: function () {
 			// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
 			// worry about marshalling that data around.
 			var listView = new app.FileUploadList( { collection: this.collection, field_meta: this.field_meta } );

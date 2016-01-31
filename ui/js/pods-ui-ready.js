@@ -23,8 +23,6 @@ jQuery( function ( $ ) {
 					model_data: data[ 'model_data' ]
 				} );
 				field_control.render();
-				field_control.triggerMethod( 'show' );
-
 				break;
 		}
 

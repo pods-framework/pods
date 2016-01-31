@@ -6,14 +6,17 @@
 		plupload: {},
 
 		initialize: function () {
+
+			// Set the browse button argument for plupload... it's required
 			this.field_options.plupload_init.browse_button = this.browse_button;
+
 			this.plupload = new plupload.Uploader( this.field_options.plupload_init );
 			this.plupload.init();
 
-			// name, callback, context
+			// Setup all callbacks: ( event_name, callback, context )
 			this.plupload.bind( 'FilesAdded', this.onFilesAdded, this );
 			this.plupload.bind( 'UploadProgress', this.onUploadProgress, this );
-			this.plupload.bind( 'FileUploaded', this.onFilesUploaded, this );
+			this.plupload.bind( 'FileUploaded', this.onFileUploaded, this );
 		},
 
 		/**
@@ -61,7 +64,6 @@
 		 */
 		onUploadProgress: function ( up, file ) {
 			var model = this.queue_collection.get( file.id );
-
 			model.set( { progress: file.percent } );
 		},
 
@@ -71,7 +73,7 @@
 		 * @param file
 		 * @param resp
 		 */
-		onFilesUploaded: function ( up, file, resp ) {
+		onFileUploaded: function ( up, file, resp ) {
 			var response = resp.response,
 				new_file = [],
 				model = this.queue_collection.get( file.id );

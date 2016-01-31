@@ -41,7 +41,9 @@
 
 <script type="text/template" id="file-upload-queue-template">
 	<ul class="pods-file-meta media-item">
-		<% if ( '' === error_msg ) { %><li class="pods-file-col pods-progress"><div class="progress-bar" style="width: <%- progress %>%;"></div></li><% } %>
+		<% if ( '' === error_msg ) { %>
+			<li class="pods-file-col pods-progress"><div class="progress-bar" style="width: <%- progress %>%;"></div></li>
+		<% } %>
 		<li class="pods-file-col pods-file-name"><%- filename %></li>
 	</ul>
 	<% if ( '' !== error_msg ) { %><div class="error"><%- error_msg %></div><% } %>

@@ -5,27 +5,15 @@
 	app.Plupload = app.PodsFileUploader.extend( {
 		plupload: {},
 
-		/**
-		 * plupload needs references to a couple of elements already in the DOM
-		 */
 		initialize: function () {
-			this.listenTo( this.main_layout, 'attached:view', this.onAttachedView );
-		},
+			this.field_options.plupload_init.browse_button = this.browse_button;
+			this.plupload = new plupload.Uploader( this.field_options.plupload_init );
+			this.plupload.init();
 
-		onAttachedView: function ( layoutView ) {
-			var button = layoutView.$el.find( '.pods-file-add' );
-
-			//console.log( 'attached ' + layoutView.el.outerHTML );
-			if ( button.length > 0 ) {
-				this.field_options.plupload_init.browse_button = button[ 0 ];
-				this.plupload = new plupload.Uploader( this.field_options.plupload_init );
-				this.plupload.init();
-
-				// name, callback, context
-				this.plupload.bind( 'FilesAdded', this.onFilesAdded, this );
-				this.plupload.bind( 'UploadProgress', this.onUploadProgress, this );
-				this.plupload.bind( 'FileUploaded', this.onFilesUploaded, this );
-			}
+			// name, callback, context
+			this.plupload.bind( 'FilesAdded', this.onFilesAdded, this );
+			this.plupload.bind( 'UploadProgress', this.onUploadProgress, this );
+			this.plupload.bind( 'FileUploaded', this.onFilesUploaded, this );
 		},
 
 		/**
@@ -36,8 +24,7 @@
 		 */
 		onFilesAdded: function ( up, files ) {
 			var new_view,
-				file_queue = [],
-				main_layout = this.main_layout;
+				file_queue = [];
 
 			// Assemble the data for the file queue
 			$.each( files, function ( index, file ) {
@@ -52,14 +39,10 @@
 			new_view = new app.FileUploadQueue( { collection: this.queue_collection } );
 			new_view.render();  // Generate the HTML, not attached to the DOM yet
 
-			// Remove any existing region just in case
-			if ( main_layout.getRegion( 'queue' ) !== undefined ) {
-				main_layout.removeRegion( 'queue' );
-			}
-
-			// Add a region to the main layout and attach our view to it
-			main_layout.addRegion( 'queue', '.pods-ui-file-utility' );
-			main_layout.getRegion( 'queue' ).show( new_view );
+			// Reset the region in case any error messages are hanging around from a previous upload
+			// and show the new file upload queue
+			this.ui_region.reset();
+			this.ui_region.show( new_view );
 
 			// Stash a reference for other callbacks
 			this.queue_view = new_view;
@@ -132,11 +115,7 @@
 					return;
 				}
 
-				file_div.fadeOut( 800 );
-				this.queue_collection.remove( file.id );
-				if ( 0 === this.queue_collection.length ) {
-					this.main_layout.removeRegion( 'queue' );
-				}
+				file_div.fadeOut( 800 ).remove();
 
 				new_file = {
 					id  : json.ID,

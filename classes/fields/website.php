@@ -126,6 +126,37 @@ class PodsField_Website extends PodsField {
     }
 
     /**
+     * Change the way the value of the field is displayed with Pods::get
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     * @param int $id
+     *
+     * @return mixed|null
+     * @since 2.0
+     */
+    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        // Ensure proper format
+        $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+
+        if ( 0 < strlen( $value ) ) {
+            $link = '<a href="%s"%s>%s</a>';
+
+            $atts = '';
+
+            if ( 1 == pods_v( self::$type . '_new_window', $options ) ) {
+            	$atts .= ' target="_blank"';
+            }
+
+            $value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
+        }
+
+        return $value;
+    }
+
+    /**
      * Customize output of the form field
      *
      * @param string $name
@@ -305,17 +336,7 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        if ( 'website' == pods_var( self::$type . '_format_type', $options ) && 0 < strlen( pods_var( self::$type . '_format', $options ) ) ) {
-            $link = '<a href="%s"%s>%s</a>';
-            
-            $atts = '';
-            
-            if ( 1 == pods_v( self::$type . '_new_window', $options ) ) {
-            	$atts .= ' target="_blank"';
-            }
-            
-            $value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
-        }
+        $value = $this->display( $value );
 
         return $value;
     }

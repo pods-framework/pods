@@ -336,7 +336,7 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        $value = $this->display( $value );
+        $value = $this->display( $value, $name, $options, $pod, $id );
 
         return $value;
     }

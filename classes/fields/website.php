@@ -82,6 +82,11 @@ class PodsField_Website extends PodsField {
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
             ),
+            self::$type . '_new_window' => array(
+                'label' => __( 'Open link in new window?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
@@ -300,8 +305,17 @@ class PodsField_Website extends PodsField {
      * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        if ( 'website' == pods_var( self::$type . '_format_type', $options ) && 0 < strlen( pods_var( self::$type . '_format', $options ) ) )
-            $value = make_clickable( $value );
+        if ( 'website' == pods_var( self::$type . '_format_type', $options ) && 0 < strlen( pods_var( self::$type . '_format', $options ) ) ) {
+            $link = '<a href="%s"%s>%s</a>';
+            
+            $atts = '';
+            
+            if ( 1 == pods_v( self::$type . '_new_window', $options ) ) {
+            	$atts .= ' target="_blank"';
+            }
+            
+            $value = sprintf( $link, esc_url( $value ), $atts, esc_html( $value ) );
+        }
 
         return $value;
     }

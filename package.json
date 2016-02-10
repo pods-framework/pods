@@ -17,6 +17,7 @@
   ],
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.1.1",
     "glob": "^4.0.2",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
@@ -28,9 +29,12 @@
     "grunt-newer": "^0.7.0",
     "grunt-push-svn": "^0.2.1",
     "grunt-remove": "^0.1.0",
+    "grunt-rollup": "^0.6.1",
     "grunt-svn-checkout": "^0.1.1",
     "grunt-svn-copy": "^0.1.4",
     "grunt-text-replace": "^0.4.0",
-    "load-grunt-tasks": "^0.6.0"
+    "load-grunt-tasks": "^0.6.0",
+    "rollup-plugin-babel": "^2.3.9",
+    "rollup-plugin-uglify": "^0.2.0"
   }
 }

@@ -849,6 +849,16 @@ class PodsInit {
             $labels[ 'not_found_in_trash' ] = pods_var_raw( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), null, true );
             $labels[ 'parent' ] = pods_var_raw( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), null, true );
             $labels[ 'parent_item_colon' ] = pods_var_raw( 'parent_item_colon', $labels, sprintf( __( 'Parent %s:', 'pods' ), $singular_label ), null, true );
+            $labels[ 'feature_image' ] = pods_var_raw( 'feature_image', $labels, __( 'Featured Image', 'pods' ), null, true );
+            $labels[ 'set_featured_image' ] = pods_var_raw( 'set_featured_image', $labels, __( 'Set featured image', 'pods' ), null, true );
+            $labels[ 'remove_featured_image' ] = pods_var_raw( 'remove_featured_image', $labels, __( 'Remove featured image', 'pods' ), null, true );
+            $labels[ 'use_featured_image' ] = pods_var_raw( 'use_featured_image', $labels, __( 'Use as featured image', 'pods' ), null, true );
+            $labels[ 'archives' ] = pods_var_raw( 'archives', $labels, sprintf( __( '%s Archives', 'pods' ), $singular_label ), null, true );
+            $labels[ 'insert_into_item' ] = pods_var_raw( 'insert_into_item', $labels, sprintf( __( 'Insert into %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'uploaded_to_this_item' ] = pods_var_raw( 'uploaded_to_this_item', $labels, sprintf( __( 'Uploaded to this %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'filter_items_list' ] = pods_var_raw( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), null, true );
+            $labels[ 'items_list_navigation' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), null, true );
+            $labels[ 'items_list' ] = pods_var_raw( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), null, true );
         }
         elseif ( 'taxonomy' == $type ) {
             $labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $labels, $label, null, true );
@@ -864,6 +874,9 @@ class PodsInit {
             $labels[ 'separate_items_with_commas' ] = pods_var_raw( 'separate_items_with_commas', $labels, sprintf( __( 'Separate %s with commas', 'pods' ), $label ), null, true );
             $labels[ 'add_or_remove_items' ] = pods_var_raw( 'add_or_remove_items', $labels, sprintf( __( 'Add or remove %s', 'pods' ), $label ), null, true );
             $labels[ 'choose_from_most_used' ] = pods_var_raw( 'choose_from_most_used', $labels, sprintf( __( 'Choose from the most used %s', 'pods' ), $label ), null, true );
+            $labels[ 'no_terms' ] = pods_var_raw( 'no_terms', $labels, sprintf( __( 'No %s', 'pods' ), $label ), null, true );
+            $labels[ 'items_list_navigation' ] = pods_var_raw( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), null, true );
+            $labels[ 'items_list' ] = pods_var_raw( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), null, true );
         }
 
         $args[ 'labels' ] = $labels;

@@ -76,16 +76,23 @@ class PodsField_Website extends PodsField {
                     'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
                 )
             ),
+            self::$type . '_clickable' => array(
+                'label' => __( 'Output as a link?', 'pods' ),
+                'default' => apply_filters( 'pods_form_ui_field_website_clickable', 0, self::$type ),
+                'type' => 'boolean',
+                'dependency' => true,
+            ),
+            self::$type . '_new_window' => array(
+                'label' => __( 'Open link in new window?', 'pods' ),
+                'default' => apply_filters( 'pods_form_ui_field_website_new_window', 0, self::$type ),
+                'type' => 'boolean',
+                'depends-on' => array( self::$type . '_clickable' => true ),
+            ),
             self::$type . '_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
-            ),
-            self::$type . '_new_window' => array(
-                'label' => __( 'Open link in new window?', 'pods' ),
-                'default' => 0,
-                'type' => 'boolean'
             ),
             self::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
@@ -141,7 +148,7 @@ class PodsField_Website extends PodsField {
         // Ensure proper format
         $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-        if ( 0 < strlen( $value ) ) {
+        if ( 1 == pods_v( self::$type . '_clickable', $options ) && 0 < strlen( $value ) ) {
             $link = '<a href="%s"%s>%s</a>';
 
             $atts = '';

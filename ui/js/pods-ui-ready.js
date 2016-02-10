@@ -1,11 +1,15 @@
-/*global jQuery, _, Backbone, Mn, pods_ui */
+/*global jQuery, _, Backbone, Mn */
+import { FileUpload } from '../fields/src/file-upload/file-upload';
+
+export default {};
+
 jQuery( function ( $ ) {
 	'use strict';
 
 	var PODS_UI_FIELDS = '.pods-ui-field';
 	var SCRIPT_TARGETS = 'script.data';
 
-	pods_ui.fields = {};
+	var fields = {};
 
 	/**
 	 * @param container
@@ -17,7 +21,7 @@ jQuery( function ( $ ) {
 		switch ( data.field_type ) {
 
 			case 'file-upload':
-				field_control = new pods_ui.FileUploadLayout( {
+				field_control = new FileUpload( {
 					el        : container,
 					field_meta: data[ 'field_meta' ],
 					model_data: data[ 'model_data' ]
@@ -52,7 +56,7 @@ jQuery( function ( $ ) {
 			// Merge inline data with the defaults and startup the new control
 			data = $.extend( defaults, data );
 			field_id = data[ 'field_meta' ][ 'field_attributes' ][ 'id' ];
-			pods_ui.fields[ field_id ] = field_factory( this, data );
+			fields[ field_id ] = field_factory( this, data );
 		} );
 
 	};

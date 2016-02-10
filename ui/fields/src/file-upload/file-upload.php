@@ -15,31 +15,12 @@ wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionett
 wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
 //wp_enqueue_script( 'backbone.wreqr', PODS_URL . 'ui/js/marionette/backbone.wreqr.min.js', array( 'backbone' ), '1.0.2', true );
 wp_enqueue_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
-wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array( 'marionette', 'backbone.radio' ), '1.0.2', true );
+wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array(
+	'marionette',
+	'backbone.radio'
+), '1.0.2', true );
 
-wp_enqueue_script( 'pods-ui', PODS_URL . 'ui/js/pods-ui.js', array(
-	'backbone.radio',
-	'marionette'
-), PODS_VERSION, true );
-wp_enqueue_script( 'ui/js/pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.js', array( 'pods-ui' ), PODS_VERSION, true );
-
-wp_enqueue_script( 'file-upload-model', PODS_URL . 'ui/fields/file-upload/models/file-upload-model.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-list', PODS_URL . 'ui/fields/file-upload/views/file-upload-list.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-form', PODS_URL . 'ui/fields/file-upload/views/file-upload-form.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-queue', PODS_URL . 'ui/fields/file-upload/views/file-upload-queue.js', array( 'pods-ui' ), PODS_VERSION, true );
-
-wp_enqueue_script( 'pods-file-uploader', PODS_URL . 'ui/fields/file-upload/uploaders/pods-file-uploader.js', array( 'pods-ui' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-media', PODS_URL . 'ui/fields/file-upload/uploaders/media-modal.js', array( 'pods-ui', 'pods-file-uploader' ), PODS_VERSION, true );
-wp_enqueue_script( 'file-upload-plupload', PODS_URL . 'ui/fields/file-upload/uploaders/plupload.js', array( 'pods-ui', 'pods-file-uploader' ), PODS_VERSION, true );
-
-wp_enqueue_script( 'file-upload-layout', PODS_URL . 'ui/fields/file-upload/views/file-upload-layout.js', array(
-	'file-upload-model',
-	'file-upload-list',
-	'file-upload-form',
-	'file-upload-queue',
-	'file-upload-media',
-	'file-upload-plupload'
-), PODS_VERSION, true );
+wp_enqueue_script( 'pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.min.js', array(), PODS_VERSION, true );
 
 $file_limit = 1;
 if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) ) {
@@ -49,7 +30,7 @@ if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) 
 $limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
 $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
-$linked = pods_var( $form_field_type . '_linked', $options, 0 );
+$linked         = pods_var( $form_field_type . '_linked', $options, 0 );
 
 $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) );
 
@@ -61,7 +42,7 @@ if ( empty( $value ) ) {
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
 $attributes = array_map( 'esc_attr', $attributes );
-$css_id = $attributes[ 'id' ];
+$css_id     = $attributes[ 'id' ];
 
 $model_data = array();
 foreach ( $value as $id ) {
@@ -87,33 +68,38 @@ foreach ( $value as $id ) {
 }
 
 if ( 'images' == $limit_file_type ) {
-	$limit_types = 'image';
+	$limit_types      = 'image';
 	$limit_extensions = 'jpg,jpeg,png,gif';
-}
-elseif ( 'video' == $limit_file_type ) {
-	$limit_types = 'video';
+} elseif ( 'video' == $limit_file_type ) {
+	$limit_types      = 'video';
 	$limit_extensions = 'mpg,mov,flv,mp4';
-}
-elseif ( 'audio' == $limit_file_type ) {
-	$limit_types = 'audio';
+} elseif ( 'audio' == $limit_file_type ) {
+	$limit_types      = 'audio';
 	$limit_extensions = 'mp3,m4a,wav,wma';
-}
-elseif ( 'text' == $limit_file_type ) {
-	$limit_types = 'text';
+} elseif ( 'text' == $limit_file_type ) {
+	$limit_types      = 'text';
 	$limit_extensions = 'txt,rtx,csv,tsv';
-}
-elseif ( 'any' == $limit_file_type ) {
-	$limit_types = '';
+} elseif ( 'any' == $limit_file_type ) {
+	$limit_types      = '';
 	$limit_extensions = '*';
-}
-else {
+} else {
 	$limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
 }
-$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
-$limit_extensions = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_extensions ), ',' );
-$mime_types = wp_get_mime_types();
+$limit_types      = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
+	'',
+	',',
+	',',
+	','
+), $limit_types ), ',' );
+$limit_extensions = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
+	'',
+	',',
+	',',
+	','
+), $limit_extensions ), ',' );
+$mime_types       = wp_get_mime_types();
 
-if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ) ) ) {
+if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ) ) ) {
 	$new_limit_types = array();
 
 	$limit_types = explode( ',', $limit_types );
@@ -123,10 +109,10 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
 			$mime = explode( '/', $mime_types[ $limit_type ] );
 			$mime = $mime[ 0 ];
 
-			if ( !in_array( $mime, $new_limit_types ) )
+			if ( ! in_array( $mime, $new_limit_types ) ) {
 				$new_limit_types[] = $mime;
-		}
-		else {
+			}
+		} else {
 			$found = false;
 
 			foreach ( $mime_types as $type => $mime ) {
@@ -134,24 +120,26 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
 					$mime = explode( '/', $mime );
 					$mime = $mime[ 0 ];
 
-					if ( !in_array( $mime, $new_limit_types ) ) {
+					if ( ! in_array( $mime, $new_limit_types ) ) {
 						$new_limit_types[] = $mime;
 					}
 					$found = true;
 				}
 			}
 
-			if ( !$found )
+			if ( ! $found ) {
 				$new_limit_types[] = $limit_type;
+			}
 		}
 	}
 
-	if ( !empty( $new_limit_types ) )
+	if ( ! empty( $new_limit_types ) ) {
 		$limit_types = implode( ',', $new_limit_types );
+	}
 }
 
-$options[ 'file_limit' ] = $file_limit; // @todo Why is the $options version of the story wrong?
-$options[ 'limit_types' ] = $limit_types;
+$options[ 'file_limit' ]       = $file_limit; // @todo Why is the $options version of the story wrong?
+$options[ 'limit_types' ]      = $limit_types;
 $options[ 'limit_extensions' ] = $limit_extensions;
 
 // @todo: plupload specific options need accommodation
@@ -160,30 +148,31 @@ if ( 'plupload' == $options[ 'file_uploader' ] ) {
 
 	$uid = @session_id();
 
-	if ( is_user_logged_in() )
+	if ( is_user_logged_in() ) {
 		$uid = 'user_' . get_current_user_id();
+	}
 
-	$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-	$field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
+	$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+	$field_nonce = wp_create_nonce( 'pods_upload_' . ( ! is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
 	$options[ 'plupload_init' ] = array(
-		'runtimes' => 'html5,silverlight,flash,html4',
-		'url' => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
-		'file_data_name' => 'Filedata',
-		'multiple_queues' => false,
-		'max_file_size' => wp_max_upload_size() . 'b',
-		'flash_swf_url' => includes_url( 'js/plupload/plupload.flash.swf' ),
+		'runtimes'            => 'html5,silverlight,flash,html4',
+		'url'                 => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
+		'file_data_name'      => 'Filedata',
+		'multiple_queues'     => false,
+		'max_file_size'       => wp_max_upload_size() . 'b',
+		'flash_swf_url'       => includes_url( 'js/plupload/plupload.flash.swf' ),
 		'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
-		'filters' => array( array( 'title' => __( 'Allowed Files', 'pods' ), 'extensions' => '*' ) ),
-		'multipart' => true,
-		'urlstream_upload' => true,
-		'multipart_params' => array(
+		'filters'             => array( array( 'title' => __( 'Allowed Files', 'pods' ), 'extensions' => '*' ) ),
+		'multipart'           => true,
+		'urlstream_upload'    => true,
+		'multipart_params'    => array(
 			'_wpnonce' => $field_nonce,
-			'action' => 'pods_upload',
-			'method' => 'upload',
-			'pod' => ( !is_object( $pod ) ? '0' : $pod->pod_id ),
-			'field' => $options[ 'id' ],
-			'uri' => $uri_hash
+			'action'   => 'pods_upload',
+			'method'   => 'upload',
+			'pod'      => ( ! is_object( $pod ) ? '0' : $pod->pod_id ),
+			'field'    => $options[ 'id' ],
+			'uri'      => $uri_hash
 		),
 	);
 }
@@ -195,11 +184,11 @@ $field_meta = array(
 		'name'       => $attributes[ 'name' ],
 		'name_clean' => $attributes[ 'data-name-clean' ]
 	),
-	'field_options' => $options
+	'field_options'    => $options
 );
 
-include_once PODS_DIR . 'ui/fields/file-upload/templates/file-upload-tpl.php';
-include_once PODS_DIR . 'ui/fields/file-upload/PodsFieldData.php';
+include_once PODS_DIR . 'ui/fields/src/file-upload/templates/file-upload-tpl.php';
+include_once PODS_DIR . 'ui/fields/src/file-upload/PodsFieldData.php';
 
 // @todo Need to normalize and finalize.  Is there a potential need for subclasses or does this basically cover it?
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );

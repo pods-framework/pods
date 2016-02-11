@@ -1,7 +1,9 @@
 /*global jQuery, _, Backbone, Mn */
 import { FileUpload } from '../fields/file-upload/src/file-upload';
 
-const app = {};
+const app = {
+	fields: {}
+};
 export default app;
 
 jQuery( function ( $ ) {
@@ -10,13 +12,11 @@ jQuery( function ( $ ) {
 	const PODS_UI_FIELDS = '.pods-ui-field';
 	const SCRIPT_TARGETS = 'script.data';
 
-	const fields = {};
-
 	/**
 	 * @param container
 	 * @param data
 	 */
-	var field_factory = function ( container, data ) {
+	const field_factory = function ( container, data ) {
 		var field_control;
 
 		switch ( data.field_type ) {
@@ -57,7 +57,7 @@ jQuery( function ( $ ) {
 			// Merge inline data with the defaults and startup the new control
 			data = $.extend( defaults, data );
 			field_id = data[ 'field_meta' ][ 'field_attributes' ][ 'id' ];
-			fields[ field_id ] = field_factory( this, data );
+			app.fields[ field_id ] = field_factory( this, data );
 		} );
 
 	};

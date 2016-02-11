@@ -285,7 +285,7 @@ class PodsField_File extends PodsField {
 
         // @todo: Now One Field to Rule Them All
         $field_type = 'file-upload';
-        pods_view( PODS_DIR . 'ui/fields/src/file-upload/file-upload.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'ui/fields/file-upload/file-upload.php', compact( array_keys( get_defined_vars() ) ) );
         return;
 
         // @todo: we're short-circuiting for prototyping above.  The actions below will need to be woven in

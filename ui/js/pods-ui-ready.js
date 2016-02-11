@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
-import { FileUpload } from '../fields/src/file-upload/file-upload';
+import { FileUpload } from '../fields/file-upload/src/file-upload';
 
 const app = {};
 export default app;
@@ -7,10 +7,10 @@ export default app;
 jQuery( function ( $ ) {
 	'use strict';
 
-	var PODS_UI_FIELDS = '.pods-ui-field';
-	var SCRIPT_TARGETS = 'script.data';
+	const PODS_UI_FIELDS = '.pods-ui-field';
+	const SCRIPT_TARGETS = 'script.data';
 
-	var fields = {};
+	const fields = {};
 
 	/**
 	 * @param container

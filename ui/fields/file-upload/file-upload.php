@@ -187,8 +187,8 @@ $field_meta = array(
 	'field_options'    => $options
 );
 
-include_once PODS_DIR . 'ui/fields/src/file-upload/templates/file-upload-tpl.php';
-include_once PODS_DIR . 'ui/fields/src/file-upload/PodsFieldData.php';
+include_once PODS_DIR . 'ui/fields/file-upload/src/templates/file-upload-tpl.php';
+include_once PODS_DIR . 'ui/fields/file-upload/PodsFieldData.php';
 
 // @todo Need to normalize and finalize.  Is there a potential need for subclasses or does this basically cover it?
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );

@@ -1,5 +1,6 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
+
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';

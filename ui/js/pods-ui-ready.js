@@ -1,7 +1,8 @@
 /*global jQuery, _, Backbone, Mn */
 import { FileUpload } from '../fields/src/file-upload/file-upload';
 
-export default {};
+const app = {};
+export default app;
 
 jQuery( function ( $ ) {
 	'use strict';

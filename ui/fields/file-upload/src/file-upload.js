@@ -99,5 +99,3 @@ export const FileUpload = Mn.LayoutView.extend( {
 	}
 
 } );
-
-export default FileUploadField;

@@ -579,7 +579,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     return false;
 }
 
-po/**
+/**
  * Shortcode support for use anywhere that support WP Shortcodes
  *
  * @param array $tags An associative array of shortcode properties

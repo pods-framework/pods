@@ -47,7 +47,7 @@ class PodsWidgetSingle extends WP_Widget {
 
         $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
 
-        if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'slug' ] ) || 0 < strlen( $args[ 'use_current' ] ) ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
+        if ( ( ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) ) || 0 < strlen( $args[ 'use_current' ] ) ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
             require PODS_DIR . 'ui/front/widgets.php';
         }
     }

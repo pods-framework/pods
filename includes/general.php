@@ -579,7 +579,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     return false;
 }
 
-/**
+po/**
  * Shortcode support for use anywhere that support WP Shortcodes
  *
  * @param array $tags An associative array of shortcode properties
@@ -609,6 +609,7 @@ function pods_shortcode ( $tags, $content = null ) {
 	}
 
     $defaults = array(
+    	'use_current' => false,
         'name' => null,
         'id' => null,
         'slug' => null,
@@ -653,6 +654,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
 	$tags[ 'pagination' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
 	$tags[ 'search' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
+	$tags[ 'use_current' ] = filter_var($tags[ 'use_current' ], FILTER_VALIDATE_BOOLEAN);
 
     if ( empty( $content ) )
         $content = null;
@@ -672,7 +674,7 @@ function pods_shortcode ( $tags, $content = null ) {
 		return $return;
 	}
 
-    if ( empty( $tags[ 'name' ] ) ) {
+    if ( ! $tags['use_current'] && empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
             $pod = pods( get_post_type(), get_the_ID(), false );
 
@@ -702,7 +704,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Please provide either a template or field name</p>';
     }
 
-    if ( !isset( $id ) ) {
+    if ( ! $tags['use_current'] && !isset( $id ) ) {
         // id > slug (if both exist)
 		$id = null;
 
@@ -726,10 +728,15 @@ function pods_shortcode ( $tags, $content = null ) {
         }
     }
 
-    if ( !isset( $pod ) )
-        $pod = pods( $tags[ 'name' ], $id );
+    if ( !isset( $pod ) ) {
+    	if ( ! $tags['use_current'] ) {
+        	$pod = pods( $tags[ 'name' ], $id );
+    	} else {
+    		$pod = pods();
+    	}
+    }
 
-    if ( empty( $pod ) )
+    if ( empty( $pod ) || ! $pod->valid() )
         return '<p>Pod not found</p>';
 
 	$found = 0;

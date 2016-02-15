@@ -1126,7 +1126,7 @@ function pods_redirect ( $location, $status = 302 ) {
 function pods_permission ( $options ) {
     global $current_user;
 
-    get_currentuserinfo();
+    wp_get_current_user();
 
     $permission = false;
 

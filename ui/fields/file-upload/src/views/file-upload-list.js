@@ -6,7 +6,7 @@ const $ = jQuery;
 export const FileUploadItem = Mn.LayoutView.extend( {
 	tagName: 'li',
 
-	className: 'pods-file hidden',
+	className: 'pods-file',
 
 	ui: {
 		drag_handle  : '.pods-file-handle',

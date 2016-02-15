@@ -15,7 +15,7 @@ app.Queue = Queue;
  * This is the workhorse that currently kicks everything off
  */
 jQuery( function ( $ ) {
-	$( '.pods-ui-field' ).pods_ui_field_init();
+	$( '.pods-form-ui-field' ).pods_ui_field_init();
 } );
 
 /**

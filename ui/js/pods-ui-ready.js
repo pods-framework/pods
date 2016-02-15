@@ -1,10 +1,14 @@
 /*global jQuery, _, Backbone, Mn */
-import { FileUpload } from '../fields/file-upload/src/file-upload';
-
 const app = {
 	fields: {}
 };
 export default app;
+
+import { FileUpload } from '../fields/file-upload/src/file-upload';
+
+// @todo: just here for testing the file upload queue, long term solution needed to expose things
+import * as Queue from '../fields/file-upload/src/views/file-upload-queue';
+app.Queue = Queue;
 
 jQuery( function ( $ ) {
 	'use strict';
@@ -27,7 +31,6 @@ jQuery( function ( $ ) {
 					field_meta: data[ 'field_meta' ],
 					model_data: data[ 'model_data' ]
 				} );
-				field_control.render();
 				break;
 		}
 
@@ -58,6 +61,7 @@ jQuery( function ( $ ) {
 			data = $.extend( defaults, data );
 			field_id = data[ 'field_meta' ][ 'field_attributes' ][ 'id' ];
 			app.fields[ field_id ] = field_factory( this, data );
+			app.fields[ field_id ].render();
 		} );
 
 	};

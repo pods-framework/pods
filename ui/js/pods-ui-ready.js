@@ -11,7 +11,6 @@ import * as Queue from '../fields/file-upload/src/views/file-upload-queue';
 app.Queue = Queue;
 
 jQuery( function ( $ ) {
-	'use strict';
 
 	const PODS_UI_FIELDS = '.pods-ui-field';
 	const SCRIPT_TARGETS = 'script.data';

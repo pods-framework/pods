@@ -1017,7 +1017,7 @@ class PodsUI {
 
         if ( true === $options[ 'wpcss' ] ) {
             global $user_ID;
-            get_currentuserinfo();
+            wp_get_current_user();
 
             $color = get_user_meta( $user_ID, 'admin_color', true );
             if ( strlen( $color ) < 1 )

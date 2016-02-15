@@ -196,4 +196,6 @@ $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_da
 // @todo This is the demarcation point, everything above this exists to achieve the single line below.  Everything
 // upstream from here needs clean up, simplification, and refactoring
 ?>
-<div class="pods-ui-field"><?php $field_data->emit_script(); ?></div>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+	<?php $field_data->emit_script(); ?>
+</div>

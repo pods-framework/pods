@@ -429,7 +429,7 @@ class PodsForm {
                 $_attributes[ 'data-label' ] = strip_tags( pods_v( 'label', $options ) );
 
             $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
-            $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+            $_attributes[ 'class' ] = 'pods-form-ui-field pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 
             if ( isset( $options[ 'dependency' ] ) && false !== $options[ 'dependency' ] )
                 $_attributes[ 'class' ] .= ' pods-dependent-toggle';

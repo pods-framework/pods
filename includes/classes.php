@@ -1,7 +1,124 @@
 <?php
 /**
- * @package Pods\Global\Functions\Classes
+ * @package Pods
+ * @category Utilities
  */
+
+/**
+ * Include and Init the PodsObject class
+ *
+ * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int                  $id     Get the Object by ID (overrides $name)
+ * @param bool                 $live   Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed                $parent Parent Object or ID
+ *
+ * @return PodsObject|null
+ *
+ * @since 2.3.10
+ */
+function pods_object( $name = null, $id = 0, $live = false, $parent = null ) {
+
+	if ( false === $name ) {
+		return null;
+	}
+
+	return new PodsObject( $name, $id, $live, $parent );
+
+}
+
+/**
+ * Include and Init the PodsObject_Pod class
+ *
+ * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int                  $id     Get the Object by ID (overrides $name)
+ * @param bool                 $live   Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed                $parent Parent Object or ID
+ *
+ * @return PodsObject_Pod|null
+ *
+ * @since 2.3.10
+ */
+function pods_object_pod( $name = null, $id = 0, $live = false, $parent = null ) {
+
+	if ( false === $name ) {
+		return null;
+	}
+
+	return new PodsObject_Pod( $name, $id, $live, $parent );
+
+}
+
+/**
+ * Include and Init the PodsObject_Field class
+ *
+ * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int                  $id     Get the Object by ID (overrides $name)
+ * @param bool                 $live   Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed                $parent Parent Object or ID
+ *
+ * @return PodsObject_Field|null
+ *
+ * @since 2.3.10
+ */
+function pods_object_field( $name = null, $id = 0, $live = false, $parent = null ) {
+
+	if ( false === $name ) {
+		return null;
+	}
+
+	return new PodsObject_Field( $name, $id, $live, $parent );
+
+}
+
+/**
+ * Include and Init the PodsObject_Group class
+ *
+ * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int                  $id     Get the Object by ID (overrides $name)
+ * @param bool                 $live   Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed                $parent Parent Object or ID
+ *
+ * @return PodsObject_Group|null
+ *
+ * @since 2.3.10
+ */
+function pods_object_group( $name = null, $id = 0, $live = false, $parent = null ) {
+
+	if ( false === $name ) {
+		return null;
+	}
+
+	return new PodsObject_Group( $name, $id, $live, $parent );
+
+}
+
+/**
+ * Include and Init the PodsObject class based on the $object name passed
+ *
+ * @param string               $object Object name
+ * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
+ * @param int                  $id     Get the Object by ID (overrides $name)
+ * @param bool                 $live   Set to true to automatically save values in the DB when you $object['option']='value'
+ * @param mixed                $parent Parent Object or ID
+ *
+ * @return PodsObject_Pod|PodsObject_Field|PodsObject_Group|PodsObject|null
+ *
+ * @since 3.0
+ */
+function pods_object_get( $object, $name = null, $id = 0, $live = false, $parent = null ) {
+
+	if ( '_pods_pod' == $object ) {
+		return pods_object_pod( $name, $id, $live, $parent );
+	} elseif ( '_pods_field' == $object ) {
+		return pods_object_field( $name, $id, $live, $parent );
+	} elseif ( '_pods_group' == $object ) {
+		return pods_object_group( $name, $id, $live, $parent );
+	}
+
+	return pods_object( $name, $id, $live, $parent );
+
+}
+
 /**
  * Include and Init the Pods class
  *

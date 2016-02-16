@@ -41,12 +41,13 @@ class PodsWidgetSingle extends WP_Widget {
         $args = array(
             'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
             'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
+            'use_current' => trim( pods_var_raw( 'use_current', $instance, '' ) ),
             'template' => trim( pods_var_raw( 'template', $instance, '' ) )
         );
 
         $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
 
-        if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
+        if ( ( ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) ) || 0 < strlen( $args[ 'use_current' ] ) ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
             require PODS_DIR . 'ui/front/widgets.php';
         }
     }
@@ -62,6 +63,7 @@ class PodsWidgetSingle extends WP_Widget {
         $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
         $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
+        $instance[ 'use_current' ] = pods_var_raw( 'use_current', $new_instance, '' );
         $instance[ 'template' ] = pods_var_raw( 'template', $new_instance, '' );
         $instance[ 'template_custom' ] = pods_var_raw( 'template_custom', $new_instance, '' );
 
@@ -74,6 +76,7 @@ class PodsWidgetSingle extends WP_Widget {
     public function form ( $instance ) {
         $title = pods_var_raw( 'title', $instance, '' );
         $slug = pods_var_raw( 'slug', $instance, '' );
+        $use_current = pods_var_raw( 'use_current', $instance, '' );
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
         $template = pods_var_raw( 'template', $instance, '' );
         $template_custom = pods_var_raw( 'template_custom', $instance, '' );

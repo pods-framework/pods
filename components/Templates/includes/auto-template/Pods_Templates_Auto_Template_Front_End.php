@@ -99,10 +99,10 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			//start output array empty
 			$auto_pods = array();
-			
+
 			//get pods api class
 			$api = pods_api();
-			
+
 			//loop through each to see if auto templates is enabled
 			foreach ( $the_pods as $the_pod => $the_pod_label ) {
 				//get this Pods' data.
@@ -115,9 +115,9 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive = pods_v( 'pfat_archive', $pod_data[ 'options' ], false, true );
 					$single_append = pods_v( 'pfat_append_single', $pod_data[ 'options' ], true, true );
 					$archive_append = pods_v( 'pfat_append_archive', $pod_data[ 'options' ], true, true );
-					$type = pods_v( 'object_type', $pod_data, false, true );
+					$type = pods_v( 'type', $pod_data, false, true );
 					//check if it's a post type that has an arhive
-					if ( $pod_data['type'] === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
+					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
 						$has_archive = pods_v( 'has_archive', $pod_data['options'], false, true );
 					}
 					else {

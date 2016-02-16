@@ -49,6 +49,14 @@
         <input class="widefat" type="text" id="<?php echo esc_attr( $this->get_field_id( 'slug' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'slug' ) ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
     </li>
 
+    <li>
+        <label for="<?php echo esc_attr( $this->get_field_id( 'use_current' ) ); ?>">
+            <?php _e( 'Use current post (singular) or term (term archive)', 'pods' ); ?>
+        </label>
+
+        <input type="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'use_current' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'use_current' ) ); ?>" value="1"<?php checked( $use_current, '1' ); ?> />
+    </li>
+
     <?php
         if ( class_exists( 'Pods_Templates' ) ) {
     ?>

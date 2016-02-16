@@ -726,6 +726,8 @@ class PodsField_Pick extends PodsField {
                 $field_type = 'radio';
             elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'select2';
+            elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
+                $field_type = 'flexible';
             else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
@@ -743,6 +745,8 @@ class PodsField_Pick extends PodsField {
                 $field_type = 'select';
             elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
                 $field_type = 'select2';
+            elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
+                $field_type = 'flexible';
             else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
@@ -755,6 +759,13 @@ class PodsField_Pick extends PodsField {
             do_action( 'pods_form_ui_field_pick_input', pods_var( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
             return;
         }
+
+	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
+	        // @todo: Fix location when merging
+	        $field_type = 'pick-flexible';
+	        pods_view( PODS_DIR . 'ui/fields/pick-flexible/pick-flexible.php', compact( array_keys( get_defined_vars() ) ) );
+	        return;
+	    }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }

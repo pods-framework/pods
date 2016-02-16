@@ -173,7 +173,7 @@ class PodsField_File extends PodsField {
             ),
             self::$type . '_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( self::$type . '_uploader' => 'attachments' ),
+                'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),

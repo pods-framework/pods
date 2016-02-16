@@ -3770,6 +3770,8 @@ class Pods implements Iterator {
 			if ( !empty( $filters ) ) {
 				$filters_new = array();
 
+				$filters = (array) $filters;
+				
 				foreach ( $filters as $filter_field ) {
 					if ( isset( $this->pod_data[ 'fields' ][ $filter_field ] ) )
 						$filters_new[ $filter_field ] = $this->pod_data[ 'fields' ][ $filter_field ];

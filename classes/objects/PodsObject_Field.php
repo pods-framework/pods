@@ -1,18 +1,17 @@
 <?php
 /**
- * @package Pods
+ * @package  Pods
  * @category Object Types
  */
 
 /**
  * Class PodsObject_Field
  *
- * @property int|string $sister_id Sister ID
- * @property PodsObject_Field[] $fields Fields
- * @property array $table_info Table information for Object
+ * @property int|string         $sister_id  Sister ID
+ * @property PodsObject_Field[] $fields     Fields
+ * @property array              $table_info Table information for Object
  */
-class PodsObject_Field extends
-	PodsObject {
+class PodsObject_Field extends PodsObject {
 
 	/**
 	 * Post type / meta key prefix for internal values
@@ -523,13 +522,12 @@ class PodsObject_Field extends
 
 			if ( 'post_type' == $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
 				$pod_data['fields'][ $field ] = $pod_data['object_fields'][ $field ];
-			} elseif ( in_array( $pod_data['type'],
-				array(
-					'post_type',
-					'media',
-					'user',
-					'comment'
-				) ) && 'meta_value' == $last
+			} elseif ( in_array( $pod_data['type'], array(
+						'post_type',
+						'media',
+						'user',
+						'comment'
+					) ) && 'meta_value' == $last
 			) {
 				$pod_data['fields'][ $field ] = Pods_Form::field_setup( array( 'name' => $field ) );
 			} else {
@@ -736,7 +734,8 @@ class PodsObject_Field extends
 	 * Recursively join tables based on fields
 	 *
 	 * @param array  $fields     Fields to recurse
-	 * @param null   $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be passed
+	 * @param null   $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be
+	 *                           passed
 	 * @param object $params     (optional) Parameters from build()
 	 *
 	 * @return array Array of joins
@@ -1052,7 +1051,12 @@ class PodsObject_Field extends
 			} elseif ( 'table' == $field['pick_object'] && 0 < strlen( $field['pick_table'] ) ) {
 				$field['pick_val']    = $field['pick_table'];
 				$field['pick_object'] = 'table';
-			} elseif ( false === strpos( $field['pick_object'], '-' ) && ! in_array( $field['pick_object'], array( 'pod', 'post_type', 'taxonomy' ) ) ) {
+			} elseif ( false === strpos( $field['pick_object'], '-' ) && ! in_array( $field['pick_object'], array(
+					'pod',
+					'post_type',
+					'taxonomy'
+				) )
+			) {
 				$field['pick_val'] = '';
 			} elseif ( 'custom-simple' == $field['pick_object'] ) {
 				$field['pick_val'] = '';
@@ -1073,7 +1077,14 @@ class PodsObject_Field extends
 
 		// Add new field
 		if ( ! isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-			if ( $params->table_operation && in_array( $field['name'], array( 'created', 'modified' ) ) && ! in_array( $field['type'], array( 'date', 'datetime' ) ) && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
+			if ( $params->table_operation && in_array( $field['name'], array(
+					'created',
+					'modified'
+				) ) && ! in_array( $field['type'], array(
+					'date',
+					'datetime'
+				) ) && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT )
+			) {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 			} elseif ( $params->table_operation && 'author' == $field['name'] && 'pick' != $field['type'] && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
 				return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
@@ -1158,7 +1169,11 @@ class PodsObject_Field extends
 			}
 
 			if ( null !== $old_name && $field['name'] != $old_name && ( ! defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) ) {
-				if ( in_array( $field['name'], array( 'created', 'modified' ) ) && ! in_array( $field['type'], array( 'date', 'datetime' ) ) ) {
+				if ( in_array( $field['name'], array(
+						'created',
+						'modified'
+					) ) && ! in_array( $field['type'], array( 'date', 'datetime' ) )
+				) {
 					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
 				} elseif ( 'author' == $field['name'] && 'pick' != $field['type'] ) {
 					return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field['name'] ), $this );
@@ -1296,8 +1311,7 @@ class PodsObject_Field extends
                     `m`.`{$pod['meta_field_index']}` = %s
                 WHERE
                     `m`.`{$pod['meta_field_index']}` = %s
-            " . ( ! empty( $pod['field_type'] ) ? " AND `t`.`{$pod['field_type']}` = %s" : "" ),
-				$prepare );
+            " . ( ! empty( $pod['field_type'] ) ? " AND `t`.`{$pod['field_type']}` = %s" : "" ), $prepare );
 		}
 
 		if ( $field['type'] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
@@ -1314,10 +1328,9 @@ class PodsObject_Field extends
 						p.ID IS NOT NULL
 						AND pm.meta_key = 'sister_id'
 						AND pm.meta_value = %d
-				",
-				array(
-					$params->id
-				) );
+				", array(
+						$params->id
+					) );
 
 				if ( ! pods_tableless() ) {
 					pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
@@ -1326,10 +1339,9 @@ class PodsObject_Field extends
 						UPDATE `@wp_podsrel`
 						SET `related_field_id` = 0
 						WHERE `field_id` = %d
-					",
-					array(
-						$old_sister_id
-					) );
+					", array(
+							$old_sister_id
+						) );
 				}
 			}
 		} elseif ( 0 < $sister_id ) {
@@ -1340,11 +1352,10 @@ class PodsObject_Field extends
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = %d
 					WHERE `field_id` = %d
-				",
-				array(
-					$params->id,
-					$sister_id
-				) );
+				", array(
+						$params->id,
+						$sister_id
+					) );
 			}
 		} elseif ( 0 < $old_sister_id ) {
 			delete_post_meta( $old_sister_id, 'sister_id' );
@@ -1354,10 +1365,9 @@ class PodsObject_Field extends
 					UPDATE `@wp_podsrel`
 					SET `related_field_id` = 0
 					WHERE `field_id` = %d
-				",
-				array(
-					$old_sister_id
-				) );
+				", array(
+						$old_sister_id
+					) );
 			}
 		}
 
@@ -1575,8 +1585,7 @@ class PodsObject_Field extends
 			$wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
 				LEFT JOIN {$wpdb->posts} AS p
 					ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-				WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d",
-			$params->id ) );
+				WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
 			if ( ! pods_tableless() && $table_operation ) {
 				pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );

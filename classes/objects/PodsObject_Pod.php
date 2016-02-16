@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Pods
+ * @package  Pods
  * @category Object Types
  */
 
@@ -8,12 +8,11 @@
  * Class PodsObject_Pod
  *
  * @property PodsObject_Field[] $object_fields Object Fields
- * @property PodsObject_Field[] $fields Fields
- * @property PodsObject_Group[] $groups Object Groups
- * @property array $table_info Table information for Object
+ * @property PodsObject_Field[] $fields        Fields
+ * @property PodsObject_Group[] $groups        Object Groups
+ * @property array              $table_info    Table information for Object
  */
-class PodsObject_Pod extends
-	PodsObject {
+class PodsObject_Pod extends PodsObject {
 
 	/**
 	 * Post type / meta key prefix for internal values
@@ -222,7 +221,7 @@ class PodsObject_Pod extends
 						$this->_is_fallback = true;
 
 						// Add labels
-						$object = array_merge( get_object_vars( $taxonomy->labels ),  $object );
+						$object = array_merge( get_object_vars( $taxonomy->labels ), $object );
 
 						// @todo Import object settings and match up to Pod options
 						/*unset( $taxonomy->name );
@@ -1107,20 +1106,18 @@ class PodsObject_Pod extends
 					'label'            => __( 'Actions Available', 'pods' ),
 					'help'             => __( 'help', 'pods' ),
 					'type'             => 'pick',
-					'default'          => ( 1 == $pod['ui_export']
-						? array(
-							'add',
-							'edit',
-							'duplicate',
-							'delete',
-							'export'
-						)
-						: array(
-							'add',
-							'edit',
-							'duplicate',
-							'delete'
-						) ),
+					'default'          => ( 1 == $pod['ui_export'] ? array(
+						'add',
+						'edit',
+						'duplicate',
+						'delete',
+						'export'
+					) : array(
+						'add',
+						'edit',
+						'duplicate',
+						'delete'
+					) ),
 					'data'             => array(
 						'add'       => __( 'Add New', 'pods' ),
 						'edit'      => __( 'Edit', 'pods' ),
@@ -1291,7 +1288,11 @@ class PodsObject_Pod extends
 				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
 			}
 
-			if ( $old_name != $params->name && in_array( $old_pod['type'], array( 'post_type', 'taxonomy' ) ) && ! empty( $old_pod['object'] ) && $old_pod['object'] == $old_name ) {
+			if ( $old_name != $params->name && in_array( $old_pod['type'], array(
+					'post_type',
+					'taxonomy'
+				) ) && ! empty( $old_pod['object'] ) && $old_pod['object'] == $old_name
+			) {
 				return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ) );
 			}
 
@@ -1304,7 +1305,12 @@ class PodsObject_Pod extends
 			}
 
 			$pod =& $this;
-		} elseif ( in_array( $params->name, array( 'order', 'orderby', 'post_type' ) ) && 'post_type' == pods_v( 'type', $params ) ) {
+		} elseif ( in_array( $params->name, array(
+				'order',
+				'orderby',
+				'post_type'
+			) ) && 'post_type' == pods_v( 'type', $params )
+		) {
 			return pods_error( sprintf( 'There are certain names that a Custom Post Type cannot be named and unfortunately, %s is one of them.', $params->name ) );
 		} else {
 			$pod = array(
@@ -1555,7 +1561,12 @@ class PodsObject_Pod extends
 				$changed_meta = $pod->export( 'data' );
 			}
 
-			$changed_meta = array_diff_key( $changed_meta, array( 'id' => '', 'name' => '', 'label' => '', 'description' => '' ) );
+			$changed_meta = array_diff_key( $changed_meta, array(
+				'id'          => '',
+				'name'        => '',
+				'label'       => '',
+				'description' => ''
+			) );
 
 			$params->id = $api->save_wp_object( 'post', $post_data, $changed_meta );
 
@@ -1674,7 +1685,11 @@ class PodsObject_Pod extends
 
 		// Sync built-in options for post types and taxonomies
 
-		if ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) && empty( $pod['object'] ) && true === $params->db ) {
+		if ( in_array( $pod['type'], array(
+				'post_type',
+				'taxonomy'
+			) ) && empty( $pod['object'] ) && true === $params->db
+		) {
 			// Build list of 'built_in' for later
 			$built_in = array();
 
@@ -1879,7 +1894,12 @@ class PodsObject_Pod extends
 		$api->cache_flush_pods( $pod );
 
 		// Register Post Types / Taxonomies / Comment Types post-registration from PodsInit
-		if ( did_action( 'pods_setup_content_types' ) && in_array( $pod['type'], array( 'post_type', 'taxonomy', 'comment' ) ) && empty( $pod['object'] ) ) {
+		if ( did_action( 'pods_setup_content_types' ) && in_array( $pod['type'], array(
+				'post_type',
+				'taxonomy',
+				'comment'
+			) ) && empty( $pod['object'] )
+		) {
 			global $pods_init;
 
 			$pods_init->setup_content_types( true );
@@ -2045,7 +2065,8 @@ class PodsObject_Pod extends
 				if ( 'table' == $this->_object['storage'] ) {
 					try {
 						pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
-					} catch ( Exception $e ) {
+					}
+					catch ( Exception $e ) {
 						// Allow pod to be deleted if the table doesn't exist
 						if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
 							return pods_error( $e->getMessage() );
@@ -2116,7 +2137,8 @@ class PodsObject_Pod extends
 			if ( 'table' == $this->_object['storage'] ) {
 				try {
 					pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
-				} catch ( Exception $e ) {
+				}
+				catch ( Exception $e ) {
 					// Allow pod to be reset if the table doesn't exist
 					if ( false === strpos( $e->getMessage(), 'Unknown table' ) ) {
 						return pods_error( $e->getMessage(), $this );

@@ -1,21 +1,19 @@
 <?php
 /**
- * @package Pods
+ * @package  Pods
  * @category Object Types
  */
 
 /**
  * Class Pods_Object
  *
- * @property int|string $id Object ID
- * @property string $name Object Name
- * @property string $label Object Label
- * @property string $description Object Description
- * @property int|string $parent_id Parent ID
+ * @property int|string $id          Object ID
+ * @property string     $name        Object Name
+ * @property string     $label       Object Label
+ * @property string     $description Object Description
+ * @property int|string $parent_id   Parent ID
  */
-class PodsObject implements
-	ArrayAccess,
-	Serializable {
+class PodsObject implements ArrayAccess, Serializable {
 
 	/**
 	 * Object data
@@ -86,16 +84,16 @@ class PodsObject implements
 	 * @var array
 	 */
 	protected $_form_options = array(
-		'default'        => null,
+		'default' => null,
 
-		'attributes'     => array(),
+		'attributes' => array(),
 
-		'group'          => 0,
-		'grouped'        => 0,
+		'group'   => 0,
+		'grouped' => 0,
 
-		'dependency'     => false,
-		'depends-on'     => array(),
-		'excludes-on'    => array(),
+		'dependency'  => false,
+		'depends-on'  => array(),
+		'excludes-on' => array(),
 
 		'developer_mode' => false
 	);
@@ -177,9 +175,9 @@ class PodsObject implements
 	/**
 	 * Get the Object
 	 *
-	 * @param string|array|WP_Post $name   Get the Object by Name, or pass an array/WP_Post of Object
-	 * @param int                  $id     Get the Object by ID (overrides $name)
-	 * @param array                $args   Additional options for the PodsObject
+	 * @param string|array|WP_Post $name Get the Object by Name, or pass an array/WP_Post of Object
+	 * @param int                  $id   Get the Object by ID (overrides $name)
+	 * @param array                $args Additional options for the PodsObject
 	 *
 	 * - bool  $live   Set to true to automatically save values in the DB when you $object['option']='value'
 	 * - mixed $parent Parent Object or ID
@@ -189,7 +187,7 @@ class PodsObject implements
 	public function __construct( $name, $id = 0, $args = array() ) {
 
 		$defaults = array(
-			'live' => false,
+			'live'   => false,
 			'parent' => null,
 		);
 
@@ -199,7 +197,7 @@ class PodsObject implements
 			$this->unserialize( $name );
 
 			if ( $this->is_valid() ) {
-				$id = $this->_object[ 'id' ];
+				$id = $this->_object['id'];
 			}
 		} else {
 			$id = $this->load( $name, $id, $args['parent'] );
@@ -214,7 +212,10 @@ class PodsObject implements
 		$this->_action_type = str_replace( '_pods_', '', $this->_post_type );
 
 		foreach ( $this->_live_actions as $action => $_options ) {
-			add_action( $action . '_' . $this->_action_type, array( $this, $_options['method'] ), 10, $_options['args'] );
+			add_action( $action . '_' . $this->_action_type, array(
+				$this,
+				$_options['method']
+			), 10, $_options['args'] );
 		}
 
 	}
@@ -1053,7 +1054,7 @@ class PodsObject implements
 			} else {
 				$find_args = array(
 					'post_type'      => '_pods_field',
-					'posts_per_page' => -1,
+					'posts_per_page' => - 1,
 					'nopaging'       => true,
 					'post_parent'    => $this->_object['id'],
 					'orderby'        => 'menu_order',

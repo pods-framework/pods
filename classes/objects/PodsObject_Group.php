@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Pods
+ * @package  Pods
  * @category Object Types
  */
 
@@ -9,8 +9,7 @@
  *
  * @property PodsObject_Field[] $fields Fields
  */
-class PodsObject_Group extends
-	PodsObject {
+class PodsObject_Group extends PodsObject {
 
 	/**
 	 * Post type / meta key prefix for internal values
@@ -257,7 +256,6 @@ class PodsObject_Group extends
 			'additional-field' => __( 'Additional Field Options', 'pods' ),
 			'advanced'         => __( 'Advanced', 'pods' )
 		);
-
 
 		/**
 		 * Fire off the setup for the Pods edit field tabs

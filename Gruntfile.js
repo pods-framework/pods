@@ -35,24 +35,15 @@ module.exports = function ( grunt ) {
 	// load all grunt tasks in package.json matching the `grunt-*` pattern
 	require( 'load-grunt-tasks' )( grunt );
 
+	grunt.loadNpmTasks( 'grunt-exec' );
+
 	// Project configuration.
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
-		rollup: {
-			options: {
-				sourceMap : true,
-				format    : 'iife',
-				moduleName: 'PodsUI',
-				plugins   : [
-					babel( { presets: [ "es2015-rollup" ] } ),
-					uglify()
-				]
-			},
-			files: {
-				src : 'ui/js/pods-ui-ready.js',
-				dest: 'ui/js/pods-ui-ready.min.js'
-			}
+		exec: {
+			rollup_dev : 'node_modules/rollup/bin/rollup -c rollup.config.dev.js',
+			rollup_prod: 'node_modules/rollup/bin/rollup -c rollup.config.prod.js'
 		},
 
 		clean: {

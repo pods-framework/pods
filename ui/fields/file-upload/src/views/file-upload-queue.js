@@ -1,6 +1,9 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
 
+import * as queue_item_template from '../templates/file-upload-queue.html';
+
+
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {
 		id       : 0,
@@ -18,7 +21,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 
 	tagName: 'li',
 
-	template: _.template( $( '#file-upload-queue-template' ).html() ),
+	template: _.template( queue_item_template.default ),
 
 	attributes: function () {
 		return {

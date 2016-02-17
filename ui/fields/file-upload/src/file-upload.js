@@ -8,11 +8,13 @@ import { FileUploadForm } from './views/file-upload-form';
 import { Plupload } from './uploaders/plupload';
 import { MediaModal } from './uploaders/media-modal';
 
+import * as layout_template from './templates/file-upload-layout.html';
+
 // @todo: last vestiges of knowledge about any specific uploaders?
 const PLUPLOAD_UPLOADER = 'plupload';
 
 export const FileUpload = Mn.LayoutView.extend( {
-	template: _.template( $( '#file-upload-layout-template' ).html() ),
+	template: _.template( layout_template.default ),
 
 	regions: {
 		list     : '.pods-ui-file-list',

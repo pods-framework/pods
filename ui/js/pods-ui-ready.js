@@ -1,6 +1,7 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
 import { FileUpload } from '../fields/file-upload/src/file-upload';
+//import { Pick } from '../fields/pick/src/pick';
 
 const app = {
 	fields: {}
@@ -25,9 +26,6 @@ jQuery.fn.pods_ui_field_init = function () {
 
 	return this.each( function () {
 		let data = {}, field_id, field;
-		let defaults = {
-			field_type: 'hidden'
-		};
 
 		// Combine data from all in-line data scripts in the container
 		$( this ).find( 'script.data' ).each( function () {
@@ -37,19 +35,20 @@ jQuery.fn.pods_ui_field_init = function () {
 			}
 		);
 
-		// Merge inline data with the defaults and startup the new control
-		data = $.extend( defaults, data );
-		field = field_factory( data.field_type );
+		if ( data[ 'field_type' ] !== undefined ) {
 
-		if ( field !== undefined ) {
-			field_id = data.field_meta[ 'field_attributes' ].id;
+			field = field_factory( data[ 'field_type' ] );
 
-			app.fields[ field_id ] = new field( {
-				el        : this,
-				field_meta: data[ 'field_meta' ],
-				model_data: data[ 'model_data' ]
-			} );
-			app.fields[ field_id ].render();
+			if ( field !== undefined ) {
+				field_id = data.field_meta[ 'field_attributes' ].id;
+
+				app.fields[ field_id ] = new field( {
+					el        : this,
+					field_meta: data[ 'field_meta' ],
+					model_data: data[ 'model_data' ]
+				} );
+				app.fields[ field_id ].render();
+			}
 		}
 	} );
 };
@@ -66,7 +65,7 @@ const field_factory = function ( field_type ) {
 			break;
 
 		case 'pick':
-			// field_control = Pick
+			//field_control = Pick;
 			break;
 
 		default:

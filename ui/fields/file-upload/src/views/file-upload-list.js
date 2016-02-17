@@ -1,8 +1,11 @@
 /*global jQuery, _, Backbone, Mn */
+const $ = jQuery;
+
+import * as item_template from '../templates/file-upload-item.html';
+
 /**
  * Individual list items, representing a single file
  */
-const $ = jQuery;
 export const FileUploadItem = Mn.LayoutView.extend( {
 	tagName: 'li',
 
@@ -14,7 +17,7 @@ export const FileUploadItem = Mn.LayoutView.extend( {
 		remove_button: '.pods-file-remove'
 	},
 
-	template: _.template( $( '#file-upload-item-template' ).html() ),
+	template: _.template( item_template.default ),
 
 	triggers: {
 		'click @ui.remove_button': 'remove:file:click'

@@ -1,6 +1,8 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
 
+import * as form_template from '../templates/file-upload-form.html';
+
 export const FileUploadForm = Mn.LayoutView.extend( {
 
 	tagName: 'div',
@@ -9,7 +11,7 @@ export const FileUploadForm = Mn.LayoutView.extend( {
 		add_button: '.pods-file-add'
 	},
 
-	template: _.template( $( '#file-upload-form-template' ).html() ),
+	template: _.template( form_template.default ),
 
 	triggers: {
 		'click @ui.add_button': 'add:file:click'

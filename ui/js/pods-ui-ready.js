@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
 import { FileUpload } from '../fields/file-upload/src/file-upload';
-//import { Pick } from '../fields/pick/src/pick';
+import { Pick } from '../fields/pick/src/pick';
 
 const app = {
 	fields: {}
@@ -65,7 +65,7 @@ const field_factory = function ( field_type ) {
 			break;
 
 		case 'pick':
-			//field_control = Pick;
+			field_control = Pick;
 			break;
 
 		default:

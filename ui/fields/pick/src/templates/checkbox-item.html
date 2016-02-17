@@ -1,0 +1,13 @@
+<div class="pods-field pods-boolean">
+	<input
+		name="<%- attr.name %>[<%- id %>]"
+		<%= selected ? 'checked="checked"' : '' %>
+		data-name-clean="<%- attr.name_clean %>"
+		data-label="<%- options.label %>"
+		id="<%- attr.id %>"
+		class="pods-form-ui-field-type-pick"
+		type="checkbox" tabindex="2" value="<%- id %>">
+	<label class="pods-form-ui-label" for="<%- attr.name %>[<%- id %>]">
+		<%- name %>
+	</label>
+</div>

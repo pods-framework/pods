@@ -41,7 +41,6 @@ $field_meta = array(
 	'field_options'    => $options
 );
 
-include_once PODS_DIR . 'ui/fields/pick/src/templates/relationship-tpl.php';
 include_once PODS_DIR . 'classes/PodsFieldData.php';
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>

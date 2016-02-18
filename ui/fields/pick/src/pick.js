@@ -28,6 +28,15 @@ export const Pick = Mn.LayoutView.extend( {
 		var listView = new CheckboxList( { collection: this.collection, field_meta: this.field_meta } );
 
 		this.showChildView( 'list', listView );
+	},
+
+	/**
+	 * Fired by a chechbox:click trigger in any child view
+	 *
+	 * @param childView View that was the source of the event
+	 */
+	onChildviewCheckboxClick: function ( childView ) {
+		childView.model.toggle_selected();
 	}
 
 } );

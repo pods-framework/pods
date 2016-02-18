@@ -11,12 +11,24 @@ export const CheckboxItem = Mn.LayoutView.extend( {
 
 	className: 'pods-pick',
 
-	ui: {},
+	ui: {
+		checkbox: 'input.pods-form-ui-field-type-pick'
+	},
 
 	template: _.template( checkbox_item.default ),
 
 	triggers: {
 		'click @ui.checkbox': 'checkbox:click'
+	},
+
+	modelEvents: {
+		'change': 'modelChanged'
+	},
+
+	templateHelpers: function () {
+		return {
+			ordinal: this.getOrdinal()
+		}
 	},
 
 	/**
@@ -32,6 +44,14 @@ export const CheckboxItem = Mn.LayoutView.extend( {
 		data.options = this.options[ 'field_options' ];
 
 		return data;
+	},
+
+	modelChanged: function () {
+		this.render();
+	},
+
+	getOrdinal: function () {
+		return this.model.collection.indexOf( this.model );
 	}
 
 } );

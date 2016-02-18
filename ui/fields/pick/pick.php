@@ -3,6 +3,7 @@
  * @var $form_field_type string
  * @var $options         array
  * @var $field_type      string
+ * @var $value
  */
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -24,8 +25,9 @@ unset ( $options[ 'data' ] );
 $model_data = array();
 foreach ( $data as $this_id => $this_title ) {
 	$model_data[] = array(
-		'id'   => $this_id,
-		'name' => $this_title
+		'id'       => $this_id,
+		'name'     => $this_title,
+		'selected' => ( null !== $value[ $this_id ] )
 	);
 }
 
@@ -44,6 +46,9 @@ $field_meta = array(
 include_once PODS_DIR . 'classes/PodsFieldData.php';
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>
-<div<?php PodsForm::attributes( array('class' => $attributes[ 'class' ], 'id'    => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array(
+	'class' => $attributes[ 'class' ],
+	'id'    => $attributes[ 'id' ]
+), $name, $form_field_type, $options ); ?>>
 	<?php $field_data->emit_script(); ?>
 </div>

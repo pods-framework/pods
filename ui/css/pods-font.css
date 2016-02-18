@@ -9,9 +9,9 @@
     url("../fonts/pods.svg#pods") format("svg");
   font-weight: normal;
   font-style: normal;
-
 }
 
+/*
 [data-icon]:before {
   font-family: "pods" !important;
   content: attr(data-icon);
@@ -24,6 +24,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+*/
 
 [class^="pods-icon-"]:before,
 [class*=" pods-icon-"]:before {
@@ -42,6 +43,8 @@
   content: "c";
 }
 
+#toplevel_page_pods .dashicons-before,
+#toplevel_page_pods .dashicons-before:before,
 .dashicons-pods:before {
     font-family: "pods" !important;
     font-size: 20px;

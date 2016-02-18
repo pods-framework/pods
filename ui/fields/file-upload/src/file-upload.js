@@ -30,9 +30,6 @@ export const FileUpload = Mn.LayoutView.extend( {
 		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
 		// worry about marshalling that data around.
 		this.field_meta = this.getOption( 'field_meta' );
-
-		this.collection = new FileUploadCollection( this.getOption( 'model_data' ), this.field_meta );
-		this.model = new FileUploadModel();
 	},
 
 	onRender: function () {

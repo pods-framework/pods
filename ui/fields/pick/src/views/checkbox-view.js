@@ -27,7 +27,7 @@ export const CheckboxItem = Mn.LayoutView.extend( {
 
 	templateHelpers: function () {
 		return {
-			ordinal: this.getOrdinal()
+			ordinal: this.model.collection.indexOf( this.model )
 		}
 	},
 
@@ -50,16 +50,12 @@ export const CheckboxItem = Mn.LayoutView.extend( {
 		this.render();
 	},
 
-	getOrdinal: function () {
-		return this.model.collection.indexOf( this.model );
-	}
-
 } );
 
 /**
  *  Represents the markup of the container as a whole
  */
-export const CheckboxList = Mn.CollectionView.extend( {
+export const CheckboxView = Mn.CollectionView.extend( {
 	tagName: 'ul',
 
 	childView: CheckboxItem,

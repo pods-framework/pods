@@ -1,16 +1,19 @@
 /*global jQuery, _, Backbone, Mn */
 const $ = jQuery;
-import { FileUpload } from '../fields/file-upload/src/file-upload';
-import { Pick } from '../fields/pick/src/pick';
+
+// @todo: just here for testing the file upload queue
+import * as Queue from '../fields/file-upload/src/views/file-upload-queue';
+import * as fieldClasses from './pods-ui-field-manifest';
+
+import { FileUploadCollection } from '../fields/file-upload/src/models/file-upload-model';
+import { RelationshipCollection } from '../fields/pick/src/models/relationship-model';
 
 const app = {
-	fields: {}
+	fieldClasses: fieldClasses,
+	fields      : {},
+	Queue       : Queue
 };
 export default app;
-
-// @todo: just here for testing the file upload queue, long term solution needed to expose things
-import * as Queue from '../fields/file-upload/src/views/file-upload-queue';
-app.Queue = Queue;
 
 /**
  * This is the workhorse that currently kicks everything off
@@ -25,7 +28,7 @@ jQuery( function ( $ ) {
 jQuery.fn.pods_ui_field_init = function () {
 
 	return this.each( function () {
-		let data = {}, field_id, field;
+		let data = {}, field_id, field_control, field;
 
 		// Combine data from all in-line data scripts in the container
 		$( this ).find( 'script.data' ).each( function () {
@@ -37,17 +40,18 @@ jQuery.fn.pods_ui_field_init = function () {
 
 		if ( data[ 'field_type' ] !== undefined ) {
 
-			field = field_factory( data[ 'field_type' ] );
+			field_control = field_factory( data[ 'field_type' ] );
 
-			if ( field !== undefined ) {
+			if ( field_control.control !== undefined ) {
 				field_id = data.field_meta[ 'field_attributes' ].id;
-
-				app.fields[ field_id ] = new field( {
+				field = new field_control.control( {
 					el        : this,
-					field_meta: data[ 'field_meta' ],
-					model_data: data[ 'model_data' ]
+					collection: new field_control.collection( data[ 'model_data' ] ),
+					field_meta: data[ 'field_meta' ]
 				} );
-				app.fields[ field_id ].render();
+				field.render();
+
+				app.fields[ field_id ] = field;
 			}
 		}
 	} );
@@ -57,15 +61,21 @@ jQuery.fn.pods_ui_field_init = function () {
  * @param {string} field_type
  */
 const field_factory = function ( field_type ) {
-	let field_control;
+	let field;
 
 	switch ( field_type ) {
 		case 'file-upload':
-			field_control = FileUpload;
+			field = {
+				control   : fieldClasses.FileUpload,
+				collection: FileUploadCollection
+			};
 			break;
 
 		case 'pick':
-			field_control = Pick;
+			field = {
+				control   : fieldClasses.Pick,
+				collection: RelationshipCollection
+			};
 			break;
 
 		default:
@@ -73,5 +83,5 @@ const field_factory = function ( field_type ) {
 			break;
 	}
 
-	return field_control;
+	return field;
 };

@@ -22,10 +22,10 @@ wp_enqueue_script( 'pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.min.js', arr
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );
 $model_data = array();
-foreach ( $data as $id => $name ) {
+foreach ( $data as $this_id => $this_title ) {
 	$model_data[] = array(
-		'id'   => $id,
-		'name' => $name
+		'id'   => $this_id,
+		'name' => $this_title
 	);
 }
 

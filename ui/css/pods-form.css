@@ -312,8 +312,6 @@ input.pods-form-ui-field-type-color {
     display: block;
 }
 
-@media screen and ( max-width: 782px ) {
-    #wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
-        height: 12em;
-    }
+#wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
+    height: 12em;
 }

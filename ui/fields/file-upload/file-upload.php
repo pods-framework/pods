@@ -19,6 +19,7 @@ wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marione
 	'marionette',
 	'backbone.radio'
 ), '1.0.2', true );
+wp_enqueue_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
 
 wp_enqueue_script( 'pods-ui-ready', PODS_URL . 'ui/js/pods-ui-ready.min.js', array(), PODS_VERSION, true );
 

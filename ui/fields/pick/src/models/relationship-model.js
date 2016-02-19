@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Mn */
 
 /**
- * Single item model representing a row of relationship data
+ *
  */
 export const RelationshipModel = Backbone.Model.extend( {
 	defaults: {
@@ -17,12 +17,27 @@ export const RelationshipModel = Backbone.Model.extend( {
 } );
 
 /**
- * Relationship item collection
+ *
  */
 export const RelationshipCollection = Backbone.Collection.extend( {
 	model: RelationshipModel,
 
-	// Return a new collection containing just the selected items in this one
+	/**
+	 *
+	 * @param { ?string[] } ids
+	 */
+	setSelected: function ( ids ) {
+		this.map( function ( thisModel ) {
+			const selected = _.contains( ids, thisModel.get( 'id' ) + '' );
+			thisModel.set( 'selected', selected );
+		} );
+	},
+
+	/**
+	 * Return a new collection containing just the selected items in this one
+	 *
+	 * @returns {*}
+	 */
 	filterSelected: function () {
 
 		// Get an array with only the selected items

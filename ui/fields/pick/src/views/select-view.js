@@ -45,5 +45,9 @@ export const SelectView = PodsFieldListView.extend( {
 			'tabindex'       : '2',
 			'multiple'       : fieldOptions[ 'pick_format_type' ]
 		}
+	},
+
+	onChangeSelected: function () {
+		this.collection.setSelected( this.$el.val() );
 	}
 } );

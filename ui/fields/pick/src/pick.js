@@ -11,7 +11,7 @@ export const Pick = Mn.LayoutView.extend( {
 
 	regions: {
 		viewSelector: '.view-selector',
-		list       : '.pods-pick-values'
+		list        : '.pods-pick-values'
 	},
 
 	onRender: function () {
@@ -21,21 +21,14 @@ export const Pick = Mn.LayoutView.extend( {
 	},
 
 	/**
-	 * Fired by a chechbox:click trigger in any child view
-	 *
-	 * @param childView View that was the source of the event
+	 * Fun for testing
 	 */
-	onChildviewToggleSelected: function ( childView ) {
-		childView.model.toggleSelected();
-		console.log( 'toggle' );
-	},
-
-	onChildviewCheckboxViewClick: function( childView ) {
+	onChildviewCheckboxViewClick: function ( childView ) {
 		const view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
 		this.showChildView( 'list', view );
 	},
 
-	onChildviewSelectViewClick: function( childView ) {
+	onChildviewSelectViewClick: function ( childView ) {
 		const view = new SelectView( { collection: this.collection, fieldModel: this.model } );
 		this.showChildView( 'list', view );
 	}

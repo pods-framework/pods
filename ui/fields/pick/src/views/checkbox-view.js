@@ -3,7 +3,7 @@ import * as checkbox_item from '../templates/checkbox-item.html';
 import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
 
 /**
- * Represents the markup of a single row of relationship data
+ *
  */
 export const CheckboxItem = PodsFieldView.extend( {
 	tagName: 'li',
@@ -32,12 +32,16 @@ export const CheckboxItem = PodsFieldView.extend( {
 
 	modelChanged: function () {
 		this.render();
+	},
+
+	onToggleSelected: function () {
+		this.model.toggleSelected();
 	}
 
 } );
 
 /**
- *  Represents the markup of the container as a whole
+ *
  */
 export const CheckboxView = PodsFieldListView.extend( {
 	tagName: 'ul',

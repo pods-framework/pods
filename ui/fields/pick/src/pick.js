@@ -1,6 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
-const $ = jQuery;
-
+/*global jQuery, _, Backbone, Mn, wp */
 import * as layout_template from './templates/pick-layout.html';
 
 import { RelationshipModel, RelationshipCollection } from './models/relationship-model';
@@ -14,17 +12,8 @@ export const Pick = Mn.LayoutView.extend( {
 		list: '.pods-pick-values'
 	},
 
-	initialize: function () {
-		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-		// worry about marshalling that data around.
-		this.field_meta = this.getOption( 'field_meta' );
-	},
-
 	onRender: function () {
-		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-		// worry about marshalling that data around.
-		var listView = new CheckboxView( { collection: this.collection, field_meta: this.field_meta } );
-
+		var listView = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
 		this.showChildView( 'list', listView );
 	},
 

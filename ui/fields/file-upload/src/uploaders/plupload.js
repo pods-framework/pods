@@ -1,6 +1,4 @@
-/*global jQuery, _, Backbone, Mn, wp, plupload */
-const $ = jQuery;
-
+/*global jQuery, _, Backbone, Mn, wp */
 import { PodsFileUploader } from './pods-file-uploader';
 import { FileUploadQueueModel, FileUploadQueue } from '../views/file-upload-queue';
 
@@ -34,7 +32,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 		// Assemble the collection data for the file queue
 		collection = new Backbone.Collection();
-		$.each( files, function ( index, file ) {
+		jQuery.each( files, function ( index, file ) {
 			model = new FileUploadQueueModel( {
 				id      : file.id,
 				filename: file.name
@@ -94,7 +92,7 @@ export const Plupload = PodsFileUploader.extend( {
 		}
 		// Error condition 2
 		else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
-			response = $( response ).text(); // Strip tags, text only
+			response = jQuery( response ).text(); // Strip tags, text only
 			if ( window.console ) {
 				console.log( response );
 			}
@@ -108,13 +106,13 @@ export const Plupload = PodsFileUploader.extend( {
 			var json = response.match( /{.*}$/ );
 
 			if ( null !== json && 0 < json.length ) {
-				json = $.parseJSON( json[ 0 ] );
+				json = jQuery.parseJSON( json[ 0 ] );
 			}
 			else {
 				json = {};
 			}
 
-			if ( 'object' != typeof json || $.isEmptyObject( json ) ) {
+			if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
 				if ( window.console ) {
 					console.log( response );
 				}

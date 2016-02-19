@@ -1,6 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
-const $ = jQuery;
-
+/*global jQuery, _, Backbone, Mn, wp */
 /**
  *
  */

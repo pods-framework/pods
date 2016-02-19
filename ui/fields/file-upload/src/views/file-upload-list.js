@@ -1,12 +1,11 @@
-/*global jQuery, _, Backbone, Mn */
-const $ = jQuery;
-
+/*global jQuery, _, Backbone, Mn, wp */
 import * as item_template from '../templates/file-upload-item.html';
+import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
 
 /**
  * Individual list items, representing a single file
  */
-export const FileUploadItem = Mn.LayoutView.extend( {
+export const FileUploadItem = PodsFieldView.extend( {
 	tagName: 'li',
 
 	className: 'pods-file',
@@ -21,49 +20,26 @@ export const FileUploadItem = Mn.LayoutView.extend( {
 
 	triggers: {
 		'click @ui.remove_button': 'remove:file:click'
-	},
-
-	/**
-	 * @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-	 * worry about marshalling that data around.
-	 *
-	 * The return value here is what will be made available to the template
-	 */
-	serializeData: function () {
-		var data = this.model.toJSON();
-
-		data.attr = this.options[ 'field_attributes' ];
-		data.options = this.options[ 'field_options' ];
-
-		return data;
 	}
-
 } );
 
 /**
  * The file list container
  */
-export const FileUploadList = Mn.CollectionView.extend( {
+export const FileUploadList = PodsFieldListView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-files pods-files-list',
 
 	childView: FileUploadItem,
 
-	// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-	// worry about marshalling that data around.
-	initialize: function ( options ) {
-		this.childViewOptions = options.field_meta;
-	},
-
 	onAttach: function () {
+		const fieldOptions = this.options.fieldModel.get( 'options' );
 
 		// @todo
 		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
 
-		// @todo: turn this into a list view behavior
-
-		if ( 1 != this.options[ 'field_meta' ][ 'field_options' ][ 'file_limit' ] ) {
+		if ( 1 != fieldOptions.file_limit ) {
 			// init sortable
 			this.$el.sortable( {
 				containment      : 'parent',
@@ -74,6 +50,5 @@ export const FileUploadList = Mn.CollectionView.extend( {
 			} );
 		}
 	}
-
 } );
 

@@ -1,6 +1,4 @@
 /*global jQuery, _, Backbone, Mn */
-const $ = jQuery;
-
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';
@@ -22,21 +20,11 @@ export const FileUpload = Mn.LayoutView.extend( {
 		form     : '.pods-ui-form'
 	},
 
-	field_meta: {}, // @todo: things to be yanked when we abstract our field data needs
-
 	uploader: {},
 
-	initialize: function () {
-		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-		// worry about marshalling that data around.
-		this.field_meta = this.getOption( 'field_meta' );
-	},
-
 	onRender: function () {
-		// @todo: abstract this out.  All fields need access to the field meta and individual views shouldn't have to
-		// worry about marshalling that data around.
-		var listView = new FileUploadList( { collection: this.collection, field_meta: this.field_meta } );
-		var formView = new FileUploadForm( { field_meta: this.field_meta } );
+		var listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
+		var formView = new FileUploadForm( { fieldModel: this.model } );
 
 		this.showChildView( 'list', listView );
 		this.showChildView( 'form', formView );
@@ -76,7 +64,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 	},
 
 	createUploader: function () {
-		var options = this.field_meta[ 'field_options' ];
+		var options = this.model.get( 'options' );
 		var Uploader;
 
 		// Determine which uploader object to use

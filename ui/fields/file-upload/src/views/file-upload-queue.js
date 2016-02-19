@@ -1,6 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
-const $ = jQuery;
-
+/*global jQuery, _, Backbone, Mn, wp */
 import * as queue_item_template from '../templates/file-upload-queue.html';
 
 

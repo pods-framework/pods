@@ -8,13 +8,13 @@ import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views
 export const CheckboxItem = PodsFieldView.extend( {
 	tagName: 'li',
 
+	template: _.template( checkbox_item.default ),
+
 	className: 'pods-pick',
 
 	ui: {
 		checkbox: 'input.pods-form-ui-field-type-pick'
 	},
-
-	template: _.template( checkbox_item.default ),
 
 	triggers: {
 		'click @ui.checkbox': 'checkbox:click'

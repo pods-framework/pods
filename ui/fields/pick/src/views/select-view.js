@@ -1,8 +1,10 @@
 /*global jQuery, _, Backbone, Mn, wp */
+import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
+
 /**
  *
  */
-export const SelectItem = Mn.ItemView.extend( {
+export const SelectItem = PodsFieldView.extend( {
 	tagName: 'option',
 
 	template: false,
@@ -14,8 +16,7 @@ export const SelectItem = Mn.ItemView.extend( {
 		}
 	},
 
-	onRender: function() {
-
+	onRender: function () {
 
 	}
 } );
@@ -23,7 +24,7 @@ export const SelectItem = Mn.ItemView.extend( {
 /**
  *
  */
-export const SelectView = Mn.CollectionView.extend( {
+export const SelectView = PodsFieldListView.extend( {
 	tagName: 'select',
 
 	template: false,
@@ -31,22 +32,16 @@ export const SelectView = Mn.CollectionView.extend( {
 	childView: SelectItem,
 
 	attributes: function () {
-		const field_meta = this.options.field_meta;
-		const field_attributes = field_meta.field_attributes;
-		const field_options = field_meta.field_options;
+		const fieldModel = this.options.fieldModel;
+		const fieldAttributes = fieldModel.get( 'attributes' );
+		const fieldOptions = fieldModel.get( 'options' );
 
 		return {
-			'name'           : field_attributes.name + '[]',
-			'data-name-clean': field_attributes.name_clean,
-			'id'             : field_attributes.id,
+			'name'           : fieldAttributes.name + '[]',
+			'data-name-clean': fieldAttributes[ 'name_clean' ],
+			'id'             : fieldAttributes.id,
 			'tabindex'       : '2',
-			'multiple'       : field_options.pick_format_type
+			'multiple'       : fieldOptions[ 'pick_format_type' ]
 		}
-	},
-
-	initialize: function ( options ) {
-		this.childViewOptions = options.field_meta;
-		this.field_attributes = options.field_meta.field_attributes;
 	}
-
 } );

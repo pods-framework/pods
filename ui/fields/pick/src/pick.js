@@ -25,8 +25,9 @@ export const Pick = Mn.LayoutView.extend( {
 	 *
 	 * @param childView View that was the source of the event
 	 */
-	onChildviewCheckboxClick: function ( childView ) {
-		childView.model.toggle_selected();
+	onChildviewToggleSelected: function ( childView ) {
+		childView.model.toggleSelected();
+		console.log( 'toggle' );
 	},
 
 	onChildviewCheckboxViewClick: function( childView ) {
@@ -38,6 +39,4 @@ export const Pick = Mn.LayoutView.extend( {
 		const view = new SelectView( { collection: this.collection, fieldModel: this.model } );
 		this.showChildView( 'list', view );
 	}
-
-
 } );

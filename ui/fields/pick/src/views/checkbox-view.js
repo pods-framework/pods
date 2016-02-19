@@ -17,7 +17,7 @@ export const CheckboxItem = PodsFieldView.extend( {
 	},
 
 	triggers: {
-		'click @ui.checkbox': 'checkbox:click'
+		'click @ui.checkbox': 'toggle:selected'
 	},
 
 	modelEvents: {

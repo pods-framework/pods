@@ -9,15 +9,23 @@ export const SelectItem = PodsFieldView.extend( {
 
 	template: false,
 
-	attributes: function () {
-		return {
-			'value'   : this.model.get( 'id' ),
-			'selected': ( this.model.get( 'selected' ) ) ? 'selected="selected"' : ''
-		}
+	ui: {
+		option: 'option'
 	},
 
-	onRender: function () {
+	triggers: {
+		'change @ui.option': 'toggle:selected'
+	},
 
+	initialize: function () {
+
+		this.$el.val( this.model.get( 'id' ) );
+
+		this.$el.text( this.model.get( 'name') );
+
+		if ( this.model.get( 'selected' ) ) {
+			this.$el.prop( 'selected', 'selected' );
+		}
 	}
 } );
 
@@ -38,10 +46,11 @@ export const SelectView = PodsFieldListView.extend( {
 
 		return {
 			'name'           : fieldAttributes.name + '[]',
+			'class'          : fieldAttributes.class,
 			'data-name-clean': fieldAttributes[ 'name_clean' ],
 			'id'             : fieldAttributes.id,
 			'tabindex'       : '2',
 			'multiple'       : fieldOptions[ 'pick_format_type' ]
 		}
-	}
+	},
 } );

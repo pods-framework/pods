@@ -11,7 +11,7 @@ export const RelationshipModel = Backbone.Model.extend( {
 		'selected': false
 	},
 
-	toggle_selected: function () {
+	toggleSelected: function () {
 		this.set( 'selected', !this.get( 'selected' ) );
 	}
 } );
@@ -23,10 +23,10 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	model: RelationshipModel,
 
 	// Return a new collection containing just the selected items in this one
-	filter_selected: function () {
+	filterSelected: function () {
 
 		// Get an array with only the selected items
-		var filtered = this.filter( function ( item_model ) {
+		const filtered = this.filter( function ( item_model ) {
 			return ( item_model.get( 'selected' ) );
 		} );
 

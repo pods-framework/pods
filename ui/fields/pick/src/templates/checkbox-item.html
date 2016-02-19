@@ -4,10 +4,10 @@
 		<%= selected ? 'checked="checked"' : '' %>
 		data-name-clean="<%- attr.name_clean %>"
 		data-label="<%- options.label %>"
-		id="<%- attr.id %>"
+		id="<%- attr.id %><%= ordinal %>"
 		class="pods-form-ui-field-type-pick"
 		type="checkbox" tabindex="2" value="<%- id %>">
-	<label class="pods-form-ui-label" for="<%- attr.name %>[<%- id %>]">
+	<label class="pods-form-ui-label" for="<%- attr.id %><%= ordinal %>">
 		<%= name %>
 	</label>
 </div>

@@ -9,19 +9,10 @@ export const SelectItem = PodsFieldView.extend( {
 
 	template: false,
 
-	ui: {
-		option: 'option'
-	},
-
-	triggers: {
-		'change @ui.option': 'toggle:selected'
-	},
-
 	initialize: function () {
-
 		this.$el.val( this.model.get( 'id' ) );
 
-		this.$el.text( this.model.get( 'name') );
+		this.$el.html( this.model.get( 'name') );
 
 		if ( this.model.get( 'selected' ) ) {
 			this.$el.prop( 'selected', 'selected' );
@@ -35,9 +26,11 @@ export const SelectItem = PodsFieldView.extend( {
 export const SelectView = PodsFieldListView.extend( {
 	tagName: 'select',
 
-	template: false,
-
 	childView: SelectItem,
+
+	triggers: {
+		'change': 'change:selected'
+	},
 
 	attributes: function () {
 		const fieldModel = this.options.fieldModel;
@@ -52,5 +45,5 @@ export const SelectView = PodsFieldListView.extend( {
 			'tabindex'       : '2',
 			'multiple'       : fieldOptions[ 'pick_format_type' ]
 		}
-	},
+	}
 } );

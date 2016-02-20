@@ -4,6 +4,8 @@ import { PodsFileUploader } from './pods-file-uploader';
 export const MediaModal = PodsFileUploader.extend( {
 	media_object: {},
 
+	fileUploader: 'attachment',
+
 	invoke: function () {
 
 		if ( wp.Uploader.defaults.filters.mime_types === undefined ) {

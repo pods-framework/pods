@@ -5,8 +5,9 @@ import { FileUploadQueueModel, FileUploadQueue } from '../views/file-upload-queu
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},
 
-	initialize: function () {
+	fileUploader: 'plupload',
 
+	initialize: function () {
 		// Set the browse button argument for plupload... it's required
 		this.field_options.plupload_init.browse_button = this.browse_button;
 

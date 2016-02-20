@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
+import * as layout_template from './templates/file-upload-layout.html';
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';
@@ -6,10 +7,10 @@ import { FileUploadForm } from './views/file-upload-form';
 import { Plupload } from './uploaders/plupload';
 import { MediaModal } from './uploaders/media-modal';
 
-import * as layout_template from './templates/file-upload-layout.html';
-
-// @todo: last vestiges of knowledge about any specific uploaders?
-const PLUPLOAD_UPLOADER = 'plupload';
+const Uploaders = [
+	Plupload,
+	MediaModal
+];
 
 export const FileUpload = Mn.LayoutView.extend( {
 	template: _.template( layout_template.default ),
@@ -23,8 +24,8 @@ export const FileUpload = Mn.LayoutView.extend( {
 	uploader: {},
 
 	onRender: function () {
-		var listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
-		var formView = new FileUploadForm( { fieldModel: this.model } );
+		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
+		const formView = new FileUploadForm( { fieldModel: this.model } );
 
 		this.showChildView( 'list', listView );
 		this.showChildView( 'form', formView );
@@ -64,25 +65,29 @@ export const FileUpload = Mn.LayoutView.extend( {
 	},
 
 	createUploader: function () {
-		var options = this.model.get( 'options' );
-		var Uploader;
+		const options = this.model.get( 'options' );
+		const targetUploader = options[ 'file_uploader' ];
+		let Uploader;
 
-		// Determine which uploader object to use
-		// @todo: last vestiges of knowledge about any specific uploaders?
-		if ( PLUPLOAD_UPLOADER == options[ 'file_uploader' ] ) {
-			Uploader = Plupload;
+		for ( let thisUploader of Uploaders ) {
+			if ( thisUploader.prototype.fileUploader === options[ 'file_uploader' ] ) {
+				Uploader = thisUploader;
+				break;
+			}
+		}
+
+		if ( Uploader !== undefined ) {
+			this.uploader = new Uploader( {
+				// We provide regular DOM element for the button
+				browse_button: this.getRegion( 'form' ).getEl( '.pods-file-add' ).get(),
+				ui_region    : this.getRegion( 'ui_region' ),
+				field_options: options
+			} );
+			return this.uploader;
 		}
 		else {
-			Uploader = MediaModal;
+			throw "Could not locate file uploader '" + targetUploader + ";";
 		}
-
-		this.uploader = new Uploader( {
-			// We provide regular DOM element for the button
-			browse_button: this.getRegion( 'form' ).getEl( '.pods-file-add' ).get(),
-			ui_region    : this.getRegion( 'ui_region' ),
-			field_options: options
-		} );
-		return this.uploader;
 	}
 
 } );

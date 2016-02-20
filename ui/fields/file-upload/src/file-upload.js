@@ -70,7 +70,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 		let Uploader;
 
 		for ( let thisUploader of Uploaders ) {
-			if ( thisUploader.prototype.fileUploader === options[ 'file_uploader' ] ) {
+			if ( targetUploader === thisUploader.prototype.fileUploader ) {
 				Uploader = thisUploader;
 				break;
 			}

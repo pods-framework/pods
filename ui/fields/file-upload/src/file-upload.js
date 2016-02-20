@@ -86,7 +86,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 			return this.uploader;
 		}
 		else {
-			throw "Could not locate file uploader '" + targetUploader + ";";
+			throw "Could not locate file uploader '" + targetUploader + "'";
 		}
 	}
 

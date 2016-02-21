@@ -27,8 +27,9 @@ export const FileUploadCollection = Backbone.Collection.extend( {
 		this.listenTo( this, 'add', this.onCollectionAdd );
 	},
 
+	// @todo: fix-up file limits
 	onCollectionAdd: function ( model, collection, options ) {
-		this.truncateToFileLimit( this.field_meta.field_options.file_limit );
+		//this.truncateToFileLimit( this.field_meta.field_options.file_limit );
 	},
 
 	truncateToFileLimit: function ( limit ) {

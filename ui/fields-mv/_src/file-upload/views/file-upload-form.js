@@ -6,12 +6,12 @@ export const FileUploadForm = PodsFieldView.extend( {
 	tagName: 'div',
 
 	ui: {
-		add_button: '.pods-file-add'
+		addButton: '.pods-file-add'
 	},
 
 	template: _.template( formTemplate.default ),
 
 	triggers: {
-		'click @ui.add_button': 'add:file:click'
+		'click @ui.addButton': 'add:file:click'
 	}
 } );

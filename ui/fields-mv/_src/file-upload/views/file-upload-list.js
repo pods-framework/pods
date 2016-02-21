@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as item_template from '../templates/file-upload-item.html';
+import * as itemTemplate from '../templates/file-upload-item.html';
 import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**
@@ -11,15 +11,15 @@ export const FileUploadItem = PodsFieldView.extend( {
 	className: 'pods-file',
 
 	ui: {
-		drag_handle  : '.pods-file-handle',
-		download_link: '.pods-file-download',
-		remove_button: '.pods-file-remove'
+		dragHandle  : '.pods-file-handle',
+		downloadLink: '.pods-file-download',
+		removeButton: '.pods-file-remove'
 	},
 
-	template: _.template( item_template.default ),
+	template: _.template( itemTemplate.default ),
 
 	triggers: {
-		'click @ui.remove_button': 'remove:file:click'
+		'click @ui.removeButton': 'remove:file:click'
 	}
 } );
 
@@ -39,7 +39,7 @@ export const FileUploadList = PodsFieldListView.extend( {
 		// @todo
 		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
 
-		if ( 1 != fieldOptions.file_limit ) {
+		if ( 1 != fieldOptions[ 'file_limit' ] ) {
 			// init sortable
 			this.$el.sortable( {
 				containment      : 'parent',

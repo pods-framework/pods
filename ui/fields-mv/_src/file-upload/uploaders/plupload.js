@@ -9,9 +9,9 @@ export const Plupload = PodsFileUploader.extend( {
 
 	initialize: function () {
 		// Set the browse button argument for plupload... it's required
-		this.field_options.plupload_init.browse_button = this.browse_button;
+		this.fieldOptions[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
 
-		this.plupload = new plupload.Uploader( this.field_options.plupload_init );
+		this.plupload = new plupload.Uploader( this.fieldOptions[ 'plupload_init' ] );
 		this.plupload.init();
 
 		// Setup all callbacks: ( event_name, callback, context )
@@ -27,7 +27,7 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param files
 	 */
 	onFilesAdded: function ( up, files ) {
-		var model,
+		let model,
 			collection,
 			view;
 
@@ -48,11 +48,11 @@ export const Plupload = PodsFileUploader.extend( {
 
 		// Reset the region in case any error messages are hanging around from a previous upload
 		// and show the new file upload queue
-		this.ui_region.reset();
-		this.ui_region.show( view );
+		this.uiRegion.reset();
+		this.uiRegion.show( view );
 
 		// Stash references
-		this.queue_collection = collection;
+		this.queueCollection = collection;
 
 		up.refresh();
 		up.start();
@@ -64,7 +64,7 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param file
 	 */
 	onUploadProgress: function ( up, file ) {
-		var model = this.queue_collection.get( file.id );
+		const model = this.queueCollection.get( file.id );
 		model.set( { progress: file.percent } );
 	},
 
@@ -75,9 +75,9 @@ export const Plupload = PodsFileUploader.extend( {
 	 * @param resp
 	 */
 	onFileUploaded: function ( up, file, resp ) {
-		var response = resp.response,
-			new_file = [],
-			model = this.queue_collection.get( file.id );
+		const model = this.queueCollection.get( file.id );
+		let response = resp.response;
+		let newFile = [];
 
 		// Error condition 1
 		if ( "Error: " == resp.response.substr( 0, 7 ) ) {
@@ -88,7 +88,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 			model.set( {
 				progress : 0,
-				error_msg: response
+				errorMsg: response
 			} );
 		}
 		// Error condition 2
@@ -100,11 +100,11 @@ export const Plupload = PodsFileUploader.extend( {
 
 			model.set( {
 				progress : 0,
-				error_msg: response
+				errorMsg: response
 			} );
 		}
 		else {
-			var json = response.match( /{.*}$/ );
+			let json = response.match( /{.*}$/ );
 
 			if ( null !== json && 0 < json.length ) {
 				json = jQuery.parseJSON( json[ 0 ] );
@@ -123,12 +123,12 @@ export const Plupload = PodsFileUploader.extend( {
 
 				model.set( {
 					progress : 0,
-					error_msg: 'There was an issue with the file upload, please try again.'
+					errorMsg: 'There was an issue with the file upload, please try again.'
 				} );
 				return;
 			}
 
-			new_file = {
+			newFile = {
 				id  : json.ID,
 				icon: json.thumbnail,
 				name: json.post_title,
@@ -137,7 +137,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 			// Remove the file from the upload queue model and trigger an event for the hosting container
 			model.trigger( 'destroy', model );
-			this.trigger( 'added:files', new_file );
+			this.trigger( 'added:files', newFile );
 		}
 	},
 

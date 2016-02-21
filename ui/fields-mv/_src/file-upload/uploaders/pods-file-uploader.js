@@ -3,19 +3,19 @@
  *
  * @param {Object} options
  *
- * @param {Object} options.browse_button   Existing and attached DOM node
- * @param {Object} options.ui_region       Marionette.Region object
- * @param {Object} options.field_options
+ * @param {Object} options.browseButton   Existing and attached DOM node
+ * @param {Object} options.uiRegion       Marionette.Region object
+ * @param {Object} options.fieldOptions
  *
- * @param {string} options.field_options.file_modal_title
- * @param {string} options.field_options.file_modal_add_button
- * @param {string} options.field_options.file_limit
- * @param {string} options.field_options.limit_extensions
- * @param {string} options.field_options.limit_types
- * @param {string} options.field_options.file_attachment_tab
+ * @param {string} options.fieldOptions.file_modal_title
+ * @param {string} options.fieldOptions.file_modal_add_button
+ * @param {string} options.fieldOptions.file_limit
+ * @param {string} options.fieldOptions.limit_extensions
+ * @param {string} options.fieldOptions.limit_types
+ * @param {string} options.fieldOptions.file_attachment_tab
  *
- * @param {Object} options.field_options.plupload_init
- * @param {Object} options.field_options.plupload_init.browse_button
+ * @param {Object} options.fieldOptions.plupload_init
+ * @param {Object} options.fieldOptions.plupload_init.browse_button
  *
  * @class
  */
@@ -23,9 +23,9 @@ export const PodsFileUploader = Mn.Object.extend( {
 
 	constructor: function ( options ) {
 		// Magically set the object properties we need, they'll just "be there" for the concrete instance
-		this.browse_button = options.browse_button;
-		this.ui_region = options.ui_region;
-		this.field_options = options.field_options;
+		this.browseButton = options.browseButton;
+		this.uiRegion = options.uiRegion;
+		this.fieldOptions = options.fieldOptions;
 
 		Mn.Object.call( this, options );
 	}

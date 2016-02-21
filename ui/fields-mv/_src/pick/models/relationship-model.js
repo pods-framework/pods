@@ -41,8 +41,8 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	filterSelected: function () {
 
 		// Get an array with only the selected items
-		const filtered = this.filter( function ( item_model ) {
-			return ( item_model.get( 'selected' ) );
+		const filtered = this.filter( function ( itemModel ) {
+			return ( itemModel.get( 'selected' ) );
 		} );
 
 		// this.filter is going to return an array, so create a collection out of it

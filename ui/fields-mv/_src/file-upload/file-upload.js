@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
-import * as layout_template from './templates/file-upload-layout.html';
+import * as template from './templates/file-upload-layout.html';
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';
@@ -13,12 +13,12 @@ const Uploaders = [
 ];
 
 export const FileUpload = Mn.LayoutView.extend( {
-	template: _.template( layout_template.default ),
+	template: _.template( template.default ),
 
 	regions: {
-		list     : '.pods-ui-file-list',
-		ui_region: '.pods-ui-region', // "Utility" container for uploaders to use
-		form     : '.pods-ui-form'
+		list    : '.pods-ui-file-list',
+		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
+		form    : '.pods-ui-form'
 	},
 
 	uploader: {},
@@ -56,7 +56,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 	},
 
 	/**
-	 * Concrete uploader implementations simply need to: this.trigger( 'added:files', new_files )
+	 * Concrete uploader implementations simply need to: this.trigger( 'added:files', newFiles )
 	 *
 	 * @param {Object[]} data An array of model objects to be added
 	 */
@@ -69,19 +69,19 @@ export const FileUpload = Mn.LayoutView.extend( {
 		const targetUploader = options[ 'file_uploader' ];
 		let Uploader;
 
-		for ( let thisUploader of Uploaders ) {
+		jQuery.each( Uploaders, function ( index, thisUploader ) {
 			if ( targetUploader === thisUploader.prototype.fileUploader ) {
 				Uploader = thisUploader;
-				break;
+				return false;
 			}
-		}
+		} );
 
 		if ( Uploader !== undefined ) {
 			this.uploader = new Uploader( {
 				// We provide regular DOM element for the button
-				browse_button: this.getRegion( 'form' ).getEl( '.pods-file-add' ).get(),
-				ui_region    : this.getRegion( 'ui_region' ),
-				field_options: options
+				browseButton: this.getRegion( 'form' ).getEl( '.pods-file-add' ).get(),
+				uiRegion    : this.getRegion( 'uiRegion' ),
+				fieldOptions: options
 			} );
 			return this.uploader;
 		}
@@ -89,5 +89,4 @@ export const FileUpload = Mn.LayoutView.extend( {
 			throw "Could not locate file uploader '" + targetUploader + "'";
 		}
 	}
-
 } );

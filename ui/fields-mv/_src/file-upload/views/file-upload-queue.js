@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as queue_item_template from '../templates/file-upload-queue.html';
+import * as itemTemplate from '../templates/file-upload-queue.html';
 
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
@@ -7,7 +7,7 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 		id       : 0,
 		filename : '',
 		progress : 0,
-		error_msg: ''
+		errorMsg: ''
 	}
 } );
 
@@ -19,7 +19,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 
 	tagName: 'li',
 
-	template: _.template( queue_item_template.default ),
+	template: _.template( itemTemplate.default ),
 
 	attributes: function () {
 		return {

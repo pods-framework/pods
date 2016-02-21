@@ -12,7 +12,7 @@ export const SelectItem = PodsFieldView.extend( {
 	initialize: function () {
 		this.$el.val( this.model.get( 'id' ) );
 
-		this.$el.html( this.model.get( 'name') );
+		this.$el.html( this.model.get( 'name' ) );
 
 		if ( this.model.get( 'selected' ) ) {
 			this.$el.prop( 'selected', 'selected' );

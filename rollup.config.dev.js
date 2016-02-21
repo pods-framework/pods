@@ -3,8 +3,8 @@ import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
 export default {
-	entry     : 'ui/js/pods-ui-ready.js',
-	dest      : 'ui/js/pods-ui-ready.min.js',
+	entry     : 'ui/fields-mv/_src/pods-fields-ready.js',
+	dest      : 'ui/fields-mv/js/pods-fields-ready.min.js',
 	format    : 'iife',
 	moduleName: 'PodsUI',
 	plugins   : [

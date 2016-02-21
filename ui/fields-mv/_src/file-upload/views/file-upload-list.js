@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
 import * as item_template from '../templates/file-upload-item.html';
-import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**
  * Individual list items, representing a single file

@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
 import * as formTemplate from '../templates/file-upload-form.html';
-import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 export const FileUploadForm = PodsFieldView.extend( {
 	tagName: 'div',

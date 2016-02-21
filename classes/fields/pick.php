@@ -763,7 +763,7 @@ class PodsField_Pick extends PodsField {
 	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
 	        // @todo: Fix location when merging
 	        $field_type = 'pick';
-	        pods_view( PODS_DIR . 'ui/fields/pick/pick.php', compact( array_keys( get_defined_vars() ) ) );
+	        pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
 	        return;
 	    }
 

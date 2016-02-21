@@ -1,12 +1,12 @@
 /*global jQuery, _, Backbone, Mn */
 
 // @todo: just here for testing the file upload queue
-import * as Queue from '../fields/file-upload/src/views/file-upload-queue';
+import * as Queue from './file-upload/views/file-upload-queue';
 import * as fieldClasses from './pods-ui-field-manifest';
 
-import { PodsFieldModel } from '../fields/core/pods-field-model';
-import { FileUploadCollection } from '../fields/file-upload/src/models/file-upload-model';
-import { RelationshipCollection } from '../fields/pick/src/models/relationship-model';
+import { PodsFieldModel } from './core/pods-field-model';
+import { FileUploadCollection } from './file-upload/models/file-upload-model';
+import { RelationshipCollection } from './pick/models/relationship-model';
 
 const app = {
 	fieldClasses: fieldClasses,

@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import { PodsFieldListView, PodsFieldView } from '../../../core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**
  *

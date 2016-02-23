@@ -168,7 +168,6 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Update Version number on 2.x (#3282,#3281) [@pglewis]
 * Fixed: Typo's Rest into REST (#3303) [@Ramoonus]
 * Fixed: Disable xdebug on Travis (#3284,#3283) [@pglewis]
-* Fixed: Non-zero array keys here in PHP7 cause odd behavior so removing the keys (#3294,#3299) [@pglewis]
 * Fixed: Remove dockunit leftovers (#3307) [@Ramoonus]
 * Fixed: Do not use Hashtag as name (#3316) [@Ramoonus]
 * Fixed: Over-escaping strikes again (file upload, restrict file types with more than one mime type) (#3083,#3328) [@pglewis]

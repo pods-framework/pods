@@ -47,13 +47,14 @@ class PodsRESTHandlers {
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param array           $object     The object from the response
-	 * @param string          $field_name Name of field
-	 * @param WP_REST_Request $request    Current request
+	 * @param array           $object      The object from the response
+	 * @param string          $field_name  Name of field
+	 * @param WP_REST_Request $request     Current request
+	 * @param string          $object_type The object type from the response
 	 *
 	 * @return mixed
 	 */
-	public static function get_handler( $object, $field_name, $request ) {
+	public static function get_handler( $object, $field_name, $request, $object_type ) {
 
 		$pod_name = pods_v( 'type', $object );
 		
@@ -64,6 +65,10 @@ class PodsRESTHandlers {
 		 */
 		if( empty( $pod_name ) ) {
 			$pod_name = pods_v( 'taxonomy', $object );
+		}
+
+		if ( empty( $pod_name ) && $object_type == 'user' ) {
+			$pod_name = 'user';
 		}
 				
 		$id       = pods_v( 'id', $object );

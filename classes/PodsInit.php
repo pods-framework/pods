@@ -1376,7 +1376,7 @@ class PodsInit {
                 foreach ( $pods as $pod ) {
                     $type = $pod['type'];
 
-                    if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+                    if ( in_array( $type, array( 'post_type', 'taxonomy', 'user' ) ) ) {
                         if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
                             $rest_bases[ $pod['name'] ] = array(
                                 'type' => $type,
@@ -1403,6 +1403,8 @@ class PodsInit {
                     PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
                 } elseif ( 'taxonomy' == $pod_type ) {
                     PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
+                } elseif ( 'user' == $pod_type ) {
+                    PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base, 'WP_REST_Users_Controller' );
                 }
 
                 new PodsRESTFields( $pod_name );

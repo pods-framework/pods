@@ -12,6 +12,8 @@ const Uploaders = [
 	MediaModal
 ];
 
+const UNLIMITED_FILES = 0;
+
 export const FileUpload = Mn.LayoutView.extend( {
 	template: _.template( template.default ),
 
@@ -61,7 +63,26 @@ export const FileUpload = Mn.LayoutView.extend( {
 	 * @param {Object[]} data An array of model objects to be added
 	 */
 	onAddedFiles: function ( data ) {
-		this.collection.add( data );
+		const options = this.model.get( 'options' );
+		const fileLimit = +options[ 'file_limit' ]; // Unary plus to force to number
+		let newCollection, filteredModels;
+
+		// Get a copy of the existing collection with the new files added
+		newCollection = this.collection.clone();
+		newCollection.add( data );
+
+		// Enforce the file limit option if one is set
+		if ( UNLIMITED_FILES === fileLimit ) {
+			filteredModels = newCollection.models;
+		}
+		else {
+			// Number of uploads is limited: keep the last N models, LIFO style
+			filteredModels = newCollection.filter( function ( model ) {
+				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
+			} );
+		}
+
+		this.collection.reset( filteredModels );
 	},
 
 	createUploader: function () {

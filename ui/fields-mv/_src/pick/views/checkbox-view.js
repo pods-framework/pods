@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as checkboxTemplate from '../templates/checkbox-item.html';
+import * as checkboxTemplate from './checkbox-item.html';
 import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**

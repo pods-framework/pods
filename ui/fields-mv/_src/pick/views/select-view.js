@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
+// Note: this is a template-less view
 import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**

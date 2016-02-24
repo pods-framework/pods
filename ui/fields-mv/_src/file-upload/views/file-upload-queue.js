@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as itemTemplate from '../templates/file-upload-queue.html';
+import * as itemTemplate from './file-upload-queue.html';
 
 
 export const FileUploadQueueModel = Backbone.Model.extend( {

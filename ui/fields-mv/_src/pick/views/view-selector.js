@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as template from '../templates/view-selector-template.html';
+import * as template from './view-selector-template.html';
 
 export const PickViewSelector = Mn.LayoutView.extend( {
 	template: _.template( template.default ),

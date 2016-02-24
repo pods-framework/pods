@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as template from './templates/pick-layout.html';
+import * as template from './pick-layout.html';
 
 import { RelationshipModel, RelationshipCollection } from './models/relationship-model';
 import { PickViewSelector } from './views/view-selector';

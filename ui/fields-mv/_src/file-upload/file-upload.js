@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
-import * as template from './templates/file-upload-layout.html';
+import * as template from './file-upload-layout.html';
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';

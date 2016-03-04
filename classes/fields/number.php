@@ -341,6 +341,7 @@ class PodsField_Number extends PodsField {
         }
 
         $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	$check = trim( $check );
 
         $check = preg_replace( '/[0-9\.\-]/', '', $check );
 
@@ -395,6 +396,7 @@ class PodsField_Number extends PodsField {
         }
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	$value = trim( $value );
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 

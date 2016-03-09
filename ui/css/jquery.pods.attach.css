@@ -109,6 +109,9 @@ form.pods-form ul.pods-files li.pods-file-name {
 
 form.pods-form ul.pods-files li.pods-file-name input[type=text] {
     width: 100% !important;
+    font-size: 1vh;
+    line-height: 1;
+    padding: .3vh 10px;
 }
 
 ul.pods-files li.pods-file {
@@ -128,7 +131,7 @@ ul.pods-files li.pods-file:last-of-type {
 }
 
 ul.pods-files-queue {
-    margin: 14px 0 0;
+    margin: 14px 0 5px;
 }
 
 ul.pods-files-queue li.pods-file-name {
@@ -139,17 +142,21 @@ ul.pods-files-queue li.pods-file-name {
     padding-top: 0;
 }
 
+ul.pods-files-queue li.pods-file li.pods-progress,
+ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
+    border-radius: 10px;
+    height: 18px;
+}
+
 ul.pods-files-queue li.pods-file li.pods-progress {
     position: relative;
     width: 23%;
-    height: 14px;
     margin: 2px 2% 0 0;
-    border: 1px solid #E7E7E7;
+    background-color: #e8e8e8;
 }
 ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
     width: 0px;
-    height: 14px;
-    background-color: #4D4D4D;
+    background-color: #1073AA;
 }
 
 ul.pods-files li.pods-file:after,

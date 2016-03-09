@@ -19,7 +19,7 @@
 
 .pods-field label {
     cursor: pointer;
-    display: inline-block;
+    display: block;
     padding: 0 0 4px 2px;
 }
 
@@ -70,6 +70,7 @@
     border-radius: 3px;
     min-width: 125px;
     max-height: 200px;
+    overflow: auto;
     padding: 2px 0;
 }
 
@@ -313,4 +314,8 @@ input.pods-form-ui-field-type-color {
 
 #wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
     height: 12em;
+}
+
+.pods-related-add-new {
+    margin-top: 1em !important;
 }

@@ -1,23 +1,48 @@
 /*global jQuery, _, Backbone, Mn, wp */
 import * as template from './pick-layout.html';
 
+import { IframeFrame } from '../core/iframe-frame';
 import { RelationshipModel, RelationshipCollection } from './models/relationship-model';
 import { PickViewSelector } from './views/view-selector';
 import { CheckboxView } from './views/checkbox-view';
 import { SelectView } from './views/select-view';
+import { AddNew } from './views/add-new';
 
+const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
+
+/**
+ *
+ */
 export const Pick = Mn.LayoutView.extend( {
 	template: _.template( template.default ),
 
 	regions: {
 		viewSelector: '.view-selector',
-		list        : '.pods-pick-values'
+		list        : '.pods-pick-values',
+		addNew      : '.pods-ui-add-new'
 	},
 
 	onRender: function () {
-		const view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
-		this.showChildView( 'list', view );
+		const list = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
+		const addNew = new AddNew( { fieldModel: this.model } );
+
 		this.showChildView( 'viewSelector', new PickViewSelector( {} ) );
+		this.showChildView( 'list', list );
+		this.showChildView( 'addNew', addNew );
+	},
+
+	onChildviewAddNewClick: function ( childView ) {
+		const options = this.model.get( 'options' );
+
+		const modalFrame = new IframeFrame( {
+			title: 'The Title',
+			src  : '/wp-admin/'
+		} );
+		modalFrame.modal.open();
+	},
+
+	addNewSuccess: function ( response ) {
+		console.log( response );
 	},
 
 	/**

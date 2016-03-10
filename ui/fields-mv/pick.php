@@ -3,10 +3,14 @@
  * @var $form_field_type string
  * @var $options         array
  * @var $field_type      string
- * @var $value
+ * @var $value           array
+ * @var $id              string
  */
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
+
+wp_enqueue_style( 'responsive-modal' );
+wp_enqueue_script( 'responsive-modal' );
 
 wp_enqueue_script( 'backbone' );
 wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
@@ -22,6 +26,8 @@ wp_enqueue_script( 'pods-fields-ready', PODS_URL . 'ui/fields-mv/js/pods-fields-
 
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );
+$options[ 'item_id' ] = (int) $id;
+
 $model_data = array();
 foreach ( $data as $this_id => $this_title ) {
 	$model_data[] = array(

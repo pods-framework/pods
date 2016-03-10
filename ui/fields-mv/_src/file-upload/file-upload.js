@@ -76,7 +76,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 			filteredModels = newCollection.models;
 		}
 		else {
-			// Number of uploads is limited: keep the last N models, LIFO style
+			// Number of uploads is limited: keep the last N models, FIFO/queue style
 			filteredModels = newCollection.filter( function ( model ) {
 				return ( newCollection.indexOf( model ) >= newCollection.length - fileLimit );
 			} );

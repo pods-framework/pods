@@ -319,3 +319,13 @@ input.pods-form-ui-field-type-color {
 .pods-related-add-new {
     margin-top: 1em !important;
 }
+
+@media screen and (max-width: 782px) {
+    .pods-pick-values li .pods-boolean input {
+        height: 18px;
+        top: 2px;
+    }
+    .pods-pick-values li .pods-boolean input:before {
+        font: 400 2.5vh/1 dashicons;
+    }
+}

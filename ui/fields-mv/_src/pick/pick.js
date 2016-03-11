@@ -36,7 +36,7 @@ export const Pick = Mn.LayoutView.extend( {
 
 		const modalFrame = new IframeFrame( {
 			title: 'The Title',
-			src  : '/wp-admin/'
+			src  : options[ 'iframe_src' ]
 		} );
 		modalFrame.modal.open();
 	},

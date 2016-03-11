@@ -46,6 +46,54 @@ $field_meta = array(
 	'field_options'    => $options
 );
 
+// Set the file name and args based on the content type of the relationship
+switch ( $options[ 'pick_object' ] ) {
+	case 'post_type':
+		$file_name = 'post-new.php';
+		$query_args = array(
+			'post_type' => $options[ 'pick_val' ],
+		);
+		break;
+
+	case 'taxonomy':
+		$file_name = 'edit-tags.php';
+		$query_args = array(
+			'taxonomy' => $options[ 'pick_val' ],
+		);
+		break;
+
+	case 'user':
+		$file_name = 'user-new.php';
+		$query_args = array();
+		break;
+
+	case 'pod':
+		$file_name = 'admin.php';
+		$query_args = array(
+			'page'   => 'pods-manage-' . $options[ 'pick_val' ],
+			'action' => 'add'
+		);
+		break;
+
+	// Something unsupported
+	default:
+		// What to do here?
+		break;
+}
+
+// Add args we always need
+$query_args = array_merge(
+	$query_args,
+	array(
+		'pods_modal' => '1', // @todo: Replace string literal with defined constant
+	)
+);
+
+$field_meta[ 'field_options' ][ 'iframe_src' ] = add_query_arg( $query_args, admin_url( $file_name ) );
+
+// Assemble the URL
+$url = add_query_arg( $query_args, admin_url( $file_name ) );
+
 include_once PODS_DIR . 'classes/PodsFieldData.php';
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>

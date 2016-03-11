@@ -9,9 +9,6 @@
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
-wp_enqueue_style( 'responsive-modal' );
-wp_enqueue_script( 'responsive-modal' );
-
 wp_enqueue_script( 'backbone' );
 wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
 

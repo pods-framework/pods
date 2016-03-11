@@ -256,10 +256,6 @@ class PodsInit {
         wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
         wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
-
-        wp_register_style( 'responsive-modal', PODS_URL . 'ui/js/responsive/modal.css', array(), '4.1.1' );
-        wp_register_script( 'responsive-core', PODS_URL . 'ui/js/responsive/responsive.core.js', array(), '4.1.1', true );
-        wp_register_script( 'responsive-modal', PODS_URL . 'ui/js/responsive/responsive.modal.js', array( 'responsive-core' ), '4.1.1', true );
     }
 
     /**

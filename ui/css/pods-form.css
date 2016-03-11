@@ -325,7 +325,21 @@ input.pods-form-ui-field-type-color {
         height: 18px;
         top: 2px;
     }
+
     .pods-pick-values li .pods-boolean input:before {
         font: 400 2.5vh/1 dashicons;
     }
+}
+
+/*
+ * Modal For Flexible Relationships
+ */
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
+  margin-top: 50px;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: none;
 }

@@ -1362,8 +1362,8 @@ class PodsInit {
             return;
         }
 
-        include_once( PODS_DIR . 'classes/PodsRESTFields.php' );
-        include_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
+        include_once( PODS_DIR . 'classes/rest/PodsRESTFields.php' );
+        include_once( PODS_DIR . 'classes/rest/PodsRESTHandlers.php' );
 
         $rest_bases = pods_transient_get( 'pods_rest_bases' );
 

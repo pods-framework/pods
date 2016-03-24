@@ -131,6 +131,16 @@ We also do our best to integrate and play nicely with other projects:
 
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
+== Frequently Asked Questions ==
+
+= Where do we go for Support on your plugin? =
+
+Our primary Support is handled through our Support Forums at http://pods.io/forums/. You can also contact us on our Slack Chat at http://pods.io/chat/ in the #support channel. We do not man the chat channel 24 hours, but we do check the questions that come through daily and reply to any unanswered questions. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards building better documentation.
+
+= I've found a Bug or Feature Request = 
+
+If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at https://github.com/pods-framework/pods/issues/new. Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
+
 == Screenshots ==
 
 1. Create new content types or extend existing ones
@@ -156,6 +166,11 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.2 - March 24th, 2016 = 
+* Added: Support for object fields when using Pods::field() with a specific $field and $option. This was also used to correct a problem with "fetching" Custom Taxonomy's Term List when using Pods Feeds in Pods Gravity Forms Plugin. (#3437) [@sc0ttkclark]
+* Fixed: Correcting CSS used for Dashicon to remove conflict with icon usage in Divi. (#3404,#3406) [@jimtrue]
+* Fixed: Currency/Number Validation used to correct issue with Currency Usage in the Pods Gravity Forms plugin (#3436) [@sc0ttkclark]
+
 = 2.6.1 - February 15th, 2016 =
 * Added: Additional Label support for Post Type / Taxonomy register functions (#3275) [@pcfreak30]
 * Added: Add use_current option for Widget Single (#3393,#3394) [@sc0ttkclark]
@@ -168,7 +183,6 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Update Version number on 2.x (#3282,#3281) [@pglewis]
 * Fixed: Typo's Rest into REST (#3303) [@Ramoonus]
 * Fixed: Disable xdebug on Travis (#3284,#3283) [@pglewis]
-* Fixed: Non-zero array keys here in PHP7 cause odd behavior so removing the keys (#3294,#3299) [@pglewis]
 * Fixed: Remove dockunit leftovers (#3307) [@Ramoonus]
 * Fixed: Do not use Hashtag as name (#3316) [@Ramoonus]
 * Fixed: Over-escaping strikes again (file upload, restrict file types with more than one mime type) (#3083,#3328) [@pglewis]

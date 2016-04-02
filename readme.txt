@@ -135,11 +135,11 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = Where do we go for Support on your plugin? =
 
-Our primary Support is handled through our Support Forums at http://pods.io/forums/. You can also contact us on our Slack Chat at http://pods.io/chat/ in the #support channel. We do not man the chat channel 24 hours, but we do check the questions that come through daily and reply to any unanswered questions. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards building better documentation.
+Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). You can also contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not man the chat channel 24 hours, but we do check the questions that come through daily and reply to any unanswered questions. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
 
 = I've found a Bug or Feature Request = 
 
-If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at https://github.com/pods-framework/pods/issues/new. Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
+If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at [https://github.com/pods-framework/pods/issues/new](https://github.com/pods-framework/pods/issues/new). Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
 
 == Screenshots ==
 

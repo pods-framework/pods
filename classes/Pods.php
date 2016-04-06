@@ -483,29 +483,37 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 */
 	public function fields ( $field = null, $option = null ) {
-		// No fields found
-		if ( empty( $this->fields ) )
-			$field_data = array();
-		// Return all fields
-		elseif ( empty( $field ) )
-			$field_data = (array) $this->fields;
-		// Field not found
-		elseif ( !isset( $this->fields[ $field ] ) )
-			$field_data = array();
-		// Return all field data
-		elseif ( empty( $option ) )
-			$field_data = $this->fields[ $field ];
-		else {
-			// Merge options
-			$options = array_merge( $this->fields[ $field ], $this->fields[ $field ][ 'options' ] );
 
-			$field_data = null;
+		$field_data = null;
+
+		if ( empty( $this->fields ) ) {
+			// No fields found
+			$field_data = array();
+		} elseif ( empty( $field ) ) {
+			// Return all fields
+			$field_data = (array) $this->fields;
+		} elseif ( ! isset( $this->fields[ $field ] ) && ! isset( $this->pod_data['object_fields'][ $field ] ) ) {
+			// Field not found
+			$field_data = array();
+		} elseif ( empty( $option ) ) {
+			// Return all field data
+			if ( isset( $this->fields[ $field ] ) ) {
+				$field_data = $this->fields[ $field ];
+			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
+				$field_data = $this->pod_data['object_fields'][ $field ];
+			}
+		} else {
+			// Merge options
+			if ( isset( $this->fields[ $field ] ) ) {
+				$options = array_merge( $this->fields[ $field ], $this->fields[ $field ]['options'] );
+			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
+				$options = array_merge( $this->pod_data['object_fields'][ $field ], $this->pod_data['object_fields'][ $field ]['options'] );
+			}
 
 			// Get a list of available items from a relationship field
 			if ( 'data' == $option && in_array( pods_var_raw( 'type', $options ), PodsForm::tableless_field_types() ) ) {
 				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $options );
-			}
-			// Return option
+			} // Return option
 			elseif ( isset( $options[ $option ] ) ) {
 				$field_data = $options[ $option ];
 			}

@@ -80,11 +80,7 @@ else {
 
 	        if ( false !== pods_compatibility_check() ) {
 		        $pods_form = pods_form();
-
-		        if ( ! is_network_admin() ) {
-			        $pods_init = pods_init();
-		        }
-
+		        $pods_init = pods_init();
 	        }
 
         }

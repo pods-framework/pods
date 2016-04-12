@@ -158,6 +158,18 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	}
 
 	/**
+	 * Clear pods cache
+	 *
+	 * @subcommand clear-cache
+	 */
+	function clear_cache() {
+
+		pods_api()->cache_flush_pods();
+
+		WP_CLI::success( __( 'Pod cache cleared', 'pods' ) );
+	}
+
+	/**
 	 *
 	 *
 	 * @synopsis   --pod=<pod> --file=<file>

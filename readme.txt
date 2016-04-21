@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.5
-Stable tag: 2.6.3
+Stable tag: 2.6.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,9 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
+= 2.6.3.1 - April 21st, 2016 =
+* Fixed: An Git / SVN deploy bug caused some files to not be properly pushed to WordPress.org SVN, this release is just to ensure everyone who may have updated to 2.6.3 during the period which we were fixing it will be able to still get the proper file updates
 
 = 2.6.3 - April 21st, 2016 =
 * Fixed: Fix forcing underscores when loading Edit Pod Form (#3483). Fixes (#3095) [@sc0ttkclark] Kudos to @lkraav for helping us pin this particular issue down and bring it to resolution.

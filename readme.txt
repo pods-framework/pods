@@ -167,7 +167,7 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 == Changelog ==
 
 = 2.6.3 - April 21st, 2016 = 
-* Fixed: Fix forcing underscores when loading Edit Pod Form (#3483). Fixes (#3095) [@sc0ttkclark]
+* Fixed: Fix forcing underscores when loading Edit Pod Form (#3483). Fixes (#3095) [@sc0ttkclark] Kudos to @lkraav for helping us pin this particular issue down and bring it to resolution.
 * Fixed: Clearing Pods Cache automatically after Pods Upgrade "Salt n'Pepa"'ing the cache keys (#3401). Fixes (#2558,#3348) [@sc0ttkclark]
 
 = 2.6.2 - March 24th, 2016 = 

@@ -1105,8 +1105,6 @@ class PodsInit {
 		// Restore DB table prefix (if switched)
 		if ( null !== $_blog_id ) {
 			restore_current_blog();
-		} else {
-			$this->run();
 		}
 	}
 

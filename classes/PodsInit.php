@@ -1106,6 +1106,11 @@ class PodsInit {
 		if ( null !== $_blog_id ) {
 			restore_current_blog();
 		}
+
+		if ( empty( self::$version ) ) {
+			$this->run( false );
+		}
+
 	}
 
 	/**
@@ -1192,7 +1197,7 @@ class PodsInit {
 		}
 	}
 
-	public function run() {
+	public function run( $full = true ) {
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
@@ -1206,21 +1211,23 @@ class PodsInit {
 			$this->load_meta();
 		}
 
-		if ( ! did_action( 'init' ) ) {
-			add_action( 'init', array( $this, 'core' ), 11 );
-			add_action( 'init', array( $this, 'add_rest_support' ), 12 );
-			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+		if ( $full ) {
+			if ( ! did_action( 'init' ) ) {
+				add_action( 'init', array( $this, 'core' ), 11 );
+				add_action( 'init', array( $this, 'add_rest_support' ), 12 );
+				add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
-			if ( is_admin() ) {
-				add_action( 'init', array( $this, 'admin_init' ), 12 );
-			}
-		} else {
-			$this->core();
-			$this->add_rest_support();
-			$this->setup_content_types();
+				if ( is_admin() ) {
+					add_action( 'init', array( $this, 'admin_init' ), 12 );
+				}
+			} else {
+				$this->core();
+				$this->add_rest_support();
+				$this->setup_content_types();
 
-			if ( is_admin() ) {
-				$this->admin_init();
+				if ( is_admin() ) {
+					$this->admin_init();
+				}
 			}
 		}
 

@@ -125,9 +125,8 @@ class PodsInit {
 		add_action( 'init', array( $this, 'activate_install' ), 9 );
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
-		if ( ! empty( self::$version ) ) {
-			$this->run();
-		}
+		$this->run();
+
 	}
 
 	/**
@@ -151,9 +150,14 @@ class PodsInit {
 	 */
 	public function load_components() {
 
+		if ( empty( self::$version ) ) {
+			return;
+		}
+
 		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
 			self::$components = pods_components();
 		}
+
 	}
 
 	/**
@@ -168,6 +172,10 @@ class PodsInit {
 	 * Set up the Pods core
 	 */
 	public function core() {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		// Session start
 		pods_session_start();
@@ -338,6 +346,10 @@ class PodsInit {
 	 * Register Post Types and Taxonomies
 	 */
 	public function setup_content_types( $force = false ) {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -957,8 +969,11 @@ class PodsInit {
 			delete_option( 'pods_framework_version' );
 			add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
 
+			self::$version = PODS_VERSION;
+
 			pods_api()->cache_flush_pods();
 		}
+
 	}
 
 	/**
@@ -985,6 +1000,7 @@ class PodsInit {
 	public function deactivate() {
 
 		pods_api()->cache_flush_pods();
+
 	}
 
 	/**
@@ -1100,15 +1116,14 @@ class PodsInit {
 		delete_option( 'pods_framework_db_version' );
 		add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
+		self::$version = PODS_VERSION;
+		self::$db_version = PODS_DB_VERSION;
+
 		pods_api()->cache_flush_pods();
 
 		// Restore DB table prefix (if switched)
 		if ( null !== $_blog_id ) {
 			restore_current_blog();
-		}
-
-		if ( empty( self::$version ) ) {
-			$this->run( false );
 		}
 
 	}
@@ -1222,10 +1237,7 @@ class PodsInit {
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
 			add_action( 'init', array( $this, 'add_rest_support' ), 12 );
-
-			if ( $full ) {
-				add_action( 'init', array( $this, 'setup_content_types' ), 11 );
-			}
+			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
 			if ( is_admin() ) {
 				add_action( 'init', array( $this, 'admin_init' ), 12 );
@@ -1233,10 +1245,7 @@ class PodsInit {
 		} else {
 			$this->core();
 			$this->add_rest_support();
-
-			if ( $full ) {
-				$this->setup_content_types();
-			}
+			$this->setup_content_types();
 
 			if ( is_admin() ) {
 				$this->admin_init();
@@ -1443,6 +1452,10 @@ class PodsInit {
 	 * @since 2.5.6
 	 */
 	public function add_rest_support() {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		static $rest_support_added;
 

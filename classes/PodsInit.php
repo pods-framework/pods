@@ -1199,6 +1199,14 @@ class PodsInit {
 
 	public function run( $full = true ) {
 
+		static $ran;
+
+		if ( ! empty( $ran ) ) {
+			return;
+		}
+
+		$ran = true;
+
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
 		} else {
@@ -1211,23 +1219,27 @@ class PodsInit {
 			$this->load_meta();
 		}
 
-		if ( $full ) {
-			if ( ! did_action( 'init' ) ) {
-				add_action( 'init', array( $this, 'core' ), 11 );
-				add_action( 'init', array( $this, 'add_rest_support' ), 12 );
+		if ( ! did_action( 'init' ) ) {
+			add_action( 'init', array( $this, 'core' ), 11 );
+			add_action( 'init', array( $this, 'add_rest_support' ), 12 );
+
+			if ( $full ) {
 				add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+			}
 
-				if ( is_admin() ) {
-					add_action( 'init', array( $this, 'admin_init' ), 12 );
-				}
-			} else {
-				$this->core();
-				$this->add_rest_support();
+			if ( is_admin() ) {
+				add_action( 'init', array( $this, 'admin_init' ), 12 );
+			}
+		} else {
+			$this->core();
+			$this->add_rest_support();
+
+			if ( $full ) {
 				$this->setup_content_types();
+			}
 
-				if ( is_admin() ) {
-					$this->admin_init();
-				}
+			if ( is_admin() ) {
+				$this->admin_init();
 			}
 		}
 

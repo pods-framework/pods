@@ -121,13 +121,12 @@ class PodsInit {
 		self::$upgrade_needed = $this->needs_upgrade();
 
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
 
-		add_action( 'init', array( $this, 'activate_install' ), 9 );
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
-		if ( ! empty( self::$version ) ) {
-			$this->run();
-		}
+		$this->run();
+
 	}
 
 	/**
@@ -151,9 +150,14 @@ class PodsInit {
 	 */
 	public function load_components() {
 
+		if ( empty( self::$version ) ) {
+			return;
+		}
+
 		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
 			self::$components = pods_components();
 		}
+
 	}
 
 	/**
@@ -168,6 +172,10 @@ class PodsInit {
 	 * Set up the Pods core
 	 */
 	public function core() {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		// Session start
 		pods_session_start();
@@ -338,6 +346,10 @@ class PodsInit {
 	 * Register Post Types and Taxonomies
 	 */
 	public function setup_content_types( $force = false ) {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -957,8 +969,11 @@ class PodsInit {
 			delete_option( 'pods_framework_version' );
 			add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
 
+			self::$version = PODS_VERSION;
+
 			pods_api()->cache_flush_pods();
 		}
+
 	}
 
 	/**
@@ -985,6 +1000,7 @@ class PodsInit {
 	public function deactivate() {
 
 		pods_api()->cache_flush_pods();
+
 	}
 
 	/**
@@ -1100,14 +1116,16 @@ class PodsInit {
 		delete_option( 'pods_framework_db_version' );
 		add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
+		self::$version = PODS_VERSION;
+		self::$db_version = PODS_DB_VERSION;
+
 		pods_api()->cache_flush_pods();
 
 		// Restore DB table prefix (if switched)
 		if ( null !== $_blog_id ) {
 			restore_current_blog();
-		} else {
-			$this->run();
 		}
+
 	}
 
 	/**
@@ -1195,6 +1213,14 @@ class PodsInit {
 	}
 
 	public function run() {
+
+		static $ran;
+
+		if ( ! empty( $ran ) ) {
+			return;
+		}
+
+		$ran = true;
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
@@ -1426,6 +1452,10 @@ class PodsInit {
 	 * @since 2.5.6
 	 */
 	public function add_rest_support() {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
 
 		static $rest_support_added;
 

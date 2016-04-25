@@ -121,8 +121,8 @@ class PodsInit {
 		self::$upgrade_needed = $this->needs_upgrade();
 
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+		add_action( 'plugins_loaded', array( $this, 'activate_install' ), 9 );
 
-		add_action( 'init', array( $this, 'activate_install' ), 9 );
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
 		$this->run();
@@ -1212,7 +1212,7 @@ class PodsInit {
 		}
 	}
 
-	public function run( $full = true ) {
+	public function run() {
 
 		static $ran;
 

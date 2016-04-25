@@ -124,7 +124,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
 					to: "GitHub Branch: master"
 				}]
 			},
@@ -147,7 +147,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
 					to: "GitHub Branch: 2.x"
 				}]
 			},
@@ -170,7 +170,7 @@ module.exports = function ( grunt ) {
 				src: [ 'init.php' ],
 				overwrite: true,
 				replacements: [{
-					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
+					from: /GitHub Branch: (release\/|)([\.\d\w\-\/]*)/,
 					to: "GitHub Branch: release/3.0"
 				}]
 			}

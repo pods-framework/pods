@@ -9,7 +9,7 @@ Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
 GitHub Plugin URI: https://github.com/pods-framework/pods
-GitHub Branch: master/upgrade-cache-fix
+GitHub Branch: master
 
 Copyright 2009-2015  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 

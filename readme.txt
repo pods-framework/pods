@@ -166,6 +166,9 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.4 - April 25th, 2016 =
+* Fixed: Modified Run activation/install priority to fire before plugins loaded. Fix for the Clearing Pods Cache automatically after Pods Upgrade (#3487). Fixes (#2558,#3348) [@sc0ttkclark]
+
 = 2.6.3.1 - April 21st, 2016 =
 * Fixed: An Git / SVN deploy bug caused some files to not be properly pushed to WordPress.org SVN, this release is just to ensure everyone who may have updated to 2.6.3 during the period which we were fixing it will be able to still get the proper file updates
 

@@ -7454,7 +7454,7 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif( is_object( $polylang ) && !empty( $current_language ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
+		    elseif( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
 			    $info[ 'join' ][ 'polylang_languages' ] = "
                         LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
                             ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -7532,7 +7532,7 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif ( is_object( $polylang ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
 			    $info[ 'join' ][ 'polylang_languages' ] = "
                         LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
                             ON `polylang_languages`.`term_id` = `t`.`term_id`

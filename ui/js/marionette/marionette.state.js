@@ -329,4 +329,3 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 	return index;
 });
-//# sourceMappingURL=./marionette.state.js.map

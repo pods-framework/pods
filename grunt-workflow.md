@@ -19,7 +19,7 @@
     * Ensure your `master` has pulled from the latest version, with no uncommitted changes
     * Ensure your Git repo has `master` currently checked out
     * LATER: We should improve this so it's done automatically in the script
-* Set new version in `package.json` (it might be something like "2.6.4-a-1"
+* Set new version in `package.json` (it might be something like `2.6.4-a-1`)
     * LATER: Would be great if running `grunt release` would ask for the version number to save a step
 * Run `grunt release`, which will run the following tasks:
     * Update branch name in README.md and init.php to `master`

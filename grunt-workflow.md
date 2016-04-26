@@ -31,10 +31,7 @@
     * Commits branch and version number changes in files to GitHub with commit message as version number `Pods {version}`
     * Tags `master` as version number `2.x/{version}`
     * Pushes `master` and new tag
-    * Removes temporary files (WP SVN
-* To make a new release (update version, tag, create zip, push all those changes to git origin)
-    * Set a new version number in `package.json`
-    * Run `grunt release`
+    * Removes temporary files (WP SVN)
     
 ## What It Does
 * Changes version number in all the places that is needed.

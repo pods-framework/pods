@@ -1681,7 +1681,7 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( is_object( $polylang ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) && method_exists( $polylang, 'get_translation' ) ) {
+                        elseif ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
                             $translated = false;
 
                             if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )

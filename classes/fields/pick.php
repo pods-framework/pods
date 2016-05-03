@@ -1681,7 +1681,7 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( is_object( $polylang ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) && method_exists( $polylang, 'get_translation' ) ) {
+                        elseif ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
                             $translated = false;
 
                             if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
@@ -1690,7 +1690,17 @@ class PodsField_Pick extends PodsField {
                                 $translated = true;
 
                             if ( $translated ) {
-                                $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                            	$object_id = 0; // default
+                            	if ( function_exists( 'PLL' ) && isset( PPL()->model ) && method_exists( PLL()->model, 'get_translation' ) ) {
+                            		// Polylang 1.8 and newer
+                            		$object_id = PLL()->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
+                            		// Polylang 1.2 - 1.7.x
+                            		$object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                            	} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                            		// Polylang 1.1.x and older
+                                	$object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                            	}
 
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];

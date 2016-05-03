@@ -1132,7 +1132,7 @@ class PodsForm {
 	    $output = preg_replace( '/_{2,}/', '_', $output );
 	    $output = preg_replace( '/-{2,}/', '-', $output );
 
-	    if ( $db_field ) {
+	    if ( true !== $db_field ) {
 		    $output = str_replace( '_', '-', $output );
 	    }
 

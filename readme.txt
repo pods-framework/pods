@@ -168,6 +168,7 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 = 2.6.5 - May 3rd, 2016 =
 * Fixed: Renaming of Pods with underscores to hyphenated names that was introduced in 2.6.3. Hyphenated Pods names will remain hyphenated and Underscored Pods names will remain underscored. Fixes (#3499). [@sc0ttkclark]
+* Fixed: Support for new Polylang Versions with much kudos to @JoryHogeveen for tackling this (#3491). Fixes (#3490,#3223) [@JoryHogeveen]
 
 = 2.6.4 - April 25th, 2016 =
 * Fixed: Modified Run activation/install priority to fire before plugins loaded. Fix for the Clearing Pods Cache automatically after Pods Upgrade (#3487). Fixes (#2558,#3348) [@sc0ttkclark]

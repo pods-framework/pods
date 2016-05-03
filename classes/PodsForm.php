@@ -1118,7 +1118,8 @@ class PodsForm {
 
 	    $output = trim( (string) $input );
 
-        $output = str_replace( array( '--1', '__1' ), '00000', $output );
+        $output = str_replace( '--1', 'podsfixtemp1', $output );
+        $output = str_replace( '__1', 'podsfixtemp2', $output );
 
         if ( false !== $noarray ) {
 	        $output = preg_replace( '/\[\d*\]/', '-', $output );
@@ -1129,14 +1130,17 @@ class PodsForm {
 	    $output = pods_clean_name( $output );
 
         $output = preg_replace( '/([^a-z0-9\-_])/', '', $output );
-	    $output = preg_replace( '/_{2,}/', '_', $output );
-	    $output = preg_replace( '/-{2,}/', '-', $output );
+	    $output = preg_replace( '/(_){2,}/', '_', $output );
+	    $output = preg_replace( '/(-){2,}/', '-', $output );
 
 	    if ( true !== $db_field ) {
 		    $output = str_replace( '_', '-', $output );
 	    }
 
-        $output = str_replace( '00000', '--1', $output );
+	    $output = rtrim( $output, '-' );
+
+        $output = str_replace( 'podsfixtemp1', '--1', $output );
+        $output = str_replace( 'podsfixtemp2', '__1', $output );
 
         return $output;
     }

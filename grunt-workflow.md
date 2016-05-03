@@ -9,27 +9,45 @@
     * `npm install`
     * BTW On OSX you generally need `sudo` to make this work.
 
+## Initial Release
+* Work is put into `2.x` branch from various feature branches
+* Create Pull Request from `2.x` branch into `master`
+* Once verified passing all unit tests, and the release has changelog, merge PR
+
 ## Do a Grunt Release
-* Merge 2.x branch to master.
-* Set new version in `package.json`
-* To make a new release (update version, tag, create zip, push all those changes to git origin)
-    * Set a new version number in `package.json`
-    * Run `grunt release`
+* Fetch latest origin from GitHub (**THIS IS IMPORTANT**)
+    * Ensure your `master` has pulled from the latest version, with no uncommitted changes
+    * Ensure your Git repo has `master` currently checked out
+    * LATER: We should improve this so it's done automatically in the script
+* Set new version in `package.json` (it might be something like `2.6.4-a-1`)
+    * LATER: Would be great if running `grunt release` would ask for the version number to save a step
+* Run `grunt release`, which will run the following tasks:
+    * Update branch name in README.md and init.php to `master`
+    * Update version number in readme.txt (stable tag) and init.php
+    * Checks out WordPress.org SVN
+    * Copies latest changes into `trunk` (**NOTE** This does not handle deleting files, something to come back to later)
+    * Commits to WP SVN `trunk` with message `Pods {version}`
+    * Copies WP SVN `trunk` into tag `tags/{version}`
+    * Commits branch and version number changes in files to GitHub with commit message as version number `Pods {version}`
+    * Tags `master` as version number `2.x/{version}`
+    * Pushes `master` and new tag
+    * Removes temporary files (WP SVN)
     
-## What It Does?
+## What It Does
 * Changes version number in all the places that is needed.
-* Updates translations
-* Makes a commit with version number.
-* Tags the Git repo with new version number.
-* Updates SVN trunk.
-* Makes a new SVN tag.
+* Makes branch name changes in various places.
+* Commits to WordPress.org SVN `trunk` and `tags/{version}`
+* Commits, pushes to GitHub `master`
+* Tags `master` to `2.x/{version}`
 
 ## Preparing Next Release
-* Merge Master into 2.x
-* Set New Version in `package.json` to next incremental version with Alpha (ie, 2.6.x-a-1)
+* Checkout `2.x` and ensure you've pulled the latest changes
+* Merge `master` branch into `2.x` to bring over the latest release changes
+* Set new version in `package.json` to next incremental version with Alpha like `2.6.4-a-1`
 * Run `grunt version_number` to update the version number in all related files
 * Run `grunt branch_name_2x` to update the branch numbers in all files
 * Commit changes to 2.x and push
+* LATER: We could do the 2.x checkout, master merge, prompt for new version number, run the other grunt tasks and commit/push to Git all in a new grunt task like `grunt prepare_next_release`
 
 ## Future Tweaks we need to make
 * Don't do a full SVN checkout, make use of partial checkouts (because of /tags/)

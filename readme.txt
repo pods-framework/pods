@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.5
-Stable tag: 2.6.6-a-1
+Stable tag: 2.6.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,9 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
+= 2.6.5.2 - May 4th, 2016 =
+* Fixed: A potential fatal error for those with Polylang installed, due to a typo in the most recent upgrade to Polylang + Pods compatibility. PR (#3504). [@JoryHogeveen]
 
 = 2.6.5.1 - May 4th, 2016 =
 * Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]

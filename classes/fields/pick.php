@@ -1318,7 +1318,7 @@ class PodsField_Pick extends PodsField {
 			$current_language = pll_current_language( 'slug' );
 			
 			// Get current language based on the object language if available
-			if ( is_admin() && function_exists( 'get_current_screen' ) ) {
+			if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
 				$current_screen = get_current_screen();
 				if ( $current_screen->base == 'post' && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
 					$current_language = pll_get_post_language( (int) $_GET['post'] );

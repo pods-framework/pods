@@ -1122,6 +1122,7 @@ class PodsForm {
         $output = str_replace( '__1', 'podsfixtemp2', $output );
 
         if ( false !== $noarray ) {
+	        $output = preg_replace( '/\[podsfixtemp\d+\]/', '-', $output );
 	        $output = preg_replace( '/\[\d*\]/', '-', $output );
         }
 

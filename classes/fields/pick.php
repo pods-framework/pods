@@ -1691,7 +1691,7 @@ class PodsField_Pick extends PodsField {
 
                             if ( $translated ) {
                             	$object_id = 0; // default
-                            	if ( function_exists( 'PLL' ) && isset( PPL()->model ) && method_exists( PLL()->model, 'get_translation' ) ) {
+                            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_translation' ) ) {
                             		// Polylang 1.8 and newer
                             		$object_id = PLL()->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
                             	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {

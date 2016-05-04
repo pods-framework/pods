@@ -41,12 +41,12 @@
 * Tags `master` to `2.x/{version}`
 
 ## Preparing Next Release
-* Checkout `2.x` and ensure you've pulled the latest changes
-* Merge `master` branch into `2.x` to bring over the latest release changes
+* Checkout `2.x` and ensure you've pulled the latest changes. From Terminal, `git checkout 2.x`.
+* Merge `master` branch into `2.x` to bring over the latest release changes. From Terminal, `git merge master`.
 * Set new version in `package.json` to next incremental version with Alpha like `2.6.4-a-1`
 * Run `grunt version_number` to update the version number in all related files
 * Run `grunt branch_name_2x` to update the branch numbers in all files
-* Commit changes to 2.x and push
+* Commit changes to 2.x and push. From Terminal, `git commit -a -m "Prepping 2.x"` followed by `git push`. 
 * LATER: We could do the 2.x checkout, master merge, prompt for new version number, run the other grunt tasks and commit/push to Git all in a new grunt task like `grunt prepare_next_release`
 
 ## Future Tweaks we need to make

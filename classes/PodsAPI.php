@@ -7323,7 +7323,7 @@ class PodsAPI {
             $current_language = pods_sanitize( pll_current_language( 'slug' ) );
 
             if ( !empty( $current_language ) ) {
-            	if ( function_exists( 'PLL' ) && isset( PPL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
+            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
             		// Polylang 1.8 and newer
             		$current_language_t = PLL()->model->get_language( $current_language );
             	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {

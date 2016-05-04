@@ -1681,7 +1681,7 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
+                        elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) && false !== $current_language  ) {
                             $translated = false;
 
                             if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
@@ -1691,9 +1691,13 @@ class PodsField_Pick extends PodsField {
 
                             if ( $translated ) {
                             	$object_id = 0; // default
-                            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_translation' ) ) {
+                            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) ) {
                             		// Polylang 1.8 and newer
-                            		$object_id = PLL()->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+					if ( 'post_type' == $object_type && method_exists( PLL()->model->post, 'get_translation' ) ) {
+						$object_id = PLL()->model->post->get_translation( $result[ $search_data->field_id ], $current_language );
+					} elseif ( 'taxonomy' == $object_type && method_exists( PLL()->model->term, 'get_translation' ) ) {
+						$object_id = PLL()->model->term->get_translation( $result[ $search_data->field_id ], $current_language );
+					}
                             	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
                             		// Polylang 1.2 - 1.7.x
                             		$object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );

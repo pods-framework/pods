@@ -68,29 +68,29 @@ class PodsField_Pick extends PodsField {
      */
     protected static $api = false;
 
-	/**
-	 * Saved array of simple relationship names
-	 *
-	 * @var array
-	 * @since 2.5
-	 */
-	private static $names_simple = null;
+    /**
+     * Saved array of simple relationship names
+     *
+     * @var array
+     * @since 2.5
+     */
+    private static $names_simple = null;
 
-	/**
-	 * Saved array of relationship names
-	 *
-	 * @var array
-	 * @since 2.5
-	 */
-	private static $names_related = null;
+    /**
+     * Saved array of relationship names
+     *
+     * @var array
+     * @since 2.5
+     */
+    private static $names_related = null;
 
-	/**
-	 * Saved array of bidirectional relationship names
-	 *
-	 * @var array
-	 * @since 2.5
-	 */
-	private static $names_bidirectional = null;
+    /**
+     * Saved array of bidirectional relationship names
+     *
+     * @var array
+     * @since 2.5
+     */
+    private static $names_bidirectional = null;
 
    /**
      * Setup related objects list
@@ -168,26 +168,26 @@ class PodsField_Pick extends PodsField {
                 'label' => __( 'Taggable', 'pods' ),
                 'help' => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
                 'excludes-on' => array(
-					self::$type . '_format_single' => array( 'dropdown', 'radio' ),
-					self::$type . '_format_multi' => array( 'checkbox', 'multiselect' ),
+                    self::$type . '_format_single' => array( 'dropdown', 'radio' ),
+                    self::$type . '_format_multi' => array( 'checkbox', 'multiselect' ),
                     self::$type . '_object' => array_merge(
                         array( 'site', 'network' ),
                         self::simple_objects()
                     )
-				),
+                ),
                 'type' => 'boolean',
                 'default' => 0
             ),
-			self::$type . '_select_text' => array(
+            self::$type . '_select_text' => array(
                 'label' => __( 'Default Select Text', 'pods' ),
                 'help' => __( 'This is the text use for the default "no selection" dropdown item, if empty, it will default to "-- Select One --"', 'pods' ),
                 'depends-on' => array(
-					self::$type . '_format_type' => 'single',
-					self::$type . '_format_single' => 'dropdown'
-				),
+                    self::$type . '_format_type' => 'single',
+                    self::$type . '_format_single' => 'dropdown'
+                ),
                 'default' => '',
                 'type' => 'text'
-			),
+            ),
             self::$type . '_limit' => array(
                 'label' => __( 'Selection Limit', 'pods' ),
                 'help' => __( 'help', 'pods' ),
@@ -195,11 +195,11 @@ class PodsField_Pick extends PodsField {
                 'default' => 0,
                 'type' => 'number'
             ),
-			self::$type . '_allow_html' => array(
-				'label' => __('Allow HTML','pods'),
-				'type' => 'boolean',
-				'default' => 0
-			),
+            self::$type . '_allow_html' => array(
+                'label' => __('Allow HTML','pods'),
+                'type' => 'boolean',
+                'default' => 0
+            ),
             self::$type . '_table_id' => array(
                 'label' => __( 'Table ID Column', 'pods' ),
                 'help' => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
@@ -348,8 +348,8 @@ class PodsField_Pick extends PodsField {
                 $new_data_loaded = true;
             }
         } elseif ( $force ) {
-	        // If we are rebuilding, make sure we start with a clean slate
-	        self::$related_objects = array();
+            // If we are rebuilding, make sure we start with a clean slate
+            self::$related_objects = array();
         }
 
         if ( empty( self::$related_objects ) ) {
@@ -366,8 +366,8 @@ class PodsField_Pick extends PodsField {
             // Pods
             $pod_options = array();
 
-			// Include PodsMeta if not already included
-			pods_meta();
+            // Include PodsMeta if not already included
+            pods_meta();
 
             // Advanced Content Types
             $_pods = PodsMeta::$advanced_content_types;
@@ -433,14 +433,14 @@ class PodsField_Pick extends PodsField {
                     continue;
                 }
 
-				/**
-				 * Prevent ability to extend core Pods content types.
-				 *
-				 * @param bool. Default is true, when set to false Pods internal content types can not be extended.
-				 *
-				 * @since 2.3.19
-				 */
-				elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+                /**
+                 * Prevent ability to extend core Pods content types.
+                 *
+                 * @param bool. Default is true, when set to false Pods internal content types can not be extended.
+                 *
+                 * @since 2.3.19
+                 */
+                elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
                     unset( $taxonomies[ $taxonomy ] );
 
                     continue;
@@ -554,7 +554,7 @@ class PodsField_Pick extends PodsField {
                 self::$related_objects[ $object ] = $related_object;
             }
         }
-	    return $new_data_loaded;
+        return $new_data_loaded;
     }
 
     /**
@@ -567,20 +567,20 @@ class PodsField_Pick extends PodsField {
      */
     public function related_objects ( $force = false ) {
         if ( $this->setup_related_objects( $force ) || null === self::$names_related ) {
-	        $related_objects = array();
+            $related_objects = array();
 
-	        foreach ( self::$related_objects as $related_object_name => $related_object ) {
-		        if ( ! isset( $related_objects[ $related_object[ 'group' ] ] ) ) {
-			        $related_objects[ $related_object[ 'group' ] ] = array();
-		        }
+            foreach ( self::$related_objects as $related_object_name => $related_object ) {
+                if ( ! isset( $related_objects[ $related_object[ 'group' ] ] ) ) {
+                    $related_objects[ $related_object[ 'group' ] ] = array();
+                }
 
-		        $related_objects[ $related_object[ 'group' ] ][ $related_object_name ] = $related_object[ 'label' ];
-	        }
+                $related_objects[ $related_object[ 'group' ] ][ $related_object_name ] = $related_object[ 'label' ];
+            }
 
-	        self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+            self::$names_related = (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
         }
 
-	    return self::$names_related;
+        return self::$names_related;
     }
 
     /**
@@ -590,20 +590,20 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function simple_objects () {
-		if ( $this->setup_related_objects() || null === self::$names_simple ) {
-			$simple_objects = array();
+        if ( $this->setup_related_objects() || null === self::$names_simple ) {
+            $simple_objects = array();
 
-			foreach ( self::$related_objects as $object => $related_object ) {
-				if ( !isset( $related_object[ 'simple' ] ) || !$related_object[ 'simple' ] )
-					continue;
+            foreach ( self::$related_objects as $object => $related_object ) {
+                if ( !isset( $related_object[ 'simple' ] ) || !$related_object[ 'simple' ] )
+                    continue;
 
-				$simple_objects[] = $object;
-			}
+                $simple_objects[] = $object;
+            }
 
-			self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
-		}
+            self::$names_simple = (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
+        }
 
-	    return self::$names_simple;
+        return self::$names_simple;
     }
 
     /**
@@ -614,19 +614,19 @@ class PodsField_Pick extends PodsField {
      */
     public function bidirectional_objects () {
         if ( $this->setup_related_objects() || null === self::$names_bidirectional ) {
-	        $bidirectional_objects = array();
+            $bidirectional_objects = array();
 
-	        foreach ( self::$related_objects as $object => $related_object ) {
-		        if ( !isset( $related_object[ 'bidirectional' ] ) || !$related_object[ 'bidirectional' ] )
-			        continue;
+            foreach ( self::$related_objects as $object => $related_object ) {
+                if ( !isset( $related_object[ 'bidirectional' ] ) || !$related_object[ 'bidirectional' ] )
+                    continue;
 
-		        $bidirectional_objects[] = $object;
-	        }
+                $bidirectional_objects[] = $object;
+            }
 
-	        self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
+            self::$names_bidirectional = (array) apply_filters( 'pods_form_ui_field_pick_bidirectional_objects', $bidirectional_objects );
         }
 
-	    return self::$names_bidirectional;
+        return self::$names_bidirectional;
     }
 
     /**
@@ -664,17 +664,17 @@ class PodsField_Pick extends PodsField {
         $fields = null;
 
         if ( is_object( $pod ) && isset( $pod->fields ) ) {
-	        $fields = $pod->fields;
+            $fields = $pod->fields;
 
-	        if ( ! empty( $pod->pod_data[ 'object_fields' ] ) ) {
-		        $fields = array_merge( $fields, $pod->pod_data[ 'object_fields' ] );
-	        }
+            if ( ! empty( $pod->pod_data[ 'object_fields' ] ) ) {
+                $fields = array_merge( $fields, $pod->pod_data[ 'object_fields' ] );
+            }
         } elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) ) {
-	        $fields = $pod[ 'fields' ];
+            $fields = $pod[ 'fields' ];
 
-	        if ( ! empty( $pod[ 'object_fields' ] ) ) {
-		        $fields = array_merge( $fields, $pod[ 'object_fields' ] );
-	        }
+            if ( ! empty( $pod[ 'object_fields' ] ) ) {
+                $fields = array_merge( $fields, $pod[ 'object_fields' ] );
+            }
         }
 
         return pods_serial_comma( $value, array( 'field' => $name, 'fields' => $fields ) );
@@ -1218,57 +1218,57 @@ class PodsField_Pick extends PodsField {
         return $labels;
     }
 
-	/**
-	 * Get available items from a relationship field
-	 *
-	 * @param array|string $field Field array or field name
-	 * @param array $options [optional] Field options array overrides
-	 * @param array $object_params [optional] Additional get_object_data options
-	 *
-	 * @return array An array of available items from a relationship field
-	 */
-	public function get_field_data( $field, $options = array(), $object_params = array() ) {
+    /**
+     * Get available items from a relationship field
+     *
+     * @param array|string $field Field array or field name
+     * @param array $options [optional] Field options array overrides
+     * @param array $object_params [optional] Additional get_object_data options
+     *
+     * @return array An array of available items from a relationship field
+     */
+    public function get_field_data( $field, $options = array(), $object_params = array() ) {
 
-		// Handle field array overrides
-		if ( is_array( $field ) ) {
-			$options = array_merge( $field, $options );
-		}
+        // Handle field array overrides
+        if ( is_array( $field ) ) {
+            $options = array_merge( $field, $options );
+        }
 
-		// Get field name from array
-		$field = pods_var_raw( 'name', $options, $field, null, true );
+        // Get field name from array
+        $field = pods_var_raw( 'name', $options, $field, null, true );
 
-		// Field name or options not set
-		if ( empty( $field ) || empty( $options ) ) {
-			return array();
-		}
+        // Field name or options not set
+        if ( empty( $field ) || empty( $options ) ) {
+            return array();
+        }
 
-		// Options normalization
-		$options = array_merge( $options, pods_var_raw( 'options', $options, array(), null, true ) );
+        // Options normalization
+        $options = array_merge( $options, pods_var_raw( 'options', $options, array(), null, true ) );
 
-		// Setup object params
+        // Setup object params
         $object_params = array_merge(
-			array(
-				'name' => $field, // The name of the field
-				'options' => $options, // Field options
-			),
-			$object_params
+            array(
+                'name' => $field, // The name of the field
+                'options' => $options, // Field options
+            ),
+            $object_params
         );
 
-		// Get data override
+        // Get data override
         $data = pods_var_raw( 'data', $options, null, null, true );
 
-		// Return data override
+        // Return data override
         if ( null !== $data ) {
             $data = (array) $data;
-		}
-		// Get object data
+        }
+        // Get object data
         else {
             $data = $this->get_object_data( $object_params );
-		}
+        }
 
-		return $data;
+        return $data;
 
-	}
+    }
 
     /**
      * Get data from relationship objects
@@ -1282,13 +1282,6 @@ class PodsField_Pick extends PodsField {
 
         $current_language = false;
 
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) )
-            $current_language = pll_current_language( 'slug' );
-
         $object_params = array_merge(
             array(
                 'name' => '', // The name of the field
@@ -1301,7 +1294,7 @@ class PodsField_Pick extends PodsField {
                     'query' => '' // Query being searched
                 ),
                 'page' => 1, // Page number of results to get
-				'limit' => 0 // How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override)
+                'limit' => 0 // How many data items to limit to (autocomplete defaults to 30, set to -1 or 1+ to override)
             ),
             $object_params
         );
@@ -1316,6 +1309,25 @@ class PodsField_Pick extends PodsField {
         $page = min( 1, (int) $object_params[ 'page' ] );
         $limit = (int) $object_params[ 'limit' ];
 
+        // WPML support
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+        }
+        // Polylang support
+        elseif ( function_exists( 'pll_current_language' ) ) {
+            $current_language = pll_current_language( 'slug' );
+            
+            // Get current language based on the object language if available
+            if ( is_admin() && function_exists( 'get_current_screen' ) ) {
+                $current_screen = get_current_screen();
+                if ( $current_screen->base == 'post' && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
+                    $current_language = pll_get_post_language( (int) $_GET['post'] );
+                } elseif ( $current_screen->base == 'term' && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
+                    $current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
+                }
+            }
+        }
+
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options, $options[ 'options' ] );
 
@@ -1328,7 +1340,7 @@ class PodsField_Pick extends PodsField {
         if ( !isset( $options[ self::$type . '_object' ] ) )
             $data = pods_var_raw( 'data', $options, array(), null, true );
 
-		$simple = false;
+        $simple = false;
 
         if ( null === $data ) {
             $data = array();
@@ -1357,8 +1369,8 @@ class PodsField_Pick extends PodsField {
                                 $custom_label = $custom_label[ 1 ];
                             }
 
-							$custom_value = trim( (string) $custom_value );
-							$custom_label = trim( (string) $custom_label );
+                            $custom_value = trim( (string) $custom_value );
+                            $custom_label = trim( (string) $custom_label );
 
                             $data[ $custom_value ] = $custom_label;
                         }
@@ -1366,21 +1378,21 @@ class PodsField_Pick extends PodsField {
                     else
                         $data = $custom;
 
-					$simple = true;
+                    $simple = true;
                 }
             }
             elseif ( isset( self::$related_objects[ $options[ self::$type . '_object' ] ] ) && isset( self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data' ] ) ) {
                 $data = self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data' ];
 
-				$simple = true;
-			}
+                $simple = true;
+            }
             elseif ( isset( self::$related_objects[ $options[ self::$type . '_object' ] ] ) && isset( self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data_callback' ] ) ) {
                 $data = call_user_func_array(
                     self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data_callback' ],
                     array( $name, $value, $options, $pod, $id )
                 );
 
-				$simple = true;
+                $simple = true;
 
                 // Cache data from callback
                 if ( !empty( $data ) )
@@ -1418,8 +1430,8 @@ class PodsField_Pick extends PodsField {
                     'orderby' => pods_var_raw( self::$type . '_orderby', $options, null, null, true ),
                     'groupby' => pods_var_raw( self::$type . '_groupby', $options, null, null, true ),
                     //'having' => pods_var_raw( self::$type . '_having', $options, null, null, true ),
-					'pagination' => false,
-					'search' => false
+                    'pagination' => false,
+                    'search' => false
                 );
 
                 if ( in_array( $options[ self::$type . '_object' ], array( 'site', 'network' ) ) )
@@ -1490,15 +1502,15 @@ class PodsField_Pick extends PodsField {
                     $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
                 if ( $autocomplete ) {
-					if ( 0 == $limit ) {
-						$limit = 30;
-					}
+                    if ( 0 == $limit ) {
+                        $limit = 30;
+                    }
 
                     $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', $limit, $name, $value, $options, $pod, $id, $object_params );
 
-					if ( is_array( $value ) && $params[ 'limit' ] < count( $value ) ) {
-						$params[ 'limit' ] = count( $value );
-					}
+                    if ( is_array( $value ) && $params[ 'limit' ] < count( $value ) ) {
+                        $params[ 'limit' ] = count( $value );
+                    }
 
                     $params[ 'page' ] = $page;
 
@@ -1548,10 +1560,10 @@ class PodsField_Pick extends PodsField {
                         $params[ 'orderby' ] = $orderby;
                     }
                 }
-				elseif ( 0 < $limit ) {
+                elseif ( 0 < $limit ) {
                     $params[ 'limit' ] = $limit;
                     $params[ 'page' ] = $page;
-				}
+                }
 
                 $extra = '';
 
@@ -1589,9 +1601,9 @@ class PodsField_Pick extends PodsField {
                     if ( !empty( $value ) ) {
                         $ids = $value;
 
-						if ( is_array( $ids ) && isset( $ids[ 0 ] ) && is_array( $ids[ 0 ] ) ) {
-							$ids = wp_list_pluck( $ids, $search_data->field_id );
-						}
+                        if ( is_array( $ids ) && isset( $ids[ 0 ] ) && is_array( $ids[ 0 ] ) ) {
+                            $ids = wp_list_pluck( $ids, $search_data->field_id );
+                        }
 
                         if ( is_array( $ids ) )
                             $ids = implode( ', ', $ids );
@@ -1681,31 +1693,37 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) && false !== $current_language  ) {
+                        elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
                             $translated = false;
 
                             if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
                                 $translated = true;
                             elseif ( 'taxonomy' == $object_type && pll_is_translated_taxonomy( $object ) )
                                 $translated = true;
-
+                            
+                            // Maybe TODO:
+                            // The need a object that is enabled for translation + we need a valid current_language
+                            // $current_language condition is not a strict comparison because we need a string, anything else is considered false
+                            // && false != $current_language
                             if ( $translated ) {
-                            	$object_id = 0; // default
-                            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) ) {
-                            		// Polylang 1.8 and newer
-					if ( 'post_type' == $object_type && method_exists( PLL()->model->post, 'get_translation' ) ) {
-						$object_id = PLL()->model->post->get_translation( $result[ $search_data->field_id ], $current_language );
-					} elseif ( 'taxonomy' == $object_type && method_exists( PLL()->model->term, 'get_translation' ) ) {
-						$object_id = PLL()->model->term->get_translation( $result[ $search_data->field_id ], $current_language );
-					}
-                            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
-                            		// Polylang 1.2 - 1.7.x
-                            		$object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
-                            		// Polylang 1.1.x and older
-                                	$object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	}
-
+                                $object_id = 0; // default
+                                if ( function_exists( 'pll_get_post_translations' ) || function_exists( 'pll_get_term_translations' ) ) {
+                                    // Polylang 1.8 and newer
+                                    if ( $object_type == 'post_type' && function_exists( 'pll_get_post_translations' ) ) {
+                                        $_translations = pll_get_post_translations( $result[ $search_data->field_id ] );
+                                        $object_id = ( isset( $_translations[ $current_language ] ) ) ? $_translations[ $current_language ] : 0;
+                                    } elseif ( $object_type == 'taxonomy' && function_exists( 'pll_get_term_translations' ) ) {
+                                        $_translations = pll_get_term_translations( $result[ $search_data->field_id ] );
+                                        $object_id = ( isset( $_translations[ $current_language ] ) ) ? $_translations[ $current_language ] : 0;
+                                    }
+                                } elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
+                                    // Polylang 1.2 - 1.7.x
+                                    $object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                                } elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                                    // Polylang 1.1.x and older
+                                    $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
+                                }
+                                
                                 if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
                                     $text = $result[ $search_data->field_index ];
 
@@ -1762,17 +1780,17 @@ class PodsField_Pick extends PodsField {
                 }
             }
 
-			if ( $simple && 'admin_ajax_relationship' == $context ) {
-				$found_data = array();
+            if ( $simple && 'admin_ajax_relationship' == $context ) {
+                $found_data = array();
 
-				foreach ( $data as $k => $v ) {
-					if ( false !== stripos( $v, $data_params[ 'query' ] ) || false !== stripos( $k, $data_params[ 'query' ] ) ) {
-						$found_data[ $k ] = $v;
-					}
-				}
+                foreach ( $data as $k => $v ) {
+                    if ( false !== stripos( $v, $data_params[ 'query' ] ) || false !== stripos( $k, $data_params[ 'query' ] ) ) {
+                        $found_data[ $k ] = $v;
+                    }
+                }
 
-				$data = $found_data;
-			}
+                $data = $found_data;
+            }
         }
 
         if ( 'admin_ajax_relationship' == $context ) {
@@ -1798,7 +1816,7 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function admin_ajax_relationship () {
-		pods_session_start();
+        pods_session_start();
 
         // Sanitize input
         $params = pods_unslash( (array) $_POST );
@@ -2442,12 +2460,12 @@ class PodsField_Pick extends PodsField {
      */
     public function data_days_of_week ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
-		/**
-		 * @var WP_Locale
-		 */
-		global $wp_locale;
+        /**
+         * @var WP_Locale
+         */
+        global $wp_locale;
 
-		return $wp_locale->weekday;
+        return $wp_locale->weekday;
 
     }
 
@@ -2466,12 +2484,12 @@ class PodsField_Pick extends PodsField {
      */
     public function data_months_of_year ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
 
-		/**
-		 * @var WP_Locale
-		 */
-		global $wp_locale;
+        /**
+         * @var WP_Locale
+         */
+        global $wp_locale;
 
-		return $wp_locale->month;
+        return $wp_locale->month;
 
     }
 }

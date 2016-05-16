@@ -778,6 +778,22 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					}
 				}
 				break;
+			case 'post_id':
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 'post_id' ] ) ) {
+						$post_id = $var[ 'post_id' ];
+					}
+					if ( isset( $var[ 'post_type' ] ) ) {
+						$post_type = $var[ 'post_type' ];
+					} else {
+						$post_type = 'post';
+					}
+				} else {
+					$post_id   = $var;
+					$post_type = 'post';
+				}
+				$output = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
 		}

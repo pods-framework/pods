@@ -75,15 +75,22 @@
                     /* e.preventDefault(); */
 
                     /**
-                     *   validate required files to be selected in client side
+                     *   validate some required file to be selected in client side
                      */
-                    $('.postbox .pods-form-ui-field-type-file.pods-validate-required').each(function(){
-                        if($(this).find('.pods-files-list > li').length === 0){
-                            e.preventDefault();
-                            alert('You have same empty required files!');
-                            return false;
+                    var requiredFiles = false;
+                    $('.postbox .pods-form-ui-field-type-file.pods-validate-required').each(function(item){
+                        $fieldRow = $($(this).closest('tr'));
+                        $fieldRow.find('.pods-validate-error-message').remove();
+                        if($(this).find('.pods-files-list > li').length == 0){
+                            requiredFiles = true;
+                            $fieldName = $fieldRow.find('label').text();
+                            $fieldRow.append('<td class="pods-validate-error-message">' + $fieldName.replace('*', '' ) + ' is required.</td>');
                         }
                     });
+
+                    if(requiredFiles){
+                        e.preventDefault();
+                    }
 
                     var postdata = {};
                     var field_data = {};

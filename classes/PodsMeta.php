@@ -985,6 +985,8 @@ class PodsMeta {
 			self::$current_pod->fetch( $id );
 
         $pod = self::$current_pod;
+	// filter the pods metas to display
+	$metabox[ 'args' ][ 'group' ][ 'fields' ] = apply_filters( 'pods_meta_' . __FUNCTION__ . '_fields', $metabox[ 'args' ][ 'group' ][ 'fields' ], $id );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {

@@ -3441,7 +3441,7 @@ class Pods implements Iterator {
 		$thank_you = $params[ 'thank_you' ];
 		$fields_only = $params[ 'fields_only' ];
 
-		PodsForm::$form_counter++;
+		$form_counter = PodsForm::$form_counter ++;
 
 		ob_start();
 

@@ -61,8 +61,12 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
 $field_prefix = '';
 
-if ( !$fields_only ) {
+if ( ! $fields_only ) {
 	$field_prefix = 'pods_field_';
+}
+$field_prefix .= $form_counter . '_';
+
+if ( ! $fields_only ) {
 ?>
 	<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo esc_attr( $pod->pod ); ?> pods-submittable-ajax" data-location="<?php echo esc_attr( $thank_you ); ?>">
 		<div class="pods-submittable-fields">

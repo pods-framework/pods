@@ -147,7 +147,7 @@ class PodsRESTHandlers {
 	 *
 	 * @return bool|int
 	 */
-	public function write_handler( $value, $object, $field_name ) {
+	public static function write_handler( $value, $object, $field_name ) {
 
 		$pod_name = pods_v( 'type', $object );
 

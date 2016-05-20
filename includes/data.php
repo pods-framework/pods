@@ -778,6 +778,39 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					}
 				}
 				break;
+			case 'post_id':
+				if ( is_array( $var ) ) {
+					if ( isset( $var[ 'post_id' ] ) ) {
+						$post_id = $var[ 'post_id' ];
+					}
+					if ( isset( $var[ 'post_type' ] ) ) {
+						$post_type = $var[ 'post_type' ];
+					} else {
+						$post_type = 'post';
+					}
+				} else {
+					$post_id   = $var;
+					$post_type = 'post';
+				}
+				if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+					/* Only call filter if WPML is installed */
+					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+				}
+				// Add other translation plugin specific code here
+
+				/**
+				 * Filter to override post_id
+				 *
+				 * Generally used with language translation plugins in order to return the post id of a
+				 * translated post
+				 *
+				 * @param  int $post_id The post ID of current post
+				 * @param  string $post_type Post type of current post
+				 *
+				 * @since 2.6.6
+				 */
+				$output = apply_filters( 'pods_var_post_id', $post_id, $post_type );
+				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
 		}

@@ -798,14 +798,13 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				 * translated post
 				 *
 				 * @param  int $post_id The post ID of current post
-				 * @param  mixed $default The default value to set if variable doesn't exist
 				 * @param  mixed $var The variable name, can also be a modifier for specific types
 				 * @param  bool $strict Only allow values (must not be empty)
 				 * @param  array $params Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
 				 *
 				 * @since 2.6.6
 				 */
-				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
+				$output = apply_filters( 'pods_var_post_id', $post_id, $var, $strict, $params );
 				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );

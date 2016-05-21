@@ -780,7 +780,12 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				break;
 			case 'post_id':
 				if ( empty( $var ) ) {
-					$post_id = get_the_ID();
+					if ( ! empty( $default ) ) {
+						$post_id = $default;
+					} else {
+						// If no $var and no $default then use current post ID
+						$post_id = get_the_ID();
+					}
 				} else {
 					$post_id = $var;
 				}

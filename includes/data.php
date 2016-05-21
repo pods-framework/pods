@@ -780,14 +780,17 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				break;
 			case 'post_id':
 				if ( is_array( $var ) ) {
-					if ( isset( $var[ 'post_id' ] ) ) {
-						$post_id = $var[ 'post_id' ];
+					if ( isset( $var['post_id'] ) ) {
+						$post_id = $var['post_id'];
 					}
-					if ( isset( $var[ 'post_type' ] ) ) {
-						$post_type = $var[ 'post_type' ];
+					if ( isset( $var['post_type'] ) ) {
+						$post_type = $var['post_type'];
 					} else {
 						$post_type = 'post';
 					}
+				} elseif ( null === $var ) {
+					$post_id = get_the_ID();
+					$post_type = get_post_type( $post_id );
 				} else {
 					$post_id   = $var;
 					$post_type = 'post';
@@ -806,10 +809,13 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				 *
 				 * @param  int $post_id The post ID of current post
 				 * @param  string $post_type Post type of current post
+				 * @param  mixed $default The default value to set if variable doesn't exist
+				 * @param  bool $strict Only allow values (must not be empty)
+				 * @param  array $params Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
 				 *
 				 * @since 2.6.6
 				 */
-				$output = apply_filters( 'pods_var_post_id', $post_id, $post_type );
+				$output = apply_filters( 'pods_var_post_id', $post_id, $post_type, $default, $var, $strict, $params );
 				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );

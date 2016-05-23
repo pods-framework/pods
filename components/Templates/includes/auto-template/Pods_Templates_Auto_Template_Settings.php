@@ -227,10 +227,6 @@ class Pods_Templates_Auto_Template_Settings {
 
 			}
 
-			if( 'taxonomy' === $pod['type'] ){
-				unset( $options[ 'pods-pfat' ][ 'pfat_single' ] );
-			}
-
 		}
 
 		return $options;

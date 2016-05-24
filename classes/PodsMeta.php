@@ -997,8 +997,8 @@ class PodsMeta {
 	 * @param array	   $metabox the metabox from the current Pod
 	 * @param object   $pod the current Pod
 	 */
-        // 
- +	$metabox[ 'args' ][ 'group' ][ 'fields' ] = apply_filters( 'pods_meta_post_fields', $metabox[ 'args' ][ 'group' ][ 'fields' ], $id,  $post, $metabox, $pod  );
+       
+ 	$metabox[ 'args' ][ 'group' ][ 'fields' ] = apply_filters( 'pods_meta_post_fields', $metabox[ 'args' ][ 'group' ][ 'fields' ], $id,  $post, $metabox, $pod  );
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
                 if ( pods_var( 'hidden', $field[ 'options' ], false ) )

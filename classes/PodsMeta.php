@@ -986,6 +986,19 @@ class PodsMeta {
 
         $pod = self::$current_pod;
 
+	/**
+	 * Filter the pods metas to display
+	 *
+	 * @since 2.6.6
+	 *
+	 * @param array    $metabox[ 'args' ][ 'group' ][ 'fields' ] fields from the current Pod
+	 * @param int      $id post id.
+	 * @param object   $post the post
+	 * @param array	   $metabox the metabox from the current Pod
+	 * @param object   $pod the current Pod
+	 */
+        // 
+ +	$metabox[ 'args' ][ 'group' ][ 'fields' ] = apply_filters( 'pods_meta_post_fields', $metabox[ 'args' ][ 'group' ][ 'fields' ], $id,  $post, $metabox, $pod  );
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
                 if ( pods_var( 'hidden', $field[ 'options' ], false ) )

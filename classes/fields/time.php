@@ -150,7 +150,7 @@ class PodsField_Time extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+        if ( !empty( $value ) ) {
             $date = $this->createFromFormat( 'H:i:s', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 

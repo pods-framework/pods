@@ -312,7 +312,7 @@ class PodsField_Currency extends PodsField {
 		// Multiple sign currencies: 100 Fr, Kr 100
 		$currency_gap = '';
 
-		if ( strlen( $currency_sign ) > 1 ) {
+		if ( strlen( $currency_sign ) > 1 && false === strpos( $currency_sign, '&' ) ) {
 			$currency_gap = ' ';
 		}
 

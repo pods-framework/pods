@@ -56,88 +56,103 @@ class PodsRESTHandlers {
 	public static function get_handler( $object, $field_name, $request ) {
 
 		$pod_name = pods_v( 'type', $object );
-		
+
 		/**
-		 * If $pod_name in the line above is empty then the route invoked 
+		 * If $pod_name in the line above is empty then the route invoked
 		 * may be for a taxonomy, so lets try and check for that
-		 * 
+		 *
 		 */
-		if( empty( $pod_name ) ) {
+		if ( empty( $pod_name ) ) {
 			$pod_name = pods_v( 'taxonomy', $object );
 		}
-				
-		$id       = pods_v( 'id', $object );
-		$pod      = self::get_pod( $pod_name, $id );
+
+		$id  = pods_v( 'id', $object );
+		$pod = self::get_pod( $pod_name, $id );
+
+		$value = false;
+
 		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'read' ) ) {
-			$params     = null;
+			$params = null;
+
 			$field_data = $pod->fields( $field_name );
+
 			if ( 'pick' == pods_v( 'type', $field_data ) ) {
 				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
 
 				if ( 'array' == $output_type ) {
-					$related_pod = $pod->field( $field_name, array( 'output' => 'pod' ), false );
-					
-					$data = array();
-					
-					if ( $related_pod ) {
-						$fields      = $related_pod->fields();
-						$fields      = array_keys( $fields );
-						
-						if ( isset( $related_pod->pod_data['object_fields'] ) && ! empty( $related_pod->pod_data['object_fields'] ) ) {
-							$fields = array_merge( $fields, array_keys( $related_pod->pod_data['object_fields'] ) );
+					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
+
+					if ( $related_pod_items ) {
+						$fields = false;
+						$items  = array();
+						$depth  = pods_v( 'rest_pick_depth', $field_data['options'], 2 );
+
+						if ( ! is_array( $related_pod_items ) ) {
+							$related_pod_items = array( $related_pod_items );
 						}
-	
-						/**
-						 * What fields to show in a related field REST response.
-						 *
-						 * @since 0.0.1
-						 *
-						 * @param array                  $fields     The fields to show
-						 * @param string                 $field_name The name of the field
-						 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-						 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-						 * @param int                    $id         Current item ID
-						 * @param object|WP_REST_Request Current     request object.
-						 */
-						$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
-	
-						$depth = pods_v( 'rest_pick_depth', $field_data['options'], 2 );
-	
-						/**
-						 * What depth to use for a related field REST response.
-						 *
-						 * @since 0.0.1
-						 *
-						 * @param array                  $depth      The depth.
-						 * @param string                 $field_name The name of the field
-						 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-						 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-						 * @param int                    $id         Current item ID
-						 * @param object|WP_REST_Request Current     request object.
-						 */
-						$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
-	
-						$params = array(
-							'fields' => $fields,
-							'depth'  => $depth
-	
-						);
-	
-						$data = $pod->api->export_pod_item( $related_pod, $params );	
+
+						foreach ( $related_pod_items as $related_pod ) {
+							if ( false === $fields ) {
+								$fields = $related_pod->fields();
+								$fields = array_keys( $fields );
+
+								if ( isset( $related_pod->pod_data['object_fields'] ) && ! empty( $related_pod->pod_data['object_fields'] ) ) {
+									$fields = array_merge( $fields, array_keys( $related_pod->pod_data['object_fields'] ) );
+								}
+
+								/**
+								 * What fields to show in a related field REST response.
+								 *
+								 * @since 0.0.1
+								 *
+								 * @param array                  $fields     The fields to show
+								 * @param string                 $field_name The name of the field
+								 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
+								 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
+								 * @param int                    $id         Current item ID
+								 * @param object|WP_REST_Request Current     request object.
+								 */
+								$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
+							}
+
+							/**
+							 * What depth to use for a related field REST response.
+							 *
+							 * @since 0.0.1
+							 *
+							 * @param array                  $depth      The depth.
+							 * @param string                 $field_name The name of the field
+							 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
+							 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
+							 * @param int                    $id         Current item ID
+							 * @param object|WP_REST_Request Current     request object.
+							 */
+							$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
+
+							$params = array(
+								'fields' => $fields,
+								'depth'  => $depth,
+							);
+
+							$items[] = $pod->api->export_pod_item( $related_pod, $params );
+						}
+
+						$value = $items;
 					}
-	
-					return $data;
 				}
 
-				$params           = array();
-				$params['output'] = $output_type;
+				$params = array(
+					'output' => $output_type,
+				);
 			}
 
-			return $pod->field( $field_name, $params );
-
+			// If no value set yet, get normal field value
+			if ( ! $value && ! is_array( $value ) ) {
+				$value = $pod->field( $field_name, $params );
+			}
 		}
 
-		return false;
+		return $value;
 
 	}
 
@@ -233,17 +248,17 @@ class PodsRESTHandlers {
 	 */
 	public static function pod_extends_core_route( $pod ) {
 
-	    $enabled = false;
+		$enabled = false;
 
-	    if ( is_object( $pod ) ) {
-	        $pod = $pod->pod_data;
-	    }
+		if ( is_object( $pod ) ) {
+			$pod = $pod->pod_data;
+		}
 
-	    if ( is_array( $pod ) ) {
-	        $enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
-	    }
+		if ( is_array( $pod ) ) {
+			$enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+		}
 
-	    return $enabled;
+		return $enabled;
 
 	}
 

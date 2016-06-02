@@ -73,55 +73,60 @@ class PodsRESTHandlers {
 			$field_data = $pod->fields( $field_name );
 			if ( 'pick' == pods_v( 'type', $field_data ) ) {
 				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
+
 				if ( 'array' == $output_type ) {
-
-					$related_pod = $pod->field( $field_name, array( 'output' => 'pod' ) );
-					$fields      = $related_pod->fields();
-					$fields      = array_keys( $fields );
-					if ( isset( $related_pod->pod_data['object_fields'] ) && ! empty( $related_pod->pod_data['object_fields'] ) ) {
-						$fields = array_merge( $fields, array_keys( $related_pod->pod_data['object_fields'] ) );
+					$related_pod = $pod->field( $field_name, array( 'output' => 'pod' ), false );
+					
+					$data = array();
+					
+					if ( $related_pod ) {
+						$fields      = $related_pod->fields();
+						$fields      = array_keys( $fields );
+						
+						if ( isset( $related_pod->pod_data['object_fields'] ) && ! empty( $related_pod->pod_data['object_fields'] ) ) {
+							$fields = array_merge( $fields, array_keys( $related_pod->pod_data['object_fields'] ) );
+						}
+	
+						/**
+						 * What fields to show in a related field REST response.
+						 *
+						 * @since 0.0.1
+						 *
+						 * @param array                  $fields     The fields to show
+						 * @param string                 $field_name The name of the field
+						 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
+						 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
+						 * @param int                    $id         Current item ID
+						 * @param object|WP_REST_Request Current     request object.
+						 */
+						$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
+	
+						$depth = pods_v( 'rest_pick_depth', $field_data['options'], 2 );
+	
+						/**
+						 * What depth to use for a related field REST response.
+						 *
+						 * @since 0.0.1
+						 *
+						 * @param array                  $depth      The depth.
+						 * @param string                 $field_name The name of the field
+						 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
+						 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
+						 * @param int                    $id         Current item ID
+						 * @param object|WP_REST_Request Current     request object.
+						 */
+						$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
+	
+						$params = array(
+							'fields' => $fields,
+							'depth'  => $depth
+	
+						);
+	
+						$data = $pod->api->export_pod_item( $related_pod, $params );	
 					}
-
-					/**
-					 * What fields to show in a related field REST response.
-					 *
-					 * @since 0.0.1
-					 *
-					 * @param array                  $fields     The fields to show
-					 * @param string                 $field_name The name of the field
-					 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-					 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-					 * @param int                    $id         Current item ID
-					 * @param object|WP_REST_Request Current     request object.
-					 */
-					$fields = apply_filters( 'pods_rest_api_fields_for_relationship_response', $fields, $field_name, $pod, $related_pod, $id, $request );
-
-					$depth = pods_v( 'rest_pick_depth', $field_data['options'], 2 );
-
-					/**
-					 * What depth to use for a related field REST response.
-					 *
-					 * @since 0.0.1
-					 *
-					 * @param array                  $depth      The depth.
-					 * @param string                 $field_name The name of the field
-					 * @param object|Pods            $pod        The Pods object for Pod relationship is from.
-					 * @param object|Pods            $pod        The Pods object for Pod relationship is to.
-					 * @param int                    $id         Current item ID
-					 * @param object|WP_REST_Request Current     request object.
-					 */
-					$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
-
-					$params = array(
-						'fields' => $fields,
-						'depth'  => $depth
-
-					);
-
-					$data = $pod->api->export_pod_item( $related_pod, $params );
-
+	
 					return $data;
-
 				}
 
 				$params           = array();

@@ -24,7 +24,7 @@ matrix:
     - php: 5.3
       env: WP_VERSION=3.8 WP_MULTISITE=0
     # MySQL 5.7
-    - env: DB=mysql-5.7-dmr WP_VERSION=latest WP_MULTISITE=0
+    #- env: DB=mysql-5.7-dmr WP_VERSION=latest WP_MULTISITE=0
 
 ## Cache composer bits
 cache:

@@ -2190,17 +2190,24 @@ class PodsAPI {
             return pods_error( $errors, $this );
 
         $this->cache_flush_pods( $pod );
+        
+		$refresh_pod = $this->load_pod( array( 'name' => $pod['name'] ), false );
+        
+		if ( $refresh_pod ) {
+			$pod = $refresh_pod;
+		}
 
-        if ( 'post_type' == $pod[ 'type' ] )
-            PodsMeta::$post_types[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-        elseif ( 'taxonomy' == $pod[ 'type' ] )
-            PodsMeta::$taxonomies[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-        elseif ( 'media' == $pod[ 'type' ] )
-            PodsMeta::$media[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-        elseif ( 'user' == $pod[ 'type' ] )
-            PodsMeta::$user[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
-        elseif ( 'comment' == $pod[ 'type' ] )
-            PodsMeta::$comment[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
+		if ( 'post_type' == $pod['type'] ) {
+			PodsMeta::$post_types[ $pod['id'] ] = $pod;
+		} elseif ( 'taxonomy' == $pod['type'] ) {
+			PodsMeta::$taxonomies[ $pod['id'] ] = $pod;
+		} elseif ( 'media' == $pod['type'] ) {
+			PodsMeta::$media[ $pod['id'] ] = $pod;
+		} elseif ( 'user' == $pod['type'] ) {
+			PodsMeta::$user[ $pod['id'] ] = $pod;
+		} elseif ( 'comment' == $pod['type'] ) {
+			PodsMeta::$comment[ $pod['id'] ] = $pod;
+		}
 
         // Register Post Types / Taxonomies post-registration from PodsInit
         if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {

@@ -213,6 +213,11 @@ class Pods_Templates_Auto_Template_Settings {
 
 			}
 
+			//remove single from taxonomy
+			if( 'taxonomy' === $pod['type'] ){
+				unset( $options[ 'pods-pfat' ][ 'pfat_single' ] );
+			}
+
 		}
 
 		return $options;

@@ -4201,6 +4201,18 @@ class PodsAPI {
         );
 
         foreach ( $fields as $field ) {
+	        if ( in_array( $field['name'], array(
+		        'ID',
+		        'post_name',
+		        'post_date',
+		        'post_date_gmt',
+		        'post_modified',
+		        'post_modified_gmt',
+		        'guid',
+	        ) ) ) {
+		        continue;
+	        }
+	        
             $value = $pod->field( array( 'name' => $field[ 'name' ], 'output' => 'ids' ) );
 
             if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )

@@ -91,7 +91,16 @@ class PodsRESTHandlers {
 							$related_pod_items = array( $related_pod_items );
 						}
 
+						/**
+						 * @var $related_pod Pods
+						 */
 						foreach ( $related_pod_items as $related_pod ) {
+							if ( ! is_object( $related_pod ) || ! is_a( $related_pod, 'Pods' ) ) {
+								$items = $related_pod_items;
+
+								break;
+							}
+
 							if ( false === $fields ) {
 								$fields = $related_pod->fields();
 								$fields = array_keys( $fields );
@@ -134,7 +143,7 @@ class PodsRESTHandlers {
 								'depth'  => $depth,
 							);
 
-							$items[] = $pod->api->export_pod_item( $related_pod, $params );
+							$items[] = $related_pod->export( $params );
 						}
 
 						$value = $items;

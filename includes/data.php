@@ -793,6 +793,11 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					/* Only call filter if WPML is installed */
 					$post_type = get_post_type( $post_id );
 					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+				} elseif ( function_exists( 'pll_get_post' ) ) {
+					$polylang_id = pll_get_post( $post_id );
+					if ( null !== $polylang_id ) {
+						$post_id = $polylang_id;
+					}
 				}
 				// Add other translation plugin specific code here
 

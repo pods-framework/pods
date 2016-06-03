@@ -166,6 +166,8 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.6 - June 10th 2016 =
+
 = 2.6.5.2 - May 4th 2016 =
 Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
 

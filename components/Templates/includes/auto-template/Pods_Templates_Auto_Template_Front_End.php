@@ -10,6 +10,49 @@ if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
  */
 class Pods_Templates_Auto_Template_Front_End {
 	function __construct() {
+
+		if( !is_admin() ){
+			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
+		}
+
+		add_action( 'template_redirect', array( $this, 'hook_content' ) );
+
+
+	}
+
+	/**
+	 * Add hooks for output
+	 *
+	 * @since 2.6.6
+	 */
+	public function hook_content(){
+		$filter = 'the_content';
+
+		// get the current post type
+		$current_post_type = $this->current_post_type();
+
+		//now use other methods in class to build array to search in/ use
+		$possible_pods = $this->auto_pods();
+
+
+		//check if $current_post_type is the key of the array of possible pods
+		if ( isset( $possible_pods[ $current_post_type ] ) ) {
+
+			$this_pod = $possible_pods[ $current_post_type ];
+
+			if ( is_singular( $current_post_type ) ) {
+				$filter =  $this_pod[ 'single_filter' ];
+			} elseif ( is_post_type_archive( $current_post_type ) ) {
+				$filter =  $this_pod[ 'archive_filter' ];
+
+			} elseif ( is_home() && $current_post_type === 'post'  ) {
+				$filter =  $this_pod[ 'archive_filter' ];
+			} elseif ( is_tax( $current_post_type )  ) {
+				$filter =  $this_pod[ 'archive_filter' ];
+
+			}
+
+		}
 		/**
 		 * Allows plugin to append/replace the_excerpt
 		 *
@@ -19,15 +62,13 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
-		if( !is_admin() ){
-			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
-		}
 
-		add_filter( 'the_content', array( $this, 'front' ), 10.5 );
+		add_filter( $filter, array( $this, 'front' ), 10.5 );
 
 		if (  PFAT_USE_ON_EXCERPT  ) {
 			add_filter( 'the_excerpt', array ( $this, 'front' ) );
 		}
+
 
 	}
 
@@ -41,7 +82,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	function the_pods() {
 
 		//use the cached results
-		$key = 'pods_pfat_the_pods';
+		$key = '_pods_pfat_the_pods';
 		$the_pods = pods_transient_get( $key  );
 
 		//check if we already have the results cached & use it if we can.
@@ -89,8 +130,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		}
 
 		//try to get cached results of this method
-		$key = 'pods_pfat_auto_pods';
+		$key = '_pods_pfat_auto_pods';
 		$auto_pods = pods_transient_get( $key );
+	
 
 		//check if we already have the results cached & use it if we can.
 		if ( $auto_pods === false  ) {
@@ -115,6 +157,8 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive = pods_v( 'pfat_archive', $pod_data[ 'options' ], false, true );
 					$single_append = pods_v( 'pfat_append_single', $pod_data[ 'options' ], true, true );
 					$archive_append = pods_v( 'pfat_append_archive', $pod_data[ 'options' ], true, true );
+					$single_filter = pods_v( 'pfat_filter_single', $pod_data[ 'options' ], 'the_content', true );
+					$archive_filter = pods_v( 'pfat_filter_archive', $pod_data[ 'options' ], 'the_content', true );
 					$type = pods_v( 'type', $pod_data, false, true );
 					//check if it's a post type that has an arhive
 					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
@@ -122,6 +166,14 @@ class Pods_Templates_Auto_Template_Front_End {
 					}
 					else {
 						$has_archive = true;
+					}
+
+					if( empty( $single_filter ) ){
+						$single_filter = 'the_content';
+					}
+
+					if( empty( $archive_filter  ) ){
+						$archive_filter = 'the_content';
 					}
 
 					//build output array
@@ -133,6 +185,8 @@ class Pods_Templates_Auto_Template_Front_End {
 						'single_append' => $single_append,
 						'archive_append' => $archive_append,
 						'has_archive'	=> $has_archive,
+						'single_filter' => $single_filter,
+						'archive_filter' => $archive_filter,
 						'type' => $type,
 					);
 				}
@@ -206,7 +260,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	function front( $content ) {
 
-		// cet the current post type
+		// get the current post type
 		$current_post_type = $this->current_post_type();
 
 		//now use other methods in class to build array to search in/ use

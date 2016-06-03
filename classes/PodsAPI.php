@@ -2190,17 +2190,24 @@ class PodsAPI {
             return pods_error( $errors, $this );
 
         $this->cache_flush_pods( $pod );
+        
+		$refresh_pod = $this->load_pod( array( 'name' => $pod['name'] ), false );
+        
+		if ( $refresh_pod ) {
+			$pod = $refresh_pod;
+		}
 
-        if ( 'post_type' == $pod[ 'type' ] )
-            PodsMeta::$post_types[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'taxonomy' == $pod[ 'type' ] )
-            PodsMeta::$taxonomies[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'media' == $pod[ 'type' ] )
-            PodsMeta::$media[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'user' == $pod[ 'type' ] )
-            PodsMeta::$user[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-        elseif ( 'comment' == $pod[ 'type' ] )
-            PodsMeta::$comment[ $pod[ 'id' ] ] = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
+		if ( 'post_type' == $pod['type'] ) {
+			PodsMeta::$post_types[ $pod['id'] ] = $pod;
+		} elseif ( 'taxonomy' == $pod['type'] ) {
+			PodsMeta::$taxonomies[ $pod['id'] ] = $pod;
+		} elseif ( 'media' == $pod['type'] ) {
+			PodsMeta::$media[ $pod['id'] ] = $pod;
+		} elseif ( 'user' == $pod['type'] ) {
+			PodsMeta::$user[ $pod['id'] ] = $pod;
+		} elseif ( 'comment' == $pod['type'] ) {
+			PodsMeta::$comment[ $pod['id'] ] = $pod;
+		}
 
         // Register Post Types / Taxonomies post-registration from PodsInit
         if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {
@@ -7316,19 +7323,27 @@ class PodsAPI {
         $current_language_t_id = $current_language_tt_id = 0;
 
         // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
             $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
         // Polylang support
-        elseif ( is_object( $polylang ) && function_exists( 'pll_current_language' ) ) {
+        } elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
             $current_language = pods_sanitize( pll_current_language( 'slug' ) );
 
             if ( !empty( $current_language ) ) {
-		if ( isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' )) {
-			$current_language_t_id = (int) $polylang->model->get_language( $current_language )->term_id;
-			$current_language_tt_id = (int) $polylang->model->get_language( $current_language )->term_taxonomy_id;
-		} else {
-			$current_language_t_id = (int) $polylang->get_language( $current_language )->term_id;
-			$current_language_tt_id = (int) $polylang->get_language( $current_language )->term_taxonomy_id;
+            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
+            		// Polylang 1.8 and newer
+            		$current_language_t = PLL()->model->get_language( $current_language );
+            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
+            		// Polylang 1.2 - 1.7.x
+            		$current_language_t = $polylang->model->get_language( $current_language );
+		} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
+			// Polylang 1.1.x and older
+			$current_language_t = $polylang->get_language( $current_language );
+		}
+		
+		if ( isset( $current_language_t->term_id ) ) {
+			$current_language_t_id = (int) $current_language_t->term_id;
+			$current_language_tt_id = (int) $current_language_t->term_taxonomy_id;
 		}
             }
         }
@@ -7446,7 +7461,7 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif( is_object( $polylang ) && !empty( $current_language ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
+		    elseif( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
 			    $info[ 'join' ][ 'polylang_languages' ] = "
                         LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
                             ON `polylang_languages`.`object_id` = `t`.`ID`
@@ -7524,7 +7539,7 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif ( is_object( $polylang ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
 			    $info[ 'join' ][ 'polylang_languages' ] = "
                         LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
                             ON `polylang_languages`.`term_id` = `t`.`term_id`

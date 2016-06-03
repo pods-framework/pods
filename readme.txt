@@ -166,6 +166,16 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.5.2 - May 4th 2016 =
+Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
+
+= 2.6.5.1 - May 4th, 2016 =
+* Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]
+
+= 2.6.5 - May 3rd, 2016 =
+* Fixed: Renaming of Pods with underscores to hyphenated names that was introduced in 2.6.3. Hyphenated Pods names will remain hyphenated and Underscored Pods names will remain underscored. Fixes (#3499). [@sc0ttkclark]
+* Fixed: Support for new Polylang Versions with much kudos to @JoryHogeveen for tackling this (#3491). Fixes (#3490,#3223) [@JoryHogeveen]
+
 = 2.6.4 - April 25th, 2016 =
 * Fixed: Modified Run activation/install priority to fire before plugins loaded. Fix for the Clearing Pods Cache automatically after Pods Upgrade (#3487). Fixes (#2558,#3348) [@sc0ttkclark]
 
@@ -193,7 +203,6 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Update Version number on 2.x (#3282,#3281) [@pglewis]
 * Fixed: Typo's Rest into REST (#3303) [@Ramoonus]
 * Fixed: Disable xdebug on Travis (#3284,#3283) [@pglewis]
-* Fixed: Non-zero array keys here in PHP7 cause odd behavior so removing the keys (#3294,#3299) [@pglewis]
 * Fixed: Remove dockunit leftovers (#3307) [@Ramoonus]
 * Fixed: Do not use Hashtag as name (#3316) [@Ramoonus]
 * Fixed: Over-escaping strikes again (file upload, restrict file types with more than one mime type) (#3083,#3328) [@pglewis]

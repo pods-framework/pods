@@ -1264,7 +1264,7 @@ function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = nul
     $page = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
 
     if ( $page )
-        return get_post( $page, $output );
+        return get_post( pods_v( $page, 'post_id' ), $output );
 
     return null;
 }

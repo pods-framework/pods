@@ -1477,7 +1477,7 @@ class PodsInit {
 				foreach ( $pods as $pod ) {
 					$type = $pod['type'];
 
-					if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+					if ( in_array( $type, array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ) ) ) {
 						if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
 							$rest_bases[ $pod['name'] ] = array(
 								'type' => $type,

@@ -71,6 +71,10 @@ class PodsRESTHandlers {
 			$pod_name = 'media';
 		}
 		$id  = pods_v( 'id', $object );
+
+		if ( empty( $id ) ) {
+			$id = pods_v( 'ID', $object );
+		}
 		
 		$pod = self::get_pod( $pod_name, $id );
 

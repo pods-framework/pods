@@ -167,9 +167,25 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 == Changelog ==
 
 = 2.6.6 - June 10th 2016 =
+* Added: Polylang support to pods_v post_id. (#3562) [@jamesgol]
+* Fixed: REST API cleanup for pick field handling. (#3560) Fixes (#3559) [@sc0ttkclark]
+* Fixed: Allow midnight (00:00) as valid time (#3555). [@jamesgol]
+* Fixed: Pass $strict = false to load_pod (#3554). [@jamesgol]
+* Fixed: Don't add space to currency names that use HTML encoding (#3553) [@jamesgol]
+* Fixed: travis-ci ignore PHP version for MySQL testing (#3551) [@Ramoonus]
+* Added: Add filter to PodsMeta->groups_get(). Needs longer explanation. (#3548) [@jamesgol]
+* Fixed: Removed extra setting showing up in Auto Templates settings for Taxonomies (#3543) [@Shelob9]
+* Added: Allow changing the Auto Templates Filter. This adds a new section in the Auto Templates tab that allows overriding the default `the_content` filter. Very useful for tailoring exactly where your Pods Templates will go by Auto Templates. (#3542) Major Kudos to [@Shelob9]
+* Added: Create new 'post_id' method for pods_v. (#3537) [@jamesgol]
+* Fixed: Use html_entity_decode to convert separator. (#3536) Fixes (#3527) [@pcfreak30]
+* Added: Use form_counter in field name to be unique and prevent conflicts. (#3535) [@pcfreak30]
+* Added: Add user, media and comment support to REST API (#3516) Fixes () [@pcfreak30]
+* Fixed: PodsRESTHandlers::write_handler needs to be static (#3511) Fixes (#3510). [@pcfreak30]
+* Fixed: Typo PLL (Polylang). (#3504) [@JoryHogeveen]
+* Fixed: travis-ci: remove retry (#3466) [@Ramoonus]
 
 = 2.6.5.2 - May 4th 2016 =
-Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
+* Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
 
 = 2.6.5.1 - May 4th, 2016 =
 * Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]

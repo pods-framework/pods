@@ -5266,12 +5266,14 @@ class PodsAPI {
         $current_language = false;
         $load_fields = true;
 
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) )
-            $current_language = pll_current_language( 'slug' );
+	    // Multilingual support
+	    if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off ) {
+			// WPML support
+			$current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+	    } elseif ( function_exists( 'pll_current_language' ) ) {
+			// Polylang support
+			$current_language = pll_current_language( 'slug' );
+	    }
 
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params, 'table_info' => false, 'fields' => true );
@@ -5537,12 +5539,14 @@ class PodsAPI {
 
         $current_language = false;
 
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) )
-            $current_language = pll_current_language( 'slug' );
+	    // Multilingual support
+	    if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off ) {
+			// WPML support
+			$current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+	    } elseif ( function_exists( 'pll_current_language' ) ) {
+			// Polylang support
+			$current_language = pll_current_language( 'slug' );
+	    }
 
         $params = (object) pods_sanitize( $params );
 
@@ -7315,48 +7319,49 @@ class PodsAPI {
         $current_language = false;
         $current_language_t_id = $current_language_tt_id = 0;
 
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        // Polylang support
-        } elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
+		// Multilingual support
+		if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off ) {
+			// WPML support
+			$current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
+			// Polylang support
 
-            // Get the global current language (if set)
-            $current_language = pll_current_language( 'slug' );
+			// Get the global current language (if set)
+			$current_language = pll_current_language( 'slug' );
 
-            // Get current language based on the object language if available (admin edit pages)
-            if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
-                $current_screen = get_current_screen();
-                if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
-                    $current_language = pll_get_post_language( (int) $_GET['post'] );
-                } elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
-                    $current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
-                } elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['new_lang'] ) ) {
-                    $current_language = $_GET['new_lang']; // TODO better checks
-                }
-            }
+			// Get current language based on the object language if available (admin edit pages)
+			if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
+				$current_screen = get_current_screen();
+				if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
+					$current_language = pll_get_post_language( (int) $_GET['post'] );
+				} elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
+					$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
+				} elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['new_lang'] ) ) {
+					$current_language = $_GET['new_lang']; // TODO better checks
+				}
+			}
 
-            $current_language = pods_sanitize( $current_language );
-            if ( !empty( $current_language ) ) {
-                // Get the language term object
-            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
-            		// Polylang 1.8 and newer
-            		$current_language_t = PLL()->model->get_language( $current_language );
-            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
-            		// Polylang 1.2 - 1.7.x
-            		$current_language_t = $polylang->model->get_language( $current_language );
-        		} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
-        			// Polylang 1.1.x and older
-        			$current_language_t = $polylang->get_language( $current_language );
-        		}
-        		
-                // If the language object exists, add it!
-        		if ( isset( $current_language_t->term_id ) ) {
-        			$current_language_t_id = (int) $current_language_t->term_id;
-        			$current_language_tt_id = (int) $current_language_t->term_taxonomy_id;
-        		}
-            }
-        }
+			$current_language = pods_sanitize( $current_language );
+			if ( ! empty( $current_language ) ) {
+				// Get the language term object
+				if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
+					// Polylang 1.8 and newer
+					$current_language_t = PLL()->model->get_language( $current_language );
+				} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
+					// Polylang 1.2 - 1.7.x
+					$current_language_t = $polylang->model->get_language( $current_language );
+				} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
+					// Polylang 1.1.x and older
+					$current_language_t = $polylang->get_language( $current_language );
+				}
+
+				// If the language object exists, add it!
+				if ( isset( $current_language_t->term_id ) ) {
+					$current_language_t_id  = (int) $current_language_t->term_id;
+					$current_language_tt_id = (int) $current_language_t->term_taxonomy_id;
+				}
+			}
+		}
 
         if ( !empty( $current_language ) )
             $transient = 'pods_' . $wpdb->prefix . '_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );

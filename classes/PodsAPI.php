@@ -7329,8 +7329,10 @@ class PodsAPI {
                 $current_screen = get_current_screen();
                 if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
                     $current_language = pll_get_post_language( (int) $_GET['post'] );
-                } elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit_tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
+                } elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
                     $current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
+                } elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['new_lang'] ) ) {
+                    $current_language = $_GET['new_lang']; // TODO better checks
                 }
             }
 

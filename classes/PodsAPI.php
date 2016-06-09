@@ -8119,12 +8119,14 @@ class PodsAPI {
 	/**
 	 * Get current language information from Multilingual plugins
 	 *
+	 * @since 2.6.6
+	 * 
 	 * @return array
 	 */
 	public static function get_current_language() {
 
 		/**
-		 * @var $sitepress                    SitePress
+		 * @var $sitepress                    SitePress object
 		 * @var $icl_adjust_id_url_filter_off boolean
 		 * @var $polylang                     object
 		 */
@@ -8147,22 +8149,50 @@ class PodsAPI {
 			// Get the global current language (if set)
 			$current_language = pll_current_language( 'slug' );
 
-			// Get current language based on the object language if available (admin edit pages)
-			if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
-				$current_screen = get_current_screen();
+			// Admin functions that overwrite the current language
+			if ( is_admin() ) {
+				
+				// Get the current user's perferred language (user setting that will overwrite the language returned from pll_current_language)
+				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
 
-				if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && ! empty( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
-					$current_language = pll_get_post_language( (int) $_GET['post'] );
-				} elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && ! empty( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
-					$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
-				} elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && ! empty( $_GET['new_lang'] ) ) {
-					$current_language = $_GET['new_lang'];
+				// Get current language based on the object language if available and this object is translateable (admin edit pages)
+				// Polylang 1.5.4+
+				if ( function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
+					$current_screen = get_current_screen();
+
+					if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
+						// post_types
+
+						if ( ! empty( $_GET['post'] ) && pll_is_translated_post_type( get_post_type( $_GET['post'] ) ) ) {
+							// Existing post + enabled for translations
+							$current_language = pll_get_post_language( (int) $_GET['post'] );
+
+						} elseif ( ! empty( $_GET['new_lang'] ) && ! empty( $_GET['post_type'] ) && pll_is_translated_post_type( sanitize_text_field( $_GET['post_type'] ) )  ) {
+							// New post + enabled for translations
+							$current_language = $_GET['new_lang'];
+						}
+
+					} elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
+						// taxonomies
+
+						// MAYBE TODO: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
+						if ( ! empty( $_GET['tag_ID'] ) && ! empty( $_GET['taxonomy'] ) && pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) ) {
+							// Existing tax + enabled for translations
+							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
+
+						} elseif ( ! empty( $_GET['new_lang'] ) && ! empty( $_GET['taxonomy'] ) && pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) ) {
+							// New tax + enabled for translations
+							$current_language = $_GET['new_lang'];
+						}
+
+					}
 				}
 			}
 
 			$current_language = pods_sanitize( sanitize_text_field( $current_language ) );
 
 			if ( ! empty( $current_language ) ) {
+				// We need to return language data
 				$lang_data = array(
 					'language' => $current_language,
 					't_id'     => 0,

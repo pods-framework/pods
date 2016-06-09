@@ -8123,12 +8123,12 @@ class PodsAPI {
 	 */
 	public static function get_current_language() {
 
-        /**
-         * @var $sitepress                    SitePress
-         * @var $icl_adjust_id_url_filter_off boolean
-         * @var $polylang                     object
-         */
-        global $sitepress, $icl_adjust_id_url_filter_off, $polylang;
+		/**
+		 * @var $sitepress                    SitePress
+		 * @var $icl_adjust_id_url_filter_off boolean
+		 * @var $polylang                     object
+		 */
+		global $sitepress, $icl_adjust_id_url_filter_off, $polylang;
 
 		$lang_data = false;
 
@@ -8201,10 +8201,10 @@ class PodsAPI {
 		 * @param array|false $lang_data {
 		 *      Language data
 		 *
-		 *      @type string  $language Language slug
-		 *      @type int     $t_id     Language term_id
-		 *      @type int     $tt_id    Language term_taxonomy_id
-		 *      @type WP_Term $term     Language term object
+		 *      @type string       $language  Language slug
+		 *      @type int          $t_id      Language term_id
+		 *      @type int          $tt_id     Language term_taxonomy_id
+		 *      @type WP_Term      $term      Language term object
 		 * }
 		 */
 		$lang_data = apply_filters( 'pods_get_current_language', $lang_data );

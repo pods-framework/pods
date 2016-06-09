@@ -1314,7 +1314,7 @@ class PodsField_Pick extends PodsField {
             $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
         }
         // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) ) {
+        /*elseif ( function_exists( 'pll_current_language' ) ) {
             $current_language = pll_current_language( 'slug' );
             
             // Get current language based on the object language if available
@@ -1328,7 +1328,7 @@ class PodsField_Pick extends PodsField {
                     $current_language = $_GET['new_lang']; // TODO better checks
                 }
             }
-        }
+        }*/
 
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options, $options[ 'options' ] );
@@ -1695,7 +1695,7 @@ class PodsField_Pick extends PodsField {
                             }
                         }
                         // Polylang integration for Post Types and Taxonomies
-                        elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
+                        /*elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
                             $translated = false;
 
                             if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
@@ -1744,7 +1744,7 @@ class PodsField_Pick extends PodsField {
                                 else 
                                     continue;
                             }
-                        }
+                        }*/
 
                         if ( 0 < strlen( $display_filter ) ) {
                             $display_filter_args = pods_var( 'display_filter_args', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );

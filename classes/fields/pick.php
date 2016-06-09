@@ -1320,25 +1320,13 @@ class PodsField_Pick extends PodsField {
             // Get current language based on the object language if available
             if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
                 $current_screen = get_current_screen();
-                if ( $current_screen->base == 'post' && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
+                if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
                     $current_language = pll_get_post_language( (int) $_GET['post'] );
-                } elseif ( $current_screen->base == 'term' && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
+                } elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
                     $current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
+                } elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['new_lang'] ) ) {
+                    $current_language = $_GET['new_lang']; // TODO better checks
                 }
-                add_action( 'parse_query', function( $query ) {
-                    $qvars = &$query->query_vars;
-                    if ( isset( $qvars['lang'] ) ) {
-                        unset( $qvars['lang'] );
-                    }
-                }, 99 );
-                /*
-                if ( function_exists( 'PLL' ) && isset( PLL()->filters_post ) ) {
-                    remove_action( 'parse_query', array( PLL()->filters_post, 'parse_query' ) );
-                }
-                if ( function_exists( 'PLL' ) && isset( PLL()->filters_term ) ) {
-                    remove_filter( 'terms_clauses', array( PLL()->filters_term, 'terms_clauses' ), 10, 3 );
-                }
-                */
             }
         }
 

@@ -1278,9 +1278,11 @@ class PodsField_Pick extends PodsField {
      * @return array|bool Object data
      */
     public function get_object_data ( $object_params = null ) {
-        global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
-        $current_language = false;
+	    /**
+	     * @var $wpdb wpdb
+	     */
+        global $wpdb;
 
         $object_params = array_merge(
             array(
@@ -1308,27 +1310,6 @@ class PodsField_Pick extends PodsField {
         $data_params = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
         $page = min( 1, (int) $object_params[ 'page' ] );
         $limit = (int) $object_params[ 'limit' ];
-
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        }
-        // Polylang support
-        /*elseif ( function_exists( 'pll_current_language' ) ) {
-            $current_language = pll_current_language( 'slug' );
-            
-            // Get current language based on the object language if available
-            if ( is_admin() && function_exists( 'get_current_screen' ) && function_exists( 'pll_get_post_language' ) && function_exists( 'pll_get_term_language' ) ) {
-                $current_screen = get_current_screen();
-                if ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) && isset( $_GET['post'] ) && is_numeric( $_GET['post'] ) ) {
-                    $current_language = pll_get_post_language( (int) $_GET['post'] );
-                } elseif ( ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['tag_ID'] ) && is_numeric( $_GET['tag_ID'] ) ) {
-                    $current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
-                } elseif ( ( $current_screen->base == 'post' || $current_screen->base == 'edit' || $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) && isset( $_GET['new_lang'] ) ) {
-                    $current_language = $_GET['new_lang']; // TODO better checks
-                }
-            }
-        }*/
 
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options, $options[ 'options' ] );
@@ -1664,87 +1645,6 @@ class PodsField_Pick extends PodsField {
                             $object = $result[ 'taxonomy' ];
                             $object_type = 'taxonomy';
                         }
-
-                        // WPML integration for Post Types and Taxonomies
-                        if ( is_object( $sitepress ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
-                            $translated = false;
-
-                            if ( 'post_type' == $object_type && $sitepress->is_translated_post_type( $object ) )
-                                $translated = true;
-                            elseif ( 'taxonomy' == $object_type && $sitepress->is_translated_taxonomy( $object ) )
-                                $translated = true;
-
-                            if ( $translated ) {
-                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false, $current_language );
-
-                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                    $text = $result[ $search_data->field_index ];
-
-                                    if ( $result[ $search_data->field_id ] != $object_id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $object_id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $object_id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_id ] = $object_id;
-                                    $result[ $search_data->field_index ] = $text;
-                                }
-                                else
-                                    continue;
-                            }
-                        }
-                        // Polylang integration for Post Types and Taxonomies
-                        /*elseif ( ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
-                            $translated = false;
-
-                            if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
-                                $translated = true;
-                            elseif ( 'taxonomy' == $object_type && pll_is_translated_taxonomy( $object ) )
-                                $translated = true;
-
-                            // Maybe TODO:
-                            // The need a object that is enabled for translation + we need a valid current_language
-                            // $current_language condition is not a strict comparison because we need a string, anything else is considered false
-                            // && false != $current_language
-                            if ( $translated ) {
-                            	$object_id = 0; // default
-                                if ( function_exists( 'pll_get_post_translations' ) && function_exists( 'pll_get_term_translations' ) ) {
-                                    // Polylang 1.8 and newer
-                                    if ( 'post_type' == $object_type ) {
-                                        $_translations = pll_get_post_translations( $result[ $search_data->field_id ] );
-                                        $_translations[ pll_get_post_language( (int) $result[ $search_data->field_id ] ) ] = $result[ $search_data->field_id ];
-                                        $object_id = ( isset( $_translations[ $current_language ] ) ) ? $_translations[ $current_language ] : 0;
-                                    } elseif ( 'taxonomy' == $object_type ) {
-                                        $_translations = pll_get_term_translations( $result[ $search_data->field_id ] );
-                                        $_translations[ pll_get_term_language( (int) $result[ $search_data->field_id ] ) ] = $result[ $search_data->field_id ];
-                                        $object_id = ( isset( $_translations[ $current_language ] ) ) ? $_translations[ $current_language ] : 0;
-                                    }
-                            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
-                            		// Polylang 1.2 - 1.7.x
-                            		$object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
-                            		// Polylang 1.1.x and older
-                                	$object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	}
-
-                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                    $text = $result[ $search_data->field_index ];
-
-                                    if ( $result[ $search_data->field_id ] != $object_id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $object_id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $object_id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_id ] = $object_id;
-                                    $result[ $search_data->field_index ] = $text;
-                                }
-                                else 
-                                    continue;
-                            }
-                        }*/
 
                         if ( 0 < strlen( $display_filter ) ) {
                             $display_filter_args = pods_var( 'display_filter_args', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );

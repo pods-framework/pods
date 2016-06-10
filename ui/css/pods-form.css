@@ -69,9 +69,19 @@
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
-    max-height: 200px;
+    max-height: 220px;
     overflow: auto;
     padding: 2px 0;
+}
+
+/* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
+.pods-form-ui-field .pods-pick-values {
+    border: none;
+}
+
+/* This one does need a border, however */
+.pods-pick-values .pods-checkbox-view {
+    border: 1px solid #dfdfdf;
 }
 
 select.pods-form-ui-field-type-pick[multiple] {

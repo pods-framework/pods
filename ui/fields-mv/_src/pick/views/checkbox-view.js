@@ -46,5 +46,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 export const CheckboxView = PodsFieldListView.extend( {
 	tagName: 'ul',
 
+	className: 'pods-checkbox-view',
 	childView: CheckboxItem
 } );

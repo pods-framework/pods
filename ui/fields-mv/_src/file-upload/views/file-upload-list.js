@@ -8,10 +8,10 @@ import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-
 export const FileUploadItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	className: 'pods-file',
+	className: 'pods-flex-item pods-file',
 
 	ui: {
-		dragHandle  : '.pods-file-handle',
+		dragHandle  : '.pods-flex-handle',
 		downloadLink: '.pods-file-download',
 		removeButton: '.pods-file-remove'
 	},
@@ -29,7 +29,7 @@ export const FileUploadItem = PodsFieldView.extend( {
 export const FileUploadList = PodsFieldListView.extend( {
 	tagName: 'ul',
 
-	className: 'pods-files pods-files-list',
+	className: 'pods-flex-list pods-files pods-files-list',
 
 	childView: FileUploadItem,
 

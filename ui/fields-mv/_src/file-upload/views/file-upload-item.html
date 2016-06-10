@@ -5,12 +5,12 @@
 	class="<%- attr.class %>"
 	type="hidden"
 	value="<%- id %>" />
-<ul class="pods-file-meta media-item">
+<ul class="pods-flex-meta media-item">
 	<% if ( 1 != options.file_limit ) { %>
-		<li class="pods-file-col pods-file-handle">Handle</li>
+		<li class="pods-flex-col pods-flex-handle">Handle</li>
 	<% } %>
-	<li class="pods-file-col pods-file-icon"><img class="pinkynail" src="<%- icon %>" alt="Icon"></li>
-	<li class="pods-file-col pods-file-name">
+	<li class="pods-flex-col pods-flex-icon"><img class="pinkynail" src="<%- icon %>" alt="Icon"></li>
+	<li class="pods-flex-col pods-flex-name">
 		<% if ( 0 != options.file_edit_title ) { %>
 			<input
 				name="<%- attr.name %>[<%- id %>][title]"
@@ -25,8 +25,8 @@
 			<%- name %>
 		<% } %>
 	</li>
-	<li class="pods-file-col pods-file-remove pods-file-delete"><a href="#remove">Remove</a></li>
+	<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
 	<% if ( 0 != options.file_linked ) { %>
-		<li class="pods-file-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li>
+		<li class="pods-flex-col pods-file-download"><a href="<%- link %>" target="_blank">Download</a></li>
 	<% } %>
 </ul>

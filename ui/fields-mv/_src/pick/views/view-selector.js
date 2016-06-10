@@ -6,11 +6,13 @@ export const PickViewSelector = Mn.LayoutView.extend( {
 
 	ui: {
 		checkbox: '.checkbox',
-		select  : '.select'
+		select  : '.select',
+		flex    : '.flex'
 	},
 
 	triggers: {
 		'click @ui.checkbox': 'checkbox:view:click',
-		'click @ui.select': 'select:view:click'
+		'click @ui.select'  : 'select:view:click',
+		'click @ui.flex'    : 'flex:view:click'
 	}
 } );

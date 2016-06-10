@@ -1,57 +1,57 @@
-ul.pods-files {
+ul.pods-flex-list {
     background: #fff;
     margin: 0 0 5px 0;
     padding: 0;
-    border-radius: 0px;
+    border-radius: 0;
     border: 1px solid #dfdfdf;
 }
 
-ul.pods-files:empty {
+ul.pods-flex-list:empty {
     display: none;
 }
 
-ul.pods-file-meta {
+ul.pods-flex-meta {
     display: block;
     overflow: hidden;
     zoom: 1;
     position: relative;
 }
 
-form.pods-form ul.pods-files li.pods-file-name {
+form.pods-form ul.pods-flex-list li.pods-flex-name {
     overflow: inherit;
 }
 
-ul.pods-files li.pods-file-col {
+ul.pods-flex-list li.pods-flex-col {
     float: left;
     margin: 0;
     padding: 0;
 }
 
-ul.pods-files li.pods-file-handle {
+ul.pods-flex-list li.pods-flex-handle {
     width: 30px;
     height: 25px;
     background: url(../images/handle.gif) -5px 75% no-repeat;
     cursor: move;
 }
 
-ul.pods-files li.pods-file-icon {
+ul.pods-flex-list li.pods-flex-icon {
     width: 40px;
 }
 
-ul.pods-files li.pods-file-icon img {
+ul.pods-flex-list li.pods-flex-icon img {
     display: block;
     border-radius: 2px;
 }
 
-ul.pods-files li.pods-file-download,
-ul.pods-files li.pods-file-delete {
+ul.pods-flex-list li.pods-file-download,
+ul.pods-flex-list li.pods-flex-remove {
     width: 25px;
     height: 32px;
     float: right;
 }
 
-ul.pods-files li.pods-file-download a,
-ul.pods-files li.pods-file-delete a {
+ul.pods-flex-list li.pods-file-download a,
+ul.pods-flex-list li.pods-flex-remove a {
 	display: block;
     width: 25px;
     height: 32px;
@@ -60,61 +60,61 @@ ul.pods-files li.pods-file-delete a {
     color: #616161;
 }
 
-ul.pods-files li.pods-file-download a:hover,
-ul.pods-files li.pods-file-delete a:hover {
+ul.pods-flex-list li.pods-file-download a:hover,
+ul.pods-flex-list li.pods-flex-remove a:hover {
     opacity: 1;
 }
 
-ul.pods-files li.pods-file-download a:focus,
-ul.pods-files li.pods-file-delete a:focus {
+ul.pods-flex-list li.pods-file-download a:focus,
+ul.pods-flex-list li.pods-flex-remove a:focus {
     box-shadow: none;
     -webkit-box-shadow: none;
 }
 
-ul.pods-files li.pods-file-download a:before,
-ul.pods-files li.pods-file-delete a:before {
+ul.pods-flex-list li.pods-file-download a:before,
+ul.pods-flex-list li.pods-flex-remove a:before {
     margin-left: -20px;
     font: 400 20px/1 dashicons;
 }
 
-ul.pods-files li.pods-file-download a:before {
+ul.pods-flex-list li.pods-file-download a:before {
     content: "\f316";
     line-height: 36px;
 }
 
-ul.pods-files li.pods-file-delete a:before {
+ul.pods-flex-list li.pods-flex-remove a:before {
     content: "\f158";
     line-height: 36px;
 }
 
-ul.pods-files li.pods-file-handle,
-ul.pods-files li.pods-file-download a,
-ul.pods-files li.pods-file-delete a {
+ul.pods-flex-list li.pods-flex-handle,
+ul.pods-flex-list li.pods-file-download a,
+ul.pods-flex-list li.pods-flex-remove a {
     text-indent: 100%;
     white-space: nowrap;
     overflow: hidden;
 }
 
-ul.pods-files li.pods-file-name {
+ul.pods-flex-list li.pods-flex-name {
     position: absolute;
     left: 85px;
     right: 60px;
     padding-top: 5px;
 }
 
-form.pods-form ul.pods-files li.pods-file-name {
+form.pods-form ul.pods-flex-list li.pods-flex-name {
     padding-top: 3px;
     overflow: visible;
 }
 
-form.pods-form ul.pods-files li.pods-file-name input[type=text] {
+form.pods-form ul.pods-flex-list li.pods-flex-name input[type=text] {
     width: 100% !important;
     font-size: 1vh;
     line-height: 1;
     padding: .3vh 10px;
 }
 
-ul.pods-files li.pods-file {
+li.pods-flex-item {
     display: block;
     padding: 8px 10px;
     margin: 0;
@@ -122,11 +122,11 @@ ul.pods-files li.pods-file {
     border-radius: 3px;
 }
 
-ul.pods-files li.pods-file:hover {
+li.pods-flex-item:hover {
     background: #fafafa;
 }
 
-ul.pods-files li.pods-file:last-of-type {
+li.pods-flex-item:last-of-type {
     border-bottom: 0;
 }
 
@@ -134,7 +134,7 @@ ul.pods-files-queue {
     margin: 14px 0 5px;
 }
 
-ul.pods-files-queue li.pods-file-name {
+ul.pods-files-queue li.pods-flex-name {
     position: relative;
     width: 73%;
     left: auto;
@@ -142,27 +142,27 @@ ul.pods-files-queue li.pods-file-name {
     padding-top: 0;
 }
 
-ul.pods-files-queue li.pods-file li.pods-progress,
-ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
+ul.pods-files-queue li.pods-flex-item li.pods-progress,
+ul.pods-files-queue li.pods-flex-item li.pods-progress div.progress-bar {
     border-radius: 10px;
     height: 18px;
 }
 
-ul.pods-files-queue li.pods-file li.pods-progress {
+ul.pods-files-queue li.pods-flex-item li.pods-progress {
     position: relative;
     width: 23%;
     margin: 2px 2% 0 0;
     background-color: #e8e8e8;
 }
-ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
-    width: 0px;
+ul.pods-files-queue li.pods-flex-item li.pods-progress div.progress-bar {
+    width: 0;
     background-color: #1073AA;
 }
 
-ul.pods-files li.pods-file:after,
-ul.pods-files li.pods-file ul.pods-file-meta:after,
-ul.pods-files-queue li.pods-file:after,
-ul.pods-files-queue li.pods-file ul.pods-file-meta:after {
+li.pods-flex-item:after,
+ul.pods-flex-list li.pods-flex-item ul.pods-flex-meta:after,
+ul.pods-files-queue li.pods-flex-item:after,
+ul.pods-files-queue li.pods-flex-item ul.pods-flex-meta:after {
     content: "";
     display: table;
     clear: both;

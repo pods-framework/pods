@@ -1,13 +1,25 @@
-<input name="pods_meta_file_test[<%- id %>][id]" data-name-clean="pods-meta-file-test-id-id" id="pods-form-ui-pods-meta-file-test-id-id" class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-id" type="hidden" value="<%- id %>>">
-<ul class="pods-flex-meta media-item">
+<input name="pods_meta_file_test[<%- attr.id %>][attr.id]"
+		data-name-clean="pods-meta-file-test-id-id"
+		id="pods-form-ui-pods-meta-file-test-id-id"
+		class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-id"
+		type="hidden"
+		value="<%- attr.id %>>">
+<ul class="pods-flex-meta relationship-item">
 	<li class="pods-flex-col pods-flex-handle">Handle</li>
 	<li class="pods-flex-col pods-flex-icon">
-		<img class="pinkynail" src="<%- thumb_url %>" alt="Icon">
+		<img class="pinkynail" src="" alt="Icon">
 	</li>
 	<li class="pods-flex-col pods-flex-name">
-		<input name="pods_meta_file_test[<%- id %>][title]" data-name-clean="pods-meta-file-test-id-title" id="pods-form-ui-pods-meta-file-test-id-title" class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-title" type="text" value="<%- name %>" tabindex="2" maxlength="255">
+		<input name="pods_meta_file_test[<%- attr.id %>][title]"
+				data-name-clean="pods-meta-file-test-id-title"
+				id="pods-form-ui-pods-meta-file-test-id-title"
+				class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-title"
+				type="text"
+				value="<%= name %>"
+				tabindex="2"
+				maxlength="255">
 	</li>
-	<li class="pods-flex-col pods-flex-delete">
-		<a href="#delete">Delete</a>
+	<li class="pods-flex-col pods-flex-remove">
+		<a href="#remove">Remove</a>
 	</li>
 </ul>

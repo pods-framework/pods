@@ -284,8 +284,7 @@ class PodsInit {
 			), '1.1.1' );
 		}
 
-		wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );
-		wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
+		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
 
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );

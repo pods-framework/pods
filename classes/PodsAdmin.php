@@ -171,7 +171,7 @@ class PodsAdmin {
 
         // Flexible Relationships
         if ( pods_is_modal_window() ) {
-            wp_enqueue_style( 'pods-flexible-relationships', PODS_URL . 'ui/css/pods-flexible-relationships.css', array(), '1.0' );
+            wp_enqueue_style( 'pods-modal-relationships', PODS_URL . 'ui/css/pods-modal-relationships.css', array(), '1.0' );
         }
 
         wp_enqueue_style( 'pods-font' );
@@ -697,7 +697,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-attach' );
+            wp_enqueue_style( 'pods-flex' );
     }
 
     /**

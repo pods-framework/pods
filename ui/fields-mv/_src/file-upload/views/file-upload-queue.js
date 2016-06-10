@@ -44,7 +44,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 export const FileUploadQueue = Mn.CollectionView.extend( {
 	tagName: 'ul',
 
-	className: 'pods-files pods-files-queue',
+	className: 'pods-flex-list pods-files-queue',
 
 	childView: FileUploadQueueItem
 } );

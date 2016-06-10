@@ -249,7 +249,7 @@ input.pods-form-ui-field-type-color {
     width: 100%;
 }
 
-.pods-form-front ul.pods-files li.pods-file-icon img {
+.pods-form-front ul.pods-flex-list li.pods-flex-icon img {
     width: 40px;
 }
 

@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
 import * as checkboxTemplate from './checkbox-item.html';
-import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
+import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-views';
 
 /**
  *
@@ -37,7 +37,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 	onToggleSelected: function () {
 		this.model.toggleSelected();
 	}
-
 } );
 
 /**
@@ -47,5 +46,6 @@ export const CheckboxView = PodsFieldListView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-checkbox-view',
+
 	childView: CheckboxItem
 } );

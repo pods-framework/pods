@@ -16,18 +16,6 @@ export const FlexItem = PodsFieldView.extend( {
 		'click .pods-flex-remove a': 'delete_item_click'
 	},
 
-	/*
-	render: function () {
-		var $el = this.$el;
-
-		$el.empty();
-		$el.attr( 'id', this.model.get( 'id' ) );
-		$el.html( this.template( this.model.attributes ) );
-
-		return this; // for chainable calls, like .render().el
-	},
-	*/
-
 	delete_item_click: function ( e ) {
 		e.preventDefault();
 
@@ -45,8 +33,6 @@ export const FlexView = PodsFieldListView.extend( {	// Cache the template functi
 	className: 'pods-flex-list pods-relationship',
 
 	childView: FlexItem
-
-	//template: _.template( $( '#flex-collection-template' ).html() ),
 
 	/*
 	events: {

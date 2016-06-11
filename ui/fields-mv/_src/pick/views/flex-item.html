@@ -6,9 +6,11 @@
 		value="<%- attr.id %>>">
 <ul class="pods-flex-meta relationship-item">
 	<li class="pods-flex-col pods-flex-handle">Handle</li>
-	<li class="pods-flex-col pods-flex-icon">
-		<img class="pinkynail" src="" alt="Icon">
-	</li>
+	<% if ( icon != '' ) { %>
+		<li class="pods-flex-col pods-flex-icon">
+			<img class="pinkynail" src="<%- icon %>" alt="Icon">
+		</li>
+	<% } %>
 	<li class="pods-flex-col pods-flex-name">
 		<input name="pods_meta_file_test[<%- attr.id %>][title]"
 				data-name-clean="pods-meta-file-test-id-title"

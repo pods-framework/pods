@@ -8139,22 +8139,24 @@ class PodsAPI {
 		 */
 		global $sitepress, $icl_adjust_id_url_filter_off, $polylang;
 
-		$lang_data = false;
-		$translator = false;
+		$lang_data        = false;
+		$translator       = false;
+		$current_language = false;
 
 		// Multilingual support
 		if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off && defined( 'ICL_LANGUAGE_CODE' ) ) {
 			// WPML support
 			$translator = 'WPML';
+
 			// Get the global current language (if set)
 			$current_language = ( ICL_LANGUAGE_CODE != 'all' ) ? ICL_LANGUAGE_CODE : '';
 
 		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
 			// Polylang support
 			$translator = 'PLL';
+
 			// Get the global current language (if set)
 			$current_language = pll_current_language( 'slug' );
-
 		}
 
 		/**
@@ -8163,7 +8165,6 @@ class PodsAPI {
 		 * @since 2.6.6
 		 */
 		if ( is_admin() && ! empty( $translator ) ) {
-			
 			if ( $translator == 'PLL' ) {
 				/**
 				 * Polylang support
@@ -8181,9 +8182,7 @@ class PodsAPI {
 				 * Overwrite the current_language var if needed for post types
 				 */
 				if ( isset( $current_screen->base ) && ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
-
 					if ( ! empty( $_GET['post'] ) ) {
-
 						/**
 						 * WPML support
 						 * In WPML the current language is always set to default when on an edit screen
@@ -8209,7 +8208,6 @@ class PodsAPI {
 							// Overwrite default language if this is a translateable post_type
 							$current_language = pll_get_post_language( (int) $_GET['post'] );
 						}
-
 					}
 
 					/**
@@ -8225,15 +8223,12 @@ class PodsAPI {
 						$current_language = $_GET['new_lang'];
 					}
 
-
 				/**
 				 * Overwrite the current_language var if needed for taxonomies
 				 */
 				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
-
 					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 					if ( ! empty( $_GET['taxonomy'] ) ) {
-
 						/**
 						 * WPML support
 						 * In WPML the current language is always set to default when on an edit screen
@@ -8260,7 +8255,6 @@ class PodsAPI {
 							// Overwrite default language if this is a translateable taxonomy
 							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
 						}
-
 					}
 
 					/**
@@ -8275,7 +8269,6 @@ class PodsAPI {
 					) {
 						$current_language = $_GET['new_lang'];
 					}
-
 				}
 			}
 		}
@@ -8324,7 +8317,7 @@ class PodsAPI {
 		 *
 		 * @since 2.6.6
 		 *
-		 * @param array|false $lang_data {
+		 * @param array|false    $lang_data {
 		 *      Language data
 		 *
 		 *      @type string       $language  Language slug
@@ -8332,8 +8325,9 @@ class PodsAPI {
 		 *      @type int          $tt_id     Language term_taxonomy_id
 		 *      @type WP_Term      $term      Language term object
 		 * }
+		 * @param string|boolean $translator Language plugin used
 		 */
-		$lang_data = apply_filters( 'pods_get_current_language', $lang_data );
+		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
 
 		return $lang_data;
 

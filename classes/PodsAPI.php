@@ -7438,7 +7438,7 @@ class PodsAPI {
 		    $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
 		    // WPML support
-		    if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -7516,7 +7516,7 @@ class PodsAPI {
 		    );
 
 		    // WPML Support
-		    if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`

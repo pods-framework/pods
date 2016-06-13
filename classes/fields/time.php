@@ -150,7 +150,7 @@ class PodsField_Time extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ) ) ) {
             $date = $this->createFromFormat( 'H:i:s', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 
@@ -227,7 +227,7 @@ class PodsField_Time extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ) ) ) )
             $value = $this->convert_date( $value, 'H:i:s', $format );
         elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
             $value = '00:00:00';
@@ -253,7 +253,7 @@ class PodsField_Time extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -333,7 +333,7 @@ class PodsField_Time extends PodsField {
      * @param $original_format
      */
     public function convert_date ( $value, $new_format, $original_format = 'H:i:s' ) {
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00' ) ) ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 
             if ( false !== $date )

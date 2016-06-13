@@ -889,7 +889,16 @@ class PodsMeta {
         if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) )
             $groups = self::$groups[ $type ][ $name ];
 
-        return $groups;
+        /**
+         * Filter the array of field groups
+         *
+         * @param array  $groups Array of groups
+         * @param string  $type The type of Pod
+         * @param string  $name Name of the Pod
+         *
+         * @since 2.6.6
+         */
+        return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
     }
 
     /**

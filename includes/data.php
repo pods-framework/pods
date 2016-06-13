@@ -778,6 +778,45 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					}
 				}
 				break;
+			case 'post_id':
+				if ( empty( $var ) ) {
+					if ( ! empty( $default ) ) {
+						$post_id = $default;
+					} else {
+						// If no $var and no $default then use current post ID
+						$post_id = get_the_ID();
+					}
+				} else {
+					$post_id = $var;
+				}
+				if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+					/* Only call filter if WPML is installed */
+					$post_type = get_post_type( $post_id );
+					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+				} elseif ( function_exists( 'pll_get_post' ) ) {
+					$polylang_id = pll_get_post( $post_id );
+					if ( null !== $polylang_id ) {
+						$post_id = $polylang_id;
+					}
+				}
+				// Add other translation plugin specific code here
+
+				/**
+				 * Filter to override post_id
+				 *
+				 * Generally used with language translation plugins in order to return the post id of a
+				 * translated post
+				 *
+				 * @param  int $post_id The post ID of current post
+				 * @param  mixed $default The default value to set if variable doesn't exist
+				 * @param  mixed $var The variable name, can also be a modifier for specific types
+				 * @param  bool $strict Only allow values (must not be empty)
+				 * @param  array $params Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
+				 *
+				 * @since 2.6.6
+				 */
+				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
+				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
 		}

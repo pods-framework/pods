@@ -8168,7 +8168,8 @@ class PodsAPI {
 			if ( $translator == 'PLL' ) {
 				/**
 				 * Polylang support
-				 * Get the current user's perferred language (user setting that will overwrite the language returned from pll_current_language)
+				 * Get the current user's perferred language.
+				 * This is a user meta setting that will overwrite the language returned from pll_current_language()
 				 * @see polylang/admin/admin-base.php -> init_user()
 				 */
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
@@ -8179,41 +8180,41 @@ class PodsAPI {
 				$current_screen = get_current_screen();
 
 				/**
-				 * Overwrite the current_language var if needed for post types
+				 * Overwrite the current language if needed for post types
 				 */
 				if ( isset( $current_screen->base ) && ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
 					if ( ! empty( $_GET['post'] ) ) {
 						/**
 						 * WPML support
-						 * In WPML the current language is always set to default when on an edit screen
-						 * We need to overwrite this when the current object is not-translateable to enable relationships with diferent languages
+						 * In WPML the current language is always set to default on an edit screen
+						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
 						if (   $translator == 'WPML' 
 							&& method_exists( $sitepress, 'is_translated_post_type') 
 							&& ! $sitepress->is_translated_post_type( get_post_type( $_GET['post'] ) ) 
 						) {
-							// Overwrite default language to nothing if this is a NOT-translateable post_type
+							// Overwrite the current language to nothing if this is a NOT-translatable post_type
 							$current_language = '';
 						}
 
 						/**
 						 * Polylang support (1.5.4+)
-						 * In polylang the preffered language could be anything. 
-						 * We only want the related objects if they are not translateable OR the same language as the current object
+						 * In polylang the preferred language could be anything. 
+						 * We only want the related objects if they are not translatable OR the same language as the current object
 						 */
 						if (   $translator == 'PLL' 
 							&& function_exists( 'pll_get_post_language' ) 
 							&& pll_is_translated_post_type( get_post_type( $_GET['post'] ) ) 
 						) {
-							// Overwrite default language if this is a translateable post_type
+							// Overwrite the current language if this is a translateable post_type
 							$current_language = pll_get_post_language( (int) $_GET['post'] );
 						}
 					}
 
 					/**
 					 * Polylang support (1.0.1+)
-					 * In polylang the preffered language could be anything. 
-					 * When we're adding a new object and the new language is set we only want the related objects if they are not translateable OR the same language as the current object
+					 * In polylang the preferred language could be anything. 
+					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
 					 */
 					if (   $translator == 'PLL' 
 						&& ! empty( $_GET['new_lang'] ) 
@@ -8224,43 +8225,43 @@ class PodsAPI {
 					}
 
 				/**
-				 * Overwrite the current_language var if needed for taxonomies
+				 * Overwrite the current language if needed for taxonomies
 				 */
 				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
 					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 					if ( ! empty( $_GET['taxonomy'] ) ) {
 						/**
 						 * WPML support
-						 * In WPML the current language is always set to default when on an edit screen
-						 * We need to overwrite this when the current object is not-translateable to enable relationships with diferent languages
+						 * In WPML the current language is always set to default on an edit screen
+						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
 						if (   $translator == 'WPML' 
 							&& method_exists( $sitepress, 'is_translated_taxonomy') 
 							&& ! $sitepress->is_translated_taxonomy( $_GET['taxonomy'] ) 
 						) {
-							// Overwrite default language to nothing if this is a NOT-translateable taxonomy
+							// Overwrite the current language to nothing if this is a NOT-translatable taxonomy
 							$current_language = '';
 						}
 
 						/**
 						 * Polylang support (1.5.4+)
-						 * In polylang the preffered language could be anything. 
-						 * We only want the related objects if they are not translateable OR the same language as the current object
+						 * In polylang the preferred language could be anything. 
+						 * We only want the related objects if they are not translatable OR the same language as the current object
 						 */
 						if (   $translator == 'PLL' 
 							&& ! empty( $_GET['tag_ID'] ) 
 							&& function_exists( 'pll_get_term_language' ) 
 							&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) 
 						) {
-							// Overwrite default language if this is a translateable taxonomy
+							// Overwrite the current language if this is a translatable taxonomy
 							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
 						}
 					}
 
 					/**
 					 * Polylang support (1.0.1+)
-					 * In polylang the preffered language could be anything. 
-					 * When we're adding a new object and the new language is set we only want the related objects if they are not translateable OR the same language as the current object
+					 * In polylang the preferred language could be anything. 
+					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
 					 */
 					if (   $translator == 'PLL' 
 						&& ! empty( $_GET['new_lang'] ) 

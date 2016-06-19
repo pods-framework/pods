@@ -4163,68 +4163,102 @@ class PodsAPI {
 
 	}
 
-    /**
-     * @see PodsAPI::save_pod_item
-     *
-     * Duplicate a pod item
-     *
-     * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_* table
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return int The table row ID
-     * @since 1.12
-     */
-    public function duplicate_pod_item ( $params ) {
-        $params = (object) pods_sanitize( $params );
+	/**
+	* @see PodsAPI::save_pod_item
+	*
+	* Duplicate a pod item
+	*
+	* $params['pod'] string The Pod name
+	* $params['id'] int The item's ID from the wp_pods_* table
+	*
+	* @param array $params An associative array of parameters
+	*
+	* @return int The table row ID
+	* 
+	* @since 1.12
+	*/
+	public function duplicate_pod_item ( $params ) {
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ) );
+		$params = (object) pods_sanitize( $params );
+	
+		$load_pod_params = array(
+			'name' => $params->pod,
+			'table_info' => false,
+		);
+	
+		$pod = $this->load_pod( $load_pod_params );
+	
+		if ( false === $pod ) {
+			return pods_error( __( 'Pod not found', 'pods' ), $this );
+		}
+	
+		$pod = pods( $params->pod, $params->id );
+	
+		$params->pod = $pod->pod;
+		$params->pod_id = $pod->pod_id;
+	
+		$fields = (array) pods_var_raw( 'fields', $pod->pod_data, array(), null, true );
+		$object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+	
+		if ( ! empty( $object_fields ) ) {
+			$fields = array_merge( $object_fields, $fields );
+		}
+	
+		$save_params = array(
+			'pod' => $params->pod,
+			'data' => array()
+		);
+	
+		$ignore_fields = array();
+	
+		if ( 'post' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+				'ID',
+				'post_name',
+				'post_date',
+				'post_date_gmt',
+				'post_modified',
+				'post_modified_gmt',
+				'guid',
+		        );
+		}
+	
+		/**
+		 * Filter the fields to ignore during duplication
+		 * 
+		 * @since 2.6.6
+		 * 
+		 * @param array  $ignore_fields Fields to ignore and not save during duplication
+		 * @param Pods   $pod           Pod object
+		 * @param array  $fields        Fields on the pod to duplicate
+		 * @param object $params        Params passed into duplicate_pod_item()
+		 */
+		$ignore_fields = apply_filters( 'pods_api_duplicate_pod_item_ignore_fields', $ignore_fields, $pod, $fields, $params );
+	
+		foreach ( $fields as $field ) {
+			if ( in_array( $field['name'], $ignore_fields ) ) {
+				continue;
+			}
+	
+			$field = array(
+				'name' => $field['name'],
+				'output' => 'ids'
+			);
+	
+			$value = $pod->field( $field );
+	
+			if ( ! empty( $value ) || ( ! is_array( $value ) && 0 < strlen( $value ) ) ) {
+				$save_params['data'][ $field['name'] ] = $value;
+			}
+		}
+	
+		$save_params = $this->do_hook( 'duplicate_pod_item', $save_params, $pod->pod, $pod->id(), $params );
+	
+		$id = $this->save_pod_item( $save_params );
+	
+		return $id;
 
-        if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
-
-        $pod = pods( $params->pod, $params->id );
-
-        $params->pod = $pod->pod;
-        $params->pod_id = $pod->pod_id;
-
-        $fields = (array) pods_var_raw( 'fields', $pod->pod_data, array(), null, true );
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
-
-        if ( !empty( $object_fields ) )
-            $fields = array_merge( $object_fields, $fields );
-
-        $save_params = array(
-            'pod' => $params->pod,
-            'data' => array()
-        );
-
-        foreach ( $fields as $field ) {
-	        if ( in_array( $field['name'], array(
-		        'ID',
-		        'post_name',
-		        'post_date',
-		        'post_date_gmt',
-		        'post_modified',
-		        'post_modified_gmt',
-		        'guid',
-	        ) ) ) {
-		        continue;
-	        }
-	        
-            $value = $pod->field( array( 'name' => $field[ 'name' ], 'output' => 'ids' ) );
-
-            if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )
-                $save_params[ 'data' ][ $field[ 'name' ] ] = $value;
-        }
-
-        $save_params = $this->do_hook( 'duplicate_pod_item', $save_params, $pod->pod, $pod->id(), $params );
-
-        $id = $this->save_pod_item( $save_params );
-
-        return $id;
-    }
+	}
 
     /**
      * @see pods()

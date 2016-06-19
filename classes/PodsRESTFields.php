@@ -126,8 +126,13 @@ class PodsRESTFields {
 		if ( 'media' == $object_type ) {
 			$object_type = 'attachment';
 		}
+
 		if ( $read || $write ) {
-			register_api_field( $object_type, $field_name, $args );
+			if ( function_exists( 'register_rest_field' ) ) {
+				register_rest_field( $object_type, $field_name, $args );
+			} elseif ( function_exists( 'register_api_field' ) ) {
+				register_api_field( $object_type, $field_name, $args );
+			}
 		}
 	}
 

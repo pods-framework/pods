@@ -4209,17 +4209,31 @@ class PodsAPI {
 			'data' => array()
 		);
 	
-		$ignore_fields = array();
+		$ignore_fields = array(
+			$pod->pod_data['field_id'],
+			$pod->pod_data['field_slug'],
+		);
 	
-		if ( 'post' == $pod->pod_data['type'] ) {
+		if ( in_array( $pod->pod_data['type'], array( 'post_type', 'media' ) ) ) {
 			$ignore_fields = array(
-				'ID',
 				'post_name',
 				'post_date',
 				'post_date_gmt',
 				'post_modified',
 				'post_modified_gmt',
 				'guid',
+		        );
+		} elseif ( 'term' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+				'term_taxonomy_id',
+				'slug',
+		        );
+		} elseif ( 'user' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+				'user_nicename',
+		        );
+		} elseif ( 'comment' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
 		        );
 		}
 	
@@ -4246,6 +4260,10 @@ class PodsAPI {
 			);
 	
 			$value = $pod->field( $field );
+		        
+		        // @todo Add post type compatibility to set unique post_title
+		        // @todo Add term compatibility to set unique name
+		        // @todo Add user compatibility to set unique user_login/user_email
 	
 			if ( ! empty( $value ) || ( ! is_array( $value ) && 0 < strlen( $value ) ) ) {
 				$save_params['data'][ $field['name'] ] = $value;

@@ -540,6 +540,8 @@ class PodsField_Pick extends PodsField {
 				'data_callback' => array( $this, 'data_months_of_year' )
 			);
 
+			do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
+
 			if ( did_action( 'init' ) ) {
 				pods_transient_set( 'pods_related_objects', self::$related_objects );
 			}
@@ -548,7 +550,7 @@ class PodsField_Pick extends PodsField {
 		/**
 		 * Allow custom related objects to be defined
 		 */
-		do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
+		do_action( 'pods_form_ui_field_pick_related_objects_custom' );
 
 		foreach ( self::$custom_related_objects as $object => $related_object ) {
 			if ( ! isset( self::$related_objects[ $object ] ) ) {

@@ -121,6 +121,7 @@ class PodsRESTFields {
 				$write                   = true;
 				break;
 		}
+
 		$object_type = $this->pod->pod;
 
 		if ( 'media' == $object_type ) {
@@ -134,6 +135,7 @@ class PodsRESTFields {
 				register_api_field( $object_type, $field_name, $args );
 			}
 		}
+
 	}
 
 	/**

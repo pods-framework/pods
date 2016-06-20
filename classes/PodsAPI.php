@@ -5313,6 +5313,38 @@ class PodsAPI {
         return false;
     }
 
+	/**
+	 * Get number of pods for a specific pod type
+	 *
+	 * @param string $type Type to get count
+	 *
+	 * @return int Total number of pods for a type
+	 *
+	 * @since 2.6.6
+	 */
+	public function get_pod_type_count( $type ) {
+
+		$args = array(
+			'post_type'      => '_pods_pod',
+			'posts_per_page' => - 1,
+			'nopaging'       => true,
+			'fields'         => 'ids',
+			'meta_query'     => array(
+				array(
+					'key'   => 'type',
+					'value' => $type,
+				),
+			),
+		);
+
+		$posts = get_posts( $args );
+
+		$total = count( $posts );
+
+		return $total;
+
+	}
+
     /**
      * Load a Pod and all of its fields
      *
@@ -5811,7 +5843,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( $pod );
+                    $pod = $this->load_pod( array( $pod, 'table_info' => ! empty( $params->table_info ) ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
@@ -7420,7 +7452,7 @@ class PodsAPI {
 		    }
 	    }
 
-	    if ( false !== $_info ) {
+	    if ( false !== $_info && is_array( $_info ) ) {
 		    // Data was cached, use that
 		    $info = $_info;
 	    } else {

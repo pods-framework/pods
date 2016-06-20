@@ -70,6 +70,7 @@ class PodsRESTHandlers {
 		if ( empty( $pod_name ) && 'attachment' == $object_type ) {
 			$pod_name = 'media';
 		}
+
 		$id  = pods_v( 'id', $object );
 
 		if ( empty( $id ) ) {

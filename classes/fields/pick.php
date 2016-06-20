@@ -428,17 +428,20 @@ class PodsField_Pick extends PodsField {
 			$ignore = array( 'nav_menu', 'post_format' );
 
 			foreach ( $taxonomies as $taxonomy => $label ) {
+				/**
+				 * Prevent ability to extend core Pods content types.
+				 *
+				 * @param bool Default is true, when set to false Pods internal content types can not be extended.
+				 *
+				 * @since 2.3.19
+				 */
+				$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
+
 				if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;
-				} /**
-				 * Prevent ability to extend core Pods content types.
-				 *
-				 * @param bool . Default is true, when set to false Pods internal content types can not be extended.
-				 *
-				 * @since 2.3.19
-				 */ elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+				} elseif ( 0 === strpos( $taxonomy, '_pods_' ) && $ignore_internal ) {
 					unset( $taxonomies[ $taxonomy ] );
 
 					continue;

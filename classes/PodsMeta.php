@@ -108,16 +108,99 @@ class PodsMeta {
     }
 
     /**
+     * Get objects without getting all of them at once unnecessarily
+     *
+     * @param string  $type       Pod type
+     * @param boolean $force      Force refresh of cache
+     * @param boolean $only_count Only get count
+     *
+     * @return array|int
+     */
+    public function get_objects( $type, $force = false, $only_count = false ) {
+
+        $objects = array();
+
+        if ( 'pod' == $type ) {
+            if ( ! empty( self::$advanced_content_types ) ) {
+                $objects = self::$advanced_content_types;
+            }
+        } elseif ( 'post_type' == $type ) {
+            if ( ! empty( self::$post_types ) ) {
+                $objects = self::$post_types;
+            }
+        } elseif ( 'taxonomy' == $type ) {
+            if ( ! empty( self::$taxonomies ) ) {
+                $objects = self::$taxonomies;
+            }
+        } elseif ( 'media' == $type ) {
+            if ( ! empty( self::$media ) ) {
+                $objects = self::$media;
+            }
+        } elseif ( 'user' == $type ) {
+            if ( ! empty( self::$user ) ) {
+                $objects = self::$user;
+            }
+        } elseif ( 'comment' == $type ) {
+            if ( ! empty( self::$comment ) ) {
+                $objects = self::$comment;
+            }
+        } elseif ( 'settings' == $type ) {
+            if ( ! empty( self::$settings ) ) {
+                $objects = self::$settings;
+            }
+        }
+
+        $api = pods_api();
+
+        $total_pods = $api->get_pod_type_count( $type );
+        $total_objects = count( $objects );
+
+        if ( $only_count ) {
+            return max( $total_objects, $total_pods );
+        }
+
+        if ( $total_pods != $total_objects || $force ) {
+            $objects = $api->load_pods( array( 'type' => $type ) );
+
+            if ( 'pod' == $type ) {
+                $objects = array_merge( self::$advanced_content_types, $objects );
+
+                self::$advanced_content_types = $objects;
+            } elseif ( 'post_type' == $type ) {
+                $objects = array_merge( self::$post_types, $objects );
+
+                self::$post_types = $objects;
+            } elseif ( 'taxonomy' == $type ) {
+                $objects = array_merge( self::$taxonomies, $objects );
+
+                self::$taxonomies = $objects;
+            } elseif ( 'media' == $type ) {
+                $objects = array_merge( self::$media, $objects );
+
+                self::$media = $objects;
+            } elseif ( 'user' == $type ) {
+                $objects = array_merge( self::$user, $objects );
+
+                self::$user = $objects;
+            } elseif ( 'comment' == $type ) {
+                $objects = array_merge( self::$comment, $objects );
+
+                self::$comment = $objects;
+            } elseif ( 'settings' == $type ) {
+                $objects = array_merge( self::$settings, $objects );
+
+                self::$settings = $objects;
+            }
+        }
+
+        return $objects;
+
+    }
+
+    /**
      * @return \PodsMeta
      */
     public function core () {
-        self::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod' ) );
-        self::$post_types = pods_api()->load_pods( array( 'type' => 'post_type' ) );
-        self::$taxonomies = pods_api()->load_pods( array( 'type' => 'taxonomy' ) );
-        self::$media = pods_api()->load_pods( array( 'type' => 'media' ) );
-        self::$user = pods_api()->load_pods( array( 'type' => 'user' ) );
-        self::$comment = pods_api()->load_pods( array( 'type' => 'comment' ) );
-        self::$settings = pods_api()->load_pods( array( 'type' => 'settings' ) );
 
         // Handle Post Type Editor (needed for Pods core)
 
@@ -151,6 +234,8 @@ class PodsMeta {
         }
 
         add_action( 'delete_post', array( $this, 'delete_post' ), 10, 1 );
+
+        $this->get_objects( 'taxonomy' );
 
         if ( !empty( self::$taxonomies ) ) {
 			$has_fields = false;
@@ -207,7 +292,7 @@ class PodsMeta {
         // Handle Delete
         add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
-        if ( !empty( self::$media ) ) {
+        if ( $this->get_objects( 'media', false, true ) ) {
             if ( pods_version_check( 'wp', '3.5' ) ) {
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
                 add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
@@ -237,7 +322,7 @@ class PodsMeta {
         // Handle Delete
         add_action( 'delete_attachment', array( $this, 'delete_media' ), 10, 1 );
 
-        if ( !empty( self::$user ) ) {
+        if ( $this->get_objects( 'user', false, true ) ) {
             // Handle User Editor
             add_action( 'show_user_profile', array( $this, 'meta_user' ) );
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
@@ -261,7 +346,7 @@ class PodsMeta {
         // Handle Delete
         add_action( 'delete_user', array( $this, 'delete_user' ), 10, 1 );
 
-        if ( !empty( self::$comment ) ) {
+        if ( $this->get_objects( 'comment', false, true ) ) {
             // Handle Comment Form / Editor
             add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
             add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
@@ -301,9 +386,6 @@ class PodsMeta {
 
         add_action( 'init', array( $this, 'enqueue' ), 9 );
 
-        if ( function_exists( 'pll_current_language' ) )
-            add_action( 'init', array( $this, 'cache_pods' ), 101 );
-
         do_action( 'pods_meta_init' );
 
         return $this;
@@ -317,19 +399,6 @@ class PodsMeta {
 
             self::$$type = array_merge( self::$$type, $objects );
         }
-    }
-
-    /**
-     * Go back through and cache the Pods now that Polylang has loaded
-     */
-    public function cache_pods () {
-        self::$advanced_content_types = pods_api()->load_pods( array( 'type' => 'pod', 'refresh' => true ) );
-        self::$post_types = pods_api()->load_pods( array( 'type' => 'post_type', 'refresh' => true ) );
-        self::$taxonomies = pods_api()->load_pods( array( 'type' => 'taxonomy', 'refresh' => true ) );
-        self::$media = pods_api()->load_pods( array( 'type' => 'media', 'refresh' => true ) );
-        self::$user = pods_api()->load_pods( array( 'type' => 'user', 'refresh' => true ) );
-        self::$comment = pods_api()->load_pods( array( 'type' => 'comment', 'refresh' => true ) );
-        self::$settings = pods_api()->load_pods( array( 'type' => 'settings', 'refresh' => true ) );
     }
 
     public function register ( $type, $pod ) {
@@ -751,51 +820,51 @@ class PodsMeta {
         }
     }
 
-    public function object_get ( $type, $name ) {
-        $object = self::$post_types;
-        
-        if ( 'term' == $type ) {
-        	$type = 'taxonomy';
+    public function object_get( $type, $name ) {
+
+        if ( 'post_type' == $type && 'attachment' == $name ) {
+            $type = 'media';
+            $name = 'media';
+        } elseif ( 'term' == $type ) {
+            $type = 'taxonomy';
         }
 
-        if ( 'taxonomy' == $type )
-            $object = self::$taxonomies;
-        elseif ( 'media' == $type )
-            $object = self::$media;
-        elseif ( 'user' == $type )
-            $object = self::$user;
-        elseif ( 'comment' == $type )
-            $object = self::$comment;
+        $objects = $this->get_objects( $type );
 
-        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
-            $pod = $object[ $name ];
-        else {
-            if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
+        if ( 'pod' != $type && ! empty( $objects ) && is_array( $objects ) && isset( $objects[ $name ] ) ) {
+            $pod = $objects[ $name ];
+        } else {
+            if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
                 self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+            }
 
             $pod = self::$current_pod_data;
         }
 
-        if ( empty( $pod ) )
+        if ( empty( $pod ) ) {
             return array();
+        }
 
         $defaults = array(
-            'name' => 'post',
+            'name'   => 'post',
             'object' => 'post',
-            'type' => 'post_type'
+            'type'   => 'post_type'
         );
 
         $pod = array_merge( $defaults, (array) $pod );
 
-        if ( empty( $pod[ 'name' ] ) )
-            $pod[ 'name' ] = $pod[ 'object' ];
-        elseif ( empty( $pod[ 'object' ] ) )
-            $pod[ 'object' ] = $pod[ 'name' ];
+        if ( empty( $pod['name'] ) ) {
+            $pod['name'] = $pod['object'];
+        } elseif ( empty( $pod['object'] ) ) {
+            $pod['object'] = $pod['name'];
+        }
 
-        if ( $pod[ 'type' ] != $type )
+        if ( $pod['type'] != $type ) {
             return array();
+        }
 
         return $pod;
+
     }
 
     /**
@@ -805,7 +874,8 @@ class PodsMeta {
      *
      * @return array
      */
-    public function groups_get ( $type, $name, $default_fields = null ) {
+    public function groups_get( $type, $name, $default_fields = null ) {
+
         if ( 'post_type' == $type && 'attachment' == $name ) {
             $type = 'media';
             $name = 'media';
@@ -815,32 +885,23 @@ class PodsMeta {
 
         do_action( 'pods_meta_groups', $type, $name );
 
-        $pod = array();
+        $pod    = array();
         $fields = array();
 
-        $object = self::$post_types;
+        $object = $this->get_objects( $type );
 
-        if ( 'taxonomy' == $type )
-            $object = self::$taxonomies;
-        elseif ( 'media' == $type )
-            $object = self::$media;
-        elseif ( 'user' == $type )
-            $object = self::$user;
-        elseif ( 'comment' == $type )
-            $object = self::$comment;
-        elseif ( 'pod' == $type )
-            $object = self::$advanced_content_types;
-
-        if ( !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
-            $fields = $object[ $name ][ 'fields' ];
-        else {
-            if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $name )
+        if ( ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
+            $fields = $object[ $name ]['fields'];
+        } else {
+            if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
                 self::$current_pod_data = pods_api()->load_pod( array( 'name' => $name ), false );
+            }
 
             $pod = self::$current_pod_data;
 
-            if ( !empty( $pod ) )
-                $fields = $pod[ 'fields' ];
+            if ( ! empty( $pod ) ) {
+                $fields = $pod['fields'];
+            }
         }
 
         if ( null !== $default_fields ) {
@@ -848,46 +909,51 @@ class PodsMeta {
         }
 
         $defaults = array(
-            'name' => 'post',
+            'name'   => 'post',
             'object' => 'post',
-            'type' => 'post_type'
+            'type'   => 'post_type'
         );
 
         $pod = array_merge( $defaults, (array) $pod );
 
-        if ( empty( $pod[ 'name' ] ) )
-            $pod[ 'name' ] = $pod[ 'object' ];
-        elseif ( empty( $pod[ 'object' ] ) )
-            $pod[ 'object' ] = $pod[ 'name' ];
+        if ( empty( $pod['name'] ) ) {
+            $pod['name'] = $pod['object'];
+        } elseif ( empty( $pod['object'] ) ) {
+            $pod['object'] = $pod['name'];
+        }
 
-        if ( $pod[ 'type' ] != $type )
+        if ( $pod['type'] != $type ) {
             return array();
+        }
+
+        /**
+         * Filter the title of the Pods Metabox In The Post Editor
+         *
+         * @param string     $title  The title to use, default is 'More Fields'
+         * @param object|Pod $pod    Current Pods Object
+         * @param array      $fields Array of fields that will go in the metabox
+         * @param string     $type   The type of Pod
+         * @params string $name Name of the Pod
+         *
+         * @returns string The title for the metabox.
+         *
+         * @since  unknown
+         */
+        $label = apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name );
 
         $groups = array(
             array(
-                'pod' => $pod,
-				/**
-				 * Filter the title of the Pods Metabox In The Post Editor
-				 *
-				 * @param string $title The title to use, default is 'More Fields'
-				 * @param obj|Pod $pod Current Pods Object
-				 * @param array $fields Array of fields that will go in the metabox
-				 * @param string $type The type of Pod
-				 * @params string $name Name of the Pod
-				 *
-				 * @returns string The title for the metabox.
-				 *
-				 * @since unknown
-				 */
-				'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
-                'fields' => $fields,
-                'context' => 'normal',
+                'pod'      => $pod,
+                'label'    => $label,
+                'fields'   => $fields,
+                'context'  => 'normal',
                 'priority' => 'default'
             )
         );
 
-        if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) )
+        if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) ) {
             $groups = self::$groups[ $type ][ $name ];
+        }
 
         /**
          * Filter the array of field groups
@@ -898,7 +964,10 @@ class PodsMeta {
          *
          * @since 2.6.6
          */
-        return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+        $groups = apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
+
+        return $groups;
+
     }
 
     /**
@@ -2507,27 +2576,14 @@ class PodsMeta {
      * @return bool|mixed
      */
     public function get_object ( $object_type, $object_id, $aux = '' ) {
-    	
+
     	global $wpdb;
-    	
+
     	if ( 'term' == $object_type ) {
     		$object_type = 'taxonomy';
     	}
-    	
-        if ( 'post_type' == $object_type )
-            $objects = self::$post_types;
-        elseif ( 'taxonomy' == $object_type )
-            $objects = self::$taxonomies;
-        elseif ( 'media' == $object_type )
-            $objects = self::$media;
-        elseif ( 'user' == $object_type )
-            $objects = self::$user;
-        elseif ( 'comment' == $object_type )
-            $objects = self::$comment;
-        elseif ( 'settings' == $object_type )
-            $objects = self::$settings;
-        else
-            return false;
+
+        $objects = $this->get_objects( $object_type );
 
         if ( empty( $objects ) || !is_array( $objects ) )
             return false;
@@ -2554,11 +2610,11 @@ class PodsMeta {
 
             	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
                 	return false;
-            	
+
             	$object_name = $object->taxonomy;
             } elseif ( empty( $aux ) ) {
             	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
-            } else { 
+            } else {
             	$object_name = $aux;
             }
         }

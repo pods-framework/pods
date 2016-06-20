@@ -331,231 +331,236 @@ class PodsField_Pick extends PodsField {
         return true;
     }
 
-    /**
-     * Setup related objects
-     *
-     * @param boolean $force Whether to force refresh of related objects
-     * @return bool True when data has been loaded
-     * @since 2.3
-     */
-    public function setup_related_objects ( $force = false ) {
-        $new_data_loaded = false;
+	/**
+	 * Setup related objects
+	 *
+	 * @param boolean $force Whether to force refresh of related objects
+	 * @return bool True when data has been loaded
+	 * @since 2.3
+	 */
+	public function setup_related_objects( $force = false ) {
 
-        if ( ! $force && empty( self::$related_objects ) ) {
-            // Only load transient if we aren't forcing a refresh
-            self::$related_objects = pods_transient_get( 'pods_related_objects' );
-            if ( false !== self::$related_objects ) {
-                $new_data_loaded = true;
-            }
-        } elseif ( $force ) {
-	        // If we are rebuilding, make sure we start with a clean slate
-	        self::$related_objects = array();
-        }
+		$new_data_loaded = false;
 
-        if ( empty( self::$related_objects ) ) {
-                // Do a complete build of related_objects
-            $new_data_loaded = true;
+		if ( ! $force && empty( self::$related_objects ) ) {
+			// Only load transient if we aren't forcing a refresh
+			self::$related_objects = pods_transient_get( 'pods_related_objects' );
 
-            // Custom
-            self::$related_objects[ 'custom-simple' ] = array(
-                'label' => __( 'Simple (custom defined list)', 'pods' ),
-                'group' => __( 'Custom', 'pods' ),
-                'simple' => true
-            );
+			if ( false !== self::$related_objects ) {
+				$new_data_loaded = true;
+			}
+		} elseif ( $force ) {
+			// If we are rebuilding, make sure we start with a clean slate
+			self::$related_objects = array();
+		}
 
-            // Pods
-            $pod_options = array();
+		if ( empty( self::$related_objects ) ) {
+			// Do a complete build of related_objects
+			$new_data_loaded = true;
+
+			// Custom
+			self::$related_objects['custom-simple'] = array(
+				'label'  => __( 'Simple (custom defined list)', 'pods' ),
+				'group'  => __( 'Custom', 'pods' ),
+				'simple' => true
+			);
+
+			// Pods
+			$pod_options = array();
 
 			// Include PodsMeta if not already included
 			pods_meta();
 
-            // Advanced Content Types
-            $_pods = PodsMeta::$advanced_content_types;
+			// Advanced Content Types
+			$_pods = PodsMeta::$advanced_content_types;
 
-            foreach ( $_pods as $pod ) {
-                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
-            }
+			foreach ( $_pods as $pod ) {
+				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
+			}
 
-            // Settings
-            $_pods = PodsMeta::$settings;
+			// Settings
+			$_pods = PodsMeta::$settings;
 
-            foreach ( $_pods as $pod ) {
-                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
-            }
+			foreach ( $_pods as $pod ) {
+				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
+			}
 
-            asort( $pod_options );
+			asort( $pod_options );
 
-            foreach ( $pod_options as $pod => $label ) {
-                self::$related_objects[ 'pod-' . $pod ] = array(
-                    'label' => $label,
-                    'group' => __( 'Pods', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+			foreach ( $pod_options as $pod => $label ) {
+				self::$related_objects[ 'pod-' . $pod ] = array(
+					'label'         => $label,
+					'group'         => __( 'Pods', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            // Post Types
-            $post_types = get_post_types();
-            asort( $post_types );
+			// Post Types
+			$post_types = get_post_types();
+			asort( $post_types );
 
-            $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+			$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
-            foreach ( $post_types as $post_type => $label ) {
-                if ( in_array( $post_type, $ignore ) || empty( $post_type ) ) {
-                    unset( $post_types[ $post_type ] );
+			foreach ( $post_types as $post_type => $label ) {
+				if ( in_array( $post_type, $ignore ) || empty( $post_type ) ) {
+					unset( $post_types[ $post_type ] );
 
-                    continue;
-                }
-                elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
-                    unset( $post_types[ $post_type ] );
+					continue;
+				} elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+					unset( $post_types[ $post_type ] );
 
-                    continue;
-                }
+					continue;
+				}
 
-                $post_type = get_post_type_object( $post_type );
+				$post_type = get_post_type_object( $post_type );
 
-                self::$related_objects[ 'post_type-' . $post_type->name ] = array(
-                    'label' => $post_type->label . ' (' . $post_type->name . ')',
-                    'group' => __( 'Post Types', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+				self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+					'label'         => $post_type->label . ' (' . $post_type->name . ')',
+					'group'         => __( 'Post Types', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            // Taxonomies
-            $taxonomies = get_taxonomies();
-            asort( $taxonomies );
+			// Taxonomies
+			$taxonomies = get_taxonomies();
+			asort( $taxonomies );
 
-            $ignore = array( 'nav_menu', 'post_format' );
+			$ignore = array( 'nav_menu', 'post_format' );
 
-            foreach ( $taxonomies as $taxonomy => $label ) {
-                if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
-                    unset( $taxonomies[ $taxonomy ] );
+			foreach ( $taxonomies as $taxonomy => $label ) {
+				if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
+					unset( $taxonomies[ $taxonomy ] );
 
-                    continue;
-                }
-
-				/**
+					continue;
+				} /**
 				 * Prevent ability to extend core Pods content types.
 				 *
-				 * @param bool. Default is true, when set to false Pods internal content types can not be extended.
+				 * @param bool . Default is true, when set to false Pods internal content types can not be extended.
 				 *
 				 * @since 2.3.19
-				 */
-				elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
-                    unset( $taxonomies[ $taxonomy ] );
+				 */ elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+					unset( $taxonomies[ $taxonomy ] );
 
-                    continue;
-                }
+					continue;
+				}
 
-                $taxonomy = get_taxonomy( $taxonomy );
+				$taxonomy = get_taxonomy( $taxonomy );
 
-                self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
-                    'label' => $taxonomy->label . ' (' . $taxonomy->name . ')',
-                    'group' => __( 'Taxonomies', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+				self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
+					'label'         => $taxonomy->label . ' (' . $taxonomy->name . ')',
+					'group'         => __( 'Taxonomies', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            // Other WP Objects
-            self::$related_objects[ 'user' ] = array(
-                'label' => __( 'Users', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+			// Other WP Objects
+			self::$related_objects['user'] = array(
+				'label'         => __( 'Users', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'role' ] = array(
-                'label' => __( 'User Roles', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_roles' )
-            );
+			self::$related_objects['role'] = array(
+				'label'         => __( 'User Roles', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_roles' )
+			);
 
-            self::$related_objects[ 'capability' ] = array(
-                'label' => __( 'User Capabilities', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_capabilities' )
-            );
+			self::$related_objects['capability'] = array(
+				'label'         => __( 'User Capabilities', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_capabilities' )
+			);
 
-            self::$related_objects[ 'media' ] = array(
-                'label' => __( 'Media', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+			self::$related_objects['media'] = array(
+				'label'         => __( 'Media', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'comment' ] = array(
-                'label' => __( 'Comments', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+			self::$related_objects['comment'] = array(
+				'label'         => __( 'Comments', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'image-size' ] = array(
-                'label' => __( 'Image Sizes', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_image_sizes' )
-            );
+			self::$related_objects['image-size'] = array(
+				'label'         => __( 'Image Sizes', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_image_sizes' )
+			);
 
-            self::$related_objects[ 'nav_menu' ] = array(
-                'label' => __( 'Navigation Menus', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
-            );
+			self::$related_objects['nav_menu'] = array(
+				'label' => __( 'Navigation Menus', 'pods' ),
+				'group' => __( 'Other WP Objects', 'pods' )
+			);
 
-            self::$related_objects[ 'post_format' ] = array(
-                'label' => __( 'Post Formats', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
-            );
+			self::$related_objects['post_format'] = array(
+				'label' => __( 'Post Formats', 'pods' ),
+				'group' => __( 'Other WP Objects', 'pods' )
+			);
 
-            self::$related_objects[ 'post-status' ] = array(
-                'label' => __( 'Post Status', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_post_stati' )
-            );
+			self::$related_objects['post-status'] = array(
+				'label'         => __( 'Post Status', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_post_stati' )
+			);
 
-            do_action( 'pods_form_ui_field_pick_related_objects_other' );
+			do_action( 'pods_form_ui_field_pick_related_objects_other' );
 
-            self::$related_objects[ 'country' ] = array(
-                'label' => __( 'Countries', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_countries' )
-            );
+			self::$related_objects['country'] = array(
+				'label'         => __( 'Countries', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_countries' )
+			);
 
-            self::$related_objects[ 'us_state' ] = array(
-                'label' => __( 'US States', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_us_states' )
-            );
+			self::$related_objects['us_state'] = array(
+				'label'         => __( 'US States', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_us_states' )
+			);
 
-            self::$related_objects[ 'days_of_week' ] = array(
-                'label' => __( 'Calendar - Days of Week', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_days_of_week' )
-            );
+			self::$related_objects['days_of_week'] = array(
+				'label'         => __( 'Calendar - Days of Week', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_days_of_week' )
+			);
 
-            self::$related_objects[ 'months_of_year' ] = array(
-                'label' => __( 'Calendar - Months of Year', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_months_of_year' )
-            );
+			self::$related_objects['months_of_year'] = array(
+				'label'         => __( 'Calendar - Months of Year', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_months_of_year' )
+			);
 
-            do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
+			if ( did_action( 'init' ) ) {
+				pods_transient_set( 'pods_related_objects', self::$related_objects );
+			}
+		}
 
-            if ( did_action( 'init' ) )
-                pods_transient_set( 'pods_related_objects', self::$related_objects );
-        }
+		/**
+		 * Allow custom related objects to be defined
+		 */
+		do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
 
-        foreach ( self::$custom_related_objects as $object => $related_object ) {
-            if ( ! isset( self::$related_objects[ $object ] ) ) {
-                $new_data_loaded = true;
-                self::$related_objects[ $object ] = $related_object;
-            }
-        }
-	    return $new_data_loaded;
-    }
+		foreach ( self::$custom_related_objects as $object => $related_object ) {
+			if ( ! isset( self::$related_objects[ $object ] ) ) {
+				$new_data_loaded = true;
+
+				self::$related_objects[ $object ] = $related_object;
+			}
+		}
+
+		return $new_data_loaded;
+
+	}
 
     /**
      * Return available related objects

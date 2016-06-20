@@ -5381,14 +5381,14 @@ class PodsAPI {
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params, 'table_info' => false, 'fields' => true );
 
-        if ( is_object( $params ) && isset( $params->fields ) && !$params->fields )
+        if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && isset( $params->fields ) && !$params->fields )
             $load_fields = false;
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
 	    $table_info = false;
 
-        if ( is_object( $params ) && ! empty( $params->table_info ) )
+        if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && ! empty( $params->table_info ) )
             $table_info = true;
         elseif ( is_array( $params ) && ! empty( $params[ 'table_info' ] ) )
             $table_info = true;
@@ -5404,11 +5404,19 @@ class PodsAPI {
         if ( $table_info )
             $transient .= '_tableinfo';
 
-        if ( is_object( $params ) && isset( $params->post_name ) ) {
+	    $check_pod = $params;
+
+	    if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && ! empty( $params->pod ) ) {
+		    $check_pod = $params->pod;
+	    } elseif ( is_array( $params ) && ! empty( $params['pod'] ) ) {
+		    $check_pod = $params['pod'];
+	    }
+
+        if ( is_object( $check_pod ) && ( is_a( $check_pod, 'WP_Post' ) || isset( $check_pod->post_name ) ) ) {
             $pod = false;
 
             if ( pods_api_cache() )
-                $pod = pods_transient_get( $transient . '_' . $params->post_name );
+                $pod = pods_transient_get( $transient . '_' . $check_pod->post_name );
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
@@ -5844,7 +5852,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( array( $pod, 'table_info' => ! empty( $params->table_info ) ) );
+                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ) ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {

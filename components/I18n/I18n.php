@@ -56,7 +56,7 @@ class Pods_I18n extends PodsComponent {
 				$pod = pods_api()->load_pod( array( 'id' => $_GET['id'] ) );
 				// Append options to root array for pods_v function to work
 				foreach ( $pod[ 'options' ] as $_option => $_value ) {
-		    		$pod[ $_option ] = $_value;
+					$pod[ $_option ] = $_value;
 				}
 			}
 			$this->cur_pod = $pod;
@@ -183,7 +183,7 @@ class Pods_I18n extends PodsComponent {
 			// All translateable fields from field_data[ (int) ][ $name ]
 			if ( in_array( $name, $translatable_fields ) ) {
 				return true;
-			}			
+			}           
 		}
 		return false;
 	}
@@ -242,7 +242,7 @@ class Pods_I18n extends PodsComponent {
 	 * @param array $pod The Pod
 	 * @param int $id The field ID
 	 * @return array
-	 */	
+	 */ 
 	public function field_pick_data_i18n( $data, $name, $value, $options, $pod, $id ) {
 		if ( isset( $data[''] ) && isset( $options['pick_select_text'] ) ) {
 			$locale = $this->locale;
@@ -291,31 +291,31 @@ class Pods_I18n extends PodsComponent {
 	 * @return string ex: "fr" ou "en-GB"
 	 */
 	public function get_locale_jquery_ui_i18n() {
-	    //replace _ by - in "en_GB" for example
-	    $locale = str_replace( '_', '-', get_locale() );
-	    switch ($locale) {
-	        case 'ar-DZ':
-	        case 'cy-GB':
-	        case 'en-AU':
-	        case 'en-GB':
-	        case 'en-NZ':
-	        case 'fr-CH':
-	        case 'nl-BE':
-	        case 'pt-BR':
-	        case 'sr-SR':
-	        case 'zh-CN':
-	        case 'zh-HK':
-	        case 'zh-TW':
-	            //For all this locale do nothing the file already exist
-	            break;
-	        default:
-	            //for other locale keep the first part of the locale (ex: "fr-FR" -> "fr")
-	            $locale = substr($locale, 0, strpos($locale, '-'));
-	            //English is the default locale
-	            $locale = ($locale == 'en') ? '' : $locale;
-	            break;
-	    }
-	    return $locale;
+		//replace _ by - in "en_GB" for example
+		$locale = str_replace( '_', '-', get_locale() );
+		switch ($locale) {
+			case 'ar-DZ':
+			case 'cy-GB':
+			case 'en-AU':
+			case 'en-GB':
+			case 'en-NZ':
+			case 'fr-CH':
+			case 'nl-BE':
+			case 'pt-BR':
+			case 'sr-SR':
+			case 'zh-CN':
+			case 'zh-HK':
+			case 'zh-TW':
+				//For all this locale do nothing the file already exist
+				break;
+			default:
+				//for other locale keep the first part of the locale (ex: "fr-FR" -> "fr")
+				$locale = substr($locale, 0, strpos($locale, '-'));
+				//English is the default locale
+				$locale = ($locale == 'en') ? '' : $locale;
+				break;
+		}
+		return $locale;
 	}
 
 	/**
@@ -413,13 +413,13 @@ class Pods_I18n extends PodsComponent {
 				$total_field_labels += count( $this->get_field_labels( $field ) );
 			}
 
-            $data[ $key ] = array(
-                'id' => $pod['id'],
-                'pod' => $pod['label'],
-                'total_labels' => $total_labels,
-                'fields' => implode( '<br />', $fields ),
-                'total_field_labels' => $total_field_labels,
-            );
+			$data[ $key ] = array(
+				'id' => $pod['id'],
+				'pod' => $pod['label'],
+				'total_labels' => $total_labels,
+				'fields' => implode( '<br />', $fields ),
+				'total_field_labels' => $total_field_labels,
+			);
 		}
 
 		$ui = array(
@@ -434,13 +434,13 @@ class Pods_I18n extends PodsComponent {
 					'pod' => array( 'label' => __( 'Pod', 'pods' ) ),
 					'total_labels' => array( 'label' => __( 'Total labels', 'pods' ) ),
 					'fields' => array(
-                        'label' => __( 'Fields', 'pods' ),
-                        'type' => 'text',
-                        'options' => array(
-                            'text_allow_html' => 1,
-                            'text_allowed_html_tags' => 'br code'
-                        )
-                    ),
+						'label' => __( 'Fields', 'pods' ),
+						'type' => 'text',
+						'options' => array(
+							'text_allow_html' => 1,
+							'text_allowed_html_tags' => 'br code'
+						)
+					),
 					'total_field_labels' => array( 'label' => __( 'Total field labels', 'pods' ) ),
 				)
 			),

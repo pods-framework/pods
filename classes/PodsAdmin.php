@@ -1721,7 +1721,7 @@ class PodsAdmin {
         );
 
         if ( !class_exists( 'Pods_Helpers' ) )
-            unset( $options[ 'advanced-options' ][ 'input_helper' ] );
+            unset( $options[ 'advanced' ][ 'input_helper' ] );
 
         /**
          * Modify tabs and their contents for field options

@@ -1851,6 +1851,7 @@
 
     if ( typeof pods_localized_strings == 'undefined' ) {
         pods_localized_strings = {
+            '__is_required': '%s is required.',
         };
     }
 

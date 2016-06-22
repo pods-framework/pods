@@ -421,7 +421,7 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'pod_slug',
                 'label' => __( 'Wildcard Slug', 'pods' ),
-                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_var( 2, "url" ) in PHP.', 'pods' ),
+                'help' => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, "url" ) in PHP.', 'pods' ),
                 'type' => 'text',
                 'excludes-on' => array( 'pod' => 0 )
             )
@@ -661,10 +661,14 @@ class Pods_Pages extends PodsComponent {
                 return false;
         }
 
-        $object = false;
+        $object = apply_filters( 'pods_page_exists', false, $uri );
+	    if ( !empty ( $object ) ) {
+	        return $object;
+	    }
 
-        if ( false === strpos( $uri, '*' ) && !apply_filters( 'pods_page_regex_matching', false ) )
-            $object = pods_by_title( $uri, ARRAY_A, '_pods_page', 'publish' );
+	    if ( false === strpos( $uri, '*' ) && ! apply_filters( 'pods_page_regex_matching', false ) ) {
+		    $object = pods_by_title( $uri, ARRAY_A, '_pods_page', 'publish' );
+	    }
 
         $wildcard = false;
 
@@ -942,7 +946,7 @@ class Pods_Pages extends PodsComponent {
 
         if ( !defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || !PODS_DISABLE_VERSION_OUTPUT ) {
             ?>
-        <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
+        <!-- Pods Framework <?php echo esc_html( PODS_VERSION ); ?> -->
         <?php
         }
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) ) {

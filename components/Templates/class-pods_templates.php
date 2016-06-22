@@ -126,10 +126,11 @@ class Pods_Templates_Frontier {
 			wp_enqueue_script( $this->plugin_slug . '-admin-scripts', $this->get_url( 'assets/js/panel.js', __FILE__ ), array(), self::VERSION );
 			wp_enqueue_script( 'pods_codemirror' );
 			wp_enqueue_script( 'pods-codemirror-overlay' );
-			wp_enqueue_script( 'pods-codemirror-hints' );			
+			wp_enqueue_script( 'pods-codemirror-hints' );
 			wp_enqueue_script( $this->plugin_slug . '-cm-editor', $this->get_url( 'assets/js/editor1.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 			wp_enqueue_script( 'pods-codemirror-mode-xml' );
 			wp_enqueue_script( 'pods-codemirror-mode-html' );
+			wp_enqueue_script( 'pods-codemirror-mode-css' );
 		}
 
 	}
@@ -223,8 +224,8 @@ class Pods_Templates_Frontier {
 	function render_metaboxes_custom( $post, $args ) {
 
 		// include the metabox view
-		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . wp_create_nonce( plugin_basename( __FILE__ ) ) . '" />';
-		echo '<input type="hidden" name="pods_templates_metabox_prefix[]" value="' . $args[ 'args' ][ 'slug' ] . '" />';
+		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
+		echo '<input type="hidden" name="pods_templates_metabox_prefix[]" value="' . esc_attr( $args[ 'args' ][ 'slug' ] ) . '" />';
 
 		//get post meta to $atts $ post content - ir the widget option
 		if ( !empty( $post ) ) {

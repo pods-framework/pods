@@ -1,4 +1,4 @@
-<div class="pods-pagination-paginate <?php echo $params->class ?>">
+<div class="pods-pagination-paginate <?php echo esc_attr( $params->class ); ?>">
 	<?php
 	$args = array(
 		'base' => $params->base,

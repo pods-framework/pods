@@ -778,6 +778,45 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					}
 				}
 				break;
+			case 'post_id':
+				if ( empty( $var ) ) {
+					if ( ! empty( $default ) ) {
+						$post_id = $default;
+					} else {
+						// If no $var and no $default then use current post ID
+						$post_id = get_the_ID();
+					}
+				} else {
+					$post_id = $var;
+				}
+				if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+					/* Only call filter if WPML is installed */
+					$post_type = get_post_type( $post_id );
+					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+				} elseif ( function_exists( 'pll_get_post' ) ) {
+					$polylang_id = pll_get_post( $post_id );
+					if ( null !== $polylang_id ) {
+						$post_id = $polylang_id;
+					}
+				}
+				// Add other translation plugin specific code here
+
+				/**
+				 * Filter to override post_id
+				 *
+				 * Generally used with language translation plugins in order to return the post id of a
+				 * translated post
+				 *
+				 * @param  int $post_id The post ID of current post
+				 * @param  mixed $default The default value to set if variable doesn't exist
+				 * @param  mixed $var The variable name, can also be a modifier for specific types
+				 * @param  bool $strict Only allow values (must not be empty)
+				 * @param  array $params Set 'casting'=>true to cast value from $default, 'allowed'=>$allowed to restrict a value to what's allowed
+				 *
+				 * @since 2.6.6
+				 */
+				$output = apply_filters( 'pods_var_post_id', $post_id, $default, $var, $strict, $params );
+				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
 		}
@@ -1147,7 +1186,12 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 		}
 	}
 
-	$url = add_query_arg( $query_args, null, $url );
+	if ( null === $url ) {
+		$url = add_query_arg( $query_args );
+	}
+	else {
+		$url = add_query_arg( $query_args, $url );
+	}
 
 	return $url;
 
@@ -1292,7 +1336,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
 }
 
 /**
- * Return a lowercase alphanumeric name (with underscores)
+ * Return a lowercase alphanumeric name (use pods_js_name if you want "_" instead of "-" )
  *
  * @param string $orig Input string to clean
  * @param boolean $lower Force lowercase
@@ -1302,22 +1346,41 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
  *
  * @since 1.2.0
  */
-function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
-    $str = preg_replace( "/([\- ])/", "_", trim( $orig ) );
+function pods_clean_name ( $orig, $lower = true, $trim_underscores = false ) {
 
-    if ( $lower )
-        $str = strtolower( $str );
+	$str = trim( $orig );
+	$str = preg_replace( '/(\s)/', '_', $str );
+	$str = preg_replace( '/([^0-9a-zA-Z\-_])/', '', $str );
+	$str = preg_replace( '/(_){2,}/', '_', $str );
+	$str = preg_replace( '/(-){2,}/', '-', $str );
 
-    $str = preg_replace( "/([^0-9a-zA-Z_])/", "", $str );
-    $str = preg_replace( "/(_){2,}/", "_", $str );
-    $str = trim( $str );
+	if ( $lower ) {
+		$str = strtolower( $str );
+	}
 
-    if ( $trim_underscores )
-        $str = trim( $str, '_' );
+	if ( $trim_underscores ) {
+		$str = trim( $str, '_' );
+	}
 
-    $str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
+	return $str;
+}
 
-    return $str;
+/**
+ * Return a lowercase alphanumeric name (with underscores) for safe Javascript variable names
+ *
+ * @param string $orig Input string to clean
+ * @param boolean $lower Force lowercase
+ *
+ * @return string Sanitized name
+ *
+ * @since 2.5.3
+ */
+function pods_js_name( $orig, $lower = true ) {
+
+	$str = pods_clean_name( $orig, $lower );
+	$str = str_replace( '-', '_', $str );
+
+	return $str;
 }
 
 /**

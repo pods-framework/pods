@@ -105,7 +105,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		),
 		'pod'       => array(
 			'object'  => array(
-				'%d'
+				'%d',
+				'test_act',
 			),
 			'storage' => array(
 				'table'
@@ -116,13 +117,24 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					'type' => 'text'
 				),
 				array(
+					'name' => 'permalink',
+					'type' => 'slug'
+				),
+				array(
+					'name' => 'test_text_field',
+					'type' => 'test'
+				),
+				array(
 					'name'             => 'author',
 					'type'             => 'pick',
 					'pick_object'      => 'user',
 					'pick_val'         => '',
 					'pick_format_type' => 'single'
 				)
-			)
+			),
+			'data' => array(
+				'permalink' => 'test-slug-%s'
+			),
 		)
 	);
 
@@ -176,6 +188,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'pick_format_type' => 'single'
 		),
 	    array(
+			'name' => 'test_rel_act',
+			'type' => 'pick',
+		    'pick_object' => 'pod',
+		    'pick_val' => 'test_act',
+		    'pick_format_type' => 'single'
+		),
+	    array(
 			'name' => 'test_text_field',
 			'type' => 'text'
 		)
@@ -197,7 +216,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'display_name' => 'Related user',
 				'user_login' => 'related-user',
 				'user_email' => 'related@user.com',
-			    'user_pass' => 'changeme'
+			    'user_pass' => 'changeme',
+				'test_text_field' => 'Test related user text field'
 			)
 		),
 		'test_rel_post' => array(
@@ -209,7 +229,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related post',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related post text field'
 			)
 		),
 	    'test_rel_pages' => array(
@@ -222,7 +243,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related page',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related page text field'
 			),
 	        'sub_data' => array(
 
@@ -239,7 +261,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		    'field_author' => false,
 			'data' => array(
 				'name' => 'Related post tag',
-				'description' => '%s'
+				'description' => '%s',
+				'test_text_field' => 'Test related tag text field'
 			)
 		),
 	    'test_rel_media' => array(
@@ -251,7 +274,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related media',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test related media text field'
 			)
 		),
 	    'test_rel_comment' => array(
@@ -268,7 +292,20 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID' => 1,
 				'comment_type' => 'comment',
 			    'comment_approved' => 1,
-			    'comment_date' => '2014-11-11 00:00:00'
+			    'comment_date' => '2014-11-11 00:00:00',
+				'test_text_field' => 'Test related comment text field'
+			)
+		),
+	    'test_rel_act' => array(
+			'pod' => 'test_act',
+		    'id' => 0,
+		    'field_index' => 'name',
+		    'field_id' => 'id',
+		    'field_author' => 'author',
+			'data' => array(
+				'name' => 'Related pod item',
+				'permalink' => 'related-pod-item',
+				'test_text_field' => 'Test related pod text field'
 			)
 		),
 	    'avatar' => array(
@@ -280,7 +317,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data' => array(
 				'post_title' => 'Related media',
 				'post_content' => '%s',
-			    'post_status' => 'publish'
+			    'post_status' => 'publish',
+				'test_text_field' => 'Test avatar text field'
 			)
 		),
 	    '%s' => array(
@@ -493,6 +531,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$pod[ 'name' ] = $pod_object . '_' . substr( $storage_type, 0, 3 ) . '_' . $test_pod;
 					}
 
+					if ( 'taxonomy' == $pod_type && 'none' == $storage_type && function_exists( 'get_term_meta' ) ) {
+						$storage_type = 'meta';
+					}
+
 					$pod[ 'storage' ] = $storage_type;
 
 					if ( 'none' != $storage_type ) {
@@ -584,9 +626,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
 
-
 		$related_author = 0;
 		$related_media = 0;
+		$related_avatar = 0;
 
 		// Get and store sample image for use later
 		$sample_image = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
@@ -622,7 +664,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				// Add term id for the Non-Pod Taxonomy field
 				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-					$item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+					$item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				} elseif ( 'pod' == $p->pod_data[ 'type' ] ) {
+					$item_data[ 'data' ][ 'author' ] = $related_author;
 				}
 
 				if ( 'media' == $item_data[ 'pod' ] ) {
@@ -669,6 +713,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				elseif ( 'test_rel_media' == $item ) {
 					$related_media = $id;
 				}
+				elseif ( 'avatar' == $item ) {
+					$related_avatar = $id;
+				}
 
 				$item_data[ 'id' ] = $id;
 
@@ -714,7 +761,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							}
 
 							foreach ( self::$supported_fields as $field ) {
-								if ( in_array( $field[ 'type' ], array( 'pick', 'taxonomy', 'avatar' ) ) && isset( self::$related_items[ $field[ 'name' ] ] ) ) {
+								if ( isset( self::$related_items[ $field[ 'name' ] ] ) ) {
 									$pod_item_data[ 'data' ][ $field[ 'name' ] ] = self::$related_items[ $field[ 'name' ] ][ 'id' ];
 								}
 							}
@@ -737,11 +784,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							if ( in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
 								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
 							}
-							elseif ( 'user' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'post_author' ] = $related_author;
-							}
 							elseif ( 'comment' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'user_id' ] = $related_author;
+							}
+							elseif ( 'user' == $pod_type ) {
+								$pod_item_data[ 'data' ][ 'avatar' ] = $related_avatar;
 							}
 							elseif ( 'pod' == $pod_type ) {
 								$pod_item_data[ 'data' ][ 'author' ] = $related_author;
@@ -749,7 +796,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 							// Add term id for the Non-Pod Taxonomy field
 							if ( 'post_type' == $pod_type ) {
-								$pod_item_data[ 'data' ][ 'test_non_pod_ct' ] = self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+								$pod_item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
 							}
 
 							$id = $p->add( $pod_item_data[ 'data' ] );
@@ -773,31 +820,37 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				continue;
 			}
 
-			if ( is_array( $r_item_data[ 'id' ] ) ) {
-				foreach ( $r_item_data[ 'id' ] as $item_id ) {
-					$p = pods( $r_item_data[ 'pod' ], $item_id );
+			$r_item_data[ 'id' ] = (array) $r_item_data[ 'id' ];
 
-					$save_data = array_merge( $r_item_data[ 'sub_data' ][ $item_id ], $r_item_data[ 'sub_rel_data' ] );
+			$p = pods( $r_item_data['pod'] );
 
+			foreach ( $r_item_data[ 'id' ] as $item_id ) {
+				$item_id = (int) $item_id;
+
+				$sub = false;
+
+				if ( ! empty( $r_item_data[ 'sub_data' ][ $item_id ] ) ) {
+					$sub = true;
+
+					$save_data = array_merge( $r_item_data['sub_data'][ $item_id ], $r_item_data['sub_rel_data'] );
+				} else {
+					$save_data = $r_item_data['data'];
+				}
+
+				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
 					// Add term id for the Non-Pod Taxonomy field
 					// @todo This should be working on it's own
-					if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-						$save_data[ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
-					}
-
-					$p->save( $save_data );
-				}
-			}
-			else {
-				$p = pods( $r_item_data[ 'pod' ], $r_item_data[ 'id' ] );
-
-				// Add term id for the Non-Pod Taxonomy field
-				// @todo This should be working on it's own
-				if ( 'post_type' == $p->pod_data[ 'type' ] ) {
-					$r_item_data[ 'data' ][ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+					$save_data[ 'test_non_pod_ct' ] = (int) self::$related_items[ 'test_non_pod_ct' ][ 'id' ];
+				} elseif ( 'user' == $p->pod_data[ 'type' ] ) {
+					// Avatar gets added after user is added, have to add it back
+					$save_data[ 'avatar' ] = (int) self::$related_items[ 'avatar' ][ 'id' ];
 				}
 
-				$p->save( $r_item_data[ 'data' ] );
+				if ( ! $sub ) {
+					self::$related_items[ $r_item ][ 'data' ] = array_merge( self::$related_items[ $r_item ][ 'data' ], $save_data );
+				}
+
+				$p->save( $save_data, null, $item_id );
 			}
 		}
 

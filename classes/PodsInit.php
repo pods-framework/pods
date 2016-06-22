@@ -290,6 +290,17 @@ class PodsInit {
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
 		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+
+		$this->localize_assets();
+	}
+
+	/**
+	 * Localize assets
+	 */
+	public function localize_assets() {
+		wp_localize_script('pods', 'pods_localized_strings', array(
+			'__is_required' => __( '%s is required.', 'pods' ),
+		));
 	}
 
 	/**

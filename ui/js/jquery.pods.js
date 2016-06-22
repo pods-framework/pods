@@ -48,7 +48,7 @@
                     if ( !valid_field ) {
                         if ( -1 == jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) ) {
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
-                            $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + label.replace( /( <([^>]+ )> )/ig, '' ) + ' is required.</div>' );
+                            $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + pods_localized_strings.__is_required.replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
                             $el.addClass( 'pods-validate-error' );
 
                             pods_form_field_names.push( $el.prop( 'name' ) );
@@ -1848,6 +1848,11 @@
                 } );
             }
         };
+
+    if ( typeof pods_localized_strings == 'undefined' ) {
+        pods_localized_strings = {
+        };
+    }
 
     $.fn.Pods = function ( method ) {
         if ( methods[ method ] ) {

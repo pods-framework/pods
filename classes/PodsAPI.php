@@ -2190,9 +2190,9 @@ class PodsAPI {
             return pods_error( $errors, $this );
 
         $this->cache_flush_pods( $pod );
-        
+
 		$refresh_pod = $this->load_pod( array( 'name' => $pod['name'] ), false );
-        
+
 		if ( $refresh_pod ) {
 			$pod = $refresh_pod;
 		}
@@ -4170,56 +4170,120 @@ class PodsAPI {
 
 	}
 
-    /**
-     * @see PodsAPI::save_pod_item
-     *
-     * Duplicate a pod item
-     *
-     * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_* table
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return int The table row ID
-     * @since 1.12
-     */
-    public function duplicate_pod_item ( $params ) {
-        $params = (object) pods_sanitize( $params );
+	/**
+	* @see PodsAPI::save_pod_item
+	*
+	* Duplicate a pod item
+	*
+	* $params['pod'] string The Pod name
+	* $params['id'] int The item's ID from the wp_pods_* table
+	*
+	* @param array $params An associative array of parameters
+	*
+	* @return int The table row ID
+	*
+	* @since 1.12
+	*/
+	public function duplicate_pod_item ( $params ) {
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ) );
+		$params = (object) pods_sanitize( $params );
 
-        if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+		$load_pod_params = array(
+			'name' => $params->pod,
+			'table_info' => false,
+		);
 
-        $pod = pods( $params->pod, $params->id );
+		$pod = $this->load_pod( $load_pod_params );
 
-        $params->pod = $pod->pod;
-        $params->pod_id = $pod->pod_id;
+		if ( false === $pod ) {
+			return pods_error( __( 'Pod not found', 'pods' ), $this );
+		}
 
-        $fields = (array) pods_var_raw( 'fields', $pod->pod_data, array(), null, true );
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+		$pod = pods( $params->pod, $params->id );
 
-        if ( !empty( $object_fields ) )
-            $fields = array_merge( $object_fields, $fields );
+		$params->pod = $pod->pod;
+		$params->pod_id = $pod->pod_id;
 
-        $save_params = array(
-            'pod' => $params->pod,
-            'data' => array()
-        );
+		$fields = (array) pods_var_raw( 'fields', $pod->pod_data, array(), null, true );
+		$object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
-        foreach ( $fields as $field ) {
-            $value = $pod->field( array( 'name' => $field[ 'name' ], 'output' => 'ids' ) );
+		if ( ! empty( $object_fields ) ) {
+			$fields = array_merge( $object_fields, $fields );
+		}
 
-            if ( !empty( $value ) || ( !is_array( $value ) && 0 < strlen( $value ) ) )
-                $save_params[ 'data' ][ $field[ 'name' ] ] = $value;
-        }
+		$save_params = array(
+			'pod' => $params->pod,
+			'data' => array()
+		);
 
-        $save_params = $this->do_hook( 'duplicate_pod_item', $save_params, $pod->pod, $pod->id(), $params );
+		$ignore_fields = array(
+			$pod->pod_data['field_id'],
+			$pod->pod_data['field_slug'],
+		);
 
-        $id = $this->save_pod_item( $save_params );
+		if ( in_array( $pod->pod_data['type'], array( 'post_type', 'media' ) ) ) {
+			$ignore_fields = array(
+				'post_name',
+				'post_date',
+				'post_date_gmt',
+				'post_modified',
+				'post_modified_gmt',
+				'guid',
+		        );
+		} elseif ( 'term' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+				'term_taxonomy_id',
+				'slug',
+		        );
+		} elseif ( 'user' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+				'user_nicename',
+		        );
+		} elseif ( 'comment' == $pod->pod_data['type'] ) {
+			$ignore_fields = array(
+		        );
+		}
 
-        return $id;
-    }
+		/**
+		 * Filter the fields to ignore during duplication
+		 *
+		 * @since 2.6.6
+		 *
+		 * @param array  $ignore_fields Fields to ignore and not save during duplication
+		 * @param Pods   $pod           Pod object
+		 * @param array  $fields        Fields on the pod to duplicate
+		 * @param object $params        Params passed into duplicate_pod_item()
+		 */
+		$ignore_fields = apply_filters( 'pods_api_duplicate_pod_item_ignore_fields', $ignore_fields, $pod, $fields, $params );
+
+		foreach ( $fields as $field ) {
+			if ( in_array( $field['name'], $ignore_fields ) ) {
+				continue;
+			}
+
+			$field = array(
+				'name' => $field['name'],
+				'output' => 'ids'
+			);
+
+			$value = $pod->field( $field );
+
+			// @todo Add post type compatibility to set unique post_title
+			// @todo Add term compatibility to set unique name
+			// @todo Add user compatibility to set unique user_login/user_email
+
+			if ( ! empty( $value ) || ( ! is_array( $value ) && 0 < strlen( $value ) ) ) {
+				$save_params['data'][ $field['name'] ] = $value;
+			}
+		}
+
+		$save_params = $this->do_hook( 'duplicate_pod_item', $save_params, $pod->pod, $pod->id(), $params );
+
+		$id = $this->save_pod_item( $save_params );
+
+		return $id;
+
+	}
 
     /**
      * @see pods()
@@ -5249,6 +5313,38 @@ class PodsAPI {
         return false;
     }
 
+	/**
+	 * Get number of pods for a specific pod type
+	 *
+	 * @param string $type Type to get count
+	 *
+	 * @return int Total number of pods for a type
+	 *
+	 * @since 2.6.6
+	 */
+	public function get_pod_type_count( $type ) {
+
+		$args = array(
+			'post_type'      => '_pods_pod',
+			'posts_per_page' => - 1,
+			'nopaging'       => true,
+			'fields'         => 'ids',
+			'meta_query'     => array(
+				array(
+					'key'   => 'type',
+					'value' => $type,
+				),
+			),
+		);
+
+		$posts = get_posts( $args );
+
+		$total = count( $posts );
+
+		return $total;
+
+	}
+
     /**
      * Load a Pod and all of its fields
      *
@@ -5285,14 +5381,14 @@ class PodsAPI {
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params, 'table_info' => false, 'fields' => true );
 
-        if ( is_object( $params ) && isset( $params->fields ) && !$params->fields )
+        if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && isset( $params->fields ) && !$params->fields )
             $load_fields = false;
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
 	    $table_info = false;
 
-        if ( is_object( $params ) && ! empty( $params->table_info ) )
+        if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && ! empty( $params->table_info ) )
             $table_info = true;
         elseif ( is_array( $params ) && ! empty( $params[ 'table_info' ] ) )
             $table_info = true;
@@ -5308,11 +5404,19 @@ class PodsAPI {
         if ( $table_info )
             $transient .= '_tableinfo';
 
-        if ( is_object( $params ) && isset( $params->post_name ) ) {
+	    $check_pod = $params;
+
+	    if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && ! empty( $params->pod ) ) {
+		    $check_pod = $params->pod;
+	    } elseif ( is_array( $params ) && ! empty( $params['pod'] ) ) {
+		    $check_pod = $params['pod'];
+	    }
+
+        if ( is_object( $check_pod ) && ( is_a( $check_pod, 'WP_Post' ) || isset( $check_pod->post_name ) ) ) {
             $pod = false;
 
             if ( pods_api_cache() )
-                $pod = pods_transient_get( $transient . '_' . $params->post_name );
+                $pod = pods_transient_get( $transient . '_' . $check_pod->post_name );
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
@@ -5322,14 +5426,15 @@ class PodsAPI {
                 return $pod;
             }
 
-            $_pod = get_object_vars( $params );
+            $_pod = get_object_vars( $check_pod );
         }
         else {
             $params = (object) pods_sanitize( $params );
 
             if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
-                if ( $strict )
-                    return pods_error( 'Either Pod ID or Name are required', $this );
+                if ( $strict ) {
+	                  return pods_error( 'Either Pod ID or Name are required', $this );
+                }
 
                 return false;
             }
@@ -5747,7 +5852,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( $pod );
+                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ) ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
@@ -7356,7 +7461,7 @@ class PodsAPI {
 		    }
 	    }
 
-	    if ( false !== $_info ) {
+	    if ( false !== $_info && is_array( $_info ) ) {
 		    // Data was cached, use that
 		    $info = $_info;
 	    } else {
@@ -8127,7 +8232,7 @@ class PodsAPI {
 	 * Get current language information from Multilingual plugins
 	 *
 	 * @since 2.6.6
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_current_language() {
@@ -8161,7 +8266,7 @@ class PodsAPI {
 
 		/**
 		 * Admin functions that overwrite the current language
-		 * 
+		 *
 		 * @since 2.6.6
 		 */
 		if ( is_admin() && ! empty( $translator ) ) {
@@ -8189,9 +8294,9 @@ class PodsAPI {
 						 * In WPML the current language is always set to default on an edit screen
 						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
-						if (   $translator == 'WPML' 
-							&& method_exists( $sitepress, 'is_translated_post_type') 
-							&& ! $sitepress->is_translated_post_type( get_post_type( $_GET['post'] ) ) 
+						if (   $translator == 'WPML'
+							&& method_exists( $sitepress, 'is_translated_post_type')
+							&& ! $sitepress->is_translated_post_type( get_post_type( $_GET['post'] ) )
 						) {
 							// Overwrite the current language to nothing if this is a NOT-translatable post_type
 							$current_language = '';
@@ -8199,12 +8304,12 @@ class PodsAPI {
 
 						/**
 						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything. 
+						 * In polylang the preferred language could be anything.
 						 * We only want the related objects if they are not translatable OR the same language as the current object
 						 */
-						if (   $translator == 'PLL' 
-							&& function_exists( 'pll_get_post_language' ) 
-							&& pll_is_translated_post_type( get_post_type( $_GET['post'] ) ) 
+						if (   $translator == 'PLL'
+							&& function_exists( 'pll_get_post_language' )
+							&& pll_is_translated_post_type( get_post_type( $_GET['post'] ) )
 						) {
 							// Overwrite the current language if this is a translateable post_type
 							$current_language = pll_get_post_language( (int) $_GET['post'] );
@@ -8213,13 +8318,13 @@ class PodsAPI {
 
 					/**
 					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything. 
+					 * In polylang the preferred language could be anything.
 					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
 					 */
-					if (   $translator == 'PLL' 
-						&& ! empty( $_GET['new_lang'] ) 
-						&& ! empty( $_GET['post_type'] ) 
-						&& pll_is_translated_post_type( sanitize_text_field( $_GET['post_type'] ) ) 
+					if (   $translator == 'PLL'
+						&& ! empty( $_GET['new_lang'] )
+						&& ! empty( $_GET['post_type'] )
+						&& pll_is_translated_post_type( sanitize_text_field( $_GET['post_type'] ) )
 					) {
 						$current_language = $_GET['new_lang'];
 					}
@@ -8235,9 +8340,9 @@ class PodsAPI {
 						 * In WPML the current language is always set to default on an edit screen
 						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
-						if (   $translator == 'WPML' 
-							&& method_exists( $sitepress, 'is_translated_taxonomy') 
-							&& ! $sitepress->is_translated_taxonomy( $_GET['taxonomy'] ) 
+						if (   $translator == 'WPML'
+							&& method_exists( $sitepress, 'is_translated_taxonomy')
+							&& ! $sitepress->is_translated_taxonomy( $_GET['taxonomy'] )
 						) {
 							// Overwrite the current language to nothing if this is a NOT-translatable taxonomy
 							$current_language = '';
@@ -8245,13 +8350,13 @@ class PodsAPI {
 
 						/**
 						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything. 
+						 * In polylang the preferred language could be anything.
 						 * We only want the related objects if they are not translatable OR the same language as the current object
 						 */
-						if (   $translator == 'PLL' 
-							&& ! empty( $_GET['tag_ID'] ) 
-							&& function_exists( 'pll_get_term_language' ) 
-							&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) 
+						if (   $translator == 'PLL'
+							&& ! empty( $_GET['tag_ID'] )
+							&& function_exists( 'pll_get_term_language' )
+							&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
 						) {
 							// Overwrite the current language if this is a translatable taxonomy
 							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
@@ -8260,13 +8365,13 @@ class PodsAPI {
 
 					/**
 					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything. 
+					 * In polylang the preferred language could be anything.
 					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
 					 */
-					if (   $translator == 'PLL' 
-						&& ! empty( $_GET['new_lang'] ) 
-						&& ! empty( $_GET['taxonomy'] ) 
-						&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) 
+					if (   $translator == 'PLL'
+						&& ! empty( $_GET['new_lang'] )
+						&& ! empty( $_GET['taxonomy'] )
+						&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
 					) {
 						$current_language = $_GET['new_lang'];
 					}

@@ -41,4 +41,3 @@ npm-debug.log
 
 # PHPunit config
 phpunit.xml
-*.bak

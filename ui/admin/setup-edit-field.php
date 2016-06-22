@@ -43,14 +43,14 @@
         'row' => $pods_i
     );
 ?>
-<tr id="row-<?php echo $pods_i; ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_var( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
+<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_var( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
     <th scope="row" class="check-field pods-manage-sort">
-        <img src="<?php echo PODS_URL; ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
+        <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
     </th>
     <td class="pods-manage-row-label">
         <strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
             <?php echo esc_html( pods_var_raw( 'label', $field ) ); ?>
-        </a> <abbr title="required" class="required<?php echo ( 1 == pods_var_raw( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
+        </a> <abbr title="required" class="required<?php echo esc_attr( 1 == pods_var_raw( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
 
         <?php
         if ( '__1' != pods_var( 'id', $field ) ) {
@@ -73,11 +73,11 @@
                         <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
                     </span>
         </div>
-        <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
-            <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
+        <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo esc_attr( $pods_i ); ?>">
+            <input type="hidden" name="field_data_json[<?php echo esc_attr( $pods_i ); ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
 
             <div class="pods-manage-field pods-dependency">
-                <input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo esc_attr( pods_var_raw( 'id', $field ) ); ?>" />
+                <input type="hidden" name="field_data[<?php echo esc_attr( $pods_i ); ?>][id]" value="<?php echo esc_attr( pods_var_raw( 'id', $field ) ); ?>" />
             <div>
         </div>
     </td>

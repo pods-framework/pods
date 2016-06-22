@@ -8,17 +8,22 @@
 	>
 	<testsuites>
 		<testsuite>
-			<directory prefix="tests-" suffix=".php">./tests/</directory>
+			<directory prefix="tests-" suffix=".php">tests</directory>
 		</testsuite>
 	</testsuites>
+
     <filter>
+		<blacklist>
+			<directory suffix=".php">.</directory>
+		</blacklist>
         <whitelist>
-            <directory suffix=".php">./classes</directory>
-            <directory suffix=".php">./components</directory>
-            <directory suffix=".php">./deprecated</directory>
             <directory suffix=".php">./includes</directory>
-            <directory suffix=".php">./ui</directory>
             <file>init.php</file>
         </whitelist>
     </filter>
+
+    <logging>
+    	<log type="coverage-clover" target="tests/clover.xml"/>
+    </logging>
+
 </phpunit>

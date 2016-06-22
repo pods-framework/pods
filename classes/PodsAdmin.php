@@ -52,6 +52,9 @@ class PodsAdmin {
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
 
         add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
+
+        $this->rest_admin();
+
     }
 
     /**
@@ -69,6 +72,13 @@ class PodsAdmin {
                 'pods_admin_components'
             );
 
+            /**
+             * Admin AJAX Callbacks
+             *
+             * @since unknown
+             *
+             * @param array $pods_admin_ajax_actions Array of actions to handle
+             */
             $pods_admin_ajax_actions = apply_filters( 'pods_admin_ajax_actions', $pods_admin_ajax_actions );
 
             if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
@@ -91,7 +101,7 @@ class PodsAdmin {
      */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
-        
+
         wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
@@ -111,7 +121,7 @@ class PodsAdmin {
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
                 ?>
             <script type="text/javascript">
-                var PODS_URL = "<?php echo PODS_URL; ?>";
+                var PODS_URL = "<?php echo esc_js( PODS_URL ); ?>";
             </script>
             <?php
                 wp_enqueue_script( 'jquery' );
@@ -224,9 +234,8 @@ class PodsAdmin {
                                 $parent_page = $page = 'pods-manage-' . $pod[ 'name' ];
 
                                 if ( empty( $menu_position ) )
-                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
-                                else
-                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
+                                    $menu_position = null;
+                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 
                                 $all_title = $plural_label;
                                 $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
@@ -251,9 +260,8 @@ class PodsAdmin {
                                 $parent_page = $page;
 
                                 if ( empty( $menu_position ) )
-                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
-                                else
-                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
+                                    $menu_position = null;
+                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -355,9 +363,8 @@ class PodsAdmin {
                         add_theme_page( $page_title, $menu_label, 'read', $menu_slug );
                     elseif ( 'objects' == $menu_location ) {
                         if ( empty( $menu_position ) )
-                            add_object_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon );
-                        else
-                            add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
+                            $menu_position = null;
+                        add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
@@ -397,9 +404,8 @@ class PodsAdmin {
                         add_theme_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
                     elseif ( 'objects' == $menu_location ) {
                         if ( empty( $menu_position ) )
-                            add_object_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon );
-                        else
-                            add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
+                            $menu_position = null;
+                        add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
                     }
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
@@ -515,6 +521,12 @@ class PodsAdmin {
 
     /**
      * Set the correct parent_file to highlight the correct top level menu
+     *
+     * @param $parent_file The parent file
+     *
+     * @return mixed|string
+     *
+     * @since unknown
      */
     public function parent_file ( $parent_file ) {
         global $current_screen;
@@ -565,8 +577,8 @@ class PodsAdmin {
         echo '<div class="error fade"><p>';
         echo sprintf(
             __( '<strong>NOTICE:</strong> Pods %s requires your action to complete the upgrade. Please run the <a href="%s">Upgrade Wizard</a>.', 'pods' ),
-            PODS_VERSION,
-            admin_url( 'admin.php?page=pods-upgrade' )
+            esc_html( PODS_VERSION ),
+            esc_url( admin_url( 'admin.php?page=pods-upgrade' ) )
         );
         echo '</p></div>';
     }
@@ -644,6 +656,10 @@ class PodsAdmin {
      * @return string
      */
     public function media_button ( $context = null ) {
+        // If shortcodes are disabled don't show the button
+        if ( defined( 'PODS_DISABLE_SHORTCODE' ) && PODS_DISABLE_SHORTCODE ) {
+            return '';
+        }
 
 		/**
 		 * Filter to remove Pods shortcode button from the post editor.
@@ -699,12 +715,12 @@ class PodsAdmin {
 
         if ( 'pods-add-new' == $_GET[ 'page' ] ) {
             if ( isset( $_GET[ 'action' ] ) && 'add' != $_GET[ 'action' ] )
-                pods_redirect( pods_var_update( array( 'page' => 'pods', 'action' => $_GET[ 'action' ] ) ) );
+                pods_redirect( pods_query_arg( array( 'page' => 'pods', 'action' => $_GET[ 'action' ] ) ) );
             else
                 $_GET[ 'action' ] = 'add';
         }
         elseif ( isset( $_GET[ 'action' ] ) && 'add' == $_GET[ 'action' ] )
-            pods_redirect( pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
+            pods_redirect( pods_query_arg( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
 
         $types = array(
             'post_type' => __( 'Post Type (extended)', 'pods' ),
@@ -822,7 +838,7 @@ class PodsAdmin {
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
             'action_links' => array(
-                'add' => pods_var_update( array( 'page' => 'pods-add-new', 'action' => '', 'id' => '', 'do' => '' ) )
+                'add' => pods_query_arg( array( 'page' => 'pods-add-new', 'action' => '', 'id' => '', 'do' => '' ) )
             ),
             'search' => false,
             'searchable' => false,
@@ -897,7 +913,7 @@ class PodsAdmin {
             $admin_ui = true;
         }
 
-        if ( 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'settings' != pods_var( 'type', $pod ) )
+        if ( ! function_exists( 'get_term_meta' ) && 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'taxonomy' == pods_var( 'type', $pod ) )
             $fields = false;
 
         $tabs = array();
@@ -1001,7 +1017,7 @@ class PodsAdmin {
                 ),
                 'menu_icon' => array(
                     'label' => __( 'Menu Icon', 'pods' ),
-                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="http://melchoyce.github.io/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
                     'type' => 'text',
                     'default' => '',
                     'depends-on' => array( 'show_in_menu' => true )
@@ -1481,6 +1497,16 @@ class PodsAdmin {
             'advanced' => __( 'Advanced', 'pods' )
         );
 
+        /**
+         * Field option tabs
+         *
+         * Use to add new tabs, default tabs are added after this filter (IE you can't remove/modify them with this, kthanksbye).
+         *
+         * @since unknown
+         *
+         * @param array $tabs Tabs to add, starts empty
+         * @param object|Pod Current Pods object
+         */
         $tabs = apply_filters( 'pods_admin_setup_edit_field_tabs', array(), $pod );
 
         $tabs = array_merge( $core_tabs, $tabs );
@@ -1697,6 +1723,14 @@ class PodsAdmin {
         if ( !class_exists( 'Pods_Helpers' ) )
             unset( $options[ 'advanced-options' ][ 'input_helper' ] );
 
+        /**
+         * Modify tabs and their contents for field options
+         *
+         * @since unknown
+         *
+         * @param array $options Tabs, indexed by label
+         * @param object|Pods Pods object for the Pod this UI is for.
+         */
         $options = apply_filters( 'pods_admin_setup_edit_field_options', $options, $pod );
 
         return $options;
@@ -1714,7 +1748,7 @@ class PodsAdmin {
         $new_id = pods_api()->duplicate_pod( array( 'id' => $obj->id ) );
 
         if ( 0 < $new_id )
-            pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
+            pods_redirect( pods_query_arg( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
     }
 
 	/**
@@ -1727,6 +1761,8 @@ class PodsAdmin {
 	 * @param PodsUI $obj
 	 *
 	 * @since 2.3.10
+     *
+     * @return bool
 	 */
 	public function admin_setup_duplicate_restrict( $restricted, $restrict, $action, $row, $obj ) {
 
@@ -1901,9 +1937,9 @@ class PodsAdmin {
             );
 
             if ( !empty( $component_data[ 'category' ] ) ) {
-                $category_url = pods_var_update( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
+                $category_url = pods_query_arg( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
 
-                $component_data[ 'category' ] = '<a href="' . $category_url . '">' . $component_data[ 'category' ] . '</a>';
+                $component_data[ 'category' ] = '<a href="' . esc_url( $category_url ) . '">' . $component_data[ 'category' ] . '</a>';
             }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
@@ -2079,7 +2115,7 @@ class PodsAdmin {
 
             pods_transient_clear( 'pods_components' );
 
-            $url = pods_var_update( array( 'toggled' => null ) );
+            $url = pods_query_arg( array( 'toggled' => null ) );
 
             pods_redirect( $url );
         }
@@ -2254,6 +2290,14 @@ class PodsAdmin {
             'migrate' => array( 'priv' => true )
         );
 
+        /**
+         * AJAX Callbacks in field editor
+         *
+         * @since unknown
+         *
+         * @param array $method Callback method map
+         * @param object|PodsAdmin Class object
+         */
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
         if ( !isset( $params->method ) || !isset( $methods[ $params->method ] ) )
@@ -2399,5 +2443,214 @@ class PodsAdmin {
 		}
 
 	}
+
+    /**
+     * Build UI for extending REST API, if makes sense to do so.
+     *
+     * @since 2.6.0
+     *
+     * @access protected
+     */
+    protected function rest_admin() {
+	    if( function_exists( 'register_rest_field' ) ) {
+		    add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'add_rest_fields_to_field_editor' ), 12, 2 );
+		    add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'add_rest_field_tab' ), 12 );
+	    }
+
+	    add_filter( 'pods_admin_setup_edit_tabs', array( $this, 'add_rest_settings_tab' ), 12, 2 );
+	    add_filter( 'pods_admin_setup_edit_options', array( $this, 'add_rest_settings_tab_fields' ), 12, 2 );
+
+    }
+
+    /**
+     * Check if Pod type <em>could</em> extend core REST API response
+     *
+     * @since 2.5.6
+     *
+     * @access protected
+     *
+     * @param array $pod
+     *
+     * @return bool
+     */
+    protected function restable_pod( $pod ) {
+        $type =  $pod[ 'type' ];
+        if( in_array( $type, array(
+                'post_type',
+                'user',
+                'taxonomy'
+            )
+        )
+        ) {
+            return true;
+
+        }
+
+    }
+
+
+    /**
+     * Add a rest api tab.
+     *
+     * @since 2.6.0
+     *
+     * @param array $tabs
+     * @param array $pod
+     *
+     * @return array
+     */
+    public function add_rest_settings_tab( $tabs, $pod ) {
+
+        $tabs[ 'rest-api' ] = __( 'REST API', 'pods' );
+
+        return $tabs;
+
+    }
+
+    /**
+     * Populate REST API tab.
+     *
+     * @since 0.1.0
+     *
+     * @param array $options
+     * @param array $pod
+     *
+     * @return array
+     */
+    public function add_rest_settings_tab_fields( $options, $pod ) {
+	    if ( ! function_exists( 'register_rest_field' ) ) {
+		    $options[ 'rest-api' ] = array(
+			    'no_dependencies' => array(
+				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
+				    'type'       => 'html',
+			    ),
+		    );
+	    } elseif ( $this->restable_pod( $pod ) ) {
+		    $options[ 'rest-api' ] = array(
+			    'rest_enable' => array(
+				    'label'      => __( 'Enable', 'pods' ),
+				    'help'       => __( 'Add REST API support for this Pod.', 'pods' ),
+				    'type'       => 'boolean',
+				    'default'    => '',
+				    'dependency' => true,
+			    ),
+			    'rest_base'   => array(
+				    'label'             => __( 'REST Base', 'pods' ),
+				    'help'              => __( 'This will form the url for the route.', 'pods' ),
+				    'type'              => 'text',
+				    'default'           => pods_v( 'name', $pod ),
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    ),
+			    'read_all'    => array(
+				    'label'             => __( 'Show All Fields?', 'pods' ),
+				    'help'              => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'type'              => 'boolean',
+				    'default'           => '',
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    ),
+			    'write_all'   => array(
+				    'label'             => __( 'Allow All Fields To Be Updated?', 'pods' ),
+				    'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'type'              => 'boolean',
+				    'default'           => pods_v( 'name', $pod ),
+				    'boolean_yes_label' => '',
+				    'depends-on'        => array( 'rest_enable' => true ),
+			    )
+
+		    );
+
+	    } else {
+		    $options[ 'rest-api' ] = array(
+			    'not_restable' => array(
+				    'label'      => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>'), 'pods' ),
+				    'type'       => 'html',
+			    ),
+		    );
+
+	    }
+
+
+        return $options;
+
+    }
+
+    /**
+     * Add a REST API section to advanced tab of field editor.
+     *
+     * @since 2.5.6
+     *
+     * @param array $options
+     * @param array $pod
+     *
+     * @return array
+     */
+    public function add_rest_fields_to_field_editor( $options, $pod ) {
+
+        if( $this->restable_pod( $pod ) ) {
+            $options[ 'rest' ][ __( 'Read/ Write', 'pods' ) ] =
+                array(
+                    'rest_read' => array(
+                        'label' => __( 'Read via REST API?', 'pods' ),
+                        'help' => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+                        'type' => 'boolean',
+                        'default' => '',
+                    ),
+                    'rest_write' => array(
+                        'label' => __( 'Write via REST API?', 'pods' ),
+                        'help' => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+                        'type' => 'boolean',
+                        'default' => '',
+                    ),
+                );
+            $options[ 'rest' ][ __( 'Relationship Field Options', 'pods' ) ] =
+                array(
+                    'rest_pick_response' => array(
+                        'label' => __( 'Response Type', 'pods' ),
+                        'help' => __( 'Should this field be readable via the REST API? You must enable REST API support for this Pod.', 'pods' ),
+                        'type' => 'pick',
+                        'default' => 'array',
+                        'depends-on' => array( 'type' => 'pick' ),
+                        'data' => array(
+                            'array' => __( 'Full', 'pods' ),
+                            'id' => __( 'ID only', 'pods' ),
+                            'name' => __( 'Name', 'pods' )
+
+                        ),
+                    ),
+                    'rest_pick_depth' => array(
+                        'label' => __( 'Depth', 'pods' ),
+                        'help' => __( 'How far to traverse relationships in response', 'pods' ),
+                        'type' => 'number',
+                        'default' => '2',
+                        'depends-on' => array( 'type' => 'pick' ),
+
+                    )
+
+                );
+
+
+        }
+
+        return $options;
+
+    }
+
+    /**
+     * Add REST field tab
+     *
+     * @since 2.5.6
+     *
+     * @param array $tabs
+     *
+     * @return array
+     */
+    public function add_rest_field_tab( $tabs ) {
+        $tabs[ 'rest' ] = __( 'REST API', 'pods' );
+        return $tabs;
+    }
 
 }

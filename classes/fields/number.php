@@ -291,7 +291,7 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
@@ -336,11 +336,12 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
         $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	$check = trim( $check );
 
         $check = preg_replace( '/[0-9\.\-]/', '', $check );
 
@@ -390,11 +391,12 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	$value = trim( $value );
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
@@ -449,6 +451,11 @@ class PodsField_Number extends PodsField {
      */
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         global $wp_locale;
+
+	if ( null === $value ) {
+		// Don't enforce a default value here
+		return null;
+	}
 
         if ( '9.999,99' == pods_var( self::$type . '_format', $options ) ) {
             $thousands = '.';

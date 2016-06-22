@@ -19,7 +19,7 @@ foreach ( $field_options as $field_name => $field_option ) {
         }
         if ( !empty( $depends ) ) {
             ?>
-    <div class="pods-field-option-container <?php echo $depends; ?>">
+    <div class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
 <?php
         }
     }
@@ -84,7 +84,7 @@ foreach ( $field_options as $field_name => $field_option ) {
                             $value = pods_var_raw( $field_group_name, $field, $value );
 
                         ?>
-                        <li class="<?php echo $depends_option; ?>">
+                        <li class="<?php echo esc_attr( $depends_option ); ?>">
                             <?php echo PodsForm::field( $row_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
                         </li>
                         <?php

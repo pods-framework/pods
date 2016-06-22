@@ -477,8 +477,12 @@ class PodsField_File extends PodsField {
         if ( empty( $id ) )
             $id = '{{id}}';
 
-        if ( empty( $icon ) )
-            $icon = '{{icon}}';
+        if ( empty( $icon ) ) {
+	        $icon = '{{icon}}';
+        }else{
+	        $icon = esc_url( $icon );
+        }
+
 
         if ( empty( $name ) )
             $name = '{{name}}';
@@ -489,7 +493,7 @@ class PodsField_File extends PodsField {
         $editable = (boolean) $editable;
         $linked = (boolean) $linked;
         ?>
-    <li class="pods-file hidden" id="pods-file-<?php echo $id ?>">
+    <li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
@@ -515,7 +519,7 @@ class PodsField_File extends PodsField {
 			<?php
 				if ( $linked ) {
 			?>
-            	<li class="pods-file-col pods-file-download"><a href="<?php echo $link; ?>" target="_blank">Download</a></li>
+            	<li class="pods-file-col pods-file-download"><a href="<?php echo esc_url( $link ); ?>" target="_blank">Download</a></li>
 			<?php
 				}
 			?>

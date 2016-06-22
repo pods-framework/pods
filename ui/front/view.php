@@ -17,7 +17,7 @@ wp_enqueue_style( 'pods-form', false, array(), false, true );
 					$value = $pod->display( $field[ 'name' ] );
 				}
 		?>
-			<li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ); ?>">
+			<li class="pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">
 				<div class="pods-field-label">
 					<strong><?php echo $field[ 'label' ]; ?></strong>
 				</div>

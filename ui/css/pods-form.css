@@ -307,8 +307,7 @@ input.pods-form-ui-field-type-color {
 .pods-meta div.pods-form-ui-field-type-pick:after,
 .pods-form-front .pods-submittable-fields:after,
 .pods-form-front li.pods-field:after {
-    content: '.';
-    visibility: hidden;
+    content: “\00a0”;
     clear: both;
     display: block;
 }

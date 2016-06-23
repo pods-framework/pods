@@ -28,12 +28,21 @@ if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) 
 	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 }
 
-$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+$limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
-$linked         = pods_var( $form_field_type . '_linked', $options, 0 );
+$title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
+$linked         = pods_v( $form_field_type . '_linked', $options, 0 );
 
 $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) );
+
+// Handle default template setting
+$file_field_template = pods_v( $form_field_type . '_field_template', $options, 'rows', true );
+
+if ( 'images' != $limit_file_type ) {
+	$file_field_template = 'rows';
+}
+
+$options[ $form_field_type . '_field_template' ] = $file_field_template;
 
 if ( empty( $value ) ) {
 	$value = array();
@@ -42,6 +51,10 @@ if ( empty( $value ) ) {
 }
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
+
+// Add template class
+$attributes['class'] .= ' pods-field-template-' . $file_field_template;
+
 $attributes = array_map( 'esc_attr', $attributes );
 $css_id     = $attributes[ 'id' ];
 
@@ -61,10 +74,12 @@ foreach ( $value as $id ) {
 	$link = wp_get_attachment_url( $attachment->ID );
 
 	$model_data[] = array(
-		'id'   => $id,
-		'icon' => $thumb[ 0 ],
-		'name' => $title,
-		'link' => $link
+		'id'        => $id,
+		'icon'      => $thumb[0],
+		'name'      => $title,
+		'edit_link' => '',
+		'link'      => '',
+		'download'  => $link,
 	);
 }
 
@@ -84,7 +99,7 @@ if ( 'images' == $limit_file_type ) {
 	$limit_types      = '';
 	$limit_extensions = '*';
 } else {
-	$limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
+	$limit_types = $limit_extensions = pods_v( $form_field_type . '_allowed_extensions', $options, '', true );
 }
 $limit_types      = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
 	'',

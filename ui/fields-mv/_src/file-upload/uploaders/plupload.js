@@ -129,10 +129,12 @@ export const Plupload = PodsFileUploader.extend( {
 			}
 
 			newFile = {
-				id  : json.ID,
-				icon: json.thumbnail,
-				name: json.post_title,
-				link: json.link
+				id       : json.ID,
+				icon     : json.thumbnail,
+				name     : json.post_title,
+				edit_link: json.edit_link,
+				link     : json.link,
+				download : json.download
 			};
 
 			// Remove the file from the upload queue model and trigger an event for the hosting container

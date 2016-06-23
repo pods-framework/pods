@@ -27,13 +27,6 @@ ul.pods-flex-list li.pods-flex-col {
 	padding: 0;
 }
 
-ul.pods-flex-list li.pods-flex-handle {
-	width: 30px;
-	height: 25px;
-	background: url(../images/handle.gif) -5px 75% no-repeat;
-	cursor: move;
-}
-
 ul.pods-flex-list li.pods-flex-icon {
 	width: 40px;
 }
@@ -43,52 +36,86 @@ ul.pods-flex-list li.pods-flex-icon img {
 	border-radius: 2px;
 }
 
-ul.pods-flex-list li.pods-file-download,
+ul.pods-flex-list li.pods-flex-handle {
+	width: 25px;
+	height: 32px;
+	float: left;
+	cursor: move;
+}
+
+ul.pods-flex-list li.pods-flex-edit,
+ul.pods-flex-list li.pods-flex-link,
+ul.pods-flex-list li.pods-flex-download,
 ul.pods-flex-list li.pods-flex-remove {
 	width: 25px;
 	height: 32px;
 	float: right;
 }
 
-ul.pods-flex-list li.pods-file-download a,
+ul.pods-flex-list li.pods-flex-handle span,
+ul.pods-flex-list li.pods-flex-edit a,
+ul.pods-flex-list li.pods-flex-link a,
+ul.pods-flex-list li.pods-flex-download a,
 ul.pods-flex-list li.pods-flex-remove a {
 	display: block;
 	width: 25px;
 	height: 32px;
-	opacity: 0.45;
+	opacity: 0.40;
 	text-decoration: none;
 	color: #616161;
 }
 
-ul.pods-flex-list li.pods-file-download a:hover,
+ul.pods-flex-list li.pods-flex-handle span:hover,
+ul.pods-flex-list li.pods-flex-edit a:hover,
+ul.pods-flex-list li.pods-flex-link a:hover,
+ul.pods-flex-list li.pods-flex-download a:hover,
 ul.pods-flex-list li.pods-flex-remove a:hover {
 	opacity: 1;
 }
 
-ul.pods-flex-list li.pods-file-download a:focus,
+ul.pods-flex-list li.pods-flex-handle span:focus,
+ul.pods-flex-list li.pods-flex-edit a:focus,
+ul.pods-flex-list li.pods-flex-link a:focus,
+ul.pods-flex-list li.pods-flex-download a:focus,
 ul.pods-flex-list li.pods-flex-remove a:focus {
 	box-shadow: none;
 	-webkit-box-shadow: none;
 }
 
-ul.pods-flex-list li.pods-file-download a:before,
+ul.pods-flex-list li.pods-flex-handle span:before,
+ul.pods-flex-list li.pods-flex-edit a:before,
+ul.pods-flex-list li.pods-flex-link a:before,
+ul.pods-flex-list li.pods-flex-download a:before,
 ul.pods-flex-list li.pods-flex-remove a:before {
 	margin-left: -20px;
 	font: 400 20px/1 dashicons;
+	line-height: 36px;
 }
 
-ul.pods-flex-list li.pods-file-download a:before {
+ul.pods-flex-list li.pods-flex-handle span:before {
+	content: "\f333";
+}
+
+ul.pods-flex-list li.pods-flex-edit a:before {
+	content: "\f464";
+}
+
+ul.pods-flex-list li.pods-flex-link a:before {
+	content: "\f103";
+}
+
+ul.pods-flex-list li.pods-flex-download a:before {
 	content: "\f316";
-	line-height: 36px;
 }
 
 ul.pods-flex-list li.pods-flex-remove a:before {
 	content: "\f158";
-	line-height: 36px;
 }
 
-ul.pods-flex-list li.pods-flex-handle,
-ul.pods-flex-list li.pods-file-download a,
+ul.pods-flex-list li.pods-flex-handle span,
+ul.pods-flex-list li.pods-flex-edit a,
+ul.pods-flex-list li.pods-flex-link a,
+ul.pods-flex-list li.pods-flex-download a,
 ul.pods-flex-list li.pods-flex-remove a {
 	text-indent: 100%;
 	white-space: nowrap;
@@ -130,11 +157,11 @@ li.pods-flex-item:last-of-type {
 	border-bottom: 0;
 }
 
-ul.pods-files-queue {
+ul.pods-flex-queue {
 	margin: 14px 0 5px;
 }
 
-ul.pods-files-queue li.pods-flex-name {
+ul.pods-flex-queue li.pods-flex-name {
 	position: relative;
 	width: 73%;
 	left: auto;
@@ -142,31 +169,93 @@ ul.pods-files-queue li.pods-flex-name {
 	padding-top: 0;
 }
 
-ul.pods-files-queue li.pods-flex-item li.pods-progress,
-ul.pods-files-queue li.pods-flex-item li.pods-progress div.progress-bar {
+ul.pods-flex-queue li.pods-flex-item li.pods-progress,
+ul.pods-flex-queue li.pods-flex-item li.pods-progress div.progress-bar {
 	border-radius: 10px;
 	height: 18px;
 }
 
-ul.pods-files-queue li.pods-flex-item li.pods-progress {
+ul.pods-flex-queue li.pods-flex-item li.pods-progress {
 	position: relative;
 	width: 23%;
 	margin: 2px 2% 0 0;
 	background-color: #e8e8e8;
 }
 
-ul.pods-files-queue li.pods-flex-item li.pods-progress div.progress-bar {
+ul.pods-flex-queue li.pods-flex-item li.pods-progress div.progress-bar {
 	width: 0;
 	background-color: #1073AA;
 }
 
 li.pods-flex-item:after,
 ul.pods-flex-list li.pods-flex-item ul.pods-flex-meta:after,
-ul.pods-files-queue li.pods-flex-item:after,
-ul.pods-files-queue li.pods-flex-item ul.pods-flex-meta:after {
+ul.pods-flex-queue li.pods-flex-item:after,
+ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 	content: "";
 	display: table;
 	clear: both;
+}
+
+/**
+ * Tiles view
+ */
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-item {
+	display: inline-block;
+	width: 160px;
+	border-bottom: 0;
+	padding: 5px 10px 10px;
+	vertical-align: top;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon {
+	width: auto;
+	float: none;
+	margin-top: 32px;
+	max-height: 150px;
+	height: 150px;
+	line-height: 150px;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon img {
+	max-width: none;
+	max-height: none;
+	float: none;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name {
+	position: static;
+	float: none;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-edit,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-link,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-download,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
+	position: absolute;
+	top: 0;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle {
+	left: 0;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-edit {
+	right: 75px;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-link {
+	right: 50px;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-download {
+	right: 25px;
+}
+
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
+	right: 0;
 }
 
 a.pods-quick-add,
@@ -182,6 +271,6 @@ div.open span.pods-quick-add {
 	display: none;
 }
 
-.pods-ui-field .pods-file-add {
+.pods-ui-field .pods-flex-add {
 	margin-bottom: 10px;
 }

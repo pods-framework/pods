@@ -1854,18 +1854,6 @@
             }
         };
 
-    if ( typeof pods_localized_strings == 'undefined' ) {
-        pods_localized_strings = {
-            '__is_required': '%s is required.',
-            '__add': 'Add',
-            '__added': 'Added!',
-            '__added_choose_another_or_close_this_box': 'Added! Choose another or <a href="#">close this box</a>',
-            '__copy': 'Copy',
-            '__navigating_away_from_this_page_will_discard_any_changes_you_have_made': 'Navigating away from this page will discard any changes you have made.',
-            '__unable_to_process_request_please_try_again': 'Unable to process request, please try again.',
-        };
-    }
-
     $.fn.Pods = function ( method ) {
         if ( methods[ method ] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
@@ -1881,3 +1869,26 @@
         }
     };
 } )( jQuery );
+
+/**
+ * String localization
+ */
+if ( typeof pods_localized_strings == 'undefined' ) {
+    pods_localized_strings = {
+        __is_required: '%s is required.',
+        __add: 'Add',
+        __add_new: 'Add New',
+        __add_new_record: 'Add New Record',
+        __added: 'Added!',
+        __added_choose_another_or_close_this_box: 'Added! Choose another or <a href="#">close this box</a>',
+        __copy: 'Copy',
+        __reorder: 'Reorder',
+        __remove: 'Remove',
+        __download: 'Download',
+        __view: 'View',
+        __edit: 'Edit',
+        __navigating_away_from_this_page_will_discard_any_changes_you_have_made: 'Navigating away from this page will discard any changes you have made.',
+        __unable_to_process_request_please_try_again: 'Unable to process request, please try again.',
+        __there_was_an_issue_with_the_file_upload_please_try_again: 'There was an issue with the file upload, please try again.',
+    };
+}

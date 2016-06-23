@@ -305,7 +305,7 @@ class PodsField_Link extends PodsField_Website {
 
 		$options = (array) $options;
 
-		$value = array_merge( (array) $value, array( 'url' => '', 'text' => '', 'target' => '' ) );
+		$value = array_merge( array( 'url' => '', 'text' => '', 'target' => '' ), (array) $value );
 
 		// Start URL format
 		if ( ! empty( $value['url'] ) ) {

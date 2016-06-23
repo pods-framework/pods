@@ -331,231 +331,241 @@ class PodsField_Pick extends PodsField {
         return true;
     }
 
-    /**
-     * Setup related objects
-     *
-     * @param boolean $force Whether to force refresh of related objects
-     * @return bool True when data has been loaded
-     * @since 2.3
-     */
-    public function setup_related_objects ( $force = false ) {
-        $new_data_loaded = false;
+	/**
+	 * Setup related objects
+	 *
+	 * @param boolean $force Whether to force refresh of related objects
+	 * @return bool True when data has been loaded
+	 * @since 2.3
+	 */
+	public function setup_related_objects( $force = false ) {
 
-        if ( ! $force && empty( self::$related_objects ) ) {
-            // Only load transient if we aren't forcing a refresh
-            self::$related_objects = pods_transient_get( 'pods_related_objects' );
-            if ( false !== self::$related_objects ) {
-                $new_data_loaded = true;
-            }
-        } elseif ( $force ) {
-	        // If we are rebuilding, make sure we start with a clean slate
-	        self::$related_objects = array();
-        }
+		$new_data_loaded = false;
 
-        if ( empty( self::$related_objects ) ) {
-                // Do a complete build of related_objects
-            $new_data_loaded = true;
+		if ( ! $force && empty( self::$related_objects ) ) {
+			// Only load transient if we aren't forcing a refresh
+			self::$related_objects = pods_transient_get( 'pods_related_objects' );
 
-            // Custom
-            self::$related_objects[ 'custom-simple' ] = array(
-                'label' => __( 'Simple (custom defined list)', 'pods' ),
-                'group' => __( 'Custom', 'pods' ),
-                'simple' => true
-            );
+			if ( false !== self::$related_objects ) {
+				$new_data_loaded = true;
+			}
+		} elseif ( $force ) {
+			// If we are rebuilding, make sure we start with a clean slate
+			self::$related_objects = array();
+		}
 
-            // Pods
-            $pod_options = array();
+		if ( empty( self::$related_objects ) ) {
+			// Do a complete build of related_objects
+			$new_data_loaded = true;
+
+			// Custom
+			self::$related_objects['custom-simple'] = array(
+				'label'  => __( 'Simple (custom defined list)', 'pods' ),
+				'group'  => __( 'Custom', 'pods' ),
+				'simple' => true
+			);
+
+			// Pods
+			$pod_options = array();
 
 			// Include PodsMeta if not already included
 			pods_meta();
 
-            // Advanced Content Types
-            $_pods = PodsMeta::$advanced_content_types;
+			// Advanced Content Types
+			$_pods = PodsMeta::$advanced_content_types;
 
-            foreach ( $_pods as $pod ) {
-                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
-            }
+			foreach ( $_pods as $pod ) {
+				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
+			}
 
-            // Settings
-            $_pods = PodsMeta::$settings;
+			// Settings
+			$_pods = PodsMeta::$settings;
 
-            foreach ( $_pods as $pod ) {
-                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
-            }
+			foreach ( $_pods as $pod ) {
+				$pod_options[ $pod['name'] ] = $pod['label'] . ' (' . $pod['name'] . ')';
+			}
 
-            asort( $pod_options );
+			asort( $pod_options );
 
-            foreach ( $pod_options as $pod => $label ) {
-                self::$related_objects[ 'pod-' . $pod ] = array(
-                    'label' => $label,
-                    'group' => __( 'Pods', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+			foreach ( $pod_options as $pod => $label ) {
+				self::$related_objects[ 'pod-' . $pod ] = array(
+					'label'         => $label,
+					'group'         => __( 'Pods', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            // Post Types
-            $post_types = get_post_types();
-            asort( $post_types );
+			// Post Types
+			$post_types = get_post_types();
+			asort( $post_types );
 
-            $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+			$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
-            foreach ( $post_types as $post_type => $label ) {
-                if ( in_array( $post_type, $ignore ) || empty( $post_type ) ) {
-                    unset( $post_types[ $post_type ] );
+			foreach ( $post_types as $post_type => $label ) {
+				if ( in_array( $post_type, $ignore ) || empty( $post_type ) ) {
+					unset( $post_types[ $post_type ] );
 
-                    continue;
-                }
-                elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
-                    unset( $post_types[ $post_type ] );
+					continue;
+				} elseif ( 0 === strpos( $post_type, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
+					unset( $post_types[ $post_type ] );
 
-                    continue;
-                }
+					continue;
+				}
 
-                $post_type = get_post_type_object( $post_type );
+				$post_type = get_post_type_object( $post_type );
 
-                self::$related_objects[ 'post_type-' . $post_type->name ] = array(
-                    'label' => $post_type->label . ' (' . $post_type->name . ')',
-                    'group' => __( 'Post Types', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+				self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+					'label'         => $post_type->label . ' (' . $post_type->name . ')',
+					'group'         => __( 'Post Types', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            // Taxonomies
-            $taxonomies = get_taxonomies();
-            asort( $taxonomies );
+			// Taxonomies
+			$taxonomies = get_taxonomies();
+			asort( $taxonomies );
 
-            $ignore = array( 'nav_menu', 'post_format' );
+			$ignore = array( 'nav_menu', 'post_format' );
 
-            foreach ( $taxonomies as $taxonomy => $label ) {
-                if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
-                    unset( $taxonomies[ $taxonomy ] );
-
-                    continue;
-                }
-
+			foreach ( $taxonomies as $taxonomy => $label ) {
 				/**
 				 * Prevent ability to extend core Pods content types.
 				 *
-				 * @param bool. Default is true, when set to false Pods internal content types can not be extended.
+				 * @param bool Default is true, when set to false Pods internal content types can not be extended.
 				 *
 				 * @since 2.3.19
 				 */
-				elseif ( 0 === strpos( $taxonomy, '_pods_' ) && apply_filters( 'pods_pick_ignore_internal', true ) ) {
-                    unset( $taxonomies[ $taxonomy ] );
+				$ignore_internal = apply_filters( 'pods_pick_ignore_internal', true );
 
-                    continue;
-                }
+				if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) ) {
+					unset( $taxonomies[ $taxonomy ] );
 
-                $taxonomy = get_taxonomy( $taxonomy );
+					continue;
+				} elseif ( 0 === strpos( $taxonomy, '_pods_' ) && $ignore_internal ) {
+					unset( $taxonomies[ $taxonomy ] );
 
-                self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
-                    'label' => $taxonomy->label . ' (' . $taxonomy->name . ')',
-                    'group' => __( 'Taxonomies', 'pods' ),
-                    'bidirectional' => true
-                );
-            }
+					continue;
+				}
 
-            // Other WP Objects
-            self::$related_objects[ 'user' ] = array(
-                'label' => __( 'Users', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+				$taxonomy = get_taxonomy( $taxonomy );
 
-            self::$related_objects[ 'role' ] = array(
-                'label' => __( 'User Roles', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_roles' )
-            );
+				self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
+					'label'         => $taxonomy->label . ' (' . $taxonomy->name . ')',
+					'group'         => __( 'Taxonomies', 'pods' ),
+					'bidirectional' => true
+				);
+			}
 
-            self::$related_objects[ 'capability' ] = array(
-                'label' => __( 'User Capabilities', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_capabilities' )
-            );
+			// Other WP Objects
+			self::$related_objects['user'] = array(
+				'label'         => __( 'Users', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'media' ] = array(
-                'label' => __( 'Media', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+			self::$related_objects['role'] = array(
+				'label'         => __( 'User Roles', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_roles' )
+			);
 
-            self::$related_objects[ 'comment' ] = array(
-                'label' => __( 'Comments', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'bidirectional' => true
-            );
+			self::$related_objects['capability'] = array(
+				'label'         => __( 'User Capabilities', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_capabilities' )
+			);
 
-            self::$related_objects[ 'image-size' ] = array(
-                'label' => __( 'Image Sizes', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_image_sizes' )
-            );
+			self::$related_objects['media'] = array(
+				'label'         => __( 'Media', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'nav_menu' ] = array(
-                'label' => __( 'Navigation Menus', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
-            );
+			self::$related_objects['comment'] = array(
+				'label'         => __( 'Comments', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'bidirectional' => true
+			);
 
-            self::$related_objects[ 'post_format' ] = array(
-                'label' => __( 'Post Formats', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' )
-            );
+			self::$related_objects['image-size'] = array(
+				'label'         => __( 'Image Sizes', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_image_sizes' )
+			);
 
-            self::$related_objects[ 'post-status' ] = array(
-                'label' => __( 'Post Status', 'pods' ),
-                'group' => __( 'Other WP Objects', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_post_stati' )
-            );
+			self::$related_objects['nav_menu'] = array(
+				'label' => __( 'Navigation Menus', 'pods' ),
+				'group' => __( 'Other WP Objects', 'pods' )
+			);
 
-            do_action( 'pods_form_ui_field_pick_related_objects_other' );
+			self::$related_objects['post_format'] = array(
+				'label' => __( 'Post Formats', 'pods' ),
+				'group' => __( 'Other WP Objects', 'pods' )
+			);
 
-            self::$related_objects[ 'country' ] = array(
-                'label' => __( 'Countries', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_countries' )
-            );
+			self::$related_objects['post-status'] = array(
+				'label'         => __( 'Post Status', 'pods' ),
+				'group'         => __( 'Other WP Objects', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_post_stati' )
+			);
 
-            self::$related_objects[ 'us_state' ] = array(
-                'label' => __( 'US States', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_us_states' )
-            );
+			do_action( 'pods_form_ui_field_pick_related_objects_other' );
 
-            self::$related_objects[ 'days_of_week' ] = array(
-                'label' => __( 'Calendar - Days of Week', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_days_of_week' )
-            );
+			self::$related_objects['country'] = array(
+				'label'         => __( 'Countries', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_countries' )
+			);
 
-            self::$related_objects[ 'months_of_year' ] = array(
-                'label' => __( 'Calendar - Months of Year', 'pods' ),
-                'group' => __( 'Predefined Lists', 'pods' ),
-                'simple' => true,
-                'data_callback' => array( $this, 'data_months_of_year' )
-            );
+			self::$related_objects['us_state'] = array(
+				'label'         => __( 'US States', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_us_states' )
+			);
 
-            do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
+			self::$related_objects['days_of_week'] = array(
+				'label'         => __( 'Calendar - Days of Week', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_days_of_week' )
+			);
 
-            if ( did_action( 'init' ) )
-                pods_transient_set( 'pods_related_objects', self::$related_objects );
-        }
+			self::$related_objects['months_of_year'] = array(
+				'label'         => __( 'Calendar - Months of Year', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_months_of_year' )
+			);
 
-        foreach ( self::$custom_related_objects as $object => $related_object ) {
-            if ( ! isset( self::$related_objects[ $object ] ) ) {
-                $new_data_loaded = true;
-                self::$related_objects[ $object ] = $related_object;
-            }
-        }
-	    return $new_data_loaded;
-    }
+			do_action( 'pods_form_ui_field_pick_related_objects_predefined' );
+
+			if ( did_action( 'init' ) ) {
+				pods_transient_set( 'pods_related_objects', self::$related_objects );
+			}
+		}
+
+		/**
+		 * Allow custom related objects to be defined
+		 */
+		do_action( 'pods_form_ui_field_pick_related_objects_custom' );
+
+		foreach ( self::$custom_related_objects as $object => $related_object ) {
+			if ( ! isset( self::$related_objects[ $object ] ) ) {
+				$new_data_loaded = true;
+
+				self::$related_objects[ $object ] = $related_object;
+			}
+		}
+
+		return $new_data_loaded;
+
+	}
 
     /**
      * Return available related objects
@@ -1278,16 +1288,11 @@ class PodsField_Pick extends PodsField {
      * @return array|bool Object data
      */
     public function get_object_data ( $object_params = null ) {
-        global $wpdb, $polylang, $sitepress, $icl_adjust_id_url_filter_off;
 
-        $current_language = false;
-
-        // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-        // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) )
-            $current_language = pll_current_language( 'slug' );
+	    /**
+	     * @var $wpdb wpdb
+	     */
+        global $wpdb;
 
         $object_params = array_merge(
             array(
@@ -1649,75 +1654,6 @@ class PodsField_Pick extends PodsField {
                         elseif ( $wpdb->terms == $search_data->table && isset( $result[ 'taxonomy' ] ) ) {
                             $object = $result[ 'taxonomy' ];
                             $object_type = 'taxonomy';
-                        }
-
-                        // WPML integration for Post Types and Taxonomies
-                        if ( is_object( $sitepress ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
-                            $translated = false;
-
-                            if ( 'post_type' == $object_type && $sitepress->is_translated_post_type( $object ) )
-                                $translated = true;
-                            elseif ( 'taxonomy' == $object_type && $sitepress->is_translated_taxonomy( $object ) )
-                                $translated = true;
-
-                            if ( $translated ) {
-                                $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false, $current_language );
-
-                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                    $text = $result[ $search_data->field_index ];
-
-                                    if ( $result[ $search_data->field_id ] != $object_id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $object_id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $object_id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_id ] = $object_id;
-                                    $result[ $search_data->field_index ] = $text;
-                                }
-                                else
-                                    continue;
-                            }
-                        }
-                        // Polylang integration for Post Types and Taxonomies
-                        elseif ( function_exists( 'PLL' ) || ( is_object( $polylang ) ) && in_array( $object_type, array( 'post_type', 'taxonomy' ) ) ) {
-                            $translated = false;
-
-                            if ( 'post_type' == $object_type && pll_is_translated_post_type( $object ) )
-                                $translated = true;
-                            elseif ( 'taxonomy' == $object_type && pll_is_translated_taxonomy( $object ) )
-                                $translated = true;
-
-                            if ( $translated ) {
-                            	$object_id = 0; // default
-                            	if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_translation' ) ) {
-                            		// Polylang 1.8 and newer
-                            		$object_id = PLL()->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_translation' ) ) {
-                            		// Polylang 1.2 - 1.7.x
-                            		$object_id = $polylang->model->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
-                            		// Polylang 1.1.x and older
-                                	$object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ], $current_language );
-                            	}
-
-                                if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
-                                    $text = $result[ $search_data->field_index ];
-
-                                    if ( $result[ $search_data->field_id ] != $object_id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $object_id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $object_id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_id ] = $object_id;
-                                    $result[ $search_data->field_index ] = $text;
-                                }
-                                else
-                                    continue;
-                            }
                         }
 
                         if ( 0 < strlen( $display_filter ) ) {

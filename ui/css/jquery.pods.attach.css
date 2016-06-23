@@ -140,6 +140,35 @@ ul.pods-files-queue li.pods-file ul.pods-file-meta:after {
     clear: both;
 }
 
+.pods-field-template-tiles ul.pods-files li.pods-file {
+    display: inline-block;
+    width: 160px;
+    border-bottom: 0;
+    padding: 5px 10px 10px;
+}
+.pods-field-template-tiles ul.pods-files li.pods-file-icon {
+    width: auto;
+    float: none;
+}
+.pods-field-template-tiles ul.pods-files li.pods-file-icon img {
+    max-width: none;
+    max-height: none;
+    float: none;
+}
+form.pods-form .pods-field-template-tiles ul.pods-files li.pods-file-name {
+    position: static;
+    float: none;
+}
+.pods-field-template-tiles ul.pods-files li.pods-file-handle {
+    margin-top: 5px;
+}
+.pods-field-template-tiles ul.pods-files li.pods-file-download, 
+.pods-field-template-tiles ul.pods-files li.pods-file-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 a.pods-quick-add,
 span.pods-quick-add {
     display: block;

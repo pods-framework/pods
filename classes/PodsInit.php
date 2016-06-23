@@ -1144,7 +1144,7 @@ class PodsInit {
 
 		$api = pods_api();
 
-		$pods = $api->load_pods( array( 'names_ids' => true ) );
+		$pods = $api->load_pods( array( 'names_ids' => true, 'table_info' => false ) );
 
 		foreach ( $pods as $pod_id => $pod_label ) {
 			$api->delete_pod( array( 'id' => $pod_id ) );
@@ -1405,7 +1405,7 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods( array( 'type' => 'pod', 'fields' => false ) );
+		$all_pods = pods_api()->load_pods( array( 'type' => 'pod', 'fields' => false, 'table_info' => false ) );
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
@@ -1469,7 +1469,7 @@ class PodsInit {
 		$rest_bases = pods_transient_get( 'pods_rest_bases' );
 
 		if ( empty( $rest_bases ) ) {
-			$pods = pods_api()->load_pods();
+	        $pods = pods_api()->load_pods( array( 'type' => array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ), 'fields' => false, 'table_info' => false ) );
 
 			$rest_bases = array();
 
@@ -1477,7 +1477,7 @@ class PodsInit {
 				foreach ( $pods as $pod ) {
 					$type = $pod['type'];
 
-					if ( in_array( $type, array( 'post_type', 'taxonomy' ) ) ) {
+					if ( in_array( $type, array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ) ) ) {
 						if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
 							$rest_bases[ $pod['name'] ] = array(
 								'type' => $type,

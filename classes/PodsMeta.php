@@ -889,7 +889,16 @@ class PodsMeta {
         if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) )
             $groups = self::$groups[ $type ][ $name ];
 
-        return $groups;
+        /**
+         * Filter the array of field groups
+         *
+         * @param array  $groups Array of groups
+         * @param string  $type The type of Pod
+         * @param string  $name Name of the Pod
+         *
+         * @since 2.6.6
+         */
+        return apply_filters( 'pods_meta_groups_get', $groups, $type, $name );
     }
 
     /**
@@ -969,25 +978,47 @@ class PodsMeta {
         do_action( 'pods_meta_' . __FUNCTION__, $post );
 
         $hidden_fields = array();
-?>
-    <table class="form-table pods-metabox pods-admin pods-dependency">
-		<?php echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' ); ?>
-
-        <?php
+        
         $id = null;
 
         if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php' ) )
             $id = $post->ID;
 
-        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod ) || self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] )
-            self::$current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
-		elseif ( self::$current_pod->id() != $id )
-			self::$current_pod->fetch( $id );
+	if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod ) || self::$current_pod->pod != $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ] ) {
+		self::$current_pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
+	} elseif ( self::$current_pod->id() != $id ) {
+		self::$current_pod->fetch( $id );
+	}
 
         $pod = self::$current_pod;
 
-        foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
-            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) ) {
+	$fields = $metabox['args']['group']['fields'];
+
+	/**
+	 * Filter the fields used for the Pods metabox group
+	 *
+	 * @since 2.6.6
+	 *
+	 * @param array   $fields  Fields from the current Pod metabox group
+	 * @param int     $id      Post ID
+	 * @param WP_Post $post    Post object
+	 * @param array	  $metabox Metabox args from the current Pod metabox group
+	 * @param Pods    $pod     Pod object
+	 */
+ 	$fields = apply_filters( 'pods_meta_post_fields', $fields, $id,  $post, $metabox, $pod  );
+ 	
+ 	if ( empty( $fields ) ) {
+ 		_e( 'There are no fields to display', 'pods' );
+ 		
+ 		return;
+ 	}
+?>
+    <table class="form-table pods-metabox pods-admin pods-dependency">
+	<?php
+	echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
+	
+        foreach ( $fields as $field ) {
+            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $id ) ) {
                 if ( pods_var( 'hidden', $field[ 'options' ], false ) )
                     $field[ 'type' ] = 'hidden';
                 else

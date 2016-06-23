@@ -1860,7 +1860,7 @@
             '__add': 'Add',
             '__added': 'Added!',
             '__added_choose_another_or_close_this_box': 'Added! Choose another or <a href="#">close this box</a>',
-            '__copy': '(Copy)',
+            '__copy': 'Copy',
             '__navigating_away_from_this_page_will_discard_any_changes_you_have_made': 'Navigating away from this page will discard any changes you have made.',
             '__unable_to_process_request_please_try_again': 'Unable to process request, please try again.',
         };

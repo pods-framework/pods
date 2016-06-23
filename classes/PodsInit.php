@@ -300,6 +300,12 @@ class PodsInit {
 	public function localize_assets() {
 		wp_localize_script('pods', 'pods_localized_strings', array(
 			'__is_required' => __( '%s is required.', 'pods' ),
+			'__add' => __( 'Add', 'pods' ),
+			'__added' => __( 'Added!', 'pods' ),
+			'__added_choose_another_or_close_this_box' => __( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
+			'__copy' => __( 'Copy', 'pods' ),
+			'__navigating_away_from_this_page_will_discard_any_changes_you_have_made' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
+			'__unable_to_process_request_please_try_again' => __( 'Unable to process request, please try again.', 'pods' ),
 		));
 	}
 

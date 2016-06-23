@@ -181,12 +181,12 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Allow midnight (00:00) as valid time (#3555). If "Allow empty value" is unchecked and a value is not passed it will default to the current time, but it will still accept 00:00:00 as a valid value. Related to (#3488) [@jamesgol]
 * Fixed: Pass $strict = false to load_pod (#3554). This will keep the "Pod not found" message from being displayed during register of other post types. Related to (#3416) [@jamesgol]
 * Fixed: Don't add space to currency names that use HTML encoding (#3553). Fixes British pound currency symbols and others. Resolves (#3498) [@jamesgol]
-x* Fixed: travis-ci ignore PHP version for MySQL testing (#3551) [@Ramoonus]
-x* Fixed: Removed extra setting showing up in Auto Templates settings for Taxonomies (#3543). Fixes (#3541) [@Shelob9]
-x* Fixed: Use html_entity_decode to convert separator as it is an html entity. (#3536) Fixes (#3527) [@pcfreak30]
-x* Fixed: PodsRESTHandlers::write_handler needs to be static (#3511). Fixes (#3510) [@pcfreak30]
-x* Fixed: Typo PLL (Polylang) (#3504). [@JoryHogeveen]
-x* Fixed: travis-ci: remove retry (#3466). [@Ramoonus]
+* Fixed: travis-ci ignore PHP version for MySQL testing (#3551) [@Ramoonus]
+* Fixed: Removed extra setting showing up in Auto Templates settings for Taxonomies (#3543). Fixes (#3541) [@Shelob9]
+* Fixed: Use html_entity_decode to convert separator as it is an html entity. (#3536) Fixes (#3527) [@pcfreak30]
+* Fixed: PodsRESTHandlers::write_handler needs to be static (#3511). Fixes (#3510) [@pcfreak30]
+* Fixed: Typo PLL (Polylang) (#3504). [@JoryHogeveen]
+* Fixed: travis-ci: remove retry (#3466). [@Ramoonus]
 
 = 2.6.5.2 - May 4th 2016 =
 * Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]

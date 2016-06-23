@@ -1326,7 +1326,8 @@ class PodsForm {
             'pick',
             'boolean',
             'color',
-            'slug'
+            'slug',
+            'link',
         );
 
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );

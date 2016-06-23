@@ -1721,7 +1721,7 @@ class PodsAdmin {
         );
 
         if ( !class_exists( 'Pods_Helpers' ) )
-            unset( $options[ 'advanced-options' ][ 'input_helper' ] );
+            unset( $options[ 'advanced' ][ 'input_helper' ] );
 
         /**
          * Modify tabs and their contents for field options
@@ -2157,7 +2157,10 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table', 'post_type', 'taxonomy', 'settings' ) ) );
+        $pods = pods_api()->load_pods( array( 'type' => array( 'settings', 'post_type', 'taxonomy' ), 'fields' => false, 'table_info' => false ) );
+        $other_pods = pods_api()->load_pods( array( 'type' => array( 'pod', 'table' ), 'table_info' => false ) );
+
+        $pods = array_merge( $pods, $other_pods );
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';

@@ -100,7 +100,7 @@ export const FileUpload = Mn.LayoutView.extend( {
 		if ( Uploader !== undefined ) {
 			this.uploader = new Uploader( {
 				// We provide regular DOM element for the button
-				browseButton: this.getRegion( 'form' ).getEl( '.pods-file-add' ).get(),
+				browseButton: this.getRegion( 'form' ).getEl( '.pods-flex-add' ).get(),
 				uiRegion    : this.getRegion( 'uiRegion' ),
 				fieldOptions: options
 			} );

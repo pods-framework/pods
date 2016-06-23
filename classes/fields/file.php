@@ -112,8 +112,13 @@ class PodsField_File extends PodsField {
                 'default' => 1,
                 'type' => 'boolean'
             ),
+            self::$type . '_show_edit_link' => array(
+                'label' => __( 'Show Edit Link', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             self::$type . '_linked' => array(
-                'label' => __( 'Link to File in editor', 'pods' ),
+                'label' => __( 'Show Download Link', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean'
             ),
@@ -155,7 +160,7 @@ class PodsField_File extends PodsField {
             ),
             self::$type . '_field_template' => array(
                 'label' => __( 'List Style', 'pods' ),
-                'description' => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
+                'help' => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
                 'depends-on' => array( self::$type . '_type' => 'images' ),
                 'default' => apply_filters( 'pods_form_ui_field_' . self::$type . '_template_default', 'rows' ),
                 'type' => 'pick',
@@ -777,8 +782,6 @@ class PodsField_File extends PodsField {
             $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
             if ( null === $custom_handler ) {
-				$linked = pods_var( $field[ 'type' ] . '_linked', $field[ 'options' ], 0 );
-
                 $attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
                 if ( is_object( $attachment_id ) ) {
@@ -793,16 +796,19 @@ class PodsField_File extends PodsField {
                 else {
                     $attachment = get_post( $attachment_id, ARRAY_A );
 
-                    $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
+                    $attachment['filename'] = basename( $attachment['guid'] );
 
-                    $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
-                    $attachment[ 'thumbnail' ] = $thumb[ 0 ];
+                    $thumb = wp_get_attachment_image_src( $attachment['ID'], 'thumbnail', true );
 
-					$attachment[ 'link' ] = '';
+                    $attachment['thumbnail'] = '';
 
-					if ( $linked ) {
-                    	$attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
-					}
+                    if ( ! empty( $thumb[0] ) ) {
+                        $attachment['thumbnail'] = $thumb[0];
+                    }
+
+                    $attachment['link']      = get_permalink( $attachment['ID'] );
+                    $attachment['edit_link'] = get_edit_post_link( $attachment['ID'] );
+                    $attachment['download']  = wp_get_attachment_url( $attachment['ID'] );
 
                     $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 

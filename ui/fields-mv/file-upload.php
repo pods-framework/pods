@@ -37,6 +37,11 @@ $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File
 
 // Handle default template setting
 $file_field_template = pods_v( $form_field_type . '_field_template', $options, 'rows', true );
+
+if ( 'images' != $limit_file_type ) {
+	$file_field_template = 'rows';
+}
+
 $options[ $form_field_type . '_field_template' ] = $file_field_template;
 
 if ( empty( $value ) ) {

@@ -152,7 +152,7 @@ class PodsField_File extends PodsField {
                 'depends-on' => array( self::$type . '_type' => 'other' ),
                 'default' => apply_filters( 'pods_form_ui_field_file_extensions_default', '' ),
                 'type' => 'text'
-            ),
+            ),/*
             self::$type . '_field_template' => array(
                 'label' => __( 'Field template', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_file_template_default', 'rows' ),
@@ -166,7 +166,7 @@ class PodsField_File extends PodsField {
                     )
                 ),
                 'dependency' => true
-            ),/*
+            ),
             self::$type . '_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),
                 'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),

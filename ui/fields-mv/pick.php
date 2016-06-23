@@ -48,7 +48,7 @@ foreach ( $data as $this_id => $this_title ) {
 				}
 			}
 
-			$edit_link = get_edit_post_link( $this_id );
+			$edit_link = get_edit_post_link( $this_id, 'raw' );
 			$link = get_permalink( $this_id );
 			break;
 

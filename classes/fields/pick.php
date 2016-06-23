@@ -818,7 +818,7 @@ class PodsField_Pick extends PodsField {
 
 		    if ( ! in_array( $pick_object, array( 'post_type', 'taxonomy', 'user', 'pod' ) ) ) {
 			    // Default all others to Select2
-				$format_type = 'select2';
+				$field_type = 'select2';
 		    } else {
 		        // @todo: Fix location when merging
 		        $field_type = 'pick';

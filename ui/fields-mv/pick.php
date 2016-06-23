@@ -28,9 +28,12 @@ $options[ 'item_id' ] = (int) $id;
 $model_data = array();
 foreach ( $data as $this_id => $this_title ) {
 	$model_data[] = array(
-		'id'       => $this_id,
-		'name'     => $this_title,
-		'selected' => ( null !== $value[ $this_id ] )
+		'id'        => $this_id,
+		'icon'      => '',
+		'name'      => $this_title,
+		'edit_link' => '',
+		'link'      => '',
+		'selected'  => ( null !== $value[ $this_id ] ),
 	);
 }
 

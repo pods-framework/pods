@@ -43,7 +43,7 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @since 2.0
 	 */
-	public function __construct () {
+	public function __construct() {
 
 	}
 
@@ -54,50 +54,51 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @since 2.0
 	 */
-	public function options () {
+	public function options() {
+
 		$options = array(
-			self::$type . '_format' => array(
-				'label' => __( 'Format', 'pods' ),
+			self::$type . '_format'            => array(
+				'label'   => __( 'Format', 'pods' ),
 				'default' => 'normal',
-				'type' => 'pick',
-				'data' => array(
-					'none' => __( 'No URL format restrictions', 'pods' ),
-					'normal' => __( 'http://example.com/', 'pods' ),
-					'no-www' => __( 'http://example.com/ (remove www)', 'pods' ),
-					'force-www' => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
-					'no-http' => __( 'example.com', 'pods' ),
-					'no-http-no-www' => __( 'example.com (force removal of www)', 'pods' ),
+				'type'    => 'pick',
+				'data'    => array(
+					'none'              => __( 'No URL format restrictions', 'pods' ),
+					'normal'            => __( 'http://example.com/', 'pods' ),
+					'no-www'            => __( 'http://example.com/ (remove www)', 'pods' ),
+					'force-www'         => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
+					'no-http'           => __( 'example.com', 'pods' ),
+					'no-http-no-www'    => __( 'example.com (force removal of www)', 'pods' ),
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
 				)
 			),
-			self::$type . '_select_existing' => array(
-				'label' => __( 'Enable Selecting from Existing Links?', 'pods' ),
-				'default' => 1,
-				'type' => 'boolean',
+			self::$type . '_select_existing'   => array(
+				'label'      => __( 'Enable Selecting from Existing Links?', 'pods' ),
+				'default'    => 1,
+				'type'       => 'boolean',
 				'dependency' => true
 			),
-			'output_options' => array(
+			'output_options'                   => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
 				'group' => array(
 					self::$type . '_allow_shortcode' => array(
-						'label' => __( 'Allow Shortcodes?', 'pods' ),
-						'default' => 0,
-						'type' => 'boolean',
+						'label'      => __( 'Allow Shortcodes?', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
 						'dependency' => true
 					),
-					self::$type . '_allow_html' => array(
-						'label' => __( 'Allow HTML?', 'pods' ),
-						'default' => 0,
-						'type' => 'boolean',
+					self::$type . '_allow_html'      => array(
+						'label'      => __( 'Allow HTML?', 'pods' ),
+						'default'    => 0,
+						'type'       => 'boolean',
 						'dependency' => true
 					)
 				)
 			),
 			self::$type . '_allowed_html_tags' => array(
-				'label' => __( 'Allowed HTML Tags', 'pods' ),
+				'label'      => __( 'Allowed HTML Tags', 'pods' ),
 				'depends-on' => array( self::$type . '_allow_html' => true ),
-				'default' => 'strong em a ul ol li b i',
-				'type' => 'text'
+				'default'    => 'strong em a ul ol li b i',
+				'type'       => 'text'
 			),
 			/*self::$type . '_max_length' => array(
 				'label' => __( 'Maximum Length', 'pods' ),
@@ -105,10 +106,10 @@ class PodsField_Link extends PodsField_Website {
 				'type' => 'number',
 				'help' => __( 'Set to -1 for no limit', 'pods' )
 			),*/
-			self::$type . '_html5' => array(
-				'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
+			self::$type . '_html5'             => array(
+				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-				'type' => 'boolean'
+				'type'    => 'boolean'
 			)/*,
 			self::$type . '_size' => array(
 				'label' => __( 'Field Size', 'pods' ),
@@ -121,7 +122,9 @@ class PodsField_Link extends PodsField_Website {
 				)
 			)*/
 		);
+
 		return $options;
+
 	}
 
 	/**
@@ -132,40 +135,45 @@ class PodsField_Link extends PodsField_Website {
 	 * @return array
 	 * @since 2.0
 	 */
-	public function schema ( $options = null ) {
+	public function schema( $options = null ) {
+
 		$schema = 'LONGTEXT';
+
 		return $schema;
+
 	}
 
 	/**
 	 * Change the value of the field
 	 *
-	 * @param mixed $value
+	 * @param mixed  $value
 	 * @param string $name
-	 * @param array $options
-	 * @param array $pod
-	 * @param int $id
+	 * @param array  $options
+	 * @param array  $pod
+	 * @param int    $id
 	 *
 	 * @return mixed|null|string
 	 * @since 2.3
 	 */
-	public function value ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
 		return $value;
+
 	}
 
 	/**
 	 * Change the way the value of the field is displayed with Pods::get
 	 *
-	 * @param mixed $value
+	 * @param mixed  $value
 	 * @param string $name
-	 * @param array $options
-	 * @param array $pod
-	 * @param int $id
+	 * @param array  $options
+	 * @param array  $pod
+	 * @param int    $id
 	 *
 	 * @return mixed|null|string
 	 * @since 2.0
 	 */
-	public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		// Validate for an array because display is also used for the get_post_meta filters along the function chain
 		if ( ! is_array( $value ) ) {
@@ -215,39 +223,43 @@ class PodsField_Link extends PodsField_Website {
 
 		// Return database value or display value if above conditions are met
 		return $value;
+
 	}
 
 	/**
 	 * Customize output of the form field
 	 *
 	 * @param string $name
-	 * @param mixed $value
-	 * @param array $options
-	 * @param array $pod
-	 * @param int $id
+	 * @param mixed  $value
+	 * @param array  $options
+	 * @param array  $pod
+	 * @param int    $id
 	 *
 	 * @since 2.0
 	 */
-	public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-		$options = (array) $options;
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
-		$field_type = 'link';
+		$field_type      = 'link';
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+
 	}
 
 	/**
 	 * Validate a value before it's saved
 	 *
-	 * @param mixed $value
+	 * @param mixed  $value
 	 * @param string $name
-	 * @param array $options
-	 * @param array $fields
-	 * @param array $pod
-	 * @param int $id
+	 * @param array  $options
+	 * @param array  $fields
+	 * @param array  $pod
+	 * @param int    $id
 	 *
 	 * @since 2.0
 	 */
-	public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
 		$errors = array();
 
 		$label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
@@ -256,37 +268,41 @@ class PodsField_Link extends PodsField_Website {
 
 		$check = $check['url'];
 
-		if ( is_array( $check ) )
+		if ( is_array( $check ) ) {
 			$errors = $check;
-		else {
+		} else {
 			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && strlen( $check ) < 1 ) {
-				if ( 1 == pods_var( 'required', $options ) )
+				if ( 1 == pods_var( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
-				else
+				} else {
 					$errors[] = sprintf( __( 'Invalid link provided for the field %s.', 'pods' ), $label );
+				}
 			}
 		}
 
-		if ( !empty( $errors ) )
+		if ( ! empty( $errors ) ) {
 			return $errors;
+		}
 
 		return true;
+
 	}
 
 	/**
 	 * Change the value or perform actions after validation but before saving to the DB
 	 *
-	 * @param mixed $value
-	 * @param int $id
+	 * @param mixed  $value
+	 * @param int    $id
 	 * @param string $name
-	 * @param array $options
-	 * @param array $fields
-	 * @param array $pod
+	 * @param array  $options
+	 * @param array  $fields
+	 * @param array  $pod
 	 * @param object $params
 	 *
 	 * @since 2.0
 	 */
-	public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
 		$options = (array) $options;
 
 		$value = array_merge( (array) $value, array( 'url' => '', 'text' => '', 'target' => '' ) );
@@ -307,6 +323,7 @@ class PodsField_Link extends PodsField_Website {
 		}
 
 		return $value;
+
 	}
 
 }

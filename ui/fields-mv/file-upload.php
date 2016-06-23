@@ -28,10 +28,10 @@ if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) 
 	$file_limit = (int) pods_v( $form_field_type . '_limit', $options, 0 );
 }
 
-$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
+$limit_file_type = pods_v( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
-$linked         = pods_var( $form_field_type . '_linked', $options, 0 );
+$title_editable = pods_v( $form_field_type . '_edit_title', $options, 0 );
+$linked         = pods_v( $form_field_type . '_linked', $options, 0 );
 
 $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) );
 
@@ -92,7 +92,7 @@ if ( 'images' == $limit_file_type ) {
 	$limit_types      = '';
 	$limit_extensions = '*';
 } else {
-	$limit_types = $limit_extensions = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
+	$limit_types = $limit_extensions = pods_v( $form_field_type . '_allowed_extensions', $options, '', true );
 }
 $limit_types      = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
 	'',

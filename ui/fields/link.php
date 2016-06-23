@@ -3,10 +3,12 @@
 wp_enqueue_script( 'wplink' );
 wp_enqueue_script( 'pods-link-picker', PODS_URL . 'ui/js/pods-link-picker.js', array( 'jquery' ), '1.0.0' );
 
+PodsForm::field_method( 'link', 'init_link_editor' );
+
 $url_attributes = array();
 $url_type = 'text';
 if ( 1 == pods_var( 'link_html5', $options ) ) {
-    $url_type = 'url';
+	$url_type = 'url';
 }
 $url_attributes[ 'type' ] = $url_type;
 $url_attributes[ 'class' ] = 'linkPickerUrl';
@@ -40,26 +42,26 @@ $target_attributes = PodsForm::merge_attributes( $target_attributes, $target_nam
 ?>
 
 <div class="pods-link-options">
-    <p class="howto"><?php _e('Enter the destination URL') ?></p>
-    <p>
-        <div class="alignleft">
-            <label><span><?php _e('URL') ?></span><input<?php PodsForm::attributes( $url_attributes, $url_name, $form_field_type, $options ); ?> /></label>
-        </div>
-        <div class="alignleft">
-            <label><span><?php _e('Link Text') ?></span><input<?php PodsForm::attributes( $text_attributes, $text_name, $form_field_type, $options ); ?> /></label>
-        </div>
-        <div class="link-target">
-            <label><div>&nbsp;</div><input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php _e('Open link in a new tab') ?></label>
-        </div>
-    </p>
-    <br clear="both">
+	<p class="howto"><?php _e('Enter the destination URL') ?></p>
+	<p>
+		<div class="alignleft">
+			<label><span><?php _e('URL') ?></span><input<?php PodsForm::attributes( $url_attributes, $url_name, $form_field_type, $options ); ?> /></label>
+		</div>
+		<div class="alignleft">
+			<label><span><?php _e('Link Text') ?></span><input<?php PodsForm::attributes( $text_attributes, $text_name, $form_field_type, $options ); ?> /></label>
+		</div>
+		<div class="link-target">
+			<label><div>&nbsp;</div><input<?php PodsForm::attributes( $target_attributes, $target_name, $form_field_type, $options ); ?> /> <?php _e('Open link in a new tab') ?></label>
+		</div>
+	</p>
+	<br clear="both">
 
-    <?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
-        <div class="howto link-existing-content">
-            <a href="#" class="podsLinkPopup"><?php _e('Or link to existing content') ?></a>
-            <textarea id="podsLinkPopupDummyTextarea" disabled="disabled" style="display: none;"></textarea>
-        </div>
-    <?php } ?>
+	<?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
+		<div class="howto link-existing-content">
+			<a href="#" class="podsLinkPopup"><?php _e('Or link to existing content') ?></a>
+			<textarea id="podsLinkPopupDummyTextarea" disabled="disabled" style="display: none;"></textarea>
+		</div>
+	<?php } ?>
 </div>
 
 <?php

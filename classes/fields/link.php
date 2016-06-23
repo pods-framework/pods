@@ -326,4 +326,21 @@ class PodsField_Link extends PodsField_Website {
 
 	}
 
+	/**
+	 * Init the editor needed for WP Link modal to work
+	 */
+	public function init_link_editor() {
+
+		static $init;
+
+		if ( empty( $init ) ) {
+			echo '<div style="display:none">';
+			wp_editor( '', '#pods-link-editor-hidden' );
+			echo '</div>';
+		}
+
+		$init = true;
+
+	}
+
 }

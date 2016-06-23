@@ -6,7 +6,7 @@
 		value="<%- attr.id %>>">
 <ul class="pods-flex-meta relationship-item">
 	<li class="pods-flex-col pods-flex-handle"><span>Reorder</span></li>
-	<% if ( icon != '' ) { %>
+	<% if ( 1 == options.pick_show_icon && '' != icon ) { %>
 		<li class="pods-flex-col pods-flex-icon">
 			<img class="pinkynail" src="<%- icon %>" alt="Icon">
 		</li>

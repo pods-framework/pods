@@ -184,6 +184,19 @@ class PodsField_Pick extends PodsField {
                 'type' => 'boolean',
                 'default' => 0
             ),
+            self::$type . '_show_icon' => array(
+                'label' => __( 'Show Icons', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
+            ),
             self::$type . '_show_edit_link' => array(
                 'label' => __( 'Show Edit Links', 'pods' ),
                 'excludes-on' => array(

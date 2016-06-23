@@ -769,7 +769,9 @@ class PodsField_Pick extends PodsField {
         if ( 0 == pods_var( self::$type . '_ajax', $options, 1 ) )
             $ajax = false;
 
-        if ( 'single' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
+	    $format_type = pods_v( self::$type . '_format_type', $options, 'single' );
+
+        if ( 'single' == $format_type ) {
             if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'select';
             elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
@@ -785,7 +787,7 @@ class PodsField_Pick extends PodsField {
                 return;
             }
         }
-        elseif ( 'multi' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
+        elseif ( 'multi' == $format_type ) {
             if ( !empty( $value ) && !is_array( $value ) )
                 $value = explode( ',', $value );
 
@@ -810,11 +812,19 @@ class PodsField_Pick extends PodsField {
             return;
         }
 
+	    // Flexible relationships only support certain related objects
 	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
-	        // @todo: Fix location when merging
-	        $field_type = 'pick';
-	        pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
-	        return;
+		    $pick_object = pods_v( 'pick_object', $options );
+
+		    if ( ! in_array( $pick_object, array( 'post_type', 'taxonomy', 'user', 'pod' ) ) ) {
+			    // Default all others to Select2
+				$format_type = 'select2';
+		    } else {
+		        // @todo: Fix location when merging
+		        $field_type = 'pick';
+		        pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+		        return;
+		    }
 	    }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );

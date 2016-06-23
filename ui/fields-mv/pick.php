@@ -78,6 +78,8 @@ switch ( $options[ 'pick_object' ] ) {
 	// Something unsupported
 	default:
 		// What to do here?
+		$file_name = '';
+		$query_args = array();
 		break;
 }
 
@@ -98,5 +100,9 @@ include_once PODS_DIR . 'classes/PodsFieldData.php';
 $field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
-	<?php $field_data->emit_script(); ?>
+	<?php if ( ! empty( $file_name ) ) { ?>
+		<?php $field_data->emit_script(); ?>
+	<?php } else { ?>
+		<p>This related object does not support Flexible Relationships.</p>
+	<?php } ?>
 </div>

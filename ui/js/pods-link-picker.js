@@ -15,6 +15,8 @@ jQuery(document).ready(function($){
 		$('#wp-link #wp-link-text').val(activeLinkPicker.find('.linkPickerText').val());
 		if (activeLinkPicker.find('.linkPickerTarget').is(':checked')) {
 			$('#wp-link #wp-link-target').prop('checked', true);
+		} else {
+			$('#wp-link #wp-link-target').prop('checked', false);
 		}
 		return false;
 	});

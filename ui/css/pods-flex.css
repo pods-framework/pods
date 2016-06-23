@@ -29,11 +29,19 @@ ul.pods-flex-list li.pods-flex-col {
 
 ul.pods-flex-list li.pods-flex-icon {
 	width: 40px;
+	margin: 0 5px;
+	height: 32px;
+	font-size: 0; /* for aligning image */
+	line-height: 32px;
+	text-align: center;
 }
 
 ul.pods-flex-list li.pods-flex-icon img {
-	display: block;
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
 	border-radius: 2px;
+	margin: 0;
 }
 
 ul.pods-flex-list li.pods-flex-handle {
@@ -78,8 +86,8 @@ ul.pods-flex-list li.pods-flex-edit a:focus,
 ul.pods-flex-list li.pods-flex-link a:focus,
 ul.pods-flex-list li.pods-flex-download a:focus,
 ul.pods-flex-list li.pods-flex-remove a:focus {
-	box-shadow: none;
 	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 ul.pods-flex-list li.pods-flex-handle span:before,
@@ -89,7 +97,7 @@ ul.pods-flex-list li.pods-flex-download a:before,
 ul.pods-flex-list li.pods-flex-remove a:before {
 	margin-left: -20px;
 	font: 400 20px/1 dashicons;
-	line-height: 36px;
+	line-height: 32px;
 }
 
 ul.pods-flex-list li.pods-flex-handle span:before {
@@ -124,21 +132,22 @@ ul.pods-flex-list li.pods-flex-remove a {
 
 ul.pods-flex-list li.pods-flex-name {
 	position: absolute;
-	left: 85px;
-	right: 60px;
+	left: 80px;
+	right: 105px; /* needed for action buttons */
 	padding-top: 5px;
 }
 
 form.pods-form ul.pods-flex-list li.pods-flex-name {
-	padding-top: 3px;
+	padding: 3px 0;
 	overflow: visible;
 }
 
 form.pods-form ul.pods-flex-list li.pods-flex-name input[type=text] {
 	width: 100% !important;
-	font-size: 1vh;
+	font-size: 1em; /*1vh*/
 	line-height: 1;
 	padding: .3vh 10px;
+	margin: 0;
 }
 
 li.pods-flex-item {
@@ -201,7 +210,7 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
  */
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-item {
 	display: inline-block;
-	width: 160px;
+	width: 150px;
 	border-bottom: 0;
 	padding: 5px 10px 10px;
 	vertical-align: top;
@@ -210,10 +219,11 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon {
 	width: auto;
 	float: none;
-	margin-top: 32px;
+	margin: 32px 0 0;
 	max-height: 150px;
 	height: 150px;
 	line-height: 150px;
+	text-align: center;
 }
 
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon img {
@@ -222,11 +232,16 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 	float: none;
 	display: inline-block;
 	vertical-align: middle;
+	margin: 0;
 }
 
 form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name {
 	position: static;
 	float: none;
+}
+form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name input[type=text] {
+	margin: 0;
+	padding: .3vh 6px;
 }
 
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle,
@@ -257,6 +272,20 @@ form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name {
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
 	right: 0;
 }
+
+ul.pods-flex-list li.pods-flex-actions {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-edit,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-link,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-download,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-remove {
+	position: static;
+	float: right;
+}
+
 
 a.pods-quick-add,
 span.pods-quick-add {

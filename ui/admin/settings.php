@@ -18,7 +18,7 @@
                 foreach ( $tabs as $tab => $label ) {
                     $class = '';
 
-                    if ( $tab == pods_var( 'tab', 'get', $default ) ) {
+                    if ( $tab == pods_v_sanitized( 'tab', 'get', $default ) ) {
                         $class = ' nav-tab-active';
 
                         $label = 'Pods ' . $label;
@@ -38,7 +38,7 @@
         <?php
             wp_nonce_field( 'pods-settings' );
 
-            $tab = pods_var( 'tab', 'get', $default );
+            $tab = pods_v_sanitized( 'tab', 'get', $default );
             $tab = sanitize_title( $tab );
 
             echo pods_view( PODS_DIR . 'ui/admin/settings-' . $tab . '.php' );

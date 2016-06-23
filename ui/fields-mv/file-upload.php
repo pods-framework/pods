@@ -65,21 +65,31 @@ foreach ( $value as $id ) {
 		continue;
 	}
 
+	$icon = '';
+	$edit_link = get_edit_post_link( $attachment->ID, 'raw' );
+	$link      = get_permalink( $attachment->ID );
+	$download  = wp_get_attachment_url( $attachment->ID );
+
 	$thumb = wp_get_attachment_image_src( $id, 'thumbnail', true );
+
+	if ( ! empty( $thumb[0] ) ) {
+		$icon = $thumb[0];
+	}
+
 	$title = $attachment->post_title;
+
 	if ( 0 == $title_editable ) {
 		$title = basename( $attachment->guid );
 	}
 
-	$link = wp_get_attachment_url( $attachment->ID );
 
 	$model_data[] = array(
 		'id'        => $id,
-		'icon'      => $thumb[0],
+		'icon'      => $icon,
 		'name'      => $title,
-		'edit_link' => '',
-		'link'      => '',
-		'download'  => $link,
+		'edit_link' => $edit_link,
+		'link'      => $link,
+		'download'  => $download,
 	);
 }
 

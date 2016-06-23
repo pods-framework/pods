@@ -172,35 +172,35 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 /**
  * Tiles view
  */
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-item {
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-item {
 	display: inline-block;
 	width: 160px;
 	border-bottom: 0;
 	padding: 5px 10px 10px;
 }
 
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-icon {
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon {
 	width: auto;
 	float: none;
 }
 
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-icon img {
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon img {
 	max-width: none;
 	max-height: none;
 	float: none;
 }
 
-form.pods-form .pods-field-template-tiles ui.pods-flex-list li.pods-flex-name {
+form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name {
 	position: static;
 	float: none;
 }
 
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-handle {
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle {
 	margin-top: 5px;
 }
 
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-download,
-.pods-field-template-tiles ui.pods-flex-list li.pods-flex-remove {
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-download,
+.pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
 	position: absolute;
 	top: 0;
 	right: 0;

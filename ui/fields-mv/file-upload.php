@@ -35,6 +35,10 @@ $linked         = pods_var( $form_field_type . '_linked', $options, 0 );
 
 $button_text = pods_v( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) );
 
+// Handle default template setting
+$file_field_template = pods_v( $form_field_type . '_field_template', $options, 'rows', true );
+$options[ $form_field_type . '_field_template' ] = $file_field_template;
+
 if ( empty( $value ) ) {
 	$value = array();
 } else {
@@ -42,6 +46,10 @@ if ( empty( $value ) ) {
 }
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
+
+// Add template class
+$attributes['class'] = ' pods-field-template-' . $file_field_template;
+
 $attributes = array_map( 'esc_attr', $attributes );
 $css_id     = $attributes[ 'id' ];
 

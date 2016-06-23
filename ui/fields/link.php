@@ -53,10 +53,13 @@ $target_attributes = PodsForm::merge_attributes( $target_attributes, $target_nam
         </div>
     </p>
     <br clear="both">
-    <div class="howto link-existing-content">
-        <a href="#" class="podsLinkPopup"><?php _e('Or link to existing content') ?></a>
-        <textarea id="podsLinkPopupDummyTextarea" disabled="disabled" style="display: none;"></textarea>
-    </div>
+
+    <?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
+        <div class="howto link-existing-content">
+            <a href="#" class="podsLinkPopup"><?php _e('Or link to existing content') ?></a>
+            <textarea id="podsLinkPopupDummyTextarea" disabled="disabled" style="display: none;"></textarea>
+        </div>
+    <?php } ?>
 </div>
 
 <?php

@@ -56,15 +56,6 @@ class PodsField_Link extends PodsField_Website {
 	 */
 	public function options () {
 		$options = array(
-			self::$type . '_repeatable' => array(
-				'label' => __( 'Repeatable Field', 'pods' ),
-				'default' => 0,
-				'type' => 'boolean',
-				'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency' => true,
-				'developer_mode' => true
-			),
 			self::$type . '_format' => array(
 				'label' => __( 'Format', 'pods' ),
 				'default' => 'normal',
@@ -79,8 +70,14 @@ class PodsField_Link extends PodsField_Website {
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
 				)
 			),
+			self::$type . '_select_existing' => array(
+				'label' => __( 'Enable Selecting from Existing Links?', 'pods' ),
+				'default' => 1,
+				'type' => 'boolean',
+				'dependency' => true
+			),
 			'output_options' => array(
-				'label' => __( 'Output Options', 'pods' ),
+				'label' => __( 'Link Text Output Options', 'pods' ),
 				'group' => array(
 					self::$type . '_allow_shortcode' => array(
 						'label' => __( 'Allow Shortcodes?', 'pods' ),

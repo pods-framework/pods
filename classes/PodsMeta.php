@@ -1245,6 +1245,7 @@ class PodsMeta {
             return $form_fields;
 
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $id = null;
 

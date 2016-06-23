@@ -64,6 +64,11 @@
     padding-top: 1px;
 }
 
+.pods-link-options {
+    padding: 5px 10px 10px;
+    border: 1px solid #dfdfdf;
+}
+
 .pods-pick-values {
     background: #fff;
     border: 1px solid #dfdfdf;

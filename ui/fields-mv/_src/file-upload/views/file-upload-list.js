@@ -12,8 +12,8 @@ export const FileUploadItem = PodsFieldView.extend( {
 
 	ui: {
 		dragHandle  : '.pods-flex-handle',
-		downloadLink: '.pods-file-download',
-		removeButton: '.pods-file-remove'
+		downloadLink: '.pods-flex-download',
+		removeButton: '.pods-flex-remove'
 	},
 
 	template: _.template( itemTemplate.default ),

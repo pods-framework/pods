@@ -753,7 +753,7 @@ class PodsMeta {
 
     public function object_get ( $type, $name ) {
         $object = self::$post_types;
-        
+
         if ( 'term' == $type ) {
         	$type = 'taxonomy';
         }
@@ -978,7 +978,7 @@ class PodsMeta {
         do_action( 'pods_meta_' . __FUNCTION__, $post );
 
         $hidden_fields = array();
-        
+
         $id = null;
 
         if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php' ) )
@@ -1006,17 +1006,17 @@ class PodsMeta {
 	 * @param Pods    $pod     Pod object
 	 */
  	$fields = apply_filters( 'pods_meta_post_fields', $fields, $id,  $post, $metabox, $pod  );
- 	
+
  	if ( empty( $fields ) ) {
  		_e( 'There are no fields to display', 'pods' );
- 		
+
  		return;
  	}
 ?>
     <table class="form-table pods-metabox pods-admin pods-dependency">
 	<?php
 	echo PodsForm::field( 'pods_meta', wp_create_nonce( 'pods_meta_' . $pod_type ), 'hidden' );
-	
+
         foreach ( $fields as $field ) {
             if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $id ) ) {
                 if ( pods_var( 'hidden', $field[ 'options' ], false ) )
@@ -1416,6 +1416,7 @@ class PodsMeta {
      */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
 
@@ -1601,6 +1602,7 @@ class PodsMeta {
      */
     public function meta_user ( $user_id ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $user_id );
 
@@ -1792,6 +1794,7 @@ class PodsMeta {
      */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
 
@@ -1858,6 +1861,7 @@ class PodsMeta {
      */
     public function meta_comment_new ( $form_fields ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -1983,6 +1987,7 @@ class PodsMeta {
      */
     public function meta_comment ( $comment, $metabox ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
 
@@ -2507,13 +2512,13 @@ class PodsMeta {
      * @return bool|mixed
      */
     public function get_object ( $object_type, $object_id, $aux = '' ) {
-    	
+
     	global $wpdb;
-    	
+
     	if ( 'term' == $object_type ) {
     		$object_type = 'taxonomy';
     	}
-    	
+
         if ( 'post_type' == $object_type )
             $objects = self::$post_types;
         elseif ( 'taxonomy' == $object_type )
@@ -2554,11 +2559,11 @@ class PodsMeta {
 
             	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
                 	return false;
-            	
+
             	$object_name = $object->taxonomy;
             } elseif ( empty( $aux ) ) {
             	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
-            } else { 
+            } else {
             	$object_name = $aux;
             }
         }

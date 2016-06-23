@@ -26,14 +26,67 @@ unset ( $options[ 'data' ] );
 $options[ 'item_id' ] = (int) $id;
 
 $model_data = array();
+
+$supports_thumbnails = null;
+
 foreach ( $data as $this_id => $this_title ) {
+	$icon = '';
+	$edit_link = '';
+	$link = '';
+
+	switch ( $options[ 'pick_object' ] ) {
+		case 'post_type':
+			if ( null === $supports_thumbnails ) {
+				$supports_thumbnails = post_type_supports( $options['pick_val'], 'thumbnail' );
+			}
+
+			if ( true === $supports_thumbnails ) {
+				$thumb = wp_get_attachment_image_src( $this_id, 'thumbnail', true );
+
+				if ( ! empty( $thumb[0] ) ) {
+					$icon = $thumb[0];
+				}
+			}
+
+			$edit_link = get_edit_post_link( $this_id );
+			$link = get_permalink( $this_id );
+			break;
+
+		case 'taxonomy':
+			$edit_link = get_edit_term_link( $this_id, $options['pick_val'] );
+			$link = get_term_link( $this_id, $options['pick_val'] );
+			break;
+
+		case 'user':
+			$icon = get_avatar_url( $this_id, array( 'size' => 150 ) );
+			$edit_link = get_edit_user_link( $this_id );
+			$link = get_author_posts_url( $this_id );
+			break;
+
+		case 'pod':
+			$file_name = 'admin.php';
+			$query_args = array(
+				'page'   => 'pods-manage-' . $options[ 'pick_val' ],
+				'action' => 'edit',
+				'id'     => $this_id,
+			);
+
+			$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
+			// @todo Add $link support
+			break;
+
+		// Something unsupported
+		default:
+			break;
+	}
+
 	$model_data[] = array(
 		'id'        => $this_id,
-		'icon'      => '',
+		'icon'      => $icon,
 		'name'      => $this_title,
-		'edit_link' => '',
-		'link'      => '',
-		'selected'  => ( null !== $value[ $this_id ] ),
+		'edit_link' => $edit_link,
+		'link'      => $link,
+		'selected'  => ( isset( $value[ $this_id ] ) ),
 	);
 }
 
@@ -80,7 +133,6 @@ switch ( $options[ 'pick_object' ] ) {
 
 	// Something unsupported
 	default:
-		// What to do here?
 		$file_name = '';
 		$query_args = array();
 		break;

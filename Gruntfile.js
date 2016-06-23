@@ -243,4 +243,8 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
 
+	// build tasks
+	grunt.registerTask( 'exec_rollup_dev', [ 'exec:rollup_dev' ] );
+	grunt.registerTask( 'exec_rollup', [ 'exec:rollup_prod' ] );
+
 };

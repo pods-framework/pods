@@ -250,12 +250,11 @@ class PodsInit {
 			wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
 		}
 
-        wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery', 'pods-json', 'jquery-qtip2' ), PODS_VERSION, true );
 		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
 			'jquery',
 			'pods-json',
 			'jquery-qtip2'
-		), PODS_VERSION );
+		), PODS_VERSION, true );
 
 		wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
 
@@ -290,6 +289,31 @@ class PodsInit {
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
 		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+
+		$this->localize_assets();
+	}
+
+	/**
+	 * Localize assets
+	 */
+	public function localize_assets() {
+		wp_localize_script('pods', 'pods_localized_strings', array(
+			'__is_required' => __( '%s is required.', 'pods' ),
+			'__add' => __( 'Add', 'pods' ),
+			'__add_new' => __( 'Add New', 'pods' ),
+			'__add_new_record' => __( 'Add New Record', 'pods' ),
+			'__added' => __( 'Added!', 'pods' ),
+			'__added_choose_another_or_close_this_box' => __( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
+			'__copy' => __( 'Copy', 'pods' ),
+			'__reorder' => __( 'Reorder', 'pods' ),
+			'__remove' => __( 'Remove', 'pods' ),
+			'__download' => __( 'Download', 'pods' ),
+			'__view' => __( 'View', 'pods' ),
+			'__edit' => __( 'Edit', 'pods' ),
+			'__navigating_away_from_this_page_will_discard_any_changes_you_have_made' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
+			'__unable_to_process_request_please_try_again' => __( 'Unable to process request, please try again.', 'pods' ),
+			'__there_was_an_issue_with_the_file_upload_please_try_again' => __( 'There was an issue with the file upload, please try again.', 'pods' ),
+		));
 	}
 
 	/**

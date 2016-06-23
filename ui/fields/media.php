@@ -19,6 +19,20 @@ $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
+if ( empty( $options['file_field_template'] ) ) {
+    $options['file_field_template'] = 'rows';
+}
+$attributes[ 'class' ] .= ' pods-field-template-'.$options['file_field_template'];
+
+switch ( $options['file_field_template'] ) {
+    case 'tiles':
+        $jquery_ui_sortable_axis = '';
+        break;
+    case 'rows':
+    default:
+        $jquery_ui_sortable_axis = 'y';
+        break;
+}
 
 $router = pods_var( $form_field_type . '_attachment_tab', $options, 'browse' );
 
@@ -150,7 +164,7 @@ else
             // init sortable
             $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.sortable( {
                 containment : 'parent',
-                axis: 'y',
+                axis: '<?php echo $jquery_ui_sortable_axis; ?>',
                 scrollSensitivity : 40,
                 tolerance : 'pointer',
                 opacity : 0.6
@@ -162,7 +176,21 @@ else
 			e.preventDefault();
 
             var podsfile = $( this ).parent().parent().parent();
+            <?php 
+            switch ( $options['file_field_template'] ) {
+                case 'tiles':
+            ?>
+            podsfile.fadeOut( function () {
+            <?php
+                    break;
+                case 'rows':
+                default:
+            ?>
             podsfile.slideUp( function () {
+            <?php
+                    break;
+            }
+            ?>
                 // check to see if this was the only entry
                 if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
                     podsfile.parent().hide();

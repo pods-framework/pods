@@ -152,6 +152,20 @@ class PodsField_File extends PodsField {
                 'depends-on' => array( self::$type . '_type' => 'other' ),
                 'default' => apply_filters( 'pods_form_ui_field_file_extensions_default', '' ),
                 'type' => 'text'
+            ),
+            self::$type . '_field_template' => array(
+                'label' => __( 'List Style', 'pods' ),
+                'description' => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
+                'depends-on' => array( self::$type . '_type' => 'image' ),
+                'default' => apply_filters( 'pods_form_ui_field_' . self::$type . '_template_default', 'rows' ),
+                'type' => 'pick',
+                'data' => apply_filters(
+                    'pods_form_ui_field_' . self::$type . '_type_templates',
+                    array(
+                        'rows' => __( 'Rows', 'pods' ),
+                        'tiles' => __( 'Tiles', 'pods' ),
+                    )
+                )
             ),/*
             self::$type . '_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),

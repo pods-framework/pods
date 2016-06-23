@@ -147,8 +147,9 @@ class PodsField_Pick extends PodsField {
                     array(
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
-                        'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                        'autocomplete' => __( 'Autocomplete', 'pods' ),
+                        'flexible' => __( 'Flexible', 'pods' ),
+                    )
                 ),
                 'dependency' => true
             ),
@@ -163,8 +164,9 @@ class PodsField_Pick extends PodsField {
                     array(
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
-                        'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                        'autocomplete' => __( 'Autocomplete', 'pods' ),
+                        'flexible' => __( 'Flexible', 'pods' ),
+                    )
                 ),
                 'dependency' => true
             ),
@@ -181,6 +183,32 @@ class PodsField_Pick extends PodsField {
 				),
                 'type' => 'boolean',
                 'default' => 0
+            ),
+            self::$type . '_show_edit_link' => array(
+                'label' => __( 'Show Edit Links', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
+            ),
+            self::$type . '_show_view_link' => array(
+                'label' => __( 'Show View Links', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
             ),
 			self::$type . '_select_text' => array(
                 'label' => __( 'Default Select Text', 'pods' ),

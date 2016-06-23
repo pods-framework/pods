@@ -5,10 +5,12 @@
  */
 export const RelationshipModel = Backbone.Model.extend( {
 	defaults: {
-		'id'      : 0,
-		'name'    : '',
-		'icon'    : '',
-		'selected': false
+		'id'       : 0,
+		'name'     : '',
+		'icon'     : '',
+		'link'     : '',
+		'edit_link': '',
+		'selected' : false
 	},
 
 	toggleSelected: function () {

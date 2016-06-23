@@ -2,7 +2,7 @@
 /**
  * @package Pods\Fields
  */
-class PodsField_Link extends PodsField {
+class PodsField_Link extends PodsField_Website {
 
     /**
      * Field Type Group
@@ -42,9 +42,9 @@ class PodsField_Link extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-		
+
     }
-	
+
     /**
      * Add options and set defaults to
      *
@@ -137,7 +137,7 @@ class PodsField_Link extends PodsField {
         $schema = 'LONGTEXT';
         return $schema;
     }
-    
+
 	/**
 	 * Change the value of the field
 	 *
@@ -153,7 +153,7 @@ class PodsField_Link extends PodsField {
 	public function value ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		return $value;
 	}
-	
+
     /**
      * Change the way the value of the field is displayed with Pods::get
      *
@@ -175,7 +175,7 @@ class PodsField_Link extends PodsField {
 
         // Ensure proper format
         $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
-        
+
         if ( isset( $value['url'] ) ) {
 
             $link = '<a href="%s"%s>%s</a>';
@@ -245,11 +245,11 @@ class PodsField_Link extends PodsField {
      */
     public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
-		
+
         $label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
 
         $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
-		
+
         if ( is_array( $check['url'] ) )
             $errors = $check['url'];
         else {
@@ -263,7 +263,7 @@ class PodsField_Link extends PodsField {
 
         if ( !empty( $errors ) )
             return $errors;
-		
+
         return true;
     }
 
@@ -282,12 +282,12 @@ class PodsField_Link extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
-		
+
 		// Start URL format
         if ( isset ($value['url']) ) {
 	       $value['url'] = $this->validate_url( $value['url'], $options );
         }
-		
+
 		// Start Title format
         if ( isset ($value['text']) ) {
             $value['text'] = $this->strip_html( $value['text'], $options );
@@ -297,10 +297,10 @@ class PodsField_Link extends PodsField {
         if ( isset ($value['target']) ) {
            $value['target'] = $this->validate_target( $value['target'], $options );
         }
-		
+
         return $value;
     }
-	
+
     /**
      * Customize the Pods UI manage table column output
      *
@@ -331,21 +331,21 @@ class PodsField_Link extends PodsField {
     public function validate_url( $value, $options = null ) {
         if ( empty( $value ) )
             return $value;
-        
+
         if ( 'none' != pods_var( self::$type . '_format', $options ) ) {
-            
+
             if ( is_array( $value ) ) {
                 if ( isset( $value[ 'scheme' ] ) )
                     $value = $this->build_url( $value );
                 else
                     $value = implode( '', $value );
             }
-    
+
             if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) )
                 $value = 'http://' . $value;
-    
+
             $url = @parse_url( $value );
-    
+
             if ( empty( $url ) || count( $url ) < 2 )
                 $value = '';
             else {
@@ -356,47 +356,47 @@ class PodsField_Link extends PodsField {
                     'query' => '',
                     'fragment' => ''
                 );
-    
+
                 $url = array_merge( $defaults, $url );
-    
+
                 if ( 'normal' == pods_var( self::$type . '_format', $options ) )
                     $value = $this->build_url( $url );
                 elseif ( 'no-www' == pods_var( self::$type . '_format', $options ) ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
-    
+
                     $value = $this->build_url( $url );
                 }
                 elseif ( 'force-www' == pods_var( self::$type . '_format', $options ) ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
-    
+
                     $value = $this->build_url( $url );
                 }
                 elseif ( 'no-http' == pods_var( self::$type . '_format', $options ) ) {
                     $value = $this->build_url( $url );
                     $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-    
+
                     if ( '/' == $url[ 'path' ] )
                         $value = trim( $value, '/' );
                 }
                 elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
-    
+
                     $value = $this->build_url( $url );
                     $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-    
+
                     if ( '/' == $url[ 'path' ] )
                         $value = trim( $value, '/' );
                 }
                 elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
-    
+
                     $value = $this->build_url( $url );
                     $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-    
+
                     if ( '/' == $url[ 'path' ] )
                         $value = trim( $value, '/' );
                 }
@@ -427,38 +427,6 @@ class PodsField_Link extends PodsField {
         return $value;
     }
 
-    /**
-     * Build an url
-     *
-     * @param array|string $url
-     *
-     * @return string
-     */
-    public function build_url ( $url ) {
-        if ( function_exists( 'http_build_url' ) )
-            return http_build_url( $url );
-
-        $defaults = array(
-            'scheme' => 'http',
-            'host' => '',
-            'path' => '/',
-            'query' => '',
-            'fragment' => ''
-        );
-
-        $url = array_merge( $defaults, (array) $url );
-
-        $new_url = trim( $url[ 'scheme' ] . '://', ':' ) . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
-
-        if ( !empty( $url[ 'query' ] ) )
-            $new_url .= '?' . ltrim( $url[ 'query' ], '?' );
-
-        if ( !empty( $url[ 'fragment' ] ) )
-            $new_url .= '#' . ltrim( $url[ 'fragment' ], '#' );
-
-        return $new_url;
-    }
-	
 
     /**
      * Strip HTML based on options

@@ -1310,6 +1310,7 @@ class PodsForm {
         $field_types = array(
             'text',
             'website',
+            'link',
             'phone',
             'email',
             'password',
@@ -1327,7 +1328,6 @@ class PodsForm {
             'boolean',
             'color',
             'slug',
-            'link',
         );
 
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );

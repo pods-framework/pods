@@ -53,7 +53,7 @@ if ( empty( $value ) ) {
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
 
 // Add template class
-$attributes['class'] = ' pods-field-template-' . $file_field_template;
+$attributes['class'] .= ' pods-field-template-' . $file_field_template;
 
 $attributes = array_map( 'esc_attr', $attributes );
 $css_id     = $attributes[ 'id' ];

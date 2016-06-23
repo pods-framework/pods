@@ -156,7 +156,7 @@ class PodsField_File extends PodsField {
             self::$type . '_field_template' => array(
                 'label' => __( 'List Style', 'pods' ),
                 'description' => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
-                'depends-on' => array( self::$type . '_type' => 'image' ),
+                'depends-on' => array( self::$type . '_type' => 'images' ),
                 'default' => apply_filters( 'pods_form_ui_field_' . self::$type . '_template_default', 'rows' ),
                 'type' => 'pick',
                 'data' => apply_filters(

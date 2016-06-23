@@ -5381,14 +5381,14 @@ class PodsAPI {
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params, 'table_info' => false, 'fields' => true );
 
-        if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && isset( $params->fields ) && !$params->fields )
+        if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && isset( $params->fields ) && !$params->fields )
             $load_fields = false;
         elseif ( is_array( $params ) && isset( $params[ 'fields' ] ) && !$params[ 'fields' ] )
             $load_fields = false;
 
 	    $table_info = false;
 
-        if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && ! empty( $params->table_info ) )
+        if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && ! empty( $params->table_info ) )
             $table_info = true;
         elseif ( is_array( $params ) && ! empty( $params[ 'table_info' ] ) )
             $table_info = true;
@@ -5406,7 +5406,7 @@ class PodsAPI {
 
 	    $check_pod = $params;
 
-	    if ( is_object( $params ) && ! is_a( $params->pod, 'WP_Post' ) && ! empty( $params->pod ) ) {
+	    if ( is_object( $params ) && ! is_a( $params, 'WP_Post' ) && ! empty( $params->pod ) ) {
 		    $check_pod = $params->pod;
 	    } elseif ( is_array( $params ) && ! empty( $params['pod'] ) ) {
 		    $check_pod = $params['pod'];
@@ -5426,7 +5426,7 @@ class PodsAPI {
                 return $pod;
             }
 
-            $_pod = get_object_vars( $params );
+            $_pod = get_object_vars( $check_pod );
         }
         else {
             $params = (object) pods_sanitize( $params );

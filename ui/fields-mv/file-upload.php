@@ -74,10 +74,12 @@ foreach ( $value as $id ) {
 	$link = wp_get_attachment_url( $attachment->ID );
 
 	$model_data[] = array(
-		'id'   => $id,
-		'icon' => $thumb[ 0 ],
-		'name' => $title,
-		'link' => $link
+		'id'        => $id,
+		'icon'      => $thumb[0],
+		'name'      => $title,
+		'edit_link' => '',
+		'link'      => '',
+		'download'  => $link,
 	);
 }
 

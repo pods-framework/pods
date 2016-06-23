@@ -69,10 +69,12 @@ export const MediaModal = PodsFileUploader.extend( {
 			}
 
 			newFiles.push( {
-				id  : attachment.attributes.id,
-				icon: attachmentThumbnail,
-				name: attachment.attributes.title,
-				link: attachment.attributes.url
+				id       : attachment.attributes.id,
+				icon     : attachmentThumbnail,
+				name     : attachment.attributes.title,
+				edit_link: attachment.attributes.editLink,
+				link     : attachment.attributes.link,
+				download : attachment.attributes.url
 			} );
 		} );
 

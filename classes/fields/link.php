@@ -334,9 +334,11 @@ class PodsField_Link extends PodsField_Website {
 		static $init;
 
 		if ( empty( $init ) ) {
-			echo '<div style="display:none">';
-			wp_editor( '', '#pods-link-editor-hidden' );
-			echo '</div>';
+			if ( ! did_action( 'wp_enqueue_editor' ) ) {
+				echo '<div style="display:none">';
+				wp_editor( '', '#pods-link-editor-hidden' );
+				echo '</div>';
+			}
 		}
 
 		$init = true;

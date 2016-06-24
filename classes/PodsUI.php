@@ -2029,7 +2029,7 @@ class PodsUI {
     /**
      * Select the pods fields to be exported
     */
-		public function export_fields_form() { ?>
+    public function export_fields_form() { ?>
         <div class="wrap pods-admin pods-ui">
             <h2>Choose Export Fields</h2>
                 <form method="POST" id="export_form" class="ac-custom ac-checkbox ac-cross">
@@ -2054,7 +2054,7 @@ class PodsUI {
             </form>
         </div>
     <?php
-		}
+    }
 
     public function export () {
         $export_type = pods_var( 'export_type', 'get', 'csv' );

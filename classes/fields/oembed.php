@@ -91,6 +91,11 @@ class PodsField_OEmbed extends PodsField {
 				'type' => 'number',
 				'help' => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' )
 			),
+			self::$type . '_show_preview' => array(
+				'label' => __( 'Show preview', 'pods' ),
+				'default' => 0,
+				'type' => 'boolean'
+			),
 		);
 
 		return $options;

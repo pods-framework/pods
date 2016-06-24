@@ -13,6 +13,9 @@
 ?>
     <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
+<?php 
+if ( ! empty( $options['oembed_show_preview'] ) ) {
+?>
     <p class="howto">
         <?php _e( 'Preview', 'pods' );?>
     </p>
@@ -25,4 +28,5 @@
     ?>
     </div>
 <?php
+}
 PodsForm::regex( $form_field_type, $options );

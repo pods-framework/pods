@@ -164,8 +164,7 @@
                 if ( slug.length )
                     shortcode += ' slug="' + slug + '"';
 
-                if ( fields.length || label.length || thank_you.length )
-                    shortcode += ' form="1"';
+                shortcode += ' form="1"';
 
                 if ( fields.length )
                     shortcode += ' fields="' + fields + '"';

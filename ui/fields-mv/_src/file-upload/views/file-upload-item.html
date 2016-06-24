@@ -7,7 +7,7 @@
 	value="<%- id %>" />
 <ul class="pods-flex-meta media-item">
 	<% if ( 1 != options.file_limit ) { %>
-		<li class="pods-flex-col pods-flex-handle"><span>Reorder</span></li>
+		<li class="pods-flex-col pods-flex-handle"><span><%- pods_localized_strings.__reorder %></span></li>
 	<% } %>
 	<li class="pods-flex-col pods-flex-icon"><img class="pinkynail" src="<%- icon %>" alt="Icon"></li>
 	<li class="pods-flex-col pods-flex-name">
@@ -25,14 +25,14 @@
 			<%- name %>
 		<% } %>
 	</li>
-	<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
+	<li class="pods-flex-col pods-flex-remove"><a href="#remove"><%- pods_localized_strings.__remove %></a></li>
 	<% if ( 1 == options.file_linked && '' != download ) { %>
-		<li class="pods-flex-col pods-flex-download"><a href="<%- download %>" target="_blank">Download</a></li>
+		<li class="pods-flex-col pods-flex-download"><a href="<%- download %>" target="_blank"><%- pods_localized_strings.__download %></a></li>
 	<% } %>
 	<% if ( 1 == options.file_show_view_link && '' != link ) { %>
-		<li class="pods-flex-col pods-flex-link"><a href="<%- link %>" target="_blank">View</a></li>
+		<li class="pods-flex-col pods-flex-link"><a href="<%- link %>" target="_blank"><%- pods_localized_strings.__view %></a></li>
 	<% } %>
 	<% if ( 1 == options.file_show_edit_link && '' != edit_link ) { %>
-		<li class="pods-flex-col pods-flex-edit"><a href="<%- edit_link %>" target="_blank">Edit</a></li>
+		<li class="pods-flex-col pods-flex-edit"><a href="<%- edit_link %>" target="_blank"><%- pods_localized_strings.__edit %></a></li>
 	<% } %>
 </ul>

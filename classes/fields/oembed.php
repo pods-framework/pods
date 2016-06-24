@@ -35,6 +35,22 @@ class PodsField_OEmbed extends PodsField {
 	 * @since 2.0
 	 */
 	public static $prepare = '%s';
+	
+	/**
+	 * Current embed width
+	 * 
+	 * @var int
+	 * @since 2.7
+	 */
+	private $width = 0;
+	
+	/**
+	 * Current embed height
+	 * 
+	 * @var int
+	 * @since 2.7
+	 */
+	private $height = 0;
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets
@@ -109,12 +125,27 @@ class PodsField_OEmbed extends PodsField {
 	public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
+		$width = (int) pods_v( self::$type . '_width', $options );
+		$height = (int) pods_v( self::$type . '_height', $options );
+
 		/**
 		 * @var $embed WP_Embed
 		 */
 		$embed = $GLOBALS[ 'wp_embed' ];
-		$value = $embed->run_shortcode( $value );
-		$value = $embed->autoembed( $value );
+
+		if ( 0 < $width && 0 < $height ) {
+			$this->width = $width;
+			$this->height = $height;
+			
+			// Setup [embed] shortcodes with set width/height
+			$value = $this->autoembed( $value );
+			
+			// Run [embed] shortcodes
+			$value = $this->run_shortcode( $value );
+		} else {
+			// Autoembed URL normally
+			$value = $embed->autoembed( $value );
+		}
 
 		return $value;
 	}
@@ -249,6 +280,48 @@ class PodsField_OEmbed extends PodsField {
 		$value = strip_shortcodes( $value );
 
 		return $value;
+	}
+
+	/**
+	 * Passes any unlinked URLs that are on their own line to {@link WP_Embed::shortcode()} for potential embedding.
+	 *
+	 * @see WP_Embed::autoembed()
+	 * @see WP_Embed::autoembed_callback()
+	 * 
+	 * @uses PodsField_OEmbed::autoembed_callback()
+	 *
+	 * @param string $content The content to be searched.
+	 * @return string Potentially modified $content.
+	 * 
+	 * @since 2.7
+	 */
+	public function autoembed( $content ) {
+
+		// Replace line breaks from all HTML elements with placeholders.
+		$content = wp_replace_in_html_tags( $content, array( "\n" => '<!-- wp-line-break -->' ) );
+
+		// Find URLs that are on their own line.
+		$content = preg_replace_callback( '|^(\s*)(https?://[^\s"]+)(\s*)$|im', array( $this, 'autoembed_callback' ), $content );
+
+		// Put the line breaks back.
+		return str_replace( '<!-- wp-line-break -->', "\n", $content );
+
+	}
+
+	/**
+	 * Callback function for {@link WP_Embed::autoembed()}.
+	 *
+	 * @param array $match A regex match array.
+	 * @return string The embed shortcode
+	 * 
+	 * @since 2.7
+	 */
+	public function autoembed_callback( $match ) {
+		
+		$shortcode = '[embed width="' . $this->width . '" height="' . $this->height . '"]' . $match[2] . '[/embed]';
+		
+		return $shortcode;
+
 	}
 
 }

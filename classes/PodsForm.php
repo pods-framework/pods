@@ -1325,6 +1325,7 @@ class PodsForm {
             'file',
             'avatar',
             'pick',
+            'oembed',
             'boolean',
             'color',
             'slug',

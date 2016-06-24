@@ -141,7 +141,7 @@ class PodsField_OEmbed extends PodsField {
 			$value = $this->autoembed( $value );
 			
 			// Run [embed] shortcodes
-			$value = $this->run_shortcode( $value );
+			$value = $embed->run_shortcode( $value );
 		} else {
 			// Autoembed URL normally
 			$value = $embed->autoembed( $value );

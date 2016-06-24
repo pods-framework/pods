@@ -3,7 +3,6 @@
     $attributes[ 'type' ] = 'text';
     $attributes[ 'value' ] = $value;
     $attributes[ 'tabindex' ] = 2;
-    $attributes[ 'class' ] .= ' regular-text';
     $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
     if ( pods_var( 'readonly', $options, false ) ) {
@@ -17,7 +16,7 @@
     <p class="howto">
         <?php _e( 'Preview', 'pods' );?>
     </p>
-    <div>
+    <div class="pods-oembed-preview">
     <?php
             $embed = $GLOBALS[ 'wp_embed' ];
             $preview = $embed->run_shortcode( $value );

@@ -107,7 +107,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @since 2.0
 	 */
 	public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-		$value = $this->strip_html( $value, $options );
+		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
 		/**
 		 * @var $embed WP_Embed
@@ -206,9 +206,6 @@ class PodsField_OEmbed extends PodsField {
 			$value = $value[0];
 		}
 
-		// Strip shortcodes
-		$value = strip_shortcodes( $value );
-
 		return $value;
 	}
 
@@ -226,7 +223,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @since 2.0
 	 */
 	public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-		$value = $this->strip_html( $value, $options );
+		$value = $this->pre_save( $value, $id, $name, $options, $fields, $pod );
 
 		return $value;
 	}
@@ -245,7 +242,11 @@ class PodsField_OEmbed extends PodsField {
 
 		$value = trim( $value );
 
+		// Strip HTML
 		$value = strip_tags( $value );
+
+		// Strip shortcodes
+		$value = strip_shortcodes( $value );
 
 		return $value;
 	}

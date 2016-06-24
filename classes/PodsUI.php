@@ -506,18 +506,18 @@ class PodsUI {
         $this->go();
     }
 
-		/**
-		 * add the Custom Bulk Action "Export Pods"
-		 */
-		public function add_bulk_action_export() {
-		    $this->actions_bulk['export_pods'] =  array (
-				    'label' => 'Export Pods',
-					   'callback' => array (
-						     &$this,
-								 'export_pods'
-						 )
-		    );
-		}
+    /**
+     * add the Custom Bulk Action "Export Pods"
+    */
+    public function add_bulk_action_export() {
+        $this->actions_bulk['export_pods'] =  array (
+            'label' => 'Export Pods',
+            'callback' => array (
+                &$this,
+                'export_pods'
+            )
+        );
+    }
 
 
     /**
@@ -1990,74 +1990,72 @@ class PodsUI {
         $this->manage();
     }
 
-		/**
-		 * Callback for exporting Pods data
-		 */
-		public function export_pods( $obj ) {
-			if (isset($_REQUEST['export_pod'])) {
+    /**
+     * Callback for exporting Pods data
+    */
+    public function export_pods( $obj ) {
+        if (isset($_REQUEST['export_pod'])) {
+            // Hack 1 : Set up type so that export function finds it
+            $type = $_REQUEST['export_pod'];
+            pods_v_set( $type, 'export_type' );
 
-				// Hack 1 : Set up type so that export function finds it
-				$type = $_REQUEST['export_pod'];
-				pods_v_set( $type, 'export_type' );
+            // Hack 2: Set up fields so that export function finds it
+            $export_fields = empty ( $_POST ['export_fields'] ) ? array () : $_POST ['export_fields'];
+            foreach ( $this->pod->fields() as $field ) {
+                if (in_array ( $field ['id'], $export_fields )) {
+                    $this->fields[ 'export' ][] = $field;
+                }
+            }
 
-				// Hack 2: Set up fields so that export function finds it
-				$export_fields = empty ( $_POST ['export_fields'] ) ? array () : $_POST ['export_fields'];
-				foreach ( $this->pod->fields() as $field ) {
-					if (in_array ( $field ['id'], $export_fields )) {
-						$this->fields[ 'export' ][] = $field;
-					}
-				}
+            // Hack 3: Set up where clause so that export function finds it
+            $ids = implode ( ",", $_GET ['action_bulk_ids'] );
+            $this->where = array(
+                'manage' => "id IN ($ids)",
+            );
 
-				// Hack 3: Set up where clause so that export function finds it
-				$ids = implode ( ",", $_GET ['action_bulk_ids'] );
-				$this->where = array(
-					'manage' => "id IN ($ids)",
-				);
+            $this->export();
 
-				$this->export();
+            // Hack 4: Cleanup since export function calls get_data before returning
+            $this->action_bulk = '';
+            $this->where = array();
+            $this->data = false;
+            $this->manage();
+        }
+        else {
+            $this->export_fields_form();
+        }
+    }
 
-				// Hack 4: Cleanup since export function calls get_data before returning
-				$this->action_bulk = '';
-				$this->where = array();
-				$this->data = false;
-				$this->manage();
-			}
-			else {
-				$this->export_fields_form();
-			}
-		}
-
-		/**
-		 * Select the pods fields to be exported
-		 */
-		public function export_fields_form() {
-			?>
-			<div class="wrap pods-admin pods-ui">
-				<h2>Choose Export Fields</h2>
-				<form method="POST" id="export_form" class="ac-custom ac-checkbox ac-cross">
-				<?php  foreach ($_GET as $key => $value){
-						if( $key== "action_bulk_ids" ){
-				?>
-						<input type="hidden" name= "<?php echo $key;?>[]" value="<?php echo implode(",",$value);?>">
-						<?php } else{ ?>
-							<input type="hidden" name= "<?php echo $key;?>" value="<?php echo $value?>">
-						<?php } ?>
-				<?php } ?>
-					<ul>
-						<?php foreach (  $this->pod->fields() as $field_name => $detail ) { ?>
-							<li class="av_one_fourth">
-								<input type="checkbox" name="export_fields[]" id="export_fields_<?php echo $detail[ 'id' ]; ?>" value="<?php echo $detail[ 'id' ]; ?>" />
-								<label for="cb"><?php echo $detail[ 'label' ];?> </label>
-							</li>
-						<?php } ?>
-					</ul>
-					<input type="submit" id="export_pod_csv" value="csv" name="export_pod" class="button-primary">
-					<input type="submit" id="export_pod_tsv" value="tsv" name="export_pod" class="button-primary">
-					<input type="submit" id="export_pod_xml" value="xml" name="export_pod" class="button-primary">
-				</form>
-			</div>
-			<?php
-		}
+    /**
+     * Select the pods fields to be exported
+    */
+		public function export_fields_form() { ?>
+            <div class="wrap pods-admin pods-ui">
+                <h2>Choose Export Fields</h2>
+                <form method="POST" id="export_form" class="ac-custom ac-checkbox ac-cross">
+                <?php  foreach ($_GET as $key => $value) {
+                        if ( $key== "action_bulk_ids" ) {
+                ?>
+                        <input type="hidden" name= "<?php echo $key;?>[]" value="<?php echo implode(",",$value);?>">
+                        <?php } else { ?>
+                            <input type="hidden" name= "<?php echo $key;?>" value="<?php echo $value?>">
+                        <?php } ?>
+                <?php } ?>
+                    <ul>
+                        <?php foreach (  $this->pod->fields() as $field_name => $detail ) { ?>
+                            <li class="av_one_fourth">
+                                <input type="checkbox" name="export_fields[]" id="export_fields_<?php echo $detail[ 'id' ]; ?>" value="<?php echo $detail[ 'id' ]; ?>" />
+                                <label for="cb"><?php echo $detail[ 'label' ];?> </label>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                    <input type="submit" id="export_pod_csv" value="csv" name="export_pod" class="button-primary">
+                    <input type="submit" id="export_pod_tsv" value="tsv" name="export_pod" class="button-primary">
+                    <input type="submit" id="export_pod_xml" value="xml" name="export_pod" class="button-primary">
+                </form>
+            </div>
+    <?php
+    }
 
     public function export () {
         $export_type = pods_var( 'export_type', 'get', 'csv' );

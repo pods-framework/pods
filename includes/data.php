@@ -795,7 +795,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
 				} elseif ( function_exists( 'pll_get_post' ) ) {
 					$polylang_id = pll_get_post( $post_id );
-					if ( null !== $polylang_id ) {
+					if ( ! empty( $polylang_id ) ) {
 						$post_id = $polylang_id;
 					}
 				}

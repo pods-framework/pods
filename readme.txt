@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
 Tested up to: 4.5
-Stable tag: 2.6.6-a-1
+Stable tag: 2.6.7-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,8 +166,27 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.6 - June 23rd 2016 =
+* Added: Polylang compatibility with latest versions along with fixes to longstanding issues with editing and displaying content, relationships, and taxonomy (#3574). Fixes (#3572, #3506) [@JoryHogeveen]
+* Added: REST API v2 Compatibility (#3584). Switches `register_api_field` to `register_rest_field`. Fixes (#3581) [@sc0ttkclark]
+* Added: Allow changing the Auto Templates Filter. This adds a new section in the Auto Templates tab that allows overriding the default `the_content` filter (#3542). Fixes (#3540) [@Shelob9]
+* Added: Polylang support to pods_v post_id (#3562). Allows Pods templates that are translated to be properly selected. Fixes (#3561,#3537) [@jamesgol]
+* Added: Create new 'post_id' method for pods_v (#3537). Provides a method to allow i18n plugins to return a different post id. Related to (#3542,#3526) [@jamesgol]
+* Added: Add filter to PodsMeta->groups_get() allowing adjusting the groups via filter (#3548). Related to (#3547) [@jamesgol]
+* Added: Use form_counter in field name to be unique and prevent conflicts. (#3535) Fixes (#3533) [@pcfreak30]
+* Added: Add user, media and comment support to REST API (#3516). Related to (#3418,#3419) [@pcfreak30]
+* Added: Filter the Pods Metas to Display (#3544). Fixes (#3520). [@coding-panda]
+* Fixed: REST API cleanup for pick field handling. (#3560) Fixes (#3559) [@sc0ttkclark]
+* Fixed: Exclude Unique Post fields from duplication during `$pods->save`. (#3564). Includes `ID`, `post_name`, `post_date`, `post_date_gmt`, `post_modified`, `post_modified_gmt` and `guid`. Fixes (#3563) [@pcfreak30]
+* Fixed: Allow midnight (00:00) as valid time (#3555). If "Allow empty value" is unchecked and a value is not passed it will default to the current time, but it will still accept 00:00:00 as a valid value. Related to (#3488) [@jamesgol]
+* Fixed: Pass $strict = false to load_pod (#3554). This will keep the "Pod not found" message from being displayed during register of other post types. Related to (#3416) [@jamesgol]
+* Fixed: Don't add space to currency names that use HTML encoding (#3553). Fixes British pound currency symbols and others. Resolves (#3498) [@jamesgol]
+* Fixed: Removed extra setting showing up in Auto Templates settings for Taxonomies (#3543). Fixes (#3541) [@Shelob9]
+* Fixed: Use html_entity_decode to convert separator as it is an html entity. (#3536) Fixes (#3527) [@pcfreak30]
+* Fixed: PodsRESTHandlers::write_handler needs to be static (#3511). Fixes (#3510) [@pcfreak30]
+
 = 2.6.5.2 - May 4th 2016 =
-Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
+* Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
 
 = 2.6.5.1 - May 4th, 2016 =
 * Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]

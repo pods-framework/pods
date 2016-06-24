@@ -10,7 +10,10 @@ jQuery(document).ready(function($){
 		activeLinkPicker = $(this).parents('.pods-link-options');
 		$('body').addClass('modal-open-pods-field-link');
 		wpActiveEditor = true;
-		wpLink.open('podsLinkPopupDummyTextarea'); // Open modal in the dummy textarea
+
+		// Open modal in the dummy textarea
+		wpLink.open( 'pods-link-editor-hidden', activeLinkPicker.find('.linkPickerUrl'), activeLinkPicker.find('.linkPickerText'), $('#pods-link-editor-hidden') );
+
 		$('#wp-link #wp-link-url').val(activeLinkPicker.find('.linkPickerUrl').val());
 		$('#wp-link #wp-link-text').val(activeLinkPicker.find('.linkPickerText').val());
 		if (activeLinkPicker.find('.linkPickerTarget').is(':checked')) {

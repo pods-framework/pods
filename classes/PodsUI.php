@@ -2030,33 +2030,32 @@ class PodsUI {
      * Select the pods fields to be exported
     */
 		public function export_fields_form() { ?>
-		        <div class="wrap pods-admin pods-ui">
-		            <h2>Choose Export Fields</h2>
-		            <form method="POST" id="export_form" class="ac-custom ac-checkbox ac-cross">
-		            <?php  foreach ($_GET as $key => $value) {
-		                    if ( $key== "action_bulk_ids" ) {
-		            ?>
-		                    <input type="hidden" name= "<?php echo $key;?>[]" value="<?php echo implode(",",$value);?>">
-		                    <?php } else { ?>
-		                        <input type="hidden" name= "<?php echo $key;?>" value="<?php echo $value?>">
-		                    <?php } ?>
-		            <?php } ?>
-		                <ul>
-		                    <?php foreach (  $this->pod->fields() as $field_name => $detail ) { ?>
-		                        <li class="av_one_fourth">
-		                            <input type="checkbox" name="export_fields[]" id="export_fields_<?php echo $detail[ 'id' ]; ?>" value="<?php echo $detail[ 'id' ]; ?>" />
-		                            <label for="cb"><?php echo $detail[ 'label' ];?> </label>
-		                        </li>
-		                    <?php } ?>
-		                </ul>
-		                <input type="submit" id="export_pod_csv" value="csv" name="export_pod" class="button-primary">
-		                <input type="submit" id="export_pod_tsv" value="tsv" name="export_pod" class="button-primary">
-		                <input type="submit" id="export_pod_xml" value="xml" name="export_pod" class="button-primary">
-		            </form>
-		        </div>
-		<?php
+        <div class="wrap pods-admin pods-ui">
+            <h2>Choose Export Fields</h2>
+                <form method="POST" id="export_form" class="ac-custom ac-checkbox ac-cross">
+                <?php foreach ($_GET as $key => $value) {
+                    if ( $key== "action_bulk_ids" ) { ?>
+                        <input type="hidden" name= "<?php echo $key;?>[]" value="<?php echo implode(",",$value);?>">
+                    <?php } else { ?>
+                        <input type="hidden" name= "<?php echo $key;?>" value="<?php echo $value?>">
+                    <?php } ?>
+                <?php } ?>
+                <ul>
+                     <?php foreach (  $this->pod->fields() as $field_name => $detail ) { ?>
+                         <li class="av_one_fourth">
+                             <input type="checkbox" name="export_fields[]" id="export_fields_<?php echo $detail[ 'id' ]; ?>" value="<?php echo $detail[ 'id' ]; ?>" />
+                             <label for="cb"><?php echo $detail[ 'label' ];?> </label>
+                         </li>
+                     <?php } ?>
+                </ul>
+                <input type="submit" id="export_pod_csv" value="csv" name="export_pod" class="button-primary">
+                <input type="submit" id="export_pod_tsv" value="tsv" name="export_pod" class="button-primary">
+                <input type="submit" id="export_pod_xml" value="xml" name="export_pod" class="button-primary">
+            </form>
+        </div>
+    <?php
 		}
-		
+
     public function export () {
         $export_type = pods_var( 'export_type', 'get', 'csv' );
 

@@ -63,45 +63,18 @@ class PodsField_OEmbed extends PodsField {
 				'dependency' => true,
 				'developer_mode' => true
 			),
-			/*'output_options' => array(
-				'label' => __( 'Output Options', 'pods' ),
-				'group' => array(
-					self::$type . '_allow_shortcode' => array(
-						'label' => __( 'Allow Shortcodes?', 'pods' ),
-						'default' => 0,
-						'type' => 'boolean',
-						'dependency' => true
-					),
-					self::$type . '_allow_html' => array(
-						'label' => __( 'Allow HTML?', 'pods' ),
-						'default' => 0,
-						'type' => 'boolean',
-						'dependency' => true
-					)
-				)
-			),*/
-			/*self::$type . '_allowed_html_tags' => array(
-				'label' => __( 'Allowed HTML Tags', 'pods' ),
-				'depends-on' => array( self::$type . '_allow_html' => true ),
-				'default' => 'strong em a ul ol li b i',
-				'type' => 'text'
-			),*/
-			self::$type . '_max_length' => array(
-				'label' => __( 'Maximum Length', 'pods' ),
-				'default' => 255,
+			self::$type . '_width' => array(
+				'label' => __( 'Embed Width', 'pods' ),
+				'default' => 0,
 				'type' => 'number',
-				'help' => __( 'Set to -1 for no limit', 'pods' )
-			)/*,
-			self::$type . '_size' => array(
-				'label' => __( 'Field Size', 'pods' ),
-				'default' => 'medium',
-				'type' => 'pick',
-				'data' => array(
-					'small' => __( 'Small', 'pods' ),
-					'medium' => __( 'Medium', 'pods' ),
-					'large' => __( 'Large', 'pods' )
-				)
-			)*/
+				'help' => __( 'Optional width to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' )
+			),
+			self::$type . '_height' => array(
+				'label' => __( 'Embed Height', 'pods' ),
+				'default' => 0,
+				'type' => 'number',
+				'help' => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' )
+			),
 		);
 
 		return $options;
@@ -116,12 +89,7 @@ class PodsField_OEmbed extends PodsField {
 	 * @since 2.0
 	 */
 	public function schema ( $options = null ) {
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
-
-		$schema = 'VARCHAR(' . $length . ')';
-
-		if ( 255 < $length || $length < 1 )
-			$schema = 'LONGTEXT';
+		$schema = 'LONGTEXT';
 
 		return $schema;
 	}
@@ -232,16 +200,14 @@ class PodsField_OEmbed extends PodsField {
 	public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		$value = $this->strip_html( $value, $options );
 
+		// Only allow ONE URL
 		if ( ! empty( $value ) ) {
 			$value = explode( ' ', $value );
 			$value = $value[0];
 		}
 
-		$length = (int) pods_var( self::$type . '_max_length', $options, 255 );
-
-		if ( 0 < $length && $length < pods_mb_strlen( $value ) ) {
-			$value = pods_mb_substr( $value, 0, $length );
-		}
+		// Strip shortcodes
+		$value = strip_shortcodes( $value );
 
 		return $value;
 	}

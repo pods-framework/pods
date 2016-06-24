@@ -158,13 +158,14 @@
 
             }
             else if ( 'form' == use_case ) {
+                // Make shortcode into [pods-form]
+                shortcode += '-form';
+
                 if ( pod_select.length )
                     shortcode += ' name="' + pod_select + '"';
 
                 if ( slug.length )
                     shortcode += ' slug="' + slug + '"';
-
-                shortcode += ' form="1"';
 
                 if ( fields.length )
                     shortcode += ' fields="' + fields + '"';

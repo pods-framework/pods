@@ -1,26 +1,26 @@
-( function ( $ ) {
+;( function ( $ ) {
 
 	if ( $('#pods_i18n_settings_save').length ) {
-		$(document).on('click', '#pods_i18n_settings_save', function() {
+		$(document).on( 'click', '#pods_i18n_settings_save', function() {
 			$('#nonce_i18n').appendTo('.pods-admin form#posts-filter');
-			$('.pods-admin form#posts-filter').attr('method', 'post').submit();
+			$('.pods-admin form#posts-filter').attr( 'method', 'post' ).submit();
 		});
 	}
 
 	if ( $('.pods-i18n-input').length ) {
 		//pods_edit_i18n.init();
-		$('.pods-admin .postbox-container #submitdiv').after('<div id="toggle_i18n" class="postbox"><div class="inside"><p><button class="button-secondary">'+pods_admin_i18n_strings.__toggle_translations+'</button></p></div></div>');
-		$(document).on('click', '.pods-admin .postbox-container #toggle_i18n', function(e) {
+		$('.pods-admin .postbox-container #submitdiv').after('<div id="toggle_i18n" class="postbox"><div class="inside"><p><button class="button-secondary">' + pods_admin_i18n_strings.__toggle_translations + '</button></p></div></div>');
+		$(document).on( 'click', '.pods-admin .postbox-container #toggle_i18n', function(e) {
 			e.preventDefault();
 			if ( $('.pods-i18n-input').first().css('display') == 'none' ) {
-				$('.pods-i18n-input').each( function() { $(this).show(); });
+				$('.pods-i18n-input').each( function() { $(this).show(); } );
 			} else {
-				$('.pods-i18n-input').each( function() { $(this).hide(); });
+				$('.pods-i18n-input').each( function() { $(this).hide(); } );
 			}
 			return false;
 		});
 	}
-	
+
 	/*pods_edit_i18n = {
 		available_languages: {},
 		locale_container_selector: '.pods-i18n-input',

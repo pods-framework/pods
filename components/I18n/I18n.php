@@ -565,8 +565,8 @@ class Pods_I18n extends PodsComponent {
 			/*'data' => $data,
 			'total' => count( $data ),
 			'total_found' => count( $data ),*/
-			'items' => 'Languages',
-			'item' => 'Language',
+			'items' => __('Languages', 'pods'),
+			'item' => __('Language', 'pods'),
 			'fields' => array(
 				'manage' => array(
 					'enabled' => array( 

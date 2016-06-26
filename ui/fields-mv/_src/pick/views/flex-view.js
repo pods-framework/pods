@@ -33,5 +33,21 @@ export const FlexView = PodsFieldListView.extend( {	// Cache the template functi
 
 	filter: function ( child, index, collection ) {
 		return child.attributes.selected;
+	},
+
+	onAttach: function () {
+
+		// @todo
+		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
+
+		// init sortable
+		this.$el.sortable( {
+			containment      : 'parent',
+			axis             : 'y',
+			scrollSensitivity: 40,
+			tolerance        : 'pointer',
+			opacity          : 0.6
+		} );
 	}
+
 } );

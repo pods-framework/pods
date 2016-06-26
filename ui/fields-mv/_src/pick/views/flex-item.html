@@ -12,14 +12,7 @@
 		</li>
 	<% } %>
 	<li class="pods-flex-col pods-flex-name">
-		<input name="pods_meta_file_test[<%- attr.id %>][title]"
-				data-name-clean="pods-meta-file-test-id-title"
-				id="pods-form-ui-pods-meta-file-test-id-title"
-				class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-title"
-				type="text"
-				value="<%= name %>"
-				tabindex="2"
-				maxlength="255">
+		<%= name %>
 	</li>
 	<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
 	<% if ( 1 == options.pick_show_view_link && '' != link ) { %>

@@ -139,13 +139,19 @@ class PodsField_OEmbed extends PodsField {
 	public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-		$width = (int) pods_v( self::$type . '_width', $options );
-		$height = (int) pods_v( self::$type . '_height', $options );
+		$args = array( 
+			'width' => (int) pods_v( self::$type . '_width', $options ),
+			'height' => (int) pods_v( self::$type . '_height', $options ),
+		);
+		//$width = (int) pods_v( self::$type . '_width', $options );
+		//$height = (int) pods_v( self::$type . '_height', $options );
+
+		$value = wp_oembed_get( $value, $args );
 
 		/**
 		 * @var $embed WP_Embed
 		 */
-		$embed = $GLOBALS[ 'wp_embed' ];
+		/*$embed = $GLOBALS[ 'wp_embed' ];
 
 		if ( 0 < $width && 0 < $height ) {
 			$this->width = $width;
@@ -159,7 +165,7 @@ class PodsField_OEmbed extends PodsField {
 		} else {
 			// Autoembed URL normally
 			$value = $embed->autoembed( $value );
-		}
+		}*/
 
 		return $value;
 	}

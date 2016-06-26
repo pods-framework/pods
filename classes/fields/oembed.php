@@ -348,9 +348,19 @@ class PodsField_OEmbed extends PodsField {
         // Sanitize input
         $params = pods_unslash( (array) $_POST );
 
-        if ( isset( $_POST['_nonce_pods_oembed'] ) && wp_verify_nonce( $_POST['_nonce_pods_oembed'], 'pods_field_embed_preview' ) ) {
-        	$c = $this->display( strip_tags( $_POST['pods_field_embed_value'] ) );
-        	wp_send_json_success( $c );
+        if (   isset( $params['_nonce_pods_oembed'] ) 
+        	&& isset( $params['pods_field_oembed_value'] ) 
+        	&& wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) 
+        ) {
+        	$value = $this->strip_html( $params['pods_field_oembed_value'] );
+        	$name = ( isset( $params['pods_field_oembed_name'] ) ) ? $params['pods_field_oembed_name'] : '';
+        	$options = ( isset( $params['pods_field_oembed_options'] ) ) ? json_decode( $params['pods_field_oembed_options'], true ) : array();
+        	$options['oembed_width'] = ( isset( $options['oembed_width'] ) ) ? (int) $options['oembed_width'] : 0;
+        	$options['oembed_height'] = ( isset( $options['oembed_height'] ) ) ? (int) $options['oembed_height'] : 0;
+        	$options['width'] = $options['oembed_width'];
+        	$options['height'] = $options['oembed_height'];
+
+        	wp_send_json_success( wp_oembed_get( $value, $options ) ); //$this->display( $value, $name, $options )
         }
         wp_send_json_error();
 

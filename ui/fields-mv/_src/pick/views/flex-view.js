@@ -32,7 +32,7 @@ export const FlexView = PodsFieldListView.extend( {	// Cache the template functi
 
 	className: 'pods-flex-list pods-relationship',
 
-	childView: FlexItem
+	childView: FlexItem,
 
 	/*
 	events: {
@@ -40,30 +40,9 @@ export const FlexView = PodsFieldListView.extend( {	// Cache the template functi
 	}
 	*/
 
-
-	/*
-	render: function () {
-		var $el, filtered_collection;
-
-		// Rebuild the entire view from scratch, starting with the container template
-		$el = this.$el;
-		$el.empty();
-		$el.html( this.template() );
-
-		// We only want to display selected items, our specialized collection has a helper method to give us a
-		// new collection with just that
-		filtered_collection = this.collection.filter_selected();
-
-		// Add an item view to the HTML list for each one in our filtered collection
-		filtered_collection.each( function ( item_model ) {
-			var view = new app.flex_item_view( { model: item_model } );
-			$el.find( 'ul.pods-collection-container' ).append( view.render().el );
-		} );
-
-		// Chaining
-		return this;
-	},
-	*/
+	filter: function( child, index, collection ) {
+		return child.attributes.selected;
+	}
 
 	/*
 	add_new_click: function ( e ) {

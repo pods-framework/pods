@@ -239,7 +239,7 @@ class PodsField_OEmbed extends PodsField {
 		// Only allow ONE URL
 		if ( ! empty( $value ) ) {
 			$value = explode( ' ', $value );
-			$value = $value[0];
+			$value = esc_url( $value[0] );
 		}
 
 		return $value;

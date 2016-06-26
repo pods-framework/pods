@@ -58,8 +58,17 @@ class PodsField_OEmbed extends PodsField {
 	 * @since 2.0
 	 */
 	public function __construct () {
-
 	}
+
+    /**
+     * Add admin_init actions
+     *
+     * @since 2.3
+     */
+    public function admin_init() {
+        // AJAX for Uploads
+        add_action( 'wp_ajax_oembed_update_preview', array( $this, 'admin_ajax_oembed_update_preview' ) );
+    }
 
 	/**
 	 * Add options and set defaults to
@@ -327,6 +336,25 @@ class PodsField_OEmbed extends PodsField {
 		
 		return $shortcode;
 
+	}
+
+    /**
+     * Handle update preview AJAX
+     *
+     * @since 2.7
+     */
+	public function admin_ajax_oembed_update_preview() {
+
+        // Sanitize input
+        $params = pods_unslash( (array) $_POST );
+
+        if ( isset( $_POST['_nonce_pods_oembed'] ) && wp_verify_nonce( $_POST['_nonce_pods_oembed'], 'pods_field_embed_preview' ) ) {
+        	$c = $this->display( strip_tags( $_POST['pods_field_embed_value'] ) );
+        	wp_send_json_success( $c );
+        }
+        wp_send_json_error();
+
+		die(); // Kill it!
 	}
 
 }

@@ -6,21 +6,18 @@ import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-vi
  *
  */
 export const FlexItem = PodsFieldView.extend( {
-	tagName  : 'li',
+	tagName: 'li',
 
 	className: 'pods-flex-item pods-relationship',
 
-	template : _.template( flexTemplate.default ),
+	template: _.template( flexTemplate.default ),
 
-	events: {
-		'click .pods-flex-remove a': 'delete_item_click'
+	ui: {
+		removeButton: '.pods-flex-remove a'
 	},
 
-	delete_item_click: function ( e ) {
-		e.preventDefault();
-
-		// "delete" really just toggles selected to false for relationships
-		this.model.toggle_selected();
+	triggers: {
+		'click @ui.removeButton': 'remove:item:click'
 	}
 } );
 
@@ -34,21 +31,7 @@ export const FlexView = PodsFieldListView.extend( {	// Cache the template functi
 
 	childView: FlexItem,
 
-	/*
-	events: {
-		'click .button.pods-flex-relationship-add': 'add_new_click'
-	}
-	*/
-
-	filter: function( child, index, collection ) {
+	filter: function ( child, index, collection ) {
 		return child.attributes.selected;
 	}
-
-	/*
-	add_new_click: function ( e ) {
-		e.preventDefault();
-		var item_model = app.get_spoof_data.create_spoof_item();
-		this.collection.add( item_model ); // add item to collection; view is updated via event 'add'
-	}
-	*/
 } );

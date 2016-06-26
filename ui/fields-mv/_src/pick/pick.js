@@ -32,6 +32,22 @@ export const Pick = Mn.LayoutView.extend( {
 		this.showChildView( 'addNew', addNew );
 	},
 
+	/** "Remove" in flex view just toggles an item's selected attribute
+	 *
+	 * @param childView
+	 * @param args
+	 */
+	onChildviewRemoveItemClick: function ( childView, args ) {
+		const list = this.getChildView( 'list' );
+
+		args.model.toggleSelected();
+		list.render();
+	},
+
+	/**
+	 * 
+	 * @param childView
+	 */
 	onChildviewAddNewClick: function ( childView ) {
 		const options = this.model.get( 'options' );
 

@@ -139,12 +139,15 @@ class PodsField_OEmbed extends PodsField {
 	public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-		$args = array( 
-			'width' => (int) pods_v( self::$type . '_width', $options ),
-			'height' => (int) pods_v( self::$type . '_height', $options ),
-		);
-		//$width = (int) pods_v( self::$type . '_width', $options );
-		//$height = (int) pods_v( self::$type . '_height', $options );
+		$width = (int) pods_v( self::$type . '_width', $options );
+		$height = (int) pods_v( self::$type . '_height', $options );
+		$args = array();
+		if ( $width > 0 ) {
+			$args['width'] = $width;
+		}
+		if ( $height > 0 ) {
+			$args['height'] = $height;
+		}
 
 		$value = wp_oembed_get( $value, $args );
 

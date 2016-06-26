@@ -33,7 +33,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	},
 
 	initState: function () {
-		const title = this.options.title || 'Add New Record';
+		const title = this.options.title || pods_localized_strings.__add_new_record;
 		const src = this.options.src || '/';
 
 		this.states.add( [

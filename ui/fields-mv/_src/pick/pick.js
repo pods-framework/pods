@@ -52,7 +52,7 @@ export const Pick = Mn.LayoutView.extend( {
 		const options = this.model.get( 'options' );
 
 		const modalFrame = new IframeFrame( {
-			title: 'The Title',
+			title: pods_localized_strings.__the_title,
 			src  : options[ 'iframe_src' ]
 		} );
 		modalFrame.modal.open();

@@ -285,7 +285,7 @@
                             }
                         },
                         error : function () {
-                            var err_msg = 'Unable to process request, please try again.';
+                            var err_msg = pods_localized_strings.__unable_to_process_request_please_try_again;
 
                             if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                 pods_admin_submit_error_callback( err_msg, $submittable );

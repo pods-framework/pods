@@ -33,10 +33,11 @@ if ( 1 == $show_preview ) {
 
 			$(document).on('keyup', '#<?php echo esc_js( $attributes[ 'id' ] ); ?>', function(e){
 				var value = $(this).val();
+				var nonce = $(this).parent().find('#<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_preview_nonce').val()
 				delay(function(){
 					postdata = {
 						'action': 'oembed_update_preview',
-						'_nonce_pods_oembed': $(this).parent().find('#<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_preview_nonce').val(),
+						'_nonce_pods_oembed': nonce,
 						'pods_field_embed_value': value
 					}
 					$.ajax({

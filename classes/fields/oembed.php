@@ -435,6 +435,7 @@ class PodsField_OEmbed extends PodsField {
 				$host = implode( '.', $tmp );
 				$providers[ $key ]['host'] = $host;
 			}
+			$this->providers = $providers;
 			return $providers;
 		}
 		

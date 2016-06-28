@@ -875,6 +875,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 </div>
             </div>
             <!-- /#submitdiv -->
+            <?php do_action( 'pods_admin_ui_setup_edit_meta_boxes', $pod, $obj ) ?>
         </div>
     </div>
 </div>

@@ -37,6 +37,7 @@ if ( 1 == $show_preview ) {
 				var value = $(this).val();
 				var name = '<?php echo $name; ?>';
 				var options = {
+					id: <?php echo $options[ 'id' ]; ?>,
 					oembed_width: '<?php echo $oembed_width; ?>',
 					oembed_height: '<?php echo $oembed_height; ?>',
 				};
@@ -55,10 +56,8 @@ if ( 1 == $show_preview ) {
 						cache : false,
 						data : postdata,
 						success : function ( response ) {
-							if ( response.success ) {
+							if ( typeof response.data == 'string' ) {
 								$('#<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_preview').html( response.data );
-							} else {
-								$('#<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_preview').html( '' );
 							}
 						}
 					});

@@ -74,7 +74,8 @@ class PodsField_WYSIWYG extends PodsField {
                             'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
                             'cleditor' => __( 'CLEditor', 'pods' )
                         )
-                    )
+                    ),
+                'dependency' => true
             ),
             'editor_options' => array(
                 'label' => __( 'Editor Options', 'pods' ),

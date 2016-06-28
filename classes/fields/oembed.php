@@ -68,15 +68,15 @@ class PodsField_OEmbed extends PodsField {
 	public function __construct () {
 	}
 
-    /**
-     * Add admin_init actions
-     *
-     * @since 2.3
-     */
-    public function admin_init() {
-        // AJAX for Uploads
-        add_action( 'wp_ajax_oembed_update_preview', array( $this, 'admin_ajax_oembed_update_preview' ) );
-    }
+	/**
+	 * Add admin_init actions
+	 *
+	 * @since 2.3
+	 */
+	public function admin_init() {
+		// AJAX for Uploads
+		add_action( 'wp_ajax_oembed_update_preview', array( $this, 'admin_ajax_oembed_update_preview' ) );
+	}
 
 	/**
 	 * Add options and set defaults to
@@ -533,43 +533,43 @@ class PodsField_OEmbed extends PodsField {
 		return false;
 	}
 
-    /**
-     * Handle update preview AJAX
-     *
-     * @since 2.7
-     */
+	/**
+	 * Handle update preview AJAX
+	 *
+	 * @since 2.7
+	 */
 	public function admin_ajax_oembed_update_preview() {
 
-        // Sanitize input
-        $params = pods_unslash( (array) $_POST );
+		// Sanitize input
+		$params = pods_unslash( (array) $_POST );
 
-        if (   ! empty( $params['_nonce_pods_oembed'] ) 
-        	&& ! empty( $params['pods_field_oembed_value'] ) 
-        	&& wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) 
-        ) {
-        	$value = $this->strip_html( $params['pods_field_oembed_value'] );
-        	$name = ( ! empty( $params['pods_field_oembed_name'] ) ) ? $this->strip_html( $params['pods_field_oembed_name'] ) : '';
-        	$options = ( ! empty( $params['pods_field_oembed_options'] ) ) ? $params['pods_field_oembed_options'] : array();
+		if (   ! empty( $params['_nonce_pods_oembed'] ) 
+			&& ! empty( $params['pods_field_oembed_value'] ) 
+			&& wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) 
+		) {
+			$value = $this->strip_html( $params['pods_field_oembed_value'] );
+			$name = ( ! empty( $params['pods_field_oembed_name'] ) ) ? $this->strip_html( $params['pods_field_oembed_name'] ) : '';
+			$options = ( ! empty( $params['pods_field_oembed_options'] ) ) ? $params['pods_field_oembed_options'] : array();
 
-        	// Load the field to get it's options
-        	$options = pods_api()->load_field( (object) $options );
+			// Load the field to get it's options
+			$options = pods_api()->load_field( (object) $options );
 
-        	// Field options are stored here, if not, just stay with the full options array
-        	if ( ! empty( $options['options'] ) ) {
-        		$options = $options['options'];
-        	}
+			// Field options are stored here, if not, just stay with the full options array
+			if ( ! empty( $options['options'] ) ) {
+				$options = $options['options'];
+			}
 
-        	// Run display function to run oEmbed
-        	$value = $this->display( $value, $name, $options );
+			// Run display function to run oEmbed
+			$value = $this->display( $value, $name, $options );
 
-        	if ( empty( $value ) ) {
+			if ( empty( $value ) ) {
 				$value = __( 'Please choose a valid oEmbed URL.', 'pods' );
-        		wp_send_json_error( $value );
-        	} else {
-        		wp_send_json_success( $value );
-        	}
-        }
-        wp_send_json_error( __( 'Unauthorized request', 'pods' ) );
+				wp_send_json_error( $value );
+			} else {
+				wp_send_json_success( $value );
+			}
+		}
+		wp_send_json_error( __( 'Unauthorized request', 'pods' ) );
 
 		die(); // Kill it!
 	}

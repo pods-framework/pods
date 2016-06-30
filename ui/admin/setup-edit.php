@@ -136,7 +136,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 }
 
 // Make use of the WP core meta box functionality
-do_action( 'add_meta_boxes' );
+do_action( 'add_meta_boxes', 'pods_edit', $pod );
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>

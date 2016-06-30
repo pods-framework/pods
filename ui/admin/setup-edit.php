@@ -134,6 +134,9 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
     if ( empty( $field_type_fields ) )
         $no_additional[] = $field_type;
 }
+
+// Make use of the WP core meta box functionality
+do_action( 'add_meta_boxes' );
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
@@ -875,7 +878,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 </div>
             </div>
             <!-- /#submitdiv -->
-            <?php do_action( 'pods_admin_ui_setup_edit_meta_boxes', $pod, $obj ) ?>
+            <?php do_meta_boxes( 'pods_edit', 'side', $pod ); ?>
         </div>
     </div>
 </div>

@@ -306,6 +306,10 @@ class PodsAPI {
 				if ( $simple ) {
 					delete_post_meta( $id, $meta_key );
 
+					if ( !has_filter( 'sanitize_post_meta__pods_' . $meta_key, 'pods_sanitize' ) ) {
+						add_filter( 'sanitize_post_meta__pods_' . $meta_key, 'pods_sanitize', 1, 1 );
+					}
+
 					update_post_meta( $id, '_pods_' . $meta_key, $meta_value );
 
 					if ( ! is_array( $meta_value ) ) {
@@ -3431,7 +3435,7 @@ class PodsAPI {
                                         if ( !isset( $custom_label[ 1 ] ) )
                                             $custom_label[ 1 ] = $custom_label[ 0 ];
 
-                                        $custom_label[ 0 ] = trim( (string) $custom_label[ 0 ] );
+                                        $custom_label[ 0 ] = pods_unsanitize( trim( (string) $custom_label[ 0 ] ) );
                                         $custom_label[ 1 ] = trim( (string) $custom_label[ 1 ] );
                                         $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
                                     }

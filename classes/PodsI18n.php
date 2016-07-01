@@ -90,20 +90,12 @@ class PodsI18n {
 	public function register( $string_key, $translation ) {
 		/**
 		 * Converts string into reference object variable
-		 * Uses the same logic as PHP to create the same references
-		 * 
-		 * 1. Remove capitals
-		 * 2. Remove all punctuation etc.
-		 * 3. Trim
-		 * 4. Convert whitespaces to underscores
+		 * Uses the same logic as JS to create the same references
 		 */
-		$ref = strtolower( $string_key );
-		$ref = preg_replace( '/[^a-z]+/i', ' ', $ref );
-		$ref = trim( $ref );
-		$ref = preg_replace( '/\s+/', '_', $ref );
+		$ref = '__' . $string_key;
 
 		// Add it to the strings localized
-		$this->strings[ '__' . $ref ] = $translation;
+		$this->strings[ $ref ] = $translation;
 		// Remove the old key
 		unset( $this->strings[ $string_key ] );
 	}

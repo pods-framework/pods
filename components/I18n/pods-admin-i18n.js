@@ -9,8 +9,8 @@
 
 	if ( $('.pods-i18n-input').length ) {
 		//pods_edit_i18n.init();
-		$('.pods-admin .postbox-container #submitdiv').after('<div id="toggle_i18n" class="postbox"><div class="inside"><p><button class="button-secondary">' + pods_admin_i18n_strings.__toggle_translations + '</button></p></div></div>');
-		$(document).on( 'click', '.pods-admin .postbox-container #toggle_i18n', function(e) {
+		//$('.pods-admin .postbox-container #submitdiv').after('<div class="postbox"><div class="inside"><p><button id="toggle_i18n" class="button-secondary">' + pods_admin_i18n_strings.__toggle_translations + '</button></p></div></div>');
+		$(document).on( 'click', 'button#toggle_i18n', function(e) {
 			e.preventDefault();
 			if ( $('.pods-i18n-input').first().css('display') == 'none' ) {
 				$('.pods-i18n-input').each( function() { $(this).show(); } );

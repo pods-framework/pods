@@ -108,7 +108,7 @@ class Pods_Component_I18n extends PodsComponent {
 					//add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'pod_tab' ), 11, 3 );
 
 					//Add options to the new tab
-					add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 12, 2 );
+					//add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 12, 2 );
 
 					//Add options metabox to the pod edit screens
 					add_action( 'add_meta_boxes', array( $this, 'admin_meta_box' ), 10 );
@@ -673,12 +673,6 @@ class Pods_Component_I18n extends PodsComponent {
 
 		foreach ( $this->languages as $locale => $lang_data ) {
 			$options['pods-i18n']['enabled_languages']['group']['enable_i18n_' . $locale] = array(
-				'label'      => $locale . ' (' . $this->create_lang_label( $lang_data ) . ')',
-				'default'    => 1,
-				'type'       => 'boolean',
-			);
-
-			$options['enable_i18n_' . $locale] = array(
 				'label'      => $locale . ' (' . $this->create_lang_label( $lang_data ) . ')',
 				'default'    => 1,
 				'type'       => 'boolean',

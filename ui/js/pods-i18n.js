@@ -5,10 +5,6 @@ var PodsI18n = {
 		return this.translate_string( str );
 	},
 
-	_e: function ( str ) {
-		print( this.translate_string( str ) );
-	},
-
 	translate_string: function ( str ) {
 		if ( typeof pods_localized_strings != 'undefined' ) {
 

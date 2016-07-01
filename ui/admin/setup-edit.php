@@ -135,7 +135,15 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
         $no_additional[] = $field_type;
 }
 
-// Make use of the WP core meta box functionality
+/**
+ * Make use of the WP core meta box functionality
+ * 
+ * Currently only context 'side' is available
+ * 
+ * @since 2.7
+ * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
+ * @param array $pod The Pod object as an array
+ */
 do_action( 'add_meta_boxes', 'pods_edit', $pod );
 ?>
 <div class="wrap pods-admin">
@@ -878,7 +886,9 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 </div>
             </div>
             <!-- /#submitdiv -->
+            <div class="pods-submittable-fields">
             <?php do_meta_boxes( 'pods_edit', 'side', $pod ); ?>
+            </div>
         </div>
     </div>
 </div>

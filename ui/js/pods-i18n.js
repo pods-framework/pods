@@ -12,13 +12,8 @@ PodsI18n = {
 			/**
 			 * Converts string into reference object variable
 			 * Uses the same logic as PHP to create the same references
-			 * 
-			 * 1. Remove capitals
-			 * 2. Remove all punctuation etc.
-			 * 3. Trim
-			 * 4. Convert whitespaces to underscores
 			 */
-			var ref = '__' + str.toLowerCase().replace(/[^a-z ]+/g, ' ').trim().replace(/\s{2,}/g, "_").replace(/ /g,'_');
+			var ref = '__' + str;
 			
 			if ( typeof pods_localized_strings[ ref ] != 'undefined' ) {
 				return pods_localized_strings[ ref ];

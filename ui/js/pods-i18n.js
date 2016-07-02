@@ -1,11 +1,12 @@
 /*global pods_localized_strings */
 'use strict';
-var PodsI18n = {
-	__: function ( str ) {
-		return this.translateString( str );
-	},
+var PodsI18n = (function () {
 
-	translateString: function ( str ) {
+	/**
+	 * Only visible to the closure, not exposed externally
+	 */
+	var translateString = function ( str ) {
+
 		if ( typeof pods_localized_strings != 'undefined' ) {
 
 			/**
@@ -21,6 +22,18 @@ var PodsI18n = {
 				console.log( 'Pods__: String not found "' + str + '" (reference used: "' + ref + '")' );
 			}
 		}
+
 		return str;
-	}
-};
+	};
+
+	/**
+	 * The returned object, this is what we'll expose to the outside world
+	 */
+	return {
+
+		__: function ( str ) {
+			return translateString( str );
+		}
+	};
+
+}());

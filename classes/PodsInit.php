@@ -283,12 +283,30 @@ class PodsInit {
 			), '1.1.1' );
 		}
 
-		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
-
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
 		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+
+		// Marionette dependencies for MV fields
+		wp_register_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
+		wp_register_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
+		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
+		wp_register_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array(
+			'marionette',
+			'backbone.radio'
+		), '1.0.2', true );
+		wp_register_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
+
+		// MV stuff
+		wp_register_script(
+			'pods-fields-ready',
+			PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js',
+			array( 'marionette', 'media-views', 'media-models' ),
+			PODS_VERSION,
+			true
+		);
+		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
 
 		$this->localize_assets();
 	}

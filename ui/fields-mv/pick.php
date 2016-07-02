@@ -8,20 +8,7 @@
  */
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
-
-wp_enqueue_script( 'backbone' );
-
-// Todo: These should all be registered so that all dependency and path information is in a single place and not duplicated for every MV field
-wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
-
-wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
-wp_enqueue_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
-wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array(
-	'marionette',
-	'backbone.radio'
-), '1.0.2', true );
-wp_enqueue_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
-wp_enqueue_script( 'pods-fields-ready', PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js', array( 'media-views', 'media-models' ), PODS_VERSION, true );
+wp_enqueue_script( 'pods-fields-ready' );
 
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );

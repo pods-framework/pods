@@ -6,6 +6,7 @@ var PodsI18n = (function () {
 	 * Only visible to the closure, not exposed externally
 	 */
 	var translateString = function ( str ) {
+		var translated = str;
 
 		if ( typeof podsLocalizedStrings != 'undefined' ) {
 
@@ -16,21 +17,20 @@ var PodsI18n = (function () {
 			var ref = '__' + str;
 
 			if ( typeof podsLocalizedStrings[ ref ] != 'undefined' ) {
-				return podsLocalizedStrings[ ref ];
+				translated = podsLocalizedStrings[ ref ];
 			}
 			else if ( podsLocalizedStrings.debug == true ) {
 				console.log( 'Pods__: String not found "' + str + '" (reference used: "' + ref + '")' );
 			}
 		}
 
-		return str;
+		return translated;
 	};
 
 	/**
 	 * The returned object, this is what we'll expose to the outside world
 	 */
 	return {
-
 		__: function ( str ) {
 			return translateString( str );
 		}

@@ -21,7 +21,7 @@ wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marione
 ), '1.0.2', true );
 wp_enqueue_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
 
-wp_enqueue_script( 'pods-fields-ready', PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js', array(), PODS_VERSION, true );
+wp_enqueue_script( 'pods-fields-ready', PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js', array( 'media-views', 'media-models' ), PODS_VERSION, true );
 
 $file_limit = 1;
 if ( 'multi' == pods_v( $form_field_type . '_format_type', $options, 'single' ) ) {

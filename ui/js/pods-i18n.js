@@ -2,10 +2,10 @@
 'use strict';
 var PodsI18n = {
 	__: function ( str ) {
-		return this.translate_string( str );
+		return this.translateString( str );
 	},
 
-	translate_string: function ( str ) {
+	translateString: function ( str ) {
 		if ( typeof pods_localized_strings != 'undefined' ) {
 
 			/**

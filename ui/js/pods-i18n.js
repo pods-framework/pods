@@ -1,4 +1,4 @@
-/*global pods_localized_strings */
+/*global podsLocalizedStrings */
 'use strict';
 var PodsI18n = (function () {
 
@@ -7,7 +7,7 @@ var PodsI18n = (function () {
 	 */
 	var translateString = function ( str ) {
 
-		if ( typeof pods_localized_strings != 'undefined' ) {
+		if ( typeof podsLocalizedStrings != 'undefined' ) {
 
 			/**
 			 * Converts string into reference object variable
@@ -15,10 +15,10 @@ var PodsI18n = (function () {
 			 */
 			var ref = '__' + str;
 
-			if ( typeof pods_localized_strings[ ref ] != 'undefined' ) {
-				return pods_localized_strings[ ref ];
+			if ( typeof podsLocalizedStrings[ ref ] != 'undefined' ) {
+				return podsLocalizedStrings[ ref ];
 			}
-			else if ( pods_localized_strings.debug == true ) {
+			else if ( podsLocalizedStrings.debug == true ) {
 				console.log( 'Pods__: String not found "' + str + '" (reference used: "' + ref + '")' );
 			}
 		}

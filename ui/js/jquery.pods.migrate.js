@@ -66,7 +66,7 @@
                     },
                     error : function () {
                         $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
-                        $row.find( 'td span.pods-wizard-info' ).text( pods_localized_strings.__unable_to_process_request_please_try_again );
+                        $row.find( 'td span.pods-wizard-info' ).text( podsLocalizedStrings.__unable_to_process_request_please_try_again );
                     },
                     dataType : 'html'
                 } );
@@ -172,7 +172,7 @@
                     },
                     error : function () {
                         $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
-                        $row.find( 'td span.pods-wizard-info' ).text( pods_localized_strings.__unable_to_process_request_please_try_again );
+                        $row.find( 'td span.pods-wizard-info' ).text( podsLocalizedStrings.__unable_to_process_request_please_try_again );
                     },
                     dataType : 'html'
                 } );

@@ -297,7 +297,7 @@ class PodsInit {
 	 * Localize assets
 	 */
 	public function localize_assets() {
-		wp_localize_script('pods', 'pods_localized_strings', array(
+		wp_localize_script('pods', 'podsLocalizedStrings', array(
 			'__is_required' => __( '%s is required.', 'pods' ),
 			'__add' => __( 'Add', 'pods' ),
 			'__add_new' => __( 'Add New', 'pods' ),

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @package Pods
  * @since 2.7
@@ -46,7 +46,7 @@ class PodsI18n {
 
 	/**
 	 * Localize assets
-	 * 
+	 *
 	 * @since 2.7
 	 */
 	public function localize_assets() {
@@ -57,7 +57,7 @@ class PodsI18n {
 		 * Add strings to the localization
 		 * Setting the key of your string to the original (non translated) value is mandatory
 		 * Note: Existing keys in this class will overwrite the ones of this filter!
-		 * 
+		 *
 		 * @since 2.7
 		 * @see create_strings()
 		 * @param array
@@ -79,12 +79,12 @@ class PodsI18n {
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
 		// Add localization to our i18n script
-		wp_localize_script( 'pods-i18n', 'pods_localized_strings', array_merge( $this->strings, $localize ) );
+		wp_localize_script( 'pods-i18n', 'podsLocalizedStrings', array_merge( $this->strings, $localize ) );
 	}
 
 	/**
 	 * Register function that creates the references and combines these with the translated strings
-	 * 
+	 *
 	 * @since 2.7
 	 */
 	public function register( $string_key, $translation ) {
@@ -104,65 +104,65 @@ class PodsI18n {
 	 * Register our labels to use in JS
 	 * We need to register them as normal string to convert to JS references
 	 * And we need to register the translations to attach to these references, these may not be variables!
-	 * 
+	 *
 	 * @since 2.7
 	 */
 	public function create_strings() {
 
 		return array(
 
-				'%s is required.' => 
+				'%s is required.' =>
 			__( '%s is required.', 'pods' ),
 
-				'This field is required.' => 
+				'This field is required.' =>
 			__( 'This field is required.', 'pods' ),
 
-				'Add' => 
+				'Add' =>
 			__( 'Add', 'pods' ),
 
-				'Add New' => 
+				'Add New' =>
 			__( 'Add New', 'pods' ),
 
-				'Add New Record' => 
+				'Add New Record' =>
 			__( 'Add New Record', 'pods' ),
 
-				'Added!' => 
+				'Added!' =>
 			__( 'Added!', 'pods' ),
 
-				'Added! Choose another or <a href="#">close this box</a>' => 
+				'Added! Choose another or <a href="#">close this box</a>' =>
 			__( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
 
-				'Copy' => 
+				'Copy' =>
 			__( 'Copy', 'pods' ),
 
-				'Reorder' => 
+				'Reorder' =>
 			__( 'Reorder', 'pods' ),
 
-				'Remove' => 
+				'Remove' =>
 			__( 'Remove', 'pods' ),
 
-				'Download' => 
+				'Download' =>
 			__( 'Download', 'pods' ),
 
-				'View' => 
+				'View' =>
 			__( 'View', 'pods' ),
 
-				'Edit' => 
+				'Edit' =>
 			__( 'Edit', 'pods' ),
 
-				'Navigating away from this page will discard any changes you have made.' => 
+				'Navigating away from this page will discard any changes you have made.' =>
 			__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
-				'Unable to process request, please try again.' => 
+				'Unable to process request, please try again.' =>
 			__( 'Unable to process request, please try again.', 'pods' ),
 
-				'There was an issue with the file upload, please try again.' => 
+				'There was an issue with the file upload, please try again.' =>
 			__( 'There was an issue with the file upload, please try again.', 'pods' ),
 
-				'Allowed Files' => 
+				'Allowed Files' =>
 			__( 'Allowed Files', 'pods' ),
 
-				'The Title' => 
+				'The Title' =>
 			__( 'The Title', 'pods' ),
 
 		);

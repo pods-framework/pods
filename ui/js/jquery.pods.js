@@ -50,9 +50,9 @@
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
                             
                             if ( $el.closest( '.pods-field-input > td' ).length > 0 ) {
-                                $el.closest( '.pods-field-input > td' ).last().prepend( '<div class="pods-validate-error-message">' + pods_localized_strings.__is_required.replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                                $el.closest( '.pods-field-input > td' ).last().prepend( '<div class="pods-validate-error-message">' + podsLocalizedStrings.__is_required.replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
                             } else {
-                                $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + pods_localized_strings.__is_required.replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                                $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + podsLocalizedStrings.__is_required.replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
                             }
                             $el.addClass( 'pods-validate-error' );
 
@@ -393,7 +393,7 @@
                             }
                         },
                         error : function () {
-                            var err_msg = pods_localized_strings.__unable_to_process_request_please_try_again;
+                            var err_msg = podsLocalizedStrings.__unable_to_process_request_please_try_again;
 
                             if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                 pods_admin_submit_error_callback( err_msg, $submittable );
@@ -1719,7 +1719,7 @@
                         var $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         field_data[ 'name' ] += '_copy';
-                        field_data[ 'label' ] += ' (' + pods_localized_strings.__copy + ')';
+                        field_data[ 'label' ] += ' (' + podsLocalizedStrings.__copy + ')';
                         field_data[ 'id' ] = 0;
 
                         $new_row_label.find( 'a.pods-manage-row-edit.row-label' ).html( field_data[ 'label' ] );
@@ -1804,7 +1804,7 @@
 
                     window.onbeforeunload = function () {
                         if ( pods_changed )
-                            return pods_localized_strings.__navigating_away_from_this_page_will_discard_any_changes_you_have_made;
+                            return podsLocalizedStrings.__navigating_away_from_this_page_will_discard_any_changes_you_have_made;
                     }
                 } );
 
@@ -1873,8 +1873,8 @@
 /**
  * String localization
  */
-if ( typeof pods_localized_strings == 'undefined' ) {
-    pods_localized_strings = {
+if ( typeof podsLocalizedStrings == 'undefined' ) {
+    podsLocalizedStrings = {
         __is_required: '%s is required.',
         __add: 'Add',
         __add_new: 'Add New',

@@ -8,7 +8,7 @@ var PodsI18n = (function () {
 	var translateString = function ( str ) {
 		var translated = str;
 
-		if ( podsLocalizedStrings !== undefined ) {
+		if ( typeof podsLocalizedStrings !== 'undefined' ) {
 
 			/**
 			 * Converts string into reference object variable
@@ -16,7 +16,7 @@ var PodsI18n = (function () {
 			 */
 			var ref = '__' + str;
 
-			if ( podsLocalizedStrings[ ref ] !== undefined ) {
+			if ( typeof podsLocalizedStrings[ ref ] !== 'undefined' ) {
 				translated = podsLocalizedStrings[ ref ];
 			}
 			else if ( podsLocalizedStrings.debug == true ) {

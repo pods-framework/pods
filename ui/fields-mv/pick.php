@@ -10,6 +10,8 @@ wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
 wp_enqueue_script( 'backbone' );
+
+// Todo: These should all be registered so that all dependency and path information is in a single place and not duplicated for every MV field
 wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
 
 wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );

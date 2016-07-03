@@ -40,7 +40,6 @@ if (isset($value['target']) && $value['target'] == '_blank') {
 }
 $target_name = $name.'[target]';
 $target_attributes = PodsForm::merge_attributes( $target_attributes, $target_name, $form_field_type, $options );
-
 ?>
 
 <div class="pods-link-options">
@@ -59,7 +58,7 @@ $target_attributes = PodsForm::merge_attributes( $target_attributes, $target_nam
 	<br clear="both">
 
 	<?php if ( 1 == pods_v( 'link_select_existing', $options, 1 ) ) { ?>
-		<div class="howto link-existing-content">
+		<div class="howto link-existing-content" style="display: none;">
 			<a href="#" class="podsLinkPopup"><?php _e('Or link to existing content') ?></a>
 			<textarea id="pods-link-editor-hidden" disabled="disabled" style="display: none;"></textarea>
 		</div>

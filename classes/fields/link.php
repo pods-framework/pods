@@ -350,10 +350,10 @@ class PodsField_Link extends PodsField_Website {
 
 		if ( ! class_exists( '_WP_Editors', false ) && file_exists( ABSPATH . WPINC . '/class-wp-editor.php' ) ) {
 			require_once( ABSPATH . WPINC . '/class-wp-editor.php' );
+		}
 
-			if ( method_exists( '_WP_Editors', 'wp_link_dialog' ) ) {
-				_WP_Editors::wp_link_dialog();
-			}
+		if ( class_exists( '_WP_Editors' ) && method_exists( '_WP_Editors', 'wp_link_dialog' ) ) {
+			_WP_Editors::wp_link_dialog();
 		} else {
 			echo '<div style="display:none;">';
 			wp_editor( '', 'pods-link-editor-hidden' );

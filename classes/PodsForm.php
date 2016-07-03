@@ -142,7 +142,7 @@ class PodsForm {
 
         $name_more_clean = self::clean( $name, true );
 
-        if ( isset( $options[ 'description' ] ) && !empty( $options[ 'description' ] ) )
+        if ( ! empty( $options[ 'description' ] ) )
             $message = $options[ 'description' ];
         elseif ( empty( $message ) )
             return '';

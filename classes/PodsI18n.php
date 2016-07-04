@@ -22,6 +22,21 @@ class PodsI18n {
 	private static $localized = array();
 
 	/**
+	 * @return PodsI18n
+	 *
+	 * @since 2.7
+	 */
+	public static function init() {
+
+		if ( ! is_object( self::$instance ) ) {
+			self::$instance = new PodsI18n();
+			self::localize_assets();
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * Singleton handling for a basic pods_i18n() request
 	 *
 	 * @return \PodsI18n
@@ -30,20 +45,12 @@ class PodsI18n {
 	 */
 	public static function get_instance() {
 
+		// Initialize if the class hasn't been setup yet for some reason
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsI18n();
+			self::init();
 		}
 
 		return self::$instance;
-	}
-
-	/**
-	 * Constructur
-	 */
-	private function __construct() {
-
-		//self::init();
-		self::localize_assets();
 	}
 
 	/**

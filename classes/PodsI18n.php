@@ -18,7 +18,7 @@ class PodsI18n {
 
 	/**
 	 * Singleton handling for a basic pods_i18n() request
-	 * 
+	 *
 	 * @return PodsI18n
 	 *
 	 * @since 2.7
@@ -60,7 +60,7 @@ class PodsI18n {
 	/**
 	 * @since 2.7
 	 */
-	public function enqueue_scripts() {
+	public static function enqueue_scripts() {
 
 		self::localize_assets();
 	}

@@ -95,11 +95,11 @@ final class PodsI18n {
 		}
 
 		// Some other stuff we need to pass through
-		$localize = array(
+		$i18n_base = array(
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
 		// Add localization to our i18n script
-		wp_localize_script( 'pods-i18n', 'podsLocalizedStrings', array_merge( self::$strings, $localize ) );
+		wp_localize_script( 'pods-i18n', 'podsLocalizedStrings', array_merge( self::$strings, $i18n_base ) );
 	}
 
 	/**

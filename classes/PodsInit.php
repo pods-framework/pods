@@ -30,6 +30,11 @@ class PodsInit {
 	static $meta;
 
 	/**
+	 * @var PodsI18n
+	 */
+	static $i18n;
+
+	/**
 	 * @var PodsAdmin
 	 */
 	static $admin;
@@ -167,6 +172,15 @@ class PodsInit {
 
 		self::$meta = pods_meta()->core();
 	}
+
+	/**
+	 *
+	 */
+	public function load_i18n() {
+
+		self::$i18n = pods_i18n();
+	}
+
 
 	/**
 	 * Set up the Pods core
@@ -1223,6 +1237,8 @@ class PodsInit {
 
 		$ran = true;
 
+		$this->load_i18n();
+		
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
 		} else {

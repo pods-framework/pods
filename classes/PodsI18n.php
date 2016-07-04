@@ -100,7 +100,7 @@ class PodsI18n {
 	 *
 	 * @since 2.7
 	 */
-	private function register( $string_key, $translation ) {
+	private static function register( $string_key, $translation ) {
 
 		/**
 		 * Converts string into reference object variable
@@ -124,7 +124,7 @@ class PodsI18n {
 	 *
 	 * @since 2.7
 	 */
-	private function default_strings() {
+	private static function default_strings() {
 
 		return array(
 

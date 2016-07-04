@@ -142,7 +142,7 @@ class PodsForm {
 
         $name_more_clean = self::clean( $name, true );
 
-        if ( isset( $options[ 'description' ] ) && !empty( $options[ 'description' ] ) )
+        if ( ! empty( $options[ 'description' ] ) )
             $message = $options[ 'description' ];
         elseif ( empty( $message ) )
             return '';
@@ -153,7 +153,7 @@ class PodsForm {
 
         $type = 'comment';
         $attributes = array();
-        $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
+        $attributes[ 'class' ] = 'description pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
         $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
 
         pods_view( PODS_DIR . 'ui/fields/_comment.php', compact( array_keys( get_defined_vars() ) ) );

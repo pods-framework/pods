@@ -1,24 +1,25 @@
 <?php
+
 /**
  * @package Pods
- * @since 2.7
+ * @since   2.7
  */
 class PodsI18n {
 
 	/**
-	 * @var PodsI18n
+	 * @var PodsI18n Singleton instance
 	 */
-	static $instance = null;
+	private static $instance = null;
 
 	/**
-	 * The strings
+	 * @var array key/value pairs
 	 */
-	public $strings = array();
+	private static $strings = array();
 
 	/**
-	 * The localized strings
+	 * @var array The localized strings
 	 */
-	public $localized = array();
+	private static $localized = array();
 
 	/**
 	 * Singleton handling for a basic pods_i18n() request
@@ -27,7 +28,7 @@ class PodsI18n {
 	 *
 	 * @since 2.7
 	 */
-	public static function init() {
+	public static function get_instance() {
 
 		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsI18n();
@@ -39,9 +40,10 @@ class PodsI18n {
 	/**
 	 * Constructur
 	 */
-	public function __construct() {
+	private function __construct() {
+
 		//self::init();
-		$this->localize_assets();
+		self::localize_assets();
 	}
 
 	/**
@@ -49,9 +51,10 @@ class PodsI18n {
 	 *
 	 * @since 2.7
 	 */
-	public function localize_assets() {
+	private static function localize_assets() {
+
 		// Create existing strings of this class
-		$this->strings = $this->create_strings();
+		self::$strings = self::create_strings();
 
 		/**
 		 * Add strings to the localization
@@ -59,16 +62,18 @@ class PodsI18n {
 		 * Note: Existing keys in this class will overwrite the ones of this filter!
 		 *
 		 * @since 2.7
-		 * @see create_strings()
+		 * @see   create_strings()
+		 *
 		 * @param array
+		 *
 		 * @return array format: 'Untranslated string' => 'Translated string with use of WP translate functions'
 		 */
 		$strings_extra = apply_filters( 'pods_localized_strings', array() );
 
-		$this->strings = array_merge( $strings_extra, $this->strings );
+		self::$strings = array_merge( $strings_extra, self::$strings );
 
-		foreach ( $this->strings as $key => $str ) {
-			$this->register( $key, $str );
+		foreach ( self::$strings as $key => $str ) {
+			self::register( $key, $str );
 		}
 
 		// Register our i18n script for JS
@@ -79,15 +84,19 @@ class PodsI18n {
 			'debug' => ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true ) ? true : false,
 		);
 		// Add localization to our i18n script
-		wp_localize_script( 'pods-i18n', 'podsLocalizedStrings', array_merge( $this->strings, $localize ) );
+		wp_localize_script( 'pods-i18n', 'podsLocalizedStrings', array_merge( self::$strings, $localize ) );
 	}
 
 	/**
 	 * Register function that creates the references and combines these with the translated strings
 	 *
 	 * @since 2.7
+	 *
+	 * @param string $string_key
+	 * @param string $translation
 	 */
-	public function register( $string_key, $translation ) {
+	private function register( $string_key, $translation ) {
+
 		/**
 		 * Converts string into reference object variable
 		 * Uses the same logic as JS to create the same references
@@ -95,9 +104,9 @@ class PodsI18n {
 		$ref = '__' . $string_key;
 
 		// Add it to the strings localized
-		$this->strings[ $ref ] = $translation;
+		self::$strings[ $ref ] = $translation;
 		// Remove the old key
-		unset( $this->strings[ $string_key ] );
+		unset( self::$strings[ $string_key ] );
 	}
 
 	/**
@@ -107,63 +116,63 @@ class PodsI18n {
 	 *
 	 * @since 2.7
 	 */
-	public function create_strings() {
+	private function create_strings() {
 
 		return array(
 
-				'%s is required.' =>
-			__( '%s is required.', 'pods' ),
+			'%s is required.' =>
+				__( '%s is required.', 'pods' ),
 
-				'This field is required.' =>
-			__( 'This field is required.', 'pods' ),
+			'This field is required.' =>
+				__( 'This field is required.', 'pods' ),
 
-				'Add' =>
-			__( 'Add', 'pods' ),
+			'Add' =>
+				__( 'Add', 'pods' ),
 
-				'Add New' =>
-			__( 'Add New', 'pods' ),
+			'Add New' =>
+				__( 'Add New', 'pods' ),
 
-				'Add New Record' =>
-			__( 'Add New Record', 'pods' ),
+			'Add New Record' =>
+				__( 'Add New Record', 'pods' ),
 
-				'Added!' =>
-			__( 'Added!', 'pods' ),
+			'Added!' =>
+				__( 'Added!', 'pods' ),
 
-				'Added! Choose another or <a href="#">close this box</a>' =>
-			__( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
+			'Added! Choose another or <a href="#">close this box</a>' =>
+				__( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
 
-				'Copy' =>
-			__( 'Copy', 'pods' ),
+			'Copy' =>
+				__( 'Copy', 'pods' ),
 
-				'Reorder' =>
-			__( 'Reorder', 'pods' ),
+			'Reorder' =>
+				__( 'Reorder', 'pods' ),
 
-				'Remove' =>
-			__( 'Remove', 'pods' ),
+			'Remove' =>
+				__( 'Remove', 'pods' ),
 
-				'Download' =>
-			__( 'Download', 'pods' ),
+			'Download' =>
+				__( 'Download', 'pods' ),
 
-				'View' =>
-			__( 'View', 'pods' ),
+			'View' =>
+				__( 'View', 'pods' ),
 
-				'Edit' =>
-			__( 'Edit', 'pods' ),
+			'Edit' =>
+				__( 'Edit', 'pods' ),
 
-				'Navigating away from this page will discard any changes you have made.' =>
-			__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
+			'Navigating away from this page will discard any changes you have made.' =>
+				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
-				'Unable to process request, please try again.' =>
-			__( 'Unable to process request, please try again.', 'pods' ),
+			'Unable to process request, please try again.' =>
+				__( 'Unable to process request, please try again.', 'pods' ),
 
-				'There was an issue with the file upload, please try again.' =>
-			__( 'There was an issue with the file upload, please try again.', 'pods' ),
+			'There was an issue with the file upload, please try again.' =>
+				__( 'There was an issue with the file upload, please try again.', 'pods' ),
 
-				'Allowed Files' =>
-			__( 'Allowed Files', 'pods' ),
+			'Allowed Files' =>
+				__( 'Allowed Files', 'pods' ),
 
-				'The Title' =>
-			__( 'The Title', 'pods' ),
+			'The Title' =>
+				__( 'The Title', 'pods' ),
 
 		);
 

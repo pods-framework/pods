@@ -30,6 +30,11 @@ class PodsInit {
 	static $meta;
 
 	/**
+	 * @var PodsI18n
+	 */
+	static $i18n;
+
+	/**
 	 * @var PodsAdmin
 	 */
 	static $admin;
@@ -169,6 +174,15 @@ class PodsInit {
 	}
 
 	/**
+	 *
+	 */
+	public function load_i18n() {
+
+		self::$i18n = pods_i18n();
+	}
+
+
+	/**
 	 * Set up the Pods core
 	 */
 	public function core() {
@@ -252,6 +266,7 @@ class PodsInit {
 
 		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
 			'jquery',
+			'pods-i18n',
 			'pods-json',
 			'jquery-qtip2'
 		), PODS_VERSION, true );
@@ -284,7 +299,7 @@ class PodsInit {
 		}
 
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
-		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
+		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '3.3.1' );
 
 		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
 
@@ -302,7 +317,7 @@ class PodsInit {
 		wp_register_script(
 			'pods-fields-ready',
 			PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js',
-			array( 'marionette', 'media-views', 'media-models' ),
+			array( 'pods-i18n', 'marionette', 'media-views', 'media-models' ),
 			PODS_VERSION,
 			true
 		);
@@ -1263,6 +1278,8 @@ class PodsInit {
 		}
 
 		$ran = true;
+
+		$this->load_i18n();
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );

@@ -317,7 +317,7 @@ class PodsInit {
 		wp_register_script(
 			'pods-fields-ready',
 			PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js',
-			array( 'marionette', 'media-views', 'media-models' ),
+			array( 'pods-i18n', 'marionette', 'media-views', 'media-models' ),
 			PODS_VERSION,
 			true
 		);
@@ -1280,7 +1280,7 @@ class PodsInit {
 		$ran = true;
 
 		$this->load_i18n();
-		
+
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );
 		} else {

@@ -4,7 +4,7 @@
  * @package Pods
  * @since   2.7
  */
-class PodsI18n {
+final class PodsI18n {
 
 	/**
 	 * @var PodsI18n Singleton instance

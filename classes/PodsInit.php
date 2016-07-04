@@ -2,7 +2,7 @@
 /**
  * @package Pods
  */
-final class PodsInit {
+class PodsInit {
 
 	/**
 	 * @var PodsInit

@@ -12,14 +12,9 @@ class PodsI18n {
 	private static $instance = null;
 
 	/**
-	 * @var array key/value pairs
+	 * @var array Key/value pairs with label/translation
 	 */
 	private static $strings = array();
-
-	/**
-	 * @var array The localized strings
-	 */
-	private static $localized = array();
 
 	/**
 	 * @return PodsI18n
@@ -54,14 +49,17 @@ class PodsI18n {
 	}
 
 	/**
-	 * Localize assets
+	 * Localize assets:
+	 *     * Build localizations strings from the defaults and those provided via filter
+	 *     * Register the script that contains the JavaScript localization object
+	 *     * Provide access to a global JavaScript object with the assembled localization strings
 	 *
 	 * @since 2.7
 	 */
 	private static function localize_assets() {
 
 		// Create existing strings of this class
-		self::$strings = self::create_strings();
+		self::$strings = self::default_strings();
 
 		/**
 		 * Add strings to the localization
@@ -69,7 +67,7 @@ class PodsI18n {
 		 * Note: Existing keys in this class will overwrite the ones of this filter!
 		 *
 		 * @since 2.7
-		 * @see   create_strings()
+		 * @see   default_strings()
 		 *
 		 * @param array
 		 *
@@ -97,10 +95,10 @@ class PodsI18n {
 	/**
 	 * Register function that creates the references and combines these with the translated strings
 	 *
-	 * @since 2.7
-	 *
 	 * @param string $string_key
 	 * @param string $translation
+	 *
+	 * @since 2.7
 	 */
 	private function register( $string_key, $translation ) {
 
@@ -112,6 +110,7 @@ class PodsI18n {
 
 		// Add it to the strings localized
 		self::$strings[ $ref ] = $translation;
+
 		// Remove the old key
 		unset( self::$strings[ $string_key ] );
 	}
@@ -121,9 +120,11 @@ class PodsI18n {
 	 * We need to register them as normal string to convert to JS references
 	 * And we need to register the translations to attach to these references, these may not be variables!
 	 *
+	 * @return array Key/value pairs with label/translation
+	 *
 	 * @since 2.7
 	 */
-	private function create_strings() {
+	private function default_strings() {
 
 		return array(
 

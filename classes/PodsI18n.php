@@ -17,6 +17,8 @@ class PodsI18n {
 	private static $strings = array();
 
 	/**
+	 * Singleton handling for a basic pods_i18n() request
+	 * 
 	 * @return PodsI18n
 	 *
 	 * @since 2.7

@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 ( function ( $ ) {
     var pods_changed = false,
         pods_form_field_names = [],
@@ -48,7 +49,7 @@
                     if ( !valid_field ) {
                         if ( -1 == jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) ) {
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
-                            
+
                             if ( $el.closest( '.pods-field-input > td' ).length > 0 ) {
                                 $el.closest( '.pods-field-input > td' ).last().prepend( '<div class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
                             } else {

@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 (function ( $ ) {
     var methods = {
         prepare : function () {

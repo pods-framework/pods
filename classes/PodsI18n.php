@@ -25,7 +25,14 @@ class PodsI18n {
 
 		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsI18n();
-			self::localize_assets();
+
+			// Register our i18n script for JS
+			wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
+
+			// Hook all enqueue scripts actions
+			add_action( 'wp_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
+			add_action( 'login_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
 		}
 
 		return self::$instance;
@@ -49,17 +56,21 @@ class PodsI18n {
 	}
 
 	/**
+	 * @since 2.7
+	 */
+	public function enqueue_scripts() {
+
+		self::localize_assets();
+	}
+
+	/**
 	 * Localize assets:
 	 *     * Build localizations strings from the defaults and those provided via filter
-	 *     * Register the script that contains the JavaScript localization object
-	 *     * Provide access to a global JavaScript object with the assembled localization strings
+	 *     * Provide a global JavaScript object with the assembled localization strings via `wp_localize_script`
 	 *
 	 * @since 2.7
 	 */
 	private static function localize_assets() {
-
-		// Create existing strings of this class
-		self::$strings = self::default_strings();
 
 		/**
 		 * Add strings to the localization
@@ -75,14 +86,11 @@ class PodsI18n {
 		 */
 		$strings_extra = apply_filters( 'pods_localized_strings', array() );
 
-		self::$strings = array_merge( $strings_extra, self::$strings );
+		self::$strings = array_merge( $strings_extra, self::default_strings() );
 
 		foreach ( self::$strings as $key => $str ) {
 			self::register( $key, $str );
 		}
-
-		// Register our i18n script for JS
-		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
 
 		// Some other stuff we need to pass through
 		$localize = array(

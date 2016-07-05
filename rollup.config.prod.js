@@ -6,7 +6,7 @@ export default {
 	entry     : 'ui/fields-mv/_src/pods-mv-fields.js',
 	dest      : 'ui/fields-mv/js/pods-mv-fields.min.js',
 	format    : 'iife',
-	moduleName: 'PodsUI',
+	moduleName: 'PodsMVFields',
 	plugins   : [
 		string( { extensions: [ '.html' ] } ),
 		babel( { presets: [ 'es2015-rollup' ] } ),

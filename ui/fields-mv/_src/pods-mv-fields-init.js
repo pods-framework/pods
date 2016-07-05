@@ -30,7 +30,7 @@ const fieldFactory = function ( fieldType ) {
  *
  * @param {Object} fields Object to which new fields will be added, in { fieldId: fieldInstance } format
  */
-export const podsFieldsInit = function ( fields ) {
+export const podsMVFieldsInit = function ( fields ) {
 
 	return this.each( function () {
 		let data = {}, fieldModel, fieldId, fieldControl, field;

@@ -1,9 +1,8 @@
-<input name="pods_meta_file_test[<%- attr.id %>][attr.id]"
-		data-name-clean="pods-meta-file-test-id-id"
-		id="pods-form-ui-pods-meta-file-test-id-id"
-		class="pods-form-ui-field-type-text pods-form-ui-field-name-pods-meta-file-test-id-id"
+<input name="<%- attr.name %>[<%= ordinal %>]"
+		data-name-clean="<%- attr.name_clean %>"
+		id="<%- attr.id %><%= ordinal %>"
 		type="hidden"
-		value="<%- attr.id %>>">
+		value="<%- id %>>">
 <ul class="pods-flex-meta relationship-item">
 	<li class="pods-flex-col pods-flex-handle"><span>Reorder</span></li>
 	<% if ( 1 == options.pick_show_icon && '' != icon ) { %>

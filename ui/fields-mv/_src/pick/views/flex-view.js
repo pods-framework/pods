@@ -18,7 +18,14 @@ export const FlexItem = PodsFieldView.extend( {
 
 	triggers: {
 		'click @ui.removeButton': 'remove:item:click'
+	},
+
+	templateHelpers: function () {
+		return {
+			ordinal: this.model.collection.indexOf( this.model )
+		}
 	}
+	
 } );
 
 /**

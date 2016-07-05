@@ -2,8 +2,8 @@ import string from 'rollup-plugin-string';
 import babel from 'rollup-plugin-babel';
 
 export default {
-	entry     : 'ui/fields-mv/_src/pods-fields-ready.js',
-	dest      : 'ui/fields-mv/js/pods-fields-ready.min.js',
+	entry     : 'ui/fields-mv/_src/pods-mv-fields.js',
+	dest      : 'ui/fields-mv/js/pods-mv-fields.min.js',
 	format    : 'iife',
 	moduleName: 'PodsUI',
 	plugins   : [

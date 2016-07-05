@@ -11,7 +11,7 @@ wp_enqueue_style( 'pods-flex' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 
-wp_enqueue_script( 'pods-fields-ready' );
+wp_enqueue_script( 'pods-mv-fields' );
 
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );

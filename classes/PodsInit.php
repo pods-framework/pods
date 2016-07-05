@@ -315,8 +315,8 @@ class PodsInit {
 
 		// MV stuff
 		wp_register_script(
-			'pods-fields-ready',
-			PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js',
+			'pods-mv-fields',
+			PODS_URL . 'ui/fields-mv/js/pods-mv-fields.min.js',
 			array( 'pods-i18n', 'marionette', 'media-views', 'media-models' ),
 			PODS_VERSION,
 			true

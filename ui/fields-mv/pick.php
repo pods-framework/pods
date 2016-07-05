@@ -6,8 +6,11 @@
  * @var $value           array
  * @var $id              string
  */
+wp_enqueue_style( 'pods-flex' );
+
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
+
 wp_enqueue_script( 'pods-fields-ready' );
 
 $data = (array) pods_v( 'data', $options, array(), null, true );

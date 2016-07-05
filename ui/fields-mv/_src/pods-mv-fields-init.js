@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
-import * as fieldClasses from './pods-fields-manifest';
+import * as fieldClasses from './pods-mv-fields-manifest';
 import { PodsFieldModel } from './core/pods-field-model';
 import { FileUploadCollection } from './file-upload/models/file-upload-model';
 import { RelationshipCollection } from './pick/models/relationship-model';

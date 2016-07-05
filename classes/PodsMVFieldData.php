@@ -3,12 +3,11 @@
 /**
  * @package Pods
  */
-class PodsUIFieldData {
+class PodsMVFieldData {
 
 	private $export_data = array();
 
 	/**
-	 * PodsFieldData constructor.
 	 *
 	 * @param string $field_type
 	 * @param array  $data

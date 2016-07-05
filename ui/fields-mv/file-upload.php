@@ -197,10 +197,10 @@ $field_meta = array(
 	'field_options'    => $options
 );
 
-include_once PODS_DIR . 'classes/PodsFieldData.php';
+include_once PODS_DIR . 'classes/PodsMVFieldData.php';
 
 // @todo Need to normalize and finalize.  Is there a potential need for subclasses or does this basically cover it?
-$field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
+$field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 
 // @todo This is the demarcation point, everything above this exists to achieve the single line below.  Everything
 // upstream from here needs clean up, simplification, and refactoring

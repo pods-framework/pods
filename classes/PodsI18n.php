@@ -28,9 +28,6 @@ final class PodsI18n {
 		if ( ! is_object( self::$instance ) ) {
 			self::$instance = new PodsI18n();
 
-			// Register our i18n script for JS
-			wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
-
 			// Hook all enqueue scripts actions
 			add_action( 'wp_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
 			add_action( 'admin_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
@@ -61,6 +58,9 @@ final class PodsI18n {
 	 * @since 2.7
 	 */
 	public static function enqueue_scripts() {
+
+		// Register our i18n script for JS
+		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
 
 		self::localize_assets();
 	}

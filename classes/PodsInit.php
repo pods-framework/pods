@@ -317,7 +317,15 @@ class PodsInit {
 		wp_register_script(
 			'pods-mv-fields',
 			PODS_URL . 'ui/fields-mv/js/pods-mv-fields.min.js',
-			array( 'pods-i18n', 'marionette', 'media-views', 'media-models' ),
+			array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-sortable',
+				'pods-i18n',
+				'marionette',
+				'media-views',
+				'media-models'
+			),
 			PODS_VERSION,
 			true
 		);

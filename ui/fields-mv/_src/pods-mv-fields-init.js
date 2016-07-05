@@ -36,7 +36,7 @@ export const podsFieldsInit = function ( fields ) {
 		let data = {}, fieldModel, fieldId, fieldControl, field;
 
 		// Combine data from all in-line data scripts in the container
-		jQuery( this ).find( 'script.pods-form-field-data' ).each( function () {
+		jQuery( this ).find( 'script.pods-mv-field-data' ).each( function () {
 				const thisData = jQuery.parseJSON( jQuery( this ).html() );
 				jQuery.extend( data, thisData );
 				jQuery( this ).remove();

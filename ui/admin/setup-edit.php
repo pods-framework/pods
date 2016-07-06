@@ -144,7 +144,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
  * @param array $pod The Pod object as an array
  */
-do_action( 'add_meta_boxes', 'pods_edit', $pod );
+do_action( 'pods_add_meta_boxes', '_pods_pod-edit-fields', $pod );
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
@@ -887,7 +887,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             </div>
             <!-- /#submitdiv -->
             <div class="pods-submittable-fields">
-            <?php do_meta_boxes( 'pods_edit', 'side', $pod ); ?>
+            <?php do_meta_boxes( '_pods_pod-edit-fields', 'side', $pod ); ?>
             </div>
         </div>
     </div>

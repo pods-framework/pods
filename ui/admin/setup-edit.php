@@ -145,6 +145,9 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
  * @param array $pod The Pod object as an array
  */
 do_action( 'pods_add_meta_boxes', '_pods_pod', $pod );
+
+/** This action is documented in wp-admin/edit-form-advanced.php */
+do_action( 'add_meta_boxes', '_pods_pod', get_post( $pod['id'] ) );
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>

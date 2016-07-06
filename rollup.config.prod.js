@@ -9,7 +9,10 @@ export default {
 	moduleName: 'PodsMVFields',
 	plugins   : [
 		string( { extensions: [ '.html' ] } ),
-		babel( { presets: [ 'es2015-rollup' ] } ),
+		babel( {
+			babelrc: false, // Ignore the .babelrc file which is there for mocha tests
+			presets: [ 'es2015-rollup' ]
+		} ),
 		uglify()
 	]
 };

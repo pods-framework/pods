@@ -659,6 +659,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @since 0.1
 	 */
 	public function admin_meta_box() {
+		add_meta_box( 'pods_i18n', __( 'Translation options', 'pods' ), array( $this, 'meta_box' ), '_pods_pod', 'side', 'default' );
 	}
 
 	/**

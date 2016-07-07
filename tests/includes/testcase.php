@@ -292,7 +292,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID' => 1,
 				'comment_type' => 'comment',
 			    'comment_approved' => 1,
-			    'comment_date' => '2014-11-11',
+			    'comment_date' => '2014-11-11 00:00:00',
 				'test_text_field' => 'Test related comment text field'
 			)
 		),

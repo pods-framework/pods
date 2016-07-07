@@ -458,7 +458,6 @@ class PodsField_OEmbed extends PodsField {
 	 * @return false|string False on failure, otherwise the oEmbed provider URL.
 	 */
 	public function get_provider( $url ) {
-		$args = wp_parse_args( $args );
 
 		$provider = false;
 

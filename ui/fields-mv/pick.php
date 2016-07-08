@@ -143,9 +143,5 @@ include_once PODS_DIR . 'classes/PodsMVFieldData.php';
 $field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
-	<?php if ( ! empty( $file_name ) ) { ?>
-		<?php $field_data->emit_script(); ?>
-	<?php } else { ?>
-		<p>This related object does not support Flexible Relationships.</p>
-	<?php } ?>
+	<?php $field_data->emit_script(); ?>
 </div>

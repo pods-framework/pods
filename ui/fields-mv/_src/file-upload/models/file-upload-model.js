@@ -5,7 +5,7 @@
 export const FileUploadModel = Backbone.Model.extend( {
 	defaults: {
 		'id'       : 0,
-		'icon'     : '',
+		'icon'     : null,
 		'name'     : '',
 		'edit_link': '',
 		'link'     : '',

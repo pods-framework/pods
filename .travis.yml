@@ -47,3 +47,4 @@ branches:
         - master
         - 2.x
         - release/3.0
+        - feature/#3639_JS_unit_tests

@@ -35,7 +35,7 @@ before_script:
 
 script:
     # - vendor/bin/phpunit
-    node --harmony _mocha --compilers js:babel-core/register --ui bdd --recursive tests-js
+    node --harmony ./node_modeuls/mocha/bin/_mocha --compilers js:babel-core/register --ui bdd --recursive tests-js
 
 branches:
     only:

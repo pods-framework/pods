@@ -22,10 +22,10 @@ require $test_root . '/includes/functions.php';
 
 // Config
 define( 'PODS_SESSION_AUTO_START', false );
-define( 'PODS_TEST_PLUGIN_FILE', dirname( dirname( __FILE__ ) ) . '/init.php' );
-define( 'PODS_TEST_PLUGIN_DIR', dirname( dirname( __FILE__ ) ) );
-define( 'PODS_TEST_PLUGIN', basename( dirname( dirname( __FILE__ ) ) ) . '/init.php' );
-define( 'PODS_TEST_DIR', dirname( __FILE__ ) );
+define( 'PODS_TEST_PLUGIN_FILE', $_SERVER[ 'PWD' ] . '/init.php' );
+define( 'PODS_TEST_PLUGIN_DIR', $_SERVER[ 'PWD' ] );
+define( 'PODS_TEST_PLUGIN', $_SERVER[ 'PWD' ] . '/init.php' );
+define( 'PODS_TEST_DIR', $_SERVER[ 'PWD' ] . '/tests/phpunit' );
 
 // Error reporting
 error_reporting( E_ALL & ~E_DEPRECATED & ~E_STRICT );

@@ -25,9 +25,12 @@ cache:
     - $HOME/.composer/cache
 
 install:
+  # We need the latest stable node
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
+
+  # Dependencies
   - npm install
 
 before_script:
@@ -38,8 +41,8 @@ before_script:
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    # - vendor/bin/phpunit
-    node --harmony ./node_modules/mocha/bin/_mocha --compilers js:babel-core/register --ui bdd --recursive tests-js
+    - vendor/bin/phpunit
+    - node --harmony ./node_modules/mocha/bin/_mocha --compilers js:babel-core/register --ui bdd --recursive tests-js
 
 branches:
     only:

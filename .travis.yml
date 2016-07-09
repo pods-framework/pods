@@ -29,7 +29,8 @@ before_script:
     - composer install --no-interaction --prefer-source
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
-    - npm install mocha
+    # JavaScript testing dependencies
+    - npm install mocha babel-core babel-preset-es2015 jsdom underscore jquery backbone backbone.marionette
 
 script:
     - vendor/bin/phpunit

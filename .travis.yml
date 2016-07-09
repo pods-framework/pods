@@ -6,7 +6,10 @@ php:
     - 7.0
 
 env:
+    - WP_VERSION=bleeding WP_MULTISITE=0
+    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
 
 matrix:
     allow_failures:
@@ -14,6 +17,12 @@ matrix:
      - env: WP_VERSION=bleeding-maintenance WP_MULTISITE=0
 
     include:
+    - php: hhvm
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.6
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.3
+      env: WP_VERSION=3.8 WP_MULTISITE=0
     # MySQL 5.7
     #- env: DB=mysql-5.7-dmr WP_VERSION=latest WP_MULTISITE=0
 
@@ -46,4 +55,6 @@ script:
 
 branches:
     only:
-        - feature/#3639_JS_unit_tests
+        - master
+        - 2.x
+        - release/3.0

@@ -41,7 +41,7 @@ before_script:
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    # - vendor/bin/phpunit
+    - vendor/bin/phpunit
     - node --harmony ./node_modules/mocha/bin/_mocha --compilers js:babel-core/register --reporter dot --recursive tests-js
 
 branches:

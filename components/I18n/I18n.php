@@ -724,7 +724,7 @@ class Pods_Component_I18n extends PodsComponent {
 					$pod['options']['enable_i18n_' . $locale] = 1;
 				}
 		?>
-				<div class="pods-field-option">
+				<div class="pods-field-option pods-enable-disable-language">
 		<?php 
 					echo PodsForm::field( 'enable_i18n_' . $locale, pods_v( 'enable_i18n_' . $locale, $pod ), 'boolean', array( 
 						'boolean_yes_label' =>  '<code>' . $locale . '</code> (' . $this->create_lang_label( $lang_data ) . ')',
@@ -797,6 +797,7 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		$output .= '<br clear="both" />';
+		$output .= '<div class="pods-i18n-field">';
 		foreach ( $this->languages as $locale => $lang_data ) {
 
 			if ( ! $this->obj_is_language_enabled( $locale, $pod ) ) {
@@ -832,6 +833,7 @@ class Pods_Component_I18n extends PodsComponent {
 			$output .= PodsForm::field( $field_name, pods_v( $field_name, $pod ), 'text', null, $pod );
 			$output .= '</div>';
 		}
+		$output .= '</div>';
 		return $output;
 	}
 

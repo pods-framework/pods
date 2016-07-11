@@ -7515,12 +7515,20 @@ class PodsAPI {
 		    if ( is_object( $post_type_object ) && $post_type_object->hierarchical )
 			    $info[ 'object_hierarchical' ] = true;
 
+            // Post Status default
+            $post_status = array( 'publish' );
+
+            // Pick field post_status option
+            if ( ! empty( $field['pick_post_status'] ) ) {
+                $post_status = (array) $field['pick_post_status'];
+            }
+
 		    /**
 		     * Default Post Status to query for.
 		     *
 		     * Use to change "default" post status from publish to any other status or statuses.
 		     *
-		     * @param  array $post_status List of post statuses. Default is 'publish'
+		     * @param  array $post_status List of post statuses. Default is 'publish' or field setting (if available)
 		     * @param  string $post_type Post type of current object
 		     * @param  array $info Array of information about the object.
 		     * @param  string $object	Type of object
@@ -7530,7 +7538,7 @@ class PodsAPI {
 		     *
 		     * @since unknown
 		     */
-		    $post_status = apply_filters( 'pods_api_get_table_info_default_post_status', array( 'publish' ), $post_type, $info, $object_type, $object, $name, $pod, $field );
+		    $post_status = apply_filters( 'pods_api_get_table_info_default_post_status', $post_status, $post_type, $info, $object_type, $object, $name, $pod, $field );
 
 		    $info[ 'where' ] = array(
 			    //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be

@@ -202,13 +202,15 @@ class PodsRESTHandlers {
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param mixed  $value      Value to write
-	 * @param object $object     The object from the response
-	 * @param string $field_name Name of field
+	 * @param mixed           $value      Value to write
+	 * @param object          $object     The object from the response
+	 * @param string          $field_name Name of field
+	 * @param WP_REST_Request $request     Current request
+	 * @param string          $object_type Type of object
 	 *
 	 * @return bool|int
 	 */
-	public static function write_handler( $value, $object, $field_name,$request, $object_type ) {
+	public static function write_handler( $value, $object, $field_name, $request, $object_type ) {
 
 		$pod_name = pods_v( 'type', $object );
 

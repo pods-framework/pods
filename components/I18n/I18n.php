@@ -138,6 +138,10 @@ class Pods_Component_I18n extends PodsComponent {
 
 				// Field specific
 				add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
+
+				// Setting pages
+				add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
+				add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
 			}
 
 			// Object filters
@@ -239,6 +243,55 @@ class Pods_Component_I18n extends PodsComponent {
 			}           
 		}
 		return false;
+	}
+
+	/**
+	 * Page title for setting pages
+	 * 
+	 * @since  0.1
+	 * @see PodsAdmin.php >> admin_menu()
+	 * @see PodsAdmin.php >> admin_content_settings()
+	 * @param  string $page_title Current page title
+	 * @param  array  $pod        Pod data
+	 * @return string
+	 */
+	public function admin_menu_page_title_i18n( $page_title, $pod ) {
+		$locale = $this->locale;
+		$options = $pod['options'];
+		// Validate field by checking if the default label is set and is the same as the label send with this function
+		if (   isset( $pod['label'] )
+			&& array_key_exists( $locale, $this->languages )
+			//&& $pod['label'] == $page_title
+			&& ! empty( $options[ 'label_' . $locale ] )
+			&& $this->pod_is_language_enabled( $locale, $pod )
+		) {
+			return $options[ 'label_' . $locale ];
+		}
+		return $page_title;
+	}
+
+	/**
+	 * Menu title for setting pages
+	 * 
+	 * @since  0.1
+	 * @see PodsAdmin.php >> admin_menu()
+	 * @param  string $menu_label Current menu label
+	 * @param  array  $pod        Pod data
+	 * @return string
+	 */
+	public function admin_menu_label_i18n( $menu_label, $pod ) {
+		$locale = $this->locale;
+		$options = $pod['options'];
+		// Validate field by checking if the default name is set and is the same as the name send with this function
+		if (   isset( $options['menu_name'] )
+			&& array_key_exists( $locale, $this->languages )
+			//&& $options['menu_name'] == $menu_label
+			&& ! empty( $options[ 'menu_name_' . $locale ] )
+			&& $this->pod_is_language_enabled( $locale, $pod )
+		) {
+			return $options[ 'menu_name_' . $locale ];
+		}
+		return $menu_label;
 	}
 
 	/**

@@ -329,15 +329,13 @@ class PodsField_Link extends PodsField_Website {
 	/**
 	 * Init the editor needed for WP Link modal to work
 	 */
-	public function init_link_editor() {
+	public function validate_link_modal() {
 
 		static $init;
 
 		if ( empty( $init ) ) {
 			if ( ! did_action( 'wp_enqueue_editor' ) ) {
-				echo '<div style="display:none">';
-				wp_editor( '', 'pods-link-editor-hidden' );
-				echo '</div>';
+				add_action( 'shutdown', array( $this, 'add_link_modal' ) );
 			}
 		}
 
@@ -345,4 +343,22 @@ class PodsField_Link extends PodsField_Website {
 
 	}
 
+	/**
+	 * Echo the link modal code
+	 */
+	public function add_link_modal() {
+
+		if ( ! class_exists( '_WP_Editors', false ) && file_exists( ABSPATH . WPINC . '/class-wp-editor.php' ) ) {
+			require_once( ABSPATH . WPINC . '/class-wp-editor.php' );
+		}
+
+		if ( class_exists( '_WP_Editors' ) && method_exists( '_WP_Editors', 'wp_link_dialog' ) ) {
+			_WP_Editors::wp_link_dialog();
+		} else {
+			echo '<div style="display:none;">';
+			wp_editor( '', 'pods-link-editor-hidden' );
+			echo '</div>';
+		}
+	
+	}
 }

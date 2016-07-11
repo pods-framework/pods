@@ -170,7 +170,7 @@ class PodsField_File extends PodsField {
                         'rows' => __( 'Rows', 'pods' ),
                         'tiles' => __( 'Tiles', 'pods' ),
                     )
-                )
+                ),
             ),/*
             self::$type . '_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),
@@ -541,18 +541,16 @@ class PodsField_File extends PodsField {
             </li>
 
             <li class="pods-file-col pods-file-actions">
-            <ul>
-
-            <li class="pods-file-col pods-file-delete"><a href="#delete">Delete</a></li>
-
-			<?php
-				if ( $linked ) {
-			?>
-            	<li class="pods-file-col pods-file-download"><a href="<?php echo esc_url( $link ); ?>" target="_blank" download>Download</a></li>
-			<?php
-				}
-			?>
-            </ul>
+                <ul>
+                    <li class="pods-file-col pods-file-delete"><a href="#delete">Delete</a></li>
+                    <?php
+						if ( $linked ) {
+					?>
+		                <li class="pods-file-col pods-file-download"><a href="<?php echo esc_url( $link ); ?>" target="_blank">Download</a></li>
+					<?php
+						}
+					?>
+                </ul>
             </li>
         </ul>
     </li>

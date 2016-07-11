@@ -1,7 +1,7 @@
 /*jshint esnext: true, node: true, mocha: true */
 var assert = require( 'assert' );
 
-import {FileUploadCollection, FileUploadModel} from '../../ui/fields-mv/_src/file-upload/models/file-upload-model';
+import {FileUploadCollection, FileUploadModel} from '../../../ui/fields-mv/_src/file-upload/models/file-upload-model';
 
 const default_model = new FileUploadModel();
 

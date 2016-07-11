@@ -246,114 +246,97 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
+	 * Get a translated option for a field key (if available)
+	 * 
+	 * @since  0.1
+	 * @param  string $current Current value
+	 * @param  string $key     The key / opion name to search for
+	 * @param  array  $data    Pod data (can also be an options array of a pod or field)
+	 * @return string
+	 */
+	public function get_field_translation( $current, $key, $data ) {
+		$locale = $this->locale;
+		// Validate locale and pod
+		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
+			// Add option keys to $data array
+			if ( $data['options'] ) {
+				$data = array_merge( $data, $data['options'] );
+			}
+			// Check if the i18n option exists and isn't empty
+			if ( ! empty( $data[ $key . '_' . $locale ] ) ) {
+				return (string) $data[ $key . '_' . $locale ];
+			}
+		}
+		return $current;
+	}
+
+	/**
 	 * Page title for setting pages
 	 * 
 	 * @since  0.1
-	 * @see PodsAdmin.php >> admin_menu()
-	 * @see PodsAdmin.php >> admin_content_settings()
+	 * @see    PodsAdmin.php >> admin_menu()
+	 * @see    PodsAdmin.php >> admin_content_settings()
 	 * @param  string $page_title Current page title
 	 * @param  array  $pod        Pod data
 	 * @return string
 	 */
 	public function admin_menu_page_title_i18n( $page_title, $pod ) {
-		$locale = $this->locale;
-		$options = $pod['options'];
-		// Validate field by checking if the default label is set and is the same as the label send with this function
-		if (   isset( $pod['label'] )
-			&& array_key_exists( $locale, $this->languages )
-			//&& $pod['label'] == $page_title
-			&& ! empty( $options[ 'label_' . $locale ] )
-			&& $this->pod_is_language_enabled( $locale, $pod )
-		) {
-			return $options[ 'label_' . $locale ];
-		}
-		return $page_title;
+		return (string) $this->get_field_translation( $page_title, 'label', $pod );
 	}
 
 	/**
 	 * Menu title for setting pages
 	 * 
 	 * @since  0.1
-	 * @see PodsAdmin.php >> admin_menu()
+	 * @see    PodsAdmin.php >> admin_menu()
 	 * @param  string $menu_label Current menu label
 	 * @param  array  $pod        Pod data
 	 * @return string
 	 */
 	public function admin_menu_label_i18n( $menu_label, $pod ) {
-		$locale = $this->locale;
-		$options = $pod['options'];
-		// Validate field by checking if the default name is set and is the same as the name send with this function
-		if (   isset( $options['menu_name'] )
-			&& array_key_exists( $locale, $this->languages )
-			//&& $options['menu_name'] == $menu_label
-			&& ! empty( $options[ 'menu_name_' . $locale ] )
-			&& $this->pod_is_language_enabled( $locale, $pod )
-		) {
-			return $options[ 'menu_name_' . $locale ];
-		}
-		return $menu_label;
+		return (string) $this->get_field_translation( $menu_label, 'menu_name', $pod );
 	}
 
 	/**
 	 * Returns the translated label if available
 	 * 
-	 * @since 0.1
-	 * @see PodsForm.php >> 'pods_form_ui_label_text' (filter)
-	 * @param string $label The default label
-	 * @param string $name The field name
-	 * @param string $help The help text
-	 * @param array $options The field options
+	 * @since  0.1
+	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
+	 * @param  string $label   The default label
+	 * @param  string $name    The field name
+	 * @param  string $help    The help text
+	 * @param  array  $options The field options
 	 * @return string
 	 */
 	public function fields_ui_label_text_i18n( $label, $name, $help, $options ) {
-		$locale = $this->locale;
-		// Validate field by checking if the default label is set and is the same as the label send with this function
-		if (   isset( $options['label'] ) 
-			&& array_key_exists( $locale, $this->languages )
-			&& $options['label'] == $label 
-			&& ! empty( $options[ 'label_' . $locale ] ) 
-			&& $this->pod_is_language_enabled( $locale, $options )
-		) {
-			return $options[ 'label_' . $locale ];
-		}
-		return $label;
+		return (string) $this->get_field_translation( $label, 'label', $options );
 	}
 
 	/**
 	 * Returns the translated description if available
 	 * 
-	 * @since 0.1
-	 * @see PodsForm.php >> 'pods_form_ui_comment_text' (filter)
-	 * @param string $message The default description
-	 * @param string $name The field name
-	 * @param array $options The field options
+	 * @since  0.1
+	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
+	 * @param  string $message The default description
+	 * @param  string $name    The field name
+	 * @param  array  $options The field options
 	 * @return string
 	 */
 	public function fields_ui_comment_text_i18n( $message, $name, $options ) {
-		$locale = $this->locale;
-		// Validate field by checking if the default description is set and is the same as the message send with this function
-		if (   isset( $options['description'] ) 
-			&& array_key_exists( $locale, $this->languages )
-			&& $options['description'] == $message 
-			&& ! empty( $options[ 'description_' . $locale ] ) 
-			&& $this->pod_is_language_enabled( $locale, $options )
-		) {
-			return $options[ 'description_' . $locale ];
-		}
-		return $message;
+		return (string) $this->get_field_translation( $message, 'description', $options );
 	}
 
 	/**
 	 * Replaces the default selected text with a translation if available
 	 * 
-	 * @since 0.1
-	 * @see pick.php >> 'pods_field_pick_data' (filter)
-	 * @param array $data The default data of the field
-	 * @param string $name The field name
-	 * @param string $value The field value
-	 * @param array $options The field options
-	 * @param array $pod The Pod
-	 * @param int $id The field ID
+	 * @since  0.1
+	 * @see    pick.php >> 'pods_field_pick_data' (filter)
+	 * @param  array  $data    The default data of the field
+	 * @param  string $name    The field name
+	 * @param  string $value   The field value
+	 * @param  array  $options The field options
+	 * @param  array  $pod     The Pod
+	 * @param  int    $id      The field ID
 	 * @return array
 	 */ 
 	public function field_pick_data_i18n( $data, $name, $value, $options, $pod, $id ) {
@@ -361,7 +344,7 @@ class Pods_Component_I18n extends PodsComponent {
 			$locale = $this->locale;
 			if (   isset( $options['pick_select_text_' . $locale ] ) 
 				&& array_key_exists( $locale, $this->languages ) 
-				&& $this->pod_is_language_enabled( $locale, $pod ) 
+				&& $this->obj_is_language_enabled( $locale, $pod ) 
 			) {
 				$data[''] = $options['pick_select_text_' . $locale ];
 			}
@@ -372,15 +355,15 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Get the i18n files for jquery datepicker from the github repository
 	 * 
-	 * @since 0.1
-	 * @link https://jqueryui.com/datepicker/#localization
-	 * @link https://github.com/jquery/jquery-ui/tree/master/ui/i18n
-	 * @param array $args datepicker arguments
-	 * @param string $type datepicker type
-	 * @param array $options field options
-	 * @param array $attributes field attibutes
-	 * @param string $name field name
-	 * @param string $form_field_type field type
+	 * @since  0.1
+	 * @link   https://jqueryui.com/datepicker/#localization
+	 * @link   https://github.com/jquery/jquery-ui/tree/master/ui/i18n
+	 * @param  array  $args            datepicker arguments
+	 * @param  string $type            datepicker type
+	 * @param  array  $options         field options
+	 * @param  array  $attributes      field attibutes
+	 * @param  string $name            field name
+	 * @param  string $form_field_type field type
 	 * @return array
 	 */
 	public function field_date_args_i18n($args, $type, $options, $attributes, $name, $form_field_type) {
@@ -402,7 +385,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Get the locale according to the format available in the jquery ui i18n file list
-	 * @url https://github.com/jquery/jquery-ui/tree/master/ui/i18n
+	 * 
+	 * @url    https://github.com/jquery/jquery-ui/tree/master/ui/i18n
 	 * @return string ex: "fr" or "en-GB"
 	 */
 	public function get_locale_jquery_ui_i18n() {
@@ -446,7 +430,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 		$locale = $this->locale;
 
-		if ( ! array_key_exists( $locale, $this->languages ) || $this->pod_is_language_enabled( $locale, $options ) ) {
+		if ( ! array_key_exists( $locale, $this->languages ) || $this->obj_is_language_enabled( $locale, $options ) ) {
 			return $options;
 		}
 
@@ -540,9 +524,9 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Build admin area
 	 *
-	 * @since 0.1
-	 * @param $options
-	 * @param $component
+	 * @since  0.1
+	 * @param  $options
+	 * @param  $component
 	 * @return void
 	 */
 	public function admin ( $options, $component ) {
@@ -664,10 +648,10 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * The i18n option tab.
 	 *
-	 * @since 0.1
-	 * @param array $tabs
-	 * @param array $pod
-	 * @param array $args
+	 * @since  0.1
+	 * @param  array $tabs
+	 * @param  array $pod
+	 * @param  array $args
 	 * @return array
 	 */
 	public function pod_tab( $tabs, $pod, $args ) {
@@ -678,9 +662,9 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * The i18n options
 	 *
-	 * @since 0.1
-	 * @param array $options
-	 * @param array $pod
+	 * @since  0.1
+	 * @param  array $options
+	 * @param  array $pod
 	 * @return array
 	 */
 	public function pod_options( $options, $pod ) {
@@ -720,8 +704,8 @@ class Pods_Component_I18n extends PodsComponent {
 	 * 
 	 * @todo Store enabled languages serialized instead of separate inputs
 	 *
-	 * @since 0.1
-	 * @param array $pod
+	 * @since  0.1
+	 * @param  array $pod
 	 * @return array
 	 */
 	public function meta_box( $pod ) {
@@ -763,9 +747,9 @@ class Pods_Component_I18n extends PodsComponent {
 	 * 
 	 * @todo check / remove
 	 *
-	 * @since 0.1
-	 * @param array $tabs
-	 * @param array $pod
+	 * @since  0.1
+	 * @param  array $tabs
+	 * @param  array $pod
 	 * @return array
 	 */
 	public function pod_field_tab( $tabs, $pod ) {
@@ -778,9 +762,9 @@ class Pods_Component_I18n extends PodsComponent {
 	 * 
 	 * @todo check / remove
 	 *
-	 * @since 0.1
-	 * @param array $options
-	 * @param array $pod
+	 * @since  0.1
+	 * @param  array $options
+	 * @param  array $pod
 	 * @return array
 	 */
 	public function pod_field_options( $options, $pod ) {
@@ -790,14 +774,14 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Adds translation inputs to fields
 	 * 
-	 * @since 0.1
-	 * @see PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
-	 * @param string $output The default output of the field
-	 * @param string $name The field name
-	 * @param string $value The field value
-	 * @param array $options The field options
-	 * @param array $pod The Pod
-	 * @param int $id The field ID
+	 * @since  0.1
+	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
+	 * @param  string $output The default output of the field
+	 * @param  string $name The field name
+	 * @param  string $value The field value
+	 * @param  array $options The field options
+	 * @param  array $pod The Pod
+	 * @param  int $id The field ID
 	 * @return string
 	 */
 	public function add_i18n_inputs( $output, $name, $value, $options, $pod, $id ) {
@@ -815,7 +799,7 @@ class Pods_Component_I18n extends PodsComponent {
 		$output .= '<br clear="both" />';
 		foreach ( $this->languages as $locale => $lang_data ) {
 
-			if ( ! $this->pod_is_language_enabled( $locale, $pod ) ) {
+			if ( ! $this->obj_is_language_enabled( $locale, $pod ) ) {
 				continue;
 			}
 			// Our own shiny label with language information
@@ -852,16 +836,16 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * Check if a language is get to enables for a pod
+	 * Check if a language is get to enables for an object
 	 * 
-	 * @since 0.1
-	 * @param string $locale
-	 * @param array  $pod
+	 * @since  0.1
+	 * @param  string $locale The locale to validate
+	 * @param  array  $data   Object data
 	 * @return bool
 	 */
-	public function pod_is_language_enabled( $locale, $pod ) {
-		$pod = (array) $pod;
-		$options = ( isset( $pod['options'] ) ) ? $pod['options'] : $pod;
+	public function obj_is_language_enabled( $locale, $data ) {
+		$data = (array) $data;
+		$options = ( isset( $data['options'] ) ) ? $data['options'] : $data;
 		if ( isset( $options['enable_i18n_'.$locale] ) && false == (bool) $options['enable_i18n_'.$locale] ) {
 			return false;
 		}
@@ -871,8 +855,8 @@ class Pods_Component_I18n extends PodsComponent {
 	/**
 	 * Create a label with the english and native name combined
 	 * 
-	 * @since 0.1 
-	 * @param array $lang_data
+	 * @since  0.1 
+	 * @param  array $lang_data
 	 * @return string
 	 */
 	public function create_lang_label( $lang_data ) {

@@ -1980,30 +1980,36 @@ class PodsUI {
 	public function export_bulk() {
 
 		if ( ! empty( $_POST['bulk_export_type'] ) ) {
-			$export_fields = array();
-
-			if ( empty( $_POST['bulk_export_fields'] ) ) {
+			if ( ! empty( $_POST['bulk_export_fields'] ) ) {
 				$export_fields = $_POST['bulk_export_fields'];
-			}
 
-			foreach ( $this->pod->fields() as $field ) {
-				if ( in_array( $field['name'], $export_fields ) ) {
-					$this->fields['export'][] = $field;
-				}
+                $this->fields['export'] = array();
+
+                if ( $this->pod ) {
+                    $fields = $this->pod->fields();
+
+                    foreach ( $fields as $field ) {
+                        if ( in_array( $field['name'], $export_fields ) ) {
+                            $this->fields['export'][] = $field;
+                        }
+                    }
+                }
 			}
 
 			// Set up where clause so that export function finds it
-			$ids = (array) $_POST['action_bulk_ids'];
-			$ids = array_map( 'absint', $ids );
-			$ids = array_filter( $ids );
+            if ( ! empty( $_POST['action_bulk_ids'] ) ) {
+                $ids = (array) $_POST['action_bulk_ids'];
+                $ids = array_map( 'absint', $ids );
+                $ids = array_filter( $ids );
 
-			if ( ! empty( $ids ) ) {
-				$ids = implode( ', ', $ids );
+                if ( ! empty( $ids ) ) {
+                    $ids = implode( ', ', $ids );
 
-				$this->where = array(
-					'manage' => '`' . pods_sanitize( $this->sql['field_id'] ) . '` IN ( ' . $ids . ' )',
-				);
-			}
+                    $this->where = array(
+                        'manage' => '`' . pods_sanitize( $this->sql['field_id'] ) . '` IN ( ' . $ids . ' )',
+                    );
+                }
+            }
 
 			$this->export( $_POST['bulk_export_type'] );
 
@@ -2050,6 +2056,7 @@ class PodsUI {
                 </ul>
 
 	            <p class="submit">
+                    <?php _e( 'Export as:', 'pods' ); ?>&nbsp;&nbsp;
 	                <?php foreach ( $this->export[ 'formats' ] as $format => $separator ) { ?>
 	                    <input type="submit" id="export_type_<?php echo esc_attr( strtoupper( $format ) ); ?>" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " name="bulk_export_type" class="button-primary" />
 	                <?php } ?>
@@ -2438,7 +2445,7 @@ class PodsUI {
 			return null;
 		}
 
-        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && !empty( $this->bulk ) ) {
+        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && ( ! empty( $this->bulk ) || 'export' == $this->action_bulk ) ) {
 	        if ( empty( $_REQUEST[ '_wpnonce' . $this->num ] ) || false === wp_verify_nonce( $_REQUEST[ '_wpnonce' . $this->num ], 'pods-ui-action-bulk' ) ) {
 		        pods_message( __( 'Invalid bulk request, please try again.', 'pods' ) );
 	        }
@@ -2784,14 +2791,7 @@ class PodsUI {
                     elseif ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) {
                         ?>
                         <div class="alignleft actions">
-                            <strong><?php _e( 'Export', 'pods' ); ?>:</strong>
-                            <?php
-                            foreach ( $this->export[ 'formats' ] as $format => $separator ) {
-                                ?>
-                                <input type="button" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " class="button" onclick="document.location='<?php echo pods_slash( pods_query_arg( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
-                                <?php
-                            }
-                            ?>
+                            <input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location='<?php echo pods_slash( pods_query_arg( array( 'action_bulk' . $this->num => 'export', '_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
                         </div>
                         <?php
                     }

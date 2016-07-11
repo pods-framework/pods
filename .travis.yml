@@ -50,12 +50,11 @@ before_script:
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    - vendor/bin/phpunit
+    #- vendor/bin/phpunit
     - node --harmony ./node_modules/mocha/bin/_mocha --compilers js:babel-core/register --reporter dot --recursive tests-js
 
 branches:
     only:
         - master
         - 2.x
-        - release/3.0
-        - feature/#3639_JS_unit_tests
+        - release/2.7

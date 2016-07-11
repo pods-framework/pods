@@ -648,7 +648,7 @@ class Pods_Component_I18n extends PodsComponent {
 		/*if ( !pods_is_admin( array( 'pods_i18n_activate_lanuages' ) ) )
 			$ui[ 'actions_disabled' ][] = 'edit';*/
 
-		echo '<div id="pods_admin_i18n">';
+		echo '<div id="pods_admin_i18n" class="pods-submittable-fields">';
 
 		pods_ui( $ui );
 
@@ -717,6 +717,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n metabox.
+	 * 
+	 * @todo Store enabled languages serialized instead of separate inputs
 	 *
 	 * @since 0.1
 	 * @param array $pod
@@ -743,7 +745,7 @@ class Pods_Component_I18n extends PodsComponent {
 					echo PodsForm::field( 'enable_i18n_' . $locale, pods_v( 'enable_i18n_' . $locale, $pod ), 'boolean', array( 
 						'boolean_yes_label' =>  '<code>' . $locale . '</code> (' . $this->create_lang_label( $lang_data ) . ')',
 						'boolean_no_label' =>  '',
-					) ); 
+					) );
 		?>
 				</div>
 		<?php
@@ -758,6 +760,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n field option tab.
+	 * 
+	 * @todo check / remove
 	 *
 	 * @since 0.1
 	 * @param array $tabs
@@ -771,6 +775,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n options
+	 * 
+	 * @todo check / remove
 	 *
 	 * @since 0.1
 	 * @param array $options
@@ -778,58 +784,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return array
 	 */
 	public function pod_field_options( $options, $pod ) {
-
-		//print_r( $pod );
-
-		$options['i18n'][ __( 'Label', 'pods' ) ] = 'label';
-		$options['i18n'][ __( 'Description', 'pods' ) ] = 'description';
-
-		//print_r( $options['additional-field']['file'] );
-
-		if( ! empty( $options['additional-field'] ) ) {
-			foreach ( $options['additional-field'] as $field_type => $field_data ) {
-				foreach ( $field_data as $field_data_name => $field_data_settings ) {
-					// group fields
-					if ( ! empty( $field_data_settings['group'] ) ) {
-						foreach ( $field_data_settings['group'] as $field_data_name => $field_data_settings ) {
-							if ( $this->is_translatable_field( $field_data_name ) ) {
-								if ( isset( $field_data_settings['label'] ) ) {
-									$options['i18n'][ $field_data_settings['label'] ] = $field_data_name;
-								}
-							}
-						}
-					// regular
-					} elseif ( $this->is_translatable_field( $field_data_name ) ) {
-						if ( isset( $field_data_settings['label'] ) ) {
-							$options['i18n'][ $field_data_settings['label'] ] = $field_data_name;
-						}
-					}
-				}
-			}
-		}
-		
-		foreach ( $options['i18n'] as $field_option_label => $field_option_name ) {
-
-			$options['i18n'][ $field_option_label ] = array();
-
-			/*$options['i18n'][ $field_option_label ][ $field_option_name ] = array(
-				'label' => __( 'Default', 'pods' ),
-				'type' => 'html',
-				'value' => pods_v( $field_option_name, $pod[ 'fields' ][ $field_option_name ] ),
-			);*/
-
-			foreach ( $this->languages as $locale => $lang_data ) {
-
-				$options['i18n'][ $field_option_label ][ $field_option_name . '_' . $locale ] = array(
-					'label'      => '<code>' . $locale . '</code>',// (' . $this->create_lang_label( $lang_data ) . ')',
-					'default'    => '',
-					'type'       => 'text',
-				);
-			}
-		}
-
 		return $options;
-
 	}
 
 	/**
@@ -878,7 +833,7 @@ class Pods_Component_I18n extends PodsComponent {
 			// Add language data to name for normal strings and array formatted strings
 			if ( strpos( $name, ']' ) !== false ) {
 				// Hide the i18n options for fields by default if they are empty
-				if ( strpos( $name, 'field_data' ) !== false && empty( pods_v( $field_name, $pod ) ) ) {
+				if ( strpos( $name, 'field_data' ) !== false && empty( pods_v( $name, $pod ) ) ) {
 					$style = ' style="display: none;"';
 				}
 				$field_name = rtrim( $name, ']' );
@@ -908,7 +863,7 @@ class Pods_Component_I18n extends PodsComponent {
 		$pod = (array) $pod;
 		$options = ( isset( $pod['options'] ) ) ? $pod['options'] : $pod;
 		if ( isset( $options['enable_i18n_'.$locale] ) && false == (bool) $options['enable_i18n_'.$locale] ) {
-			return false;;
+			return false;
 		}
 		return true;
 	}

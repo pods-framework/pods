@@ -1800,6 +1800,9 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
+
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
 
@@ -1822,6 +1825,9 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         $object_type = 'post';
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
+
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
@@ -2009,6 +2015,9 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
         $object_type = 'post';
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
+
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
         return false;

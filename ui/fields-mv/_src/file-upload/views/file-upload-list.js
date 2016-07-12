@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as itemTemplate from './file-upload-item.html';
+import * as templateImport from './file-upload-item.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+
 import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 /**
@@ -19,7 +21,7 @@ export const FileUploadItem = PodsFieldView.extend( {
 		itemName    : '.pods-flex-name'
 	},
 
-	template: _.template( itemTemplate ),
+	template: _.template( template ),
 
 	triggers: {
 		'click @ui.removeButton': 'remove:file:click'

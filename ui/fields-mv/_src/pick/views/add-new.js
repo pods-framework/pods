@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as template from './add-new.html';
+import * as templateImport from './add-new.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+
 import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
 
 export const AddNew = PodsFieldView.extend( {

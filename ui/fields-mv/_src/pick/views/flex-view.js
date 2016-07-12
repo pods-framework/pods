@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as flexTemplate from './flex-item.html';
+import * as templateImport from './flex-item.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+
 import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-views';
 
 /**
@@ -10,7 +12,7 @@ export const FlexItem = PodsFieldView.extend( {
 
 	className: 'pods-flex-item pods-relationship',
 
-	template: _.template( flexTemplate ),
+	template: _.template( template ),
 
 	ui: {
 		removeButton: '.pods-flex-remove a'
@@ -25,7 +27,7 @@ export const FlexItem = PodsFieldView.extend( {
 			ordinal: this.model.collection.indexOf( this.model )
 		}
 	}
-	
+
 } );
 
 /**

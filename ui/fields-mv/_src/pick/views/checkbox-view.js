@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as checkboxTemplate from './checkbox-item.html';
+import * as templateImport from './checkbox-item.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+
 import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-views';
 
 /**
@@ -8,7 +10,7 @@ import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-vi
 export const CheckboxItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	template: _.template( checkboxTemplate ),
+	template: _.template( template ),
 
 	className: 'pods-pick',
 

@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as itemTemplate from './file-upload-queue.html';
-
+import * as templateImport from './file-upload-queue.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {
@@ -19,7 +19,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 
 	tagName: 'li',
 
-	template: _.template( itemTemplate ),
+	template: _.template( template ),
 
 	attributes: function () {
 		return {

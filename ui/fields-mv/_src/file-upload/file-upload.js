@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Mn */
-import * as template from './file-upload-layout.html';
+import * as templateImport from './file-upload-layout.html';
+const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+
 import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
 import { FileUploadList } from './views/file-upload-list';
 import { FileUploadForm } from './views/file-upload-form';

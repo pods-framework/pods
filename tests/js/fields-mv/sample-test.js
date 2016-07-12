@@ -1,6 +1,4 @@
-/*jshint esnext: true, node: true, mocha: true */
-var assert = require( 'assert' );
-
+/*global jQuery, _, Backbone, Mn, assert */
 import {FileUploadCollection, FileUploadModel} from '../../../ui/fields-mv/_src/file-upload/models/file-upload-model';
 
 const default_model = new FileUploadModel();
@@ -16,7 +14,6 @@ const test_data = {
 
 const test_model = new FileUploadModel( test_data );
 const collection = new FileUploadCollection( test_model );
-
 
 describe( 'FileUploadModel', function () {
 	it( 'should have proper defaults', function () {

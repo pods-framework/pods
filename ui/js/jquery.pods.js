@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 ( function ( $ ) {
     var pods_changed = false,
         pods_form_field_names = [],
@@ -48,7 +49,12 @@
                     if ( !valid_field ) {
                         if ( -1 == jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) ) {
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
-                            $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + label.replace( /( <([^>]+ )> )/ig, '' ) + ' is required.</div>' );
+
+                            if ( $el.closest( '.pods-field-input > td' ).length > 0 ) {
+                                $el.closest( '.pods-field-input > td' ).last().prepend( '<div class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                            } else {
+                                $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                            }
                             $el.addClass( 'pods-validate-error' );
 
                             pods_form_field_names.push( $el.prop( 'name' ) );
@@ -388,7 +394,7 @@
                             }
                         },
                         error : function () {
-                            var err_msg = 'Unable to process request, please try again.';
+                            var err_msg = PodsI18n.__( 'Unable to process request, please try again.' );
 
                             if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                 pods_admin_submit_error_callback( err_msg, $submittable );
@@ -1714,7 +1720,7 @@
                         var $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         field_data[ 'name' ] += '_copy';
-                        field_data[ 'label' ] += ' (Copy)';
+                        field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';
                         field_data[ 'id' ] = 0;
 
                         $new_row_label.find( 'a.pods-manage-row-edit.row-label' ).html( field_data[ 'label' ] );
@@ -1799,7 +1805,7 @@
 
                     window.onbeforeunload = function () {
                         if ( pods_changed )
-                            return 'Navigating away from this page will discard any changes you have made.';
+                            return PodsI18n.__( 'Navigating away from this page will discard any changes you have made.' );
                     }
                 } );
 

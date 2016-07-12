@@ -169,6 +169,11 @@ class PodsAdmin {
             }
         }
 
+        // Flexible Relationships
+        if ( pods_is_modal_window() ) {
+            wp_enqueue_style( 'pods-modal-relationships', PODS_URL . 'ui/css/pods-modal-relationships.css', array(), '1.0' );
+        }
+
         wp_enqueue_style( 'pods-font' );
     }
 
@@ -618,6 +623,7 @@ class PodsAdmin {
             $_GET[ 'action' ] = 'edit';
 
             $page_title = pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
+            $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod->pod_data );
 
             $ui = array(
                 'pod' => $pod,
@@ -692,7 +698,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-attach' );
+            wp_enqueue_style( 'pods-flex' );
     }
 
     /**

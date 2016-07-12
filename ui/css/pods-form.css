@@ -19,7 +19,7 @@
 
 .pods-field label {
     cursor: pointer;
-    display: inline-block;
+    display: block;
     padding: 0 0 4px 2px;
 }
 
@@ -64,14 +64,34 @@
     padding-top: 1px;
 }
 
+.pods-link-options {
+    background: #fff;
+    padding: 5px 10px 10px;
+    border: 1px solid #dfdfdf;
+}
+.pods-link-options > div {
+    display: inline-block;
+}
+
 .pods-pick-values {
     background: #fff;
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
-    max-height: 200px;
+    max-height: 220px;
     overflow: auto;
     padding: 2px 0;
+}
+
+/* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
+.pods-form-ui-field .pods-pick-values,
+.pods-form-ui-field .pods-pick-values li.pods-flex-col {
+    border: none;
+}
+
+/* This one does need a border, however */
+.pods-pick-values .pods-checkbox-view {
+    border: 1px solid #dfdfdf;
 }
 
 select.pods-form-ui-field-type-pick[multiple] {
@@ -249,7 +269,7 @@ input.pods-form-ui-field-type-color {
     width: 100%;
 }
 
-.pods-form-front ul.pods-files li.pods-file-icon img {
+.pods-form-front ul.pods-flex-list li.pods-flex-icon img {
     width: 40px;
 }
 
@@ -307,7 +327,39 @@ input.pods-form-ui-field-type-color {
 .pods-meta div.pods-form-ui-field-type-pick:after,
 .pods-form-front .pods-submittable-fields:after,
 .pods-form-front li.pods-field:after {
-    content: “\00a0”;
+    content: "\00a0";
     clear: both;
     display: block;
+}
+
+#wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
+    height: 12em;
+}
+
+.pods-related-add-new {
+    margin-top: 1em !important;
+}
+
+@media screen and (max-width: 782px) {
+    .pods-pick-values li .pods-boolean input {
+        height: 18px;
+        top: 2px;
+    }
+
+    .pods-pick-values li .pods-boolean input:before {
+        font: 400 2.5vh/1 dashicons;
+    }
+}
+
+/*
+ * Modal For Flexible Relationships
+ */
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
+  margin-top: 50px;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: none;
 }

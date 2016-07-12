@@ -920,13 +920,19 @@ class PodsMeta {
                 continue;
 
             $field_found = false;
+            $group_hidden = true;
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) ) {
                     $field_found = true;
-                    break;
+                }
+                if ( ! isset( $field['options']['hidden'] ) || 1 != (int) $field['options']['hidden'] ) {
+                    $group_hidden = false;
                 }
             }
+
+            if ( $group_hidden ) 
+                continue;
 
             if ( empty( $group[ 'label' ] ) )
                 $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;

@@ -34,6 +34,14 @@ export const SelectView = PodsFieldListView.extend( {
 	},
 
 	attributes: function () {
+		/**
+		 * @param {string} fieldAttributes.name
+		 * @param {string} fieldAttributes.class
+		 * @param {string} fieldAttributes.name_clean
+		 * @param {string} fieldAttributes.id
+		 *
+		 * @param {string} fieldOptions.pick_format_type 'single' or 'multi'
+		 */
 		const fieldModel = this.options.fieldModel;
 		const fieldAttributes = fieldModel.get( 'attributes' );
 		const fieldOptions = fieldModel.get( 'options' );
@@ -41,11 +49,11 @@ export const SelectView = PodsFieldListView.extend( {
 		return {
 			'name'           : fieldAttributes.name + '[]',
 			'class'          : fieldAttributes.class,
-			'data-name-clean': fieldAttributes[ 'name_clean' ],
+			'data-name-clean': fieldAttributes.name_clean,
 			'id'             : fieldAttributes.id,
 			'tabindex'       : '2',
-			'multiple'       : fieldOptions[ 'pick_format_type' ]
-		}
+			'multiple'       : ( fieldOptions.pick_format_type === 'multi' )
+		};
 	},
 
 	onChangeSelected: function () {

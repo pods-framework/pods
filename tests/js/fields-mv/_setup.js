@@ -5,3 +5,4 @@ global._ = require( 'underscore' );
 global.Backbone = require( 'backbone' );
 global.Mn = require( 'backbone.marionette' );
 global.assert = require( 'assert' );
+global.wp = { media: { view: { Frame: { extend : function(){} } } } }; // Stub

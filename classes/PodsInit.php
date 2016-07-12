@@ -693,15 +693,17 @@ class PodsInit {
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
 					'public'                => (boolean) pods_var( 'public', $taxonomy, true ),
-					'show_in_nav_menus'     => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
+					'show_in_nav_menus'     => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_tagcloud'         => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
+					'show_tagcloud_in_edit' => (boolean) pods_var( 'show_tagcloud_in_edit', $taxonomy, (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ) ),
+					'show_in_quick_edit'    => (boolean) pods_var( 'show_in_quick_edit', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
 					'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
 					'query_var'             => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_var( 'show_admin_column', $taxonomy, false ),
-					'sort'                  => (boolean) pods_var( 'sort', $taxonomy, false )
+					'sort'                  => (boolean) pods_var( 'sort', $taxonomy, false ),
 				);
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
@@ -788,6 +790,15 @@ class PodsInit {
 			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy );
 
 			$options = self::object_label_fix( $options, 'taxonomy' );
+
+			/** 
+			 * Hide tagcloud compatibility
+			 * @todo check https://core.trac.wordpress.org/ticket/36964
+			 * @see wp-admin/edit-tags.php L389
+			 */
+			if ( true != (boolean) pods_var( 'show_tagcloud_in_edit', $options, (boolean) pods_var( 'show_tagcloud', $options, true ) ) ) {
+				$options['labels']['popular_items'] = null;
+			}
 
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );

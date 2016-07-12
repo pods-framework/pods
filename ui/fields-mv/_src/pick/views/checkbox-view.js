@@ -8,7 +8,7 @@ import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-vi
 export const CheckboxItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	template: _.template( checkboxTemplate.default ),
+	template: _.template( checkboxTemplate ),
 
 	className: 'pods-pick',
 

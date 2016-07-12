@@ -15,7 +15,7 @@ const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
  *
  */
 export const Pick = Mn.LayoutView.extend( {
-	template: _.template( template.default ),
+	template: _.template( template ),
 
 	regions: {
 		viewSelector: '.view-selector',
@@ -45,7 +45,7 @@ export const Pick = Mn.LayoutView.extend( {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param childView
 	 */
 	onChildviewAddNewClick: function ( childView ) {

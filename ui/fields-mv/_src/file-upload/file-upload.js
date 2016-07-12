@@ -15,7 +15,7 @@ const Uploaders = [
 const UNLIMITED_FILES = 0;
 
 export const FileUpload = Mn.LayoutView.extend( {
-	template: _.template( template.default ),
+	template: _.template( template ),
 
 	regions: {
 		list    : '.pods-ui-file-list',

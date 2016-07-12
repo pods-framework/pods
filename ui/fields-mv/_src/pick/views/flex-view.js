@@ -10,7 +10,7 @@ export const FlexItem = PodsFieldView.extend( {
 
 	className: 'pods-flex-item pods-relationship',
 
-	template: _.template( flexTemplate.default ),
+	template: _.template( flexTemplate ),
 
 	ui: {
 		removeButton: '.pods-flex-remove a'

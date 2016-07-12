@@ -11,7 +11,7 @@ export const AddNew = PodsFieldView.extend( {
 		addButton: '.pods-related-add-new'
 	},
 
-	template: _.template( template.default ),
+	template: _.template( template ),
 
 	triggers: {
 		'click @ui.addButton': 'add:new:click'

@@ -19,7 +19,7 @@ export const FileUploadItem = PodsFieldView.extend( {
 		itemName    : '.pods-flex-name'
 	},
 
-	template: _.template( itemTemplate.default ),
+	template: _.template( itemTemplate ),
 
 	triggers: {
 		'click @ui.removeButton': 'remove:file:click'

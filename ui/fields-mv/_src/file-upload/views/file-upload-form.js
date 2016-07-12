@@ -9,7 +9,7 @@ export const FileUploadForm = PodsFieldView.extend( {
 		addButton: '.pods-flex-add'
 	},
 
-	template: _.template( formTemplate.default ),
+	template: _.template( formTemplate ),
 
 	triggers: {
 		'click @ui.addButton': 'add:file:click'

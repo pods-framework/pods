@@ -2,7 +2,7 @@
 import * as template from './view-selector-template.html';
 
 export const PickViewSelector = Mn.LayoutView.extend( {
-	template: _.template( template.default ),
+	template: _.template( template ),
 
 	ui: {
 		checkbox: '.checkbox',

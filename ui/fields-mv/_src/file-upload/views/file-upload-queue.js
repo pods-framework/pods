@@ -19,7 +19,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 
 	tagName: 'li',
 
-	template: _.template( itemTemplate.default ),
+	template: _.template( itemTemplate ),
 
 	attributes: function () {
 		return {

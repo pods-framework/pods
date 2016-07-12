@@ -1251,21 +1251,6 @@ class PodsAdmin {
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),
                     'boolean_yes_label' => ''
-                ),
-                // @todo check https://core.trac.wordpress.org/ticket/36964
-                'show_tagcloud_in_edit' => array(
-                    'label' => __( 'Allow Tagcloud on term edit pages', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'show_tagcloud', $pod, true ) ),
-                    'boolean_yes_label' => ''
-                ),
-                'show_in_quick_edit' => array(
-                    'label' => __( 'Allow in quick/bulk edit panel', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),
-                    'boolean_yes_label' => ''
                 )
             );
 

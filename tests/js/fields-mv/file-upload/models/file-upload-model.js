@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, assert */
-import {FileUploadCollection, FileUploadModel} from '../../../ui/fields-mv/_src/file-upload/models/file-upload-model';
+import {FileUploadCollection, FileUploadModel} from '~/ui/fields-mv/_src/file-upload/models/file-upload-model';
 
 const default_model = new FileUploadModel();
 

@@ -1,4 +1,3 @@
-import string from 'rollup-plugin-string';
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
@@ -8,11 +7,11 @@ export default {
 	"format"    : 'iife',
 	"moduleName": 'PodsMVFields',
 	"plugins"   : [
-		string( { "extensions": [ '.html' ] } ),
 		babel( {
 			"babelrc": false, // Ignore the .babelrc file which is there for mocha tests
 			"presets": [ 'es2015-rollup' ],
 			"plugins": [
+				"transform-html-import-to-string",
 				"babel-root-import"
 			]
 		} ),

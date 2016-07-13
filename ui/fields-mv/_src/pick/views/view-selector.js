@@ -1,6 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as templateImport from '~/ui/fields-mv/_src/pick/views/view-selector-template.html';
-const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+import * as template from '~/ui/fields-mv/_src/pick/views/view-selector-template.html';
 
 export const PickViewSelector = Mn.LayoutView.extend( {
 	template: _.template( template ),

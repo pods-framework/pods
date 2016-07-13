@@ -2,9 +2,6 @@
 module.exports = function ( grunt ) {
 	'use strict';
 
-	var babel = require( 'rollup-plugin-babel' );
-	var uglify = require( 'rollup-plugin-uglify' );
-
 	//setup file list for copying/ not copying for SVN
 	var files_list = [
 		'**',

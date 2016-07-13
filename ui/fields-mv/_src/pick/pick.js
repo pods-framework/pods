@@ -1,6 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as templateImport from '~/ui/fields-mv/_src/pick/pick-layout.html';
-const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
+import * as template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
 import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
 //import { RelationshipModel, RelationshipCollection } from './models/relationship-model';

@@ -1,2 +1,2 @@
-export { FileUpload } from './file-upload/file-upload';
-export { Pick } from './pick/pick';
+export { FileUpload } from '~/ui/fields-mv/_src/file-upload/file-upload';
+export { Pick } from '~/ui/fields-mv/_src/pick/pick';

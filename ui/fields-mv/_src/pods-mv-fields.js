@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn */
-import { podsMVFieldsInit } from './pods-mv-fields-init'; // jQuery plugin
-import * as fieldClasses from './pods-mv-fields-manifest'; // All fields
+import { podsMVFieldsInit } from '~/ui/fields-mv/_src/pods-mv-fields-init'; // jQuery plugin
+import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest'; // All fields
 
 const PodsMVFields = {
 	fieldClasses: fieldClasses,

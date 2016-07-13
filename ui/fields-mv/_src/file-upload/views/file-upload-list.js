@@ -1,8 +1,8 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as templateImport from './file-upload-item.html';
+import * as templateImport from '~/ui/fields-mv/_src/file-upload/views/file-upload-item.html';
 const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
 
-import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
  * Individual list items, representing a single file

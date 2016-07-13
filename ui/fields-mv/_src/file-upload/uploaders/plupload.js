@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import { PodsFileUploader } from './pods-file-uploader';
-import { FileUploadQueueModel, FileUploadQueue } from '../views/file-upload-queue';
+import { PodsFileUploader } from '~/ui/fields-mv/_src/file-upload/uploaders/pods-file-uploader';
+import { FileUploadQueueModel, FileUploadQueue } from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},

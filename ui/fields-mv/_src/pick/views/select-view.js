@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Mn, wp */
 // Note: this is a template-less view
-import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
+import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
  *
@@ -34,6 +34,7 @@ export const SelectView = PodsFieldListView.extend( {
 	},
 
 	attributes: function () {
+
 		/**
 		 * @param {string} fieldAttributes.name
 		 * @param {string} fieldAttributes.class
@@ -59,4 +60,5 @@ export const SelectView = PodsFieldListView.extend( {
 	onChangeSelected: function () {
 		this.collection.setSelected( this.$el.val() );
 	}
+
 } );

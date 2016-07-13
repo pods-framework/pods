@@ -1,14 +1,14 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as templateImport from './pick-layout.html';
+import * as templateImport from '~/ui/fields-mv/_src/pick/pick-layout.html';
 const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
 
-import {IframeFrame} from '../core/iframe-frame';
+import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
 //import { RelationshipModel, RelationshipCollection } from './models/relationship-model';
-import {PickViewSelector} from './views/view-selector';
-import {CheckboxView} from './views/checkbox-view';
-import {SelectView} from './views/select-view';
-import {FlexView} from './views/flex-view';
-import {AddNew} from './views/add-new';
+import {PickViewSelector} from '~/ui/fields-mv/_src/pick/views/view-selector';
+import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
+import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
+import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
+import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
 
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 

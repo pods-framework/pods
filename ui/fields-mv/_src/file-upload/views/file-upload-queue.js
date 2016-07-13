@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as templateImport from './file-upload-queue.html';
+import * as templateImport from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue.html';
 const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
 
 export const FileUploadQueueModel = Backbone.Model.extend( {

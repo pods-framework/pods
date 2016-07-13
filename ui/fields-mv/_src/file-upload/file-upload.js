@@ -1,13 +1,13 @@
 /*global jQuery, _, Backbone, Mn */
-import * as templateImport from './file-upload-layout.html';
+import * as templateImport from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
 const template = templateImport.default || templateImport; // Currently two differnt style string importers for build and test
 
-import { FileUploadCollection, FileUploadModel } from './models/file-upload-model';
-import { FileUploadList } from './views/file-upload-list';
-import { FileUploadForm } from './views/file-upload-form';
+import { FileUploadCollection, FileUploadModel } from '~/ui/fields-mv/_src/file-upload/models/file-upload-model';
+import { FileUploadList } from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';
+import { FileUploadForm } from '~/ui/fields-mv/_src/file-upload/views/file-upload-form';
 
-import { Plupload } from './uploaders/plupload';
-import { MediaModal } from './uploaders/media-modal';
+import { Plupload } from '~/ui/fields-mv/_src/file-upload/uploaders/plupload';
+import { MediaModal } from '~/ui/fields-mv/_src/file-upload/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,

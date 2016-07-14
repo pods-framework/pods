@@ -381,4 +381,18 @@ class PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $value;
     }
+
+	/**
+	 * Placeholder function to allow var_export() use with classes
+	 *
+	 * @param array $properties
+	 *
+	 * @return object|void
+	 */
+	public static function __set_state( $properties ) {
+
+		return;
+
+	}
+
 }

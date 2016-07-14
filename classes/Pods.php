@@ -3944,4 +3944,21 @@ class Pods implements Iterator {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
 	}
+
+	/**
+	 * Handle casting a Pods() object to string
+	 *
+	 * @return string Pod type and name in CURIE notation
+	 */
+	public function __toString() {
+
+		$string = '';
+
+		if ( ! empty( $this->pod_data ) ) {
+			$string = sprintf( '%s:%s', $this->pod_data['type'], $this->pod_data['name'] );
+		}
+
+		return $string;
+		
+	}
 }

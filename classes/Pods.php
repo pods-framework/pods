@@ -656,6 +656,9 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/field/
 	 */
 	public function field ( $name, $single = null, $raw = false ) {
+	    /*
+	     * @todo wpml-comp Remove global object usage
+	     */
 		global $sitepress;
 
 		$defaults = array(
@@ -1049,6 +1052,17 @@ class Pods implements Iterator {
 						if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
 							$metadata_type = 'post';
 
+                            /*
+                             * @todo wpml-comp Is translated post type
+                             * Suggested API call:
+                             * add_filter( 'wpml_is_translated_post_type', get_post_type( $_GET['post'] ), 10, 2 );
+                             *
+                             * @todo wpml-comp Master Post From Duplicate
+                             * Suggested API call:
+                             * apply_filters( 'wpml_master_post_from_duplicate', $id );
+                             * https://wpml.org/wpml-hook/wpml_master_post_from_duplicate/
+                             * dev-note Why Duplicate is needed?
+                             */
 							// Support for WPML 'duplicated' translation handling
 							if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
 								$master_post_id = (int) get_metadata( $metadata_type, $id, '_icl_lang_duplicate_of', true );
@@ -1499,6 +1513,16 @@ class Pods implements Iterator {
 											$metadata_type = $object_type;
 
 											if ( 'post' == $object_type ) {
+                                                /*
+                                                 * @todo wpml-comp Is translated post type
+                                                 * Suggested API call:
+                                                 * add_filter( 'wpml_is_translated_post_type', get_post_type( $_GET['post'] ), 10, 2 );
+                                                 * @todo wpml-comp Master Post From Duplicate
+                                                 * Suggested API call:
+                                                 * apply_filters( 'wpml_master_post_from_duplicate', $id );
+                                                 * https://wpml.org/wpml-hook/wpml_master_post_from_duplicate/
+                                                 * dev-note Why Duplicate is needed?
+                                                 */
 												// Support for WPML 'duplicated' translation handling
 												if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
 													$master_post_id = (int) get_metadata( $metadata_type, $metadata_object_id, '_icl_lang_duplicate_of', true );

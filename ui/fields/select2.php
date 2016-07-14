@@ -198,6 +198,13 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             uri : '<?php echo esc_js( $uri_hash ); ?>',
                             id : '<?php echo esc_js( (int) $id ); ?>',
                             query : term<?php
+                            /*
+                             * @todo wpml-comp Check if WPML active
+                             * if ( did_action( 'wpml_loaded', false ) ) {
+                             *
+                             * @todo wpml-comp Get language
+                             * apply_filters( 'wpml_current_language', null );
+                             */
                                 global $sitepress, $icl_adjust_id_url_filter_off;
 
                                 if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {

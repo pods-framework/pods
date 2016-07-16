@@ -688,6 +688,26 @@ class PodsInit {
 					$ct_rewrite = $ct_rewrite_array;
 				}
 
+				/**
+				 * Default tax capabilities
+				 * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
+				 */
+				$capability_type = pods_var( 'capability_type', $taxonomy, 'default' );
+				$tax_capabilities = array();
+
+				if ( 'custom' == $capability_type ) {
+					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
+					if ( ! empty( $capability_type ) && 'default' != $capability_type ) {
+						$capability_type .=  '_terms';
+						$tax_capabilities = array(
+							'manage_terms' => 'manage_' . $capability_type,
+							'edit_terms'   => 'edit_' . $capability_type,
+							'delete_terms' => 'delete_' . $capability_type,
+							'assign_terms' => 'assign_' . $capability_type,
+						);
+					}
+				}
+
 				// Register Taxonomy
 				$pods_taxonomies[ $taxonomy_name ] = array(
 					'label'                 => $ct_label,
@@ -699,6 +719,9 @@ class PodsInit {
 					'show_tagcloud_in_edit' => (boolean) pods_var( 'show_tagcloud_in_edit', $taxonomy, (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ) ),
 					'show_in_quick_edit'    => (boolean) pods_var( 'show_in_quick_edit', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
+					//'capability_type'       => $capability_type,
+					'capabilities'          => $tax_capabilities,
+					//'map_meta_cap'          => (boolean) pods_var( 'capability_type_extra', $taxonomy, true ),
 					'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
 					'query_var'             => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
 					'rewrite'               => $ct_rewrite,

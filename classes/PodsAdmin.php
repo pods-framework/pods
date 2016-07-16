@@ -1366,7 +1366,7 @@ class PodsAdmin {
                     'label' => __( 'Custom User Capability', 'pods' ),
                     'help' => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
                     'type' => 'text',
-                    'default' => pods_var_raw( 'name', $pod ),
+                    'default' => pods_v( 'name', $pod ),
                     'depends-on' => array( 'capability_type' => 'custom' )
                 ),
                 'query_var' => array(
@@ -2315,10 +2315,12 @@ class PodsAdmin {
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ], 'terms' ) ) {
                     $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
 
-                    $capabilities[] = 'manage_' . $capability_type . '_terms';
-                    $capabilities[] = 'edit_' . $capability_type . '_terms';
-                    $capabilities[] = 'delete_' . $capability_type . '_terms';
-                    $capabilities[] = 'assign_' . $capability_type . '_terms';
+                    $capability_type .= '_terms';
+
+                    $capabilities[] = 'manage_' . $capability_type;
+                    $capabilities[] = 'edit_' . $capability_type;
+                    $capabilities[] = 'delete_' . $capability_type;
+                    $capabilities[] = 'assign_' . $capability_type;
                 }
             }
             else {

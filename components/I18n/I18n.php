@@ -430,7 +430,9 @@ class Pods_Component_I18n extends PodsComponent {
 
 		$locale = $this->locale;
 
-		if ( ! array_key_exists( $locale, $this->languages ) || $this->obj_is_language_enabled( $locale, $options ) ) {
+		$pod = pods_api()->load_pod( $object );
+
+		if ( ! $this->obj_is_language_enabled( $locale, $pod ) ) {
 			return $options;
 		}
 
@@ -670,7 +672,7 @@ class Pods_Component_I18n extends PodsComponent {
 	public function pod_options( $options, $pod ) {
 
 		//if ( $pod['type'] === '' )
-		$options[ 'pods-i18n' ] = array(
+		/*$options[ 'pods-i18n' ] = array(
 			'enabled_languages' => array(
 				'label' => __( 'Enable/Disable languages for this Pod', 'pods' ),
 				'help' => __( 'This overwrites the defaults set in the component admin.', 'pods' ),
@@ -679,12 +681,12 @@ class Pods_Component_I18n extends PodsComponent {
 		);
 
 		foreach ( $this->languages as $locale => $lang_data ) {
-			$options['pods-i18n']['enabled_languages']['group']['enable_i18n_' . $locale] = array(
+			$options['pods-i18n']['enabled_languages']['group']['enable_i18n'][ $locale ] = array(
 				'label'      => $locale . ' (' . $this->create_lang_label( $lang_data ) . ')',
 				'default'    => 1,
 				'type'       => 'boolean',
 			);
-		}
+		}*/
 
 		return $options;
 
@@ -719,15 +721,15 @@ class Pods_Component_I18n extends PodsComponent {
 
 			foreach ( $this->languages as $locale => $lang_data ) {
 
-				if ( ! isset( $pod['options']['enable_i18n_' . $locale] ) ) {
+				if ( ! isset( $pod['options']['enable_i18n'][ $locale ] ) ) {
 					// Enabled by default
-					$pod['options']['enable_i18n_' . $locale] = 1;
+					$pod['options']['enable_i18n'][ $locale ] = 1;
 				}
 		?>
 				<div class="pods-field-option pods-enable-disable-language">
 		<?php 
-					echo PodsForm::field( 'enable_i18n_' . $locale, pods_v( 'enable_i18n_' . $locale, $pod ), 'boolean', array( 
-						'boolean_yes_label' =>  '<code>' . $locale . '</code> (' . $this->create_lang_label( $lang_data ) . ')',
+					echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array( 
+						'boolean_yes_label' =>  '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
 						'boolean_no_label' =>  '',
 					) );
 		?>
@@ -846,9 +848,12 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return bool
 	 */
 	public function obj_is_language_enabled( $locale, $data ) {
+		if ( ! array_key_exists( $locale, $this->languages ) ) {
+			return false;
+		}
 		$data = (array) $data;
 		$options = ( isset( $data['options'] ) ) ? $data['options'] : $data;
-		if ( isset( $options['enable_i18n_'.$locale] ) && false == (bool) $options['enable_i18n_'.$locale] ) {
+		if ( isset( $options['enable_i18n'][ $locale ] ) && false == (bool) $options['enable_i18n'][ $locale ] ) {
 			return false;
 		}
 		return true;

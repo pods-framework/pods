@@ -39,10 +39,10 @@ class Pods_Component_I18n extends PodsComponent {
 		'menu_name',
 		'pick_select_text',
 
-		//@todo: Not working due to lack of filters
-		//'file_add_button',
-		//'file_modal_title',
-		//'file_modal_add_button',
+		//@todo: Validate PR #3683 https://github.com/pods-framework/pods/pull/3683 is merged
+		'file_add_button',
+		'file_modal_title',
+		'file_modal_add_button',
 	);
 
 	/**
@@ -51,7 +51,6 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @since 0.1
 	 */
 	public function __construct () {
-		//add_action( 'plugins_loaded', array( $this, 'init' ) );
 		$this->init();
 	}
 
@@ -127,17 +126,19 @@ class Pods_Component_I18n extends PodsComponent {
 
 				}
 
-				/*foreach ( pods_form()->field_types() as $type => $data ) {
-					//add_filter( 'pods_form_ui_field_' . $type . '_data', array( $this, 'field_options_i18n' ), 10, 3 );
-					//add_filter( 'pods_form_ui_field_' . $type . '_merge_attributes', array( $this, 'merge_attributes_fields_i18n' ), 10, 3 );
-				}*/
 
 				// Default filters for all fields
 				add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
 				add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
 
+				foreach ( pods_form()->field_types() as $type => $data ) {
+					add_filter( 'pods_form_ui_field_' . $type . '_options', array( $this, 'form_ui_field_options_i18n' ), 10, 5 );
+					//add_filter( 'pods_form_ui_field_' . $type . '_data', array( $this, 'field_options_i18n' ), 10, 3 );
+					//add_filter( 'pods_form_ui_field_' . $type . '_merge_attributes', array( $this, 'merge_attributes_fields_i18n' ), 10, 3 );
+				}
+
 				// Field specific
-				add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
+				//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
 
 				// Setting pages
 				add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
@@ -198,7 +199,6 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @todo Make it work or delete :)
 	 */
 	function field_options_i18n( $options, $type, $bla ) {
-		print_r($options);
 		return $options;
 	}
 
@@ -208,7 +208,6 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @todo Make it work or delete :)
 	 */
 	public function merge_attributes_fields_i18n( $attributes, $name, $options ) {
-		print_r($attributes);
 		return $attributes;
 	}
 
@@ -221,7 +220,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 */
 	public function is_translatable_field( $name ) {
 
-		$translatable_fields = apply_filters( 'pods_translatable_fields', $this->translatable_fields );
+		$translatable_fields = $this->get_translatable_fields();
 
 		// All fields that start with "label"
 		if ( strpos( $name, 'label' ) === 0 ) {
@@ -254,7 +253,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  array  $data    Pod data (can also be an options array of a pod or field)
 	 * @return string
 	 */
-	public function get_field_translation( $current, $key, $data ) {
+	public function get_value_translation( $current, $key, $data ) {
 		$locale = $this->locale;
 		// Validate locale and pod
 		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
@@ -272,7 +271,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Page title for setting pages
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsAdmin.php >> admin_menu()
 	 * @see    PodsAdmin.php >> admin_content_settings()
@@ -281,12 +280,12 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return string
 	 */
 	public function admin_menu_page_title_i18n( $page_title, $pod ) {
-		return (string) $this->get_field_translation( $page_title, 'label', $pod );
+		return (string) $this->get_value_translation( $page_title, 'label', $pod );
 	}
 
 	/**
 	 * Menu title for setting pages
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsAdmin.php >> admin_menu()
 	 * @param  string $menu_label Current menu label
@@ -294,7 +293,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return string
 	 */
 	public function admin_menu_label_i18n( $menu_label, $pod ) {
-		return (string) $this->get_field_translation( $menu_label, 'menu_name', $pod );
+		return (string) $this->get_value_translation( $menu_label, 'menu_name', $pod );
 	}
 
 	/**
@@ -309,7 +308,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return string
 	 */
 	public function fields_ui_label_text_i18n( $label, $name, $help, $options ) {
-		return (string) $this->get_field_translation( $label, 'label', $options );
+		return (string) $this->get_value_translation( $label, 'label', $options );
 	}
 
 	/**
@@ -323,7 +322,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return string
 	 */
 	public function fields_ui_comment_text_i18n( $message, $name, $options ) {
-		return (string) $this->get_field_translation( $message, 'description', $options );
+		return (string) $this->get_value_translation( $message, 'description', $options );
 	}
 
 	/**
@@ -350,6 +349,31 @@ class Pods_Component_I18n extends PodsComponent {
 			}
 		}
 		return $data;
+	}
+
+	/**
+	 * Replaces the default values with a translation if available
+	 * 
+	 * @since  0.1
+	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
+	 * @param  array  $options The field options
+	 * @param  string $name    The field name
+	 * @param  string $value   The field value
+	 * @param  array  $pod     The Pod
+	 * @param  int    $id      The field ID
+	 * @return array
+	 */ 
+	public function form_ui_field_options_i18n( $options, $name, $value, $pod, $id ) {
+		foreach ( $this->get_translatable_fields() as $field ) {
+			$locale = $this->locale;
+			if (   isset( $options[ $field . '_' . $locale ] ) 
+				&& array_key_exists( $locale, $this->languages ) 
+				&& $this->obj_is_language_enabled( $locale, $pod ) 
+			) {
+				$options[ $field ] = $options[ $field . '_' . $locale ];
+			}
+		}
+		return $options;
 	}
 
 	/**
@@ -439,7 +463,6 @@ class Pods_Component_I18n extends PodsComponent {
 		$temp_options = $options;
 
 		// Load the pod
-		$pod = pods_api()->load_pod( $object );
 		foreach ( $pod[ 'options' ] as $_option => $_value ) {
 			$pod[ $_option ] = $_value;
 		}
@@ -447,23 +470,35 @@ class Pods_Component_I18n extends PodsComponent {
 		$cpt_locale_label    = esc_html( pods_v( 'label_'.$locale, $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ), null, true ) );
 		$cpt_locale_singular = esc_html( pods_v( 'label_singular_'.$locale, $pod, ucwords( str_replace( '_', ' ', pods_v( 'label', $pod, $options['label'], null, true ) ) ), null, true ) );
 
+		// Default
 		$cpt_locale_labels                       = array();
 		$cpt_locale_labels['name']               = $cpt_locale_label;
 		$cpt_locale_labels['singular_name']      = $cpt_locale_singular;
 		$cpt_locale_labels['menu_name']          = pods_v( 'menu_name_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['add_new']            = pods_v( 'label_add_new_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['add_new_item']       = pods_v( 'label_add_new_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['new_item']           = pods_v( 'label_new_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['edit']               = pods_v( 'label_edit_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['edit_item']          = pods_v( 'label_edit_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['view']               = pods_v( 'label_view_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['view_item']          = pods_v( 'label_view_item_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['all_items']          = pods_v( 'label_all_items_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['search_items']       = pods_v( 'label_search_items_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['parent_item_colon']  = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', null, true );
+		
+		// Post Types
+		$cpt_locale_labels['add_new']            = pods_v( 'label_add_new_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['new_item']           = pods_v( 'label_new_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['edit']               = pods_v( 'label_edit_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['view']               = pods_v( 'label_view_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['view_item']          = pods_v( 'label_view_item_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['not_found']          = pods_v( 'label_not_found_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['not_found_in_trash'] = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['parent']             = pods_v( 'label_parent_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['parent_item_colon']  = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', null, true );
+
+		// Taxonomies
+		$cpt_locale_labels['popular_items']              = pods_v( 'label_popular_items_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['parent_item']                = pods_v( 'label_parent_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['new_item_name']              = pods_v( 'label_new_item_name_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['separate_items_with_commas'] = pods_v( 'label_separate_items_with_commas_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['add_or_remove_items']        = pods_v( 'label_add_or_remove_items_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['choose_from_most_used']      = pods_v( 'label_choose_from_the_most_used_' . $locale, $pod, '', null, true );
 
 		// Label
 		if ( isset( $cpt_locale_label ) && ! empty( $cpt_locale_label ) ) {
@@ -893,6 +928,10 @@ class Pods_Component_I18n extends PodsComponent {
 			}
 		}
 		return '';
+	}
+
+	public function get_translatable_fields() {
+		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );
 	}
 
 }

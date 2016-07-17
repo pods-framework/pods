@@ -192,6 +192,7 @@ class PodsForm {
 		}
 
         $options = self::options( $type, $options );
+        $options = apply_filters( 'pods_form_ui_field_' . $type . '_options', $options, $value, $name, $pod, $id );
 
         if ( null === $value || ( '' === $value && 'boolean' == $type ) || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );

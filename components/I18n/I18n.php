@@ -761,7 +761,7 @@ class Pods_Component_I18n extends PodsComponent {
 					$pod['options']['enable_i18n'][ $locale ] = 1;
 				}
 		?>
-				<div class="pods-field-option pods-enable-disable-language">
+				<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ) ?>">
 		<?php 
 					echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array( 
 						'boolean_yes_label' =>  '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),

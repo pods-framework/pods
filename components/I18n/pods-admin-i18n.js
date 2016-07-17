@@ -92,7 +92,7 @@
 
 				PodsEditI18n.validateI18nVisibility();
 
-				var locale = $(this).attr('name').replace( 'enable_i18n[', '' ).replace( ']', '' );
+				var locale = $(this).parents('.pods-enable-disable-language').attr('data-locale');
 
 				if ( $(this).is(':checked') ) {
 

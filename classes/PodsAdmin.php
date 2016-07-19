@@ -1010,6 +1010,13 @@ class PodsAdmin {
                     'default' => '',
                     'object_type' => array( 'post_type', 'pod' )
                 ),
+                'label_new_item_name' => array(
+                    'label' => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span> Name', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
                 // @todo Why was label_edit added previously? Can't find it in WP
                 'label_edit' => array(
                     'label' => __( 'Edit', 'pods' ),

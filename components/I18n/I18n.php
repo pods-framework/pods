@@ -37,6 +37,7 @@ class Pods_Component_I18n extends PodsComponent {
 		'description',
 		'placeholder',
 		'menu_name',
+		'name_admin_bar',
 		'pick_select_text',
 
 		//@todo: Validate PR #3683 https://github.com/pods-framework/pods/pull/3683 is merged
@@ -471,34 +472,46 @@ class Pods_Component_I18n extends PodsComponent {
 		$cpt_locale_singular = esc_html( pods_v( 'label_singular_'.$locale, $pod, ucwords( str_replace( '_', ' ', pods_v( 'label', $pod, $options['label'], null, true ) ) ), null, true ) );
 
 		// Default
-		$cpt_locale_labels                       = array();
-		$cpt_locale_labels['name']               = $cpt_locale_label;
-		$cpt_locale_labels['singular_name']      = $cpt_locale_singular;
-		$cpt_locale_labels['menu_name']          = pods_v( 'menu_name_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['add_new_item']       = pods_v( 'label_add_new_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['edit_item']          = pods_v( 'label_edit_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['all_items']          = pods_v( 'label_all_items_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['search_items']       = pods_v( 'label_search_items_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['parent_item_colon']  = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels                          = array();
+		$cpt_locale_labels['name']                  = $cpt_locale_label;
+		$cpt_locale_labels['singular_name']         = $cpt_locale_singular;
+		$cpt_locale_labels['menu_name']             = pods_v( 'menu_name_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['add_new_item']          = pods_v( 'label_add_new_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['edit_item']             = pods_v( 'label_edit_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['view_item']             = pods_v( 'label_view_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['all_items']             = pods_v( 'label_all_items_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['search_items']          = pods_v( 'label_search_items_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['parent_item_colon']     = pods_v( 'label_parent_item_colon_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['not_found']             = pods_v( 'label_not_found_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['items_list_navigation'] = pods_v( 'label_items_list_navigation_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['items_list']            = pods_v( 'label_items_list_' . $locale, $pod, '', null, true );
 		
 		// Post Types
-		$cpt_locale_labels['add_new']            = pods_v( 'label_add_new_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['new_item']           = pods_v( 'label_new_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['edit']               = pods_v( 'label_edit_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['view']               = pods_v( 'label_view_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['view_item']          = pods_v( 'label_view_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['not_found']          = pods_v( 'label_not_found_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['not_found_in_trash'] = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['parent']             = pods_v( 'label_parent_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['name_admin_bar']        = pods_v( 'name_admin_bar_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['add_new']               = pods_v( 'label_add_new_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['new_item']              = pods_v( 'label_new_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['edit']                  = pods_v( 'label_edit_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['view']                  = pods_v( 'label_view_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['parent']                = pods_v( 'label_parent_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['not_found_in_trash']    = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['archives']              = pods_v( 'label_archives_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['insert_into_item']      = pods_v( 'label_insert_into_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['featured_image']        = pods_v( 'label_featured_image_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['set_featured_image']    = pods_v( 'label_set_featured_image_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['remove_featured_image'] = pods_v( 'label_remove_featured_image_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['use_featured_image']    = pods_v( 'label_use_featured_image_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['filter_items_list']     = pods_v( 'label_filter_items_list_' . $locale, $pod, '', null, true );
 
 		// Taxonomies
+		$cpt_locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['popular_items']              = pods_v( 'label_popular_items_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['parent_item']                = pods_v( 'label_parent_item_' . $locale, $pod, '', null, true );
-		$cpt_locale_labels['update_item']                = pods_v( 'label_update_item_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['new_item_name']              = pods_v( 'label_new_item_name_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['separate_items_with_commas'] = pods_v( 'label_separate_items_with_commas_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['add_or_remove_items']        = pods_v( 'label_add_or_remove_items_' . $locale, $pod, '', null, true );
 		$cpt_locale_labels['choose_from_most_used']      = pods_v( 'label_choose_from_the_most_used_' . $locale, $pod, '', null, true );
+		$cpt_locale_labels['no_terms']                   = pods_v( 'label_no_terms_' . $locale, $pod, '', null, true );
 
 		// Label
 		if ( isset( $cpt_locale_label ) && ! empty( $cpt_locale_label ) ) {

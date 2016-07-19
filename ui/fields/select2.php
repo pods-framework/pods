@@ -199,17 +199,13 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             id : '<?php echo esc_js( (int) $id ); ?>',
                             query : term<?php
                             /*
-                             * @todo wpml-comp Check if WPML active
-                             * if ( did_action( 'wpml_loaded', false ) ) {
-                             *
-                             * @todo wpml-comp Get language
-                             * apply_filters( 'wpml_current_language', null );
+                             * @todo wpml-comp Remove global object usage
                              */
-                                global $sitepress, $icl_adjust_id_url_filter_off;
+                                global $icl_adjust_id_url_filter_off;
 
-                                if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
+                                if ( did_action( 'wpml_loaded' ) && !$icl_adjust_id_url_filter_off ) {
                             ?>,
-                                lang : '<?php echo esc_js( ICL_LANGUAGE_CODE ); ?>'
+                                lang : '<?php echo esc_js( apply_filters( 'wpml_current_language', null ) ); ?>'
                             <?php
                                 }
                             ?>

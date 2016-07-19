@@ -198,12 +198,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             uri : '<?php echo esc_js( $uri_hash ); ?>',
                             id : '<?php echo esc_js( (int) $id ); ?>',
                             query : term<?php
-                            /*
-                             * @todo wpml-comp Remove global object usage
-                             */
-                                global $icl_adjust_id_url_filter_off;
-
-                                if ( did_action( 'wpml_loaded' ) && !$icl_adjust_id_url_filter_off ) {
+                                if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
                             ?>,
                                 lang : '<?php echo esc_js( apply_filters( 'wpml_current_language', 'all' ) ); ?>'
                             <?php

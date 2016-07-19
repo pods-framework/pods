@@ -205,7 +205,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
                                 if ( did_action( 'wpml_loaded' ) && !$icl_adjust_id_url_filter_off ) {
                             ?>,
-                                lang : '<?php echo esc_js( apply_filters( 'wpml_current_language', null ) ); ?>'
+                                lang : '<?php echo esc_js( apply_filters( 'wpml_current_language', 'all' ) ); ?>'
                             <?php
                                 }
                             ?>

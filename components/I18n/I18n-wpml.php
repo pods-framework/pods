@@ -7,19 +7,10 @@ class Pods_I18n_WPML {
 
 	public function __construct() {
 
-		global $sitepress;
-		if ( is_object( $sitepress ) && function_exists( 'icl_get_languages' ) ) {
-			$languages = icl_get_languages();
+		$languages = apply_filters( 'wpml_active_languages', array() );
+		if ( ! empty( $languages ) ) {
 			foreach ($languages as $lang => $lang_data) {
-				$locale = $sitepress->get_locale( $lang );
-				if ( ! empty( $locale['default_locale'] ) ) {
-					$locale = $locale['default_locale'];
-				} else {
-					// Just a fallback
-					if ( strlen( $locale ) <= 2 ) {
-						$locale = $locale . '_' . strtoupper( $locale );
-					}
-				}
+				$locale = $lang_data['default_locale'];
 				$this->languages[] = $locale;
 			}
 

@@ -7566,7 +7566,7 @@ class PodsAPI {
              * @todo wpml-comp Check if WPML filters can be applied afterwards
              */
 		    // WPML support
-		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_post_type( $post_type ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' )) {
+		    if ( did_action( 'wpml_loaded' ) && !empty( $current_language ) && apply_filters( 'wpml_is_translated_post_type', false, $post_type ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' )) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -8331,7 +8331,7 @@ class PodsAPI {
 						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
 						if (   $translator == 'WPML'
-							&& ! apply_filters( 'wpml_is_translated_post_type', ( get_post_type( $_GET['post'] ) ), false )
+							&& ! apply_filters( 'wpml_is_translated_post_type', false, ( get_post_type( $_GET['post'] ) ) )
 						) {
 							// Overwrite the current language to nothing if this is a NOT-translatable post_type
 							$current_language = '';

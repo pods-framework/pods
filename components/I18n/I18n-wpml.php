@@ -1,6 +1,6 @@
 <?php 
 
-class Pods_I18n_WPML extends PodsComponent {
+class Pods_I18n_WPML {
 
 	public $languages = array();
 	public $textdomain = 'sitepress-multilingual-cms';

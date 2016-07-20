@@ -1,6 +1,6 @@
 <?php 
 
-class Pods_I18n_Polylang extends PodsComponent {
+class Pods_I18n_Polylang {
 
 	public $languages = array();
 	public $textdomain = 'polylang';

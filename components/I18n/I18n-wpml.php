@@ -10,8 +10,10 @@ class Pods_I18n_WPML {
 		$languages = apply_filters( 'wpml_active_languages', array() );
 		if ( ! empty( $languages ) ) {
 			foreach ($languages as $lang => $lang_data) {
-				$locale = $lang_data['default_locale'];
-				$this->languages[] = $locale;
+				if ( isset( $lang_data['default_locale'] ) ) {
+					$locale = $lang_data['default_locale'];
+					$this->languages[] = $locale;
+				}
 			}
 
 			add_filter( 'pods_component_i18n_admin_data', array( $this, 'pods_component_i18n_admin_data' ) );

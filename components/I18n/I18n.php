@@ -67,8 +67,7 @@ class Pods_Component_I18n extends PodsComponent {
 			include_once( plugin_dir_path( __FILE__ ) . '/I18n-polylang.php' );
 		}
 		// WPML
-		// Polylang has WPML compat functions with the same names so check constant ICL_SITEPRESS_VERSION for WPML
-		if ( defined('ICL_SITEPRESS_VERSION') && file_exists( plugin_dir_path( __FILE__ ) . '/I18n-wpml.php' ) ) {
+		if ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . '/I18n-wpml.php' ) ) {
 			include_once( plugin_dir_path( __FILE__ ) . '/I18n-wpml.php' );
 		}
 

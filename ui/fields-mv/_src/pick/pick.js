@@ -42,7 +42,8 @@ export const Pick = Mn.LayoutView.extend( {
 		}
 		View = views[ viewKey ];
 
-		if ( View instanceof Mn.View ) {
+		// ToDo: need better handling than this
+		if ( typeof View === "function" ) {
 			list = new View( { collection: this.collection, fieldModel: this.model } );
 			this.showChildView( 'list', list );
 		}

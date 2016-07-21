@@ -1361,9 +1361,12 @@ class Pods implements Iterator {
 												$item = get_comment( $item_id );
 											else
 												$item = (object) $item;
-										}
-										elseif ( 'pods' == $params->output ) {
-											$item = pods( $object, (int) $item_id );
+										} elseif ( 'pods' == $params->output ) {
+											if ( in_array( $object_type, array( 'user', 'media' ) ) ) {
+												$item = pods( $object_type, (int) $item_id );
+											} else {
+												$item = pods( $object, (int) $item_id );
+											}
 										}
 										else // arrays
 											$item = get_object_vars( (object) $item );

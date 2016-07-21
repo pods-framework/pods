@@ -30,7 +30,10 @@ export const SelectView = PodsFieldListView.extend( {
 	childView: SelectItem,
 
 	triggers: {
-		'change': 'change:selected'
+		"change": {
+			event          : "change:selected",
+			stopPropagation: false
+		}
 	},
 
 	attributes: function () {

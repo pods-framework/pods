@@ -5420,10 +5420,8 @@ class PodsAPI {
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
-                /*
-                 * @todo wpml-comp Test scenario needed
-                 */
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
+                    && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
                     $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
                 return $pod;
@@ -5475,10 +5473,8 @@ class PodsAPI {
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
                 if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-                    /*
-                     * @todo wpml-comp Test scenario needed
-                     */
-                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
+                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
+                        && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
                         $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
                     return $pod;
@@ -5514,10 +5510,8 @@ class PodsAPI {
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
         if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-            /*
-             * @todo wpml-comp Test scenario needed
-             */
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
+                && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
                 $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
             return $pod;
@@ -7562,7 +7556,6 @@ class PodsAPI {
 		    $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
             /*
-             * @todo wpml-comp Testing scenario and debug_backtrace needed
              * @todo wpml-comp Check if WPML filters can be applied afterwards
              */
 		    // WPML support
@@ -7644,7 +7637,7 @@ class PodsAPI {
 		    );
 
             /*
-             * @todo wpml-comp Testing scenario and debug_backtrace needed
+             * @todo wpml-comp WPML API call for is_translated_taxononomy
              * @todo wpml-comp Check if WPML filters can be applied afterwards
              */
 		    // WPML Support
@@ -8277,9 +8270,6 @@ class PodsAPI {
 		$translator       = false;
 		$current_language = false;
 
-        /*
-         * @todo wpml-comp Test scenario needed
-         */
 		// Multilingual support
 		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			// WPML support
@@ -8322,9 +8312,6 @@ class PodsAPI {
 				 */
 				if ( isset( $current_screen->base ) && ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
 					if ( ! empty( $_GET['post'] ) ) {
-					    /*
-					     * @todo wpml-comp Test scenario needed
-					     */
 						/**
 						 * WPML support
 						 * In WPML the current language is always set to default on an edit screen

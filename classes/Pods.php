@@ -1048,11 +1048,9 @@ class Pods implements Iterator {
 						if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
 							$metadata_type = 'post';
 
-                            /*
-                             * @todo wpml-comp Testing scenario needed
-                             */
 							// Support for WPML 'duplicated' translation handling
-							if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data[ 'name' ], false ) ) {
+							if ( did_action( 'wpml_loaded' )
+                                && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data[ 'name' ] ) ) {
 								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
 
 								if ( 0 < $master_post_id )
@@ -1501,11 +1499,9 @@ class Pods implements Iterator {
 											$metadata_type = $object_type;
 
 											if ( 'post' == $object_type ) {
-                                                /*
-                                                 * @todo wpml-comp Testing scenario needed
-                                                 */
 												// Support for WPML 'duplicated' translation handling
-                                                if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
+                                                if ( did_action( 'wpml_loaded' )
+                                                    && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
 													$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $metadata_object_id );
 
 													if ( 0 < $master_post_id )

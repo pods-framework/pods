@@ -483,17 +483,17 @@ class PodsInit {
 
 				// Supported
 				$cpt_supported = array(
-					'title'           => (boolean) pods_v_sanitized( 'supports_title', $post_type, false ),
-					'editor'          => (boolean) pods_v_sanitized( 'supports_editor', $post_type, false ),
-					'author'          => (boolean) pods_v_sanitized( 'supports_author', $post_type, false ),
-					'thumbnail'       => (boolean) pods_v_sanitized( 'supports_thumbnail', $post_type, false ),
-					'excerpt'         => (boolean) pods_v_sanitized( 'supports_excerpt', $post_type, false ),
-					'trackbacks'      => (boolean) pods_v_sanitized( 'supports_trackbacks', $post_type, false ),
-					'custom-fields'   => (boolean) pods_v_sanitized( 'supports_custom_fields', $post_type, false ),
-					'comments'        => (boolean) pods_v_sanitized( 'supports_comments', $post_type, false ),
-					'revisions'       => (boolean) pods_v_sanitized( 'supports_revisions', $post_type, false ),
-					'page-attributes' => (boolean) pods_v_sanitized( 'supports_page_attributes', $post_type, false ),
-					'post-formats'    => (boolean) pods_v_sanitized( 'supports_post_formats', $post_type, false )
+					'title'           => (boolean) pods_v( 'supports_title', $post_type, false ),
+					'editor'          => (boolean) pods_v( 'supports_editor', $post_type, false ),
+					'author'          => (boolean) pods_v( 'supports_author', $post_type, false ),
+					'thumbnail'       => (boolean) pods_v( 'supports_thumbnail', $post_type, false ),
+					'excerpt'         => (boolean) pods_v( 'supports_excerpt', $post_type, false ),
+					'trackbacks'      => (boolean) pods_v( 'supports_trackbacks', $post_type, false ),
+					'custom-fields'   => (boolean) pods_v( 'supports_custom_fields', $post_type, false ),
+					'comments'        => (boolean) pods_v( 'supports_comments', $post_type, false ),
+					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
+					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
+					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false )
 				);
 
 				// Custom Supported

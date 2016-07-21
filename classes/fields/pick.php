@@ -829,6 +829,10 @@ class PodsField_Pick extends PodsField {
             return;
         }
 
+	    $field_type = 'pick';
+	    pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+	    return;
+
 	    // Flexible relationships only support certain related objects
 	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
 		    $pick_object = pods_v( 'pick_object', $options );

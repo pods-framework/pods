@@ -22,6 +22,7 @@ foreach ( $data as $this_id => $this_title ) {
 	$edit_link = '';
 	$link = '';
 
+	$options[ 'pick_object' ] = ( empty( $options[ 'pick_object' ] ) ) ? '' : $options[ 'pick_object' ];
 	switch ( $options[ 'pick_object' ] ) {
 		case 'post_type':
 			if ( null === $supports_thumbnails ) {
@@ -134,7 +135,11 @@ $query_args = array_merge(
 	)
 );
 
-$field_meta[ 'field_options' ][ 'iframe_src' ] = add_query_arg( $query_args, admin_url( $file_name ) );
+$iframe_src = '';
+if ( !empty( $file_name) ) {
+	$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
+}
+$field_meta[ 'field_options' ][ 'iframe_src' ] = $iframe_src;
 
 // Assemble the URL
 $url = add_query_arg( $query_args, admin_url( $file_name ) );

@@ -741,7 +741,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Pod not found</p>';
 
 	$found = 0;
-	
+
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
 	if ( ! $is_singular ) {
@@ -1872,7 +1872,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 )
 				) );
 			}
-			
+
 			if ( !pods_tableless() ) {
 				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
 					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
@@ -2084,4 +2084,13 @@ function pods_session_start() {
 
 	return true;
 
+}
+
+/**
+ * @todo: replace string literal with a defined constant
+ *
+ * @return bool
+ */
+function pods_is_modal_window() {
+    return isset( $_GET[ 'pods_modal' ] );
 }

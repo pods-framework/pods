@@ -169,6 +169,11 @@ class PodsAdmin {
             }
         }
 
+        // Flexible Relationships
+        if ( pods_is_modal_window() ) {
+            wp_enqueue_style( 'pods-modal-relationships', PODS_URL . 'ui/css/pods-modal-relationships.css', array(), '1.0' );
+        }
+
         wp_enqueue_style( 'pods-font' );
     }
 
@@ -618,6 +623,7 @@ class PodsAdmin {
             $_GET[ 'action' ] = 'edit';
 
             $page_title = pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
+            $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod->pod_data );
 
             $ui = array(
                 'pod' => $pod,
@@ -692,7 +698,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-attach' );
+            wp_enqueue_style( 'pods-flex' );
     }
 
     /**
@@ -1247,6 +1253,21 @@ class PodsAdmin {
                 ),
                 'show_tagcloud' => array(
                     'label' => __( 'Allow in Tagcloud Widget', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),
+                    'boolean_yes_label' => ''
+                ),
+                // @todo check https://core.trac.wordpress.org/ticket/36964
+                'show_tagcloud_in_edit' => array(
+                    'label' => __( 'Allow Tagcloud on term edit pages', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'show_tagcloud', $pod, true ) ),
+                    'boolean_yes_label' => ''
+                ),
+                'show_in_quick_edit' => array(
+                    'label' => __( 'Allow in quick/bulk edit panel', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),

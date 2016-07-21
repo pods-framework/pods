@@ -1,0 +1,32 @@
+#wpadminbar,
+#adminmenuback,
+#adminmenuwrap,
+#preview-action,
+#wpfooter,
+body.edit-tags-php #col-right,
+body.edit-tags-php .search-form {
+	display: none;
+}
+
+html.wp-toolbar {
+	padding-top: 0 ;
+}
+
+#wpbody-content {
+	padding-bottom: 0;
+}
+
+#wpcontent {
+	padding: 0;
+	margin: 0 1.25em;
+}
+
+.wrap {
+	margin: 0;
+}
+
+body.edit-tags-php #col-left,
+body.edit-tags-php #col-left input,
+body.edit-tags-php #col-left textarea {
+	width: 100%;
+}

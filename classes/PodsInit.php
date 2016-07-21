@@ -30,6 +30,11 @@ class PodsInit {
 	static $meta;
 
 	/**
+	 * @var PodsI18n
+	 */
+	static $i18n;
+
+	/**
 	 * @var PodsAdmin
 	 */
 	static $admin;
@@ -169,6 +174,15 @@ class PodsInit {
 	}
 
 	/**
+	 *
+	 */
+	public function load_i18n() {
+
+		self::$i18n = pods_i18n();
+	}
+
+
+	/**
 	 * Set up the Pods core
 	 */
 	public function core() {
@@ -252,9 +266,10 @@ class PodsInit {
 
 		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
 			'jquery',
+			'pods-i18n',
 			'pods-json',
 			'jquery-qtip2'
-		), PODS_VERSION );
+		), PODS_VERSION, true );
 
 		wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
 
@@ -283,13 +298,38 @@ class PodsInit {
 			), '1.1.1' );
 		}
 
-		wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );
-		wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
-
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
-		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
+		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '3.3.1' );
 
 		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+
+		// Marionette dependencies for MV fields
+		wp_register_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
+		wp_register_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
+		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
+		wp_register_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array(
+			'marionette',
+			'backbone.radio'
+		), '1.0.2', true );
+		wp_register_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
+
+		// MV stuff
+		wp_register_script(
+			'pods-mv-fields',
+			PODS_URL . 'ui/fields-mv/js/pods-mv-fields.min.js',
+			array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-sortable',
+				'pods-i18n',
+				'marionette',
+				'media-views',
+				'media-models'
+			),
+			PODS_VERSION,
+			true
+		);
+		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
 	}
 
 	/**
@@ -673,9 +713,11 @@ class PodsInit {
 					'label'                 => $ct_label,
 					'labels'                => $ct_labels,
 					'public'                => (boolean) pods_var( 'public', $taxonomy, true ),
-					'show_in_nav_menus'     => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
+					'show_in_nav_menus'     => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_tagcloud'         => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
+					'show_tagcloud_in_edit' => (boolean) pods_var( 'show_tagcloud_in_edit', $taxonomy, (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ) ),
+					'show_in_quick_edit'    => (boolean) pods_var( 'show_in_quick_edit', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
 					//'capability_type'       => $capability_type,
 					'capabilities'          => $tax_capabilities,
@@ -684,7 +726,7 @@ class PodsInit {
 					'query_var'             => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
 					'rewrite'               => $ct_rewrite,
 					'show_admin_column'     => (boolean) pods_var( 'show_admin_column', $taxonomy, false ),
-					'sort'                  => (boolean) pods_var( 'sort', $taxonomy, false )
+					'sort'                  => (boolean) pods_var( 'sort', $taxonomy, false ),
 				);
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
@@ -771,6 +813,15 @@ class PodsInit {
 			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy );
 
 			$options = self::object_label_fix( $options, 'taxonomy' );
+
+			/** 
+			 * Hide tagcloud compatibility
+			 * @todo check https://core.trac.wordpress.org/ticket/36964
+			 * @see wp-admin/edit-tags.php L389
+			 */
+			if ( true != (boolean) pods_var( 'show_tagcloud_in_edit', $options, (boolean) pods_var( 'show_tagcloud', $options, true ) ) ) {
+				$options['labels']['popular_items'] = null;
+			}
 
 			// Max length for taxonomies are 32 characters
 			$taxonomy = substr( $taxonomy, 0, 32 );
@@ -1244,6 +1295,8 @@ class PodsInit {
 		}
 
 		$ran = true;
+
+		$this->load_i18n();
 
 		if ( ! did_action( 'plugins_loaded' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'load_components' ), 11 );

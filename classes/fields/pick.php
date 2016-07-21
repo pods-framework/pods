@@ -107,6 +107,10 @@ class PodsField_Pick extends PodsField {
      * @since 2.3
      */
     public function admin_init () {
+        //--!! Prototype testing only
+        add_action( 'wp_ajax_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+        add_action( 'wp_ajax_nopriv_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
+
         // AJAX for Relationship lookups
         add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
@@ -143,8 +147,9 @@ class PodsField_Pick extends PodsField {
                     array(
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
-                        'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() ) // Disable for now
+                        'autocomplete' => __( 'Autocomplete', 'pods' ),
+                        'flexible' => __( 'Flexible', 'pods' ),
+                    )
                 ),
                 'dependency' => true
             ),
@@ -159,8 +164,9 @@ class PodsField_Pick extends PodsField {
                     array(
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
-                        'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() ) // Disable for now
+                        'autocomplete' => __( 'Autocomplete', 'pods' ),
+                        'flexible' => __( 'Flexible', 'pods' ),
+                    )
                 ),
                 'dependency' => true
             ),
@@ -177,6 +183,45 @@ class PodsField_Pick extends PodsField {
 				),
                 'type' => 'boolean',
                 'default' => 0
+            ),
+            self::$type . '_show_icon' => array(
+                'label' => __( 'Show Icons', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
+            ),
+            self::$type . '_show_edit_link' => array(
+                'label' => __( 'Show Edit Links', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
+            ),
+            self::$type . '_show_view_link' => array(
+                'label' => __( 'Show View Links', 'pods' ),
+                'excludes-on' => array(
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'autocomplete' ),
+					self::$type . '_format_multi' => array( 'checkbox', 'multiselect', 'autocomplete' ),
+                    self::$type . '_object' => array_merge(
+                        array( 'site', 'network' ),
+                        self::simple_objects()
+                    )
+				),
+                'type' => 'boolean',
+                'default' => 1
             ),
 			self::$type . '_select_text' => array(
                 'label' => __( 'Default Select Text', 'pods' ),
@@ -195,11 +240,6 @@ class PodsField_Pick extends PodsField {
                 'default' => 0,
                 'type' => 'number'
             ),
-			self::$type . '_allow_html' => array(
-				'label' => __('Allow HTML','pods'),
-				'type' => 'boolean',
-				'default' => 0
-			),
             self::$type . '_table_id' => array(
                 'label' => __( 'Table ID Column', 'pods' ),
                 'help' => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
@@ -746,13 +786,17 @@ class PodsField_Pick extends PodsField {
         if ( 0 == pods_var( self::$type . '_ajax', $options, 1 ) )
             $ajax = false;
 
-        if ( 'single' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
+	    $format_type = pods_v( self::$type . '_format_type', $options, 'single' );
+
+        if ( 'single' == $format_type ) {
             if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'select';
             elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'radio';
             elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
                 $field_type = 'select2';
+            elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
+                $field_type = 'flexible';
             else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
@@ -760,7 +804,7 @@ class PodsField_Pick extends PodsField {
                 return;
             }
         }
-        elseif ( 'multi' == pods_var( self::$type . '_format_type', $options, 'single' ) ) {
+        elseif ( 'multi' == $format_type ) {
             if ( !empty( $value ) && !is_array( $value ) )
                 $value = explode( ',', $value );
 
@@ -770,6 +814,8 @@ class PodsField_Pick extends PodsField {
                 $field_type = 'select';
             elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
                 $field_type = 'select2';
+            elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
+                $field_type = 'flexible';
             else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
@@ -782,6 +828,25 @@ class PodsField_Pick extends PodsField {
             do_action( 'pods_form_ui_field_pick_input', pods_var( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
             return;
         }
+
+	    $field_type = 'pick';
+	    pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+	    return;
+
+	    // Flexible relationships only support certain related objects
+	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
+		    $pick_object = pods_v( 'pick_object', $options );
+
+		    if ( ! in_array( $pick_object, array( 'post_type', 'taxonomy', 'user', 'pod' ) ) ) {
+			    // Default all others to Select2
+				$field_type = 'select2';
+		    } else {
+		        // @todo: Fix location when merging
+		        $field_type = 'pick';
+		        pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+		        return;
+		    }
+	    }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -1739,6 +1804,41 @@ class PodsField_Pick extends PodsField {
         }
 
         return $data;
+    }
+
+    /**
+     * AJAX call to refresh relationship field markup (supports adding new records modally)
+     *
+     * @since 2.7
+     */
+    public function admin_ajax_relationship_popup () {
+
+        $data = pods_unslash( (array) $_POST );
+
+        // Get the field information
+        $params = array(
+            'pod_id' => $data[ 'pod_id' ],
+            'id'     => $data[ 'field_id' ]
+        );
+        $field = pods_api()->load_field( $params );
+
+        // Get Pods object for this item
+        $pod = pods( $field[ 'pod' ], $data[ 'item_id' ] );
+
+        // Get the relationship field's value(s)
+        $field_name = $field[ 'name' ];
+        $params = array(
+            'name'    => $field_name,
+            'in_form' => true
+        );
+        $value = $pod->field( $params);
+
+        // Build the markup and return it to the caller
+        $meta_field_name = 'pods_meta_' . $field_name;
+        $output = PodsForm::field( $meta_field_name, $value, 'pick', $field, $pod, $data[ 'item_id' ] );
+        echo $output;
+
+        die();
     }
 
     /**

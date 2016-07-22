@@ -52,6 +52,8 @@ export const Pick = Mn.LayoutView.extend( {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}
+
+		this.$el.trigger( 'render' );
 	},
 
 	/** "Remove" in flex view just toggles an item's selected attribute

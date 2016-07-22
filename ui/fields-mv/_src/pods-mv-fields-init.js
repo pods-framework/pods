@@ -1,8 +1,8 @@
 /*global jQuery, _, Backbone, Mn */
 import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
-import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/models/file-upload-model';
-import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/models/relationship-model';
+import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
+import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 
 /**
  * @param {string} fieldType

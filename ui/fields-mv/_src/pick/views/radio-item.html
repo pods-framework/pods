@@ -1,0 +1,16 @@
+<div class="pods-field pods-boolean">
+	<input
+			name="<%- attr.name %>"
+			data-name-clean="<%- attr.name_clean %>"
+			data-label="<%- options.label %>"
+			id="<%- attr.id %><%= ordinal %>"
+			class="pods-form-ui-field-type-pick pods-form-ui-field-name-<%- attr.name_clean %>"
+			type="radio"
+			tabindex="2"
+			value="<%- id %>">
+	<label
+		class="pods-form-ui-label pods-form-ui-label-<%- attr.id %><%= ordinal %>"
+		for="<%- attr.id %><%= ordinal %>">
+		<%= name %>
+	</label>
+</div>

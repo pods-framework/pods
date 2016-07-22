@@ -2,6 +2,7 @@
 import template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
 import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
+import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
 import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
@@ -13,7 +14,7 @@ const views = {
 	'checkbox'    : CheckboxView,
 	'dropdown'    : SelectView,
 	'multiselect' : SelectView,
-	'radio'       : 'radio',
+	'radio'       : RadioView,
 	'autocomplete': 'select2',
 	'flexible'    : FlexView
 };

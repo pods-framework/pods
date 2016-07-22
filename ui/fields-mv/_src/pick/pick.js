@@ -12,7 +12,7 @@ const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 const views = {
 	'checkbox'    : CheckboxView,
 	'dropdown'    : SelectView,
-	'select'      : SelectView,
+	'multiselect' : SelectView,
 	'radio'       : 'radio',
 	'autocomplete': 'select2',
 	'flexible'    : FlexView

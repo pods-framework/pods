@@ -11,12 +11,11 @@ import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 
 const views = {
-	'checkbox'    : CheckboxView,
-	'dropdown'    : SelectView,
-	'multiselect' : SelectView,
-	'radio'       : RadioView,
-	'autocomplete': 'select2',
-	'flexible'    : FlexView
+	'checkbox': CheckboxView,
+	'select'  : SelectView,
+	'radio'   : RadioView,
+	'select2' : 'select2',
+	'flexible': FlexView
 };
 
 /**
@@ -34,14 +33,7 @@ export const Pick = Mn.LayoutView.extend( {
 		let View, viewKey, list, addNew;
 		const fieldOptions = this.model.attributes.options;
 
-		// ToDo: don't follow the legacy badness here, require the caller to give us the proper view name
-		if ( fieldOptions.pick_format_type !== 'multi' ) {
-			viewKey = fieldOptions.pick_format_single;
-		}
-		else {
-			viewKey = fieldOptions.pick_format_multi;
-		}
-		View = views[ viewKey ];
+		View = views[ fieldOptions.view_name ];
 
 		// ToDo: need better handling than this
 		if ( typeof View === "function" ) {

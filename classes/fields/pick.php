@@ -789,15 +789,15 @@ class PodsField_Pick extends PodsField {
 	    $format_type = pods_v( self::$type . '_format_type', $options, 'single' );
 
         if ( 'single' == $format_type ) {
-            if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
-                $field_type = 'select';
-            elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
-                $field_type = 'radio';
-            elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
-                $field_type = 'select2';
-            elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) )
-                $field_type = 'flexible';
-            else {
+            if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $options[ 'view_name' ] = 'select';
+            } elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $options[ 'view_name' ] = 'radio';
+            } elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $options[ 'view_name' ] = 'select2';
+            } elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $options[ 'view_name' ] = 'flexible';
+            } else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
                 do_action( 'pods_form_ui_field_pick_input', pods_var( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
@@ -805,18 +805,19 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( 'multi' == $format_type ) {
-            if ( !empty( $value ) && !is_array( $value ) )
-                $value = explode( ',', $value );
+            if ( !empty( $value ) && !is_array( $value ) ) {
+	            $value = explode( ',', $value );
+            }
 
-            if ( 'checkbox' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
-                $field_type = 'checkbox';
-            elseif ( 'multiselect' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
-                $field_type = 'select';
-            elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
-                $field_type = 'select2';
-            elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) )
-                $field_type = 'flexible';
-            else {
+            if ( 'checkbox' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $options[ 'view_name' ] = 'checkbox';
+            } elseif ( 'multiselect' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $options[ 'view_name' ] = 'select';
+            } elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $options[ 'view_name' ] = 'select2';
+            } elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $options[ 'view_name' ] = 'flexible';
+            } else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
                 do_action( 'pods_form_ui_field_pick_input', pods_var( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
@@ -831,24 +832,7 @@ class PodsField_Pick extends PodsField {
 
 	    $field_type = 'pick';
 	    pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
-	    return;
 
-	    // Flexible relationships only support certain related objects
-	    if ( 'flexible' == $field_type || ( 'select2' == $field_type && 1 == pods_v( self::$type . '_taggable', $options, 0 ) ) ) {
-		    $pick_object = pods_v( 'pick_object', $options );
-
-		    if ( ! in_array( $pick_object, array( 'post_type', 'taxonomy', 'user', 'pod' ) ) ) {
-			    // Default all others to Select2
-				$field_type = 'select2';
-		    } else {
-		        // @todo: Fix location when merging
-		        $field_type = 'pick';
-		        pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
-		        return;
-		    }
-	    }
-
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

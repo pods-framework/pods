@@ -36,8 +36,6 @@ export const FileUpload = Mn.LayoutView.extend( {
 		// Setup the uploader and listen for a response event
 		this.uploader = this.createUploader();
 		this.listenTo( this.uploader, 'added:files', this.onAddedFiles );
-
-		this.$el.trigger( 'render' );
 	},
 
 	/**

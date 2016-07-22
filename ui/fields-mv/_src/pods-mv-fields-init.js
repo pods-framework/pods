@@ -70,8 +70,10 @@ export const podsMVFieldsInit = function ( fields ) {
 					model     : fieldModel,
 					collection: new fieldControl.collection( data.model_data )
 				} );
+
 				field.render();
 				fields[ fieldId ] = field;
+				jQuery( this ).trigger( 'render' );
 			}
 		}
 	} );

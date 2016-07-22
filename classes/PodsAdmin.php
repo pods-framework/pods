@@ -973,10 +973,278 @@ class PodsAdmin {
     public function admin_setup_edit_options ( $pod ) {
         $options = array();
 
-        // @todo fill this in
-        $options[ 'labels' ] = array(
-            'temporary' => 'This has the fields hardcoded' // :(
-        );
+        if ( strlen( pods_v_sanitized( 'object', $pod ) ) < 1 && 'settings' != pods_v_sanitized( 'type', $pod ) ) {
+
+            $labels = array(
+                'label' => array(
+                    'label' => __( 'Label', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+                    'text_max_length' => 30
+                ),
+                'label_singular' => array(
+                    'label' => __( 'Singular Label', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+                    'text_max_length' => 30
+                ),
+                'label_add_new' => array(
+                    'label' => __( 'Add New', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_add_new_item' => array(
+                    'label' => __( 'Add new <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_new_item' => array(
+                    'label' => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_new_item_name' => array(
+                    'label' => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span> Name', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                // @todo Why was label_edit added previously? Can't find it in WP
+                'label_edit' => array(
+                    'label' => __( 'Edit', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_edit_item' => array(
+                    'label' => __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_update_item' => array(
+                    'label' => __( 'Update <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                // @todo Why was label_view added previously? Can't find it in WP
+                'label_view' => array(
+                    'label' => __( 'View', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_view_item' => array(
+                    'label' => __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_all_items' => array(
+                    'label' => __( 'All <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_search_items' => array(
+                    'label' => __( 'Search <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_popular_items' => array(
+                    'label' => __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                // @todo Why was label_parent added previously? Can't find it in WP
+                'label_parent' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_parent_item' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_parent_item_colon' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>:', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_not_found' => array(
+                    'label' => __( 'Not Found', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_not_found_in_trash' => array(
+                    'label' => __( 'Not Found in Trash', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_archives' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Archives', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_insert_into_item' => array(
+                    'label' => __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_uploaded_to_this_item' => array(
+                    'label' => __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_featured_image' => array(
+                    'label' => __( 'Featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_set_featured_image' => array(
+                    'label' => __( 'Set featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_remove_featured_image' => array(
+                    'label' => __( 'Remove featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_use_featured_image' => array(
+                    'label' => __( 'Use as featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_filter_items_list' => array(
+                    'label' => __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_items_list_navigation' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod', 'taxonomy' )
+                ),
+                'label_items_list' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod', 'taxonomy' )
+                ),
+                'label_separate_items_with_commas' => array(
+                    'label' => __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_add_or_remove_items' => array(
+                    'label' => __( 'Add or remove <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_choose_from_the_most_used' => array(
+                    'label' => __( 'Choose from the most used <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_no_terms' => array(
+                    'label' => __( 'No <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+            );
+
+            $options[ 'labels' ] = array();
+
+            /**
+             * Filter through all labels if they have an object_type set and match it against the current object type
+             */
+            foreach ( $labels as $label => $labeldata ) {
+                if ( array_key_exists( 'object_type', $labeldata ) ) {
+                    if ( in_array( pods_v_sanitized( 'type', $pod ), $labeldata[ 'object_type' ] ) ) {
+                        // Do not add the object_type to the actual label data
+                        unset( $labeldata[ 'object_type' ] );
+                        $options[ 'labels' ][ $label ] = $labeldata;
+                    }
+                } else {
+                    $options[ 'labels' ][ $label ] = $labeldata;
+                }
+            }
+
+        } elseif ( 'settings' == pods_v_sanitized( 'type', $pod ) ) {
+
+            $options[ 'labels' ] = array(
+                'label' => array(
+                    'label' => __( 'Page Title', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+                    'text_max_length' => 30
+                ),
+                'menu_name' => array(
+                    'label' => __( 'Menu Name', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+                    'text_max_length' => 30
+                ),
+            );
+        }
 
         if ( 'post_type' == $pod[ 'type' ] ) {
             $options[ 'admin-ui' ] = array(
@@ -1040,7 +1308,15 @@ class PodsAdmin {
                     'help' => __( 'help', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
+                    'dependency' => true,
                     'boolean_yes_label' => ''
+                ),
+                'name_admin_bar' => array(
+                    'label' => __( 'Admin bar name', 'pods' ),
+                    'help' =>__( 'Defaults to singular name', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'show_in_admin_bar' => true )
                 )
             );
 

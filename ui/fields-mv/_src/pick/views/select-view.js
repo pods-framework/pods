@@ -50,8 +50,12 @@ export const SelectView = PodsFieldListView.extend( {
 		const fieldAttributes = fieldModel.get( 'attributes' );
 		const fieldOptions = fieldModel.get( 'options' );
 
+		let name = fieldAttributes.name;
+		if ( fieldOptions.pick_format_type === 'multi' ) {
+			name = name + '[]';
+		}
 		return {
-			'name'           : fieldAttributes.name + '[]',
+			'name'           : name,
 			'class'          : fieldAttributes.class,
 			'data-name-clean': fieldAttributes.name_clean,
 			'id'             : fieldAttributes.id,

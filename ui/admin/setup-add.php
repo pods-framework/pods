@@ -398,11 +398,11 @@
         else {
             document.location = 'admin.php?page=pods&do=create';
         }
-    }
+    };
 
     var pods_admin_option_select_callback = function ( $opt ) {
         jQuery( '#pods_create_extend' ).val( $opt.data( 'opt' ) );
-    }
+    };
 
     jQuery( function ( $ ) {
         $( document ).Pods( 'validate' );
@@ -413,8 +413,8 @@
         $( document ).Pods( 'confirm' );
         $( document ).Pods( 'sluggable' );
 
-        $( document ).find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-            $( this ).trigger( 'change' );
+        $( '.pods-admin' ).on( 'render', '.pods-form-ui-field', function ( e ) {
+            $( this ).find( '.pods-dependent-toggle[data-name-clean]' ).trigger( 'change' );
         } );
     } );
 </script>

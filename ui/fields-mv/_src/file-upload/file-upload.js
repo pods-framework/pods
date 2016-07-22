@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn */
-import * as template from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
+import template from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
 
 import { FileUploadCollection, FileUploadModel } from '~/ui/fields-mv/_src/file-upload/models/file-upload-model';
 import { FileUploadList } from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';

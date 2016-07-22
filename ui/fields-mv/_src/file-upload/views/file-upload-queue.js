@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as template from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue.html';
+import template from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {

@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Mn, wp */
-import * as template from '~/ui/fields-mv/_src/file-upload/views/file-upload-item.html';
+import template from '~/ui/fields-mv/_src/file-upload/views/file-upload-item.html';
 
 import { PodsFieldListView, PodsFieldView } from '~/ui/fields-mv/_src/core/pods-field-views';
 

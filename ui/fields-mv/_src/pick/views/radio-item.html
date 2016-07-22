@@ -6,8 +6,11 @@
 			id="<%- attr.id %><%= ordinal %>"
 			class="pods-form-ui-field-type-pick pods-form-ui-field-name-<%- attr.name_clean %>"
 			type="radio"
-			tabindex="2"
-			value="<%- id %>">
+			<% if ( selected ) { %>
+				checked="CHECKED"
+			<% } %>
+			value="<%- id %>"
+			tabindex="2">
 	<label
 		class="pods-form-ui-label pods-form-ui-label-<%- attr.id %><%= ordinal %>"
 		for="<%- attr.id %><%= ordinal %>">

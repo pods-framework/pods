@@ -1,7 +1,7 @@
 /*global assert */
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
-import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/models/relationship-model';
+import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 let options = {};
 
 let fieldModel = new PodsFieldModel( {

@@ -3,14 +3,14 @@
 import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
- *
+ * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
 	tagName: 'option',
 
 	template: false,
 
-	initialize: function () {
+	initialize: function ( options ) {
 		this.$el.val( this.model.get( 'id' ) );
 
 		this.$el.html( this.model.get( 'name' ) );

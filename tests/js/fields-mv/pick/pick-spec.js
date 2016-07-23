@@ -2,12 +2,15 @@
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 import {Pick} from '~/ui/fields-mv/_src/pick/pick';
 
+/**
+ * Pick field tests
+ */
 describe( 'Pick field', function () {
 	let field, $el;
 	let fieldModel = new PodsFieldModel();
 
 	/**
-	 * Setup a target div for the Pick field
+	 * Pre-test setup, before every it()
 	 */
 	beforeEach( function () {
 		jQuery( document.body ).append( '<div id="target">' );
@@ -15,7 +18,7 @@ describe( 'Pick field', function () {
 	} );
 
 	/**
-	 * Post test clean-up, after every it()
+	 * Post-test clean-up, after every it()
 	 */
 	afterEach( function () {
 		jQuery( document.body ).empty();

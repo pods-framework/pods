@@ -27,6 +27,6 @@
     "jQuery": false,
     "_": false,
     "Backbone": false,
-    "Mn": false
+    "Marionette": false
   }
 }

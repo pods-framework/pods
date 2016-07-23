@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Mn, wp */
+/*global jQuery, _, Backbone, Marionette, wp */
 import { PodsFileUploader } from '~/ui/fields-mv/_src/file-upload/uploaders/pods-file-uploader';
 
 export const MediaModal = PodsFileUploader.extend( {

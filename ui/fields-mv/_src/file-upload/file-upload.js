@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
+/*global jQuery, _, Backbone, Marionette */
 import template from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
 
 import { FileUploadCollection, FileUploadModel } from '~/ui/fields-mv/_src/file-upload/file-upload-model';
@@ -15,7 +15,7 @@ const Uploaders = [
 
 const UNLIMITED_FILES = 0;
 
-export const FileUpload = Mn.LayoutView.extend( {
+export const FileUpload = Marionette.LayoutView.extend( {
 	template: _.template( template ),
 
 	regions: {

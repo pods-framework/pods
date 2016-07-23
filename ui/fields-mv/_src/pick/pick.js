@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Mn, wp */
+/*global jQuery, _, Backbone, Marionette, wp */
 import template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
 import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
@@ -21,7 +21,7 @@ const views = {
 /**
  *
  */
-export const Pick = Mn.LayoutView.extend( {
+export const Pick = Marionette.LayoutView.extend( {
 	template: _.template( template ),
 
 	regions: {

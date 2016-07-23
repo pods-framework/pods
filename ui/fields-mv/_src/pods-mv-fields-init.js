@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
+/*global jQuery, _, Backbone, Marionette */
 import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/file-upload-model';

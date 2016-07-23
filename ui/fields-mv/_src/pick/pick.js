@@ -1,12 +1,14 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
-import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
+import {PickFieldModel} from '~/ui/fields-mv/_src/pick/pick-field-model';
 import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
 import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
 import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
+
+import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
 
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 
@@ -19,7 +21,7 @@ const views = {
 };
 
 /**
- *
+ * @extends Backbone.View
  */
 export const Pick = Marionette.LayoutView.extend( {
 	template: _.template( template ),
@@ -29,25 +31,32 @@ export const Pick = Marionette.LayoutView.extend( {
 		addNew: '.pods-ui-add-new'
 	},
 
+	/**
+	 *
+	 */
 	onRender: function () {
-		let View, viewKey, list, addNew;
-		const fieldOptions = this.model.attributes.options;
+		let viewName, View, list, addNew;
 
-		View = views[ fieldOptions.view_name ];
+		this.fieldOptions = new PickFieldModel( this.model.get( 'options' ) );
 
-		// ToDo: need better handling than this
-		if ( typeof View === "function" ) {
-			list = new View( { collection: this.collection, fieldModel: this.model } );
-			this.showChildView( 'list', list );
+		// Setup the view to be used
+		viewName = this.fieldOptions.get( 'view_name' );
+		if( views[ viewName ] === undefined ) {
+			throw new Error( `Invalid view name "${viewName}"` );
 		}
+		View = views[ viewName ];
+		list = new View( { collection: this.collection, fieldModel: this.model } );
+		this.showChildView( 'list', list );
 
-		if ( fieldOptions.iframe_src !== '' ) {
+		// Show Add New?
+		if ( this.fieldOptions.get( 'iframe_src' ) !== '' ) {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}
 	},
 
-	/** "Remove" in flex view just toggles an item's selected attribute
+	/**
+	 *"Remove" in flex view just toggles an item's selected attribute
 	 *
 	 * @param childView
 	 * @param args
@@ -60,7 +69,6 @@ export const Pick = Marionette.LayoutView.extend( {
 	},
 
 	/**
-	 *
 	 * @param childView
 	 */
 	onChildviewAddNewClick: function ( childView ) {
@@ -73,6 +81,9 @@ export const Pick = Marionette.LayoutView.extend( {
 		modalFrame.modal.open();
 	},
 
+	/**
+	 * @param response
+	 */
 	addNewSuccess: function ( response ) {
 		console.log( response );
 	}

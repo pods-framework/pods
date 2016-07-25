@@ -792,7 +792,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				if ( did_action( 'wpml_loaded' ) ) {
 					/* Only call filter if WPML is installed */
 					$post_type = get_post_type( $post_id );
-					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );
+					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, false );
 				} elseif ( function_exists( 'pll_get_post' ) ) {
 					$polylang_id = pll_get_post( $post_id );
 					if ( ! empty( $polylang_id ) ) {

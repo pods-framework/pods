@@ -5420,9 +5420,11 @@ class PodsAPI {
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
-                    && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
-                    $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                     && did_action( 'wpml_loaded' )
+                     && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+                    $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+                }
 
                 return $pod;
             }
@@ -5510,9 +5512,11 @@ class PodsAPI {
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
         if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
-                && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
-                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                 && did_action( 'wpml_loaded' )
+                && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+	            $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+            }
 
             return $pod;
         }

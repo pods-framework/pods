@@ -17,6 +17,8 @@ matrix:
      - env: WP_VERSION=bleeding-maintenance WP_MULTISITE=0
 
     include:
+    - php: 7.1
+      env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.6

@@ -96,13 +96,28 @@
 
 				if ( $(this).is(':checked') ) {
 
-					$('.pods-i18n-field').each(function() {
+					// Get the index for this locale
+					var index = 0;
+					$('#pods_i18n .pods-enable-disable-language input:checked').each( function() {
+						if ( $( this ).parents('.pods-enable-disable-language').attr( 'data-locale' ) == locale ) {
+							return false;
+						}
+						index++;
+					});
+
+					$('.pods-i18n-field').each( function() {
 						if ( $('.pods-i18n-input-' + locale, this).length ) {
-							$('.pods-i18n-input-' + locale + ' input', this).removeAttr('disabled');
+							$('.pods-i18n-input-' + locale, this).slideDown( PodsEditI18n.toggleSpeed, function() {
+								$('input', this).removeAttr('disabled');
+							});
 						} else {
-							var org = $(this).parent().children('input').first();
-							var name = org.attr('name');
-							$(this).append( PodsEditI18n.i18nInputTemplate( name, locale ) );
+							var name = $(this).parent().children('input').first().attr('name');
+							// Place the new input on the right index
+							if ( $( '.pods-i18n-input:visible', this ).eq(index).length ) {
+								$( '.pods-i18n-input:visible', this ).eq(index).before( PodsEditI18n.i18nInputTemplate( name, locale ) );
+							} else {
+								$( this ).append( PodsEditI18n.i18nInputTemplate( name, locale ) );
+							}
 							if ( PodsEditI18n.i18nVisible ) {
 								$('.pods-i18n-input-' + locale, this).slideDown( PodsEditI18n.toggleSpeed );
 							}
@@ -110,17 +125,11 @@
 					});
 
 				} else {
-
 					$('.pods-i18n-input-' + locale + ' input').each( function() {
-						if ( $(this).val() != '' ) {
-							$(this).attr('disabled', 'disabled'); 
-						} else {
-							$(this).parent().slideUp( PodsEditI18n.toggleSpeed, function() {
-								$(this).remove();
-							});
-						}
+						$(this).parent().slideUp( PodsEditI18n.toggleSpeed, function() {
+							$('input', this).attr('disabled', 'disabled');
+						});
 					});
-					
 				}
 
 			});

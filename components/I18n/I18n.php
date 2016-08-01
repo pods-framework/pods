@@ -81,7 +81,6 @@ class Pods_Component_I18n extends PodsComponent {
 				if ( isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'pods', $this->admin_page ) ) ) {
 
 					add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
-					//$this->admin_assets();
 
 					// Do save action here because otherwise the loading of post_types get done first and labels aren't translated
 					if (   $_GET['page'] == $this->admin_page
@@ -529,7 +528,6 @@ class Pods_Component_I18n extends PodsComponent {
 	public function admin_save() {
 
 		$this->languages_available = get_available_languages();
-		$this->admin_assets();
 
 		/**
 		 * format: array( language, version, updated, english_name, native_name, package, iso, strings )

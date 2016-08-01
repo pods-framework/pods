@@ -749,10 +749,9 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( ! empty( $this->languages ) ) {
 		?>
 			<p><?php _e( 'Enable/Disable languages for this Pod', 'pods' ); ?></p>
-			<p><small class="description"><?php _e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small>
-			<br>
+			<p><small class="description"><?php _e( 'This overwrites the defaults set in the component admin.', 'pods' ); ?></small></p>
+			<div class="pods-field-enable-disable-language">
 		<?php
-
 			foreach ( $this->languages as $locale => $lang_data ) {
 
 				if ( ! isset( $pod['options']['enable_i18n'][ $locale ] ) ) {
@@ -761,8 +760,8 @@ class Pods_Component_I18n extends PodsComponent {
 				}
 		?>
 				<div class="pods-field-option pods-enable-disable-language" data-locale="<?php echo esc_attr( $locale ) ?>">
-		<?php 
-					echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array( 
+		<?php
+					echo PodsForm::field( 'enable_i18n[' . $locale . ']', $pod['options']['enable_i18n'][ $locale ], 'boolean', array(
 						'boolean_yes_label' =>  '<code>' . $locale . '</code> ' . $this->create_lang_label( $lang_data ),
 						'boolean_no_label' =>  '',
 					) );
@@ -771,7 +770,7 @@ class Pods_Component_I18n extends PodsComponent {
 		<?php
 			}
 		?>
-			</p>
+			</div>
 			<hr>
 			<p><button id="toggle_i18n" class="button-secondary"><?php _e('Toggle translation visibility', 'pods'); ?></button></p>
 		<?php

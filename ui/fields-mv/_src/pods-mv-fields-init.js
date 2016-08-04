@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
-import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest';
+import * as fields from '~/ui/fields-mv/_src/field-manifest';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
 import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
@@ -12,12 +12,12 @@ const fieldFactory = function ( fieldType ) {
 
 	switch ( fieldType ) {
 		case 'file-upload':
-			field.control = fieldClasses.FileUpload;
+			field.control = fields.FileUpload;
 			field.collection = FileUploadCollection;
 			break;
 
 		case 'pick':
-			field.control = fieldClasses.Pick;
+			field.control = fields.Pick;
 			field.collection = RelationshipCollection;
 			break;
 	}

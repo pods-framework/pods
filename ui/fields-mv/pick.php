@@ -15,6 +15,19 @@ $options[ 'item_id' ] = (int) $id;
 
 $model_data = array();
 
+// ToDo: We don't have optgroup support yet.  Just create flat select lists until we do
+if ( is_array( $data ) && is_array( current( $data ) ) ) {
+
+	$new_data = array();
+	foreach( $data as $group_label => $option_group ) {
+		foreach( $option_group as $this_value => $this_label ) {
+			$new_data[ $this_value ] = $this_label;
+		}
+	}
+
+	$data = $new_data;
+}
+
 $supports_thumbnails = null;
 
 foreach ( $data as $this_id => $this_title ) {

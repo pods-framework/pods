@@ -1376,10 +1376,14 @@
                             edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
                             $field_wrapper = $row_content.find( 'div.pods-manage-field' );
 
-                            if ( $row.hasClass( 'pods-field-duplicated' ) )
+                            if ( $row.hasClass( 'pods-field-duplicated' ) ) {
                                 $row.removeClass( 'pods-field-duplicated' );
-                            else
+                            } else {
                                 $field_wrapper.append( edit_row );
+
+                                // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                                $row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                            }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
                             $field_wrapper.find( '.pods-excludes-on' ).hide();
@@ -1451,8 +1455,6 @@
 
                         $row_content.slideDown();
 
-                        // ToDo: Duct tape to handle fields added dynamically.  Find out why and see if we can avoid this
-                        $row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );

@@ -147,6 +147,6 @@ $url = add_query_arg( $query_args, admin_url( $file_name ) );
 include_once PODS_DIR . 'classes/PodsMVFieldData.php';
 $field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+<div class="pods-form-ui-field">
 	<?php $field_data->emit_script(); ?>
 </div>

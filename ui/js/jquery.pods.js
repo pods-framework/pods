@@ -1446,6 +1446,9 @@
 
                         $row_content.slideDown();
 
+                        // ToDo: Duct tape to handle fields added dynamically.  Find out why and see if we can avoid this
+						$row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );
                         } );

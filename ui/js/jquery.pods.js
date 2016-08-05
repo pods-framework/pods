@@ -1309,7 +1309,9 @@
                 } );
             },
             collapsible : function ( row ) {
-                var new_row = row;
+            	var new_row, orig_fields;
+
+                new_row = row;
 
                 if ( new_row[ 0 ] )
                     new_row = new_row.html();
@@ -1317,7 +1319,7 @@
                 // Hide all rows
                 $( 'div.pods-manage-row-wrapper' ).hide();
 
-                var orig_fields = {};
+                orig_fields = {};
 
                 // Handle 'Edit' action
                 $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-edit', function ( e ) {

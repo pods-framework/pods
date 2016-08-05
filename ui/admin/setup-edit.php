@@ -944,13 +944,6 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        <?php
-        $values = array();
-        foreach( pods_v( 'sister_id', $field_settings ) as $key => $value ) {
-            $values[ 'name' ] = $value;
-        }
-        ?>
-
         fieldModel = new PodsMVFields.models.PodsFieldModel( {
             attributes: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",

@@ -911,43 +911,74 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         var thank_you = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
-    }
-
-    var pods_sister_field_going = {
-
     };
 
+    var sisterFieldsProcessing = {};
+
+    /*global PodsMVFields */
     var pods_sister_field = function ( $el ) {
+        var postData, relatedPodName, selectedValue, $container;
+        var fieldModel, collection, selectField;
+
         var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
+        var fieldKey = id + '_' + $el.prop( 'id' );
 
-        if ( 'undefined' != typeof pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] && true == pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] )
-            return;
-
-        pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
-
-        var default_select = '<?php echo str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_v( 'sister_id', $field_settings ) ) ) ); ?>';
-        default_select = default_select.replace( /\-\-1/g, id );
-
-        var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
-
-        if ( 0 != related_pod_name.indexOf( 'pod-' ) && 0 != related_pod_name.indexOf( 'post_type-' ) && 0 != related_pod_name.indexOf( 'taxonomy-' ) && 0 != related_pod_name.indexOf( 'user' ) && 0 != related_pod_name.indexOf( 'media' ) && 0 != related_pod_name.indexOf( 'comment' ) ) {
-            pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
-
+        if ( 'undefined' != typeof sisterFieldsProcessing[ fieldKey ] && true == sisterFieldsProcessing[ fieldKey ] ) {
             return;
         }
 
-        var selected_value = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
+        relatedPodName = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val() + '';
+        selectedValue = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
+        $container = $el.find( '.pods-sister-field' );
 
-        var select_container = default_select.match( /<select[^<]*>/g );
+        if ( 0 != relatedPodName.indexOf( 'pod-' )
+            && 0 != relatedPodName.indexOf( 'post_type-' )
+            && 0 != relatedPodName.indexOf( 'taxonomy-' )
+            && 0 != relatedPodName.indexOf( 'user' )
+            && 0 != relatedPodName.indexOf( 'media' )
+            && 0 != relatedPodName.indexOf( 'comment' ) ) {
 
-        $el.find( '.pods-sister-field' ).html( select_container + '<option value=""><?php esc_attr_e( 'Loading available fields..', 'pods' ); ?></option></select>' );
+            sisterFieldsProcessing[ fieldKey ] = false;
+            return;
+        }
 
-        postdata = {
+        sisterFieldsProcessing[ fieldKey ] = true;
+
+        <?php
+        $values = array();
+        foreach( pods_v( 'sister_id', $field_settings ) as $key => $value ) {
+            $values[ 'name' ] = $value;
+        }
+        ?>
+
+        fieldModel = new PodsMVFields.models.PodsFieldModel( {
+            attributes: {
+                id        : "pods-form-ui-field-data-" + id + "-sister-id",
+                "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
+                name      : "field_data[" + id + "][sister_id]",
+                name_clean: "field-data-sister-id"
+            }
+        } );
+
+        collection = new PodsMVFields.models.RelationshipCollection( {
+            id  : "",
+            name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
+        } );
+
+        selectField = new PodsMVFields.fields.Pick( {
+            el        : $container,
+            model     : fieldModel,
+            collection: collection
+        } );
+
+        selectField.render();
+
+        postData = {
             action : 'pods_admin',
             method : 'load_sister_fields',
             _wpnonce : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
             pod : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
-            related_pod : related_pod_name
+            related_pod : relatedPodName
         };
 
         jQuery.ajax( {
@@ -955,57 +986,80 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             dataType : 'html',
             url : ajaxurl + '?pods_ajax=1',
             cache : false,
-            data : postdata,
+            data : postData,
             success : function ( d ) {
+                var json, newItems, field_id, field_name;
+
+                newItems = [];
+
                 if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
-                    var json = d.match( /{.*}$/ );
 
-                    if ( null !== json && 0 < json.length )
+                    json = d.match( /{.*}$/ );
+
+                    if ( null !== json && 0 < json.length ) {
                         json = jQuery.parseJSON( json[ 0 ] );
-                    else
+                    } else {
                         json = {};
-
-                    var select_container = default_select.match( /<select[^<]*>/g );
+                    }
 
                     if ( 'object' != typeof json || ! jQuery.isEmptyObject( json ) ) {
+
                         if ( 'object' != typeof json ) {
                             if ( window.console ) console.log( d );
                             if ( window.console ) console.log( json );
 
-                            select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
+                            newItems.push( {
+                                id: "",
+                                name: <?php echo json_encode( __( 'There was a server error with your AJAX request.', 'pods' ) ); ?>
+                            } );
+
+                        } else {
+                            newItems.push( {
+                                id  : "",
+                                name: <?php echo json_encode( __( '-- Select Related Field --', 'pods' ) ); ?>
+                            } );
+
+                            for ( field_id in json ) {
+                                if ( json.hasOwnProperty( field_id ) ) {
+                                    field_name = json[ field_id ];
+
+                                    newItems.push( {
+                                        id  : field_id,
+                                        name: field_name
+                                    } );
+                                }
+                            }
                         }
-
-                        select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
-
-                        for ( var field_id in json ) {
-                            var field_name = json[field_id];
-
-                            select_container += '<option value="' + field_id + '">' + field_name + '</option>';
-                        }
-
-                        select_container += '</select>';
-
-                        $el.find( '.pods-sister-field' ).html( select_container );
-
-                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
+                        collection.reset( newItems );
+                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selectedValue );
                     }
                     else {
+                        // Todo: I18N
                         // None found
-                        $el.find( '.pods-sister-field' ).html( default_select );
+                        collection.reset( {
+                            id  : "",
+                            name: "No Related Fields Found"
+                        } );
                     }
                 }
                 else {
-                    // None found
-                    $el.find( '.pods-sister-field' ).html( default_select );
+                    // Todo: proper message and I18N
+                    collection.reset( {
+                        id  : "",
+                        name: "Also an error"
+                    } );
                 }
 
-                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                sisterFieldsProcessing[ fieldKey ] = false;
             },
             error : function () {
-                // None found
-                $el.find( '.pods-sister-field' ).html( default_select );
+                // Todo: proper message and I18N
+                collection.reset( {
+                    id  : "",
+                    name: "An error"
+                } );
 
-                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                sisterFieldsProcessing[ fieldKey ] = false;
             }
         } );
     }

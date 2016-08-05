@@ -1321,12 +1321,15 @@
 
                 // Handle 'Edit' action
                 $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-edit', function ( e ) {
+                    var $row, $row_label, $row_content, $tbody;
+                    var row_counter, edit_row, $field_wrapper, field_data, field_array_counter, json_name;
+
                     $( this ).css( 'cursor', 'default' );
                     $( this ).prop( 'disabled', true );
 
-                    var $row = $( this ).closest( 'tr.pods-manage-row' );
-                    var $row_label = $row.find( 'td.pods-manage-row-label' );
-                    var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+                    $row = $( this ).closest( 'tr.pods-manage-row' );
+                    $row_label = $row.find( 'td.pods-manage-row-label' );
+                    $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
 
                     if ( 'undefined' == typeof orig_fields[ $row.data( 'id' ) ] )
                         orig_fields[ $row.data( 'id' ) ] = {};
@@ -1349,7 +1352,7 @@
                             } );
                         }
                         else {
-                            var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+                            $tbody = $( this ).closest( 'tbody.pods-manage-list' );
 
                             $row.animate( {backgroundColor : '#B80000'} );
 
@@ -1366,10 +1369,10 @@
                     // Row inactive, show it
                     else {
                         if ( $row.hasClass( 'pods-field-init' ) && 'undefined' != typeof new_row && null !== new_row ) {
-                            var row_counter = $row.data( 'row' );
+                            row_counter = $row.data( 'row' );
 
-                            var edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                            var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
+                            edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
+                            $field_wrapper = $row_content.find( 'div.pods-manage-field' );
 
                             if ( $row.hasClass( 'pods-field-duplicated' ) )
                                 $row.removeClass( 'pods-field-duplicated' );
@@ -1383,9 +1386,9 @@
                                 $( this ).trigger( 'change' );
                             } );
 
-                            var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                            field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
-                            var field_array_counter = 0;
+                            field_array_counter = 0;
 
                             $field_wrapper.find( 'input, select, textarea' ).each( function () {
                                 json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( /\[\d*\]/gi, '' ).replace( '[', '' ).replace( ']', '' );
@@ -1447,7 +1450,7 @@
                         $row_content.slideDown();
 
                         // ToDo: Duct tape to handle fields added dynamically.  Find out why and see if we can avoid this
-						$row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                        $row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );

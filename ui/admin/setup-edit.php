@@ -928,7 +928,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         }
 
         relatedPodName = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val() + '';
-        selectedValue = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
+        selectedValue = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val() + '';
         $container = $el.find( '.pods-sister-field' );
 
         if ( 0 != relatedPodName.indexOf( 'pod-' )
@@ -981,7 +981,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             cache : false,
             data : postData,
             success : function ( d ) {
-                var json, newItems, field_id, field_name;
+                var json, newItems, fieldID, fieldName;
 
                 newItems = [];
 
@@ -1012,13 +1012,14 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                                 name: <?php echo json_encode( __( '-- Select Related Field --', 'pods' ) ); ?>
                             } );
 
-                            for ( field_id in json ) {
-                                if ( json.hasOwnProperty( field_id ) ) {
-                                    field_name = json[ field_id ];
+                            for ( fieldID in json ) {
+                                if ( json.hasOwnProperty( fieldID ) ) {
+                                    fieldName = json[ fieldID ];
 
                                     newItems.push( {
-                                        id  : field_id,
-                                        name: field_name
+                                        id      : fieldID,
+                                        name    : fieldName,
+                                        selected: (selectedValue == fieldID)
                                     } );
                                 }
                             }

@@ -321,10 +321,7 @@ class PodsField_Address extends PodsField {
 						// Default value is empty. Only known tags are allowed, remove all unknown tags
 						$value = '';
 						if ( ! empty( $address[ $tag ] ) ) {
-							$value = $address[ $tag ];
-							if ( $microdata ) {
-								$value = self::wrap_microdata( $value, $tag, 'span' );
-							}
+							$value = self::wrap_html_format( $address[ $tag ], $tag, 'span', $microdata );
 						}
 						$lines[ $key ] = str_replace( '{{' . $tag . '}}', $value, $lines[ $key ] );
 					}
@@ -336,15 +333,13 @@ class PodsField_Address extends PodsField {
 			// Lines to HTML line breaks
 			$output = implode( '<br>', $lines );
 
-			if ( $microdata ) {
-				$output = self::wrap_microdata( $output, 'address', 'div' );
-			}
+			$output = self::wrap_html_format( $output, 'address', 'div', $microdata );
 		}
 		return $output;
 	}
 
 	/**
-	 * Wrap values in the correct schema.org microdata based on the address tag
+	 * Wrap values in the correct HTML format with optional schema.org microdata based on the address tag
 	 *
 	 * @since 2.7
 	 *
@@ -353,28 +348,61 @@ class PodsField_Address extends PodsField {
 	 *
 	 * @return string
 	 */
-	public static function wrap_microdata( $value, $tag, $element ) {
+	public static function wrap_html_format( $value, $tag, $element, $microdata = false ) {
+
+		$atts['class'] = 'pods-address' . $tags;
 
 		switch ( $tag ) {
 			case 'address':
-				return '<' . $element . ' itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . $value . '</' . $element . '>';
+				$atts['class'] = 'pods-address';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'address';
+					$atts['itemscope'] = '';
+					$atts['itemtype'] = 'http://schema.org/PostalAddress';
+				};
 				break;
+
 			case 'line_1':
 			case 'line_2':
-				return '<' . $element . ' itemprop="streetAddress">' . $value . '</' . $element . '>';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'streetAddress';
+				};
 				break;
 			case 'postal_code':
-				return '<' . $element . ' itemprop="postalCode">' . $value . '</' . $element . '>';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'postalCode';
+				};
 				break;
+
 			case 'city':
-				return '<' . $element . ' itemprop="addressLocality">' . $value . '</' . $element . '>';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'addressLocality';
+				};
 				break;
+
 			case 'region':
-				return '<' . $element . ' itemprop="addressRegion">' . $value . '</' . $element . '>';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'addressRegion';
+				};
 				break;
+
 			case 'country':
-				return '<' . $element . ' itemprop="addressCountry">' . $value . '</' . $element . '>';
+				if ( $microdata ) {
+					$atts['itemprop'] = 'addressCountry';
+				};
 				break;
+
+			default:
+				$atts = false;
+				break;
+		}
+
+		if ( $atts ) {
+			$attributes = '';
+			foreach ( $atts as $key => $val ) {
+				$attributes .= ' ' . $key . '="' . $val . '"';
+			}
+			$value = '<' . $element . $attributes . '>' . $value . '</' . $element . '>';
 		}
 
 		return $value;

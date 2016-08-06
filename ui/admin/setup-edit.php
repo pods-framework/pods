@@ -967,19 +967,19 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         selectField.render();
 
         postData = {
-            action : 'pods_admin',
-            method : 'load_sister_fields',
-            _wpnonce : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
-            pod : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
-            related_pod : relatedPodName
+            action     : 'pods_admin',
+            method     : 'load_sister_fields',
+            _wpnonce   : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
+            pod        : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
+            related_pod: relatedPodName
         };
 
         jQuery.ajax( {
-            type : 'POST',
-            dataType : 'html',
-            url : ajaxurl + '?pods_ajax=1',
-            cache : false,
-            data : postData,
+            type    : 'POST',
+            dataType: 'html',
+            url     : ajaxurl + '?pods_ajax=1',
+            cache   : false,
+            data    : postData,
             success : function ( d ) {
                 var json, newItems, fieldID, fieldName;
 
@@ -1026,31 +1026,30 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                         }
                         collection.reset( newItems );
                         jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selectedValue );
-                    }
-                    else {
-                        // Todo: I18N
+
+                    } else {
                         // None found
                         collection.reset( {
                             id  : "",
-                            name: "No Related Fields Found"
+                            name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
                         } );
                     }
-                }
-                else {
-                    // Todo: proper message and I18N
+
+                } else {
+                    // None found
                     collection.reset( {
                         id  : "",
-                        name: "Also an error"
+                        name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
                     } );
                 }
 
                 sisterFieldsProcessing[ fieldKey ] = false;
             },
             error : function () {
-                // Todo: proper message and I18N
+                // None found
                 collection.reset( {
                     id  : "",
-                    name: "An error"
+                    name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
                 } );
 
                 sisterFieldsProcessing[ fieldKey ] = false;

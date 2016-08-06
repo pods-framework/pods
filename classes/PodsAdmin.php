@@ -1965,6 +1965,19 @@ class PodsAdmin {
             }
 
             $options[ 'additional-field' ][ $type ] = PodsForm::ui_options( $type );
+
+            /**
+             * Modify Additional Field Options tab
+             *
+             * @since 2.7
+             *
+             * @param array $options Additional field type options
+             * @param string $type Field type
+             * @param array $options Tabs, indexed by label
+             * @param object|Pods Pods object for the Pod this UI is for.
+             */
+            $options[ 'additional-field' ][ $type ] = apply_filters( 'pods_admin_setup_edit_' . $type . '_additional_field_options', $options[ 'additional-field' ][ $type ], $type, $options, $pod );
+            $options[ 'additional-field' ][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options[ 'additional-field' ][ $type ], $type, $options, $pod );
         }
 
         $input_helpers = array(

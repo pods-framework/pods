@@ -166,6 +166,7 @@ class PodsField_Address extends PodsField {
 					'default' => __( 'Default', 'pods' ),
 					'custom'  => __( 'Custom', 'pods' )
 				),
+				'depends-on' => array( self::$type . '_type' => 'address' ),
 				'dependency' => true
 			),
 			self::$type . '_display_type_custom' => array(
@@ -173,12 +174,13 @@ class PodsField_Address extends PodsField {
 				'help' => __( 'You can use the following tags for address fields', 'pods' ) . ': <code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>',
 				'default'    => self::default_display_format(),
 				'type'       => 'paragraph',
-				'depends-on' => array( self::$type . '_display_type' => array( 'custom' ) )
+				'depends-on' => array( self::$type . '_display_type' => 'custom', self::$type . '_type' => 'address' )
 			),
 			self::$type . '_microdata' => array(
 				'label'      => __( 'Format with microdata?', 'pods' ) . ' (schema.org)',
 				'default'    => 0,
-				'type'       => 'boolean'
+				'type'       => 'boolean',
+				'depends-on' => array( self::$type . '_type' => 'address' )
 			)
 		);
 
@@ -368,6 +370,7 @@ class PodsField_Address extends PodsField {
 					$atts['itemprop'] = 'streetAddress';
 				};
 				break;
+
 			case 'postal_code':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'postalCode';

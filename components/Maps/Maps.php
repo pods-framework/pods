@@ -115,8 +115,12 @@ class Pods_Component_Maps extends PodsComponent {
 				'default' => 12,
 				'type'    => 'number',
 				'options' => array(
-					'number_decimals'   => 0,
-					'number_max_length' => 2
+					'number_decimals'   => 0, // 2
+					'number_max_length' => 2,
+					'number_min' => 1,
+					'number_max' => 21,
+					'number_format' => '9999.99',
+					//'number_format_type' => 'slider'
 				)
 			),
 			'address_map_marker'      => array(
@@ -153,14 +157,38 @@ class Pods_Component_Maps extends PodsComponent {
 		$options[ $type . '_type' ]['data']['lat-lng'] = __( 'Latitude / Longitude', 'pods' );
 
 		// Add Map display types
-		$options[ $type . '_display_type' ]['data']['map'] = __( 'Map', 'pods' );
-		$options[ $type . '_display_type' ]['data']['default-map'] = __( 'Default and map', 'pods' );
-		$options[ $type . '_display_type' ]['data']['custom-map'] = __( 'Custom and map', 'pods' );
+		//$options[ $type . '_display_type' ]['data']['map'] = __( 'Map', 'pods' );
+		//$options[ $type . '_display_type' ]['data']['default-map'] = __( 'Default and map', 'pods' );
+		//$options[ $type . '_display_type' ]['data']['custom-map'] = __( 'Custom and map', 'pods' );
 
 		// Add extra options
+
+		$options[ $type . '_map' ] = array(
+			'label'      => __( 'Display a map', 'pods' ),
+			'default'    => 0,
+			'type'       => 'boolean',
+			'dependency' => true
+		);
+		$options[ $type . '_map_display' ] = array(
+			'label'      => __( 'Map Display', 'pods' ),
+			'depends-on' => array( $type . '_map' => true ),
+			'default'    => 'replace',
+			'type'       => 'pick',
+			'data'       => array(
+				'replace' => __( 'Replace default display', 'pods' ),
+				'before'     => __( 'Before default display', 'pods' ),
+				'after'     => __( 'After default display', 'pods' )
+			)
+		);
+		$options[ $type . '_autocorrect' ] = array(
+			'label'      => __( 'Autocorrect Address during save', 'pods' ),
+			'depends-on' => array( $type . '_map' => true, $type . '_type' => array( 'address', 'text' ) ),
+			'default'    => 0,
+			'type'       => 'boolean'
+		);
 		$options[ $type . '_style' ] = array(
 			'label'      => __( 'Map Output Type', 'pods' ),
-			'depends-on' => array( $type . '_display_type' => array( 'map', 'default-map', 'custom-map' ) ),
+			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_style', self::$options, 'static', true ),
 			'type'       => 'pick',
 			'data'       => array(
@@ -170,7 +198,7 @@ class Pods_Component_Maps extends PodsComponent {
 		);
 		$options[ $type . '_type_of_map' ] = array(
 			'label'      => __( 'Map Type', 'pods' ),
-			'depends-on' => array( $type . '_display_type' => array( 'map', 'default-map', 'custom-map' ) ),
+			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_type', self::$options, 'roadmap', true ),
 			'type'       => 'pick',
 			'data'       => array(
@@ -182,7 +210,7 @@ class Pods_Component_Maps extends PodsComponent {
 		);
 		$options[ $type . '_zoom' ] = array(
 			'label'      => __( 'Map Zoom Level', 'pods' ),
-			'depends-on' => array( $type . '_display_type' => array( 'map', 'default-map', 'custom-map' ) ),
+			'depends-on' => array( $type . '_map' => true ),
 			'help'       => array(
 				__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
 				'https://developers.google.com/maps/documentation/javascript/tutorial#zoom-levels'
@@ -191,13 +219,28 @@ class Pods_Component_Maps extends PodsComponent {
 			'default'    => pods_v( $type . '_zoom', self::$options, 12, true ),
 			'type'       => 'number',
 			'options'    => array(
-				'number_decimals'   => 0,
-				'number_max_length' => 2
+				'number_decimals'   => 0, // 2
+				'number_max_length' => 2,
+				'number_min' => 1,
+				'number_max' => 21,
+				'number_format' => '9999.99',
+				//'number_format_type' => 'slider'
+			)
+		);
+		$options[ $type . '_info_window_content' ] = array(
+			'label'      => __( 'Map Info Window content', 'pods' ),
+			'depends-on' => array( $type . '_map' => true ),
+			'default'    => 'default',
+			'type'       => 'pick',
+			'data'       => array(
+				'default'   => __( 'Default display', 'pods' ),
+				// Custom will add a WYSIWYG window at the edit screen
+				'custom' => __( 'Custom (WYSIWYG)', 'pods' )
 			)
 		);
 		$options[ $type . '_marker' ] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
-			'depends-on' => array( $type . '_display_type' => array( 'map', 'default-map', 'custom-map' ) ),
+			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_marker', self::$options ),
 			'type'       => 'file',
 			'options'    => array(
@@ -210,23 +253,15 @@ class Pods_Component_Maps extends PodsComponent {
 		);
 
 		// Add option dependencies
-		if ( empty( $options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ] ) ) {
+		/*if ( empty( $options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ] ) ) {
 			$options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ] = array( 'custom-map' );
 		} else {
 			$options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ] = $this->append_dependency(
 				$options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ],
 				'custom-map'
 			);
-		}
-
-		if ( empty( $options[ $type . '_microdata' ]['excludes-on'][ $type . '_display_type' ] ) ) {
-			$options[ $type . '_microdata' ]['excludes-on'][ $type . '_display_type' ] = array( 'map' );
-		} else {
-			$options[ $type . '_microdata' ]['excludes-on'][ $type . '_display_type' ] = $this->append_dependency(
-				$options[ $type . '_microdata' ]['excludes-on'][ $type . '_display_type' ],
-				'map'
-			);
-		}
+		}*/
+		$options[ $type . '_microdata' ]['excludes-on'][ $type . '_map' ] = true;
 
 		return $options;
 	}

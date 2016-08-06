@@ -1,16 +1,16 @@
-/*global jQuery, _, Backbone, Mn, wp */
+/*global jQuery, _, Backbone, Marionette, wp */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
- *
+ * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
 	tagName: 'option',
 
 	template: false,
 
-	initialize: function () {
+	initialize: function ( options ) {
 		this.$el.val( this.model.get( 'id' ) );
 
 		this.$el.html( this.model.get( 'name' ) );
@@ -30,7 +30,10 @@ export const SelectView = PodsFieldListView.extend( {
 	childView: SelectItem,
 
 	triggers: {
-		'change': 'change:selected'
+		"change": {
+			event          : "change:selected",
+			stopPropagation: false
+		}
 	},
 
 	attributes: function () {
@@ -47,8 +50,12 @@ export const SelectView = PodsFieldListView.extend( {
 		const fieldAttributes = fieldModel.get( 'attributes' );
 		const fieldOptions = fieldModel.get( 'options' );
 
+		let name = fieldAttributes.name;
+		if ( fieldOptions.pick_format_type === 'multi' ) {
+			name = name + '[]';
+		}
 		return {
-			'name'           : fieldAttributes.name + '[]',
+			'name'           : name,
 			'class'          : fieldAttributes.class,
 			'data-name-clean': fieldAttributes.name_clean,
 			'id'             : fieldAttributes.id,

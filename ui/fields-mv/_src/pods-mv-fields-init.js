@@ -1,8 +1,8 @@
-/*global jQuery, _, Backbone, Mn */
-import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest';
+/*global jQuery, _, Backbone, Marionette */
+import * as fields from '~/ui/fields-mv/_src/field-manifest';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
-import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/models/file-upload-model';
-import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/models/relationship-model';
+import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
+import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 
 /**
  * @param {string} fieldType
@@ -12,12 +12,12 @@ const fieldFactory = function ( fieldType ) {
 
 	switch ( fieldType ) {
 		case 'file-upload':
-			field.control = fieldClasses.FileUpload;
+			field.control = fields.FileUpload;
 			field.collection = FileUploadCollection;
 			break;
 
 		case 'pick':
-			field.control = fieldClasses.Pick;
+			field.control = fields.Pick;
 			field.collection = RelationshipCollection;
 			break;
 	}
@@ -70,8 +70,10 @@ export const podsMVFieldsInit = function ( fields ) {
 					model     : fieldModel,
 					collection: new fieldControl.collection( data.model_data )
 				} );
+
 				field.render();
 				fields[ fieldId ] = field;
+				jQuery( this ).trigger( 'render' );
 			}
 		}
 	} );

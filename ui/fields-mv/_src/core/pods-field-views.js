@@ -1,9 +1,9 @@
-/*global jQuery, _, Backbone, Mn */
+/*global jQuery, _, Backbone, Marionette */
 
 /**
  *
  */
-export const PodsFieldListView = Mn.CollectionView.extend( {
+export const PodsFieldListView = Marionette.CollectionView.extend( {
 	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
 		this.childViewOptions = { fieldModel: options.fieldModel };
@@ -13,7 +13,7 @@ export const PodsFieldListView = Mn.CollectionView.extend( {
 /**
  *
  */
-export const PodsFieldView = Mn.LayoutView.extend( {
+export const PodsFieldView = Marionette.LayoutView.extend( {
 	serializeData: function () {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};

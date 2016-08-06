@@ -198,7 +198,7 @@ ul.pods-flex-list li span.pods-file-remove img {
 	display:block;
 }
 
-.pods-pick-checkbox ul, .pods-pick-radio ul {
+.pods-pick-checkbox ul, .pods-radio ul {
 	padding-left: 0;
 	margin-left: 0;
 }

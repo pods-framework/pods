@@ -15,6 +15,19 @@ $options[ 'item_id' ] = (int) $id;
 
 $model_data = array();
 
+// ToDo: We don't have optgroup support yet.  Just create flat select lists until we do
+if ( is_array( $data ) && is_array( current( $data ) ) ) {
+
+	$new_data = array();
+	foreach( $data as $group_label => $option_group ) {
+		foreach( $option_group as $this_value => $this_label ) {
+			$new_data[ $this_value ] = $this_label;
+		}
+	}
+
+	$data = $new_data;
+}
+
 $supports_thumbnails = null;
 
 foreach ( $data as $this_id => $this_title ) {
@@ -22,6 +35,7 @@ foreach ( $data as $this_id => $this_title ) {
 	$edit_link = '';
 	$link = '';
 
+	$options[ 'pick_object' ] = ( empty( $options[ 'pick_object' ] ) ) ? '' : $options[ 'pick_object' ];
 	switch ( $options[ 'pick_object' ] ) {
 		case 'post_type':
 			if ( null === $supports_thumbnails ) {
@@ -134,7 +148,11 @@ $query_args = array_merge(
 	)
 );
 
-$field_meta[ 'field_options' ][ 'iframe_src' ] = add_query_arg( $query_args, admin_url( $file_name ) );
+$iframe_src = '';
+if ( !empty( $file_name) ) {
+	$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
+}
+$field_meta[ 'field_options' ][ 'iframe_src' ] = $iframe_src;
 
 // Assemble the URL
 $url = add_query_arg( $query_args, admin_url( $file_name ) );
@@ -142,6 +160,6 @@ $url = add_query_arg( $query_args, admin_url( $file_name ) );
 include_once PODS_DIR . 'classes/PodsMVFieldData.php';
 $field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
+<div class="pods-form-ui-field">
 	<?php $field_data->emit_script(); ?>
 </div>

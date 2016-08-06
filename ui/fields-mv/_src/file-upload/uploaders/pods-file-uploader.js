@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Mn */
+/*global jQuery, _, Backbone, Marionette */
 /**
  *
  * @param {Object} options
@@ -19,7 +19,7 @@
  *
  * @class
  */
-export const PodsFileUploader = Mn.Object.extend( {
+export const PodsFileUploader = Marionette.Object.extend( {
 
 	constructor: function ( options ) {
 		// Magically set the object properties we need, they'll just "be there" for the concrete instance
@@ -27,7 +27,7 @@ export const PodsFileUploader = Mn.Object.extend( {
 		this.uiRegion = options.uiRegion;
 		this.fieldOptions = options.fieldOptions;
 
-		Mn.Object.call( this, options );
+		Marionette.Object.call( this, options );
 	}
 
 } );

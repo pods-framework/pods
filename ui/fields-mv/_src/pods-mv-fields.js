@@ -1,10 +1,13 @@
-/*global jQuery, _, Backbone, Mn */
-import { podsMVFieldsInit } from '~/ui/fields-mv/_src/pods-mv-fields-init'; // jQuery plugin
-import * as fieldClasses from '~/ui/fields-mv/_src/pods-mv-fields-manifest'; // All fields
+/*global jQuery, _, Backbone, Marionette */
+import {podsMVFieldsInit} from '~/ui/fields-mv/_src/pods-mv-fields-init'; // jQuery plugin
+
+import * as fields from '~/ui/fields-mv/_src/field-manifest';
+import * as models from '~/ui/fields-mv/_src/model-manifest';
 
 const PodsMVFields = {
-	fieldClasses: fieldClasses,
-	fields      : {}
+	fields        : fields,
+	models        : models,
+	fieldInstances: {}
 };
 export default PodsMVFields;
 
@@ -13,5 +16,5 @@ export default PodsMVFields;
  */
 jQuery.fn.podsMVFieldsInit = podsMVFieldsInit;
 jQuery( function () {
-	jQuery( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fields );
+	jQuery( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 } );

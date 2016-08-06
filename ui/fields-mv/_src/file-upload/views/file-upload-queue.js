@@ -1,5 +1,5 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import * as template from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue.html';
+/*global jQuery, _, Backbone, Marionette, wp */
+import template from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue.html';
 
 export const FileUploadQueueModel = Backbone.Model.extend( {
 	defaults: {
@@ -13,7 +13,7 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 /**
  *
  */
-export const FileUploadQueueItem = Mn.LayoutView.extend( {
+export const FileUploadQueueItem = Marionette.LayoutView.extend( {
 	model: FileUploadQueueModel,
 
 	tagName: 'li',
@@ -40,7 +40,7 @@ export const FileUploadQueueItem = Mn.LayoutView.extend( {
 /**
  *
  */
-export const FileUploadQueue = Mn.CollectionView.extend( {
+export const FileUploadQueue = Marionette.CollectionView.extend( {
 	tagName: 'ul',
 
 	className: 'pods-flex-list pods-flex-queue',

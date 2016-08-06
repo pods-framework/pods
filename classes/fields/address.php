@@ -173,7 +173,7 @@ class PodsField_Address extends PodsField {
 				'help' => __( 'You can use the following tags for address fields', 'pods' ) . ': <code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>',
 				'default'    => self::default_display_format(),
 				'type'       => 'paragraph',
-				'depends-on' => array( self::$type . '_display_type' => 'custom' )
+				'depends-on' => array( self::$type . '_display_type' => array( 'custom' ) )
 			),
 			self::$type . '_microdata' => array(
 				'label'      => __( 'Format with microdata?', 'pods' ) . ' (schema.org)',

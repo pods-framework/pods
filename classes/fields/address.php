@@ -323,7 +323,7 @@ class PodsField_Address extends PodsField {
 						if ( ! empty( $address[ $tag ] ) ) {
 							$value = $address[ $tag ];
 							if ( $microdata ) {
-								$value = self::wrap_microdata( $value, $tag );
+								$value = self::wrap_microdata( $value, $tag, 'span' );
 							}
 						}
 						$lines[ $key ] = str_replace( '{{' . $tag . '}}', $value, $lines[ $key ] );
@@ -337,7 +337,7 @@ class PodsField_Address extends PodsField {
 			$output = implode( '<br>', $lines );
 
 			if ( $microdata ) {
-				$output = '<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . $output . '</div>';
+				$output = self::wrap_microdata( $output, 'address', 'div' );
 			}
 		}
 		return $output;
@@ -353,24 +353,27 @@ class PodsField_Address extends PodsField {
 	 *
 	 * @return string
 	 */
-	public static function wrap_microdata( $value, $tag ) {
+	public static function wrap_microdata( $value, $tag, $element ) {
 
 		switch ( $tag ) {
+			case 'address':
+				return '<' . $element . ' itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">' . $value . '</' . $element . '>';
+				break;
 			case 'line_1':
 			case 'line_2':
-				return '<span itemprop="streetAddress">' . $value . '</span>';
+				return '<' . $element . ' itemprop="streetAddress">' . $value . '</' . $element . '>';
 				break;
 			case 'postal_code':
-				return '<span itemprop="postalCode">' . $value . '</span>';
+				return '<' . $element . ' itemprop="postalCode">' . $value . '</' . $element . '>';
 				break;
 			case 'city':
-				return '<span itemprop="addressLocality">' . $value . '</span>';
+				return '<' . $element . ' itemprop="addressLocality">' . $value . '</' . $element . '>';
 				break;
 			case 'region':
-				return '<span itemprop="addressRegion">' . $value . '</span>';
+				return '<' . $element . ' itemprop="addressRegion">' . $value . '</' . $element . '>';
 				break;
 			case 'country':
-				return '<span itemprop="addressCountry">' . $value . '</span>';
+				return '<' . $element . ' itemprop="addressCountry">' . $value . '</' . $element . '>';
 				break;
 		}
 

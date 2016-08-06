@@ -22,15 +22,15 @@ $attributes             = PodsForm::merge_attributes( $attributes, $name, $form_
 
 <?php if ( pods_v( $form_field_type . '_address_postal_code', $options ) ): ?>
 	<?php echo PodsForm::label( $name . '[address][postal_code]', __( 'ZIP / Postal Code', 'pods' ) ) ?>
-	<?php echo PodsForm::field( $name . '[address][postal_code]', pods_v( 'line_2', $value ), 'text', $options ) ?>
+	<?php echo PodsForm::field( $name . '[address][postal_code]', pods_v( 'postal_code', $value ), 'text', $options ) ?>
 <?php endif; ?>
 
-<?php if ( pods_v( $form_field_type . '_address_state', $options ) ): ?>
-	<?php echo PodsForm::label( $name . '[address][state]', __( 'State / Province', 'pods' ) ) ?>
-	<?php if ( 'pick' == pods_v( $form_field_type . '_address_state_input', $options ) ): ?>
-		<?php echo PodsForm::field( $name . '[address][state]', pods_v( 'state', $value ), 'pick', array( 'pick_object' => 'us_state' ) ) ?>
+<?php if ( pods_v( $form_field_type . '_address_region', $options ) ): ?>
+	<?php echo PodsForm::label( $name . '[address][region]', __( 'State / Province', 'pods' ) ) ?>
+	<?php if ( 'pick' == pods_v( $form_field_type . '_address_region_input', $options ) ): ?>
+		<?php echo PodsForm::field( $name . '[address][region]', pods_v( 'region', $value ), 'pick', array( 'pick_object' => 'us_state' ) ) ?>
 	<?php else: ?>
-		<?php echo PodsForm::field( $name . '[address][state]', pods_v( 'state', $value ), 'text', $options ) ?>
+		<?php echo PodsForm::field( $name . '[address][region]', pods_v( 'region', $value ), 'text', $options ) ?>
 	<?php endif ?>
 <?php endif; ?>
 

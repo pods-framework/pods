@@ -1711,28 +1711,34 @@
 
                     // Handle 'Duplicate' action
                     $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-duplicate', function ( e ) {
+                        var add_row, field_data;
+                        var $tbody, $row, $row_label, $row_content, $new_row, $new_row_label, $new_row_content;
+
                         e.preventDefault();
 
                         $( this ).css( 'cursor', 'default' );
                         $( this ).prop( 'disabled', true );
 
-                        var $row = $( this ).closest( 'tr.pods-manage-row' );
-                        var $row_label = $row.find( 'td.pods-manage-row-label' );
-                        var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+                        $row = $( this ).closest( 'tr.pods-manage-row' );
+                        $row_label = $row.find( 'td.pods-manage-row-label' );
+                        $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
 
-                        var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                        field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
                         row_counter++;
 
-                        var add_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                        var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+                        add_row = new_row.replace( /__1/gi, row_counter ).replace( /--1/gi, row_counter );
+                        $tbody = $( this ).closest( 'tbody.pods-manage-list' );
 
                         $tbody.find( 'tr.no-items' ).hide();
                         $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-init pods-field-new pods-field-duplicated pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
-                        var $new_row = $tbody.find( 'tr#row-' + row_counter );
-                        var $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
-                        var $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
+                        $new_row = $tbody.find( 'tr#row-' + row_counter );
+                        $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
+                        $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
+
+                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';

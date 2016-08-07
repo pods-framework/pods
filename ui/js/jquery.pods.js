@@ -1662,6 +1662,8 @@
                 if ( 'undefined' != typeof new_row && null !== new_row ) {
                     // Handle 'Add' action
                     $( '.pods-manage-row-add' ).on( 'click', 'a', function ( e ) {
+                        var add_row, $new_row, $tbody;
+
                         e.preventDefault();
 
                         $( this ).css( 'cursor', 'default' );
@@ -1669,13 +1671,16 @@
 
                         row_counter++;
 
-                        var add_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                        var $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
+                        add_row = new_row.replace( /__1/gi, row_counter ).replace( /--1/gi, row_counter );
+                        $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
 
                         $tbody.find( 'tr.no-items' ).hide();
                         $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-new pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
+
+                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();

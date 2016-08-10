@@ -2,10 +2,10 @@
 
 class Pods_Component_Maps_Google {
 
-	private static $geocode_url = '';
+	public static $geocode_url = '';
 
 	public function __construct() {
-		self::$geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/' );
+		self::$geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/json' );
 	}
 
 	public function assets() {
@@ -204,7 +204,7 @@ class Pods_Component_Maps_Google {
 			$data = implode( ',', $data );
 		}
 
-		$url = self::$geocode_url . 'json?' . $type . '=' . $data;
+		$url = self::$geocode_url . '?' . $type . '=' . $data;
 		/*if ( ! empty( $api_key ) ) {
 			$url .= '&key=' . $api_key;
 		}*/

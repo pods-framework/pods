@@ -50,7 +50,10 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			};
 
 			var map = null;
+			var marker = null;
 			var geocoder = null;
+			var address = null;
+			var latlng = null;
 			var mapOptions = {
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default
 				marker: '<?php echo $map_options['marker'] ?>',
@@ -61,96 +64,160 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			//------------------------------------------------------------------------
 			// Initialze the map
 			//
-			(function () {
 
-				if ( fields.lat.length && fields.lng.length ) {
-					mapOptions.center = new google.maps.LatLng( fields.lat.val(), fields.lng.val() );
-				}
+			if ( fields.lat.length && fields.lng.length ) {
+				latlng = { 'lat': Number( fields.lat.val() ), 'lng': Number( fields.lng.val() ) };
+				mapOptions.center = new google.maps.LatLng( latlng );
+			}
 
-				map = new google.maps.Map( mapCanvas, mapOptions );
+			map = new google.maps.Map( mapCanvas, mapOptions );
+			geocoder = new google.maps.Geocoder();
 
-				geocodeButton.on('click', function(){
-					if ( fieldType == 'lat-lng' ) {
-						mapOptions.center = new google.maps.LatLng( fields.lat.val(), fields.lng.val() );
-					} else {
-						if ( fieldType == 'address' ) {
-							PodsMaps.geocodeAddressToLatLng( PodsMaps.mergeAddressFromInputs( fields ) );
-						} else {
-							PodsMaps.geocodeAddressToLatLng( fields.text );
-						}
-						$(document).on('PodsMapsAjaxDone', function(){
-							podsFieldUpdateLatLng( PodsMaps.ajaxResults );
-						});
-					}
-				});
-
-				if ( typeof podsFieldUpdateLatLng == 'undefined' ) {
-					function podsFieldUpdateLatLng( latlng ) {
-						if ( typeof latlng != 'object' ) {
-							// error
-						} else {
-							console.log(latlng);
-							map.setCenter( latlng );
-							if ( fields.lat.length ) {
-								fields.lat.val( latlng.lat );
-							}
-							if ( fields.lng.length ) {
-								fields.lng.val( latlng.lng );
-							}
-						}
-
-					}
-				}
-
-				//geocoder = new google.maps.Geocoder();
-
-			})();
+			podsMapsMarker();
 
 			//------------------------------------------------------------------------
-			// Geolocate from the address
+			// Geolocate from the address after clicking the button
 			//
-			/*geocodeButton.on( 'click', function ( event ) {
+			geocodeButton.on( 'click', function ( event ) {
 
-			 event.preventDefault();
+				event.preventDefault();
 
-			 var address = addressField.val();
+				if ( fieldType == 'lat-lng' ) {
+					latlng = { 'lat': Number( fields.lat.val() ), 'lng': Number( fields.lng.val() ) };
+					podsMapsCenter();
+				} else {
+					if ( fieldType == 'address' ) {
+						address = podsMergeAddressFromInputs();
+					} else {
+						address = fields.text;
+					}
+					podsMapsGeocodeAddress();
+				}
+			} ); // end button click event*/
 
-			 geocoder.geocode( {'address' : address}, function ( results, status ) {
+			function podsMapsGeocodeAddress() {
+				geocoder.geocode( { 'address': address }, function ( results, status ) {
+					if ( status == google.maps.GeocoderStatus.OK ) {
+						latlng = {
+							'lat': results[ 0 ].geometry.location.lat(),
+							'lng': results[ 0 ].geometry.location.lng()
+						};
+						// Center the map and set the lat/lng values
+						podsMapsCenter();
+						podsMapsMarker();
+					}
+					// Geocode failure
+					else {
+						alert( "Geocode was not successful for the following reason: " + status );
+					}
+				} ); // end geocode
+			}
 
-			 if ( status == google.maps.GeocoderStatus.OK ) {
-			 var location = results[0].geometry.location;
+			function podsMapsGeocodeLatLng() {
+				geocoder.geocode( { 'location': latlng }, function ( results, status ) {
+					if ( status == google.maps.GeocoderStatus.OK ) {
+						address = results[ 0 ].address_components;
+						// Center the map and set the lat/lng values
+						podsUpdateAddress();
+						podsMapsMarker();
+					}
+					// Geocode failure
+					else {
+						alert( "Geocode was not successful for the following reason: " + status );
+					}
+				} ); // end geocode
+			}
 
-			 // Center the map and set the lat/lng values
-			 map.setCenter( location );
-			 latField.val( location.lat() );
-			 lngField.val( location.lng() );
+			function podsMapsCenter() {
+				mapOptions.center = new google.maps.LatLng( latlng );
+				map.setCenter( mapOptions.center );
+			}
 
-			 // Set the marker options
-			 var markerOptions = {
-			 map : map, position : location, draggable : true
-			 };
+			function podsMapsPanTo() {
+				mapOptions.center = new google.maps.LatLng( latlng );
+				map.panTo( mapOptions.center );
+			}
 
-			 // Create a new marker, if needed, and set the event listeners
-			 if ( !marker ) {
-			 marker = new google.maps.Marker( markerOptions );
-			 google.maps.event.addListener( marker, 'drag', function () {
-			 latField.val( marker.getPosition().lat() );
-			 lngField.val( marker.getPosition().lng() );
-			 } );
-			 }
-			 // Marker is already set, just update its options
-			 else {
-			 marker.setOptions( markerOptions );
-			 }
-			 }
-			 // Geocode failure
-			 else {
-			 alert( "Geocode was not successful for the following reason: " + status );
-			 }
+			function podsMapsMarker() {
 
-			 } ); // end geocode
+				// Set the marker options
+				var markerOptions = {
+					map : map,
+					position : latlng,
+					draggable : true
+				};
 
-			 } ); // end button click event*/
+				// Create a new marker, if needed, and set the event listeners
+				if ( ! marker ) {
+					marker = new google.maps.Marker( markerOptions );
+					google.maps.event.addListener( marker, 'drag', function () {
+						latlng = { 'lat': marker.getPosition().lat(), 'lng': marker.getPosition().lng() };
+						podsUpdateLatLng();
+					} );
+					google.maps.event.addListener( marker, 'mouseup', function () {
+						latlng = { 'lat': marker.getPosition().lat(), 'lng': marker.getPosition().lng() };
+						podsMapsGeocodeLatLng();
+						podsMapsPanTo();
+					} );
+				}
+				// Marker is already set, just update its options
+				else {
+					marker.setOptions( markerOptions );
+				}
+			}
+
+			function podsUpdateAddress() {
+				if ( fieldType != 'lat-lng' ) {
+					// Reset line_1 since this is made of two parts from Google (street_number and route)
+					if ( fields.line_1.length ) {
+						fields.line_1.val('');
+					}
+					$.each( address, function ( i, address_component ) {
+						if ( fields.line_1.length && address_component.types[0] == "street_number" ){
+							fields.line_1.val( ' ' + address_component.long_name );
+						}
+						if ( fields.line_1.length && address_component.types[0] == "route" ){
+							fields.line_1.val( address_component.long_name + fields.line_1.val() );
+						}
+						if ( fields.city.length && address_component.types[0] == "locality" ){
+							fields.city.val( address_component.long_name );
+						}
+						if ( fields.country.length && address_component.types[0] == "country" ) {
+							if ( fields.country.is('select') ) {
+								fields.country.val( address_component.short_name );
+							} else {
+								fields.country.val( address_component.long_name );
+							}
+						}
+						if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ){
+							if ( fields.region.is('select') ) {
+								fields.region.val( address_component.short_name );
+							} else {
+								fields.region.val( address_component.long_name );
+							}
+						}
+						if ( fields.postal_code.length && address_component.types[0] == "postal_code" ){
+							fields.postal_code.val( address_component.long_name );
+						}
+					} );
+				}
+			}
+
+			podsMergeAddressFromInputs = function() {
+				var tmpAddress = [];
+				if ( fields.line_1.length ) { tmpAddress.push( fields.line_1.val() ); }
+				if ( fields.line_2.length ) { tmpAddress.push( fields.line_2.val() ); }
+				if ( fields.city.length ) { tmpAddress.push( fields.city.val() ); }
+				if ( fields.postal_code.length ) { tmpAddress.push( fields.postal_code.val() ); }
+				if ( fields.region.length ) { tmpAddress.push( fields.region.val() ); }
+				if ( fields.country.length ) { tmpAddress.push( fields.country.val() ); }
+				address = tmpAddress.join(', ');
+			};
+
+			function podsUpdateLatLng() {
+				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}
+				if ( fields.lng.length ) { fields.lng.val( latlng.lng )	}
+			}
 
 		}
 

@@ -2,7 +2,7 @@
 
 class Pods_Component_Maps_Google {
 
-	private $geocode_url = '';
+	private static $geocode_url = '';
 
 	public function __construct() {
 
@@ -186,10 +186,10 @@ class Pods_Component_Maps_Google {
 			$data = implode( ',', $data );
 		}
 
-		$url = $this->geocode_url . 'json?' . $type . '=' . $data;
-		if ( ! empty( $api_key ) ) {
+		$url = self::$geocode_url . 'json?' . $type . '=' . $data;
+		/*if ( ! empty( $api_key ) ) {
 			$url .= '&key=' . $api_key;
-		}
+		}*/
 
 		$post = wp_remote_post( $url );
 

@@ -63,12 +63,12 @@ class Pods_Component_I18n extends PodsComponent {
 		$this->settings = get_option( $this->option_key, array() );
 
 		// Polylang
-		if ( function_exists( 'PLL' ) && file_exists( plugin_dir_path( __FILE__ ) . '/I18n-polylang.php' ) ) {
-			include_once( plugin_dir_path( __FILE__ ) . '/I18n-polylang.php' );
+		if ( function_exists( 'PLL' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-polylang.php' ) ) {
+			include_once( plugin_dir_path( __FILE__ ) . 'I18n-polylang.php' );
 		}
 		// WPML
-		if ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . '/I18n-wpml.php' ) ) {
-			include_once( plugin_dir_path( __FILE__ ) . '/I18n-wpml.php' );
+		if ( did_action( 'wpml_loaded' ) && file_exists( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' ) ) {
+			include_once( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' );
 		}
 
 		if ( ! empty( $this->settings['enabled_languages'] ) ) {

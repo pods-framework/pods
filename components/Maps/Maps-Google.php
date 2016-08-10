@@ -19,8 +19,13 @@ class Pods_Component_Maps_Google {
 
 	}
 
-		$this->geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/' );
+	public function pods_ui_field_view_extra() {
 
+		$view = false;
+		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
+			$view = plugin_dir_path( __FILE__ ) . 'ui/fields/map-google.php';
+		}
+		return $view;
 	}
 
 	/**

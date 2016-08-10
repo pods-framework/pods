@@ -16,16 +16,28 @@
 class Pods_Component_Maps extends PodsComponent {
 
 	static $component_path;
-
 	static $component_file;
-
 	static $options;
-
 	static $provider;
+	static $api_key = '';
+
+	private static $nonce = 'pods_maps';
 
 	public function __construct() {
 		// See https://github.com/pods-framework/pods/pull/3711
 		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'maps_options' ), 10, 2 );
+
+		// Add Maps input
+		// do_action( 'pods_ui_field_address_input_view_extra', $view, $type, $name, $value, $options, $pod, $id );
+		add_action( 'pods_ui_field_address_input_view_extra', array( $this, 'pods_ui_field_address_input_view_extra' ), 10, 7 );
+
+		// Ajax call handler
+		add_action( 'wp_ajax_pods_maps', array( $this, 'ajax_handler' ) );
+		// Allow calls from frontend when needed (always verify nonce!)
+		add_action( 'wp_ajax_nopriv_pods_maps', array( $this, 'ajax_handler' ) );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'global_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'global_assets' ) );
 	}
 
 	/**
@@ -37,6 +49,16 @@ class Pods_Component_Maps extends PodsComponent {
 
 		wp_enqueue_style( 'pods-admin' );
 
+	}
+
+	public function global_assets() {
+		wp_register_style( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/css/pods-maps.css', array(), '1.0' );
+		wp_register_script( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/js/pods-maps.js', array( 'jquery' ), '1.0' );
+		wp_localize_script( 'pods-maps', 'PodsMaps', array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'_nonce' => wp_create_nonce( self::$nonce ),
+		) );
+		self::$provider->assets();
 	}
 
 	/**
@@ -64,6 +86,10 @@ class Pods_Component_Maps extends PodsComponent {
 
 		self::$options = $options;
 
+		if ( ! empty( $options['api_key'] ) ) {
+			self::$api_key = $options['api_key'];
+		}
+
 		$this->load_provider();
 
 	}
@@ -84,6 +110,66 @@ class Pods_Component_Maps extends PodsComponent {
 				break;
 		}
 
+	}
+
+	/**
+	 * Ajax handler for geocode calls
+	 *
+	 * AJAX call data setup:
+	 * action           => pods_maps
+	 * _pods_maps_nonce => PodsMaps._nonce
+	 * pods_maps_action => 'string' (the maps action)
+	 * pods_maps_data   => 'string|array' (the provided data)
+	 */
+	public function ajax_handler() {
+
+		if (   ! defined('DOING_AJAX')
+		       || ! DOING_AJAX
+		       || ! isset( $_POST['_pods_maps_nonce'] )
+		       || ! wp_verify_nonce( $_POST['_pods_maps_nonce'], self::$nonce )
+		) {
+			wp_send_json_error( __( 'Cheatin uh?', 'pods' ) );
+			die();
+		}
+
+		if ( isset( $_POST['pods_maps_action'] ) ) {
+			$return = false;
+			$data = '';
+			if ( ! empty( $_POST['pods_maps_data'] ) ) {
+				if ( is_array( $_POST['pods_maps_data'] ) ) {
+					$data = array_map( 'pods_sanitize', $_POST['pods_maps_data'] );
+				} else {
+					$data = pods_sanitize( $_POST['pods_maps_data'] );
+				}
+			}
+			if ( ! empty( $data ) && is_object( self::$provider ) ) {
+				$provider = get_class( self::$provider );
+				switch ( pods_sanitize( $_POST['pods_maps_action'] ) ) {
+					case 'geocode':
+					case 'geocode_address':
+						if ( method_exists( $provider, 'geocode_address' ) ) {
+							$return = $provider::geocode_address( $data, self::$api_key );
+						}
+						break;
+					case 'geocode_address_to_latlng':
+						if ( method_exists( $provider, 'geocode_address_to_latlng' ) ) {
+							$return = $provider::geocode_address_to_latlng( $data, self::$api_key );
+						}
+						break;
+					case 'geocode_latlng_to_address':
+						if ( method_exists( $provider, 'geocode_latlng_to_address' ) ) {
+							$return = $provider::geocode_latlng_to_address( $data, self::$api_key );
+						}
+						break;
+				}
+			}
+			if ( ! empty( $return ) ) {
+				wp_send_json_success( $return );
+			} else {
+				wp_send_json_error( __( 'Geocode error, please try again or type different address data.', 'pods' ) );
+			}
+		}
+		die();
 	}
 
 	/**
@@ -296,6 +382,34 @@ class Pods_Component_Maps extends PodsComponent {
 		$options[ $type . '_microdata' ]['excludes-on'][ $type . '_map' ] = true;
 
 		return $options;
+	}
+
+	/**
+	 * Allow Map providers to add a map to the field input field
+	 *
+	 * @param $view
+	 * @param $type
+	 * @param $name
+	 * @param $value
+	 * @param $options
+	 * @param $pod
+	 * @param $id
+	 */
+	public function pods_ui_field_address_input_view_extra( $view, $type, $name, $value, $options, $pod, $id ) {
+
+		if ( ! empty ( $options['address_map'] ) ) {
+
+			$provider = get_class( self::$provider );
+			if ( method_exists( $provider, 'pods_ui_field_view_extra' ) ) {
+				$view = $provider::pods_ui_field_view_extra();
+			}
+
+			if ( $view && file_exists( $view ) ) {
+				pods_view( $view, compact( array_keys( get_defined_vars() ) ) );
+			}
+
+		}
+
 	}
 
 	/**

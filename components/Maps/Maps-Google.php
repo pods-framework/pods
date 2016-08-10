@@ -5,6 +5,19 @@ class Pods_Component_Maps_Google {
 	private static $geocode_url = '';
 
 	public function __construct() {
+		self::$geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/' );
+	}
+
+	public function assets() {
+
+		// Static map: http://maps.googleapis.com/maps/api/staticmap
+
+		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
+			$googlemaps_js = '//maps.googleapis.com/maps/api/js?key=' . Pods_Component_Maps::$api_key;
+			wp_register_script( 'googlemaps', $googlemaps_js, false, '3' ); //sensor=false&
+		}
+
+	}
 
 		$this->geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/' );
 

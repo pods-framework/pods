@@ -21,6 +21,8 @@ class Pods_Component_Maps extends PodsComponent {
 
 	static $options;
 
+	static $provider;
+
 	public function __construct() {
 		// See https://github.com/pods-framework/pods/pull/3711
 		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'maps_options' ), 10, 2 );
@@ -50,6 +52,37 @@ class Pods_Component_Maps extends PodsComponent {
 		$components[] = array( 'File' => realpath( self::$component_file ) );
 
 		return $components;
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.0
+	 */
+	public function handler( $options ) {
+
+		self::$options = $options;
+
+		$this->load_provider();
+
+	}
+
+	/**
+	 * Load the selected provider
+	 *
+	 * @since 2.7
+	 */
+	private function load_provider() {
+
+		switch ( self::$options['provider'] ) {
+			case 'google':
+				if ( file_exists( plugin_dir_path( __FILE__ ) . '/Maps-Google.php' ) ) {
+					include_once( plugin_dir_path( __FILE__ ) . '/Maps-Google.php' );
+					self::$provider = new Pods_Component_Maps_Google();
+				}
+				break;
+		}
 
 	}
 
@@ -141,16 +174,15 @@ class Pods_Component_Maps extends PodsComponent {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Add map field options
 	 *
-	 * @since 1.0
+	 * @param array $options
+	 * @param string $type
+	 *
+	 * @return array
+	 *
+	 * @since 2.7
 	 */
-	public function handler( $options ) {
-
-		self::$options = $options;
-
-	}
-
 	public function maps_options( $options, $type ) {
 
 		// Add lat/lng input type
@@ -266,6 +298,14 @@ class Pods_Component_Maps extends PodsComponent {
 		return $options;
 	}
 
+	/**
+	 * Append new dependency to existing data
+	 *
+	 * @param $value
+	 * @param $new
+	 *
+	 * @return array
+	 */
 	public function append_dependency( $value, $new ) {
 		if ( ! is_array( $value ) ) {
 			$value = array(
@@ -278,65 +318,4 @@ class Pods_Component_Maps extends PodsComponent {
 		return $value;
 	}
 
-	/**
-	 * Geocode a specific address into Latitude and Longitude values
-	 *
-	 * @param string|array $address Address
-	 *
-	 * @return array Latitude, Longitude, and Formatted Address values
-	 *
-	 * @public
-	 * @since 2.7
-	 */
-	public static function geocode_address( $address ) {
-
-		if ( is_array( $address ) ) {
-			$address = implode( ', ', $address );
-		}
-
-		$address_data = array();
-
-		$post = wp_remote_post( 'https://maps.googleapis.com/maps/api/geocode/json?address=' . $address . '&key=' . self::$api_key );
-
-		if ( ! empty( $post['body'] ) ) {
-			$data = json_decode( $post['body'] );
-
-			if ( ! empty( $post['results']['geometry']['location'] ) ) {
-				$lat_lng = $post['results']['geometry']['location'];
-				$address_data = array_merge( $address_data, $lat_lng );
-			}
-		}
-
-		return $address_data;
-
-	}
-
-	/**
-	 * Get an address from a lat / long
-	 *
-	 * @param string|array $lat_lng Lat / long numbers
-	 *
-	 * @return string Address information
-	 *
-	 * @public
-	 * @static
-	 * @since 2.7
-	 */
-	public function geocode_lat_long( $lat_lng ) {
-
-		return '';
-
-	}
-
-	/**
-	 * @param $result
-	 *
-	 * @return array|bool
-	 * @since 2.7
-	 */
-	public function parse_address( $result ) {
-
-		return false;
-
-	}
 }

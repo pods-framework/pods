@@ -119,7 +119,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'default'     => '',
 				'type'        => 'text'
 			),
-			'address_map_style'       => array(
+			'map_style'       => array(
 				'label'   => __( 'Default Map Output Type', 'pods' ),
 				'default' => 'static',
 				'type'    => 'pick',
@@ -128,7 +128,7 @@ class Pods_Component_Maps extends PodsComponent {
 					'js'     => __( 'Javascript (Interactive)', 'pods' )
 				)
 			),
-			'address_map_type_of_map' => array(
+			'map_type' => array(
 				'label'   => __( 'Default Map Type', 'pods' ),
 				'default' => 'roadmap',
 				'type'    => 'pick',
@@ -139,7 +139,7 @@ class Pods_Component_Maps extends PodsComponent {
 					'hybrid'    => __( 'Hybrid', 'pods' )
 				)
 			),
-			'address_map_zoom'        => array(
+			'map_zoom'        => array(
 				'label'   => __( 'Default Map Zoom Level', 'pods' ),
 				'help'    => array(
 					__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
@@ -156,7 +156,7 @@ class Pods_Component_Maps extends PodsComponent {
 					//'number_format_type' => 'slider'
 				)
 			),
-			'address_map_marker'      => array(
+			'map_marker'      => array(
 				'label'   => __( 'Default Map Custom Marker', 'pods' ),
 				'type'    => 'file',
 				'options' => array(
@@ -201,6 +201,12 @@ class Pods_Component_Maps extends PodsComponent {
 			'type'       => 'boolean',
 			'dependency' => true
 		);
+		$options[ $type . '_autocorrect' ] = array(
+			'label'      => __( 'Autocorrect Address during save', 'pods' ),
+			'depends-on' => array( $type . '_map' => true, $type . '_type' => array( 'address', 'text' ) ),
+			'default'    => 0,
+			'type'       => 'boolean'
+		);
 		$options[ $type . '_map_display' ] = array(
 			'label'      => __( 'Map Display', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
@@ -212,13 +218,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'after'     => __( 'After default display', 'pods' )
 			)
 		);
-		$options[ $type . '_autocorrect' ] = array(
-			'label'      => __( 'Autocorrect Address during save', 'pods' ),
-			'depends-on' => array( $type . '_map' => true, $type . '_type' => array( 'address', 'text' ) ),
-			'default'    => 0,
-			'type'       => 'boolean'
-		);
-		$options[ $type . '_style' ] = array(
+		$options[ $type . '_map_style' ] = array(
 			'label'      => __( 'Map Output Type', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_style', self::$options, 'static', true ),
@@ -228,7 +228,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'js'     => __( 'Javascript (Interactive)', 'pods' )
 			)
 		);
-		$options[ $type . '_type_of_map' ] = array(
+		$options[ $type . '_map_type' ] = array(
 			'label'      => __( 'Map Type', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_type', self::$options, 'roadmap', true ),
@@ -240,7 +240,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'hybrid'    => __( 'Hybrid', 'pods' )
 			)
 		);
-		$options[ $type . '_zoom' ] = array(
+		$options[ $type . '_map_zoom' ] = array(
 			'label'      => __( 'Map Zoom Level', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
 			'help'       => array(
@@ -259,7 +259,7 @@ class Pods_Component_Maps extends PodsComponent {
 				//'number_format_type' => 'slider'
 			)
 		);
-		$options[ $type . '_info_window_content' ] = array(
+		$options[ $type . '_map_info_window_content' ] = array(
 			'label'      => __( 'Map Info Window content', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
 			'default'    => 'default',
@@ -270,7 +270,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'custom' => __( 'Custom (WYSIWYG)', 'pods' )
 			)
 		);
-		$options[ $type . '_marker' ] = array(
+		$options[ $type . '_map_marker' ] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),
 			'default'    => pods_v( $type . '_marker', self::$options ),

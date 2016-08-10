@@ -61,11 +61,14 @@ class Pods_Component_Maps extends PodsComponent {
 
 	public function global_assets() {
 		wp_register_style( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/css/pods-maps.css', array(), '1.0' );
-		wp_register_script( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/js/pods-maps.js', array( 'jquery' ), '1.0' );
+
+		// @todo pods-maps is probably not needed anymore (also see pods-maps.js file)
+		/*wp_register_script( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/js/pods-maps.js', array( 'jquery' ), '1.0' );
+		$provider = get_class( self::$provider );
 		wp_localize_script( 'pods-maps', 'PodsMaps', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'_nonce' => wp_create_nonce( self::$nonce ),
-		) );
+			'_nonce' => wp_create_nonce( self::$nonce )
+		) );*/
 		self::$provider->assets();
 	}
 

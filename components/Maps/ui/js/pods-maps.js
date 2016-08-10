@@ -5,6 +5,8 @@ if ( typeof PodsMaps == 'undefined' ) {
 
 (function ( $ ) {
 
+	// @todo PodsMaps is probably not needed anymore
+
 	PodsMaps.ajaxData = {};
 	PodsMaps.doingAjax = false;
 	PodsMaps.ajaxResults = false;

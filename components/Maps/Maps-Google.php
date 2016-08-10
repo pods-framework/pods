@@ -47,7 +47,7 @@ class Pods_Component_Maps_Google {
 		$address = self::get_address( $data );
 		$latlng = self::get_latlng( $data );
 
-		return array_merge( $address, $latlng );
+		return array( 'address' => $address, 'geo' => $latlng );
 	}
 
 	/**

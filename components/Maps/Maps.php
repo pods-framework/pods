@@ -31,6 +31,14 @@ class Pods_Component_Maps extends PodsComponent {
 		// do_action( 'pods_ui_field_address_input_view_extra', $view, $type, $name, $value, $options, $pod, $id );
 		add_action( 'pods_ui_field_address_input_view_extra', array( $this, 'pods_ui_field_address_input_view_extra' ), 10, 7 );
 
+		// Validate Address/Geo
+		// apply_filters( 'pods_ui_field_address_validate', $errors, $value, $type, $name, $options, $fields, $pod, $id, $params );
+		add_filter( 'pods_ui_field_address_validate', array( $this, 'pods_ui_field_address_validate' ), 10, 9 );
+
+		// Add Address/Geo pre save
+		// apply_filters( 'pods_ui_field_address_pre_save', $value, $type, $id, $name, $options, $fields, $pod, $params );
+		add_filter( 'pods_ui_field_address_pre_save', array( $this, 'pods_ui_field_address_pre_save' ), 10, 8 );
+
 		// Ajax call handler
 		add_action( 'wp_ajax_pods_maps', array( $this, 'ajax_handler' ) );
 		// Allow calls from frontend when needed (always verify nonce!)
@@ -142,24 +150,17 @@ class Pods_Component_Maps extends PodsComponent {
 					$data = pods_sanitize( $_POST['pods_maps_data'] );
 				}
 			}
-			if ( ! empty( $data ) && is_object( self::$provider ) ) {
-				$provider = get_class( self::$provider );
+			if ( ! empty( $data ) ) {
 				switch ( pods_sanitize( $_POST['pods_maps_action'] ) ) {
 					case 'geocode':
 					case 'geocode_address':
-						if ( method_exists( $provider, 'geocode_address' ) ) {
-							$return = $provider::geocode_address( $data, self::$api_key );
-						}
+						$return = self::geocode_address( $data );
 						break;
 					case 'geocode_address_to_latlng':
-						if ( method_exists( $provider, 'geocode_address_to_latlng' ) ) {
-							$return = $provider::geocode_address_to_latlng( $data, self::$api_key );
-						}
+						$return = self::geocode_address_to_latlng( $data );
 						break;
 					case 'geocode_latlng_to_address':
-						if ( method_exists( $provider, 'geocode_latlng_to_address' ) ) {
-							$return = $provider::geocode_latlng_to_address( $data, self::$api_key );
-						}
+						$return = self::geocode_latlng_to_address( $data );
 						break;
 				}
 			}
@@ -415,6 +416,108 @@ class Pods_Component_Maps extends PodsComponent {
 
 		}
 
+	}
+
+	/**
+	 * Validate current value
+	 *
+	 * @param $errors
+	 * @param $value
+	 * @param $type
+	 * @param $name
+	 * @param $options
+	 * @param $fields
+	 * @param $pod
+	 * @param $id
+	 * @param $params
+	 *
+	 * @return array
+	 */
+	public function pods_ui_field_address_validate( $errors, $value, $type, $name, $options, $fields, $pod, $id, $params ) {
+
+		// Get geocode from address fields
+		if ( isset( $value['address'] ) ) {
+			$geocode = self::geocode_address_to_latlng( $value['address'] );
+			if ( empty( $geocode['lat'] ) && empty( $geocode['lng'] ) ) {
+				$errors[] = __( 'Could not find geodata for this address', 'pods' );
+			}
+		}
+
+		return $errors;
+
+	}
+
+	/**
+	 * Save Additional geo data dependent on the field type
+	 *
+	 * @param $value
+	 * @param $type
+	 * @param $id
+	 * @param $name
+	 * @param $options
+	 * @param $fields
+	 * @param $pod
+	 * @param $params
+	 *
+	 * @return mixed
+	 */
+	public function pods_ui_field_address_pre_save( $value, $type, $id, $name, $options, $fields, $pod, $params ) {
+
+		// Get geocode from address fields
+		if ( isset( $value['address'] ) ) {
+			$geocode = self::geocode_address_to_latlng( $value['address'] );
+			if ( isset( $geocode['lat'] ) && isset( $geocode['lng'] ) ) {
+				$value['geo'] = $geocode;
+			}
+		}
+
+		return $value;
+
+	}
+
+	/**
+	 * @param string|array $data
+	 *
+	 * @return mixed
+	 */
+	public static function geocode_address( $data ) {
+		if ( is_object( self::$provider ) ) {
+			$provider = get_class( self::$provider );
+			if ( method_exists( $provider, 'geocode_address' ) ) {
+				return $provider::geocode_address( $data, self::$api_key );
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param string|array $data
+	 *
+	 * @return mixed
+	 */
+	public static function geocode_address_to_latlng( $data ) {
+		if ( is_object( self::$provider ) ) {
+			$provider = get_class( self::$provider );
+			if ( method_exists( $provider, 'geocode_address_to_latlng' ) ) {
+				return $provider::geocode_address_to_latlng( $data, self::$api_key );
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param string|array $data
+	 *
+	 * @return mixed
+	 */
+	public static function geocode_latlng_to_address( $data ) {
+		if ( is_object( self::$provider ) ) {
+			$provider = get_class( self::$provider );
+			if ( method_exists( $provider, 'geocode_latlng_to_address' ) ) {
+				return $provider::geocode_latlng_to_address( $data, self::$api_key );
+			}
+		}
+		return false;
 	}
 
 	/**

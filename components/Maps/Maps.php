@@ -77,8 +77,8 @@ class Pods_Component_Maps extends PodsComponent {
 
 		switch ( self::$options['provider'] ) {
 			case 'google':
-				if ( file_exists( plugin_dir_path( __FILE__ ) . '/Maps-Google.php' ) ) {
-					include_once( plugin_dir_path( __FILE__ ) . '/Maps-Google.php' );
+				if ( file_exists( plugin_dir_path( __FILE__ ) . 'Maps-Google.php' ) ) {
+					include_once( plugin_dir_path( __FILE__ ) . 'Maps-Google.php' );
 					self::$provider = new Pods_Component_Maps_Google();
 				}
 				break;

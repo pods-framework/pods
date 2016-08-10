@@ -398,14 +398,19 @@ class Pods_Component_Maps extends PodsComponent {
 	public function pods_ui_field_address_input_view_extra( $view, $type, $name, $value, $options, $pod, $id ) {
 
 		if ( ! empty ( $options['address_map'] ) ) {
-
 			$provider = get_class( self::$provider );
 			if ( method_exists( $provider, 'pods_ui_field_view_extra' ) ) {
 				$view = $provider::pods_ui_field_view_extra();
 			}
 
 			if ( $view && file_exists( $view ) ) {
+				// Add hidden lat/lng fields for non latlng view types
 				pods_view( $view, compact( array_keys( get_defined_vars() ) ) );
+				if ( $type != 'lat-lng' ) {
+					echo '<div style="display: none">';
+					pods_view( plugin_dir_path( __FILE__ ) . 'ui/fields/lat-lng.php', compact( array_keys( get_defined_vars() ) ) );
+					echo '</div>';
+				}
 			}
 
 		}

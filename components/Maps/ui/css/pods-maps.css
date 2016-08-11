@@ -1,6 +1,8 @@
 
 .pods-form-ui-row-type-address .pods-submittable-fields * + label { padding-top: 6px; }
 
+.pods-form-ui-row-type-address label + p.description { margin-bottom: 8px; }
+
 /*.pods-form-ui-row-type-address .pods-form-ui-field-type-wysiwyg {
 	width: 95%;
 }*/

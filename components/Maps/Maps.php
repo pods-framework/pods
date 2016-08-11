@@ -362,15 +362,16 @@ class Pods_Component_Maps extends PodsComponent {
 		$options[ $type . '_map_info_window_content' ] = array(
 			'label'      => __( 'Info Window content', 'pods' ),
 			'depends-on' => array(
-				// @todo dependency on 'type' not working
-				$type . '_type'  => 'address',
+				//$type . '_type'  => 'address',
 				$type . '_map' => true,
 				$type . '_map_info_window' => true
 			),
-			'default'    => 'custom',
+			'default'    => 'paragraph',
 			'type'       => 'pick',
 			'data'       => array(
-				'custom' => __( 'Custom (WYSIWYG)', 'pods' ),
+				'paragraph' => __( 'Custom', 'pods' ),
+				'wysiwyg' => __( 'Custom (WYSIWYG)', 'pods' ),
+				// @todo 'display_type' is only available for field type 'address'
 				'display_type'   => __( 'Display Type', 'pods' )
 			)
 		);

@@ -23,12 +23,12 @@ if ( ! empty( $options[ $type . '_map_marker' ] ) ) {
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
-if ( ! empty( $options['address_map_info_window'] ) && $options['address_map_info_window_content'] == 'custom' ) {
+if ( ! empty( $options['address_map_info_window'] ) && in_array( $options['address_map_info_window_content'], array( 'paragraph', 'wysiwyg' ) ) ) {
 	echo PodsForm::label( $name . '-info-window', __( 'Info Window content', 'pod' ) );
 	if ( $type == 'address' ) {
 		echo PodsForm::comment( $name . '-info-window', __( 'You can use the following tags for address fields', 'pods' ) . ': <br><code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>' );
 	}
-	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), 'wysiwyg', array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
+	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), $options['address_map_info_window_content'], array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
 }
 
 echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );

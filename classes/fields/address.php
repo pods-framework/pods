@@ -388,6 +388,7 @@ class PodsField_Address extends PodsField {
 			// Format in microdata?
 			$microdata = ( ! empty( $options[ self::$type . '_microdata' ] ) ) ? true : false;
 
+			// @todo check pregreplace, maybe this can be done better (nl2br not working)
 			// Convert actual line breaks into an array
 			$lines = explode( '\r\n', preg_replace("/\n/m", '\r\n', $format) );
 

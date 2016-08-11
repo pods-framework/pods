@@ -119,6 +119,21 @@ class PodsField_Address extends PodsField {
 					'text' => __( 'Freeform Text', 'pods' ),
 					'pick' => __( 'Drop-down Select Box (US States)', 'pods' )
 				),
+				'dependency' => true
+			),
+			self::$type . '_address_region_output' => array(
+				'label'      => __( 'Region Output Type', 'pods' ),
+				'depends-on' => array(
+					self::$type . '_address_region_input' => 'pick',
+					self::$type . '_address_region' => true,
+					self::$type . '_type' => 'address'
+				),
+				'default'    => 'long',
+				'type'       => 'pick',
+				'data'       => array(
+					'long' => __( 'Full name', 'pods' ),
+					'short' => __( 'Stage / Province code', 'pods' )
+				)
 			),
 			self::$type . '_address_country_input' => array(
 				'label'      => __( 'Country Input Type', 'pods' ),
@@ -129,6 +144,21 @@ class PodsField_Address extends PodsField {
 					'text' => __( 'Freeform Text', 'pods' ),
 					'pick' => __( 'Drop-down Select Box', 'pods' )
 				),
+				'dependency' => true
+			),
+			self::$type . '_address_country_output' => array(
+				'label'      => __( 'Country Output Type', 'pods' ),
+				'depends-on' => array(
+					self::$type . '_address_country_input' => 'pick',
+					self::$type . '_address_country' => true,
+					self::$type . '_type' => 'address'
+				),
+				'default'    => 'long',
+				'type'       => 'pick',
+				'data'       => array(
+					'long' => __( 'Full name', 'pods' ),
+					'short' => __( 'Country code', 'pods' )
+				)
 			),
 			self::$type . '_display_type' => array(
 				'label'      => __( 'Display Type', 'pods' ),
@@ -300,6 +330,21 @@ class PodsField_Address extends PodsField {
 						// Default value is empty. Only known tags are allowed, remove all unknown tags
 						$value = '';
 						if ( ! empty( $address[ $tag ] ) ) {
+							// Display full region names if enabled
+							if ( $tag == 'region' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+								$regions = PodsForm::field_method( 'pick', 'data_us_states' );
+								if ( array_key_exists( $address[ $tag ], $regions ) ) {
+									$address[ $tag ] = $regions[ $address[ $tag ] ];
+								}
+							}
+							// Display full country names if enabled
+							if ( $tag == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+								$countries = PodsForm::field_method( 'pick', 'data_countries' );
+								if ( array_key_exists( $address[ $tag ], $countries ) ) {
+									$address[ $tag ] = $countries[ $address[ $tag ] ];
+								}
+							}
+							// Format the value for HTML
 							$value = self::wrap_html_format( $address[ $tag ], $tag, 'span', $microdata );
 						}
 						$lines[ $key ] = str_replace( '{{' . $tag . '}}', $value, $lines[ $key ] );

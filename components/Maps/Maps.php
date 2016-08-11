@@ -293,7 +293,10 @@ class Pods_Component_Maps extends PodsComponent {
 		);
 		$options[ $type . '_autocorrect' ] = array(
 			'label'      => __( 'Autocorrect Address during save', 'pods' ),
-			'depends-on' => array( $type . '_map' => true, $type . '_type' => array( 'address', 'text' ) ),
+			'depends-on' => array(
+				$type . '_map' => true,
+				$type . '_type' => array( 'address', 'text' )
+			),
 			'default'    => 0,
 			'type'       => 'boolean'
 		);
@@ -357,14 +360,18 @@ class Pods_Component_Maps extends PodsComponent {
 			'dependency' => true
 		);
 		$options[ $type . '_map_info_window_content' ] = array(
-			'label'      => __( 'Map Info Window content', 'pods' ),
-			'depends-on' => array( $type . '_map' => true, $type . '_map_info_window' => true ),
-			'default'    => 'default',
+			'label'      => __( 'Info Window content', 'pods' ),
+			'depends-on' => array(
+				// @todo dependency on 'type' not working
+				$type . '_type'  => 'address',
+				$type . '_map' => true,
+				$type . '_map_info_window' => true
+			),
+			'default'    => 'custom',
 			'type'       => 'pick',
 			'data'       => array(
-				'default'   => __( 'Default display', 'pods' ),
-				// Custom will add a WYSIWYG window at the edit screen
-				'custom' => __( 'Custom (WYSIWYG)', 'pods' )
+				'custom' => __( 'Custom (WYSIWYG)', 'pods' ),
+				'display_type'   => __( 'Display Type', 'pods' )
 			)
 		);
 		$options[ $type . '_map_marker' ] = array(

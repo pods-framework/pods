@@ -58,10 +58,11 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				lat: $( '#<?php echo $attributes['id'] . '-geo-lat'  ?>' ),
 				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
 			};
+			var fieldsFormat = '<?php echo preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ); ?>';
 
 			var map = null;
 			var marker = null;
-			var infowindow = null;
+			var infowindow = <?php echo ( ! empty( $options['address_map_info_window'] ) ) ? 'null' : 'false' ?>;
 			var infowindowContent = '';
 			var infowindowEditor = '';
 			var geocoder = null;
@@ -85,7 +86,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			geocoder = new google.maps.Geocoder();
 
 			podsMapsMarker();
-			podsMapsInfoWindowContent();
+			if ( infowindow !== false ) {
+				podsMapsInfoWindowContent();
+			}
 
 			//------------------------------------------------------------------------
 			// Geolocate from the address after clicking the button
@@ -111,23 +114,25 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			function podsMapsInfoWindowContent() {
 
 				if ( fields.info_window.length ) {
-					infowindowContent = fields.info_window.val();
+					infowindowContent = podsFormatFieldsToHTML( fields.info_window.val() );
+
 					podsMapsInfoWindow( false );
 					// In case the tinyMCE editor doesn't load
 					fields.info_window.on( 'change keyup', function () {
-						clearInterval(wait);
-						infowindowContent = fields.info_window.val();
+						clearInterval( wait );
+						infowindowContent = podsFormatFieldsToHTML( fields.info_window.val() );
 						podsMapsInfoWindow( false );
-					});
+					} );
 					// Wait for the tinyMCE editor to load
 					var wait = setInterval( function () {
 						if ( tinyMCE.editors.length ) {
-							clearInterval(wait);
-							infowindowEditor = tinyMCE.get( fields.info_window.attr('id') );
+							clearInterval( wait );
+							infowindowEditor = tinyMCE.get( fields.info_window.attr( 'id' ) );
+							// No need to instantly call podsMapsInfoWindow since this is already done from the textarea
 							infowindowEditor.on( 'change keyup', function () {
-								infowindowContent = infowindowEditor.getContent({format : 'raw'});
+								infowindowContent = podsFormatFieldsToHTML( infowindowEditor.getContent( { format: 'raw' } ) );
 								podsMapsInfoWindow( false );
-							})
+							} )
 						}
 					}, 100 );
 				} else {
@@ -138,42 +143,21 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 							fields.text.on( 'change keyup', function () {
 								infowindowContent = fields.text.val();
 								podsMapsInfoWindow( false );
-							})
+							} )
 						}
+					} else {
+						infowindowContent = podsFormatFieldsToHTML( fieldsFormat );
+						podsMapsInfoWindow( false );
+						$.each( fields, function ( key, field ) {
+							field.on( 'change keyup', function () {
+								infowindowContent = podsFormatFieldsToHTML( fieldsFormat );
+								podsMapsInfoWindow( false );
+							} )
+						} );
 					}
 				}
 			}
 
-			function podsMapsGeocodeAddress() {
-				geocoder.geocode( { 'address': address }, function ( results, status ) {
-					if ( status == google.maps.GeocoderStatus.OK ) {
-						console.log(results[ 0 ]);
-						latlng = {
-							'lat': results[ 0 ].geometry.location.lat(),
-							'lng': results[ 0 ].geometry.location.lng()
-						};
-						podsUpdateLatLng();
-						podsMapsCenter();
-					}
-					// Geocode failure
-					else {
-						alert( "Geocode was not successful for the following reason: " + status );
-					}
-				} ); // end geocode
-			}
-
-			function podsMapsGeocodeLatLng() {
-				geocoder.geocode( { 'location': latlng }, function ( results, status ) {
-					if ( status == google.maps.GeocoderStatus.OK ) {
-						address = results[ 0 ].address_components;
-						podsUpdateAddress();
-					}
-					// Geocode failure
-					else {
-						alert( "Geocode was not successful for the following reason: " + status );
-					}
-				} ); // end geocode
-			}
 
 			function podsMapsCenter() {
 				mapOptions.center = new google.maps.LatLng( latlng );
@@ -212,9 +196,11 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						podsMapsGeocodeLatLng();
 					} );
 					// InfoWindow
-					google.maps.event.addListener( marker, 'click', function () {
-						podsMapsInfoWindow( true );
-					} );
+					if ( infowindow !== false ) {
+						google.maps.event.addListener( marker, 'click', function () {
+							podsMapsInfoWindow( true );
+						} );
+					}
 				}
 				// Marker is already set, just update its options
 				else {
@@ -232,6 +218,45 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				if ( open ) {
 					infowindow.open( map, marker );
 				}
+			}
+
+
+			//------------------------------------------------------------------------
+			// Geocoding
+			//
+			function podsMapsGeocodeAddress() {
+				geocoder.geocode( { 'address': address }, function ( results, status ) {
+					if ( status == google.maps.GeocoderStatus.OK ) {
+						latlng = {
+							'lat': results[ 0 ].geometry.location.lat(),
+							'lng': results[ 0 ].geometry.location.lng()
+						};
+						podsUpdateLatLng();
+						podsMapsCenter();
+					}
+					// Geocode failure
+					else {
+						alert( "Geocode was not successful for the following reason: " + status );
+					}
+				} ); // end geocode
+			}
+
+			function podsMapsGeocodeLatLng() {
+				geocoder.geocode( { 'location': latlng }, function ( results, status ) {
+					if ( status == google.maps.GeocoderStatus.OK ) {
+						address = results[ 0 ].address_components;
+						podsUpdateAddress();
+					}
+					// Geocode failure
+					else {
+						alert( "Geocode was not successful for the following reason: " + status );
+					}
+				} ); // end geocode
+			}
+
+			function podsUpdateLatLng() {
+				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}
+				if ( fields.lng.length ) { fields.lng.val( latlng.lng )	}
 			}
 
 			function podsUpdateAddress() {
@@ -309,9 +334,30 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				address = tmpAddress.join(', ');
 			}
 
-			function podsUpdateLatLng() {
-				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}
-				if ( fields.lng.length ) { fields.lng.val( latlng.lng )	}
+			function podsFormatFieldsToHTML( html ) {
+				// Convert magic tags to field values or remove them
+				$.each( fields, function( key, field ) {
+					if ( field.length && field.val().length ) {
+						html = html.replace( '{{' + key + '}}', field.val() );
+					} else {
+						// Replace with {{PODS}} so we can remove this line if needed
+						html = html.replace( '{{' + key + '}}', '{{PODS}}' );
+					}
+				} );
+				// Remove empty lines
+				lines = html.split( '<br>' );
+				$.each( lines, function( key, line ) {
+					if ( line == '{{PODS}}' ) {
+						// Delete the key it this line only has {{PODS}}
+						delete lines[ key ];
+					} else {
+						// Remove {{PODS}}
+						lines[ key ] = line.replace('{{PODS}}', '')
+					}
+				} );
+				// Reset array keys and join it back together
+				html = lines.filter(function(){return true;}).join( '<br>' );
+				return html;
 			}
 
 		}

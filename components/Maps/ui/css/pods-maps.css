@@ -1,5 +1,12 @@
+
+.pods-form-ui-row-type-address .pods-submittable-fields * + label { padding-top: 6px; }
+
+/*.pods-form-ui-row-type-address .pods-form-ui-field-type-wysiwyg {
+	width: 95%;
+}*/
+
 .pods-maps-map-canvas {
 	margin-top: 10px;
 	height:     300px;
-	width:      95%;
+	/*width:      95%;*/
 }

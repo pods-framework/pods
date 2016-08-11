@@ -20,6 +20,11 @@ if ( ! empty( $options[ $type . '_map_marker' ] ) ) {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
 
+if ( $options['address_map_info_window_content'] == 'custom' ) {
+	echo PodsForm::label( $attributes['id'] . '-info-window', __( 'Info Window content', 'pod' ) );
+	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), 'wysiwyg', array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
+}
+
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
@@ -45,12 +50,16 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				region: $( '#<?php echo $attributes['id'] . '-address-region'  ?>' ),
 				country: $( '#<?php echo $attributes['id'] . '-address-country'  ?>' ),
 				text: $( '#<?php echo $attributes['id'] . '-text' ?>' ),
+				info_window: $( '#<?php echo $attributes['id'] . '-info-window' ?>' ),
 				lat: $( '#<?php echo $attributes['id'] . '-geo-lat'  ?>' ),
 				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
 			};
 
 			var map = null;
 			var marker = null;
+			var infowindow = null;
+			var infowindowContent = '';
+			var infowindowEditor = '';
 			var geocoder = null;
 			var address = null;
 			var latlng = null;
@@ -64,16 +73,15 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			//------------------------------------------------------------------------
 			// Initialze the map
 			//
-
 			if ( fields.lat.length && fields.lng.length ) {
 				latlng = { 'lat': Number( fields.lat.val() ), 'lng': Number( fields.lng.val() ) };
 				mapOptions.center = new google.maps.LatLng( latlng );
 			}
-
 			map = new google.maps.Map( mapCanvas, mapOptions );
 			geocoder = new google.maps.Geocoder();
 
 			podsMapsMarker();
+			podsMapsInfoWindowContent();
 
 			//------------------------------------------------------------------------
 			// Geolocate from the address after clicking the button
@@ -94,6 +102,43 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					podsMapsGeocodeAddress();
 				}
 			} ); // end button click event*/
+
+			// Set & Update InfoWindow content
+			function podsMapsInfoWindowContent() {
+
+				if ( fields.info_window.length ) {
+					infowindowContent = fields.info_window.val();
+					podsMapsInfoWindow( false );
+					// In case the tinyMCE editor doesn't load
+					fields.info_window.on( 'change keyup', function () {
+						clearInterval(wait);
+						infowindowContent = fields.info_window.val();
+						podsMapsInfoWindow( false );
+					});
+					// Wait for the tinyMCE editor to load
+					var wait = setInterval( function () {
+						if ( tinyMCE.editors.length ) {
+							clearInterval(wait);
+							infowindowEditor = tinyMCE.get( fields.info_window.attr('id') );
+							infowindowEditor.on( 'change keyup', function () {
+								infowindowContent = infowindowEditor.getContent({format : 'raw'});
+								podsMapsInfoWindow( false );
+							})
+						}
+					}, 100 );
+				} else {
+					if ( fieldType == 'text' ) {
+						if ( fields.text.length ) {
+							infowindowContent = fields.text.val();
+							podsMapsInfoWindow( false );
+							fields.text.on( 'change keyup', function () {
+								infowindowContent = fields.text.val();
+								podsMapsInfoWindow( false );
+							})
+						}
+					}
+				}
+			}
 
 			function podsMapsGeocodeAddress() {
 				geocoder.geocode( { 'address': address }, function ( results, status ) {
@@ -162,10 +207,26 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						podsUpdateLatLng();
 						podsMapsGeocodeLatLng();
 					} );
+					// InfoWindow
+					google.maps.event.addListener( marker, 'click', function () {
+						podsMapsInfoWindow( true );
+					} );
 				}
 				// Marker is already set, just update its options
 				else {
 					marker.setOptions( markerOptions );
+				}
+			}
+
+			function podsMapsInfoWindow( open ) {
+
+				if ( ! infowindow ) {
+					infowindow = new google.maps.InfoWindow();
+				}
+
+				infowindow.setContent( infowindowContent );
+				if ( open ) {
+					infowindow.open( map, marker );
 				}
 			}
 

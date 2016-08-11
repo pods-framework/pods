@@ -349,9 +349,16 @@ class Pods_Component_Maps extends PodsComponent {
 				//'number_format_type' => 'slider'
 			)
 		);
+		$options[ $type . '_map_info_window' ] = array(
+			'label'      => __( 'Display an Info Window', 'pods' ),
+			'default'    => 0,
+			'type'       => 'boolean',
+			'depends-on' => array( $type . '_map' => true ),
+			'dependency' => true
+		);
 		$options[ $type . '_map_info_window_content' ] = array(
 			'label'      => __( 'Map Info Window content', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
+			'depends-on' => array( $type . '_map' => true, $type . '_map_info_window' => true ),
 			'default'    => 'default',
 			'type'       => 'pick',
 			'data'       => array(

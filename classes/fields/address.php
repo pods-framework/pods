@@ -296,6 +296,38 @@ class PodsField_Address extends PodsField {
 	}
 
 	/**
+	 * Convert the value for output display based on the field options
+	 *
+	 * @param array $value
+	 * @param array $options
+	 *
+	 * @return array
+	 */
+	public static function format_value_for_output( $value, $options ) {
+
+		if ( ! empty( $value['address'] ) ) {
+			foreach ( $value['address'] as $key => $val ) {
+				// Display full region names if enabled
+				if ( $key == 'region' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+					$regions = PodsForm::field_method( 'pick', 'data_us_states' );
+					if ( array_key_exists( $val, $regions ) ) {
+						$value['address'][ $key ] = $regions[ $val ];
+					}
+				}
+				// Display full country names if enabled
+				if ( $key == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+					$countries = PodsForm::field_method( 'pick', 'data_countries' );
+					if ( array_key_exists( $val, $countries ) ) {
+						$value['address'][ $key ] = $countries[ $val ];
+					}
+				}
+			}
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Convert the field format into HTML for display
 	 *
 	 * @since 2.7
@@ -308,6 +340,8 @@ class PodsField_Address extends PodsField {
 	 */
 	public static function format_to_html( $format, $value, $options ) {
 		$output = '';
+
+		$value = self::format_value_for_output( $value, $options );
 
 		if ( ! empty ( $value['address'] ) ) {
 			$address = $value['address'];
@@ -330,20 +364,6 @@ class PodsField_Address extends PodsField {
 						// Default value is empty. Only known tags are allowed, remove all unknown tags
 						$value = '';
 						if ( ! empty( $address[ $tag ] ) ) {
-							// Display full region names if enabled
-							if ( $tag == 'region' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
-								$regions = PodsForm::field_method( 'pick', 'data_us_states' );
-								if ( array_key_exists( $address[ $tag ], $regions ) ) {
-									$address[ $tag ] = $regions[ $address[ $tag ] ];
-								}
-							}
-							// Display full country names if enabled
-							if ( $tag == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
-								$countries = PodsForm::field_method( 'pick', 'data_countries' );
-								if ( array_key_exists( $address[ $tag ], $countries ) ) {
-									$address[ $tag ] = $countries[ $address[ $tag ] ];
-								}
-							}
 							// Format the value for HTML
 							$value = self::wrap_html_format( $address[ $tag ], $tag, 'span', $microdata );
 						}

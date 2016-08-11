@@ -58,6 +58,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				lat: $( '#<?php echo $attributes['id'] . '-geo-lat'  ?>' ),
 				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
 			};
+			// @todo check pregreplace, maybe this can be done better (nl2br not working)
 			var fieldsFormat = '<?php echo preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ); ?>';
 
 			var map = null;
@@ -91,7 +92,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			}
 
 			//------------------------------------------------------------------------
-			// Geolocate from the address after clicking the button
+			// Geolocate button
 			//
 			geocodeButton.on( 'click', function ( event ) {
 
@@ -110,7 +111,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				}
 			} ); // end button click event*/
 
+			//------------------------------------------------------------------------
 			// Set & Update InfoWindow content
+			//
 			function podsMapsInfoWindowContent() {
 
 				if ( fields.info_window.length ) {
@@ -159,6 +162,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			}
 
 
+			//------------------------------------------------------------------------
+			// Map handlers
+			//
 			function podsMapsCenter() {
 				mapOptions.center = new google.maps.LatLng( latlng );
 				map.setCenter( mapOptions.center );
@@ -171,6 +177,10 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				podsMapsMarker();
 			}
 
+
+			//------------------------------------------------------------------------
+			// Markers
+			//
 			function podsMapsMarker() {
 
 				// Set the marker options
@@ -208,6 +218,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				}
 			}
 
+			//------------------------------------------------------------------------
+			// InfoWindows
+			//
 			function podsMapsInfoWindow( open ) {
 
 				if ( ! infowindow ) {
@@ -254,6 +267,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				} ); // end geocode
 			}
 
+			//------------------------------------------------------------------------
+			// Field updates
+			//
 			function podsUpdateLatLng() {
 				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}
 				if ( fields.lng.length ) { fields.lng.val( latlng.lng )	}
@@ -323,6 +339,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				}
 			}
 
+			//------------------------------------------------------------------------
+			// Formatting and variable handlers
+			//
 			function podsMergeAddressFields() {
 				var tmpAddress = [];
 				if ( fields.line_1.length ) { tmpAddress.push( fields.line_1.val() ); }

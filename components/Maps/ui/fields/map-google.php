@@ -55,7 +55,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			var address = null;
 			var latlng = null;
 			var mapOptions = {
-				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default
+				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
 				marker: '<?php echo $map_options['marker'] ?>',
 				zoom: <?php echo $map_options['zoom'] ?>,
 				type: '<?php echo $map_options['type'] ?>'
@@ -194,7 +194,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 									fields.country.val( address_component.long_name );
 								}
 							}
-							if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ){
+							if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ) {
 								if ( fields.region.is('select') ) {
 									// @todo Validate for US states
 									fields.region.val( address_component.short_name );
@@ -202,7 +202,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 									fields.region.val( address_component.long_name );
 								}
 							}
-							if ( fields.postal_code.length && address_component.types[0] == "postal_code" ){
+							if ( fields.postal_code.length && address_component.types[0] == "postal_code" ) {
 								fields.postal_code.val( address_component.long_name );
 							}
 						} );

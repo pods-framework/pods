@@ -438,6 +438,8 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_validate( $errors, $value, $type, $name, $options, $fields, $pod, $id, $params ) {
 
+		// @todo: Validate based on address type ( lat / lon, address fields)
+
 		// Get geocode from address fields
 		if ( isset( $value['address'] ) ) {
 			$geocode = self::geocode_address_to_latlng( $value['address'] );

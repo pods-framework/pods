@@ -197,6 +197,17 @@ class PodsField_Address extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
+		/**
+		 * @todo Storage types
+		 *
+		 * 1: Single meta value (default)
+		 * 2: Separate meta values
+		 * 3: Multiple columns (ACT)
+		 *
+		 * This field does not handle lat/lng & other maps related data so
+		 * also allow the Maps component (and perhaps others) to modify/append to this with actions
+		 */
+
 		$schema = 'LONGTEXT';
 
 		return $schema;
@@ -251,11 +262,24 @@ class PodsField_Address extends PodsField {
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
-		// @todo: Validate based on address type ( lat / lon, address fields)
+		// @todo: Validate each returned value for variable type and content (sanitizing)
 		$errors = array();
 
 		$type = pods_v( self::$type . '_type', $options );
 
+		/**
+		 * Add extra validation checks
+		 *
+		 * @param array $errors
+		 * @param mixed $value
+		 * @param string $type Field address type
+		 * @param string $name
+		 * @param array $options
+		 * @param array $fields
+		 * @param array $pod
+		 * @param int $id
+		 * @param array $params
+		 */
 		$errors = apply_filters( 'pods_ui_field_address_validate', $errors, $value, $type, $name, $options, $fields, $pod, $id, $params );
 
 		if ( 1 == pods_v( 'required', $options ) ) {
@@ -279,6 +303,18 @@ class PodsField_Address extends PodsField {
 
 		$type = pods_v( self::$type . '_type', $options );
 
+		/**
+		 * Add extra value sanitation
+		 *
+		 * @param mixed $value
+		 * @param string $type Field address type
+		 * @param int $id
+		 * @param string $name
+		 * @param array $options
+		 * @param array $fields
+		 * @param array $pod
+		 * @param array $params
+		 */
 		$value = apply_filters( 'pods_ui_field_address_pre_save', $value, $type, $id, $name, $options, $fields, $pod, $params );
 
 		return $value;

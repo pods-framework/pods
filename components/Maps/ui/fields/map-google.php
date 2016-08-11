@@ -156,7 +156,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						podsUpdateLatLng();
 					} );
 					// Drop marker
-					google.maps.event.addListener( marker, 'mouseup', function () {
+					google.maps.event.addListener( marker, 'dragend', function () {
 						latlng = { 'lat': marker.getPosition().lat(), 'lng': marker.getPosition().lng() };
 						podsMapsPanTo();
 						podsUpdateLatLng();

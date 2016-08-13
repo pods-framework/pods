@@ -3759,7 +3759,7 @@ class PodsAPI {
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed

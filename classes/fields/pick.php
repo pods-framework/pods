@@ -295,6 +295,23 @@ class PodsField_Pick extends PodsField {
             )*/
         );
 
+        $post_type_pick_objects = array();
+        foreach ( get_post_types( '', 'names' ) as $post_type ) {
+            $post_type_pick_objects[] = 'post-type_' .$post_type;
+        }
+        $options[ self::$type . '_post_status' ] = array(
+            'name' => 'post_status',
+            'label' => __( 'Post Status', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'pick_object' => 'post-status',
+            'pick_format_type' => 'multi',
+            'default' => 'publish',
+            'depends-on' => array(
+                self::$type . '_object' => $post_type_pick_objects
+            )
+        );
+
         /*if ( !is_multisite() )
             unset( $options[ self::$type . '_user_site' ] );*/
 

@@ -656,7 +656,6 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/field/
 	 */
 	public function field ( $name, $single = null, $raw = false ) {
-		global $sitepress;
 
 		$defaults = array(
 			'name' => $name,
@@ -751,7 +750,7 @@ class Pods implements Iterator {
 
 		$params->traverse = array();
 
-		if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
+		if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) ) ) {
 			if ( 0 < strlen( $this->detail_page ) )
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
@@ -1050,8 +1049,9 @@ class Pods implements Iterator {
 							$metadata_type = 'post';
 
 							// Support for WPML 'duplicated' translation handling
-							if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
-								$master_post_id = (int) get_metadata( $metadata_type, $id, '_icl_lang_duplicate_of', true );
+							if ( did_action( 'wpml_loaded' )
+                                && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data[ 'name' ] ) ) {
+								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
 
 								if ( 0 < $master_post_id )
 									$id = $master_post_id;
@@ -1361,9 +1361,12 @@ class Pods implements Iterator {
 												$item = get_comment( $item_id );
 											else
 												$item = (object) $item;
-										}
-										elseif ( 'pods' == $params->output ) {
-											$item = pods( $object, (int) $item_id );
+										} elseif ( 'pods' == $params->output ) {
+											if ( in_array( $object_type, array( 'user', 'media' ) ) ) {
+												$item = pods( $object_type, (int) $item_id );
+											} else {
+												$item = pods( $object, (int) $item_id );
+											}
 										}
 										else // arrays
 											$item = get_object_vars( (object) $item );
@@ -1500,8 +1503,9 @@ class Pods implements Iterator {
 
 											if ( 'post' == $object_type ) {
 												// Support for WPML 'duplicated' translation handling
-												if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
-													$master_post_id = (int) get_metadata( $metadata_type, $metadata_object_id, '_icl_lang_duplicate_of', true );
+                                                if ( did_action( 'wpml_loaded' )
+                                                    && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
+													$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $metadata_object_id );
 
 													if ( 0 < $master_post_id )
 														$metadata_object_id = $master_post_id;

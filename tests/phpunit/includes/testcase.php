@@ -100,7 +100,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID'      => 1,
 				'comment_type'         => 'comment',
 				'comment_approved'     => 1,
-				'comment_date'         => '2014-11-11 00:00:00'
+				'comment_date'         => '2014-11-11'
 			)
 		),
 		'pod'       => array(
@@ -652,6 +652,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					}
 					else {
 						$v = sprintf( $v, wp_generate_password( 4, false ) );
+						if ( 'permalink' === $k ) {
+							$v = strtolower( $v );
+						}
 					}
 
 					$item_data[ 'data' ][ $k ] = $v;
@@ -755,6 +758,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								}
 								else {
 									$v = sprintf( $v, wp_generate_password( 4, false ) );
+									if ( 'permalink' === $k ) {
+										$v = strtolower( $v );
+									}
 								}
 
 								$pod_item_data[ 'data' ][ $k ] = $v;

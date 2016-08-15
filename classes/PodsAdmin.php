@@ -1283,9 +1283,127 @@ class PodsAdmin {
                 );
 			}
 
-            // @todo fill this in
             $options[ 'advanced' ] = array(
-                'temporary' => 'This type has the fields hardcoded' // :(
+                'public' => array(
+                    'label' => __( 'Public', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'hierarchical' => array(
+                    'label' => __( 'Hierarchical', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'label_parent_item_colon' => array(
+                    'label' => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'label_parent' => array(
+                    'label' => __( '<strong>Label: </strong> Parent', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'label_no_terms' => array(
+                    'label' => __( '<strong>Label: </strong> No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'rewrite' => array(
+                    'label' => __( 'Rewrite', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'rewrite_custom_slug' => array(
+                    'label' => __( 'Custom Rewrite Slug', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'rewrite_with_front' => array(
+                    'label' => __( 'Allow Front Prepend', 'pods' ),
+                    'help' => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'rewrite_hierarchical' => array(
+                    'label' => __( 'Hierarchical Permalinks', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'capability_type' => array(
+                    'label' => __( 'User Capability', 'pods' ),
+                    'help' => __( 'Uses WordPress term capabilities by default', 'pods' ),
+                    'type' => 'pick',
+                    'default' => 'default',
+                    'data' => array(
+                        'default' => 'Default',
+                        'custom' => __( 'Custom Capability', 'pods' )
+                    ),
+                    'dependency' => true
+                ),
+                'capability_type_custom' => array(
+                    'label' => __( 'Custom User Capability', 'pods' ),
+                    'help' => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'name', $pod ),
+                    'depends-on' => array( 'capability_type' => 'custom' )
+                ),
+                'query_var' => array(
+                    'label' => __( 'Query Var', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                ),
+                'query_var' => array(
+                    'label' => __( 'Query Var', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'query_var_string' => array(
+                    'label' => __( 'Custom Query Var Name', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'query_var' => true )
+                ),
+                'sort' => array(
+                    'label' => __( 'Remember order saved on Post Types', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                ),
+                'update_count_callback' => array(
+                    'label' => __( 'Function to call when updating counts', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => ''
+                ),
             );
         }
         elseif ( 'settings' == $pod[ 'type' ] ) {
@@ -2194,8 +2312,10 @@ class PodsAdmin {
                 }
             }
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                if ( 1 == pods_var( 'capabilities', $pod[ 'options' ], 0 ) ) {
+                if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ], 'terms' ) ) {
                     $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
+
+                    $capability_type .= '_terms';
 
                     $capabilities[] = 'manage_' . $capability_type;
                     $capabilities[] = 'edit_' . $capability_type;

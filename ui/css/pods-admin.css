@@ -329,9 +329,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-slider-field {
     display: block;
     float: left;
-    margin-left: 22px;
     width: 65%;
-    max-width: 300px;
+    max-width: 25em;
 }
 
 

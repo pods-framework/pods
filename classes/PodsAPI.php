@@ -5364,7 +5364,7 @@ class PodsAPI {
          * @var $sitepress SitePress
 		 * @var $wpdb wpdb
          */
-        global $sitepress, $icl_adjust_id_url_filter_off, $wpdb;
+        global $wpdb;
 
         $current_language = false;
         $load_fields = true;
@@ -5420,8 +5420,11 @@ class PodsAPI {
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                    $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                     && did_action( 'wpml_loaded' )
+                     && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+                    $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+                }
 
                 return $pod;
             }
@@ -5472,7 +5475,8 @@ class PodsAPI {
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
                 if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
+                        && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
                         $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
                     return $pod;
@@ -5508,8 +5512,11 @@ class PodsAPI {
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
         if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                 && did_action( 'wpml_loaded' )
+                && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+	            $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+            }
 
             return $pod;
         }
@@ -7358,10 +7365,12 @@ class PodsAPI {
 	    /**
 	     * @var $wpdb                         wpdb
 	     * @var $sitepress                    SitePress
-	     * @var $icl_adjust_id_url_filter_off boolean
 	     * @var $polylang                     object
 	     */
-        global $wpdb, $sitepress, $icl_adjust_id_url_filter_off, $polylang;
+	    /*
+	     * @todo wpml-comp Remove global object usage
+	     */
+        global $wpdb, $sitepress, $polylang;
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 
@@ -7550,8 +7559,11 @@ class PodsAPI {
 
 		    $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
+            /*
+             * @todo wpml-comp Check if WPML filters can be applied afterwards
+             */
 		    // WPML support
-		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( did_action( 'wpml_loaded' ) && !empty( $current_language ) && apply_filters( 'wpml_is_translated_post_type', false, $post_type ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' )) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -7628,8 +7640,12 @@ class PodsAPI {
 			    'tt.taxonomy' => '`tt`.`' . $info[ 'field_type' ] . '` = "' . $taxonomy . '"'
 		    );
 
+            /*
+             * @todo wpml-comp WPML API call for is_translated_taxononomy
+             * @todo wpml-comp Check if WPML filters can be applied afterwards
+             */
 		    // WPML Support
-		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
@@ -8247,22 +8263,25 @@ class PodsAPI {
 
 		/**
 		 * @var $sitepress                    SitePress object
-		 * @var $icl_adjust_id_url_filter_off boolean
 		 * @var $polylang                     object
 		 */
-		global $sitepress, $icl_adjust_id_url_filter_off, $polylang;
+        /*
+         * @todo wpml-comp Remove global object usage
+         */
+		global $sitepress, $polylang;
 
 		$lang_data        = false;
 		$translator       = false;
 		$current_language = false;
 
 		// Multilingual support
-		if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off && defined( 'ICL_LANGUAGE_CODE' ) ) {
+		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			// WPML support
 			$translator = 'WPML';
 
 			// Get the global current language (if set)
-			$current_language = ( ICL_LANGUAGE_CODE != 'all' ) ? ICL_LANGUAGE_CODE : '';
+            $wpml_language = apply_filters( 'wpml_current_language', null );
+			$current_language = ( $wpml_language != 'all' ) ? $wpml_language : '';
 
 		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
 			// Polylang support
@@ -8303,8 +8322,7 @@ class PodsAPI {
 						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
 						if (   $translator == 'WPML'
-							&& method_exists( $sitepress, 'is_translated_post_type')
-							&& ! $sitepress->is_translated_post_type( get_post_type( $_GET['post'] ) )
+							&& ! apply_filters( 'wpml_is_translated_post_type', false, ( get_post_type( $_GET['post'] ) ) )
 						) {
 							// Overwrite the current language to nothing if this is a NOT-translatable post_type
 							$current_language = '';
@@ -8343,6 +8361,11 @@ class PodsAPI {
 				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
 					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 					if ( ! empty( $_GET['taxonomy'] ) ) {
+					    /*
+					     * @todo wpml-comp API call for taxonomy needed!
+					     * Suggested API call:
+					     * add_filter( 'wpml_is_translated_taxonomy', $_GET['taxonomy'], 10, 2 );
+					     */
 						/**
 						 * WPML support
 						 * In WPML the current language is always set to default on an edit screen

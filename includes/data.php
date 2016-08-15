@@ -789,7 +789,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				} else {
 					$post_id = $var;
 				}
-				if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+				if ( did_action( 'wpml_loaded' ) ) {
 					/* Only call filter if WPML is installed */
 					$post_type = get_post_type( $post_id );
 					$post_id = apply_filters( 'wpml_object_id', $post_id, $post_type, true );

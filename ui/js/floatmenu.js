@@ -2,9 +2,9 @@
 
 jQuery(document).ready(function($) {
     $( '.pods_floatmenu' ).each(function() {
-        var floatmenu = this;
+        var floatmenu = $( this );
         var margin = 20;
-        var offset = $( floatmenu ).offset();
+        var offset = floatmenu.offset();
         var top = margin;
         if ( $('html').hasClass( 'wp-toolbar' ) ) {
             offset.top -= parseInt( $('html').css('padding-top') );
@@ -16,20 +16,20 @@ jQuery(document).ready(function($) {
         window.onscroll = function () {
             if ( window.XMLHttpRequest ) {
                 // Make sure the window height is larger than the floatmenu height
-                if ( $(window).height() < ( $(floatmenu).height() + ( 2 * margin ) ) ) {
+                if ( $(window).height() < ( floatmenu.height() + ( 2 * margin ) ) ) {
                     return;
                 }
                 if ( document.documentElement.scrollTop > offset.top || self.pageYOffset > offset.top ) {
-                    $( floatmenu ).css( 'position', 'fixed' );
-                    $( floatmenu ).css( 'top', top + 'px' );
-                    $( floatmenu ).css( 'right', right + 'px' );
+                    floatmenu.css( 'position', 'fixed' );
+                    floatmenu.css( 'top', top + 'px' );
+                    floatmenu.css( 'right', right + 'px' );
                 }
                 else if ( document.documentElement.scrollTop < offset.top || self.pageYOffset < offset.top ) {
-                    $( floatmenu ).css( 'position', 'relative' );
-                    $( floatmenu ).css( 'top', 'auto' );
-                    $( floatmenu ).css( 'right', 'auto' );
-                    //$(floatmenu).css('top','112px');
-                    //$(floatmenu).css('right','15px');
+                    floatmenu.css( 'position', 'relative' );
+                    floatmenu.css( 'top', 'auto' );
+                    floatmenu.css( 'right', 'auto' );
+                    //floatmenu.css('top','112px');
+                    //floatmenu.css('right','15px');
                 }
             }
         };

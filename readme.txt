@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jimtrue, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.5
-Stable tag: 2.7-a-1
+Tested up to: 4.6
+Stable tag: 2.6.8-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,23 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
 
 == Changelog ==
+
+= 2.6.7 - August 15th 2016 =
+* Fixed: Magic Tag {@permalink} fixes for taxonomy / user / comment detail URL Mapping. Fixes (#3339). [@sc0ttkclark]
+* Fixed: Pods Wizard for Forms now properly uses the `[podsform]` shortcode. Fixes (#3251). [@sc0ttkclark]
+* Fixed: Issue with pll_get_post returning false instead of null. Fixes (#3596). (#3599) [@JoryHogeveen]
+* Fixed: WYSIWYG editor type option is used as dependency by the editor options. Fixes (#3549). (#3610) [@JoryHogeveen]
+* Fixed: Do not display metagroup if all fields are set to hidden. Fixes (#1614). (#3615) [@JoryHogeveen]
+* Fixed: Allow post_status filter to be set for related post_type objects in the edit field UI (#3626). Fixes (#3594). [@JoryHogeveen]
+* Fixed: Refactor object type checking in PodsRESTHandlers::get_handler (#3630). Fixes (#3629). [@pcfreak30]
+* Fixed: Added PODS_DIR to directories that are checked by field_loader() (#3644). Fixes (#3643). [@jamesgol]
+* Fixed: Improved field alignment on setting pages (#3649). Fixes (#3648). [@JoryHogeveen]
+* Fixed: Check for PodsInit in general.php (#3665). Fixes (#3473,#2803,#3353). [@JoryHogeveen]
+* Fixed: Taxonomy capabilities + No more hardcoded tax settings (#3678). Fixes (#3676,#3677). [@JoryHogeveen]
+* Fixed: Allow field options to be filtered (UI). Also allows for il8n module to improve translation handling. (#3683). Fixes (#3682). [@JoryHogeveen]
+* Fixed: WPML Compatibility (#3691). Related to (#142). [@srdjan-jcc]
+* Fixed: Pods field() now properly handles user and media when the output type is pod/pods. Original issue resulted in `$object` being empty as `user` and `media` do not have a `pick_val` (#3694). Fixes (#3693). [@pcfreak30]
+* Fixed: travis-ci: test with PHP 7.1 (#3702). [@Ramoonus]
 
 = 2.6.6 - June 23rd 2016 =
 * Added: Polylang compatibility with latest versions along with fixes to longstanding issues with editing and displaying content, relationships, and taxonomy (#3574). Fixes (#3572, #3506) [@JoryHogeveen]

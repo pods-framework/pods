@@ -147,7 +147,8 @@ class PodsInit {
 			define( 'PODS_TABLELESS', false );
 		}
 
-		load_plugin_textdomain( 'pods', false, dirname( plugin_basename( PODS_DIR . 'init.php' ) ) . '/languages/' );
+		load_plugin_textdomain( 'pods' );
+
 	}
 
 	/**

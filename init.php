@@ -7,7 +7,6 @@ Version: 2.6.8-a-1
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
-Domain Path: /languages/
 GitHub Plugin URI: https://github.com/pods-framework/pods
 GitHub Branch: 2.x
 

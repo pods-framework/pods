@@ -40,7 +40,7 @@ There are various ways you can contribute:
 
 1. Raise an [Issue](https://github.com/pods-framework/pods/issues) on GitHub
 2. Send us a Pull Request with your bug fixes and/or enhancements
-3. Translate Pods Framework into different languages via [WP Translate](http://wp-translate.org/projects/pods), just sign up and let us know what your username / language(s) are
+3. Translate Pods Framework into different languages via [WP Translate](https://translate.wordpress.org/projects/wp-plugins/pods), just sign up and let us know what your username / language(s) are
 4. Provide feedback and suggestions on [enhancements](https://github.com/pods-framework/pods/issues?direction=desc&labels=Enhancement&page=1&sort=created&state=open)
 
 ## Donations

@@ -87,9 +87,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					podsMapsCenter();
 				} else {
 					if ( fieldType == 'address' ) {
-						address = podsMergeAddressFromInputs();
+						address = podsMergeAddressFields();
 					} else {
-						address = fields.text;
+						address = fields.text.val();
 					}
 					podsMapsGeocodeAddress();
 				}
@@ -98,13 +98,13 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			function podsMapsGeocodeAddress() {
 				geocoder.geocode( { 'address': address }, function ( results, status ) {
 					if ( status == google.maps.GeocoderStatus.OK ) {
+						console.log(results[ 0 ]);
 						latlng = {
 							'lat': results[ 0 ].geometry.location.lat(),
 							'lng': results[ 0 ].geometry.location.lng()
 						};
-						// Center the map and set the lat/lng values
+						podsUpdateLatLng();
 						podsMapsCenter();
-						podsMapsMarker();
 					}
 					// Geocode failure
 					else {
@@ -117,9 +117,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				geocoder.geocode( { 'location': latlng }, function ( results, status ) {
 					if ( status == google.maps.GeocoderStatus.OK ) {
 						address = results[ 0 ].address_components;
-						// Center the map and set the lat/lng values
 						podsUpdateAddress();
-						podsMapsMarker();
 					}
 					// Geocode failure
 					else {
@@ -131,11 +129,13 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			function podsMapsCenter() {
 				mapOptions.center = new google.maps.LatLng( latlng );
 				map.setCenter( mapOptions.center );
+				podsMapsMarker();
 			}
 
 			function podsMapsPanTo() {
 				mapOptions.center = new google.maps.LatLng( latlng );
 				map.panTo( mapOptions.center );
+				podsMapsMarker();
 			}
 
 			function podsMapsMarker() {
@@ -150,14 +150,17 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				// Create a new marker, if needed, and set the event listeners
 				if ( ! marker ) {
 					marker = new google.maps.Marker( markerOptions );
+					// Move marker
 					google.maps.event.addListener( marker, 'drag', function () {
 						latlng = { 'lat': marker.getPosition().lat(), 'lng': marker.getPosition().lng() };
 						podsUpdateLatLng();
 					} );
+					// Drop marker
 					google.maps.event.addListener( marker, 'mouseup', function () {
 						latlng = { 'lat': marker.getPosition().lat(), 'lng': marker.getPosition().lng() };
-						podsMapsGeocodeLatLng();
 						podsMapsPanTo();
+						podsUpdateLatLng();
+						podsMapsGeocodeLatLng();
 					} );
 				}
 				// Marker is already set, just update its options
@@ -167,43 +170,70 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			}
 
 			function podsUpdateAddress() {
-				if ( fieldType != 'lat-lng' ) {
-					// Reset line_1 since this is made of two parts from Google (street_number and route)
-					if ( fields.line_1.length ) {
-						fields.line_1.val('');
+				if ( typeof address == 'object' ) {
+
+					if ( fieldType == 'address' ) {
+						// Reset line_1 since this is made of two parts from Google (street_number and route)
+						if ( fields.line_1.length ) {
+							fields.line_1.val('');
+						}
+						$.each( address, function ( i, address_component ) {
+							if ( fields.line_1.length && address_component.types[0] == "street_number" ){
+								fields.line_1.val( ' ' + address_component.long_name );
+							}
+							if ( fields.line_1.length && address_component.types[0] == "route" ){
+								fields.line_1.val( address_component.long_name + fields.line_1.val() );
+							}
+							if ( fields.city.length && address_component.types[0] == "locality" ){
+								fields.city.val( address_component.long_name );
+							}
+							if ( fields.country.length && address_component.types[0] == "country" ) {
+								if ( fields.country.is('select') ) {
+									fields.country.val( address_component.short_name );
+								} else {
+									fields.country.val( address_component.long_name );
+								}
+							}
+							if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ){
+								if ( fields.region.is('select') ) {
+									// @todo Validate for US states
+									fields.region.val( address_component.short_name );
+								} else {
+									fields.region.val( address_component.long_name );
+								}
+							}
+							if ( fields.postal_code.length && address_component.types[0] == "postal_code" ){
+								fields.postal_code.val( address_component.long_name );
+							}
+						} );
+
+					} else if ( fieldType == 'text' ) {
+
+						if ( fields.text.length ) {
+							// Reset value
+							fields.text.val('');
+							$.each( address, function ( i, address_component ) {
+								if ( address_component.long_name != '' ) {
+									if ( address_component.types[0] == "route" ) {
+										fields.text.val( address_component.long_name + fields.text.val() );
+									} else if ( address_component.types[0] == "street_number" ){
+										fields.text.val( ' ' + address_component.long_name );
+									} else {
+										if ( fields.text.val() == '' ) {
+											fields.text.val( address_component.long_name );
+										} else {
+											fields.text.val( fields.text.val() + ', ' + address_component.long_name );
+										}
+									}
+								}
+							} );
+						}
+
 					}
-					$.each( address, function ( i, address_component ) {
-						if ( fields.line_1.length && address_component.types[0] == "street_number" ){
-							fields.line_1.val( ' ' + address_component.long_name );
-						}
-						if ( fields.line_1.length && address_component.types[0] == "route" ){
-							fields.line_1.val( address_component.long_name + fields.line_1.val() );
-						}
-						if ( fields.city.length && address_component.types[0] == "locality" ){
-							fields.city.val( address_component.long_name );
-						}
-						if ( fields.country.length && address_component.types[0] == "country" ) {
-							if ( fields.country.is('select') ) {
-								fields.country.val( address_component.short_name );
-							} else {
-								fields.country.val( address_component.long_name );
-							}
-						}
-						if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ){
-							if ( fields.region.is('select') ) {
-								fields.region.val( address_component.short_name );
-							} else {
-								fields.region.val( address_component.long_name );
-							}
-						}
-						if ( fields.postal_code.length && address_component.types[0] == "postal_code" ){
-							fields.postal_code.val( address_component.long_name );
-						}
-					} );
 				}
 			}
 
-			podsMergeAddressFromInputs = function() {
+			function podsMergeAddressFields() {
 				var tmpAddress = [];
 				if ( fields.line_1.length ) { tmpAddress.push( fields.line_1.val() ); }
 				if ( fields.line_2.length ) { tmpAddress.push( fields.line_2.val() ); }
@@ -212,7 +242,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				if ( fields.region.length ) { tmpAddress.push( fields.region.val() ); }
 				if ( fields.country.length ) { tmpAddress.push( fields.country.val() ); }
 				address = tmpAddress.join(', ');
-			};
+			}
 
 			function podsUpdateLatLng() {
 				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}

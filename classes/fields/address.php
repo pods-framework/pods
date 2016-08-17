@@ -46,39 +46,11 @@ class PodsField_Address extends PodsField {
 	public static $file_path = '';
 
 	/**
-	 * API key
-	 *
-	 * @var string
-	 * @since 1.0
-	 */
-	public static $api_key = '';
-
-	/**
-	 * Maps Component Options
-	 *
-	 * @var array
-	 * @since 1.0
-	 */
-	public static $component_options = array();
-
-	/**
 	 * {@inheritDoc}
 	 *
 	 * @since 1.0
 	 */
 	public function __construct() {
-
-		/*if ( class_exists( 'Pods_Component_AddressMaps' ) && ! empty( Pods_Component_AddressMaps::$options ) ) {
-			self::$file_path = Pods_Component_AddressMaps::$component_path;
-
-			self::$component_options = Pods_Component_AddressMaps::$options;
-
-			self::$api_key = $api_key = ( ! empty( self::$component_options['api_key'] ) ) ? self::$component_options['api_key'] : '';
-
-			wp_register_style( 'pods-component-address-maps', PODS_URL . 'ui/css/pods-address-maps.css', array(), '1.0' );
-			wp_register_script( 'pods-component-address-maps', PODS_URL . 'ui/js/pods-address-maps.js', array(), '1.0' );
-			wp_register_script( 'googlemaps', 'http://maps.googleapis.com/maps/api/js?key='.$api_key, false, '3' ); //sensor=false&
-		}*/
 
 	}
 

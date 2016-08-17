@@ -203,10 +203,8 @@ class PodsField_Address extends PodsField {
 
 		$type = pods_v( self::$type . '_type', $options );
 
-		$view = PODS_DIR . 'ui/fields/text.php';
-		if ( 'address' == $type ) {
-			$view = PODS_DIR . 'ui/fields/address.php';
-		}
+		// Text type is handled within the address field view
+		$view = PODS_DIR . 'ui/fields/address.php';
 		$view = apply_filters( 'pods_ui_field_address_input_view', $view, $type, $name, $value, $options, $pod, $id );
 
 		if ( ! empty( $view ) ) {

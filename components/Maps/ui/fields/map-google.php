@@ -44,7 +44,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				postal_code: $( '#<?php echo $attributes['id'] . '-address-postal-code'  ?>' ),
 				region: $( '#<?php echo $attributes['id'] . '-address-region'  ?>' ),
 				country: $( '#<?php echo $attributes['id'] . '-address-country'  ?>' ),
-				text: $( '#<?php echo $attributes['id'] ?>' ),
+				text: $( '#<?php echo $attributes['id'] . '-text' ?>' ),
 				lat: $( '#<?php echo $attributes['id'] . '-geo-lat'  ?>' ),
 				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
 			};

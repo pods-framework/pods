@@ -254,6 +254,10 @@ class PodsField_Address extends PodsField {
 		// @todo: Validate based on address type ( lat / lon, address fields)
 		$errors = array();
 
+		$type = pods_v( self::$type . '_type', $options );
+
+		$errors = apply_filters( 'pods_ui_field_address_validate', $errors, $value, $type, $name, $options, $fields, $pod, $id, $params );
+
 		if ( 1 == pods_v( 'required', $options ) ) {
 			$errors[] = __( 'This field is required.', 'pods' );
 		}
@@ -273,8 +277,11 @@ class PodsField_Address extends PodsField {
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		return $value;
+		$type = pods_v( self::$type . '_type', $options );
 
+		$value = apply_filters( 'pods_ui_field_address_pre_save', $value, $type, $id, $name, $options, $fields, $pod, $params );
+
+		return $value;
 	}
 
 	/**

@@ -1706,7 +1706,10 @@ class PodsAdmin {
                     'label' => __( 'Default Value', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'text',
-                    'default' => ''
+                    'default' => '',
+                    'options' => array(
+                        'text_max_length' => -1
+                    )
                 ),
                 'default_value_parameter' => array(
                     'name' => 'default_value_parameter',

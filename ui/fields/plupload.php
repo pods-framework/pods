@@ -210,6 +210,8 @@ else
             queue_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
             maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
+        list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).removeClass('hidden');
+
         pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.init();
 
         // Plupload FilesAdded Event Handler
@@ -294,7 +296,7 @@ else
                 var html = tmpl( binding );
 
                 list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.prepend( html );
-                list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).hide().removeClass('hidden').slideDown( 'fast' );
 
                 var items = list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file' ),
                     itemCount = items.size();

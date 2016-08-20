@@ -299,7 +299,7 @@ else
                 list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).hide().removeClass('hidden').slideDown( 'fast' );
 
                 var items = list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file' ),
-                    itemCount = items.size();
+                    itemCount = items.length;
 
                 if ( 0 < maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> && itemCount > maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> ) {
                     items.each( function ( idx, elem ) {

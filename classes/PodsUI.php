@@ -1491,7 +1491,7 @@ class PodsUI {
                 if ( !empty( $this->action_links[ 'manage' ] ) )
                     $link = $this->action_links[ 'manage' ];
                 ?>
-                <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+                <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
                 <?php
             }
             ?>
@@ -1771,7 +1771,7 @@ class PodsUI {
 							$link = $this->action_links[ 'manage' ];
 						}
 				?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
 				<?php
 					}
 

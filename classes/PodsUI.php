@@ -914,43 +914,49 @@ class PodsUI {
         $item = __( 'Item', 'pods' );
         $items = __( 'Items', 'pods' );
 
+        if ( ! is_array( $this->label ) ) {
+            $this->label = (array) $this->label;
+        }
+
         if ( is_object( $this->pod ) ) {
-            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
-            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+            $item = pods_v( 'label_singular', $this->pod->pod_data[ 'options' ], pods_v( 'label', $this->pod->pod_data, $item, true ), true );
+            $items = pods_v( 'label', $this->pod->pod_data, $items, true );
+
+            $this->label = array_merge( $this->label, $this->pod->pod_data[ 'options' ] );
         }
 
         $options->validate( 'item', $item );
         $options->validate( 'items', $items );
 
         $options->validate( 'heading', array(
-            'manage' => __( 'Manage', 'pods' ),
-            'add' => __( 'Add New', 'pods' ),
-            'edit' => __( 'Edit', 'pods' ),
-            'duplicate' => __( 'Duplicate', 'pods' ),
-            'view' => __( 'View', 'pods' ),
-            'reorder' => __( 'Reorder', 'pods' ),
-            'search' => __( 'Search', 'pods' ),
-            'views' => __( 'View', 'pods' )
+            'manage'    => pods_v( 'label_manage', $this->label, __( 'Manage', 'pods' ) ),
+            'add'       => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_edit', $this->label, __( 'Edit', 'pods' ) ),
+            'duplicate' => pods_v( 'label_duplicate', $this->label, __( 'Duplicate', 'pods' ) ),
+            'view'      => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) ),
+            'reorder'   => pods_v( 'label_reorder', $this->label, __( 'Reorder', 'pods' ) ),
+            'search'    => pods_v( 'label_search', $this->label, __( 'Search', 'pods' ) ),
+            'views'     => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) )
         ), 'array_merge' );
 
         $options->validate( 'header', array(
-            'manage' => sprintf( __( 'Manage %s', 'pods' ), $options->items ),
-            'add' => sprintf( __( 'Add New %s', 'pods' ), $options->item ),
-            'edit' => sprintf( __( 'Edit %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Duplicate %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items ),
-            'search' => sprintf( __( 'Search %s', 'pods' ), $options->items )
+            'manage'    => pods_v( 'label_manage_items', $this->label, sprintf( __( 'Manage %s', 'pods' ), $options->items ) ),
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'edit'      => pods_v( 'label_edit_item', $this->label, sprintf( __( 'Edit %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) ),
+            'search'    => pods_v( 'label_search_items', $this->label, sprintf( __( 'Search %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'add_new' => __( 'Add New', 'pods' ),
-            'edit' => sprintf( __( 'Save %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'delete' => sprintf( __( 'Delete this %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items )
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'add_new'   => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_edit_item', $this->label, sprintf( __( 'Edit %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'delete'    => pods_v( 'label_delete_item', $this->label, sprintf( __( 'Delete this %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1431,7 +1437,7 @@ class PodsUI {
 				$link = $this->action_links[ 'manage' ];
 			}
             ?>
-            <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+            <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
         </h2>
 
         <?php $this->form( true ); ?>
@@ -3197,7 +3203,7 @@ class PodsUI {
 
         if ( empty( $this->data ) ) {
             ?>
-        <p><?php echo sprintf( __( 'No %s found', 'pods' ), $this->items ); ?></p>
+        <p><?php echo pods_v( 'label_no_items_found', $this->label, sprintf( __( 'No %s found', 'pods' ), $this->items ) ); ?></p>
         <?php
             return false;
         }

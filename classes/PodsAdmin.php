@@ -1063,7 +1063,7 @@ class PodsAdmin {
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'pod' )
                 ),
                 'label_view_item' => array(
                     'label' => __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
@@ -1200,7 +1200,7 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_set_featured_image' => array(
                     'label' => __( 'Set featured Image', 'pods' ),
@@ -1208,7 +1208,7 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_remove_featured_image' => array(
                     'label' => __( 'Remove featured Image', 'pods' ),
@@ -1216,7 +1216,7 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_use_featured_image' => array(
                     'label' => __( 'Use as featured Image', 'pods' ),
@@ -1224,7 +1224,7 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_filter_items_list' => array(
                     'label' => __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ),

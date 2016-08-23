@@ -15,9 +15,10 @@ ul.pods-file-meta {
     overflow: hidden;
     zoom: 1;
     position: relative;
+    list-style-type: none;
 }
 
-form.pods-form ul.pods-files li.pods-file-name {
+form.pods-form ul.pods-files li.pods-file-name, form.pods-form ul.pods-files li.pods-file-description {
     overflow: inherit;
 }
 
@@ -36,6 +37,7 @@ ul.pods-files li.pods-file-handle {
 
 ul.pods-files li.pods-file-icon {
     width: 40px;
+    padding-bottom: 45px;
 }
 
 ul.pods-files li.pods-file-icon img {
@@ -86,7 +88,15 @@ ul.pods-files li.pods-file-name {
     padding-top: 5px;
 }
 
-form.pods-form ul.pods-files li.pods-file-name {
+ul.pods-files li.pods-file-description {
+    position: absolute;
+    left: 85px;
+    right: 60px;
+    top: 60px;
+    padding-top: 5px;
+}
+
+form.pods-form ul.pods-files li.pods-file-name, form.pods-form ul.pods-files li.pods-file-description {
     padding-top: 3px;
 }
 

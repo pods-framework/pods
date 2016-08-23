@@ -139,7 +139,7 @@ else
 
             $attachment = apply_filters( 'pods_media_attachment', $attachment );
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $attachment[ 'ID' ], $attachment[ 'thumbnail' ], $attachment[ 'post_title' ], $linked, $attachment[ 'link' ] );
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $attachment['ID'], $attachment['thumbnail'], $attachment['post_title'], $attachment['post_content'], $linked, $attachment['link'] );
         }
         ?></ul>
 
@@ -280,6 +280,7 @@ else
                             id: attachment.id,
                             icon: attachment_thumbnail,
                             name: attachment.attributes.title,
+                            description : attachment.attributes.content,
                             filename: attachment.filename,
                             link: attachment.attributes.url
                         };

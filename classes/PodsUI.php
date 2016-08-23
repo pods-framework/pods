@@ -502,6 +502,12 @@ class PodsUI {
             return false;
         }
 
+        // Assign pod labels
+        // @todo This is also done in setup(), maybe a better / more central way?
+        if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data[ 'options' ] ) ) {
+            $this->label = $this->pod->pod_data[ 'options' ];
+        }
+
         $this->go();
     }
 

@@ -164,7 +164,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo esc_attr( $css_id ); ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo esc_attr( $css_id ); ?>-progress-template">

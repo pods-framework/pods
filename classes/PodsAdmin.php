@@ -1017,13 +1017,12 @@ class PodsAdmin {
                     'default' => '',
                     'object_type' => array( 'taxonomy' )
                 ),
-                // @todo Why was label_edit added previously? Can't find it in WP
                 'label_edit' => array(
                     'label' => __( 'Edit', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'pod' )
                 ),
                 'label_edit_item' => array(
                     'label' => __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
@@ -1038,7 +1037,27 @@ class PodsAdmin {
                     'default' => '',
                     'object_type' => array( 'taxonomy' )
                 ),
-                // @todo Why was label_view added previously? Can't find it in WP
+                'label_duplicate' => array(
+                    'label' => __( 'Duplicate', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_duplicate_item' => array(
+                    'label' => __( 'Duplicate <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_delete_item' => array(
+                    'label' => __( 'Delete <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
                 'label_view' => array(
                     'label' => __( 'View', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
@@ -1052,11 +1071,53 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                 ),
+                'label_back_to_manage' => array(
+                    'label' => __( 'Back to Manage', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_manage' => array(
+                    'label' => __( 'Manage', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_manage_items' => array(
+                    'label' => __( 'Manage <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_reorder' => array(
+                    'label' => __( 'Reorder', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_reorder_items' => array(
+                    'label' => __( 'Reorder <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
                 'label_all_items' => array(
                     'label' => __( 'All <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
+                ),
+                'label_search' => array(
+                    'label' => __( 'Search', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
                 ),
                 'label_search_items' => array(
                     'label' => __( 'Search <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
@@ -1097,6 +1158,13 @@ class PodsAdmin {
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
+                ),
+                'label_no_items_found' => array(
+                    'label' => __( 'No <span class="pods-slugged" data-sluggable="label_singular">Item</span> Found', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
                 ),
                 'label_not_found_in_trash' => array(
                     'label' => __( 'Not Found in Trash', 'pods' ),

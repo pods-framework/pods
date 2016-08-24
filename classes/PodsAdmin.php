@@ -1038,7 +1038,7 @@ class PodsAdmin {
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'taxonomy' )
+                    'object_type' => array( 'taxonomy', 'pod' )
                 ),
                 'label_duplicate' => array(
                     'label' => __( 'Duplicate', 'pods' ),

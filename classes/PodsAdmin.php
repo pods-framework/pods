@@ -203,8 +203,8 @@ class PodsAdmin {
                     elseif ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod[ 'name' ], 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) )
                         continue;
 
-                    $pod = apply_filters( 'pods_register_advanced_content_type_' . $pod['name'], $pod, $pod['name'] );
-                    $pod = apply_filters( 'pods_register_advanced_content_type', $pod, $pod['name'] );
+                    $pod = apply_filters( 'pods_advanced_content_type_admin_menu_' . $pod['name'], $pod, $pod['name'] );
+                    $pod = apply_filters( 'pods_advanced_content_type_admin_menu', $pod, $pod['name'] );
 
                     if ( 1 == pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) ) {
                         $page_title = pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), true );

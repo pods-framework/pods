@@ -929,14 +929,14 @@ class PodsUI {
         }
 
         if ( is_object( $this->pod ) ) {
-            $item = pods_v( 'label_singular', $this->pod->pod_data[ 'options' ], pods_v( 'label', $this->pod->pod_data, $item, true ), true );
-            $items = pods_v( 'label', $this->pod->pod_data, $items, true );
+            $pod_data = $this->pod->pod_data;
+            $pod_data = apply_filters( 'pods_advanced_content_type_admin_ui_' . $this->pod->pod_data[ 'name' ], $pod_data, $this->pod->pod_data[ 'name' ] );
+            $pod_data = apply_filters( 'pods_advanced_content_type_admin_ui', $pod_data, $this->pod->pod_data[ 'name' ] );
 
-            $pod_options = $this->pod->pod_data[ 'options' ];
-            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui_' . $this->pod->pod_data[ 'name' ], $pod_options, $this->pod->pod_data[ 'name' ] );
-            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui', $pod_options, $this->pod->pod_data[ 'name' ] );
+            $this->label = array_merge( $this->label, $pod_data['options'] );
 
-            $this->label = array_merge( $this->label, $pod_options );
+            $item = pods_v( 'label_singular', $pod_data['options'], pods_v( 'label', $pod_data, $item, true ), true );
+            $items = pods_v( 'label', $pod_data, $items, true );
         }
 
         $options->validate( 'item', $item );

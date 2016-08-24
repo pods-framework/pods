@@ -505,7 +505,11 @@ class PodsUI {
         // Assign pod labels
         // @todo This is also done in setup(), maybe a better / more central way?
         if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data[ 'options' ] ) ) {
-            $this->label = array_merge( (array) $this->label, $this->pod->pod_data[ 'options' ] );
+            $pod_options = $this->pod->pod_data[ 'options' ];
+            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui_' . $this->pod->pod_data[ 'name' ], $pod_options, $this->pod->pod_data[ 'name' ] );
+            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui', $pod_options, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_options );
         }
 
         $this->go();
@@ -928,7 +932,11 @@ class PodsUI {
             $item = pods_v( 'label_singular', $this->pod->pod_data[ 'options' ], pods_v( 'label', $this->pod->pod_data, $item, true ), true );
             $items = pods_v( 'label', $this->pod->pod_data, $items, true );
 
-            $this->label = array_merge( $this->label, $this->pod->pod_data[ 'options' ] );
+            $pod_options = $this->pod->pod_data[ 'options' ];
+            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui_' . $this->pod->pod_data[ 'name' ], $pod_options, $this->pod->pod_data[ 'name' ] );
+            $pod_options = apply_filters( 'pods_advanced_content_type_admin_ui', $pod_options, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_options );
         }
 
         $options->validate( 'item', $item );

@@ -1181,21 +1181,21 @@ class PodsAdmin {
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_insert_into_item' => array(
                     'label' => __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_uploaded_to_this_item' => array(
                     'label' => __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_featured_image' => array(
                     'label' => __( 'Featured Image', 'pods' ),
@@ -1234,21 +1234,21 @@ class PodsAdmin {
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod' )
+                    'object_type' => array( 'post_type' )
                 ),
                 'label_items_list_navigation' => array(
                     'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod', 'taxonomy' )
+                    'object_type' => array( 'post_type', 'taxonomy' )
                 ),
                 'label_items_list' => array(
                     'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
                     'type' => 'text',
                     'default' => '',
-                    'object_type' => array( 'post_type', 'pod', 'taxonomy' )
+                    'object_type' => array( 'post_type', 'taxonomy' )
                 ),
                 'label_separate_items_with_commas' => array(
                     'label' => __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas', 'pods' ),

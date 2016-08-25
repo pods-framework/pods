@@ -20,16 +20,18 @@ jQuery(document).ready(function($) {
                     return;
                 }
                 if ( document.documentElement.scrollTop > offset.top || self.pageYOffset > offset.top ) {
-                    floatmenu.css( 'position', 'fixed' );
-                    floatmenu.css( 'top', top + 'px' );
-                    floatmenu.css( 'right', right + 'px' );
+                    floatmenu.css( {
+                        'position': 'fixed',
+                        'top': top + 'px',
+                        'right': right + 'px'
+                    } );
                 }
                 else if ( document.documentElement.scrollTop < offset.top || self.pageYOffset < offset.top ) {
-                    floatmenu.css( 'position', 'relative' );
-                    floatmenu.css( 'top', 'auto' );
-                    floatmenu.css( 'right', 'auto' );
-                    //floatmenu.css('top','112px');
-                    //floatmenu.css('right','15px');
+                    floatmenu.css( {
+                        'position': 'relative',
+                        'top': 'auto',
+                        'right': 'auto'
+                    } );
                 }
             }
         };

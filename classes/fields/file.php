@@ -488,21 +488,28 @@ class PodsField_File extends PodsField {
 
         ob_start();
 
-        if ( empty( $id ) )
-            $id = '{{id}}';
+	    if ( empty( $id ) ) {
+		    $id = '{{id}}';
+	    } else {
+		    $date = get_the_date( '', $id );
+	    }
+	    if ( empty( $date ) ) {
+		    $date = '{{date}}';
+	    }
 
-        if ( empty( $icon ) ) {
-	        $icon = '{{icon}}';
-        }else{
-	        $icon = esc_url( $icon );
-        }
+	    if ( empty( $icon ) ) {
+		    $icon = '{{icon}}';
+	    } else {
+		    $icon = esc_url( $icon );
+	    }
 
+	    if ( empty( $name ) ) {
+		    $name = '{{name}}';
+	    }
 
-        if ( empty( $name ) )
-            $name = '{{name}}';
-
-        if ( empty( $link ) )
-            $link = '{{link}}';
+	    if ( empty( $link ) ) {
+		    $link = '{{link}}';
+	    }
 
         $editable = (boolean) $editable;
         $linked = (boolean) $linked;
@@ -517,6 +524,7 @@ class PodsField_File extends PodsField {
 
             <li class="pods-file-col pods-file-icon">
                 <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
+	            <?php echo $date ?>
             </li>
 
             <li class="pods-file-col pods-file-name">
@@ -796,6 +804,8 @@ class PodsField_File extends PodsField {
 					if ( $linked ) {
                     	$attachment[ 'link' ] = wp_get_attachment_url( $attachment[ 'ID' ] );
 					}
+
+	                $attachment['post_date'] = get_the_date( '', $attachment_id );
 
                     $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 

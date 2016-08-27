@@ -281,7 +281,7 @@ else
                             icon: attachment_thumbnail,
                             name: attachment.attributes.title,
                             filename: attachment.filename,
-                            link: attachment.attributes.url
+                            date: attachment.attributes.date
                         };
 
                         var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

@@ -1,0 +1,8 @@
+exclude_paths:
+- vendor/*
+- tests/*
+- .tx/*, 
+- includes/libraries/*, 
+- bin/*
+- assets/*
+- templates/*

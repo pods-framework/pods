@@ -12,6 +12,10 @@ else
 
 $groups = PodsInit::$meta->groups_get( $pod->pod_data[ 'type' ], $pod->pod_data[ 'name' ], $fields );
 
+$pod_options = $pod->pod_data[ 'options' ];
+$pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod->pod_data[ 'name' ], $pod_options, $pod->pod_data[ 'name' ] );
+$pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $pod->pod_data[ 'name' ] );
+
 $group_fields = array();
 $submittable_fields = array();
 
@@ -81,7 +85,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-        if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+        if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) )
             $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
         $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -105,7 +109,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-    if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+    if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) )
         $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 
     $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
@@ -180,16 +184,16 @@ if ( 0 < $pod->id() ) {
                     <!-- BEGIN PUBLISH DIV -->
                     <div id="submitdiv" class="postbox">
                         <div class="handlediv" title="Click to toggle"><br /></div>
-                        <h3 class="hndle"><span><?php _e( 'Manage', 'pods' ); ?></span></h3>
+                        <h3 class="hndle"><span><?php echo pods_v( 'label_manage', $pod_options, __( 'Manage', 'pods' ) ); ?></span></h3>
 
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
                                 <?php
-                                    if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) ) {
+                                    if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) ) {
                                 ?>
                                     <div id="minor-publishing">
                                         <?php
-                                            if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
+                                            if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
                                         ?>
                                             <div id="minor-publishing-actions">
                                                 <div id="preview-action">
@@ -257,7 +261,7 @@ if ( 0 < $pod->id() ) {
                                             ) );
                                     ?>
                                         <div id="delete-action">
-                                            <a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                            <a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('<?php _e( "You are about to permanently delete this item. Choose CANCEL to stop, OK to delete.", 'pods' ); ?>');"><?php _e( 'Delete', 'pods' ); ?></a>
                                         </div>
                                         <!-- /#delete-action -->
                                     <?php } ?>
@@ -309,8 +313,8 @@ if ( 0 < $pod->id() ) {
                             if ( !isset( $singular_label ) )
                                 $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 
-                            $singular_label = pods_v( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
-                            $singular_label = pods_v( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
+                            $singular_label = pods_v( 'label', $pod_options, $singular_label, null, true );
+                            $singular_label = pods_v( 'label_singular', $pod_options, $singular_label, null, true );
 
                             $pod->params = $obj->get_params( null, 'manage' );
 

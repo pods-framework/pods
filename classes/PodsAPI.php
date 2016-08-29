@@ -7450,8 +7450,16 @@ class PodsAPI {
 			    $current_language_t_id = $lang_data['t_id'];
 		    }
 
-		    if ( ! empty( $lang_data['t_id'] ) ) {
+		    if ( ! empty( $lang_data['tt_id'] ) ) {
 			    $current_language_tt_id = $lang_data['tt_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_t_id'] ) ) {
+			    $current_language_tl_t_id = $lang_data['tl_t_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			    $current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		    }
 	    }
 
@@ -8444,6 +8452,8 @@ class PodsAPI {
 				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
 					$lang_data['t_id']  = (int) $current_language_t->term_id;
 					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
+					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
+					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
 					$lang_data['term']  = $current_language_t;
 				}
 			}

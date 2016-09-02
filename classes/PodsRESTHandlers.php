@@ -310,14 +310,17 @@ class PodsRESTHandlers {
 
 		global $wp_taxonomies;
 
+		// Only add support for taxonomies that exist
 		if ( isset( $wp_taxonomies[ $taxonomy_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $taxonomy_name;
-			}
+			// Only add support if REST base not already set
+			if ( empty( $wp_taxonomies[ $taxonomy_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $taxonomy_name;
+				}
 
-			$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
-			$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
-			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
+				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
+				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 		}
 
 	}

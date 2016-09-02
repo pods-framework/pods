@@ -280,14 +280,18 @@ class PodsRESTHandlers {
 
 		global $wp_post_types;
 
+		// Only add support for post types that exist
 		if ( isset( $wp_post_types[ $post_type_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $post_type_name;
-			}
+			// Only add support if REST base not already set
+			if ( empty( $wp_post_types[ $post_type_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $post_type_name;
+				}
 
-			$wp_post_types[ $post_type_name ]->show_in_rest          = true;
-			$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
-			$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
+				$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+			}
 		}
 
 	}

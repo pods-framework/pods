@@ -1323,6 +1323,16 @@ class PodsMeta {
 
                     ob_end_clean();
 
+                    /**
+                     * Ensure data is send and saved.
+                     * Default array structures not working in update
+                     * @todo file bug at WP trac?
+                     */
+                    $counter = 0;
+                    while( false !== strpos( $html, '['.$field.'][]' ) ) {
+                        $html = preg_replace( '/\['.$field.'\]\[\]/', '['.$field.']['.($counter++).']', $html, 1 );
+                    }
+
                     unset( $form_fields[ $field ][ 'value' ] );
 
                     $form_fields[ $field ][ 'input' ] = 'html';

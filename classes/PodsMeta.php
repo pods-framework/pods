@@ -1420,24 +1420,6 @@ class PodsMeta {
             pods_no_conflict_off( 'post' );
         }
 
-        /**
-         * Update taxonomies when changed to checkboxes in the attachment modal
-         * @since 2.6.8
-         */
-        if ( ! empty( $_POST['tax_input'] ) && defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-            foreach ( $_POST['tax_input'] as $tax => $terms ) {
-                /**
-                 * Validate for an array
-                 * Otherwise we didn't change this functionality since this is a string by default
-                 */
-                if ( is_taxonomy_hierarchical( $tax ) && is_array( $terms ) ) {
-                    $tax = sanitize_title( $tax );
-                    $terms = array_map( 'intval', $terms );
-                    wp_set_post_terms( $id, $terms, $tax );
-                }
-            }
-        }
-
         do_action( 'pods_meta_save_media', $data, $pod, $id, $groups, $post, $attachment );
 
         return $post;
@@ -1472,6 +1454,24 @@ class PodsMeta {
 
         if ( empty( $_REQUEST[ 'attachments' ][ $id ] ) )
             $_REQUEST[ 'attachments' ][ $id ][ '_fix_wp' ] = 1;
+
+        /**
+         * Update taxonomies when changed to checkboxes in the attachment modal
+         * @since 2.6.8
+         */
+        if ( ! empty( $_POST['tax_input'] ) ) {
+            foreach ( $_POST['tax_input'] as $tax => $terms ) {
+                /**
+                 * Validate for an array
+                 * Otherwise we didn't change this functionality since this is a string by default in WP core
+                 */
+                if ( is_taxonomy_hierarchical( $tax ) && is_array( $terms ) ) {
+                    $tax = sanitize_title( $tax );
+                    $terms = array_map( 'intval', $terms );
+                    wp_set_post_terms( $id, $terms, $tax );
+                }
+            }
+        }
     }
 
     /**

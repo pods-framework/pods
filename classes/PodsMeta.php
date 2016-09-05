@@ -304,9 +304,26 @@ class PodsMeta {
         if ( function_exists( 'pll_current_language' ) )
             add_action( 'init', array( $this, 'cache_pods' ), 101 );
 
+        // Priority 20 because PodsInit has priority 15
+        add_action( 'admin_enqueue_scripts', array( $this, 'assets' ), 20 );
+        add_action( 'wp_enqueue_scripts', array( $this, 'assets' ), 20 );
+
         do_action( 'pods_meta_init' );
 
         return $this;
+    }
+
+    /**
+     * Add styles and scripts globally or conditionally
+     * @since 2.6.8
+     */
+    public function assets() {
+
+        // Add Pods form styles to the Media Library
+        if ( is_admin() && get_current_screen()->base == 'upload' ) {
+            wp_enqueue_style( 'pods-form' );
+            //wp_enqueue_script( 'pods' );
+        }
     }
 
     public static function enqueue () {

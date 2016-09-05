@@ -314,20 +314,20 @@ input.pods-form-ui-field-type-color {
 /**
  * Modal fields
  */
-.media-modal .media-sidebar .pods-term-list {
+.media-modal .compat-item .pods-term-list {
     margin: 0;
     padding: 3px;
     background: #fff;
     border: 1px solid #dfdfdf;
 }
-.media-modal .media-sidebar .pods-term-list input {
+.media-modal .compat-item .pods-term-list input {
     vertical-align: text-bottom;
     margin: 3px 3px 0;
 }
-.media-modal .media-sidebar .pods-term-list > li:last-child {
+.media-modal .compat-item .pods-term-list > li:last-child {
     margin-bottom: 3px;
 }
-.media-modal .media-sidebar .pods-term-list ul.children {
+.media-modal .compat-item .pods-term-list ul.children {
     margin: 6px 0 0 18px;
 }
 }

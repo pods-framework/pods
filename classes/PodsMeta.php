@@ -1301,6 +1301,36 @@ class PodsMeta {
             }
         }
 
+        /**
+         * Add hierarchical taxonomies as checkboxes
+         * Based on Enhanced Media Library
+         */
+        if ( function_exists( 'wp_terms_checklist' ) ) {
+            foreach ( $form_fields as $field => $args ) {
+                if ( ! empty( $args[ 'hierarchical' ] ) && ( ! isset( $form_fields[ $field ][ 'input' ] ) || $form_fields[ $field ][ 'input' ] != 'html' ) ) {
+
+                    ob_start();
+
+                    wp_terms_checklist( $post->ID, array( 'taxonomy' => $field, 'checked_ontop' => false ) );
+
+                    $content = ob_get_contents();
+
+                    if ( $content ) {
+                        $html = '<ul class="term-list pods-term-list">' . $content . '</ul>';
+                    } else {
+                        $html = '<ul class="term-list pods-term-list"><li>No ' . $args[ 'label' ] . ' found.</li></ul>';
+                    }
+
+                    ob_end_clean();
+
+                    unset( $form_fields[ $field ][ 'value' ] );
+
+                    $form_fields[ $field ][ 'input' ] = 'html';
+                    $form_fields[ $field ][ 'html' ]  = $html;
+                }
+            }
+        }
+
         $form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
 
         return $form_fields;

@@ -3914,6 +3914,11 @@ class PodsAPI {
         else
             $current_ids = $this->lookup_related_items( $field[ 'id' ], $pod[ 'id' ], $id, $field, $pod );
 
+	    if ( isset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] ) ) {
+		    // Delete relationship from cache
+		    unset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] );
+	    }
+
         if ( !is_array( $related_ids ) )
             $related_ids = implode( ',', $related_ids );
 

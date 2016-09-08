@@ -1998,7 +1998,7 @@ class PodsUI {
 
 			// Set up where clause so that export function finds it
             if ( ! empty( $_POST['action_bulk_ids'] ) ) {
-                $ids = (array) $_POST['action_bulk_ids'];
+                $ids = (array) explode(',', $_POST['action_bulk_ids']);
                 $ids = array_map( 'absint', $ids );
                 $ids = array_filter( $ids );
 

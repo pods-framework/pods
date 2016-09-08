@@ -321,8 +321,9 @@ class PodsRESTHandlers {
 				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
 				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
 				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
-		}
+			}
 
+		}
 	}
 
 	/**

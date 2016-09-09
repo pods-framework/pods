@@ -2017,6 +2017,7 @@ class PodsUI {
 			$this->action_bulk = '';
 			$this->where = array();
 			$this->data  = false;
+			$_GET['action_bulk_ids'] = ''; 
 
 			$this->manage();
 		} else {

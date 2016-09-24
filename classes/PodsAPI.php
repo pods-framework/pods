@@ -1294,7 +1294,7 @@ class PodsAPI {
                 'taxonomy' => array(
                     'name' => 'taxonomy',
                     'label' => 'Taxonomy',
-                    'type' => 'pick',
+                    'type' => 'text',
                     'alias' => array()
                 ),
                 'parent' => array(

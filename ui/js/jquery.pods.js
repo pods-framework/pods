@@ -1625,7 +1625,7 @@
                 } );
             },
             toggled : function () {
-                $( '.pods-toggled .handlediv, .pods-toggled h3' ).live( 'click', function () {
+                $( 'body' ).on( 'click', '.pods-toggled .handlediv, .pods-toggled h3', function () {
                     $( this ).parent().find( '.inside' ).slideToggle();
                     return false;
                 } );

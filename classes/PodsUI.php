@@ -3276,7 +3276,7 @@ class PodsUI {
                             );
 
                             // Merge with the classes taken from the UI call
-                            if ( is_array( $attributes['classes'] ) ) {
+                            if ( ! empty( $attributes['classes'] ) && is_array( $attributes['classes'] ) ) {
                                 $column_classes = array_merge( $column_classes, $attributes['classes'] );
                             }
                             if ( $id == 'title' ) {
@@ -3453,7 +3453,7 @@ class PodsUI {
                                 );
 
                                 // Merge with the classes taken from the UI call
-                                if ( is_array( $attributes['classes'] ) ) {
+                                if ( ! empty( $attributes['classes'] ) && is_array( $attributes['classes'] ) ) {
                                     $css_classes = array_merge( $css_classes, $attributes['classes'] );
                                 }
 

@@ -499,4 +499,8 @@ div.row-actions.row-actions-toggle {
         margin-top: -10px;
         margin-bottom: 5px;
     }
+    .wp-list-table .is-expanded td.column-secondary {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 }

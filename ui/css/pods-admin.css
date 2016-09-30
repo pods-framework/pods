@@ -489,3 +489,14 @@ div.row-actions.row-actions-toggle {
         width: auto;
     }
 }
+
+@media screen and (max-width: 782px) {
+    /*
+     * Pods wp-list-table
+     */
+    .wp-list-table td.column-secondary {
+        display: block !important;
+        margin-top: -10px;
+        margin-bottom: 5px;
+    }
+}

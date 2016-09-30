@@ -3274,6 +3274,11 @@ class PodsUI {
                                 'manage-column',
                                 'column-' . esc_attr( $id )
                             );
+                            
+                            // Merge with the classes taken from the UI call
+                            if ( is_array( $attributes['classes'] ) ) {
+                                $column_classes = array_merge( $column_classes, $attributes['classes'] );
+                            }
                             if ( $id == 'title' ) {
                                 $column_classes[] = 'column-primary';
                             }
@@ -3446,6 +3451,11 @@ class PodsUI {
                                 $css_classes = array(
                                     'pods-ui-col-field-' . sanitize_title( $field )
                                 );
+
+                                // Merge with the classes taken from the UI call
+                                if ( is_array( $attributes['classes'] ) ) {
+                                    $css_classes = array_merge( $css_classes, $attributes['classes'] );
+                                }
 
 								if ( $attributes[ 'css_values' ] ) {
 									$css_field_value = $row[ $field ];

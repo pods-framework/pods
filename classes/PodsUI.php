@@ -3270,19 +3270,28 @@ class PodsUI {
 
                             $width = '';
 
+                            $column_classes = array(
+                                'manage-column',
+                                'column-' . esc_attr( $id )
+                            );
+                            if ( $id == 'title' ) {
+                                $column_classes[] = 'column-primary';
+                            }
+
                             if ( isset( $attributes[ 'width' ] ) && !empty( $attributes[ 'width' ] ) )
                                 $width = ' style="width: ' . esc_attr( $attributes[ 'width' ] ) . '"';
 
                             if ( $fields[ $field ][ 'sortable' ] ) {
+                                $column_classes[] = 'sortable' . $current_sort;
                                 ?>
-                                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo esc_attr( $id ); ?> sortable<?php echo esc_attr( $current_sort ); ?>"<?php echo $width; ?>>
+                                <th scope="col"<?php echo $att_id; ?> class="<?php echo esc_attr( implode( ' ', $column_classes ) ); ?>"<?php echo $width; ?>>
                                     <a href="<?php echo esc_url_raw( pods_query_arg( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ) ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
                                 </th>
                                 <?php
                             }
                             else {
                                 ?>
-                                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo esc_attr( $id ); ?>"<?php echo $width; ?>><?php echo $attributes[ 'label' ]; ?></th>
+                                <th scope="col"<?php echo $att_id; ?> class="<?php echo esc_attr( implode( ' ', $column_classes ) ); ?>"<?php echo $width; ?>><?php echo $attributes[ 'label' ]; ?></th>
                                 <?php
                             }
                         }
@@ -3361,7 +3370,9 @@ class PodsUI {
                                 <th scope="row" class="check-column"><input type="checkbox" name="action_bulk_ids<?php echo esc_attr( $this->num ); ?>[]" value="<?php echo esc_attr( $row[$this->sql['field_id']] ); ?>"></th>
             <?php
                                 }
-
+                            // Boolean for the first field to output after the check-column
+                            // will be set to false at the end of the first loop
+                            $first_field = true;
                             foreach ( $fields as $field => $attributes ) {
                                 if ( false === $attributes[ 'display' ] )
                                     continue;
@@ -3432,7 +3443,9 @@ class PodsUI {
                                     }
                                 }
 
-								$css_classes = ' pods-ui-col-field-' . sanitize_title( $field );
+                                $css_classes = array(
+                                    'pods-ui-col-field-' . sanitize_title( $field )
+                                );
 
 								if ( $attributes[ 'css_values' ] ) {
 									$css_field_value = $row[ $field ];
@@ -3453,16 +3466,16 @@ class PodsUI {
 														$css_field_v = get_object_vars( $css_field_v );
 													}
 
-													$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_v ) ) );
+													$css_classes[] = 'pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_v ) ) );
 												}
 											}
 											else {
-												$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
+												$css_classes[] = ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_val ) ) );
 											}
 										}
 									}
 									else {
-										$css_classes .= ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_value ) ) );
+										$css_classes[] = ' pods-ui-css-value-' . sanitize_title( str_replace( array( "\n", "\r" ), ' ', strip_tags( (string) $css_field_value ) ) );
 									}
 								}
 
@@ -3474,13 +3487,20 @@ class PodsUI {
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
 									$default_action = $this->do_hook( 'default_action', 'edit', $row );
 
+                                    if ( $first_field ) {
+                                        $css_classes[] = 'column-primary';
+                                    }
+                                    $css_classes[] = 'post-title';
+                                    $css_classes[] = 'page-title';
+                                    $css_classes[] = 'column-title';
+
                                     if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'edit' == $default_action ) {
                                         $link = pods_query_arg( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'view' == $default_action ) {
@@ -3489,12 +3509,15 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
+                                        if ( 1 == $reorder && $this->reorder ) {
+                                            $css_classes[] = 'dragme';
+                                        }
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?><?php echo esc_attr( ( 1 == $reorder && $this->reorder ) ? ' dragme' : '' ); ?>"><strong><?php echo $row_value; ?></strong>
+                <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>"><strong><?php echo $row_value; ?></strong>
                                         <?php
                                     }
 
@@ -3611,20 +3634,36 @@ class PodsUI {
                                         <input type="hidden" name="order[]" value="<?php echo esc_attr( $row[ $this->sql[ 'field_id' ] ] ); ?>" />
                                         <?php
                                     }
-                                    ?>
+                                    ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button>
                 </td>
 <?php
                                 }
                                 elseif ( 'date' == $attributes[ 'type' ] ) {
+                                    if ( $first_field ) {
+                                        $css_classes[] = 'column-primary';
+                                    }
+                                    $css_classes[] = 'date';
+                                    $css_classes[] = 'column-date';
                                     ?>
-                                    <td class="date column-date<?php echo esc_attr( $css_classes ); ?>"><abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo $row_value; ?></abbr></td>
+                                    <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>" data-colname="<?php echo $attributes['label'] ?>">
+                                        <abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo $row_value; ?></abbr>
+                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><?php }; ?>
+                                    </td>
                                     <?php
                                 }
                                 else {
+                                    if ( $first_field ) {
+                                        $css_classes[] = 'column-primary';
+                                    }
+                                    $css_classes[] = 'author';
                                     ?>
-                                    <td class="author<?php echo esc_attr( $css_classes ); ?>"><span><?php echo $row_value; ?></span></td>
+                                    <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>" data-colname="<?php echo $attributes['label'] ?>">
+                                        <span><?php echo $row_value; ?></span>
+                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><?php }; ?>
+                                    </td>
                                     <?php
                                 }
+                                $first_field = false;
                             }
                             ?>
                         </tr>

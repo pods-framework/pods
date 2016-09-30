@@ -3272,9 +3272,9 @@ class PodsUI {
 
                             $column_classes = array(
                                 'manage-column',
-                                'column-' . esc_attr( $id )
+                                'column-' . $id
                             );
-                            
+
                             // Merge with the classes taken from the UI call
                             if ( is_array( $attributes['classes'] ) ) {
                                 $column_classes = array_merge( $column_classes, $attributes['classes'] );

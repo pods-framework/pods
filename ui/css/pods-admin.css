@@ -476,3 +476,16 @@ div.row-actions.row-actions-toggle {
     width: 100%;
     max-width: initial;
 }
+
+@media only screen and (max-width: 850px) {
+    .pods-admin .pods_floatmenu {
+        position: static !important;
+        float: none;
+        display: block;
+        width: 100%;
+    }
+    .pods-admin .pods_floatmenu .inner-sidebar {
+        float: none;
+        width: auto;
+    }
+}

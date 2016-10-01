@@ -4,6 +4,7 @@ ul.pods-flex-list {
 	padding: 0;
 	border-radius: 0;
 	border: 1px solid #dfdfdf;
+	overflow: hidden;
 }
 
 ul.pods-flex-list:empty {

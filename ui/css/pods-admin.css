@@ -372,13 +372,12 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-field.pods-boolean label,
 .pods-manage-field .pods-pick-values label {
     padding-top: 0;
-    display: block;
-    margin-left: 20px;
+    display: inline-block;
 }
 
 .pods-manage-field input[type="checkbox"],
 .pods-manage-field input[type="radio"] {
-    position: absolute;
+	display: inline-block;
     left: 2px;
     margin: 1px 7px 0 0;
     float: none;

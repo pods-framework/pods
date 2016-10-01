@@ -25,14 +25,18 @@
 			<%- name %>
 		<% } %>
 	</li>
-	<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
-	<% if ( 1 == options.file_linked && '' != download ) { %>
-		<li class="pods-flex-col pods-flex-download"><a href="<%- download %>" target="_blank">Download</a></li>
-	<% } %>
-	<% if ( 1 == options.file_show_view_link && '' != link ) { %>
-		<li class="pods-flex-col pods-flex-link"><a href="<%- link %>" target="_blank">View</a></li>
-	<% } %>
-	<% if ( 1 == options.file_show_edit_link && '' != edit_link ) { %>
-		<li class="pods-flex-col pods-flex-edit"><a href="<%- edit_link %>" target="_blank">Edit</a></li>
-	<% } %>
+	<li class="pods-flex-col pods-flex-actions">
+		<ul>
+			<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
+			<% if ( 1 == options.file_linked && '' != download ) { %>
+				<li class="pods-flex-col pods-flex-download"><a href="<%- download %>" target="_blank">Download</a></li>
+			<% } %>
+			<% if ( 1 == options.file_show_view_link && '' != link ) { %>
+				<li class="pods-flex-col pods-flex-link"><a href="<%- link %>" target="_blank">View</a></li>
+			<% } %>
+			<% if ( 1 == options.file_show_edit_link && '' != edit_link ) { %>
+				<li class="pods-flex-col pods-flex-edit"><a href="<%- edit_link %>" target="_blank">Edit</a></li>
+			<% } %>
+		</ul>
+	</li>
 </ul>

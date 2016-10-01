@@ -245,6 +245,9 @@ form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name in
 	padding: .3vh 6px;
 }
 
+/*
+ * @todo Probably remove this
+ */
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle,
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-edit,
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-link,
@@ -273,6 +276,9 @@ form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name in
 .pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
 	right: 0;
 }
+/*
+ * @todo until here
+ */
 
 ul.pods-flex-list li.pods-flex-actions {
 	position: absolute;

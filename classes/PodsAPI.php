@@ -8199,12 +8199,18 @@ class PodsAPI {
         else
             pods_transient_clear( 'pods_wp_cpt_ct' );
 
+        // Delete transients in the database
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
+
+        // Delete Pods Options Cache in the database
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
         pods_cache_clear( true );
 
         pods_transient_set( 'pods_flush_rewrites', 1 );
+
+        do_action( 'pods_cache_flushed' );
     }
 
     /**

@@ -5546,7 +5546,7 @@ class PodsAPI {
             'alias' => ''
         );
 
-        if ( $params->bypass_cache ) {
+        if ( $bypass_cache ) {
             wp_cache_delete( $pod['id'], 'post_meta' );
 
             update_postmeta_cache( array( $pod['id'] ) );
@@ -5621,7 +5621,7 @@ class PodsAPI {
                     $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
                 }
                 else {
-			        if ( $params->bypass_cache ) {
+			        if ( $bypass_cache ) {
                         wp_cache_delete( $field->ID, 'post_meta' );
 
 			            update_postmeta_cache( array( $field->ID ) );
@@ -5693,8 +5693,10 @@ class PodsAPI {
         $meta_query = array();
         $cache_key = '';
 
-	    if ( ! isset( $params->bypass_cache ) ) {
-	    	$params->bypass_cache = false;
+        $bypass_cache = false;
+
+	    if ( ! empty( $params->bypass_cache ) ) {
+	    	$bypass_cache = true;
 	    }
 
         if ( isset( $params->type ) && !empty( $params->type ) ) {
@@ -5805,7 +5807,7 @@ class PodsAPI {
         else
             $cache_key = 'pods' . $pre_key . $cache_key;
 
-        if ( ! $params->bypass_cache && pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( ! $bypass_cache && pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
             if ( false === $the_pods )
@@ -5883,7 +5885,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ), 'bypass_cache' => $params->bypass_cache ) );
+                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ), 'bypass_cache' => $bypass_cache ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
@@ -5992,8 +5994,10 @@ class PodsAPI {
         if ( !isset( $params->table_info ) )
             $params->table_info = false;
 
-        if ( !isset( $params->bypass_cache ) )
-            $params->bypass_cache = false;
+        $bypass_cache = false;
+
+        if ( ! empty( $params->bypass_cache ) )
+            $bypass_cache = true;
 
         $pod = array();
         $field = array();
@@ -6012,7 +6016,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false, 'bypass_cache' => $params->bypass_cache ), false );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false, 'bypass_cache' => $bypass_cache ), false );
 
                 if ( false === $pod ) {
                     if ( $strict )
@@ -6035,7 +6039,7 @@ class PodsAPI {
 
             $field = false;
 
-            if ( ! $params->bypass_cache && pods_api_cache() )
+            if ( ! $bypass_cache && pods_api_cache() )
                 $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
 
             if ( empty( $field ) ) {
@@ -6081,7 +6085,7 @@ class PodsAPI {
         }
 
         if ( empty( $field ) ) {
-            if ( ! $params->bypass_cache && pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
+            if ( ! $bypass_cache && pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
                 $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $_field[ 'post_name' ] );
 
             if ( empty( $field ) ) {
@@ -6107,10 +6111,10 @@ class PodsAPI {
                 elseif ( isset( $_field[ 'pod' ] ) )
                     $field[ 'pod' ] = $_field[ 'pod' ];
 
-	            if ( $params->bypass_cache ) {
-	            	wp_cache_delete( $field['id'], 'post_meta' );
+	            if ( $bypass_cache ) {
+	                wp_cache_delete( $field['id'], 'post_meta' );
 
-		            update_postmeta_cache( array( $field['id'] ) );
+	                update_postmeta_cache( array( $field['id'] ) );
 	            }
 
                 $field[ 'options' ] = get_post_meta( $field[ 'id' ] );

@@ -5546,6 +5546,10 @@ class PodsAPI {
             'alias' => ''
         );
 
+        if ( $params->bypass_cache ) {
+            update_postmeta_cache( array( $pod['id'] ) );
+        }
+
         $pod[ 'options' ] = get_post_meta( $pod[ 'id' ] );
 
         foreach ( $pod[ 'options' ] as $option => $value ) {
@@ -5615,6 +5619,10 @@ class PodsAPI {
                     $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
                 }
                 else {
+			        if ( $params->bypass_cache ) {
+			            update_postmeta_cache( array( $field->ID ) );
+			        }
+
                     $field = array(
                         'id' => $field->ID,
                         'name' => $field->post_name,
@@ -6094,6 +6102,10 @@ class PodsAPI {
                     $field[ 'pod' ] = $pod[ 'name' ];
                 elseif ( isset( $_field[ 'pod' ] ) )
                     $field[ 'pod' ] = $_field[ 'pod' ];
+
+	            if ( $params->bypass_cache ) {
+		            update_postmeta_cache( array( $field['id'] ) );
+	            }
 
                 $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 

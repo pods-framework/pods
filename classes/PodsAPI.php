@@ -5547,6 +5547,8 @@ class PodsAPI {
         );
 
         if ( $params->bypass_cache ) {
+            wp_cache_delete( $pod['id'], 'post_meta' );
+
             update_postmeta_cache( array( $pod['id'] ) );
         }
 
@@ -5620,6 +5622,8 @@ class PodsAPI {
                 }
                 else {
 			        if ( $params->bypass_cache ) {
+                        wp_cache_delete( $field->ID, 'post_meta' );
+
 			            update_postmeta_cache( array( $field->ID ) );
 			        }
 
@@ -6104,6 +6108,8 @@ class PodsAPI {
                     $field[ 'pod' ] = $_field[ 'pod' ];
 
 	            if ( $params->bypass_cache ) {
+	            	wp_cache_delete( $field['id'], 'post_meta' );
+
 		            update_postmeta_cache( array( $field['id'] ) );
 	            }
 

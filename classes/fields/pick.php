@@ -790,10 +790,13 @@ class PodsField_Pick extends PodsField {
 
         if ( 'single' == $format_type ) {
             if ( 'dropdown' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $field_type = 'select';
 	            $options[ 'view_name' ] = 'select';
             } elseif ( 'radio' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $field_type = 'radio';
 	            $options[ 'view_name' ] = 'radio';
             } elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $field_type = 'select2';
 	            $options[ 'view_name' ] = 'select2';
             } elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
 	            $options[ 'view_name' ] = 'flexible';
@@ -810,10 +813,13 @@ class PodsField_Pick extends PodsField {
             }
 
             if ( 'checkbox' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $field_type = 'checkbox';
 	            $options[ 'view_name' ] = 'checkbox';
             } elseif ( 'multiselect' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $field_type = 'select';
 	            $options[ 'view_name' ] = 'select';
             } elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $field_type = 'select2';
 	            $options[ 'view_name' ] = 'select2';
             } elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
 	            $options[ 'view_name' ] = 'flexible';
@@ -830,8 +836,17 @@ class PodsField_Pick extends PodsField {
             return;
         }
 
-	    $field_type = 'pick';
-	    pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+		if ( empty( $field_type ) ) {
+			$field_type = 'select';
+		}
+
+		if ( empty( $options['deprecated_view'] ) ) {
+			// New MV views
+			pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+		} else {
+			// Deprecated views
+			pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+		}
 
     }
 

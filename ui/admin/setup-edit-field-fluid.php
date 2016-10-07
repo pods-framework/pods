@@ -72,7 +72,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                             </div>
                             <div class="pods-field-option">
                                 <?php echo PodsForm::label( 'field_data[' . $pods_i . '][type]', __( 'Field Type', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                <?php echo PodsForm::field( 'field_data[' . $pods_i . '][type]', pods_v( 'type', $field, '' ), 'pick', array( 'data' => pods_v( 'field_types_select', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
+                                <?php echo PodsForm::field( 'field_data[' . $pods_i . '][type]', pods_v( 'type', $field, '' ), 'pick', array( 'data' => pods_v( 'field_types_select', $field_settings ), 'class' => 'pods-dependent-toggle', 'deprecated_view' => true ) ); ?>
                             </div>
                             <div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
                                 <div class="pods-field-option">

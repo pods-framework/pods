@@ -5,6 +5,7 @@ import {PickFieldModel} from '~/ui/fields-mv/_src/pick/pick-field-model';
 import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
+import {Select2View} from '~/ui/fields-mv/_src/pick/views/select2-view';
 import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
 import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
 
@@ -16,7 +17,7 @@ const views = {
 	'checkbox': CheckboxView,
 	'select'  : SelectView,
 	'radio'   : RadioView,
-	'select2' : 'select2',
+	'select2' : Select2View,
 	'flexible': FlexView
 };
 

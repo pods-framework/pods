@@ -1,8 +1,11 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
+import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 
 /**
+ * option
+ *
  * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
@@ -22,12 +25,24 @@ export const SelectItem = PodsFieldView.extend( {
 } );
 
 /**
- *
+ * optgroup
  */
-export const SelectView = PodsFieldListView.extend( {
-	tagName: 'select',
-
+export const Optgroup = PodsFieldListView.extend( {
+	tagName  : 'optgroup',
 	childView: SelectItem,
+
+	attributes: function () {
+		return {
+			label: this.model.get( 'label' )
+		};
+	}
+} );
+
+/**
+ * select
+ */
+export const SelectView = Marionette.CollectionView.extend( {
+	tagName: 'select',
 
 	triggers: {
 		"change": {
@@ -36,6 +51,62 @@ export const SelectView = PodsFieldListView.extend( {
 		}
 	},
 
+	initialize: function ( options ) {
+		this.fieldModel = options.fieldModel;
+		this.fieldOptions = this.fieldModel.get( 'options' );
+	},
+
+	/**
+	 * Set the proper child view (optgroups or no)
+	 *
+	 * @param item
+	 * @returns {*}
+	 */
+	getChildView: function ( item ) {
+		if ( this.fieldOptions.optgroup ) {
+			return Optgroup;
+		}
+		else {
+			return SelectItem;
+		}
+	},
+
+	/**
+	 * todo: We're bypassing the PodsFieldListView functionality, need to explicitly include it for now
+	 *
+	 * @param model
+	 * @param index
+	 * @returns {{fieldModel: *}}
+	 */
+	childViewOptions: function ( model, index ) {
+		let returnOptions = { fieldModel: this.fieldModel };
+
+		if ( this.fieldOptions.optgroup ) {
+			returnOptions.collection = new RelationshipCollection( model.get( 'collection' ) );
+		}
+
+		return returnOptions;
+	},
+
+	/**
+	 * todo: We're bypassing the PodsFieldListView functionality, need to explicitly include it for now
+	 *
+	 * @returns {{}}
+	 */
+	serializeData: function () {
+		const fieldModel = this.options.fieldModel;
+		let data = this.model ? this.model.toJSON() : {};
+
+		data.field_type = fieldModel.get( 'type' );
+		data.attr = fieldModel.get( 'attributes' );
+		data.options = fieldModel.get( 'options' );
+
+		return data;
+	},
+
+	/**
+	 *
+	 */
 	attributes: function () {
 
 		/**
@@ -64,6 +135,9 @@ export const SelectView = PodsFieldListView.extend( {
 		};
 	},
 
+	/**
+	 *
+	 */
 	onChangeSelected: function () {
 		this.collection.setSelected( this.$el.val() );
 	}

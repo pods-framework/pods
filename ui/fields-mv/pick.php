@@ -13,83 +13,23 @@ $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );
 $options[ 'item_id' ] = (int) $id;
 
-$model_data = array();
+$options[ 'supports_thumbnails' ] = null;
+$options[ 'pick_object' ]         = ( empty( $options[ 'pick_object' ] ) ) ? '' : $options[ 'pick_object' ];
 
-// ToDo: We don't have optgroup support yet.  Just create flat select lists until we do
+// Todo: Should probably be set where the data is set
+// optgroups
 if ( is_array( $data ) && is_array( current( $data ) ) ) {
+	$options[ 'optgroup' ] = true;
 
-	$new_data = array();
-	foreach( $data as $group_label => $option_group ) {
-		foreach( $option_group as $this_value => $this_label ) {
-			$new_data[ $this_value ] = $this_label;
-		}
+	foreach ( $data as $this_key => $this_value ) {
+		$model_data[] = array(
+			'label'      => $this_key,
+			'collection' => PodsField_Pick::build_model_data( $this_value, $value, $options )
+		);
 	}
-
-	$data = $new_data;
-}
-
-$supports_thumbnails = null;
-
-foreach ( $data as $this_id => $this_title ) {
-	$icon = '';
-	$edit_link = '';
-	$link = '';
-
-	$options[ 'pick_object' ] = ( empty( $options[ 'pick_object' ] ) ) ? '' : $options[ 'pick_object' ];
-	switch ( $options[ 'pick_object' ] ) {
-		case 'post_type':
-			if ( null === $supports_thumbnails ) {
-				$supports_thumbnails = post_type_supports( $options['pick_val'], 'thumbnail' );
-			}
-
-			if ( true === $supports_thumbnails ) {
-				$thumb = wp_get_attachment_image_src( $this_id, 'thumbnail', true );
-
-				if ( ! empty( $thumb[0] ) ) {
-					$icon = $thumb[0];
-				}
-			}
-
-			$edit_link = get_edit_post_link( $this_id, 'raw' );
-			$link = get_permalink( $this_id );
-			break;
-
-		case 'taxonomy':
-			$edit_link = get_edit_term_link( $this_id, $options['pick_val'] );
-			$link = get_term_link( $this_id, $options['pick_val'] );
-			break;
-
-		case 'user':
-			$icon = get_avatar_url( $this_id, array( 'size' => 150 ) );
-			$edit_link = get_edit_user_link( $this_id );
-			$link = get_author_posts_url( $this_id );
-			break;
-
-		case 'pod':
-			$file_name = 'admin.php';
-			$query_args = array(
-				'page'   => 'pods-manage-' . $options[ 'pick_val' ],
-				'action' => 'edit',
-				'id'     => $this_id,
-			);
-
-			$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
-			// @todo Add $link support
-			break;
-
-		// Something unsupported
-		default:
-			break;
-	}
-
-	$model_data[] = array(
-		'id'        => $this_id,
-		'icon'      => $icon,
-		'name'      => $this_title,
-		'edit_link' => $edit_link,
-		'link'      => $link,
-		'selected'  => ( isset( $value[ $this_id ] ) ),
-	);
+} else { // Ungrouped (no optgroups)
+	$options[ 'optgroup' ] = false;
+	$model_data = PodsField_Pick::build_model_data( $data, $value, $options );
 }
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
@@ -107,26 +47,26 @@ $field_meta = array(
 // Set the file name and args based on the content type of the relationship
 switch ( $options[ 'pick_object' ] ) {
 	case 'post_type':
-		$file_name = 'post-new.php';
+		$file_name  = 'post-new.php';
 		$query_args = array(
 			'post_type' => $options[ 'pick_val' ],
 		);
 		break;
 
 	case 'taxonomy':
-		$file_name = 'edit-tags.php';
+		$file_name  = 'edit-tags.php';
 		$query_args = array(
 			'taxonomy' => $options[ 'pick_val' ],
 		);
 		break;
 
 	case 'user':
-		$file_name = 'user-new.php';
+		$file_name  = 'user-new.php';
 		$query_args = array();
 		break;
 
 	case 'pod':
-		$file_name = 'admin.php';
+		$file_name  = 'admin.php';
 		$query_args = array(
 			'page'   => 'pods-manage-' . $options[ 'pick_val' ],
 			'action' => 'add'
@@ -135,7 +75,7 @@ switch ( $options[ 'pick_object' ] ) {
 
 	// Something unsupported
 	default:
-		$file_name = '';
+		$file_name  = '';
 		$query_args = array();
 		break;
 }
@@ -149,7 +89,7 @@ $query_args = array_merge(
 );
 
 $iframe_src = '';
-if ( !empty( $file_name) ) {
+if ( ! empty( $file_name ) ) {
 	$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
 }
 $field_meta[ 'field_options' ][ 'iframe_src' ] = $iframe_src;

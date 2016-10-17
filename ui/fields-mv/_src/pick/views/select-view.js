@@ -62,7 +62,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @param item
 	 * @returns {*}
 	 */
-	getChildView: function ( item ) {
+	childView: function ( item ) {
 		if ( this.fieldOptions.optgroup ) {
 			return Optgroup;
 		}

@@ -21,7 +21,7 @@ export const FlexItem = PodsFieldView.extend( {
 		'click @ui.removeButton': 'remove:item:click'
 	},
 
-	templateHelpers: function () {
+	templateContext: function () {
 		return {
 			ordinal: this.model.collection.indexOf( this.model )
 		}

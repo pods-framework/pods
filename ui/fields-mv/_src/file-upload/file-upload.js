@@ -15,7 +15,7 @@ const Uploaders = [
 
 const UNLIMITED_FILES = 0;
 
-export const FileUpload = Marionette.LayoutView.extend( {
+export const FileUpload = Marionette.View.extend( {
 	template: _.template( template ),
 
 	regions: {

@@ -13,7 +13,7 @@ export const PodsFieldListView = Marionette.CollectionView.extend( {
 /**
  *
  */
-export const PodsFieldView = Marionette.LayoutView.extend( {
+export const PodsFieldView = Marionette.View.extend( {
 	serializeData: function () {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};

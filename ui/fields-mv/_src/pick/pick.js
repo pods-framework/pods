@@ -24,7 +24,7 @@ const views = {
 /**
  * @extends Backbone.View
  */
-export const Pick = Marionette.LayoutView.extend( {
+export const Pick = Marionette.View.extend( {
 	template: _.template( template ),
 
 	regions: {
@@ -63,7 +63,7 @@ export const Pick = Marionette.LayoutView.extend( {
 	 * @param args
 	 */
 	onChildviewRemoveItemClick: function ( childView, args ) {
-		const list = this.getChildView( 'list' );
+		const list = this.childView( 'list' );
 
 		args.model.toggleSelected();
 		list.render();

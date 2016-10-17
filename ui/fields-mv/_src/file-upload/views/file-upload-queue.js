@@ -13,7 +13,7 @@ export const FileUploadQueueModel = Backbone.Model.extend( {
 /**
  *
  */
-export const FileUploadQueueItem = Marionette.LayoutView.extend( {
+export const FileUploadQueueItem = Marionette.View.extend( {
 	model: FileUploadQueueModel,
 
 	tagName: 'li',

@@ -58,7 +58,6 @@ export const podsMVFieldsInit = function ( fields ) {
 			fieldControl = fieldFactory( data.field_type );
 			if ( fieldControl.control !== undefined ) {
 				fieldModel = new PodsFieldModel( {
-					type      : data.field_type,
 					attributes: data.field_meta.field_attributes,
 					options   : data.field_meta.field_options
 				} );

@@ -1,28 +1,14 @@
 /*global jQuery, _, Backbone, Marionette */
 import * as fields from '~/ui/fields-mv/_src/field-manifest';
 import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
-import {FileUploadCollection} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
-import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 
-/**
- * @param {string} fieldType
- */
-const fieldFactory = function ( fieldType ) {
-	let field = {};
+// jQuery selector for inline scripts with field definitions
+const SCRIPT_TARGET = 'script.pods-mv-field-data';
 
-	switch ( fieldType ) {
-		case 'file-upload':
-			field.control = fields.FileUpload;
-			field.collection = FileUploadCollection;
-			break;
-
-		case 'pick':
-			field.control = fields.Pick;
-			field.collection = RelationshipCollection;
-			break;
-	}
-
-	return field;
+// key: FieldClass
+const FieldClasses = {
+	'file-upload': fields.FileUpload,
+	'pick'       : fields.Pick
 };
 
 /**
@@ -33,7 +19,7 @@ const fieldFactory = function ( fieldType ) {
 export const podsMVFieldsInit = function ( fields ) {
 
 	return this.each( function () {
-		let data, fieldModel, fieldId, fieldControl, field;
+		let data, fieldModel, FieldClass, newField;
 
 		data = {
 			field_type: '',
@@ -45,7 +31,7 @@ export const podsMVFieldsInit = function ( fields ) {
 		};
 
 		// Combine data from all in-line data scripts in the container
-		jQuery( this ).find( 'script.pods-mv-field-data' ).each( function () {
+		jQuery( this ).find( SCRIPT_TARGET ).each( function () {
 				const thisData = jQuery.parseJSON( jQuery( this ).html() );
 				jQuery.extend( data, thisData );
 				jQuery( this ).remove();
@@ -55,23 +41,21 @@ export const podsMVFieldsInit = function ( fields ) {
 		// Ignore anything that doesn't have the field type set
 		if ( data.field_type !== undefined ) {
 
-			fieldControl = fieldFactory( data.field_type );
-			if ( fieldControl.control !== undefined ) {
+			FieldClass = FieldClasses[ data.field_type ];
+			if ( FieldClass !== undefined ) {
 				fieldModel = new PodsFieldModel( {
 					attributes: data.field_meta.field_attributes,
 					options   : data.field_meta.field_options
 				} );
 
-				fieldId = data.field_meta.field_attributes.id;
-
-				field = new fieldControl.control( {
+				newField = new FieldClass( {
 					el        : this,
 					model     : fieldModel,
-					collection: new fieldControl.collection( data.model_data )
+					collection: data.model_data
 				} );
 
-				field.render();
-				fields[ fieldId ] = field;
+				newField.render();
+				fields[ data.field_meta.field_attributes.id ] = newField;
 				jQuery( this ).trigger( 'render' );
 			}
 		}

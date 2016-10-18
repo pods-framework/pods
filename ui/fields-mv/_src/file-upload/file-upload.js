@@ -15,6 +15,9 @@ const Uploaders = [
 
 const UNLIMITED_FILES = 0;
 
+/**
+ * @extends Backbone.View
+ */
 export const FileUpload = Marionette.View.extend( {
 	template: _.template( template ),
 
@@ -25,6 +28,13 @@ export const FileUpload = Marionette.View.extend( {
 	},
 
 	uploader: {},
+
+	/**
+	 *
+	 */
+	onBeforeRender: function() {
+		this.collection = new FileUploadCollection( this.collection );
+	},
 
 	onRender: function () {
 		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );

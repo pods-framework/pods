@@ -1,6 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
+import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 import {PickFieldModel} from '~/ui/fields-mv/_src/pick/pick-field-model';
 import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
@@ -30,6 +31,13 @@ export const Pick = Marionette.View.extend( {
 	regions: {
 		list  : '.pods-pick-values',
 		addNew: '.pods-ui-add-new'
+	},
+
+	/**
+	 *
+	 */
+	onBeforeRender: function() {
+		this.collection = new RelationshipCollection( this.collection );
 	},
 
 	/**

@@ -57,7 +57,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
-		this.fieldOptions = this.fieldModel.get( 'options' );
+		this.fieldConfig = this.fieldModel.get( 'fieldConfig' );
 	},
 
 	/**
@@ -67,7 +67,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @returns {*}
 	 */
 	childView: function ( item ) {
-		if ( this.fieldOptions.optgroup ) {
+		if ( this.fieldConfig.optgroup ) {
 			return Optgroup;
 		}
 		else {
@@ -85,7 +85,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	childViewOptions: function ( model, index ) {
 		let returnOptions = { fieldModel: this.fieldModel };
 
-		if ( this.fieldOptions.optgroup ) {
+		if ( this.fieldConfig.optgroup ) {
 			returnOptions.collection = new RelationshipCollection( model.get( 'collection' ) );
 		}
 
@@ -102,7 +102,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		let data = this.model ? this.model.toJSON() : {};
 
 		data.htmlAttr = fieldModel.get( 'attributes' );
-		data.options = fieldModel.get( 'options' );
+		data.fieldConfig = fieldModel.get( 'fieldConfig' );
 
 		return data;
 	},
@@ -113,19 +113,19 @@ export const SelectView = Marionette.CollectionView.extend( {
 	attributes: function () {
 
 		/**
-		 * @param {string} fieldAttributes.name
-		 * @param {string} fieldAttributes.class
-		 * @param {string} fieldAttributes.name_clean
-		 * @param {string} fieldAttributes.id
+		 * @param {string} htmlAttr.name
+		 * @param {string} htmlAttr.class
+		 * @param {string} htmlAttr.name_clean
+		 * @param {string} htmlAttr.id
 		 *
-		 * @param {string} fieldOptions.pick_format_type 'single' or 'multi'
+		 * @param {string} fieldConfig.pick_format_type 'single' or 'multi'
 		 */
 		const fieldModel = this.options.fieldModel;
 		const htmlAttr = fieldModel.get( 'htmlAttr' );
-		const fieldOptions = fieldModel.get( 'options' );
+		const fieldConfig = fieldModel.get( 'fieldConfig' );
 
 		let name = htmlAttr.name;
-		if ( fieldOptions.pick_format_type === 'multi' ) {
+		if ( fieldConfig.pick_format_type === 'multi' ) {
 			name = name + '[]';
 		}
 		return {
@@ -134,7 +134,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			'data-name-clean': htmlAttr.name_clean,
 			'id'             : htmlAttr.id,
 			'tabindex'       : '2',
-			'multiple'       : ( fieldOptions.pick_format_type === 'multi' )
+			'multiple'       : ( fieldConfig.pick_format_type === 'multi' )
 		};
 	},
 

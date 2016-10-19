@@ -77,8 +77,8 @@ export const FileUpload = PodsMVFieldLayout.extend( {
 	 * @param {Object[]} data An array of model objects to be added
 	 */
 	onAddedFiles: function ( data ) {
-		const options = this.model.get( 'options' );
-		const fileLimit = +options[ 'file_limit' ]; // Unary plus to force to number
+		const fieldConfig = this.model.get( 'fieldConfig' );
+		const fileLimit = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
 		let newCollection, filteredModels;
 
 		// Get a copy of the existing collection with the new files added
@@ -100,8 +100,8 @@ export const FileUpload = PodsMVFieldLayout.extend( {
 	},
 
 	createUploader: function () {
-		const options = this.model.get( 'options' );
-		const targetUploader = options[ 'file_uploader' ];
+		const fieldConfig = this.model.get( 'fieldConfig' );
+		const targetUploader = fieldConfig[ 'file_uploader' ];
 		let Uploader;
 
 		jQuery.each( Uploaders, function ( index, thisUploader ) {
@@ -116,7 +116,7 @@ export const FileUpload = PodsMVFieldLayout.extend( {
 				// We provide regular DOM element for the button
 				browseButton: this.getRegion( 'form' ).getEl( '.pods-flex-add' ).get(),
 				uiRegion    : this.getRegion( 'uiRegion' ),
-				fieldOptions: options
+				fieldConfig : fieldConfig
 			} );
 			return this.uploader;
 		}

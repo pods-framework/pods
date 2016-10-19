@@ -5,7 +5,7 @@
 		value="<%- id %>>">
 <ul class="pods-flex-meta relationship-item">
 	<li class="pods-flex-col pods-flex-handle"><span>Reorder</span></li>
-	<% if ( 1 == options.pick_show_icon && '' != icon ) { %>
+	<% if ( 1 == fieldConfig.pick_show_icon && '' != icon ) { %>
 		<li class="pods-flex-col pods-flex-icon">
 			<img class="pinkynail" src="<%- icon %>" alt="Icon">
 		</li>
@@ -14,10 +14,10 @@
 		<%= name %>
 	</li>
 	<li class="pods-flex-col pods-flex-remove"><a href="#remove">Remove</a></li>
-	<% if ( 1 == options.pick_show_view_link && '' != link ) { %>
+	<% if ( 1 == fieldConfig.pick_show_view_link && '' != link ) { %>
 		<li class="pods-flex-col pods-flex-link"><a href="<%- link %>" target="_blank">View</a></li>
 	<% } %>
-	<% if ( 1 == options.pick_show_edit_link && '' != edit_link ) { %>
+	<% if ( 1 == fieldConfig.pick_show_edit_link && '' != edit_link ) { %>
 		<li class="pods-flex-col pods-flex-edit"><a href="<%- edit_link %>" target="_blank">Edit</a></li>
 	<% } %>
 </ul>

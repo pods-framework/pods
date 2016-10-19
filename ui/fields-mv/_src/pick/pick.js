@@ -48,10 +48,10 @@ export const Pick = PodsMVFieldLayout.extend( {
 	onRender: function () {
 		let viewName, View, list, addNew;
 
-		this.fieldOptions = new PickFieldModel( this.model.get( 'options' ) );
+		this.fieldConfig = new PickFieldModel( this.model.get( 'fieldConfig' ) );
 
 		// Setup the view to be used
-		viewName = this.fieldOptions.get( 'view_name' );
+		viewName = this.fieldConfig.get( 'view_name' );
 		if ( views[ viewName ] === undefined ) {
 			throw new Error( `Invalid view name "${viewName}"` );
 		}
@@ -60,7 +60,7 @@ export const Pick = PodsMVFieldLayout.extend( {
 		this.showChildView( 'list', list );
 
 		// Show Add New?
-		if ( this.fieldOptions.get( 'iframe_src' ) !== '' ) {
+		if ( this.fieldConfig.get( 'iframe_src' ) !== '' ) {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}
@@ -83,11 +83,11 @@ export const Pick = PodsMVFieldLayout.extend( {
 	 * @param childView
 	 */
 	onChildviewAddNewClick: function ( childView ) {
-		const options = this.model.get( 'options' );
+		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		const modalFrame = new IframeFrame( {
 			title: 'The Title',
-			src  : options.iframe_src
+			src  : fieldConfig.iframe_src
 		} );
 		modalFrame.modal.open();
 	},

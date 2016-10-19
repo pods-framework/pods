@@ -19,7 +19,7 @@ export const PodsFieldView = Marionette.View.extend( {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};
 
-		data.attr = fieldModel.get( 'attributes' );
+		data.htmlAttr = fieldModel.get( 'htmlAttr' );
 		data.options = fieldModel.get( 'options' );
 
 		return data;
@@ -27,14 +27,14 @@ export const PodsFieldView = Marionette.View.extend( {
 } );
 
 /**
- *
+ * Top-level "main field container"
  */
 export const PodsMVFieldLayout = Marionette.View.extend( {
 
 	initialize: function ( options ) {
 		this.model = new PodsFieldModel( {
-			attributes: options.fieldAttributes,
-			options   : options.fieldOptions
+			htmlAttr: options.htmlAttr,
+			options : options.fieldOptions
 		} );
 
 		this.fieldData = options.fieldData;

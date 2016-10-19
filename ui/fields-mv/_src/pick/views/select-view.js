@@ -26,6 +26,8 @@ export const SelectItem = PodsFieldView.extend( {
 
 /**
  * optgroup
+ *
+ * @extends Backbone.View
  */
 export const Optgroup = PodsFieldListView.extend( {
 	tagName  : 'optgroup',
@@ -40,6 +42,8 @@ export const Optgroup = PodsFieldListView.extend( {
 
 /**
  * select
+ *
+ * @extends Backbone.View
  */
 export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
@@ -97,7 +101,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};
 
-		data.attr = fieldModel.get( 'attributes' );
+		data.htmlAttr = fieldModel.get( 'attributes' );
 		data.options = fieldModel.get( 'options' );
 
 		return data;
@@ -117,18 +121,18 @@ export const SelectView = Marionette.CollectionView.extend( {
 		 * @param {string} fieldOptions.pick_format_type 'single' or 'multi'
 		 */
 		const fieldModel = this.options.fieldModel;
-		const fieldAttributes = fieldModel.get( 'attributes' );
+		const htmlAttr = fieldModel.get( 'htmlAttr' );
 		const fieldOptions = fieldModel.get( 'options' );
 
-		let name = fieldAttributes.name;
+		let name = htmlAttr.name;
 		if ( fieldOptions.pick_format_type === 'multi' ) {
 			name = name + '[]';
 		}
 		return {
 			'name'           : name,
-			'class'          : fieldAttributes.class,
-			'data-name-clean': fieldAttributes.name_clean,
-			'id'             : fieldAttributes.id,
+			'class'          : htmlAttr.class,
+			'data-name-clean': htmlAttr.name_clean,
+			'id'             : htmlAttr.id,
 			'tabindex'       : '2',
 			'multiple'       : ( fieldOptions.pick_format_type === 'multi' )
 		};

@@ -43,10 +43,10 @@ export const podsMVFieldsInit = function ( fields ) {
 			FieldClass = FieldClasses[ data.field_type ];
 			if ( FieldClass !== undefined ) {
 				newField = new FieldClass( {
-					el             : this,
-					fieldAttributes: data.field_meta.field_attributes,
-					fieldOptions   : data.field_meta.field_options,
-					fieldData      : data.model_data
+					el          : this,
+					htmlAttr    : data.field_meta.field_attributes,
+					fieldOptions: data.field_meta.field_options,
+					fieldData   : data.model_data
 				} );
 
 				// Render the field, stash a reference, trigger an event for the outside world

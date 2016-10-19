@@ -1,8 +1,8 @@
 <input
-	name="<%- attr.name %>[<%- id %>][id]"
-	data-name-clean="<%- attr.name_clean %>-id"
-	id="<%- attr.id %>-<%- id %>-id"
-	class="<%- attr.class %>"
+	name="<%- htmlAttr.name %>[<%- id %>][id]"
+	data-name-clean="<%- htmlAttr.name_clean %>-id"
+	id="<%- htmlAttr.id %>-<%- id %>-id"
+	class="<%- htmlAttr.class %>"
 	type="hidden"
 	value="<%- id %>" />
 <ul class="pods-flex-meta media-item">
@@ -13,10 +13,10 @@
 	<li class="pods-flex-col pods-flex-name">
 		<% if ( 0 != options.file_edit_title ) { %>
 			<input
-				name="<%- attr.name %>[<%- id %>][title]"
-				data-name-clean="<%- attr.name_clean %>-title"
-				id="pods-form-ui-<%- attr.name_clean %>-<%- id %>-title"
-				class="pods-form-ui-field-type-text pods-form-ui-field-name-<%- attr.name_clean %>-title"
+				name="<%- htmlAttr.name %>[<%- id %>][title]"
+				data-name-clean="<%- htmlAttr.name_clean %>-title"
+				id="pods-form-ui-<%- htmlAttr.name_clean %>-<%- id %>-title"
+				class="pods-form-ui-field-type-text pods-form-ui-field-name-<%- htmlAttr.name_clean %>-title"
 				type="text"
 				value="<%- name %>"
 				tabindex="2"

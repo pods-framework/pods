@@ -1,13 +1,13 @@
 <div class="pods-field pods-boolean">
 	<input
-		name="<%- attr.name %>[<%= ordinal %>]"
+		name="<%- htmlAttr.name %>[<%= ordinal %>]"
 		<%= selected ? 'checked="checked"' : '' %>
-		data-name-clean="<%- attr.name_clean %>"
+		data-name-clean="<%- htmlAttr.name_clean %>"
 		data-label="<%- options.label %>"
-		id="<%- attr.id %><%= ordinal %>"
+		id="<%- htmlAttr.id %><%= ordinal %>"
 		class="pods-form-ui-field-type-pick"
 		type="checkbox" tabindex="2" value="<%- id %>">
-	<label class="pods-form-ui-label" for="<%- attr.id %><%= ordinal %>">
+	<label class="pods-form-ui-label" for="<%- htmlAttr.id %><%= ordinal %>">
 		<%= name %>
 	</label>
 </div>

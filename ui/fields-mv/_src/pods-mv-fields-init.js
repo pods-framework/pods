@@ -1,6 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
 import * as fields from '~/ui/fields-mv/_src/field-manifest';
-import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 
 // jQuery selector for inline scripts with field definitions
 const SCRIPT_TARGET = 'script.pods-mv-field-data';
@@ -43,17 +42,14 @@ export const podsMVFieldsInit = function ( fields ) {
 
 			FieldClass = FieldClasses[ data.field_type ];
 			if ( FieldClass !== undefined ) {
-				fieldModel = new PodsFieldModel( {
-					attributes: data.field_meta.field_attributes,
-					options   : data.field_meta.field_options
-				} );
-
 				newField = new FieldClass( {
-					el        : this,
-					model     : fieldModel,
-					collection: data.model_data
+					el             : this,
+					fieldAttributes: data.field_meta.field_attributes,
+					fieldOptions   : data.field_meta.field_options,
+					fieldData      : data.model_data
 				} );
 
+				// Render the field, stash a reference, trigger an event for the outside world
 				newField.render();
 				fields[ data.field_meta.field_attributes.id ] = newField;
 				jQuery( this ).trigger( 'render' );

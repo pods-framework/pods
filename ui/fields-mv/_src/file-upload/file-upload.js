@@ -1,12 +1,15 @@
 /*global jQuery, _, Backbone, Marionette */
 import template from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
 
-import { FileUploadCollection, FileUploadModel } from '~/ui/fields-mv/_src/file-upload/file-upload-model';
-import { FileUploadList } from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';
-import { FileUploadForm } from '~/ui/fields-mv/_src/file-upload/views/file-upload-form';
+import {PodsMVFieldLayout} from '~/ui/fields-mv/_src/core/pods-field-views';
 
-import { Plupload } from '~/ui/fields-mv/_src/file-upload/uploaders/plupload';
-import { MediaModal } from '~/ui/fields-mv/_src/file-upload/uploaders/media-modal';
+import {FileUploadCollection, FileUploadModel} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
+
+import {FileUploadList} from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';
+import {FileUploadForm} from '~/ui/fields-mv/_src/file-upload/views/file-upload-form';
+
+import {Plupload} from '~/ui/fields-mv/_src/file-upload/uploaders/plupload';
+import {MediaModal} from '~/ui/fields-mv/_src/file-upload/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,
@@ -18,7 +21,7 @@ const UNLIMITED_FILES = 0;
 /**
  * @extends Backbone.View
  */
-export const FileUpload = Marionette.View.extend( {
+export const FileUpload = PodsMVFieldLayout.extend( {
 	template: _.template( template ),
 
 	regions: {
@@ -32,8 +35,8 @@ export const FileUpload = Marionette.View.extend( {
 	/**
 	 *
 	 */
-	onBeforeRender: function() {
-		this.collection = new FileUploadCollection( this.collection );
+	onBeforeRender: function () {
+		this.collection = new FileUploadCollection( this.fieldData );
 	},
 
 	onRender: function () {

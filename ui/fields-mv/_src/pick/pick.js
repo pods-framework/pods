@@ -1,16 +1,18 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from '~/ui/fields-mv/_src/pick/pick-layout.html';
 
+import {PodsMVFieldLayout} from '~/ui/fields-mv/_src/core/pods-field-views';
+import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
+
 import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 import {PickFieldModel} from '~/ui/fields-mv/_src/pick/pick-field-model';
+
 import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
 import {Select2View} from '~/ui/fields-mv/_src/pick/views/select2-view';
 import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
 import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
-
-import {IframeFrame} from '~/ui/fields-mv/_src/core/iframe-frame';
 
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 
@@ -25,7 +27,7 @@ const views = {
 /**
  * @extends Backbone.View
  */
-export const Pick = Marionette.View.extend( {
+export const Pick = PodsMVFieldLayout.extend( {
 	template: _.template( template ),
 
 	regions: {
@@ -36,8 +38,8 @@ export const Pick = Marionette.View.extend( {
 	/**
 	 *
 	 */
-	onBeforeRender: function() {
-		this.collection = new RelationshipCollection( this.collection );
+	onBeforeRender: function () {
+		this.collection = new RelationshipCollection( this.fieldData );
 	},
 
 	/**
@@ -50,7 +52,7 @@ export const Pick = Marionette.View.extend( {
 
 		// Setup the view to be used
 		viewName = this.fieldOptions.get( 'view_name' );
-		if( views[ viewName ] === undefined ) {
+		if ( views[ viewName ] === undefined ) {
 			throw new Error( `Invalid view name "${viewName}"` );
 		}
 		View = views[ viewName ];

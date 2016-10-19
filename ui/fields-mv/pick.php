@@ -29,19 +29,19 @@ if ( is_array( $data ) && is_array( current( $data ) ) ) {
 	}
 } else { // Ungrouped (no optgroups)
 	$options[ 'optgroup' ] = false;
-	$model_data = PodsField_Pick::build_model_data( $data, $value, $options );
+	$model_data            = PodsField_Pick::build_model_data( $data, $value, $options );
 }
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
 $attributes = array_map( 'esc_attr', $attributes );
 $field_meta = array(
-	'field_attributes' => array(
+	'htmlAttr' => array(
 		'id'         => $attributes[ 'id' ],
 		'class'      => $attributes[ 'class' ],
 		'name'       => $attributes[ 'name' ],
 		'name_clean' => $attributes[ 'data-name-clean' ]
 	),
-	'field_options'    => $options
+	'fieldConfig'      => $options
 );
 
 // Set the file name and args based on the content type of the relationship
@@ -92,13 +92,18 @@ $iframe_src = '';
 if ( ! empty( $file_name ) ) {
 	$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
 }
-$field_meta[ 'field_options' ][ 'iframe_src' ] = $iframe_src;
+$field_meta[ 'fieldConfig' ][ 'iframe_src' ] = $iframe_src;
 
 // Assemble the URL
 $url = add_query_arg( $query_args, admin_url( $file_name ) );
 
 include_once PODS_DIR . 'classes/PodsMVFieldData.php';
-$field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
+$mvdata     = array(
+	'fieldData'   => $model_data,
+	'fieldConfig' => $field_meta[ 'fieldConfig' ],
+	'htmlAttr'    => $field_meta[ 'htmlAttr' ]
+);
+$field_data = new PodsMVFieldData( $field_type, $mvdata );
 ?>
 <div class="pods-form-ui-field">
 	<?php $field_data->emit_script(); ?>

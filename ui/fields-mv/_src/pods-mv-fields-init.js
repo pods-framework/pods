@@ -11,22 +11,20 @@ const FieldClasses = {
 };
 
 /**
- * Custom jQuery plugin to handle Pods Fields
+ * Custom jQuery plugin to handle Pods MV Fields
  *
  * @param {Object} fields Object to which new fields will be added, in { fieldId: fieldInstance } format
  */
 export const podsMVFieldsInit = function ( fields ) {
 
 	return this.each( function () {
-		let data, fieldModel, FieldClass, newField;
+		let data, FieldClass, newField;
 
 		data = {
-			field_type: '',
-			field_meta: {
-				field_attributes: {},
-				field_options   : {}
-			},
-			model_data: {}
+			fieldType  : '',
+			htmlAttr   : {},
+			fieldConfig: {},
+			fieldData  : {}
 		};
 
 		// Combine data from all in-line data scripts in the container
@@ -38,20 +36,20 @@ export const podsMVFieldsInit = function ( fields ) {
 		);
 
 		// Ignore anything that doesn't have the field type set
-		if ( data.field_type !== undefined ) {
+		if ( data.fieldType !== undefined ) {
 
-			FieldClass = FieldClasses[ data.field_type ];
+			FieldClass = FieldClasses[ data.fieldType ];
 			if ( FieldClass !== undefined ) {
 				newField = new FieldClass( {
 					el         : this,
-					htmlAttr   : data.field_meta.field_attributes,
-					fieldConfig: data.field_meta.field_options,
-					fieldData  : data.model_data
+					htmlAttr   : data.htmlAttr,
+					fieldConfig: data.fieldConfig,
+					fieldData  : data.fieldData
 				} );
 
 				// Render the field, stash a reference, trigger an event for the outside world
 				newField.render();
-				fields[ data.field_meta.field_attributes.id ] = newField;
+				fields[ data.htmlAttr.id ] = newField;
 				jQuery( this ).trigger( 'render' );
 			}
 		}

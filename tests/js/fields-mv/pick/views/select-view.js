@@ -1,6 +1,6 @@
 /*global assert */
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
-import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
+import {PodsMVFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
 
 let pickFormatTypes = [
@@ -13,7 +13,7 @@ let pickFormatTypes = [
  */
 describe( 'SelectView', function () {
 	let view;
-	let fieldModel = new PodsFieldModel();
+	let fieldModel = new PodsMVFieldModel();
 	let collection = new RelationshipCollection();
 
 	/**
@@ -30,11 +30,11 @@ describe( 'SelectView', function () {
 	/**
 	 * Test single/multi select
 	 */
-	pickFormatTypes.forEach( function ( option ) {
+	pickFormatTypes.forEach( function ( thisFormatType ) {
 		let multiple;
 
-		it( 'respects ' + option.type + ' select', function () {
-			fieldModel.set( 'options', { pick_format_type: option.type } );
+		it( 'respects ' + thisFormatType.type + ' select', function () {
+			fieldModel.set( 'fieldConfig', { pick_format_type: thisFormatType.type } );
 
 			view = new SelectView( {
 				fieldModel: fieldModel
@@ -43,7 +43,7 @@ describe( 'SelectView', function () {
 			jQuery( document.body ).append( view.$el );
 
 			multiple = jQuery( 'select' ).prop( 'multiple' );
-			assert.equal( multiple, option.isMultiple );
+			assert.equal( multiple, thisFormatType.isMultiple );
 		} );
 	} );
 

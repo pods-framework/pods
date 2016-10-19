@@ -1,5 +1,5 @@
 /*global assert */
-import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
+import {PodsMVFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 import {Pick} from '~/ui/fields-mv/_src/pick/pick';
 
 /**
@@ -7,7 +7,7 @@ import {Pick} from '~/ui/fields-mv/_src/pick/pick';
  */
 describe( 'Pick field', function () {
 	let field, $el;
-	let fieldModel = new PodsFieldModel();
+	let fieldModel = new PodsMVFieldModel();
 
 	/**
 	 * Pre-test setup, before every it()
@@ -44,7 +44,7 @@ describe( 'Pick field', function () {
 	 *
 	 */
 	it( 'Throws an exception on invalid view name', function () {
-		fieldModel.set( 'options', { view_name: 'not a view' } );
+		fieldModel.set( 'fieldConfig', { view_name: 'not a view' } );
 
 		field = new Pick( {
 			el   : $el,

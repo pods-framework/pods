@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
-export const PodsFieldModel = Backbone.Model.extend( {
+export const PodsMVFieldModel = Backbone.Model.extend( {
 	defaults: {
 		htmlAttr   : {},
 		fieldConfig: {}

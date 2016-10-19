@@ -1,4 +1,6 @@
 /*global jQuery, _, Backbone, Marionette */
+import {PodsMVFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
+
 import * as fields from '~/ui/fields-mv/_src/field-manifest';
 
 // jQuery selector for inline scripts with field definitions
@@ -18,14 +20,9 @@ const FieldClasses = {
 export const podsMVFieldsInit = function ( fields ) {
 
 	return this.each( function () {
-		let data, FieldClass, newField;
+		let data, FieldClass, newField, fieldModel;
 
-		data = {
-			fieldType  : '',
-			htmlAttr   : {},
-			fieldConfig: {},
-			fieldData  : {}
-		};
+		data = { fieldType: '' };
 
 		// Combine data from all in-line data scripts in the container
 		jQuery( this ).find( SCRIPT_TARGET ).each( function () {
@@ -38,13 +35,20 @@ export const podsMVFieldsInit = function ( fields ) {
 		// Ignore anything that doesn't have the field type set
 		if ( data.fieldType !== undefined ) {
 
+			// Lookup the class to instantiate by key
 			FieldClass = FieldClasses[ data.fieldType ];
+
 			if ( FieldClass !== undefined ) {
-				newField = new FieldClass( {
-					el         : this,
+				// Assemble the model
+				fieldModel = new PodsMVFieldModel( {
 					htmlAttr   : data.htmlAttr,
-					fieldConfig: data.fieldConfig,
-					fieldData  : data.fieldData
+					fieldConfig: data.fieldConfig
+				} );
+
+				newField = new FieldClass( {
+					el       : this,
+					model    : fieldModel,
+					fieldData: data.fieldData
 				} );
 
 				// Render the field, stash a reference, trigger an event for the outside world

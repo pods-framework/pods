@@ -1,5 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
-import {PodsFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
+import {PodsMVFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 
 /**
  *
@@ -32,11 +32,6 @@ export const PodsFieldView = Marionette.View.extend( {
 export const PodsMVFieldLayout = Marionette.View.extend( {
 
 	initialize: function ( options ) {
-		this.model = new PodsFieldModel( {
-			htmlAttr   : options.htmlAttr,
-			fieldConfig: options.fieldConfig
-		} );
-
 		this.fieldData = options.fieldData;
 	}
 } );

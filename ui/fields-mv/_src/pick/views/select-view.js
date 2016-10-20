@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, select2, wp */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 import {RelationshipCollection} from '~/ui/fields-mv/_src/pick/relationship-model';
@@ -136,6 +136,12 @@ export const SelectView = Marionette.CollectionView.extend( {
 			'tabindex'       : '2',
 			'multiple'       : ( fieldConfig.pick_format_type === 'multi' )
 		};
+	},
+
+	onAttach: function() {
+		if ( this.fieldConfig.view_name === 'select2' ) {
+			this.$el.select2();
+		}
 	},
 
 	/**

@@ -10,7 +10,6 @@ import {PickFieldModel} from '~/ui/fields-mv/_src/pick/pick-field-model';
 import {RadioView} from '~/ui/fields-mv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/fields-mv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/fields-mv/_src/pick/views/select-view';
-import {Select2View} from '~/ui/fields-mv/_src/pick/views/select2-view';
 import {FlexView} from '~/ui/fields-mv/_src/pick/views/flex-view';
 import {AddNew} from '~/ui/fields-mv/_src/pick/views/add-new';
 
@@ -19,8 +18,8 @@ const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 const views = {
 	'checkbox': CheckboxView,
 	'select'  : SelectView,
+	'select2' : SelectView,  // SelectView handles select2 as well
 	'radio'   : RadioView,
-	'select2' : Select2View,
 	'flexible': FlexView
 };
 

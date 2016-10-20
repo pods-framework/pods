@@ -8,6 +8,9 @@
  */
 wp_enqueue_style( 'pods-flex' );
 wp_enqueue_script( 'pods-mv-fields' );
+wp_enqueue_style( 'pods-select2' );
+wp_enqueue_script( 'pods-select2' );
+
 
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );

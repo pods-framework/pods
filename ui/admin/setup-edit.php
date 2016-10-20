@@ -350,7 +350,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
     $field = $pod;
 
     include PODS_DIR . 'ui/admin/field-option.php';
-    
+
 ?>
 </div>
 <?php
@@ -816,8 +816,8 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        fieldModel = new PodsMVFields.models.PodsFieldModel( {
-            attributes: {
+        fieldModel = new PodsMVFields.models.PodsMVFieldModel( {
+            htmlAttr: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",
                 "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
                 name      : "field_data[" + id + "][sister_id]",

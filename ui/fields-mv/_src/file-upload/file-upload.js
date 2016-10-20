@@ -36,7 +36,9 @@ export const FileUpload = PodsMVFieldLayout.extend( {
 	 *
 	 */
 	onBeforeRender: function () {
-		this.collection = new FileUploadCollection( this.fieldData );
+		if ( this.collection === undefined ) {
+			this.collection = new FileUploadCollection( this.fieldData );
+		}
 	},
 
 	onRender: function () {

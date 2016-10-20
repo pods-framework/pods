@@ -38,7 +38,9 @@ export const Pick = PodsMVFieldLayout.extend( {
 	 *
 	 */
 	onBeforeRender: function () {
-		this.collection = new RelationshipCollection( this.fieldData );
+		if ( this.collection === undefined ) {
+			this.collection = new RelationshipCollection( this.fieldData );
+		}
 	},
 
 	/**

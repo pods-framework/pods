@@ -1975,6 +1975,9 @@ class PodsAdmin {
      * Get components administration UI
      */
     public function admin_components () {
+        if ( ! is_object( PodsInit::$components ) )
+            return;
+
         $components = PodsInit::$components->components;
 
         $view = pods_var( 'view', 'get', 'all', null, true );

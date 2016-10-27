@@ -65,7 +65,7 @@
         'dateFormat' => $date_format[ $format_value ],
         'changeMonth' => true,
         'changeYear' => true,
-        'firstDay' => (int) get_option('start_of_week')
+        'firstDay' => (int) get_option( 'start_of_week', 0 )
     );
 
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

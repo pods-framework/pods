@@ -39,7 +39,7 @@
         'dateFormat' => $date_format[ pods_var( $form_field_type . '_format', $options, 'mdy', null, true ) ],
         'changeMonth' => true,
         'changeYear' => true,
-        'firstDay' => (int) get_option('start_of_week')
+        'firstDay' => (int) get_option( 'start_of_week', 0 )
     );
 
     $html5_format = 'Y-m-d';

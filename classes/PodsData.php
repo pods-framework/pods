@@ -2138,7 +2138,7 @@ class PodsData {
             $wpdb->term_relationships
         );
 
-        $showTables = $wpdb->get_results( 'SHOW TABLES in ' . DB_NAME, ARRAY_N );
+        $showTables = $wpdb->get_results( 'SHOW TABLES in ' . DB_NAME, ARRAY_A );
 
         $finalTables = array();
 
@@ -2198,7 +2198,7 @@ class PodsData {
     public static function get_column_data ( $column_name, $table ) {
 	    global $wpdb;
 
-        $describe_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_N );
+        $describe_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_A );
 
         $column_data = array();
 

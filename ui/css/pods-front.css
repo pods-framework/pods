@@ -9,7 +9,6 @@
 a.button {
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
-	-o-border-radius: 10px;
 	border-radius: 10px;
 	white-space: nowrap;
 	line-height: 15px;
@@ -33,7 +32,6 @@ a.button:active {
 .button-primary {
 	-webkit-border-radius: 11px;
 	-moz-border-radius: 11px;
-	-o-border-radius: 11px;
 	border-radius: 11px;
 	-webkit-box-sizing: content-box;
 	box-sizing: content-box;

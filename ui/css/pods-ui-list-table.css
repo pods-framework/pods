@@ -286,7 +286,7 @@ body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
     padding: 0 32px;
 }
 
-.pods-ui-posts-filter-popup p:after
+.pods-ui-posts-filter-popup p:after,
 .pods-ui-posts-filter-popup .pods-ui-posts-filters:after {
     content: ".";
     display: block;

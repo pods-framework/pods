@@ -488,10 +488,12 @@ class PodsAdmin {
 
         $parent = false;
 
-        if ( !empty( $admin_menus )
-             && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU )
-             && ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
-        ) {
+        // PODS_LIGHT disables all Pods components so remove the components menu
+        if ( defined( 'PODS_LIGHT' ) && true == PODS_LIGHT ) {
+            unset( $admin_menus['pods-components'] );
+        }
+
+        if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
                     continue;

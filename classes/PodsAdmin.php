@@ -562,7 +562,7 @@ class PodsAdmin {
             }
         }
 
-        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
+        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
             global $submenu_file;
             $components = PodsInit::$components->components;
             foreach ( $components as $component => $component_data ) {

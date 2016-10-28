@@ -111,7 +111,7 @@ function pods_sanitize_like( $input ) {
 	}
 	else {
 		global $wpdb;
-		$input = wp_unslash( $input );
+		$input = pods_unslash( $input );
 
 		if ( pods_version_check( 'wp', '4.0' ) ) {
 			$output = pods_sanitize( $wpdb->esc_like( $input ) );

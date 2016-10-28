@@ -488,7 +488,10 @@ class PodsAdmin {
 
         $parent = false;
 
-        if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
+        if ( !empty( $admin_menus )
+             && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU )
+             && ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
+        ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
                     continue;

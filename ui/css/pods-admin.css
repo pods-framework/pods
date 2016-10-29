@@ -379,10 +379,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field input[type="radio"] {
 	display: inline-block;
     left: 2px;
-    margin: 1px 7px 0 0;
+    margin: 1px 2px 1px 0;
     float: none;
-    margin-right: 2px;
-    margin-left: 0;
     vertical-align: middle;
 }
 

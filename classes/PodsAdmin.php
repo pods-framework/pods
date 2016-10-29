@@ -2491,7 +2491,7 @@ class PodsAdmin {
              * Ajax successful
              * @since  2.6.8
              */
-            do_action( "pods_ajax_success_{$method->name}", $params );
+            do_action( "pods_admin_ajax_success_{$method->name}", $params );
 
             if ( is_array( $output ) || is_object( $output ) )
                 wp_send_json( $output );

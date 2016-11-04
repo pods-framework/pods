@@ -212,6 +212,13 @@ class Pods_Templates_Frontier {
 			'slug' => 'pod_reference',
 			'groups' => array()
 		) );
+		add_meta_box( 'pod_reference', __( 'Magic Tag Reference', 'pods' ), array(
+			$this,
+			'render_metaboxes_custom'
+		), '_pods_template', 'side', 'default', array(
+			'slug' => 'tag_reference',
+			'groups' => array()
+		) );
 
 	}
 

@@ -98,7 +98,7 @@ class PodsField_Pick extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Relationship', 'pods' );
     }
 
     /**

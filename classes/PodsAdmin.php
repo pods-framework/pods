@@ -986,14 +986,14 @@ class PodsAdmin {
                 ),
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this post type in the admin.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'boolean_yes_label' => ''
                 ),
                 'show_in_menu' => array(
                     'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to show the post type in the admin menu.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,

@@ -51,7 +51,7 @@ class PodsField_Address extends PodsField {
 	 * @since 1.0
 	 */
 	public function __construct() {
-
+		self::$label = __( 'Address', 'pods' );
 	}
 
 	/**

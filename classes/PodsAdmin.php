@@ -1295,7 +1295,7 @@ class PodsAdmin {
                     'label' => __( 'Hierarchical', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'boolean',
-                    'default' => false,
+                    'default' => true,
                     'dependency' => true,
                     'boolean_yes_label' => ''
                 ),

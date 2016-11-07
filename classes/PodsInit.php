@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods
  */
@@ -229,6 +230,11 @@ class PodsInit {
 
 		if ( method_exists( $avatar, 'get_avatar' ) ) {
 			add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 4 );
+		}
+
+		// Add support for Post Meta Revisions
+		if ( class_exists( 'WP_Post_Meta_Revisioning' ) ) {
+			add_filter( 'wp_post_revision_meta_keys', array( $this, 'add_revision_fields' ) );
 		}
 	}
 
@@ -653,13 +659,13 @@ class PodsInit {
 				 * Default tax capabilities
 				 * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
 				 */
-				$capability_type = pods_var( 'capability_type', $taxonomy, 'default' );
+				$capability_type  = pods_var( 'capability_type', $taxonomy, 'default' );
 				$tax_capabilities = array();
 
 				if ( 'custom' == $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
 					if ( ! empty( $capability_type ) && 'default' != $capability_type ) {
-						$capability_type .=  '_terms';
+						$capability_type .= '_terms';
 						$tax_capabilities = array(
 							'manage_terms' => 'manage_' . $capability_type,
 							'edit_terms'   => 'edit_' . $capability_type,
@@ -1140,7 +1146,7 @@ class PodsInit {
 		delete_option( 'pods_framework_db_version' );
 		add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
-		self::$version = PODS_VERSION;
+		self::$version    = PODS_VERSION;
 		self::$db_version = PODS_DB_VERSION;
 
 		pods_api()->cache_flush_pods();
@@ -1493,7 +1499,16 @@ class PodsInit {
 		$rest_bases = pods_transient_get( 'pods_rest_bases' );
 
 		if ( empty( $rest_bases ) ) {
-	        $pods = pods_api()->load_pods( array( 'type' => array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ), 'fields' => false, 'table_info' => false ) );
+			$pods = pods_api()->load_pods( array( 'type'       => array(
+				'post_type',
+				'taxonomy',
+				'user',
+				'media',
+				'comment'
+			),
+			                                      'fields'     => false,
+			                                      'table_info' => false
+			) );
 
 			$rest_bases = array();
 
@@ -1536,5 +1551,16 @@ class PodsInit {
 			$rest_support_added = true;
 		}
 
+	}
+
+	public function add_revision_fields( $fields ) {
+		foreach ( pods_api()->load_pods() as $pod ) {
+			if ( 'post_type' == $pod['type'] && post_type_supports( $pod['name'], 'revisions' ) ) {
+				$fields = array_merge( $fields, wp_list_pluck( pods_api()->load_fields( array( 'pod' => $pod['name'] ) ), 'name' ) );
+				$fields = array_unique( $fields );
+			}
+		}
+
+		return $fields;
 	}
 }

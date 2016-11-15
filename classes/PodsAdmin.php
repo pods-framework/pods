@@ -327,6 +327,10 @@ class PodsAdmin {
                     if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
                         continue;
 
+                    // Check UI settings
+                    if ( 1 != pods_var( 'show_ui', $pod[ 'options' ], 0 ) || 1 != pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) )
+                        continue;
+
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
                     $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
@@ -982,14 +986,14 @@ class PodsAdmin {
                 ),
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this post type in the admin.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'boolean_yes_label' => ''
                 ),
                 'show_in_menu' => array(
                     'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to show the post type in the admin menu.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
@@ -1189,10 +1193,19 @@ class PodsAdmin {
             $options[ 'admin-ui' ] = array(
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'show_in_menu' => array(
+                    'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
+                    'help' => __( 'Whether to show the taxonomy in the admin menu.', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'public', $pod, true ),
+                    'dependency' => true,
+                    'depends-on' => array( 'show_ui' => true ),
                     'boolean_yes_label' => ''
                 ),
                 'menu_name' => array(

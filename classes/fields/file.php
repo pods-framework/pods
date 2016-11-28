@@ -112,6 +112,11 @@ class PodsField_File extends PodsField {
                 'default' => 1,
                 'type' => 'boolean'
             ),
+            self::$type . '_edit_description' => array(
+                'label' => __( 'Editable Description', 'pods' ),
+                'default' => 1,
+                'type' => 'boolean'
+            ),
             self::$type . '_linked' => array(
                 'label' => __( 'Link to File in editor', 'pods' ),
                 'default' => 0,
@@ -392,10 +397,14 @@ class PodsField_File extends PodsField {
         // File title / field handling
         foreach ( $value as $id ) {
             $title = false;
+            $description = false;
 
             if ( is_array( $id ) ) {
                 if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) )
                     $title = trim( $id[ 'title' ] );
+
+                if ( isset( $id[ 'description' ] ) && 0 < strlen( trim( $id[ 'description' ] ) ) )
+                    $description = trim( $id[ 'description' ] );
 
                 if ( isset( $id[ 'id' ] ) )
                     $id = (int) $id[ 'id' ];
@@ -406,13 +415,17 @@ class PodsField_File extends PodsField {
             if ( empty( $id ) )
                 continue;
 
+            $attachment_data = array();
             // Update the title if set
             if ( false !== $title && 1 == pods_var( self::$type . '_edit_title', $options, 0 ) ) {
-                $attachment_data = array(
-                    'ID' => $id,
-                    'post_title' => $title
-                );
-
+                $attachment_data['post_title'] = $title;
+            }
+            // Update the description if set
+            if ( false !== $description && 1 == pods_var( self::$type . '_edit_description', $options, 0 ) ) {
+                $attachment_data['post_content'] = $description;
+            }
+            if ( ! empty( $attachment_data ) ) {
+                $attachment_data['ID'] = $id;
                 self::$api->save_wp_object( 'media', $attachment_data );
             }
         }
@@ -482,7 +495,7 @@ class PodsField_File extends PodsField {
      * @return string
      * @since 2.0
      */
-    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $linked = false, $link = null ) {
+    public function markup( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null, $description = null, $linked = false, $link = null ) {
         // Preserve current file type
         $field_type = PodsForm::$field_type;
 
@@ -500,6 +513,9 @@ class PodsField_File extends PodsField {
 
         if ( empty( $name ) )
             $name = '{{name}}';
+
+        if ( is_null( $description ) )
+            $description = '{{description}}';
 
         if ( empty( $link ) )
             $link = '{{link}}';
@@ -525,6 +541,14 @@ class PodsField_File extends PodsField {
                     echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
                 else
                     echo ( empty( $name ) ? '{{name}}' : $name );
+                ?>
+            </li>
+            <li class="pods-file-col pods-file-description">
+                <?php
+                if ( $editable )
+                    echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][description]', $description, 'text' );
+                else
+                    echo ( empty( $description ) ? '{{description}}' : $description );
                 ?>
             </li>
 

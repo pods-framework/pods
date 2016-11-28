@@ -145,14 +145,16 @@ else
 
             $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-            $title = $attachment->post_title;
+            $title       = $attachment->post_title;
+            $description = $attachment->post_content;
 
-            if ( 0 == $title_editable )
+            if ( 0 == $title_editable ) {
                 $title = basename( $attachment->guid );
+            }
 
-			$link = wp_get_attachment_url( $attachment->ID );
+            $link = wp_get_attachment_url( $attachment->ID );
 
-            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title, $linked, $link );
+            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[0], $title, $description, $linked, $link );
         }
         ?></ul>
 
@@ -162,7 +164,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo esc_attr( $css_id ); ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, $linked ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable, null, null, null, null, $linked ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo esc_attr( $css_id ); ?>-progress-template">
@@ -286,6 +288,7 @@ else
                     id : json.ID,
                     icon : json.thumbnail,
                     name : json.post_title,
+                    description : json.post_content,
                     link : json.link
                 };
 

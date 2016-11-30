@@ -31,6 +31,6 @@
     "grunt-svn-checkout": "^0.1.1",
     "grunt-svn-copy": "^0.1.4",
     "grunt-text-replace": "^0.4.0",
-    "load-grunt-tasks": "^0.6.0"
+    "load-grunt-tasks": "^3.5.0"
   }
 }

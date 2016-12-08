@@ -324,7 +324,16 @@ class PodsAdmin {
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
-                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
+                    // Default taxonomy capability
+                    $capability = 'manage_categories';
+
+                    if ( ! empty( $pod[ 'options' ][ 'capability_type' ] ) ) {
+                        if ( 'custom' == $pod[ 'options' ][ 'capability_type' ] && ! empty( $pod[ 'options' ][ 'capability_type_custom' ] ) ) {
+                            $capability = 'manage_' . (string) $pod[ 'options' ][ 'capability_type_custom' ] . '_terms';
+                        }
+                    }
+
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], $capability ) ) )
                         continue;
 
                     // Check UI settings

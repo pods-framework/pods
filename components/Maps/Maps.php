@@ -418,8 +418,8 @@ class Pods_Component_Maps extends PodsComponent {
 
 		if ( ! empty ( $options['address_map'] ) ) {
 			$provider = get_class( self::$provider );
-			if ( method_exists( $provider, 'pods_ui_field_view_extra' ) ) {
-				$view = $provider::pods_ui_field_view_extra();
+			if ( is_callable( array( $provider, 'pods_ui_field_view_extra' ) ) ) {
+				$view = self::$provider->pods_ui_field_view_extra();
 			}
 
 			if ( $view && file_exists( $view ) ) {

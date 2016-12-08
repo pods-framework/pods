@@ -3,6 +3,10 @@ wp_enqueue_script( 'googlemaps' );
 wp_enqueue_script( 'pods-maps' );
 wp_enqueue_style( 'pods-maps' );
 
+if ( ! isset( $form_field_type ) ) {
+	$form_field_type = PodsForm::$field_type;
+}
+
 $map_options = array();
 if ( ! empty( $options[ $type . '_map_zoom' ] ) ) {
 	$map_options['zoom'] = (int) $options[ $type . '_map_zoom' ];
@@ -364,7 +368,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					}
 				} );
 				// Remove empty lines
-				lines = html.split( '<br>' );
+				var lines = html.split( '<br>' );
 				$.each( lines, function( key, line ) {
 					if ( line == '{{PODS}}' ) {
 						// Delete the key it this line only has {{PODS}}

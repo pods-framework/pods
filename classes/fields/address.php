@@ -242,7 +242,7 @@ class PodsField_Address extends PodsField {
 
 		$form_field_type = PodsForm::$field_type;
 
-		$type = pods_v( self::$type . '_type', $options );
+		$type = pods_v( self::$type . '_type', $options, 'address' );
 
 		// Text type is handled within the address field view
 		$view = PODS_DIR . 'ui/fields/address.php';

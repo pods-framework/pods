@@ -3644,7 +3644,7 @@ class PodsUI {
                                         <input type="hidden" name="order[]" value="<?php echo esc_attr( $row[ $this->sql[ 'field_id' ] ] ); ?>" />
                                         <?php
                                     }
-                                    ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button>
+                                    ?><button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span></button>
                 </td>
 <?php
                                 }
@@ -3657,7 +3657,7 @@ class PodsUI {
                                     ?>
                                     <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>" data-colname="<?php echo esc_attr( $attributes['label'] ); ?>">
                                         <abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo wp_kses_post( $row_value ); ?></abbr>
-                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><?php }; ?>
+                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span></button><?php }; ?>
                                     </td>
                                     <?php
                                 }
@@ -3669,7 +3669,7 @@ class PodsUI {
                                     ?>
                                     <td class="<?php echo esc_attr( implode( ' ', $css_classes ) ); ?>" data-colname="<?php echo esc_attr( $attributes['label'] ); ?>">
                                         <span><?php echo wp_kses_post( $row_value ); ?></span>
-                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button><?php }; ?>
+                                        <?php if ( $first_field ) { ?><button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span></button><?php }; ?>
                                     </td>
                                     <?php
                                 }

@@ -2170,6 +2170,8 @@ class PodsUI {
 
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
+            
+        $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
 
         // Debug purposes
         if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )

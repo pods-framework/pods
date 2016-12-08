@@ -2585,6 +2585,11 @@ class PodsAPI {
                 $conflicted = true;
             }
 
+            // Store the old field name
+            if ( $old_name && $old_name != $post_data['post_name'] ) {
+	            $field['options']['old_name'] = $old_name;
+            }
+
             $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
 
             if ( $conflicted )

@@ -32,6 +32,7 @@ matrix:
 
 ## Cache composer bits
 cache:
+  apt: true
   directories:
     - vendor
     - $HOME/.composer/cache

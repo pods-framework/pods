@@ -7498,8 +7498,16 @@ class PodsAPI {
 			    $current_language_t_id = $lang_data['t_id'];
 		    }
 
-		    if ( ! empty( $lang_data['t_id'] ) ) {
+		    if ( ! empty( $lang_data['tt_id'] ) ) {
 			    $current_language_tt_id = $lang_data['tt_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_t_id'] ) ) {
+			    $current_language_tl_t_id = $lang_data['tl_t_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			    $current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		    }
 	    }
 
@@ -7709,14 +7717,14 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
-			    $info[ 'join' ][ 'polylang_languages' ] = "
-                        LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
-                            ON `polylang_languages`.`term_id` = `t`.`term_id`
-                                AND `polylang_languages`.`meta_value` = {$current_language_t_id}
-                    ";
+		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && !empty( $current_language_tl_tt_id ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+				$info[ 'join' ][ 'polylang_languages' ] = "
+					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
+						ON `polylang_languages`.`object_id` = `t`.`term_id`
+							AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tl_tt_id}
+				";
 
-			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`term_id` IS NOT NULL";
+			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`object_id` IS NOT NULL";
 		    }
 
 		    $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
@@ -8498,6 +8506,8 @@ class PodsAPI {
 				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
 					$lang_data['t_id']  = (int) $current_language_t->term_id;
 					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
+					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
+					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
 					$lang_data['term']  = $current_language_t;
 				}
 			}

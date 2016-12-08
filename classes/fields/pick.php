@@ -1401,6 +1401,13 @@ class PodsField_Pick extends PodsField {
                     self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data_callback' ],
                     array( $name, $value, $options, $pod, $id )
                 );
+                if ( 'data' == $context ) {
+                    self::$field_data = array(
+                        'field' => $name,
+                        'id' => $options[ 'id' ],
+                        'autocomplete' => false
+                    );
+                }
 
 				$simple = true;
 

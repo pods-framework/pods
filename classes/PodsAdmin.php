@@ -324,18 +324,16 @@ class PodsAdmin {
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
+                    // Default taxonomy capability
+                    $capability = 'manage_categories';
 
-                    $capability = 'pods_edit_' . $pod[ 'name' ];
                     if ( ! empty( $pod[ 'options' ][ 'capability_type' ] ) ) {
                         if ( 'custom' == $pod[ 'options' ][ 'capability_type' ] && ! empty( $pod[ 'options' ][ 'capability_type_custom' ] ) ) {
                             $capability = 'manage_' . (string) $pod[ 'options' ][ 'capability_type_custom' ] . '_terms';
-                        } else {
-                            // Default taxonomy capability
-                            $capability = 'manage_categories';
                         }
                     }
 
-                    if ( !pods_is_admin( array( 'pods', 'pods_content', $capability ) ) )
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], $capability ) ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );

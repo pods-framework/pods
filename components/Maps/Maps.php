@@ -66,13 +66,16 @@ class Pods_Component_Maps extends PodsComponent {
 	public function global_assets() {
 		wp_register_style( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/css/pods-maps.css', array(), '1.0' );
 
-		// @todo pods-maps is probably not needed anymore (also see pods-maps.js file)
-		/*wp_register_script( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/js/pods-maps.js', array( 'jquery' ), '1.0' );
+		// @todo Use pods-maps.js for global functions needed for the Google Maps API (also see pods-maps.js file)
+		wp_register_script( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/js/pods-maps.js', array( 'jquery' ), '1.0' );
 		$provider = get_class( self::$provider );
 		wp_localize_script( 'pods-maps', 'PodsMaps', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'_nonce' => wp_create_nonce( self::$nonce )
-		) );*/
+		) );
+
+		// @todo Allways load required front end assets (Maybe as an option?)
+		//       Enqueue doesn't work in the display function anymore (hook is already fires before that)
 		self::$provider->assets();
 	}
 
@@ -295,6 +298,7 @@ class Pods_Component_Maps extends PodsComponent {
 			'type'       => 'boolean',
 			'dependency' => true
 		);
+		// @todo Autocorrect is not implemented yet
 		$options[ $type . '_autocorrect' ] = array(
 			'label'      => __( 'Autocorrect Address during save', 'pods' ),
 			'depends-on' => array(
@@ -379,6 +383,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'display_type'   => __( 'Display Type', 'pods' )
 			)
 		);
+		// @todo Make file type working as a field option
 		$options[ $type . '_map_marker' ] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
 			'depends-on' => array( $type . '_map' => true ),

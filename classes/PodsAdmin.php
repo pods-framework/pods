@@ -2488,10 +2488,12 @@ class PodsAdmin {
         if ( false !== $output ) {
 
             /**
-             * Ajax successful
+             * Pods Admin AJAX request was successful
+	     *
              * @since  2.6.8
-             * @param array $params
-             * @param mixed $output
+	     *
+             * @param array               $params AJAX parameters
+             * @param array|object|string $output Output for AJAX request
              */
             do_action( "pods_admin_ajax_success_{$method->name}", $params, $output );
 

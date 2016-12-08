@@ -10,11 +10,9 @@ class Pods_Component_Maps_Google {
 
 	public function assets() {
 
-		// Static map: http://maps.googleapis.com/maps/api/staticmap
-
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
-			$googlemaps_js = '//maps.googleapis.com/maps/api/js?key=' . Pods_Component_Maps::$api_key;
-			wp_register_script( 'googlemaps', $googlemaps_js, false, '3' ); //sensor=false&
+			wp_register_script( 'googlemaps', '//maps.googleapis.com/maps/api/js?key=' . Pods_Component_Maps::$api_key, false, '3' ); //sensor=false&
+			wp_register_script( 'googlemaps-static', '//maps.googleapis.com/maps/api/staticmap?key=' . Pods_Component_Maps::$api_key, false, '3' ); //sensor=false&
 		}
 
 	}
@@ -24,6 +22,15 @@ class Pods_Component_Maps_Google {
 		$view = false;
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
 			$view = plugin_dir_path( __FILE__ ) . 'ui/fields/map-google.php';
+		}
+		return $view;
+	}
+
+	public function pods_ui_field_display_extra() {
+
+		$view = false;
+		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
+			$view = plugin_dir_path( __FILE__ ) . 'ui/front/map-google.php';
 		}
 		return $view;
 	}

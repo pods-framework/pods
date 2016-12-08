@@ -39,6 +39,10 @@ class Pods_Component_Maps extends PodsComponent {
 		// apply_filters( 'pods_ui_field_address_pre_save', $value, $type, $id, $name, $options, $fields, $pod, $params );
 		add_filter( 'pods_ui_field_address_pre_save', array( $this, 'pods_ui_field_address_pre_save' ), 10, 8 );
 
+		// Add or change the display value
+		// apply_filters( 'pods_ui_field_address_display_value', $output, $value, $view, $display_type, $name, $options, $pod, $id );
+		add_filter( 'pods_ui_field_address_display_value', array( $this, 'pods_ui_field_address_display_value' ), 10, 8 );
+
 		// Ajax call handler
 		add_action( 'wp_ajax_pods_maps', array( $this, 'ajax_handler' ) );
 		// Allow calls from frontend when needed (always verify nonce!)
@@ -401,6 +405,43 @@ class Pods_Component_Maps extends PodsComponent {
 		$options[ $type . '_microdata' ]['excludes-on'][ $type . '_map' ] = true;
 
 		return $options;
+	}
+
+	/**
+	 * Add/Change the display value
+	 *
+	 * @param $value
+	 * @param $view
+	 * @param $display_type
+	 * @param $value
+	 * @param $name
+	 * @param $options
+	 * @param $pod
+	 * @param $id
+	 *
+	 * @return string
+	 */
+	public function pods_ui_field_address_display_value( $output, $value, $view, $display_type, $name, $options, $pod, $id ) {
+
+		if ( ! empty ( $options['address_map'] ) ) {
+			$view = '';
+			$provider = get_class( self::$provider );
+			if ( is_callable( array( $provider, 'pods_ui_field_display_extra' ) ) ) {
+				$view = self::$provider->pods_ui_field_display_extra();
+			}
+
+			if ( $view && file_exists( $view ) ) {
+				// Add hidden lat/lng fields for non latlng view types
+
+				$maps_value = pods_view( $view, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+
+				// @todo change location based on option
+				$output .= $maps_value;
+			}
+		}
+
+		return $output;
+
 	}
 
 	/**

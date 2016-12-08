@@ -64,7 +64,8 @@
         'timeFormat' => $time_format[ pods_var( $form_field_type . '_time_format', $options, 'h_mma', null, true ) ],
         'dateFormat' => $date_format[ $format_value ],
         'changeMonth' => true,
-        'changeYear' => true
+        'changeYear' => true,
+        'firstDay' => (int) get_option( 'start_of_week', 0 )
     );
 
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

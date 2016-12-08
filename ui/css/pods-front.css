@@ -9,12 +9,11 @@
 a.button {
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
-	-o-border-radius: 10px;
 	border-radius: 10px;
 	white-space: nowrap;
 	line-height: 15px;
 	padding: 3px 10px;
-	background: #f2f2f2 url(../../../../../wp-admin/images/white-grad.png) repeat-x scroll left top;
+	background: #f2f2f2;
 	border: 1px solid #bbb;
 	font-size: 12px;
 	color: #464646;
@@ -27,13 +26,12 @@ a.button:hover {
 }
 
 a.button:active {
-	background: #eee url(../../../../../wp-admin/images/white-grad-active.png) repeat-x scroll left top;
+	background: #eee;
 }
 
 .button-primary {
 	-webkit-border-radius: 11px;
 	-moz-border-radius: 11px;
-	-o-border-radius: 11px;
 	border-radius: 11px;
 	-webkit-box-sizing: content-box;
 	box-sizing: content-box;
@@ -41,7 +39,7 @@ a.button:active {
 	line-height: 15px;
 	padding: 3px 8px;
 	border: 1px solid #298CBA;
-	background: #21759B url(../../../../../wp-admin/images/button-grad.png) repeat-x scroll left top;
+	background: #21759B;
 	font-size: 12px;
 	font-weight: bold;
 	color: #fff;
@@ -56,7 +54,7 @@ a.button:active {
 .button-primary:active {
 	border-color: #298CBA;
 	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
-	background: #21759B url(../../../../../wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+	background: #21759B;
 	text-decoration: none;
 }
 

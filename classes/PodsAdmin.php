@@ -492,6 +492,11 @@ class PodsAdmin {
 
         $parent = false;
 
+        // PODS_LIGHT disables all Pods components so remove the components menu
+        if ( defined( 'PODS_LIGHT' ) && true == PODS_LIGHT ) {
+            unset( $admin_menus['pods-components'] );
+        }
+
         if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
@@ -517,7 +522,7 @@ class PodsAdmin {
 
                 add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
-                if ( 'pods-components' == $page )
+                if ( 'pods-components' == $page && is_object( PodsInit::$components ) )
                     PodsInit::$components->menu( $parent );
             }
         }
@@ -563,7 +568,7 @@ class PodsAdmin {
             }
         }
 
-        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
+        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
             global $submenu_file;
             $components = PodsInit::$components->components;
             foreach ( $components as $component => $component_data ) {
@@ -1988,6 +1993,9 @@ class PodsAdmin {
      * Get components administration UI
      */
     public function admin_components () {
+        if ( ! is_object( PodsInit::$components ) )
+            return;
+
         $components = PodsInit::$components->components;
 
         $view = pods_var( 'view', 'get', 'all', null, true );

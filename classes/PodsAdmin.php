@@ -2499,6 +2499,17 @@ class PodsAdmin {
 
         // Output in json format
         if ( false !== $output ) {
+
+            /**
+             * Pods Admin AJAX request was successful
+	     *
+             * @since  2.6.8
+	     *
+             * @param array               $params AJAX parameters
+             * @param array|object|string $output Output for AJAX request
+             */
+            do_action( "pods_admin_ajax_success_{$method->name}", $params, $output );
+
             if ( is_array( $output ) || is_object( $output ) )
                 wp_send_json( $output );
             else

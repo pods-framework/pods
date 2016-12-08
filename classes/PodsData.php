@@ -2198,13 +2198,7 @@ class PodsData {
     public static function get_column_data ( $column_name, $table ) {
 	    global $wpdb;
 
-        $describe_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_A );
-
-        $column_data = array();
-
-        foreach ( $describe_data as $column_row ) {
-            $column_data[] = $column_row;
-        }
+        $column_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_A );
 
         foreach ( $column_data as $single_column ) {
             if ( $column_name == $single_column[ 'Field' ] )

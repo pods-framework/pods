@@ -221,15 +221,16 @@ class PodsField_Address extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
+		$value_raw = $value;
 		$display_type = pods_v( self::$type . '_display_type', $options );
 
 		$view = PODS_DIR . 'ui/front/address.php';
 		$view = apply_filters( 'pods_ui_field_address_display_view', $view, $display_type, $value, $name, $options, $pod, $id );
 
-		$value = pods_view( $view, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
-		$value = apply_filters( 'pods_ui_field_address_display_value', $value, $view, $display_type, $value, $name, $options, $pod, $id );
+		$output = pods_view( $view, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
+		$output = apply_filters( 'pods_ui_field_address_display_value', $output, $value, $view, $display_type, $name, $options, $pod, $id );
 
-		return $value;
+		return $output;
 
 	}
 

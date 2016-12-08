@@ -3061,7 +3061,7 @@ class PodsUI {
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
                             <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
-                                <?php echo esc$filter_field[ 'label' ]; ?>
+                                <?php echo esc_html( $filter_field[ 'label' ] ); ?>
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo esc_attr( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">

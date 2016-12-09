@@ -72,9 +72,8 @@ class PodsField_Currency extends PodsField {
 	 * @since 2.0
 	 */
 	public function __construct() {
-
+		self::$label = __( 'Currency', 'pods' );
 		self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
-		
 	}
 
 	/**

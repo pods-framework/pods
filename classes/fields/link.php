@@ -44,7 +44,7 @@ class PodsField_Link extends PodsField_Website {
 	 * @since 2.0
 	 */
 	public function __construct() {
-
+		self::$label = __( 'Link', 'pods' );
 	}
 
 	/**

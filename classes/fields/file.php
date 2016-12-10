@@ -42,7 +42,7 @@ class PodsField_File extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+        self::$label = __( 'File / Image / Video', 'pods' );
     }
 
     /**
@@ -406,13 +406,24 @@ class PodsField_File extends PodsField {
             if ( empty( $id ) )
                 continue;
 
+            $attachment_data = array();
+
             // Update the title if set
             if ( false !== $title && 1 == pods_var( self::$type . '_edit_title', $options, 0 ) ) {
-                $attachment_data = array(
-                    'ID' => $id,
-                    'post_title' => $title
-                );
+                $attachment_data['post_title'] = $title;
+            }
 
+            // Update attachment parent if it's not set yet and we're updating a post
+            if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' == $pod['type'] ) {
+                $attachment = get_post( $id );
+                if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
+                    $attachment_data['post_parent'] = (int) $params->id;
+                }
+            }
+
+            // Update the attachment if it the data array is not still empty
+            if ( ! empty( $attachment_data ) ) {
+                $attachment_data['ID'] = $id;
                 self::$api->save_wp_object( 'media', $attachment_data );
             }
         }

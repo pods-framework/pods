@@ -1,0 +1,14 @@
+exclude_paths:
+- vendor/*
+- tests/*
+- .tx/*, 
+- includes/libraries/*, 
+- bin/*
+- assets/*
+- templates/*
+
+engines:
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "WordPress"

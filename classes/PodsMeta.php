@@ -518,8 +518,8 @@ class PodsMeta {
             $object = $obj->storage_model->taxonomy;
         }
 
-        $field = substr( $obj->options->field, 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->options->field ) : $obj->options->field;
-        $field_type = $obj->options->field_type;
+        $field = substr( $obj->get_option( 'field' ), 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+        $field_type = $obj->get_option( 'field_type' );
 
         if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
             self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );

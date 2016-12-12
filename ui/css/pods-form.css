@@ -192,9 +192,9 @@ input.pods-form-ui-field-type-color {
 
 /* Codemirror */
 .pods-field .CodeMirror {
-    width: 95%;
     border: 1px solid #999;
     background-color: #fff;
+    margin: 0;
 }
 
 .pods-form-front ul.pods-form-fields {
@@ -310,6 +310,7 @@ input.pods-form-ui-field-type-color {
     content: “\00a0”;
     clear: both;
     display: block;
+}
 
 /**
  * Modal fields
@@ -329,5 +330,4 @@ input.pods-form-ui-field-type-color {
 }
 .media-modal .compat-item .pods-term-list ul.children {
     margin: 6px 0 0 18px;
-}
 }

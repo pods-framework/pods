@@ -25,7 +25,7 @@ export const CheckboxItem = PodsFieldView.extend( {
 		'change': 'modelChanged'
 	},
 
-	templateHelpers: function () {
+	templateContext: function () {
 		return {
 			ordinal: this.model.collection.indexOf( this.model )
 		};

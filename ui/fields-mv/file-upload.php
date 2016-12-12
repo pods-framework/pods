@@ -188,19 +188,24 @@ if ( 'plupload' == $options[ 'file_uploader' ] ) {
 }
 
 $field_meta = array(
-	'field_attributes' => array(
+	'htmlAttr' => array(
 		'id'         => $attributes[ 'id' ],
 		'class'      => $attributes[ 'class' ],
 		'name'       => $attributes[ 'name' ],
 		'name_clean' => $attributes[ 'data-name-clean' ]
 	),
-	'field_options'    => $options
+	'fieldConfig'    => $options
 );
 
 include_once PODS_DIR . 'classes/PodsMVFieldData.php';
 
 // @todo Need to normalize and finalize.  Is there a potential need for subclasses or does this basically cover it?
-$field_data = new PodsMVFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
+$mvdata     = array(
+	'fieldData'   => $model_data,
+	'fieldConfig' => $field_meta[ 'fieldConfig' ],
+	'htmlAttr'    => $field_meta[ 'htmlAttr' ]
+);
+$field_data = new PodsMVFieldData( $field_type, $mvdata );
 
 // @todo This is the demarcation point, everything above this exists to achieve the single line below.  Everything
 // upstream from here needs clean up, simplification, and refactoring

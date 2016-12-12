@@ -6,7 +6,7 @@
             $api->cache_flush_pods();
 
 			if ( defined( 'PODS_PRELOAD_CONFIG_AFTER_FLUSH' ) && PODS_PRELOAD_CONFIG_AFTER_FLUSH ) {
-				$api->load_pods();
+				$api->load_pods( array( 'bypass_cache' => true ) );
 			}
 
             pods_redirect( pods_query_arg( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );

@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Marionette */
+import {PodsMVFieldModel} from '~/ui/fields-mv/_src/core/pods-field-model';
 
 /**
  *
@@ -11,17 +12,26 @@ export const PodsFieldListView = Marionette.CollectionView.extend( {
 } );
 
 /**
- *
+ * @extends Backbone.View
  */
-export const PodsFieldView = Marionette.LayoutView.extend( {
+export const PodsFieldView = Marionette.View.extend( {
 	serializeData: function () {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};
 
-		data.field_type = fieldModel.get( 'type' );
-		data.attr = fieldModel.get( 'attributes' );
-		data.options = fieldModel.get( 'options' );
+		data.htmlAttr = fieldModel.get( 'htmlAttr' );
+		data.fieldConfig = fieldModel.get( 'fieldConfig' );
 
 		return data;
+	}
+} );
+
+/**
+ * Top-level "main field container"
+ */
+export const PodsMVFieldLayout = Marionette.View.extend( {
+
+	initialize: function ( options ) {
+		this.fieldData = options.fieldData;
 	}
 } );

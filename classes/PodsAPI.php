@@ -5351,6 +5351,7 @@ class PodsAPI {
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      * $params['fields'] bool Whether to load fields (default is true)
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array|object $params An associative array of parameters or pod name as a string
      * @param bool $strict Makes sure the pod exists, throws an error if it doesn't work
@@ -5368,6 +5369,7 @@ class PodsAPI {
 
         $current_language = false;
         $load_fields = true;
+	    $bypass_cache = false;
 
 	    // Get current language data
 		$lang_data = self::get_current_language();
@@ -5442,6 +5444,10 @@ class PodsAPI {
                 return false;
             }
 
+		    if ( ! empty( $params->bypass_cache ) ) {
+		        $bypass_cache = true;
+		    }
+
             if ( isset( $params->name ) ) {
                 $pod = false;
 
@@ -5471,7 +5477,7 @@ class PodsAPI {
 						'fields' => array()
 					);
 				}
-                elseif ( pods_api_cache() )
+                elseif ( ! $bypass_cache & pods_api_cache() )
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
                 if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
@@ -5508,7 +5514,7 @@ class PodsAPI {
 
         $pod = false;
 
-        if ( pods_api_cache() )
+        if ( ! $bypass_cache || pods_api_cache() )
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
         if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
@@ -5539,6 +5545,12 @@ class PodsAPI {
             'object' => '',
             'alias' => ''
         );
+
+        if ( $bypass_cache ) {
+            wp_cache_delete( $pod['id'], 'post_meta' );
+
+            update_postmeta_cache( array( $pod['id'] ) );
+        }
 
         $pod[ 'options' ] = get_post_meta( $pod[ 'id' ] );
 
@@ -5601,6 +5613,7 @@ class PodsAPI {
             foreach ( $fields as $field ) {
                 $field->pod = $pod[ 'name' ];
                 $field->table_info = $table_info;
+                $field->bypass_cache = $bypass_cache;
 
                 if ( $load_fields ) {
                     $field = $this->load_field( $field );
@@ -5608,6 +5621,12 @@ class PodsAPI {
                     $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
                 }
                 else {
+			        if ( $bypass_cache ) {
+                        wp_cache_delete( $field->ID, 'post_meta' );
+
+			            update_postmeta_cache( array( $field->ID ) );
+			        }
+
                     $field = array(
                         'id' => $field->ID,
                         'name' => $field->post_name,
@@ -5641,6 +5660,7 @@ class PodsAPI {
      * $params['ids'] boolean Return only an array of ID => label
      * $params['fields'] boolean Return pod fields with Pods (default is true)
      * $params['key_names'] boolean Return pods keyed by name
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array $params An associative array of parameters
      *
@@ -5672,6 +5692,12 @@ class PodsAPI {
 
         $meta_query = array();
         $cache_key = '';
+
+        $bypass_cache = false;
+
+	    if ( ! empty( $params->bypass_cache ) ) {
+	    	$bypass_cache = true;
+	    }
 
         if ( isset( $params->type ) && !empty( $params->type ) ) {
             if ( !is_array( $params->type ) )
@@ -5781,7 +5807,7 @@ class PodsAPI {
         else
             $cache_key = 'pods' . $pre_key . $cache_key;
 
-        if ( pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( ! $bypass_cache && pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
             if ( false === $the_pods )
@@ -5859,7 +5885,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ) ) );
+                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ), 'bypass_cache' => $bypass_cache ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
@@ -5954,6 +5980,7 @@ class PodsAPI {
      * $params['id'] int The field ID
      * $params['name'] string The field name
      * $params['table_info'] boolean Whether to lookup a pick field's table info
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array $params An associative array of parameters
      * @param boolean $strict Whether to require a field exist or not when loading the info
@@ -5966,6 +5993,11 @@ class PodsAPI {
 
         if ( !isset( $params->table_info ) )
             $params->table_info = false;
+
+        $bypass_cache = false;
+
+        if ( ! empty( $params->bypass_cache ) )
+            $bypass_cache = true;
 
         $pod = array();
         $field = array();
@@ -5984,7 +6016,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false, 'bypass_cache' => $bypass_cache ), false );
 
                 if ( false === $pod ) {
                     if ( $strict )
@@ -6007,7 +6039,7 @@ class PodsAPI {
 
             $field = false;
 
-            if ( pods_api_cache() )
+            if ( ! $bypass_cache && pods_api_cache() )
                 $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
 
             if ( empty( $field ) ) {
@@ -6053,7 +6085,7 @@ class PodsAPI {
         }
 
         if ( empty( $field ) ) {
-            if ( pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
+            if ( ! $bypass_cache && pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
                 $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $_field[ 'post_name' ] );
 
             if ( empty( $field ) ) {
@@ -6078,6 +6110,12 @@ class PodsAPI {
                     $field[ 'pod' ] = $pod[ 'name' ];
                 elseif ( isset( $_field[ 'pod' ] ) )
                     $field[ 'pod' ] = $_field[ 'pod' ];
+
+	            if ( $bypass_cache ) {
+	                wp_cache_delete( $field['id'], 'post_meta' );
+
+	                update_postmeta_cache( array( $field['id'] ) );
+	            }
 
                 $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 
@@ -8165,12 +8203,18 @@ class PodsAPI {
         else
             pods_transient_clear( 'pods_wp_cpt_ct' );
 
+        // Delete transients in the database
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
+
+        // Delete Pods Options Cache in the database
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
         pods_cache_clear( true );
 
         pods_transient_set( 'pods_flush_rewrites', 1 );
+
+        do_action( 'pods_cache_flushed' );
     }
 
     /**

@@ -14,7 +14,7 @@ class PodsMVFieldData {
 	 */
 	public function __construct( $field_type, $data ) {
 
-		$data[ 'field_type' ] = $field_type;
+		$data[ 'fieldType' ] = $field_type;
 		$this->export_data    = $data;
 	}
 

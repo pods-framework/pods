@@ -1,12 +1,15 @@
 /*global jQuery, _, Backbone, Marionette */
 import template from '~/ui/fields-mv/_src/file-upload/file-upload-layout.html';
 
-import { FileUploadCollection, FileUploadModel } from '~/ui/fields-mv/_src/file-upload/file-upload-model';
-import { FileUploadList } from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';
-import { FileUploadForm } from '~/ui/fields-mv/_src/file-upload/views/file-upload-form';
+import {PodsMVFieldLayout} from '~/ui/fields-mv/_src/core/pods-field-views';
 
-import { Plupload } from '~/ui/fields-mv/_src/file-upload/uploaders/plupload';
-import { MediaModal } from '~/ui/fields-mv/_src/file-upload/uploaders/media-modal';
+import {FileUploadCollection, FileUploadModel} from '~/ui/fields-mv/_src/file-upload/file-upload-model';
+
+import {FileUploadList} from '~/ui/fields-mv/_src/file-upload/views/file-upload-list';
+import {FileUploadForm} from '~/ui/fields-mv/_src/file-upload/views/file-upload-form';
+
+import {Plupload} from '~/ui/fields-mv/_src/file-upload/uploaders/plupload';
+import {MediaModal} from '~/ui/fields-mv/_src/file-upload/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,
@@ -15,7 +18,10 @@ const Uploaders = [
 
 const UNLIMITED_FILES = 0;
 
-export const FileUpload = Marionette.LayoutView.extend( {
+/**
+ * @extends Backbone.View
+ */
+export const FileUpload = PodsMVFieldLayout.extend( {
 	template: _.template( template ),
 
 	regions: {
@@ -25,6 +31,15 @@ export const FileUpload = Marionette.LayoutView.extend( {
 	},
 
 	uploader: {},
+
+	/**
+	 *
+	 */
+	onBeforeRender: function () {
+		if ( this.collection === undefined ) {
+			this.collection = new FileUploadCollection( this.fieldData );
+		}
+	},
 
 	onRender: function () {
 		const listView = new FileUploadList( { collection: this.collection, fieldModel: this.model } );
@@ -64,8 +79,8 @@ export const FileUpload = Marionette.LayoutView.extend( {
 	 * @param {Object[]} data An array of model objects to be added
 	 */
 	onAddedFiles: function ( data ) {
-		const options = this.model.get( 'options' );
-		const fileLimit = +options[ 'file_limit' ]; // Unary plus to force to number
+		const fieldConfig = this.model.get( 'fieldConfig' );
+		const fileLimit = +fieldConfig[ 'file_limit' ]; // Unary plus to force to number
 		let newCollection, filteredModels;
 
 		// Get a copy of the existing collection with the new files added
@@ -87,8 +102,8 @@ export const FileUpload = Marionette.LayoutView.extend( {
 	},
 
 	createUploader: function () {
-		const options = this.model.get( 'options' );
-		const targetUploader = options[ 'file_uploader' ];
+		const fieldConfig = this.model.get( 'fieldConfig' );
+		const targetUploader = fieldConfig[ 'file_uploader' ];
 		let Uploader;
 
 		jQuery.each( Uploaders, function ( index, thisUploader ) {
@@ -103,7 +118,7 @@ export const FileUpload = Marionette.LayoutView.extend( {
 				// We provide regular DOM element for the button
 				browseButton: this.getRegion( 'form' ).getEl( '.pods-flex-add' ).get(),
 				uiRegion    : this.getRegion( 'uiRegion' ),
-				fieldOptions: options
+				fieldConfig : fieldConfig
 			} );
 			return this.uploader;
 		}

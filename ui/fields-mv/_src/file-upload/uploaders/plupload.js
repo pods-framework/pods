@@ -9,9 +9,9 @@ export const Plupload = PodsFileUploader.extend( {
 
 	initialize: function () {
 		// Set the browse button argument for plupload... it's required
-		this.fieldOptions[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
+		this.fieldConfig[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
 
-		this.plupload = new plupload.Uploader( this.fieldOptions[ 'plupload_init' ] );
+		this.plupload = new plupload.Uploader( this.fieldConfig[ 'plupload_init' ] );
 		this.plupload.init();
 
 		// Setup all callbacks: ( event_name, callback, context )

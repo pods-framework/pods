@@ -210,6 +210,9 @@ else
             queue = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
             maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
+        list.find( 'li.pods-file:first' ).removeClass('hidden');
+
+        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.init();
         pods_uploader.init();
 
         // Store a reference to this Plupload instance in window.pods_uploaders
@@ -300,10 +303,10 @@ else
                 var html = tmpl( binding );
 
                 list.prepend( html );
-                list.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                list.find( 'li.pods-file:first' ).hide().removeClass('hidden').slideDown( 'fast' );
 
                 var items = list.find( 'li.pods-file' ),
-                    itemCount = items.size();
+                    itemCount = items.length;
 
                 if ( 0 < maxFiles && itemCount > maxFiles ) {
                     items.each( function ( idx, elem ) {

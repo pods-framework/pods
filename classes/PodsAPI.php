@@ -1456,10 +1456,6 @@ class PodsAPI {
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
                 $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
-                // @since  2.6.8  Issue: #3846
-	            if ( ! isset( $pod_params[ 'options' ][ 'hierarchical' ] ) ) {
-		            $pod_params[ 'options' ][ 'hierarchical' ] = 1;
-	            }
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
@@ -1744,6 +1740,11 @@ class PodsAPI {
         $pod[ 'options' ][ 'alias' ] = $pod[ 'alias' ];
 
         $pod[ 'options' ] = array_merge( $pod[ 'options' ], $options );
+
+	    // @since  2.6.8  Issue: #3846
+	    if ( 'taxonomy' === $pod[ 'type' ] && ! isset( $pod[ 'options' ][ 'hierarchical' ] ) ) {
+		    $pod[ 'options' ][ 'hierarchical' ] = 1;
+	    }
 
 		/**
 		 * @var WP_Query

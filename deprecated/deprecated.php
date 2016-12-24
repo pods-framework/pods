@@ -57,7 +57,7 @@ if ( !function_exists( 'get_current_url' ) ) {
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
     pods_deprecated('pod_query', '2.0', 'pods_query');
@@ -111,7 +111,7 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
  * Include and Init the Pods class
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  * @package Pods\Deprecated
  */
 class Pod
@@ -229,7 +229,7 @@ class Pod
  * Include and Init the PodsAPI class
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  * @package Pods\Deprecated
  */
 class PodAPI
@@ -275,7 +275,7 @@ class PodAPI
  * Include and Init the PodsUI class
  *
  * @since 2.0
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pods_ui_manage ($obj) {
     pods_deprecated('pods_ui_manage', '2.0', 'pods_ui');
@@ -288,7 +288,7 @@ function pods_ui_manage ($obj) {
  * Limit Access based on Field Value
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pods_ui_access ($object, $access, $what) {
     pods_deprecated('pods_ui_access', '2.0');
@@ -317,7 +317,7 @@ function pods_ui_access ($object, $access, $what) {
  * @param string $type (optional) "uri", "get", "post", "request", "server", "session", or "cookie"
  * @return string The requested value, or null
  * @since 1.6.2
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pods_url_variable ($key = 'last', $type = 'url') {
     $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
@@ -328,7 +328,7 @@ function pods_url_variable ($key = 'last', $type = 'url') {
  * Generate form key - INTERNAL USE
  *
  * @since 1.2.0
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
     $token = wp_create_nonce( 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) );
@@ -341,7 +341,7 @@ function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
  * Validate form key - INTERNAL USE
  *
  * @since 1.2.0
- * @deprecated deprecated since version 2.0
+ * @deprecated 2.0
  */
 function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form_count = 1 ) {
     if ( null === $columns && !empty( $_SESSION ) && isset( $_SESSION[ 'pods_form_' . $token ] ) )
@@ -361,7 +361,7 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @return bool
  *
  * @since 1.12
- * @deprcated 2.3
+ * @deprecated 2.3
  */
 function pods_ui_message ( $message, $error = false ) {
     pods_deprecated( "pods_message", '2.3' );
@@ -377,7 +377,7 @@ function pods_ui_message ( $message, $error = false ) {
  * @return bool
  *
  * @since 1.12
- * @deprcated 2.3
+ * @deprecated 2.3
  */
 function pods_ui_error ( $message ) {
     pods_deprecated( "pods_message", '2.3' );
@@ -389,7 +389,7 @@ function pods_ui_error ( $message ) {
  * Get a Point value from a Pods Version number
  *
  * @since 1.10.1
- * @deprcated 2.3
+ * @deprecated 2.3
  */
 function pods_point_to_version ( $point ) {
     $version_tmp = explode( '.', $point );
@@ -418,7 +418,7 @@ function pods_point_to_version ( $point ) {
  * Get a Point value from a Pods Version number
  *
  * @since 1.10
- * @deprcated 2.3
+ * @deprecated 2.3
  */
 function pods_version_to_point ( $version ) {
     $point_tmp = $version;

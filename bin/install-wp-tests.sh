@@ -59,7 +59,7 @@ install_wp() {
 
 	echo "Installing WordPress for Unit Tests"
 
-	if [ $FORCE == 'true' ] || [ -z TRAVIS_JOB_ID ]; then
+	if [[ $FORCE == 'true' || -z TRAVIS_JOB_ID ]]; then
 		echo "Removing existing core WordPress directory"
 
 		rm -Rf $WP_CORE_DIR
@@ -99,7 +99,7 @@ install_test_suite() {
 
 	echo "Installing Tests Suite for Unit Tests"
 
-	if [ $FORCE == 'true' ] || [ -z TRAVIS_JOB_ID ]; then
+	if [[ $FORCE == 'true' || -z TRAVIS_JOB_ID ]]; then
 		echo "Removing existing Tests Suite directory"
 
 		rm -Rf $WP_TESTS_DIR
@@ -163,7 +163,7 @@ install_db() {
 		fi
 	fi
 
-	if [ -z TRAVIS_JOB_ID ]; then
+	if [[ $FORCE == 'true' || -z TRAVIS_JOB_ID ]]; then
 		echo "Removing existing Database"
 
 		# drop database

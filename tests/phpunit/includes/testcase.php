@@ -578,9 +578,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 					$load_pod = $api->load_pod( array( 'id' => $id ) );
 
-					foreach ( $load_pod[ 'fields' ] as $field ) {
-						if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ] ) ) {
-							self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ][ 'id' ] = $field[ 'id' ];
+					if ( ! empty( $load_pod ) ) {
+						foreach ( $load_pod['fields'] as $field ) {
+							if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] ) ) {
+								self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ]['id'] = $field['id'];
+							}
 						}
 					}
 

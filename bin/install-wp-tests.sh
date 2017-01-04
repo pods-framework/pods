@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [force download]"
+	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version] [force download] [skip-database-creation]"
 	exit 1
 fi
 
@@ -11,6 +11,7 @@ DB_PASS=$3
 DB_HOST=${4-localhost}
 WP_VERSION=${5-latest}
 FORCE=${6-false}
+SKIP_DB_CREATE=${7-false}
 
 WP_TESTS_DIR=${WP_TESTS_DIR-/tmp/wordpress-tests-lib}
 WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
@@ -18,17 +19,21 @@ WP_CORE_DIR=${WP_CORE_DIR-/tmp/wordpress/}
 # Placeholder for download agent
 # @todo replace back to wget everywhere in this file
 download() {
+
     if [ `which curl` ]; then
         curl -s "$1" > "$2";
 	elif [ `which wget` ]; then
         wget -nv -O "$2" "$1"
 	fi
+
 }
 
 # Detect version tag
 # Format: N.N.N
 if [[ $WP_VERSION =~ [0-9]+\.[0-9]+(\.[0-9]+)? ]]; then
 	WP_TESTS_TAG="tags/$WP_VERSION"
+elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
+	WP_TESTS_TAG="trunk"
 else
 	# http serves a single offer, whereas https serves multiple. we only want one
 	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
@@ -51,6 +56,7 @@ fi
 set -ex
 
 install_wp() {
+
 	echo "Installing WordPress for Unit Tests"
 
 	if [ $FORCE == 'true' ] || [ -z TRAVIS_JOB_ID ]; then
@@ -67,21 +73,30 @@ install_wp() {
 
 	mkdir -p $WP_CORE_DIR
 
-	if [ $WP_VERSION == 'latest' ]; then
-		local ARCHIVE_NAME='latest'
+	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
+		mkdir -p /tmp/wordpress-nightly
+		download https://wordpress.org/nightly-builds/wordpress-latest.zip  /tmp/wordpress-nightly/wordpress-nightly.zip
+		unzip -q /tmp/wordpress-nightly/wordpress-nightly.zip -d /tmp/wordpress-nightly/
+		mv /tmp/wordpress-nightly/wordpress/* $WP_CORE_DIR
 	else
-		local ARCHIVE_NAME="wordpress-$WP_VERSION"
-	fi
+		if [ $WP_VERSION == 'latest' ]; then
+			local ARCHIVE_NAME='latest'
+		else
+			local ARCHIVE_NAME="wordpress-$WP_VERSION"
+		fi
 
-	download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
-	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  /tmp/wordpress.tar.gz
+		tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+	fi
 
 	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 
 	echo "WordPress installed"
+
 }
 
 install_test_suite() {
+
 	echo "Installing Tests Suite for Unit Tests"
 
 	if [ $FORCE == 'true' ] || [ -z TRAVIS_JOB_ID ]; then
@@ -104,13 +119,16 @@ install_test_suite() {
 		# set up testing suite
 		mkdir -p $WP_TESTS_DIR
 		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
+		svn co --quiet https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
 	fi
 
 	cd $WP_TESTS_DIR
 
 	if [ ! -f wp-tests-config.php ]; then
 		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" "$WP_TESTS_DIR"/wp-tests-config.php
+		# remove all forward slashes in the end
+		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
+		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
@@ -118,9 +136,15 @@ install_test_suite() {
 	fi
 
 	echo "Tests Suite installed"
+
 }
 
 install_db() {
+
+	if [ ${SKIP_DB_CREATE} = "true" ]; then
+		return 0
+	fi
+
 	echo "Setting up Database for Unit Tests"
 
 	# parse DB_HOST for port or socket references
@@ -152,6 +176,7 @@ install_db() {
 	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 
 	echo "Database set up"
+
 }
 
 install_wp

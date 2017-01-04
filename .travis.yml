@@ -6,15 +6,13 @@ php:
     - 7.0
 
 env:
-    - WP_VERSION=bleeding WP_MULTISITE=0
-    - WP_VERSION=bleeding-maintenance WP_MULTISITE=0
+    - WP_VERSION=nightly WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
 
 matrix:
     allow_failures:
-     - env: WP_VERSION=bleeding WP_MULTISITE=0
-     - env: WP_VERSION=bleeding-maintenance WP_MULTISITE=0
+     - env: WP_VERSION=nightly WP_MULTISITE=0
 
     include:
     - php: 7.1

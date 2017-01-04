@@ -870,6 +870,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		self::$related_items[ 'author' ] = self::$related_items[ 'test_rel_user' ];
 
 	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function tearDownAfterClass() {
+		// Force WP_UnitTestCase to not delete all data
+	}
 }
 
 Pods_UnitTestCase::_initialize_config();

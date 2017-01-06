@@ -210,7 +210,7 @@ class PodsField_File extends PodsField {
 	            'type' => 'boolean'
             ),
             self::$type . '_wp_gallery_link' => array(
-	            'label' => __( 'WP Gallery link', 'pods' ),
+	            'label' => __( 'Gallery image links', 'pods' ),
 	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
 	            'type' => 'pick',
 	            'data' => array(
@@ -220,23 +220,31 @@ class PodsField_File extends PodsField {
 	            )
             ),
             self::$type . '_wp_gallery_columns' => array(
-	            'label' => __( 'WP Gallery columns', 'pods' ),
+	            'label' => __( 'Gallery image columns', 'pods' ),
 	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
 	            'type' => 'pick',
 	            'data' => array(
-		            '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9,
+		            '1' => 1,
+			    '2' => 2,
+			    '3' => 3,
+			    '4' => 4,
+			    '5' => 5,
+			    '6' => 6,
+			    '7' => 7,
+			    '8' => 8,
+			    '9' => 9,
 	            )
             ),
             self::$type . '_wp_gallery_random_sort' => array(
-	            'label' => __( 'WP Gallery random order?', 'pods' ),
+	            'label' => __( 'Gallery randomized order', 'pods' ),
 	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
 	            'type' => 'boolean'
             ),
             self::$type . '_wp_gallery_size' => array(
-	            'label' => __( 'WP Gallery image size', 'pods' ),
+	            'label' => __( 'Gallery image size', 'pods' ),
 	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
 	            'type' => 'pick',
-	            'data' => $this->data_image_sizes()
+	            'data' => $this->data_image_sizes(),
             )
         );
 

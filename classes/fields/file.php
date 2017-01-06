@@ -197,7 +197,8 @@ class PodsField_File extends PodsField {
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             ),
-			/* WP GALLERY OUTPUT */
+
+            /* WP GALLERY OUTPUT */
             self::$type . '_wp_gallery_output' => array(
 	            'label' => __( 'Output as a WP Gallery', 'pods' ),
 	            'help' => sprintf(

@@ -76,7 +76,7 @@
 .pods-wizard h2,
 .pods-wizard h3 {
     font-family: Georgia !important;
-    margin-bottom: 0px !important;
+    margin-bottom: 0 !important;
 }
 
 .pods-admin #poststuff h3 {

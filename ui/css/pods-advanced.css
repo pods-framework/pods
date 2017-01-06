@@ -2,9 +2,9 @@
 .right { float: right; }
 .clear { clear: both; }
 .dialogWithDropShadow {
-	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);  
-	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);  
+	-moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 #pods-parts-right {
     width: 250px;

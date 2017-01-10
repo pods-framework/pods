@@ -166,6 +166,8 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.8 - January 12th 2017 =
+
 = 2.6.7 - August 15th 2016 =
 * Fixed: Magic Tag {@permalink} fixes for taxonomy / user / comment detail URL Mapping. Fixes (#3339). [@sc0ttkclark]
 * Fixed: Pods Wizard for Forms now properly uses the `[podsform]` shortcode. Fixes (#3251). [@sc0ttkclark]

@@ -1459,6 +1459,8 @@ class PodsAPI {
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
+
+				$pod_params['options']['hierarchical'] = 1;
             }
             elseif ( 'pod' == $pod_params[ 'type' ] ) {
                 if ( empty(  $pod_params[ 'name' ] ) )

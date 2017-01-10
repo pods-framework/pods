@@ -98,7 +98,7 @@ class PodsRESTHandlers {
 		if ( empty( $id ) ) {
 			$id = pods_v( 'ID', $object );
 		}
-		
+
 		$pod = self::get_pod( $pod_name, $id );
 
 		$value = false;
@@ -308,6 +308,8 @@ class PodsRESTHandlers {
 	 */
 	public static function taxonomy_rest_support( $taxonomy_name, $rest_base = false, $controller = 'WP_REST_Terms_Controller' ) {
 
+		/** As of WordPress 4.7: https://make.wordpress.org/core/2016/10/29/wp_taxonomy-in-4-7/ */
+		/** @var WP_Taxonomy[] $wp_taxonomies */
 		global $wp_taxonomies;
 
 		// Only add support for taxonomies that exist

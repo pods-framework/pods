@@ -2615,6 +2615,9 @@ class PodsMeta {
      * @return array|bool|int|mixed|null|string|void
      */
     public function get_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
+		// Enforce boolean as it can be a string sometimes
+		$single = filter_var( $single, FILTER_VALIDATE_BOOLEAN );
+		
         $meta_type = $object_type;
 
         if ( in_array( $meta_type, array( 'post_type', 'media' ) ) )

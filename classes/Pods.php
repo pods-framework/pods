@@ -2572,19 +2572,17 @@ class Pods implements Iterator {
 	 * @since 2.3
 	 */
 	public function add_to ( $field, $value, $id = null ) {
+		$pod =& $this;
+
 		$fetch = false;
 
 		if ( null === $id ) {
 			$fetch = true;
 
-			$pod =& $this;
-
 			$id = $pod->id();
 		}
 		elseif ( $id != $this->id() ) {
 			$pod = pods( $this->pod, $id );
-		} else {
-			$pod =& $this;
 		}
 
 		$this->do_hook( 'add_to', $field, $value, $id );
@@ -2685,19 +2683,17 @@ class Pods implements Iterator {
 	 * @since 2.3.3
 	 */
 	public function remove_from( $field, $value = null, $id = null ) {
+		$pod =& $this;
+
 		$fetch = false;
 
 		if ( null === $id ) {
 			$fetch = true;
 
-			$pod =& $this;
-
 			$id = $this->id();
 		}
 		elseif ( $id != $this->id() ) {
 			$pod = pods( $this->pod, $id );
-		} else {
-			$pod =& $this;
 		}
 
 		$this->do_hook( 'remove_from', $field, $value, $id );

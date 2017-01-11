@@ -6,6 +6,7 @@ exclude_paths:
 - bin/*
 - assets/*
 - templates/*
+- ui/js/select2/*
 
 engines:
   phpcodesniffer:

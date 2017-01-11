@@ -212,7 +212,6 @@ else
 
         list.find( 'li.pods-file:first' ).removeClass('hidden');
 
-        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.init();
         pods_uploader.init();
 
         // Store a reference to this Plupload instance in window.pods_uploaders

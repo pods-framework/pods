@@ -487,9 +487,11 @@ class Pods_Component_I18n extends PodsComponent {
 		$locale_labels['new_item']              = pods_v( 'label_new_item_' . $locale, $pod, '', true );
 		$locale_labels['edit']                  = pods_v( 'label_edit_' . $locale, $pod, '', true );
 		$locale_labels['view']                  = pods_v( 'label_view_' . $locale, $pod, '', true );
+		$locale_labels['view_items']            = pods_v( 'label_view_items_' . $locale, $pod, '', true );
 		$locale_labels['parent']                = pods_v( 'label_parent_' . $locale, $pod, '', true );
 		$locale_labels['not_found_in_trash']    = pods_v( 'label_not_found_in_trash_' . $locale, $pod, '', true );
 		$locale_labels['archives']              = pods_v( 'label_archives_' . $locale, $pod, '', true );
+		$locale_labels['attributes']            = pods_v( 'label_attributes_' . $locale, $pod, '', true );
 		$locale_labels['insert_into_item']      = pods_v( 'label_insert_into_item_' . $locale, $pod, '', true );
 		$locale_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item_' . $locale, $pod, '', true );
 		$locale_labels['featured_image']        = pods_v( 'label_featured_image_' . $locale, $pod, '', true );

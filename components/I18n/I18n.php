@@ -148,6 +148,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 			add_filter( 'pods_advanced_content_type_pod_data', array( $this, 'pods_filter_object_strings_i18n' ), 10, 2 );
 
+			// Date field
 			global $wp_version;
 			if ( version_compare( $wp_version, '4.6', '<' ) ) {
 				add_filter( 'pods_form_ui_field_date_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
@@ -256,7 +257,7 @@ class Pods_Component_I18n extends PodsComponent {
 		// Validate locale and pod
 		if ( is_array( $data ) && array_key_exists( $locale, $this->languages ) && $this->obj_is_language_enabled( $locale, $data ) ) {
 			// Add option keys to $data array
-			if ( $data['options'] ) {
+			if ( ! empty( $data['options'] ) ) {
 				$data = array_merge( $data, $data['options'] );
 			}
 			// Check if the i18n option exists and isn't empty

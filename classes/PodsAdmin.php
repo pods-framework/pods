@@ -1052,6 +1052,13 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                 ),
+                'label_view_items' => array(
+	                'label' => __( 'View <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+	                'help' =>__( 'help', 'pods' ),
+	                'type' => 'text',
+	                'default' => '',
+	                'object_type' => array( 'post_type' )
+                ),
                 'label_all_items' => array(
                     'label' => __( 'All <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
                     'help' =>__( 'help', 'pods' ),
@@ -1111,6 +1118,13 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_attributes' => array(
+	                'label' => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Attributes', 'pods' ),
+	                'help' =>__( 'help', 'pods' ),
+	                'type' => 'text',
+	                'default' => '',
+	                'object_type' => array( 'post_type' )
                 ),
                 'label_insert_into_item' => array(
                     'label' => __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),

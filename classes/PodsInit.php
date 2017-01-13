@@ -459,6 +459,7 @@ class PodsInit {
 				$cpt_labels['edit_item']             = pods_v( 'label_edit_item', $post_type, '', true );
 				$cpt_labels['view']                  = pods_v( 'label_view', $post_type, '', true );
 				$cpt_labels['view_item']             = pods_v( 'label_view_item', $post_type, '', true );
+				$cpt_labels['view_items']            = pods_v( 'label_view_items', $post_type, '', true );
 				$cpt_labels['all_items']             = pods_v( 'label_all_items', $post_type, '', true );
 				$cpt_labels['search_items']          = pods_v( 'label_search_items', $post_type, '', true );
 				$cpt_labels['not_found']             = pods_v( 'label_not_found', $post_type, '', true );
@@ -466,6 +467,7 @@ class PodsInit {
 				$cpt_labels['parent']                = pods_v( 'label_parent', $post_type, '', true );
 				$cpt_labels['parent_item_colon']     = pods_v( 'label_parent_item_colon', $post_type, '', true );
 				$cpt_labels['archives']              = pods_v( 'label_archives', $post_type, '', true );
+				$cpt_labels['attributes']            = pods_v( 'label_attributes', $post_type, '', true );
 				$cpt_labels['insert_into_item']      = pods_v( 'label_insert_into_item', $post_type, '', true );
 				$cpt_labels['uploaded_to_this_item'] = pods_v( 'label_uploaded_to_this_item', $post_type, '', true );
 				$cpt_labels['featured_image']        = pods_v( 'label_featured_image', $post_type, '', true );
@@ -999,6 +1001,7 @@ class PodsInit {
 			$labels['edit_item']             = pods_v( 'edit_item', $labels, sprintf( __( 'Edit %s', 'pods' ), $singular_label ), true );
 			$labels['view']                  = pods_v( 'view', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
 			$labels['view_item']             = pods_v( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), true );
+			$labels['view_items']            = pods_v( 'view_items', $labels, sprintf( __( 'View %s', 'pods' ), $label ), true );
 			$labels['all_items']             = pods_v( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), true );
 			$labels['search_items']          = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
 			$labels['not_found']             = pods_v( 'not_found', $labels, sprintf( __( 'No %s Found', 'pods' ), $label ), true );
@@ -1010,6 +1013,7 @@ class PodsInit {
 			$labels['remove_featured_image'] = pods_v( 'remove_featured_image', $labels, __( 'Remove featured image', 'pods' ), true );
 			$labels['use_featured_image']    = pods_v( 'use_featured_image', $labels, __( 'Use as featured image', 'pods' ), true );
 			$labels['archives']              = pods_v( 'archives', $labels, sprintf( __( '%s Archives', 'pods' ), $singular_label ), true );
+			$labels['attributes']            = pods_v( 'attributes', $labels, sprintf( __( '%s Attributes', 'pods' ), $singular_label ), true );
 			$labels['insert_into_item']      = pods_v( 'insert_into_item', $labels, sprintf( __( 'Insert into %s', 'pods' ), $singular_label ), true );
 			$labels['uploaded_to_this_item'] = pods_v( 'uploaded_to_this_item', $labels, sprintf( __( 'Uploaded to this %s', 'pods' ), $singular_label ), true );
 			$labels['filter_items_list']     = pods_v( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), true );

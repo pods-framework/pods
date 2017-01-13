@@ -11,7 +11,7 @@
  * Category: I18n
  *
  * Class: Pods_Component_I18n
- * 
+ *
  * @package Pods\Components
  * @subpackage i18n
  */
@@ -39,8 +39,6 @@ class Pods_Component_I18n extends PodsComponent {
 		'menu_name',
 		'name_admin_bar',
 		'pick_select_text',
-
-		//@todo: Validate PR #3683 https://github.com/pods-framework/pods/pull/3683 is merged
 		'file_add_button',
 		'file_modal_title',
 		'file_modal_add_button',
@@ -77,16 +75,16 @@ class Pods_Component_I18n extends PodsComponent {
 			$this->locale = get_locale();
 
 			if ( is_admin() ) {
-				
+
 				if ( isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'pods', $this->admin_page ) ) ) {
 
 					add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
 
 					// Do save action here because otherwise the loading of post_types get done first and labels aren't translated
 					if (   $_GET['page'] == $this->admin_page
-						&& pods_is_admin( array( 'pods_i18n_activate_lanuages' ) ) 
-						&& isset( $_POST['_nonce_i18n'] ) 
-						&& wp_verify_nonce( $_POST['_nonce_i18n'], 'pods_i18n_activate_lanuages' ) 
+						&& pods_is_admin( array( 'pods_i18n_activate_lanuages' ) )
+						&& isset( $_POST['_nonce_i18n'] )
+						&& wp_verify_nonce( $_POST['_nonce_i18n'], 'pods_i18n_activate_lanuages' )
 					) {
 						$this->admin_save();
 					}
@@ -212,7 +210,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Check is a field name is set for translation
-	 * 
+	 *
 	 * @since 0.1
 	 * @param string $name
 	 * @return bool
@@ -238,14 +236,14 @@ class Pods_Component_I18n extends PodsComponent {
 			// All translateable fields from field_data[ (int) ][ $name ]
 			if ( in_array( $name, $translatable_fields ) ) {
 				return true;
-			}           
+			}
 		}
 		return false;
 	}
 
 	/**
 	 * Get a translated option for a field key (if available)
-	 * 
+	 *
 	 * @since  0.1
 	 * @param  string $current Current value
 	 * @param  string $key     The key / opion name to search for
@@ -297,7 +295,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Returns the translated label if available
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsForm.php >> 'pods_form_ui_label_text' (filter)
 	 * @param  string $label   The default label
@@ -312,7 +310,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Returns the translated description if available
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsForm.php >> 'pods_form_ui_comment_text' (filter)
 	 * @param  string $message The default description
@@ -326,7 +324,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Replaces the default selected text with a translation if available
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    pick.php >> 'pods_field_pick_data' (filter)
 	 * @param  array  $data    The default data of the field
@@ -336,13 +334,13 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  array  $pod     The Pod
 	 * @param  int    $id      The field ID
 	 * @return array
-	 */ 
+	 */
 	public function field_pick_data_i18n( $data, $name, $value, $options, $pod, $id ) {
 		if ( isset( $data[''] ) && isset( $options['pick_select_text'] ) ) {
 			$locale = $this->locale;
-			if (   isset( $options['pick_select_text_' . $locale ] ) 
-				&& array_key_exists( $locale, $this->languages ) 
-				&& $this->obj_is_language_enabled( $locale, $pod ) 
+			if (   isset( $options['pick_select_text_' . $locale ] )
+				&& array_key_exists( $locale, $this->languages )
+				&& $this->obj_is_language_enabled( $locale, $pod )
 			) {
 				$data[''] = $options['pick_select_text_' . $locale ];
 			}
@@ -352,7 +350,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Replaces the default values with a translation if available
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type . '_options' (filter)
 	 * @param  array  $options The field options
@@ -361,13 +359,13 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  array  $pod     The Pod
 	 * @param  int    $id      The field ID
 	 * @return array
-	 */ 
+	 */
 	public function form_ui_field_options_i18n( $options, $name, $value, $pod, $id ) {
 		foreach ( $this->get_translatable_fields() as $field ) {
 			$locale = $this->locale;
-			if (   isset( $options[ $field . '_' . $locale ] ) 
-				&& array_key_exists( $locale, $this->languages ) 
-				&& $this->obj_is_language_enabled( $locale, $pod ) 
+			if (   isset( $options[ $field . '_' . $locale ] )
+				&& array_key_exists( $locale, $this->languages )
+				&& $this->obj_is_language_enabled( $locale, $pod )
 			) {
 				$options[ $field ] = $options[ $field . '_' . $locale ];
 			}
@@ -377,7 +375,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Get the i18n files for jquery datepicker from the github repository
-	 * 
+	 *
 	 * @since  0.1
 	 * @link   https://jqueryui.com/datepicker/#localization
 	 * @link   https://github.com/jquery/jquery-ui/tree/master/ui/i18n
@@ -408,7 +406,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Get the locale according to the format available in the jquery ui i18n file list
-	 * 
+	 *
 	 * @url    https://github.com/jquery/jquery-ui/tree/master/ui/i18n
 	 * @return string ex: "fr" or "en-GB"
 	 */
@@ -442,7 +440,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Filter hook function to overwrite the labels and description with translations (if available)
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsInit.php >> setup_content_types()
 	 * @param  array   $options  The array of object options
@@ -480,7 +478,7 @@ class Pods_Component_I18n extends PodsComponent {
 		$locale_labels['not_found']             = pods_v( 'label_not_found_' . $locale, $pod, '', true );
 		$locale_labels['items_list_navigation'] = pods_v( 'label_items_list_navigation_' . $locale, $pod, '', true );
 		$locale_labels['items_list']            = pods_v( 'label_items_list_' . $locale, $pod, '', true );
-		
+
 		// Post Types
 		$locale_labels['name_admin_bar']        = pods_v( 'name_admin_bar_' . $locale, $pod, '', true );
 		$locale_labels['add_new']               = pods_v( 'label_add_new_' . $locale, $pod, '', true );
@@ -522,7 +520,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Save component settings
-	 * 
+	 *
 	 * @since 0.1
 	 */
 	public function admin_save() {
@@ -618,9 +616,9 @@ class Pods_Component_I18n extends PodsComponent {
 			'item' => __('Language', 'pods'),
 			'fields' => array(
 				'manage' => array(
-					'enabled' => array( 
+					'enabled' => array(
 						'label' => __( 'Active', 'pods' ),
-						'type' => 'text', 
+						'type' => 'text',
 					),
 					'locale' => array( 'label' => __( 'Locale', 'pods' ) ),
 					'lang' => array( 'label' => __( 'Language', 'pods' ) ),
@@ -737,7 +735,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n metabox.
-	 * 
+	 *
 	 * @todo Store enabled languages serialized instead of separate inputs
 	 *
 	 * @since  0.1
@@ -779,7 +777,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n field option tab.
-	 * 
+	 *
 	 * @todo check / remove
 	 *
 	 * @since  0.1
@@ -794,7 +792,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n options
-	 * 
+	 *
 	 * @todo check / remove
 	 *
 	 * @since  0.1
@@ -808,7 +806,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Adds translation inputs to fields
-	 * 
+	 *
 	 * @since  0.1
 	 * @see    PodsForm.php >> 'pods_form_ui_field_' . $type (filter)
 	 * @param  string $output The default output of the field
@@ -820,7 +818,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return string
 	 */
 	public function add_i18n_inputs( $output, $name, $value, $options, $pod, $id ) {
-		
+
 		if ( ! empty( $pod ) || empty( $name ) || ! $this->is_translatable_field( $name ) ) {
 			return $output;
 		}
@@ -874,7 +872,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Check if a language is get to enables for an object
-	 * 
+	 *
 	 * @since  0.1
 	 * @param  string $locale The locale to validate
 	 * @param  array  $data   Object data
@@ -894,8 +892,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Create a label with the english and native name combined
-	 * 
-	 * @since  0.1 
+	 *
+	 * @since  0.1
 	 * @param  array $lang_data
 	 * @return string
 	 */

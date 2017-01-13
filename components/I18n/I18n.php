@@ -143,9 +143,10 @@ class Pods_Component_I18n extends PodsComponent {
 			}
 
 			// Object filters
-			add_filter( 'pods_register_post_type', array( $this, 'pods_register_object_i18n' ), 10, 2 );
-			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_object_i18n' ), 10, 2 );
+			add_filter( 'pods_register_post_type', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
+			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 
+			add_filter( 'pods_advanced_content_type_pod_data', array( $this, 'pods_filter_object_strings_i18n' ), 10, 2 );
 
 			global $wp_version;
 			if ( version_compare( $wp_version, '4.6', '<' ) ) {
@@ -447,7 +448,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  string  $object   The object type name/slug
 	 * @return array
 	 */
-	public function pods_register_object_i18n( $options, $object ) {
+	public function pods_register_wp_object_i18n( $options, $object ) {
 
 		$locale = $this->locale;
 
@@ -511,6 +512,41 @@ class Pods_Component_I18n extends PodsComponent {
 			foreach( $options['labels'] as $key => $value ) {
 				if ( isset( $locale_labels[ $key ] ) && ! empty( $locale_labels[ $key ] ) ) {
 					$options['labels'][ $key ] = $locale_labels[ $key ];
+				}
+			}
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Filter hook function to overwrite the labels and description with translations (if available)
+	 *
+	 * @since  0.1
+	 * @see    PodsInit.php >> admin_menu()
+	 * @param  array   $options  The array of object options
+	 * @param  string  $object   The object type name/slug
+	 * @return array
+	 */
+	function pods_filter_object_strings_i18n( $options, $object ) {
+
+		/**
+		 * @todo allow labels to be set even if the default language isn't
+		 *
+		 * - Find all keys that end with the current locale
+		 * - Assign them to the keys without that locale
+		 */
+
+		foreach( $options as $key => $option ) {
+			if ( is_string( $option ) && $this->is_translatable_field( $key ) ) {
+				$options[ $key ] = $this->get_value_translation( $option, $key, $options );
+			}
+		}
+
+		if ( ! empty( $options['options'] ) ) {
+			foreach( $options['options'] as $key => $option ) {
+				if ( is_string( $option ) && $this->is_translatable_field( $key ) ) {
+					$options['options'][ $key ] = $this->get_value_translation( $option, $key, $options['options'] );
 				}
 			}
 		}

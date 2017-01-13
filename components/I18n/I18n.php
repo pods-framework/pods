@@ -620,7 +620,7 @@ class Pods_Component_I18n extends PodsComponent {
 						'label' => __( 'Active', 'pods' ),
 						'type' => 'text',
 					),
-					'locale' => array( 'label' => __( 'Locale', 'pods' ) ),
+					'locale' => array( 'label' => __( 'Locale', 'pods' ), 'classes' => array( 'column-secondary' ) ),
 					'lang' => array( 'label' => __( 'Language', 'pods' ) ),
 					'lang_native' => array( 'label' => __( 'Native name', 'pods' ) ),
 					/*'fields' => array(

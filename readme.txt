@@ -168,6 +168,8 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 = 2.6.8 - January 12th 2017 =
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
+* Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
+* Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
 * Fixed: Add `pods_ui_get_find_params` filter for PodsUI to extend default `find()`. Fixes (#3925). (#3926). [@sc0ttkclark]
 * Fixed: Compatibility additions for WP 4.7, Taxonomy Class (#3895,#3894)
 * Fixed: Proper reset of the local var cache in Pods::$row when using add_to/remove_from/save. Fixes (#3784). (#3923). [@sc0ttkclark]
@@ -181,7 +183,6 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Unchecking Show in Menu in the Admin UI selection for Custom Taxonomies will now properly not show the Taxonomy. `show_in_menu` option for for Taxonomies. Fixes (#3848). (#3852). [@JoryHogeveen]
 * Fixed: Make field type labels translatable. Fixes (#3849). (#3850). [@JoryHogeveen]
 * Fixed: Store the old field name in meta. Pods already stored the old 'pod' name, but didn't do the same for fields after updating. Added for (#3841). (#3842). [@JoryHogeveen]
-* Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
 * Fixed: Fix error with PODS_LIGHT and components. Fixes (#2301,#3811,#2293). (#3837). [@JoryHogeveen]
 * Fixed: Update the attachment parent if updating a post type. Only updates if the parent isn't set but allows file fields/upload fields to now properly show parent post. Fixes (#3808). (#3834). [@JoryHogeveen]
 * Fixed: CSS fixes (remove old images + linter), fixing issues with gradient button not in WP Core. Fixes (#3812). (#3833). [@JoryHogeveen]
@@ -195,7 +196,6 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Correcting a bug in adding Taxonomy REST support. Fixes (#3777). (#3778). [@pcfreak30]
 * Fixed: Clear `$related_item_cache` when saving a relationship. Fixes an issue where the $PodsAPI::save_relationships was not clearing the cache. Fixes (#3775). (#3776). [@pcfreak30]
 * Fixed: jQuery fix to change from deprecated .live() to .on(). Fixes (#3771). (#3772). [@mikeschinkel]
-* Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
 * Fixed: Basic included post types from WP-API are no longer having their REST base overridden by Pods. Fixes (#3759). (#3760). [@sc0ttkclark]
 * Fixed: Fix SQL for multilingual taxonomies for compatibility with PolyLang. Fixes (#3728). (#3754). [@JoryHogeveen]
 * Fixed: Fix plupload file field listings, specifically fixing some issues in the CSS and jQuery. Fixes (#3731). (#3732). [@pcfreak30]

@@ -1188,12 +1188,6 @@ class PodsMeta {
 			return $post_id;
 		}
 
-		$groups = $this->groups_get( 'post_type', $post->post_type );
-
-		if ( empty( $groups ) ) {
-			return $post_id;
-		}
-
 		$id = $post_id;
 
 		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== $post->post_type ) {
@@ -1205,7 +1199,7 @@ class PodsMeta {
 		$pod  = self::$current_pod;
 		$data = array();
 
-		if ( false !== $nonced ) {
+		if ( false !== $nonced && ! empty( $groups ) ) {
 			foreach ( $groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
 					continue;
@@ -1225,38 +1219,43 @@ class PodsMeta {
 					}
 				}
 			}
-		}
 
-		if ( $is_new_item ) {
-			do_action( 'pods_meta_create_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
-			do_action( "pods_meta_create_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
-		}
-
-		do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
-		do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
-
-		pods_no_conflict_on( 'post' );
-
-		if ( ! empty( $pod ) ) {
-			// Fix for Pods doing it's own sanitizing
-			$data = pods_unslash( (array) $data );
-
-			$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
-		} elseif ( ! empty( $id ) ) {
-			foreach ( $data as $field => $value ) {
-				update_post_meta( $id, $field, $value );
+			if ( $is_new_item ) {
+				do_action( 'pods_meta_create_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
+				do_action( "pods_meta_create_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
 			}
+
+			do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
+			do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
 		}
 
-		pods_no_conflict_off( 'post' );
+		if ( $is_new_item || false !== $nonced ) {
+			pods_no_conflict_on( 'post' );
 
-		if ( $is_new_item ) {
-			do_action( 'pods_meta_create_post', $data, $pod, $id, $groups, $post, $post->post_type );
-			do_action( "pods_meta_create_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+			if ( ! empty( $pod ) ) {
+				// Fix for Pods doing it's own sanitizing
+				$data = pods_unslash( (array) $data );
+
+				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+			} elseif ( ! empty( $id ) ) {
+				foreach ( $data as $field => $value ) {
+					update_post_meta( $id, $field, $value );
+				}
+			}
+
+			pods_no_conflict_off( 'post' );
 		}
 
-		do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
-		do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
+
+		if ( false !== $nonced && ! empty( $groups ) ) {
+			if ( $is_new_item ) {
+				do_action( 'pods_meta_create_post', $data, $pod, $id, $groups, $post, $post->post_type );
+				do_action( "pods_meta_create_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+			}
+
+			do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
+			do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
+		}
 
 		return $post_id;
 

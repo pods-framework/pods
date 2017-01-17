@@ -241,8 +241,8 @@ class PodsMeta {
             // Handle User Editor
             add_action( 'show_user_profile', array( $this, 'meta_user' ) );
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-            //add_action( 'user_register', array( $this, 'save_user' ) );
-            add_action( 'profile_update', array( $this, 'save_user' ) );
+            add_action( 'user_register', array( $this, 'save_user' ) );
+            add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
 
             if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
                 // Handle *_user_meta
@@ -736,8 +736,8 @@ class PodsMeta {
             if ( !has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
                 add_action( 'show_user_profile', array( $this, 'meta_user' ) );
                 add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-                //add_action( 'user_register', array( $this, 'save_user' ) );
-                add_action( 'profile_update', array( $this, 'save_user' ) );
+                add_action( 'user_register', array( $this, 'save_user' ) );
+                add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
             }
         }
         elseif ( 'comment' == $pod[ 'type' ] ) {
@@ -1122,13 +1122,11 @@ class PodsMeta {
      * @param int       $post_id
      * @param WP_Post   $post
      * @param bool|null $update
-	 *
-     * @return int Post ID
      */
 	public function save_post( $post_id, $post, $update = null ) {
 
-		if ( empty( $_POST ) || empty( $post ) ) {
-			return $post_id;
+		if ( empty( $post ) ) {
+			return;
 		}
 
 		$is_new_item = false;
@@ -1143,7 +1141,7 @@ class PodsMeta {
 		$nonced = wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_post' );
 
 		if ( ! $is_new_item && false === $nonced ) {
-			return $post_id;
+			return;
 		}
 
 		// Unset to avoid manual new post issues
@@ -1163,17 +1161,17 @@ class PodsMeta {
 
 		// Block Autosave and Revisions
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) ) {
-			return $post_id;
+			return;
 		}
 
 		// Block Quick Edits / Bulk Edits
 		if ( 'edit.php' === pods_v( 'pagenow', 'global' ) && ( 'inline-save' === pods_v( 'action', 'post' ) || null !== pods_v( 'bulk_edit', 'get' ) || is_array( pods_v( 'post', 'get' ) ) ) ) {
-			return $post_id;
+			return;
 		}
 
 		// Block Trash
 		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ) ) ) {
-			return $post_id;
+			return;
 		}
 
 		// Block Auto-drafting and Trash (not via Admin action)
@@ -1185,8 +1183,10 @@ class PodsMeta {
 		$blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );
 
 		if ( in_array( $post->post_status, $blacklisted_status ) ) {
-			return $post_id;
+			return;
 		}
+
+		$groups = $this->groups_get( 'post_type', $post->post_type );
 
 		$id = $post_id;
 
@@ -1246,7 +1246,6 @@ class PodsMeta {
 			pods_no_conflict_off( 'post' );
 		}
 
-
 		if ( false !== $nonced && ! empty( $groups ) ) {
 			if ( $is_new_item ) {
 				do_action( 'pods_meta_create_post', $data, $pod, $id, $groups, $post, $post->post_type );
@@ -1256,8 +1255,6 @@ class PodsMeta {
 			do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
 			do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
 		}
-
-		return $post_id;
 
 	}
 
@@ -1718,10 +1715,15 @@ class PodsMeta {
         do_action( 'pods_meta_' . __FUNCTION__ . '_post', $user_id );
     }
 
-    /**
-     * @param $user_id
-     */
-    public function save_user ( $user_id ) {
+	/**
+	 * Handle integration with the user_register and profile_update hooks.
+	 *
+	 * @see wp_insert_user
+	 *
+	 * @param int         $user_id       User ID.
+	 * @param object|null $old_user_data Object containing user's data prior to update.
+	 */
+	public function save_user( $user_id, $old_user_data = null ) {
 
 		$is_new_item = false;
 
@@ -1729,91 +1731,83 @@ class PodsMeta {
 			$is_new_item = true;
 		}
 
-		if ( empty( $_POST ) ) {
-			return $user_id;
-		}
-		elseif ( $is_new_item || !wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' ) ) {
-			return $user_id;
-		}
+		$nonced = wp_verify_nonce( pods_v( 'pods_meta', 'post' ), 'pods_meta_user' );
 
-		$groups = $this->groups_get( 'user', 'user' );
-
-		if ( empty( $groups ) ) {
-			return $user_id;
+		if ( ! $is_new_item && false === $nonced ) {
+			return;
 		}
 
 		if ( is_object( $user_id ) ) {
 			$user_id = $user_id->ID;
 		}
 
-		$data = array();
+		$groups = $this->groups_get( 'user', 'user' );
 
 		$id = $user_id;
-		$pod = null;
 
-		foreach ( $groups as $group ) {
-			if ( empty( $group[ 'fields' ] ) ) {
-				continue;
-			}
+		if ( ! is_object( self::$current_pod ) || self::$current_pod->pod !== 'user' ) {
+			self::$current_pod = pods( 'user', $id, true );
+		} elseif ( is_object( self::$current_pod ) && (int) self::$current_pod->id() !== (int) $id ) {
+			self::$current_pod->fetch( $id );
+		}
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] ) {
-					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+		$pod  = self::$current_pod;
+		$data = array();
+
+		if ( false !== $nonced && ! empty( $groups ) ) {
+			foreach ( $groups as $group ) {
+				if ( empty( $group['fields'] ) ) {
+					continue;
 				}
-				elseif ( self::$current_pod->id() != $id ) {
-					self::$current_pod->fetch( $id );
-				}
 
-				$pod = self::$current_pod;
-			}
+				foreach ( $group['fields'] as $field ) {
+					if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
+						if ( ! pods_v( 'hidden', $field['options'], false ) ) {
+							continue;
+						}
+					}
 
-			foreach ( $group[ 'fields' ] as $field ) {
+					$data[ $field['name'] ] = '';
 
-				if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-					if ( !pods_var( 'hidden', $field[ 'options' ], false ) ) {
-						continue;
+					if ( isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+						$data[ $field['name'] ] = $_POST[ 'pods_meta_' . $field['name'] ];
 					}
 				}
+			}
 
-				$data[ $field[ 'name' ] ] = '';
+			if ( $is_new_item ) {
+				do_action( 'pods_meta_create_pre_user', $data, $pod, $id, $groups );
+			}
 
-				if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) ) {
-					$data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+			do_action( 'pods_meta_save_pre_user', $data, $pod, $id, $groups, $is_new_item );
+		}
+
+		if ( $is_new_item || false !== $nonced ) {
+			pods_no_conflict_on( 'user' );
+
+			if ( ! empty( $pod ) ) {
+				// Fix for Pods doing it's own sanitizing
+				$data = pods_unslash( (array) $data );
+
+				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+			} elseif ( ! empty( $id ) ) {
+				foreach ( $data as $field => $value ) {
+					update_user_meta( $id, $field, $value );
 				}
 			}
+
+			pods_no_conflict_off( 'user' );
 		}
 
-		if ( $is_new_item ) {
-			do_action( 'pods_meta_create_pre_user', $data, $pod, $id, $groups );
-		}
-
-		do_action( 'pods_meta_save_pre_user', $data, $pod, $id, $groups, $is_new_item );
-
-		pods_no_conflict_on( 'user' );
-
-		if ( !empty( $pod ) ) {
-			// Fix for Pods doing it's own sanitization
-			$data = pods_unslash( (array) $data );
-
-			$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
-		}
-		elseif ( !empty( $id ) ) {
-			foreach ( $data as $field => $value ) {
-				update_user_meta( $id, $field, $value );
+		if ( false !== $nonced && ! empty( $groups ) ) {
+			if ( $is_new_item ) {
+				do_action( 'pods_meta_create_user', $data, $pod, $id, $groups );
 			}
+
+			do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
 		}
 
-		pods_no_conflict_off( 'user' );
-
-		if ( $is_new_item ) {
-			do_action( 'pods_meta_create_user', $data, $pod, $id, $groups );
-		}
-
-		do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
-
-		return $user_id;
-
-    }
+	}
 
     /**
      * @param $commenter

@@ -3784,6 +3784,28 @@ class PodsAPI {
         if ( !$no_conflict )
             pods_no_conflict_off( $pod[ 'type' ] );
 
+        // Clear cache
+        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
+
+		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
+			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
+			}
+		}
+
+        // Clear WP meta cache
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+            $meta_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $meta_type )
+                $meta_type = 'post';
+
+            wp_cache_delete( $params->id, $meta_type . '_meta' );
+            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
+        }
+
         if ( false === $bypass_helpers ) {
             $pieces = compact( $pieces );
 
@@ -3813,28 +3835,6 @@ class PodsAPI {
                     }
                 }
             }
-        }
-
-        // Clear cache
-        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
-
-		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
-			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
-
-			if ( 0 < strlen( $slug ) ) {
-        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
-			}
-		}
-
-        // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
-            $meta_type = $pod[ 'type' ];
-
-            if ( 'post_type' == $meta_type )
-                $meta_type = 'post';
-
-            wp_cache_delete( $params->id, $meta_type . '_meta' );
-            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
         }
 
         // Success! Return the id

@@ -1,7 +1,7 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher
 Donate link: http://podsfoundation.org/donate/
-Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
+Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields, relationships
 Requires at least: 3.8
 Tested up to: 4.7.1
 Stable tag: 2.6.8-a-1
@@ -11,8 +11,11 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Pods is a framework for creating, managing, and deploying customized content types and fields.
 
 == Description ==
-
-Check out http://pods.io/ for our User Guide, Forums, and other resources to help you develop with Pods.
+Manage all your custom content needs in ONE location with the Pods Framework. You can:
+* Create and edit custom post types, taxonomy, fields and extend existing WordPress objects like users, media, posts and pages or extend other plugins' custom post types -- all from Pods.
+* Easily display your custom content, whether you want to use shortcodes, widgets, the code-free Pods Template approach, or use standard PHP in WordPress Theme templates and functions.
+* Create connections between any of your content to help organize it in logical and useful ways with relationship fields.
+Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](https://pods.io/) for our User Guide, Support Forum, and other resources to help you develop with Pods.
 
 = Introduction =
 [youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
@@ -135,11 +138,17 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = Where do we go for Support on your plugin? =
 
-Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). You can also contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not man the chat channel 24 hours, but we do check the questions that come through daily and reply to any unanswered questions. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
+Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). For the fastest support, you can contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not staff our Slack channel 24 hours, but we do check any questions that come through daily and reply to any unanswered questions.
 
-= I've found a Bug or Feature Request =
+We do have a community of Pods users and developers that hang out on Slack so you're sure to get an answer quickly. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
+
+= I've found a Bug or I have a Feature Request =
 
 If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at [https://github.com/pods-framework/pods/issues/new](https://github.com/pods-framework/pods/issues/new). Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
+
+= Will Pods work with my Theme? =
+
+We don't provide any special CSS or display attributes with your custom content so as long as your theme works with WordPress standard functions and the theme hierarchy (https://wp-hierarchy.com), you should be fine. You may need to create special PHP WordPress Theme Templates for your content, or you can use our Pods Templates and the Auto Template option to display your 'template' containing your custom content where your theme normally outputs `the_content` filter.
 
 == Screenshots ==
 
@@ -162,7 +171,7 @@ Pods really wouldn't be where it is without all of the contributions both financ
 
 Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
 
-Join us in further translating the Pods interface at: http://wp-translate.org/projects/pods
+Join us in further translating the Pods interface at: [wp-translate.org/projects/pods](http://wp-translate.org/projects/pods)
 
 == Changelog ==
 
@@ -170,6 +179,8 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
 * Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
 * Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
+* Fixed: Properly clear cache before running post-save actions in PodsAPI::save_pod_item. Prevents double saves being necessary to use the `pods_api_post_save_pod_item` filters to update WordPress Object fields. Fixes (#3917). (#3938). [@sc0ttkclark]
+* Fixed: Update save_post / save_user handling with better fallbacks when nonce not active. Fixes an issue where the $is_new_item was not set as expected on post saves and user saves. Fixes (#3801,#3918). (#3936). [@sc0ttkclark]
 * Fixed: Add `pods_ui_get_find_params` filter for PodsUI to extend default `find()`. Fixes (#3925). (#3926). [@sc0ttkclark]
 * Fixed: Compatibility additions for WP 4.7, Taxonomy Class (#3895,#3894)
 * Fixed: Proper reset of the local var cache in Pods::$row when using add_to/remove_from/save. Fixes (#3784). (#3923). [@sc0ttkclark]

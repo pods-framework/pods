@@ -2990,14 +2990,15 @@ class PodsAPI {
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
      * $params['pod_id'] string The Pod ID (pod or pod_id is required)
-     * $params['id'] int The item ID
+     * $params['id'] int|array The item ID, or an array of item IDs to save data for
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
 	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via PodsAPI::get_changed_fields()
+	 * $params['error_mode'] string Throw an 'exception', 'exit' with the message, return 'false', or return 'wp_error'
      *
      * @param array|object $params An associative array of parameters
      *
-     * @return int The item ID
+     * @return int|array The item ID, or an array of item IDs (if `id` is an array if IDs)
      *
      * @since 1.7.9
      */
@@ -3010,6 +3011,12 @@ class PodsAPI {
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
         $simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+	    $error_mode = $this->display_errors;
+
+	    if ( ! empty( $params->error_mode ) ) {
+		    $error_mode = $params->error_mode;
+	    }
 
         // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
@@ -3087,6 +3094,7 @@ class PodsAPI {
 		 * @since 2.3.19
 		 */
 		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
+
 		$changed_fields = array();
 
 		if ( !isset( $params->clear_slug_cache ) ) {
@@ -3132,7 +3140,7 @@ class PodsAPI {
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => true ) );
 
         if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+            return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 
         $params->pod = $pod[ 'name' ];
         $params->pod_id = $pod[ 'id' ];
@@ -3389,7 +3397,7 @@ class PodsAPI {
                     $validate = (array) $validate;
 
                 if ( !is_bool( $validate ) && !empty( $validate ) )
-                    return pods_error( $validate, $this );
+                    return pods_error( $validate, $error_mode );
             }
 
             $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $field_data, $options ), array_merge( $fields, $object_fields ), $pod, $params );
@@ -3784,6 +3792,28 @@ class PodsAPI {
         if ( !$no_conflict )
             pods_no_conflict_off( $pod[ 'type' ] );
 
+        // Clear cache
+        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
+
+		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
+			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
+			}
+		}
+
+        // Clear WP meta cache
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+            $meta_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $meta_type )
+                $meta_type = 'post';
+
+            wp_cache_delete( $params->id, $meta_type . '_meta' );
+            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
+        }
+
         if ( false === $bypass_helpers ) {
             $pieces = compact( $pieces );
 
@@ -3813,28 +3843,6 @@ class PodsAPI {
                     }
                 }
             }
-        }
-
-        // Clear cache
-        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
-
-		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
-			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
-
-			if ( 0 < strlen( $slug ) ) {
-        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
-			}
-		}
-
-        // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
-            $meta_type = $pod[ 'type' ];
-
-            if ( 'post_type' == $meta_type )
-                $meta_type = 'post';
-
-            wp_cache_delete( $params->id, $meta_type . '_meta' );
-            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
         }
 
         // Success! Return the id

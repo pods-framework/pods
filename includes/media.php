@@ -350,7 +350,7 @@ function pods_audio( $url, $args = false ) {
 		$audio_args = array_merge(  $audio_args, $args );
 	}
 
-	return wp_audio_shortcode( $args );
+	return wp_audio_shortcode( $audio_args );
 
 }
 

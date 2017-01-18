@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jimtrue, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 2.7.0-a-2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

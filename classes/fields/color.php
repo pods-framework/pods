@@ -34,7 +34,7 @@ class PodsField_Color extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Color Picker', 'pods' );
     }
 
     /**

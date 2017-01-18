@@ -58,7 +58,7 @@
     border: none;
     font-weight: bold;
     color: white;
-    background: #21759B url(/wp-admin/images/button-grad.png) repeat-x scroll left top;
+    background: #21759B;
     text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
 }
 
@@ -146,7 +146,7 @@ body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
     box-sizing: content-box;
 
     border: none;
-    background: #21759B url(/wp-admin/images/button-grad.png) repeat-x scroll left top;
+    background: #21759B;
     text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
 }
 
@@ -159,7 +159,7 @@ body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
 }
 
 .pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active {
-    background: #21759B url(/wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+    background: #21759B;
 }
 
 .pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a:hover,
@@ -286,7 +286,7 @@ body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
     padding: 0 32px;
 }
 
-.pods-ui-posts-filter-popup p:after
+.pods-ui-posts-filter-popup p:after,
 .pods-ui-posts-filter-popup .pods-ui-posts-filters:after {
     content: ".";
     display: block;

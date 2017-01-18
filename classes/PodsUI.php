@@ -503,6 +503,16 @@ class PodsUI {
             return false;
         }
 
+        // Assign pod labels
+        // @todo This is also done in setup(), maybe a better / more central way?
+        if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data[ 'options' ] ) ) {
+            $pod_options = $this->pod->pod_data[ 'options' ];
+            $pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data[ 'name' ], $pod_options, $this->pod->pod_data[ 'name' ] );
+            $pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_options );
+        }
+
         $this->go();
     }
 
@@ -915,43 +925,53 @@ class PodsUI {
         $item = __( 'Item', 'pods' );
         $items = __( 'Items', 'pods' );
 
+        if ( ! is_array( $this->label ) ) {
+            $this->label = (array) $this->label;
+        }
+
         if ( is_object( $this->pod ) ) {
-            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
-            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+            $pod_data = $this->pod->pod_data;
+            $pod_data = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data[ 'name' ], $pod_data, $this->pod->pod_data[ 'name' ] );
+            $pod_data = apply_filters( 'pods_advanced_content_type_pod_data', $pod_data, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_data['options'] );
+
+            $item = pods_v( 'label_singular', $pod_data['options'], pods_v( 'label', $pod_data, $item, true ), true );
+            $items = pods_v( 'label', $pod_data, $items, true );
         }
 
         $options->validate( 'item', $item );
         $options->validate( 'items', $items );
 
         $options->validate( 'heading', array(
-            'manage' => __( 'Manage', 'pods' ),
-            'add' => __( 'Add New', 'pods' ),
-            'edit' => __( 'Edit', 'pods' ),
-            'duplicate' => __( 'Duplicate', 'pods' ),
-            'view' => __( 'View', 'pods' ),
-            'reorder' => __( 'Reorder', 'pods' ),
-            'search' => __( 'Search', 'pods' ),
-            'views' => __( 'View', 'pods' )
+            'manage'    => pods_v( 'label_manage', $this->label, __( 'Manage', 'pods' ) ),
+            'add'       => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_edit', $this->label, __( 'Edit', 'pods' ) ),
+            'duplicate' => pods_v( 'label_duplicate', $this->label, __( 'Duplicate', 'pods' ) ),
+            'view'      => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) ),
+            'reorder'   => pods_v( 'label_reorder', $this->label, __( 'Reorder', 'pods' ) ),
+            'search'    => pods_v( 'label_search', $this->label, __( 'Search', 'pods' ) ),
+            'views'     => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) )
         ), 'array_merge' );
 
         $options->validate( 'header', array(
-            'manage' => sprintf( __( 'Manage %s', 'pods' ), $options->items ),
-            'add' => sprintf( __( 'Add New %s', 'pods' ), $options->item ),
-            'edit' => sprintf( __( 'Edit %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Duplicate %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items ),
-            'search' => sprintf( __( 'Search %s', 'pods' ), $options->items )
+            'manage'    => pods_v( 'label_manage_items', $this->label, sprintf( __( 'Manage %s', 'pods' ), $options->items ) ),
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'edit'      => pods_v( 'label_edit_item', $this->label, sprintf( __( 'Edit %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) ),
+            'search'    => pods_v( 'label_search_items', $this->label, sprintf( __( 'Search %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'add_new' => __( 'Add New', 'pods' ),
-            'edit' => sprintf( __( 'Save %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'delete' => sprintf( __( 'Delete this %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items )
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'add_new'   => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_update_item', $this->label, sprintf( __( 'Update %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'delete'    => pods_v( 'label_delete_item', $this->label, sprintf( __( 'Delete this %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1432,7 +1452,7 @@ class PodsUI {
 				$link = $this->action_links[ 'manage' ];
 			}
             ?>
-            <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+            <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
         </h2>
 
         <?php $this->form( true ); ?>
@@ -1480,7 +1500,7 @@ class PodsUI {
                 if ( !empty( $this->action_links[ 'manage' ] ) )
                     $link = $this->action_links[ 'manage' ];
                 ?>
-                <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+                <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
                 <?php
             }
             ?>
@@ -1760,7 +1780,7 @@ class PodsUI {
 							$link = $this->action_links[ 'manage' ];
 						}
 				?>
-					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo pods_v( 'label_back_to_manage', $this->label, sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ) ); ?></a>
 				<?php
 					}
 
@@ -2272,6 +2292,17 @@ class PodsUI {
             
         $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
 
+		/**
+		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.
+		 *
+		 * @param array  $find_params Parameters used with Pods::find()
+		 * @param string $action      Current action
+		 * @param PodsUI $this        PodsUI instance
+		 *
+		 * @since 2.6.8
+		 */
+		$find_params = apply_filters( 'pods_ui_get_find_params', $find_params, $action, $this );
+
         // Debug purposes
         if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $find_params );
@@ -2302,7 +2333,7 @@ class PodsUI {
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';
 
-        $find_params = $this->get_params( $params );
+        $find_params = $this->get_params( $params, $action );
 
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $this->pod->find( $find_params );
@@ -3298,7 +3329,7 @@ class PodsUI {
 
         if ( empty( $this->data ) ) {
             ?>
-        <p><?php echo sprintf( __( 'No %s found', 'pods' ), $this->items ); ?></p>
+        <p><?php echo pods_v( 'label_no_items_found', $this->label, sprintf( __( 'No %s found', 'pods' ), $this->items ) ); ?></p>
         <?php
             return false;
         }

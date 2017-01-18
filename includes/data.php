@@ -111,13 +111,14 @@ function pods_sanitize_like( $input ) {
 	}
 	else {
 		global $wpdb;
+		$input = pods_unslash( $input );
 
 		if ( pods_version_check( 'wp', '4.0' ) ) {
-			$output = $wpdb->esc_like( pods_sanitize( $input ) );
+			$output = pods_sanitize( $wpdb->esc_like( $input ) );
 		}
 		else {
 			// like_escape is deprecated in WordPress 4.0
-			$output = like_escape( pods_sanitize( $input ) );
+			$output = pods_sanitize( like_escape( $input ) );
 		}
 	}
 

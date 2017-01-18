@@ -179,7 +179,9 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
 * Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
 * Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
+* Fixed: Undefined Index Notice in (#3936). (#3941). [@sc0ttkclark]
 * Fixed: Properly clear cache before running post-save actions in PodsAPI::save_pod_item. Prevents double saves being necessary to use the `pods_api_post_save_pod_item` filters to update WordPress Object fields. Fixes (#3917). (#3938). [@sc0ttkclark]
+* Fixed: Revamp pods_error to handle multiple modes, PodsMeta now returns false instead of die/exception. Fixes (#3930). (#3937). [@sc0ttkclark]
 * Fixed: Update save_post / save_user handling with better fallbacks when nonce not active. Fixes an issue where the $is_new_item was not set as expected on post saves and user saves. Fixes (#3801,#3918). (#3936). [@sc0ttkclark]
 * Fixed: Add `pods_ui_get_find_params` filter for PodsUI to extend default `find()`. Fixes (#3925). (#3926). [@sc0ttkclark]
 * Fixed: Compatibility additions for WP 4.7, Taxonomy Class (#3895,#3894)

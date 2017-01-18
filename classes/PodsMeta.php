@@ -1134,7 +1134,7 @@ class PodsMeta {
 		if ( is_bool( $update ) ) {
 			$is_new_item = ! $update;
 		} // false is new item
-		elseif ( in_array( self::$old_post_status[ $post->post_type ], array( 'new', 'auto-draft' ), true ) ) {
+		elseif ( isset( self::$old_post_status[ $post->post_type ] ) && in_array( self::$old_post_status[ $post->post_type ], array( 'new', 'auto-draft' ), true ) ) {
 			$is_new_item = true;
 		}
 

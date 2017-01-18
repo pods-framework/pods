@@ -2994,6 +2994,7 @@ class PodsAPI {
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
 	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via PodsAPI::get_changed_fields()
+	 * $params['error_mode'] string Throw an 'exception', 'exit' with the message, return 'false', or return 'wp_error'
      *
      * @param array|object $params An associative array of parameters
      *

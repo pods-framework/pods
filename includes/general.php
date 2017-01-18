@@ -92,79 +92,140 @@ function pods_message ( $message, $type = null ) {
     echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 }
 
-global $pods_errors;
-$pods_errors = array();
+$GLOBALS['pods_errors'] = array();
 
 /**
  * Error Handling which throws / displays errors
  *
- * @param string $error The error message to be thrown / displayed
- * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
- *                              If boolean, and is set to true: display errors
+ * @param string|array        $error The error message(s) to be thrown / displayed.
+ * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if boolean and is set to true it will display errors.
  *
- * @throws Exception
+ * @throws Exception Throws exception for developer-oriented error handling.
  *
- * @return mixed|void
+ * @return mixed
  *
  * @since 2.0
  */
-function pods_error ( $error, $obj = null ) {
+function pods_error( $error, $obj = null ) {
 
-    global $pods_errors;
+	global $pods_errors;
 
-    $display_errors = false;
+	$error_mode = 'exception';
 
-    if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
-        $display_errors = true;
-    elseif ( is_bool( $obj ) && true === $obj )
-        $display_errors = true;
+	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
+		if ( true === $obj->display_errors ) {
+			$error_mode = 'exit';
+		} elseif ( false === $obj->display_errors ) {
+			$error_mode = 'exception';
+		} else {
+			$error_mode = $obj->display_errors;
+		}
+	} elseif ( true === $obj ) {
+		$error_mode = 'exit';
+	} elseif ( false === $obj ) {
+		$error_mode = 'exception';
+	} elseif ( is_string( $obj ) ) {
+		$error_mode = $obj;
+	}
 
-    if ( is_object( $error ) && 'Exception' == get_class( $error ) ) {
-        $error = $error->getMessage();
-        $display_errors = false;
-    }
+	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		$error = $error->getMessage();
 
-    if ( is_array( $error ) ) {
-        if ( 1 == count( $error ) )
-            $error = current( $error );
-        elseif ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-            $error = __( 'The following issue occurred:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
-        else
-            $error = __( 'The following issues occurred:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
-    }
+		$error_mode = 'exception';
+	}
 
-    if ( is_object( $error ) )
-        $error = __( 'An unknown error has occurred', 'pods' );
+	/**
+	 * @var string $error_mode Throw an exception, exit with the message, return false, or return WP_Error
+	 */
+	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error' ), true ) ) {
+		$error_mode = 'exception';
+	}
 
-    // log error in WP
-    $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+	/**
+	 * Filter the error mode used by pods_error.
+	 *
+	 * @param string $error_mode Error mode
+	 * @param string|array $error Error message(s)
+	 * @param object|boolean|string|null $obj
+	 */
+	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
 
-    // throw error as Exception and return false if silent
-    if ( $pods_errors !== $error && false === $display_errors && !empty( $error ) ) {
-        $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
+	if ( is_array( $error ) ) {
+		$error = array_map( 'wp_kses_post', $error );
 
-        if ( null !== $exception_bypass )
-            return $exception_bypass;
+		if ( 1 === count( $error ) ) {
+			$error = current( $error );
 
-        $pods_errors = $error;
+			// Create WP_Error for use later.
+			$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+		} else {
+			// Create WP_Error for use later.
+			$wp_error = new WP_Error();
 
-        set_exception_handler( 'pods_error' );
+			foreach ( $error as $error_message ) {
+				$wp_error->add( 'pods-error-' . md5( $error_message ), $error_message );
+			}
 
-        throw new Exception( $error );
-    }
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+				$error = __( 'The following issue occurred:', 'pods' )
+						 . "\n\n- " . implode( "\n- ", $error );
+			} else {
+				$error = __( 'The following issues occurred:', 'pods' )
+						 . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+			}
+		}
+	} else {
+		if ( is_object( $error ) ) {
+			$error = __( 'An unknown error has occurred', 'pods' );
+		}
 
-    $pods_errors = array();
+		$error = wp_kses_post( $error );
 
-    $die_bypass = apply_filters( 'pods_error_die', null, $error );
+		// Create WP_Error for use later.
+		$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+	}
 
-    if ( null !== $die_bypass )
-        return $die_bypass;
+	$last_error = $pods_errors;
 
-    // die with error
-    if ( !defined( 'DOING_AJAX' ) && !headers_sent() && ( is_admin() || false !== strpos( $_SERVER[ 'REQUEST_URI' ], 'wp-comments-post.php' ) ) )
-        wp_die( $error );
-    else
-        die( "<e>$error</e>" );
+	$pods_errors = array();
+
+	if ( $last_error === $error && 'exception' === $error_mode ) {
+		$error_mode = 'exit';
+	}
+
+	if ( ! empty( $error ) ) {
+		if ( 'exception' === $error_mode ) {
+			$exception_bypass = apply_filters( 'pods_error_exception', null, $error );
+
+			if ( null !== $exception_bypass ) {
+				return $exception_bypass;
+			}
+
+			$pods_errors = $error;
+
+			set_exception_handler( 'pods_error' );
+
+			throw new Exception( $error );
+		} elseif ( 'exit' === $error_mode ) {
+			$die_bypass = apply_filters( 'pods_error_die', null, $error );
+
+			if ( null !== $die_bypass ) {
+				return $die_bypass;
+			}
+
+			// die with error
+			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
+				wp_die( $error );
+			} else {
+				die( sprintf( '<e>%s</e>', $error ) );
+			}
+		} elseif ( 'wp_error' === $error_mode ) {
+			return $wp_error;
+		}
+	}
+
+	return false;
+
 }
 
 /**
@@ -1930,8 +1991,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 		}
 
         $no_conflict[ 'action' ] = array(
-            //array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
-            array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
+            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            array( 'profile_update', array( PodsInit::$meta, 'save_user' ), 10, 2 )
         );
     }
     elseif ( 'comment' == $object_type ) {

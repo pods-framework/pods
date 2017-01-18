@@ -48,18 +48,19 @@
     $theme_name = $theme->get( 'Name' );
 
     $opcode_cache = array (
-            'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
-            'Memcached' => class_exists ( 'eaccelerator_put') ? 'Yes' : 'No',
-            'Redis' => class_exists( 'xcache_set' ) ? 'Yes' : 'No',
-        );
+        'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
+        'Memcached' => class_exists ( 'eaccelerator_put') ? 'Yes' : 'No',
+        'OPcache' => function_exists( 'opcache_get_status') ? 'Yes' : 'No',
+        'Redis' => class_exists( 'xcache_set' ) ? 'Yes' : 'No',
+    );
 
     $object_cache = array (
-            'Apc' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
-            'Apcu' => function_exists( 'apcu_cache_info' ) ? 'Yes' : 'No',
-            'Memcache' => class_exists ( 'Memcache') ? 'Yes' : 'No',
-            'Memcached' => class_exists ( 'Memcached') ? 'Yes' : 'No',
-            'Redis' => class_exists( 'Redis' ) ? 'Yes' : 'No',
-        );
+        'APC' => function_exists( 'apc_cache_info' ) ? 'Yes' : 'No',
+        'APCu' => function_exists( 'apcu_cache_info' ) ? 'Yes' : 'No',
+        'Memcache' => class_exists( 'Memcache') ? 'Yes' : 'No',
+        'Memcached' => class_exists( 'Memcached') ? 'Yes' : 'No',
+        'Redis' => class_exists( 'Redis' ) ? 'Yes' : 'No',
+    );
 
     $versions = array(
         'WordPress Version' => $wp,

@@ -65,5 +65,4 @@ checks:
         missing_arguments: true
         argument_type_checks: false
         no_error_suppression: false
-        return_doc_comments: false
         property_assignments: false

@@ -2579,10 +2579,11 @@ class Pods implements Iterator {
 		if ( null === $id ) {
 			$fetch = true;
 
-			$id = $this->id();
+			$id = $pod->id();
 		}
-		elseif ( $id != $this->id() )
+		elseif ( $id != $this->id() ) {
 			$pod = pods( $this->pod, $id );
+		}
 
 		$this->do_hook( 'add_to', $field, $value, $id );
 
@@ -2658,8 +2659,12 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
-		if ( 0 < $id && $fetch )
+		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$pod->data->row = array();
+
 			$pod->fetch( $id, false );
+		}
 
 		return $id;
 	}
@@ -2678,7 +2683,6 @@ class Pods implements Iterator {
 	 * @since 2.3.3
 	 */
 	public function remove_from( $field, $value = null, $id = null ) {
-
 		$pod =& $this;
 
 		$fetch = false;
@@ -2797,6 +2801,9 @@ class Pods implements Iterator {
 		$id = $this->api->save_pod_item( $params );
 
 		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$pod->data->row = array();
+
 			$pod->fetch( $id, false );
 		}
 
@@ -2859,8 +2866,12 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
-		if ( 0 < $id && $fetch )
+		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$this->data->row = array();
+
 			$this->fetch( $id, false );
+		}
 
 		if ( !empty( $this->pod_data[ 'field_slug' ] ) ) {
 			if ( 0 < $id && $fetch ) {
@@ -3783,7 +3794,7 @@ class Pods implements Iterator {
 				$filters_new = array();
 
 				$filters = (array) $filters;
-				
+
 				foreach ( $filters as $filter_field ) {
 					if ( isset( $this->pod_data[ 'fields' ][ $filter_field ] ) )
 						$filters_new[ $filter_field ] = $this->pod_data[ 'fields' ][ $filter_field ];

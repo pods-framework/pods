@@ -58,12 +58,15 @@ if ( !function_exists( 'get_current_url' ) ) {
  *
  * @since 1.x
  * @deprecated deprecated since version 2.0
+ *
+ * @return array|bool|mixed|null|void Result of the query
  */
 function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
     pods_deprecated('pod_query', '2.0', 'pods_query');
     global $wpdb;
 
     $sql = trim($sql);
+
     // Using @wp_users is deprecated! use $wpdb->users instead!
     $sql = str_replace( '@wp_pod_tbl_', $wpdb->prefix . 'pods_', $sql );
     $sql = str_replace( '@wp_users', $wpdb->users, $sql );
@@ -72,35 +75,7 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
 
     $sql = apply_filters( 'pod_query', $sql, $error, $results_error, $no_results_error );
 
-    // Return cached resultset
-    /*if ('SELECT' == substr($sql, 0, 6)) {
-        $cache = PodCache::instance();
-        if ($cache->cache_enabled && isset($cache->results[$sql])) {
-            $result = $cache->results[$sql];
-            if (0 < mysql_num_rows($result)) {
-                mysql_data_seek($result, 0);
-            }
-            $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
-            return $result;
-        }
-    }*/
-
-    if (false !== $error)
-        $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
-    else
-        $result = @mysql_query($sql, $wpdb->dbh);
-
-    if (0 < @mysql_num_rows($result)) {
-        if (!empty($results_error))
-            die("<e>$results_error");
-    }
-    elseif (!empty($no_results_error))
-        die("<e>$no_results_error");
-
-    if ('INSERT' == substr($sql, 0, 6))
-        $result = mysql_insert_id($wpdb->dbh);
-    /*elseif ('SELECT' == substr($sql, 0, 6) && 'SELECT FOUND_ROWS()' != $sql)
-        $cache->results[$sql] = $result;*/
+	$result = pods_query( $sql, $error, $results_error, $no_results_error );
 
     $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
 

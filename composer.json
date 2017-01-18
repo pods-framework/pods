@@ -52,8 +52,8 @@
         "php": ">=5.2.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.x",
-        "mockery/mockery": "0.9.4"
+        "phpunit/phpunit": "4.8.*",
+        "mockery/mockery": "0.9.*"
     },
     "extra": {
         "installer-name": "pods"

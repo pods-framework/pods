@@ -1294,7 +1294,7 @@ class PodsAPI {
                 'taxonomy' => array(
                     'name' => 'taxonomy',
                     'label' => 'Taxonomy',
-                    'type' => 'pick',
+                    'type' => 'text',
                     'alias' => array()
                 ),
                 'parent' => array(
@@ -1459,6 +1459,8 @@ class PodsAPI {
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
+
+				$pod_params['options']['hierarchical'] = 1;
             }
             elseif ( 'pod' == $pod_params[ 'type' ] ) {
                 if ( empty(  $pod_params[ 'name' ] ) )
@@ -2585,6 +2587,11 @@ class PodsAPI {
                 $conflicted = true;
             }
 
+            // Store the old field name
+            if ( $old_name && $old_name != $post_data['post_name'] ) {
+	            $field['options']['old_name'] = $old_name;
+            }
+
             $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
 
             if ( $conflicted )
@@ -2983,14 +2990,15 @@ class PodsAPI {
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
      * $params['pod_id'] string The Pod ID (pod or pod_id is required)
-     * $params['id'] int The item ID
+     * $params['id'] int|array The item ID, or an array of item IDs to save data for
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
 	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via PodsAPI::get_changed_fields()
+	 * $params['error_mode'] string Throw an 'exception', 'exit' with the message, return 'false', or return 'wp_error'
      *
      * @param array|object $params An associative array of parameters
      *
-     * @return int The item ID
+     * @return int|array The item ID, or an array of item IDs (if `id` is an array if IDs)
      *
      * @since 1.7.9
      */
@@ -3003,6 +3011,12 @@ class PodsAPI {
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
         $simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+	    $error_mode = $this->display_errors;
+
+	    if ( ! empty( $params->error_mode ) ) {
+		    $error_mode = $params->error_mode;
+	    }
 
         // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
@@ -3080,6 +3094,7 @@ class PodsAPI {
 		 * @since 2.3.19
 		 */
 		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
+
 		$changed_fields = array();
 
 		if ( !isset( $params->clear_slug_cache ) ) {
@@ -3125,7 +3140,7 @@ class PodsAPI {
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => true ) );
 
         if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+            return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 
         $params->pod = $pod[ 'name' ];
         $params->pod_id = $pod[ 'id' ];
@@ -3382,7 +3397,7 @@ class PodsAPI {
                     $validate = (array) $validate;
 
                 if ( !is_bool( $validate ) && !empty( $validate ) )
-                    return pods_error( $validate, $this );
+                    return pods_error( $validate, $error_mode );
             }
 
             $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $field_data, $options ), array_merge( $fields, $object_fields ), $pod, $params );
@@ -3759,7 +3774,7 @@ class PodsAPI {
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -3776,6 +3791,28 @@ class PodsAPI {
 
         if ( !$no_conflict )
             pods_no_conflict_off( $pod[ 'type' ] );
+
+        // Clear cache
+        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
+
+		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
+			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
+			}
+		}
+
+        // Clear WP meta cache
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+            $meta_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $meta_type )
+                $meta_type = 'post';
+
+            wp_cache_delete( $params->id, $meta_type . '_meta' );
+            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
+        }
 
         if ( false === $bypass_helpers ) {
             $pieces = compact( $pieces );
@@ -3806,28 +3843,6 @@ class PodsAPI {
                     }
                 }
             }
-        }
-
-        // Clear cache
-        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
-
-		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
-			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
-
-			if ( 0 < strlen( $slug ) ) {
-        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
-			}
-		}
-
-        // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
-            $meta_type = $pod[ 'type' ];
-
-            if ( 'post_type' == $meta_type )
-                $meta_type = 'post';
-
-            wp_cache_delete( $params->id, $meta_type . '_meta' );
-            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
         }
 
         // Success! Return the id
@@ -3913,6 +3928,11 @@ class PodsAPI {
             $current_ids = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ];
         else
             $current_ids = $this->lookup_related_items( $field[ 'id' ], $pod[ 'id' ], $id, $field, $pod );
+
+	    if ( isset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] ) ) {
+		    // Delete relationship from cache
+		    unset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] );
+	    }
 
         if ( !is_array( $related_ids ) )
             $related_ids = implode( ',', $related_ids );
@@ -7488,8 +7508,16 @@ class PodsAPI {
 			    $current_language_t_id = $lang_data['t_id'];
 		    }
 
-		    if ( ! empty( $lang_data['t_id'] ) ) {
+		    if ( ! empty( $lang_data['tt_id'] ) ) {
 			    $current_language_tt_id = $lang_data['tt_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_t_id'] ) ) {
+			    $current_language_tl_t_id = $lang_data['tl_t_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			    $current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		    }
 	    }
 
@@ -7699,14 +7727,14 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
-			    $info[ 'join' ][ 'polylang_languages' ] = "
-                        LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
-                            ON `polylang_languages`.`term_id` = `t`.`term_id`
-                                AND `polylang_languages`.`meta_value` = {$current_language_t_id}
-                    ";
+		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && !empty( $current_language_tl_tt_id ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+				$info[ 'join' ][ 'polylang_languages' ] = "
+					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
+						ON `polylang_languages`.`object_id` = `t`.`term_id`
+							AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tl_tt_id}
+				";
 
-			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`term_id` IS NOT NULL";
+			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`object_id` IS NOT NULL";
 		    }
 
 		    $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
@@ -8488,6 +8516,8 @@ class PodsAPI {
 				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
 					$lang_data['t_id']  = (int) $current_language_t->term_id;
 					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
+					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
+					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
 					$lang_data['term']  = $current_language_t;
 				}
 			}

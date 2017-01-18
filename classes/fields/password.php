@@ -42,7 +42,7 @@ class PodsField_Password extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Password', 'pods' );
     }
 
     /**

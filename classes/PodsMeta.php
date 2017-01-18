@@ -1388,7 +1388,7 @@ class PodsMeta {
             // Fix for Pods doing it's own sanitization
             $data = pods_unslash( (array) $data );
 
-            $pod->save( $data );
+            $pod->save( $data, null, null, array( 'podsmeta' => true ) );
         }
         elseif ( !empty( $id ) ) {
             pods_no_conflict_on( 'post' );
@@ -1606,7 +1606,7 @@ class PodsMeta {
             // Fix for Pods doing it's own sanitization
             $data = pods_unslash( (array) $data );
 
-            $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+            $pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
         }
 
         pods_no_conflict_off( 'taxonomy' );
@@ -1789,7 +1789,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_user_meta( $id, $field, $value );
@@ -2178,7 +2178,7 @@ class PodsMeta {
             // Fix for Pods doing it's own sanitization
             $data = pods_unslash( (array) $data );
 
-            $pod->save( $data );
+            $pod->save( $data, null, null, array( 'podsmeta' => true ) );
         }
         elseif ( !empty( $id ) ) {
             pods_no_conflict_on( 'comment' );
@@ -2797,7 +2797,7 @@ class PodsMeta {
 
             $pod = self::$current_field_pod;
 
-            $pod->save( $meta_key, $meta_value, $object_id );
+            $pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );
         }
 
         return $object_id;
@@ -2843,7 +2843,7 @@ class PodsMeta {
 
         }
 
-        $pod->save( $meta_key, $meta_value, $object_id );
+        $pod->save( $meta_key, $meta_value, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );
 
         return $object_id;
     }
@@ -2884,7 +2884,7 @@ class PodsMeta {
 
             $pod = self::$current_field_pod;
 
-            $pod->save( array( $meta_key => null ), null, $object_id );
+            $pod->save( array( $meta_key => null ), null, $object_id, array( 'podsmeta_direct' => true, 'error_mode' => 'false' ) );
         }
 
         return $_null;

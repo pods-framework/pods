@@ -1170,7 +1170,7 @@ class PodsMeta {
 		}
 
 		// Block Trash
-		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ) ) ) {
+		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ), true ) ) {
 			return;
 		}
 

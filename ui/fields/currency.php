@@ -44,7 +44,7 @@ $currency_sign = PodsField_Currency::$currencies[ $currency ];
             ?>]$/.test( $( this ).val() ) ) {
                 var newval = $( this )
                     .val()
-                    .replace( /[^0-9\<?php echo esc_js( $currency_sign ); ?>\<?php
+                    .replace( /[^0-9-\\<?php echo esc_js( $currency_sign ); ?>\<?php
                               echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
                               ?>]/g, '' );
                 $( this ).val( newval );

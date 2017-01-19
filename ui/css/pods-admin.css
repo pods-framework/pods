@@ -1,13 +1,10 @@
-/*
- * Pods Admin
- */
 .pods-admin .pods-leaf-watermark-right {
     position: fixed;
     width: 236px;
     height: 178px;
     bottom: 50px;
     right: 16px;
-	z-index: -1;
+    z-index: -1;
 }
 
 .pods-admin .pods_floatmenu {
@@ -76,7 +73,7 @@
 .pods-wizard h2,
 .pods-wizard h3 {
     font-family: Georgia !important;
-    margin-bottom: 0px !important;
+    margin-bottom: 0 !important;
 }
 
 .pods-admin #poststuff h3 {
@@ -179,6 +176,7 @@ tbody.pods-manage-list tr.pods-manage-row-expanded th.pods-manage-sort img {
 tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort {
     cursor: move;
 }
+
 tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
     vertical-align: top;
     margin-top: 1px;
@@ -264,9 +262,11 @@ tr.pods-toggled-off {
     overflow: hidden;
     zoom: 1;
 }
+
 .pods-tab.pods-basic-options {
     display: block;
 }
+
 .pods-tab#pods-advanced-labels,
 .pods-tab#pods-advanced-settings-labels {
     display: block;
@@ -332,7 +332,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     width: 65%;
     max-width: 25em;
 }
-
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
     max-width: 100%;
@@ -433,6 +432,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-sluggable .pods-slug em {
     cursor: pointer;
 }
+
 .pods-sluggable a.cancel {
     font-size: 12px;
 }
@@ -464,7 +464,7 @@ div.row-actions.row-actions-toggle {
     visibility: visible;
 }
 
-.pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label{
+.pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label {
     background: #ffffcc;
 }
 

@@ -324,7 +324,20 @@ class PodsAdmin {
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
-                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
+                    // Default taxonomy capability
+                    $capability = 'manage_categories';
+
+                    if ( ! empty( $pod[ 'options' ][ 'capability_type' ] ) ) {
+                        if ( 'custom' == $pod[ 'options' ][ 'capability_type' ] && ! empty( $pod[ 'options' ][ 'capability_type_custom' ] ) ) {
+                            $capability = 'manage_' . (string) $pod[ 'options' ][ 'capability_type_custom' ] . '_terms';
+                        }
+                    }
+
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], $capability ) ) )
+                        continue;
+
+                    // Check UI settings
+                    if ( 1 != pods_var( 'show_ui', $pod[ 'options' ], 0 ) || 1 != pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -488,6 +501,11 @@ class PodsAdmin {
 
         $parent = false;
 
+        // PODS_LIGHT disables all Pods components so remove the components menu
+        if ( defined( 'PODS_LIGHT' ) && true == PODS_LIGHT ) {
+            unset( $admin_menus['pods-components'] );
+        }
+
         if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
@@ -513,7 +531,7 @@ class PodsAdmin {
 
                 add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
-                if ( 'pods-components' == $page )
+                if ( 'pods-components' == $page && is_object( PodsInit::$components ) )
                     PodsInit::$components->menu( $parent );
             }
         }
@@ -559,7 +577,7 @@ class PodsAdmin {
             }
         }
 
-        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
+        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
             global $submenu_file;
             $components = PodsInit::$components->components;
             foreach ( $components as $component => $component_data ) {
@@ -982,14 +1000,14 @@ class PodsAdmin {
                 ),
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this post type in the admin.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'boolean_yes_label' => ''
                 ),
                 'show_in_menu' => array(
                     'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to show the post type in the admin menu.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
@@ -1189,10 +1207,19 @@ class PodsAdmin {
             $options[ 'admin-ui' ] = array(
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'show_in_menu' => array(
+                    'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
+                    'help' => __( 'Whether to show the taxonomy in the admin menu.', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'public', $pod, true ),
+                    'dependency' => true,
+                    'depends-on' => array( 'show_ui' => true ),
                     'boolean_yes_label' => ''
                 ),
                 'menu_name' => array(
@@ -1295,7 +1322,7 @@ class PodsAdmin {
                     'label' => __( 'Hierarchical', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'boolean',
-                    'default' => false,
+                    'default' => true,
                     'dependency' => true,
                     'boolean_yes_label' => ''
                 ),
@@ -1706,7 +1733,10 @@ class PodsAdmin {
                     'label' => __( 'Default Value', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'text',
-                    'default' => ''
+                    'default' => '',
+                    'options' => array(
+                        'text_max_length' => -1
+                    )
                 ),
                 'default_value_parameter' => array(
                     'name' => 'default_value_parameter',
@@ -1975,6 +2005,9 @@ class PodsAdmin {
      * Get components administration UI
      */
     public function admin_components () {
+        if ( ! is_object( PodsInit::$components ) )
+            return;
+
         $components = PodsInit::$components->components;
 
         $view = pods_var( 'view', 'get', 'all', null, true );
@@ -2298,16 +2331,18 @@ class PodsAdmin {
                     $capabilities[] = 'delete_' . $capability_type;
 
                     if ( 1 == pods_var( 'capability_type_extra', $pod[ 'options' ], 1 ) ) {
-                        $capabilities[] = 'read_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_' . $capability_type . 's';
-                        $capabilities[] = 'edit_others_' . $capability_type . 's';
-                        $capabilities[] = 'edit_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_published_' . $capability_type . 's';
-                        $capabilities[] = 'publish_' . $capability_type . 's';
-                        $capabilities[] = 'delete_' . $capability_type . 's';
-                        $capabilities[] = 'delete_private_' . $capability_type . 's';
-                        $capabilities[] = 'delete_published_' . $capability_type . 's';
-                        $capabilities[] = 'delete_others_' . $capability_type . 's';
+                        $capability_type_plural = $capability_type . 's';
+
+                        $capabilities[] = 'read_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_' . $capability_type_plural;
+                        $capabilities[] = 'edit_others_' . $capability_type_plural;
+                        $capabilities[] = 'edit_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_published_' . $capability_type_plural;
+                        $capabilities[] = 'publish_' . $capability_type_plural;
+                        $capabilities[] = 'delete_' . $capability_type_plural;
+                        $capabilities[] = 'delete_private_' . $capability_type_plural;
+                        $capabilities[] = 'delete_published_' . $capability_type_plural;
+                        $capabilities[] = 'delete_others_' . $capability_type_plural;
                     }
                 }
             }
@@ -2315,12 +2350,18 @@ class PodsAdmin {
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ], 'terms' ) ) {
                     $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
 
-                    $capability_type .= '_terms';
+                    $capability_type .= '_term';
+                    $capability_type_plural = $capability_type . 's';
 
-                    $capabilities[] = 'manage_' . $capability_type;
+                    // Singular
                     $capabilities[] = 'edit_' . $capability_type;
                     $capabilities[] = 'delete_' . $capability_type;
                     $capabilities[] = 'assign_' . $capability_type;
+                    // Plural
+                    $capabilities[] = 'manage_' . $capability_type_plural;
+                    $capabilities[] = 'edit_' . $capability_type_plural;
+                    $capabilities[] = 'delete_' . $capability_type_plural;
+                    $capabilities[] = 'assign_' . $capability_type_plural;
                 }
             }
             else {
@@ -2486,6 +2527,17 @@ class PodsAdmin {
 
         // Output in json format
         if ( false !== $output ) {
+
+            /**
+             * Pods Admin AJAX request was successful
+	     *
+             * @since  2.6.8
+	     *
+             * @param array               $params AJAX parameters
+             * @param array|object|string $output Output for AJAX request
+             */
+            do_action( "pods_admin_ajax_success_{$method->name}", $params, $output );
+
             if ( is_array( $output ) || is_object( $output ) )
                 wp_send_json( $output );
             else

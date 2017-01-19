@@ -12,6 +12,7 @@ class PodsField_Taxonomy extends PodsField_Pick {
      * @since 2.0
      */
     public function __construct () {
+	    parent::__construct();
 		// this field type just maps to the relationship field
     }
 

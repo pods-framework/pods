@@ -142,7 +142,8 @@ class PodsInit {
 			define( 'PODS_TABLELESS', false );
 		}
 
-		load_plugin_textdomain( 'pods', false, dirname( plugin_basename( PODS_DIR . 'init.php' ) ) . '/languages/' );
+		load_plugin_textdomain( 'pods' );
+
 	}
 
 	/**
@@ -658,12 +659,18 @@ class PodsInit {
 				if ( 'custom' == $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
 					if ( ! empty( $capability_type ) && 'default' != $capability_type ) {
-						$capability_type .=  '_terms';
+						$capability_type .=  '_term';
+						$capability_type_plural =  $capability_type . 's';
 						$tax_capabilities = array(
-							'manage_terms' => 'manage_' . $capability_type,
-							'edit_terms'   => 'edit_' . $capability_type,
-							'delete_terms' => 'delete_' . $capability_type,
-							'assign_terms' => 'assign_' . $capability_type,
+							// Singular
+							'edit_term'   => 'edit_' . $capability_type,
+							'delete_term' => 'delete_' . $capability_type,
+							'assign_term' => 'assign_' . $capability_type,
+							// Plural
+							'manage_terms' => 'manage_' . $capability_type_plural,
+							'edit_terms'   => 'edit_' . $capability_type_plural,
+							'delete_terms' => 'delete_' . $capability_type_plural,
+							'assign_terms' => 'assign_' . $capability_type_plural,
 						);
 					}
 				}
@@ -675,6 +682,7 @@ class PodsInit {
 					'public'                => (boolean) pods_var( 'public', $taxonomy, true ),
 					'show_in_nav_menus'     => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_ui'               => (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
+					'show_in_menu'          => (boolean) pods_var( 'show_in_menu', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
 					'show_tagcloud'         => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
 					//'capability_type'       => $capability_type,

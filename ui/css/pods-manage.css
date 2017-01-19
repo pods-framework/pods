@@ -17,7 +17,7 @@ ul.ui-sortable li:hover {
 }
 
 .ui-slider-handle {
-	z-index: 0 !important;
+    z-index: 0 !important;
 }
 
 form.pods-manage .pods-field label {
@@ -123,8 +123,8 @@ form.pods-manage ul.pods-files li span.pods-file-thumb {
 form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail {
     float: none;
     margin: 0;
-	max-width: 40px !important;
-	max-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-name {
@@ -144,39 +144,39 @@ form.pods-manage ul.pods-files li span.pods-file-remove img {
 }
 
 .plupload-queue {
-	width: 250px;
+    width: 250px;
 }
 
 .plupload-progress {
-	position: relative;
+    position: relative;
 }
 
 .plupload-progress .progress-bar {
-	position: absolute;
-	height: 14px;
-	width: 0%;
-	background: #4d4d4d;
-	margin-left: 10px;
+    position: absolute;
+    height: 14px;
+    width: 0%;
+    background: #4d4d4d;
+    margin-left: 10px;
 }
 
 .plupload-progress .file-name {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .pods-inline-files .plupload-progress {
-	width: 150px;
+    width: 150px;
 }
 
 .pods-inline-files li {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .pods-inline-files li .file-name {
-	vertical-align: top !important;
+    vertical-align: top !important;
 }
 
 .pods-inline-files li .remove {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 form.pods-manage .pods-pick-values {
@@ -296,6 +296,6 @@ table.plupload-queue td.progress .progress-bar {
 }
 
 tr.form-field .pods-boolean input {
-	width: 20%;
+    width: 20%;
 }
 

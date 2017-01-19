@@ -98,7 +98,7 @@ class PodsRESTHandlers {
 		if ( empty( $id ) ) {
 			$id = pods_v( 'ID', $object );
 		}
-		
+
 		$pod = self::get_pod( $pod_name, $id );
 
 		$value = false;
@@ -280,14 +280,18 @@ class PodsRESTHandlers {
 
 		global $wp_post_types;
 
+		// Only add support for post types that exist
 		if ( isset( $wp_post_types[ $post_type_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $post_type_name;
-			}
+			// Only add support if REST base not already set
+			if ( empty( $wp_post_types[ $post_type_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $post_type_name;
+				}
 
-			$wp_post_types[ $post_type_name ]->show_in_rest          = true;
-			$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
-			$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
+				$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+			}
 		}
 
 	}
@@ -304,18 +308,24 @@ class PodsRESTHandlers {
 	 */
 	public static function taxonomy_rest_support( $taxonomy_name, $rest_base = false, $controller = 'WP_REST_Terms_Controller' ) {
 
+		/** As of WordPress 4.7: https://make.wordpress.org/core/2016/10/29/wp_taxonomy-in-4-7/ */
+		/** @var WP_Taxonomy[] $wp_taxonomies */
 		global $wp_taxonomies;
 
+		// Only add support for taxonomies that exist
 		if ( isset( $wp_taxonomies[ $taxonomy_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $taxonomy_name;
+			// Only add support if REST base not already set
+			if ( empty( $wp_taxonomies[ $taxonomy_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $taxonomy_name;
+				}
+
+				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
+				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 			}
 
-			$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
-			$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
-			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 		}
-
 	}
 
 	/**

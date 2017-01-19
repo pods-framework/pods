@@ -43,28 +43,7 @@ class PodsField_Currency extends PodsField {
 	 * @var array
 	 * @since 2.0
 	 */
-	public static $currencies = array(
-		'usd' => '$',
-		'euro' => '&euro;',
-		'gbp' => '&pound;',
-		'cad' => '$',
-		'aud' => '$',
-		'nzd' => '$',
-		'rub' => '&#8381;',
-		'chf' => 'CHF',
-		'dkk' => 'kr',
-		'nok' => 'kr',
-		'sek' => 'kr',
-		'zar' => 'R',
-		'inr' => '&#x20B9;',
-		'jpy' => '&yen;',
-		'cny' => '&yen;',
-		'sgd' => '$',
-		'krw' => '&#8361;',
-		'thb' => '&#x0E3F;',
-		'trl' => '&#8378;',
-		'vnd' => '&#8363;'
-	);
+	public static $currencies = array();
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets
@@ -73,7 +52,7 @@ class PodsField_Currency extends PodsField {
 	 */
 	public function __construct() {
 		self::$label = __( 'Currency', 'pods' );
-		self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
+		self::data_currencies();
 	}
 
 	/**
@@ -84,6 +63,16 @@ class PodsField_Currency extends PodsField {
 	 * @since 2.0
 	 */
 	public function options() {
+
+		$currency_options = array();
+		foreach ( self::$currencies as $key => $value ) {
+			$currency = $value['label'];
+			if ( $value['label'] != $value['name'] ) {
+				$currency .= ': ' . $value['name'];
+			}
+			$currency .= ' (' . $value['sign'] . ')';
+			$currency_options[ $key ] = $currency;
+		}
 
 		$options = array(
 			self::$type . '_repeatable' => array(
@@ -109,28 +98,7 @@ class PodsField_Currency extends PodsField {
 				'label' => __( 'Currency Sign', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
 				'type' => 'pick',
-				'data' => apply_filters( 'pods_form_ui_field_number_currency_options', array(
-						'usd' => '$ (USD)',
-						'euro' => '&euro; (EUR)',
-						'gbp' => '&pound; (GBP)',
-						'aud' => 'Australian Dollar (AUD)',
-						'cad' => 'Canadian Dollar (CAD)',
-						'cny' => 'Chinese Yuan (CNY)',
-						'dkk' => 'Danish Krone (DKK)',
-						'inr' => 'Indian Rupee (INR)',
-						'jpy' => 'Japanese Yen (JPY)',
-						'krw' => 'Korean Won (KRW)',
-						'nzd' => 'New Zealand Dollar (NZD)',
-						'nok' => 'Norwegian Krone (NOK)',
-						'rub' => 'Russian Ruble (RUB)',
-						'sgd' => 'Singapore Dollar (SGD)',
-						'zar' => 'South African Rand (ZAR)',
-						'sek' => 'Swedish Krona (SEK)',
-						'chf' => 'Swiss Franc (CHF)',
-						'thb' => 'Thai Baht (THB)',
-						'trl' => 'Turkish Lira (TRL)',
-						'vnd' => 'Vietnamese Dong (VND)'
-					) )
+				'data' => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options )
 			),
 			self::$type . '_format_placement' => array(
 				'label' => __( 'Currency Placement', 'pods' ),
@@ -302,7 +270,8 @@ class PodsField_Currency extends PodsField {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[ $currency ]['sign'];
+		$currency_label = self::$currencies[ $currency ]['label'];
 
 		$placement = pods_v( self::$type . '_format_placement', $options, 'before', true );
 
@@ -322,7 +291,7 @@ class PodsField_Currency extends PodsField {
 			$value .= $currency_gap . $currency_sign;
 		}
 		elseif ( 'beforeaftercode' == $placement ) {
-			$value = $currency_sign . $currency_gap . $value . ' ' . strtoupper( $currency );
+			$value = $currency_sign . $currency_gap . $value . ' ' . $currency_label;
 		}
 
 		return $value;
@@ -689,5 +658,166 @@ class PodsField_Currency extends PodsField {
 
 		return $value;
 
+	}
+
+	/**
+	 * Get the currencies and place them in the local property
+	 * @since  2.6.8
+	 * @return array
+	 */
+	public static function data_currencies() {
+
+		// If it's already done, do not redo the filter
+		if ( ! empty( self::$currencies ) ) {
+			return self::$currencies;
+		}
+
+		$default_currencies = array(
+			'usd' => array(
+				'label' => 'USD',
+				'name'  => 'US Dollar',
+				'sign'  => '$',
+			),
+			'euro' => array(
+				'label' => 'EUR',
+				'name'  => 'Euro',
+				'sign'  => '&euro;',
+			),
+			'gbp' => array(
+				'label' => 'GBP',
+				'name'  => 'British Pound',
+				'sign'  => '&pound;',
+			),
+			'cad' => array(
+				'label' => 'CAD',
+				'name'  => 'Canadian Dollar',
+				'sign'  => '$',
+			),
+			'aud' => array(
+				'label' => 'AUD',
+				'name'  => 'Australian Dollar',
+				'sign'  => '$',
+			),
+			'nzd' => array(
+				'label' => 'NZD',
+				'name'  => 'New Zealand Dollar',
+				'sign'  => '$',
+			),
+			'rub' => array(
+				'label' => 'RUB',
+				'name'  => 'Russian Ruble',
+				'sign'  => '&#8381;',
+			),
+			'chf' => array(
+				'label' => 'CHF',
+				'name'  => 'Swiss Franc',
+				'sign'  => 'Fr.',
+			),
+			'dkk' => array(
+				'label' => 'DKK',
+				'name'  => 'Danish Krone',
+				'sign'  => 'kr.',
+			),
+			'nok' => array(
+				'label' => 'NOK',
+				'name'  => 'Norwegian Krone',
+				'sign'  => 'kr',
+			),
+			'sek' => array(
+				'label' => 'SEK',
+				'name'  => 'Swedish Krona',
+				'sign'  => 'kr',
+			),
+			'zar' => array(
+				'label' => 'ZAR',
+				'name'  => 'South African Rand',
+				'sign'  => 'R',
+			),
+			'inr' => array(
+				'label' => 'INR',
+				'name'  => 'Indian Rupee',
+				'sign'  => '&#x20B9;',
+			),
+			'jpy' => array(
+				'label' => 'JPY',
+				'name'  => 'Japanese Yen',
+				'sign'  => '&yen;',
+			),
+			'cny' => array(
+				'label' => 'CNY',
+				'name'  => 'Chinese Yuan',
+				'sign'  => '&yen;',
+			),
+			'sgd' => array(
+				'label' => 'SGD',
+				'name'  => 'Singapore Dollar',
+				'sign'  => '$',
+			),
+			'krw' => array(
+				'label' => 'KRW',
+				'name'  => 'Korean Won',
+				'sign'  => '&#8361;',
+			),
+			'thb' => array(
+				'label' => 'THB',
+				'name'  => 'Thai Baht',
+				'sign'  => '&#x0E3F;',
+			),
+			'trl' => array(
+				'label' => 'TRL',
+				'name'  => 'Turkish Lira',
+				'sign'  => '&#8378;',
+			),
+			'vnd' => array(
+				'label' => 'VND',
+				'name'  => 'Vietnamese Dong',
+				'sign'  => '&#8363;',
+			),
+		);
+
+		/**
+		 * Add custom currencies
+		 *
+		 * @param  array  $options {
+		 *     Required array of arrays.
+		 *     @type  array {
+		 *         @type  string  $label  The label (example: USD).
+		 *         @type  string  $name   The full name (example: US Dollar).
+		 *         @type  string  $sign   The sign (example: $).
+		 *     }
+		 * }
+		 * @return array
+		 */
+		self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', $default_currencies );
+
+		// Sort the currencies
+		ksort( self::$currencies );
+
+		// Backwards compatibility
+		foreach ( self::$currencies as $key => $value ) {
+			if ( is_string( $value ) ) {
+				self::$currencies[ $key ] = array(
+					'label' => strtoupper( $key ),
+					'name' => strtoupper( $key ),
+					'sign' => $value,
+				);
+			} elseif ( is_array( $value ) ) {
+				// Make sure all required values are set
+				if ( empty( $value['label'] ) ) {
+					$value['label'] = $key;
+				}
+				if ( empty( $value['name'] ) ) {
+					$value['name'] = $key;
+				}
+				if ( empty( $value['sign'] ) ) {
+					$value['sign'] = $key;
+				}
+			} else {
+				// Invalid
+				unset( self::$currencies[ $key ] );
+			}
+		}
+
+		return self::$currencies;
 	}
 }

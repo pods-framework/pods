@@ -130,6 +130,16 @@ class PodsField_Currency extends PodsField {
 				'default' => 2,
 				'type' => 'number'
 			),
+			self::$type . '_decimal_handling' => array(
+				'label' => __( 'Decimal handling when zero', 'pods' ),
+				'default' => 'none',
+				'type' => 'pick',
+				'data' => array(
+					'none' => __( 'Default', 'pods' ),
+					'remove' => __( 'Remove decimals', 'pods' ),
+					'dash' => __( 'Convert to dash', 'pods' ) . ' (-)',
+				)
+			),
 			self::$type . '_step' => array(
 				'label' => __( 'Slider Increment (Step)', 'pods' ),
 				'depends-on' => array( self::$type . '_format_type' => 'slider' ),
@@ -654,6 +664,19 @@ class PodsField_Currency extends PodsField {
 		}
 		else {
 			$value = number_format( (float) $value, $decimals, $dot, $thousands );
+		}
+
+		// Additional output handling for decimals
+		$decimal_handling = pods_v( self::$type . '_decimal_handling', $options, 'none' ) ;
+		if ( 'none' !== $decimal_handling ) {
+			$value_parts = explode( $dot, $value );
+			if ( 'remove' === $decimal_handling ) {
+				array_pop( $value_parts );
+			} elseif ( 'dash' === $decimal_handling ) {
+				array_pop( $value_parts );
+				$value_parts[] = '-';
+			}
+			$value = implode( $dot, $value_parts );
 		}
 
 		return $value;

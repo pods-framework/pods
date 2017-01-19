@@ -2845,7 +2845,7 @@ class Pods implements Iterator {
 
 		$data = (array) $this->do_hook( 'save', $data, $id );
 
-		if ( empty( $data ) )
+		if ( empty( $data ) && empty( $params['is_new_item'] ) )
 			return $id;
 
 		$default = array();

@@ -194,8 +194,12 @@ class PodsForm {
         $options = self::options( $type, $options );
         $options = apply_filters( 'pods_form_ui_field_' . $type . '_options', $options, $value, $name, $pod, $id );
 
-        if ( null === $value || ( '' === $value && 'boolean' == $type ) || ( !empty( $pod ) && empty( $id ) ) )
+        if ( null === $value || ( '' === $value && 'boolean' === $type ) || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
+
+        // Fix double help qtip when using single checkboxes (boolean type)
+        if ( 'boolean' === $type )
+        	$options['help'] = '';
 
         if ( false === self::permission( $type, $name, $options, null, $pod, $id ) )
             return false;

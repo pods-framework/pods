@@ -126,7 +126,7 @@ ul.pods-files-queue li.pods-file li.pods-progress {
     border: 1px solid #E7E7E7;
 }
 ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
-    width: 0px;
+    width: 0;
     height: 14px;
     background-color: #4D4D4D;
 }

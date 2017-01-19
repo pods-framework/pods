@@ -2171,6 +2171,17 @@ class PodsUI {
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
 
+		/**
+		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.
+		 *
+		 * @param array  $find_params Parameters used with Pods::find()
+		 * @param string $action      Current action
+		 * @param PodsUI $this        PodsUI instance
+		 *
+		 * @since 2.6.8
+		 */
+		$find_params = apply_filters( 'pods_ui_get_find_params', $find_params, $action, $this );
+
         // Debug purposes
         if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
             pods_debug( $find_params );
@@ -2201,7 +2212,7 @@ class PodsUI {
         if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
             $action = 'manage';
 
-        $find_params = $this->get_params( $params );
+        $find_params = $this->get_params( $params, $action );
 
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $this->pod->find( $find_params );

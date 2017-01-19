@@ -2,20 +2,30 @@
 namespace Pods_Unit_Tests;
 
 /**
+ * Tests for PodsMeta class methods
+ *
  * @group pods-meta
+ * @since  2.6.8
  */
 class Test_Pods_Meta extends Pods_UnitTestCase {
 
 	/**
 	 * @var \PodsMeta
+	 * @since  2.6.8
 	 */
 	public static $meta;
 
 	/**
 	 * @var array
+	 * @since  2.6.8
 	 */
 	public static $hooked = array();
 
+	/**
+	 * Set up PodsMeta for our use
+	 *
+	 * @since  2.6.8
+	 */
 	public function setUp() {
 
 		self::$meta = pods_meta()->core();
@@ -49,9 +59,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 	 */
 	public function test_save_post_create() {
 
-		add_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		$this->_add_save_actions();
 
 		$_POST['pods_meta'] = wp_create_nonce( 'pods_meta_post' );
 
@@ -74,10 +82,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 		$this->assertArrayNotHasKey( 'pods_api_post_edit_pod_item', self::$hooked );
 
 		$this->_reset_hooks();
-
-		remove_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ) );
+		$this->_remove_save_actions();
 
 	}
 
@@ -87,9 +92,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 	 */
 	public function test_save_post_edit() {
 
-		add_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		$this->_add_save_actions();
 
 		$_POST['pods_meta'] = wp_create_nonce( 'pods_meta_post' );
 
@@ -112,10 +115,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 		$this->assertArrayHasKey( 'pods_api_post_edit_pod_item', self::$hooked );
 
 		$this->_reset_hooks();
-
-		remove_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ) );
+		$this->_remove_save_actions();
 
 	}
 
@@ -125,9 +125,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 	 */
 	public function test_save_user_create() {
 
-		add_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		$this->_add_save_actions();
 
 		$_POST['pods_meta'] = wp_create_nonce( 'pods_meta_user' );
 
@@ -150,10 +148,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 		$this->assertArrayNotHasKey( 'pods_api_post_edit_pod_item', self::$hooked );
 
 		$this->_reset_hooks();
-
-		remove_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ) );
+		$this->_remove_save_actions();
 
 	}
 
@@ -163,9 +158,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 	 */
 	public function test_save_user_edit() {
 
-		add_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ), 10, 3 );
-		add_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		$this->_add_save_actions();
 
 		$_POST['pods_meta'] = wp_create_nonce( 'pods_meta_user' );
 
@@ -188,15 +181,14 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 		$this->assertArrayHasKey( 'pods_api_post_edit_pod_item', self::$hooked );
 
 		$this->_reset_hooks();
-
-		remove_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ) );
-		remove_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ) );
+		$this->_remove_save_actions();
 
 	}
 
 	/**
 	 * Track current hook info
+	 *
+	 * @since  2.6.8
 	 */
 	public function _track_hook() {
 
@@ -206,10 +198,38 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 	/**
 	 * Reset hook info
+	 *
+	 * @since  2.6.8
 	 */
 	public function _reset_hooks() {
 
 		self::$hooked = array();
+
+	}
+
+	/**
+	 * Add save hook actions
+	 *
+	 * @since  2.6.8
+	 */
+	public function _add_save_actions() {
+
+		add_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		add_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ), 10, 3 );
+		add_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ), 10, 3 );
+
+	}
+
+	/**
+	 * Remove save hook actions
+	 *
+	 * @since  2.6.8
+	 */
+	public function _remove_save_actions() {
+
+		remove_action( 'pods_api_post_save_pod_item', array( $this, '_track_hook' ) );
+		remove_action( 'pods_api_post_create_pod_item', array( $this, '_track_hook' ) );
+		remove_action( 'pods_api_post_edit_pod_item', array( $this, '_track_hook' ) );
 
 	}
 

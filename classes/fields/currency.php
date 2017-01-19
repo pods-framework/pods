@@ -796,6 +796,11 @@ class PodsField_Currency extends PodsField {
 				'name'  => 'Vietnamese Dong',
 				'sign'  => '&#8363;',
 			),
+			'myr' => array(
+				'label' => 'MYR',
+				'name'  => 'Malaysian Ringgit',
+				'sign'  => 'MR',
+			),
 		);
 
 		/**

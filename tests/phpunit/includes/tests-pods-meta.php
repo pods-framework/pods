@@ -192,7 +192,7 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 	 */
 	public function _track_hook() {
 
-		self::$hooked[ \current_action() ] = func_get_args();
+		self::$hooked[ \current_filter() ] = func_get_args();
 
 	}
 

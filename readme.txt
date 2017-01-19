@@ -180,6 +180,8 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 * Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]
 * Added: Keep Plupload instances in `windows.pods_uploader[id]`. This makes it possible to bind event listeners to the file uploader. Fixes (#3763). (#3768). [@thirdender]
 * Added: New singular capabilities for Taxonomies for Compatibility with WP 4.7. Fixes (#3896). (#3946). [@JoryHogeveen]
+* Added: Enhance Currency Field storage. Fixes Adds new format as arrays for multiple values (label, name, sign) and decimal handling options. Fixes(#1915). (#3949). [@JoryHogeveen]
+* Fixed: Number/Currency format validation error with French formatting. Fixes (#3842). (#3950). [@JoryHogeveen]
 * Fixed: Additional save_user/save_post handling problems corrected and addition of Unit Tests. Fixes (#3918,#3801). (#3945). [sc0ttkclark]
 * Fixed: Double qtip/tooltip when using single checkboxes (boolean type). Fixes (#3940). (#3943) [@JoryHogeveen]
 * Fixed: Undefined Index Notice in (#3936). (#3941). [@sc0ttkclark]

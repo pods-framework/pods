@@ -66,17 +66,39 @@ class PodsRESTHandlers {
 		if ( empty( $pod_name ) ) {
 			$pod_name = pods_v( 'taxonomy', $object );
 		}
-		
-		if ( empty( $pod_name ) && 'attachment' == $object_type ) {
-			$pod_name = 'media';
+
+		/**
+		 * $pod_name is still empty, so check lets check $object_type
+		 *
+		 */
+
+		if ( empty( $pod_name ) ) {
+			if ( 'attachment' == $object_type ) {
+				$pod_name = 'media';
+			} else {
+				$pod_name = $object_type;
+			}
 		}
+
+		/**
+		 * Filter the pod name
+		 *
+		 * @since 2.6.7
+		 *
+		 * @param array           $pod_name    Pod name
+		 * @param Pods            $object      Rest object
+		 * @param string          $field_name  Name of the field
+		 * @param WP_REST_Request $request     Current request
+		 * @param string          $object_type Rest Object type
+		 */
+		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type  );
 
 		$id  = pods_v( 'id', $object );
 
 		if ( empty( $id ) ) {
 			$id = pods_v( 'ID', $object );
 		}
-		
+
 		$pod = self::get_pod( $pod_name, $id );
 
 		$value = false;
@@ -180,18 +202,58 @@ class PodsRESTHandlers {
 	 *
 	 * @since 2.5.6
 	 *
-	 * @param mixed  $value      Value to write
-	 * @param object $object     The object from the response
-	 * @param string $field_name Name of field
+	 * @param mixed           $value      Value to write
+	 * @param object          $object     The object from the response
+	 * @param string          $field_name Name of field
+	 * @param WP_REST_Request $request     Current request
+	 * @param string          $object_type Type of object
 	 *
 	 * @return bool|int
 	 */
-	public static function write_handler( $value, $object, $field_name ) {
+	public static function write_handler( $value, $object, $field_name, $request, $object_type ) {
 
 		$pod_name = pods_v( 'type', $object );
 
+		/**
+		 * If $pod_name in the line above is empty then the route invoked
+		 * may be for a taxonomy, so lets try and check for that
+		 *
+		 */
+		if ( empty( $pod_name ) ) {
+			$pod_name = pods_v( 'taxonomy', $object );
+		}
+
+		/**
+		 * $pod_name is still empty, so check lets check $object_type
+		 *
+		 */
+
+		if ( empty( $pod_name ) ) {
+			if ( 'attachment' == $object_type ) {
+				$pod_name = 'media';
+			} else {
+				$pod_name = $object_type;
+			}
+		}
+
+		/**
+		 * Filter the pod name
+		 *
+		 * @since 2.6.7
+		 *
+		 * @param array           $pod_name    Pod name
+		 * @param Pods            $object      Rest object
+		 * @param string          $field_name  Name of the field
+		 * @param WP_REST_Request $request     Current request
+		 * @param string          $object_type Rest Object type
+		 */
+		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type );
+
 		$id = pods_v( 'id', $object );
 
+		if ( empty( $id ) ) {
+			$id = pods_v( 'ID', $object );
+		}
 		$pod = self::get_pod( $pod_name, $id );
 
 		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'write' ) ) {
@@ -218,14 +280,18 @@ class PodsRESTHandlers {
 
 		global $wp_post_types;
 
+		// Only add support for post types that exist
 		if ( isset( $wp_post_types[ $post_type_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $post_type_name;
-			}
+			// Only add support if REST base not already set
+			if ( empty( $wp_post_types[ $post_type_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $post_type_name;
+				}
 
-			$wp_post_types[ $post_type_name ]->show_in_rest          = true;
-			$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
-			$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
+				$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
+			}
 		}
 
 	}
@@ -242,18 +308,24 @@ class PodsRESTHandlers {
 	 */
 	public static function taxonomy_rest_support( $taxonomy_name, $rest_base = false, $controller = 'WP_REST_Terms_Controller' ) {
 
+		/** As of WordPress 4.7: https://make.wordpress.org/core/2016/10/29/wp_taxonomy-in-4-7/ */
+		/** @var WP_Taxonomy[] $wp_taxonomies */
 		global $wp_taxonomies;
 
+		// Only add support for taxonomies that exist
 		if ( isset( $wp_taxonomies[ $taxonomy_name ] ) ) {
-			if ( ! $rest_base ) {
-				$rest_base = $taxonomy_name;
+			// Only add support if REST base not already set
+			if ( empty( $wp_taxonomies[ $taxonomy_name ]->rest_base ) ) {
+				if ( ! $rest_base ) {
+					$rest_base = $taxonomy_name;
+				}
+
+				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
+				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 			}
 
-			$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
-			$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
-			$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
 		}
-
 	}
 
 	/**

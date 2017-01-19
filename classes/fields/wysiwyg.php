@@ -42,7 +42,7 @@ class PodsField_WYSIWYG extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
     }
 
     /**
@@ -74,7 +74,8 @@ class PodsField_WYSIWYG extends PodsField {
                             'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
                             'cleditor' => __( 'CLEditor', 'pods' )
                         )
-                    )
+                    ),
+                'dependency' => true
             ),
             'editor_options' => array(
                 'label' => __( 'Editor Options', 'pods' ),

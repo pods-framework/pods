@@ -50,7 +50,7 @@
 
 .pods-boolean input {
     display: block;
-    min-height:16px;
+    min-height: 16px;
     left: 2px;
     margin: 1px 7px 0 0;
     padding: 0;
@@ -192,9 +192,9 @@ input.pods-form-ui-field-type-color {
 
 /* Codemirror */
 .pods-field .CodeMirror {
-    width: 95%;
     border: 1px solid #999;
     background-color: #fff;
+    margin: 0;
 }
 
 .pods-form-front ul.pods-form-fields {

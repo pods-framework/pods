@@ -13,15 +13,18 @@ class PodsView {
 	 * @return \PodsView
 	 */
 	private function __construct() {
+
+		// !nope
+
 	}
 
 	/**
 	 * @static
 	 *
-	 * @param string $view Path of the view file
-	 * @param array|null $data (optional) Data to pass on to the template
-	 * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
-	 * @param string $cache_mode (optional) Decides the caching method to use for the view.
+	 * @param string         $view       Path of the view file
+	 * @param array|null     $data       (optional) Data to pass on to the template
+	 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
+	 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
@@ -34,18 +37,18 @@ class PodsView {
 		 *
 		 * To use, set first param to true. If that param in not null, this method returns its value.
 		 *
-		 * @param null|bool If not set to null, this filter overrides the rest of the method.
-		 * @param string $view Path of the view file
-		 * @param array|null $data (optional) Data to pass on to the template
-		 * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
-		 * @param string $cache_mode (optional) Decides the caching method to use for the view.
+		 * @param null|bool      If          not set to null, this filter overrides the rest of the method.
+		 * @param string         $view       Path of the view file
+		 * @param array|null     $data       (optional) Data to pass on to the template
+		 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
+		 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
 		 *
 		 * @returns The value of the first param.
 		 *
 		 * @since 2.4.1
 		 */
 		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );
-		if ( !is_null( $filter_check ) ) {
+		if ( ! is_null( $filter_check ) ) {
 			return $filter_check;
 
 		}
@@ -53,28 +56,28 @@ class PodsView {
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
 		}
 
 		// Support my-view.php?custom-key=X#hash keying for cache
 		$view_id = '';
 
-		if ( !is_array( $view ) ) {
+		if ( ! is_array( $view ) ) {
 			$view_q = explode( '?', $view );
 
 			if ( 1 < count( $view_q ) ) {
-				$view_id = '?' . $view_q[ 1 ];
+				$view_id = '?' . $view_q[1];
 
-				$view = $view_q[ 0 ];
+				$view = $view_q[0];
 			}
 
 			$view_h = explode( '#', $view );
 
 			if ( 1 < count( $view_h ) ) {
-				$view_id .= '#' . $view_h[ 1 ];
+				$view_id .= '#' . $view_h[1];
 
-				$view = $view_h[ 0 ];
+				$view = $view_h[0];
 			}
 
 			// Support dynamic tags!
@@ -93,9 +96,9 @@ class PodsView {
 			$view_key = realpath( $view_key );
 		}
 
-		$pods_ui_dir = realpath( PODS_DIR . 'ui/' );
+		$pods_ui_dir         = realpath( PODS_DIR . 'ui/' );
 		$pods_components_dir = realpath( PODS_DIR . 'components/' );
-		$abspath_dir = realpath( ABSPATH );
+		$abspath_dir         = realpath( ABSPATH );
 
 		$cache_key = pods_str_replace( $abspath_dir, '/', $view_key, 1 );
 
@@ -126,12 +129,36 @@ class PodsView {
 	}
 
 	/**
+	 * Get the cache key, salted with current Pods version, peppered with md5 if too long
+	 *
+	 * @param string $key
+	 * @param string $group_key
+	 *
+	 * @return string
+	 *
+	 * @since 2.6.2
+	 */
+	public static function get_key( $key, $group_key = '' ) {
+
+		// Add some salt
+		$key .= '-' . PODS_VERSION;
+
+		// Patch for limitations in DB
+		if ( 44 < strlen( $group_key . $key ) ) {
+			$key = md5( $key );
+		}
+
+		return $key;
+
+	}
+
+	/**
 	 * @static
 	 *
-	 * @param string $key Key for the cache
+	 * @param string $key        Key for the cache
 	 * @param string $cache_mode (optional) Decides the caching method to use for the view.
-	 * @param string $group (optional) Set the group of the value.
-	 * @param string $callback (optional) Callback function to run to set the value if not cached.
+	 * @param string $group      (optional) Set the group of the value.
+	 * @param string $callback   (optional) Callback function to run to set the value if not cached.
 	 *
 	 * @return bool|mixed|null|void
 	 *
@@ -141,72 +168,60 @@ class PodsView {
 
 		$object_cache = false;
 
-		if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
 			$object_cache = true;
 		}
 
-		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
 		}
 
-		$group_key = '';
+		$group_key = 'pods_';
 
-		if ( !empty( $group ) ) {
+		if ( ! empty( $group ) ) {
 			$group_key = $group . '_';
 		}
 
 		$original_key = $key;
 
-		// Patch for limitations in DB
-		if ( 44 < strlen( $group_key . $key ) ) {
-			$key = md5( $key );
-
-			if ( empty( $group_key ) ) {
-				$group_key = 'pods_';
-			}
-		}
+		// Get proper cache key
+		$key = self::get_key( $key, $group_key );
 
 		$value = null;
 
 		$called = false;
 
 		$pods_nocache = pods_var_raw( 'pods_nocache' );
-		$nocache = array();
+		$nocache      = array();
 
 		if ( pods_is_admin() && null !== $pods_nocache ) {
 			if ( 1 < strlen( $pods_nocache ) ) {
 				$nocache = explode( ',', $pods_nocache );
-			}
-			else {
+			} else {
 				$nocache = self::$cache_modes;
 			}
 		}
 
 		if ( apply_filters( 'pods_view_cache_alt_get', false, $cache_mode, $group_key . $key, $original_key, $group ) ) {
 			$value = apply_filters( 'pods_view_cache_alt_get_value', $value, $cache_mode, $group_key . $key, $original_key, $group );
-		}
-		elseif ( 'transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+		} elseif ( 'transient' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			$value = get_transient( $group_key . $key );
-		}
-		elseif ( 'site-transient' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+		} elseif ( 'site-transient' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			$value = get_site_transient( $group_key . $key );
-		}
-		elseif ( 'cache' == $cache_mode && $object_cache && !in_array( $cache_mode, $nocache ) ) {
+		} elseif ( 'cache' == $cache_mode && $object_cache && ! in_array( $cache_mode, $nocache ) ) {
 			$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
-		}
-		elseif ( 'option-cache' == $cache_mode && !in_array( $cache_mode, $nocache ) ) {
+		} elseif ( 'option-cache' == $cache_mode && ! in_array( $cache_mode, $nocache ) ) {
 			global $_wp_using_ext_object_cache;
 
 			$pre = apply_filters( 'pre_transient_' . $key, false );
 
 			if ( false !== $pre ) {
 				$value = $pre;
-			}
-			elseif ( $_wp_using_ext_object_cache ) {
-				$value = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
+			} elseif ( $_wp_using_ext_object_cache ) {
+				$value   = wp_cache_get( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 				$timeout = wp_cache_get( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 
-				if ( !empty( $timeout ) && $timeout < time() ) {
+				if ( ! empty( $timeout ) && $timeout < time() ) {
 					if ( is_callable( $callback ) ) {
 						// Callback function should do it's own set/update for cache
 						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
@@ -216,23 +231,21 @@ class PodsView {
 						}
 
 						$called = true;
-					}
-					else {
+					} else {
 						$value = false;
 
 						wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 						wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 					}
 				}
-			}
-			else {
-				$transient_option = '_pods_option_' . $key;
+			} else {
+				$transient_option  = '_pods_option_' . $key;
 				$transient_timeout = '_pods_option_timeout_' . $key;
 
-				$value = get_option( $transient_option );
+				$value   = get_option( $transient_option );
 				$timeout = get_option( $transient_timeout );
 
-				if ( !empty( $timeout ) && $timeout < time() ) {
+				if ( ! empty( $timeout ) && $timeout < time() ) {
 					if ( is_callable( $callback ) ) {
 						// Callback function should do it's own set/update for cache
 						$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
@@ -242,8 +255,7 @@ class PodsView {
 						}
 
 						$called = true;
-					}
-					else {
+					} else {
 						$value = false;
 
 						delete_option( $transient_option );
@@ -255,12 +267,11 @@ class PodsView {
 			if ( false !== $value ) {
 				$value = apply_filters( 'transient_' . $key, $value );
 			}
-		}
-		else {
+		} else {
 			$value = false;
 		}
 
-		if ( false === $value && is_callable( $callback ) && !$called ) {
+		if ( false === $value && is_callable( $callback ) && ! $called ) {
 			// Callback function should do it's own set/update for cache
 			$callback_value = call_user_func( $callback, $original_key, $group, $cache_mode );
 
@@ -279,11 +290,11 @@ class PodsView {
 	 *
 	 * Set a cached value
 	 *
-	 * @param string $key Key for the cache
-	 * @param mixed $value Value to add to the cache
-	 * @param int $expires (optional) Time in seconds for the cache to expire, if 0 no expiration.
+	 * @param string $key        Key for the cache
+	 * @param mixed  $value      Value to add to the cache
+	 * @param int    $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 	 * @param string $cache_mode (optional) Decides the caching method to use for the view.
-	 * @param string $group (optional) Set the group of the value.
+	 * @param string $group      (optional) Set the group of the value.
 	 *
 	 * @return bool|mixed|null|string|void
 	 *
@@ -293,47 +304,37 @@ class PodsView {
 
 		$object_cache = false;
 
-		if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
 			$object_cache = true;
 		}
 
 		// Advanced $expires handling
 		$expires = self::expires( $expires, $cache_mode );
 
-		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
 		}
 
-		$group_key = '';
+		$group_key = 'pods_';
 
-		if ( !empty( $group ) ) {
+		if ( ! empty( $group ) ) {
 			$group_key = $group . '_';
 		}
 
 		$original_key = $key;
 
-		// Patch for limitations in DB
-		if ( 44 < strlen( $group_key . $key ) ) {
-			$key = md5( $key );
-
-			if ( empty( $group_key ) ) {
-				$group_key = 'pods_';
-			}
-		}
+		// Get proper cache key
+		$key = self::get_key( $key, $group_key );
 
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $group_key . $key, $original_key, $value, $expires, $group ) ) {
 			return $value;
-		}
-		elseif ( 'transient' == $cache_mode ) {
+		} elseif ( 'transient' == $cache_mode ) {
 			set_transient( $group_key . $key, $value, $expires );
-		}
-		elseif ( 'site-transient' == $cache_mode ) {
+		} elseif ( 'site-transient' == $cache_mode ) {
 			set_site_transient( $group_key . $key, $value, $expires );
-		}
-		elseif ( 'cache' == $cache_mode && $object_cache ) {
+		} elseif ( 'cache' == $cache_mode && $object_cache ) {
 			wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
-		}
-		elseif ( 'option-cache' == $cache_mode ) {
+		} elseif ( 'option-cache' == $cache_mode ) {
 			global $_wp_using_ext_object_cache;
 
 			$value = apply_filters( 'pre_set_transient_' . $key, $value );
@@ -344,10 +345,9 @@ class PodsView {
 				if ( $expires ) {
 					$result = wp_cache_set( '_timeout_' . $key, $expires, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 				}
-			}
-			else {
+			} else {
 				$transient_timeout = '_pods_option_timeout_' . $key;
-				$key = '_pods_option_' . $key;
+				$key               = '_pods_option_' . $key;
 
 				if ( false === get_option( $key ) ) {
 					if ( $expires ) {
@@ -355,8 +355,7 @@ class PodsView {
 					}
 
 					$result = add_option( $key, $value, '', 'no' );
-				}
-				else {
+				} else {
 					if ( $expires ) {
 						update_option( $transient_timeout, time() + $expires );
 					}
@@ -381,9 +380,9 @@ class PodsView {
 	 *
 	 * Clear a cached value
 	 *
-	 * @param string|bool $key Key for the cache
-	 * @param string $cache_mode (optional) Decides the caching method to use for the view.
-	 * @param string $group (optional) Set the group.
+	 * @param string|bool $key        Key for the cache
+	 * @param string      $cache_mode (optional) Decides the caching method to use for the view.
+	 * @param string      $group      (optional) Set the group.
 	 *
 	 * @return bool
 	 *
@@ -393,41 +392,34 @@ class PodsView {
 
 		$object_cache = false;
 
-		if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
+		if ( isset( $GLOBALS['wp_object_cache'] ) && is_object( $GLOBALS['wp_object_cache'] ) ) {
 			$object_cache = true;
 		}
 
 		global $wpdb;
 
-		if ( !in_array( $cache_mode, self::$cache_modes ) ) {
+		if ( ! in_array( $cache_mode, self::$cache_modes ) ) {
 			$cache_mode = 'cache';
 		}
 
-		$group_key = '';
+		$group_key = 'pods_';
 
-		if ( !empty( $group ) ) {
+		if ( ! empty( $group ) ) {
 			$group_key = $group . '_';
 		}
 
 		$full_key = $original_key = $key;
 
 		if ( true !== $key ) {
-			// Patch for limitations in DB
-			if ( 44 < strlen( $group_key . $key ) ) {
-				$key = md5( $key );
-
-				if ( empty( $group_key ) ) {
-					$group_key = 'pods_';
-				}
-			}
+			// Get proper cache key
+			$key = self::get_key( $key, $group_key );
 
 			$full_key = $group_key . $key;
 		}
 
 		if ( apply_filters( 'pods_view_cache_alt_set', false, $cache_mode, $full_key, $original_key, '', 0, $group ) ) {
 			return true;
-		}
-		elseif ( 'transient' == $cache_mode ) {
+		} elseif ( 'transient' == $cache_mode ) {
 			if ( true === $key ) {
 				$group_key = pods_sanitize_like( $group_key );
 
@@ -436,12 +428,10 @@ class PodsView {
 				if ( $object_cache ) {
 					wp_cache_flush();
 				}
-			}
-			else {
+			} else {
 				delete_transient( $group_key . $key );
 			}
-		}
-		elseif ( 'site-transient' == $cache_mode ) {
+		} elseif ( 'site-transient' == $cache_mode ) {
 			if ( true === $key ) {
 				$group_key = pods_sanitize_like( $group_key );
 
@@ -450,20 +440,16 @@ class PodsView {
 				if ( $object_cache ) {
 					wp_cache_flush();
 				}
-			}
-			else {
+			} else {
 				delete_site_transient( $group_key . $key );
 			}
-		}
-		elseif ( 'cache' == $cache_mode && $object_cache ) {
+		} elseif ( 'cache' == $cache_mode && $object_cache ) {
 			if ( true === $key ) {
 				wp_cache_flush();
+			} else {
+				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group ) );
 			}
-			else {
-				wp_cache_delete( ( empty( $key ) ? 'pods_view' : $key ), ( empty( $group ) ? 'pods_view' : $group )  );
-			}
-		}
-		elseif ( 'option-cache' == $cache_mode ) {
+		} elseif ( 'option-cache' == $cache_mode ) {
 			global $_wp_using_ext_object_cache;
 
 			do_action( 'delete_transient_' . $key, $key );
@@ -472,10 +458,9 @@ class PodsView {
 				$result = wp_cache_delete( $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
 
 				wp_cache_delete( '_timeout_' . $key, ( empty( $group ) ? 'pods_option_cache' : $group ) );
-			}
-			else {
+			} else {
 				$option_timeout = '_pods_option_timeout_' . $key;
-				$option = '_pods_option_' . $key;
+				$option         = '_pods_option_' . $key;
 
 				$result = delete_option( $option );
 
@@ -497,7 +482,7 @@ class PodsView {
 	/**
 	 * @static
 	 *
-	 * @param $_view
+	 * @param            $_view
 	 * @param null|array $_data
 	 *
 	 * @return bool|mixed|string|void
@@ -522,7 +507,7 @@ class PodsView {
 			return $_view;
 		}
 
-		if ( !empty( $_data ) && is_array( $_data ) ) {
+		if ( ! empty( $_data ) && is_array( $_data ) ) {
 			extract( $_data, EXTR_SKIP );
 		}
 
@@ -545,16 +530,15 @@ class PodsView {
 		if ( is_array( $_view ) ) {
 			$_views = array();
 
-			if ( isset( $_view[ 0 ] ) && false === strpos( $_view[ 0 ], '.php' ) ) {
+			if ( isset( $_view[0] ) && false === strpos( $_view[0], '.php' ) ) {
 				$_view_count = count( $_view );
 
-				for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
+				for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x -- ) {
 					$_view_v = array_slice( $_view, 0, $_view_x );
 
 					$_views[] = implode( '-', $_view_v ) . '.php';
 				}
-			}
-			else {
+			} else {
 				$_views = $_view;
 			}
 
@@ -563,7 +547,7 @@ class PodsView {
 			foreach ( $_views as $_view_check ) {
 				$_view = self::locate_template( $_view_check );
 
-				if ( !empty( $_view ) ) {
+				if ( ! empty( $_view ) ) {
 					break;
 				}
 			}
@@ -588,14 +572,10 @@ class PodsView {
 
 		// Is the view's file somewhere within the plugin directory tree?
 		// Note: we explicitly whitelist PODS_DIR for the case of symlinks (see issue #2945)
-		if ( false !== strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) ||
-		     false !== strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ||
-		     false !== strpos( $_real_view, PODS_DIR )
-		) {
+		if ( false !== strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) || false !== strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) || false !== strpos( $_real_view, PODS_DIR ) ) {
 			if ( file_exists( $_view ) ) {
 				$located = $_view;
-			}
-			else {
+			} else {
 				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
 			}
 
@@ -609,8 +589,7 @@ class PodsView {
 			// Allow views in the theme or child theme
 			if ( file_exists( realpath( get_stylesheet_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_stylesheet_directory() . '/' . $_real_view );
-			}
-			elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
+			} elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
 		}
@@ -623,7 +602,7 @@ class PodsView {
 	 * Advanced $expires handling
 	 *
 	 * @param array|bool|int $expires
-	 * @param string $cache_mode
+	 * @param string         $cache_mode
 	 *
 	 * @return bool|int
 	 *
@@ -634,42 +613,38 @@ class PodsView {
 
 		// Different $expires if user is anonymous or logged in or specific capability
 		if ( is_array( $expires ) ) {
-			if ( ( isset( $expires[ 'anonymous' ] ) || isset( $expires[ 'user_with_access' ] ) ) && isset( $expires[ 'user' ] ) ) {
-				if ( isset( $expires[ 'user_with_access' ] ) ) {
+			if ( ( isset( $expires['anonymous'] ) || isset( $expires['user_with_access'] ) ) && isset( $expires['user'] ) ) {
+				if ( isset( $expires['user_with_access'] ) ) {
 					$expires = array(
 						pods_var_raw( 'anonymous', $expires, false ),
 						pods_var_raw( 'user', $expires, false ),
 						pods_var_raw( 'user_with_access', $expires, false ),
 						pods_var_raw( 'capability', $expires, null, null, true )
 					);
-				}
-				elseif ( isset( $expires[ 'anonymous' ] ) ) {
+				} elseif ( isset( $expires['anonymous'] ) ) {
 					$expires = array(
 						pods_var_raw( 'anonymous', $expires, false ),
 						pods_var_raw( 'user', $expires, false ),
 						pods_var_raw( 'capability', $expires, null, null, true )
 					);
 				}
-			}
-			else {
+			} else {
 				$expires = array_values( $expires );
 			}
 
 			if ( 4 == count( $expires ) ) {
-				if ( !is_user_logged_in() ) {
+				if ( ! is_user_logged_in() ) {
 					$expires = pods_var_raw( 0, $expires, false );
-				}
-				else {
-					$user_no_access = pods_var_raw( 1, $expires, false );
+				} else {
+					$user_no_access   = pods_var_raw( 1, $expires, false );
 					$user_with_access = pods_var_raw( 2, $expires, false );
-					$capability = pods_var_raw( 3, $expires, null, null, true );
+					$capability       = pods_var_raw( 3, $expires, null, null, true );
 
 					$expires = pods_var_user( $user_no_access, $user_with_access, $capability );
 				}
-			}
-			else {
-				$anon = pods_var_raw( 0, $expires, false );
-				$user = pods_var_raw( 1, $expires, false );
+			} else {
+				$anon       = pods_var_raw( 0, $expires, false );
+				$user       = pods_var_raw( 1, $expires, false );
 				$capability = pods_var_raw( 2, $expires, null, null, true );
 
 				$expires = pods_var_user( $anon, $user, $capability );
@@ -678,8 +653,7 @@ class PodsView {
 
 		if ( 'none' == $cache_mode ) {
 			$expires = false;
-		}
-		elseif ( false !== $expires ) {
+		} elseif ( false !== $expires ) {
 			$expires = (int) $expires;
 
 			if ( $expires < 1 ) {
@@ -691,12 +665,4 @@ class PodsView {
 
 	}
 
-	private static function filter_callback( $value ) {
-
-		if ( in_array( $value, array( '', null, false ) ) ) {
-			return false;
-		}
-
-		return true;
-	}
 }

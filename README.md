@@ -1,7 +1,9 @@
 # [Pods Framework](http://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
+[![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/2.x/license.txt)
+[![Code Climate](https://codeclimate.com/github/pods-framework/pods/badges/gpa.svg)](https://codeclimate.com/github/pods-framework/pods)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
@@ -40,7 +42,7 @@ There are various ways you can contribute:
 
 1. Raise an [Issue](https://github.com/pods-framework/pods/issues) on GitHub
 2. Send us a Pull Request with your bug fixes and/or enhancements
-3. Translate Pods Framework into different languages via [WP Translate](http://wp-translate.org/projects/pods), just sign up and let us know what your username / language(s) are
+3. Translate Pods Framework into different languages via [WP Translate](https://translate.wordpress.org/projects/wp-plugins/pods), just sign in with your wordpress.org account and add translations where you can
 4. Provide feedback and suggestions on [enhancements](https://github.com/pods-framework/pods/issues?direction=desc&labels=Enhancement&page=1&sort=created&state=open)
 
 ## Donations
@@ -51,6 +53,5 @@ We're able to focus more on Pods when we have some cash to help keep the lights 
 
 * Stable Branch: [master](https://github.com/pods-framework/pods/tree/master)
 * 2.x Development Branch: [2.x](https://github.com/pods-framework/pods/tree/2.x)
-* 3.0 Development Branch: [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0)
 
-<em>Please submit all pull requests against [release/3.0](https://github.com/pods-framework/pods/tree/release/3.0) branch.</em>
+<em>Please submit all pull requests against [2.x](https://github.com/pods-framework/pods/tree/2.x) branch.</em>

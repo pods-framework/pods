@@ -92,79 +92,140 @@ function pods_message ( $message, $type = null ) {
     echo '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 }
 
-global $pods_errors;
-$pods_errors = array();
+$GLOBALS['pods_errors'] = array();
 
 /**
  * Error Handling which throws / displays errors
  *
- * @param string $error The error message to be thrown / displayed
- * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
- *                              If boolean, and is set to true: display errors
+ * @param string|array        $error The error message(s) to be thrown / displayed.
+ * @param object|boolean|null $obj   If $obj->display_errors is set and is set to true it will display errors, if boolean and is set to true it will display errors.
  *
- * @throws Exception
+ * @throws Exception Throws exception for developer-oriented error handling.
  *
- * @return mixed|void
+ * @return mixed
  *
  * @since 2.0
  */
-function pods_error ( $error, $obj = null ) {
+function pods_error( $error, $obj = null ) {
 
-    global $pods_errors;
+	global $pods_errors;
 
-    $display_errors = false;
+	$error_mode = 'exception';
 
-    if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
-        $display_errors = true;
-    elseif ( is_bool( $obj ) && true === $obj )
-        $display_errors = true;
+	if ( is_object( $obj ) && isset( $obj->display_errors ) ) {
+		if ( true === $obj->display_errors ) {
+			$error_mode = 'exit';
+		} elseif ( false === $obj->display_errors ) {
+			$error_mode = 'exception';
+		} else {
+			$error_mode = $obj->display_errors;
+		}
+	} elseif ( true === $obj ) {
+		$error_mode = 'exit';
+	} elseif ( false === $obj ) {
+		$error_mode = 'exception';
+	} elseif ( is_string( $obj ) ) {
+		$error_mode = $obj;
+	}
 
-    if ( is_object( $error ) && 'Exception' == get_class( $error ) ) {
-        $error = $error->getMessage();
-        $display_errors = false;
-    }
+	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		$error = $error->getMessage();
 
-    if ( is_array( $error ) ) {
-        if ( 1 == count( $error ) )
-            $error = current( $error );
-        elseif ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-            $error = __( 'The following issue occurred:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
-        else
-            $error = __( 'The following issues occurred:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
-    }
+		$error_mode = 'exception';
+	}
 
-    if ( is_object( $error ) )
-        $error = __( 'An unknown error has occurred', 'pods' );
+	/**
+	 * @var string $error_mode Throw an exception, exit with the message, return false, or return WP_Error
+	 */
+	if ( ! in_array( $error_mode, array( 'exception', 'exit', 'false', 'wp_error' ), true ) ) {
+		$error_mode = 'exception';
+	}
 
-    // log error in WP
-    $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+	/**
+	 * Filter the error mode used by pods_error.
+	 *
+	 * @param string $error_mode Error mode
+	 * @param string|array $error Error message(s)
+	 * @param object|boolean|string|null $obj
+	 */
+	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
 
-    // throw error as Exception and return false if silent
-    if ( $pods_errors !== $error && false === $display_errors && !empty( $error ) ) {
-        $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
+	if ( is_array( $error ) ) {
+		$error = array_map( 'wp_kses_post', $error );
 
-        if ( null !== $exception_bypass )
-            return $exception_bypass;
+		if ( 1 === count( $error ) ) {
+			$error = current( $error );
 
-        $pods_errors = $error;
+			// Create WP_Error for use later.
+			$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+		} else {
+			// Create WP_Error for use later.
+			$wp_error = new WP_Error();
 
-        set_exception_handler( 'pods_error' );
+			foreach ( $error as $error_message ) {
+				$wp_error->add( 'pods-error-' . md5( $error_message ), $error_message );
+			}
 
-        throw new Exception( $error );
-    }
+			if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+				$error = __( 'The following issue occurred:', 'pods' )
+						 . "\n\n- " . implode( "\n- ", $error );
+			} else {
+				$error = __( 'The following issues occurred:', 'pods' )
+						 . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+			}
+		}
+	} else {
+		if ( is_object( $error ) ) {
+			$error = __( 'An unknown error has occurred', 'pods' );
+		}
 
-    $pods_errors = array();
+		$error = wp_kses_post( $error );
 
-    $die_bypass = apply_filters( 'pods_error_die', null, $error );
+		// Create WP_Error for use later.
+		$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+	}
 
-    if ( null !== $die_bypass )
-        return $die_bypass;
+	$last_error = $pods_errors;
 
-    // die with error
-    if ( !defined( 'DOING_AJAX' ) && !headers_sent() && ( is_admin() || false !== strpos( $_SERVER[ 'REQUEST_URI' ], 'wp-comments-post.php' ) ) )
-        wp_die( $error );
-    else
-        die( "<e>$error</e>" );
+	$pods_errors = array();
+
+	if ( $last_error === $error && 'exception' === $error_mode ) {
+		$error_mode = 'exit';
+	}
+
+	if ( ! empty( $error ) ) {
+		if ( 'exception' === $error_mode ) {
+			$exception_bypass = apply_filters( 'pods_error_exception', null, $error );
+
+			if ( null !== $exception_bypass ) {
+				return $exception_bypass;
+			}
+
+			$pods_errors = $error;
+
+			set_exception_handler( 'pods_error' );
+
+			throw new Exception( $error );
+		} elseif ( 'exit' === $error_mode ) {
+			$die_bypass = apply_filters( 'pods_error_die', null, $error );
+
+			if ( null !== $die_bypass ) {
+				return $die_bypass;
+			}
+
+			// die with error
+			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
+				wp_die( $error );
+			} else {
+				die( sprintf( '<e>%s</e>', $error ) );
+			}
+		} elseif ( 'wp_error' === $error_mode ) {
+			return $wp_error;
+		}
+	}
+
+	return false;
+
 }
 
 /**
@@ -609,6 +670,7 @@ function pods_shortcode ( $tags, $content = null ) {
 	}
 
     $defaults = array(
+    	'use_current' => false,
         'name' => null,
         'id' => null,
         'slug' => null,
@@ -653,6 +715,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
 	$tags[ 'pagination' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
 	$tags[ 'search' ] = filter_var($tags[ 'pagination' ], FILTER_VALIDATE_BOOLEAN);
+	$tags[ 'use_current' ] = filter_var($tags[ 'use_current' ], FILTER_VALIDATE_BOOLEAN);
 
     if ( empty( $content ) )
         $content = null;
@@ -672,7 +735,7 @@ function pods_shortcode ( $tags, $content = null ) {
 		return $return;
 	}
 
-    if ( empty( $tags[ 'name' ] ) ) {
+    if ( ! $tags['use_current'] && empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
             $pod = pods( get_post_type(), get_the_ID(), false );
 
@@ -702,7 +765,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Please provide either a template or field name</p>';
     }
 
-    if ( !isset( $id ) ) {
+    if ( ! $tags['use_current'] && !isset( $id ) ) {
         // id > slug (if both exist)
 		$id = null;
 
@@ -717,20 +780,32 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( !empty( $tags[ 'id' ] ) ) {
             $id = $tags[ 'id' ];
 
+            if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
+                $id = pods_evaluate_tags( $id );
+            }
+
             if ( is_numeric( $id ) )
                 $id = absint( $id );
         }
     }
 
-    if ( !isset( $pod ) )
-        $pod = pods( $tags[ 'name' ], $id );
+    if ( !isset( $pod ) ) {
+    	if ( ! $tags['use_current'] ) {
+        	$pod = pods( $tags[ 'name' ], $id );
+    	} else {
+    		$pod = pods();
+    		$id = $pod->id();
+    	}
+    }
 
-    if ( empty( $pod ) )
+    if ( empty( $pod ) || ! $pod->valid() )
         return '<p>Pod not found</p>';
 
 	$found = 0;
+	
+	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
-	if ( empty( $id ) ) {
+	if ( ! $is_singular ) {
 		$params = array();
 
 		if ( !defined( 'PODS_DISABLE_SHORTCODE_SQL' ) || !PODS_DISABLE_SHORTCODE_SQL ) {
@@ -817,7 +892,7 @@ function pods_shortcode ( $tags, $content = null ) {
 				return '';
 			}
 			// Only explicitly allow user edit forms
-			elseif ( !empty( $id ) && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+			elseif ( $is_singular && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
 				return '';
 			}
 		}
@@ -853,18 +928,18 @@ function pods_shortcode ( $tags, $content = null ) {
 
     ob_start();
 
-    if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
+    if ( ! $is_singular && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
-    if ( empty( $id ) && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
+    if ( ! $is_singular && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'before', 'both' ) ) )
         echo $pod->pagination( $tags[ 'pagination_label' ] );
 
     echo $pod->template( $tags[ 'template' ], $content );
 
-    if ( empty( $id ) && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
+    if ( ! $is_singular && 0 < $found && true === $tags[ 'pagination' ] && in_array( $tags[ 'pagination_location' ], array( 'after', 'both' ) ) )
         echo $pod->pagination( $tags[ 'pagination_label' ] );
 
-    if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
+    if ( ! $is_singular && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
 	$return = ob_get_clean();
@@ -1122,7 +1197,7 @@ function pods_redirect ( $location, $status = 302 ) {
 function pods_permission ( $options ) {
     global $current_user;
 
-    get_currentuserinfo();
+    wp_get_current_user();
 
     $permission = false;
 
@@ -1250,7 +1325,7 @@ function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = nul
     $page = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s" . $status_sql . $orderby_sql, $prepared ) );
 
     if ( $page )
-        return get_post( $page, $output );
+        return get_post( pods_v( $page, 'post_id' ), $output );
 
     return null;
 }
@@ -1786,6 +1861,9 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
+
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
 
@@ -1808,6 +1886,9 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         $object_type = 'post';
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
+
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
@@ -1910,8 +1991,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 		}
 
         $no_conflict[ 'action' ] = array(
-            //array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
-            array( 'profile_update', array( PodsInit::$meta, 'save_user' ) )
+            array( 'user_register', array( PodsInit::$meta, 'save_user' ) ),
+            array( 'profile_update', array( PodsInit::$meta, 'save_user' ), 10, 2 )
         );
     }
     elseif ( 'comment' == $object_type ) {
@@ -1995,6 +2076,9 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
         $object_type = 'post';
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
+
+    if ( ! class_exists( 'PodsInit' ) ) 
+        pods_init();
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
         return false;

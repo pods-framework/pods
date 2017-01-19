@@ -448,7 +448,7 @@ class PodsField_Currency extends PodsField {
 	 * @param int $id
 	 * @param null $params
 	 *
-	 * @return bool|mixed|void
+	 * @return bool|mixed
 	 * @since 2.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -492,10 +492,14 @@ class PodsField_Currency extends PodsField {
 
 		$currency_sign = self::$currencies[ $currency ];
 
-		$check = str_replace( array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ) ), array( '', '.', '', '' ), $value );
+		$check = str_replace(
+			array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ), html_entity_decode( $thousands ) ),
+			array( '', '.', '', '', '' ),
+			$value
+		);
 		$check = trim( $check );
 
-		$check = preg_replace( '/[0-9\.\-]/', '', $check );
+		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );
 
 		$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 

@@ -1109,7 +1109,7 @@ class PodsMeta {
     public function save_post_detect_new ( $new_status, $old_status, $post ) {
 
     	if ( $post ) {
-		    self::$old_post_status[ $post->post_status ] = $old_status;
+		    self::$old_post_status[ $post->post_type ] = $old_status;
 	    }
 
     }
@@ -1170,7 +1170,7 @@ class PodsMeta {
 		}
 
 		// Block Trash
-		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ) ) ) {
+		if ( in_array( pods_v( 'action', 'get' ), array( 'untrash', 'trash' ), true ) ) {
 			return;
 		}
 

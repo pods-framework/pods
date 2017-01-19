@@ -192,9 +192,14 @@ class PodsForm {
 		}
 
         $options = self::options( $type, $options );
+        $options = apply_filters( 'pods_form_ui_field_' . $type . '_options', $options, $value, $name, $pod, $id );
 
-        if ( null === $value || ( '' === $value && 'boolean' == $type ) || ( !empty( $pod ) && empty( $id ) ) )
+        if ( null === $value || ( '' === $value && 'boolean' === $type ) || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
+
+        // Fix double help qtip when using single checkboxes (boolean type)
+        if ( 'boolean' === $type )
+        	$options['help'] = '';
 
         if ( false === self::permission( $type, $name, $options, null, $pod, $id ) )
             return false;
@@ -428,7 +433,7 @@ class PodsForm {
             if ( 0 < strlen( pods_v( 'label', $options, '' ) ) )
                 $_attributes[ 'data-label' ] = strip_tags( pods_v( 'label', $options ) );
 
-            $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
+	        $_attributes['id'] = 'pods-form-ui-' . $name_clean . ( self::$form_counter > 1 ? '-' . self::$form_counter : '' );
             $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 
             if ( isset( $options[ 'dependency' ] ) && false !== $options[ 'dependency' ] )
@@ -1115,15 +1120,34 @@ class PodsForm {
      * @since 2.0
      */
     public static function clean( $input, $noarray = false, $db_field = false ) {
-        $input = str_replace( array( '--1', '__1' ), '00000', (string) $input );
-        if ( false !== $noarray )
-            $input = preg_replace( '/\[\d*\]/', '-', $input );
-        $output = str_replace( array( '[', ']' ), '-', strtolower( $input ) );
+
+	    $output = trim( (string) $input );
+
+        $output = str_replace( '--1', 'podsfixtemp1', $output );
+        $output = str_replace( '__1', 'podsfixtemp2', $output );
+
+        if ( false !== $noarray ) {
+	        $output = preg_replace( '/\[podsfixtemp\d+\]/', '-', $output );
+	        $output = preg_replace( '/\[\d*\]/', '-', $output );
+        }
+
+        $output = str_replace( array( '[', ']' ), '-', $output );
+
+	    $output = pods_clean_name( $output );
+
         $output = preg_replace( '/([^a-z0-9\-_])/', '', $output );
-        $output = trim( str_replace( array( '__', '_', '--' ), '-', $output ), '-' );
-        $output = str_replace( '00000', '--1', $output );
-        if ( false !== $db_field )
-            $output = str_replace( '-', '_', $output );
+	    $output = preg_replace( '/(_){2,}/', '_', $output );
+	    $output = preg_replace( '/(-){2,}/', '-', $output );
+
+	    if ( true !== $db_field ) {
+		    $output = str_replace( '_', '-', $output );
+	    }
+
+	    $output = rtrim( $output, '-' );
+
+        $output = str_replace( 'podsfixtemp1', '--1', $output );
+        $output = str_replace( 'podsfixtemp2', '__1', $output );
+
         return $output;
     }
 
@@ -1189,6 +1213,7 @@ class PodsForm {
         $plugins_dir = realpath( WP_PLUGIN_DIR );
         $muplugins_dir = realpath( WPMU_PLUGIN_DIR );
         $abspath_dir = realpath( ABSPATH );
+        $pods_dir = realpath( PODS_DIR );
 
         if ( !class_exists( $class_name ) ) {
             if ( isset( self::$field_types[ $field_type ] ) && !empty( self::$field_types[ $field_type ][ 'file' ] ) )
@@ -1200,7 +1225,7 @@ class PodsForm {
                 $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
                 $file = realpath( $file );
 
-                if ( file_exists( $file ) && ( 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) )
+                if ( file_exists( $file ) && ( 0 === strpos( $file, $pods_dir ) || 0 === strpos( $file, $content_dir ) || 0 === strpos( $file, $plugins_dir ) || 0 === strpos( $file, $muplugins_dir ) || 0 === strpos( $file, $abspath_dir ) ) )
                     include_once $file;
             }
         }

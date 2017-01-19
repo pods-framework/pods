@@ -2138,11 +2138,11 @@ class PodsData {
             $wpdb->term_relationships
         );
 
-        $showTables = mysql_list_tables( DB_NAME );
+        $showTables = $wpdb->get_results( 'SHOW TABLES in ' . DB_NAME, ARRAY_A );
 
         $finalTables = array();
 
-        while ( $table = mysql_fetch_row( $showTables ) ) {
+        foreach ( $showTables as $table ) {
             if ( !$pods_tables && 0 === ( strpos( $table[ 0 ], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) // don't include pods tables
                 continue;
             elseif ( !$wp_core && in_array( $table[ 0 ], $core_wp_tables ) )
@@ -2196,13 +2196,9 @@ class PodsData {
      * @since 2.0
      */
     public static function get_column_data ( $column_name, $table ) {
-        $describe_data = mysql_query( 'DESCRIBE ' . $table );
+	    global $wpdb;
 
-        $column_data = array();
-
-        while ( $column_row = mysql_fetch_assoc( $describe_data ) ) {
-            $column_data[] = $column_row;
-        }
+        $column_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_A );
 
         foreach ( $column_data as $single_column ) {
             if ( $column_name == $single_column[ 'Field' ] )

@@ -483,29 +483,37 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 */
 	public function fields ( $field = null, $option = null ) {
-		// No fields found
-		if ( empty( $this->fields ) )
-			$field_data = array();
-		// Return all fields
-		elseif ( empty( $field ) )
-			$field_data = (array) $this->fields;
-		// Field not found
-		elseif ( !isset( $this->fields[ $field ] ) )
-			$field_data = array();
-		// Return all field data
-		elseif ( empty( $option ) )
-			$field_data = $this->fields[ $field ];
-		else {
-			// Merge options
-			$options = array_merge( $this->fields[ $field ], $this->fields[ $field ][ 'options' ] );
 
-			$field_data = null;
+		$field_data = null;
+
+		if ( empty( $this->fields ) ) {
+			// No fields found
+			$field_data = array();
+		} elseif ( empty( $field ) ) {
+			// Return all fields
+			$field_data = (array) $this->fields;
+		} elseif ( ! isset( $this->fields[ $field ] ) && ! isset( $this->pod_data['object_fields'][ $field ] ) ) {
+			// Field not found
+			$field_data = array();
+		} elseif ( empty( $option ) ) {
+			// Return all field data
+			if ( isset( $this->fields[ $field ] ) ) {
+				$field_data = $this->fields[ $field ];
+			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
+				$field_data = $this->pod_data['object_fields'][ $field ];
+			}
+		} else {
+			// Merge options
+			if ( isset( $this->fields[ $field ] ) ) {
+				$options = array_merge( $this->fields[ $field ], $this->fields[ $field ]['options'] );
+			} elseif ( isset( $this->pod_data['object_fields'] ) ) {
+				$options = array_merge( $this->pod_data['object_fields'][ $field ], $this->pod_data['object_fields'][ $field ]['options'] );
+			}
 
 			// Get a list of available items from a relationship field
 			if ( 'data' == $option && in_array( pods_var_raw( 'type', $options ), PodsForm::tableless_field_types() ) ) {
 				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $options );
-			}
-			// Return option
+			} // Return option
 			elseif ( isset( $options[ $option ] ) ) {
 				$field_data = $options[ $option ];
 			}
@@ -648,7 +656,6 @@ class Pods implements Iterator {
 	 * @link http://pods.io/docs/field/
 	 */
 	public function field ( $name, $single = null, $raw = false ) {
-		global $sitepress;
 
 		$defaults = array(
 			'name' => $name,
@@ -743,7 +750,7 @@ class Pods implements Iterator {
 
 		$params->traverse = array();
 
-		if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
+		if ( in_array( $params->name, array( '_link', 'detail_url' ) ) || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) ) ) {
 			if ( 0 < strlen( $this->detail_page ) )
 				$value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
 			elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
@@ -1042,8 +1049,9 @@ class Pods implements Iterator {
 							$metadata_type = 'post';
 
 							// Support for WPML 'duplicated' translation handling
-							if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $this->pod_data[ 'name' ] ) ) {
-								$master_post_id = (int) get_metadata( $metadata_type, $id, '_icl_lang_duplicate_of', true );
+							if ( did_action( 'wpml_loaded' )
+                                && apply_filters( 'wpml_is_translated_post_type', false, $this->pod_data[ 'name' ] ) ) {
+								$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $id );
 
 								if ( 0 < $master_post_id )
 									$id = $master_post_id;
@@ -1353,9 +1361,12 @@ class Pods implements Iterator {
 												$item = get_comment( $item_id );
 											else
 												$item = (object) $item;
-										}
-										elseif ( 'pods' == $params->output ) {
-											$item = pods( $object, (int) $item_id );
+										} elseif ( 'pods' == $params->output ) {
+											if ( in_array( $object_type, array( 'user', 'media' ) ) ) {
+												$item = pods( $object_type, (int) $item_id );
+											} else {
+												$item = pods( $object, (int) $item_id );
+											}
 										}
 										else // arrays
 											$item = get_object_vars( (object) $item );
@@ -1492,8 +1503,9 @@ class Pods implements Iterator {
 
 											if ( 'post' == $object_type ) {
 												// Support for WPML 'duplicated' translation handling
-												if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $object ) ) {
-													$master_post_id = (int) get_metadata( $metadata_type, $metadata_object_id, '_icl_lang_duplicate_of', true );
+                                                if ( did_action( 'wpml_loaded' )
+                                                    && apply_filters( 'wpml_is_translated_post_type', false, $object ) ) {
+													$master_post_id = (int) apply_filters( 'wpml_master_post_from_duplicate', $metadata_object_id );
 
 													if ( 0 < $master_post_id )
 														$metadata_object_id = $master_post_id;
@@ -2567,10 +2579,11 @@ class Pods implements Iterator {
 		if ( null === $id ) {
 			$fetch = true;
 
-			$id = $this->id();
+			$id = $pod->id();
 		}
-		elseif ( $id != $this->id() )
+		elseif ( $id != $this->id() ) {
 			$pod = pods( $this->pod, $id );
+		}
 
 		$this->do_hook( 'add_to', $field, $value, $id );
 
@@ -2646,8 +2659,12 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
-		if ( 0 < $id && $fetch )
+		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$pod->data->row = array();
+
 			$pod->fetch( $id, false );
+		}
 
 		return $id;
 	}
@@ -2666,7 +2683,6 @@ class Pods implements Iterator {
 	 * @since 2.3.3
 	 */
 	public function remove_from( $field, $value = null, $id = null ) {
-
 		$pod =& $this;
 
 		$fetch = false;
@@ -2785,6 +2801,9 @@ class Pods implements Iterator {
 		$id = $this->api->save_pod_item( $params );
 
 		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$pod->data->row = array();
+
 			$pod->fetch( $id, false );
 		}
 
@@ -2826,7 +2845,7 @@ class Pods implements Iterator {
 
 		$data = (array) $this->do_hook( 'save', $data, $id );
 
-		if ( empty( $data ) )
+		if ( empty( $data ) && empty( $params['is_new_item'] ) )
 			return $id;
 
 		$default = array();
@@ -2847,8 +2866,12 @@ class Pods implements Iterator {
 
 		$id = $this->api->save_pod_item( $params );
 
-		if ( 0 < $id && $fetch )
+		if ( 0 < $id && $fetch ) {
+			// Clear local var cache of field values
+			$this->data->row = array();
+
 			$this->fetch( $id, false );
+		}
 
 		if ( !empty( $this->pod_data[ 'field_slug' ] ) ) {
 			if ( 0 < $id && $fetch ) {
@@ -3771,7 +3794,7 @@ class Pods implements Iterator {
 				$filters_new = array();
 
 				$filters = (array) $filters;
-				
+
 				foreach ( $filters as $filter_field ) {
 					if ( isset( $this->pod_data[ 'fields' ][ $filter_field ] ) )
 						$filters_new[ $filter_field ] = $this->pod_data[ 'fields' ][ $filter_field ];

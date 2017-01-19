@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, pglewis, Shelob9, jimtrue, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.8
-Tested up to: 4.5
-Stable tag: 2.6.2-a-1
+Tested up to: 4.7
+Stable tag: 2.6.8-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -131,6 +131,16 @@ We also do our best to integrate and play nicely with other projects:
 
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
+== Frequently Asked Questions ==
+
+= Where do we go for Support on your plugin? =
+
+Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). You can also contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not man the chat channel 24 hours, but we do check the questions that come through daily and reply to any unanswered questions. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
+
+= I've found a Bug or Feature Request =
+
+If you’ve uncovered a Bug or have a Feature Request, we kindly request you to create an Issue on our GitHub Repository at [https://github.com/pods-framework/pods/issues/new](https://github.com/pods-framework/pods/issues/new). Please be very specific about what steps you did to create the issue you’re having and include any screenshots or other configuration parameters to help us recreate or isolate the issue.
+
 == Screenshots ==
 
 1. Create new content types or extend existing ones
@@ -156,6 +166,67 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 
 == Changelog ==
 
+= 2.6.7 - August 15th 2016 =
+* Fixed: Magic Tag {@permalink} fixes for taxonomy / user / comment detail URL Mapping. Fixes (#3339). [@sc0ttkclark]
+* Fixed: Pods Wizard for Forms now properly uses the `[podsform]` shortcode. Fixes (#3251). [@sc0ttkclark]
+* Fixed: Issue with pll_get_post returning false instead of null. Fixes (#3596). (#3599) [@JoryHogeveen]
+* Fixed: WYSIWYG editor type option is used as dependency by the editor options. Fixes (#3549). (#3610) [@JoryHogeveen]
+* Fixed: Do not display metagroup if all fields are set to hidden. Fixes (#1614). (#3615) [@JoryHogeveen]
+* Fixed: Allow post_status filter to be set for related post_type objects in the edit field UI (#3626). Fixes (#3594). [@JoryHogeveen]
+* Fixed: Refactor object type checking in PodsRESTHandlers::get_handler (#3630). Fixes (#3629). [@pcfreak30]
+* Fixed: Added PODS_DIR to directories that are checked by field_loader() (#3644). Fixes (#3643). [@jamesgol]
+* Fixed: Improved field alignment on setting pages (#3649). Fixes (#3648). [@JoryHogeveen]
+* Fixed: Check for PodsInit in general.php (#3665). Fixes (#3473,#2803,#3353). [@JoryHogeveen]
+* Fixed: Taxonomy capabilities + No more hardcoded tax settings (#3678). Fixes (#3676,#3677). [@JoryHogeveen]
+* Fixed: Allow field options to be filtered (UI). Also allows for il8n module to improve translation handling. (#3683). Fixes (#3682). [@JoryHogeveen]
+* Fixed: WPML Compatibility (#3691). Related to (#142). [@srdjan-jcc]
+* Fixed: Pods field() now properly handles user and media when the output type is pod/pods. Original issue resulted in `$object` being empty as `user` and `media` do not have a `pick_val` (#3694). Fixes (#3693). [@pcfreak30]
+* Fixed: travis-ci: test with PHP 7.1 (#3702). [@Ramoonus]
+
+= 2.6.6 - June 23rd 2016 =
+* Added: Polylang compatibility with latest versions along with fixes to longstanding issues with editing and displaying content, relationships, and taxonomy (#3574). Fixes (#3572, #3506) [@JoryHogeveen]
+* Added: REST API v2 Compatibility (#3584). Switches `register_api_field` to `register_rest_field`. Fixes (#3581) [@sc0ttkclark]
+* Added: Allow changing the Auto Templates Filter. This adds a new section in the Auto Templates tab that allows overriding the default `the_content` filter (#3542). Fixes (#3540) [@Shelob9]
+* Added: Polylang support to pods_v post_id (#3562). Allows Pods templates that are translated to be properly selected. Fixes (#3561,#3537) [@jamesgol]
+* Added: Create new 'post_id' method for pods_v (#3537). Provides a method to allow i18n plugins to return a different post id. Related to (#3542,#3526) [@jamesgol]
+* Added: Add filter to PodsMeta->groups_get() allowing adjusting the groups via filter (#3548). Related to (#3547) [@jamesgol]
+* Added: Use form_counter in field name to be unique and prevent conflicts. (#3535) Fixes (#3533) [@pcfreak30]
+* Added: Add user, media and comment support to REST API (#3516). Related to (#3418,#3419) [@pcfreak30]
+* Added: Filter the Pods Metas to Display (#3544). Fixes (#3520). [@coding-panda]
+* Fixed: REST API cleanup for pick field handling. (#3560) Fixes (#3559) [@sc0ttkclark]
+* Fixed: Exclude Unique Post fields from duplication during `$pods->save`. (#3564). Includes `ID`, `post_name`, `post_date`, `post_date_gmt`, `post_modified`, `post_modified_gmt` and `guid`. Fixes (#3563) [@pcfreak30]
+* Fixed: Allow midnight (00:00) as valid time (#3555). If "Allow empty value" is unchecked and a value is not passed it will default to the current time, but it will still accept 00:00:00 as a valid value. Related to (#3488) [@jamesgol]
+* Fixed: Pass $strict = false to load_pod (#3554). This will keep the "Pod not found" message from being displayed during register of other post types. Related to (#3416) [@jamesgol]
+* Fixed: Don't add space to currency names that use HTML encoding (#3553). Fixes British pound currency symbols and others. Resolves (#3498) [@jamesgol]
+* Fixed: Removed extra setting showing up in Auto Templates settings for Taxonomies (#3543). Fixes (#3541) [@Shelob9]
+* Fixed: Use html_entity_decode to convert separator as it is an html entity. (#3536) Fixes (#3527) [@pcfreak30]
+* Fixed: PodsRESTHandlers::write_handler needs to be static (#3511). Fixes (#3510) [@pcfreak30]
+
+= 2.6.5.2 - May 4th 2016 =
+* Fixed: Typo in PLL Compatibility check corrected. (#3504) Fixes (#3503). Thank you @JoryHogeveen and @fmommeja for tracking down, fixing and validating this fix. [@JoryHogeveen]
+
+= 2.6.5.1 - May 4th, 2016 =
+* Fixed: Additional Field Options tab disappears from field admin view. Fixes (#3501). [@sc0ttkclark]
+
+= 2.6.5 - May 3rd, 2016 =
+* Fixed: Renaming of Pods with underscores to hyphenated names that was introduced in 2.6.3. Hyphenated Pods names will remain hyphenated and Underscored Pods names will remain underscored. Fixes (#3499). [@sc0ttkclark]
+* Fixed: Support for new Polylang Versions with much kudos to @JoryHogeveen for tackling this (#3491). Fixes (#3490,#3223) [@JoryHogeveen]
+
+= 2.6.4 - April 25th, 2016 =
+* Fixed: Modified Run activation/install priority to fire before plugins loaded. Fix for the Clearing Pods Cache automatically after Pods Upgrade (#3487). Fixes (#2558,#3348) [@sc0ttkclark]
+
+= 2.6.3.1 - April 21st, 2016 =
+* Fixed: An Git / SVN deploy bug caused some files to not be properly pushed to WordPress.org SVN, this release is just to ensure everyone who may have updated to 2.6.3 during the period which we were fixing it will be able to still get the proper file updates
+
+= 2.6.3 - April 21st, 2016 =
+* Fixed: Fix forcing underscores when loading Edit Pod Form (#3483). Fixes (#3095) [@sc0ttkclark] Kudos to @lkraav for helping us pin this particular issue down and bring it to resolution.
+* Fixed: Clearing Pods Cache automatically after Pods Upgrade "Salt n'Pepa"'ing the cache keys (#3401). Fixes (#2558,#3348) [@sc0ttkclark]
+
+= 2.6.2 - March 24th, 2016 =
+* Added: Support for object fields when using Pods::field() with a specific $field and $option. This was also used to correct a problem with "fetching" Custom Taxonomy's Term List when using Pods Feeds in Pods Gravity Forms Plugin. (#3437) [@sc0ttkclark]
+* Fixed: Correcting CSS used for Dashicon to remove conflict with icon usage in Divi. (#3404,#3406) [@jimtrue]
+* Fixed: Currency/Number Validation used to correct issue with Currency Usage in the Pods Gravity Forms plugin (#3436) [@sc0ttkclark]
+
 = 2.6.1 - February 15th, 2016 =
 * Added: Additional Label support for Post Type / Taxonomy register functions (#3275) [@pcfreak30]
 * Added: Add use_current option for Widget Single (#3393,#3394) [@sc0ttkclark]
@@ -168,13 +239,12 @@ Join us in further translating the Pods interface at: http://wp-translate.org/pr
 * Fixed: Update Version number on 2.x (#3282,#3281) [@pglewis]
 * Fixed: Typo's Rest into REST (#3303) [@Ramoonus]
 * Fixed: Disable xdebug on Travis (#3284,#3283) [@pglewis]
-* Fixed: Non-zero array keys here in PHP7 cause odd behavior so removing the keys (#3294,#3299) [@pglewis]
 * Fixed: Remove dockunit leftovers (#3307) [@Ramoonus]
 * Fixed: Do not use Hashtag as name (#3316) [@Ramoonus]
 * Fixed: Over-escaping strikes again (file upload, restrict file types with more than one mime type) (#3083,#3328) [@pglewis]
 * Fixed: Refresh #3388 with 2.x (#3388,#3389) [@sc0ttkclark]
 * Fixed: Replace usage of get_currentuserinfo with wp_get_current_user (preparation for WP 4.5) (#3399,#3398) [@sc0ttkclark]
-* Fixed: Taxonomy custom meta fields returning false from REST API (#3365,#3369) [@anandamd] 
+* Fixed: Taxonomy custom meta fields returning false from REST API (#3365,#3369) [@anandamd]
 
 = 2.6 - December 9th, 2015 =
 * Added: Support for Term Meta in WP 4.4 - Now create meta-based taxonomies and Pods just magically works! (#3169,#3163) [@sc0ttkclark]

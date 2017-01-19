@@ -1,13 +1,13 @@
 jQuery(document).ready(function () {
 
     jQuery('#filter-right-tables, #filter-left-tables').focus(function() {
-       if (jQuery(this).val() == 'Filter Tables') {
+       if (jQuery(this).val() === 'Filter Tables') {
            jQuery(this).val('');
        }
     });
 
     jQuery('#filter-right-tables, #filter-left-tables').blur(function() {
-       if (jQuery(this).val() == '') {
+       if (jQuery(this).val() === '') {
            jQuery(this).val('Filter Tables');
        }
     });
@@ -15,7 +15,7 @@ jQuery(document).ready(function () {
     jQuery('#filter-right-tables').keyup(function() {
         var query = jQuery(this).val();
 
-        if (query == '') {
+        if (query === '') {
             jQuery('ul.list-tables-right li.right-table').removeClass('invisible');
         } else {
             jQuery("ul.list-tables-right li.right-table").addClass('invisible');
@@ -28,7 +28,7 @@ jQuery(document).ready(function () {
     jQuery('#filter-left-tables').keyup(function() {
         var query = jQuery(this).val();
 
-        if (query == '') {
+        if (query === '') {
             jQuery('ul.list-tables-left li.left-table').removeClass('invisible');
         } else {
             jQuery("ul.list-tables-left li.left-table").addClass('invisible');
@@ -109,7 +109,7 @@ jQuery(document).ready(function () {
      * and that at a minimum the pod name is entered.
      */
     jQuery('a#pods-import-create-pod').click(function () {
-        if (jQuery('tr.pod-column-row.enabled').length == 0) {
+        if (jQuery('tr.pod-column-row.enabled').length === 0) {
             alert('At least one column must be selected to convert.');
         } else if (jQuery('input[name="new_pod_data[pod_name]"]').val() == '') {
             alert('The Pod Name field is required.');
@@ -117,8 +117,5 @@ jQuery(document).ready(function () {
             jQuery('form#pods-import-create-pod').submit();
         }
     });
-
-
-
 
 });

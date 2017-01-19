@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleField' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleField () {
+        public function __construct () {
             $this->_name = __( 'Pods - Field Value', 'pods' );
             $this->_description = __( "Display a single Pod item's field value", 'pods' );
             $this->module_path = dirname( __FILE__ );

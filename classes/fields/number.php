@@ -42,7 +42,7 @@ class PodsField_Number extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Plain Number', 'pods' );
     }
 
     /**
@@ -291,7 +291,7 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
@@ -309,7 +309,7 @@ class PodsField_Number extends PodsField {
      * @param int $id
      * @param null $params
      *
-     * @return bool|mixed|void
+     * @return bool|mixed
      * @since 2.0
      */
     public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -336,13 +336,18 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
-        $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	    $check = str_replace(
+	    	array( $thousands, $dot, html_entity_decode($thousands) ),
+		    array( '', '.', '' ),
+		    $value
+	    );
+        $check = trim( $check );
 
-        $check = preg_replace( '/[0-9\.\-]/', '', $check );
+        $check = preg_replace( '/[0-9\.\-\s]/', '', $check );
 
         $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
@@ -390,11 +395,12 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
         else {
-            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $thousands = html_entity_decode( $wp_locale->number_format['thousands_sep'] );
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+	$value = trim( $value );
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 

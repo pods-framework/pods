@@ -148,7 +148,7 @@ If you’ve uncovered a Bug or have a Feature Request, we kindly request you to 
 
 = Will Pods work with my Theme? =
 
-We don't provide any special CSS or display attributes with your custom content so as long as your theme works with WordPress standard functions and the theme hierarchy (https://wp-hierarchy.com), you should be fine. You may need to create special PHP WordPress Theme Templates for your content, or you can use our Pods Templates and the Auto Template option to display your 'template' containing your custom content where your theme normally outputs `the_content` filter.
+We don't provide any special CSS or display attributes with your custom content so as long as your theme works with WordPress standard functions and the [WordPress Template Hierarchy] (https://wphierarchy.com), you should be fine. You may need to create special PHP WordPress Theme Templates for your content, or you can use our Pods Templates and the Auto Template option to display your 'template' containing your custom content where your theme normally outputs `the_content` filter.
 
 == Screenshots ==
 

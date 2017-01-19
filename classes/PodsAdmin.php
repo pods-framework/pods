@@ -2331,16 +2331,18 @@ class PodsAdmin {
                     $capabilities[] = 'delete_' . $capability_type;
 
                     if ( 1 == pods_var( 'capability_type_extra', $pod[ 'options' ], 1 ) ) {
-                        $capabilities[] = 'read_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_' . $capability_type . 's';
-                        $capabilities[] = 'edit_others_' . $capability_type . 's';
-                        $capabilities[] = 'edit_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_published_' . $capability_type . 's';
-                        $capabilities[] = 'publish_' . $capability_type . 's';
-                        $capabilities[] = 'delete_' . $capability_type . 's';
-                        $capabilities[] = 'delete_private_' . $capability_type . 's';
-                        $capabilities[] = 'delete_published_' . $capability_type . 's';
-                        $capabilities[] = 'delete_others_' . $capability_type . 's';
+                        $capability_type_plural = $capability_type . 's';
+
+                        $capabilities[] = 'read_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_' . $capability_type_plural;
+                        $capabilities[] = 'edit_others_' . $capability_type_plural;
+                        $capabilities[] = 'edit_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_published_' . $capability_type_plural;
+                        $capabilities[] = 'publish_' . $capability_type_plural;
+                        $capabilities[] = 'delete_' . $capability_type_plural;
+                        $capabilities[] = 'delete_private_' . $capability_type_plural;
+                        $capabilities[] = 'delete_published_' . $capability_type_plural;
+                        $capabilities[] = 'delete_others_' . $capability_type_plural;
                     }
                 }
             }
@@ -2348,12 +2350,18 @@ class PodsAdmin {
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ], 'terms' ) ) {
                     $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
 
-                    $capability_type .= '_terms';
+                    $capability_type .= '_term';
+                    $capability_type_plural = $capability_type . 's';
 
-                    $capabilities[] = 'manage_' . $capability_type;
+                    // Singular
                     $capabilities[] = 'edit_' . $capability_type;
                     $capabilities[] = 'delete_' . $capability_type;
                     $capabilities[] = 'assign_' . $capability_type;
+                    // Plural
+                    $capabilities[] = 'manage_' . $capability_type_plural;
+                    $capabilities[] = 'edit_' . $capability_type_plural;
+                    $capabilities[] = 'delete_' . $capability_type_plural;
+                    $capabilities[] = 'assign_' . $capability_type_plural;
                 }
             }
             else {

@@ -152,3 +152,23 @@ export const SelectView = Marionette.CollectionView.extend( {
 	}
 
 } );
+
+/**
+ * @extends Backbone.View
+ */
+export const SelectGroupItem = SelectView.extend( {
+	tagName: 'optgroup',
+
+	childView: SelectItem,
+
+	initialize: function ( options ) {
+		this.$el.prop( 'label', this.model.get( 'name' ) );
+	}
+} );
+
+/**
+ * @extends Backbone.View
+ */
+export const SelectGroupView = SelectView.extend( {
+	childView: SelectGroupItem
+} );

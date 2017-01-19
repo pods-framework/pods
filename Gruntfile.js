@@ -225,7 +225,7 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'branch_name_release', [ 'replace:branchfix_release_readme_md', 'replace:branchfix_release_init_php' ] );
 
 	// release tasks
-	grunt.registerTask( 'version_number', [ 'replace:version_reamdme_txt', 'replace:version_init_php' ] );
+	grunt.registerTask( 'version_number', [ 'replace:version_readme_txt', 'replace:version_init_php' ] );
 	grunt.registerTask( 'pre_vcs', [ 'branch_name_master', 'version_number', 'clean:post_build', 'mkdir:build' ] );
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );

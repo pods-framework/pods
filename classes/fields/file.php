@@ -42,7 +42,7 @@ class PodsField_File extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+        self::$label = __( 'File / Image / Video', 'pods' );
     }
 
     /**
@@ -196,6 +196,55 @@ class PodsField_File extends PodsField {
                 'depends-on' => array( self::$type . '_uploader' => 'attachment' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
+            ),
+
+            /* WP GALLERY OUTPUT */
+            self::$type . '_wp_gallery_output' => array(
+	            'label' => __( 'Output as a WP Gallery', 'pods' ),
+	            'help' => sprintf(
+	            	__( '<a href="%s" target="_blank">Click here for more info</a>', 'pods' ),
+					'https://codex.wordpress.org/The_WordPress_Gallery'
+				),
+	            'depends-on' => array( self::$type . '_type' => 'images' ),
+	            'dependency' => true,
+	            'type' => 'boolean'
+            ),
+            self::$type . '_wp_gallery_link' => array(
+	            'label' => __( 'Gallery image links', 'pods' ),
+	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
+	            'type' => 'pick',
+	            'data' => array(
+		            'post' => __( 'Attachment Page', 'pods' ),
+		            'file' => __( 'Media File', 'pods' ),
+		            'none' => __( 'None', 'pods' )
+	            )
+            ),
+            self::$type . '_wp_gallery_columns' => array(
+	            'label' => __( 'Gallery image columns', 'pods' ),
+	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
+	            'type' => 'pick',
+	            'data' => array(
+		            '1' => 1,
+			    '2' => 2,
+			    '3' => 3,
+			    '4' => 4,
+			    '5' => 5,
+			    '6' => 6,
+			    '7' => 7,
+			    '8' => 8,
+			    '9' => 9,
+	            )
+            ),
+            self::$type . '_wp_gallery_random_sort' => array(
+	            'label' => __( 'Gallery randomized order', 'pods' ),
+	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
+	            'type' => 'boolean'
+            ),
+            self::$type . '_wp_gallery_size' => array(
+	            'label' => __( 'Gallery image size', 'pods' ),
+	            'depends-on' => array( self::$type . '_wp_gallery_output' => 1 ),
+	            'type' => 'pick',
+	            'data' => $this->data_image_sizes(),
             )
         );
 
@@ -241,6 +290,10 @@ class PodsField_File extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+    	if ( 1 == $options[ self::$type . '_wp_gallery_output' ] ) {
+    		return $this->do_wp_gallery( $value, $options );
+		}
+
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( isset( $value[ 'ID' ] ) )
                 $value = wp_get_attachment_url( $value[ 'ID' ] );
@@ -406,13 +459,24 @@ class PodsField_File extends PodsField {
             if ( empty( $id ) )
                 continue;
 
+            $attachment_data = array();
+
             // Update the title if set
             if ( false !== $title && 1 == pods_var( self::$type . '_edit_title', $options, 0 ) ) {
-                $attachment_data = array(
-                    'ID' => $id,
-                    'post_title' => $title
-                );
+                $attachment_data['post_title'] = $title;
+            }
 
+            // Update attachment parent if it's not set yet and we're updating a post
+            if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' == $pod['type'] ) {
+                $attachment = get_post( $id );
+                if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
+                    $attachment_data['post_parent'] = (int) $params->id;
+                }
+            }
+
+            // Update the attachment if it the data array is not still empty
+            if ( ! empty( $attachment_data ) ) {
+                $attachment_data['ID'] = $id;
                 self::$api->save_wp_object( 'media', $attachment_data );
             }
         }
@@ -468,6 +532,80 @@ class PodsField_File extends PodsField {
 
         return $images;
     }
+
+	/**
+	 * Data callback for Image Sizes
+	 *
+	 * @param string $name The name of the field
+	 * @param string|array $value The value of the field
+	 * @param array $options Field options
+	 * @param array $pod Pod data
+	 * @param int $id Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3
+	 */
+	public function data_image_sizes ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+		$data = array();
+
+		$image_sizes = get_intermediate_image_sizes();
+
+		foreach ( $image_sizes as $image_size ) {
+			$data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
+		}
+
+		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+	}
+
+	/**
+	 * Create a WP Gallery from the passed values (need to be attachments)
+	 *
+	 * @since  2.7
+	 * @param  string|array  $value    The value(s)
+	 * @param  array         $options  The field options
+	 * @return string
+	 */
+	public function do_wp_gallery( $value, $options ) {
+		$args = array();
+		if ( ! empty( $options[ self::$type . '_wp_gallery_columns' ] ) ) {
+			$args['columns'] = $options[ self::$type . '_wp_gallery_columns' ];
+		}
+		if ( ! empty( $options[ self::$type . '_wp_gallery_random_sort' ] ) ) {
+			$args['orderby'] = 'rand';
+		}
+		if ( ! empty( $options[ self::$type . '_wp_gallery_link' ] ) ) {
+			$args['link'] = $options[ self::$type . '_wp_gallery_link' ];
+		}
+		if ( ! empty( $options[ self::$type . '_wp_gallery_size' ] ) ) {
+			$args['size'] = $options[ self::$type . '_wp_gallery_size' ];
+		}
+
+		if ( isset( $value[ 'ID' ] ) ) {
+			$args['ids'] = $value[ 'ID' ];
+		} else {
+			$images = array();
+			foreach ( $value as $v ) {
+				if ( ! is_array( $v ) ) {
+					$images[] = (int) $v;
+				} elseif ( isset( $v[ 'ID' ] ) ) {
+					$images[] = (int) $v[ 'ID' ];
+				}
+			}
+			$args['ids'] = implode( ',', $images );
+		}
+
+		if ( is_callable( 'gallery_shortcode' ) ) {
+			return gallery_shortcode( $args );
+		} else {
+			$shortcode = '[gallery';
+			foreach ( $args as $key => $value ) {
+				$shortcode .= ' ' . $key . '="' . $value . '"';
+			}
+			$shortcode .= ']';
+			return do_shortcode( $shortcode );
+		}
+	}
 
     /**
      * Handle file row output for uploaders

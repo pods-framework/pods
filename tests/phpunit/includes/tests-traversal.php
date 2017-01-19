@@ -247,8 +247,7 @@ namespace Pods_Unit_Tests;
 			$this->assertEquals( (string) $data[ 'id' ], (string) $p->field( $data[ 'field_id' ] ), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
 			$this->assertEquals( (string) $data[ 'id' ], (string) $p->display( $data[ 'field_id' ] ), sprintf( 'Item ID not as expected (%s) [%s]', $data[ 'field_id' ], $variant_id ) );
 
-			$this->assertEquals( $data[ 'data' ][ $data[ 'field_index' ] ], $p->index(), sprintf( 'Item index not as expected (%s) [%s]', $data[ 'field_index' ], $variant_id ) );
-			$this->assertEquals( $data[ 'data' ][ $data[ 'field_index' ] ], $p->field( $data[ 'field_index' ] ), sprintf( 'Item index not as expected (%s) [%s]', $data[ 'field_index' ], $variant_id ) );
+			$this->assertEquals( $data[ 'field_index' ], $p->data->field_index, sprintf( 'Item index not as expected (%s) [%s]', $data[ 'field_index' ], $variant_id ) );
 			$this->assertEquals( $data[ 'data' ][ $data[ 'field_index' ] ], $p->display( $data[ 'field_index' ] ), sprintf( 'Item index not as expected (%s) [%s]', $data[ 'field_index' ], $variant_id ) );
 
 		}

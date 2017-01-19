@@ -100,7 +100,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID'      => 1,
 				'comment_type'         => 'comment',
 				'comment_approved'     => 1,
-				'comment_date'         => '2014-11-11 00:00:00'
+				'comment_date'         => '2014-11-11'
 			)
 		),
 		'pod'       => array(
@@ -578,9 +578,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 					$load_pod = $api->load_pod( array( 'id' => $id ) );
 
-					foreach ( $load_pod[ 'fields' ] as $field ) {
-						if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ] ) ) {
-							self::$builds[ $pod_type ][ $object ][ $storage_type ][ 'fields' ][ $field[ 'name' ] ][ 'id' ] = $field[ 'id' ];
+					if ( ! empty( $load_pod ) ) {
+						foreach ( $load_pod['fields'] as $field ) {
+							if ( isset( self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ] ) ) {
+								self::$builds[ $pod_type ][ $object ][ $storage_type ]['fields'][ $field['name'] ]['id'] = $field['id'];
+							}
 						}
 					}
 
@@ -652,6 +654,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					}
 					else {
 						$v = sprintf( $v, wp_generate_password( 4, false ) );
+						if ( 'permalink' === $k ) {
+							$v = strtolower( $v );
+						}
 					}
 
 					$item_data[ 'data' ][ $k ] = $v;
@@ -755,6 +760,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 								}
 								else {
 									$v = sprintf( $v, wp_generate_password( 4, false ) );
+									if ( 'permalink' === $k ) {
+										$v = strtolower( $v );
+									}
 								}
 
 								$pod_item_data[ 'data' ][ $k ] = $v;
@@ -861,6 +869,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		// Setup copies
 		self::$related_items[ 'author' ] = self::$related_items[ 'test_rel_user' ];
 
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function tearDownAfterClass() {
+		// Force WP_UnitTestCase to not delete all data
 	}
 }
 

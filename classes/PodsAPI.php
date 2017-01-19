@@ -1298,7 +1298,7 @@ class PodsAPI {
                 'taxonomy' => array(
                     'name' => 'taxonomy',
                     'label' => 'Taxonomy',
-                    'type' => 'pick',
+                    'type' => 'text',
                     'alias' => array()
                 ),
                 'parent' => array(
@@ -1463,6 +1463,8 @@ class PodsAPI {
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
+
+				$pod_params['options']['hierarchical'] = 1;
             }
             elseif ( 'pod' == $pod_params[ 'type' ] ) {
                 if ( empty(  $pod_params[ 'name' ] ) )
@@ -2589,6 +2591,11 @@ class PodsAPI {
                 $conflicted = true;
             }
 
+            // Store the old field name
+            if ( $old_name && $old_name != $post_data['post_name'] ) {
+	            $field['options']['old_name'] = $old_name;
+            }
+
             $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
 
             if ( $conflicted )
@@ -2987,14 +2994,15 @@ class PodsAPI {
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
      * $params['pod_id'] string The Pod ID (pod or pod_id is required)
-     * $params['id'] int The item ID
+     * $params['id'] int|array The item ID, or an array of item IDs to save data for
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
 	 * $params['track_changed_fields'] bool Set to true to enable tracking of saved fields via PodsAPI::get_changed_fields()
+	 * $params['error_mode'] string Throw an 'exception', 'exit' with the message, return 'false', or return 'wp_error'
      *
      * @param array|object $params An associative array of parameters
      *
-     * @return int The item ID
+     * @return int|array The item ID, or an array of item IDs (if `id` is an array if IDs)
      *
      * @since 1.7.9
      */
@@ -3007,6 +3015,12 @@ class PodsAPI {
         $tableless_field_types = PodsForm::tableless_field_types();
         $repeatable_field_types = PodsForm::repeatable_field_types();
         $simple_tableless_objects = PodsForm::simple_tableless_objects();
+
+	    $error_mode = $this->display_errors;
+
+	    if ( ! empty( $params->error_mode ) ) {
+		    $error_mode = $params->error_mode;
+	    }
 
         // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
@@ -3084,6 +3098,7 @@ class PodsAPI {
 		 * @since 2.3.19
 		 */
 		$track_changed_fields = apply_filters( 'pods_api_save_pod_item_track_changed_fields_' . $params->pod, (boolean) $params->track_changed_fields, $params );
+
 		$changed_fields = array();
 
 		if ( !isset( $params->clear_slug_cache ) ) {
@@ -3129,7 +3144,7 @@ class PodsAPI {
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => true ) );
 
         if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+            return pods_error( __( 'Pod not found', 'pods' ), $error_mode );
 
         $params->pod = $pod[ 'name' ];
         $params->pod_id = $pod[ 'id' ];
@@ -3386,7 +3401,7 @@ class PodsAPI {
                     $validate = (array) $validate;
 
                 if ( !is_bool( $validate ) && !empty( $validate ) )
-                    return pods_error( $validate, $this );
+                    return pods_error( $validate, $error_mode );
             }
 
             $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $field_data, $options ), array_merge( $fields, $object_fields ), $pod, $params );
@@ -3763,7 +3778,7 @@ class PodsAPI {
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -3780,6 +3795,28 @@ class PodsAPI {
 
         if ( !$no_conflict )
             pods_no_conflict_off( $pod[ 'type' ] );
+
+        // Clear cache
+        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
+
+		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
+			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
+
+			if ( 0 < strlen( $slug ) ) {
+        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
+			}
+		}
+
+        // Clear WP meta cache
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
+            $meta_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $meta_type )
+                $meta_type = 'post';
+
+            wp_cache_delete( $params->id, $meta_type . '_meta' );
+            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
+        }
 
         if ( false === $bypass_helpers ) {
             $pieces = compact( $pieces );
@@ -3810,28 +3847,6 @@ class PodsAPI {
                     }
                 }
             }
-        }
-
-        // Clear cache
-        pods_cache_clear( $params->id, 'pods_items_' . $pod[ 'name' ] );
-
-		if ( $params->clear_slug_cache && !empty( $pod[ 'field_slug' ] ) ) {
-			$slug = pods( $pod[ 'name' ], $params->id )->field( $pod[ 'field_slug' ] );
-
-			if ( 0 < strlen( $slug ) ) {
-        		pods_cache_clear( $slug, 'pods_items_' . $pod[ 'name' ] );
-			}
-		}
-
-        // Clear WP meta cache
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment' ) ) ) {
-            $meta_type = $pod[ 'type' ];
-
-            if ( 'post_type' == $meta_type )
-                $meta_type = 'post';
-
-            wp_cache_delete( $params->id, $meta_type . '_meta' );
-            wp_cache_delete( $params->id, 'pods_' . $meta_type . '_meta' );
         }
 
         // Success! Return the id
@@ -3917,6 +3932,11 @@ class PodsAPI {
             $current_ids = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ];
         else
             $current_ids = $this->lookup_related_items( $field[ 'id' ], $pod[ 'id' ], $id, $field, $pod );
+
+	    if ( isset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] ) ) {
+		    // Delete relationship from cache
+		    unset( self::$related_item_cache[ $pod['id'] ][ $field['id'] ] );
+	    }
 
         if ( !is_array( $related_ids ) )
             $related_ids = implode( ',', $related_ids );
@@ -5355,6 +5375,7 @@ class PodsAPI {
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      * $params['fields'] bool Whether to load fields (default is true)
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array|object $params An associative array of parameters or pod name as a string
      * @param bool $strict Makes sure the pod exists, throws an error if it doesn't work
@@ -5368,10 +5389,11 @@ class PodsAPI {
          * @var $sitepress SitePress
 		 * @var $wpdb wpdb
          */
-        global $sitepress, $icl_adjust_id_url_filter_off, $wpdb;
+        global $wpdb;
 
         $current_language = false;
         $load_fields = true;
+	    $bypass_cache = false;
 
 	    // Get current language data
 		$lang_data = self::get_current_language();
@@ -5424,8 +5446,11 @@ class PodsAPI {
 
             if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
 	            // @todo Is this needed anymore for WPML?
-                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                    $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                     && did_action( 'wpml_loaded' )
+                     && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+                    $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+                }
 
                 return $pod;
             }
@@ -5442,6 +5467,10 @@ class PodsAPI {
 
                 return false;
             }
+
+		    if ( ! empty( $params->bypass_cache ) ) {
+		        $bypass_cache = true;
+		    }
 
             if ( isset( $params->name ) ) {
                 $pod = false;
@@ -5472,11 +5501,12 @@ class PodsAPI {
 						'fields' => array()
 					);
 				}
-                elseif ( pods_api_cache() )
+                elseif ( ! $bypass_cache & pods_api_cache() )
                     $pod = pods_transient_get( $transient . '_' . $params->name );
 
                 if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && did_action( 'wpml_loaded' )
+                        && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) )
                         $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
                     return $pod;
@@ -5508,12 +5538,15 @@ class PodsAPI {
 
         $pod = false;
 
-        if ( pods_api_cache() )
+        if ( ! $bypass_cache || pods_api_cache() )
             $pod = pods_transient_get( $transient . '_' . $_pod[ 'post_name' ] );
 
         if ( false !== $pod && ( ! $table_info || isset( $pod[ 'table' ] ) ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) )
+                 && did_action( 'wpml_loaded' )
+                && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
+	            $pod = array_merge( $pod, $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ) );
+            }
 
             return $pod;
         }
@@ -5536,6 +5569,12 @@ class PodsAPI {
             'object' => '',
             'alias' => ''
         );
+
+        if ( $bypass_cache ) {
+            wp_cache_delete( $pod['id'], 'post_meta' );
+
+            update_postmeta_cache( array( $pod['id'] ) );
+        }
 
         $pod[ 'options' ] = get_post_meta( $pod[ 'id' ] );
 
@@ -5598,6 +5637,7 @@ class PodsAPI {
             foreach ( $fields as $field ) {
                 $field->pod = $pod[ 'name' ];
                 $field->table_info = $table_info;
+                $field->bypass_cache = $bypass_cache;
 
                 if ( $load_fields ) {
                     $field = $this->load_field( $field );
@@ -5605,6 +5645,12 @@ class PodsAPI {
                     $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
                 }
                 else {
+			        if ( $bypass_cache ) {
+                        wp_cache_delete( $field->ID, 'post_meta' );
+
+			            update_postmeta_cache( array( $field->ID ) );
+			        }
+
                     $field = array(
                         'id' => $field->ID,
                         'name' => $field->post_name,
@@ -5638,6 +5684,7 @@ class PodsAPI {
      * $params['ids'] boolean Return only an array of ID => label
      * $params['fields'] boolean Return pod fields with Pods (default is true)
      * $params['key_names'] boolean Return pods keyed by name
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array $params An associative array of parameters
      *
@@ -5669,6 +5716,12 @@ class PodsAPI {
 
         $meta_query = array();
         $cache_key = '';
+
+        $bypass_cache = false;
+
+	    if ( ! empty( $params->bypass_cache ) ) {
+	    	$bypass_cache = true;
+	    }
 
         if ( isset( $params->type ) && !empty( $params->type ) ) {
             if ( !is_array( $params->type ) )
@@ -5778,7 +5831,7 @@ class PodsAPI {
         else
             $cache_key = 'pods' . $pre_key . $cache_key;
 
-        if ( pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( ! $bypass_cache && pods_api_cache() && !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
             if ( false === $the_pods )
@@ -5856,7 +5909,7 @@ class PodsAPI {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;
 
-                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ) ) );
+                    $pod = $this->load_pod( array( 'pod' => $pod, 'table_info' => ! empty( $params->table_info ), 'bypass_cache' => $bypass_cache ) );
 
                     // Remove extra data not needed
                     if ( pods_var( 'export', $params, false ) && ( !isset( $params->fields ) || $params->fields ) ) {
@@ -5951,6 +6004,7 @@ class PodsAPI {
      * $params['id'] int The field ID
      * $params['name'] string The field name
      * $params['table_info'] boolean Whether to lookup a pick field's table info
+     * $params['bypass_cache'] boolean Bypass the cache when getting data
      *
      * @param array $params An associative array of parameters
      * @param boolean $strict Whether to require a field exist or not when loading the info
@@ -5963,6 +6017,11 @@ class PodsAPI {
 
         if ( !isset( $params->table_info ) )
             $params->table_info = false;
+
+        $bypass_cache = false;
+
+        if ( ! empty( $params->bypass_cache ) )
+            $bypass_cache = true;
 
         $pod = array();
         $field = array();
@@ -5981,7 +6040,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ), false );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false, 'bypass_cache' => $bypass_cache ), false );
 
                 if ( false === $pod ) {
                     if ( $strict )
@@ -6004,7 +6063,7 @@ class PodsAPI {
 
             $field = false;
 
-            if ( pods_api_cache() )
+            if ( ! $bypass_cache && pods_api_cache() )
                 $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
 
             if ( empty( $field ) ) {
@@ -6050,7 +6109,7 @@ class PodsAPI {
         }
 
         if ( empty( $field ) ) {
-            if ( pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
+            if ( ! $bypass_cache && pods_api_cache() && ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) ) )
                 $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $_field[ 'post_name' ] );
 
             if ( empty( $field ) ) {
@@ -6075,6 +6134,12 @@ class PodsAPI {
                     $field[ 'pod' ] = $pod[ 'name' ];
                 elseif ( isset( $_field[ 'pod' ] ) )
                     $field[ 'pod' ] = $_field[ 'pod' ];
+
+	            if ( $bypass_cache ) {
+	                wp_cache_delete( $field['id'], 'post_meta' );
+
+	                update_postmeta_cache( array( $field['id'] ) );
+	            }
 
                 $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 
@@ -7362,10 +7427,12 @@ class PodsAPI {
 	    /**
 	     * @var $wpdb                         wpdb
 	     * @var $sitepress                    SitePress
-	     * @var $icl_adjust_id_url_filter_off boolean
 	     * @var $polylang                     object
 	     */
-        global $wpdb, $sitepress, $icl_adjust_id_url_filter_off, $polylang;
+	    /*
+	     * @todo wpml-comp Remove global object usage
+	     */
+        global $wpdb, $sitepress, $polylang;
 
 		// @todo Handle $object arrays for Post Types, Taxonomies, Comments (table pulled from first object in array)
 
@@ -7445,8 +7512,16 @@ class PodsAPI {
 			    $current_language_t_id = $lang_data['t_id'];
 		    }
 
-		    if ( ! empty( $lang_data['t_id'] ) ) {
+		    if ( ! empty( $lang_data['tt_id'] ) ) {
 			    $current_language_tt_id = $lang_data['tt_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_t_id'] ) ) {
+			    $current_language_tl_t_id = $lang_data['tl_t_id'];
+		    }
+
+		    if ( ! empty( $lang_data['tl_tt_id'] ) ) {
+			    $current_language_tl_tt_id = $lang_data['tl_tt_id'];
 		    }
 	    }
 
@@ -7519,12 +7594,20 @@ class PodsAPI {
 		    if ( is_object( $post_type_object ) && $post_type_object->hierarchical )
 			    $info[ 'object_hierarchical' ] = true;
 
+            // Post Status default
+            $post_status = array( 'publish' );
+
+            // Pick field post_status option
+            if ( ! empty( $field['pick_post_status'] ) ) {
+                $post_status = (array) $field['pick_post_status'];
+            }
+
 		    /**
 		     * Default Post Status to query for.
 		     *
 		     * Use to change "default" post status from publish to any other status or statuses.
 		     *
-		     * @param  array $post_status List of post statuses. Default is 'publish'
+		     * @param  array $post_status List of post statuses. Default is 'publish' or field setting (if available)
 		     * @param  string $post_type Post type of current object
 		     * @param  array $info Array of information about the object.
 		     * @param  string $object	Type of object
@@ -7534,7 +7617,7 @@ class PodsAPI {
 		     *
 		     * @since unknown
 		     */
-		    $post_status = apply_filters( 'pods_api_get_table_info_default_post_status', array( 'publish' ), $post_type, $info, $object_type, $object, $name, $pod, $field );
+		    $post_status = apply_filters( 'pods_api_get_table_info_default_post_status', $post_status, $post_type, $info, $object_type, $object, $name, $pod, $field );
 
 		    $info[ 'where' ] = array(
 			    //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
@@ -7546,8 +7629,11 @@ class PodsAPI {
 
 		    $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
+            /*
+             * @todo wpml-comp Check if WPML filters can be applied afterwards
+             */
 		    // WPML support
-		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( did_action( 'wpml_loaded' ) && !empty( $current_language ) && apply_filters( 'wpml_is_translated_post_type', false, $post_type ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' )) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -7624,8 +7710,12 @@ class PodsAPI {
 			    'tt.taxonomy' => '`tt`.`' . $info[ 'field_type' ] . '` = "' . $taxonomy . '"'
 		    );
 
+            /*
+             * @todo wpml-comp WPML API call for is_translated_taxononomy
+             * @todo wpml-comp Check if WPML filters can be applied afterwards
+             */
 		    // WPML Support
-		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
+		    if ( is_object( $sitepress ) && !empty( $current_language ) && $sitepress->is_translated_taxonomy( $taxonomy ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			    $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
@@ -7641,14 +7731,14 @@ class PodsAPI {
 			    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
 		    }
 		    // Polylang support
-		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
-			    $info[ 'join' ][ 'polylang_languages' ] = "
-                        LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
-                            ON `polylang_languages`.`term_id` = `t`.`term_id`
-                                AND `polylang_languages`.`meta_value` = {$current_language_t_id}
-                    ";
+		    elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && !empty( $current_language ) && !empty( $current_language_tl_tt_id ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+				$info[ 'join' ][ 'polylang_languages' ] = "
+					LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
+						ON `polylang_languages`.`object_id` = `t`.`term_id`
+							AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tl_tt_id}
+				";
 
-			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`term_id` IS NOT NULL";
+			    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`object_id` IS NOT NULL";
 		    }
 
 		    $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $info[ 'pod' ] );
@@ -8145,12 +8235,18 @@ class PodsAPI {
         else
             pods_transient_clear( 'pods_wp_cpt_ct' );
 
+        // Delete transients in the database
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
+
+        // Delete Pods Options Cache in the database
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_pods_option_%'" );
 
         pods_cache_clear( true );
 
         pods_transient_set( 'pods_flush_rewrites', 1 );
+
+        do_action( 'pods_cache_flushed' );
     }
 
     /**
@@ -8243,22 +8339,25 @@ class PodsAPI {
 
 		/**
 		 * @var $sitepress                    SitePress object
-		 * @var $icl_adjust_id_url_filter_off boolean
 		 * @var $polylang                     object
 		 */
-		global $sitepress, $icl_adjust_id_url_filter_off, $polylang;
+        /*
+         * @todo wpml-comp Remove global object usage
+         */
+		global $sitepress, $polylang;
 
 		$lang_data        = false;
 		$translator       = false;
 		$current_language = false;
 
 		// Multilingual support
-		if ( is_object( $sitepress ) && ! $icl_adjust_id_url_filter_off && defined( 'ICL_LANGUAGE_CODE' ) ) {
+		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
 			// WPML support
 			$translator = 'WPML';
 
 			// Get the global current language (if set)
-			$current_language = ( ICL_LANGUAGE_CODE != 'all' ) ? ICL_LANGUAGE_CODE : '';
+            $wpml_language = apply_filters( 'wpml_current_language', null );
+			$current_language = ( $wpml_language != 'all' ) ? $wpml_language : '';
 
 		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
 			// Polylang support
@@ -8299,8 +8398,7 @@ class PodsAPI {
 						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
 						 */
 						if (   $translator == 'WPML'
-							&& method_exists( $sitepress, 'is_translated_post_type')
-							&& ! $sitepress->is_translated_post_type( get_post_type( $_GET['post'] ) )
+							&& ! apply_filters( 'wpml_is_translated_post_type', false, ( get_post_type( $_GET['post'] ) ) )
 						) {
 							// Overwrite the current language to nothing if this is a NOT-translatable post_type
 							$current_language = '';
@@ -8339,6 +8437,11 @@ class PodsAPI {
 				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
 					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
 					if ( ! empty( $_GET['taxonomy'] ) ) {
+					    /*
+					     * @todo wpml-comp API call for taxonomy needed!
+					     * Suggested API call:
+					     * add_filter( 'wpml_is_translated_taxonomy', $_GET['taxonomy'], 10, 2 );
+					     */
 						/**
 						 * WPML support
 						 * In WPML the current language is always set to default on an edit screen
@@ -8417,6 +8520,8 @@ class PodsAPI {
 				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
 					$lang_data['t_id']  = (int) $current_language_t->term_id;
 					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
+					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
+					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
 					$lang_data['term']  = $current_language_t;
 				}
 			}

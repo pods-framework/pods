@@ -98,7 +98,7 @@ class PodsField_Pick extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Relationship', 'pods' );
     }
 
     /**
@@ -293,6 +293,23 @@ class PodsField_Pick extends PodsField {
                     'large' => __( 'Large', 'pods' )
                 )
             )*/
+        );
+
+        $post_type_pick_objects = array();
+        foreach ( get_post_types( '', 'names' ) as $post_type ) {
+            $post_type_pick_objects[] = 'post-type_' .$post_type;
+        }
+        $options[ self::$type . '_post_status' ] = array(
+            'name' => 'post_status',
+            'label' => __( 'Post Status', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'pick_object' => 'post-status',
+            'pick_format_type' => 'multi',
+            'default' => 'publish',
+            'depends-on' => array(
+                self::$type . '_object' => $post_type_pick_objects
+            )
         );
 
         /*if ( !is_multisite() )
@@ -1384,6 +1401,13 @@ class PodsField_Pick extends PodsField {
                     self::$related_objects[ $options[ self::$type . '_object' ] ][ 'data_callback' ],
                     array( $name, $value, $options, $pod, $id )
                 );
+                if ( 'data' == $context ) {
+                    self::$field_data = array(
+                        'field' => $name,
+                        'id' => $options[ 'id' ],
+                        'autocomplete' => false
+                    );
+                }
 
 				$simple = true;
 

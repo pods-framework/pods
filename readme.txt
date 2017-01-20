@@ -12,10 +12,12 @@ Pods is a framework for creating, managing, and deploying customized content typ
 
 == Description ==
 Manage all your custom content needs in ONE location with the Pods Framework. You can:
+
 * Create and edit custom post types, taxonomy, fields and extend existing WordPress objects like users, media, posts and pages or extend other plugins' custom post types -- all from Pods.
 * Easily display your custom content, whether you want to use shortcodes, widgets, the code-free Pods Template approach, or use standard PHP in WordPress Theme templates and functions.
 * Create connections between any of your content to help organize it in logical and useful ways with relationship fields.
-Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](https://pods.io/) for our User Guide, Support Forum, and other resources to help you develop with Pods.
+
+Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](http://pods.io/) for our User Guide, Support Forum, and other resources to help you develop with Pods.
 
 = Introduction =
 [youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
@@ -148,7 +150,7 @@ If you’ve uncovered a Bug or have a Feature Request, we kindly request you to 
 
 = Will Pods work with my Theme? =
 
-We don't provide any special CSS or display attributes with your custom content so as long as your theme works with WordPress standard functions and the [WordPress Template Hierarchy] (https://wphierarchy.com), you should be fine. You may need to create special PHP WordPress Theme Templates for your content, or you can use our Pods Templates and the Auto Template option to display your 'template' containing your custom content where your theme normally outputs `the_content` filter.
+We don't provide any special CSS or display attributes with your custom content so as long as your theme works with WordPress standard functions and the [WordPress Template Hierarchy](https://wphierarchy.com), you should be fine. You may need to create special PHP WordPress Theme Templates for your content, or you can use our Pods Templates and the Auto Template option to display your 'template' containing your custom content where your theme normally outputs `the_content` filter.
 
 == Screenshots ==
 
@@ -562,7 +564,7 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 * Fixed: Usage of pods_v in currency.php for optimzation purposes
 * Fixed: Correct parent_file to highlight the correct top level menu
 * Fixed: Improper wording for text at top of settings page field
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 
+Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
 
 Our GitHub has the full list of all prior releases of Pods: https://github.com/pods-framework/pods/releases

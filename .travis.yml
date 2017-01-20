@@ -28,12 +28,22 @@ matrix:
     # MySQL 8.0
     #- env: DB=mysql-8.0-dmr WP_VERSION=latest WP_MULTISITE=0
 
-## Cache composer bits
+## Cache composer and node bits
 cache:
-  apt: true
-  directories:
-    - vendor
-    - $HOME/.composer/cache
+    apt: true
+    directories:
+        - vendor
+        - node_modules
+        - $HOME/.composer/cache
+
+install:
+    # We need the latest stable node
+    - . $HOME/.nvm/nvm.sh
+    - nvm install stable
+    - nvm use stable
+
+    # Dependencies
+    - npm install
 
 before_script:
     - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]]; then phpenv config-rm xdebug.ini; fi
@@ -44,9 +54,10 @@ before_script:
 
 script:
     - vendor/bin/phpunit
+    - npm run test-mv-fields
 
 branches:
     only:
         - master
         - 2.x
-        - release/3.0
+        - release/2.7

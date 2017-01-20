@@ -142,7 +142,7 @@ class PodsForm {
 
         $name_more_clean = self::clean( $name, true );
 
-        if ( isset( $options[ 'description' ] ) && !empty( $options[ 'description' ] ) )
+        if ( ! empty( $options[ 'description' ] ) )
             $message = $options[ 'description' ];
         elseif ( empty( $message ) )
             return '';
@@ -153,7 +153,7 @@ class PodsForm {
 
         $type = 'comment';
         $attributes = array();
-        $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
+        $attributes[ 'class' ] = 'description pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
         $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
 
         pods_view( PODS_DIR . 'ui/fields/_comment.php', compact( array_keys( get_defined_vars() ) ) );
@@ -433,8 +433,8 @@ class PodsForm {
             if ( 0 < strlen( pods_v( 'label', $options, '' ) ) )
                 $_attributes[ 'data-label' ] = strip_tags( pods_v( 'label', $options ) );
 
-	        $_attributes['id'] = 'pods-form-ui-' . $name_clean . ( self::$form_counter > 1 ? '-' . self::$form_counter : '' );
-            $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+            $_attributes['id'] = 'pods-form-ui-' . $name_clean . ( self::$form_counter > 1 ? '-' . self::$form_counter : '' );
+            $_attributes['class'] = 'pods-form-ui-field pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 
             if ( isset( $options[ 'dependency' ] ) && false !== $options[ 'dependency' ] )
                 $_attributes[ 'class' ] .= ' pods-dependent-toggle';
@@ -1316,6 +1316,7 @@ class PodsForm {
         $field_types = array(
             'text',
             'website',
+            'link',
             'phone',
             'email',
             'password',
@@ -1329,10 +1330,11 @@ class PodsForm {
             'currency',
             'file',
             'avatar',
+            'oembed',
             'pick',
             'boolean',
             'color',
-            'slug'
+            'slug',
         );
 
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );

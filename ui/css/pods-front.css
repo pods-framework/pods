@@ -124,15 +124,15 @@ form.pods-manage .inside {
     margin-left: 20px;
 }
 
-.pods-file label {
+.pods-flex-item label {
     padding-bottom: 8px;
 }
 
-.pods-file input {
+.pods-flex-item input {
     display: none;
 }
 
-ul.pods-files {
+ul.pods-flex-list {
     background: #fbfbfb;
     border: 1px solid #dfdfdf;
     border-bottom: 0;
@@ -142,7 +142,7 @@ ul.pods-files {
     padding: 0;
 }
 
-ul.pods-files li {
+ul.pods-flex-list li {
     background: #fff;
     border-bottom: 1px solid #dfdfdf;
     margin: 0;
@@ -150,53 +150,53 @@ ul.pods-files li {
     padding-bottom: 10px;
 }
 
-ul.pods-files li span {
+ul.pods-flex-list li span {
     display: inline-block;
 }
 
-ul.pods-files li span.pods-file-reorder {
+ul.pods-flex-list li span.pods-flex-reorder {
     left: 3px;
     position: absolute;
     top: 15px;
     width: 30px;
 }
 
-ul.pods-files li span.pods-file-reorder img {
+ul.pods-flex-list li span.pods-flex-reorder img {
     cursor: move;
     display: block;
 }
 
-ul.pods-files li span.pods-file-thumb {
+ul.pods-flex-list li span.pods-flex-thumb {
     left: 35px;
     position: absolute;
     top: 2px;
     width: 45px;
 }
 
-ul.pods-files li span.pods-file-thumb .pinkynail {
+ul.pods-flex-list li span.pods-flex-thumb .pinkynail {
     float: none;
     margin: 0;
     max-width: 40px;
     max-height: 40px;
 }
 
-ul.pods-files li span.pods-file-name {
+ul.pods-flex-list li span.pods-flex-name {
     padding: 5px 35px 0 85px;
 }
 
-ul.pods-files li span.pods-file-remove {
+ul.pods-flex-list li span.pods-flex-remove {
     position: absolute;
     right: 10px;
     top: 10px;
     width: 25px;
 }
 
-ul.pods-files li span.pods-file-remove img {
+ul.pods-flex-list li span.pods-flex-remove img {
     cursor: pointer;
     display: block;
 }
 
-.pods-pick-checkbox ul, .pods-pick-radio ul {
+.pods-pick-checkbox ul, .pods-radio ul {
     padding-left: 0;
     margin-left: 0;
 }

@@ -1,3 +1,4 @@
+/*@global PodsI18n */
 ( function ( $ ) {
     var pods_changed = false,
         pods_form_field_names = [],
@@ -48,7 +49,12 @@
                     if ( !valid_field ) {
                         if ( -1 == jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) ) {
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
-                            $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + label.replace( /( <([^>]+ )> )/ig, '' ) + ' is required.</div>' );
+
+                            if ( $el.closest( '.pods-field-input > td' ).length > 0 ) {
+                                $el.closest( '.pods-field-input > td' ).last().prepend( '<div class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                            } else {
+                                $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + PodsI18n.__( '%s is required.' ).replace( '%s', label.replace( /( <([^>]+ )> )/ig, '' ) ) + '</div>' );
+                            }
                             $el.addClass( 'pods-validate-error' );
 
                             pods_form_field_names.push( $el.prop( 'name' ) );
@@ -388,7 +394,7 @@
                             }
                         },
                         error : function () {
-                            var err_msg = 'Unable to process request, please try again.';
+                            var err_msg = PodsI18n.__( 'Unable to process request, please try again.' );
 
                             if ( 'undefined' != typeof pods_admin_submit_error_callback )
                                 pods_admin_submit_error_callback( err_msg, $submittable );
@@ -1324,7 +1330,9 @@
                 } );
             },
             collapsible : function ( row ) {
-                var new_row = row;
+            	var new_row, orig_fields;
+
+                new_row = row;
 
                 if ( new_row[ 0 ] )
                     new_row = new_row.html();
@@ -1332,16 +1340,19 @@
                 // Hide all rows
                 $( 'div.pods-manage-row-wrapper' ).hide();
 
-                var orig_fields = {};
+                orig_fields = {};
 
                 // Handle 'Edit' action
                 $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-edit', function ( e ) {
+                    var $row, $row_label, $row_content, $tbody;
+                    var row_counter, edit_row, $field_wrapper, field_data, field_array_counter, json_name;
+
                     $( this ).css( 'cursor', 'default' );
                     $( this ).prop( 'disabled', true );
 
-                    var $row = $( this ).closest( 'tr.pods-manage-row' );
-                    var $row_label = $row.find( 'td.pods-manage-row-label' );
-                    var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+                    $row = $( this ).closest( 'tr.pods-manage-row' );
+                    $row_label = $row.find( 'td.pods-manage-row-label' );
+                    $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
 
                     if ( 'undefined' == typeof orig_fields[ $row.data( 'id' ) ] )
                         orig_fields[ $row.data( 'id' ) ] = {};
@@ -1364,7 +1375,7 @@
                             } );
                         }
                         else {
-                            var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+                            $tbody = $( this ).closest( 'tbody.pods-manage-list' );
 
                             $row.animate( {backgroundColor : '#B80000'} );
 
@@ -1381,15 +1392,19 @@
                     // Row inactive, show it
                     else {
                         if ( $row.hasClass( 'pods-field-init' ) && 'undefined' != typeof new_row && null !== new_row ) {
-                            var row_counter = $row.data( 'row' );
+                            row_counter = $row.data( 'row' );
 
-                            var edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                            var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
+                            edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
+                            $field_wrapper = $row_content.find( 'div.pods-manage-field' );
 
-                            if ( $row.hasClass( 'pods-field-duplicated' ) )
+                            if ( $row.hasClass( 'pods-field-duplicated' ) ) {
                                 $row.removeClass( 'pods-field-duplicated' );
-                            else
+                            } else {
                                 $field_wrapper.append( edit_row );
+
+                                // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                                $row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                            }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
                             $field_wrapper.find( '.pods-excludes-on' ).hide();
@@ -1398,9 +1413,9 @@
                                 $( this ).trigger( 'change' );
                             } );
 
-                            var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                            field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
-                            var field_array_counter = 0;
+                            field_array_counter = 0;
 
                             $field_wrapper.find( 'input, select, textarea' ).each( function () {
                                 json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( /\[\d*\]/gi, '' ).replace( '[', '' ).replace( ']', '' );
@@ -1460,6 +1475,7 @@
                         methods[ 'scroll' ]( $row );
 
                         $row_content.slideDown();
+
 
                         $row_content.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                             methods[ 'setup_dependencies' ]( $( this ) );
@@ -1667,6 +1683,8 @@
                 if ( 'undefined' != typeof new_row && null !== new_row ) {
                     // Handle 'Add' action
                     $( '.pods-manage-row-add' ).on( 'click', 'a', function ( e ) {
+                        var add_row, $new_row, $tbody;
+
                         e.preventDefault();
 
                         $( this ).css( 'cursor', 'default' );
@@ -1674,13 +1692,16 @@
 
                         row_counter++;
 
-                        var add_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                        var $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
+                        add_row = new_row.replace( /__1/gi, row_counter ).replace( /--1/gi, row_counter );
+                        $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
 
                         $tbody.find( 'tr.no-items' ).hide();
                         $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-new pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
+
+                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1711,31 +1732,37 @@
 
                     // Handle 'Duplicate' action
                     $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-duplicate', function ( e ) {
+                        var add_row, field_data;
+                        var $tbody, $row, $row_label, $row_content, $new_row, $new_row_label, $new_row_content;
+
                         e.preventDefault();
 
                         $( this ).css( 'cursor', 'default' );
                         $( this ).prop( 'disabled', true );
 
-                        var $row = $( this ).closest( 'tr.pods-manage-row' );
-                        var $row_label = $row.find( 'td.pods-manage-row-label' );
-                        var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+                        $row = $( this ).closest( 'tr.pods-manage-row' );
+                        $row_label = $row.find( 'td.pods-manage-row-label' );
+                        $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
 
-                        var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                        field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
                         row_counter++;
 
-                        var add_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
-                        var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+                        add_row = new_row.replace( /__1/gi, row_counter ).replace( /--1/gi, row_counter );
+                        $tbody = $( this ).closest( 'tbody.pods-manage-list' );
 
                         $tbody.find( 'tr.no-items' ).hide();
                         $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-init pods-field-new pods-field-duplicated pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
-                        var $new_row = $tbody.find( 'tr#row-' + row_counter );
-                        var $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
-                        var $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
+                        $new_row = $tbody.find( 'tr#row-' + row_counter );
+                        $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
+                        $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
+
+                        // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
+                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
 
                         field_data[ 'name' ] += '_copy';
-                        field_data[ 'label' ] += ' (Copy)';
+                        field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';
                         field_data[ 'id' ] = 0;
 
                         $new_row_label.find( 'a.pods-manage-row-edit.row-label' ).html( field_data[ 'label' ] );
@@ -1820,7 +1847,7 @@
 
                     window.onbeforeunload = function () {
                         if ( pods_changed )
-                            return 'Navigating away from this page will discard any changes you have made.';
+                            return PodsI18n.__( 'Navigating away from this page will discard any changes you have made.' );
                     }
                 } );
 

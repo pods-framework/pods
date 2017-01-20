@@ -704,156 +704,187 @@ class PodsField_Currency extends PodsField {
 				'label'  => 'AUD',
 				'name'   => __( 'Australian Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'brl' => array(
 				'label'  => 'BRL',
 				'name'   => __( 'Brazilian Real', 'pods' ),
 				'sign'   => 'R$',
+				'entity' => 'R&#36;',
 			),
 			'cad' => array(
 				'label'  => 'CAD',
 				'name'   => __( 'Canadian Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'chf' => array(
 				'label'  => 'CHF',
 				'name'   => __( 'Swiss Franc', 'pods' ),
 				'sign'   => 'Fr',
+				'entity' => 'Fr',
 			),
 			'cny' => array(
 				'label'  => 'CNY',
 				'name'   => __( 'Chinese Yuan', 'pods' ),
 				'sign'   => '¥',
+				'entity' => '&yen;',
 			),
 			'cny2' => array(
 				'label'  => 'CNY',
 				'name'   => __( 'Chinese Yuan', 'pods' ),
 				'sign'   => '元',
+				'entity' => '&#20803;',
 			),
 			'czk' => array(
 				'label'  => 'CZK',
 				'name'   => __( 'Czech Koruna', 'pods' ),
 				'sign'   => 'Kč',
+				'entity' => 'K&#x10D;',
 			),
 			'dkk' => array(
 				'label'  => 'DKK',
 				'name'   => __( 'Danish Krone', 'pods' ),
 				'sign'   => 'kr.',
+				'entity' => 'kr.',
 			),
 			'euro' => array(
 				'label'  => 'EUR',
 				'name'   => __( 'Euro', 'pods' ),
 				'sign'   => '€',
+				'entity' => '&euro;',
 			),
 			'gbp' => array(
 				'label'  => 'GBP',
 				'name'   => __( 'British Pound', 'pods' ),
 				'sign'   => '£',
+				'entity' => '&pound;',
 			),
 			'hkd' => array(
 				'label'  => 'HKD',
 				'name'   => __( 'Hong Kong Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'huf' => array(
 				'label'  => 'HUF',
 				'name'   => __( 'Hungarian Forint', 'pods' ),
 				'sign'   => 'Ft',
+				'entity' => 'Ft',
 			),
 			'ils' => array(
 				'label'  => 'ILS',
 				'name'   => __( 'Israeli New Sheqel', 'pods' ),
 				'sign'   => '₪',
+				'entity' => '&#x20AA;',
 			),
 			'jpy' => array(
 				'label'  => 'JPY',
 				'name'   => __( 'Japanese Yen', 'pods' ),
 				'sign'   => '¥',
+				'entity' => '&yen;',
 			),
 			'krw' => array(
 				'label'  => 'KRW',
 				'name'   => __( 'Korean Won', 'pods' ),
 				'sign'   => '₩',
+				'entity' => '&#8361;',
 			),
 			'myr' => array(
 				'label'  => 'MYR',
 				'name'   => __( 'Malaysian Ringgit', 'pods' ),
 				'sign'   => 'MR',
+				'entity' => 'MR',
 			),
 			'mxn' => array(
 				'label'  => 'MXN',
 				'name'   => __( 'Mexican Peso', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'nok' => array(
 				'label'  => 'NOK',
 				'name'   => __( 'Norwegian Krone', 'pods' ),
 				'sign'   => 'kr',
+				'entity' => 'kr',
 			),
 			'nzd' => array(
 				'label'  => 'NZD',
 				'name'   => __( 'New Zealand Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'php' => array(
 				'label'  => 'PHP',
 				'name'   => __( 'Philippine Peso', 'pods' ),
 				'sign'   => '₱',
+				'entity' => '&#x20B1;',
 			),
 			'pln' => array(
 				'label'  => 'PLN',
 				'name'   => __( 'Polish Złoty', 'pods' ),
 				'sign'   => 'zł',
+				'entity' => 'z&#x142;',
 			),
 			'rub' => array(
 				'label'  => 'RUB',
 				'name'   => __( 'Russian Ruble', 'pods' ),
 				'sign'   => '₽',
+				'entity' => '&#8381;',
 			),
 			'sek' => array(
 				'label'  => 'SEK',
 				'name'   => __( 'Swedish Krona', 'pods' ),
 				'sign'   => 'kr',
+				'entity' => 'kr',
 			),
 			'sgd' => array(
 				'label'  => 'SGD',
 				'name'   => __( 'Singapore Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'thb' => array(
 				'label'  => 'THB',
 				'name'   => __( 'Thai Baht', 'pods' ),
 				'sign'   => '฿',
+				'entity' => '&#x0E3F;',
 			),
 			'trl' => array(
 				'label'  => 'TRL',
 				'name'   => __( 'Turkish Lira', 'pods' ),
 				'sign'   => '₺',
+				'entity' => '&#8378;',
 			),
 			'twd' => array(
 				'label'  => 'TWD',
 				'name'   => __( 'Taiwan New Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'usd' => array(
 				'label'  => 'USD',
 				'name'   => __( 'US Dollar', 'pods' ),
 				'sign'   => '$',
+				'entity' => '&#36;',
 			),
 			'vnd' => array(
 				'label'  => 'VND',
 				'name'   => __( 'Vietnamese Dong', 'pods' ),
 				'sign'   => '₫',
+				'entity' => '&#8363;',
 			),
 			'zar' => array(
 				'label'  => 'ZAR',
 				'name'   => __( 'South African Rand', 'pods' ),
 				'sign'   => 'R',
+				'entity' => 'R',
 			),
 			'inr' => array(
 				'label'  => 'INR',
 				'name'   => __( 'Indian Rupee', 'pods' ),
 				'sign'   => '₹',
+				'entity' => '&#x20B9;',
 			),
 		);
 
@@ -863,9 +894,10 @@ class PodsField_Currency extends PodsField {
 		 * @param  array  $options {
 		 *     Required array of arrays.
 		 *     @type  array {
-		 *         @type  string  $label  The label (example: USD).
-		 *         @type  string  $name   The full name (example: US Dollar).
-		 *         @type  string  $sign   The sign (example: $).
+		 *         @type  string  $label   The label (example: USD).
+		 *         @type  string  $name    The full name (example: US Dollar).
+		 *         @type  string  $sign    The sign (example: $).
+		 *         @type  string  $entity  The HTML entity (example: &#36;).
 		 *     }
 		 * }
 		 * @return array
@@ -879,9 +911,10 @@ class PodsField_Currency extends PodsField {
 		foreach ( self::$currencies as $key => $value ) {
 			if ( is_string( $value ) ) {
 				self::$currencies[ $key ] = array(
-					'label' => strtoupper( $key ),
-					'name' => strtoupper( $key ),
-					'sign' => $value,
+					'label'  => strtoupper( $key ),
+					'name'   => strtoupper( $key ),
+					'sign'   => $value,
+					'entity' => $value,
 				);
 			} elseif ( is_array( $value ) ) {
 				// Make sure all required values are set
@@ -893,6 +926,9 @@ class PodsField_Currency extends PodsField {
 				}
 				if ( empty( $value['sign'] ) ) {
 					$value['sign'] = $key;
+				}
+				if ( empty( $value['entity'] ) ) {
+					$value['entity'] = $key;
 				}
 			} else {
 				// Invalid

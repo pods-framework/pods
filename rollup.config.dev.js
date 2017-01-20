@@ -1,13 +1,18 @@
-import string from 'rollup-plugin-string';
 import babel from 'rollup-plugin-babel';
 
 export default {
-	entry     : 'ui/fields-mv/_src/pods-fields-ready.js',
-	dest      : 'ui/fields-mv/js/pods-fields-ready.min.js',
-	format    : 'iife',
-	moduleName: 'PodsUI',
-	plugins   : [
-		string( { extensions: [ '.html' ] } ),
-		babel( { presets: [ 'es2015-rollup' ] } )
+	"entry"     : 'ui/fields-mv/_src/pods-mv-fields.js',
+	"dest"      : 'ui/fields-mv/js/pods-mv-fields.min.js',
+	"format"    : 'iife',
+	"moduleName": 'PodsMVFields',
+	"plugins"   : [
+		babel( {
+			"babelrc": false, // Ignore the .babelrc file which is there for mocha tests
+			"presets": [ 'es2015-rollup' ],
+			"plugins": [
+				"transform-html-import-to-string",
+				"babel-root-import"
+			]
+		} )
 	]
 };

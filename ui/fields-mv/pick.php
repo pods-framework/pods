@@ -6,125 +6,70 @@
  * @var $value           array
  * @var $id              string
  */
-wp_enqueue_script( 'jquery-ui-core' );
-wp_enqueue_script( 'jquery-ui-sortable' );
+wp_enqueue_style( 'pods-flex' );
+wp_enqueue_script( 'pods-mv-fields' );
+wp_enqueue_style( 'pods-select2' );
+wp_enqueue_script( 'pods-select2' );
 
-wp_enqueue_script( 'backbone' );
-wp_enqueue_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone' ), '2.4.4', true );
-
-wp_enqueue_script( 'backbone.babysitter', PODS_URL . 'ui/js/marionette/backbone.babysitter.min.js', array( 'backbone' ), '0.1.10', true );
-wp_enqueue_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.min.js', array( 'backbone' ), '1.0.2', true );
-wp_enqueue_script( 'marionette.radio.shim', PODS_URL . 'ui/js/marionette/marionette.radio.shim.js', array(
-	'marionette',
-	'backbone.radio'
-), '1.0.2', true );
-wp_enqueue_script( 'marionette.state', PODS_URL. 'ui/js/marionette/marionette.state.js', array( 'marionette' ), '1.0.1', true );
-wp_enqueue_script( 'pods-fields-ready', PODS_URL . 'ui/fields-mv/js/pods-fields-ready.min.js', array(), PODS_VERSION, true );
 
 $data = (array) pods_v( 'data', $options, array(), null, true );
 unset ( $options[ 'data' ] );
 $options[ 'item_id' ] = (int) $id;
 
-$model_data = array();
+$options[ 'supports_thumbnails' ] = null;
+$options[ 'pick_object' ]         = ( empty( $options[ 'pick_object' ] ) ) ? '' : $options[ 'pick_object' ];
 
-$supports_thumbnails = null;
+// Todo: Should probably be set where the data is set
+// optgroups
+if ( is_array( $data ) && is_array( current( $data ) ) ) {
+	$options[ 'optgroup' ] = true;
 
-foreach ( $data as $this_id => $this_title ) {
-	$icon = '';
-	$edit_link = '';
-	$link = '';
-
-	switch ( $options[ 'pick_object' ] ) {
-		case 'post_type':
-			if ( null === $supports_thumbnails ) {
-				$supports_thumbnails = post_type_supports( $options['pick_val'], 'thumbnail' );
-			}
-
-			if ( true === $supports_thumbnails ) {
-				$thumb = wp_get_attachment_image_src( $this_id, 'thumbnail', true );
-
-				if ( ! empty( $thumb[0] ) ) {
-					$icon = $thumb[0];
-				}
-			}
-
-			$edit_link = get_edit_post_link( $this_id, 'raw' );
-			$link = get_permalink( $this_id );
-			break;
-
-		case 'taxonomy':
-			$edit_link = get_edit_term_link( $this_id, $options['pick_val'] );
-			$link = get_term_link( $this_id, $options['pick_val'] );
-			break;
-
-		case 'user':
-			$icon = get_avatar_url( $this_id, array( 'size' => 150 ) );
-			$edit_link = get_edit_user_link( $this_id );
-			$link = get_author_posts_url( $this_id );
-			break;
-
-		case 'pod':
-			$file_name = 'admin.php';
-			$query_args = array(
-				'page'   => 'pods-manage-' . $options[ 'pick_val' ],
-				'action' => 'edit',
-				'id'     => $this_id,
-			);
-
-			$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
-			// @todo Add $link support
-			break;
-
-		// Something unsupported
-		default:
-			break;
+	foreach ( $data as $this_key => $this_value ) {
+		$model_data[] = array(
+			'label'      => $this_key,
+			'collection' => PodsField_Pick::build_model_data( $this_value, $value, $options )
+		);
 	}
-
-	$model_data[] = array(
-		'id'        => $this_id,
-		'icon'      => $icon,
-		'name'      => $this_title,
-		'edit_link' => $edit_link,
-		'link'      => $link,
-		'selected'  => ( isset( $value[ $this_id ] ) ),
-	);
+} else { // Ungrouped (no optgroups)
+	$options[ 'optgroup' ] = false;
+	$model_data            = PodsField_Pick::build_model_data( $data, $value, $options );
 }
 
 $attributes = PodsForm::merge_attributes( array(), $name, $form_field_type, $options );
 $attributes = array_map( 'esc_attr', $attributes );
 $field_meta = array(
-	'field_attributes' => array(
+	'htmlAttr' => array(
 		'id'         => $attributes[ 'id' ],
 		'class'      => $attributes[ 'class' ],
 		'name'       => $attributes[ 'name' ],
 		'name_clean' => $attributes[ 'data-name-clean' ]
 	),
-	'field_options'    => $options
+	'fieldConfig'      => $options
 );
 
 // Set the file name and args based on the content type of the relationship
 switch ( $options[ 'pick_object' ] ) {
 	case 'post_type':
-		$file_name = 'post-new.php';
+		$file_name  = 'post-new.php';
 		$query_args = array(
 			'post_type' => $options[ 'pick_val' ],
 		);
 		break;
 
 	case 'taxonomy':
-		$file_name = 'edit-tags.php';
+		$file_name  = 'edit-tags.php';
 		$query_args = array(
 			'taxonomy' => $options[ 'pick_val' ],
 		);
 		break;
 
 	case 'user':
-		$file_name = 'user-new.php';
+		$file_name  = 'user-new.php';
 		$query_args = array();
 		break;
 
 	case 'pod':
-		$file_name = 'admin.php';
+		$file_name  = 'admin.php';
 		$query_args = array(
 			'page'   => 'pods-manage-' . $options[ 'pick_val' ],
 			'action' => 'add'
@@ -133,7 +78,7 @@ switch ( $options[ 'pick_object' ] ) {
 
 	// Something unsupported
 	default:
-		$file_name = '';
+		$file_name  = '';
 		$query_args = array();
 		break;
 }
@@ -146,18 +91,23 @@ $query_args = array_merge(
 	)
 );
 
-$field_meta[ 'field_options' ][ 'iframe_src' ] = add_query_arg( $query_args, admin_url( $file_name ) );
+$iframe_src = '';
+if ( ! empty( $file_name ) ) {
+	$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
+}
+$field_meta[ 'fieldConfig' ][ 'iframe_src' ] = $iframe_src;
 
 // Assemble the URL
 $url = add_query_arg( $query_args, admin_url( $file_name ) );
 
-include_once PODS_DIR . 'classes/PodsFieldData.php';
-$field_data = new PodsUIFieldData( $field_type, array( 'model_data' => $model_data, 'field_meta' => $field_meta ) );
+include_once PODS_DIR . 'classes/PodsMVFieldData.php';
+$mvdata     = array(
+	'fieldData'   => $model_data,
+	'fieldConfig' => $field_meta[ 'fieldConfig' ],
+	'htmlAttr'    => $field_meta[ 'htmlAttr' ]
+);
+$field_data = new PodsMVFieldData( $field_type, $mvdata );
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ], 'id' => $attributes[ 'id' ] ), $name, $form_field_type, $options ); ?>>
-	<?php if ( ! empty( $file_name ) ) { ?>
-		<?php $field_data->emit_script(); ?>
-	<?php } else { ?>
-		<p>This related object does not support Flexible Relationships.</p>
-	<?php } ?>
+<div class="pods-form-ui-field">
+	<?php $field_data->emit_script(); ?>
 </div>

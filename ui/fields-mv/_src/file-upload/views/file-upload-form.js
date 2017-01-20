@@ -1,6 +1,7 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import * as formTemplate from './file-upload-form.html';
-import { PodsFieldListView, PodsFieldView } from '../../../_src/core/pods-field-views';
+/*global jQuery, _, Backbone, Marionette, wp */
+import template from '~/ui/fields-mv/_src/file-upload/views/file-upload-form.html';
+
+import { PodsFieldListView, PodsFieldView } from '~/ui/fields-mv/_src/core/pods-field-views';
 
 export const FileUploadForm = PodsFieldView.extend( {
 	tagName: 'div',
@@ -9,7 +10,7 @@ export const FileUploadForm = PodsFieldView.extend( {
 		addButton: '.pods-flex-add'
 	},
 
-	template: _.template( formTemplate.default ),
+	template: _.template( template ),
 
 	triggers: {
 		'click @ui.addButton': 'add:file:click'

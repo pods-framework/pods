@@ -1,6 +1,6 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import { PodsFileUploader } from './pods-file-uploader';
-import { FileUploadQueueModel, FileUploadQueue } from '../views/file-upload-queue';
+/*global jQuery, _, Backbone, Marionette, wp */
+import { PodsFileUploader } from '~/ui/fields-mv/_src/file-upload/uploaders/pods-file-uploader';
+import { FileUploadQueueModel, FileUploadQueue } from '~/ui/fields-mv/_src/file-upload/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},
@@ -9,9 +9,9 @@ export const Plupload = PodsFileUploader.extend( {
 
 	initialize: function () {
 		// Set the browse button argument for plupload... it's required
-		this.fieldOptions[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
+		this.fieldConfig[ 'plupload_init' ][ 'browse_button' ] = this.browseButton;
 
-		this.plupload = new plupload.Uploader( this.fieldOptions[ 'plupload_init' ] );
+		this.plupload = new plupload.Uploader( this.fieldConfig[ 'plupload_init' ] );
 		this.plupload.init();
 
 		// Setup all callbacks: ( event_name, callback, context )

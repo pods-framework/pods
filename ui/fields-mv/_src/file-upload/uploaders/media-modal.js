@@ -1,5 +1,5 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import { PodsFileUploader } from './pods-file-uploader';
+/*global jQuery, _, Backbone, Marionette, wp */
+import { PodsFileUploader } from '~/ui/fields-mv/_src/file-upload/uploaders/pods-file-uploader';
 
 export const MediaModal = PodsFileUploader.extend( {
 	mediaObject: {},
@@ -14,19 +14,19 @@ export const MediaModal = PodsFileUploader.extend( {
 
 		let defaultExt = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;
 
-		wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.fieldOptions[ 'limit_extensions' ];
+		wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = this.fieldConfig[ 'limit_extensions' ];
 
 		// set our settings
 		this.mediaObject = wp.media( {
-			title   : this.fieldOptions[ 'file_modal_title' ],
-			multiple: ( 1 != this.fieldOptions[ 'file_limit' ] ),
+			title   : this.fieldConfig[ 'file_modal_title' ],
+			multiple: ( 1 != this.fieldConfig[ 'file_limit' ] ),
 			library : {
-				type: this.fieldOptions[ 'limit_types' ]
+				type: this.fieldConfig[ 'limit_types' ]
 			},
 			// Customize the submit button.
 			button  : {
 				// Set the text of the button.
-				text: this.fieldOptions[ 'file_modal_add_button' ]
+				text: this.fieldConfig[ 'file_modal_add_button' ]
 			}
 		} );
 
@@ -35,7 +35,7 @@ export const MediaModal = PodsFileUploader.extend( {
 
 		// open the frame
 		this.mediaObject.open();
-		this.mediaObject.content.mode( this.fieldOptions[ 'file_attachment_tab' ] );
+		this.mediaObject.content.mode( this.fieldConfig[ 'file_attachment_tab' ] );
 
 		// Reset the allowed file extensions
 		wp.Uploader.defaults.filters.mime_types[ 0 ].extensions = defaultExt;

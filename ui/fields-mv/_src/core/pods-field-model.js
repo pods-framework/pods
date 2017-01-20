@@ -1,8 +1,7 @@
-/*global jQuery, _, Backbone, Mn */
-export const PodsFieldModel = Backbone.Model.extend( {
+/*global jQuery, _, Backbone, Marionette */
+export const PodsMVFieldModel = Backbone.Model.extend( {
 	defaults: {
-		type      : 'hidden',
-		attributes: {},
-		options   : {}
+		htmlAttr   : {},
+		fieldConfig: {}
 	}
 } );

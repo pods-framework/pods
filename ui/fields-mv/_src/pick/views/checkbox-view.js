@@ -1,6 +1,7 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import * as checkboxTemplate from './checkbox-item.html';
-import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-views';
+/*global jQuery, _, Backbone, Marionette, wp */
+import template from '~/ui/fields-mv/_src/pick/views/checkbox-item.html';
+
+import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
  *
@@ -8,7 +9,7 @@ import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-vi
 export const CheckboxItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	template: _.template( checkboxTemplate.default ),
+	template: _.template( template ),
 
 	className: 'pods-pick',
 
@@ -24,10 +25,10 @@ export const CheckboxItem = PodsFieldView.extend( {
 		'change': 'modelChanged'
 	},
 
-	templateHelpers: function () {
+	templateContext: function () {
 		return {
 			ordinal: this.model.collection.indexOf( this.model )
-		}
+		};
 	},
 
 	modelChanged: function () {

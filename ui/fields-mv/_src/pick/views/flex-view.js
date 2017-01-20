@@ -1,6 +1,7 @@
-/*global jQuery, _, Backbone, Mn, wp */
-import * as flexTemplate from './flex-item.html';
-import {PodsFieldListView, PodsFieldView} from '../../../_src/core/pods-field-views';
+/*global jQuery, _, Backbone, Marionette, wp */
+import template from '~/ui/fields-mv/_src/pick/views/flex-item.html';
+
+import {PodsFieldListView, PodsFieldView} from '~/ui/fields-mv/_src/core/pods-field-views';
 
 /**
  *
@@ -10,7 +11,7 @@ export const FlexItem = PodsFieldView.extend( {
 
 	className: 'pods-flex-item pods-relationship',
 
-	template: _.template( flexTemplate.default ),
+	template: _.template( template ),
 
 	ui: {
 		removeButton: '.pods-flex-remove a'
@@ -18,7 +19,14 @@ export const FlexItem = PodsFieldView.extend( {
 
 	triggers: {
 		'click @ui.removeButton': 'remove:item:click'
+	},
+
+	templateContext: function () {
+		return {
+			ordinal: this.model.collection.indexOf( this.model )
+		}
 	}
+
 } );
 
 /**

@@ -50,7 +50,7 @@
 
 .pods-boolean input {
     display: block;
-    min-height:16px;
+    min-height: 16px;
     left: 2px;
     margin: 1px 7px 0 0;
     padding: 0;
@@ -65,8 +65,12 @@
 }
 
 .pods-link-options {
+    background: #fff;
     padding: 5px 10px 10px;
     border: 1px solid #dfdfdf;
+}
+.pods-link-options > div {
+    display: inline-block;
 }
 
 .pods-pick-values {
@@ -132,8 +136,13 @@ select.pods-form-ui-field-type-pick[multiple] {
     top: 5px;
 }
 
+
+.pods-pick-values .pods-radio {
+    border: 1px solid #dfdfdf;
+}
+
 .pods-field.pods-boolean:hover,
-.pods-pick-values.pods-pick-radio li:hover {
+.pods-pick-values .pods-radio li:hover {
     background: #ffffd8;
 }
 
@@ -208,9 +217,9 @@ input.pods-form-ui-field-type-color {
 
 /* Codemirror */
 .pods-field .CodeMirror {
-    width: 95%;
     border: 1px solid #999;
     background-color: #fff;
+    margin: 0;
 }
 
 .pods-form-front ul.pods-form-fields {

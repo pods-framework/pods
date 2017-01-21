@@ -3,9 +3,9 @@ exclude_paths:
 - tests/*
 - .tx/*, 
 - includes/libraries/*, 
-- bin/*
-- assets/*
-- templates/*
+- bin/*,
+- assets/*,
+- templates/*,
 - ui/js/select2/*
 
 engines:

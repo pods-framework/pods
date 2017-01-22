@@ -1,11 +1,11 @@
 exclude_paths:
 - vendor/*
 - tests/*
-- .tx/*, 
-- includes/libraries/*, 
-- bin/*,
-- assets/*,
-- templates/*,
+- .tx/*
+- includes/libraries/* 
+- bin/*
+- assets/*
+- templates/*
 - ui/js/select2/*
 
 engines:

@@ -290,9 +290,9 @@ class PodsField_File extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-    	if ( 1 == $options[ self::$type . '_wp_gallery_output' ] ) {
-    		return $this->do_wp_gallery( $value, $options );
-		}
+    	if ( ! empty( $options[ self::$type . '_wp_gallery_output' ] ) ) {
+                return $this->do_wp_gallery( $value, $options );
+        }
 
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( isset( $value[ 'ID' ] ) )

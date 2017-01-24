@@ -1098,6 +1098,7 @@ class PodsAdmin {
                     'type' => 'text',
                     'default' => '',
                     'object_type' => array( 'post_type' )
+                ),
                 'label_back_to_manage' => array(
                     'label' => __( 'Back to Manage', 'pods' ),
                     'help' =>__( 'help', 'pods' ),

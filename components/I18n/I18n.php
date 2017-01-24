@@ -31,6 +31,8 @@ class Pods_Component_I18n extends PodsComponent {
 	public $cur_pod = null;
 	public $option_key = 'pods_component_i18n_settings';
 	public $admin_page = 'pods-component-translate-pods-admin';
+	public $capability = 'pods_i18n_activate_lanuages';
+	public $nonce = 'pods_i18n_activate_lanuages';
 
 	public $translatable_fields = array(
 		'label',
@@ -69,78 +71,41 @@ class Pods_Component_I18n extends PodsComponent {
 			include_once( plugin_dir_path( __FILE__ ) . 'I18n-wpml.php' );
 		}
 
+		$active = false;
+		// Are there active languages?
 		if ( ! empty( $this->settings['enabled_languages'] ) ) {
-
 			$this->languages = $this->settings['enabled_languages'];
 			$this->locale = get_locale();
+			$active = true;
+		}
 
-			if ( is_admin() ) {
+		$is_component_page = false;
+		$is_pods_edit_page = false;
+		if ( is_admin() && isset( $_GET['page'] ) ) {
 
-				if ( isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'pods', $this->admin_page ) ) ) {
-
-					add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
-
-					// Do save action here because otherwise the loading of post_types get done first and labels aren't translated
-					if (   $_GET['page'] == $this->admin_page
-						&& pods_is_admin( array( 'pods_i18n_activate_lanuages' ) )
-						&& isset( $_POST['_nonce_i18n'] )
-						&& wp_verify_nonce( $_POST['_nonce_i18n'], 'pods_i18n_activate_lanuages' )
-					) {
-						$this->admin_save();
-					}
-
-					if ( $_GET['page'] == 'pods' ) {
-
-						$pod = null;
-						// Get the pod if available
-						if ( isset( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
-							$pod = pods_api()->load_pod( array( 'id' => $_GET['id'] ) );
-							// Append options to root array for pods_v function to work
-							foreach ( $pod[ 'options' ] as $_option => $_value ) {
-								$pod[ $_option ] = $_value;
-							}
-						}
-						$this->cur_pod = $pod;
-
-						//Add option tab for post types
-						//add_filter( 'pods_admin_setup_edit_tabs_post_type', array( $this, 'pod_tab' ), 11, 3 );
-
-						//Add the same tab for taxonomies
-						//add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'pod_tab' ), 11, 3 );
-
-						//Add options to the new tab
-						//add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 12, 2 );
-
-						//Add options metabox to the pod edit screens
-						add_action( 'pods_add_meta_boxes', array( $this, 'admin_meta_box' ), 10 );
-
-						//Add the i18n input fields based on existing fields
-						add_filter( 'pods_form_ui_field_text', array( $this, 'add_i18n_inputs' ), 10, 6 );
-
-						//add_filter( 'pods_admin_setup_edit_field_tabs', array( $this, 'pod_field_tab' ), 10, 2 );
-						//add_filter( 'pods_admin_setup_edit_field_options', array( $this, 'pod_field_options' ), 10, 2 );
-					}
-
-				}
-
-
-				// Default filters for all fields
-				add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
-				add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
-
-				foreach ( pods_form()->field_types() as $type => $data ) {
-					add_filter( 'pods_form_ui_field_' . $type . '_options', array( $this, 'form_ui_field_options_i18n' ), 10, 5 );
-					//add_filter( 'pods_form_ui_field_' . $type . '_data', array( $this, 'field_options_i18n' ), 10, 3 );
-					//add_filter( 'pods_form_ui_field_' . $type . '_merge_attributes', array( $this, 'merge_attributes_fields_i18n' ), 10, 3 );
-				}
-
-				// Field specific
-				//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
-
-				// Setting pages
-				add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
-				add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
+			// Is the current page the admin page of this component or a Pods edit page?
+			if ( $_GET['page'] === $this->admin_page ) {
+				$is_component_page = true;
+			} elseif ( $_GET['page'] === 'pods' ) {
+				$is_pods_edit_page = true;
 			}
+
+			if ( $is_component_page || ( $is_pods_edit_page && $active ) ) {
+				add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
+			}
+		}
+
+		if ( $is_component_page ) {
+			// Do save action here because otherwise the loading of post_types get done first and labels aren't translated
+			if ( pods_is_admin( $this->capability )
+			    && isset( $_POST['_nonce_i18n'] )
+			    && wp_verify_nonce( $_POST['_nonce_i18n'], $this->nonce )
+			) {
+				$this->admin_save();
+			}
+		}
+
+		if ( $active ) {
 
 			// Object filters
 			add_filter( 'pods_register_post_type', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
@@ -148,7 +113,52 @@ class Pods_Component_I18n extends PodsComponent {
 
 			add_filter( 'pods_advanced_content_type_pod_data', array( $this, 'pods_filter_object_strings_i18n' ), 10, 2 );
 
+			if ( $is_pods_edit_page ) {
+
+				$pod = null;
+				// Get the pod if available
+				if ( isset( $_GET['id'] ) && is_numeric( $_GET['id'] ) ) {
+					$pod = pods_api()->load_pod( array( 'id' => $_GET['id'] ) );
+					// Append options to root array for pods_v function to work
+					foreach ( $pod[ 'options' ] as $_option => $_value ) {
+						$pod[ $_option ] = $_value;
+					}
+				}
+				$this->cur_pod = $pod;
+
+				//Add option tab for post types
+				//add_filter( 'pods_admin_setup_edit_tabs_post_type', array( $this, 'pod_tab' ), 11, 3 );
+
+				//Add the same tab for taxonomies
+				//add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'pod_tab' ), 11, 3 );
+
+				//Add options to the new tab
+				//add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 12, 2 );
+
+				//Add options metabox to the pod edit screens
+				add_action( 'pods_add_meta_boxes', array( $this, 'admin_meta_box' ), 10 );
+
+				//Add the i18n input fields based on existing fields
+				add_filter( 'pods_form_ui_field_text', array( $this, 'add_i18n_inputs' ), 10, 6 );
+			}
+
+			// Default filters for all fields
+			add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
+			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
+
+			foreach ( pods_form()->field_types() as $type => $data ) {
+				add_filter( 'pods_form_ui_field_' . $type . '_options', array( $this, 'form_ui_field_options_i18n' ), 10, 5 );
+			}
+
+			// Field specific
+			//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
+
+			// Setting pages
+			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
+			add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
+
 			// Date field
+			// @todo  Maybe move this to the Date field in core?
 			global $wp_version;
 			if ( version_compare( $wp_version, '4.6', '<' ) ) {
 				add_filter( 'pods_form_ui_field_date_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
@@ -165,14 +175,16 @@ class Pods_Component_I18n extends PodsComponent {
 	public function admin_assets() {
 		wp_enqueue_script( 'pods-admin-i18n', PODS_URL . 'components/I18n/pods-admin-i18n.js', array( 'jquery', 'pods-i18n' ), '1.0', true );
 		$localize_script = array();
-		foreach ( $this->languages as $lang => $lang_data ) {
-			$lang_label = $this->create_lang_label( $lang_data );
-			if ( ! empty( $lang_label ) ) {
-				$lang_label = $lang . ' ('. $lang_label .')';
-			} else {
-				$lang_label = $lang;
+		if ( ! empty( $this->languages ) ) {
+			foreach ( $this->languages as $lang => $lang_data ) {
+				$lang_label = $this->create_lang_label( $lang_data );
+				if ( ! empty( $lang_label ) ) {
+					$lang_label = $lang . ' ('. $lang_label .')';
+				} else {
+					$lang_label = $lang;
+				}
+				$localize_script[ $lang ] = $lang_label;
 			}
-			$localize_script[ $lang ] = $lang_label;
 		}
 		wp_localize_script( 'pods-admin-i18n', 'pods_admin_i18n_strings', $localize_script );
 
@@ -190,24 +202,6 @@ class Pods_Component_I18n extends PodsComponent {
 		$str['Hide translations'] = __( 'Hide translations', 'pods' );
 		$str['Select'] = __( 'Select', 'pods' );
 		return $str;
-	}
-
-	/**
-	 * Not sure if this is needed
-	 * @since 0.1
-	 * @todo Make it work or delete :)
-	 */
-	function field_options_i18n( $options, $type, $bla ) {
-		return $options;
-	}
-
-	/**
-	 * Not sure if this is needed
-	 * @since 0.1
-	 * @todo Make it work or delete :)
-	 */
-	public function merge_attributes_fields_i18n( $attributes, $name, $options ) {
-		return $attributes;
 	}
 
 	/**
@@ -711,7 +705,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 		// @todo Do this in pods_ui so we don't rely on javascript
 		echo '<div id="pods_i18n_settings_save">';
-		echo '<input type="hidden" id="nonce_i18n" name="_nonce_i18n" value="' . wp_create_nonce('pods_i18n_activate_lanuages') . '" />';
+		echo '<input type="hidden" id="nonce_i18n" name="_nonce_i18n" value="' . wp_create_nonce( $this->nonce ) . '" />';
 		submit_button();
 		echo '</div>';
 
@@ -720,6 +714,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n option tab.
+	 *
+	 * @todo  Remove if not used in final version
 	 *
 	 * @since  0.1
 	 * @param  array $tabs
@@ -734,6 +730,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * The i18n options
+	 *
+	 * @todo  Remove if not used in final version
 	 *
 	 * @since  0.1
 	 * @param  array $options
@@ -812,35 +810,6 @@ class Pods_Component_I18n extends PodsComponent {
 			<p><button id="toggle_i18n" class="button-secondary"><?php _e('Toggle translation visibility', 'pods'); ?></button></p>
 		<?php
 		}
-	}
-
-	/**
-	 * The i18n field option tab.
-	 *
-	 * @todo check / remove
-	 *
-	 * @since  0.1
-	 * @param  array $tabs
-	 * @param  array $pod
-	 * @return array
-	 */
-	public function pod_field_tab( $tabs, $pod ) {
-		$tabs[ 'i18n' ] = __( 'Translations', 'pods' );
-		return $tabs;
-	}
-
-	/**
-	 * The i18n options
-	 *
-	 * @todo check / remove
-	 *
-	 * @since  0.1
-	 * @param  array $options
-	 * @param  array $pod
-	 * @return array
-	 */
-	public function pod_field_options( $options, $pod ) {
-		return $options;
 	}
 
 	/**

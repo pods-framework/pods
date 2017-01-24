@@ -657,7 +657,7 @@ class Pods_Component_I18n extends PodsComponent {
 				'manage' => array(
 					'enabled' => array(
 						'label' => __( 'Active', 'pods' ),
-						'type' => 'text',
+						'type' => 'raw',
 					),
 					'locale' => array( 'label' => __( 'Locale', 'pods' ), 'classes' => array( 'column-secondary' ) ),
 					'lang' => array( 'label' => __( 'Language', 'pods' ) ),

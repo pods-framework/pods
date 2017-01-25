@@ -206,7 +206,6 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-delete {
 tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     float: right;
     text-align: right;
-    width: 40%;
 }
 
 tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-delete a.submitdelete,
@@ -333,6 +332,11 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     max-width: 25em;
 }
 
+.pods-manage-field .pods-pick-values {
+    /* Match width to input fields */
+    width: 93%;
+}
+
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
     max-width: 100%;
 }
@@ -340,6 +344,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-field-option div select {
     float: none;
     width: 100%;
+    margin: 0;
 }
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file {

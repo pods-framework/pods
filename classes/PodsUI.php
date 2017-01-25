@@ -2921,7 +2921,7 @@ class PodsUI {
                                     $label = '<a href="' . esc_url( $link ) . '">' . esc_html( $label ) . '</a>';
                             }
                     ?>
-                        <li class="<?php echo esc_attr( $view ); ?>"><?php echo esc_html( $label ); ?></li>
+                        <li class="<?php echo esc_attr( $view ); ?>"><?php echo $label; ?></li>
                     <?php
                         }
                     ?>

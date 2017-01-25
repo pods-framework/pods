@@ -56,6 +56,7 @@
 		toggleI18nInputs: function() {
 
 			// Toggle i18n inputs for pod options
+			// @todo  Enable auto-toggle when opening a field
 			$(document).on( 'click', 'button#toggle_i18n', function(e) {
 				e.preventDefault();
 
@@ -64,21 +65,21 @@
 				if ( PodsEditI18n.i18nVisible ) {
 
 					PodsEditI18n.i18nVisible = false;
-					$( PodsEditI18n.selector ).each( function() { 
+					$( PodsEditI18n.selector ).each( function() {
 						$( this ).slideUp( PodsEditI18n.toggleSpeed, function() {
 							// Fallback for hidden fields
 							$( this ).css('display', 'none');
-						} ); 
+						} );
 					} );
 
 				} else {
 
 					PodsEditI18n.i18nVisible = true;
-					$( PodsEditI18n.selector ).each( function() { 
+					$( PodsEditI18n.selector ).each( function() {
 						$( this ).slideDown( PodsEditI18n.toggleSpeed, function() {
 							// Fallback for hidden fields
 							$( this ).css('display', 'block');
-						} ); 
+						} );
 					} );
 
 				}

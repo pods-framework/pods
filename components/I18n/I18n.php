@@ -107,11 +107,35 @@ class Pods_Component_I18n extends PodsComponent {
 
 		if ( $active ) {
 
-			// Object filters
+			// WP Object filters (post_type and taxonomy)
 			add_filter( 'pods_register_post_type', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 
+			// ACT's
 			add_filter( 'pods_advanced_content_type_pod_data', array( $this, 'pods_filter_object_strings_i18n' ), 10, 2 );
+
+			// Setting pages
+			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
+			add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
+
+			// Default filters for all fields
+			add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
+			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
+
+			foreach ( pods_form()->field_types() as $type => $data ) {
+				add_filter( 'pods_form_ui_field_' . $type . '_options', array( $this, 'form_ui_field_options_i18n' ), 10, 5 );
+			}
+
+			// Field specific
+			//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
+
+			// Date field
+			// @todo  Maybe move this to the Date field in core?
+			global $wp_version;
+			if ( version_compare( $wp_version, '4.6', '<' ) ) {
+				add_filter( 'pods_form_ui_field_date_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
+				add_filter( 'pods_form_ui_field_datetime_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
+			}
 
 			if ( $is_pods_edit_page ) {
 
@@ -140,29 +164,6 @@ class Pods_Component_I18n extends PodsComponent {
 
 				//Add the i18n input fields based on existing fields
 				add_filter( 'pods_form_ui_field_text', array( $this, 'add_i18n_inputs' ), 10, 6 );
-			}
-
-			// Default filters for all fields
-			add_filter( 'pods_form_ui_label_text', array( $this, 'fields_ui_label_text_i18n' ), 10, 4 );
-			add_filter( 'pods_form_ui_comment_text', array( $this, 'fields_ui_comment_text_i18n' ), 10, 3 );
-
-			foreach ( pods_form()->field_types() as $type => $data ) {
-				add_filter( 'pods_form_ui_field_' . $type . '_options', array( $this, 'form_ui_field_options_i18n' ), 10, 5 );
-			}
-
-			// Field specific
-			//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
-
-			// Setting pages
-			add_filter( 'pods_admin_menu_page_title', array( $this, 'admin_menu_page_title_i18n' ), 10, 2 );
-			add_filter( 'pods_admin_menu_label', array( $this, 'admin_menu_label_i18n' ), 10, 2 );
-
-			// Date field
-			// @todo  Maybe move this to the Date field in core?
-			global $wp_version;
-			if ( version_compare( $wp_version, '4.6', '<' ) ) {
-				add_filter( 'pods_form_ui_field_date_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
-				add_filter( 'pods_form_ui_field_datetime_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
 			}
 
 		}
@@ -194,6 +195,8 @@ class Pods_Component_I18n extends PodsComponent {
 
 	/**
 	 * Localize the assets
+	 * @param  array  $str  Existing strings
+	 * @return array
 	 */
 	public function localize_assets( $str ) {
 		$str['Add translation'] = __( 'Add translation', 'pods' );
@@ -219,7 +222,7 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( strpos( $name, 'label' ) === 0 ) {
 			return true;
 		}
-		// All translateable fields
+		// All translatable fields
 		if ( in_array( $name, $translatable_fields ) ) {
 			return true;
 		}
@@ -229,7 +232,7 @@ class Pods_Component_I18n extends PodsComponent {
 			$name = rtrim( $name, ']' );
 			$name = explode( '][', $name );
 			$name = end( $name );
-			// All translateable fields from field_data[ (int) ][ $name ]
+			// All translatable fields from field_data[ (int) ][ $name ]
 			if ( in_array( $name, $translatable_fields ) ) {
 				return true;
 			}
@@ -383,7 +386,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @param  string $form_field_type field type
 	 * @return array
 	 */
-	public function field_date_args_i18n($args, $type, $options, $attributes, $name, $form_field_type) {
+	public function field_date_args_i18n( $args, $type, $options, $attributes, $name, $form_field_type ) {
 		$locale = $this->get_locale_jquery_ui_i18n();
 		if ( ! empty( $locale ) ) {
 			// URL to the raw file on github
@@ -391,9 +394,9 @@ class Pods_Component_I18n extends PodsComponent {
 			// Filename prefix
 			$file_prefix = 'datepicker-';
 			// Full URL
-			$i18n_file = $url_base.$file_prefix.$locale.'.js';
+			$i18n_file = $url_base.$file_prefix . $locale . '.js';
 			// Enqueue script
-			wp_enqueue_script('jquery-ui-i18n-'.$locale, $i18n_file, array('jquery-ui-datepicker'));
+			wp_enqueue_script( 'jquery-ui-i18n-' . $locale, $i18n_file, array( 'jquery-ui-datepicker' ) );
 			// Add i18n argument to the datepicker
 			$args['regional'] = $locale;
 		}
@@ -409,7 +412,7 @@ class Pods_Component_I18n extends PodsComponent {
 	public function get_locale_jquery_ui_i18n() {
 		//replace _ by - in "en_GB" for example
 		$locale = str_replace( '_', '-', get_locale() );
-		switch ($locale) {
+		switch ( $locale ) {
 			case 'ar-DZ':
 			case 'cy-GB':
 			case 'en-AU':
@@ -452,8 +455,6 @@ class Pods_Component_I18n extends PodsComponent {
 		if ( ! $this->obj_is_language_enabled( $locale, $pod ) ) {
 			return $options;
 		}
-
-		$temp_options = $options;
 
 		// Load the pod
 		foreach ( $pod[ 'options' ] as $_option => $_value ) {
@@ -504,9 +505,10 @@ class Pods_Component_I18n extends PodsComponent {
 		$locale_labels['choose_from_most_used']      = pods_v( 'label_choose_from_the_most_used_' . $locale, $pod, '', true );
 		$locale_labels['no_terms']                   = pods_v( 'label_no_terms_' . $locale, $pod, '', true );
 
-		// Asign to label array
+		// Assign to label array
 		if ( isset( $options['labels'] ) && is_array( $options['labels'] ) ) {
 			foreach( $options['labels'] as $key => $value ) {
+				// @todo Currently I only overwrite, maybe also append even if the default locale isn't set?
 				if ( isset( $locale_labels[ $key ] ) && ! empty( $locale_labels[ $key ] ) ) {
 					$options['labels'][ $key ] = $locale_labels[ $key ];
 				}
@@ -599,7 +601,6 @@ class Pods_Component_I18n extends PodsComponent {
 	public function admin ( $options, $component ) {
 
 		$this->languages_available = get_available_languages();
-		$this->admin_assets();
 
 		/**
 		 * format: array( language, version, updated, english_name, native_name, package, iso, strings )
@@ -607,7 +608,7 @@ class Pods_Component_I18n extends PodsComponent {
 		require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
 		$this->languages_translated = wp_get_available_translations();
 
-		// en_US is always installed
+		// en_US is always installed (default locale of WP)
 		$data = array( 'en_US' => array(
 			'id' => 'en_US',
 			'locale' => 'en_US',
@@ -617,12 +618,6 @@ class Pods_Component_I18n extends PodsComponent {
 		) );
 
 		foreach ( $this->languages_available as $locale ) {
-			$lang_label = $this->create_lang_label( $this->languages_translated[ $locale ] );
-			if ( ! empty( $lang_label ) ) {
-				$lang_label = $locale . ' ('. $lang_label .')';
-			} else {
-				$lang_label = $locale;
-			}
 
 			if ( array_key_exists( $locale, $this->languages ) ) {
 				$checked = 'checked="checked"';
@@ -767,7 +762,14 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @since 0.1
 	 */
 	public function admin_meta_box() {
-		add_meta_box( 'pods_i18n', __( 'Translation options', 'pods' ), array( $this, 'meta_box' ), '_pods_pod', 'side', 'default' );
+		add_meta_box(
+			'pods_i18n', // ID
+			__( 'Translation options', 'pods' ), // Label
+			array( $this, 'meta_box' ), // Callback
+			'_pods_pod', // Screen
+			'side', // Context (side)
+			'default' // Priority
+		);
 	}
 
 	/**
@@ -777,7 +779,6 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @since  0.1
 	 * @param  array $pod
-	 * @return array
 	 */
 	public function meta_box( $pod ) {
 
@@ -807,7 +808,7 @@ class Pods_Component_I18n extends PodsComponent {
 		?>
 			</div>
 			<hr>
-			<p><button id="toggle_i18n" class="button-secondary"><?php _e('Toggle translation visibility', 'pods'); ?></button></p>
+			<p><button id="toggle_i18n" class="button-secondary"><?php _e( 'Toggle translation visibility', 'pods' ); ?></button></p>
 		<?php
 		}
 	}
@@ -831,7 +832,9 @@ class Pods_Component_I18n extends PodsComponent {
 			return $output;
 		}
 
+
 		$pod = $this->cur_pod;
+		//print_r( $pod );
 		if ( empty( $pod ) ) {
 			// Setting the $pod var to a non-empty value is mandatory to prevent a loop
 			$pod = true;
@@ -841,7 +844,7 @@ class Pods_Component_I18n extends PodsComponent {
 		$output .= '<div class="pods-i18n-field">';
 		foreach ( $this->languages as $locale => $lang_data ) {
 
-			if ( ! $this->obj_is_language_enabled( $locale, $pod ) ) {
+			if ( ! $this->obj_is_language_enabled( $locale, (array) $pod ) ) {
 				continue;
 			}
 			// Our own shiny label with language information
@@ -870,7 +873,7 @@ class Pods_Component_I18n extends PodsComponent {
 
 			// Add the translation fields
 			$output .= '<div class="pods-i18n-input pods-i18n-input-' . $locale . '" data-locale="' . $locale . '" ' . $style . '>';
-			$output .= PodsForm::label( $field_name, $lang_label, __( 'help', 'pods' ) );
+			$output .= PodsForm::label( $field_name, $lang_label );
 			$output .= PodsForm::field( $field_name, pods_v( $field_name, $pod ), 'text', null, $pod );
 			$output .= '</div>';
 		}
@@ -879,7 +882,7 @@ class Pods_Component_I18n extends PodsComponent {
 	}
 
 	/**
-	 * Check if a language is get to enables for an object
+	 * Check if a language is get to enabled for an object
 	 *
 	 * @since  0.1
 	 * @param  string $locale The locale to validate
@@ -887,12 +890,14 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @return bool
 	 */
 	public function obj_is_language_enabled( $locale, $data ) {
+		// If the locale isn't enabled in the global scope from the component it's always disabled
 		if ( ! array_key_exists( $locale, $this->languages ) ) {
 			return false;
 		}
 		$data = (array) $data;
 		$options = ( isset( $data['options'] ) ) ? $data['options'] : $data;
-		if ( isset( $options['enable_i18n'][ $locale ] ) && false == (bool) $options['enable_i18n'][ $locale ] ) {
+		// If it doesn't exist in the object data then use the default (enabled)
+		if ( isset( $options['enable_i18n'][ $locale ] ) && false === (bool) $options['enable_i18n'][ $locale ] ) {
 			return false;
 		}
 		return true;

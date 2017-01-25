@@ -43,7 +43,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	define( 'PODS_DB_VERSION', '2.3.5' );
 
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
+		define( 'PODS_WP_VERSION_MINIMUM', '4.0' );
 	}
 
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {

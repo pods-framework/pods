@@ -506,4 +506,26 @@ div.row-actions.row-actions-toggle {
         margin-top: 0;
         margin-bottom: 0;
     }
+
+    div.pods-manage-field .pods-field-option label,
+    div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+        float: none;
+        display: block;
+        width: 100%;
+        max-width: none;
+        padding-bottom: 4px;
+    }
+
+    .pods-manage-field .pods-field-option input[type="text"],
+    .pods-manage-field .pods-field-option select,
+    .pods-manage-field .pods-field-option textarea,
+    .pods-manage-field .pods-field-option .pods-field.pods-boolean,
+    .pods-manage-field .pods-pick-values,
+    .pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+    .pods-manage-field .pods-slider-field {
+        display: block;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+    }
 }

@@ -179,7 +179,8 @@ tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort {
 
 tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
     vertical-align: top;
-    margin-top: 1px;
+    margin-top: 7px;
+    margin-left: -5px;
 }
 
 tbody.pods-manage-list tr.pods-manage-row td > span.pods-manage-row-more {

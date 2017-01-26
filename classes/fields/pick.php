@@ -905,7 +905,7 @@ class PodsField_Pick extends PodsField {
         }
 
 	    $field_type = 'pick';
-	    pods_view( PODS_DIR . 'ui/fields-mv/pick.php', compact( array_keys( get_defined_vars() ) ) );
+	    pods_view( PODS_DIR . 'ui/fields-dfv/pick.php', compact( array_keys( get_defined_vars() ) ) );
 
     }
 

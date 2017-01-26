@@ -14,15 +14,17 @@ class PodsMVFieldData {
 	 */
 	public function __construct( $field_type, $data ) {
 
-		$data[ 'fieldType' ] = $field_type;
-		$this->export_data    = $data;
+		$data['fieldType'] = $field_type;
+
+		$this->export_data = $data;
+
 	}
 
 	/**
 	 * Sends direct output
 	 */
 	public function emit_script() { ?>
-		<script type="application/json" class="pods-mv-field-data"><?php echo self::json_encode_hex_tag( $this->export_data ); ?></script>
+		<script type="application/json" class="pods-dfv-field-data"><?php echo self::json_encode_hex_tag( $this->export_data ); ?></script>
 	<?php }
 
 	/**

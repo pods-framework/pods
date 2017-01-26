@@ -310,8 +310,8 @@ class PodsInit {
 
 		// MV stuff
 		wp_register_script(
-			'pods-mv-fields',
-			PODS_URL . 'ui/fields-mv/js/pods-mv-fields.min.js',
+			'pods-dfv',
+			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
 			array(
 				'jquery',
 				'jquery-ui-core',

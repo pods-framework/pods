@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Pods Field class for common type-specific methods.
+ *
  * @package Pods
  */
 class PodsField {
@@ -425,6 +427,53 @@ class PodsField {
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
 		return $value;
+
+	}
+
+	/**
+	 * Render input script for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 */
+	public function render_input_script( array $args ) {
+
+		$dfv_field_data = $this->build_dfv_field_data( $args );
+	?>
+		<script type="application/json" class="pods-dfv-field-data"><?php
+			echo json_encode( $dfv_field_data, JSON_HEX_TAG );
+			?></script>
+	<?php
+
+	}
+
+	/**
+	 * Build field data for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 */
+	public function build_dfv_field_data( array $args ) {
+
+		$data = array();
+
+		return $data;
 
 	}
 

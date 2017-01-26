@@ -47,7 +47,7 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
-	 * Add admin_init actions
+	 * Add admin_init actions.
 	 *
 	 * @since 2.3
 	 */

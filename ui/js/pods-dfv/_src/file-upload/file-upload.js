@@ -37,7 +37,7 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 	 */
 	onBeforeRender: function () {
 		if ( this.collection === undefined ) {
-			this.collection = new FileUploadCollection( this.fieldData );
+			this.collection = new FileUploadCollection( this.fieldItemsData );
 		}
 	},
 

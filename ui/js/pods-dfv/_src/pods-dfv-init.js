@@ -48,7 +48,7 @@ export const PodsDFVInit = function ( fields ) {
 				newField = new FieldClass( {
 					el       : this,
 					model    : fieldModel,
-					fieldData: data.fieldData
+					fieldItemsData: data.fieldItemsData
 				} );
 
 				// Render the field, stash a reference, trigger an event for the outside world

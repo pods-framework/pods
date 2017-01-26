@@ -39,7 +39,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 */
 	onBeforeRender: function () {
 		if ( this.collection === undefined ) {
-			this.collection = new RelationshipCollection( this.fieldData );
+			this.collection = new RelationshipCollection( this.fieldItemsData );
 		}
 	},
 

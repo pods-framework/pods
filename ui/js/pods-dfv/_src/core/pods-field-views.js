@@ -32,6 +32,6 @@ export const PodsFieldView = Marionette.View.extend( {
 export const PodsDFVFieldLayout = Marionette.View.extend( {
 
 	initialize: function ( options ) {
-		this.fieldData = options.fieldData;
+		this.fieldItemsData = options.fieldItemsData;
 	}
 } );

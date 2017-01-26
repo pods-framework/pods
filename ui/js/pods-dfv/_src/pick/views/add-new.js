@@ -6,7 +6,7 @@ import { PodsFieldListView, PodsFieldView } from '~/ui/js/pods-dfv/_src/core/pod
 export const AddNew = PodsFieldView.extend( {
 	tagName: 'div',
 
-	className: 'podsform-flex-relationship-container',
+	className: 'podsform-dfv-list-relationship-container',
 
 	ui: {
 		addButton: '.pods-related-add-new'

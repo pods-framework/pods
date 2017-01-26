@@ -6,7 +6,7 @@
  * @var $value           array
  * @var $id              string
  */
-wp_enqueue_style( 'pods-flex' );
+wp_enqueue_style( 'pods-dfv-list' );
 wp_enqueue_script( 'pods-dfv' );
 wp_enqueue_style( 'pods-select2' );
 wp_enqueue_script( 'pods-select2' );

@@ -22,7 +22,7 @@ export const FileUploadQueueItem = Marionette.View.extend( {
 
 	attributes: function () {
 		return {
-			class: 'pods-flex-item',
+			class: 'pods-dfv-list-item',
 			id   : this.model.get( 'id' )
 		};
 	},
@@ -43,7 +43,7 @@ export const FileUploadQueueItem = Marionette.View.extend( {
 export const FileUploadQueue = Marionette.CollectionView.extend( {
 	tagName: 'ul',
 
-	className: 'pods-flex-list pods-flex-queue',
+	className: 'pods-dfv-list pods-dfv-list-queue',
 
 	childView: FileUploadQueueItem
 } );

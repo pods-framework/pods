@@ -222,7 +222,7 @@ class PodsField_Pick extends PodsField {
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' ),
-                        'flexible' => __( 'Flexible', 'pods' ),
+                        'list' => __( 'List view', 'pods' ),
                     )
                 ),
                 'dependency' => true
@@ -239,7 +239,7 @@ class PodsField_Pick extends PodsField {
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' ),
-                        'flexible' => __( 'Flexible', 'pods' ),
+                        'list' => __( 'List view', 'pods' ),
                     )
                 ),
                 'dependency' => true
@@ -869,8 +869,8 @@ class PodsField_Pick extends PodsField {
 	            $options[ 'view_name' ] = 'radio';
             } elseif ( 'autocomplete' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
 	            $options[ 'view_name' ] = 'select2';
-            } elseif ( 'flexible' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
-	            $options[ 'view_name' ] = 'flexible';
+            } elseif ( 'list' == pods_var( self::$type . '_format_single', $options, 'dropdown' ) ) {
+	            $options[ 'view_name' ] = 'list';
             } else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
@@ -889,8 +889,8 @@ class PodsField_Pick extends PodsField {
 	            $options[ 'view_name' ] = 'select';
             } elseif ( 'autocomplete' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
 	            $options[ 'view_name' ] = 'select2';
-            } elseif ( 'flexible' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
-	            $options[ 'view_name' ] = 'flexible';
+            } elseif ( 'list' == pods_var( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+	            $options[ 'view_name' ] = 'list';
             } else {
                 // Support custom integration
                 do_action( 'pods_form_ui_field_pick_input_' . pods_var( self::$type . '_format_type', $options, 'single' ) . '_' . pods_var( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );

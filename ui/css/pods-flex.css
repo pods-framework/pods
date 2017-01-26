@@ -1,4 +1,4 @@
-ul.pods-flex-list {
+ul.pods-dfv-list {
 	background: #fff;
 	margin: 0 0 5px 0;
 	padding: 0;
@@ -7,28 +7,28 @@ ul.pods-flex-list {
 	overflow: hidden;
 }
 
-ul.pods-flex-list:empty {
+ul.pods-dfv-list:empty {
 	display: none;
 }
 
-ul.pods-flex-meta {
+ul.pods-dfv-list-meta {
 	display: block;
 	overflow: hidden;
 	zoom: 1;
 	position: relative;
 }
 
-form.pods-form ul.pods-flex-list li.pods-flex-name {
+form.pods-form ul.pods-dfv-list li.pods-dfv-list-name {
 	overflow: inherit;
 }
 
-ul.pods-flex-list li.pods-flex-col {
+ul.pods-dfv-list li.pods-dfv-list-col {
 	float: left;
 	margin: 0;
 	padding: 0;
 }
 
-ul.pods-flex-list li.pods-flex-icon {
+ul.pods-dfv-list li.pods-dfv-list-icon {
 	width: 40px;
 	margin: 0 5px;
 	height: 32px;
@@ -37,7 +37,7 @@ ul.pods-flex-list li.pods-flex-icon {
 	text-align: center;
 }
 
-ul.pods-flex-list li.pods-flex-icon img {
+ul.pods-dfv-list li.pods-dfv-list-icon img {
 	display: inline-block;
 	vertical-align: middle;
 	float: none;
@@ -45,27 +45,27 @@ ul.pods-flex-list li.pods-flex-icon img {
 	margin: 0;
 }
 
-ul.pods-flex-list li.pods-flex-handle {
+ul.pods-dfv-list li.pods-dfv-list-handle {
 	width: 25px;
 	height: 32px;
 	float: left;
 	cursor: move;
 }
 
-ul.pods-flex-list li.pods-flex-edit,
-ul.pods-flex-list li.pods-flex-link,
-ul.pods-flex-list li.pods-flex-download,
-ul.pods-flex-list li.pods-flex-remove {
+ul.pods-dfv-list li.pods-dfv-list-edit,
+ul.pods-dfv-list li.pods-dfv-list-link,
+ul.pods-dfv-list li.pods-dfv-list-download,
+ul.pods-dfv-list li.pods-dfv-list-remove {
 	width: 25px;
 	height: 32px;
 	float: right;
 }
 
-ul.pods-flex-list li.pods-flex-handle span,
-ul.pods-flex-list li.pods-flex-edit a,
-ul.pods-flex-list li.pods-flex-link a,
-ul.pods-flex-list li.pods-flex-download a,
-ul.pods-flex-list li.pods-flex-remove a {
+ul.pods-dfv-list li.pods-dfv-list-handle span,
+ul.pods-dfv-list li.pods-dfv-list-edit a,
+ul.pods-dfv-list li.pods-dfv-list-link a,
+ul.pods-dfv-list li.pods-dfv-list-download a,
+ul.pods-dfv-list li.pods-dfv-list-remove a {
 	display: block;
 	width: 25px;
 	height: 32px;
@@ -74,76 +74,76 @@ ul.pods-flex-list li.pods-flex-remove a {
 	color: #616161;
 }
 
-ul.pods-flex-list li.pods-flex-handle span:hover,
-ul.pods-flex-list li.pods-flex-edit a:hover,
-ul.pods-flex-list li.pods-flex-link a:hover,
-ul.pods-flex-list li.pods-flex-download a:hover,
-ul.pods-flex-list li.pods-flex-remove a:hover {
+ul.pods-dfv-list li.pods-dfv-list-handle span:hover,
+ul.pods-dfv-list li.pods-dfv-list-edit a:hover,
+ul.pods-dfv-list li.pods-dfv-list-link a:hover,
+ul.pods-dfv-list li.pods-dfv-list-download a:hover,
+ul.pods-dfv-list li.pods-dfv-list-remove a:hover {
 	opacity: 1;
 }
 
-ul.pods-flex-list li.pods-flex-handle span:focus,
-ul.pods-flex-list li.pods-flex-edit a:focus,
-ul.pods-flex-list li.pods-flex-link a:focus,
-ul.pods-flex-list li.pods-flex-download a:focus,
-ul.pods-flex-list li.pods-flex-remove a:focus {
+ul.pods-dfv-list li.pods-dfv-list-handle span:focus,
+ul.pods-dfv-list li.pods-dfv-list-edit a:focus,
+ul.pods-dfv-list li.pods-dfv-list-link a:focus,
+ul.pods-dfv-list li.pods-dfv-list-download a:focus,
+ul.pods-dfv-list li.pods-dfv-list-remove a:focus {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 
-ul.pods-flex-list li.pods-flex-handle span:before,
-ul.pods-flex-list li.pods-flex-edit a:before,
-ul.pods-flex-list li.pods-flex-link a:before,
-ul.pods-flex-list li.pods-flex-download a:before,
-ul.pods-flex-list li.pods-flex-remove a:before {
+ul.pods-dfv-list li.pods-dfv-list-handle span:before,
+ul.pods-dfv-list li.pods-dfv-list-edit a:before,
+ul.pods-dfv-list li.pods-dfv-list-link a:before,
+ul.pods-dfv-list li.pods-dfv-list-download a:before,
+ul.pods-dfv-list li.pods-dfv-list-remove a:before {
 	margin-left: -20px;
 	font: 400 20px/1 dashicons;
 	line-height: 32px;
 }
 
-ul.pods-flex-list li.pods-flex-handle span:before {
+ul.pods-dfv-list li.pods-dfv-list-handle span:before {
 	content: "\f333";
 }
 
-ul.pods-flex-list li.pods-flex-edit a:before {
+ul.pods-dfv-list li.pods-dfv-list-edit a:before {
 	content: "\f464";
 }
 
-ul.pods-flex-list li.pods-flex-link a:before {
+ul.pods-dfv-list li.pods-dfv-list-link a:before {
 	content: "\f103";
 }
 
-ul.pods-flex-list li.pods-flex-download a:before {
+ul.pods-dfv-list li.pods-dfv-list-download a:before {
 	content: "\f316";
 }
 
-ul.pods-flex-list li.pods-flex-remove a:before {
+ul.pods-dfv-list li.pods-dfv-list-remove a:before {
 	content: "\f158";
 }
 
-ul.pods-flex-list li.pods-flex-handle span,
-ul.pods-flex-list li.pods-flex-edit a,
-ul.pods-flex-list li.pods-flex-link a,
-ul.pods-flex-list li.pods-flex-download a,
-ul.pods-flex-list li.pods-flex-remove a {
+ul.pods-dfv-list li.pods-dfv-list-handle span,
+ul.pods-dfv-list li.pods-dfv-list-edit a,
+ul.pods-dfv-list li.pods-dfv-list-link a,
+ul.pods-dfv-list li.pods-dfv-list-download a,
+ul.pods-dfv-list li.pods-dfv-list-remove a {
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-ul.pods-flex-list li.pods-flex-name {
+ul.pods-dfv-list li.pods-dfv-list-name {
 	position: absolute;
 	left: 80px;
 	right: 105px; /* needed for action buttons */
 	padding-top: 5px;
 }
 
-form.pods-form ul.pods-flex-list li.pods-flex-name {
+form.pods-form ul.pods-dfv-list li.pods-dfv-list-name {
 	padding: 3px 0;
 	overflow: visible;
 }
 
-form.pods-form ul.pods-flex-list li.pods-flex-name input[type=text] {
+form.pods-form ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
 	width: 100% !important;
 	font-size: 1em; /*1vh*/
 	line-height: 1;
@@ -151,7 +151,7 @@ form.pods-form ul.pods-flex-list li.pods-flex-name input[type=text] {
 	margin: 0;
 }
 
-li.pods-flex-item {
+li.pods-dfv-list-item {
 	display: block;
 	padding: 8px 10px;
 	margin: 0;
@@ -159,19 +159,19 @@ li.pods-flex-item {
 	border-radius: 3px;
 }
 
-li.pods-flex-item:hover {
+li.pods-dfv-list-item:hover {
 	background: #fafafa;
 }
 
-li.pods-flex-item:last-of-type {
+li.pods-dfv-list-item:last-of-type {
 	border-bottom: 0;
 }
 
-ul.pods-flex-queue {
+ul.pods-dfv-list-queue {
 	margin: 14px 0 5px;
 }
 
-ul.pods-flex-queue li.pods-flex-name {
+ul.pods-dfv-list-queue li.pods-dfv-list-name {
 	position: relative;
 	width: 73%;
 	left: auto;
@@ -179,28 +179,28 @@ ul.pods-flex-queue li.pods-flex-name {
 	padding-top: 0;
 }
 
-ul.pods-flex-queue li.pods-flex-item li.pods-progress,
-ul.pods-flex-queue li.pods-flex-item li.pods-progress div.progress-bar {
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress,
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress div.progress-bar {
 	border-radius: 10px;
 	height: 18px;
 }
 
-ul.pods-flex-queue li.pods-flex-item li.pods-progress {
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress {
 	position: relative;
 	width: 23%;
 	margin: 2px 2% 0 0;
 	background-color: #e8e8e8;
 }
 
-ul.pods-flex-queue li.pods-flex-item li.pods-progress div.progress-bar {
+ul.pods-dfv-list-queue li.pods-dfv-list-item li.pods-progress div.progress-bar {
 	width: 0;
 	background-color: #1073AA;
 }
 
-li.pods-flex-item:after,
-ul.pods-flex-list li.pods-flex-item ul.pods-flex-meta:after,
-ul.pods-flex-queue li.pods-flex-item:after,
-ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
+li.pods-dfv-list-item:after,
+ul.pods-dfv-list li.pods-dfv-list-item ul.pods-dfv-list-meta:after,
+ul.pods-dfv-list-queue li.pods-dfv-list-item:after,
+ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 	content: "";
 	display: table;
 	clear: both;
@@ -209,7 +209,7 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 /**
  * Tiles view
  */
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-item {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-item {
 	display: inline-block;
 	width: 150px;
 	border-bottom: 0;
@@ -217,7 +217,7 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 	vertical-align: top;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon {
 	width: auto;
 	float: none;
 	margin: 32px 0 0;
@@ -227,7 +227,7 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 	text-align: center;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-icon img {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {
 	max-width: none;
 	max-height: none;
 	float: none;
@@ -236,11 +236,11 @@ ul.pods-flex-queue li.pods-flex-item ul.pods-flex-meta:after {
 	margin: 0;
 }
 
-form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name {
+form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name {
 	position: static;
 	float: none;
 }
-form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name input[type=text] {
+form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
 	margin: 0;
 	padding: .3vh 6px;
 }
@@ -248,47 +248,47 @@ form.pods-form .pods-field-template-tiles ul.pods-flex-list li.pods-flex-name in
 /*
  * @todo Probably remove this
  */
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-edit,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-link,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-download,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-edit,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-link,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-download,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-remove {
 	position: absolute;
 	top: 0;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-handle {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle {
 	left: 0;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-edit {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-edit {
 	right: 75px;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-link {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-link {
 	right: 50px;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-download {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-download {
 	right: 25px;
 }
 
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-remove {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-remove {
 	right: 0;
 }
 /*
  * @todo until here
  */
 
-ul.pods-flex-list li.pods-flex-actions {
+ul.pods-dfv-list li.pods-dfv-list-actions {
 	position: absolute;
 	top: 0;
 	right: 0;
 }
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-edit,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-link,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-download,
-.pods-field-template-tiles ul.pods-flex-list li.pods-flex-actions li.pods-flex-remove {
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-edit,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-link,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-download,
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-actions li.pods-dfv-list-remove {
 	position: static;
 	float: right;
 }
@@ -307,6 +307,6 @@ div.open span.pods-quick-add {
 	display: none;
 }
 
-.pods-ui-field .pods-flex-add {
+.pods-ui-field .pods-dfv-list-add {
 	margin-bottom: 10px;
 }

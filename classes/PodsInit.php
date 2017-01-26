@@ -324,7 +324,7 @@ class PodsInit {
 			PODS_VERSION,
 			true
 		);
-		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-dfv-list', PODS_URL . 'ui/css/pods-dfv-list.css', array(), PODS_VERSION );
 	}
 
 	/**

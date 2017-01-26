@@ -1,8 +1,8 @@
-<ul class="pods-flex-meta media-item">
+<ul class="pods-dfv-list-meta media-item">
 	<% if ( '' === errorMsg ) { %>
-		<li class="pods-flex-col pods-progress"><div class="progress-bar" style="width: <%- progress %>%;"></div></li>
+		<li class="pods-dfv-list-col pods-progress"><div class="progress-bar" style="width: <%- progress %>%;"></div></li>
 	<% } %>
-	<li class="pods-flex-col pods-flex-name"><%- filename %></li>
+	<li class="pods-dfv-list-col pods-dfv-list-name"><%- filename %></li>
 </ul>
 <% if ( '' !== errorMsg ) { %>
 	<div class="error"><%- errorMsg %></div>

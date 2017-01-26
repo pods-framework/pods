@@ -1,20 +1,20 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/pick/views/flex-item.html';
+import template from '~/ui/js/pods-dfv/_src/pick/views/list-item.html';
 
 import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
 
 /**
  *
  */
-export const FlexItem = PodsFieldView.extend( {
+export const ListItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	className: 'pods-flex-item pods-relationship',
+	className: 'pods-dfv-list-item pods-relationship',
 
 	template: _.template( template ),
 
 	ui: {
-		removeButton: '.pods-flex-remove a'
+		removeButton: '.pods-dfv-list-remove a'
 	},
 
 	triggers: {
@@ -32,12 +32,12 @@ export const FlexItem = PodsFieldView.extend( {
 /**
  *  Represents the markup of the container as a whole
  */
-export const FlexView = PodsFieldListView.extend( {	// Cache the template function for the overall container
+export const ListView = PodsFieldListView.extend( {	// Cache the template function for the overall container
 	tagName: 'ul',
 
-	className: 'pods-flex-list pods-relationship',
+	className: 'pods-dfv-list pods-relationship',
 
-	childView: FlexItem,
+	childView: ListItem,
 
 	filter: function ( child, index, collection ) {
 		return child.attributes.selected;

@@ -7,7 +7,7 @@ export const FileUploadForm = PodsFieldView.extend( {
 	tagName: 'div',
 
 	ui: {
-		addButton: '.pods-flex-add'
+		addButton: '.pods-dfv-list-add'
 	},
 
 	template: _.template( template ),

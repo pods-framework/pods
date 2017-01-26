@@ -10,7 +10,7 @@ import {PickFieldModel} from '~/ui/js/pods-dfv/_src/pick/pick-field-model';
 import {RadioView} from '~/ui/js/pods-dfv/_src/pick/views/radio-view';
 import {CheckboxView} from '~/ui/js/pods-dfv/_src/pick/views/checkbox-view';
 import {SelectView} from '~/ui/js/pods-dfv/_src/pick/views/select-view';
-import {FlexView} from '~/ui/js/pods-dfv/_src/pick/views/flex-view';
+import {ListView} from '~/ui/js/pods-dfv/_src/pick/views/list-view';
 import {AddNew} from '~/ui/js/pods-dfv/_src/pick/views/add-new';
 
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
@@ -20,7 +20,7 @@ const views = {
 	'select'  : SelectView,
 	'select2' : SelectView,  // SelectView handles select2 as well
 	'radio'   : RadioView,
-	'flexible': FlexView
+	'list'    : ListView
 };
 
 /**
@@ -68,7 +68,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
-	 *"Remove" in flex view just toggles an item's selected attribute
+	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
 	 * @param args

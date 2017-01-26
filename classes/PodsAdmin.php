@@ -719,7 +719,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-flex' );
+            wp_enqueue_style( 'pods-dfv-list' );
     }
 
     /**

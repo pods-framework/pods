@@ -4,7 +4,7 @@
  * @var $options         array
  * @var $field_type      string
  */
-wp_enqueue_style( 'pods-flex' );
+wp_enqueue_style( 'pods-dfv-list' );
 wp_enqueue_script( 'pods-dfv' );
 
 $file_limit = 1;

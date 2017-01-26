@@ -9,15 +9,15 @@ import { PodsFieldListView, PodsFieldView } from '~/ui/js/pods-dfv/_src/core/pod
 export const FileUploadItem = PodsFieldView.extend( {
 	tagName: 'li',
 
-	className: 'pods-flex-item',
+	className: 'pods-dfv-list-item',
 
 	ui: {
-		dragHandle  : '.pods-flex-handle',
-		editLink    : '.pods-flex-edit-link',
-		viewLink    : '.pods-flex-link',
-		downloadLink: '.pods-flex-download',
-		removeButton: '.pods-flex-remove',
-		itemName    : '.pods-flex-name'
+		dragHandle  : '.pods-dfv-list-handle',
+		editLink    : '.pods-dfv-list-edit-link',
+		viewLink    : '.pods-dfv-list-link',
+		downloadLink: '.pods-dfv-list-download',
+		removeButton: '.pods-dfv-list-remove',
+		itemName    : '.pods-dfv-list-name'
 	},
 
 	template: _.template( template ),
@@ -33,7 +33,7 @@ export const FileUploadItem = PodsFieldView.extend( {
 export const FileUploadList = PodsFieldListView.extend( {
 	tagName: 'ul',
 
-	className: 'pods-flex-list',
+	className: 'pods-dfv-list',
 
 	childView: FileUploadItem,
 

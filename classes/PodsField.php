@@ -62,7 +62,7 @@ class PodsField {
 	 */
 	public function __construct() {
 
-		// Placeholder
+		// Subclasses utilize this method if needed.
 
 	}
 
@@ -209,13 +209,11 @@ class PodsField {
 	/**
 	 * Customize output of the form field
 	 *
-	 * @param string $name
-	 * @param mixed|null  $value
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
-	 *
-	 * @return void
+	 * @param string     $name
+	 * @param mixed|null $value
+	 * @param array|null $options
+	 * @param array|null $pod
+	 * @param int|null   $id
 	 *
 	 * @since 2.0
 	 */
@@ -236,12 +234,12 @@ class PodsField {
 	/**
 	 * Get the data from the field
 	 *
-	 * @param string       $name  The name of the field
+	 * @param string            $name  The name of the field
 	 * @param string|array|null $value The value of the field
 	 * @param array|null        $options
 	 * @param array|null        $pod
 	 * @param int|null          $id
-	 * @param boolean      $in_form
+	 * @param boolean           $in_form
 	 *
 	 * @return array Array of possible field data
 	 *
@@ -275,7 +273,7 @@ class PodsField {
 	/**
 	 * Validate a value before it's saved
 	 *
-	 * @param mixed  $value
+	 * @param mixed       $value
 	 * @param string|null $name
 	 * @param array|null  $options
 	 * @param array|null  $fields
@@ -296,7 +294,7 @@ class PodsField {
 	/**
 	 * Change the value or perform actions after validation but before saving to the DB
 	 *
-	 * @param mixed  $value
+	 * @param mixed       $value
 	 * @param int|null    $id
 	 * @param string|null $name
 	 * @param array|null  $options
@@ -317,7 +315,7 @@ class PodsField {
 	/**
 	 * Save the value to the DB
 	 *
-	 * @param mixed  $value
+	 * @param mixed       $value
 	 * @param int|null    $id
 	 * @param string|null $name
 	 * @param array|null  $options
@@ -325,7 +323,7 @@ class PodsField {
 	 * @param array|null  $pod
 	 * @param object|null $params
 	 *
-	 * @return bool|void Whether the value was saved
+	 * @return bool|null Whether the value was saved, returning null means no save needed to occur
 	 *
 	 * @since 2.3
 	 */
@@ -338,7 +336,7 @@ class PodsField {
 	/**
 	 * Perform actions after saving to the DB
 	 *
-	 * @param mixed  $value
+	 * @param mixed       $value
 	 * @param int|null    $id
 	 * @param string|null $name
 	 * @param array|null  $options
@@ -346,13 +344,11 @@ class PodsField {
 	 * @param array|null  $pod
 	 * @param object|null $params
 	 *
-	 * @return void
-	 *
 	 * @since 2.0
 	 */
 	public function post_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
-		// Placeholder
+		// Subclasses utilize this method if needed.
 
 	}
 
@@ -361,16 +357,14 @@ class PodsField {
 	 *
 	 * @param int|null    $id
 	 * @param string|null $name
-	 * @param array|null   $options
+	 * @param array|null  $options
 	 * @param string|null $pod
-	 *
-	 * @return void
 	 *
 	 * @since 2.0
 	 */
 	public function pre_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
-		// Placeholder
+		// Subclasses utilize this method if needed.
 
 	}
 
@@ -382,13 +376,11 @@ class PodsField {
 	 * @param array|null  $options
 	 * @param array|null  $pod
 	 *
-	 * @return void
-	 *
 	 * @since 2.3
 	 */
 	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
 
-		// Placeholder
+		// Subclasses utilize this method if needed.
 
 	}
 
@@ -400,21 +392,19 @@ class PodsField {
 	 * @param array|null  $options
 	 * @param array|null  $pod
 	 *
-	 * @return void
-	 *
 	 * @since 2.0
 	 */
 	public function post_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
-		// Placeholder
+		// Subclasses utilize this method if needed.
 
 	}
 
 	/**
 	 * Customize the Pods UI manage table column output
 	 *
-	 * @param int    $id
-	 * @param mixed  $value
+	 * @param int         $id
+	 * @param mixed       $value
 	 * @param string|null $name
 	 * @param array|null  $options
 	 * @param array|null  $fields
@@ -486,7 +476,7 @@ class PodsField {
 	 */
 	public static function __set_state( $properties ) {
 
-		// Placeholder
+		return;
 
 	}
 

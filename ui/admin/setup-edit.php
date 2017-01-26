@@ -816,7 +816,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        fieldModel = new PodsDFV.models.PodsMVFieldModel( {
+        fieldModel = new PodsDFV.models.PodsDFVFieldModel( {
             htmlAttr: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",
                 "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",

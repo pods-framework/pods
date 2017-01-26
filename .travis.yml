@@ -54,7 +54,7 @@ before_script:
 
 script:
     - vendor/bin/phpunit
-    - npm run test-mv-fields
+    - npm run pods-test-dfv
 
 branches:
     only:

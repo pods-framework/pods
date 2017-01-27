@@ -232,6 +232,113 @@ class PodsField {
 	}
 
 	/**
+	 * Render input script for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 */
+	public function render_input_script( array $args ) {
+
+		$dfv_field_data = $this->build_dfv_field_data( $args );
+	?>
+		<script type="application/json" class="pods-dfv-field-data"><?php
+			echo json_encode( $dfv_field_data, JSON_HEX_TAG );
+			?></script>
+	<?php
+
+	}
+
+	/**
+	 * Build field data for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name            Field name
+	 *     @type string     $type            Pod field type
+	 *     @type string     $form_field_type HTML field type
+	 *     @type array      $options         Field options
+	 *     @type mixed      $value           Current value
+	 *     @type array      $pod             Pod information
+	 *     @type int|string $id              Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_data( array $args ) {
+
+		$attributes = PodsForm::merge_attributes( array(), $args['name'], $args['form_field_type'], $args['options'] );
+		$attributes = array_map( 'esc_attr', $attributes );
+
+		$data = array(
+			'htmlAttr'       => array(
+				'id'         => $attributes['id'],
+				'class'      => $attributes['class'],
+				'name'       => $attributes['name'],
+				'name_clean' => $attributes['data-name-clean'],
+			),
+			'fieldType'      => $args['type'],
+			'fieldItemsData' => $this->build_dfv_field_items_data( $args ),
+			'fieldConfig'    => $this->build_dfv_field_config( $args ),
+		);
+
+		return $data;
+
+	}
+
+	/**
+	 * Build field config for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_config( array $args ) {
+
+		return $args['options'];
+
+	}
+
+	/**
+	 * Build field config for Pods DFV
+	 *
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_items_data( array $args ) {
+
+		return array();
+
+	}
+
+	/**
 	 * Get the data from the field
 	 *
 	 * @param string            $name  The name of the field
@@ -417,53 +524,6 @@ class PodsField {
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
 		return $value;
-
-	}
-
-	/**
-	 * Render input script for Pods DFV
-	 *
-	 * @param array $args {
-	 *     Field information arguments.
-	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
-	 * }
-	 */
-	public function render_input_script( array $args ) {
-
-		$dfv_field_data = $this->build_dfv_field_data( $args );
-	?>
-		<script type="application/json" class="pods-dfv-field-data"><?php
-			echo json_encode( $dfv_field_data, JSON_HEX_TAG );
-			?></script>
-	<?php
-
-	}
-
-	/**
-	 * Build field data for Pods DFV
-	 *
-	 * @param array $args {
-	 *     Field information arguments.
-	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
-	 * }
-	 */
-	public function build_dfv_field_data( array $args ) {
-
-		$data = array();
-
-		return $data;
 
 	}
 

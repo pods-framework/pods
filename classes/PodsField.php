@@ -275,9 +275,15 @@ class PodsField {
 	 */
 	public function build_dfv_field_data( array $args ) {
 
+		// Handle DFW options.
+		$args['options'] = $this->build_dfv_field_options( $args['options'], $args );
+
+		// Handle DFW attributes.
 		$attributes = PodsForm::merge_attributes( array(), $args['name'], $args['form_field_type'], $args['options'] );
+		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
+		// Build DFW field data.
 		$data = array(
 			'htmlAttr'       => array(
 				'id'         => $attributes['id'],
@@ -291,6 +297,52 @@ class PodsField {
 		);
 
 		return $data;
+
+	}
+
+	/**
+	 * Build field options and handle any validation/customization for Pods DFV
+	 *
+	 * @param array $options
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_options( array $options, array $args ) {
+
+		return $options;
+
+	}
+
+	/**
+	 * Build field HTML attributes for Pods DFV
+	 *
+	 * @param array $attributes
+	 * @param array $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_attributes( array $attributes, array $args ) {
+
+		return $attributes;
 
 	}
 

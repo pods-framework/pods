@@ -469,7 +469,7 @@ class PodsField_Currency extends PodsField {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[ $currency ]['sign'];
 
 		$check = str_replace(
 			array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ), html_entity_decode( $thousands ) ),
@@ -543,7 +543,7 @@ class PodsField_Currency extends PodsField {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[ $currency ]['sign'];
 
 		$value = str_replace( array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ) ), array( '', '.', '', '' ), $value );
 		$value = trim( $value );

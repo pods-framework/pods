@@ -301,14 +301,6 @@ class PodsField_File extends PodsField {
 		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( ! is_admin() ) {
-			include_once( ABSPATH . '/wp-admin/includes/template.php' );
-
-			if ( is_multisite() ) {
-				include_once( ABSPATH . '/wp-admin/includes/ms.php' );
-			}
-		}
-
 		if ( ( ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) && ( ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ) || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_bool( PODS_FILES_REQUIRE_LOGIN ) && true === PODS_FILES_REQUIRE_LOGIN && ! is_user_logged_in() ) || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && ! is_bool( PODS_FILES_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ) ) ) {
 			?>
 			<p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
@@ -316,14 +308,12 @@ class PodsField_File extends PodsField {
 			return;
 		}
 
-		// @todo test frontend media modal
-		if ( ! is_admin() || ! is_user_logged_in() || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
-			$options[ self::$type . '_uploader' ] = 'plupload';
-		}
-
 		$args = compact( array_keys( get_defined_vars() ) );
 
-		PodsForm::field_method( $field_type, 'render_input_script', $args );
+		wp_enqueue_style( 'pods-dfv-list' );
+		wp_enqueue_script( 'pods-dfv' );
+
+		PodsForm::field_method( $form_field_type, 'render_input_script', $args );
 
 		return;
 
@@ -348,6 +338,261 @@ class PodsField_File extends PodsField {
 
 			return;
 		}
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_options( array $options, array $args ) {
+
+		if ( ! is_admin() ) {
+			include_once( ABSPATH . '/wp-admin/includes/template.php' );
+
+			if ( is_multisite() ) {
+				include_once( ABSPATH . '/wp-admin/includes/ms.php' );
+			}
+		}
+
+		// Handle default template setting.
+		$file_field_template = pods_v( $args['form_field_type'] . '_field_template', $options, 'rows', true );
+
+		// Get which file types the field is limited to.
+		$limit_file_type = pods_v( $args['form_field_type'] . '_type', $options, 'images' );
+
+		// Non-image file types are forced to rows template right now.
+		if ( 'images' !== $limit_file_type ) {
+			$file_field_template = 'rows';
+		}
+
+		$options[ $args['form_field_type'] . '_field_template' ] = $file_field_template;
+
+		// Enforce limit.
+		$file_limit = 1;
+
+		if ( 'multi' === pods_v( $args['form_field_type'] . '_format_type', $options, 'single' ) ) {
+			$file_limit = (int) pods_v( $args['form_field_type'] . '_limit', $options, 0 );
+
+			if ( $file_limit < 0 ) {
+				$file_limit = 0;
+			}
+		}
+
+		$options[ $args['form_field_type'] . '_limit' ] = $file_limit;
+
+		// Build types and extensions to limit by.
+		if ( 'images' === $limit_file_type ) {
+			$limit_types      = 'image';
+			$limit_extensions = 'jpg,jpeg,png,gif';
+		} elseif ( 'video' === $limit_file_type ) {
+			$limit_types      = 'video';
+			$limit_extensions = 'mpg,mov,flv,mp4';
+		} elseif ( 'audio' === $limit_file_type ) {
+			$limit_types      = 'audio';
+			$limit_extensions = 'mp3,m4a,wav,wma';
+		} elseif ( 'text' === $limit_file_type ) {
+			$limit_types      = 'text';
+			$limit_extensions = 'txt,rtx,csv,tsv';
+		} elseif ( 'any' === $limit_file_type ) {
+			$limit_types      = '';
+			$limit_extensions = '*';
+		} else {
+			$limit_types = $limit_extensions = pods_v( $args['form_field_type'] . '_allowed_extensions', $options, '', true );
+		}
+
+		// Find and replace certain characters to properly split by commas.
+		$find    = array(
+			' ',
+			'.',
+			"\n",
+			"\t",
+			';',
+		);
+		$replace = array(
+			'',
+			',',
+			',',
+			',',
+		);
+
+		$limit_types      = trim( str_replace( $find, $replace, $limit_types ), ',' );
+		$limit_extensions = trim( str_replace( $find, $replace, $limit_extensions ), ',' );
+		$mime_types       = wp_get_mime_types();
+
+		if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ), true ) ) {
+			$new_limit_types = array();
+
+			$limit_types = explode( ',', $limit_types );
+
+			foreach ( $limit_types as $k => $limit_type ) {
+				if ( isset( $mime_types[ $limit_type ] ) ) {
+					$mime = explode( '/', $mime_types[ $limit_type ] );
+					$mime = $mime[0];
+
+					if ( ! in_array( $mime, $new_limit_types, true ) ) {
+						$new_limit_types[] = $mime;
+					}
+				} else {
+					$found = false;
+
+					foreach ( $mime_types as $type => $mime ) {
+						if ( false !== strpos( $type, $limit_type ) ) {
+							$mime = explode( '/', $mime );
+							$mime = $mime[0];
+
+							if ( ! in_array( $mime, $new_limit_types, true ) ) {
+								$new_limit_types[] = $mime;
+							}
+
+							$found = true;
+						}
+					}
+
+					if ( ! $found ) {
+						$new_limit_types[] = $limit_type;
+					}
+				}
+			}
+
+			if ( ! empty( $new_limit_types ) ) {
+				$limit_types = implode( ',', $new_limit_types );
+			}
+		}
+
+		$options['limit_types']      = $limit_types;
+		$options['limit_extensions'] = $limit_extensions;
+
+		// @todo test frontend media modal
+		if ( empty( $options[ self::$type . '_uploader' ] ) || ! is_admin() || ! is_user_logged_in()
+			 || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
+			$options[ self::$type . '_uploader' ] = 'plupload';
+		}
+
+		// @todo: plupload specific options need accommodation
+		if ( 'plupload' === $options[ self::$type . '_uploader' ] ) {
+			wp_enqueue_script( 'plupload-all' );
+
+			if ( is_user_logged_in() ) {
+				$uid = 'user_' . get_current_user_id();
+			} else {
+				$uid = @session_id();
+			}
+
+			$pod_id = '0';
+
+			if ( is_object( $args['pod'] ) ) {
+				$pod_id = $args['pod']->pod_id;
+			}
+
+			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
+			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $options['id'] );
+
+			$options['plupload_init'] = array(
+				'runtimes'            => 'html5,silverlight,flash,html4',
+				'url'                 => admin_url( 'admin-ajax.php?pods_ajax=1', 'relative' ),
+				'file_data_name'      => 'Filedata',
+				'multiple_queues'     => false,
+				'max_file_size'       => wp_max_upload_size() . 'b',
+				'flash_swf_url'       => includes_url( 'js/plupload/plupload.flash.swf' ),
+				'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
+				'filters'             => array(
+					array(
+						'title'      => __( 'Allowed Files', 'pods' ),
+						'extensions' => '*',
+					),
+				),
+				'multipart'           => true,
+				'urlstream_upload'    => true,
+				'multipart_params'    => array(
+					'_wpnonce' => $field_nonce,
+					'action'   => 'pods_upload',
+					'method'   => 'upload',
+					'pod'      => $pod_id,
+					'field'    => $options['id'],
+					'uri'      => $uri_hash,
+				),
+			);
+		}
+
+		return $options;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_attributes( array $attributes, array $args ) {
+
+		// Add template class.
+		$attributes['class'] .= ' pods-field-template-' . $args['options'][ $args['form_field_type'] . '_field_template' ];
+
+		return $attributes;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_config( array $args ) {
+
+		$config = $args['options'];
+
+		return $config;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_items_data( array $args ) {
+
+		$data = array();
+
+		$title_editable = (int) pods_v( $args['form_field_type'] . '_edit_title', $args['options'], 0 );
+
+		$value = $args['value'];
+
+		if ( empty( $value ) ) {
+			$value = array();
+		} else {
+			$value = (array) $value;
+		}
+
+		foreach ( $value as $id ) {
+			$attachment = get_post( $id );
+
+			if ( empty( $attachment ) ) {
+				continue;
+			}
+
+			$icon      = '';
+			$edit_link = get_edit_post_link( $attachment->ID, 'raw' );
+			$link      = get_permalink( $attachment->ID );
+			$download  = wp_get_attachment_url( $attachment->ID );
+
+			$thumb = wp_get_attachment_image_src( $id, 'thumbnail', true );
+
+			if ( ! empty( $thumb[0] ) ) {
+				$icon = $thumb[0];
+			}
+
+			$title = $attachment->post_title;
+
+			if ( 0 === $title_editable ) {
+				$title = basename( $attachment->guid );
+			}
+
+			$model_data[] = array(
+				'id'        => $id,
+				'icon'      => $icon,
+				'name'      => $title,
+				'edit_link' => $edit_link,
+				'link'      => $link,
+				'download'  => $download,
+			);
+		}
+
+		return $data;
 
 	}
 

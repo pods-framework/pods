@@ -186,7 +186,7 @@ class PodsField_Currency extends PodsField {
 	 *
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0
 	 */
 	public function schema( $options = null ) {
@@ -221,7 +221,7 @@ class PodsField_Currency extends PodsField {
 	 *
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0
 	 */
 	public function prepare( $options = null ) {
@@ -470,10 +470,18 @@ class PodsField_Currency extends PodsField {
 		}
 
 		$currency_sign = self::$currencies[ $currency ]['sign'];
+		$currency_entity = self::$currencies[ $currency ]['entity'];
 
 		$check = str_replace(
-			array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ), html_entity_decode( $thousands ) ),
-			array( '', '.', '', '', '' ),
+			array(
+				$thousands,
+				$dot,
+				$currency_sign,
+				$currency_entity,
+				html_entity_decode( $currency_entity ),
+				html_entity_decode( $thousands ),
+			),
+			array( '', '.', '', '', '', '' ),
 			$value
 		);
 		$check = trim( $check );
@@ -544,8 +552,19 @@ class PodsField_Currency extends PodsField {
 		}
 
 		$currency_sign = self::$currencies[ $currency ]['sign'];
+		$currency_entity = self::$currencies[ $currency ]['entity'];
 
-		$value = str_replace( array( $thousands, $dot, $currency_sign, html_entity_decode( $currency_sign ) ), array( '', '.', '', '' ), $value );
+		$value = str_replace(
+			array(
+				$thousands,
+				$dot,
+				$currency_sign,
+				$currency_entity,
+				html_entity_decode( $currency_entity ),
+			),
+			array( '', '.', '', '', '' ),
+			$value
+		);
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );

@@ -313,25 +313,12 @@ class PodsField_File extends PodsField {
 		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
 
-		PodsForm::field_method( $form_field_type, 'render_input_script', $args );
+		$this->render_input_script( $args );
 
 		return;
 
 		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-
-		// Use plupload if attachment isn't available
-		if ( 'attachment' === pods_v( self::$type . '_uploader', $options ) && ( ! is_user_logged_in() || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) ) {
-			$field_type = 'plupload';
-		} elseif ( 'plupload' === pods_v( self::$type . '_uploader', $options ) ) {
-			$field_type = 'plupload';
-		} elseif ( 'attachment' === pods_v( self::$type . '_uploader', $options ) ) {
-			if ( ! pods_version_check( 'wp', '3.5' ) || ! is_admin() ) // @todo test frontend media modal
-			{
-				$field_type = 'attachment';
-			} else {
-				$field_type = 'media';
-			}
-		} else {
+		if ( ! in_array( pods_v( $form_field_type . '_uploader', $options ), array( 'attachment', 'plupload', 'media' ) ) ) {
 			// Support custom File Uploader integration
 			do_action( 'pods_form_ui_field_' . self::$type . '_uploader_' . pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
 			do_action( 'pods_form_ui_field_' . self::$type . '_uploader', pods_v( self::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );

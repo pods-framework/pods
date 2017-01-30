@@ -472,18 +472,21 @@ class PodsField_Currency extends PodsField {
 		$currency_sign = self::$currencies[ $currency ]['sign'];
 		$currency_entity = self::$currencies[ $currency ]['entity'];
 
+		// Remove currency and thousands symbols
 		$check = str_replace(
 			array(
 				$thousands,
-				$dot,
 				$currency_sign,
 				$currency_entity,
-				html_entity_decode( $currency_entity ),
 				html_entity_decode( $thousands ),
+				html_entity_decode( $currency_sign ),
+				html_entity_decode( $currency_entity ),
 			),
-			array( '', '.', '', '', '', '' ),
+			'',
 			$value
 		);
+		// Convert decimal type for numeric type
+		$check = str_replace( $dot, '.', $check );
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );
@@ -554,17 +557,21 @@ class PodsField_Currency extends PodsField {
 		$currency_sign = self::$currencies[ $currency ]['sign'];
 		$currency_entity = self::$currencies[ $currency ]['entity'];
 
+		// Convert decimal type for numeric type
 		$value = str_replace(
 			array(
 				$thousands,
-				$dot,
 				$currency_sign,
 				$currency_entity,
+				html_entity_decode( $thousands ),
+				html_entity_decode( $currency_sign ),
 				html_entity_decode( $currency_entity ),
 			),
-			array( '', '.', '', '', '' ),
+			'',
 			$value
 		);
+		// Convert decimal type for numeric type
+		$value = str_replace( $dot, '.', $value );
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );

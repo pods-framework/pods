@@ -410,7 +410,7 @@ class PodsField_Currency extends PodsField {
 			$currency = pods_v( self::$type . '_format_sign', $options );
 		}
 
-		$currency_sign = self::$currencies[ $currency ];
+		$currency_sign = self::$currencies[ $currency ]['sign'];
 
 		return '\-*\\' . $currency_sign . '*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
 

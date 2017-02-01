@@ -290,6 +290,14 @@ input.pods-form-ui-field-type-color {
     background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
 }
 
+.pods-form-front-error {
+    color: #8A1010;
+    border: 1px solid;
+    margin: 10px 0;
+    padding: 15px 10px 15px 50px;
+    background: #F2D8BF url(../images/red-x.png) no-repeat 10px center;
+}
+
 .pods-form-ui-row-type-hidden {
     display: none;
     visibility: hidden;

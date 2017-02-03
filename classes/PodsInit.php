@@ -267,6 +267,7 @@ class PodsInit {
 
 		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
 			'jquery',
+			'pods-dfv',
 			'pods-i18n',
 			'pods-json',
 			'jquery-qtip2'

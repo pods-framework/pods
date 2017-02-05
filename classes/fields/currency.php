@@ -717,6 +717,8 @@ class PodsField_Currency extends PodsField {
 	 * Get the currencies and place them in the local property
 	 * @since  2.6.8
 	 * @return array
+     *
+     * @todo fill up each continent
 	 */
 	public static function data_currencies() {
 
@@ -912,6 +914,20 @@ class PodsField_Currency extends PodsField {
 				'sign'   => '₹',
 				'entity' => '&#x20B9;',
 			),
+            // Europe
+
+            // North America
+
+            // South America
+
+            // Africa
+
+            // Asia
+
+            // Oceania
+
+            // Virtual Currency
+
 		);
 
 		/**

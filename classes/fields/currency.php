@@ -927,7 +927,18 @@ class PodsField_Currency extends PodsField {
             // Oceania
 
             // Virtual Currency
-
+            'btc' => array(
+                'label'  => 'BTC',
+                'name'   => __( 'Bitcoin', 'pods' ),
+                'sign'   => 'BTC ',
+                'entity' => 'BTC;',
+            ),
+            'gld' => array(
+                'label'  => 'GLD',
+                'name'   => __( 'Gulden', 'pods' ),
+                'sign'   => 'GLD ',
+                'entity' => 'GLD;',
+            ),
 		);
 
 		/**

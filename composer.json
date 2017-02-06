@@ -52,7 +52,7 @@
         "php": ">=5.2.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.*",
+        "phpunit/phpunit": "5.*",
         "mockery/mockery": "0.9.*"
     },
     "extra": {

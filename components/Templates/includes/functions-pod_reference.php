@@ -3,6 +3,9 @@
 add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
 
 function pq_loadpod($podname = false) {
+	if ( !pods_is_admin() ) {
+		pods_error( __( 'Unauthorized request', 'pods' ) );
+	}
 	if(!empty($_POST['pod_reference']['pod'])){
 		$podname = $_POST['pod_reference']['pod'];
 	}

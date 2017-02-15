@@ -1001,7 +1001,7 @@ function pods_do_shortcode( $content, $shortcodes ) {
 	if ( !empty( $shortcodes ) ) {
 		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
 			if ( in_array( $m[2], $shortcodes ) ) {
-				// If shortcode being called is is list, return false to allow it to run
+				// If shortcode being called is in list, return false to allow it to run
 				return false;
 			}
 			// Return original shortcode string if we aren't going to handle at this time

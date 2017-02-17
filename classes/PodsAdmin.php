@@ -2103,8 +2103,8 @@ class PodsAdmin {
             'data' => $components,
             'total' => count( $components ),
             'total_found' => count( $components ),
-            'items' => 'Components',
-            'item' => 'Component',
+            'items' => __( 'Components', 'pods' ),
+            'item' => __( 'Component', 'pods' ),
             'fields' => array(
                 'manage' => array(
                     'name' => array(

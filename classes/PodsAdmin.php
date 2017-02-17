@@ -2057,7 +2057,7 @@ class PodsAdmin {
             $meta = array();
 
             if ( !empty( $component_data[ 'Version' ] ) )
-                $meta[] = 'Version ' . $component_data[ 'Version' ];
+                $meta[] = sprintf( __( 'Version %s', 'pods' ), $component_data[ 'Version' ] );
 
             if ( empty( $component_data[ 'Author' ] ) ) {
                 $component_data[ 'Author' ] = 'Pods Framework Team';
@@ -2090,7 +2090,7 @@ class PodsAdmin {
             if ( !empty( $component_data[ 'category' ] ) ) {
                 $category_url = pods_query_arg( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
 
-                $component_data[ 'category' ] = '<a href="' . esc_url( $category_url ) . '">' . $component_data[ 'category' ] . '</a>';
+                $component_data[ 'category' ] = '<a href="' . esc_url( $category_url ) . '">' . __( $component_data[ 'category' ], 'pods' ) . '</a>';
             }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )

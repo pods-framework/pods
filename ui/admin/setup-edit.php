@@ -272,13 +272,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                 <th scope="col" class="manage-column field-cb check-column">
                     <span>&nbsp;</span>
                 </th>
-                <th scope="col" id="label" class="manage-column field-label">
+                <th scope="col" class="manage-column field-label">
                     <span><?php _e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
                 </th>
-                <th scope="col" id="machine-name" class="manage-column field-machine-name">
+                <th scope="col" class="manage-column field-machine-name">
                     <span><?php _e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
                 </th>
-                <th scope="col" id="field-type" class="manage-column field-field-type">
+                <th scope="col" class="manage-column field-field-type">
                     <span><?php _e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
                 </th>
             </tr>

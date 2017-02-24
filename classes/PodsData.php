@@ -1028,7 +1028,7 @@ class PodsData {
                         }
                         elseif ( isset( $params->fields[ $field ] ) ) {
                             if ( $params->meta_fields )
-                                $fieldfield = $fieldfield . '.`' . $params->pod_table_prefix . '`';
+                                $fieldfield = $fieldfield . '.`meta_value`';
                             else
                                 $fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
                         }

@@ -324,9 +324,9 @@ class PodsField {
 	}
 
 	/**
-	 * Build field HTML attributes for Pods DFV
+	 * Build field HTML attributes for Pods DFV.
 	 *
-	 * @param array $attributes
+	 * @param array $attributes Default HTML attributes from field and PodsForm::merge_attributes.
 	 * @param array $args {
 	 *     Field information arguments.
 	 *
@@ -347,7 +347,9 @@ class PodsField {
 	}
 
 	/**
-	 * Build field config for Pods DFV
+	 * Build field config for Pods DFV using field options.
+	 *
+	 * This is for customizing the options and adding output-specific config values.
 	 *
 	 * @param array $args {
 	 *     Field information arguments.
@@ -369,7 +371,7 @@ class PodsField {
 	}
 
 	/**
-	 * Build field config for Pods DFV
+	 * Build array of item data for Pods DFV
 	 *
 	 * @param array $args {
 	 *     Field information arguments.

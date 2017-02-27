@@ -386,9 +386,15 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_items_data( array $args ) {
+	public function build_dfv_field_item_data( array $args ) {
 
-		return array();
+		$data = array();
+
+		if ( ! empty( $args['options']['data'] ) && is_array( $args['options']['data'] ) ) {
+			$data = $args['options']['data'];
+		}
+
+		return $data;
 
 	}
 

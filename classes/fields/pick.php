@@ -732,6 +732,28 @@ class PodsField_Pick extends PodsField {
 		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
+		$field_type = 'pick';
+
+		$args = compact( array_keys( get_defined_vars() ) );
+
+		$this->render_input_script( $args );
+
+		return;
+
+		// @todo Support custom integrations.
+		do_action( 'pods_form_ui_field_pick_input_' . pods_v( self::$type . '_format_type', $options, 'single' ) . '_' . pods_v( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
+		do_action( 'pods_form_ui_field_pick_input', pods_v( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
+
+		// @todo Support custom integrations.
+		do_action( 'pods_form_ui_field_pick_input', pods_v( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_options( array $options, array $args ) {
+
 		$options['grouped'] = 1;
 
 		$options['table_info'] = array();
@@ -756,62 +778,80 @@ class PodsField_Pick extends PodsField {
 			$ajax = false;
 		}
 
-		$format_type = pods_v( self::$type . '_format_type', $options, 'single' );
+		$options[ self::$type . '_ajax' ] = (int) $ajax;
+
+		$format_type = pods_v( self::$type . '_format_type', $options, 'single', true );
 
 		if ( 'single' === $format_type ) {
-			if ( 'dropdown' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
+			$format_single = pods_v( self::$type . '_format_single', $options, 'dropdown', true );
+
+			if ( 'dropdown' === $format_single ) {
 				$options['view_name'] = 'select';
-			} elseif ( 'radio' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
+			} elseif ( 'radio' === $format_single ) {
 				$options['view_name'] = 'radio';
-			} elseif ( 'autocomplete' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
+			} elseif ( 'autocomplete' === $format_single ) {
 				$options['view_name'] = 'select2';
-			} elseif ( 'list' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
+			} elseif ( 'list' === $format_single ) {
 				$options['view_name'] = 'list';
 			} else {
-				// @todo Support custom integrations.
-				/*
-				do_action( 'pods_form_ui_field_pick_input_' . pods_v( self::$type . '_format_type', $options, 'single' ) . '_' . pods_v( self::$type . '_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
-				do_action( 'pods_form_ui_field_pick_input', pods_v( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
-
-				return;
-				*/
+				$options['view_name'] = $format_single;
 			}
 		} elseif ( 'multi' === $format_type ) {
+			$format_multi = pods_v( self::$type . '_format_multi', $options, 'checkbox', true );
+
 			if ( ! empty( $value ) && ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'checkbox' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+			if ( 'checkbox' === $format_multi ) {
 				$options['view_name'] = 'checkbox';
-			} elseif ( 'multiselect' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+			} elseif ( 'multiselect' === $format_multi ) {
 				$options['view_name'] = 'select';
-			} elseif ( 'autocomplete' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+			} elseif ( 'autocomplete' === $format_multi ) {
 				$options['view_name'] = 'select2';
-			} elseif ( 'list' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
+			} elseif ( 'list' === $format_multi ) {
 				$options['view_name'] = 'list';
 			} else {
-				// @todo Support custom integrations.
-				/*
-				do_action( 'pods_form_ui_field_pick_input_' . pods_v( self::$type . '_format_type', $options, 'single' ) . '_' . pods_v( self::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
-				do_action( 'pods_form_ui_field_pick_input', pods_v( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
-
-				return;
-				*/
+				$options['view_name'] = $format_multi;
 			}
 		} else {
-			// @todo Support custom integrations.
-			/*
-			do_action( 'pods_form_ui_field_pick_input', pods_v( self::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
-
-			return;
-			*/
+			$options['view_name'] = $format_type;
 		}
 
-		$field_type = 'pick';
+		return $options;
 
-		$args = compact( array_keys( get_defined_vars() ) );
+	}
 
-		PodsForm::field_method( $field_type, 'render_input_script', $args );
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_config( array $args ) {
+
+		$config = $args['options'];
+
+		return $config;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_item_data( array $args ) {
+
+		$data = array();
+
+		return $data;
+
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function build_dfv_field_item_data_recurse( array $args ) {
+
+		$data = array();
+
+		return $data;
 
 	}
 

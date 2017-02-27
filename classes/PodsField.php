@@ -229,12 +229,24 @@ class PodsField {
 
 		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
 
+		return;
+
+		// @todo Eventually use this code
+		$options = (array) $options;
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
+
 	}
 
 	/**
 	 * Render input script for Pods DFV
 	 *
-	 * @param array $args {
+	 * @param array|object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name    Field name
@@ -245,7 +257,11 @@ class PodsField {
 	 *     @type int|string $id      Current item ID
 	 * }
 	 */
-	public function render_input_script( array $args ) {
+	public function render_input_script( $args ) {
+
+		if ( is_array( $args ) ) {
+			$args = (object) $args;
+		}
 
 		$dfv_field_data = $this->build_dfv_field_data( $args );
 	?>
@@ -259,7 +275,7 @@ class PodsField {
 	/**
 	 * Build field data for Pods DFV
 	 *
-	 * @param array $args {
+	 * @param object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name            Field name
@@ -273,17 +289,17 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_data( array $args ) {
+	public function build_dfv_field_data( $args ) {
 
-		// Handle DFW options.
-		$args['options'] = $this->build_dfv_field_options( $args['options'], $args );
+		// Handle DFV options.
+		$args->options = $this->build_dfv_field_options( $args->options, $args );
 
-		// Handle DFW attributes.
-		$attributes = PodsForm::merge_attributes( array(), $args['name'], $args['form_field_type'], $args['options'] );
+		// Handle DFV attributes.
+		$attributes = PodsForm::merge_attributes( array(), $args->name, $args->type, $args->options );
 		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
 		$attributes = array_map( 'esc_attr', $attributes );
 
-		// Build DFW field data.
+		// Build DFV field data.
 		$data = array(
 			'htmlAttr'       => array(
 				'id'         => $attributes['id'],
@@ -291,10 +307,31 @@ class PodsField {
 				'name'       => $attributes['name'],
 				'name_clean' => $attributes['data-name-clean'],
 			),
-			'fieldType'      => $args['type'],
+			'fieldType'      => $args->type,
 			'fieldItemData'  => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'    => $this->build_dfv_field_config( $args ),
 		);
+
+		/**
+		 * Filter Pods DFV field data to further customize functionality.
+		 *
+		 * @since 2.7
+		 *
+		 * @param array  $data DFV field data
+		 * @param object $args {
+		 *     Field information arguments.
+		 *
+		 *     @type string     $name            Field name
+		 *     @type string     $type            Pod field type
+		 *     @type string     $form_field_type HTML field type
+		 *     @type array      $options         Field options
+		 *     @type mixed      $value           Current value
+		 *     @type array      $pod             Pod information
+		 *     @type int|string $id              Current item ID
+		 * }
+		 * @param array  $attributes HTML attributes
+		 */
+		$data = apply_filters( 'pods_field_dfv_data', $data, $args, $attributes );
 
 		return $data;
 
@@ -303,8 +340,8 @@ class PodsField {
 	/**
 	 * Build field options and handle any validation/customization for Pods DFV
 	 *
-	 * @param array $options
-	 * @param array $args {
+	 * @param array  $options
+	 * @param object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name    Field name
@@ -317,7 +354,7 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_options( array $options, array $args ) {
+	public function build_dfv_field_options( $options, $args ) {
 
 		return $options;
 
@@ -326,8 +363,8 @@ class PodsField {
 	/**
 	 * Build field HTML attributes for Pods DFV.
 	 *
-	 * @param array $attributes Default HTML attributes from field and PodsForm::merge_attributes.
-	 * @param array $args {
+	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.
+	 * @param object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name    Field name
@@ -340,7 +377,7 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_attributes( array $attributes, array $args ) {
+	public function build_dfv_field_attributes( $attributes, $args ) {
 
 		return $attributes;
 
@@ -351,7 +388,7 @@ class PodsField {
 	 *
 	 * This is for customizing the options and adding output-specific config values.
 	 *
-	 * @param array $args {
+	 * @param object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name    Field name
@@ -364,16 +401,22 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_config( array $args ) {
+	public function build_dfv_field_config( $args ) {
 
-		return $args['options'];
+		$config = $args->options;
+
+		unset( $config['data'] );
+
+		$config['item_id'] = (int) $args->id;
+
+		return $config;
 
 	}
 
 	/**
 	 * Build array of item data for Pods DFV
 	 *
-	 * @param array $args {
+	 * @param object $args {
 	 *     Field information arguments.
 	 *
 	 *     @type string     $name    Field name
@@ -386,12 +429,12 @@ class PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_field_item_data( array $args ) {
+	public function build_dfv_field_item_data( $args ) {
 
 		$data = array();
 
-		if ( ! empty( $args['options']['data'] ) && is_array( $args['options']['data'] ) ) {
-			$data = $args['options']['data'];
+		if ( ! empty( $args->options['data'] ) && is_array( $args->options['data'] ) ) {
+			$data = $args->options['data'];
 		}
 
 		return $data;

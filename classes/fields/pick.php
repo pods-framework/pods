@@ -772,13 +772,13 @@ class PodsField_Pick extends PodsField {
 
 		$options['table_info'] = array();
 
-		$custom = pods_v( self::$type . '_custom', $options, false );
+		$custom = pods_v( $args->type . '_custom', $options, false );
 
-		$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $args->name, $args->value, $args->options, $args->pod, $args->id );
+		$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $args->name, $args->value, $options, $args->pod, $args->id );
 
 		$ajax = false;
 
-		if ( ( 'custom-simple' !== pods_v( self::$type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( $args->type . '_object', $options, '', true ) ) {
+		if ( ( 'custom-simple' !== pods_v( $args->type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( $args->type . '_object', $options, '', true ) ) {
 			$ajax = true;
 		}
 
@@ -786,18 +786,18 @@ class PodsField_Pick extends PodsField {
 			$ajax = (boolean) self::$field_data['autocomplete'];
 		}
 
-		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $args->name, $args->value, $args->options, $args->pod, $args->id );
+		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $args->name, $args->value, $options, $args->pod, $args->id );
 
-		if ( 0 === (int) pods_v( self::$type . '_ajax', $options, 1 ) ) {
+		if ( 0 === (int) pods_v( $args->type . '_ajax', $options, 1 ) ) {
 			$ajax = false;
 		}
 
-		$options[ self::$type . '_ajax' ] = (int) $ajax;
+		$options[ $args->type . '_ajax' ] = (int) $ajax;
 
-		$format_type = pods_v( self::$type . '_format_type', $options, 'single', true );
+		$format_type = pods_v( $args->type . '_format_type', $options, 'single', true );
 
 		if ( 'single' === $format_type ) {
-			$format_single = pods_v( self::$type . '_format_single', $options, 'dropdown', true );
+			$format_single = pods_v( $args->type . '_format_single', $options, 'dropdown', true );
 
 			if ( 'dropdown' === $format_single ) {
 				$options['view_name'] = 'select';
@@ -811,7 +811,7 @@ class PodsField_Pick extends PodsField {
 				$options['view_name'] = $format_single;
 			}
 		} elseif ( 'multi' === $format_type ) {
-			$format_multi = pods_v( self::$type . '_format_multi', $options, 'checkbox', true );
+			$format_multi = pods_v( $args->type . '_format_multi', $options, 'checkbox', true );
 
 			if ( ! empty( $args->value ) && ! is_array( $args->value ) ) {
 				$args->value = explode( ',', $args->value );

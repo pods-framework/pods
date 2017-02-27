@@ -298,17 +298,40 @@ class PodsField_File extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
-		$form_field_type = PodsForm::$field_type;
+		$options = (array) $options;
 
-		if ( ( ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) && ( ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ) || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_bool( PODS_FILES_REQUIRE_LOGIN ) && true === PODS_FILES_REQUIRE_LOGIN && ! is_user_logged_in() ) || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && ! is_bool( PODS_FILES_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ) ) ) {
-			?>
-			<p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
-			<?php
-			return;
-		}
+		$type = pods_v( 'type', $options, static::$type );
 
 		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		/**
+		 * Access Checking
+		 */
+		$is_user_logged_in = is_user_logged_in();
+
+		$file_upload_requirements = array(
+			'disabled'          => ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ),
+			'require_login'     => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! $is_user_logged_in ),
+			'require_login_cap' => ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ),
+		);
+
+		$file_browser_requirements = array(
+			'disabled'          => ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER ),
+			'require_login'     => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && true === PODS_FILES_REQUIRE_LOGIN && ! $is_user_logged_in ),
+			'require_login_cap' => ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_string( PODS_FILES_REQUIRE_LOGIN ) && ( ! $is_user_logged_in || ! current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ),
+		);
+
+		$file_upload_requirements  = array_filter( $file_upload_requirements );
+		$file_browser_requirements = array_filter( $file_browser_requirements );
+
+		if ( ! empty( $file_upload_requirements ) && ! empty( $file_browser_requirements ) ) {
+			?>
+			<p><?php esc_html_e( 'You do not have access to upload / browse files. Contact your website admin to resolve.', 'pods' ); ?></p>
+			<?php
+
+			return;
+		}
 
 		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
@@ -331,7 +354,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_options( array $options, array $args ) {
+	public function build_dfv_field_options( $options, $args ) {
 
 		if ( ! is_admin() ) {
 			include_once( ABSPATH . '/wp-admin/includes/template.php' );
@@ -342,30 +365,30 @@ class PodsField_File extends PodsField {
 		}
 
 		// Handle default template setting.
-		$file_field_template = pods_v( $args['form_field_type'] . '_field_template', $options, 'rows', true );
+		$file_field_template = pods_v( $args->type . '_field_template', $options, 'rows', true );
 
 		// Get which file types the field is limited to.
-		$limit_file_type = pods_v( $args['form_field_type'] . '_type', $options, 'images' );
+		$limit_file_type = pods_v( $args->type . '_type', $options, 'images' );
 
 		// Non-image file types are forced to rows template right now.
 		if ( 'images' !== $limit_file_type ) {
 			$file_field_template = 'rows';
 		}
 
-		$options[ $args['form_field_type'] . '_field_template' ] = $file_field_template;
+		$options[ $args->type . '_field_template' ] = $file_field_template;
 
 		// Enforce limit.
 		$file_limit = 1;
 
-		if ( 'multi' === pods_v( $args['form_field_type'] . '_format_type', $options, 'single' ) ) {
-			$file_limit = (int) pods_v( $args['form_field_type'] . '_limit', $options, 0 );
+		if ( 'multi' === pods_v( $args->type . '_format_type', $options, 'single' ) ) {
+			$file_limit = (int) pods_v( $args->type . '_limit', $options, 0 );
 
 			if ( $file_limit < 0 ) {
 				$file_limit = 0;
 			}
 		}
 
-		$options[ $args['form_field_type'] . '_limit' ] = $file_limit;
+		$options[ $args->type . '_limit' ] = $file_limit;
 
 		// Build types and extensions to limit by.
 		if ( 'images' === $limit_file_type ) {
@@ -384,7 +407,7 @@ class PodsField_File extends PodsField {
 			$limit_types      = '';
 			$limit_extensions = '*';
 		} else {
-			$limit_types = $limit_extensions = pods_v( $args['form_field_type'] . '_allowed_extensions', $options, '', true );
+			$limit_types = $limit_extensions = pods_v( $args->type . '_allowed_extensions', $options, '', true );
 		}
 
 		// Find and replace certain characters to properly split by commas.
@@ -449,8 +472,10 @@ class PodsField_File extends PodsField {
 		$options['limit_types']      = $limit_types;
 		$options['limit_extensions'] = $limit_extensions;
 
+		$is_user_logged_in = is_user_logged_in();
+
 		// @todo test frontend media modal
-		if ( empty( $options[ self::$type . '_uploader' ] ) || ! is_admin() || ! is_user_logged_in()
+		if ( empty( $options[ self::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in
 			 || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
 			$options[ self::$type . '_uploader' ] = 'plupload';
 		}
@@ -459,7 +484,7 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === $options[ self::$type . '_uploader' ] ) {
 			wp_enqueue_script( 'plupload-all' );
 
-			if ( is_user_logged_in() ) {
+			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
 				$uid = @session_id();
@@ -467,8 +492,8 @@ class PodsField_File extends PodsField {
 
 			$pod_id = '0';
 
-			if ( is_object( $args['pod'] ) ) {
-				$pod_id = $args['pod']->pod_id;
+			if ( is_object( $args->pod ) ) {
+				$pod_id = $args->pod->pod_id;
 			}
 
 			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
@@ -508,10 +533,10 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_attributes( array $attributes, array $args ) {
+	public function build_dfv_field_attributes( $attributes, $args ) {
 
 		// Add template class.
-		$attributes['class'] .= ' pods-field-template-' . $args['options'][ $args['form_field_type'] . '_field_template' ];
+		$attributes['class'] .= ' pods-field-template-' . $args->options[ $args->type . '_field_template' ];
 
 		return $attributes;
 
@@ -520,13 +545,13 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_item_data( array $args ) {
+	public function build_dfv_field_item_data( $args ) {
 
 		$data = array();
 
-		$title_editable = (int) pods_v( $args['form_field_type'] . '_edit_title', $args['options'], 0 );
+		$title_editable = (int) pods_v( $args->type . '_edit_title', $args->options, 0 );
 
-		$value = $args['value'];
+		$value = $args->value;
 
 		if ( empty( $value ) ) {
 			$value = array();
@@ -744,26 +769,26 @@ class PodsField_File extends PodsField {
 	 */
 	public function do_wp_gallery( $value, $options ) {
 
-		$args = array();
+		$shortcode_args = array();
 
 		if ( ! empty( $options[ self::$type . '_wp_gallery_columns' ] ) ) {
-			$args['columns'] = absint( $options[ self::$type . '_wp_gallery_columns' ] );
+			$shortcode_args['columns'] = absint( $options[ self::$type . '_wp_gallery_columns' ] );
 		}
 
 		if ( ! empty( $options[ self::$type . '_wp_gallery_random_sort' ] ) ) {
-			$args['orderby'] = 'rand';
+			$shortcode_args['orderby'] = 'rand';
 		}
 
 		if ( ! empty( $options[ self::$type . '_wp_gallery_link' ] ) ) {
-			$args['link'] = $options[ self::$type . '_wp_gallery_link' ];
+			$shortcode_args['link'] = $options[ self::$type . '_wp_gallery_link' ];
 		}
 
 		if ( ! empty( $options[ self::$type . '_wp_gallery_size' ] ) ) {
-			$args['size'] = $options[ self::$type . '_wp_gallery_size' ];
+			$shortcode_args['size'] = $options[ self::$type . '_wp_gallery_size' ];
 		}
 
 		if ( isset( $value['ID'] ) ) {
-			$args['ids'] = $value['ID'];
+			$shortcode_args['ids'] = $value['ID'];
 		} else {
 			$images = array();
 
@@ -775,16 +800,16 @@ class PodsField_File extends PodsField {
 				}
 			}
 
-			$args['ids'] = implode( ',', $images );
+			$shortcode_args['ids'] = implode( ',', $images );
 		}
 
 		if ( is_callable( 'gallery_shortcode' ) ) {
-			return gallery_shortcode( $args );
+			return gallery_shortcode( $shortcode_args );
 		} else {
 			$shortcode = '[gallery';
 
-			foreach ( $args as $key => $value ) {
-				$shortcode .= ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+			foreach ( $shortcode_args as $key => $shortcode_arg ) {
+				$shortcode .= ' ' . esc_attr( $key ) . '="' . esc_attr( $shortcode_arg ) . '"';
 			}
 
 			$shortcode .= ']';
@@ -936,19 +961,22 @@ class PodsField_File extends PodsField {
 		/**
 		 * Access Checking
 		 */
-		$upload_disabled = false;
+		$upload_disabled   = false;
+		$is_user_logged_in = is_user_logged_in();
 
 		if ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) {
 			$upload_disabled = true;
-		} elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) {
-			$upload_disabled = true;
-		} elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) {
-			$upload_disabled = true;
+		} elseif ( ! $is_user_logged_in ) {
+			if ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN ) {
+				$upload_disabled = true;
+			} elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) {
+				$upload_disabled = true;
+			}
 		}
 
 		$uid = @session_id();
 
-		if ( is_user_logged_in() ) {
+		if ( $is_user_logged_in ) {
 			$uid = 'user_' . get_current_user_id();
 		}
 

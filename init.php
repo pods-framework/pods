@@ -10,7 +10,7 @@ Text Domain: pods
 GitHub Plugin URI: https://github.com/pods-framework/pods
 GitHub Branch: 2.x
 
-Copyright 2009-2015  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2017  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	define( 'PODS_DB_VERSION', '2.3.5' );
 
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
+		define( 'PODS_WP_VERSION_MINIMUM', '4.0' );
 	}
 
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {

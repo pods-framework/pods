@@ -729,12 +729,18 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
-		$options         = (array) $options;
-		$form_field_type = PodsForm::$field_type;
+		$options = (array) $options;
 
-		$field_type = 'pick';
+		$type = pods_v( 'type', $options, static::$type );
 
 		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		wp_enqueue_style( 'pods-dfv-list' );
+		wp_enqueue_script( 'pods-dfv' );
+
+		wp_enqueue_style( 'pods-select2' );
+		wp_enqueue_script( 'pods-select2' );
 
 		$this->render_input_script( $args );
 
@@ -752,19 +758,27 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_options( array $options, array $args ) {
+	public function build_dfv_field_options( $options, $args ) {
 
 		$options['grouped'] = 1;
+
+		if ( empty( $options['pick_object'] ) ) {
+			$options['pick_object'] = '';
+		}
+
+		if ( empty( $options['pick_val'] ) ) {
+			$options['pick_val'] = '';
+		}
 
 		$options['table_info'] = array();
 
 		$custom = pods_v( self::$type . '_custom', $options, false );
 
-		$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
+		$custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $args->name, $args->value, $args->options, $args->pod, $args->id );
 
 		$ajax = false;
 
-		if ( ( 'custom-simple' !== pods_v( self::$type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( self::$type . '_object', $options, '', true ) ) {
+		if ( ( 'custom-simple' !== pods_v( self::$type . '_object', $options ) || empty( $custom ) ) && '' !== pods_v( $args->type . '_object', $options, '', true ) ) {
 			$ajax = true;
 		}
 
@@ -772,7 +786,7 @@ class PodsField_Pick extends PodsField {
 			$ajax = (boolean) self::$field_data['autocomplete'];
 		}
 
-		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $name, $value, $options, $pod, $id );
+		$ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $args->name, $args->value, $args->options, $args->pod, $args->id );
 
 		if ( 0 === (int) pods_v( self::$type . '_ajax', $options, 1 ) ) {
 			$ajax = false;
@@ -799,8 +813,8 @@ class PodsField_Pick extends PodsField {
 		} elseif ( 'multi' === $format_type ) {
 			$format_multi = pods_v( self::$type . '_format_multi', $options, 'checkbox', true );
 
-			if ( ! empty( $value ) && ! is_array( $value ) ) {
-				$value = explode( ',', $value );
+			if ( ! empty( $args->value ) && ! is_array( $args->value ) ) {
+				$args->value = explode( ',', $args->value );
 			}
 
 			if ( 'checkbox' === $format_multi ) {
@@ -825,9 +839,62 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_config( array $args ) {
+	public function build_dfv_field_config( $args ) {
 
-		$config = $args['options'];
+		$config = parent::build_dfv_field_config( $args );
+
+		if ( ! isset( $config['optgroup'] ) ) {
+			$config['optgroup'] = false;
+		}
+
+		$file_name  = '';
+		$query_args = array();
+
+		// Set the file name and args based on the content type of the relationship
+		switch ( $args->options['pick_object'] ) {
+			case 'post_type':
+				$file_name  = 'post-new.php';
+				$query_args = array(
+					'post_type' => $args->options['pick_val'],
+				);
+				// @todo Access rights for add new
+				break;
+
+			case 'taxonomy':
+				$file_name  = 'edit-tags.php';
+				$query_args = array(
+					'taxonomy' => $args->options['pick_val'],
+				);
+				// @todo Access rights for add new
+				break;
+
+			case 'user':
+				$file_name  = 'user-new.php';
+				$query_args = array();
+				// @todo Access rights for add new
+				break;
+
+			case 'pod':
+				$file_name  = 'admin.php';
+				$query_args = array(
+					'page'   => 'pods-manage-' . $args->options['pick_val'],
+					'action' => 'add',
+				);
+				// @todo Access rights for add new
+				break;
+		}
+
+		$iframe_src = '';
+
+		if ( ! empty( $file_name ) ) {
+			// @todo: Replace string literal with defined constant
+			$query_args['pods_modal'] = 1;
+
+			// Add args we always need
+			$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
+		}
+
+		$config['iframe_src'] = $iframe_src;
 
 		return $config;
 
@@ -836,22 +903,152 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_item_data( array $args ) {
+	public function build_dfv_field_item_data( $args ) {
 
-		$data = array();
+		$args->options['supports_thumbnails'] = null;
 
-		return $data;
+		$item_data = array();
+
+		if ( ! empty( $args->options['data'] ) ) {
+			$item_data = $this->build_dfv_field_item_data_recurse( $args->options['data'], $args );
+		}
+
+		return $item_data;
 
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Loop through relationship data and expand item data with additional information for DFV.
+	 *
+	 * @param array     $data    Item data to expand.
+	 * @param object    $args    {
+	 *                           Field information arguments.
+	 *
+	 * @type string     $name    Field name
+	 * @type string     $type    Field type
+	 * @type array      $options Field options
+	 * @type mixed      $value   Current value
+	 * @type array      $pod     Pod information
+	 * @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
 	 */
-	public function build_dfv_field_item_data_recurse( array $args ) {
+	public function build_dfv_field_item_data_recurse( $data, $args ) {
 
-		$data = array();
+		$item_data = array();
 
-		return $data;
+		foreach ( $data as $item_id => $item_title ) {
+			if ( is_array( $item_title ) ) {
+				$args->options['optgroup'] = true;
+
+				foreach ( $item_title as $subitem_id => $subitem_title ) {
+					$item_data[] = array(
+						'label'      => $item_title,
+						'collection' => $this->build_dfv_field_item_data_recurse_item( $subitem_id, $subitem_title, $args ),
+					);
+				}
+			} else {
+				$item_data[] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
+			}
+		}
+
+		return $item_data;
+
+	}
+
+	/**
+	 * Loop through relationship data and expand item data with additional information for DFV.
+	 *
+	 * @param int|string $item_id
+	 * @param string     $item_title
+	 * @param object     $args    {
+	 *                            Field information arguments.
+	 *
+	 * @type string      $name    Field name
+	 * @type string      $type    Field type
+	 * @type array       $options Field options
+	 * @type mixed       $value   Current value
+	 * @type array       $pod     Pod information
+	 * @type int|string  $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args ) {
+
+		$icon      = '';
+		$edit_link = '';
+		$link      = '';
+
+		switch ( $args->options['pick_object'] ) {
+			case 'post_type':
+				if ( null === $args->options['supports_thumbnails'] ) {
+					$args->options['supports_thumbnails'] = post_type_supports( $args->options['pick_val'], 'thumbnail' );
+				}
+
+				if ( true === $args->options['supports_thumbnails'] ) {
+					$thumb = wp_get_attachment_image_src( $item_id, 'thumbnail', true );
+
+					if ( ! empty( $thumb[0] ) ) {
+						$icon = $thumb[0];
+					}
+				}
+
+				// @todo Access rights for edit link
+				$edit_link = get_edit_post_link( $item_id, 'raw' );
+
+				$link = get_permalink( $item_id );
+
+				break;
+
+			case 'taxonomy':
+				// @todo Access rights for edit link
+				$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
+
+				$link = get_term_link( $item_id, $args->options['pick_val'] );
+
+				break;
+
+			case 'user':
+				$args->options['supports_thumbnails'] = true;
+
+				$icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
+
+				// @todo Access rights for edit link
+				$edit_link = get_edit_user_link( $item_id );
+
+				$link = get_author_posts_url( $item_id );
+
+				break;
+
+			case 'pod':
+				$file_name  = 'admin.php';
+				$query_args = array(
+					'page'   => 'pods-manage-' . $args->options['pick_val'],
+					'action' => 'edit',
+					'id'     => $item_id,
+				);
+
+				// @todo Access rights for edit link
+				$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
+
+				// @todo Add $link support
+				$link = '';
+
+				break;
+		}
+
+		$item = array(
+			'id'        => $item_id,
+			'icon'      => $icon,
+			'name'      => $item_title,
+			'edit_link' => $edit_link,
+			'link'      => $link,
+			'selected'  => ( isset( $args->value[ $item_id ] ) ),
+		);
+
+		return $item;
 
 	}
 
@@ -1763,13 +1960,13 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( $hierarchy && ! $autocomplete && ! empty( $results ) && $options['table_info']['object_hierarchical'] && ! empty( $options['table_info']['field_parent'] ) ) {
-					$args = array(
+					$select_args = array(
 						'id'     => $options['table_info']['field_id'],
 						'index'  => $options['table_info']['field_index'],
 						'parent' => $options['table_info']['field_parent'],
 					);
 
-					$results = pods_hierarchical_select( $results, $args );
+					$results = pods_hierarchical_select( $results, $select_args );
 				}
 
 				$ids = array();
@@ -1799,7 +1996,7 @@ class PodsField_Pick extends PodsField {
 						if ( 0 < strlen( $display_filter ) ) {
 							$display_filter_args = pods_v( 'display_filter_args', pods_v( 'options', pods_v( $search_data->field_index, $search_data->pod_data['object_fields'] ) ) );
 
-							$args = array(
+							$filter_args = array(
 								$display_filter,
 								$result[ $search_data->field_index ],
 							);
@@ -1807,12 +2004,12 @@ class PodsField_Pick extends PodsField {
 							if ( ! empty( $display_filter_args ) ) {
 								foreach ( (array) $display_filter_args as $display_filter_arg ) {
 									if ( isset( $result[ $display_filter_arg ] ) ) {
-										$args[] = $result[ $display_filter_arg ];
+										$filter_args[] = $result[ $display_filter_arg ];
 									}
 								}
 							}
 
-							$result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $args );
+							$result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $filter_args );
 						}
 
 						if ( in_array( $options[ self::$type . '_object' ], array( 'site', 'network' ), true ) ) {
@@ -2608,82 +2805,6 @@ class PodsField_Pick extends PodsField {
 		global $wp_locale;
 
 		return $wp_locale->month;
-
-	}
-
-	/**
-	 * @param $data
-	 * @param $selected_values
-	 * @param $options
-	 *
-	 * @return array
-	 */
-	public static function build_model_data( $data, $selected_values, $options ) {
-
-		$model_data = array();
-
-		foreach ( $data as $this_id => $this_title ) {
-			$icon      = '';
-			$edit_link = '';
-			$link      = '';
-
-			switch ( $options['pick_object'] ) {
-				case 'post_type':
-					if ( null === $options['supports_thumbnails'] ) {
-						$options['supports_thumbnails'] = post_type_supports( $options['pick_val'], 'thumbnail' );
-					}
-
-					if ( true === $options['supports_thumbnails'] ) {
-						$thumb = wp_get_attachment_image_src( $this_id, 'thumbnail', true );
-
-						if ( ! empty( $thumb[0] ) ) {
-							$icon = $thumb[0];
-						}
-					}
-
-					$edit_link = get_edit_post_link( $this_id, 'raw' );
-					$link      = get_permalink( $this_id );
-					break;
-
-				case 'taxonomy':
-					$edit_link = get_edit_term_link( $this_id, $options['pick_val'] );
-					$link      = get_term_link( $this_id, $options['pick_val'] );
-					break;
-
-				case 'user':
-					$icon      = get_avatar_url( $this_id, array( 'size' => 150 ) );
-					$edit_link = get_edit_user_link( $this_id );
-					$link      = get_author_posts_url( $this_id );
-					break;
-
-				case 'pod':
-					$file_name  = 'admin.php';
-					$query_args = array(
-						'page'   => 'pods-manage-' . $options['pick_val'],
-						'action' => 'edit',
-						'id'     => $this_id,
-					);
-
-					$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
-					// @todo Add $link support
-					break;
-
-				// Something unsupported
-				default:
-					break;
-			}
-
-			$model_data[] = array(
-				'id'        => $this_id,
-				'icon'      => $icon,
-				'name'      => $this_title,
-				'edit_link' => $edit_link,
-				'link'      => $link,
-				'selected'  => ( isset( $selected_values[ $this_id ] ) ),
-			);
-		}
-
-		return $model_data;
 
 	}
 

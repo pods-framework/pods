@@ -520,18 +520,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function build_dfv_field_config( array $args ) {
-
-		$config = $args['options'];
-
-		return $config;
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function build_dfv_field_items_data( array $args ) {
+	public function build_dfv_field_item_data( array $args ) {
 
 		$data = array();
 

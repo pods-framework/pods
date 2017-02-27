@@ -292,7 +292,7 @@ class PodsField {
 				'name_clean' => $attributes['data-name-clean'],
 			),
 			'fieldType'      => $args['type'],
-			'fieldItemsData' => $this->build_dfv_field_items_data( $args ),
+			'fieldItemData'  => $this->build_dfv_field_item_data( $args ),
 			'fieldConfig'    => $this->build_dfv_field_config( $args ),
 		);
 

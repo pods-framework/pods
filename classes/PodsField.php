@@ -263,11 +263,11 @@ class PodsField {
 			$args = (object) $args;
 		}
 
-		$dfv_field_data = $this->build_dfv_field_data( $args );
+		$script_content = json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );;
 	?>
-		<script type="application/json" class="pods-dfv-field-data"><?php
-			echo json_encode( $dfv_field_data, JSON_HEX_TAG );
-			?></script>
+		<div class="pods-form-ui-field">
+			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content ?></script>
+		</div>
 	<?php
 
 	}

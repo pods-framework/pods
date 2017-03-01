@@ -8,8 +8,8 @@ const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 
 // key: FieldClass
 const FieldClasses = {
-	'file-upload': fields.FileUpload,
-	'pick'       : fields.Pick
+	'file': fields.FileUpload,
+	'pick': fields.Pick
 };
 
 /**
@@ -46,8 +46,8 @@ export const PodsDFVInit = function ( fields ) {
 				} );
 
 				newField = new FieldClass( {
-					el       : this,
-					model    : fieldModel,
+					el           : this,
+					model        : fieldModel,
 					fieldItemData: data.fieldItemData
 				} );
 

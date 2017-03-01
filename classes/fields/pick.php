@@ -945,7 +945,7 @@ class PodsField_Pick extends PodsField {
 				foreach ( $item_title as $subitem_id => $subitem_title ) {
 					$item_data[] = array(
 						'label'      => $subitem_title,
-						'collection' => $this->build_dfv_field_item_data_recurse_item( $subitem_id, $subitem_title, $args ),
+						'collection' => $this->build_dfv_field_item_data_recurse( $subitem_title, $args ),
 					);
 				}
 			} else {

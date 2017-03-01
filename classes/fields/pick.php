@@ -942,12 +942,10 @@ class PodsField_Pick extends PodsField {
 			if ( is_array( $item_title ) ) {
 				$args->options['optgroup'] = true;
 
-				foreach ( $item_title as $subitem_id => $subitem_title ) {
-					$item_data[] = array(
-						'label'      => $subitem_title,
-						'collection' => $this->build_dfv_field_item_data_recurse( $subitem_title, $args ),
-					);
-				}
+				$item_data[] = array(
+					'label'      => $item_id,
+					'collection' => $this->build_dfv_field_item_data_recurse( $item_title, $args ),
+				);
 			} else {
 				$item_data[] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
 			}

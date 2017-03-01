@@ -99,10 +99,6 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function admin_init() {
 
-		// @todo --!! Prototype testing only.
-		add_action( 'wp_ajax_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
-		add_action( 'wp_ajax_nopriv_pods_relationship_popup', array( $this, 'admin_ajax_relationship_popup' ) );
-
 		// AJAX for Relationship lookups.
 		add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 		add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
@@ -2059,44 +2055,6 @@ class PodsField_Pick extends PodsField {
 		}
 
 		return $data;
-
-	}
-
-	/**
-	 * AJAX call to refresh relationship field markup (supports adding new records via modal).
-	 *
-	 * @since 2.7
-	 */
-	public function admin_ajax_relationship_popup() {
-
-		$data = pods_unslash( (array) $_POST );
-
-		// Get the field information.
-		$params = array(
-			'pod_id' => $data['pod_id'],
-			'id'     => $data['field_id'],
-		);
-		$field  = pods_api()->load_field( $params );
-
-		// Get Pods object for this item.
-		$pod = pods( $field['pod'], $data['item_id'] );
-
-		// Get the relationship field's value(s).
-		$field_name = $field['name'];
-		$params     = array(
-			'name'    => $field_name,
-			'in_form' => true,
-		);
-		$value      = $pod->field( $params );
-
-		// Build the markup and return it to the caller.
-		$meta_field_name = 'pods_meta_' . $field_name;
-
-		$output = PodsForm::field( $meta_field_name, $value, 'pick', $field, $pod, $data['item_id'] );
-
-		echo $output;
-
-		die();
 
 	}
 

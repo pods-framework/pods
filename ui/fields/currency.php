@@ -33,7 +33,7 @@ $currency = 'usd';
 if ( isset( PodsField_Currency::$currencies[ pods_var( 'currency_format_sign', $options, -1 ) ] ) )
     $currency = pods_var( 'currency_format_sign', $options );
 
-$currency_sign = PodsField_Currency::$currencies[ $currency ];
+$currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>

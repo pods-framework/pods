@@ -74,7 +74,6 @@
 }
 
 .pods-pick-values {
-    background: #fff;
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
@@ -108,6 +107,7 @@ select.pods-form-ui-field-type-pick[multiple] {
 }
 
 .pods-pick-values li {
+    background-color: #fff;
     border-bottom: 1px solid #f4f4f4;
     line-height: 1em;
     margin: 0;
@@ -198,10 +198,33 @@ input.pods-form-ui-field-type-color {
     height: auto;
 }
 
+.pods-ui-add-new {
+    clear: both;
+}
+
 /**
     Form tables.
  */
 
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+    border-bottom: none;
+}
+
+.form-table td .pods-form-ui-field {
+    max-width: 95%;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+    padding: 0 10px;
+}
+
+.pods-field .wp-editor-container {
+    background-color: #FFF;
+}
+
+/* Side location */
 #side-sortables .form-table .pods-field {
     display: block;
 }
@@ -219,25 +242,6 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
-.form-table tr.pods-field:last-child > th,
-.form-table tr.pods-field:last-child > td {
-    border-bottom: none;
-}
-
-.form-table tr.pods-field > td {
-    line-height: inherit;
-    padding: 15px 0;
-}
-
-.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
-.form-table.pods-form-ui-table-type-file tr.form-field > td {
-    padding: 0 10px;
-}
-
-.pods-field .wp-editor-container {
-    background-color: #FFF;
-}
-
 /* Codemirror */
 .pods-field .CodeMirror {
     border: 1px solid #999;
@@ -245,6 +249,9 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
+/**
+    Pods form frontend
+ */
 .pods-form-front ul.pods-form-fields {
     list-style: none;
     margin: 0;
@@ -377,6 +384,16 @@ input.pods-form-ui-field-type-color {
 
     .pods-pick-values li .pods-boolean input:before {
         font: 400 2.5vh/1 dashicons;
+    }
+
+    .form-table td .pods-form-ui-field {
+        max-width: none;
+    }
+
+    /* WP fix */
+    .form-table td input,
+    .form-table td select {
+        margin: 0;
     }
 }
 

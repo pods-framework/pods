@@ -146,7 +146,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
     <h2>
-        <?php _e( 'Edit Pod', 'pods' ); ?>:
+        <?php esc_html_e( 'Edit Pod', 'pods' ); ?>:
         <?php
             if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
         ?>
@@ -158,7 +158,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
             <span class="pods-sluggable">
                 <span class="pods-slug">
                     <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
-                    <input type="button" class="edit-slug-button button" value="<?php _e( 'Edit', 'pods' ); ?>" />
+                    <input type="button" class="edit-slug-button button" value="<?php esc_attr_e( 'Edit', 'pods' ); ?>" />
                 </span>
                 <span class="pods-slug-edit">
                     <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
@@ -168,7 +168,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
                     ),
                     'class' => 'pods-validate pods-validate-required'
                 ) ); ?>
-                    <input type="button" class="save-button button" value="<?php _e( 'OK', 'pods' ); ?>" /> <a class="cancel" href="#cancel-edit"><?php _e( 'Cancel', 'pods' ); ?></a>
+                    <input type="button" class="save-button button" value="<?php esc_attr_e( 'OK', 'pods' ); ?>" /> <a class="cancel" href="#cancel-edit"><?php esc_html_e( 'Cancel', 'pods' ); ?></a>
                 </span>
             </span>
         <?php
@@ -257,13 +257,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" id="label" class="manage-column field-label">
-                    <span><?php _e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                    <span><?php _e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                    <span><?php _e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
                 </th>
             </tr>
         </thead>
@@ -273,13 +273,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" class="manage-column field-label">
-                    <span><?php _e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-machine-name">
-                    <span><?php _e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-field-type">
-                    <span><?php _e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
                 </th>
             </tr>
         </tfoot>
@@ -306,7 +306,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
                 }
             ?>
             <tr class="no-items<?php echo esc_attr( 1 < $pods_i ? ' hidden' : '' ); ?>">
-                <td class="colspanchange" colspan="4"><?php _e( 'No fields have been added yet', 'pods' ); ?></td>
+                <td class="colspanchange" colspan="4"><?php esc_html_e( 'No fields have been added yet', 'pods' ); ?></td>
             </tr>
         </tbody>
     </table>
@@ -803,7 +803,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     <div id="side-info-field" class="inner-sidebar">
         <div id="side-sortables">
             <div id="submitdiv" class="postbox pods-no-toggle">
-                <h3><span><?php _e( 'Manage', 'pods' ); ?> <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
+                <h3><span><?php esc_html_e( 'Manage', 'pods' ); ?> <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
                 </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">
@@ -813,7 +813,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                             </div>
                             <div id="publishing-action">
                                 <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                <button class="button-primary" type="submit"><?php _e( 'Save Pod', 'pods' ); ?></button>
+                                <button class="button-primary" type="submit"><?php esc_html_e( 'Save Pod', 'pods' ); ?></button>
                             </div>
                             <div class="clear"></div>
                         </div>

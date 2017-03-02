@@ -161,9 +161,9 @@
                                                 echo PodsForm::label( 'create_menu_location', __( 'Menu Location', 'pods' ), __( '<h6>Menu Location</h6> This is the location where the new settings page will be added in the WordPress Dashboard menu.', 'pods' ) );
 
                                                 $data = array(
-                                                    'settings' => 'Add to Settings menu',
-                                                    'appearances' => 'Add to Appearances menu',
-                                                    'top' => 'Make a new menu item below Settings'
+                                                    'settings' => __( 'Add to Settings menu', 'pods' ),
+                                                    'appearances' => __( 'Add to Appearances menu', 'pods' ),
+                                                    'top' => __( 'Make a new menu item below Settings', 'pods' )
                                                 );
 
                                                 echo PodsForm::field( 'create_menu_location', pods_v( 'create_menu_location', 'post' ), 'pick', array( 'data' => $data ) );

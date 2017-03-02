@@ -229,11 +229,6 @@ input.pods-form-ui-field-type-color {
     padding: 15px 0;
 }
 
-.form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
-.form-table tr.pods-field.pods-form-ui-row-type-file > td {
-    padding: 0;
-}
-
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
 .form-table.pods-form-ui-table-type-file tr.form-field > td {
     padding: 0 10px;
@@ -363,6 +358,7 @@ input.pods-form-ui-field-type-color {
     content: "\00a0";
     clear: both;
     display: block;
+    height: 0;
 }
 
 #wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {

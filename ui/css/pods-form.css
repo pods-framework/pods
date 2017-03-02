@@ -383,8 +383,20 @@ input.pods-form-ui-field-type-color {
 /*
  * Modal For DFV List View Relationships
  */
+.pods-modal-frame.hide-menu .media-frame-title {
+    left: 0;
+}
+.media-modal .media-modal-content .pods-modal-frame {
+    height: 100%;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
+    height: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
-  margin-top: 50px;
+    height: 100%;
+    position: relative;
 }
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
     position: absolute;

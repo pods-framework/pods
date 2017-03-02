@@ -566,10 +566,13 @@ class PodsField_File extends PodsField {
 				continue;
 			}
 
-			$icon      = '';
+			$icon = '';
+			
+			// @todo Add access check
 			$edit_link = get_edit_post_link( $attachment->ID, 'raw' );
-			$link      = get_permalink( $attachment->ID );
-			$download  = wp_get_attachment_url( $attachment->ID );
+			
+			$link = get_permalink( $attachment->ID );
+			$download = wp_get_attachment_url( $attachment->ID );
 
 			$thumb = wp_get_attachment_image_src( $id, 'thumbnail', true );
 
@@ -583,7 +586,7 @@ class PodsField_File extends PodsField {
 				$title = basename( $attachment->guid );
 			}
 
-			$model_data[] = array(
+			$data[] = array(
 				'id'        => $id,
 				'icon'      => $icon,
 				'name'      => $title,

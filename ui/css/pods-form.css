@@ -85,7 +85,7 @@
 
 /* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
 .pods-form-ui-field .pods-pick-values,
-.pods-form-ui-field .pods-pick-values li.pods-flex-col {
+.pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
     border: none;
 }
 
@@ -274,7 +274,7 @@ input.pods-form-ui-field-type-color {
     width: 100%;
 }
 
-.pods-form-front ul.pods-flex-list li.pods-flex-icon img {
+.pods-form-front ul.pods-dfv-list li.pods-dfv-list-icon img {
     width: 40px;
 }
 
@@ -357,7 +357,7 @@ input.pods-form-ui-field-type-color {
 }
 
 /*
- * Modal For Flexible Relationships
+ * Modal For DFV List View Relationships
  */
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
   margin-top: 50px;

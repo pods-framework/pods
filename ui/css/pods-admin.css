@@ -351,7 +351,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     border-bottom: none;
 }
 
-.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-flex-list li.pods-flex-name {
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-dfv-list li.pods-dfv-list-name {
     left: 46px;
     right: 30px;
     overflow: hidden;
@@ -439,7 +439,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 }
 
 /*
- * Pods Flexible
+ * Pods Flexible rows (hacky)
  */
 tbody.pods-manage-list tr.flexible-row {
     display: none;

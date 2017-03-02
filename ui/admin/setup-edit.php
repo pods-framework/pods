@@ -787,7 +787,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
     var sisterFieldsProcessing = {};
 
-    /*global PodsMVFields */
+    /*global PodsDFV */
     var pods_sister_field = function ( $el ) {
         var postData, relatedPodName, selectedValue, $container;
         var fieldModel, collection, selectField;
@@ -816,7 +816,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 
         sisterFieldsProcessing[ fieldKey ] = true;
 
-        fieldModel = new PodsMVFields.models.PodsMVFieldModel( {
+        fieldModel = new PodsDFV.models.PodsDFVFieldModel( {
             htmlAttr: {
                 id        : "pods-form-ui-field-data-" + id + "-sister-id",
                 "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
@@ -825,12 +825,12 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             }
         } );
 
-        collection = new PodsMVFields.models.RelationshipCollection( {
+        collection = new PodsDFV.models.RelationshipCollection( {
             id  : "",
             name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
         } );
 
-        selectField = new PodsMVFields.fields.Pick( {
+        selectField = new PodsDFV.fields.Pick( {
             el        : $container,
             model     : fieldModel,
             collection: collection

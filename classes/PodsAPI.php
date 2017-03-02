@@ -5324,6 +5324,7 @@ class PodsAPI {
                     'post_type' => '_pods_pod',
                     'posts_per_page' => 1
                 ) );
+
                 if ( is_array( $pod ) ) {
                     $pod = $pod[0];
                 }

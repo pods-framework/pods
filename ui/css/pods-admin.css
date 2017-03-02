@@ -1,3 +1,7 @@
+.pods-hidden {
+    display: none;
+}
+
 .pods-admin .pods-leaf-watermark-right {
     position: fixed;
     width: 236px;

@@ -3,6 +3,10 @@
     background: none;
 }
 
+.pods-hidden {
+    display: none;
+}
+
 .pods-admin #navigation-actions .previous-item {
     display: block;
     text-align: left;

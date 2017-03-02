@@ -1015,6 +1015,7 @@ function pods_do_shortcode( $content, $shortcodes ) {
 	if ( isset( $temp_shortcode_filter ) ) {
 		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );
 	}
+	
 	return $content;
 
 }

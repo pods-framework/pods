@@ -198,6 +198,27 @@ input.pods-form-ui-field-type-color {
     height: auto;
 }
 
+/**
+    Form tables.
+ */
+
+#side-sortables .form-table .pods-field {
+    display: block;
+}
+
+#side-sortables .form-table th {
+    display: block;
+    width: 100%;
+    padding: 0 0 10px;
+    margin: 0;
+}
+#side-sortables .form-table tr.pods-field > td {
+    display: block;
+    line-height: inherit;
+    padding: 0;
+    margin: 0;
+}
+
 .form-table tr.pods-field:last-child > th,
 .form-table tr.pods-field:last-child > td {
     border-bottom: none;

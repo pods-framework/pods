@@ -190,6 +190,11 @@ input.pods-form-ui-field-type-color {
     width: 80px;
 }
 
+/* @todo Improve this, select2 adds inline fixed widths preventing responsive scaling */
+.pods-form-ui-field .select2-container {
+    width: 100% !important;
+}
+
 .pods-form-ui-field-type-select2 {
     min-width: 20%;
     width: auto;

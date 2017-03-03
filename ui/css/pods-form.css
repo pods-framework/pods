@@ -92,6 +92,11 @@
     border: none;
 }
 
+/* HTML select field fix */
+.pods-form-ui-row-type-pick .pods-form-ui-field select {
+    width: 25em;
+}
+
 /* This one does need a border, however */
 .pods-pick-values .pods-checkbox-view {
     border: 1px solid #dfdfdf;
@@ -398,6 +403,10 @@ input.pods-form-ui-field-type-color {
     .form-table td input,
     .form-table td select {
         margin: 0;
+    }
+    /* HTML select field fix */
+    .pods-form-ui-row-type-pick .pods-form-ui-field select {
+        width: 100%;
     }
 }
 

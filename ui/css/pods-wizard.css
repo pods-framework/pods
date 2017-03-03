@@ -387,9 +387,9 @@
     background: #f9f9f9;
     position: relative;
     text-decoration: none;
-    -webkit-border-radius: 0 0 8px 8px;
-    -moz-border-radius: 0 0 8px 8px;
-    border-radius: 0 0 8px 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);

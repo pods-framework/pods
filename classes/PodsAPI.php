@@ -2460,7 +2460,7 @@ class PodsAPI {
                 unset( $field[ 'sister_id' ] );
         }
 
-        $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
+        $field[ 'options' ] = array_merge( $options, $field[ 'options' ] );
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 

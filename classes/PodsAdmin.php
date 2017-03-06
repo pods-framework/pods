@@ -142,7 +142,7 @@ class PodsAdmin {
                     wp_enqueue_script( 'post' );
                 elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
                     wp_enqueue_script( 'post' );
-                    wp_enqueue_style( 'pods-admin' );
+                    //wp_enqueue_style( 'pods-admin' );
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );

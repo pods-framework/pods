@@ -3,6 +3,10 @@
     background: none;
 }
 
+.pods-hidden {
+    display: none;
+}
+
 .pods-admin #navigation-actions .previous-item {
     display: block;
     text-align: left;
@@ -74,12 +78,11 @@
 }
 
 .pods-pick-values {
-    background: #fff;
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
     max-height: 220px;
-    overflow: auto;
+    overflow-y: auto;
     padding: 2px 0;
 }
 
@@ -87,6 +90,11 @@
 .pods-form-ui-field .pods-pick-values,
 .pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
     border: none;
+}
+
+/* HTML select field fix */
+.pods-form-ui-row-type-pick .pods-form-ui-field select {
+    width: 25em;
 }
 
 /* This one does need a border, however */
@@ -108,6 +116,7 @@ select.pods-form-ui-field-type-pick[multiple] {
 }
 
 .pods-pick-values li {
+    background-color: #fff;
     border-bottom: 1px solid #f4f4f4;
     line-height: 1em;
     margin: 0;
@@ -181,29 +190,43 @@ input.pods-form-ui-field-type-color {
     width: 80px;
 }
 
+/* @todo Improve this, select2 adds inline fixed widths preventing responsive scaling */
+.pods-form-ui-field .select2-container {
+    width: 100% !important;
+}
+
 .pods-form-ui-field-type-select2 {
     min-width: 20%;
     width: auto;
     min-height: 28px;
 }
 
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    margin-right: 5px;
+}
+
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    padding: 3px 5px;
+}
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
 }
+
+.pods-ui-add-new {
+    clear: both;
+}
+
+/**
+    Form tables.
+ */
 
 .form-table tr.pods-field:last-child > th,
 .form-table tr.pods-field:last-child > td {
     border-bottom: none;
 }
 
-.form-table tr.pods-field > td {
-    line-height: inherit;
-    padding: 10px 0;
-}
-
-.form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
-.form-table tr.pods-field.pods-form-ui-row-type-file > td {
-    padding: 0;
+.form-table td .pods-form-ui-field {
+    max-width: 95%;
 }
 
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
@@ -215,6 +238,24 @@ input.pods-form-ui-field-type-color {
     background-color: #FFF;
 }
 
+/* Side location */
+#side-sortables .form-table .pods-field {
+    display: block;
+}
+
+#side-sortables .form-table th {
+    display: block;
+    width: 100%;
+    padding: 0 0 10px;
+    margin: 0;
+}
+#side-sortables .form-table tr.pods-field > td {
+    display: block;
+    line-height: inherit;
+    padding: 0;
+    margin: 0;
+}
+
 /* Codemirror */
 .pods-field .CodeMirror {
     border: 1px solid #999;
@@ -222,6 +263,9 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
+/**
+    Pods form frontend
+ */
 .pods-form-front ul.pods-form-fields {
     list-style: none;
     margin: 0;
@@ -335,6 +379,7 @@ input.pods-form-ui-field-type-color {
     content: "\00a0";
     clear: both;
     display: block;
+    height: 0;
 }
 
 #wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
@@ -354,13 +399,39 @@ input.pods-form-ui-field-type-color {
     .pods-pick-values li .pods-boolean input:before {
         font: 400 2.5vh/1 dashicons;
     }
+
+    .form-table td .pods-form-ui-field {
+        max-width: none;
+    }
+
+    /* WP fix */
+    .form-table td input,
+    .form-table td select {
+        margin: 0;
+    }
+    /* HTML select field fix */
+    .pods-form-ui-row-type-pick .pods-form-ui-field select {
+        width: 100%;
+    }
 }
 
 /*
  * Modal For DFV List View Relationships
  */
+.pods-modal-frame.hide-menu .media-frame-title {
+    left: 0;
+}
+.media-modal .media-modal-content .pods-modal-frame {
+    height: 100%;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
+    height: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
-  margin-top: 50px;
+    height: 100%;
+    position: relative;
 }
 .media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
     position: absolute;

@@ -56,10 +56,21 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	},
 
 	render: function () {
+
 		// Activate the default state if no active state exists.
 		if ( !this.state() && this.options.state ) {
 			this.setState( this.options.state );
 		}
+
+//--!! Prototyping only
+const self = this;
+setTimeout( function() {
+	const name = "Dummy record " + ( 0 | Math.random() * 9e6 ).toString( 36 );
+	const dummyRecord = { 'name': name, 'selected': true };
+	jQuery( self ).trigger( 'dfv:modal:update', dummyRecord );
+}, 4000 );
+//--!! Prototyping only
+
 		/**
 		 * call 'render' directly on the parent class
 		 */

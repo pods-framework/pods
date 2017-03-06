@@ -23,6 +23,8 @@ const views = {
 	'list'    : ListView
 };
 
+let modalIFrame;
+
 /**
  * @extends Backbone.View
  */
@@ -86,18 +88,25 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onChildviewAddNewClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
-		const modalFrame = new IframeFrame( {
+		modalIFrame = new IframeFrame( {
 			title: 'The Title',
 			src  : fieldConfig.iframe_src
 		} );
-		modalFrame.modal.open();
+
+		//--!! Prototyping
+		jQuery( modalIFrame ).on( 'dfv:modal:update', this.addNewSuccess.bind( this ) );
+		//--!! Prototyping
+
+		modalIFrame.modal.open();
 	},
 
 	/**
-	 * @param response
+	 * @param event
+	 * @param data
 	 */
-	addNewSuccess: function ( response ) {
-		console.log( response );
+	addNewSuccess: function ( event, data ) {
+		this.collection.add( data );
+		modalIFrame.modal.close();
 	}
 
 } );

@@ -138,13 +138,13 @@ export const SelectView = Marionette.CollectionView.extend( {
 		};
 	},
 
+	/**
+	 * Setup to be done once attached to the DOM.  Select2 has some setup needs.
+	 */
 	onAttach: function () {
-		if ( this.fieldConfig.view_name === 'select2' ) {
-			this.$el.select2();
 
-			this.$el.parent().find( 'ul.select2-selection__rendered' ).sortable( {
-				containment: 'parent',
-			} );
+		if ( this.fieldConfig.view_name === 'select2' ) {
+			this.setupSelect2();
 		}
 	},
 
@@ -153,6 +153,40 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 */
 	onChangeSelected: function () {
 		this.collection.setSelected( this.$el.val() );
+	},
+
+	/**
+	 * Initialize Select2, setup drag-drop reordering
+	 */
+	setupSelect2: function () {
+		const UL_TARGET = 'ul.select2-selection__rendered';
+		const SELECTED_TARGET = '.select2-selection__choice';
+		const $select2 = this.$el;
+		let $ulContainer;
+
+		// Initialize select2
+		$select2.select2();
+
+		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
+		$ulContainer = $select2.parent().find( UL_TARGET );
+
+		// Make the list drag-drop sortable
+		$ulContainer.sortable( {
+			containment: 'parent'
+		} );
+
+		// With select2 4.0, sortable is just eordering the UI elements.  Keep the underlying select/option list
+		// synced with the changes.  See: https://github.com/select2/select2/issues/3004
+		$ulContainer.on( 'sortstop', function () {
+			const $selected = $ulContainer.find( SELECTED_TARGET ).get().reverse();
+
+			jQuery( $selected ).each( function () {
+				const id = jQuery( this ).data( 'data' ).id;
+				const option = $select2.find( 'option[value="' + id + '"]' )[ 0 ];
+
+				$select2.prepend( option );
+			} );
+		} );
 	}
 
 } );

@@ -175,7 +175,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			containment: 'parent'
 		} );
 
-		// With select2 4.0, sortable is just eordering the UI elements.  Keep the underlying select/option list
+		// With select2 4.0, sortable is just reordering the UI elements.  Keep the underlying select/option list
 		// synced with the changes.  See: https://github.com/select2/select2/issues/3004
 		$ulContainer.on( 'sortstop', function () {
 			const $selected = $ulContainer.find( SELECTED_TARGET ).get().reverse();

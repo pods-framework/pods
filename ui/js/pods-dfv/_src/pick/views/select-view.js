@@ -138,9 +138,13 @@ export const SelectView = Marionette.CollectionView.extend( {
 		};
 	},
 
-	onAttach: function() {
+	onAttach: function () {
 		if ( this.fieldConfig.view_name === 'select2' ) {
 			this.$el.select2();
+
+			this.$el.parent().find( 'ul.select2-selection__rendered' ).sortable( {
+				containment: 'parent',
+			} );
 		}
 	},
 

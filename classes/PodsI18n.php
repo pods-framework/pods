@@ -211,11 +211,19 @@ final class PodsI18n {
 	 * @since 2.6.6
 	 * @since 2.7 Moved to this class from PodsAPI
 	 *
+	 * @param array $args (optional) {
+	 *     @type bool $redo Rerun logic?
+	 * }
+	 *
 	 * @return array
 	 */
-	public static function get_current_language() {
+	public static function get_current_language( $args = array() ) {
 
-		if ( null !== self::$current_language_data ) {
+		$args = wp_parse_args( $args, array(
+			'redo' => false,
+		) );
+
+		if ( ! $args['redo'] && null !== self::$current_language_data ) {
 			return self::$current_language_data;
 		}
 

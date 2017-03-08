@@ -8336,7 +8336,8 @@ class PodsAPI {
 	 * @return array
 	 */
 	public static function get_current_language() {
-		return pods_i18n()::get_current_language();
+		$pods_i18n = pods_i18n();
+		return $pods_i18n::get_current_language();
 	}
 
     /**

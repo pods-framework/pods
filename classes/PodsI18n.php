@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package Pods
  * @since   2.7
@@ -15,6 +14,16 @@ final class PodsI18n {
 	 * @var array Key/value pairs with label/translation
 	 */
 	private static $strings = array();
+
+	/**
+	 * @var mixed Current language locale
+	 */
+	public static $current_language = null;
+
+	/**
+	 * @var mixed Current language data
+	 */
+	public static $current_language_data = null;
 
 	/**
 	 * Singleton handling for a basic pods_i18n() request
@@ -205,6 +214,10 @@ final class PodsI18n {
 	 * @return array
 	 */
 	public static function get_current_language() {
+
+		if ( null !== self::$current_language_data ) {
+			return self::$current_language_data;
+		}
 
 		/**
 		 * @var $sitepress SitePress object
@@ -412,6 +425,9 @@ final class PodsI18n {
 		 * @param string|boolean $translator Language plugin used
 		 */
 		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
+
+		self::$current_language = $lang_data['language'];
+		self::$current_language_data = $lang_data;
 
 		return $lang_data;
 

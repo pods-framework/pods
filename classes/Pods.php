@@ -692,17 +692,17 @@ class Pods implements Iterator {
 		}
 		elseif ( null === $params->output ) {
 			/**
-			 * Override the way realted fields are output
+			 * Override the way related fields are output
 			 *
-			 * @param string $output How to output related fields. Default is 'arrays'. Options: id|name|object|array|pod
-			 * @param array|object $row Current row being outputted.
-			 * @param array $params Params array passed to field().
-			 * @param object|Pods   $this Current Pods object.
+			 * @param string       $output How to output related fields. Default is 'arrays'. Options: ids|names|objects|arrays|pods|find
+			 * @param array|object $row    Current row being outputted.
+			 * @param array        $params Params array passed to field().
+			 * @param Pods         $this   Current Pods object.
 			 */
 			$params->output = apply_filters( 'pods_pods_field_related_output_type', 'arrays', $this->row, $params, $this );
 		}
 
-		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ) ) )
+		if ( in_array( $params->output, array( 'id', 'name', 'object', 'array', 'pod' ), true ) )
 			$params->output .= 's';
 
 		// Support old $orderby variable
@@ -1269,6 +1269,13 @@ class Pods implements Iterator {
 							 */
 							$related_obj = false;
 
+							// Check if we can return the full object/array or if we need to traverse into it
+							$is_field_output_full = false;
+
+							if ( false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) ) {
+								$is_field_output_full = true;
+							}
+
 							if ( 'pod' == $object_type )
 								$related_obj = pods( $object, null, false );
 							elseif ( !empty( $table[ 'pod' ] ) )
@@ -1288,7 +1295,7 @@ class Pods implements Iterator {
 								);
 
 								// Output types
-								if ( in_array( $params->output, array( 'ids', 'objects', 'pods' ) ) )
+								if ( in_array( $params->output, array( 'ids', 'objects', 'pods' ), true ) )
 									$sql[ 'select' ] = '`t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
 								elseif ( 'names' == $params->output && !empty( $table[ 'field_index' ] ) )
 									$sql[ 'select' ] = '`t`.`' . $table[ 'field_index' ] . '` AS `pod_item_index`, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';
@@ -1302,14 +1309,26 @@ class Pods implements Iterator {
 										$sql[ 'where' ] = array_merge( (array) $where, (array) $params->params['where' ] );
 								}
 
+								$item_data = array();
+
 								if ( empty( $related_obj ) ) {
-									if ( !is_object( $this->alt_data ) )
+									if ( ! is_object( $this->alt_data ) ) {
 										$this->alt_data = pods_data( null, 0, true, true );
+									}
 
 									$item_data = $this->alt_data->select( $sql );
+								} else {
+									$related_obj->find( $sql );
+
+									// Support 'find' output
+									if ( 'find' === $params->output && false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) ) {
+										$data = $related_obj;
+
+										$is_field_output_full = true;
+									} else {
+										$item_data = $related_obj->data();
+									}
 								}
-								else
-									$item_data = $related_obj->find( $sql )->data();
 
 								$items = array();
 
@@ -1417,7 +1436,7 @@ class Pods implements Iterator {
 								}
 
 								// Return entire array
-								if ( false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) )
+								if ( $is_field_output_full )
 									$value = $data;
 								// Return an array of single column values
 								else {

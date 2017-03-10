@@ -1550,7 +1550,7 @@ class Pods implements Iterator {
 
 									$value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
 								}
-								elseif ( false === $params->in_form && !empty( $value ) )
+								elseif ( false === $params->in_form && !empty( $value ) && is_array( $value ) )
 									$value = array_values( $value );
 
 								// Return a single column value

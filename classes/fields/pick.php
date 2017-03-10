@@ -1025,9 +1025,17 @@ class PodsField_Pick extends PodsField {
 					if ( ! empty( $post_type['menu_icon'] ) ) {
 						// Post specific icon.
 						$icon = $post_type['menu_icon'];
-					} elseif ( isset( $post_type['name'] ) && 'page' === $post_type['name'] ) {
-						// Default for pages.
-						$icon = 'dashicons-admin-page';
+					} elseif ( isset( $post_type['name'] ) && 'page' ) {
+						switch ( $post_type['name'] ) {
+							case 'page':
+								// Default for pages.
+								$icon = 'dashicons-admin-page';
+							break;
+							case 'attachment':
+								// Default for attachments.
+								$icon = 'dashicons-admin-media';
+							break;
+						}
 					}
 				}
 
@@ -1042,7 +1050,7 @@ class PodsField_Pick extends PodsField {
 				if ( ! empty( $args->options['pick_val'] ) ) {
 
 					// Default icon for taxonomy.
-					$icon = 'dashicons-category';	
+					$icon = 'dashicons-category';
 
 					// Change icon for non-hierarchical taxonomies.
 					$taxonomy = get_term( $item_id );

@@ -849,34 +849,52 @@ class PodsField_Pick extends PodsField {
 		// Set the file name and args based on the content type of the relationship
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
-				$file_name  = 'post-new.php';
-				$query_args = array(
-					'post_type' => $args->options['pick_val'],
-				);
-				// @todo Access rights for add new
+				if ( ! empty( $args->options['pick_val'] ) ) {
+					$post_type_obj = get_post_type_object( $args->options['pick_val'] );
+
+					if ( $post_type_obj && current_user_can( $post_type_obj->cap->create_posts ) ) {
+						$file_name  = 'post-new.php';
+						$query_args = array(
+							'post_type' => $args->options['pick_val'],
+						);
+					}
+				}
+
 				break;
 
 			case 'taxonomy':
-				$file_name  = 'edit-tags.php';
-				$query_args = array(
-					'taxonomy' => $args->options['pick_val'],
-				);
-				// @todo Access rights for add new
+				if ( ! empty( $args->options['pick_val'] ) ) {
+					$taxonomy_obj = get_taxonomy( $args->options['pick_val'] );
+
+					if ( $taxonomy_obj && current_user_can( $taxonomy_obj->cap->edit_terms ) ) {
+						$file_name  = 'edit-tags.php';
+						$query_args = array(
+							'taxonomy' => $args->options['pick_val'],
+						);
+					}
+				}
+
 				break;
 
 			case 'user':
-				$file_name  = 'user-new.php';
-				$query_args = array();
-				// @todo Access rights for add new
+				if ( current_user_can( 'create_users' ) ) {
+					$file_name  = 'user-new.php';
+				}
+
 				break;
 
 			case 'pod':
-				$file_name  = 'admin.php';
-				$query_args = array(
-					'page'   => 'pods-manage-' . $args->options['pick_val'],
-					'action' => 'add',
-				);
-				// @todo Access rights for add new
+				if ( ! empty( $args->options['pick_val'] ) ) {
+					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
+						$file_name  = 'admin.php';
+						$query_args = array(
+							'page'   => 'pods-manage-' . $args->options['pick_val'],
+							'action' => 'add',
+						);
+
+					}
+				}
+
 				break;
 		}
 
@@ -977,7 +995,9 @@ class PodsField_Pick extends PodsField {
 
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
-				if ( null === $args->options['supports_thumbnails'] ) {
+				$item_id = (int) $item_id;
+
+				if ( null === $args->options['supports_thumbnails'] && ! empty( $args->options['pick_val'] ) ) {
 					$args->options['supports_thumbnails'] = post_type_supports( $args->options['pick_val'], 'thumbnail' );
 				}
 
@@ -989,7 +1009,6 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
-				// @todo Access rights for edit link
 				$edit_link = get_edit_post_link( $item_id, 'raw' );
 
 				$link = get_permalink( $item_id );
@@ -997,38 +1016,60 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				// @todo Access rights for edit link
-				$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
+				$item_id = (int) $item_id;
 
-				$link = get_term_link( $item_id, $args->options['pick_val'] );
+				if ( ! empty( $args->options['pick_val'] ) ) {
+					$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
+
+					$link = get_term_link( $item_id, $args->options['pick_val'] );
+				}
 
 				break;
 
 			case 'user':
+				$item_id = (int) $item_id;
+
 				$args->options['supports_thumbnails'] = true;
 
 				$icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
 
-				// @todo Access rights for edit link
 				$edit_link = get_edit_user_link( $item_id );
 
 				$link = get_author_posts_url( $item_id );
 
 				break;
 
+			case 'comment':
+				$item_id = (int) $item_id;
+
+				$args->options['supports_thumbnails'] = true;
+
+				$icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
+
+				$edit_link = get_edit_comment_link( $item_id );
+
+				$link = get_comment_link( $item_id );
+
+				break;
+
 			case 'pod':
-				$file_name  = 'admin.php';
-				$query_args = array(
-					'page'   => 'pods-manage-' . $args->options['pick_val'],
-					'action' => 'edit',
-					'id'     => $item_id,
-				);
+				$item_id = (int) $item_id;
 
-				// @todo Access rights for edit link
-				$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
+				if ( ! empty( $args->options['pick_val'] ) ) {
+					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
+						$file_name  = 'admin.php';
+						$query_args = array(
+							'page'   => 'pods-manage-' . $args->options['pick_val'],
+							'action' => 'edit',
+							'id'     => $item_id,
+						);
 
-				// @todo Add $link support
-				$link = '';
+						$edit_link = add_query_arg( $query_args, admin_url( $file_name ) );
+					}
+
+					// @todo Add $link support
+					$link = '';
+				}
 
 				break;
 		}

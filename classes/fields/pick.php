@@ -1055,7 +1055,7 @@ class PodsField_Pick extends PodsField {
 					// Change icon for non-hierarchical taxonomies.
 					$taxonomy = get_term( $item_id );
 					if ( isset( $taxonomy->taxonomy ) ) {
-						$taxonomy = get_taxonomy( $taxonomy->taxonomy );
+						$taxonomy = (array) get_taxonomy( $taxonomy->taxonomy );
 						if ( isset( $taxonomy['hierarchical'] ) && ! $taxonomy['hierarchical'] ) {
 							$icon = 'dashicons-tag';
 						}

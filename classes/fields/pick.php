@@ -995,7 +995,9 @@ class PodsField_Pick extends PodsField {
 		$edit_link    = '';
 		$link         = '';
 
-		$item_id = (int) $item_id;
+		if ( ! empty( $args->options['pick_object'] ) ) {
+			$item_id = (int) $item_id;
+		}
 
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':

@@ -1084,8 +1084,7 @@ class PodsField_Pick extends PodsField {
 				$args->options['supports_thumbnails'] = true;
 
 				$icon = 'dashicons-admin-comments';
-
-				$icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
+				$img_icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
 
 				$edit_link = get_edit_comment_link( $item_id );
 

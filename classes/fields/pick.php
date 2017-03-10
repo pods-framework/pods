@@ -989,7 +989,7 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args ) {
 
-		$use_dashicon = true;
+		$use_dashicon = false;
 		$icon         = '';
 		$img_icon     = '';
 		$edit_link    = '';
@@ -1096,6 +1096,9 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
+
+					$icon = 'dashicons-pods';
+
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
 						$query_args = array(
@@ -1114,9 +1117,21 @@ class PodsField_Pick extends PodsField {
 				break;
 		}
 
+		// Image icons always overwrite default icons
 		if ( ! empty( $img_icon ) ) {
-			$use_dashicon = false;
 			$icon = $img_icon;
+		}
+
+		// Parse icon type
+		if ( 'none' === $icon || 'div' === $icon ) {
+			$icon = '';
+			$use_dashicon = true;
+		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
+			$icon = esc_attr( $icon );
+			$use_dashicon = false;
+		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			$icon = sanitize_html_class( $icon );
+			$use_dashicon = true;
 		}
 
 		$item = array(

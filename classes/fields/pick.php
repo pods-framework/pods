@@ -993,9 +993,10 @@ class PodsField_Pick extends PodsField {
 		$edit_link = '';
 		$link      = '';
 
+		$item_id = (int) $item_id;
+
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
-				$item_id = (int) $item_id;
 
 				if ( null === $args->options['supports_thumbnails'] && ! empty( $args->options['pick_val'] ) ) {
 					$args->options['supports_thumbnails'] = post_type_supports( $args->options['pick_val'], 'thumbnail' );
@@ -1016,7 +1017,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
 					$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
@@ -1027,8 +1027,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'user':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
@@ -1040,8 +1038,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'comment':
-				$item_id = (int) $item_id;
-
 				$args->options['supports_thumbnails'] = true;
 
 				$icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
@@ -1053,7 +1049,6 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'pod':
-				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {

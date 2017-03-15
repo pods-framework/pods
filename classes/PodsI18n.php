@@ -192,6 +192,9 @@ final class PodsI18n {
 			'The Title' =>
 				__( 'The Title', 'pods' ),
 
+			'Select from existing' =>
+				__( 'Select from existing', 'pods' ),
+
 		);
 
 	}

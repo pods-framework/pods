@@ -192,6 +192,9 @@ final class PodsI18n {
 			'The Title' =>
 				__( 'The Title', 'pods' ),
 
+			'Icon' =>
+				__( 'Icon', 'pods' ),
+
 		);
 
 	}

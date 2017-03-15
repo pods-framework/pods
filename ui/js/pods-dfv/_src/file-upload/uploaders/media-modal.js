@@ -9,7 +9,7 @@ export const MediaModal = PodsFileUploader.extend( {
 	invoke: function () {
 
 		if ( wp.Uploader.defaults.filters.mime_types === undefined ) {
-			wp.Uploader.defaults.filters.mime_types = [ { title: 'Allowed Files', extensions: '*' } ];
+			wp.Uploader.defaults.filters.mime_types = [ { title: PodsI18n.__( 'Allowed Files' ), extensions: '*' } ];
 		}
 
 		let defaultExt = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;

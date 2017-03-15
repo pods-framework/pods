@@ -87,7 +87,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		const modalFrame = new IframeFrame( {
-			title: 'The Title',
+			title: PodsI18n.__( 'The Title' ),
 			src  : fieldConfig.iframe_src
 		} );
 		modalFrame.modal.open();

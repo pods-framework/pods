@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 import template from '~/ui/js/pods-dfv/_src/pick/pick-layout.html';
 
 import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';

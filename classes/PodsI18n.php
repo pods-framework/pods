@@ -199,6 +199,31 @@ final class PodsI18n {
 	}
 
 	/**
+	 * Get current locale information from Multilingual plugins
+	 *
+	 * @since 2.7
+	 *
+	 * @param array $args (optional) {
+	 *     @type bool $redo Rerun get_current_language() logic?
+	 * }
+	 *
+	 * @return string
+	 */
+	public function get_current_language( $args = array() ) {
+
+		$args = wp_parse_args( $args, array(
+			'redo' => false,
+		) );
+
+		if ( ! $args['redo'] && ! empty( self::$current_language ) ) {
+			return self::$current_language;
+		}
+
+		$this->get_current_language_data( $args );
+		return self::$current_language;
+	}
+
+	/**
 	 * Get current language information from Multilingual plugins
 	 *
 	 * @since 2.6.6
@@ -210,13 +235,13 @@ final class PodsI18n {
 	 *
 	 * @return array
 	 */
-	public static function get_current_language( $args = array() ) {
+	public function get_current_language_data( $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
 			'redo' => false,
 		) );
 
-		if ( ! $args['redo'] && null !== self::$current_language_data ) {
+		if ( ! $args['redo'] && ! empty( self::$current_language_data ) ) {
 			return self::$current_language_data;
 		}
 

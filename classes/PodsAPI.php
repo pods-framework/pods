@@ -5396,7 +5396,7 @@ class PodsAPI {
 	    $bypass_cache = false;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -5699,7 +5699,7 @@ class PodsAPI {
         $current_language = false;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -7500,7 +7500,7 @@ class PodsAPI {
         $current_language_t_id = $current_language_tt_id = 0;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+		$lang_data = pods_i18n()->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -8326,19 +8326,6 @@ class PodsAPI {
 
         return $id;
     }
-
-	/**
-	 * Get current language information from Multilingual plugins
-	 *
-	 * @since 2.6.6
-	 * @since 2.7 Logic moved to PodsI18n
-	 *
-	 * @return array
-	 */
-	public static function get_current_language() {
-		$pods_i18n = pods_i18n();
-		return $pods_i18n::get_current_language();
-	}
 
     /**
      * Handle filters / actions for the class

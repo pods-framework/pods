@@ -156,8 +156,8 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Taggable', 'pods' ),
 				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),
 				'excludes-on' => array(
-					self::$type . '_format_single' => array( 'dropdown', 'radio' ),
-					self::$type . '_format_multi'  => array( 'checkbox', 'multiselect' ),
+					self::$type . '_format_single' => array( 'dropdown', 'radio', 'list' ),
+					self::$type . '_format_multi'  => array( 'checkbox', 'multiselect', 'list' ),
 					self::$type . '_object'        => array_merge( array( 'site', 'network' ), self::simple_objects() ),
 				),
 				'type'        => 'boolean',

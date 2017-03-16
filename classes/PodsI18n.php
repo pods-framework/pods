@@ -28,22 +28,15 @@ final class PodsI18n {
 	/**
 	 * Singleton handling for a basic pods_i18n() request
 	 *
-	 * @return PodsI18n
-	 *
 	 * @since 2.7
 	 */
-	public static function init() {
+	private function __construct() {
+		self::$instance = $this;
 
-		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsI18n();
-
-			// Hook all enqueue scripts actions
-			add_action( 'wp_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
-			add_action( 'admin_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
-			add_action( 'login_enqueue_scripts', array( 'PodsI18n', 'enqueue_scripts' ) );
-		}
-
-		return self::$instance;
+		// Hook all enqueue scripts actions
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
 	/**
@@ -57,7 +50,7 @@ final class PodsI18n {
 
 		// Initialize if the class hasn't been setup yet for some reason
 		if ( ! is_object( self::$instance ) ) {
-			self::init();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -66,7 +59,7 @@ final class PodsI18n {
 	/**
 	 * @since 2.7
 	 */
-	public static function enqueue_scripts() {
+	public function enqueue_scripts() {
 
 		// Register our i18n script for JS
 		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );

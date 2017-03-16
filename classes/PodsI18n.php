@@ -18,12 +18,12 @@ final class PodsI18n {
 	/**
 	 * @var mixed Current language locale
 	 */
-	public static $current_language = null;
+	private static $current_language = null;
 
 	/**
 	 * @var mixed Current language data
 	 */
-	public static $current_language_data = null;
+	private static $current_language_data = null;
 
 	/**
 	 * Singleton handling for a basic pods_i18n() request

@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, wp, plupload, PodsI18n */
 import { PodsFileUploader } from '~/ui/js/pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
 import { FileUploadQueueModel, FileUploadQueue } from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-queue';
 
@@ -123,7 +123,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 				model.set( {
 					progress : 0,
-					errorMsg: 'There was an issue with the file upload, please try again.'
+					errorMsg: PodsI18n.__( 'There was an issue with the file upload, please try again.' )
 				} );
 				return;
 			}

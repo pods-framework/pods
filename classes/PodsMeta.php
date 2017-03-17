@@ -1083,7 +1083,7 @@ class PodsMeta {
         foreach ( $hidden_fields as $hidden_field ) {
             $field = $hidden_field[ 'field' ];
 
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden', $hidden_field[ 'field' ] );
         }
     ?>
 

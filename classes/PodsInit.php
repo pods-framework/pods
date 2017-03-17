@@ -137,7 +137,22 @@ class PodsInit {
 
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
+		// Must run at a lower priority than PodsComponents::get_components() so the component list has been built
+		add_action( 'setup_theme', array( $this, 'auto_enable_components' ), 12 );
+
 		$this->run();
+
+	}
+
+	/**
+	 * Auto enable certain components on new installs
+	 */
+	public function auto_enable_components() {
+
+		// Make templates component active after an initial installation or re-installation
+		if ( self::$did_setup ) {
+			self::$components->activate_component( 'templates' );
+		}
 
 	}
 
@@ -169,11 +184,6 @@ class PodsInit {
 
 		if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
 			self::$components = pods_components();
-
-			// Make templates component active after an initial installation or re-installation
-			if ( self::$did_setup ) {
-				self::$components->activate_component( 'templates' );
-			}
 		}
 
 	}

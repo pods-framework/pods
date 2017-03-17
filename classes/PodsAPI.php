@@ -5396,7 +5396,8 @@ class PodsAPI {
 	    $bypass_cache = false;
 
 	    // Get current language data
-		$lang_data = pods_i18n()->get_current_language_data();
+
+		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -5699,7 +5700,7 @@ class PodsAPI {
         $current_language = false;
 
 	    // Get current language data
-		$lang_data = pods_i18n()->get_current_language_data();
+		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {

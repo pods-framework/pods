@@ -204,7 +204,7 @@ final class PodsI18n {
 	 * @since 2.7
 	 *
 	 * @param array $args (optional) {
-	 *     @type bool $redo Rerun get_current_language() logic?
+	 *     @type bool $refresh Rerun get_current_language() logic?
 	 * }
 	 *
 	 * @return string
@@ -212,10 +212,10 @@ final class PodsI18n {
 	public function get_current_language( $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
-			'redo' => false,
+			'refresh' => false,
 		) );
 
-		if ( ! $args['redo'] && ! empty( self::$current_language ) ) {
+		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
 			return self::$current_language;
 		}
 
@@ -230,7 +230,7 @@ final class PodsI18n {
 	 * @since 2.7 Moved to this class from PodsAPI
 	 *
 	 * @param array $args (optional) {
-	 *     @type bool $redo Rerun logic?
+	 *     @type bool $refresh Rerun logic?
 	 * }
 	 *
 	 * @return array
@@ -238,10 +238,10 @@ final class PodsI18n {
 	public function get_current_language_data( $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
-			'redo' => false,
+			'refresh' => false,
 		) );
 
-		if ( ! $args['redo'] && ! empty( self::$current_language_data ) ) {
+		if ( ! $args['refresh'] && ! empty( self::$current_language_data ) ) {
 			return self::$current_language_data;
 		}
 

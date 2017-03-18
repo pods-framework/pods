@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Marionette, wp, plupload, PodsI18n */
-import { PodsFileUploader } from '~/ui/js/pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
-import { FileUploadQueueModel, FileUploadQueue } from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-queue';
+import {PodsFileUploader} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
+import {FileUploadQueueModel, FileUploadQueue} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},
@@ -78,6 +78,7 @@ export const Plupload = PodsFileUploader.extend( {
 		const model = this.queueCollection.get( file.id );
 		let response = resp.response;
 		let newFile = [];
+		let json;
 
 		// Error condition 1
 		if ( "Error: " == resp.response.substr( 0, 7 ) ) {
@@ -87,7 +88,7 @@ export const Plupload = PodsFileUploader.extend( {
 			}
 
 			model.set( {
-				progress : 0,
+				progress: 0,
 				errorMsg: response
 			} );
 		}
@@ -99,12 +100,12 @@ export const Plupload = PodsFileUploader.extend( {
 			}
 
 			model.set( {
-				progress : 0,
+				progress: 0,
 				errorMsg: response
 			} );
 		}
 		else {
-			let json = response.match( /{.*}$/ );
+			json = response.match( /{.*}$/ );
 
 			if ( null !== json && 0 < json.length ) {
 				json = jQuery.parseJSON( json[ 0 ] );
@@ -122,7 +123,7 @@ export const Plupload = PodsFileUploader.extend( {
 				}
 
 				model.set( {
-					progress : 0,
+					progress: 0,
 					errorMsg: PodsI18n.__( 'There was an issue with the file upload, please try again.' )
 				} );
 				return;
@@ -141,11 +142,6 @@ export const Plupload = PodsFileUploader.extend( {
 			model.trigger( 'destroy', model );
 			this.trigger( 'added:files', newFile );
 		}
-	},
-
-	// This should never be called as plupload intercepts the button click event itself
-	invoke: function () {
-		return;
 	}
 
 } );

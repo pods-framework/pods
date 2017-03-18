@@ -77,9 +77,9 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'boolean',
 				'dependency' => true
 			),
-			self::$type . '_default_target'      => array(
-				'label'      => __( 'Open in a new window by default?', 'pods' ),
-				'default'    => 0,
+			self::$type . '_new_window'      => array(
+				'label'      => __( 'Open link in new window by default?', 'pods' ),
+				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, self::$type ),
 				'type'       => 'boolean',
 				'dependency' => false
 			),
@@ -210,7 +210,7 @@ class PodsField_Link extends PodsField_Website {
 			$atts = '';
 
 			if ( ! empty( $value['target'] ) ||
-			     ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_default_target', $options ) )
+			     ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_new_window', $options ) )
 			) {
 				// Possible support for other targets in future
 				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
@@ -341,7 +341,7 @@ class PodsField_Link extends PodsField_Website {
 		// Start Target format
 		if ( ! empty( $value['target'] ) ) {
 			$value['target'] = $this->validate_target( $value['target'] );
-		} elseif ( ! isset( $value['target'] ) && 1 == pods_v( self::$type . '_default_target', $options, 0 ) ) {
+		} elseif ( ! isset( $value['target'] ) && 1 == pods_v( self::$type . '_new_window', $options, 0 ) ) {
 			$value['target'] = '_blank';
 		}
 

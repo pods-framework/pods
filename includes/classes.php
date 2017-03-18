@@ -190,7 +190,7 @@ function pods_array ( $container ) {
 function pods_i18n() {
     require_once( PODS_DIR . 'classes/PodsI18n.php' );
 
-    return PodsI18n::init();
+    return PodsI18n::get_instance();
 }
 
 /**

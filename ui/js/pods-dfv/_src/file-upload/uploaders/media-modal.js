@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 import { PodsFileUploader } from '~/ui/js/pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
 
 export const MediaModal = PodsFileUploader.extend( {
@@ -9,7 +9,7 @@ export const MediaModal = PodsFileUploader.extend( {
 	invoke: function () {
 
 		if ( wp.Uploader.defaults.filters.mime_types === undefined ) {
-			wp.Uploader.defaults.filters.mime_types = [ { title: 'Allowed Files', extensions: '*' } ];
+			wp.Uploader.defaults.filters.mime_types = [ { title: PodsI18n.__( 'Allowed Files' ), extensions: '*' } ];
 		}
 
 		let defaultExt = wp.Uploader.defaults.filters.mime_types[ 0 ].extensions;

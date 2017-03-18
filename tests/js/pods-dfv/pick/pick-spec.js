@@ -54,7 +54,7 @@ describe( 'Pick field', function () {
 	} );
 
 	/**
-	 * Add new option tests
+	 * Test pick_allow_add_new option
 	 */
 	it( "Does not show add new when it shouldn't", function () {
 		const add_new_not_allowed = [
@@ -67,6 +67,13 @@ describe( 'Pick field', function () {
 				options    : {
 					iframe_src        : 'xxx',
 					pick_allow_add_new: '0'
+				}
+			},
+			{
+				description: 'Add new option as a non 1/0 string',
+				options    : {
+					iframe_src        : 'xxx',
+					pick_allow_add_new: 'bob'
 				}
 			},
 			{

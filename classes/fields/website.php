@@ -415,11 +415,10 @@ class PodsField_Website extends PodsField {
 	 * Validate an target attribute with the options
 	 *
 	 * @param string $value
-	 * @param array $options
 	 *
 	 * @since 2.7
 	 */
-	public function validate_target( $value, $options = null ) {
+	public function validate_target( $value ) {
 		if ( ! empty( $value ) && $value == '_blank' ) {
 			$value = '_blank';
 		} else {

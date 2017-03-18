@@ -327,7 +327,7 @@ class PodsField_Link extends PodsField_Website {
 
 		// Start Target format
 		if ( ! empty( $value['target'] ) ) {
-			$value['target'] = $this->validate_target( $value['target'], $options );
+			$value['target'] = $this->validate_target( $value['target'] );
 		} elseif ( ! isset( $value['target'] ) && 1 == pods_v( self::$type . '_default_target', $options, 0 ) ) {
 			$value['target'] = '_blank';
 		}

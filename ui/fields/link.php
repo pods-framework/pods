@@ -35,7 +35,7 @@ $target_attributes[ 'class' ] = 'linkPickerTarget';
 $target_attributes[ 'value' ] = '_blank';
 $target_attributes[ 'tabindex' ] = 2;
 $target_attributes[ 'style' ] = 'display: inline-block;';
-if (isset($value['target']) && $value['target'] == '_blank') {
+if ( isset( $value['target'] ) && $value['target'] == '_blank' || ( ! isset( $value['target'] ) && ! empty( $options['link_default_target'] ) ) ) {
 	$target_attributes[ 'checked' ] = 'checked';
 }
 $target_name = $name.'[target]';

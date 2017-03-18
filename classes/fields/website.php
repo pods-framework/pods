@@ -180,8 +180,8 @@ class PodsField_Website extends PodsField {
 		$options = (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) )
-			$value = implode( ' ', $value );
+		// Ensure proper format
+		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
 		$field_type = 'website';
 
@@ -254,6 +254,15 @@ class PodsField_Website extends PodsField {
 	 */
 	public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		$options = (array) $options;
+
+		// Update from a array input field (like link) if the field updates
+		if ( is_array( $value ) ) {
+			if ( isset( $value['url'] ) ) {
+				$value = $value['url'];
+			} else {
+				$value = implode( ' ', $value );
+			}
+		}
 
 		$value = $this->validate_url( $value, $options );
 

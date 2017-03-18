@@ -138,7 +138,7 @@ class PodsInit {
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
 		// Must run at a lower priority than PodsComponents::get_components() so the component list has been built
-		add_action( 'setup_theme', array( $this, 'auto_enable_components' ), 12 );
+		add_action( 'setup_theme', array( $this, 'auto_activate_components' ), 12 );
 
 		$this->run();
 
@@ -147,7 +147,7 @@ class PodsInit {
 	/**
 	 * Auto enable certain components on new installs
 	 */
-	public function auto_enable_components() {
+	public function auto_activate_components() {
 
 		if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
 			return;

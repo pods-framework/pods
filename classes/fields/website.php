@@ -213,6 +213,8 @@ class PodsField_Website extends PodsField {
 	 * @param array $pod
 	 * @param int $id
 	 *
+	 * @return bool|array
+	 *
 	 * @since 2.0
 	 */
 	public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -250,6 +252,8 @@ class PodsField_Website extends PodsField {
 	 * @param array $pod
 	 * @param object $params
 	 *
+	 * @return string
+	 *
 	 * @since 2.0
 	 */
 	public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -285,6 +289,8 @@ class PodsField_Website extends PodsField {
 	 * @param array $fields
 	 * @param array $pod
 	 *
+	 * @return string
+	 *
 	 * @since 2.0
 	 */
 	public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
@@ -298,6 +304,8 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @param string $value
 	 * @param array $options
+	 *
+	 * @return string
 	 *
 	 * @since 2.7
 	 */
@@ -424,6 +432,8 @@ class PodsField_Website extends PodsField {
 	 * Validate an target attribute with the options
 	 *
 	 * @param string $value
+	 *
+	 * @return string
 	 *
 	 * @since 2.7
 	 */

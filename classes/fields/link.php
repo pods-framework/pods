@@ -138,7 +138,7 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0
 	 */
 	public function schema( $options = null ) {
@@ -268,6 +268,8 @@ class PodsField_Link extends PodsField_Website {
 	 * @param array  $pod
 	 * @param int    $id
 	 *
+	 * @return bool|array
+	 *
 	 * @since 2.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -310,6 +312,8 @@ class PodsField_Link extends PodsField_Website {
 	 * @param array  $fields
 	 * @param array  $pod
 	 * @param object $params
+	 *
+	 * @return array
 	 *
 	 * @since 2.0
 	 */
@@ -378,6 +382,6 @@ class PodsField_Link extends PodsField_Website {
 			wp_editor( '', 'pods-link-editor-hidden' );
 			echo '</div>';
 		}
-	
+
 	}
 }

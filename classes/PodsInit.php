@@ -149,6 +149,10 @@ class PodsInit {
 	 */
 	public function auto_enable_components() {
 
+		if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
+			return;
+		}
+
 		// Make templates component active after an initial installation or re-installation
 		if ( self::$did_setup ) {
 			self::$components->activate_component( 'templates' );

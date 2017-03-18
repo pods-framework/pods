@@ -124,7 +124,7 @@ export const Plupload = PodsFileUploader.extend( {
 
 				model.set( {
 					progress: 0,
-					errorMsg: PodsI18n.__( 'There was an issue with the file upload, please try again.' )
+					errorMsg: PodsI18n.__( 'Error uploading file: ' ) + file.name
 				} );
 				return;
 			}

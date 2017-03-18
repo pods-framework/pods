@@ -145,7 +145,7 @@ class PodsInit {
 	}
 
 	/**
-	 * Auto enable certain components on new installs
+	 * Auto-activate certain components on new installs
 	 */
 	public function auto_activate_components() {
 

@@ -393,6 +393,8 @@ class PodsInit {
 
 			$pods_post_types      = $pods_taxonomies = array();
 			$supported_post_types = $supported_taxonomies = array();
+			
+			$post_format_post_types = array();
 
 			foreach ( $post_types as $post_type ) {
 				// Post Type exists already
@@ -486,6 +488,10 @@ class PodsInit {
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
 						$cpt_supports[] = $cpt_support;
+						
+						if ( 'post-formats' === $cpt_support ) {
+							$post_format_post_types[] = $post_type_name;
+						}
 					}
 				}
 
@@ -763,6 +769,8 @@ class PodsInit {
 
 				$pods_cpt_ct['post_types'][ $post_type ] = $options;
 			}
+			
+			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
 		}
@@ -824,6 +832,11 @@ class PodsInit {
 			}
 
 			register_post_type( $post_type, $options );
+
+			// Register post format taxonomy for this post type
+			if ( isset( $pods_cpt_ct['post_format_post_types'] ) && in_array( $pods_cpt_ct['post_format_post_types'], $post_type, true ) ) {
+				register_taxonomy_for_object_type( 'post_format', $post_type );
+			}
 
 			if ( ! isset( self::$content_types_registered['post_types'] ) ) {
 				self::$content_types_registered['post_types'] = array();

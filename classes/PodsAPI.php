@@ -4243,6 +4243,7 @@ class PodsAPI {
 
 		if ( in_array( $pod->pod_data['type'], array( 'post_type', 'media' ) ) ) {
 			$ignore_fields = array(
+				'ID',
 				'post_name',
 				'post_date',
 				'post_date_gmt',
@@ -4252,16 +4253,21 @@ class PodsAPI {
 		        );
 		} elseif ( 'term' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'term_id',
 				'term_taxonomy_id',
 				'slug',
 		        );
 		} elseif ( 'user' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'ID',
 				'user_nicename',
 		        );
 		} elseif ( 'comment' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'comment_ID',
 		        );
+		} elseif ( 'settings' == $pod->pod_data['type'] ) {
+			return pods_error( __( 'Settings do not support duplication.', 'pods' ), $this );
 		}
 
 		/**

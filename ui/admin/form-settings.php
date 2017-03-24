@@ -109,18 +109,20 @@ $do = 'save';
                     if ( 'hidden' == $field[ 'type' ] )
                         continue;
 
-                    $depends = PodsForm::dependencies( $field );
+                    $dep_options = PodsForm::dependencies( $field );
+                    $dep_classes = $dep_options[ 'classes' ];
+                    $dep_data = $dep_options[ 'data' ];
 
-                    if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
+            if ( ( !empty( $depends_on ) || !empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
                         if ( !empty( $depends_on ) ) {
             ?>
                 </tbody>
             <?php
                         }
 
-                        if ( !empty( $depends ) ) {
+                        if ( !empty( $dep_classes ) ) {
             ?>
-                <tbody class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
+                <tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
             <?php
                         }
                     }
@@ -135,8 +137,8 @@ $do = 'save';
                     </td>
                 </tr>
             <?php
-                    if ( false !== $depends_on || !empty( $depends ) )
-                        $depends_on = $depends;
+                    if ( false !== $depends_on || !empty( $dep_classes ) )
+                        $depends_on = $dep_classes;
                 }
 
                 if ( !empty( $depends_on ) ) {

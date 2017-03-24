@@ -830,9 +830,10 @@ class PodsForm {
      * @static
      * @since 2.0
      */
-    public static function dependencies( &$options, $prefix = '' ) {
+    public static function dependencies( $options, $prefix = '' ) {
 
         $options = (array) $options;
+	    $classes = $data = array();
 
         $depends_on = $excludes_on = $wildcard_on = array();
         if ( isset( $options[ 'depends-on' ] ) ) {
@@ -846,8 +847,6 @@ class PodsForm {
         if ( isset( $options[ 'wildcard-on' ] ) ) {
             $wildcard_on = (array) $options[ 'wildcard-on' ];
         }
-
-        $classes = array();
 
         if ( ! empty( $depends_on ) ) {
             $classes[] = 'pods-depends-on';
@@ -881,19 +880,17 @@ class PodsForm {
         if ( ! empty( $wildcard_on ) ) {
             $classes[] = 'pods-wildcard-on';
 
-            // Clean up / format the options, add the appropriate classes
-            $options[ 'wildcard-on' ] = array();
-            foreach ( $wildcard_on as $target => $wildcards ) {
-                $target = self::clean( $target, true );
-
-                $classes[] = 'pods-wildcard-on-' . $prefix . $target;
-                $options[ 'wildcard-on' ][ 'pods-wildcard-' . $prefix . $target ] = $wildcards;
+            // Add the appropriate classes and data attribs per value dependency
+	        foreach ( $wildcard_on as $target => $wildcards ) {
+		        $target = $prefix . self::clean( $target, true );
+		        $classes[] = 'pods-wildcard-on-' . $target;
+		        $data[ 'pods-wildcard-' . $target ] = $wildcards;
             }
         }
 
         $classes = implode( ' ', $classes );
 
-        return $classes;
+        return array( 'classes' => $classes, 'data' => $data );
     }
 
     /**

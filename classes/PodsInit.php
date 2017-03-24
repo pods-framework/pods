@@ -834,7 +834,7 @@ class PodsInit {
 			register_post_type( $post_type, $options );
 
 			// Register post format taxonomy for this post type
-			if ( isset( $pods_cpt_ct['post_format_post_types'] ) && in_array( $pods_cpt_ct['post_format_post_types'], $post_type, true ) ) {
+			if ( isset( $pods_cpt_ct['post_format_post_types'] ) && in_array( $post_type, $pods_cpt_ct['post_format_post_types'], true ) ) {
 				register_taxonomy_for_object_type( 'post_format', $post_type );
 			}
 

@@ -72,10 +72,10 @@ foreach ( $field_options as $field_name => $field_option ) {
                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
                         $group_dep_options = PodsForm::dependencies( $field_group_option, ( !isset( $pods_tab_form ) ? 'field-data-' : '' ) );
-	                    $group_dep_classes = $group_dep_options[ 'classes' ];
-	                    $group_dep_data = $group_dep_options[ 'data' ];
+                        $group_dep_classes = $group_dep_options[ 'classes' ];
+                        $group_dep_data = $group_dep_options[ 'data' ];
 
-	                    $row_name = $field_group_name;
+                        $row_name = $field_group_name;
 
                         if ( !isset( $pods_tab_form ) )
                             $row_name = 'field_data[' . $pods_i . '][' . $field_group_name . ']';

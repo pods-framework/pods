@@ -22,8 +22,8 @@
                         $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
 
                         $dep_options = PodsForm::dependencies( $field_option );
-						$dep_classes = $dep_options[ 'classes' ];
-						$dep_data = $dep_options[ 'data' ];
+                        $dep_classes = $dep_options[ 'classes' ];
+                        $dep_data = $dep_options[ 'data' ];
 
                 if ( ( !empty( $depends_on ) || !empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
                             if ( !empty( $depends_on ) ) {
@@ -70,8 +70,8 @@
                                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
                                         $group_dep_options = PodsForm::dependencies( $field_group_option );
-	                                    $group_dep_classes = $group_dep_options[ 'classes' ];
-	                                    $group_dep_data = $group_dep_options[ 'data' ];
+                                        $group_dep_classes = $group_dep_options[ 'classes' ];
+                                        $group_dep_data = $group_dep_options[ 'data' ];
 
                                         $value = pods_v( $field_group_name, $settings, $field_group_option[ 'default' ] );
                                 ?>

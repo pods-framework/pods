@@ -1053,8 +1053,8 @@ class PodsMeta {
             }
             else {
                 $dep_options = PodsForm::dependencies( $field, 'pods-meta-' );
-	            $dep_classes = $dep_options[ 'classes' ];
-	            $dep_data = $dep_options[ 'data' ];
+                $dep_classes = $dep_options[ 'classes' ];
+                $dep_data = $dep_options[ 'data' ];
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
@@ -1066,10 +1066,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
-			<div class="pods-submittable-fields">
+            <div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-			</div>
+            </div>
                 </td>
             </tr>
         <?php

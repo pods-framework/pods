@@ -833,7 +833,7 @@ class PodsForm {
     public static function dependencies( $options, $prefix = '' ) {
 
         $options = (array) $options;
-	    $classes = $data = array();
+        $classes = $data = array();
 
         $depends_on = $excludes_on = $wildcard_on = array();
         if ( isset( $options[ 'depends-on' ] ) ) {
@@ -881,10 +881,10 @@ class PodsForm {
             $classes[] = 'pods-wildcard-on';
 
             // Add the appropriate classes and data attribs per value dependency
-	        foreach ( $wildcard_on as $target => $wildcards ) {
-		        $target = $prefix . self::clean( $target, true );
-		        $classes[] = 'pods-wildcard-on-' . $target;
-		        $data[ 'pods-wildcard-' . $target ] = $wildcards;
+            foreach ( $wildcard_on as $target => $wildcards ) {
+                $target = $prefix . self::clean( $target, true );
+                $classes[] = 'pods-wildcard-on-' . $target;
+                $data[ 'pods-wildcard-' . $target ] = $wildcards;
             }
         }
 

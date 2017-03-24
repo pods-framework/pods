@@ -255,7 +255,8 @@ tr.pods-toggled-off {
  * Pods Dependency
  */
 .pods-depends-on,
-.pods-excludes-on {
+.pods-excludes-on,
+.pods-wildcard-on {
     display: none;
 }
 

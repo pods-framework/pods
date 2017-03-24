@@ -847,8 +847,15 @@
             },
             setup_dependencies : function( $el ) {
                 var $current = $el.closest( '.pods-dependency' ),
-					$field = $el,
-					val = $el.val();
+                    $field = $el,
+                    val = $el.val(),
+                    $field_type,
+                    dependent_flag,
+                    dependent_specific,
+                    exclude_flag,
+                    exclude_specific,
+                    wildcard_flag,
+                    wildcard_value;
 
                 /**
                  * Check if this element is a child from an 'advanced field options' group.
@@ -862,7 +869,7 @@
                     // And are we also in the "Additional Field Options" tab?
                     if ( $el.parents('.pods-additional-field-options').length ) {
                         // Get this field's type
-                        var $field_type = $current.find( '.pods-form-ui-field-name-field-data-type' ).val();
+                        $field_type = $current.find( '.pods-form-ui-field-name-field-data-type' ).val();
                         // Check if this element resides within the correct "Additional Field Options" tab
                         if ( ! $el.parents( '.pods-additional-field-options > .pods-depends-on-field-data-type-' + $field_type ).length ) {
                             // This is not an option for this field. Empty the value
@@ -871,16 +878,16 @@
                     }
                 }
 
-				if ( null === val ) {
-					val = '';
-				}
+                if ( null === val ) {
+                    val = '';
+                }
 
-                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' ),
-					dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
+                dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( dependent_flag ).each( function () {
                     var $dependent_el = $( this ),
-						dependency_trigger;
+                        dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -984,12 +991,12 @@
                     }
                 } );
 
-                var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
+                exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( exclude_flag ).each( function () {
                     var $dependent_el = $( this ),
-						dependency_trigger;
+                        dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -1093,13 +1100,13 @@
                     }
                 } );
 
-                var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var wildcard_value = val.replace( /\_/gi, '-' );
+                wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                wildcard_value = val.replace( /\_/gi, '-' );
 
                 $current.find( wildcard_flag ).each( function () {
                     var $dependent_el = $( this ),
-						wildcard = $dependent_el.data( 'wildcard' ),
-						dependency_trigger;
+                        wildcard = $dependent_el.data( 'wildcard' ),
+                        dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( null !== wildcard_value.match( wildcard ) ) {

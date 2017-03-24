@@ -854,8 +854,8 @@
                     dependent_specific,
                     exclude_flag,
                     exclude_specific,
-                    wildcard_flag,
-                    wildcard_value;
+                    wildcard_target,
+                    wildcard_target_value;
 
                 /**
                  * Check if this element is a child from an 'advanced field options' group.
@@ -1100,20 +1100,40 @@
                     }
                 } );
 
-                wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                wildcard_value = val.replace( /\_/gi, '-' );
+                // Search for wildcard dependencies on this element's value
+                wildcard_target = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                wildcard_target_value = val.replace( /\_/gi, '-' );
 
-                $current.find( wildcard_flag ).each( function () {
+                $current.find( wildcard_target ).each( function () {
                     var $dependent_el = $( this ),
-                        wildcard = $dependent_el.data( 'wildcard' ),
+                        data_attribute = 'pods-wildcard-' + $field.data( 'name-clean' ),
+                        wildcard_data = $dependent_el.data( data_attribute ),
+                        match_found,
                         dependency_trigger;
 
+                    // Could support objects but limiting to a single string for now
+                    if ( 'string' !== typeof wildcard_data ) {
+                        return true; // Continues the outer each() loop
+                    }
+
+                    // Check for a wildcard match.  Can be multiple wildcards in a comma separated list
+                    match_found = false;
+                    $.each( wildcard_data.split( ',' ), function( index, this_wildcard ) {
+                        if ( null !== wildcard_target_value.match( this_wildcard ) ) {
+                            match_found = true;
+                            return false; // Stop iterating through further each() elements
+                        }
+                    } );
+
+                    // Set the state of the dependent element
                     if ( $dependent_el.parent().is( ':visible' ) ) {
-                        if ( null !== wildcard_value.match( wildcard ) ) {
-                            if ( $dependent_el.is( 'tr' ) )
+                        if ( match_found ) {
+                            if ( $dependent_el.is( 'tr' ) ) {
                                 $dependent_el.show().addClass( 'pods-dependent-visible' );
-                            else
+                            }
+                            else {
                                 $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                            }
 
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1131,15 +1151,17 @@
                                 dependency_trigger( $dependent_el );
                             }
                         }
-                        else {
-                            if ( $dependent_el.is( 'tr' ) )
+                        else { // No wildcard matches
+                            if ( $dependent_el.is( 'tr' ) ) {
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );
-                            else
+                            }
+                            else {
                                 $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
+                            }
                         }
                     }
-                    else {
-                        if ( null !== wildcard_value.match( wildcard ) ) {
+                    else { // Parent element wasn't visible
+                        if ( match_found ) {
                             $dependent_el.show().addClass( 'pods-dependent-visible' );
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1157,8 +1179,9 @@
                                 dependency_trigger( $dependent_el );
                             }
                         }
-                        else
+                        else { // No wildcard matches
                             $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                        }
                     }
                 } );
             },

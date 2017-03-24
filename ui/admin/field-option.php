@@ -9,18 +9,24 @@ foreach ( $field_options as $field_name => $field_option ) {
 
     $field_option = (array) $field_option;
 
+    $x =4 ;
     $depends = PodsForm::dependencies( $field_option, ( !isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 
-    if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
-        if ( !empty( $depends_on ) ) {
+    if ( ( ! empty( $depends_on ) || ! empty( $depends ) ) && $depends_on != $depends ) {
+        if ( ! empty( $depends_on ) ) {
             ?>
-        </div>
-        <?php
+            </div>
+            <?php
         }
-        if ( !empty( $depends ) ) {
+        if ( ! empty( $depends ) ) {
             ?>
-    <div class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
-<?php
+            <div class="pods-field-option-container <?php echo esc_attr( $depends ); ?>"
+            <?php if ( ! empty( $field_option[ 'wildcard-on' ] ) ) {
+                PodsForm::data( $field_option[ 'wildcard-on' ] );
+                unset( $field_option[ 'wildcard-on' ] );
+            } ?>
+            >
+            <?php
         }
     }
 

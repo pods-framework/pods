@@ -830,25 +830,32 @@ class PodsForm {
      * @static
      * @since 2.0
      */
-    public static function dependencies( $options, $prefix = '' ) {
+    public static function dependencies( &$options, $prefix = '' ) {
+
         $options = (array) $options;
 
-        $depends_on = $excludes_on = array();
-        if ( isset( $options[ 'depends-on' ] ) )
+        $depends_on = $excludes_on = $wildcard_on = array();
+        if ( isset( $options[ 'depends-on' ] ) ) {
             $depends_on = (array) $options[ 'depends-on' ];
+        }
 
-        if ( isset( $options[ 'excludes-on' ] ) )
+        if ( isset( $options[ 'excludes-on' ] ) ) {
             $excludes_on = (array) $options[ 'excludes-on' ];
+        }
+
+        if ( isset( $options[ 'wildcard-on' ] ) ) {
+            $wildcard_on = (array) $options[ 'wildcard-on' ];
+        }
 
         $classes = array();
 
-        if ( !empty( $depends_on ) ) {
+        if ( ! empty( $depends_on ) ) {
             $classes[] = 'pods-depends-on';
 
             foreach ( $depends_on as $depends => $on ) {
                 $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-                if ( !is_bool( $on ) ) {
+                if ( ! is_bool( $on ) ) {
                     $on = (array) $on;
 
                     foreach ( $on as $o ) {
@@ -858,7 +865,7 @@ class PodsForm {
             }
         }
 
-        if ( !empty( $excludes_on ) ) {
+        if ( ! empty( $excludes_on ) ) {
             $classes[] = 'pods-excludes-on';
             foreach ( $excludes_on as $excludes => $on ) {
                 $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
@@ -868,6 +875,19 @@ class PodsForm {
                 foreach ( $on as $o ) {
                     $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
                 }
+            }
+        }
+
+        if ( ! empty( $wildcard_on ) ) {
+            $classes[] = 'pods-wildcard-on';
+
+            // Clean up / format the options, add the appropriate classes
+            $options[ 'wildcard-on' ] = array();
+            foreach ( $wildcard_on as $target => $wildcards ) {
+                $target = self::clean( $target, true );
+
+                $classes[] = 'pods-wildcard-on-' . $prefix . $target;
+                $options[ 'wildcard-on' ][ 'pods-wildcard-' . $prefix . $target ] = $wildcards;
             }
         }
 

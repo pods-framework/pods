@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 
 /**
  * A frame for displaying a modal popup with iframe content
@@ -33,7 +33,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	},
 
 	initState: function () {
-		const title = this.options.title || 'Add New Record';
+		const title = this.options.title || PodsI18n.__( 'Add New Record' );
 		const src = this.options.src || '/';
 
 		this.states.add( [

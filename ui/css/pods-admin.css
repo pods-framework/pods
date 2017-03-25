@@ -425,6 +425,10 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     clear: none;
 }
 
+.pods-manage-field .pods-pick-values .regular-text {
+    max-width: 95%;
+}
+
 .pods-manage-field .pods-field.pods-boolean:hover {
     background: #ffffd8;
 }

@@ -41,7 +41,7 @@
     padding-top: 5px;
     color: #ababab;
     margin-bottom: 0;
-    font: 18px 'Garamond, Georgia';
+    font-size: 20px;
     position: relative;
     border-top: 1px solid #dfdfdf;
     border-bottom: 1px solid #dfdfdf;
@@ -67,7 +67,7 @@
     background: #ababab;
     color: #f2f2f2;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;
@@ -203,7 +203,6 @@
     font-weight: normal;
     line-height: 1;
     padding: 7px 10px;
-    font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
 }
 
 #pods-wizard-box #pods-wizard-main .stuffbox .inside {
@@ -437,7 +436,9 @@
     left: 0;
     text-align: center;
     color: #fff;
-    font: 13px/30px bold Garamond, Georgia;
+    font-size: 13px;
+    line-height:  30px;
+    font-weight: bold;
     -webkit-border-radius: 0 0 8px 8px;
     -moz-border-radius: 0 0 8px 8px;
     border-radius: 0 0 8px 8px;

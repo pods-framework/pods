@@ -1,35 +1,35 @@
 <div class="wrap pods-admin">
-    <script>
-        var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
-    </script>
-    <div id="icon-pods" class="icon32"><br /></div>
+	<script>
+		var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
+	</script>
+	<div id="icon-pods" class="icon32"><br /></div>
 
-    <form action="" method="post" class="pods-submittable pods-form">
-        <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+	<form action="" method="post" class="pods-submittable pods-form">
+		<div class="pods-submittable-fields">
+			<?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+			<?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
+			<?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
+			<?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
+			<?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
-            <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
+			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
-            <?php
-            if ( isset( $_GET[ 'do' ] ) ) {
-                $action = __( 'saved', 'pods' );
+			<?php
+			if ( isset( $_GET[ 'do' ] ) ) {
+				$action = __( 'saved', 'pods' );
 
-                if ( 'create' == pods_var( 'do', 'get', 'save' ) )
-                    $action = __( 'created', 'pods' );
+				if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+					$action = __( 'created', 'pods' );
 
-                $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+				$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-                echo $obj->message( $message );
-            }
-            ?>
+				echo $obj->message( $message );
+			}
+			?>
 
-            <p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
+			<p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-            <div id="poststuff">
+			<div id="poststuff">
 				<div id="post-body" class="metabox-holder columns-2">
 
 					<div id="postbox-container-1" class="postbox-container">
@@ -149,46 +149,46 @@
 					<br class="clear" />
 
 				</div>
-            </div>
-            <!-- /#poststuff -->
-        </div>
-    </form>
-    <!-- /#pods-record -->
+			</div>
+			<!-- /#poststuff -->
+		</div>
+	</form>
+	<!-- /#pods-record -->
 </div>
 
 <script type="text/javascript">
-    var pods_admin_submit_callback = function ( id ) {
-        id = parseInt( id );
-        document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
-    }
+	var pods_admin_submit_callback = function ( id ) {
+		id = parseInt( id );
+		document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
+	};
 
-    jQuery( function ( $ ) {
-        $( document ).Pods( 'validate' );
-        $( document ).Pods( 'submit' );
-        $( document ).Pods( 'wizard' );
-        $( document ).Pods( 'dependency' );
-        $( document ).Pods( 'advanced' );
-        $( document ).Pods( 'confirm' );
-        $( document ).Pods( 'sluggable' );
+	jQuery( function ( $ ) {
+		$( document ).Pods( 'validate' );
+		$( document ).Pods( 'submit' );
+		$( document ).Pods( 'wizard' );
+		$( document ).Pods( 'dependency' );
+		$( document ).Pods( 'advanced' );
+		$( document ).Pods( 'confirm' );
+		$( document ).Pods( 'sluggable' );
 
-        var toggle_all = true;
+		var toggle_all = true;
 
-        $( '#toggle-all' ).on( 'click', function ( e ) {
-            e.preventDefault();
+		$( '#toggle-all' ).on( 'click', function ( e ) {
+			e.preventDefault();
 
-            $( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
+			$( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
-            toggle_all = ( !toggle_all );
-        } );
+			toggle_all = ( !toggle_all );
+		} );
 
-        $( '#add-capability' ).on( 'click', function ( e ) {
-            e.preventDefault();
+		$( '#add-capability' ).on( 'click', function ( e ) {
+			e.preventDefault();
 
-            var new_id = $( 'ul#custom-capabilities li' ).length;
-            var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( /\-\-1/g, new_id );
+			var new_id = $( 'ul#custom-capabilities li' ).length;
+			var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( /\-\-1/g, new_id );
 
-            $( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
-            $( 'li#capability-' + new_id + ' input' ).focus();
-        } );
-    } );
+			$( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
+			$( 'li#capability-' + new_id + ' input' ).focus();
+		} );
+	} );
 </script>

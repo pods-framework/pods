@@ -76,7 +76,6 @@
 .pods-wizard #poststuff h1,
 .pods-wizard h2,
 .pods-wizard h3 {
-    font-family: Georgia !important;
     margin-bottom: 0 !important;
 }
 
@@ -425,6 +424,10 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     clear: none;
 }
 
+.pods-manage-field .pods-pick-values .regular-text {
+    max-width: 95%;
+}
+
 .pods-manage-field .pods-field.pods-boolean:hover {
     background: #ffffd8;
 }
@@ -531,5 +534,13 @@ div.row-actions.row-actions-toggle {
         margin: 0;
         width: 100%;
         max-width: none;
+    }
+
+    .pods-manage-field .pods-pick-values li.pods-zebra-odd,
+    .pods-manage-field .pods-pick-values li.pods-zebra-even {
+        display: block;
+        width: 100%;
+        float: none;
+        clear: both;
     }
 }

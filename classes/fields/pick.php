@@ -156,7 +156,7 @@ class PodsField_Pick extends PodsField {
 				'label'       => __( 'Allow Add New', 'pods' ),
 				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
 				'wildcard-on' => array(
-					self::$type . '_object' => array( '^post-type-.*$', '^taxonomy-.*$', '^user$', '^pod-.*$' )
+					self::$type . '_object' => array( '^post-type-(?!(custom-css|customize-changeset)).*$', '^taxonomy-.*$', '^user$', '^pod-.*$' )
 				),
 				'type'        => 'boolean',
 				'default'     => 1

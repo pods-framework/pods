@@ -532,4 +532,12 @@ div.row-actions.row-actions-toggle {
         width: 100%;
         max-width: none;
     }
+
+    .pods-manage-field .pods-pick-values li.pods-zebra-odd,
+    .pods-manage-field .pods-pick-values li.pods-zebra-even {
+        display: block;
+        width: 100%;
+        float: none;
+        clear: both;
+    }
 }

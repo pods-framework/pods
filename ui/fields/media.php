@@ -171,6 +171,8 @@ else
             } );
         <?php } ?>
 
+        $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).removeClass('hidden');
+
         // hook delete links
         $element_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.on( 'click', 'li.pods-file-delete a', function ( e ) {
 			e.preventDefault();
@@ -293,7 +295,7 @@ else
                         if ( !$list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.is( ':visible' ) )
                             $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.show().removeClass( 'hidden' );
 
-                        $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                        $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).hide().removeClass('hidden').slideDown( 'fast' );
 
                         var items = $list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file' ),
                             itemCount = items.size();

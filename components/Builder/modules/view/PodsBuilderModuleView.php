@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleView () {
+        public function __construct () {
             $this->_name = __( 'Pods - View', 'pods' );
             $this->_description = __( "Include a file from a theme, with caching options", 'pods' );
             $this->module_path = dirname( __FILE__ );

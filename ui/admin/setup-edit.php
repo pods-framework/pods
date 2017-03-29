@@ -5,7 +5,9 @@ $api = pods_api();
 
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
-if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v_sanitized( 'enable_extra_fields', 'get' ) ) {
+$pod_type = pods_v( 'type', $pod );
+
+if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields', 'get' ) ) {
     $api->save_pod( array( 'id' => $obj->id, 'storage' => 'table' ) );
 
     $pod = $api->load_pod( array( 'id' => $obj->id ) );
@@ -34,9 +36,9 @@ foreach ( $field_types as $type => $field_type_data ) {
     if ( true !== $field_type_vars[ 'pod_types' ] ) {
         if ( empty( $field_type_vars[ 'pod_types' ] ) )
             continue;
-        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( pods_v_sanitized( 'type', $pod ), $field_type_vars[ 'pod_types' ] ) )
+        elseif ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( $pod_type, $field_type_vars[ 'pod_types' ] ) )
             continue;
-        elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && pods_v_sanitized( 'type', $pod ) != $field_type_vars[ 'pod_types' ] )
+        elseif ( !is_array( $field_type_vars[ 'pod_types' ] ) && $pod_type != $field_type_vars[ 'pod_types' ] )
             continue;
     }
 
@@ -134,6 +136,22 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
     if ( empty( $field_type_fields ) )
         $no_additional[] = $field_type;
 }
+
+/**
+ * Make use of the WP core meta box functionality
+ *
+ * Currently only context 'side' is available
+ *
+ * @since 2.7
+ * @see https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
+ * @param array $pod The Pod object as an array
+ */
+do_action( 'pods_add_meta_boxes', '_pods_pod', $pod );
+
+$pod_post = get_post( $pod['id'] );
+
+/** This action is documented in wp-admin/edit-form-advanced.php */
+do_action( 'add_meta_boxes', $pod_post->post_type, $pod_post );
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
@@ -146,7 +164,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
     <h2>
-        Edit Pod:
+        <?php esc_html_e( 'Edit Pod', 'pods' ); ?>:
         <?php
             if ( ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) ) || in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
         ?>
@@ -158,7 +176,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
             <span class="pods-sluggable">
                 <span class="pods-slug">
                     <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
-                    <input type="button" class="edit-slug-button button" value="Edit" />
+                    <input type="button" class="edit-slug-button button" value="<?php esc_attr_e( 'Edit', 'pods' ); ?>" />
                 </span>
                 <span class="pods-slug-edit">
                     <?php echo PodsForm::field( 'name', pods_v( 'name', $pod ), 'db', array(
@@ -168,7 +186,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
                     ),
                     'class' => 'pods-validate pods-validate-required'
                 ) ); ?>
-                    <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+                    <input type="button" class="save-button button" value="<?php esc_attr_e( 'OK', 'pods' ); ?>" /> <a class="cancel" href="#cancel-edit"><?php esc_html_e( 'Cancel', 'pods' ); ?></a>
                 </span>
             </span>
         <?php
@@ -182,7 +200,7 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 
         <h2 class="nav-tab-wrapper pods-nav-tabs">
             <?php
-                $default = sanitize_title( pods_v_sanitized( 'tab', 'get', 'manage-fields', null, true ) );
+                $default = sanitize_title( pods_v( 'tab', 'get', 'manage-fields', null, true ) );
 
                 if ( !isset( $tabs[ $default ] ) ) {
                     $tab_keys = array_keys( $tabs );
@@ -217,9 +235,11 @@ foreach ( $field_tab_options[ 'additional-field' ] as $field_type => $field_type
 if ( isset( $_GET[ 'do' ] ) ) {
     $action = __( 'saved', 'pods' );
 
-    if ( 'create' == pods_v_sanitized( 'do', 'get', 'save' ) )
+	$do = pods_v( 'do', 'get', 'save' );
+
+    if ( 'create' == $do )
         $action = __( 'created', 'pods' );
-    elseif ( 'duplicate' == pods_v_sanitized( 'do', 'get', 'save' ) )
+    elseif ( 'duplicate' ==$do )
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -257,13 +277,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" id="label" class="manage-column field-label">
-                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
                 </th>
             </tr>
         </thead>
@@ -273,13 +293,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
                     <span>&nbsp;</span>
                 </th>
                 <th scope="col" class="manage-column field-label">
-                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Label', 'pods' ); pods_help( "<h6>" . __( 'Label', 'pods' ) . "</h6>" . __( 'The label is the descriptive name to identify the Pod field.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-machine-name">
-                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Name', 'pods' ); pods_help( "<h6>" . __( 'Name', 'pods' ) . "</h6>" . __( 'The name attribute is what is used to identify and access the Pod field programatically.', 'pods' ) ); ?></span>
                 </th>
                 <th scope="col" class="manage-column field-field-type">
-                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                    <span><?php esc_html_e( 'Field Type', 'pods' ); pods_help( "<h6>" . __( 'Field Type', 'pods' ) . "</h6>" . __( 'Field types are used to determine what kind of data will be stored in the Pod. They can range from, dates, text, files, etc.', 'pods' ) ); ?></span>
                 </th>
             </tr>
         </tfoot>
@@ -306,7 +326,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
                 }
             ?>
             <tr class="no-items<?php echo esc_attr( 1 < $pods_i ? ' hidden' : '' ); ?>">
-                <td class="colspanchange" colspan="4">No fields have been added yet</td>
+                <td class="colspanchange" colspan="4"><?php esc_html_e( 'No fields have been added yet', 'pods' ); ?></td>
             </tr>
         </tbody>
     </table>
@@ -324,141 +344,13 @@ if ( isset( $_GET[ 'do' ] ) ) {
 ?>
 <div id="pods-labels" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
-if ( strlen( pods_v_sanitized( 'object', $pod ) ) < 1 && 'settings' != pods_v_sanitized( 'type', $pod ) ) {
-    ?>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label', pods_v( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_singular', __( 'Singular Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_singular', pods_v( 'label_singular', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_add_new', __( 'Add New', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_add_new', pods_v( 'label_add_new', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_add_new_item', __( 'Add New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_add_new_item', pods_v( 'label_add_new_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_new_item', __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_new_item', pods_v( 'label_new_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_edit', __( 'Edit', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_edit', pods_v( 'label_edit', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_edit_item', __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_edit_item', pods_v( 'label_edit_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_update_item', __( 'Update <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_update_item', pods_v( 'label_update_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_view', __( 'View', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_view', pods_v( 'label_view', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_view_item', __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_view_item', pods_v( 'label_view_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_all_items', __( 'All <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_all_items', pods_v( 'label_all_items', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_search_items', __( 'Search <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_search_items', pods_v( 'label_search_items', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_not_found', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_not_found', pods_v( 'label_not_found', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_feature_image', __( 'Featured Image', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_feature_image', pods_v( 'label_feature_image', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_set_featured_image', __( 'Set featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_set_featured_image', pods_v( 'label_set_featured_image', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_remove_featured_image', __( 'Remove featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_remove_featured_image', pods_v( 'label_remove_featured_image', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_use_featured_image', __( 'Use as featured image', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_use_featured_image', pods_v( 'label_use_featured_image', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_archives', __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Archives', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_archives', pods_v( 'label_archives', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_insert_into_item', __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_insert_into_item', pods_v( 'label_insert_into_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_uploaded_to_this_item', __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_uploaded_to_this_item', pods_v( 'label_uploaded_to_this_item', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_filter_items_list', __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_filter_items_list', pods_v( 'label_filter_items_list', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_items_list_navigation', __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_items_list_navigation', pods_v( 'label_items_list_navigation', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_items_list', __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_items_list', pods_v( 'label_items_list', $pod ), 'text' ); ?>
-    </div>
-    <?php
-    if ( in_array( pods_v_sanitized( 'type', $pod ), array( 'post_type', 'pod' ) ) ) {
-        ?>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'label_not_found_in_trash', __( 'Not Found in Trash', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'label_not_found_in_trash', pods_v( 'label_not_found_in_trash', $pod ), 'text' ); ?>
-        </div>
-        <?php
-    }
-    ?>
 
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_popular_items', __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_popular_items', pods_v( 'label_popular_items', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_separate_items_with_commas', __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_separate_items_with_commas', pods_v( 'label_separate_items_with_commas', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_add_or_remove_items', __( 'Add or remove <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_add_or_remove_items', pods_v( 'label_add_or_remove_items', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_choose_from_the_most_used', __( 'Choose from the most used', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_choose_from_the_most_used', pods_v( 'label_choose_from_the_most_used', $pod ), 'text' ); ?>
-    </div>
-    <?php
-}
-elseif ( 'settings' == pods_v_sanitized( 'type', $pod ) ) {
-    ?>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label', __( 'Page Title', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label', pods_v( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'menu_name', pods_v( 'menu_name', $pod, pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
-    </div>
-    <?php
-}
+    $fields = $tab_options[ 'labels' ];
+    $field_options = PodsForm::fields_setup( $fields );
+    $field = $pod;
+
+    include PODS_DIR . 'ui/admin/field-option.php';
+
 ?>
 </div>
 <?php
@@ -468,7 +360,7 @@ if ( isset( $tabs[ 'advanced' ] ) ) {
 ?>
 <div id="pods-advanced" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
-if ( 'post_type' == pods_v_sanitized( 'type', $pod ) && strlen( pods_v_sanitized( 'object', $pod ) ) < 1 ) {
+if ( 'post_type' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     $fields = $tab_options[ 'advanced' ];
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
@@ -499,7 +391,7 @@ if ( 'post_type' == pods_v_sanitized( 'type', $pod ) && strlen( pods_v_sanitized
                 </li>
                 <li>
                     <div class="pods-field pods-boolean">
-                        <?php echo PodsForm::field( 'supports_thumbnail', pods_v( 'supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ) ) ); ?>
+                        <?php echo PodsForm::field( 'supports_thumbnail', pods_v( 'supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ), 'dependency' => true ) ); ?>
                     </div>
                 </li>
                 <li>
@@ -607,67 +499,13 @@ if ( 'post_type' == pods_v_sanitized( 'type', $pod ) && strlen( pods_v_sanitized
     </div>
     <?php
 }
-elseif ( 'taxonomy' == pods_v_sanitized( 'type', $pod ) && strlen( pods_v_sanitized( 'object', $pod ) ) < 1 ) {
-    ?>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'public', __( 'Public', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'public', pods_v( 'public', $pod, true ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'hierarchical', __( 'Hierarchical', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'hierarchical', pods_v( 'hierarchical', $pod, false ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option-container pods-depends-on pods-depends-on-hierarchical">
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'label_parent_item_colon', __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'label_parent_item_colon', pods_v( 'label_parent_item_colon', $pod ), 'text' ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'label_parent', __( '<strong>Label: </strong> Parent', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'label_parent', pods_v( 'label_parent', $pod ), 'text' ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'label_no_terms', __( 'No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'label_no_terms', pods_v( 'label_no_terms', $pod ), 'text' ); ?>
-        </div>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'rewrite', __( 'Rewrite', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'rewrite', pods_v( 'rewrite', $pod, true ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option-container pods-depends-on pods-depends-on-rewrite">
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'rewrite_custom_slug', __( 'Custom Rewrite Slug', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'rewrite_custom_slug', pods_v( 'rewrite_custom_slug', $pod ), 'text' ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'rewrite_with_front', __( 'Allow Front Prepend', 'pods' ), __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'rewrite_with_front', pods_v( 'rewrite_with_front', $pod, true ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'rewrite_hierarchical', __( 'Hierarchical Permalinks', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'rewrite_hierarchical', pods_v( 'rewrite_hierarchical', $pod, true ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
-        </div>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'query_var', __( 'Query Var', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'query_var', pods_v( 'query_var', $pod ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option-container pods-depends-on pods-depends-on-query-var">
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'query_var_string', __( 'Custom Query Var Name', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'query_var_string', pods_v( 'query_var_string', $pod ), 'text' ); ?>
-        </div>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'sort', __( 'Remember order saved on Post Types', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'sort', pods_v( 'sort', $pod ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
-    </div>
+elseif ( 'taxonomy' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
+    $fields = $tab_options[ 'advanced' ];
+    $field_options = PodsForm::fields_setup( $fields );
+    $field = $pod;
 
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'update_count_callback', __( 'Function to call when updating counts', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'update_count_callback', pods_v( 'update_count_callback', $pod ), 'text' ); ?>
-    </div>
+    include PODS_DIR . 'ui/admin/field-option.php';
+    ?>
     <div class="pods-field-option-group">
         <p class="pods-field-option-group-label">
             <?php _e( 'Associated Post Types', 'pods' ); ?>
@@ -705,7 +543,7 @@ elseif ( 'taxonomy' == pods_v_sanitized( 'type', $pod ) && strlen( pods_v_saniti
     </div>
     <?php
 }
-elseif ( 'pod' == pods_v_sanitized( 'type', $pod ) ) {
+elseif ( 'pod' == $pod_type ) {
 ?>
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'detail_url', __( 'Detail Page URL', 'pods' ), __( 'help', 'pods' ) ); ?>
@@ -735,7 +573,7 @@ elseif ( 'pod' == pods_v_sanitized( 'type', $pod ) ) {
         $hierarchical_fields = array();
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_v_sanitized( 'pick_object', $field ) && $pod[ 'name' ] == pods_v_sanitized( 'pick_val', $field ) && 'single' == pods_v_sanitized( 'pick_format_type', $field[ 'options' ] ) )
+            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_v( 'pick_object', $field ) && $pod[ 'name' ] == pods_v( 'pick_val', $field ) && 'single' == pods_v( 'pick_format_type', $field[ 'options' ] ) )
                 $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 
@@ -839,7 +677,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
 <div id="pods-extra-fields" class="pods-nav-tab">
     <p><?php _e( 'Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ); ?></p>
 
-    <p><?php echo sprintf( __( 'Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>.', 'pods' ), $wpdb->prefix . 'pods_' . pods_v_sanitized( 'name', $pod ) ); ?></p>
+    <p><?php echo sprintf( __( 'Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>.', 'pods' ), $wpdb->prefix . 'pods_' . pods_v( 'name', $pod ) ); ?></p>
 
     <p><a href="http://pods.io/docs/comparisons/compare-storage-types/" target="_blank"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
 
@@ -857,7 +695,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
     <div id="side-info-field" class="inner-sidebar">
         <div id="side-sortables">
             <div id="submitdiv" class="postbox pods-no-toggle">
-                <h3><span>Manage <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
+                <h3><span><?php esc_html_e( 'Manage', 'pods' ); ?> <small>(<a href="<?php echo esc_url( pods_query_arg( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ) ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)
                 </small></span></h3>
                 <div class="inside">
                     <div class="submitbox" id="submitpost">
@@ -867,7 +705,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                             </div>
                             <div id="publishing-action">
                                 <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                <button class="button-primary" type="submit">Save Pod</button>
+                                <button class="button-primary" type="submit"><?php esc_html_e( 'Save Pod', 'pods' ); ?></button>
                             </div>
                             <div class="clear"></div>
                         </div>
@@ -875,6 +713,9 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 </div>
             </div>
             <!-- /#submitdiv -->
+            <div class="pods-submittable-fields">
+            <?php do_meta_boxes( '_pods_pod', 'side', $pod ); ?>
+            </div>
         </div>
     </div>
 </div>
@@ -942,101 +783,148 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
         var thank_you = '<?php echo pods_slash( pods_query_arg( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
-    }
-
-    var pods_sister_field_going = {
-
     };
 
+    var sisterFieldsProcessing = {};
+
+    /*global PodsDFV */
     var pods_sister_field = function ( $el ) {
+        var postData, relatedPodName, selectedValue, $container;
+        var fieldModel, collection, selectField;
+
         var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
+        var fieldKey = id + '_' + $el.prop( 'id' );
 
-        if ( 'undefined' != typeof pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] && true == pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] )
-            return;
-
-        pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = true;
-
-        var default_select = '<?php echo str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_v( 'sister_id', $field_settings ) ) ) ); ?>';
-        default_select = default_select.replace( /\-\-1/g, id );
-
-        var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
-
-        if ( 0 != related_pod_name.indexOf( 'pod-' ) && 0 != related_pod_name.indexOf( 'post_type-' ) && 0 != related_pod_name.indexOf( 'taxonomy-' ) && 0 != related_pod_name.indexOf( 'user' ) && 0 != related_pod_name.indexOf( 'media' ) && 0 != related_pod_name.indexOf( 'comment' ) ) {
-            pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
-
+        if ( 'undefined' != typeof sisterFieldsProcessing[ fieldKey ] && true == sisterFieldsProcessing[ fieldKey ] ) {
             return;
         }
 
-        var selected_value = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
+        relatedPodName = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val() + '';
+        selectedValue = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val() + '';
+        $container = $el.find( '.pods-sister-field' );
 
-        var select_container = default_select.match( /<select[^<]*>/g );
+        if ( 0 != relatedPodName.indexOf( 'pod-' )
+            && 0 != relatedPodName.indexOf( 'post_type-' )
+            && 0 != relatedPodName.indexOf( 'taxonomy-' )
+            && 0 != relatedPodName.indexOf( 'user' )
+            && 0 != relatedPodName.indexOf( 'media' )
+            && 0 != relatedPodName.indexOf( 'comment' ) ) {
 
-        $el.find( '.pods-sister-field' ).html( select_container + '<option value=""><?php esc_attr_e( 'Loading available fields..', 'pods' ); ?></option></select>' );
+            sisterFieldsProcessing[ fieldKey ] = false;
+            return;
+        }
 
-        postdata = {
-            action : 'pods_admin',
-            method : 'load_sister_fields',
-            _wpnonce : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
-            pod : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
-            related_pod : related_pod_name
+        sisterFieldsProcessing[ fieldKey ] = true;
+
+        fieldModel = new PodsDFV.models.PodsDFVFieldModel( {
+            htmlAttr: {
+                id        : "pods-form-ui-field-data-" + id + "-sister-id",
+                "class"   : "pods-form-ui-field pods-form-ui-field-type-pick pods-form-ui-field-name-field-data-sister-id",
+                name      : "field_data[" + id + "][sister_id]",
+                name_clean: "field-data-sister-id"
+            }
+        } );
+
+        collection = new PodsDFV.models.RelationshipCollection( {
+            id  : "",
+            name: <?php echo json_encode( __( 'Loading available fields..', 'pods' ) ); ?>
+        } );
+
+        selectField = new PodsDFV.fields.Pick( {
+            el        : $container,
+            model     : fieldModel,
+            collection: collection
+        } );
+
+        selectField.render();
+
+        postData = {
+            action     : 'pods_admin',
+            method     : 'load_sister_fields',
+            _wpnonce   : '<?php echo esc_js( wp_create_nonce( 'pods-load_sister_fields' ) ); ?>',
+            pod        : '<?php echo esc_js( pods_v( 'name', $pod ) ); ?>',
+            related_pod: relatedPodName
         };
 
         jQuery.ajax( {
-            type : 'POST',
-            dataType : 'html',
-            url : ajaxurl + '?pods_ajax=1',
-            cache : false,
-            data : postdata,
+            type    : 'POST',
+            dataType: 'html',
+            url     : ajaxurl + '?pods_ajax=1',
+            cache   : false,
+            data    : postData,
             success : function ( d ) {
+                var json, newItems, fieldID, fieldName;
+
+                newItems = [];
+
                 if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
-                    var json = d.match( /{.*}$/ );
 
-                    if ( null !== json && 0 < json.length )
+                    json = d.match( /{.*}$/ );
+
+                    if ( null !== json && 0 < json.length ) {
                         json = jQuery.parseJSON( json[ 0 ] );
-                    else
+                    } else {
                         json = {};
-
-                    var select_container = default_select.match( /<select[^<]*>/g );
+                    }
 
                     if ( 'object' != typeof json || ! jQuery.isEmptyObject( json ) ) {
+
                         if ( 'object' != typeof json ) {
                             if ( window.console ) console.log( d );
                             if ( window.console ) console.log( json );
 
-                            select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
+                            newItems.push( {
+                                id: "",
+                                name: <?php echo json_encode( __( 'There was a server error with your AJAX request.', 'pods' ) ); ?>
+                            } );
+
+                        } else {
+                            newItems.push( {
+                                id  : "",
+                                name: <?php echo json_encode( __( '-- Select Related Field --', 'pods' ) ); ?>
+                            } );
+
+                            for ( fieldID in json ) {
+                                if ( json.hasOwnProperty( fieldID ) ) {
+                                    fieldName = json[ fieldID ];
+
+                                    newItems.push( {
+                                        id      : fieldID,
+                                        name    : fieldName,
+                                        selected: (selectedValue == fieldID)
+                                    } );
+                                }
+                            }
                         }
+                        collection.reset( newItems );
+                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selectedValue );
 
-                        select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
-
-                        for ( var field_id in json ) {
-                            var field_name = json[field_id];
-
-                            select_container += '<option value="' + field_id + '">' + field_name + '</option>';
-                        }
-
-                        select_container += '</select>';
-
-                        $el.find( '.pods-sister-field' ).html( select_container );
-
-                        jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
-                    }
-                    else {
+                    } else {
                         // None found
-                        $el.find( '.pods-sister-field' ).html( default_select );
+                        collection.reset( {
+                            id  : "",
+                            name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
+                        } );
                     }
-                }
-                else {
+
+                } else {
                     // None found
-                    $el.find( '.pods-sister-field' ).html( default_select );
+                    collection.reset( {
+                        id  : "",
+                        name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
+                    } );
                 }
 
-                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                sisterFieldsProcessing[ fieldKey ] = false;
             },
             error : function () {
                 // None found
-                $el.find( '.pods-sister-field' ).html( default_select );
+                collection.reset( {
+                    id  : "",
+                    name: <?php echo json_encode( __( 'No Related Fields Found', 'pods' ) ); ?>
+                } );
 
-                pods_sister_field_going[ id + '_' + $el.prop( 'id' ) ] = false;
+                sisterFieldsProcessing[ fieldKey ] = false;
             }
         } );
     }

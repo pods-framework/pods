@@ -42,7 +42,7 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Plain Paragraph Text', 'pods' );
     }
 
     /**

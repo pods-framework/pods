@@ -142,7 +142,7 @@ class PodsAdmin {
                     wp_enqueue_script( 'post' );
                 elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
                     wp_enqueue_script( 'post' );
-                    wp_enqueue_style( 'pods-admin' );
+                    //wp_enqueue_style( 'pods-admin' );
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );
@@ -203,21 +203,24 @@ class PodsAdmin {
                     elseif ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_add_' . $pod[ 'name' ], 'pods_edit_' . $pod[ 'name' ], 'pods_delete_' . $pod[ 'name' ] ) ) )
                         continue;
 
+                    $pod = apply_filters( 'pods_advanced_content_type_pod_data_' . $pod['name'], $pod, $pod['name'] );
+                    $pod = apply_filters( 'pods_advanced_content_type_pod_data', $pod, $pod['name'] );
+
                     if ( 1 == pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) ) {
-                        $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
+                        $page_title = pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), true );
                         $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
-                        $menu_label = pods_var_raw( 'menu_name', $pod[ 'options' ], $page_title, null, true );
+                        $menu_label = pods_v( 'menu_name', $pod[ 'options' ], $page_title, true );
                         $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
-                        $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
-                        $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
+                        $singular_label = pods_v( 'label_singular', $pod[ 'options' ], pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), true ), true );
+                        $plural_label = pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), true );
 
                         $menu_location = pods_var( 'menu_location', $pod[ 'options' ], 'objects' );
                         $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
 
-                        $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
-                        $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
+                        $menu_position = pods_v( 'menu_position', $pod[ 'options' ], '', true );
+                        $menu_icon = pods_evaluate_tags( pods_v( 'menu_icon', $pod[ 'options' ], '', true ), true );
 
                         if ( empty( $menu_position ) )
                             $menu_position = null;
@@ -243,13 +246,13 @@ class PodsAdmin {
                                 add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 
                                 $all_title = $plural_label;
-                                $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
+                                $all_label = pods_v( 'label_all_items', $pod[ 'options' ], __( 'All', 'pods' ) . ' ' . $plural_label );
 
                                 if ( $page == pods_var( 'page', 'get' ) ) {
                                     if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
-                                        $all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
+                                        $all_title = pods_v( 'label_edit_item', $pod[ 'options' ], __( 'Edit', 'pods' ) . ' ' . $singular_label );
                                     elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
-                                        $all_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+                                        $all_title = pods_v( 'label_add_new_item', $pod[ 'options' ], __( 'Add New', 'pods' ) . ' ' . $singular_label );
                                 }
 
                                 add_submenu_page( $parent_page, $all_title, $all_label, 'read', $page, array( $this, 'admin_content' ) );
@@ -269,8 +272,8 @@ class PodsAdmin {
                                 add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
                             }
 
-                            $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
-                            $add_label = __( 'Add New', 'pods' );
+                            $add_title = pods_v( 'label_add_new_item', $pod[ 'options' ], __( 'Add New', 'pods' ) . ' ' . $singular_label );
+                            $add_label = pods_v( 'label_add_new', $pod[ 'options' ], __( 'Add New', 'pods' ) );
 
                             add_submenu_page( $parent_page, $add_title, $add_label, 'read', $page, array( $this, 'admin_content' ) );
                         }
@@ -329,7 +332,20 @@ class PodsAdmin {
 
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
-                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ] ) ) )
+                    // Default taxonomy capability
+                    $capability = 'manage_categories';
+
+                    if ( ! empty( $pod[ 'options' ][ 'capability_type' ] ) ) {
+                        if ( 'custom' == $pod[ 'options' ][ 'capability_type' ] && ! empty( $pod[ 'options' ][ 'capability_type_custom' ] ) ) {
+                            $capability = 'manage_' . (string) $pod[ 'options' ][ 'capability_type_custom' ] . '_terms';
+                        }
+                    }
+
+                    if ( !pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod[ 'name' ], $capability ) ) )
+                        continue;
+
+                    // Check UI settings
+                    if ( 1 != pods_var( 'show_ui', $pod[ 'options' ], 0 ) || 1 != pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -493,6 +509,11 @@ class PodsAdmin {
 
         $parent = false;
 
+        // PODS_LIGHT disables all Pods components so remove the components menu
+        if ( defined( 'PODS_LIGHT' ) && true == PODS_LIGHT ) {
+            unset( $admin_menus['pods-components'] );
+        }
+
         if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !pods_is_admin( pods_var_raw( 'access', $menu_item ) ) )
@@ -518,7 +539,7 @@ class PodsAdmin {
 
                 add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
-                if ( 'pods-components' == $page )
+                if ( 'pods-components' == $page && is_object( PodsInit::$components ) )
                     PodsInit::$components->menu( $parent );
             }
         }
@@ -564,7 +585,7 @@ class PodsAdmin {
             }
         }
 
-        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) ) {
+        if ( isset( $current_screen ) && ! empty( $current_screen->post_type ) && is_object( PodsInit::$components ) ) {
             global $submenu_file;
             $components = PodsInit::$components->components;
             foreach ( $components as $component => $component_data ) {
@@ -623,6 +644,7 @@ class PodsAdmin {
             $_GET[ 'action' ] = 'edit';
 
             $page_title = pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
+            $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod->pod_data );
 
             $ui = array(
                 'pod' => $pod,
@@ -697,7 +719,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-flex' );
+            wp_enqueue_style( 'pods-dfv-list' );
     }
 
     /**
@@ -972,10 +994,360 @@ class PodsAdmin {
     public function admin_setup_edit_options ( $pod ) {
         $options = array();
 
-        // @todo fill this in
-        $options[ 'labels' ] = array(
-            'temporary' => 'This has the fields hardcoded' // :(
-        );
+        if ( strlen( pods_v_sanitized( 'object', $pod ) ) < 1 && 'settings' != pods_v_sanitized( 'type', $pod ) ) {
+
+            $labels = array(
+                'label' => array(
+                    'label' => __( 'Label', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+                    'text_max_length' => 30
+                ),
+                'label_singular' => array(
+                    'label' => __( 'Singular Label', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+                    'text_max_length' => 30
+                ),
+                'label_add_new' => array(
+                    'label' => __( 'Add New', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_add_new_item' => array(
+                    'label' => __( 'Add new <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_new_item' => array(
+                    'label' => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_new_item_name' => array(
+                    'label' => __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span> Name', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_edit' => array(
+                    'label' => __( 'Edit', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_edit_item' => array(
+                    'label' => __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_update_item' => array(
+                    'label' => __( 'Update <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy', 'pod' )
+                ),
+                'label_duplicate' => array(
+                    'label' => __( 'Duplicate', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_duplicate_item' => array(
+                    'label' => __( 'Duplicate <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_delete_item' => array(
+                    'label' => __( 'Delete <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_view' => array(
+                    'label' => __( 'View', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_view_item' => array(
+                    'label' => __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_view_items' => array(
+                    'label' => __( 'View <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_back_to_manage' => array(
+                    'label' => __( 'Back to Manage', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_manage' => array(
+                    'label' => __( 'Manage', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_manage_items' => array(
+                    'label' => __( 'Manage <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_reorder' => array(
+                    'label' => __( 'Reorder', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_reorder_items' => array(
+                    'label' => __( 'Reorder <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_all_items' => array(
+                    'label' => __( 'All <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_search' => array(
+                    'label' => __( 'Search', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_search_items' => array(
+                    'label' => __( 'Search <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_popular_items' => array(
+                    'label' => __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                // @todo Why was label_parent added previously? Can't find it in WP
+                'label_parent' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_parent_item' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_parent_item_colon' => array(
+                    'label' => __( 'Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>:', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_not_found' => array(
+                    'label' => __( 'Not Found', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                ),
+                'label_no_items_found' => array(
+                    'label' => __( 'No <span class="pods-slugged" data-sluggable="label_singular">Item</span> Found', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'pod' )
+                ),
+                'label_not_found_in_trash' => array(
+                    'label' => __( 'Not Found in Trash', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'pod' )
+                ),
+                'label_archives' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Archives', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_attributes' => array(
+	                'label' => __( '<span class="pods-slugged" data-sluggable="label_singular">Item</span> Attributes', 'pods' ),
+	                'help' =>__( 'help', 'pods' ),
+	                'type' => 'text',
+	                'default' => '',
+	                'object_type' => array( 'post_type' )
+                ),
+                'label_insert_into_item' => array(
+                    'label' => __( 'Insert into <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_uploaded_to_this_item' => array(
+                    'label' => __( 'Uploaded to this <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_featured_image' => array(
+                    'label' => __( 'Featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_set_featured_image' => array(
+                    'label' => __( 'Set featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_remove_featured_image' => array(
+                    'label' => __( 'Remove featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_use_featured_image' => array(
+                    'label' => __( 'Use as featured Image', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    //'depends-on' => array( 'supports_thumbnail' => true ), // @todo Dependency from other tabs not working
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_filter_items_list' => array(
+                    'label' => __( 'Filter <span class="pods-slugged" data-sluggable="label">Items</span> lists', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type' )
+                ),
+                'label_items_list_navigation' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list navigation', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'taxonomy' )
+                ),
+                'label_items_list' => array(
+                    'label' => __( '<span class="pods-slugged" data-sluggable="label">Items</span> list', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'post_type', 'taxonomy' )
+                ),
+                'label_separate_items_with_commas' => array(
+                    'label' => __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_add_or_remove_items' => array(
+                    'label' => __( 'Add or remove <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_choose_from_the_most_used' => array(
+                    'label' => __( 'Choose from the most used <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+                'label_no_terms' => array(
+                    'label' => __( 'No <span class="pods-slugged-lower" data-sluggable="label">items</span>', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'object_type' => array( 'taxonomy' )
+                ),
+            );
+
+            $options[ 'labels' ] = array();
+
+            /**
+             * Filter through all labels if they have an object_type set and match it against the current object type
+             */
+            foreach ( $labels as $label => $labeldata ) {
+                if ( array_key_exists( 'object_type', $labeldata ) ) {
+                    if ( in_array( pods_v_sanitized( 'type', $pod ), $labeldata[ 'object_type' ] ) ) {
+                        // Do not add the object_type to the actual label data
+                        unset( $labeldata[ 'object_type' ] );
+                        $options[ 'labels' ][ $label ] = $labeldata;
+                    }
+                } else {
+                    $options[ 'labels' ][ $label ] = $labeldata;
+                }
+            }
+
+        } elseif ( 'settings' == pods_v_sanitized( 'type', $pod ) ) {
+
+            $options[ 'labels' ] = array(
+                'label' => array(
+                    'label' => __( 'Page Title', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => str_replace( '_', ' ', pods_v( 'name', $pod ) ),
+                    'text_max_length' => 30
+                ),
+                'menu_name' => array(
+                    'label' => __( 'Menu Name', 'pods' ),
+                    'help' =>__( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'label', $pod, ucwords( str_replace( '_', ' ', pods_v( 'name', $pod ) ) ) ),
+                    'text_max_length' => 30
+                ),
+            );
+        }
 
         if ( 'post_type' == $pod[ 'type' ] ) {
             $options[ 'admin-ui' ] = array(
@@ -987,14 +1359,14 @@ class PodsAdmin {
                 ),
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this post type in the admin.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'boolean_yes_label' => ''
                 ),
                 'show_in_menu' => array(
                     'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to show the post type in the admin menu.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
@@ -1039,7 +1411,15 @@ class PodsAdmin {
                     'help' => __( 'help', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
+                    'dependency' => true,
                     'boolean_yes_label' => ''
+                ),
+                'name_admin_bar' => array(
+                    'label' => __( 'Admin bar name', 'pods' ),
+                    'help' =>__( 'Defaults to singular name', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'show_in_admin_bar' => true )
                 )
             );
 
@@ -1130,7 +1510,7 @@ class PodsAdmin {
                 ),
                 'rewrite' => array(
                     'label' => __( 'Rewrite', 'pods' ),
-                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Reading. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
+                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'dependency' => true,
@@ -1194,10 +1574,19 @@ class PodsAdmin {
             $options[ 'admin-ui' ] = array(
                 'show_ui' => array(
                     'label' => __( 'Show Admin UI', 'pods' ),
-                    'help' => __( 'help', 'pods' ),
+                    'help' => __( 'Whether to generate a default UI for managing this taxonomy.', 'pods' ),
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'public', $pod, true ),
                     'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'show_in_menu' => array(
+                    'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
+                    'help' => __( 'Whether to show the taxonomy in the admin menu.', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'public', $pod, true ),
+                    'dependency' => true,
+                    'depends-on' => array( 'show_ui' => true ),
                     'boolean_yes_label' => ''
                 ),
                 'menu_name' => array(
@@ -1215,11 +1604,11 @@ class PodsAdmin {
                     'depends-on' => array( 'show_ui' => true ),
                     'data' => array(
                         'default' => __( 'Default - Add to associated Post Type(s) menus', 'pods' ),
-                        'settings' => __( 'Add to Settings menu', 'pods' ),
-                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'objects' => __( 'Make a top-level menu item', 'pods' ),
-                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
-                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
+                        'settings' => __( 'Add a submenu item to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' ),
+                        'objects' => __( 'Make a new menu item', 'pods' ),
+                        'top' => __( 'Make a new menu item below Settings', 'pods' )
                     ),
                     'dependency' => true
                 ),
@@ -1256,6 +1645,21 @@ class PodsAdmin {
                     'type' => 'boolean',
                     'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),
                     'boolean_yes_label' => ''
+                ),
+                // @todo check https://core.trac.wordpress.org/ticket/36964
+                'show_tagcloud_in_edit' => array(
+                    'label' => __( 'Allow Tagcloud on term edit pages', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'show_tagcloud', $pod, true ) ),
+                    'boolean_yes_label' => ''
+                ),
+                'show_in_quick_edit' => array(
+                    'label' => __( 'Allow in quick/bulk edit panel', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => pods_var_raw( 'show_ui', $pod, pods_var_raw( 'public', $pod, true ) ),
+                    'boolean_yes_label' => ''
                 )
             );
 
@@ -1288,9 +1692,127 @@ class PodsAdmin {
                 );
 			}
 
-            // @todo fill this in
             $options[ 'advanced' ] = array(
-                'temporary' => 'This type has the fields hardcoded' // :(
+                'public' => array(
+                    'label' => __( 'Public', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'hierarchical' => array(
+                    'label' => __( 'Hierarchical', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'label_parent_item_colon' => array(
+                    'label' => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'label_parent' => array(
+                    'label' => __( '<strong>Label: </strong> Parent', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'label_no_terms' => array(
+                    'label' => __( '<strong>Label: </strong> No <span class="pods-slugged" data-sluggable="label">Items</span>', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'hierarchical' => true )
+                ),
+                'rewrite' => array(
+                    'label' => __( 'Rewrite', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'rewrite_custom_slug' => array(
+                    'label' => __( 'Custom Rewrite Slug', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'rewrite_with_front' => array(
+                    'label' => __( 'Allow Front Prepend', 'pods' ),
+                    'help' => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'rewrite_hierarchical' => array(
+                    'label' => __( 'Hierarchical Permalinks', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => true,
+                    'boolean_yes_label' => '',
+                    'depends-on' => array( 'rewrite' => true )
+                ),
+                'capability_type' => array(
+                    'label' => __( 'User Capability', 'pods' ),
+                    'help' => __( 'Uses WordPress term capabilities by default', 'pods' ),
+                    'type' => 'pick',
+                    'default' => 'default',
+                    'data' => array(
+                        'default' => 'Default',
+                        'custom' => __( 'Custom Capability', 'pods' )
+                    ),
+                    'dependency' => true
+                ),
+                'capability_type_custom' => array(
+                    'label' => __( 'Custom User Capability', 'pods' ),
+                    'help' => __( 'Enables additional capabilities for this Taxonomy including: manage_{capability}_terms, edit_{capability}_terms, assign_{capability}_terms, and delete_{capability}_terms', 'pods' ),
+                    'type' => 'text',
+                    'default' => pods_v( 'name', $pod ),
+                    'depends-on' => array( 'capability_type' => 'custom' )
+                ),
+                'query_var' => array(
+                    'label' => __( 'Query Var', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                ),
+                'query_var' => array(
+                    'label' => __( 'Query Var', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'dependency' => true,
+                    'boolean_yes_label' => ''
+                ),
+                'query_var_string' => array(
+                    'label' => __( 'Custom Query Var Name', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'query_var' => true )
+                ),
+                'sort' => array(
+                    'label' => __( 'Remember order saved on Post Types', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'boolean_yes_label' => ''
+                ),
+                'update_count_callback' => array(
+                    'label' => __( 'Function to call when updating counts', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => ''
+                ),
             );
         }
         elseif ( 'settings' == $pod[ 'type' ] ) {
@@ -1313,10 +1835,10 @@ class PodsAdmin {
                     'type' => 'pick',
                     'default' => 'settings',
                     'data' => array(
-                        'settings' => __( 'Add to Settings menu', 'pods' ),
-                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
-                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
+                        'settings' => __( 'Add a submenu item to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' ),
+                        'top' => __( 'Make a new menu item below Settings', 'pods' )
                     ),
                     'dependency' => true
                 ),
@@ -1555,6 +2077,19 @@ class PodsAdmin {
             }
 
             $options[ 'additional-field' ][ $type ] = PodsForm::ui_options( $type );
+
+            /**
+             * Modify Additional Field Options tab
+             *
+             * @since 2.7
+             *
+             * @param array $options Additional field type options
+             * @param string $type Field type
+             * @param array $options Tabs, indexed by label
+             * @param object|Pods Pods object for the Pod this UI is for.
+             */
+            $options[ 'additional-field' ][ $type ] = apply_filters( 'pods_admin_setup_edit_' . $type . '_additional_field_options', $options[ 'additional-field' ][ $type ], $type, $options, $pod );
+            $options[ 'additional-field' ][ $type ] = apply_filters( 'pods_admin_setup_edit_additional_field_options', $options[ 'additional-field' ][ $type ], $type, $options, $pod );
         }
 
         $input_helpers = array(
@@ -1593,7 +2128,10 @@ class PodsAdmin {
                     'label' => __( 'Default Value', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'text',
-                    'default' => ''
+                    'default' => '',
+                    'options' => array(
+                        'text_max_length' => -1
+                    )
                 ),
                 'default_value_parameter' => array(
                     'name' => 'default_value_parameter',
@@ -1862,6 +2400,9 @@ class PodsAdmin {
      * Get components administration UI
      */
     public function admin_components () {
+        if ( ! is_object( PodsInit::$components ) )
+            return;
+
         $components = PodsInit::$components->components;
 
         $view = pods_var( 'view', 'get', 'all', null, true );
@@ -1911,7 +2452,7 @@ class PodsAdmin {
             $meta = array();
 
             if ( !empty( $component_data[ 'Version' ] ) )
-                $meta[] = 'Version ' . $component_data[ 'Version' ];
+                $meta[] = sprintf( __( 'Version %s', 'pods' ), $component_data[ 'Version' ] );
 
             if ( empty( $component_data[ 'Author' ] ) ) {
                 $component_data[ 'Author' ] = 'Pods Framework Team';
@@ -1957,8 +2498,8 @@ class PodsAdmin {
             'data' => $components,
             'total' => count( $components ),
             'total_found' => count( $components ),
-            'items' => 'Components',
-            'item' => 'Component',
+            'items' => __( 'Components', 'pods' ),
+            'item' => __( 'Component', 'pods' ),
             'fields' => array(
                 'manage' => array(
                     'name' => array(
@@ -2185,27 +2726,37 @@ class PodsAdmin {
                     $capabilities[] = 'delete_' . $capability_type;
 
                     if ( 1 == pods_var( 'capability_type_extra', $pod[ 'options' ], 1 ) ) {
-                        $capabilities[] = 'read_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_' . $capability_type . 's';
-                        $capabilities[] = 'edit_others_' . $capability_type . 's';
-                        $capabilities[] = 'edit_private_' . $capability_type . 's';
-                        $capabilities[] = 'edit_published_' . $capability_type . 's';
-                        $capabilities[] = 'publish_' . $capability_type . 's';
-                        $capabilities[] = 'delete_' . $capability_type . 's';
-                        $capabilities[] = 'delete_private_' . $capability_type . 's';
-                        $capabilities[] = 'delete_published_' . $capability_type . 's';
-                        $capabilities[] = 'delete_others_' . $capability_type . 's';
+                        $capability_type_plural = $capability_type . 's';
+
+                        $capabilities[] = 'read_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_' . $capability_type_plural;
+                        $capabilities[] = 'edit_others_' . $capability_type_plural;
+                        $capabilities[] = 'edit_private_' . $capability_type_plural;
+                        $capabilities[] = 'edit_published_' . $capability_type_plural;
+                        $capabilities[] = 'publish_' . $capability_type_plural;
+                        $capabilities[] = 'delete_' . $capability_type_plural;
+                        $capabilities[] = 'delete_private_' . $capability_type_plural;
+                        $capabilities[] = 'delete_published_' . $capability_type_plural;
+                        $capabilities[] = 'delete_others_' . $capability_type_plural;
                     }
                 }
             }
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                if ( 1 == pods_var( 'capabilities', $pod[ 'options' ], 0 ) ) {
+                if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ], 'terms' ) ) {
                     $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) . 's' );
 
-                    $capabilities[] = 'manage_' . $capability_type;
+                    $capability_type .= '_term';
+                    $capability_type_plural = $capability_type . 's';
+
+                    // Singular
                     $capabilities[] = 'edit_' . $capability_type;
                     $capabilities[] = 'delete_' . $capability_type;
                     $capabilities[] = 'assign_' . $capability_type;
+                    // Plural
+                    $capabilities[] = 'manage_' . $capability_type_plural;
+                    $capabilities[] = 'edit_' . $capability_type_plural;
+                    $capabilities[] = 'delete_' . $capability_type_plural;
+                    $capabilities[] = 'assign_' . $capability_type_plural;
                 }
             }
             else {
@@ -2371,6 +2922,17 @@ class PodsAdmin {
 
         // Output in json format
         if ( false !== $output ) {
+
+            /**
+             * Pods Admin AJAX request was successful
+	     *
+             * @since  2.6.8
+	     *
+             * @param array               $params AJAX parameters
+             * @param array|object|string $output Output for AJAX request
+             */
+            do_action( "pods_admin_ajax_success_{$method->name}", $params, $output );
+
             if ( is_array( $output ) || is_object( $output ) )
                 wp_send_json( $output );
             else

@@ -43,6 +43,8 @@ class PodsField_Website extends PodsField {
 	 */
 	public function __construct () {
 
+		self::$label = __( 'Website', 'pods' );
+
 	}
 
 	/**

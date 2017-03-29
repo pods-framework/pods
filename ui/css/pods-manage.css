@@ -17,7 +17,7 @@ ul.ui-sortable li:hover {
 }
 
 .ui-slider-handle {
-	z-index: 0 !important;
+    z-index: 0 !important;
 }
 
 form.pods-manage .pods-field label {
@@ -70,15 +70,15 @@ form.pods-manage .pods-boolean label {
     margin-left: 20px;
 }
 
-form.pods-manage .pods-flex-item label {
+form.pods-manage .pods-dfv-list-item label {
     padding-bottom: 8px;
 }
 
-form.pods-manage .pods-flex-item input {
+form.pods-manage .pods-dfv-list-item input {
     display: none;
 }
 
-form.pods-manage ul.pods-flex-list {
+form.pods-manage ul.pods-dfv-list {
     background: #fbfbfb;
     border: 1px solid #dfdfdf;
     border-bottom: 0;
@@ -88,7 +88,7 @@ form.pods-manage ul.pods-flex-list {
     padding: 0;
 }
 
-form.pods-manage ul.pods-flex-list li {
+form.pods-manage ul.pods-dfv-list li {
     background: #fff;
     border-bottom: 1px solid #dfdfdf;
     margin: 0;
@@ -96,87 +96,87 @@ form.pods-manage ul.pods-flex-list li {
     padding-bottom: 10px;
 }
 
-form.pods-manage ul.pods-flex-list li span {
+form.pods-manage ul.pods-dfv-list li span {
     display: inline-block;
     float: none;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-reorder {
+form.pods-manage ul.pods-dfv-list li span.pods-file-reorder {
     left: 3px;
     position: absolute;
     top: 15px;
     width: 30px;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-reorder img {
+form.pods-manage ul.pods-dfv-list li span.pods-file-reorder img {
     cursor: move;
     display: block;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-thumb {
+form.pods-manage ul.pods-dfv-list li span.pods-file-thumb {
     left: 35px;
     position: absolute;
     top: 2px;
     width: 45px;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-thumb .pinkynail {
+form.pods-manage ul.pods-dfv-list li span.pods-file-thumb .pinkynail {
     float: none;
     margin: 0;
-	max-width: 40px !important;
-	max-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-flex-name {
+form.pods-manage ul.pods-dfv-list li span.pods-dfv-list-name {
     padding: 11px 35px 0 85px;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-remove {
+form.pods-manage ul.pods-dfv-list li span.pods-file-remove {
     position: absolute;
     right: 10px;
     top: 10px;
     width: 25px;
 }
 
-form.pods-manage ul.pods-flex-list li span.pods-file-remove img {
+form.pods-manage ul.pods-dfv-list li span.pods-file-remove img {
     cursor: pointer;
     display: block;
 }
 
 .plupload-queue {
-	width: 250px;
+    width: 250px;
 }
 
 .plupload-progress {
-	position: relative;
+    position: relative;
 }
 
 .plupload-progress .progress-bar {
-	position: absolute;
-	height: 14px;
-	width: 0%;
-	background: #4d4d4d;
-	margin-left: 10px;
+    position: absolute;
+    height: 14px;
+    width: 0%;
+    background: #4d4d4d;
+    margin-left: 10px;
 }
 
 .plupload-progress .file-name {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .pods-inline-files .plupload-progress {
-	width: 150px;
+    width: 150px;
 }
 
 .pods-inline-files li {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .pods-inline-files li .file-name {
-	vertical-align: top !important;
+    vertical-align: top !important;
 }
 
 .pods-inline-files li .remove {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 form.pods-manage .pods-pick-values {
@@ -296,6 +296,6 @@ table.plupload-queue td.progress .progress-bar {
 }
 
 tr.form-field .pods-boolean input {
-	width: 20%;
+    width: 20%;
 }
 

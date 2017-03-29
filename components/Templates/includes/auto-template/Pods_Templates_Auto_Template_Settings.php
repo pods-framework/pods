@@ -118,6 +118,14 @@ class Pods_Templates_Auto_Template_Settings {
 					'dependency'        => true,
 					'boolean_yes_label' => ''
 				),
+				'pfat_run_outside_loop' => array(
+					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
+					'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'depends-on'        => array( 'pfat_enable' => true ),
+					'boolean_yes_label' => ''
+				),
 				'pfat_single'         => array(
 					'label'      => __( 'Single item view template', 'pods' ),
 					'help'       => __( 'Name of Pods template to use for single item view.', 'pods' ),
@@ -168,6 +176,14 @@ class Pods_Templates_Auto_Template_Settings {
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
+					'boolean_yes_label' => ''
+				),
+				'pfat_run_outside_loop' => array(
+					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
+					'help'              => __( 'When enabled, the template will be executed whenever the specified filter is called.', 'pods' ),
+					'type'              => 'boolean',
+					'default'           => false,
+					'depends-on'        => array( 'pfat_enable' => true ),
 					'boolean_yes_label' => ''
 				),
 				'pfat_archive'  => array (

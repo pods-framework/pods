@@ -3,15 +3,14 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.7-a-1
+Version: 2.7.0-a-2
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
-Domain Path: /languages/
 GitHub Plugin URI: https://github.com/pods-framework/pods
 GitHub Branch: 2.x
 
-Copyright 2009-2015  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2017  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,17 +37,17 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	add_action( 'init', 'pods_deactivate_pods_ui' );
 } else {
 	// Current version
-	define( 'PODS_VERSION', '2.7-a-1' );
+	define( 'PODS_VERSION', '2.7.0-a-2' );
 
 	// Version tracking between DB updates themselves
 	define( 'PODS_DB_VERSION', '2.3.5' );
 
 	if ( ! defined( 'PODS_WP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_WP_VERSION_MINIMUM', '3.8' );
+		define( 'PODS_WP_VERSION_MINIMUM', '4.0' );
 	}
 
 	if ( ! defined( 'PODS_PHP_VERSION_MINIMUM' ) ) {
-		define( 'PODS_PHP_VERSION_MINIMUM', '5.2.4' );
+		define( 'PODS_PHP_VERSION_MINIMUM', '5.3' );
 	}
 
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
@@ -84,16 +83,8 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 				if ( ! is_network_admin() ) {
 					$pods_init = pods_init();
 				}
-
 			}
 		}
-
-		// Add WP-CLI commands
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			require_once( PODS_DIR . 'classes/cli/Pods_CLI_Command.php' );
-			require_once( PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php' );
-		}
-
 	}
 }
 
@@ -133,7 +124,6 @@ function pods_deactivate_pods_ui() {
 			wp_redirect( $_SERVER['REQUEST_URI'] );
 			die();
 		}
-
 	}
 
 }

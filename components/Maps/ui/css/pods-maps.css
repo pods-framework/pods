@@ -7,8 +7,15 @@
 	width: 95%;
 }*/
 
+/* Admin */
 .pods-maps-map-canvas {
 	margin-top: 10px;
 	height:     300px;
 	/*width:      95%;*/
+}
+
+/* Front */
+.pods-address-maps-map-canvas {
+	min-height: 250px;
+	width: 100%;
 }

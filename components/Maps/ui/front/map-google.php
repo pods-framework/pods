@@ -1,6 +1,7 @@
 <?php
 wp_enqueue_script( 'googlemaps' );
 wp_enqueue_script( 'pods-maps' );
+wp_enqueue_style( 'pods-maps' );
 
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, '', $options );
@@ -38,15 +39,21 @@ $value['address_html'] = $address_html;
 <script type="text/javascript">
 	document.addEventListener( "DOMContentLoaded", function() {
 		jQuery( document ).ready( function ( $ ) {
-			var mapDiv = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas' ?>' );
+			var mapCanvas = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas' ?>' );
 			var value = $( '#<?php echo $attributes['id'] . '-map-canvas' ?>' ).attr('data-value');
-			var address = '<?php echo $address; ?>';
+
+			if ( value ) {
+				value = JSON.parse( value );
+			}
+			console.log( value );
+			var address = '';
 
 			var map = null;
 			var geocoder = null;
 			var marker = null;
+			var latlng = null;
 			var mapOptions = {
-				center: null, // default (Chicago)
+				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
 				marker: '<?php echo $map_options['marker'] ?>',
 				zoom: <?php echo $map_options['zoom'] ?>,
 				type: '<?php echo $map_options['type'] ?>'
@@ -55,50 +62,59 @@ $value['address_html'] = $address_html;
 			//------------------------------------------------------------------------
 			// Initialze the map
 			//
-			//(function () {
+			if ( value.geo ) {
+				latlng = value.geo;
+				console.log( latlng );
+				mapOptions.center = new google.maps.LatLng( latlng );
+			}
 
-				var center = new google.maps.LatLng( 40.026, -82.936 );
+			console.log( mapOptions );
+			map = new google.maps.Map( mapCanvas, mapOptions );
+			geocoder = new google.maps.Geocoder();
 
-				map = new google.maps.Map( mapDiv, {
-					center : center, zoom : zoom, mapTypeId : google.maps.MapTypeId.ROADMAP
+			var markerOptions = {
+				map : map,
+				position: latlng,
+				draggable: false
+			};
+			marker = new google.maps.Marker( markerOptions );
+			map.setCenter( mapOptions.center );
+
+			var infowindowContent = value.address_html;
+			if ( value.info_window ) {
+				infowindowContent = podsFormatFieldsToHTML( value.info_window, value.address );
+			}
+			var infowindow = new google.maps.InfoWindow();
+
+			infowindow.setContent( infowindowContent );
+			infowindow.open( map, marker );
+
+
+			function podsFormatFieldsToHTML( html, fields ) {
+				// Convert magic tags to field values or remove them
+				$.each( fields, function( key, field ) {
+					if ( field.length ) {
+						html = html.replace( '{{' + key + '}}', field );
+					} else {
+						// Replace with {{PODS}} so we can remove this line if needed
+						html = html.replace( '{{' + key + '}}', '{{PODS}}' );
+					}
 				} );
-
-				geocoder = new google.maps.Geocoder();
-
-				//------------------------------------------------------------------------
-				// Geolocate from the address
-				//
-				geocoder.geocode( {'address' : address}, function ( results, status ) {
-
-					if ( status == google.maps.GeocoderStatus.OK ) {
-						var latField, lngField;
-						var location = results[0].geometry.location;
-
-						// Center the map and set the lat/lng values
-						map.setCenter( location );
-
-						// Set the marker options
-						var markerOptions = {
-							map : map, position : location, draggable : true
-						};
-
-						// Create a new marker, if needed, and set the event listeners
-						if ( !marker ) {
-							marker = new google.maps.Marker( markerOptions );
-						}
-						// Marker is already set, just update its options
-						else {
-							marker.setOptions( markerOptions );
-						}
+				// Remove empty lines
+				var lines = html.split( '<br>' );
+				$.each( lines, function( key, line ) {
+					if ( line == '{{PODS}}' ) {
+						// Delete the key it this line only has {{PODS}}
+						delete lines[ key ];
+					} else {
+						// Remove {{PODS}}
+						lines[ key ] = line.replace('{{PODS}}', '')
 					}
-					// Geocode failure
-					else {
-						alert( "Geocode was not successful for the following reason: " + status );
-					}
-
-				} ); // end geocode
-
-			//})();
+				} );
+				// Reset array keys and join it back together
+				html = lines.filter(function(){return true;}).join( '<br>' );
+				return html;
+			}
 
 		} ); // end document ready
 	}, false );

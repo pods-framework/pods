@@ -45,7 +45,6 @@ $value['address_html'] = $address_html;
 			if ( value ) {
 				value = JSON.parse( value );
 			}
-			console.log( value );
 			var address = '';
 
 			var map = null;
@@ -64,11 +63,9 @@ $value['address_html'] = $address_html;
 			//
 			if ( value.geo ) {
 				latlng = value.geo;
-				console.log( latlng );
 				mapOptions.center = new google.maps.LatLng( latlng );
 			}
 
-			console.log( mapOptions );
 			map = new google.maps.Map( mapCanvas, mapOptions );
 			geocoder = new google.maps.Geocoder();
 

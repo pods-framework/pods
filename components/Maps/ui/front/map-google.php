@@ -6,23 +6,24 @@ $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, '', $options );
 
 $map_options = array();
-if ( ! empty( $options[ $type . '_map_zoom' ] ) ) {
-	$map_options['zoom'] = (int) $options[ $type . '_map_zoom' ];
+if ( ! empty( $options[ 'maps_zoom' ] ) ) {
+	$map_options['zoom'] = (int) $options[ 'maps_zoom' ];
 } else {
 	$map_options['zoom'] = (int) Pods_Component_Maps::$options['map_zoom'];
 }
-if ( ! empty( $options[ $type . '_map_type' ] ) ) {
-	$map_options['type'] = $options[ $type . '_map_type' ];
+if ( ! empty( $options[ 'maps_type' ] ) ) {
+	$map_options['type'] = $options[ 'maps_type' ];
 } else {
 	$map_options['type'] = Pods_Component_Maps::$options['map_type'];
 }
-if ( ! empty( $options[ $type . '_map_marker' ] ) ) {
-	$map_options['marker'] = $options[ $type . '_map_marker' ];
+if ( ! empty( $options[ 'maps_marker' ] ) ) {
+	$map_options['marker'] = $options[ 'maps_marker' ];
 } else {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
 
 if ( ! isset( $address_html ) ) {
+	// @todo Check field type
 	$format = PodsForm::field_method( 'address', 'default_display_format' );
 	if ( $options['address_display_type'] == 'custom' ) {
 		$format = $options['address_display_type_custom'];

@@ -8,18 +8,18 @@ if ( ! isset( $form_field_type ) ) {
 }
 
 $map_options = array();
-if ( ! empty( $options[ $type . '_map_zoom' ] ) ) {
-	$map_options['zoom'] = (int) $options[ $type . '_map_zoom' ];
+if ( ! empty( $options[ 'maps_zoom' ] ) ) {
+	$map_options['zoom'] = (int) $options[ 'maps_zoom' ];
 } else {
 	$map_options['zoom'] = (int) Pods_Component_Maps::$options['map_zoom'];
 }
-if ( ! empty( $options[ $type . '_map_type' ] ) ) {
-	$map_options['type'] = $options[ $type . '_map_type' ];
+if ( ! empty( $options[ 'maps_type' ] ) ) {
+	$map_options['type'] = $options[ 'maps_type' ];
 } else {
 	$map_options['type'] = Pods_Component_Maps::$options['map_type'];
 }
-if ( ! empty( $options[ $type . '_map_marker' ] ) ) {
-	$map_options['marker'] = $options[ $type . '_map_marker' ];
+if ( ! empty( $options[ 'maps_marker' ] ) ) {
+	$map_options['marker'] = $options[ 'maps_marker' ];
 } else {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
@@ -27,12 +27,12 @@ if ( ! empty( $options[ $type . '_map_marker' ] ) ) {
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
-if ( ! empty( $options['address_map_info_window'] ) && in_array( $options['address_map_info_window_content'], array( 'paragraph', 'wysiwyg' ) ) ) {
+if ( ! empty( $options['maps_info_window'] ) && in_array( $options['maps_info_window_content'], array( 'paragraph', 'wysiwyg' ) ) ) {
 	echo PodsForm::label( $name . '-info-window', __( 'Info Window content', 'pod' ) );
 	if ( $type == 'address' ) {
 		echo PodsForm::comment( $name . '-info-window', __( 'You can use the following tags for address fields', 'pods' ) . ': <br><code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>' );
 	}
-	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), $options['address_map_info_window_content'], array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
+	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), $options['maps_info_window_content'], array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
 }
 
 echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
@@ -43,7 +43,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 <script type="text/javascript">
 	jQuery( document ).ready( function ( $ ) {
 
-		if ( typeof google != 'undefined' ) {
+		if ( typeof google !== 'undefined' ) {
 
 			var fieldId = '<?php echo $attributes['id'] ?>';
 			var fieldType = '<?php echo $type ?>';
@@ -63,11 +63,12 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
 			};
 			// @todo check pregreplace, maybe this can be done better (nl2br not working)
+			// @todo check field type
 			var fieldsFormat = '<?php echo preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ); ?>';
 
 			var map = null;
 			var marker = null;
-			var infowindow = <?php echo ( ! empty( $options['address_map_info_window'] ) ) ? 'null' : 'false' ?>;
+			var infowindow = <?php echo ( ! empty( $options['maps_info_window'] ) ) ? 'null' : 'false' ?>;
 			var infowindowContent = '';
 			var infowindowEditor = '';
 			var geocoder = null;

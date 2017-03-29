@@ -274,7 +274,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 * Add map field options
 	 *
 	 * @param array $options
-	 * @param string $type
+	 * @param string $type The field type
 	 *
 	 * @return array
 	 *
@@ -292,25 +292,25 @@ class Pods_Component_Maps extends PodsComponent {
 
 		// Add extra options
 
-		$options[ $type . '_map' ] = array(
+		$options[ 'maps' ] = array(
 			'label'      => __( 'Display a map', 'pods' ),
 			'default'    => 0,
 			'type'       => 'boolean',
 			'dependency' => true
 		);
 		// @todo Autocorrect is not implemented yet
-		$options[ $type . '_autocorrect' ] = array(
+		/*$options[ 'maps_autocorrect' ] = array(
 			'label'      => __( 'Autocorrect Address during save', 'pods' ),
 			'depends-on' => array(
-				$type . '_map' => true,
+				'maps' => true,
 				$type . '_type' => array( 'address', 'text' )
 			),
 			'default'    => 0,
 			'type'       => 'boolean'
-		);
-		$options[ $type . '_map_display' ] = array(
+		);*/
+		$options[ 'maps_display' ] = array(
 			'label'      => __( 'Map Display', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
+			'depends-on' => array( 'maps' => true ),
 			'default'    => 'replace',
 			'type'       => 'pick',
 			'data'       => array(
@@ -321,18 +321,18 @@ class Pods_Component_Maps extends PodsComponent {
 		);
 		$options[ $type . '_map_style' ] = array(
 			'label'      => __( 'Map Output Type', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
-			'default'    => pods_v( $type . '_style', self::$options, 'static', true ),
+			'depends-on' => array( 'maps' => true ),
+			'default'    => pods_v( 'maps_style', self::$options, 'static', true ),
 			'type'       => 'pick',
 			'data'       => array(
 				'static' => __( 'Static (Image)', 'pods' ),
 				'js'     => __( 'Javascript (Interactive)', 'pods' )
 			)
 		);
-		$options[ $type . '_map_type' ] = array(
+		$options[ 'maps_type' ] = array(
 			'label'      => __( 'Map Type', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
-			'default'    => pods_v( $type . '_type', self::$options, 'roadmap', true ),
+			'depends-on' => array( 'maps' => true ),
+			'default'    => pods_v( 'maps_type', self::$options, 'roadmap', true ),
 			'type'       => 'pick',
 			'data'       => array(
 				'roadmap'   => __( 'Roadmap', 'pods' ),
@@ -341,15 +341,15 @@ class Pods_Component_Maps extends PodsComponent {
 				'hybrid'    => __( 'Hybrid', 'pods' )
 			)
 		);
-		$options[ $type . '_map_zoom' ] = array(
+		$options[ 'maps_zoom' ] = array(
 			'label'      => __( 'Map Zoom Level', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
+			'depends-on' => array( 'maps' => true ),
 			'help'       => array(
 				__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
 				'https://developers.google.com/maps/documentation/javascript/tutorial#zoom-levels'
 				//'https://developers.google.com/maps/documentation/staticmaps/#Zoomlevels'
 			),
-			'default'    => pods_v( $type . '_zoom', self::$options, 12, true ),
+			'default'    => pods_v( 'maps_zoom', self::$options, 12, true ),
 			'type'       => 'number',
 			'options'    => array(
 				'number_decimals'   => 0, // 2
@@ -360,19 +360,18 @@ class Pods_Component_Maps extends PodsComponent {
 				//'number_format_type' => 'slider'
 			)
 		);
-		$options[ $type . '_map_info_window' ] = array(
+		$options[ 'maps_info_window' ] = array(
 			'label'      => __( 'Display an Info Window', 'pods' ),
 			'default'    => 0,
 			'type'       => 'boolean',
-			'depends-on' => array( $type . '_map' => true ),
+			'depends-on' => array( 'maps' => true ),
 			'dependency' => true
 		);
-		$options[ $type . '_map_info_window_content' ] = array(
+		$options[ 'maps_info_window_content' ] = array(
 			'label'      => __( 'Info Window content', 'pods' ),
 			'depends-on' => array(
-				//$type . '_type'  => 'address',
-				$type . '_map' => true,
-				$type . '_map_info_window' => true
+				'maps' => true,
+				'maps_info_window' => true
 			),
 			'default'    => 'paragraph',
 			'type'       => 'pick',
@@ -384,10 +383,10 @@ class Pods_Component_Maps extends PodsComponent {
 			)
 		);
 		// @todo Make file type working as a field option
-		$options[ $type . '_map_marker' ] = array(
+		$options[ 'maps_marker' ] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
-			'depends-on' => array( $type . '_map' => true ),
-			'default'    => pods_v( $type . '_marker', self::$options ),
+			'depends-on' => array( 'maps' => true ),
+			'default'    => pods_v( 'maps_marker', self::$options ),
 			'type'       => 'file',
 			'options'    => array(
 				'file_uploader'          => 'plupload',
@@ -407,7 +406,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'custom-map'
 			);
 		}*/
-		$options[ $type . '_microdata' ]['excludes-on'][ $type . '_map' ] = true;
+		$options[ 'maps_microdata' ]['excludes-on'][ 'maps' ] = true;
 
 		return $options;
 	}
@@ -428,7 +427,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_display_value( $output, $value, $view, $display_type, $name, $options, $pod, $id ) {
 
-		if ( ! empty ( $options['address_map'] ) ) {
+		if ( ! empty ( $options['maps'] ) ) {
 			$view = '';
 			$provider = get_class( self::$provider );
 			if ( is_callable( array( $provider, 'pods_ui_field_display_extra' ) ) ) {
@@ -462,7 +461,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_input_view_extra( $view, $type, $name, $value, $options, $pod, $id ) {
 
-		if ( ! empty ( $options['address_map'] ) ) {
+		if ( ! empty ( $options['maps'] ) ) {
 			$provider = get_class( self::$provider );
 			if ( is_callable( array( $provider, 'pods_ui_field_view_extra' ) ) ) {
 				$view = self::$provider->pods_ui_field_view_extra();

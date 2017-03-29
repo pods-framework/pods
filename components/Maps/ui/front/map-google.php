@@ -37,82 +37,89 @@ $value['address_html'] = $address_html;
 <div id="<?php echo $attributes['id'] . '-map-canvas' ?>" class="pods-address-maps-map-canvas" data-value='<?php echo json_encode( $value ) ?>'></div>
 
 <script type="text/javascript">
-	document.addEventListener( "DOMContentLoaded", function() {
-		jQuery( document ).ready( function ( $ ) {
-			var mapCanvas = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas' ?>' );
-			var value = $( '#<?php echo $attributes['id'] . '-map-canvas' ?>' ).attr('data-value');
-
-			if ( value ) {
-				value = JSON.parse( value );
-			}
-			var address = '';
-
-			var map = null;
-			var geocoder = null;
-			var marker = null;
-			var latlng = null;
-			var mapOptions = {
+	jQuery( document ).ready( function ( $ ) {
+		var mapCanvas = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas' ?>' ),
+			value = $( '#<?php echo $attributes['id'] . '-map-canvas' ?>' ).attr('data-value'),
+			latlng = null,
+			mapOptions = {
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
 				marker: '<?php echo $map_options['marker'] ?>',
 				zoom: <?php echo $map_options['zoom'] ?>,
 				type: '<?php echo $map_options['type'] ?>'
 			};
 
-			//------------------------------------------------------------------------
-			// Initialze the map
-			//
-			if ( value.geo ) {
-				latlng = value.geo;
-				mapOptions.center = new google.maps.LatLng( latlng );
+		if ( value ) {
+			try {
+				value = JSON.parse( value );
+			} catch ( err ) {
+				return;
 			}
+		} else {
+			return;
+		}
 
-			map = new google.maps.Map( mapCanvas, mapOptions );
-			geocoder = new google.maps.Geocoder();
+		//------------------------------------------------------------------------
+		// Initialze the map
+		//
+		if ( value.hasOwnProperty('geo') ) {
+			latlng = value.geo;
+			mapOptions.center = new google.maps.LatLng( latlng );
+		}
 
-			var markerOptions = {
-				map : map,
-				position: latlng,
-				draggable: false
-			};
-			marker = new google.maps.Marker( markerOptions );
-			map.setCenter( mapOptions.center );
+		var map = new google.maps.Map( mapCanvas, mapOptions );
+		var geocoder = new google.maps.Geocoder();
 
-			var infowindowContent = value.address_html;
-			if ( value.info_window ) {
-				infowindowContent = podsFormatFieldsToHTML( value.info_window, value.address );
-			}
-			var infowindow = new google.maps.InfoWindow();
+		//------------------------------------------------------------------------
+		// Initialze marker
+		//
+		var markerOptions = {
+			map : map,
+			position: latlng,
+			draggable: false
+		};
+		var marker = new google.maps.Marker( markerOptions );
+		map.setCenter( mapOptions.center );
 
-			infowindow.setContent( infowindowContent );
-			infowindow.open( map, marker );
+		//------------------------------------------------------------------------
+		// Initialze info window
+		//
+		var infowindowContent = value.address_html;
+		if ( value.info_window ) {
+			infowindowContent = podsFormatFieldsToHTML( value.info_window, value.address );
+		}
+		var infowindow = new google.maps.InfoWindow();
 
+		infowindow.setContent( infowindowContent );
+		infowindow.open( map, marker );
 
-			function podsFormatFieldsToHTML( html, fields ) {
-				// Convert magic tags to field values or remove them
-				$.each( fields, function( key, field ) {
-					if ( field.length ) {
-						html = html.replace( '{{' + key + '}}', field );
-					} else {
-						// Replace with {{PODS}} so we can remove this line if needed
-						html = html.replace( '{{' + key + '}}', '{{PODS}}' );
-					}
-				} );
-				// Remove empty lines
-				var lines = html.split( '<br>' );
-				$.each( lines, function( key, line ) {
-					if ( line == '{{PODS}}' ) {
-						// Delete the key it this line only has {{PODS}}
-						delete lines[ key ];
-					} else {
-						// Remove {{PODS}}
-						lines[ key ] = line.replace('{{PODS}}', '')
-					}
-				} );
-				// Reset array keys and join it back together
-				html = lines.filter(function(){return true;}).join( '<br>' );
-				return html;
-			}
+		//------------------------------------------------------------------------
+		// Helpers
+		//
+		function podsFormatFieldsToHTML( html, fields ) {
+			// Convert magic tags to field values or remove them
+			$.each( fields, function( key, field ) {
+				if ( field.length ) {
+					html = html.replace( '{{' + key + '}}', field );
+				} else {
+					// Replace with {{PODS}} so we can remove this line if needed
+					html = html.replace( '{{' + key + '}}', '{{REMOVE}}' );
+				}
+			} );
+			// Remove empty lines
+			var lines = html.split( '<br>' );
+			$.each( lines, function( key, line ) {
+				if ( line === '{{REMOVE}}' ) {
+					// Delete the key it this line only has {{REMOVE}}
+					delete lines[ key ];
+				} else {
+					// Remove {{REMOVE}}
+					lines[ key ] = line.replace('{{REMOVE}}', '')
+				}
+			} );
+			// Reset array keys and join it back together
+			html = lines.filter(function(){return true;}).join( '<br>' );
+			return html;
+		}
 
-		} ); // end document ready
-	}, false );
+	} ); // end document ready
 </script>

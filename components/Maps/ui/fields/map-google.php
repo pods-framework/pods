@@ -103,11 +103,11 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 
 				event.preventDefault();
 
-				if ( fieldType == 'lat-lng' ) {
+				if ( fieldType === 'lat-lng' ) {
 					latlng = { 'lat': Number( fields.lat.val() ), 'lng': Number( fields.lng.val() ) };
 					podsMapsCenter();
 				} else {
-					if ( fieldType == 'address' ) {
+					if ( fieldType === 'address' ) {
 						address = podsMergeAddressFields();
 					} else {
 						address = fields.text.val();
@@ -144,7 +144,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						}
 					}, 100 );
 				} else {
-					if ( fieldType == 'text' ) {
+					if ( fieldType === 'text' ) {
 						if ( fields.text.length ) {
 							infowindowContent = fields.text.val();
 							podsMapsInfoWindow( false );
@@ -281,31 +281,31 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			}
 
 			function podsUpdateAddress() {
-				if ( typeof address == 'object' ) {
+				if ( typeof address === 'object' ) {
 
-					if ( fieldType == 'address' ) {
+					if ( fieldType === 'address' ) {
 						// Reset line_1 since this is made of two parts from Google (street_number and route)
 						if ( fields.line_1.length ) {
 							fields.line_1.val('');
 						}
 						$.each( address, function ( i, address_component ) {
-							if ( fields.line_1.length && address_component.types[0] == "street_number" ){
+							if ( fields.line_1.length && address_component.types[0] === "street_number" ){
 								fields.line_1.val( ' ' + address_component.long_name );
 							}
-							if ( fields.line_1.length && address_component.types[0] == "route" ){
+							if ( fields.line_1.length && address_component.types[0] === "route" ){
 								fields.line_1.val( address_component.long_name + fields.line_1.val() );
 							}
-							if ( fields.city.length && address_component.types[0] == "locality" ){
+							if ( fields.city.length && address_component.types[0] === "locality" ){
 								fields.city.val( address_component.long_name );
 							}
-							if ( fields.country.length && address_component.types[0] == "country" ) {
+							if ( fields.country.length && address_component.types[0] === "country" ) {
 								if ( fields.country.is('select') ) {
 									fields.country.val( address_component.short_name );
 								} else {
 									fields.country.val( address_component.long_name );
 								}
 							}
-							if ( fields.region.length && address_component.types[0] == "administrative_area_level_1" ) {
+							if ( fields.region.length && address_component.types[0] === "administrative_area_level_1" ) {
 								if ( fields.region.is('select') ) {
 									// @todo Validate for US states
 									fields.region.val( address_component.short_name );
@@ -313,24 +313,24 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 									fields.region.val( address_component.long_name );
 								}
 							}
-							if ( fields.postal_code.length && address_component.types[0] == "postal_code" ) {
+							if ( fields.postal_code.length && address_component.types[0] === "postal_code" ) {
 								fields.postal_code.val( address_component.long_name );
 							}
 						} );
 
-					} else if ( fieldType == 'text' ) {
+					} else if ( fieldType === 'text' ) {
 
 						if ( fields.text.length ) {
 							// Reset value
 							fields.text.val('');
 							$.each( address, function ( i, address_component ) {
-								if ( address_component.long_name != '' ) {
-									if ( address_component.types[0] == "route" ) {
+								if ( address_component.long_name !== '' ) {
+									if ( address_component.types[0] === "route" ) {
 										fields.text.val( address_component.long_name + fields.text.val() );
-									} else if ( address_component.types[0] == "street_number" ){
+									} else if ( address_component.types[0] === "street_number" ){
 										fields.text.val( ' ' + address_component.long_name );
 									} else {
-										if ( fields.text.val() == '' ) {
+										if ( fields.text.val() === '' ) {
 											fields.text.val( address_component.long_name );
 										} else {
 											fields.text.val( fields.text.val() + ', ' + address_component.long_name );
@@ -365,18 +365,18 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						html = html.replace( '{{' + key + '}}', field.val() );
 					} else {
 						// Replace with {{PODS}} so we can remove this line if needed
-						html = html.replace( '{{' + key + '}}', '{{PODS}}' );
+						html = html.replace( '{{' + key + '}}', '{{REMOVE}}' );
 					}
 				} );
 				// Remove empty lines
 				var lines = html.split( '<br>' );
 				$.each( lines, function( key, line ) {
-					if ( line == '{{PODS}}' ) {
-						// Delete the key it this line only has {{PODS}}
+					if ( line === '{{REMOVE}}' ) {
+						// Delete the key it this line only has {{REMOVE}}
 						delete lines[ key ];
 					} else {
-						// Remove {{PODS}}
-						lines[ key ] = line.replace('{{PODS}}', '')
+						// Remove {{REMOVE}}
+						lines[ key ] = line.replace('{{REMOVE}}', '')
 					}
 				} );
 				// Reset array keys and join it back together

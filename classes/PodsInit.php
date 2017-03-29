@@ -888,7 +888,14 @@ class PodsInit {
 			return $messages;
 		}
 
-		$preview_post_link = apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
+		/* Use new function added in 4.4, which eventually applies preview_post_link filter
+		 * Before 4.4, this filter is defined in wp-admin/includes/meta-boxes.php, $post parameter added in 4.0
+		 * there wasn't post parameter back in 3.8
+		 * Let's add $post in the filter as it won't hurt anyway.
+		*/
+		$preview_post_link = version_compare( $wp_version, "4.4", ">=" )
+									? get_preview_post_link( $post )
+									: apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
 
 		foreach ( $post_types as $post_type ) {
 			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {

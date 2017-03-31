@@ -670,6 +670,7 @@ function pods_shortcode ( $tags, $content = null ) {
 	}
 
     $defaults = array(
+    	'blog_id' => null,
     	'use_current' => false,
         'name' => null,
         'id' => null,
@@ -735,6 +736,12 @@ function pods_shortcode ( $tags, $content = null ) {
 		return $return;
 	}
 
+    $blog_is_switched = false;
+	if ( ! empty( $tags['blog_id'] ) && is_numeric( $tags['blog_id'] ) && (int) get_current_blog_id() !== (int) $tags['blog_id'] ) {
+    	switch_to_blog( (int) $tags['blog_id'] );
+		$blog_is_switched = true;
+	}
+
     if ( ! $tags['use_current'] && empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
             $pod = pods( get_post_type(), get_the_ID(), false );
@@ -745,8 +752,10 @@ function pods_shortcode ( $tags, $content = null ) {
             }
         }
 
-        if ( empty( $tags[ 'name' ] ) )
-            return '<p>Please provide a Pod name</p>';
+        if ( empty( $tags[ 'name' ] ) ) {
+			if ( $blog_is_switched ) { restore_current_blog(); }
+	        return '<p>Please provide a Pod name</p>';
+        }
     }
 
     if ( !empty( $tags[ 'col' ] ) ) {
@@ -762,6 +771,7 @@ function pods_shortcode ( $tags, $content = null ) {
     }
 
     if ( empty( $content ) && empty( $tags[ 'pods_page' ] ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
+	    if ( $blog_is_switched ) { restore_current_blog(); }
         return '<p>Please provide either a template or field name</p>';
     }
 
@@ -798,8 +808,10 @@ function pods_shortcode ( $tags, $content = null ) {
     	}
     }
 
-    if ( empty( $pod ) || ! $pod->valid() )
-        return '<p>Pod not found</p>';
+    if ( empty( $pod ) || ! $pod->valid() ) {
+	    if ( $blog_is_switched ) { restore_current_blog(); }
+	    return '<p>Pod not found</p>';
+    }
 
 	$found = 0;
 
@@ -889,10 +901,12 @@ function pods_shortcode ( $tags, $content = null ) {
 		if ( 'user' == $pod->pod ) {
 			// Further hardening of User-based forms
 			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
+				if ( $blog_is_switched ) { restore_current_blog(); }
 				return '';
 			}
 			// Only explicitly allow user edit forms
 			elseif ( $is_singular && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				if ( $blog_is_switched ) { restore_current_blog(); }
 				return '';
 			}
 		}
@@ -909,6 +923,7 @@ function pods_shortcode ( $tags, $content = null ) {
 			$return = do_shortcode( $return );
 		}
 
+	    if ( $blog_is_switched ) { restore_current_blog(); }
 		return $return;
     }
     elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
@@ -923,6 +938,7 @@ function pods_shortcode ( $tags, $content = null ) {
 			$return = do_shortcode( $return );
 		}
 
+	    if ( $blog_is_switched ) { restore_current_blog(); }
 		return $return;
     }
 
@@ -948,6 +964,7 @@ function pods_shortcode ( $tags, $content = null ) {
 		$return = do_shortcode( $return );
 	}
 
+	if ( $blog_is_switched ) { restore_current_blog(); }
 	return $return;
 }
 

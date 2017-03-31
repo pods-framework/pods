@@ -919,6 +919,7 @@ function pods_shortcode ( $tags, $content = null ) {
         else
             $return = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
+	    // @todo $blog_is_switched >> Switch back before running other shortcodes?
 		if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
@@ -934,6 +935,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
         $return = Pods_Pages::content( true, $pods_page );
 
+	    // @todo $blog_is_switched >> Switch back before running other shortcodes?
 		if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 			$return = do_shortcode( $return );
 		}
@@ -960,6 +962,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
 	$return = ob_get_clean();
 
+	// @todo $blog_is_switched >> Switch back before running other shortcodes?
 	if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
 	}

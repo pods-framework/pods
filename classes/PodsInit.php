@@ -892,6 +892,7 @@ class PodsInit {
 		 * Before 4.4, this filter is defined in wp-admin/includes/meta-boxes.php, $post parameter added in 4.0
 		 * there wasn't post parameter back in 3.8
 		 * Let's add $post in the filter as it won't hurt anyway.
+         * @since 2.6.8.1
 		*/
 		$preview_post_link = function_exists('get_preview_post_link')
 									? get_preview_post_link( $post )

@@ -22,7 +22,7 @@ matrix:
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.3
-      env: WP_VERSION=3.8 WP_MULTISITE=0
+      env: WP_VERSION=4.0 WP_MULTISITE=0
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
     # MySQL 8.0
@@ -54,7 +54,7 @@ before_script:
 
 script:
     - vendor/bin/phpunit
-    - npm run test-mv-fields
+    - npm run pods-test-dfv
 
 branches:
     only:

@@ -1,9 +1,0 @@
-<ul class="pods-flex-meta media-item">
-	<% if ( '' === errorMsg ) { %>
-		<li class="pods-flex-col pods-progress"><div class="progress-bar" style="width: <%- progress %>%;"></div></li>
-	<% } %>
-	<li class="pods-flex-col pods-flex-name"><%- filename %></li>
-</ul>
-<% if ( '' !== errorMsg ) { %>
-	<div class="error"><%- errorMsg %></div>
-<% } %>

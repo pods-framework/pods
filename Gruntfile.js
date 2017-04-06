@@ -39,8 +39,9 @@ module.exports = function ( grunt ) {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
 		exec: {
-			rollup_dev : 'node_modules/rollup/bin/rollup -c rollup.config.dev.js',
-			rollup_prod: 'node_modules/rollup/bin/rollup -c rollup.config.prod.js'
+			dfv_rollup_dev : 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.dev.js',
+			dfv_rollup_prod: 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.prod.js',
+			dfv_test       : 'node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js'
 		},
 
 		clean: {
@@ -241,7 +242,8 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
 
 	// build tasks
-	grunt.registerTask( 'exec_rollup_dev', [ 'exec:rollup_dev' ] );
-	grunt.registerTask( 'exec_rollup', [ 'exec:rollup_prod' ] );
+	grunt.registerTask( 'exec_dfv_rollup_dev', [ 'exec:dfv_rollup_dev' ] );
+	grunt.registerTask( 'exec_dfv_rollup_prod', [ 'exec:dfv_rollup_prod' ] );
+	grunt.registerTask( 'exec_dfv_test', [ 'exec:dfv_test' ] );
 
 };

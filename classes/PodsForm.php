@@ -211,25 +211,70 @@ class PodsForm {
 
         $helper = false;
 
-        if ( 0 < strlen( pods_v( 'input_helper', $options ) ) )
-            $helper = pods_api()->load_helper( array( 'name' => $options[ 'input_helper' ] ) );
+	    /**
+	     * Input helpers are deprecated and not guaranteed to work properly.
+	     *
+	     * They will be entirely removed in Pods 3.0.
+	     *
+	     * @deprecated 2.7
+	     */
+	    if ( 0 < strlen( pods_v( 'input_helper', $options ) ) ) {
+		    $helper = pods_api()->load_helper( array( 'name' => $options['input_helper'] ) );
+	    }
 
-        if ( ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) )
-            $data = $options[ 'data' ] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
+        // @todo Move into DFV field method or PodsObject later
+	    if ( ( ! isset( $options['data'] ) || empty( $options['data'] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) ) {
+		    $data = $options['data'] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
+	    }
 
-        if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) )
-            do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
-        elseif ( !empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper[ 'code' ], '$this->' ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
-            eval( '?>' . $helper[ 'code' ] );
-        elseif ( method_exists( get_class(), 'field_' . $type ) )
-            echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
-        elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) )
-            self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
-        else
-            do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+	    /**
+	     * pods_form_ui_field_{$type}_override filter leaves too much to be done by developer.
+	     *
+	     * It will be replaced in Pods 3.0 with better documentation.
+	     *
+	     * @deprecated 2.7
+	     */
+	    if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) ) {
+		    /**
+		     * pods_form_ui_field_{$type} action leaves too much to be done by developer.
+		     *
+		     * It will be replaced in Pods 3.0 with better documentation.
+		     *
+		     * @deprecated 2.7
+		     */
+		    do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+	    } elseif ( ! empty( $helper ) && 0 < strlen( pods_v( 'code', $helper ) ) && false === strpos( $helper['code'], '$this->' ) && ( ! defined( 'PODS_DISABLE_EVAL' ) || ! PODS_DISABLE_EVAL ) ) {
+		    /**
+		     * Input helpers are deprecated and not guaranteed to work properly.
+		     *
+		     * They will be entirely removed in Pods 3.0.
+		     *
+		     * @deprecated 2.7
+		     */
+		    eval( '?>' . $helper['code'] );
+	    } elseif ( method_exists( get_class(), 'field_' . $type ) ) {
+	    	// @todo Move these custom field methods into real/faux field classes
+		    echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
+	    } elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) ) {
+		    self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
+	    } else {
+	    	/**
+		     * pods_form_ui_field_{$type} action leaves too much to be done by developer.
+		     *
+		     * It will be replaced in Pods 3.0 with better documentation.
+		     *
+		     * @deprecated 2.7
+		     */
+		    do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+	    }
 
         $output = ob_get_clean();
 
+	    /**
+	     * pods_form_ui_field_{$type} filter will remain supported.
+	     *
+	     * It is not intended for replacing but augmenting input markup.
+	     */
         return apply_filters( 'pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id );
     }
 
@@ -786,24 +831,30 @@ class PodsForm {
      * @since 2.0
      */
     public static function dependencies( $options, $prefix = '' ) {
+
         $options = (array) $options;
+        $classes = $data = array();
 
-        $depends_on = $excludes_on = array();
-        if ( isset( $options[ 'depends-on' ] ) )
+        $depends_on = $excludes_on = $wildcard_on = array();
+        if ( isset( $options[ 'depends-on' ] ) ) {
             $depends_on = (array) $options[ 'depends-on' ];
+        }
 
-        if ( isset( $options[ 'excludes-on' ] ) )
+        if ( isset( $options[ 'excludes-on' ] ) ) {
             $excludes_on = (array) $options[ 'excludes-on' ];
+        }
 
-        $classes = array();
+        if ( isset( $options[ 'wildcard-on' ] ) ) {
+            $wildcard_on = (array) $options[ 'wildcard-on' ];
+        }
 
-        if ( !empty( $depends_on ) ) {
+        if ( ! empty( $depends_on ) ) {
             $classes[] = 'pods-depends-on';
 
             foreach ( $depends_on as $depends => $on ) {
                 $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-                if ( !is_bool( $on ) ) {
+                if ( ! is_bool( $on ) ) {
                     $on = (array) $on;
 
                     foreach ( $on as $o ) {
@@ -813,7 +864,7 @@ class PodsForm {
             }
         }
 
-        if ( !empty( $excludes_on ) ) {
+        if ( ! empty( $excludes_on ) ) {
             $classes[] = 'pods-excludes-on';
             foreach ( $excludes_on as $excludes => $on ) {
                 $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
@@ -826,9 +877,20 @@ class PodsForm {
             }
         }
 
+        if ( ! empty( $wildcard_on ) ) {
+            $classes[] = 'pods-wildcard-on';
+
+            // Add the appropriate classes and data attribs per value dependency
+            foreach ( $wildcard_on as $target => $wildcards ) {
+                $target = $prefix . self::clean( $target, true );
+                $classes[] = 'pods-wildcard-on-' . $target;
+                $data[ 'pods-wildcard-' . $target ] = $wildcards;
+            }
+        }
+
         $classes = implode( ' ', $classes );
 
-        return $classes;
+        return array( 'classes' => $classes, 'data' => $data );
     }
 
     /**

@@ -758,12 +758,12 @@ class PodsField_Pick extends PodsField {
 
 		$options['grouped'] = 1;
 
-		if ( empty( $options['pick_object'] ) ) {
-			$options['pick_object'] = '';
+		if ( empty( $options[ $args->type . '_object' ] ) ) {
+			$options[ $args->type . '_object' ] = '';
 		}
 
-		if ( empty( $options['pick_val'] ) ) {
-			$options['pick_val'] = '';
+		if ( empty( $options[ $args->type . '_val' ] ) ) {
+			$options[ $args->type . '_val' ] = '';
 		}
 
 		$options['table_info'] = array();

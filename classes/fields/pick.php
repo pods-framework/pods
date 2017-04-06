@@ -109,6 +109,7 @@ class PodsField_Pick extends PodsField {
 		add_action( 'edit_user_profile', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_category_form', array( $this, 'admin_modal_input' ) );
 		add_action( 'edit_link_category_form', array( $this, 'admin_modal_input' ) );
+		add_action( 'edit_tag_form', array( $this, 'admin_modal_input' ) );
 		add_action( 'add_tag_form', array( $this, 'admin_modal_input' ) );
 		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
 

@@ -2802,9 +2802,16 @@ class PodsUI {
                                     $label = '<a href="' . esc_url( $link ) . '" class="current">' . $label . '</a>';
                                 else
                                     $label = '<a href="' . esc_url( $link ) . '">' . $label . '</a>';
+                            } else {
+                            	$label = wp_kses_post( $label );
                             }
                     ?>
-                        <li class="<?php echo esc_attr( $view ); ?>"><?php echo $label; ?></li>
+                        <li class="<?php echo esc_attr( $view ); ?>">
+							<?php
+								/* Escaped above to support links */
+								echo $label;
+							?>
+						</li>
                     <?php
                         }
                     ?>
@@ -3506,7 +3513,7 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'edit' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'edit' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'Edit this item', 'pods' ); ?>"><?php /* Escaped above for non-HTML types */ echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'view' == $default_action ) {
@@ -3515,12 +3522,12 @@ class PodsUI {
                                         if ( !empty( $this->action_links[ 'view' ] ) )
                                             $link = $this->do_template( $this->action_links[ 'view' ], $row );
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php echo $row_value; ?></a></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?>"><strong><a class="row-title" href="<?php echo esc_url_raw( $link ); ?>" title="<?php esc_attr_e( 'View this item', 'pods' ); ?>"><?php /* Escaped above for non-HTML types */ echo $row_value; ?></a></strong>
                                         <?php
                                     }
                                     else {
                                         ?>
-                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?><?php echo esc_attr( ( 1 == $reorder && $this->reorder ) ? ' dragme' : '' ); ?>"><strong><?php echo $row_value; ?></strong>
+                <td class="post-title page-title column-title<?php echo esc_attr( $css_classes ); ?><?php echo esc_attr( ( 1 == $reorder && $this->reorder ) ? ' dragme' : '' ); ?>"><strong><?php /* Escaped above for non-HTML types */ echo $row_value; ?></strong>
                                         <?php
                                     }
 
@@ -3657,7 +3664,7 @@ class PodsUI {
                                         $row_value = wp_kses_post( $row_value );
                                     }
                                     ?>
-                                    <td class="author<?php echo esc_attr( $css_classes ); ?>"><span><?php echo $row_value; ?></span></td>
+                                    <td class="author<?php echo esc_attr( $css_classes ); ?>"><span><?php /* Escaped above for non-HTML types */ echo $row_value; ?></span></td>
                                     <?php
                                 }
                             }

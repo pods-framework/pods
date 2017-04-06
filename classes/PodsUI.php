@@ -1975,8 +1975,10 @@ class PodsUI {
         $this->manage();
     }
 
-    public function export () {
-        $export_type = pods_var( 'export_type', 'get', 'csv' );
+
+	public function export( ) {
+		    $export_type = pods_var( 'export_type', 'get', 'csv' );
+
 
         $type = 'sv'; // covers csv + tsv
 
@@ -2170,6 +2172,8 @@ class PodsUI {
 
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
+
+        $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
 
 		/**
 		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.
@@ -3485,6 +3489,17 @@ class PodsUI {
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
 									$default_action = $this->do_hook( 'default_action', 'edit', $row );
 
+                                    if ( $first_field ) {
+                                        $css_classes[] = 'column-primary';
+                                    }
+                                    $css_classes[] = 'post-title';
+                                    $css_classes[] = 'page-title';
+                                    $css_classes[] = 'column-title';
+
+                                    if ( 'raw' !== $attributes['type'] ) {
+                                        $row_value = wp_kses_post( $row_value );
+                                    }
+
                                     if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) && 'edit' == $default_action ) {
                                         $link = pods_query_arg( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
 
@@ -3632,6 +3647,15 @@ class PodsUI {
                                     <?php
                                 }
                                 else {
+                                    if ( $first_field ) {
+                                        $css_classes[] = 'column-primary';
+                                    }
+
+                                    $css_classes[] = 'author';
+
+                                    if ( 'raw' !== $attributes[ 'type' ] ) {
+                                        $row_value = wp_kses_post( $row_value );
+                                    }
                                     ?>
                                     <td class="author<?php echo esc_attr( $css_classes ); ?>"><span><?php echo $row_value; ?></span></td>
                                     <?php

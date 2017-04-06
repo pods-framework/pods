@@ -61,7 +61,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		this.showChildView( 'list', list );
 
 		// Show Add New?
-		if ( this.fieldConfig.get( 'iframe_src' ) !== '' ) {
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}

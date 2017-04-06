@@ -39,9 +39,9 @@ module.exports = function ( grunt ) {
 		pkg: grunt.file.readJSON( 'package.json' ),
 
 		exec: {
-			dfv_rollup_dev : 'node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.dev.js',
-			dfv_rollup_prod: 'node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.prod.js',
-			dfv_test       : 'node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js'
+			dfv_rollup_dev : 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.dev.js',
+			dfv_rollup_prod: 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.prod.js',
+			dfv_test       : 'node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js'
 		},
 
 		clean: {

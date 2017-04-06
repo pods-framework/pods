@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, wp */
+/*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 import template from '~/ui/js/pods-dfv/_src/pick/pick-layout.html';
 
 import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
@@ -63,7 +63,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		this.showChildView( 'list', list );
 
 		// Show Add New?
-		if ( this.fieldConfig.get( 'iframe_src' ) !== '' ) {
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}
@@ -88,7 +88,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onChildviewAddNewClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
-		modalIFrame = new IframeFrame( {
+		const modalFrame = new IframeFrame( {
 			title: fieldConfig.iframe_title,
 			src  : fieldConfig.iframe_src
 		} );

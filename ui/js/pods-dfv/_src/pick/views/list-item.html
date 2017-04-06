@@ -5,7 +5,7 @@
 		value="<%- id %>">
 <ul class="pods-dfv-list-meta relationship-item">
 	<% if ( 1 != fieldConfig.pick_limit ) { %>
-		<li class="pods-dfv-list-col pods-dfv-list-handle"><span>Reorder</span></li>
+		<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
 	<% } %>
 	<% if ( 1 == fieldConfig.pick_show_icon && '' != icon ) { %>
 		<li class="pods-dfv-list-col pods-dfv-list-icon">
@@ -15,11 +15,11 @@
 	<li class="pods-dfv-list-col pods-dfv-list-name">
 		<%= name %>
 	</li>
-	<li class="pods-dfv-list-col pods-dfv-list-remove"><a href="#remove">Remove</a></li>
+	<li class="pods-dfv-list-col pods-dfv-list-remove"><a href="#remove"><%- PodsI18n.__( 'Remove' ) %></a></li>
 	<% if ( 1 == fieldConfig.pick_show_view_link && '' != link ) { %>
-		<li class="pods-dfv-list-col pods-dfv-list-link"><a href="<%- link %>" target="_blank">View</a></li>
+		<li class="pods-dfv-list-col pods-dfv-list-link"><a href="<%- link %>" target="_blank"><%- PodsI18n.__( 'View' ) %></a></li>
 	<% } %>
 	<% if ( 1 == fieldConfig.pick_show_edit_link && '' != edit_link ) { %>
-		<li class="pods-dfv-list-col pods-dfv-list-edit"><a href="<%- edit_link %>" target="_blank">Edit</a></li>
+		<li class="pods-dfv-list-col pods-dfv-list-edit"><a href="<%- edit_link %>" target="_blank"><%- PodsI18n.__( 'Edit' ) %></a></li>
 	<% } %>
 </ul>

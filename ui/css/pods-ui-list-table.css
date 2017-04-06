@@ -220,7 +220,7 @@ body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
     margin-bottom: 4px;
 }
 
-.pods-ui-posts-filter-popup .pods-ui-posts-filter.hidden {
+.pods-ui-posts-filter-popup .pods-ui-posts-filter.pods-hidden {
     display: none;
 }
 

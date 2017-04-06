@@ -5330,6 +5330,10 @@ class PodsAPI {
                     'post_type' => '_pods_pod',
                     'posts_per_page' => 1
                 ) );
+
+                if ( is_array( $pod ) ) {
+                    $pod = $pod[0];
+                }
             }
 
             if ( !empty( $pod ) && ( empty( $type ) || $type == get_post_meta( $pod->ID, 'type', true ) ) )
@@ -5398,7 +5402,8 @@ class PodsAPI {
 	    $bypass_cache = false;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+
+		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -5701,7 +5706,7 @@ class PodsAPI {
         $current_language = false;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -6973,7 +6978,7 @@ class PodsAPI {
      * @param array $field Field data array
      * @param array $pod Pod data array
      *
-     * @return array
+     * @return int[]
      *
      * @since 2.0
      *
@@ -6985,13 +6990,12 @@ class PodsAPI {
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
 
-        foreach ( $ids as $k => $id ) {
-            $ids[ $k ] = (int) $id;
-        }
+        $ids = array_map( 'absint', $ids );
 
         $ids = array_unique( array_filter( $ids ) );
 
 	    $idstring = implode( ',', $ids );
+
 	    if ( 0 != $pod_id && 0 != $field_id && isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
 		    // Check cache first, no point in running the same query multiple times
 		    return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];
@@ -7503,7 +7507,7 @@ class PodsAPI {
         $current_language_t_id = $current_language_tt_id = 0;
 
 	    // Get current language data
-		$lang_data = self::get_current_language();
+		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
 		    if ( ! empty( $lang_data['language'] ) ) {
@@ -8329,226 +8333,6 @@ class PodsAPI {
 
         return $id;
     }
-
-	/**
-	 * Get current language information from Multilingual plugins
-	 *
-	 * @since 2.6.6
-	 *
-	 * @return array
-	 */
-	public static function get_current_language() {
-
-		/**
-		 * @var $sitepress                    SitePress object
-		 * @var $polylang                     object
-		 */
-        /*
-         * @todo wpml-comp Remove global object usage
-         */
-		global $sitepress, $polylang;
-
-		$lang_data        = false;
-		$translator       = false;
-		$current_language = false;
-
-		// Multilingual support
-		if ( did_action( 'wpml_loaded' ) && apply_filters( 'wpml_setting', true, 'auto_adjust_ids' ) ) {
-			// WPML support
-			$translator = 'WPML';
-
-			// Get the global current language (if set)
-            $wpml_language = apply_filters( 'wpml_current_language', null );
-			$current_language = ( $wpml_language != 'all' ) ? $wpml_language : '';
-
-		} elseif ( ( function_exists( 'PLL' ) || is_object( $polylang ) ) && function_exists( 'pll_current_language' ) ) {
-			// Polylang support
-			$translator = 'PLL';
-
-			// Get the global current language (if set)
-			$current_language = pll_current_language( 'slug' );
-		}
-
-		/**
-		 * Admin functions that overwrite the current language
-		 *
-		 * @since 2.6.6
-		 */
-		if ( is_admin() && ! empty( $translator ) ) {
-			if ( $translator == 'PLL' ) {
-				/**
-				 * Polylang support
-				 * Get the current user's perferred language.
-				 * This is a user meta setting that will overwrite the language returned from pll_current_language()
-				 * @see polylang/admin/admin-base.php -> init_user()
-				 */
-				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
-			}
-
-			// Get current language based on the object language if available
-			if ( function_exists( 'get_current_screen' ) ) {
-				$current_screen = get_current_screen();
-
-				/**
-				 * Overwrite the current language if needed for post types
-				 */
-				if ( isset( $current_screen->base ) && ( $current_screen->base == 'post' || $current_screen->base == 'edit' ) ) {
-					if ( ! empty( $_GET['post'] ) ) {
-						/**
-						 * WPML support
-						 * In WPML the current language is always set to default on an edit screen
-						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
-						 */
-						if (   $translator == 'WPML'
-							&& ! apply_filters( 'wpml_is_translated_post_type', false, ( get_post_type( $_GET['post'] ) ) )
-						) {
-							// Overwrite the current language to nothing if this is a NOT-translatable post_type
-							$current_language = '';
-						}
-
-						/**
-						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything.
-						 * We only want the related objects if they are not translatable OR the same language as the current object
-						 */
-						if (   $translator == 'PLL'
-							&& function_exists( 'pll_get_post_language' )
-							&& pll_is_translated_post_type( get_post_type( $_GET['post'] ) )
-						) {
-							// Overwrite the current language if this is a translateable post_type
-							$current_language = pll_get_post_language( (int) $_GET['post'] );
-						}
-					}
-
-					/**
-					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything.
-					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
-					 */
-					if (   $translator == 'PLL'
-						&& ! empty( $_GET['new_lang'] )
-						&& ! empty( $_GET['post_type'] )
-						&& pll_is_translated_post_type( sanitize_text_field( $_GET['post_type'] ) )
-					) {
-						$current_language = $_GET['new_lang'];
-					}
-
-				/**
-				 * Overwrite the current language if needed for taxonomies
-				 */
-				} elseif ( isset( $current_screen->base ) && ( $current_screen->base == 'term' || $current_screen->base == 'edit-tags' ) ) {
-					// @todo MAYBE: Similar function like get_post_type for taxonomies so we don't need to check for $_GET['taxonomy']
-					if ( ! empty( $_GET['taxonomy'] ) ) {
-					    /*
-					     * @todo wpml-comp API call for taxonomy needed!
-					     * Suggested API call:
-					     * add_filter( 'wpml_is_translated_taxonomy', $_GET['taxonomy'], 10, 2 );
-					     */
-						/**
-						 * WPML support
-						 * In WPML the current language is always set to default on an edit screen
-						 * We need to overwrite this when the current object is not-translatable to enable relationships with different languages
-						 */
-						if (   $translator == 'WPML'
-							&& method_exists( $sitepress, 'is_translated_taxonomy')
-							&& ! $sitepress->is_translated_taxonomy( $_GET['taxonomy'] )
-						) {
-							// Overwrite the current language to nothing if this is a NOT-translatable taxonomy
-							$current_language = '';
-						}
-
-						/**
-						 * Polylang support (1.5.4+)
-						 * In polylang the preferred language could be anything.
-						 * We only want the related objects if they are not translatable OR the same language as the current object
-						 */
-						if (   $translator == 'PLL'
-							&& ! empty( $_GET['tag_ID'] )
-							&& function_exists( 'pll_get_term_language' )
-							&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
-						) {
-							// Overwrite the current language if this is a translatable taxonomy
-							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
-						}
-					}
-
-					/**
-					 * Polylang support (1.0.1+)
-					 * In polylang the preferred language could be anything.
-					 * When we're adding a new object and language is set we only want the related objects if they are not translatable OR the same language
-					 */
-					if (   $translator == 'PLL'
-						&& ! empty( $_GET['new_lang'] )
-						&& ! empty( $_GET['taxonomy'] )
-						&& pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) )
-					) {
-						$current_language = $_GET['new_lang'];
-					}
-				}
-			}
-		}
-
-		$current_language = pods_sanitize( sanitize_text_field( $current_language ) );
-
-		if ( ! empty( $current_language ) ) {
-			// We need to return language data
-			$lang_data = array(
-				'language' => $current_language,
-				't_id'     => 0,
-				'tt_id'    => 0,
-				'term'     => null,
-			);
-
-			/**
-			 * Polylang support
-			 * Get the language taxonomy object for the current language
-			 */
-			if ( $translator == 'PLL' ) {
-				$current_language_t = false;
-
-				// Get the language term object
-				if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'get_language' ) ) {
-					// Polylang 1.8 and newer
-					$current_language_t = PLL()->model->get_language( $current_language );
-				} elseif ( is_object( $polylang ) && isset( $polylang->model ) && method_exists( $polylang->model, 'get_language' ) ) {
-					// Polylang 1.2 - 1.7.x
-					$current_language_t = $polylang->model->get_language( $current_language );
-				} elseif ( is_object( $polylang ) && method_exists( $polylang, 'get_language' ) ) {
-					// Polylang 1.1.x and older
-					$current_language_t = $polylang->get_language( $current_language );
-				}
-
-				// If the language object exists, add it!
-				if ( $current_language_t && ! empty( $current_language_t->term_id ) ) {
-					$lang_data['t_id']  = (int) $current_language_t->term_id;
-					$lang_data['tt_id'] = (int) $current_language_t->term_taxonomy_id;
-					$lang_data['tl_t_id'] = (int) $current_language_t->tl_term_id;
-					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
-					$lang_data['term']  = $current_language_t;
-				}
-			}
-		}
-
-		/**
-		 * Override language data used by Pods.
-		 *
-		 * @since 2.6.6
-		 *
-		 * @param array|false    $lang_data {
-		 *      Language data
-		 *
-		 *      @type string       $language  Language slug
-		 *      @type int          $t_id      Language term_id
-		 *      @type int          $tt_id     Language term_taxonomy_id
-		 *      @type WP_Term      $term      Language term object
-		 * }
-		 * @param string|boolean $translator Language plugin used
-		 */
-		$lang_data = apply_filters( 'pods_get_current_language', $lang_data, $translator );
-
-		return $lang_data;
-
-	}
 
     /**
      * Handle filters / actions for the class

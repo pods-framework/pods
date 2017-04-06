@@ -78,6 +78,9 @@ class PodsUpgrade {
 
                 pods_query( $query, 'Cannot setup SQL tables' );
             }
+
+            // Auto activate component
+	        PodsInit::$components->activate_component( 'templates' );
         }
 
         do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );

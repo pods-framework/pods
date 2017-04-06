@@ -1,10 +1,10 @@
 <?php
 /**
- * Name: Translate Pods Admin
+ * Name: Polylang / WPML admin label integration
  *
- * Menu Name: Translate Pods
+ * Menu Name: Supported Admin Languages
  *
- * Description: Allow UI of Pods and fields to be translated
+ * Description: Allow UI of Pods and fields to be translated, with support for Polylang and WPML plugins.
  *
  * Version: 0.1
  *

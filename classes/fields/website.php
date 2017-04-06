@@ -180,8 +180,8 @@ class PodsField_Website extends PodsField {
 		$options = (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) )
-			$value = implode( ' ', $value );
+		// Ensure proper format
+		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
 		$field_type = 'website';
 
@@ -212,6 +212,8 @@ class PodsField_Website extends PodsField {
 	 * @param array $fields
 	 * @param array $pod
 	 * @param int $id
+	 *
+	 * @return bool|array
 	 *
 	 * @since 2.0
 	 */
@@ -250,10 +252,21 @@ class PodsField_Website extends PodsField {
 	 * @param array $pod
 	 * @param object $params
 	 *
+	 * @return string
+	 *
 	 * @since 2.0
 	 */
 	public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 		$options = (array) $options;
+
+		// Update from a array input field (like link) if the field updates
+		if ( is_array( $value ) ) {
+			if ( isset( $value['url'] ) ) {
+				$value = $value['url'];
+			} else {
+				$value = implode( ' ', $value );
+			}
+		}
 
 		$value = $this->validate_url( $value, $options );
 
@@ -276,6 +289,8 @@ class PodsField_Website extends PodsField {
 	 * @param array $fields
 	 * @param array $pod
 	 *
+	 * @return string
+	 *
 	 * @since 2.0
 	 */
 	public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
@@ -289,6 +304,8 @@ class PodsField_Website extends PodsField {
 	 *
 	 * @param string $value
 	 * @param array $options
+	 *
+	 * @return string
 	 *
 	 * @since 2.7
 	 */
@@ -415,11 +432,12 @@ class PodsField_Website extends PodsField {
 	 * Validate an target attribute with the options
 	 *
 	 * @param string $value
-	 * @param array $options
+	 *
+	 * @return string
 	 *
 	 * @since 2.7
 	 */
-	public function validate_target( $value, $options = null ) {
+	public function validate_target( $value ) {
 		if ( ! empty( $value ) && $value == '_blank' ) {
 			$value = '_blank';
 		} else {

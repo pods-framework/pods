@@ -9,6 +9,7 @@ const SCRIPT_TARGET = 'script.pods-dfv-field-data';
 // key: FieldClass
 const FieldClasses = {
 	'file': fields.FileUpload,
+	'avatar': fields.FileUpload,
 	'pick': fields.Pick
 };
 

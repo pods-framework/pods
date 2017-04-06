@@ -1052,11 +1052,13 @@ class PodsMeta {
                 );
             }
             else {
-                $depends = PodsForm::dependencies( $field, 'pods-meta-' );
+                $dep_options = PodsForm::dependencies( $field, 'pods-meta-' );
+                $dep_classes = $dep_options[ 'classes' ];
+                $dep_data = $dep_options[ 'data' ];
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
-            <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?> <?php echo esc_attr( $depends ); ?>">
+            <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?> <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php
@@ -1064,10 +1066,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
-			<div class="pods-submittable-fields">
+            <div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-			</div>
+            </div>
                 </td>
             </tr>
         <?php

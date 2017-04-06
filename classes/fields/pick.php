@@ -115,6 +115,8 @@ class PodsField_Pick extends PodsField {
 		// Handle modal saving.
 		add_filter( 'redirect_post_location', array( $this, 'admin_modal_bail_post_redirect' ), 10, 2 );
 		add_action( 'load-edit-tags.php', array( $this, 'admin_modal_bail_term_action' ) );
+		add_action( 'load-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
+		add_action( 'load-edit-link-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
 		add_action( 'personal_options_update', array( $this, 'admin_modal_bail_user_action' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'admin_modal_bail_user_action' ) );
 		add_action( 'pods_api_process_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
@@ -2926,6 +2928,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
+		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
 
 	}
 

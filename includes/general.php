@@ -753,8 +753,11 @@ function pods_shortcode ( $tags, $content = null ) {
         }
 
         if ( empty( $tags[ 'name' ] ) ) {
-			if ( $blog_is_switched ) { restore_current_blog(); }
-	        return '<p>Please provide a Pod name</p>';
+	        if ( $blog_is_switched ) {
+		        restore_current_blog();
+	        }
+
+	        return '<p>' . __( 'Pods shortcode error: Please provide a Pod name.', 'pods' ) . '</p>';
         }
     }
 
@@ -771,8 +774,11 @@ function pods_shortcode ( $tags, $content = null ) {
     }
 
     if ( empty( $content ) && empty( $tags[ 'pods_page' ] ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
-	    if ( $blog_is_switched ) { restore_current_blog(); }
-        return '<p>Please provide either a template or field name</p>';
+	    if ( $blog_is_switched ) {
+		    restore_current_blog();
+	    }
+
+        return '<p>' . __( 'Pods shortcode error: Please provide either a template or field name.', 'pods' ) . '</p>';
     }
 
     if ( ! $tags['use_current'] && !isset( $id ) ) {
@@ -809,8 +815,11 @@ function pods_shortcode ( $tags, $content = null ) {
     }
 
     if ( empty( $pod ) || ! $pod->valid() ) {
-	    if ( $blog_is_switched ) { restore_current_blog(); }
-	    return '<p>Pod not found</p>';
+	    if ( $blog_is_switched ) {
+		    restore_current_blog();
+	    }
+
+	    return '<p>' . __( 'Pods shortcode error: Pod not found.', 'pods' ) . '</p>';
     }
 
 	$found = 0;
@@ -901,12 +910,18 @@ function pods_shortcode ( $tags, $content = null ) {
 		if ( 'user' == $pod->pod ) {
 			// Further hardening of User-based forms
 			if ( false !== strpos( $tags[ 'fields' ], '_capabilities' ) || false !== strpos( $tags[ 'fields' ], '_user_level' ) ) {
-				if ( $blog_is_switched ) { restore_current_blog(); }
+				if ( $blog_is_switched ) {
+					restore_current_blog();
+				}
+
 				return '';
 			}
 			// Only explicitly allow user edit forms
 			elseif ( $is_singular && ( !defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || !PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
-				if ( $blog_is_switched ) { restore_current_blog(); }
+				if ( $blog_is_switched ) {
+					restore_current_blog();
+				}
+
 				return '';
 			}
 		}
@@ -931,7 +946,7 @@ function pods_shortcode ( $tags, $content = null ) {
         $pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
 
         if ( empty( $pods_page ) )
-            return '<p>Pods Page not found</p>';
+            return '<p>' . __( 'Pods shortcode error: Pods Page not found.', 'pods' ) . '</p>';
 
         $return = Pods_Pages::content( true, $pods_page );
 
@@ -940,7 +955,10 @@ function pods_shortcode ( $tags, $content = null ) {
 			$return = do_shortcode( $return );
 		}
 
-	    if ( $blog_is_switched ) { restore_current_blog(); }
+	    if ( $blog_is_switched ) {
+		    restore_current_blog();
+	    }
+
 		return $return;
     }
 
@@ -962,12 +980,14 @@ function pods_shortcode ( $tags, $content = null ) {
 
 	$return = ob_get_clean();
 
-	// @todo $blog_is_switched >> Switch back before running other shortcodes?
 	if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 		$return = do_shortcode( $return );
 	}
 
-	if ( $blog_is_switched ) { restore_current_blog(); }
+	if ( $blog_is_switched ) {
+		restore_current_blog();
+	}
+
 	return $return;
 }
 
@@ -1880,7 +1900,7 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -1906,7 +1926,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -2096,7 +2116,7 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )

@@ -975,6 +975,10 @@ class PodsField_Pick extends PodsField {
 		$edit_link = '';
 		$link      = '';
 
+		if ( ! isset( $args->options['supports_thumbnails'] ) ) {
+			$args->options['supports_thumbnails'] = null;
+		}
+
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
 				if ( null === $args->options['supports_thumbnails'] ) {
@@ -982,10 +986,14 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( true === $args->options['supports_thumbnails'] ) {
-					$thumb = wp_get_attachment_image_src( $item_id, 'thumbnail', true );
+					$post_thumbnail_id = get_post_thumbnail_id( $item_id );
 
-					if ( ! empty( $thumb[0] ) ) {
-						$icon = $thumb[0];
+					if ( $post_thumbnail_id ) {
+						$thumb = wp_get_attachment_image_src( $post_thumbnail_id, 'thumbnail', true );
+
+						if ( ! empty( $thumb[0] ) ) {
+							$icon = $thumb[0];
+						}
 					}
 				}
 

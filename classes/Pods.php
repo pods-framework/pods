@@ -1318,10 +1318,18 @@ class Pods implements Iterator {
 
 									$item_data = $this->alt_data->select( $sql );
 								} else {
+									// Support 'find' output ordering
+									if ( 'find' === $params->output && $is_field_output_full && empty( $sql['orderby'] ) && $ids ) {
+										// Handle default orderby for ordering by the IDs
+										$order_ids = implode( ', ', array_map( 'absint', $ids ) );
+
+										$sql['orderby'] = 'FIELD( `t`.`' . $table[ 'field_id' ] . '`, ' . $order_ids . ' )';
+									}
+
 									$related_obj->find( $sql );
 
 									// Support 'find' output
-									if ( 'find' === $params->output && false !== $field_exists && ( in_array( $last_type, $tableless_field_types ) && !$simple ) ) {
+									if ( 'find' === $params->output && $is_field_output_full ) {
 										$data = $related_obj;
 
 										$is_field_output_full = true;
@@ -3999,6 +4007,6 @@ class Pods implements Iterator {
 		}
 
 		return $string;
-		
+
 	}
 }

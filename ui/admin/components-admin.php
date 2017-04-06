@@ -21,24 +21,26 @@
                     foreach ( $options as $field_name => $field_option ) {
                         $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
 
-                        $depends = PodsForm::dependencies( $field_option );
+                        $dep_options = PodsForm::dependencies( $field_option );
+                        $dep_classes = $dep_options[ 'classes' ];
+                        $dep_data = $dep_options[ 'data' ];
 
-                        if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
+                if ( ( !empty( $depends_on ) || !empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
                             if ( !empty( $depends_on ) ) {
                 ?>
                     </tbody>
                 <?php
                             }
 
-                            if ( !empty( $depends ) ) {
+                            if ( !empty( $dep_classes ) ) {
                 ?>
-                    <tbody class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
+                    <tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
                 <?php
                             }
                         }
 
                         if ( !is_array( $field_option[ 'group' ] ) ) {
-                            $value = pods_var_raw( $field_name, $settings, $field_option[ 'default' ] );
+                            $value = pods_v( $field_name, $settings, $field_option[ 'default' ] );
                 ?>
                     <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
                         <th>
@@ -67,11 +69,13 @@
 
                                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
-                                        $depends_option = PodsForm::dependencies( $field_group_option );
+                                        $group_dep_options = PodsForm::dependencies( $field_group_option );
+                                        $group_dep_classes = $group_dep_options[ 'classes' ];
+                                        $group_dep_data = $group_dep_options[ 'data' ];
 
-                                        $value = pods_var_raw( $field_group_name, $settings, $field_group_option[ 'default' ] );
+                                        $value = pods_v( $field_group_name, $settings, $field_group_option[ 'default' ] );
                                 ?>
-                                    <li class="<?php echo esc_attr( $depends_option ); ?>">
+                                    <li class="<?php echo esc_attr( $group_dep_classes ); ?>" <?php PodsForm::data( $group_dep_data ); ?>>
                                         <?php echo PodsForm::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
                                     </li>
                                 <?php
@@ -83,8 +87,8 @@
                 <?php
                         }
 
-                        if ( false !== $depends_on || !empty( $depends ) )
-                            $depends_on = $depends;
+                        if ( false !== $depends_on || !empty( $dep_classes ) )
+                            $depends_on = $dep_options;
                     }
 
                     if ( !empty( $depends_on ) ) {

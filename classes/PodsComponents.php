@@ -503,6 +503,69 @@ class PodsComponents {
     }
 
     /**
+     * Check if a component is active or not
+     *
+     * @param string $component The component name to check if active
+     *
+     * @return bool
+     *
+     * @since 2.7
+     */
+    public function is_component_active( $component ) {
+
+        $active = false;
+
+        if ( isset( $this->components[ $component ] ) && isset( $this->settings[ 'components' ][ $component ] ) && 0 !== $this->settings[ 'components' ][ $component ] ) {
+            $active = true;
+        }
+
+        return $active;
+
+    }
+
+    /**
+     * Activate a component
+     *
+     * @param string $component The component name to activate
+     *
+     * @since 2.7
+     */
+    public function activate_component( $component ) {
+
+        if ( ! $this->is_component_active( $component ) ) {
+            if ( isset( $this->components[ $component ] ) ) {
+                $this->settings[ 'components' ][ $component ] = array();
+
+                $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+                update_option( 'pods_component_settings', $settings );
+            }
+        }
+
+    }
+
+    /**
+     * Deactivate a component
+     *
+     * @param string $component The component name to deactivate
+     *
+     * @since 2.7
+     */
+    public function deactivate_component( $component ) {
+
+        if ( $this->is_component_active( $component ) ) {
+            if ( isset( $this->components[ $component ] ) ) {
+                $this->settings[ 'components' ][ $component ] = 0;
+
+                $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+                update_option( 'pods_component_settings', $settings );
+            }
+        }
+
+    }
+
+    /**
      * Toggle a component on or off
      *
      * @param string $component The component name to toggle
@@ -511,25 +574,23 @@ class PodsComponents {
      *
      * @since 2.0
      */
-    public function toggle ( $component ) {
+    public function toggle( $component ) {
+
         $toggle = null;
 
-        if ( isset( $this->components[ $component ] ) ) {
-            if ( 1 == pods_var( 'toggle', 'get' ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) ) {
-                $this->settings[ 'components' ][ $component ] = array();
-                $toggle = true;
-            }
-            elseif ( 0 == pods_var( 'toggle', 'get' ) ) {
-                $this->settings[ 'components' ][ $component ] = 0;
-                $toggle = false;
-            }
+        $toggle_mode = (int) pods_v( 'toggle', 'get' );
+
+        if ( 1 == $toggle_mode ) {
+            $this->activate_component( $component );
+            $toggle = true;
+        }
+        else {
+            $this->deactivate_component( $component );
+            $toggle = false;
         }
 
-        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
-
-        update_option( 'pods_component_settings', $settings );
-
         return $toggle;
+
     }
 
     /**

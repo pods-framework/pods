@@ -27,7 +27,7 @@
 	// Monday Mode
 	$monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
 
-	if ( pods_var( 'pods_reset_weekend', 'post', pods_var( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
+	if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_reset_weekend', 'get', 0, null, true ), null, true ) ) {
         if ( $monday_mode ) {
             $html = '<br /><br /><iframe width="480" height="360" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4?autoplay=1" frameborder="0" allowfullscreen></iframe>';
             pods_message( 'The weekend has been reset and you have been sent back to Friday night. Unfortunately due to a tear in the fabric of time, you slipped back to Monday. We took video of the whole process and you can see it below..' . $html );

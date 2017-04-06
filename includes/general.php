@@ -802,7 +802,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Pod not found</p>';
 
 	$found = 0;
-	
+
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
 	if ( ! $is_singular ) {
@@ -998,24 +998,23 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		return $content;
 	}
 
-	// Store all shortcodes, to restore later
-	$temp_shortcode_tags = $shortcode_tags;
-
-	// Loop through all shortcodes and remove those not being used right now
-	foreach ( $shortcode_tags as $tag => $callback ) {
-		if ( ! in_array( $tag, $shortcodes ) ) {
-			unset( $shortcode_tags[ $tag ] );
-		}
+	if ( !empty( $shortcodes ) ) {
+		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
+			if ( in_array( $m[2], $shortcodes ) ) {
+				// If shortcode being called is in list, return false to allow it to run
+				return false;
+			}
+			// Return original shortcode string if we aren't going to handle at this time
+			return $m[0];
+		};
+		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
-	// Build Shortcode regex pattern just for the shortcodes we want
-	$pattern = get_shortcode_regex();
+	$content = do_shortcode( $content );
 
-	// Call shortcode callbacks just for the shortcodes we want
-	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
-
-	// Restore all shortcode tags
-	$shortcode_tags = $temp_shortcode_tags;
+	if ( isset( $temp_shortcode_filter ) ) {
+		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );
+	}
 
 	return $content;
 
@@ -1933,7 +1932,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 )
 				) );
 			}
-			
+
 			if ( !pods_tableless() ) {
 				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
 					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
@@ -2145,4 +2144,13 @@ function pods_session_start() {
 
 	return true;
 
+}
+
+/**
+ * @todo: replace string literal with a defined constant
+ *
+ * @return bool
+ */
+function pods_is_modal_window() {
+    return isset( $_GET[ 'pods_modal' ] );
 }

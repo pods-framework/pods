@@ -1,3 +1,7 @@
+.pods-hidden {
+    display: none;
+}
+
 .pods-admin .pods-leaf-watermark-right {
     position: fixed;
     width: 236px;
@@ -72,7 +76,6 @@
 .pods-wizard #poststuff h1,
 .pods-wizard h2,
 .pods-wizard h3 {
-    font-family: Georgia !important;
     margin-bottom: 0 !important;
 }
 
@@ -179,7 +182,8 @@ tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort {
 
 tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
     vertical-align: top;
-    margin-top: 1px;
+    margin-top: 7px;
+    margin-left: -5px;
 }
 
 tbody.pods-manage-list tr.pods-manage-row td > span.pods-manage-row-more {
@@ -206,7 +210,6 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-delete {
 tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     float: right;
     text-align: right;
-    width: 40%;
 }
 
 tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-delete a.submitdelete,
@@ -251,7 +254,8 @@ tr.pods-toggled-off {
  * Pods Dependency
  */
 .pods-depends-on,
-.pods-excludes-on {
+.pods-excludes-on,
+.pods-wildcard-on {
     display: none;
 }
 
@@ -333,6 +337,11 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     max-width: 25em;
 }
 
+.pods-manage-field .pods-pick-values {
+    /* Match width to input fields */
+    width: 93%;
+}
+
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
     max-width: 100%;
 }
@@ -340,6 +349,7 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-field-option div select {
     float: none;
     width: 100%;
+    margin: 0;
 }
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
@@ -351,13 +361,13 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     border-bottom: none;
 }
 
-.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-files li.pods-file-name {
+/*.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-flex-list li.pods-flex-name {
     left: 46px;
     right: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
+}*/
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table,
 .pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
@@ -371,18 +381,15 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-field.pods-boolean label,
 .pods-manage-field .pods-pick-values label {
     padding-top: 0;
-    display: block;
-    margin-left: 20px;
+    display: inline-block;
 }
 
 .pods-manage-field input[type="checkbox"],
 .pods-manage-field input[type="radio"] {
-    position: absolute;
+	display: inline-block;
     left: 2px;
-    margin: 1px 7px 0 0;
+    margin: 1px 2px 1px 0;
     float: none;
-    margin-right: 2px;
-    margin-left: 0;
     vertical-align: middle;
 }
 
@@ -416,6 +423,10 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     width: 50%;
     float: left;
     clear: none;
+}
+
+.pods-manage-field .pods-pick-values .regular-text {
+    max-width: 95%;
 }
 
 .pods-manage-field .pods-field.pods-boolean:hover {
@@ -475,4 +486,62 @@ div.row-actions.row-actions-toggle {
 #pods-rest-api label[for="pods-form-ui-no-dependencies"] {
     width: 100%;
     max-width: initial;
+}
+
+@media only screen and (max-width: 850px) {
+    .pods-admin .pods_floatmenu {
+        position: static !important;
+        float: none;
+        display: block;
+        width: 100%;
+    }
+    .pods-admin .pods_floatmenu .inner-sidebar {
+        float: none;
+        width: auto;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    /*
+     * Pods wp-list-table
+     */
+    .wp-list-table td.column-secondary {
+        display: block !important;
+        margin-top: -10px;
+        margin-bottom: 5px;
+    }
+    .wp-list-table .is-expanded td.column-secondary {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    div.pods-manage-field .pods-field-option label,
+    div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+        float: none;
+        display: block;
+        width: 100%;
+        max-width: none;
+        padding-bottom: 4px;
+    }
+
+    .pods-manage-field .pods-field-option input[type="text"],
+    .pods-manage-field .pods-field-option select,
+    .pods-manage-field .pods-field-option textarea,
+    .pods-manage-field .pods-field-option .pods-field.pods-boolean,
+    .pods-manage-field .pods-pick-values,
+    .pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+    .pods-manage-field .pods-slider-field {
+        display: block;
+        margin: 0;
+        width: 100%;
+        max-width: none;
+    }
+
+    .pods-manage-field .pods-pick-values li.pods-zebra-odd,
+    .pods-manage-field .pods-pick-values li.pods-zebra-even {
+        display: block;
+        width: 100%;
+        float: none;
+        clear: both;
+    }
 }

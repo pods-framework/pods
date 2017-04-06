@@ -1052,11 +1052,13 @@ class PodsMeta {
                 );
             }
             else {
-                $depends = PodsForm::dependencies( $field, 'pods-meta-' );
+                $dep_options = PodsForm::dependencies( $field, 'pods-meta-' );
+                $dep_classes = $dep_options[ 'classes' ];
+                $dep_data = $dep_options[ 'data' ];
 
             do_action( 'pods_meta_' . __FUNCTION__ . '_' . $field[ 'name' ], $post, $field, $pod );
         ?>
-            <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?> <?php echo esc_attr( $depends ); ?>">
+            <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?> <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                 <td>
                     <?php
@@ -1064,10 +1066,10 @@ class PodsMeta {
                         if ( isset( $field[ 'help' ] ) )
                             unset( $field[ 'help' ] );
                     ?>
-			<div class="pods-submittable-fields">
+            <div class="pods-submittable-fields">
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-			</div>
+            </div>
                 </td>
             </tr>
         <?php
@@ -1271,6 +1273,7 @@ class PodsMeta {
             return $form_fields;
 
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $id = null;
 
@@ -1442,6 +1445,7 @@ class PodsMeta {
      */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
 
@@ -1627,6 +1631,7 @@ class PodsMeta {
      */
     public function meta_user ( $user_id ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $user_id );
 
@@ -1815,6 +1820,7 @@ class PodsMeta {
      */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
 
@@ -1881,6 +1887,7 @@ class PodsMeta {
      */
     public function meta_comment_new ( $form_fields ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2006,6 +2013,7 @@ class PodsMeta {
      */
     public function meta_comment ( $comment, $metabox ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
 

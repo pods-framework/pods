@@ -3832,7 +3832,8 @@ class Pods implements Iterator {
 					'duplicate' => $this->pod_data[ 'fields' ]
 				),
 				'icon' => $icon,
-				'actions_disabled' => $actions_disabled
+				'actions_disabled' => $actions_disabled,
+				'actions_bulk' => array(),
 			);
 
 			if ( !empty( $filters ) ) {
@@ -3852,12 +3853,17 @@ class Pods implements Iterator {
 			if ( !empty( $author_restrict ) )
 				$ui[ 'restrict' ] = array( 'author_restrict' => $author_restrict );
 
+			if ( ! in_array( 'export', $ui[ 'actions_disabled' ] ) ) {
+				$ui['actions_bulk']['export'] = array(
+					'label' => __( 'Export', 'pods' )
+					// callback not needed, Pods has this built-in for export
+				);
+			}
+
 			if ( !in_array( 'delete', $ui[ 'actions_disabled' ] ) ) {
-				$ui[ 'actions_bulk' ] = array(
-					'delete' => array(
-						'label' => __( 'Delete', 'pods' )
-						// callback not needed, Pods has this built-in for delete
-					)
+				$ui['actions_bulk']['delete'] = array(
+					'label' => __( 'Delete', 'pods' )
+					// callback not needed, Pods has this built-in for delete
 				);
 			}
 
@@ -3977,5 +3983,22 @@ class Pods implements Iterator {
 		elseif ( ! class_exists( 'Pod' ) || Pod::$deprecated_notice ) {
 			pods_deprecated( "Pods::{$name}", '2.0' );
 		}
+	}
+
+	/**
+	 * Handle casting a Pods() object to string
+	 *
+	 * @return string Pod type and name in CURIE notation
+	 */
+	public function __toString() {
+
+		$string = '';
+
+		if ( ! empty( $this->pod_data ) ) {
+			$string = sprintf( '%s:%s', $this->pod_data['type'], $this->pod_data['name'] );
+		}
+
+		return $string;
+		
 	}
 }

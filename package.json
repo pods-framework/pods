@@ -49,6 +49,6 @@
     "underscore": "~1.8.3"
   },
   "scripts": {
-    "test-mv-fields": "mocha --compilers js:babel-core/register --reporter dot --recursive tests/js"
+    "pods-test-dfv": "mocha --compilers js:babel-core/register --reporter dot --recursive tests/js"
   }
 }

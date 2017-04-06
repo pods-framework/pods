@@ -6,7 +6,7 @@ var PodsI18n = (function () {
 	 * Only visible to the closure, not exposed externally
 	 */
 	var translateString = function ( str ) {
-		var translated = str;
+		var translated = str, ref;
 
 		if ( typeof podsLocalizedStrings !== 'undefined' ) {
 
@@ -14,7 +14,7 @@ var PodsI18n = (function () {
 			 * Converts string into reference object variable
 			 * Uses the same logic as PHP to create the same references
 			 */
-			var ref = '__' + str;
+			ref = '__' + str;
 
 			if ( typeof podsLocalizedStrings[ ref ] !== 'undefined' ) {
 				translated = podsLocalizedStrings[ ref ];

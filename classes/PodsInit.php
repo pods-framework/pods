@@ -267,6 +267,7 @@ class PodsInit {
 
 		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
 			'jquery',
+			'pods-dfv',
 			'pods-i18n',
 			'pods-json',
 			'jquery-qtip2'
@@ -310,8 +311,8 @@ class PodsInit {
 
 		// MV stuff
 		wp_register_script(
-			'pods-mv-fields',
-			PODS_URL . 'ui/fields-mv/js/pods-mv-fields.min.js',
+			'pods-dfv',
+			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
 			array(
 				'jquery',
 				'jquery-ui-core',
@@ -324,7 +325,7 @@ class PodsInit {
 			PODS_VERSION,
 			true
 		);
-		wp_register_style( 'pods-flex', PODS_URL . 'ui/css/pods-flex.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-dfv-list', PODS_URL . 'ui/css/pods-dfv-list.css', array(), PODS_VERSION );
 	}
 
 	/**

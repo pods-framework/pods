@@ -142,7 +142,7 @@ class PodsAdmin {
                     wp_enqueue_script( 'post' );
                 elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
                     wp_enqueue_script( 'post' );
-                    wp_enqueue_style( 'pods-admin' );
+                    //wp_enqueue_style( 'pods-admin' );
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );
@@ -719,7 +719,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-flex' );
+            wp_enqueue_style( 'pods-dfv-list' );
     }
 
     /**
@@ -1510,7 +1510,7 @@ class PodsAdmin {
                 ),
                 'rewrite' => array(
                     'label' => __( 'Rewrite', 'pods' ),
-                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Reading. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
+                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'dependency' => true,
@@ -1604,11 +1604,11 @@ class PodsAdmin {
                     'depends-on' => array( 'show_ui' => true ),
                     'data' => array(
                         'default' => __( 'Default - Add to associated Post Type(s) menus', 'pods' ),
-                        'settings' => __( 'Add to Settings menu', 'pods' ),
-                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'objects' => __( 'Make a top-level menu item', 'pods' ),
-                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
-                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
+                        'settings' => __( 'Add a submenu item to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' ),
+                        'objects' => __( 'Make a new menu item', 'pods' ),
+                        'top' => __( 'Make a new menu item below Settings', 'pods' )
                     ),
                     'dependency' => true
                 ),
@@ -1835,10 +1835,10 @@ class PodsAdmin {
                     'type' => 'pick',
                     'default' => 'settings',
                     'data' => array(
-                        'settings' => __( 'Add to Settings menu', 'pods' ),
-                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
-                        'top' => __( 'Make a new top-level menu item below Settings', 'pods' ),
-                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
+                        'settings' => __( 'Add a submenu item to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add a submenu item to Appearances menu', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' ),
+                        'top' => __( 'Make a new menu item below Settings', 'pods' )
                     ),
                     'dependency' => true
                 ),
@@ -2452,7 +2452,7 @@ class PodsAdmin {
             $meta = array();
 
             if ( !empty( $component_data[ 'Version' ] ) )
-                $meta[] = 'Version ' . $component_data[ 'Version' ];
+                $meta[] = sprintf( __( 'Version %s', 'pods' ), $component_data[ 'Version' ] );
 
             if ( empty( $component_data[ 'Author' ] ) ) {
                 $component_data[ 'Author' ] = 'Pods Framework Team';
@@ -2498,8 +2498,8 @@ class PodsAdmin {
             'data' => $components,
             'total' => count( $components ),
             'total_found' => count( $components ),
-            'items' => 'Components',
-            'item' => 'Component',
+            'items' => __( 'Components', 'pods' ),
+            'item' => __( 'Component', 'pods' ),
             'fields' => array(
                 'manage' => array(
                     'name' => array(

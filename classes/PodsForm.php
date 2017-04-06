@@ -1210,10 +1210,11 @@ class PodsForm {
             $field_types = self::field_types();
 
             foreach ( $field_types as $field_type => $field_type_data ) {
-                $has_ajax = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
+                $has_admin_init = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
 
-                if ( false !== $has_ajax )
-                    $admin_field_types[] = $field_type;
+                if ( false !== $has_admin_init ) {
+	                $admin_field_types[] = $field_type;
+                }
             }
 
             pods_transient_set( 'pods_form_admin_init_field_types', $admin_field_types );

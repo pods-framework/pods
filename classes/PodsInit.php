@@ -79,13 +79,6 @@ class PodsInit {
 	static $upgrade_needed = false;
 
 	/**
-	 * Whether setup() was called (activations for new installation or re-installation only)
-	 *
-	 * @var bool
-	 */
-	private static $did_setup = false;
-
-	/**
 	 * Singleton handling for a basic pods_init() request
 	 *
 	 * @return \PodsInit
@@ -137,26 +130,7 @@ class PodsInit {
 
 		add_action( 'wp_loaded', array( $this, 'flush_rewrite_rules' ) );
 
-		// Must run at a lower priority than PodsComponents::get_components() so the component list has been built
-		add_action( 'setup_theme', array( $this, 'auto_activate_components' ), 12 );
-
 		$this->run();
-
-	}
-
-	/**
-	 * Auto-activate certain components on new installs
-	 */
-	public function auto_activate_components() {
-
-		if ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) {
-			return;
-		}
-
-		// Make templates component active after an initial installation or re-installation
-		if ( self::$did_setup ) {
-			self::$components->activate_component( 'templates' );
-		}
 
 	}
 
@@ -1181,8 +1155,6 @@ class PodsInit {
 	public function setup( $_blog_id = null ) {
 
 		global $wpdb;
-
-		self::$did_setup = true;
 
 		// Switch DB table prefixes
 		if ( null !== $_blog_id && $_blog_id != $wpdb->blogid ) {

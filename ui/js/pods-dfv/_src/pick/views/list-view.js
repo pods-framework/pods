@@ -44,18 +44,21 @@ export const ListView = PodsFieldListView.extend( {	// Cache the template functi
 	},
 
 	onAttach: function () {
+		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 
 		// @todo
 		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
 
-		// init sortable
-		this.$el.sortable( {
-			containment      : 'parent',
-			axis             : 'y',
-			scrollSensitivity: 40,
-			tolerance        : 'pointer',
-			opacity          : 0.6
-		} );
+		if ( 1 !== fieldConfig[ 'pick_limit' ] ) {
+			// init sortable
+			this.$el.sortable( {
+				containment      : 'parent',
+				axis             : 'y',
+				scrollSensitivity: 40,
+				tolerance        : 'pointer',
+				opacity          : 0.6
+			} );
+		}
 	}
 
 } );

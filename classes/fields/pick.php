@@ -152,6 +152,15 @@ class PodsField_Pick extends PodsField {
 				),
 				'dependency' => true,
 			),
+			self::$type . '_allow_add_new' => array(
+				'label'       => __( 'Allow Add New', 'pods' ),
+				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
+				'wildcard-on' => array(
+					self::$type . '_object' => array( '^post-type-(?!(custom-css|customize-changeset)).*$', '^taxonomy-.*$', '^user$', '^pod-.*$' )
+				),
+				'type'        => 'boolean',
+				'default'     => 1
+			),
 			self::$type . '_taggable'       => array(
 				'label'       => __( 'Taggable', 'pods' ),
 				'help'        => __( 'Allow new values to be inserted when using an Autocomplete field', 'pods' ),

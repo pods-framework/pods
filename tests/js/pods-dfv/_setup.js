@@ -6,3 +6,4 @@ global.Backbone = require( 'backbone' );
 global.Marionette = require( 'backbone.marionette' );
 global.assert = require( 'assert' );
 global.wp = { media: { view: { Frame: { extend : function(){} } } } }; // Stub
+global.PodsI18n = { __: function( str ){ return str; } }; // Stub for now

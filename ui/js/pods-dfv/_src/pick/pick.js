@@ -93,7 +93,23 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : fieldConfig.iframe_src
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.addNewSuccess.bind( this ) );
+		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+
+		modalIFrame.modal.open();
+	},
+
+	/**
+	 * @param childView
+	 */
+	onChildviewEditClick: function ( childView ) {
+		const fieldConfig = this.model.get( 'fieldConfig' );
+
+		const modalFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title,
+			src  : fieldConfig.iframe_src
+		} );
+
+		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
 	},
@@ -102,7 +118,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param event
 	 * @param data
 	 */
-	addNewSuccess: function ( event, data ) {
+	modalSuccess: function ( event, data ) {
 		this.collection.add( data );
 
 		modalIFrame.modal.close();

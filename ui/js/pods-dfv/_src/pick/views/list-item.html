@@ -4,7 +4,9 @@
 		type="hidden"
 		value="<%- id %>">
 <ul class="pods-dfv-list-meta relationship-item">
-	<li class="pods-dfv-list-col pods-dfv-list-handle"><span>Reorder</span></li>
+	<% if ( 1 != fieldConfig.pick_limit ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-handle"><span>Reorder</span></li>
+	<% } %>
 	<% if ( 1 == fieldConfig.pick_show_icon && '' != icon ) { %>
 		<li class="pods-dfv-list-col pods-dfv-list-icon">
 			<img class="pinkynail" src="<%- icon %>" alt="Icon">

@@ -30,7 +30,7 @@ class Pods_Component_I18n extends PodsComponent {
 	public $languages_translated = array();
 	public $cur_pod = null;
 	public $option_key = 'pods_component_i18n_settings';
-	public $admin_page = 'pods-component-translate-pods-admin';
+	public $admin_page = 'pods-component-polylang-wpml-admin-label-integration';
 	public $capability = 'pods_i18n_activate_lanuages';
 	public $nonce = 'pods_i18n_activate_lanuages';
 
@@ -106,7 +106,6 @@ class Pods_Component_I18n extends PodsComponent {
 		}
 
 		if ( $active ) {
-
 			// WP Object filters (post_type and taxonomy)
 			add_filter( 'pods_register_post_type', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
 			add_filter( 'pods_register_taxonomy', array( $this, 'pods_register_wp_object_i18n' ), 10, 2 );
@@ -569,25 +568,34 @@ class Pods_Component_I18n extends PodsComponent {
 		$this->languages_translated = wp_get_available_translations();
 
 		$new_languages = array();
+
 		if ( isset( $_POST['pods_i18n_enabled_languages'] ) && is_array( $_POST['pods_i18n_enabled_languages'] ) ) {
 			foreach ( $_POST['pods_i18n_enabled_languages'] as $locale ) {
-				if ( in_array( strip_tags( $locale ), $this->languages_available ) ) {
+				$locale = sanitize_text_field( $locale );
+
+				if ( in_array( $locale, $this->languages_available ) ) {
 					$new_languages[ $locale ] = array();
+
 					if ( isset( $this->languages_translated[ $locale ]['language'] ) ) {
 						$new_languages[ $locale ]['language'] = $this->languages_translated[ $locale ]['language'];
 					}
+
 					if ( isset( $this->languages_translated[ $locale ]['english_name'] ) ) {
 						$new_languages[ $locale ]['english_name'] = $this->languages_translated[ $locale ]['english_name'];
 					}
+
 					if ( isset( $this->languages_translated[ $locale ]['native_name'] ) ) {
 						$new_languages[ $locale ]['native_name'] = $this->languages_translated[ $locale ]['native_name'];
 					}
 				}
 			}
 		}
-		$this->settings['enabled_languages'] = $new_languages;
-		update_option( $this->option_key, $this->settings );
+
 		$this->languages = $new_languages;
+		$this->settings['enabled_languages'] = $new_languages;
+
+		update_option( $this->option_key, $this->settings );
+
 	}
 
 	/**
@@ -621,7 +629,7 @@ class Pods_Component_I18n extends PodsComponent {
 		);
 
 		foreach ( $this->languages_available as $locale ) {
-			$checked = checked( array_key_exists( $locale, $this->languages ) );
+			$checked = checked( isset( $this->languages[ $locale ] ), true, false );
 
 			$enabled = sprintf(
 				'<input type="checkbox" name="pods_i18n_enabled_languages[%s]" value="%s"%s />',
@@ -700,11 +708,19 @@ class Pods_Component_I18n extends PodsComponent {
 
 		echo '<div id="pods_admin_i18n" class="pods-submittable-fields">';
 
+		// Do save action here because otherwise the loading of post_types get done first and labels aren't translated
+		if ( pods_is_admin( $this->capability )
+			&& isset( $_POST['_nonce_i18n'] )
+			&& wp_verify_nonce( $_POST['_nonce_i18n'], $this->nonce )
+		) {
+			pods_message( __( 'Updated active languages.', 'pods' ) );
+		}
+
 		pods_ui( $ui );
 
 		// @todo Do this in pods_ui so we don't rely on javascript
 		echo '<div id="pods_i18n_settings_save">';
-		echo '<input type="hidden" id="nonce_i18n" name="_nonce_i18n" value="' . wp_create_nonce( $this->nonce ) . '" />';
+		wp_nonce_field( $this->nonce, '_nonce_i18n', false );
 		submit_button();
 		echo '</div>';
 
@@ -866,9 +882,12 @@ class Pods_Component_I18n extends PodsComponent {
 			// Add language data to name for normal strings and array formatted strings
 			if ( strpos( $name, ']' ) !== false ) {
 				// Hide the i18n options for fields by default if they are empty
-				if ( strpos( $name, 'field_data' ) !== false && empty( pods_v( $name, $pod ) ) ) {
+				$field_value = pods_v( $name, $pod );
+
+				if ( strpos( $name, 'field_data' ) !== false && empty( $field_value ) ) {
 					$style = ' style="display: none;"';
 				}
+
 				$field_name = rtrim( $name, ']' );
 				$field_name .= '_'.$locale.']';
 			} else {

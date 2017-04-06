@@ -1,6 +1,5 @@
 ;( function ( $ ) {
 
-
 	/**
 	 * Component admin page
 	 */
@@ -11,11 +10,12 @@
 			}
 		},
 
-		initSave: function() {
-			$(document).on( 'click', '#pods_i18n_settings_save #submit', function() {
-				$('#nonce_i18n').appendTo('.pods-admin form#posts-filter');
-				$('.pods-admin form#posts-filter').attr( 'method', 'post' ).submit();
-			});
+		initSave: function () {
+			$( document ).on( 'click', '#pods_i18n_settings_save #submit', function() {
+				$( '#_nonce_i18n' ).appendTo( '.pods-admin form#posts-filter' );
+
+				$( '.pods-admin form#posts-filter' ).prop( 'method', 'post' ).submit();
+			} );
 		}
 	};
 

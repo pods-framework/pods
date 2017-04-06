@@ -792,6 +792,8 @@ class PodsField_Pick extends PodsField {
 
 		$format_type = pods_v( $args->type . '_format_type', $options, 'single', true );
 
+		$limit = 1;
+
 		if ( 'single' === $format_type ) {
 			$format_single = pods_v( $args->type . '_format_single', $options, 'dropdown', true );
 
@@ -824,9 +826,17 @@ class PodsField_Pick extends PodsField {
 			} else {
 				$options['view_name'] = $format_multi;
 			}
+
+			$limit = 0;
+
+			if ( ! empty( $options[ $args->type . '_limit' ] ) ) {
+				$limit = absint( $options[ $args->type . '_limit' ] );
+			}
 		} else {
 			$options['view_name'] = $format_type;
 		}
+
+		$options[ $args->type . '_limit' ] = $limit;
 
 		return $options;
 

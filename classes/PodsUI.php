@@ -2037,7 +2037,7 @@ class PodsUI {
 			$this->action_bulk = '';
 			$this->where = array();
 			$this->data  = false;
-			$_GET['action_bulk_ids'] = ''; 
+			$_GET['action_bulk_ids'] = '';
 
 			$this->manage();
 		} else {
@@ -2289,7 +2289,7 @@ class PodsUI {
 
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
-            
+
         $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
 
 		/**
@@ -3636,7 +3636,7 @@ class PodsUI {
                                     $css_classes[] = 'page-title';
                                     $css_classes[] = 'column-title';
 
-                                    if ( $attributes['type'] !== 'raw' ) {
+                                    if ( 'raw' !== $attributes['type'] ) {
                                         $row_value = wp_kses_post( $row_value );
                                     }
 
@@ -3801,7 +3801,9 @@ class PodsUI {
                                     if ( $first_field ) {
                                         $css_classes[] = 'column-primary';
                                     }
+
                                     $css_classes[] = 'author';
+
                                     if ( 'raw' !== $attributes[ 'type' ] ) {
                                         $row_value = wp_kses_post( $row_value );
                                     }

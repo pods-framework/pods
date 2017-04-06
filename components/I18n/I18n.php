@@ -606,32 +606,36 @@ class Pods_Component_I18n extends PodsComponent {
 		 * format: array( language, version, updated, english_name, native_name, package, iso, strings )
 		 */
 		require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
+
 		$this->languages_translated = wp_get_available_translations();
 
 		// en_US is always installed (default locale of WP)
-		$data = array( 'en_US' => array(
-			'id' => 'en_US',
-			'locale' => 'en_US',
-			'lang' => 'English',
-			'lang_native' => 'English',
-			'enabled' => 'Default',
-		) );
+		$data = array(
+			'en_US' => array(
+				'id'          => 'en_US',
+				'locale'      => 'en_US',
+				'lang'        => 'English',
+				'lang_native' => 'English',
+				'enabled'     => 'Default',
+			)
+		);
 
 		foreach ( $this->languages_available as $locale ) {
+			$checked = checked( array_key_exists( $locale, $this->languages ) );
 
-			if ( array_key_exists( $locale, $this->languages ) ) {
-				$checked = 'checked="checked"';
-			} else {
-				$checked = '';
-			}
-			$enabled = '<input type="checkbox" name="pods_i18n_enabled_languages['.$locale.']" value="'.$locale.'" '.$checked.'/>';
+			$enabled = sprintf(
+				'<input type="checkbox" name="pods_i18n_enabled_languages[%s]" value="%s"%s />',
+				esc_attr( $locale ),
+				esc_attr( $locale ),
+				$checked
+			);
 
 			$data[ $locale ] = array(
-				'id' => $locale,
-				'locale' => $locale,
-				'lang' => $this->languages_translated[ $locale ]['english_name'],
+				'id'          => $locale,
+				'locale'      => $locale,
+				'lang'        => $this->languages_translated[ $locale ]['english_name'],
 				'lang_native' => $this->languages_translated[ $locale ]['native_name'],
-				'enabled' => $enabled,
+				'enabled'     => $enabled,
 			);
 		}
 

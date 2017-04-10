@@ -2,6 +2,7 @@
 /**
  * @var string $form_field_type
  * @var array $options
+ * @var $value
  */
 
     wp_enqueue_script( 'jquery-ui-datepicker' );

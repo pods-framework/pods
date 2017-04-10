@@ -2,6 +2,7 @@
 /**
  * @var string $form_field_type
  * @var array $options
+ * @var $value
  */
 
     wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -31,7 +32,7 @@
         'ampm' => false,
         'changeMonth' => true,
         'changeYear' => true,
-        'firstDay' => (int) get_option( 'start_of_week', 0 )
+        'firstDay' => (int) get_option( 'start_of_week', 0 ),
     );
 
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

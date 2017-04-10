@@ -84,11 +84,19 @@ class PodsField_Time extends PodsField_DateTime {
                 'dependency' => true
             ),
             self::$type . '_format_custom' => array(
-	            'label' => __( 'Custom time format', 'pods' ),
+	            'label' => __( 'Time format', 'pods' ),
 	            'depends-on' => array( self::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+            ),
+            self::$type . '_format_custom_js' => array(
+	            'label' => __( 'Time format field input', 'pods' ),
+	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">' . __( 'jQuery UI timepicker documentation', 'pods' ) . '</a>'
+	                      . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
             ),
             self::$type . '_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
@@ -312,9 +320,14 @@ class PodsField_Time extends PodsField_DateTime {
 				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
 			break;
 			case 'custom':
-				$format = pods_v( static::$type . '_format_custom', $options, '' );
-				if ( $js ) {
-					$format = static::format_php_to_jqueryui( $format );
+				if ( ! $js ) {
+					$format = pods_v( static::$type . '_format_custom', $options, '' );
+				} else {
+					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
+					if ( empty( $format ) ) {
+						$format = pods_v( static::$type . '_format_custom', $options, '' );
+						$format = static::format_php_to_jqueryui( $format );
+					}
 				}
 			break;
 			default:

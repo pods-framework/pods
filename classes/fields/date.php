@@ -84,11 +84,19 @@ class PodsField_Date extends PodsField_DateTime {
 	            'dependency' => true
             ),
             self::$type . '_format_custom' => array(
-	            'label' => __( 'Custom date format', 'pods' ),
+	            'label' => __( 'Date format', 'pods' ),
 	            'depends-on' => array( self::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+            ),
+            self::$type . '_format_custom_js' => array(
+	            'label' => __( 'Date format field input', 'pods' ),
+	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="https://api.jqueryui.com/datepicker/" target="_blank">' . __( 'jQuery UI datepicker documentation', 'pods' ) . '</a>'
+	                      . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
             ),
             self::$type . '_format' => array(
                 'label' => __( 'Date Format', 'pods' ),

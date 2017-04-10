@@ -291,4 +291,40 @@ class PodsField_Time extends PodsField_DateTime {
 	    return $this->format_time( $options, $js );
     }
 
+	/**
+	 * Build time format string based on options
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return format for jQuery UI?
+	 * @return string
+	 */
+	public function format_time( $options, $js = false ) {
+
+		switch ( pods_var( static::$type . '_type', $options ) ) {
+			case 12:
+				$time_format = $this->get_time_formats( $options, $js );
+				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
+			break;
+			case 24:
+				$time_format_24 = $this->get_time_formats_24( $options, $js );
+				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
+			break;
+			case 'custom':
+				$format = pods_v( static::$type . '_format_custom', $options, '' );
+				if ( $js ) {
+					$format = static::format_php_to_jqueryui( $format );
+				}
+			break;
+			default:
+				$format = get_option( 'time_format' );
+				if ( $js ) {
+					$format = static::format_php_to_jqueryui( $format );
+				}
+			break;
+		}
+
+		return $format;
+	}
 }

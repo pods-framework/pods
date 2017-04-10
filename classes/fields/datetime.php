@@ -343,13 +343,11 @@ class PodsField_DateTime extends PodsField {
      */
     public function format ( $options, $js = false ) {
 
-    	$format_value = null;
-
         $format = $this->format_date( $options, $js );
 
 	    $type = pods_v( static::$type . '_type', $options, 'format' );
-	    $format_value = pods_v( static::$type . '_format', $options, 'ymd_dash', true );
-	    if ( 'format' !== $type || 'c' !== $format_value ) {
+
+	    if ( 'format' !== $type || 'c' !== pods_v( static::$type . '_format', $options, '' ) ) {
 		    $format .= ' ' . $this->format_time( $options, $js );
 	    }
 

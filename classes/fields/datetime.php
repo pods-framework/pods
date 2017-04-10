@@ -71,8 +71,26 @@ class PodsField_DateTime extends PodsField {
                 'dependency' => true,
                 'developer_mode' => true
             ),
+            self::$type . '_type' => array(
+	            'label' => __( 'Date Format Type', 'pods' ),
+	            'default' => 'format', // Backwards compatibility
+	            'type' => 'pick',
+	            'data' => array(
+		            'custom' => __( 'Custom', 'pods' ),
+		            'format' => __( 'Predefined formats', 'pods' ),
+	            ),
+	            'dependency' => true
+            ),
+            self::$type . '_format_custom' => array(
+	            'label' => __( 'Custom date format', 'pods' ),
+	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+            ),
             self::$type . '_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
+                'depends-on' => array( self::$type . '_type' => 'format' ),
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(

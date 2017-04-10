@@ -421,4 +421,79 @@ class PodsField_DateTime extends PodsField {
 
         return $value;
     }
+
+	/**
+	 * Matches each symbol of PHP date format standard with jQuery equivalent codeword.
+	 *
+	 * @link http://stackoverflow.com/questions/16702398/convert-a-php-date-format-to-a-jqueryui-datepicker-date-format
+	 *
+	 * @since  2.7
+	 *
+	 * @param  string  $php_format
+	 * @return string
+	 */
+	public static function format_php_to_jqueryui( $php_format ) {
+		$symbols = array(
+			// Day
+			'd' => 'dd',
+			'D' => 'D',
+			'j' => 'd',
+			'l' => 'DD',
+			'N' => '',
+			'S' => '',
+			'w' => '',
+			'z' => 'o',
+			// Week
+			'W' => '',
+			// Month
+			'F' => 'MM',
+			'm' => 'mm',
+			'M' => 'M',
+			'n' => 'm',
+			't' => '',
+			// Year
+			'L' => '',
+			'o' => '',
+			'Y' => 'yy',
+			'y' => 'y',
+			// Time
+			'a' => 'tt',
+			'A' => 'TT',
+			'B' => '',
+			'g' => 'h',
+			'G' => 'H',
+			'h' => 'hh',
+			'H' => 'HH',
+			'i' => 'mm',
+			's' => 'ss',
+			'u' => '',
+		);
+		$jqueryui_format = "";
+		$escaping = false;
+		for( $i = 0; $i < strlen( $php_format ); $i++ ) {
+			$char = $php_format[ $i ];
+			// PHP date format escaping character
+			if( $char === '\\' ) {
+				$i++;
+				if( $escaping ) {
+					$jqueryui_format .= $php_format[ $i ];
+				}
+				else {
+					$jqueryui_format .= '\'' . $php_format[ $i ];
+				}
+				$escaping = true;
+			} else {
+				if( $escaping ) {
+					$jqueryui_format .= "'"; $escaping = false;
+				}
+				if( isset ( $symbols[ $char ] ) ) {
+					$jqueryui_format .= $symbols[ $char ];
+				}
+				else {
+					$jqueryui_format .= $char;
+				}
+			}
+		}
+		return $jqueryui_format;
+	}
 }

@@ -112,10 +112,18 @@ class PodsField_DateTime extends PodsField {
                 'default' => '12',
                 'type' => 'pick',
                 'data' => array(
+	                'custom' => __( 'Custom', 'pods' ),
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' )
                 ),
                 'dependency' => true
+            ),
+            self::$type . '_time_format_custom' => array(
+	            'label' => __( 'Custom time format', 'pods' ),
+	            'depends-on' => array( self::$type . '_time_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
             ),
             self::$type . '_time_format' => array(
                 'label' => __( 'Time Format', 'pods' ),

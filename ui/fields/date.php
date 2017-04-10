@@ -1,22 +1,8 @@
 <?php
-    $date_format = array(
-        'mdy' => 'mm/dd/yy',
-        'mdy_dash' => 'mm-dd-yy',
-        'mdy_dot' => 'mm.dd.yy',
-        'dmy' => 'dd/mm/yy',
-        'dmy_dash' => 'dd-mm-yy',
-        'dmy_dot' => 'dd.mm.yy',
-        'ymd_slash' => 'yy/mm/dd',
-        'ymd_dash' => 'yy-mm-dd',
-        'ymd_dot' => 'yy.mm.dd',
-        'dMy' => 'dd/M/yy',
-        'dMy_dash' => 'dd-M-yy',
-        'fjy' => 'MM d, yy',
-        'fjsy' => 'MM d, yy',
-        'y' => 'yy'
-    );
-
-	$date_format = apply_filters( 'pods_form_ui_field_date_js_formats', $date_format );
+/**
+ * @var string $form_field_type
+ * @var array $options
+ */
 
     wp_enqueue_script( 'jquery-ui-datepicker' );
     wp_enqueue_style( 'jquery-ui' );
@@ -36,7 +22,8 @@
     $method = 'datepicker';
 
     $args = array(
-        'dateFormat' => $date_format[ pods_var( $form_field_type . '_format', $options, 'mdy', null, true ) ],
+	    // Get selected JS date format.
+        'dateFormat' => PodsForm::field_method( 'date', 'format', $options, true ),
         'changeMonth' => true,
         'changeYear' => true,
         'firstDay' => (int) get_option( 'start_of_week', 0 )

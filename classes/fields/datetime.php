@@ -103,7 +103,7 @@ class PodsField_DateTime extends PodsField {
                     'ymd_dot' => date_i18n( 'Y.m.d' ),
                     'fjy' => date_i18n( 'F j, Y' ),
                     'fjsy' => date_i18n( 'F jS, Y' ),
-                    'c' => date_i18n( 'c' )
+                    'c' => date_i18n( 'c' ),
                 ),
                 'dependency' => true
             ),
@@ -116,7 +116,7 @@ class PodsField_DateTime extends PodsField {
 	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
 	                'custom' => __( 'Custom', 'pods' ),
                     '12' => __( '12 hour', 'pods' ),
-                    '24' => __( '24 hour', 'pods' )
+                    '24' => __( '24 hour', 'pods' ),
                 ),
                 'dependency' => true
             ),
@@ -143,7 +143,7 @@ class PodsField_DateTime extends PodsField {
                     'h_mm' => date_i18n( 'g:i' ),
                     'h_mm_ss' => date_i18n( 'g:i:s' ),
                     'hh_mm' => date_i18n( 'h:i' ),
-                    'hh_mm_ss' => date_i18n( 'h:i:s' )
+                    'hh_mm_ss' => date_i18n( 'h:i:s' ),
                 )
             ),
             self::$type . '_time_format_24' => array(

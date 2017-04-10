@@ -1,43 +1,8 @@
 <?php
-    $date_format = array(
-        'mdy' => 'mm/dd/yy',
-        'mdy_dash' => 'mm-dd-yy',
-        'mdy_dot' => 'mm.dd.yy',
-        'dmy' => 'dd/mm/yy',
-        'dmy_dash' => 'dd-mm-yy',
-        'dmy_dot' => 'dd.mm.yy',
-        'ymd_slash' => 'yy/mm/dd',
-        'ymd_dash' => 'yy-mm-dd',
-        'ymd_dot' => 'yy.mm.dd',
-        'dMy' => 'dd/mmm/yy',
-        'dMy_dash' => 'dd-mmm-yy',
-        'fjy' => 'MM d, yy',
-        'fjsy' => 'MM d, yy',
-        'c' => 'yy-mm-dd'
-    );
-
-    $time_format = array(
-        'h_mm_A' => 'h:mm:ss TT',
-        'h_mm_ss_A' => 'h:mm TT',
-        'hh_mm_A' => 'hh:mm TT',
-        'hh_mm_ss_A' => 'hh:mm:ss TT',
-        'h_mma' => 'h:mmtt',
-        'hh_mma' => 'hh:mmtt',
-        'h_mm' => 'h:mm',
-        'h_mm_ss' => 'h:mm:ss',
-        'hh_mm' => 'hh:mm',
-        'hh_mm_ss' => 'hh:mm:ss'
-    );
-
-    $time_format_24 = array(
-         'hh_mm' => 'HH:mm',
-         'hh_mm_ss' => 'HH:mm:ss'
-    );
-
-	$date_format = apply_filters( 'pods_form_ui_field_date_js_formats', $date_format );
-
-	$time_format = apply_filters( 'pods_form_ui_field_time_js_formats', $time_format );
-	$time_format_24 = apply_filters( 'pods_form_ui_field_time_js_formats_24', $time_format_24 );
+/**
+ * @var string $form_field_type
+ * @var array $options
+ */
 
     wp_enqueue_script( 'jquery-ui-datepicker' );
     wp_enqueue_script( 'jquery-ui-timepicker' );
@@ -58,11 +23,12 @@
 
     $method = 'datetimepicker';
 
-    $format_value = pods_var( $form_field_type . '_format', $options, 'mdy', null, true );
+    $format_value = pods_v( $form_field_type . '_format', $options, 'mdy', true );
 
     $args = array(
-        'timeFormat' => $time_format[ pods_var( $form_field_type . '_time_format', $options, 'h_mma', null, true ) ],
-        'dateFormat' => $date_format[ $format_value ],
+        'timeFormat' => PodsForm::field_method( 'datetime', 'format_time', $options, true ),
+        'dateFormat' => PodsForm::field_method( 'datetime', 'format_date', $options, true ),
+        'ampm' => false,
         'changeMonth' => true,
         'changeYear' => true,
         'firstDay' => (int) get_option( 'start_of_week', 0 )
@@ -73,7 +39,7 @@
 
     $html5_format = 'Y-m-d H:i:s';
 
-    if ( 'c' == $format_value ) {
+	if ( 'format' === pods_v( $form_field_type . '_type', $options, 'format', true ) && 'c' === $format_value ) {
         $args[ 'ampm' ] = false;
         $args[ 'separator' ] = 'T';
         $args[ 'timeFormat' ] = 'HH:mm:ssz';
@@ -86,10 +52,6 @@
             $timezone = '+' . (string) $timezone;
 
         $args[ 'timezone' ] = (string) $timezone;
-    }
-    elseif ( 24 == pods_var( $form_field_type . '_time_type', $options, 12 ) ) {
-        $args[ 'ampm' ] = false;
-        $args[ 'timeFormat' ] = $time_format_24[ pods_var( $form_field_type . '_time_format_24', $options, 'hh_mm', null, true ) ];
     }
 
     $date = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );

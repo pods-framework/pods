@@ -1,24 +1,8 @@
 <?php
-    $time_format = array(
-        'h_mm_A' => 'h:mm:ss TT',
-        'h_mm_ss_A' => 'h:mm TT',
-        'hh_mm_A' => 'hh:mm TT',
-        'hh_mm_ss_A' => 'hh:mm:ss TT',
-        'h_mma' => 'h:mmtt',
-        'hh_mma' => 'hh:mmtt',
-        'h_mm' => 'h:mm',
-        'h_mm_ss' => 'h:mm:ss',
-        'hh_mm' => 'hh:mm',
-        'hh_mm_ss' => 'hh:mm:ss'
-    );
-
-    $time_format_24 = array(
-        'hh_mm' => 'HH:mm',
-        'hh_mm_ss' => 'HH:mm:ss'
-    );
-
-	$time_format = apply_filters( 'pods_form_ui_field_time_js_formats', $time_format );
-	$time_format_24 = apply_filters( 'pods_form_ui_field_time_js_formats_24', $time_format_24 );
+/**
+ * @var string $form_field_type
+ * @var array $options
+ */
 
     wp_enqueue_script( 'jquery-ui-datepicker' );
     wp_enqueue_script( 'jquery-ui-timepicker' );
@@ -40,18 +24,15 @@
     $method = 'timepicker';
 
     $args = array(
-        'timeFormat' => $time_format[ pods_var( $form_field_type . '_format', $options, 'h_mma', null, true ) ]
+		'ampm' => false,
+        // Get selected JS time format.
+        'timeFormat' => PodsForm::field_method( 'time', 'format', $options, true ),
     );
 
     if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
         $args[ 'ampm' ] = true;
 
     $html5_format = 'H:i:s';
-
-    if ( 24 == pods_var( $form_field_type . '_type', $options, 12 ) ) {
-        $args[ 'ampm' ] = false;
-        $args[ 'timeFormat' ] = $time_format_24[ pods_var( $form_field_type . '_format_24', $options, 'hh_mm', null, true ) ];
-    }
 
     $date = PodsForm::field_method( 'time', 'createFromFormat', $format, (string) $value );
     $date_default = PodsForm::field_method( 'time', 'createFromFormat', 'H:i:s', (string) $value );
@@ -78,6 +59,7 @@
     $attributes[ 'value' ] = $value;
 
     $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 

@@ -347,8 +347,9 @@ class PodsField_DateTime extends PodsField {
 
         $format = $this->format_date( $options, $js );
 
-	    $format_value = pods_var( static::$type . '_format', $options, 'ymd_dash', true );
-	    if ( 'c' !== $format_value ) {
+	    $type = pods_v( static::$type . '_type', $options, 'format' );
+	    $format_value = pods_v( static::$type . '_format', $options, 'ymd_dash', true );
+	    if ( 'format' !== $type || 'c' !== $format_value ) {
 		    $format .= ' ' . $this->format_time( $options, $js );
 	    }
 
@@ -366,7 +367,7 @@ class PodsField_DateTime extends PodsField {
 	 */
     public function format_date( $options, $js = false ) {
 
-	    switch ( pods_var( static::$type . '_type', $options ) ) {
+	    switch ( pods_v( static::$type . '_type', $options, 'format' ) ) {
 		    case 'wp':
 			    $format = get_option( 'date_format' );
 			    if ( $js ) {

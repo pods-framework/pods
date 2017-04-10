@@ -566,6 +566,8 @@ class PodsField_DateTime extends PodsField {
 	 * Matches each symbol of PHP date format standard with jQuery equivalent codeword.
 	 *
 	 * @link http://stackoverflow.com/questions/16702398/convert-a-php-date-format-to-a-jqueryui-datepicker-date-format
+	 * @link https://api.jqueryui.com/datepicker/
+	 * @link http://trentrichardson.com/examples/timepicker/
 	 *
 	 * @since  2.7
 	 *
@@ -596,18 +598,27 @@ class PodsField_DateTime extends PodsField {
 			'o' => '',
 			'Y' => 'yy',
 			'y' => 'y',
-			// Time
+			// AM/PM
 			'a' => 'tt',
 			'A' => 'TT',
+			// Swatch internet time (not supported)
 			'B' => '',
+			// Hour
 			'g' => 'h',
 			'G' => 'H',
 			'h' => 'hh',
 			'H' => 'HH',
+			// Minute
 			'i' => 'mm',
+			// Second
 			's' => 'ss',
-			'u' => '',
+			// Microsecond
+			'u' => 'c',
 		);
+		if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+			// Millisecond
+			$symbols['v'] = 'l';
+		}
 		$jqueryui_format = "";
 		$escaping = false;
 		for( $i = 0; $i < strlen( $php_format ); $i++ ) {

@@ -549,7 +549,7 @@ class PodsField_DateTime extends PodsField {
      *
      * @return string
      */
-    public function convert_date ( $value, $new_format, $original_format = 'Y-m-d H:i:s' ) {
+    public function convert_date ( $value, $new_format, $original_format = '' ) {
     	if ( empty( $original_format ) ) {
     		$original_format = $this->default_format;
 	    }

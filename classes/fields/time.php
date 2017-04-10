@@ -304,11 +304,11 @@ class PodsField_Time extends PodsField_DateTime {
 
 		switch ( pods_var( static::$type . '_type', $options ) ) {
 			case 12:
-				$time_format = $this->get_time_formats( $options, $js );
+				$time_format = $this->get_time_formats( $js );
 				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
 			break;
 			case 24:
-				$time_format_24 = $this->get_time_formats_24( $options, $js );
+				$time_format_24 = $this->get_time_formats_24( $js );
 				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
 			break;
 			case 'custom':

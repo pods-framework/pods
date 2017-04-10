@@ -379,7 +379,7 @@ class PodsField_DateTime extends PodsField {
 			    }
 		    break;
 		    default:
-			    $date_format = $this->get_date_formats( $options, $js );
+			    $date_format = $this->get_date_formats( $js );
 			    $format = $date_format[ pods_var( static::$type . '_format', $options, 'ymd_dash', null, true ) ];
 		    break;
 	    }
@@ -400,11 +400,11 @@ class PodsField_DateTime extends PodsField {
 
 		switch ( pods_var( static::$type . '_time_type', $options ) ) {
 			case 12:
-				$time_format = $this->get_time_formats( $options, $js );
+				$time_format = $this->get_time_formats( $js );
 				$format = $time_format[ pods_var( static::$type . '_time_format', $options, 'hh_mm', null, true ) ];
 			break;
 			case 24:
-				$time_format_24 = $this->get_time_formats_24( $options, $js );
+				$time_format_24 = $this->get_time_formats_24( $js );
 				$format = $time_format_24[ pods_var( static::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
 			break;
 			case 'custom':
@@ -429,11 +429,10 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  array $options
 	 * @param  bool  $js       Return formats for jQuery UI?
 	 * @return array
 	 */
-    public function get_date_formats( $options = array(), $js = false ) {
+    public function get_date_formats( $js = false ) {
 	    $date_format = array(
 		    'mdy' => 'm/d/Y',
 		    'mdy_dash' => 'm-d-Y',
@@ -463,11 +462,10 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  array $options
 	 * @param  bool  $js       Return formats for jQuery UI?
 	 * @return array
 	 */
-    public function get_time_formats( $options = array(), $js = false ) {
+    public function get_time_formats( $js = false ) {
 	    $time_format = array(
 		    'h_mm_A' => 'g:i A',
 		    'h_mm_ss_A' => 'g:i:s A',
@@ -493,11 +491,10 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  array $options
 	 * @param  bool  $js       Return formats for jQuery UI?
 	 * @return array
 	 */
-	public function get_time_formats_24( $options = array(), $js = false ) {
+	public function get_time_formats_24( $js = false ) {
 		$time_format_24 = array(
 			'hh_mm' => 'H:i',
 			'hh_mm_ss' => 'H:i:s'

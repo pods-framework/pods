@@ -73,13 +73,22 @@ class PodsField_Time extends PodsField_DateTime {
             ),
             self::$type . '_type' => array(
                 'label' => __( 'Time Format Type', 'pods' ),
-                'default' => '12',
+                'default' => '12', // Backwards compatibility
                 'type' => 'pick',
                 'data' => array(
+	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
+	                'custom' => __( 'Custom', 'pods' ),
                     '12' => __( '12 hour', 'pods' ),
-                    '24' => __( '24 hour', 'pods' )
+                    '24' => __( '24 hour', 'pods' ),
                 ),
                 'dependency' => true
+            ),
+            self::$type . '_format_custom' => array(
+	            'label' => __( 'Custom time format', 'pods' ),
+	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
             ),
             self::$type . '_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
@@ -97,7 +106,8 @@ class PodsField_Time extends PodsField_DateTime {
                     'h_mm_ss' => date_i18n( 'g:i:s' ),
                     'hh_mm' => date_i18n( 'h:i' ),
                     'hh_mm_ss' => date_i18n( 'h:i:s' )
-                )
+                ),
+                'dependency' => true
             ),
             self::$type . '_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
@@ -271,39 +281,14 @@ class PodsField_Time extends PodsField_DateTime {
     /**
      * Build date/time format string based on options
      *
-     * @param $options
+     * @param array $options
+     * @param bool  $js       Return format for jQuery UI?
      *
      * @return string
      * @since 2.0
      */
-    public function format ( $options ) {
-        $time_format = array(
-            'h_mm_A' => 'g:i A',
-            'h_mm_ss_A' => 'g:i:s A',
-            'hh_mm_A' => 'h:i A',
-            'hh_mm_ss_A' => 'h:i:s A',
-            'h_mma' => 'g:ia',
-            'hh_mma' => 'h:ia',
-            'h_mm' => 'g:i',
-            'h_mm_ss' => 'g:i:s',
-            'hh_mm' => 'h:i',
-            'hh_mm_ss' => 'h:i:s'
-        );
-
-        $time_format_24 = array(
-			'hh_mm' => 'H:i',
-			'hh_mm_ss' => 'H:i:s'
-        );
-
-		$time_format = apply_filters( 'pods_form_ui_field_time_formats', $time_format );
-		$time_format_24 = apply_filters( 'pods_form_ui_field_time_formats_24', $time_format_24 );
-
-        if ( 12 == pods_var( self::$type . '_type', $options ) )
-            $format = $time_format[ pods_var( self::$type . '_format', $options, 'hh_mm', null, true ) ];
-        else
-            $format = $time_format_24[ pods_var( self::$type . '_format_24', $options, 'hh_mm', null, true ) ];
-
-        return $format;
+    public function format ( $options, $js = false ) {
+	    return $this->format_time( $options, $js );
     }
 
 }

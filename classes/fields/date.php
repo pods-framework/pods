@@ -72,8 +72,27 @@ class PodsField_Date extends PodsField_DateTime {
                 'dependency' => true,
                 'developer_mode' => true
             ),
+            self::$type . '_type' => array(
+	            'label' => __( 'Date Format Type', 'pods' ),
+	            'default' => 'format', // Backwards compatibility
+	            'type' => 'pick',
+	            'data' => array(
+		            'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'date_format' ) ),
+		            'custom' => __( 'Custom', 'pods' ),
+		            'format' => __( 'Predefined formats', 'pods' ),
+	            ),
+	            'dependency' => true
+            ),
+            self::$type . '_format_custom' => array(
+	            'label' => __( 'Custom date format', 'pods' ),
+	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'default' => '',
+	            'type' => 'text',
+	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+            ),
             self::$type . '_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
+                'depends-on' => array( self::$type . '_type' => 'format' ),
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
@@ -85,8 +104,9 @@ class PodsField_Date extends PodsField_DateTime {
                     'ymd_dot' => date_i18n( 'Y.m.d' ),
                     'fjy' => date_i18n( 'F j, Y' ),
                     'fjsy' => date_i18n( 'F jS, Y' ),
-                    'y' => date_i18n( 'Y' )
-                )
+                    'y' => date_i18n( 'Y' ),
+                ),
+                'dependency' => true,
             ),
             self::$type . '_allow_empty' => array(
                 'label' => __( 'Allow empty value?', 'pods' ),
@@ -261,33 +281,14 @@ class PodsField_Date extends PodsField_DateTime {
     /**
      * Build date/time format string based on options
      *
-     * @param $options
+     * @param array $options
+     * @param bool  $js       Return format for jQuery UI?
      *
      * @return string
      * @since 2.0
      */
-    public function format ( $options ) {
-        $date_format = array(
-            'mdy' => 'm/d/Y',
-            'mdy_dash' => 'm-d-Y',
-            'mdy_dot' => 'm.d.Y',
-            'dmy' => 'd/m/Y',
-            'dmy_dash' => 'd-m-Y',
-            'dmy_dot' => 'd.m.Y',
-            'ymd_slash' => 'Y/m/d',
-            'ymd_dash' => 'Y-m-d',
-            'ymd_dot' => 'Y.m.d',
-            'dMy' => 'd/M/Y',
-            'dMy_dash' => 'd-M-Y',
-            'fjy' => 'F j, Y',
-            'fjsy' => 'F jS, Y',
-            'y' => 'Y'
-        );
-
-		$date_format = apply_filters( 'pods_form_ui_field_date_formats', $date_format );
-
-        $format = $date_format[ pods_var( self::$type . '_format', $options, 'ymd_dash', null, true ) ];
-
-        return $format;
+    public function format ( $options, $js = false ) {
+    	// @see datetime field.
+	    return $this->format_date( $options, $js );
     }
 }

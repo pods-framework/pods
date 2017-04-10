@@ -36,6 +36,14 @@ class PodsField_DateTime extends PodsField {
      */
     public static $prepare = '%s';
 
+	/**
+	 * Default format.
+	 *
+	 * @var string
+	 * @since 2.7
+	 */
+    public $default_format = 'Y-m-d H:i:s';
+
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
@@ -382,7 +390,7 @@ class PodsField_DateTime extends PodsField {
         }
 
         if ( false === $datetime )
-            $datetime = new DateTime( date_i18n( 'Y-m-d H:i:s', strtotime( (string) $date ) ) );
+            $datetime = new DateTime( date_i18n( $this->default_format, strtotime( (string) $date ) ) );
 
         return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );
     }
@@ -397,7 +405,10 @@ class PodsField_DateTime extends PodsField {
      * @return string
      */
     public function convert_date ( $value, $new_format, $original_format = 'Y-m-d H:i:s' ) {
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+    	if ( empty( $original_format ) ) {
+    		$original_format = $this->default_format;
+	    }
+        if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 
             if ( false !== $date )

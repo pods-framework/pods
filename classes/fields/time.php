@@ -37,6 +37,14 @@ class PodsField_Time extends PodsField_DateTime {
      */
     public static $prepare = '%s';
 
+	/**
+	 * Default format.
+	 *
+	 * @var string
+	 * @since 2.7
+	 */
+	public $default_format = 'H:i:s';
+
     /**
      * Do things like register/enqueue scripts and stylesheets
      *

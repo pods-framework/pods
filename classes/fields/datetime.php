@@ -110,7 +110,7 @@ class PodsField_DateTime extends PodsField {
             self::$type . '_time_type' => array(
                 'label' => __( 'Time Format Type', 'pods' ),
                 'excludes-on' => array( self::$type . '_format' => 'c' ),
-                'default' => '12',
+                'default' => '12', // Backwards compatibility
                 'type' => 'pick',
                 'data' => array(
 	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
@@ -398,7 +398,7 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_time( $options, $js = false ) {
 
-		switch ( (string) pods_v( static::$type . '_time_type', $options, true ) ) {
+		switch ( (string) pods_v( static::$type . '_time_type', $options, '12', true ) ) {
 			case '12':
 				$time_format = $this->get_time_formats( $js );
 				$format = $time_format[ pods_v( static::$type . '_time_format', $options, 'hh_mm', true ) ];

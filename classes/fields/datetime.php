@@ -365,7 +365,7 @@ class PodsField_DateTime extends PodsField {
 	 */
     public function format_date( $options, $js = false ) {
 
-	    switch ( pods_v( static::$type . '_type', $options, 'format' ) ) {
+	    switch ( (string) pods_v( static::$type . '_type', $options, 'format', true ) ) {
 		    case 'wp':
 			    $format = get_option( 'date_format' );
 			    if ( $js ) {
@@ -380,7 +380,7 @@ class PodsField_DateTime extends PodsField {
 		    break;
 		    default:
 			    $date_format = $this->get_date_formats( $js );
-			    $format = $date_format[ pods_var( static::$type . '_format', $options, 'ymd_dash', null, true ) ];
+			    $format = $date_format[ pods_v( static::$type . '_format', $options, 'ymd_dash', true ) ];
 		    break;
 	    }
 
@@ -398,14 +398,14 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function format_time( $options, $js = false ) {
 
-		switch ( pods_var( static::$type . '_time_type', $options ) ) {
-			case 12:
+		switch ( (string) pods_v( static::$type . '_time_type', $options, true ) ) {
+			case '12':
 				$time_format = $this->get_time_formats( $js );
-				$format = $time_format[ pods_var( static::$type . '_time_format', $options, 'hh_mm', null, true ) ];
+				$format = $time_format[ pods_v( static::$type . '_time_format', $options, 'hh_mm', true ) ];
 			break;
-			case 24:
+			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
-				$format = $time_format_24[ pods_var( static::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
+				$format = $time_format_24[ pods_v( static::$type . '_time_format_24', $options, 'hh_mm', true ) ];
 			break;
 			case 'custom':
 				$format = pods_v( static::$type . '_time_format_custom', $options, '' );

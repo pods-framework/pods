@@ -302,12 +302,12 @@ class PodsField_Time extends PodsField_DateTime {
 	 */
 	public function format_time( $options, $js = false ) {
 
-		switch ( pods_var( static::$type . '_type', $options ) ) {
-			case 12:
+		switch ( (string) pods_v( static::$type . '_type', $options, true ) ) {
+			case '12':
 				$time_format = $this->get_time_formats( $js );
 				$format = $time_format[ pods_v( static::$type . '_format', $options, 'hh_mm', true ) ];
 			break;
-			case 24:
+			case '24':
 				$time_format_24 = $this->get_time_formats_24( $js );
 				$format = $time_format_24[ pods_v( static::$type . '_format_24', $options, 'hh_mm', true ) ];
 			break;

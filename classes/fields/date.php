@@ -1,8 +1,9 @@
 <?php
+require_once( PODS_DIR . 'classes/fields/datetime.php' );
 /**
  * @package Pods\Fields
  */
-class PodsField_Date extends PodsField {
+class PodsField_Date extends PodsField_DateTime {
 
     /**
      * Field Type Group

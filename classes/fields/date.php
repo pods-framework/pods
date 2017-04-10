@@ -145,7 +145,7 @@ class PodsField_Date extends PodsField_DateTime {
      *
      * @param array $options
      *
-     * @return array
+     * @return string
      * @since 2.0
      */
     public function schema ( $options = null ) {
@@ -207,7 +207,7 @@ class PodsField_Date extends PodsField_DateTime {
             $value = implode( ' ', $value );
 
         // Format Value
-        $value = $this->display( $value, $name, $options, null, $pod, $id );
+        $value = $this->display( $value, $name, $options, $pod, $id );
 
         $field_type = 'date';
 

@@ -76,6 +76,7 @@ class PodsField_DateTime extends PodsField {
 	            'default' => 'format', // Backwards compatibility
 	            'type' => 'pick',
 	            'data' => array(
+		            'wp' => __( 'WordPress default', 'pods' ) . ': '. date_i18n( get_option( 'date_format' ) ),
 		            'custom' => __( 'Custom', 'pods' ),
 		            'format' => __( 'Predefined formats', 'pods' ),
 	            ),
@@ -112,6 +113,7 @@ class PodsField_DateTime extends PodsField {
                 'default' => '12',
                 'type' => 'pick',
                 'data' => array(
+	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
 	                'custom' => __( 'Custom', 'pods' ),
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' )
@@ -333,64 +335,94 @@ class PodsField_DateTime extends PodsField {
     /**
      * Build date/time format string based on options
      *
-     * @param $options
+     * @param array $options
+     * @param bool  $js       Return format for jQuery UI?
      *
      * @return string
      * @since 2.0
      */
-    public function format ( $options ) {
-        $date_format = array(
-            'mdy' => 'm/d/Y',
-            'mdy_dash' => 'm-d-Y',
-            'mdy_dot' => 'm.d.Y',
-            'dmy' => 'd/m/Y',
-            'dmy_dash' => 'd-m-Y',
-            'dmy_dot' => 'd.m.Y',
-            'ymd_slash' => 'Y/m/d',
-            'ymd_dash' => 'Y-m-d',
-            'ymd_dot' => 'Y.m.d',
-            'dMy' => 'd/M/Y',
-            'dMy_dash' => 'd-M-Y',
-            'fjy' => 'F j, Y',
-            'fjsy' => 'F jS, Y',
-            'c' => 'c'
-        );
+    public function format ( $options, $js = false ) {
 
-        $time_format = array(
-            'h_mm_A' => 'g:i A',
-            'h_mm_ss_A' => 'g:i:s A',
-            'hh_mm_A' => 'h:i A',
-            'hh_mm_ss_A' => 'h:i:s A',
-            'h_mma' => 'g:ia',
-            'hh_mma' => 'h:ia',
-            'h_mm' => 'g:i',
-            'h_mm_ss' => 'g:i:s',
-            'hh_mm' => 'h:i',
-            'hh_mm_ss' => 'h:i:s'
-        );
+    	$format_value = null;
 
-        $time_format_24 = array(
-			'hh_mm' => 'H:i',
-			'hh_mm_ss' => 'H:i:s'
-        );
+        $format = $this->format_date( $options, $js );
 
-		$date_format = apply_filters( 'pods_form_ui_field_date_formats', $date_format );
-
-		$time_format = apply_filters( 'pods_form_ui_field_time_formats', $time_format );
-		$time_format_24 = apply_filters( 'pods_form_ui_field_time_formats_24', $time_format_24 );
-
-        $format_value = pods_var( self::$type . '_format', $options, 'ymd_dash', null, true );
-
-        $format = $date_format[ $format_value ];
-
-        if ( 'c' != $format_value ) {
-            if ( 12 == pods_var( self::$type . '_time_type', $options ) )
-                $format .= ' ' . $time_format[ pods_var( self::$type . '_time_format', $options, 'hh_mm', null, true ) ];
-            else
-                $format .= ' ' . $time_format_24[ pods_var( self::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
-        }
+	    $format_value = pods_var( static::$type . '_format', $options, 'ymd_dash', true );
+	    if ( 'c' !== $format_value ) {
+		    $format .= ' ' . $this->format_time( $options, $js );
+	    }
 
         return $format;
+    }
+
+	/**
+	 * Build date format string based on options
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return format for jQuery UI?
+	 * @return string
+	 */
+    public function format_date( $options, $js = false ) {
+
+	    switch ( pods_var( static::$type . '_type', $options ) ) {
+		    case 'wp':
+			    $format = get_option( 'date_format' );
+			    if ( $js ) {
+				    $format = static::format_php_to_jqueryui( $format );
+			    }
+		    break;
+		    case 'custom':
+			    $format = pods_v( static::$type . '_format_custom', $options, '' );
+			    if ( $js ) {
+				    $format = static::format_php_to_jqueryui( $format );
+			    }
+		    break;
+		    default:
+			    $date_format = $this->get_date_formats( $options, $js );
+			    $format = $date_format[ pods_var( static::$type . '_format', $options, 'ymd_dash', null, true ) ];
+		    break;
+	    }
+
+	    return $format;
+    }
+
+	/**
+	 * Build time format string based on options
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return format for jQuery UI?
+	 * @return string
+	 */
+	public function format_time( $options, $js = false ) {
+
+		switch ( pods_var( static::$type . '_time_type', $options ) ) {
+			case 12:
+				$time_format = $this->get_time_formats( $options, $js );
+				$format = $time_format[ pods_var( static::$type . '_time_format', $options, 'hh_mm', null, true ) ];
+			break;
+			case 24:
+				$time_format_24 = $this->get_time_formats_24( $options, $js );
+				$format = $time_format_24[ pods_var( static::$type . '_time_format_24', $options, 'hh_mm', null, true ) ];
+			break;
+			case 'custom':
+				$format = pods_v( static::$type . '_time_format_custom', $options, '' );
+				if ( $js ) {
+					$format = static::format_php_to_jqueryui( $format );
+				}
+			break;
+			default:
+				$format = get_option( 'time_format' );
+				if ( $js ) {
+					$format = static::format_php_to_jqueryui( $format );
+				}
+			break;
+		}
+
+		return $format;
 	}
 
 	/**

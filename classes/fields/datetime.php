@@ -365,7 +365,93 @@ class PodsField_DateTime extends PodsField {
         }
 
         return $format;
+	}
+
+	/**
+	 * Get the date formats.
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return formats for jQuery UI?
+	 * @return array
+	 */
+    public function get_date_formats( $options = array(), $js = false ) {
+	    $date_format = array(
+		    'mdy' => 'm/d/Y',
+		    'mdy_dash' => 'm-d-Y',
+		    'mdy_dot' => 'm.d.Y',
+		    'dmy' => 'd/m/Y',
+		    'dmy_dash' => 'd-m-Y',
+		    'dmy_dot' => 'd.m.Y',
+		    'ymd_slash' => 'Y/m/d',
+		    'ymd_dash' => 'Y-m-d',
+		    'ymd_dot' => 'Y.m.d',
+		    'dMy' => 'd/M/Y',
+		    'dMy_dash' => 'd-M-Y',
+		    'fjy' => 'F j, Y',
+		    'fjsy' => 'F jS, Y',
+		    'y' => 'Y',
+	    );
+	    $filter = 'pods_form_ui_field_date_formats';
+	    if ( $js ) {
+		    $date_format = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $date_format );
+		    $filter = 'pods_form_ui_field_date_js_formats';
+	    }
+	    return apply_filters( $filter, $date_format );
     }
+
+	/**
+	 * Get the time formats.
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return formats for jQuery UI?
+	 * @return array
+	 */
+    public function get_time_formats( $options = array(), $js = false ) {
+	    $time_format = array(
+		    'h_mm_A' => 'g:i A',
+		    'h_mm_ss_A' => 'g:i:s A',
+		    'hh_mm_A' => 'h:i A',
+		    'hh_mm_ss_A' => 'h:i:s A',
+		    'h_mma' => 'g:ia',
+		    'hh_mma' => 'h:ia',
+		    'h_mm' => 'g:i',
+		    'h_mm_ss' => 'g:i:s',
+		    'hh_mm' => 'h:i',
+		    'hh_mm_ss' => 'h:i:s',
+	    );
+	    $filter = 'pods_form_ui_field_time_formats';
+	    if ( $js ) {
+		    $time_format = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $time_format );
+		    $filter = 'pods_form_ui_field_time_js_formats';
+	    }
+	    return apply_filters( $filter, $time_format );
+    }
+
+	/**
+	 * Get the time formats.
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options
+	 * @param  bool  $js       Return formats for jQuery UI?
+	 * @return array
+	 */
+	public function get_time_formats_24( $options = array(), $js = false ) {
+		$time_format_24 = array(
+			'hh_mm' => 'H:i',
+			'hh_mm_ss' => 'H:i:s'
+		);
+		$filter = 'pods_form_ui_field_time_formats_24';
+		if ( $js ) {
+			$time_format_24 = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $time_format_24 );
+			$filter = 'pods_form_ui_field_time_js_formats_24';
+		}
+		return apply_filters( $filter, $time_format_24 );
+	}
 
     /**
      * @param $format

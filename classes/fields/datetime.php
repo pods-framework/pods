@@ -367,13 +367,14 @@ class PodsField_DateTime extends PodsField {
 	    }
 
 	    if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+    		// Try default storage format.
 		    $date = $this->createFromFormat( static::$storage_format, (string) $value );
-		    // Use PHP format.
+		    // Try field format.
 		    $date_local = $this->createFromFormat( $format, (string) $value );
 
-		    if ( false !== $date )
+		    if ( $date instanceof DateTime )
 			    $value = $date->format( $format );
-		    elseif ( false !== $date_local )
+		    elseif ( $date_local instanceof DateTime )
 			    $value = $date_local->format( $format );
 		    else
 			    $value = date_i18n( $format, strtotime( (string) $value ) );
@@ -575,13 +576,13 @@ class PodsField_DateTime extends PodsField {
 	}
 
     /**
-     * @param $format
-     * @param $date
+     * @param string $format
+     * @param string $date Defaults to time() if empty.
      *
-     * @return DateTime
+     * @return DateTime|null
      */
     public function createFromFormat ( $format, $date ) {
-        $datetime = false;
+        $datetime = null;
 
         if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
             $timezone = get_option( 'timezone_string' );
@@ -596,8 +597,16 @@ class PodsField_DateTime extends PodsField {
             }
         }
 
-        if ( false === $datetime )
-            $datetime = new DateTime( date_i18n( static::$storage_format, strtotime( (string) $date ) ) );
+        if ( null === $datetime ) {
+        	if ( empty( $date ) ) {
+		        $timestamp = time();
+	        } else {
+		        $timestamp = strtotime( (string) $date );
+	        }
+	        if ( $timestamp ) {
+		        $datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
+	        }
+        }
 
         return apply_filters( 'pods_form_ui_field_datetime_formatter', $datetime, $format, $date );
     }
@@ -618,7 +627,7 @@ class PodsField_DateTime extends PodsField {
         if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 
-            if ( false !== $date )
+            if ( $date instanceof DateTime )
                 $value = $date->format( $new_format );
             else
                 $value = date_i18n( $new_format, strtotime( (string) $value ) );

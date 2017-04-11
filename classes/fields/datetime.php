@@ -245,23 +245,8 @@ class PodsField_DateTime extends PodsField {
      * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $format = $this->format( $options );
 
-        if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
-            $date = $this->createFromFormat( static::$storage_format, (string) $value );
-            $date_local = $this->createFromFormat( $format, (string) $value );
-
-            if ( false !== $date )
-                $value = $date->format( $format );
-            elseif ( false !== $date_local )
-                $value = $date_local->format( $format );
-            else
-                $value = date_i18n( $format, strtotime( (string) $value ) );
-        }
-        elseif ( 0 == pods_var( static::$type . '_allow_empty', $options, 1 ) )
-            $value = date_i18n( $format );
-        else
-            $value = '';
+        $value = $this->format_value_display( $value, $options, false );
 
         return $value;
     }
@@ -285,7 +270,7 @@ class PodsField_DateTime extends PodsField {
             $value = implode( ' ', $value );
 
         // Format Value
-        $value = $this->display( $value, $name, $options, $pod, $id );
+        $value = $this->format_value_display( $value, $options, true );
 
         $field_type = static::$type;
 
@@ -355,6 +340,44 @@ class PodsField_DateTime extends PodsField {
             $value = false;
 
         return $value;
+    }
+
+	/**
+	 * Convert value to the correct format for display.
+	 *
+	 * @param string $value
+	 * @param array  $options
+	 * @param bool   $js       Return formatted from jQuery UI format? (only for custom formats).
+	 * @return string
+	 * @since 2.7
+	 */
+    public function format_value_display( $value, $options, $js = false ) {
+    	if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+    		$js = false;
+	    }
+    	$format = $this->format( $options, $js );
+    	if ( $js ) {
+		    $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
+	    }
+
+	    if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+		    $date = $this->createFromFormat( static::$storage_format, (string) $value );
+		    // Use PHP format.
+		    $date_local = $this->createFromFormat( $format, (string) $value );
+
+		    if ( false !== $date )
+			    $value = $date->format( $format );
+		    elseif ( false !== $date_local )
+			    $value = $date_local->format( $format );
+		    else
+			    $value = date_i18n( $format, strtotime( (string) $value ) );
+	    }
+	    elseif ( 0 == pods_var( static::$type . '_allow_empty', $options, 1 ) )
+		    $value = date_i18n( $format );
+	    else
+		    $value = '';
+
+	    return $value;
     }
 
     /**

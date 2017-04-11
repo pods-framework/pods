@@ -210,14 +210,14 @@ class PodsField_Time extends PodsField_DateTime {
 					$format = pods_v( static::$type . '_format_custom_js', $options, '' );
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_format_custom', $options, '' );
-						$format = static::convert_format( $format );
+						$format = static::convert_format( $format, array( 'source' => 'php' ) );
 					}
 				}
 			break;
 			default:
 				$format = get_option( 'time_format' );
 				if ( $js ) {
-					$format = static::convert_format( $format );
+					$format = static::convert_format( $format, array( 'source' => 'php' ) );
 				}
 			break;
 		}

@@ -394,7 +394,7 @@ class PodsField_DateTime extends PodsField {
 		    case 'wp':
 			    $format = get_option( 'date_format' );
 			    if ( $js ) {
-				    $format = static::convert_format( $format );
+				    $format = static::convert_format( $format, array( 'source' => 'php' ) );
 			    }
 		    break;
 		    case 'custom':
@@ -404,7 +404,7 @@ class PodsField_DateTime extends PodsField {
 				    $format = pods_v( static::$type . '_format_custom_js', $options, '' );
 				    if ( empty( $format ) ) {
 					    $format = pods_v( static::$type . '_format_custom', $options, '' );
-					    $format = static::convert_format( $format );
+					    $format = static::convert_format( $format, array( 'source' => 'php' ) );
 				    }
 			    }
 		    break;
@@ -444,14 +444,14 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
-						$format = static::convert_format( $format );
+						$format = static::convert_format( $format, array( 'source' => 'php' ) );
 					}
 				}
 			break;
 			default:
 				$format = get_option( 'time_format' );
 				if ( $js ) {
-					$format = static::convert_format( $format );
+					$format = static::convert_format( $format, array( 'source' => 'php' ) );
 				}
 			break;
 		}
@@ -469,23 +469,24 @@ class PodsField_DateTime extends PodsField {
 	 */
     public function get_date_formats( $js = false ) {
 	    $date_format = array(
-		    'mdy' => 'm/d/Y',
-		    'mdy_dash' => 'm-d-Y',
-		    'mdy_dot' => 'm.d.Y',
-		    'dmy' => 'd/m/Y',
-		    'dmy_dash' => 'd-m-Y',
-		    'dmy_dot' => 'd.m.Y',
+		    'mdy'       => 'm/d/Y',
+		    'mdy_dash'  => 'm-d-Y',
+		    'mdy_dot'   => 'm.d.Y',
+		    'dmy'       => 'd/m/Y',
+		    'dmy_dash'  => 'd-m-Y',
+		    'dmy_dot'   => 'd.m.Y',
 		    'ymd_slash' => 'Y/m/d',
-		    'ymd_dash' => 'Y-m-d',
-		    'ymd_dot' => 'Y.m.d',
-		    'dMy' => 'd/M/Y',
-		    'dMy_dash' => 'd-M-Y',
-		    'fjy' => 'F j, Y',
-		    'fjsy' => 'F jS, Y',
-		    'y' => 'Y',
+		    'ymd_dash'  => 'Y-m-d',
+		    'ymd_dot'   => 'Y.m.d',
+		    'dMy'       => 'd/M/Y',
+		    'dMy_dash'  => 'd-M-Y',
+		    'fjy'       => 'F j, Y',
+		    'fjsy'      => 'F jS, Y',
+		    'y'         => 'Y',
 	    );
 	    $filter = 'pods_form_ui_field_date_formats';
 	    if ( $js ) {
+	    	// @todo Method parameters? (Not supported by array_map)
 		    $date_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $date_format );
 		    $filter = 'pods_form_ui_field_date_js_formats';
 	    }
@@ -502,19 +503,20 @@ class PodsField_DateTime extends PodsField {
 	 */
     public function get_time_formats( $js = false ) {
 	    $time_format = array(
-		    'h_mm_A' => 'g:i A',
-		    'h_mm_ss_A' => 'g:i:s A',
-		    'hh_mm_A' => 'h:i A',
+		    'h_mm_A'     => 'g:i A',
+		    'h_mm_ss_A'  => 'g:i:s A',
+		    'hh_mm_A'    => 'h:i A',
 		    'hh_mm_ss_A' => 'h:i:s A',
-		    'h_mma' => 'g:ia',
-		    'hh_mma' => 'h:ia',
-		    'h_mm' => 'g:i',
-		    'h_mm_ss' => 'g:i:s',
-		    'hh_mm' => 'h:i',
-		    'hh_mm_ss' => 'h:i:s',
+		    'h_mma'      => 'g:ia',
+		    'hh_mma'     => 'h:ia',
+		    'h_mm'       => 'g:i',
+		    'h_mm_ss'    => 'g:i:s',
+		    'hh_mm'      => 'h:i',
+		    'hh_mm_ss'   => 'h:i:s',
 	    );
 	    $filter = 'pods_form_ui_field_time_formats';
 	    if ( $js ) {
+		    // @todo Method parameters? (Not supported by array_map)
 		    $time_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format );
 		    $filter = 'pods_form_ui_field_time_js_formats';
 	    }
@@ -531,11 +533,12 @@ class PodsField_DateTime extends PodsField {
 	 */
 	public function get_time_formats_24( $js = false ) {
 		$time_format_24 = array(
-			'hh_mm' => 'H:i',
+			'hh_mm'    => 'H:i',
 			'hh_mm_ss' => 'H:i:s'
 		);
 		$filter = 'pods_form_ui_field_time_formats_24';
 		if ( $js ) {
+			// @todo Method parameters? (Not supported by array_map)
 			$time_format_24 = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format_24 );
 			$filter = 'pods_form_ui_field_time_js_formats_24';
 		}
@@ -671,6 +674,7 @@ class PodsField_DateTime extends PodsField {
 		for( $i = 0; $i < strlen( $source_format ); $i++ ) {
 			$char = $source_format[ $i ];
 			// PHP date format escaping character
+			// @todo Do we want to support non-format characters?
 			if( $char === '\\' ) {
 				$i++;
 				if( $escaping ) {

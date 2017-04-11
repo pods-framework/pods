@@ -307,8 +307,14 @@ class PodsField_DateTime extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $format = $this->format( $options, true );
-        $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
+	    $js = true;
+	    if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+		    $js = false;
+	    }
+	    $format = $this->format( $options, $js );
+	    if ( $js ) {
+		    $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
+	    }
 
         if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = $this->convert_date( $value, static::$storage_format, $format );

@@ -393,7 +393,7 @@ class PodsField_DateTime extends PodsField {
 		    case 'wp':
 			    $format = get_option( 'date_format' );
 			    if ( $js ) {
-				    $format = static::format_php_to_jqueryui( $format );
+				    $format = static::convert_format( $format );
 			    }
 		    break;
 		    case 'custom':
@@ -403,7 +403,7 @@ class PodsField_DateTime extends PodsField {
 				    $format = pods_v( static::$type . '_format_custom_js', $options, '' );
 				    if ( empty( $format ) ) {
 					    $format = pods_v( static::$type . '_format_custom', $options, '' );
-					    $format = static::format_php_to_jqueryui( $format );
+					    $format = static::convert_format( $format );
 				    }
 			    }
 		    break;
@@ -443,14 +443,14 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
-						$format = static::format_php_to_jqueryui( $format );
+						$format = static::convert_format( $format );
 					}
 				}
 			break;
 			default:
 				$format = get_option( 'time_format' );
 				if ( $js ) {
-					$format = static::format_php_to_jqueryui( $format );
+					$format = static::convert_format( $format );
 				}
 			break;
 		}
@@ -485,7 +485,7 @@ class PodsField_DateTime extends PodsField {
 	    );
 	    $filter = 'pods_form_ui_field_date_formats';
 	    if ( $js ) {
-		    $date_format = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $date_format );
+		    $date_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $date_format );
 		    $filter = 'pods_form_ui_field_date_js_formats';
 	    }
 	    return apply_filters( $filter, $date_format );
@@ -514,7 +514,7 @@ class PodsField_DateTime extends PodsField {
 	    );
 	    $filter = 'pods_form_ui_field_time_formats';
 	    if ( $js ) {
-		    $time_format = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $time_format );
+		    $time_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format );
 		    $filter = 'pods_form_ui_field_time_js_formats';
 	    }
 	    return apply_filters( $filter, $time_format );
@@ -535,7 +535,7 @@ class PodsField_DateTime extends PodsField {
 		);
 		$filter = 'pods_form_ui_field_time_formats_24';
 		if ( $js ) {
-			$time_format_24 = array_map( array( 'PodsField_DateTime', 'format_php_to_jqueryui' ), $time_format_24 );
+			$time_format_24 = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format_24 );
 			$filter = 'pods_form_ui_field_time_js_formats_24';
 		}
 		return apply_filters( $filter, $time_format_24 );
@@ -605,16 +605,23 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  string  $php_format
+	 * @param  string  $source_format
+	 * @param  array   $args
 	 * @return string
 	 */
-	public static function format_php_to_jqueryui( $php_format ) {
+	public static function convert_format( $source_format, $args = array() ) {
+		// @todo Improve source/target logic.
+		$args = array_merge( array(
+			'source' => 'php', // 'jquery_ui' for reverse.
+		), $args );
+
+		// Keep keys and values sorted by string length.
 		$symbols = array(
 			// Day
 			'd' => 'dd',
+			'l' => 'DD',
 			'D' => 'D',
 			'j' => 'd',
-			'l' => 'DD',
 			'N' => '',
 			'S' => '',
 			'w' => '',
@@ -638,10 +645,10 @@ class PodsField_DateTime extends PodsField {
 			// Swatch internet time (not supported)
 			'B' => '',
 			// Hour
-			'g' => 'h',
-			'G' => 'H',
 			'h' => 'hh',
 			'H' => 'HH',
+			'g' => 'h',
+			'G' => 'H',
 			// Minute
 			'i' => 'mm',
 			// Second
@@ -653,32 +660,42 @@ class PodsField_DateTime extends PodsField {
 			// Millisecond
 			$symbols['v'] = 'l';
 		}
-		$jqueryui_format = "";
+		if ( 'jquery_ui' === $args[ 'source' ] ) {
+			// Remove empty values.
+			$symbols = array_filter( $symbols );
+			$symbols = array_flip( $symbols );
+		}
+		$new_format = "";
 		$escaping = false;
-		for( $i = 0; $i < strlen( $php_format ); $i++ ) {
-			$char = $php_format[ $i ];
+		for( $i = 0; $i < strlen( $source_format ); $i++ ) {
+			$char = $source_format[ $i ];
 			// PHP date format escaping character
 			if( $char === '\\' ) {
 				$i++;
 				if( $escaping ) {
-					$jqueryui_format .= $php_format[ $i ];
+					$new_format .= $source_format[ $i ];
 				}
 				else {
-					$jqueryui_format .= '\'' . $php_format[ $i ];
+					$new_format .= '\'' . $source_format[ $i ];
 				}
 				$escaping = true;
 			} else {
 				if( $escaping ) {
-					$jqueryui_format .= "'"; $escaping = false;
+					$new_format .= "'"; $escaping = false;
 				}
-				if( isset ( $symbols[ $char ] ) ) {
-					$jqueryui_format .= $symbols[ $char ];
+				// Support 2 characters.
+				if ( isset( $source_format[ $i + 1 ] ) && isset( $symbols[ $char . $source_format[ $i + 1 ] ] ) ) {
+					$new_format .= $symbols[ $char . $source_format[ $i + 1 ] ];
+					$i++;
+				}
+				elseif ( isset ( $symbols[ $char ] ) ) {
+					$new_format .= $symbols[ $char ];
 				}
 				else {
-					$jqueryui_format .= $char;
+					$new_format .= $char;
 				}
 			}
 		}
-		return $jqueryui_format;
+		return $new_format;
 	}
 }

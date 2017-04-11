@@ -38,12 +38,20 @@ class PodsField_Date extends PodsField_DateTime {
     public static $prepare = '%s';
 
 	/**
-	 * Default format.
+	 * Storage format.
 	 *
 	 * @var string
 	 * @since 2.7
 	 */
-	public $default_format = 'Y-m-d';
+	public static $storage_format = 'Y-m-d';
+
+	/**
+	 * The default empty value (database)
+	 *
+	 * @var string
+	 * @since 2.7
+	 */
+	public static $empty_value = '0000-00-00';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -160,130 +168,6 @@ class PodsField_Date extends PodsField_DateTime {
         $schema = 'DATE NOT NULL default "0000-00-00"';
 
         return $schema;
-    }
-
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.0
-     */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $format = $this->format( $options );
-
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
-            $date = $this->createFromFormat( 'Y-m-d', (string) $value );
-            $date_local = $this->createFromFormat( $format, (string) $value );
-
-            if ( false !== $date )
-                $value = $date->format( $format );
-            elseif ( false !== $date_local )
-                $value = $date_local->format( $format );
-            else
-                $value = date_i18n( $format, strtotime( (string) $value ) );
-        }
-        elseif ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
-            $value = date_i18n( $format );
-        else
-            $value = '';
-
-        return $value;
-    }
-
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-        $form_field_type = PodsForm::$field_type;
-
-        if ( is_array( $value ) )
-            $value = implode( ' ', $value );
-
-        // Format Value
-        $value = $this->display( $value, $name, $options, $pod, $id );
-
-        $field_type = 'date';
-
-        if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
-                $options[ 'readonly' ] = true;
-
-                $field_type = 'text';
-            }
-            else
-                return;
-        }
-        elseif ( !pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
-            $options[ 'readonly' ] = true;
-
-            $field_type = 'text';
-        }
-
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
-    }
-
-    /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return mixed|string
-     * @since 2.0
-     */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $format = $this->format( $options );
-
-        if ( !empty( $value ) && ( 0 == pods_var( self::$type . '_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
-            $value = $this->convert_date( $value, 'Y-m-d', $format );
-        elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
-            $value = '0000-00-00';
-        else
-            $value = date_i18n( 'Y-m-d' );
-
-        return $value;
-    }
-
-    /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @return mixed|null|string
-     * @since 2.0
-     */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        $value = $this->display( $value, $name, $options, $pod, $id );
-
-        if ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
-            $value = false;
-
-        return $value;
     }
 
     /**

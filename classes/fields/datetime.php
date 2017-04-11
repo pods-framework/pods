@@ -313,7 +313,7 @@ class PodsField_DateTime extends PodsField {
 	    }
 	    $format = $this->format( $options, $js );
 	    if ( $js ) {
-		    $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		    $format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 	    }
 
         if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
@@ -363,7 +363,7 @@ class PodsField_DateTime extends PodsField {
 	    }
     	$format = $this->format( $options, $js );
     	if ( $js ) {
-		    $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		    $format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 	    }
 
 	    if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
@@ -424,7 +424,7 @@ class PodsField_DateTime extends PodsField {
 		    case 'wp':
 			    $format = get_option( 'date_format' );
 			    if ( $js ) {
-				    $format = static::convert_format( $format, array( 'source' => 'php' ) );
+				    $format = $this->convert_format( $format, array( 'source' => 'php' ) );
 			    }
 		    break;
 		    case 'custom':
@@ -434,7 +434,7 @@ class PodsField_DateTime extends PodsField {
 				    $format = pods_v( static::$type . '_format_custom_js', $options, '' );
 				    if ( empty( $format ) ) {
 					    $format = pods_v( static::$type . '_format_custom', $options, '' );
-					    $format = static::convert_format( $format, array( 'source' => 'php' ) );
+					    $format = $this->convert_format( $format, array( 'source' => 'php' ) );
 				    }
 			    }
 		    break;
@@ -474,14 +474,14 @@ class PodsField_DateTime extends PodsField {
 					$format = pods_v( static::$type . '_time_format_custom_js', $options, '' );
 					if ( empty( $format ) ) {
 						$format = pods_v( static::$type . '_time_format_custom', $options, '' );
-						$format = static::convert_format( $format, array( 'source' => 'php' ) );
+						$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 					}
 				}
 			break;
 			default:
 				$format = get_option( 'time_format' );
 				if ( $js ) {
-					$format = static::convert_format( $format, array( 'source' => 'php' ) );
+					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 				}
 			break;
 		}
@@ -517,7 +517,7 @@ class PodsField_DateTime extends PodsField {
 	    $filter = 'pods_form_ui_field_date_formats';
 	    if ( $js ) {
 	    	// @todo Method parameters? (Not supported by array_map)
-		    $date_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $date_format );
+		    $date_format = array_map( array( $this, 'convert_format' ), $date_format );
 		    $filter = 'pods_form_ui_field_date_js_formats';
 	    }
 	    return apply_filters( $filter, $date_format );
@@ -547,7 +547,7 @@ class PodsField_DateTime extends PodsField {
 	    $filter = 'pods_form_ui_field_time_formats';
 	    if ( $js ) {
 		    // @todo Method parameters? (Not supported by array_map)
-		    $time_format = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format );
+		    $time_format = array_map( array( $this, 'convert_format' ), $time_format );
 		    $filter = 'pods_form_ui_field_time_js_formats';
 	    }
 	    return apply_filters( $filter, $time_format );
@@ -569,7 +569,7 @@ class PodsField_DateTime extends PodsField {
 		$filter = 'pods_form_ui_field_time_formats_24';
 		if ( $js ) {
 			// @todo Method parameters? (Not supported by array_map)
-			$time_format_24 = array_map( array( 'PodsField_DateTime', 'convert_format' ), $time_format_24 );
+			$time_format_24 = array_map( array( $this, 'convert_format' ), $time_format_24 );
 			$filter = 'pods_form_ui_field_time_js_formats_24';
 		}
 		return apply_filters( $filter, $time_format_24 );
@@ -651,7 +651,7 @@ class PodsField_DateTime extends PodsField {
 	 * @param  array   $args
 	 * @return string
 	 */
-	public static function convert_format( $source_format, $args = array() ) {
+	public function convert_format( $source_format, $args = array() ) {
 		// @todo Improve source/target logic.
 		$args = array_merge( array(
 			'source' => 'php', // 'jquery_ui' for reverse.

@@ -275,7 +275,7 @@ class PodsField_DateTime extends PodsField {
         $field_type = static::$type;
 
         if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( static::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
-            if ( pods_var( 'read_only', $options, false ) ) {
+            if ( pods_v( 'read_only', $options, false ) ) {
                 $options[ 'readonly' ] = true;
 
                 $field_type = 'text';
@@ -283,7 +283,7 @@ class PodsField_DateTime extends PodsField {
             else
                 return;
         }
-        elseif ( ! pods_has_permissions( $options ) && pods_var( 'read_only', $options, false ) ) {
+        elseif ( ! pods_has_permissions( $options ) && pods_v( 'read_only', $options, false ) ) {
             $options[ 'readonly' ] = true;
 
             $field_type = 'text';
@@ -310,9 +310,9 @@ class PodsField_DateTime extends PodsField {
         $format = $this->format( $options, true );
         $format = static::convert_format( $format, array( 'source' => 'jquery_ui' ) );
 
-        if ( ! empty( $value ) && ( 0 == pods_var( static::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = $this->convert_date( $value, static::$storage_format, $format );
-        elseif ( 1 == pods_var( self::$type . '_allow_empty', $options, 1 ) )
+        elseif ( 1 == pods_v( static::$type . '_allow_empty', $options, 1 ) )
             $value = static::$empty_value;
         else
             $value = date_i18n( static::$storage_format );
@@ -336,7 +336,7 @@ class PodsField_DateTime extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( static::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+        if ( 1 == pods_v( static::$type . '_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -372,7 +372,7 @@ class PodsField_DateTime extends PodsField {
 		    else
 			    $value = date_i18n( $format, strtotime( (string) $value ) );
 	    }
-	    elseif ( 0 == pods_var( static::$type . '_allow_empty', $options, 1 ) )
+	    elseif ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) )
 		    $value = date_i18n( $format );
 	    else
 		    $value = '';

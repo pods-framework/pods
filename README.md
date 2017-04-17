@@ -1,5 +1,6 @@
 # [Pods Framework](http://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
+[![Dockunit Status](https://dockunit.io/svg/pods-framework/pods?2.x)](https://dockunit.io/projects/pods-framework/pods#2.x)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
 [![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/2.x/license.txt)

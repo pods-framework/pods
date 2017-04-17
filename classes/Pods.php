@@ -2298,14 +2298,14 @@ class Pods implements Iterator {
 			if ( !is_array( $params->orderby ) )
 				$params->orderby = array( $params->orderby );
 
-			foreach ( $params->orderby as &$prefix_orderby ) {
-				if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-					if ( false !== stripos( $prefix_orderby, ' DESC' ) ) {
-						$k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
+			foreach ( $params->orderby as $orderby_key => $orderby_value ) {
+				if ( false === strpos( $orderby_value, ',' ) && false === strpos( $orderby_value, '(' ) && false === stripos( $orderby_value, ' AS ' ) && false === strpos( $orderby_value, '`' ) && false === strpos( $orderby_value, '.' ) ) {
+					if ( false !== stripos( $orderby_value, ' DESC' ) ) {
+						$k = trim( str_ireplace( array( '`', ' DESC' ), '', $orderby_value ) );
 						$dir = 'DESC';
 					}
 					else {
-						$k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
+						$k = trim( str_ireplace( array( '`', ' ASC' ), '', $orderby_value ) );
 						$dir = 'ASC';
 					}
 
@@ -2334,7 +2334,7 @@ class Pods implements Iterator {
 							$key = "`{$k}`.`meta_value`";
 					}
 
-					$prefix_orderby = "{$key} {$dir}";
+					$params->orderby[ $orderby_key ] = "{$key} {$dir}";
 				}
 			}
 		}

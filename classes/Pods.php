@@ -1153,7 +1153,7 @@ class Pods implements Iterator {
 						}
 
 						// Tableless handler
-						if ( $field_exists && ( !in_array( $all_fields[ $pod ][ $field ][ 'type' ], array( 'pick', 'taxonomy' ) ) || !$simple ) ) {
+						if ( $field_exists && ( !in_array( $all_fields[ $pod ][ $field ][ 'type' ], array( 'pick', 'taxonomy', 'comment' ) ) || !$simple ) ) {
 							$type = $all_fields[ $pod ][ $field ][ 'type' ];
 							$pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
 							$pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];

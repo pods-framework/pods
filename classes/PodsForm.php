@@ -1384,7 +1384,13 @@ class PodsForm {
 	    static $field_types = null;
 
 	    if ( null === $field_types ) {
-		    $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+		    $field_types = array(
+			    'pick',
+			    'file',
+			    'avatar',
+			    'taxonomy',
+			    'comment',
+		    );
 
 		    $field_types = apply_filters( 'pods_tableless_field_types', $field_types );
 	    }

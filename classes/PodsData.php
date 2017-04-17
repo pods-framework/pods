@@ -2921,8 +2921,6 @@ class PodsData {
                 $joined_index = $table_info[ 'field_index' ];
             }
         } elseif ( 'comment' == $traverse[ 'type' ] ) {
-            $rel_c_alias = 'rel_c_' . $field_joined;
-
             if ( pods_tableless() ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2944,8 +2942,8 @@ class PodsData {
             }
             else {
                 $the_join = "
-                    LEFT JOIN `{$wpdb->comments}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+                    LEFT JOIN `{$wpdb->comments}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
                 ";
 
 				// Override $rel_alias

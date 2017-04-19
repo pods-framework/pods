@@ -518,6 +518,13 @@ class PodsField_Pick extends PodsField {
 				'group' => __( 'Other WP Objects', 'pods' )
 			);
 
+            self::$related_objects['post_types'] = array(
+                'label' => __( 'Post Types', 'pods' ),
+                'group' => __( 'Other WP Objects', 'pods' ),
+                'simple'        => true,
+                'data_callback' => array( $this, 'data_post_types' )
+            );
+
 			self::$related_objects['post_format'] = array(
 				'label' => __( 'Post Formats', 'pods' ),
 				'group' => __( 'Other WP Objects', 'pods' )
@@ -1849,6 +1856,31 @@ class PodsField_Pick extends PodsField {
         wp_send_json( $items );
 
         die(); // KBAI!
+    }
+
+    /**
+     * Data callback for Post Types
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return array
+     *
+     * @since 2.6.7
+     */
+    public function data_post_types ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+        $data = array();
+
+        $post_types = get_post_types( array(), 'objects' );
+
+        foreach ( $post_types as $post_type ) {
+            $data[ $post_type->name ] = $post_type->label;
+        }
+
+        return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
     }
 
     /**

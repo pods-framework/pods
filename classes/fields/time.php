@@ -85,21 +85,21 @@ class PodsField_Time extends PodsField_DateTime {
                 'type' => 'pick',
                 'data' => array(
 	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
-	                'custom' => __( 'Custom', 'pods' ),
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' ),
+	                'custom' => __( 'Custom format', 'pods' ),
                 ),
                 'dependency' => true
             ),
             static::$type . '_format_custom' => array(
-	            'label' => __( 'Time format', 'pods' ),
+	            'label' => __( 'Time format for display', 'pods' ),
 	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
             ),
             static::$type . '_format_custom_js' => array(
-	            'label' => __( 'Time format field input', 'pods' ),
+	            'label' => __( 'Time format for input', 'pods' ),
 	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',

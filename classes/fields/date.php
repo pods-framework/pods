@@ -59,7 +59,7 @@ class PodsField_Date extends PodsField_DateTime {
      * @since 2.0
      */
     public function __construct () {
-	    self::$label = __( 'Date', 'pods' );
+	    static::$label = __( 'Date', 'pods' );
     }
 
     /**
@@ -71,7 +71,7 @@ class PodsField_Date extends PodsField_DateTime {
      */
     public function options () {
         $options = array(
-            self::$type . '_repeatable' => array(
+            static::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -80,7 +80,7 @@ class PodsField_Date extends PodsField_DateTime {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            self::$type . '_type' => array(
+            static::$type . '_type' => array(
 	            'label' => __( 'Date Format Type', 'pods' ),
 	            'default' => 'format', // Backwards compatibility
 	            'type' => 'pick',
@@ -91,24 +91,24 @@ class PodsField_Date extends PodsField_DateTime {
 	            ),
 	            'dependency' => true
             ),
-            self::$type . '_format_custom' => array(
+            static::$type . '_format_custom' => array(
 	            'label' => __( 'Date format', 'pods' ),
-	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
             ),
-            self::$type . '_format_custom_js' => array(
+            static::$type . '_format_custom_js' => array(
 	            'label' => __( 'Date format field input', 'pods' ),
-	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="https://api.jqueryui.com/datepicker/" target="_blank">' . __( 'jQuery UI datepicker documentation', 'pods' ) . '</a>'
 	                      . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
             ),
-            self::$type . '_format' => array(
+            static::$type . '_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
-                'depends-on' => array( self::$type . '_type' => 'format' ),
+                'depends-on' => array( static::$type . '_type' => 'format' ),
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
@@ -124,22 +124,22 @@ class PodsField_Date extends PodsField_DateTime {
                 ),
                 'dependency' => true,
             ),
-            self::$type . '_allow_empty' => array(
+            static::$type . '_allow_empty' => array(
                 'label' => __( 'Allow empty value?', 'pods' ),
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            self::$type . '_html5' => array(
+            static::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
-                'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+                'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
                 'type' => 'boolean'
             )
         );
 
         // Check if PHP DateTime::createFromFormat exists for additional supported formats
         if ( method_exists( 'DateTime', 'createFromFormat' ) || apply_filters( 'pods_form_ui_field_datetime_custom_formatter', false ) ) {
-            $options[ self::$type . '_format' ][ 'data' ] = array_merge(
-                $options[ self::$type . '_format' ][ 'data' ],
+            $options[ static::$type . '_format' ][ 'data' ] = array_merge(
+                $options[ static::$type . '_format' ][ 'data' ],
                 array(
                     'dmy' => date_i18n( 'd/m/Y' ),
                     'dmy_dash' => date_i18n( 'd-m-Y' ),
@@ -150,8 +150,8 @@ class PodsField_Date extends PodsField_DateTime {
             );
         }
 
-		$options[ self::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_date_format_options', $options[ self::$type . '_format' ][ 'data' ] );
-		$options[ self::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_date_format_default', $options[ self::$type . '_format' ][ 'default' ] );
+		$options[ static::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_date_format_options', $options[ static::$type . '_format' ][ 'data' ] );
+		$options[ static::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_date_format_default', $options[ static::$type . '_format' ][ 'default' ] );
 
         return $options;
     }

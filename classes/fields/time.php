@@ -59,7 +59,7 @@ class PodsField_Time extends PodsField_DateTime {
      * @since 2.0
      */
     public function __construct () {
-	    self::$label = __( 'Time', 'pods' );
+	    static::$label = __( 'Time', 'pods' );
     }
 
     /**
@@ -70,7 +70,7 @@ class PodsField_Time extends PodsField_DateTime {
      */
     public function options () {
         $options = array(
-            self::$type . '_repeatable' => array(
+            static::$type . '_repeatable' => array(
                 'label' => __( 'Repeatable Field', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
@@ -79,7 +79,7 @@ class PodsField_Time extends PodsField_DateTime {
                 'dependency' => true,
                 'developer_mode' => true
             ),
-            self::$type . '_type' => array(
+            static::$type . '_type' => array(
                 'label' => __( 'Time Format Type', 'pods' ),
                 'default' => '12', // Backwards compatibility
                 'type' => 'pick',
@@ -91,24 +91,24 @@ class PodsField_Time extends PodsField_DateTime {
                 ),
                 'dependency' => true
             ),
-            self::$type . '_format_custom' => array(
+            static::$type . '_format_custom' => array(
 	            'label' => __( 'Time format', 'pods' ),
-	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
             ),
-            self::$type . '_format_custom_js' => array(
+            static::$type . '_format_custom_js' => array(
 	            'label' => __( 'Time format field input', 'pods' ),
-	            'depends-on' => array( self::$type . '_type' => 'custom' ),
+	            'depends-on' => array( static::$type . '_type' => 'custom' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">' . __( 'jQuery UI timepicker documentation', 'pods' ) . '</a>'
 	                      . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
             ),
-            self::$type . '_format' => array(
+            static::$type . '_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( self::$type . '_type' => '12' ),
+                'depends-on' => array( static::$type . '_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
@@ -125,9 +125,9 @@ class PodsField_Time extends PodsField_DateTime {
                 ),
                 'dependency' => true
             ),
-            self::$type . '_format_24' => array(
+            static::$type . '_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
-                'depends-on' => array( self::$type . '_type' => '24' ),
+                'depends-on' => array( static::$type . '_type' => '24' ),
                 'default' => 'hh_mm',
                 'type' => 'pick',
                 'data' => array(
@@ -135,23 +135,23 @@ class PodsField_Time extends PodsField_DateTime {
                     'hh_mm_ss' => date_i18n( 'H:i:s' )
                 )
             ),
-            self::$type . '_allow_empty' => array(
+            static::$type . '_allow_empty' => array(
                 'label' => __( 'Allow empty value?', 'pods' ),
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            self::$type . '_html5' => array(
+            static::$type . '_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
-                'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+                'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
                 'type' => 'boolean'
             )
         );
 
-		$options[ self::$type . '_type' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_type_default', $options[ self::$type . '_type' ][ 'default' ] );
-		$options[ self::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_options', $options[ self::$type . '_format' ][ 'data' ] );
-		$options[ self::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_default', $options[ self::$type . '_format' ][ 'default' ] );
-		$options[ self::$type . '_format_24' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_24_options', $options[ self::$type . '_format_24' ][ 'data' ] );
-		$options[ self::$type . '_format_24' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_24_default', $options[ self::$type . '_format_24' ][ 'default' ] );
+		$options[ static::$type . '_type' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_type_default', $options[ static::$type . '_type' ][ 'default' ] );
+		$options[ static::$type . '_format' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_options', $options[ static::$type . '_format' ][ 'data' ] );
+		$options[ static::$type . '_format' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_default', $options[ static::$type . '_format' ][ 'default' ] );
+		$options[ static::$type . '_format_24' ][ 'data' ] = apply_filters( 'pods_form_ui_field_time_format_24_options', $options[ static::$type . '_format_24' ][ 'data' ] );
+		$options[ static::$type . '_format_24' ][ 'default' ] = apply_filters( 'pods_form_ui_field_time_format_24_default', $options[ static::$type . '_format_24' ][ 'default' ] );
 
         return $options;
     }

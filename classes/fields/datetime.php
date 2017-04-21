@@ -578,10 +578,11 @@ class PodsField_DateTime extends PodsField {
     /**
      * @param string $format
      * @param string $date Defaults to time() if empty.
+     * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not
      *
-     * @return DateTime|null
+     * @return DateTime|null|int|false
      */
-    public function createFromFormat ( $format, $date ) {
+    public function createFromFormat ( $format, $date, $return_timestamp = false ) {
         $datetime = null;
 
         if ( method_exists( 'DateTime', 'createFromFormat' ) ) {
@@ -602,6 +603,10 @@ class PodsField_DateTime extends PodsField {
 		        $timestamp = time();
 	        } else {
 		        $timestamp = strtotime( (string) $date );
+
+		        if ( $return_timestamp ) {
+			        return $timestamp;
+		        }
 	        }
 	        if ( $timestamp ) {
 		        $datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
@@ -617,23 +622,35 @@ class PodsField_DateTime extends PodsField {
      * @param $value
      * @param $new_format
      * @param string $original_format
+     * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not
      *
-     * @return string
+     * @return string|int|boolean|DateTime
      */
-    public function convert_date ( $value, $new_format, $original_format = '' ) {
+    public function convert_date ( $value, $new_format, $original_format = '', $return_timestamp = false ) {
     	if ( empty( $original_format ) ) {
     		$original_format = static::$storage_format;
 	    }
-        if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
-            $date = $this->createFromFormat( $original_format, (string) $value );
 
-            if ( $date instanceof DateTime )
-                $value = $date->format( $new_format );
-            else
-                $value = date_i18n( $new_format, strtotime( (string) $value ) );
-        }
-        else
-            $value = date_i18n( $new_format );
+	    $date = '';
+
+	    if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+		    $date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
+
+		    if ( $date && $date instanceof DateTime ) {
+			    $value = $date->format( $new_format );
+		    } else {
+			    $date = strtotime( (string) $value );
+
+			    $value = date_i18n( $new_format, $date );
+		    }
+	    } else {
+		    $value = date_i18n( $new_format );
+	    }
+
+	    // Return timestamp conversion result instead
+	    if ( $return_timestamp ) {
+		    return $date;
+	    }
 
         return $value;
     }

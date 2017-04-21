@@ -293,6 +293,37 @@ class PodsField_DateTime extends PodsField {
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
+    	if ( ! empty( $value ) && ( 0 == pods_v( static::$type . '_allow_empty', $options, 1 ) || ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
+	        $js = true;
+
+		    if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
+			    $js = false;
+		    }
+
+		    $format = $this->format( $options, $js );
+
+		    if ( $js ) {
+			    $format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
+		    }
+
+		    $check = $this->convert_date( $value, static::$storage_format, $format, true );
+
+	        if ( false === $check ) {
+                $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+
+	            return sprintf( __( '%s was not provided in a recognizable format', 'pods' ), $label );
+		    }
+	    }
+
+        return true;
+
+    }
+
+    /**
      * Change the value or perform actions after validation but before saving to the DB
      *
      * @param mixed $value

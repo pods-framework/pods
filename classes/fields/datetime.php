@@ -139,6 +139,7 @@ class PodsField_DateTime extends PodsField {
             static::$type . '_time_format_custom' => array(
 	            'label' => __( 'Time format', 'pods' ),
 	            'depends-on' => array( static::$type . '_time_type' => 'custom' ),
+                'excludes-on' => array( static::$type . '_format' => 'c' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
@@ -146,6 +147,7 @@ class PodsField_DateTime extends PodsField {
             static::$type . '_time_format_custom_js' => array(
 	            'label' => __( 'Time format field input', 'pods' ),
 	            'depends-on' => array( static::$type . '_time_type' => 'custom' ),
+                'excludes-on' => array( static::$type . '_format' => 'c' ),
 	            'default' => '',
 	            'type' => 'text',
 	            'help' => '<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">' . __( 'jQuery UI timepicker documentation', 'pods' ) . '</a>'
@@ -173,6 +175,7 @@ class PodsField_DateTime extends PodsField {
             static::$type . '_time_format_24' => array(
                 'label' => __( 'Time Format', 'pods' ),
                 'depends-on' => array( static::$type . '_time_type' => '24' ),
+                'excludes-on' => array( static::$type . '_format' => 'c' ),
                 'default' => 'hh_mm',
                 'type' => 'pick',
                 'data' => array(

@@ -626,6 +626,10 @@ class PodsField_DateTime extends PodsField {
                 $datetimezone = new DateTimeZone( $timezone );
 
                 $datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
+
+	            if ( $return_timestamp ) {
+		            return $datetime;
+	            }
             }
         }
 
@@ -667,9 +671,9 @@ class PodsField_DateTime extends PodsField {
 	    if ( ! empty( $value ) && ! in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
 		    $date = $this->createFromFormat( $original_format, (string) $value, $return_timestamp );
 
-		    if ( $date && $date instanceof DateTime ) {
+		    if ( $date instanceof DateTime ) {
 			    $value = $date->format( $new_format );
-		    } else {
+		    } elseif ( false !== $date ) {
 			    $date = strtotime( (string) $value );
 
 			    $value = date_i18n( $new_format, $date );

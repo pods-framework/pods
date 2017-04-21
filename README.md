@@ -1,9 +1,7 @@
 # [Pods Framework](http://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=2.x)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=2.x)
 [![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/2.x/license.txt)
-[![Code Climate](https://codeclimate.com/github/pods-framework/pods/badges/gpa.svg)](https://codeclimate.com/github/pods-framework/pods)
 
 [![WordPress Plugin version](https://img.shields.io/wordpress/plugin/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)
 [![WordPress Plugin WP tested version](https://img.shields.io/wordpress/v/pods.svg?style=flat)](https://wordpress.org/plugins/pods/)

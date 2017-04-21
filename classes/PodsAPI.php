@@ -1073,6 +1073,18 @@ class PodsAPI {
                     'type' => 'number',
                     'alias' => array(),
                     'hidden' => true
+                ),
+                'comments' => array(
+                    'name' => 'comments',
+                    'label' => 'Comments',
+                    'type' => 'comment',
+					'pick_object' => 'comment',
+					'pick_val' => 'comment',
+                    'alias' => array(),
+                    'hidden' => true,
+					'options' => array(
+						'comment_format_type' => 'multi'
+					)
                 )
             );
 
@@ -3405,6 +3417,7 @@ class PodsAPI {
             $field_data[ 'value' ] = $value;
 
             if ( isset( $object_fields[ $field ] ) ) {
+            	// @todo Eventually support 'comment' field type saving here too
 				if ( 'taxonomy' == $object_fields[ $field ][ 'type' ] ) {
 					$post_term_data[ $field ] = $value;
 				}
@@ -4243,6 +4256,7 @@ class PodsAPI {
 
 		if ( in_array( $pod->pod_data['type'], array( 'post_type', 'media' ) ) ) {
 			$ignore_fields = array(
+				'ID',
 				'post_name',
 				'post_date',
 				'post_date_gmt',
@@ -4252,16 +4266,21 @@ class PodsAPI {
 		        );
 		} elseif ( 'term' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'term_id',
 				'term_taxonomy_id',
 				'slug',
 		        );
 		} elseif ( 'user' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'ID',
 				'user_nicename',
 		        );
 		} elseif ( 'comment' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'comment_ID',
 		        );
+		} elseif ( 'settings' == $pod->pod_data['type'] ) {
+			return pods_error( __( 'Settings do not support duplication.', 'pods' ), $this );
 		}
 
 		/**
@@ -6785,6 +6804,9 @@ class PodsAPI {
             $params->related_pod = pods_str_replace( 'taxonomy-', '', $params->related_pod, 1 );
             $type = 'taxonomy';
         }
+        elseif ( 'comment' === $params->related_pod ) {
+            $type = $params->related_pod;
+        }
 
         $related_pod = $this->load_pod( array( 'name' => $params->related_pod, 'table_info' => false ), false );
 
@@ -7026,8 +7048,18 @@ class PodsAPI {
 			if ( !is_wp_error( $related ) ) {
 				$related_ids = $related;
 			}
-		}
-		elseif ( !pods_tableless() ) {
+		} elseif ( 'comment' == $field_type ) {
+			$comment_args = array(
+				'post__in' => $ids,
+				'fields' => 'ids',
+			);
+
+			$related = get_comments( $comment_args );
+
+			if ( ! is_wp_error( $related ) ) {
+				$related_ids = $related;
+			}
+		} elseif ( !pods_tableless() ) {
             $ids = implode( ', ', $ids );
 
             $field_id = (int) $field_id;
@@ -8071,7 +8103,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`tt`.`term_id` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `t`.`term_id`", $this );
+                                    $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `t`.`term_id` LIMIT 1", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
@@ -8082,7 +8114,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`ID` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '{$pick_val}' AND {$where} ORDER BY `ID`", $this );
+                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '{$pick_val}' AND {$where} ORDER BY `ID` LIMIT 1", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
@@ -8093,7 +8125,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`ID` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->users}` WHERE {$where} ORDER BY `ID`", $this );
+                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->users}` WHERE {$where} ORDER BY `ID` LIMIT 1", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
@@ -8101,7 +8133,7 @@ class PodsAPI {
                                 elseif ( in_array( 'comment', array( $pick_object, $related_pod[ 'type' ] ) ) ) {
                                     $where = "`comment_ID` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID`", $this );
+                                    $result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID` LIMIT 1", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
@@ -8114,7 +8146,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`" . $related_pod[ 'field_id' ] . "` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `" . $related_pod[ 'field_id' ] . "` AS `id` FROM `" . $related_pod[ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'field_id' ] . "`", $this );
+                                    $result = pods_query( "SELECT `" . $related_pod[ 'field_id' ] . "` AS `id` FROM `" . $related_pod[ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'field_id' ] . "` LIMIT 1", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;

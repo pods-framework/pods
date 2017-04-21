@@ -901,7 +901,8 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				if ( ! empty( $args->options['pick_val'] ) ) {
+				// @todo Fix add new modal issues
+				/*if ( ! empty( $args->options['pick_val'] ) ) {
 					$taxonomy_obj = get_taxonomy( $args->options['pick_val'] );
 
 					if ( $taxonomy_obj && current_user_can( $taxonomy_obj->cap->edit_terms ) ) {
@@ -910,7 +911,7 @@ class PodsField_Pick extends PodsField {
 							'taxonomy' => $args->options['pick_val'],
 						);
 					}
-				}
+				}*/
 
 				break;
 

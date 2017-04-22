@@ -374,6 +374,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				if ( fields.region.length ) { tmpAddress.push( fields.region.val() ); }
 				if ( fields.country.length ) { tmpAddress.push( fields.country.val() ); }
 				address = tmpAddress.join(', ');
+				return address;
 			}
 
 			function podsFormatFieldsToHTML( html ) {

@@ -24,6 +24,10 @@ if ( ! empty( $options[ 'maps_marker' ] ) ) {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
 
+if ( ! empty( $map_options['marker'] ) ) {
+	$map_options['marker'] = wp_get_attachment_image_url( $map_options['marker'], 'full' );
+}
+
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
@@ -37,38 +41,41 @@ if ( ! empty( $options['maps_info_window'] ) && in_array( $options['maps_info_wi
 
 echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 ?>
-<input type="button" name="<?php echo $attributes['id'] . '-map-lookup-button' ?>" id="<?php echo $attributes['id'] . '-map-lookup-button' ?>" value="<?php _e( 'Lookup Location from Address', 'pods' ) ?>" />
-<div id="<?php echo $attributes['id'] . '-map-canvas' ?>" class="pods-maps-map-canvas pods-<?php echo $form_field_type ?>-maps-map-canvas"></div>
+<input type="button" name="<?php echo esc_attr( $attributes['id'] . '-map-lookup-button' ); ?>"
+	id="<?php echo esc_attr( $attributes['id'] . '-map-lookup-button' ); ?>"
+	value="<?php esc_attr_e( 'Lookup Location from Address', 'pods' ) ?>" />
+<div id="<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>"
+	class="pods-maps-map-canvas pods-<?php echo esc_attr( $form_field_type ); ?>-maps-map-canvas"></div>
 
 <script type="text/javascript">
 	jQuery( document ).ready( function ( $ ) {
 
 		if ( typeof google !== 'undefined' ) {
 
-			var fieldId = '<?php echo $attributes['id'] ?>';
-			var fieldType = '<?php echo $type ?>';
-			var mapCanvas = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas'?>' );
-			var geocodeButton = $( '#<?php echo $attributes['id'] . '-map-lookup-button'  ?>' );
+			var fieldId = '<?php echo esc_attr( $attributes['id'] ); ?>';
+			var fieldType = '<?php echo esc_attr( $type ); ?>';
+			var mapCanvas = document.getElementById( '<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' );
+			var geocodeButton = $( '#<?php echo esc_attr( $attributes['id'] . '-map-lookup-button' ); ?>' );
 
 			var fields = {
-				line_1: $( '#<?php echo $attributes['id'] . '-address-line-1'  ?>' ),
-				line_2: $( '#<?php echo $attributes['id'] . '-address-line-2'  ?>' ),
-				city: $( '#<?php echo $attributes['id'] . '-address-city'  ?>' ),
-				postal_code: $( '#<?php echo $attributes['id'] . '-address-postal-code'  ?>' ),
-				region: $( '#<?php echo $attributes['id'] . '-address-region'  ?>' ),
-				country: $( '#<?php echo $attributes['id'] . '-address-country'  ?>' ),
-				text: $( '#<?php echo $attributes['id'] . '-text' ?>' ),
-				info_window: $( '#<?php echo $attributes['id'] . '-info-window' ?>' ),
-				lat: $( '#<?php echo $attributes['id'] . '-geo-lat'  ?>' ),
-				lng: $( '#<?php echo $attributes['id'] . '-geo-lng'  ?>' )
+				line_1: $( '#<?php echo esc_attr( $attributes['id'] . '-address-line-1' ); ?>' ),
+				line_2: $( '#<?php echo esc_attr( $attributes['id'] . '-address-line-2' ); ?>' ),
+				city: $( '#<?php echo esc_attr( $attributes['id'] . '-address-city' ); ?>' ),
+				postal_code: $( '#<?php echo esc_attr( $attributes['id'] . '-address-postal-code' ); ?>' ),
+				region: $( '#<?php echo esc_attr( $attributes['id'] . '-address-region' ); ?>' ),
+				country: $( '#<?php echo esc_attr( $attributes['id'] . '-address-country' ); ?>' ),
+				text: $( '#<?php echo esc_attr( $attributes['id'] . '-text' ); ?>' ),
+				info_window: $( '#<?php echo esc_attr( $attributes['id'] . '-info-window' ); ?>' ),
+				lat: $( '#<?php echo esc_attr( $attributes['id'] . '-geo-lat' ); ?>' ),
+				lng: $( '#<?php echo esc_attr( $attributes['id'] . '-geo-lng' ); ?>' )
 			};
 			// @todo check pregreplace, maybe this can be done better (nl2br not working)
 			// @todo check field type
-			var fieldsFormat = '<?php echo preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ); ?>';
+			var fieldsFormat = '<?php echo esc_attr( preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ) ); ?>';
 
 			var map = null;
 			var marker = null;
-			var infowindow = <?php echo ( ! empty( $options['maps_info_window'] ) ) ? 'null' : 'false' ?>;
+			var infowindow = <?php echo esc_attr( ( ! empty( $options['maps_info_window'] ) ) ? 'null' : 'false' ); ?>;
 			var infowindowContent = '';
 			var infowindowEditor = '';
 			var geocoder = null;
@@ -76,9 +83,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			var latlng = null;
 			var mapOptions = {
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
-				marker: '<?php echo $map_options['marker'] ?>',
-				zoom: <?php echo $map_options['zoom'] ?>,
-				type: '<?php echo $map_options['type'] ?>'
+				marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
+				zoom: <?php echo absint( $map_options['zoom'] ); ?>,
+				type: '<?php echo esc_attr( $map_options['type'] ); ?>'
 			};
 
 			//------------------------------------------------------------------------

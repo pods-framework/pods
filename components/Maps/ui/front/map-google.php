@@ -23,6 +23,10 @@ if ( ! empty( $options[ 'maps_marker' ] ) ) {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
 
+if ( ! empty( $map_options['marker'] ) ) {
+	$map_options['marker'] = wp_get_attachment_image_url( $map_options['marker'], 'full' );
+}
+
 if ( ! isset( $address_html ) ) {
 	// @todo Check field type
 	$format = PodsForm::field_method( 'address', 'default_display_format' );
@@ -31,21 +35,23 @@ if ( ! isset( $address_html ) ) {
 	}
 	$address_html = PodsForm::field_method( 'address', 'format_to_html', $format, $value, $options );
 }
-$value['address_html'] = $address_html;
 
+$value['address_html'] = $address_html;
 ?>
-<div id="<?php echo $attributes['id'] . '-map-canvas' ?>" class="pods-address-maps-map-canvas" data-value='<?php echo json_encode( $value ) ?>'></div>
+<div id="<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>"
+	class="pods-address-maps-map-canvas"
+	data-value="<?php echo esc_attr( json_encode( $value ) ); ?>"></div>
 
 <script type="text/javascript">
 	jQuery( document ).ready( function ( $ ) {
-		var mapCanvas = document.getElementById( '<?php echo $attributes['id'] . '-map-canvas' ?>' ),
-			value = $( '#<?php echo $attributes['id'] . '-map-canvas' ?>' ).attr('data-value'),
+		var mapCanvas = document.getElementById( '<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' ),
+			value = $( '#<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' ).attr('data-value'),
 			latlng = null,
 			mapOptions = {
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
-				marker: '<?php echo $map_options['marker'] ?>',
-				zoom: <?php echo $map_options['zoom'] ?>,
-				type: '<?php echo $map_options['type'] ?>'
+				marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
+				zoom: <?php echo absint( $map_options['zoom'] ); ?>,
+				type: '<?php echo esc_attr( $map_options['type'] ); ?>'
 			};
 
 		if ( value ) {

@@ -8,18 +8,20 @@ if ( ! isset( $form_field_type ) ) {
 }
 
 $map_options = array();
-if ( ! empty( $options[ 'maps_zoom' ] ) ) {
-	$map_options['zoom'] = (int) $options[ 'maps_zoom' ];
+if ( ! empty( $options['maps_zoom'] ) ) {
+	$map_options['zoom'] = (int) $options['maps_zoom'];
 } else {
 	$map_options['zoom'] = (int) Pods_Component_Maps::$options['map_zoom'];
 }
-if ( ! empty( $options[ 'maps_type' ] ) ) {
-	$map_options['type'] = $options[ 'maps_type' ];
+
+if ( ! empty( $options['maps_type'] ) ) {
+	$map_options['type'] = $options['maps_type'];
 } else {
 	$map_options['type'] = Pods_Component_Maps::$options['map_type'];
 }
-if ( ! empty( $options[ 'maps_marker' ] ) ) {
-	$map_options['marker'] = $options[ 'maps_marker' ];
+
+if ( ! empty( $options['maps_marker'] ) ) {
+	$map_options['marker'] = $options['maps_marker'];
 } else {
 	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
 }
@@ -31,12 +33,21 @@ if ( ! empty( $map_options['marker'] ) ) {
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
-if ( ! empty( $options['maps_info_window'] ) && in_array( $options['maps_info_window_content'], array( 'paragraph', 'wysiwyg' ) ) ) {
+if ( ! empty( $options['maps_info_window'] ) && in_array( $options['maps_info_window_content'], array(
+		'paragraph',
+		'wysiwyg'
+	) )
+) {
 	echo PodsForm::label( $name . '-info-window', __( 'Info Window content', 'pod' ) );
 	if ( $type == 'address' ) {
 		echo PodsForm::comment( $name . '-info-window', __( 'You can use the following tags for address fields', 'pods' ) . ': <br><code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>' );
 	}
-	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), $options['maps_info_window_content'], array( 'settings' => array( 'wpautop' => false, 'editor_height' => 150 ) ) );
+	echo PodsForm::field( $name . '[info_window]', pods_v( 'info_window', $value ), $options['maps_info_window_content'], array(
+		'settings' => array(
+			'wpautop' => false,
+			'editor_height' => 150
+		)
+	) );
 }
 
 echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );

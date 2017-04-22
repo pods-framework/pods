@@ -5,6 +5,7 @@ class Pods_Component_Maps_Google {
 	public static $geocode_url = '';
 
 	public function __construct() {
+
 		self::$geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/json' );
 	}
 
@@ -23,6 +24,7 @@ class Pods_Component_Maps_Google {
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
 			$view = plugin_dir_path( __FILE__ ) . 'ui/fields/map-google.php';
 		}
+
 		return $view;
 	}
 
@@ -32,6 +34,7 @@ class Pods_Component_Maps_Google {
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
 			$view = plugin_dir_path( __FILE__ ) . 'ui/front/map-google.php';
 		}
+
 		return $view;
 	}
 
@@ -52,7 +55,7 @@ class Pods_Component_Maps_Google {
 		$data = self::geocode( $data, $api_key );
 
 		$address = self::get_address( $data );
-		$latlng = self::get_latlng( $data );
+		$latlng  = self::get_latlng( $data );
 
 		return array( 'address' => $address, 'geo' => $latlng );
 	}
@@ -123,12 +126,12 @@ class Pods_Component_Maps_Google {
 		if ( ! empty( $data['address_components'] ) ) {
 
 			$address = array(
-				'line_1' => array(),
-				'line_2' => array(),
+				'line_1'      => array(),
+				'line_2'      => array(),
 				'postal_code' => '',
-				'city' => '',
-				'region' => array(),
-				'country' => '',
+				'city'        => '',
+				'region'      => array(),
+				'country'     => '',
 			);
 
 			foreach ( $data['address_components'] as $component ) {
@@ -165,6 +168,7 @@ class Pods_Component_Maps_Google {
 
 			return $address;
 		}
+
 		return array();
 	}
 
@@ -185,10 +189,12 @@ class Pods_Component_Maps_Google {
 			$data = $data['results'][0];
 		}
 
-		if ( ! empty( $data[ 'geometry' ][ 'location' ] ) ) {
-			$latlng = $data[ 'geometry' ][ 'location' ];
+		if ( ! empty( $data['geometry']['location'] ) ) {
+			$latlng = $data['geometry']['location'];
+
 			return array_map( 'floatval', $latlng );
 		}
+
 		return array();
 	}
 
@@ -197,7 +203,7 @@ class Pods_Component_Maps_Google {
 	 *
 	 * @param string|array $data
 	 * @param string       $api_key Optional
-	 * @param string       $type ( address | latlng )
+	 * @param string       $type    ( address | latlng )
 	 *
 	 * @return array
 	 *
@@ -218,12 +224,13 @@ class Pods_Component_Maps_Google {
 
 		$post = wp_remote_post( $url );
 
-		if ( ! empty( $post[ 'body' ] ) ) {
-			$data = json_decode( $post[ 'body' ], true );
+		if ( ! empty( $post['body'] ) ) {
+			$data = json_decode( $post['body'], true );
 			if ( ! empty( $data['results'][0] ) ) {
 				return $data['results'][0];
 			}
 		}
+
 		return array();
 	}
 

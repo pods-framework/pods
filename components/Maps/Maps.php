@@ -24,12 +24,16 @@ class Pods_Component_Maps extends PodsComponent {
 	private static $nonce = 'pods_maps';
 
 	public function __construct() {
+
 		// See https://github.com/pods-framework/pods/pull/3711
 		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'maps_options' ), 10, 2 );
 
 		// Add Maps input
 		// do_action( 'pods_ui_field_address_input_view_extra', $view, $type, $name, $value, $options, $pod, $id );
-		add_action( 'pods_ui_field_address_input_view_extra', array( $this, 'pods_ui_field_address_input_view_extra' ), 10, 7 );
+		add_action( 'pods_ui_field_address_input_view_extra', array(
+			$this,
+			'pods_ui_field_address_input_view_extra'
+		), 10, 7 );
 
 		// Validate Address/Geo
 		// apply_filters( 'pods_ui_field_address_validate', $errors, $value, $type, $name, $options, $fields, $pod, $id, $params );
@@ -41,7 +45,10 @@ class Pods_Component_Maps extends PodsComponent {
 
 		// Add or change the display value
 		// apply_filters( 'pods_ui_field_address_display_value', $output, $value, $view, $display_type, $name, $options, $pod, $id );
-		add_filter( 'pods_ui_field_address_display_value', array( $this, 'pods_ui_field_address_display_value' ), 10, 8 );
+		add_filter( 'pods_ui_field_address_display_value', array(
+			$this,
+			'pods_ui_field_address_display_value'
+		), 10, 8 );
 
 		// Ajax call handler
 		add_action( 'wp_ajax_pods_maps', array( $this, 'ajax_handler' ) );
@@ -64,6 +71,7 @@ class Pods_Component_Maps extends PodsComponent {
 	}
 
 	public function global_assets() {
+
 		wp_register_style( 'pods-maps', plugin_dir_url( __FILE__ ) . 'ui/css/pods-maps.css', array(), '1.0' );
 
 		// @todo Use pods-maps.js for global functions needed for the Google Maps API (also see pods-maps.js file)
@@ -71,7 +79,7 @@ class Pods_Component_Maps extends PodsComponent {
 		$provider = get_class( self::$provider );
 		wp_localize_script( 'pods-maps', 'PodsMaps', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'_nonce' => wp_create_nonce( self::$nonce )
+			'_nonce'  => wp_create_nonce( self::$nonce )
 		) );
 
 		// @todo Allways load required front end assets (Maybe as an option?)
@@ -141,18 +149,14 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function ajax_handler() {
 
-		if (   ! defined('DOING_AJAX')
-		       || ! DOING_AJAX
-		       || ! isset( $_POST['_pods_maps_nonce'] )
-		       || ! wp_verify_nonce( $_POST['_pods_maps_nonce'], self::$nonce )
-		) {
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX || ! isset( $_POST['_pods_maps_nonce'] ) || ! wp_verify_nonce( $_POST['_pods_maps_nonce'], self::$nonce ) ) {
 			wp_send_json_error( __( 'Cheatin uh?', 'pods' ) );
 			die();
 		}
 
 		if ( isset( $_POST['pods_maps_action'] ) ) {
 			$return = false;
-			$data = '';
+			$data   = '';
 			if ( ! empty( $_POST['pods_maps_data'] ) ) {
 				if ( is_array( $_POST['pods_maps_data'] ) ) {
 					$data = array_map( 'pods_sanitize', $_POST['pods_maps_data'] );
@@ -191,7 +195,7 @@ class Pods_Component_Maps extends PodsComponent {
 	public function options( $settings ) {
 
 		$options = array(
-			'provider'                => array(
+			'provider'         => array(
 				'label'      => __( 'Maps Provider', 'pods' ),
 				'help'       => __( 'help', 'pods' ),
 				'default'    => 'google',
@@ -203,20 +207,20 @@ class Pods_Component_Maps extends PodsComponent {
 				) ),
 				'dependency' => true
 			),
-			'api_key'                 => array(
+			'api_key'          => array(
 				'label'   => __( 'Maps API Key', 'pods' ),
 				'help'    => __( 'help', 'pods' ),
 				'default' => '',
 				'type'    => 'text'
 			),
-			'google_client_id'        => array(
+			'google_client_id' => array(
 				'label'       => __( 'Google Maps Client ID', 'pods' ),
 				'help'        => __( 'For use with Google Maps API for Business and Geocoding; A Client ID does not come with the Free edition.', 'pods' ),
 				'includes-on' => array( 'provider' => 'google' ),
 				'default'     => '',
 				'type'        => 'text'
 			),
-			'map_style'       => array(
+			'map_style'        => array(
 				'label'   => __( 'Default Map Output Type', 'pods' ),
 				'default' => 'static',
 				'type'    => 'pick',
@@ -225,7 +229,7 @@ class Pods_Component_Maps extends PodsComponent {
 					'js'     => __( 'Javascript (Interactive)', 'pods' )
 				)
 			),
-			'map_type' => array(
+			'map_type'         => array(
 				'label'   => __( 'Default Map Type', 'pods' ),
 				'default' => 'roadmap',
 				'type'    => 'pick',
@@ -236,7 +240,7 @@ class Pods_Component_Maps extends PodsComponent {
 					'hybrid'    => __( 'Hybrid', 'pods' )
 				)
 			),
-			'map_zoom'        => array(
+			'map_zoom'         => array(
 				'label'   => __( 'Default Map Zoom Level', 'pods' ),
 				'help'    => array(
 					__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
@@ -247,13 +251,13 @@ class Pods_Component_Maps extends PodsComponent {
 				'options' => array(
 					'number_decimals'   => 0, // 2
 					'number_max_length' => 2,
-					'number_min' => 1,
-					'number_max' => 21,
-					'number_format' => '9999.99',
+					'number_min'        => 1,
+					'number_max'        => 21,
+					'number_format'     => '9999.99',
 					//'number_format_type' => 'slider'
 				)
 			),
-			'map_marker'      => array(
+			'map_marker'       => array(
 				'label'   => __( 'Default Map Custom Marker', 'pods' ),
 				'type'    => 'file',
 				'options' => array(
@@ -273,7 +277,7 @@ class Pods_Component_Maps extends PodsComponent {
 	/**
 	 * Add map field options
 	 *
-	 * @param array $options
+	 * @param array  $options
 	 * @param string $type The field type
 	 *
 	 * @return array
@@ -292,7 +296,7 @@ class Pods_Component_Maps extends PodsComponent {
 
 		// Add extra options
 
-		$options[ 'maps' ] = array(
+		$options['maps'] = array(
 			'label'      => __( 'Display a map', 'pods' ),
 			'default'    => 0,
 			'type'       => 'boolean',
@@ -308,18 +312,18 @@ class Pods_Component_Maps extends PodsComponent {
 			'default'    => 0,
 			'type'       => 'boolean'
 		);*/
-		$options[ 'maps_display' ] = array(
+		$options['maps_display']             = array(
 			'label'      => __( 'Map Display', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
 			'default'    => 'replace',
 			'type'       => 'pick',
 			'data'       => array(
 				'replace' => __( 'Replace default display', 'pods' ),
-				'before'     => __( 'Before default display', 'pods' ),
-				'after'     => __( 'After default display', 'pods' )
+				'before'  => __( 'Before default display', 'pods' ),
+				'after'   => __( 'After default display', 'pods' )
 			)
 		);
-		$options[ $type . '_map_style' ] = array(
+		$options[ $type . '_map_style' ]     = array(
 			'label'      => __( 'Map Output Type', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
 			'default'    => pods_v( 'maps_style', self::$options, 'static', true ),
@@ -329,7 +333,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'js'     => __( 'Javascript (Interactive)', 'pods' )
 			)
 		);
-		$options[ 'maps_type' ] = array(
+		$options['maps_type']                = array(
 			'label'      => __( 'Map Type', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
 			'default'    => pods_v( 'maps_type', self::$options, 'roadmap', true ),
@@ -341,7 +345,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'hybrid'    => __( 'Hybrid', 'pods' )
 			)
 		);
-		$options[ 'maps_zoom' ] = array(
+		$options['maps_zoom']                = array(
 			'label'      => __( 'Map Zoom Level', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
 			'help'       => array(
@@ -354,36 +358,36 @@ class Pods_Component_Maps extends PodsComponent {
 			'options'    => array(
 				'number_decimals'   => 0, // 2
 				'number_max_length' => 2,
-				'number_min' => 1,
-				'number_max' => 21,
-				'number_format' => '9999.99',
+				'number_min'        => 1,
+				'number_max'        => 21,
+				'number_format'     => '9999.99',
 				//'number_format_type' => 'slider'
 			)
 		);
-		$options[ 'maps_info_window' ] = array(
+		$options['maps_info_window']         = array(
 			'label'      => __( 'Display an Info Window', 'pods' ),
 			'default'    => 0,
 			'type'       => 'boolean',
 			'depends-on' => array( 'maps' => true ),
 			'dependency' => true
 		);
-		$options[ 'maps_info_window_content' ] = array(
+		$options['maps_info_window_content'] = array(
 			'label'      => __( 'Info Window content', 'pods' ),
 			'depends-on' => array(
-				'maps' => true,
+				'maps'             => true,
 				'maps_info_window' => true
 			),
 			'default'    => 'paragraph',
 			'type'       => 'pick',
 			'data'       => array(
-				'paragraph' => __( 'Custom', 'pods' ),
-				'wysiwyg' => __( 'Custom (WYSIWYG)', 'pods' ),
+				'paragraph'    => __( 'Custom', 'pods' ),
+				'wysiwyg'      => __( 'Custom (WYSIWYG)', 'pods' ),
 				// @todo 'display_type' is only available for field type 'address'
-				'display_type'   => __( 'Display Type', 'pods' )
+				'display_type' => __( 'Display Type', 'pods' )
 			)
 		);
 		// @todo Make file type working as a field option
-		$options[ 'maps_marker' ] = array(
+		$options['maps_marker'] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
 			'default'    => pods_v( 'maps_marker', self::$options ),
@@ -406,7 +410,7 @@ class Pods_Component_Maps extends PodsComponent {
 				'custom-map'
 			);
 		}*/
-		$options[ 'maps_microdata' ]['excludes-on'][ 'maps' ] = true;
+		$options['maps_microdata']['excludes-on']['maps'] = true;
 
 		return $options;
 	}
@@ -428,15 +432,15 @@ class Pods_Component_Maps extends PodsComponent {
 	public function pods_ui_field_address_display_value( $output, $value, $view, $display_type, $name, $options, $pod, $id ) {
 
 		if ( ! empty ( $options['maps'] ) ) {
-			$view = '';
+			$view     = '';
 			$provider = get_class( self::$provider );
+
 			if ( is_callable( array( $provider, 'pods_ui_field_display_extra' ) ) ) {
 				$view = self::$provider->pods_ui_field_display_extra();
 			}
 
 			if ( $view && file_exists( $view ) ) {
 				// Add hidden lat/lng fields for non latlng view types
-
 				$maps_value = pods_view( $view, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
 
 				// @todo change location based on option
@@ -546,12 +550,14 @@ class Pods_Component_Maps extends PodsComponent {
 	 * @return mixed
 	 */
 	public static function geocode_address( $data ) {
+
 		if ( is_object( self::$provider ) ) {
 			$provider = get_class( self::$provider );
 			if ( method_exists( $provider, 'geocode_address' ) ) {
 				return $provider::geocode_address( $data, self::$api_key );
 			}
 		}
+
 		return false;
 	}
 
@@ -561,12 +567,14 @@ class Pods_Component_Maps extends PodsComponent {
 	 * @return mixed
 	 */
 	public static function geocode_address_to_latlng( $data ) {
+
 		if ( is_object( self::$provider ) ) {
 			$provider = get_class( self::$provider );
 			if ( method_exists( $provider, 'geocode_address_to_latlng' ) ) {
 				return $provider::geocode_address_to_latlng( $data, self::$api_key );
 			}
 		}
+
 		return false;
 	}
 
@@ -576,12 +584,14 @@ class Pods_Component_Maps extends PodsComponent {
 	 * @return mixed
 	 */
 	public static function geocode_latlng_to_address( $data ) {
+
 		if ( is_object( self::$provider ) ) {
 			$provider = get_class( self::$provider );
 			if ( method_exists( $provider, 'geocode_latlng_to_address' ) ) {
 				return $provider::geocode_latlng_to_address( $data, self::$api_key );
 			}
 		}
+
 		return false;
 	}
 
@@ -594,6 +604,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 * @return array
 	 */
 	public function append_dependency( $value, $new ) {
+
 		if ( ! is_array( $value ) ) {
 			$value = array(
 				(string) $value,
@@ -602,6 +613,7 @@ class Pods_Component_Maps extends PodsComponent {
 		} else {
 			$value[] = $new;
 		}
+
 		return $value;
 	}
 

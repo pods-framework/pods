@@ -127,12 +127,30 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	private function load_provider() {
 
-		switch ( self::$options['provider'] ) {
+		/**
+		 * Let Pods use a custom provider.
+		 * Return string should match the instance you return in `pods_component_maps_provider_{provider}`
+		 *
+		 * @param string $provider Provider name slug.
+		 * @return string Custom provider name slug.
+		 */
+		$provider = (string) apply_filters( 'pods_component_maps_provider', self::$options['provider'] );
+
+		switch ( $provider ) {
 			case 'google':
 				if ( file_exists( plugin_dir_path( __FILE__ ) . 'Maps-Google.php' ) ) {
 					include_once( plugin_dir_path( __FILE__ ) . 'Maps-Google.php' );
 					self::$provider = new Pods_Component_Maps_Google();
 				}
+				break;
+			default:
+				/**
+				 * Add your own maps API provider instance
+				 *
+				 * @param  string  $provider
+				 * @return object  Custom provider class instance.
+				 */
+				self::$provider = apply_filters( 'pods_component_maps_provider_' . $provider, self::$options['provider'] );
 				break;
 		}
 

@@ -691,38 +691,59 @@ class PodsComponents {
         die(); // KBAI!
     }
 
-    public function admin_ajax_settings ( $component, $params ) {
-        if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component' );
-        elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
-            pods_error( 'Component options method does not exist', $this );
+	public function admin_ajax_settings( $component, $params ) {
 
-        $options = $this->components[ $component ][ 'object' ]->options( $this->settings[ 'components' ][ $component ] );
+		if ( ! isset( $this->components[ $component ] ) ) {
+			wp_die( 'Invalid Component' );
+		} elseif ( ! method_exists( $this->components[ $component ]['object'], 'options' ) ) {
+			pods_error( 'Component options method does not exist', $this );
+		}
 
-        if ( empty( $this->settings[ 'components' ][ $component ] ) )
-            $this->settings[ 'components' ][ $component ] = array();
+		$options = $this->components[ $component ]['object']->options( $this->settings['components'][ $component ] );
 
-        foreach ( $options as $field_name => $field_option ) {
-            $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+		if ( empty( $this->settings['components'][ $component ] ) ) {
+			$this->settings['components'][ $component ] = array();
+		}
 
-            if ( !is_array( $field_option[ 'group' ] ) ) {
-                $field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
+		foreach ( $options as $field_name => $field_option ) {
+			$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
 
-                $this->settings[ 'components' ][ $component ][ $field_name ] = $field_value;
-            }
-            else {
-                foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
-                    $field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
+			if ( ! is_array( $field_option['group'] ) ) {
+				$field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
 
-                    $this->settings[ 'components' ][ $component ][ $field_group_name ] = $field_value;
-                }
-            }
-        }
+				if ( is_array( $field_value ) ) {
+					$first_value = current( $field_value );
 
-        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+					if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
+						$field_value = wp_list_pluck( $field_value, 'id' );
+						$field_value = array_map( 'absint', $field_value );
+					}
+				}
 
-        update_option( 'pods_component_settings', $settings );
+				$this->settings['components'][ $component ][ $field_name ] = $field_value;
+			} else {
+				foreach ( $field_option['group'] as $field_group_name => $field_group_option ) {
+					$field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
 
-        return '1';
-    }
+					if ( is_array( $field_value ) ) {
+						$first_value = current( $field_value );
+
+						if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
+							$field_value = wp_list_pluck( $field_value, 'id' );
+							$field_value = array_map( 'absint', $field_value );
+						}
+					}
+
+					$this->settings['components'][ $component ][ $field_group_name ] = $field_value;
+				}
+			}
+		}
+
+		$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+		update_option( 'pods_component_settings', $settings );
+
+		return '1';
+
+	}
 }

@@ -1052,6 +1052,7 @@ class PodsField_Pick extends PodsField {
 
 					if ( $post_thumbnail_id ) {
 						$thumb = wp_get_attachment_image_src( $post_thumbnail_id, 'thumbnail', false );
+					}
 
 					if ( ! empty( $thumb[0] ) ) {
 						$img_icon = $thumb[0];

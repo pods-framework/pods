@@ -103,9 +103,27 @@ $value['address_html'] = $address_html;
 			infowindowContent = podsFormatFieldsToHTML( value.info_window, value.address );
 		}
 		var infowindow = new google.maps.InfoWindow();
+		podsMapsInfoWindow( true );
 
-		infowindow.setContent( infowindowContent );
-		infowindow.open( map, marker );
+		function podsMapsInfoWindow( open ) {
+
+			if ( ! infowindow ) {
+				infowindow = new google.maps.InfoWindow();
+			}
+
+			infowindow.setContent( infowindowContent );
+			if ( open ) {
+				infowindow.open( map, marker );
+			}
+		}
+
+
+		// InfoWindow trigger
+		if ( infowindow !== false ) {
+			google.maps.event.addListener( marker, 'click', function () {
+				podsMapsInfoWindow( true );
+			} );
+		}
 
 		//------------------------------------------------------------------------
 		// Helpers

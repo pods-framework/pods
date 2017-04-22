@@ -18,7 +18,7 @@ class Pods_Component_Maps_Google {
 
 	}
 
-	public function pods_ui_field_view_extra() {
+	public function field_input_view() {
 
 		$view = false;
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
@@ -28,7 +28,7 @@ class Pods_Component_Maps_Google {
 		return $view;
 	}
 
-	public function pods_ui_field_display_extra() {
+	public function field_display_view() {
 
 		$view = false;
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {

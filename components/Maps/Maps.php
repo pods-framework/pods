@@ -456,8 +456,8 @@ class Pods_Component_Maps extends PodsComponent {
 			$view     = '';
 			$provider = get_class( self::$provider );
 
-			if ( is_callable( array( $provider, 'pods_ui_field_display_extra' ) ) ) {
-				$view = self::$provider->pods_ui_field_display_extra();
+			if ( is_callable( array( $provider, 'field_display_view' ) ) ) {
+				$view = self::$provider->field_display_view();
 			}
 
 			if ( $view && file_exists( $view ) ) {
@@ -495,8 +495,8 @@ class Pods_Component_Maps extends PodsComponent {
 
 		if ( ! empty( $options['maps'] ) ) {
 			$provider = get_class( self::$provider );
-			if ( is_callable( array( $provider, 'pods_ui_field_view_extra' ) ) ) {
-				$view = self::$provider->pods_ui_field_view_extra();
+			if ( is_callable( array( $provider, 'field_input_view' ) ) ) {
+				$view = self::$provider->field_input_view();
 			}
 
 			if ( $view && file_exists( $view ) ) {

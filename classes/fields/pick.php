@@ -1029,9 +1029,11 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args ) {
 
-		$icon      = '';
-		$edit_link = '';
-		$link      = '';
+		$use_dashicon = false;
+		$icon         = '';
+		$img_icon     = '';
+		$edit_link    = '';
+		$link         = '';
 
 		if ( ! isset( $args->options['supports_thumbnails'] ) ) {
 			$args->options['supports_thumbnails'] = null;
@@ -1049,10 +1051,34 @@ class PodsField_Pick extends PodsField {
 					$post_thumbnail_id = get_post_thumbnail_id( $item_id );
 
 					if ( $post_thumbnail_id ) {
-						$thumb = wp_get_attachment_image_src( $post_thumbnail_id, 'thumbnail', true );
+						$thumb = wp_get_attachment_image_src( $post_thumbnail_id, 'thumbnail', false );
 
-						if ( ! empty( $thumb[0] ) ) {
-							$icon = $thumb[0];
+					if ( ! empty( $thumb[0] ) ) {
+						$img_icon = $thumb[0];
+					}
+				}
+
+				if ( empty( $img_icon ) ) {
+
+					// Default icon for posts.
+					$icon = 'dashicons-admin-post';
+
+					// Post type icons.
+					$post_type = (array) get_post_type_object( get_post_type( $item_id ) );
+
+					if ( ! empty( $post_type['menu_icon'] ) ) {
+						// Post specific icon.
+						$icon = $post_type['menu_icon'];
+					} elseif ( isset( $post_type['name'] ) && 'page' ) {
+						switch ( $post_type['name'] ) {
+							case 'page':
+								// Default for pages.
+								$icon = 'dashicons-admin-page';
+							break;
+							case 'attachment':
+								// Default for attachments.
+								$icon = 'dashicons-admin-media';
+							break;
 						}
 					}
 				}
@@ -1067,6 +1093,19 @@ class PodsField_Pick extends PodsField {
 				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
+
+					// Default icon for taxonomy.
+					$icon = 'dashicons-category';
+
+					// Change icon for non-hierarchical taxonomies.
+					$taxonomy = get_term( $item_id );
+					if ( isset( $taxonomy->taxonomy ) ) {
+						$taxonomy = (array) get_taxonomy( $taxonomy->taxonomy );
+						if ( isset( $taxonomy['hierarchical'] ) && ! $taxonomy['hierarchical'] ) {
+							$icon = 'dashicons-tag';
+						}
+					}
+
 					$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
 
 					$link = get_term_link( $item_id, $args->options['pick_val'] );
@@ -1079,7 +1118,8 @@ class PodsField_Pick extends PodsField {
 
 				$args->options['supports_thumbnails'] = true;
 
-				$icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
+				$icon = 'dashicons-admin-users';
+				$img_icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
 
 				$edit_link = get_edit_user_link( $item_id );
 
@@ -1092,7 +1132,8 @@ class PodsField_Pick extends PodsField {
 
 				$args->options['supports_thumbnails'] = true;
 
-				$icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
+				$icon = 'dashicons-admin-comments';
+				$img_icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
 
 				$edit_link = get_edit_comment_link( $item_id );
 
@@ -1104,6 +1145,9 @@ class PodsField_Pick extends PodsField {
 				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
+
+					$icon = 'dashicons-pods';
+
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
 						$query_args = array(
@@ -1122,13 +1166,31 @@ class PodsField_Pick extends PodsField {
 				break;
 		}
 
+		// Image icons always overwrite default icons
+		if ( ! empty( $img_icon ) ) {
+			$icon = $img_icon;
+		}
+
+		// Parse icon type
+		if ( 'none' === $icon || 'div' === $icon ) {
+			$icon = '';
+			$use_dashicon = true;
+		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
+			$icon = esc_attr( $icon );
+			$use_dashicon = false;
+		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			$icon = sanitize_html_class( $icon );
+			$use_dashicon = true;
+		}
+
 		$item = array(
-			'id'        => $item_id,
-			'icon'      => $icon,
-			'name'      => $item_title,
-			'edit_link' => $edit_link,
-			'link'      => $link,
-			'selected'  => ( isset( $args->value[ $item_id ] ) ),
+			'id'           => $item_id,
+			'use_dashicon' => $use_dashicon,
+			'icon'         => $icon,
+			'name'         => $item_title,
+			'edit_link'    => $edit_link,
+			'link'         => $link,
+			'selected'     => ( isset( $args->value[ $item_id ] ) ),
 		);
 
 		return $item;

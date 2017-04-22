@@ -36,6 +36,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		addNew: '.pods-ui-add-new'
 	},
 
+	ui: {
+		selectFromExisting: 'a.dfv-list-select'
+	},
+
+	triggers: {
+		'click @ui.selectFromExisting': 'select:from:existing:click'
+	},
+
+	inSelectFromExisting: false,
+
 	/**
 	 *
 	 */
@@ -70,15 +80,33 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 */
+	onSelectFromExistingClick: function () {
+		let view;
+
+		this.inSelectFromExisting = !this.inSelectFromExisting;
+
+		if ( this.inSelectFromExisting ) {
+			view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
+		}
+		else {
+			view = new ListView( { collection: this.collection, fieldModel: this.model } );
+		}
+
+		this.showChildView( 'list', view );
+	},
+
+	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
 	 * @param args
 	 */
-	onChildviewRemoveItemClick: function ( childView, args ) {
-		const list = this.childView( 'list' );
+	onChildviewRemoveItemClick: function ( childView ) {
+		const list = this.getChildView( 'list' );
 
-		args.model.toggleSelected();
+		childView.model.toggleSelected();
 		list.render();
 	},
 

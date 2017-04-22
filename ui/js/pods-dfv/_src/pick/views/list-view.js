@@ -24,7 +24,7 @@ export const ListItem = PodsFieldView.extend( {
 	templateContext: function () {
 		return {
 			ordinal: this.model.collection.indexOf( this.model )
-		}
+		};
 	}
 
 } );

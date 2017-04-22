@@ -127,6 +127,12 @@ select.pods-form-ui-field-type-pick[multiple] {
     background: #fcfcfc;
 }
 
+/* Remove backgrounds from inner child lists */
+.pods-pick-values li li:nth-child(even),
+.pods-pick-values li li {
+    background: transparent;
+}
+
 .pods-pick-values label {
     display: block;
     padding-bottom: 3px;

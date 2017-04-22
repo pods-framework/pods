@@ -705,19 +705,16 @@ class PodsComponents {
 			$this->settings['components'][ $component ] = array();
 		}
 
+		// @todo Use save_pod_item() functionality instead, this doesn't cover much
+
 		foreach ( $options as $field_name => $field_option ) {
 			$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
 
 			if ( ! is_array( $field_option['group'] ) ) {
 				$field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
 
-				if ( is_array( $field_value ) ) {
-					$first_value = current( $field_value );
-
-					if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
-						$field_value = wp_list_pluck( $field_value, 'id' );
-						$field_value = array_map( 'absint', $field_value );
-					}
+				if ( in_array( $field_option['type'], array( 'pick', 'file' ), true ) ) {
+					$field_value = $this->handle_pick_file_value_saving( $field_value, $field_option );
 				}
 
 				$this->settings['components'][ $component ][ $field_name ] = $field_value;
@@ -725,13 +722,8 @@ class PodsComponents {
 				foreach ( $field_option['group'] as $field_group_name => $field_group_option ) {
 					$field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
 
-					if ( is_array( $field_value ) ) {
-						$first_value = current( $field_value );
-
-						if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
-							$field_value = wp_list_pluck( $field_value, 'id' );
-							$field_value = array_map( 'absint', $field_value );
-						}
+					if ( in_array( $field_group_option['type'], array( 'pick', 'file' ), true ) ) {
+						$field_value = $this->handle_pick_file_value_saving( $field_value, $field_group_option );
 					}
 
 					$this->settings['components'][ $component ][ $field_group_name ] = $field_value;
@@ -746,4 +738,51 @@ class PodsComponents {
 		return '1';
 
 	}
+
+	/**
+	 * Handle saving for file/pick fields which requires some array work
+	 *
+	 * @param array|string $value
+	 * @param array        $field
+	 *
+	 * @return array|string
+	 */
+	public function handle_pick_file_value_saving( $value, $field ) {
+
+    	if ( empty( $value ) ) {
+    		$value = array();
+	    } elseif ( ! is_array( $value ) ) {
+    		$value = array( $value );
+	    }
+
+	    if ( 'file' === $field['type'] && ! empty( $value ) ) {
+    		// Fix file upload saved values coming from submission
+			$first_value = current( $value );
+
+			if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
+				$value = wp_list_pluck( $value, 'id' );
+				$value = array_map( 'absint', $value );
+			}
+		}
+
+		if ( $value ) {
+    		$single = false;
+
+			if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single', true ) ) {
+				$single = true;
+			} elseif ( 1 === (int) pods_v( $field['type'] . '_limit', $field ) ) {
+				$single = true;
+			}
+
+			if ( $single ) {
+				$value = current( $value );
+			}
+		} else {
+			$value = '';
+		}
+
+		return $value;
+
+	}
+
 }

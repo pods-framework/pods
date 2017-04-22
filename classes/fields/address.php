@@ -409,7 +409,6 @@ class PodsField_Address extends PodsField {
 		}
 
 		if ( ! empty( $address ) ) {
-
 			// Format in microdata?
 			$microdata = ( ! empty( $options[ self::$type . '_microdata' ] ) ) ? true : false;
 
@@ -418,17 +417,19 @@ class PodsField_Address extends PodsField {
 			$lines = explode( '\r\n', preg_replace( "/\n/m", '\r\n', $format ) );
 
 			foreach ( $lines as $key => $line ) {
-
 				// preg_match to all tags
 				preg_match_all( '#{{(.*?)}}#', $line, $tags );
+
 				if ( ! empty( $tags[1] ) ) {
 					foreach ( $tags[1] as $tag ) {
 						// Default value is empty. Only known tags are allowed, remove all unknown tags
 						$value = '';
+
 						if ( ! empty( $address[ $tag ] ) ) {
 							// Format the value for HTML
 							$value = self::wrap_html_format( $address[ $tag ], $tag, 'span', $microdata );
 						}
+
 						$lines[ $key ] = str_replace( '{{' . $tag . '}}', $value, $lines[ $key ] );
 					}
 				}
@@ -447,6 +448,7 @@ class PodsField_Address extends PodsField {
 		}
 
 		return $output;
+
 	}
 
 	/**
@@ -461,63 +463,76 @@ class PodsField_Address extends PodsField {
 	 */
 	public static function wrap_html_format( $value, $tag, $element, $microdata = false ) {
 
-		$atts['class'] = 'pods-address' . $tag;
+		$atts = array(
+			'class' => 'pods-address' . $tag,
+		);
 
 		switch ( $tag ) {
 			case 'address':
 				$atts['class'] = 'pods-address';
+
 				if ( $microdata ) {
 					$atts['itemprop']  = 'address';
 					$atts['itemscope'] = '';
 					$atts['itemtype']  = 'http://schema.org/PostalAddress';
-				};
+				}
+
 				break;
 
 			case 'line_1':
 			case 'line_2':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'streetAddress';
-				};
+				}
+
 				break;
 
 			case 'postal_code':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'postalCode';
-				};
+				}
+
 				break;
 
 			case 'city':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'addressLocality';
-				};
+				}
+
 				break;
 
 			case 'region':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'addressRegion';
-				};
+				}
+
 				break;
 
 			case 'country':
 				if ( $microdata ) {
 					$atts['itemprop'] = 'addressCountry';
-				};
+				}
+
 				break;
 
 			default:
 				$atts = false;
+
 				break;
 		}
 
 		if ( $atts ) {
 			$attributes = '';
+
 			foreach ( $atts as $key => $val ) {
-				$attributes .= ' ' . $key . '="' . $val . '"';
+				$attributes .= ' ' . esc_html( $key ) . '="' . esc_attr( $val ) . '"';
 			}
-			$value = '<' . $element . $attributes . '>' . $value . '</' . $element . '>';
+
+			$value = '<' . esc_html( $element ) . $attributes . '>' . wp_kses_post( $value ) . '</' . esc_html( $element ) . '>';
 		}
 
 		return $value;
+
 	}
 
 	/**

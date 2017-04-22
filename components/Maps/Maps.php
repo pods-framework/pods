@@ -386,7 +386,6 @@ class Pods_Component_Maps extends PodsComponent {
 				'display_type' => __( 'Display Type', 'pods' )
 			)
 		);
-		// @todo Make file type working as a field option
 		$options['maps_marker'] = array(
 			'label'      => __( 'Map Custom Marker', 'pods' ),
 			'depends-on' => array( 'maps' => true ),
@@ -431,7 +430,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_display_value( $output, $value, $view, $display_type, $name, $options, $pod, $id ) {
 
-		if ( ! empty ( $options['maps'] ) ) {
+		if ( ! empty( $options['maps'] ) ) {
 			$view     = '';
 			$provider = get_class( self::$provider );
 
@@ -443,8 +442,15 @@ class Pods_Component_Maps extends PodsComponent {
 				// Add hidden lat/lng fields for non latlng view types
 				$maps_value = pods_view( $view, compact( array_keys( get_defined_vars() ) ), false, 'cache', true );
 
-				// @todo change location based on option
-				$output .= $maps_value;
+				$maps_display = pods_v( 'maps_display', $options, 'replace', true );
+
+				if ( 'before' === $maps_display ) {
+					$output = $maps_value . $output;
+				} elseif ( 'after' === $maps_display ) {
+					$output .= $maps_value;
+				} else {
+					$output = $maps_value;
+				}
 			}
 		}
 
@@ -465,7 +471,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_input_view_extra( $view, $type, $name, $value, $options, $pod, $id ) {
 
-		if ( ! empty ( $options['maps'] ) ) {
+		if ( ! empty( $options['maps'] ) ) {
 			$provider = get_class( self::$provider );
 			if ( is_callable( array( $provider, 'pods_ui_field_view_extra' ) ) ) {
 				$view = self::$provider->pods_ui_field_view_extra();

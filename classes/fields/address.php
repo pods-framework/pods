@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class PodsField_AddressMap
  * @package Pods\Fields
@@ -51,6 +52,7 @@ class PodsField_Address extends PodsField {
 	 * @since 1.0
 	 */
 	public function __construct() {
+
 		self::$label = __( 'Address', 'pods' );
 	}
 
@@ -62,47 +64,47 @@ class PodsField_Address extends PodsField {
 	public function options() {
 
 		$options = array(
-			self::$type . '_type' => array(
+			self::$type . '_type'                   => array(
 				'label'      => __( 'Address Type', 'pods' ),
 				'default'    => 'address',
 				'type'       => 'pick',
 				'data'       => array(
-					'address'  => __( 'Address Field Group', 'pods' ),
-					'text'     => __( 'Freeform Text', 'pods' )
+					'address' => __( 'Address Field Group', 'pods' ),
+					'text'    => __( 'Freeform Text', 'pods' )
 				),
 				'dependency' => true
 			),
-			self::$type . '_address_options'       => array(
+			self::$type . '_address_options'        => array(
 				'label'      => __( 'Address Options', 'pods' ),
 				'depends-on' => array( self::$type . '_type' => 'address' ),
 				'group'      => array(
-					self::$type . '_address_line_1'  => array(
+					self::$type . '_address_line_1'      => array(
 						'label'   => __( 'Enable Address Line 1', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean'
 					),
-					self::$type . '_address_line_2'  => array(
+					self::$type . '_address_line_2'      => array(
 						'label'   => __( 'Enable Address Line 2', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean'
 					),
-					self::$type . '_address_postal_code'  => array(
+					self::$type . '_address_postal_code' => array(
 						'label'   => __( 'Enable ZIP / Postal Code', 'pods' ),
 						'default' => 0,
 						'type'    => 'boolean'
 					),
-					self::$type . '_address_city'    => array(
+					self::$type . '_address_city'        => array(
 						'label'   => __( 'Enable City', 'pods' ),
 						'default' => 1,
 						'type'    => 'boolean'
 					),
-					self::$type . '_address_region'   => array(
+					self::$type . '_address_region'      => array(
 						'label'      => __( 'Enable Region (State / Province)', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
 						'dependency' => true
 					),
-					self::$type . '_address_country' => array(
+					self::$type . '_address_country'     => array(
 						'label'      => __( 'Enable Country', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
@@ -110,7 +112,7 @@ class PodsField_Address extends PodsField {
 					)
 				)
 			),
-			self::$type . '_address_region_input' => array(
+			self::$type . '_address_region_input'   => array(
 				'label'      => __( 'Region Input Type', 'pods' ),
 				'depends-on' => array( self::$type . '_address_region' => true, self::$type . '_type' => 'address' ),
 				'default'    => 'text',
@@ -121,21 +123,21 @@ class PodsField_Address extends PodsField {
 				),
 				'dependency' => true
 			),
-			self::$type . '_address_region_output' => array(
+			self::$type . '_address_region_output'  => array(
 				'label'      => __( 'Region Output Type', 'pods' ),
 				'depends-on' => array(
 					self::$type . '_address_region_input' => 'pick',
-					self::$type . '_address_region' => true,
-					self::$type . '_type' => 'address'
+					self::$type . '_address_region'       => true,
+					self::$type . '_type'                 => 'address'
 				),
 				'default'    => 'long',
 				'type'       => 'pick',
 				'data'       => array(
-					'long' => __( 'Full name', 'pods' ),
+					'long'  => __( 'Full name', 'pods' ),
 					'short' => __( 'Stage / Province code', 'pods' )
 				)
 			),
-			self::$type . '_address_country_input' => array(
+			self::$type . '_address_country_input'  => array(
 				'label'      => __( 'Country Input Type', 'pods' ),
 				'depends-on' => array( self::$type . '_address_country' => true, self::$type . '_type' => 'address' ),
 				'default'    => 'text',
@@ -150,17 +152,17 @@ class PodsField_Address extends PodsField {
 				'label'      => __( 'Country Output Type', 'pods' ),
 				'depends-on' => array(
 					self::$type . '_address_country_input' => 'pick',
-					self::$type . '_address_country' => true,
-					self::$type . '_type' => 'address'
+					self::$type . '_address_country'       => true,
+					self::$type . '_type'                  => 'address'
 				),
 				'default'    => 'long',
 				'type'       => 'pick',
 				'data'       => array(
-					'long' => __( 'Full name', 'pods' ),
+					'long'  => __( 'Full name', 'pods' ),
 					'short' => __( 'Country code', 'pods' )
 				)
 			),
-			self::$type . '_display_type' => array(
+			self::$type . '_display_type'           => array(
 				'label'      => __( 'Display Type', 'pods' ),
 				'default'    => 'default',
 				'type'       => 'pick',
@@ -171,14 +173,14 @@ class PodsField_Address extends PodsField {
 				'depends-on' => array( self::$type . '_type' => 'address' ),
 				'dependency' => true
 			),
-			self::$type . '_display_type_custom' => array(
+			self::$type . '_display_type_custom'    => array(
 				'label'      => __( 'Custom display', 'pods' ),
-				'help' => __( 'You can use the following tags for address fields', 'pods' ) . ': <code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>',
+				'help'       => __( 'You can use the following tags for address fields', 'pods' ) . ': <code>{{line_1}}</code>, <code>{{line_2}}</code>, <code>{{postal_code}}</code>, <code>{{city}}</code>, <code>{{region}}</code>, <code>{{country}}</code>',
 				'default'    => self::default_display_format(),
 				'type'       => 'paragraph',
 				'depends-on' => array( self::$type . '_display_type' => 'custom', self::$type . '_type' => 'address' )
 			),
-			self::$type . '_microdata' => array(
+			self::$type . '_microdata'              => array(
 				'label'      => __( 'Format with microdata?', 'pods' ) . ' (schema.org)',
 				'default'    => 0,
 				'type'       => 'boolean',
@@ -221,7 +223,7 @@ class PodsField_Address extends PodsField {
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-		$value_raw = $value;
+		$value_raw    = $value;
 		$display_type = pods_v( self::$type . '_display_type', $options );
 
 		$view = PODS_DIR . 'ui/front/address.php';
@@ -231,6 +233,25 @@ class PodsField_Address extends PodsField {
 		$output = apply_filters( 'pods_ui_field_address_display_value', $output, $value, $view, $display_type, $name, $options, $pod, $id );
 
 		return $output;
+
+	}
+
+	/**
+	 * Change the way the a list of values of the field are displayed with Pods::field
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 *
+	 * @return mixed|null|string
+	 *
+	 * @since 2.7
+	 */
+	public function display_list( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		return call_user_func_array( array( $this, 'display' ), func_get_args() );
 
 	}
 
@@ -271,15 +292,15 @@ class PodsField_Address extends PodsField {
 		/**
 		 * Add extra validation checks
 		 *
-		 * @param array $errors
-		 * @param mixed $value
+		 * @param array  $errors
+		 * @param mixed  $value
 		 * @param string $type Field address type
 		 * @param string $name
-		 * @param array $options
-		 * @param array $fields
-		 * @param array $pod
-		 * @param int $id
-		 * @param array $params
+		 * @param array  $options
+		 * @param array  $fields
+		 * @param array  $pod
+		 * @param int    $id
+		 * @param array  $params
 		 */
 		$errors = apply_filters( 'pods_ui_field_address_validate', $errors, $value, $type, $name, $options, $fields, $pod, $id, $params );
 
@@ -307,14 +328,14 @@ class PodsField_Address extends PodsField {
 		/**
 		 * Add extra value sanitation
 		 *
-		 * @param mixed $value
+		 * @param mixed  $value
 		 * @param string $type Field address type
-		 * @param int $id
+		 * @param int    $id
 		 * @param string $name
-		 * @param array $options
-		 * @param array $fields
-		 * @param array $pod
-		 * @param array $params
+		 * @param array  $options
+		 * @param array  $fields
+		 * @param array  $pod
+		 * @param array  $params
 		 */
 		$value = apply_filters( 'pods_ui_field_address_pre_save', $value, $type, $id, $name, $options, $fields, $pod, $params );
 
@@ -344,16 +365,17 @@ class PodsField_Address extends PodsField {
 
 		if ( ! empty( $value['address'] ) ) {
 			foreach ( $value['address'] as $key => $val ) {
-				// Display full region names if enabled
-				if ( $key == 'region' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+				if ( $key == 'region' && $options[ self::$type . '_address_region_input' ] == 'pick' && $options[ self::$type . '_address_region_output' ] == 'long' ) {
+					// Display full region names if enabled
 					$regions = PodsForm::field_method( 'pick', 'data_us_states' );
+
 					if ( array_key_exists( $val, $regions ) ) {
 						$value['address'][ $key ] = $regions[ $val ];
 					}
-				}
-				// Display full country names if enabled
-				if ( $key == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+				} elseif ( $key == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+					// Display full country names if enabled
 					$countries = PodsForm::field_method( 'pick', 'data_countries' );
+
 					if ( array_key_exists( $val, $countries ) ) {
 						$value['address'][ $key ] = $countries[ $val ];
 					}
@@ -362,6 +384,7 @@ class PodsField_Address extends PodsField {
 		}
 
 		return $value;
+
 	}
 
 	/**
@@ -369,13 +392,14 @@ class PodsField_Address extends PodsField {
 	 *
 	 * @since 2.7
 	 *
-	 * @param string $format The format to be used (default or custom)
-	 * @param array $value The field value
-	 * @param array $options The field options
+	 * @param string $format  The format to be used (default or custom)
+	 * @param array  $value   The field value
+	 * @param array  $options The field options
 	 *
 	 * @return string
 	 */
 	public static function format_to_html( $format, $value, $options ) {
+
 		$output = '';
 
 		$value = self::format_value_for_output( $value, $options );
@@ -391,14 +415,14 @@ class PodsField_Address extends PodsField {
 
 			// @todo check pregreplace, maybe this can be done better (nl2br not working)
 			// Convert actual line breaks into an array
-			$lines = explode( '\r\n', preg_replace("/\n/m", '\r\n', $format) );
+			$lines = explode( '\r\n', preg_replace( "/\n/m", '\r\n', $format ) );
 
 			foreach ( $lines as $key => $line ) {
 
 				// preg_match to all tags
 				preg_match_all( '#{{(.*?)}}#', $line, $tags );
 				if ( ! empty( $tags[1] ) ) {
-					foreach( $tags[1] as $tag ) {
+					foreach ( $tags[1] as $tag ) {
 						// Default value is empty. Only known tags are allowed, remove all unknown tags
 						$value = '';
 						if ( ! empty( $address[ $tag ] ) ) {
@@ -408,15 +432,20 @@ class PodsField_Address extends PodsField {
 						$lines[ $key ] = str_replace( '{{' . $tag . '}}', $value, $lines[ $key ] );
 					}
 				}
-				if ( empty( trim( $lines[ $key ] ) ) ) {
+
+				$lines[ $key ] = trim( $lines[ $key ] );
+
+				if ( empty( $lines[ $key ] ) ) {
 					unset( $lines[ $key ] );
 				}
 			}
+
 			// Lines to HTML line breaks
 			$output = implode( '<br>', $lines );
 
 			$output = self::wrap_html_format( $output, 'address', 'div', $microdata );
 		}
+
 		return $output;
 	}
 
@@ -432,15 +461,15 @@ class PodsField_Address extends PodsField {
 	 */
 	public static function wrap_html_format( $value, $tag, $element, $microdata = false ) {
 
-		$atts['class'] = 'pods-address' . $tags;
+		$atts['class'] = 'pods-address' . $tag;
 
 		switch ( $tag ) {
 			case 'address':
 				$atts['class'] = 'pods-address';
 				if ( $microdata ) {
-					$atts['itemprop'] = 'address';
+					$atts['itemprop']  = 'address';
 					$atts['itemscope'] = '';
-					$atts['itemtype'] = 'http://schema.org/PostalAddress';
+					$atts['itemtype']  = 'http://schema.org/PostalAddress';
 				};
 				break;
 
@@ -499,6 +528,7 @@ class PodsField_Address extends PodsField {
 	 * @return string
 	 */
 	public static function default_display_format() {
+
 		return '{{line_1}}
 {{line_2}}
 {{postal_code}} {{city}}

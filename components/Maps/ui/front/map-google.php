@@ -55,7 +55,8 @@ $value['address_html'] = $address_html;
 				marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
 				zoom: <?php echo absint( $map_options['zoom'] ); ?>,
 				type: '<?php echo esc_attr( $map_options['type'] ); ?>'
-			};
+			},
+			marker_icon = <?php echo ( ! empty( $map_options['marker'] ) ? '\'' . esc_url( $map_options['marker'] ) . '\'' : 'null' ) ?>;
 
 		if ( value ) {
 			try {
@@ -86,6 +87,11 @@ $value['address_html'] = $address_html;
 			position: latlng,
 			draggable: false
 		};
+
+		if ( marker_icon ) {
+			markerOptions.icon = marker_icon;
+		}
+
 		var marker = new google.maps.Marker( markerOptions );
 		map.setCenter( mapOptions.center );
 

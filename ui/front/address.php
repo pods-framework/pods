@@ -1,16 +1,14 @@
 <?php
-
 if ( ! empty( $value['address'] ) ) {
-
 	$format = PodsForm::field_method( 'address', 'default_display_format' );
-	if ( $options['address_display_type'] == 'custom' ) {
-		$format = $options['address_display_type_custom'];
+
+	if ( 'custom' === pods_v( 'address_display_type', $options ) ) {
+		$custom_format = trim( pods_v( 'address_display_type_custom', $options ) );
+
+		if ( ! empty( $custom_format ) ) {
+			$format = $custom_format;
+		}
 	}
 
-	$html = PodsForm::field_method( 'address', 'format_to_html', $format, $value, $options );
-
-	echo $html;
-
+	echo PodsForm::field_method( 'address', 'format_to_html', $format, $value, $options );
 }
-
-?>

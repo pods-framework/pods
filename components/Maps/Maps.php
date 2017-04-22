@@ -212,6 +212,8 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function options( $settings ) {
 
+		// @todo Put part of this in the maps provider class? This could be different between providers.
+
 		$options = array(
 			'provider'         => array(
 				'label'      => __( 'Maps Provider', 'pods' ),
@@ -303,6 +305,8 @@ class Pods_Component_Maps extends PodsComponent {
 	 * @since 2.7
 	 */
 	public function maps_options( $options, $type ) {
+
+		// @todo Put this in the maps provider class? This could be different between providers.
 
 		// Add lat/lng input type
 		$options[ $type . '_type' ]['data']['lat-lng'] = __( 'Latitude / Longitude', 'pods' );

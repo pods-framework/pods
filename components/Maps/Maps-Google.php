@@ -124,52 +124,53 @@ class Pods_Component_Maps_Google {
 		}
 
 		if ( ! empty( $data['address_components'] ) ) {
-
-			$address = array(
-				'line_1'      => array(),
-				'line_2'      => array(),
-				'postal_code' => '',
-				'city'        => '',
-				'region'      => array(),
-				'country'     => '',
-			);
-
-			foreach ( $data['address_components'] as $component ) {
-
-				switch ( $component['types'] ) {
-					case 'street_number':
-						$address['line_1'][1] = $component['long_name'];
-						break;
-					case 'route':
-						$address['line_1'][0] = $component['long_name'];
-						break;
-					case 'locality':
-						$address['city'] = $component['long_name'];
-						break;
-					case 'country':
-						$address['country'] = $component['long_name'];
-						break;
-					case 'postal_code':
-						$address['postal_code'] = $component['long_name'];
-						break;
-					case 'administrative_area_level_1':
-					case 'administrative_area_level_2':
-					case 'administrative_area_level_3':
-						$address['region'][] = $component['long_name'];
-						break;
-				}
-			}
-
-			foreach ( $address as $key => $value ) {
-				if ( is_array( $value ) ) {
-					$address[ $key ] = implode( ' ', $value );
-				}
-			}
-
-			return $address;
+			return array();
 		}
 
-		return array();
+		$address = array(
+			'line_1'      => array(),
+			'line_2'      => array(),
+			'postal_code' => '',
+			'city'        => '',
+			'region'      => array(),
+			'country'     => '',
+		);
+
+		foreach ( $data['address_components'] as $component ) {
+
+			$value = $component['long_name'];
+
+			switch ( $component['types'] ) {
+				case 'street_number':
+					$address['line_1'][1] = $value;
+					break;
+				case 'route':
+					$address['line_1'][0] = $value;
+					break;
+				case 'locality':
+					$address['city'] = $value;
+					break;
+				case 'country':
+					$address['country'] = $value;
+					break;
+				case 'postal_code':
+					$address['postal_code'] = $value;
+					break;
+				case 'administrative_area_level_1':
+				case 'administrative_area_level_2':
+				case 'administrative_area_level_3':
+					$address['region'][] = $value;
+					break;
+			}
+		}
+
+		foreach ( $address as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$address[ $key ] = implode( ' ', $value );
+			}
+		}
+
+		return $address;
 	}
 
 	/**
@@ -189,13 +190,11 @@ class Pods_Component_Maps_Google {
 			$data = $data['results'][0];
 		}
 
-		if ( ! empty( $data['geometry']['location'] ) ) {
-			$latlng = $data['geometry']['location'];
-
-			return array_map( 'floatval', $latlng );
+		if ( empty( $data['geometry']['location'] ) ) {
+			return array();
 		}
 
-		return array();
+		return array_map( 'floatval', $data['geometry']['location'] );
 	}
 
 	/**

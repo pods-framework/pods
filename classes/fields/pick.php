@@ -2941,9 +2941,10 @@ class PodsField_Pick extends PodsField {
 		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
 		?>
 			<script type="text/javascript">
-				const modalRecord = <?php echo json_encode( $model_data, JSON_HEX_TAG ); ?>;
-
-				window.parent.jQuery( window.parent ).trigger( 'dfv:modal:update', modalRecord );
+				window.parent.jQuery( window.parent ).trigger(
+					'dfv:modal:update',
+					<?php echo json_encode( $model_data, JSON_HEX_TAG ); ?>
+				);
 			</script>
 		<?php
 

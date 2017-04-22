@@ -97,7 +97,7 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
 					marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
 					zoom: <?php echo absint( $map_options['zoom'] ); ?>,
-					type: '<?php echo esc_attr( $map_options['type'] ); ?>'
+					mapTypeId: '<?php echo esc_attr( $map_options['type'] ); ?>'
 				};
 
 			//------------------------------------------------------------------------

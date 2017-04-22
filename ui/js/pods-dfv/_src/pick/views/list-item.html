@@ -2,9 +2,11 @@
 		data-name-clean="<%- htmlAttr.name_clean %>"
 		id="<%- htmlAttr.id %><%= ordinal %>"
 		type="hidden"
-		value="<%- id %>>">
+		value="<%- id %>">
 <ul class="pods-dfv-list-meta relationship-item">
-	<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
+	<% if ( 1 != fieldConfig.pick_limit ) { %>
+		<li class="pods-dfv-list-col pods-dfv-list-handle"><span><%- PodsI18n.__( 'Reorder' ) %></span></li>
+	<% } %>
 	<% if ( 1 == fieldConfig.pick_show_icon && '' != icon ) { %>
 		<li class="pods-dfv-list-col pods-dfv-list-icon">
 			<% if ( use_dashicon ) { %>

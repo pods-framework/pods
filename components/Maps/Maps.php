@@ -261,7 +261,7 @@ class Pods_Component_Maps extends PodsComponent {
 					'file_edit_title'        => 0,
 					'file_restrict_filesize' => '1MB',
 					'file_type'              => 'images',
-					'file_add_button'        => 'Upload Marker Icon'
+					'file_add_button'        => __( 'Upload Marker Icon', 'pods' ),
 				)
 			)
 		);

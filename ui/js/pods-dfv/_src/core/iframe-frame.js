@@ -29,7 +29,6 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 		this.on( 'title:render', function ( view ) {
 			view.$el.append( '<span class="dashicons dashicons-arrow-down"></span>' );
 		} );
-
 	},
 
 	initState: function () {
@@ -60,6 +59,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 		if ( !this.state() && this.options.state ) {
 			this.setState( this.options.state );
 		}
+
 		/**
 		 * call 'render' directly on the parent class
 		 */

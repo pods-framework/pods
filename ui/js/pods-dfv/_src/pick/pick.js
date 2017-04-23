@@ -23,6 +23,8 @@ const views = {
 	'list'    : ListView
 };
 
+let modalIFrame;
+
 /**
  * @extends Backbone.View
  */
@@ -33,6 +35,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		list  : '.pods-pick-values',
 		addNew: '.pods-ui-add-new'
 	},
+
+	ui: {
+		selectFromExisting: 'a.dfv-list-select'
+	},
+
+	triggers: {
+		'click @ui.selectFromExisting': 'select:from:existing:click'
+	},
+
+	inSelectFromExisting: false,
 
 	/**
 	 *
@@ -68,15 +80,33 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 */
+	onSelectFromExistingClick: function () {
+		let view;
+
+		this.inSelectFromExisting = !this.inSelectFromExisting;
+
+		if ( this.inSelectFromExisting ) {
+			view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
+		}
+		else {
+			view = new ListView( { collection: this.collection, fieldModel: this.model } );
+		}
+
+		this.showChildView( 'list', view );
+	},
+
+	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
 	 * @param args
 	 */
-	onChildviewRemoveItemClick: function ( childView, args ) {
-		const list = this.childView( 'list' );
+	onChildviewRemoveItemClick: function ( childView ) {
+		const list = this.getChildView( 'list' );
 
-		args.model.toggleSelected();
+		childView.model.toggleSelected();
 		list.render();
 	},
 
@@ -87,17 +117,39 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		const modalFrame = new IframeFrame( {
-			title: PodsI18n.__( 'The Title' ),
+			title: fieldConfig.iframe_title,
 			src  : fieldConfig.iframe_src
 		} );
-		modalFrame.modal.open();
+
+		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+
+		modalIFrame.modal.open();
 	},
 
 	/**
-	 * @param response
+	 * @param childView
 	 */
-	addNewSuccess: function ( response ) {
-		console.log( response );
+	onChildviewEditClick: function ( childView ) {
+		const fieldConfig = this.model.get( 'fieldConfig' );
+
+		const modalFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title,
+			src  : fieldConfig.iframe_src
+		} );
+
+		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+
+		modalIFrame.modal.open();
+	},
+
+	/**
+	 * @param event
+	 * @param data
+	 */
+	modalSuccess: function ( event, data ) {
+		this.collection.add( data );
+
+		modalIFrame.modal.close();
 	}
 
 } );

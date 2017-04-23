@@ -284,6 +284,10 @@ div.pods-manage-field div {
     zoom: 1;
 }
 
+div.pods-manage-field .description {
+    clear: both;
+}
+
 div.pods-manage-field .pods-field-option,
 div.pods-manage-field .pods-field-option-group {
     background: #fcfcfc;

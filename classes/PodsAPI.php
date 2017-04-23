@@ -8351,6 +8351,15 @@ class PodsAPI {
 
         $id = $this->save_pod_item( $params );
 
+	    /**
+	     * Fires after the form has been processed and save_pod_item has run.
+	     *
+	     * @param int       $id     Item ID.
+	     * @param array     $params save_pod_item parameters.
+	     * @param null|Pods $obj    Pod object (if set).
+	     */
+        do_action( 'pods_api_process_form', $id, $params, $obj );
+
         if ( 0 < $id && !empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 

@@ -147,7 +147,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param data
 	 */
 	modalSuccess: function ( event, data ) {
-		this.collection.add( data );
+		const itemModel = this.collection.get( data.id );
+
+		if ( itemModel ) {
+			// Edit: update an existing model and force a re-render
+			itemModel.set( data );
+			this.getChildView( 'list' ).render();
+		} else {
+			// Add new: create a new model in the collection
+			this.collection.add( data );
+		}
 
 		modalIFrame.modal.close();
 	}

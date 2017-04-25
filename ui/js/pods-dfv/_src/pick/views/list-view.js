@@ -14,11 +14,13 @@ export const ListItem = PodsFieldView.extend( {
 	template: _.template( template ),
 
 	ui: {
-		removeButton: '.pods-dfv-list-remove a'
+		removeButton: '.pods-dfv-list-remove a',
+		editButton:   '.pods-dfv-list-edit a'
 	},
 
 	triggers: {
-		'click @ui.removeButton': 'remove:item:click'
+		'click @ui.removeButton': 'remove:item:click',
+		'click @ui.editButton': 'edit:item:click'
 	},
 
 	templateContext: function () {

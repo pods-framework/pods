@@ -87,7 +87,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			selectFromExisting: true
 		};
 		let model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
-		let collection = this.collection.byUnselected();
+		let collection = this.collection.filterByUnselected();
 
 		let view = new SelectView( { collection: collection, fieldModel: model } );
 		this.showChildView( 'autocomplete', view );
@@ -122,7 +122,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 */
 	refreshAutocomplete: function () {
 		let autocomplete = this.getChildView( 'autocomplete' );
-		autocomplete.collection = this.collection.byUnselected();
+		autocomplete.collection = this.collection.filterByUnselected();
 		autocomplete.render();
 	},
 
@@ -185,7 +185,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		if ( childView.fieldConfig.selectFromExisting ) {
 
 			// There should only ever be a single selected item as we respond to change events as the happen
-			selectedId = childView.collection.bySelected().models[ 0 ].get( 'id' );
+			selectedId = childView.collection.filterBySelected().models[ 0 ].get( 'id' );
 
 			// Set the autocomplete selected item in the main collection
 			this.collection.get( selectedId ).set( { selected: true } );

@@ -129,12 +129,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewEditClick: function ( childView ) {
+	onChildviewEditItemClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
 			title: fieldConfig.iframe_title,
-			src  : fieldConfig.iframe_src
+			src  : childView.ui.editButton.attr( 'href' )
 		} );
 
 		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );

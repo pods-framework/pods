@@ -39,16 +39,6 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		addNew      : '.pods-ui-add-new'
 	},
 
-	ui: {
-		selectFromExisting: 'a.dfv-list-select'
-	},
-
-	triggers: {
-		'click @ui.selectFromExisting': 'select:from:existing:click'
-	},
-
-	inSelectFromExisting: false,
-
 	/**
 	 *
 	 */

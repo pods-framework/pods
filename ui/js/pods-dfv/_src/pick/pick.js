@@ -122,9 +122,8 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param childView
 	 */
 	onChildviewRemoveItemClick: function ( childView ) {
-		let list = this.getChildView( 'list' );
 		childView.model.toggleSelected();
-		list.render();
+		this.getChildView( 'list' ).render();
 
 		// Keep autocomplete in sync, removed items should now be available choices
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
@@ -169,7 +168,6 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param childView
 	 */
 	onChildviewChangeSelected: function ( childView ) {
-		let selectedId;
 
 		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {

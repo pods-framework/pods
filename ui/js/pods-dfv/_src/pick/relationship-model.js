@@ -41,7 +41,7 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 	 *
 	 * @returns {*}
 	 */
-	filterSelected: function () {
+	bySelected: function () {
 
 		// Get an array with only the selected items
 		const filtered = this.filter( function ( itemModel ) {
@@ -50,6 +50,23 @@ export const RelationshipCollection = Backbone.Collection.extend( {
 
 		// this.filter is going to return an array, so create a collection out of it
 		return new RelationshipCollection( filtered );
+	},
+
+	/**
+	 * Return a new collection containing just the unselected items in this one
+	 *
+	 * @returns {*}
+	 */
+	byUnselected: function () {
+
+		// Get an array with only the selected items
+		const filtered = this.filter( function ( itemModel ) {
+			return !( itemModel.get( 'selected' ) );
+		} );
+
+		// this.filter is going to return an array, so create a collection out of it
+		return new RelationshipCollection( filtered );
 	}
+
 } );
 

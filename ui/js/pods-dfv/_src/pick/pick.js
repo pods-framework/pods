@@ -82,8 +82,9 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 */
 	showAutocomplete: function () {
 		let fieldConfig = {
-			view_name: 'select2',
-			pick_format_type: 'multi'
+			view_name         : 'select2',
+			pick_format_type  : 'multi',
+			selectFromExisting: true
 		};
 		let model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
 		let collection = this.collection.byUnselected();
@@ -117,22 +118,27 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 */
+	refreshAutocomplete: function () {
+		let autocomplete = this.getChildView( 'autocomplete' );
+		autocomplete.collection = this.collection.byUnselected();
+		autocomplete.render();
+	},
+
+	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
 	 */
 	onChildviewRemoveItemClick: function ( childView ) {
-		let list, autocomplete;
-
-		list = this.getChildView( 'list' );
-
+		let list = this.getChildView( 'list' );
 		childView.model.toggleSelected();
 		list.render();
 
+		// Keep autocomplete in sync, removed items should now be available choices
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
-			autocomplete = this.getChildView( 'autocomplete' );
-			autocomplete.collection = this.collection.byUnselected();
-			autocomplete.render();
+			this.refreshAutocomplete();
 		}
 	},
 
@@ -166,6 +172,31 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewChangeSelected: function ( childView ) {
+		let selectedId;
+
+		// Is this an autocomplete selection for List View?
+		if ( childView.fieldConfig.selectFromExisting ) {
+
+			// There should only ever be a single selected item as we respond to change events as the happen
+			selectedId = childView.collection.bySelected().models[ 0 ].get( 'id' );
+
+			// Set the autocomplete selected item in the main collection
+			this.collection.get( selectedId ).set( { selected: true } );
+
+			// The autocomplete selected item will be removed on refresh, it's now selected in the main collection
+			// and the autocomplete list only keeps unselected items
+			this.refreshAutocomplete();
+
+			// Redraw the main list to update with the newly selected item
+			this.getChildView( 'list' ).render();
+		}
 	},
 
 	/**

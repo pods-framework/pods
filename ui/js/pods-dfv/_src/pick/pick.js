@@ -181,20 +181,9 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onChildviewChangeSelected: function ( childView ) {
 		let selectedId;
 
-		// Is this an autocomplete selection for List View?
+		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {
-
-			// There should only ever be a single selected item as we respond to change events as the happen
-			selectedId = childView.collection.filterBySelected().models[ 0 ].get( 'id' );
-
-			// Set the autocomplete selected item in the main collection
-			this.collection.get( selectedId ).set( { selected: true } );
-
-			// The autocomplete selected item will be removed on refresh, it's now selected in the main collection
-			// and the autocomplete list only keeps unselected items
 			this.refreshAutocomplete();
-
-			// Redraw the main list to update with the newly selected item
 			this.getChildView( 'list' ).render();
 		}
 	},

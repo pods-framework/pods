@@ -1184,6 +1184,15 @@ class PodsField_Pick extends PodsField {
 			$use_dashicon = true;
 		}
 
+		// Support modal editing
+		if ( ! empty( $edit_link ) ) {
+			// @todo: Replace string literal with defined constant
+			$query_args['pods_modal'] = 1;
+
+			// Add args we always need
+			$edit_link = add_query_arg( $query_args, admin_url( $edit_link ) );
+		}
+
 		$item = array(
 			'id'           => $item_id,
 			'use_dashicon' => $use_dashicon,

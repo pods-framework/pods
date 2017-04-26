@@ -120,7 +120,7 @@ class PodsField_Pick extends PodsField {
 		add_action( 'load-edit-link-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
 		add_action( 'personal_options_update', array( $this, 'admin_modal_bail_user_action' ) );
 		add_action( 'user_register', array( $this, 'admin_modal_bail_user_action' ) );
-		add_action( 'pods_api_process_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
+		add_action( 'pods_api_processed_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
 
 	}
 

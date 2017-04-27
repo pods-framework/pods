@@ -3104,7 +3104,7 @@ class PodsField_Pick extends PodsField {
 			$obj = pods( $params['pod'] );
 		}
 
-		if ( ! $obj || $obj->fetch( $id ) ) {
+		if ( ! $obj || ! $obj->fetch( $id ) ) {
 			return;
 		}
 

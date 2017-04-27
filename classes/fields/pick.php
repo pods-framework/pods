@@ -2959,6 +2959,21 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Bail to send new saved data back to our modal handler.
+	 *
+	 * @param int    $item_id
+	 * @param string $item_title
+	 * @param object $field_args
+	 */
+	public function admin_modal_bail_JSON( $item_id, $item_title, $field_args ) {
+
+		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
+		echo json_encode( $model_data, JSON_HEX_TAG );
+
+		die();
+	}
+
+	/**
 	 * Bail on Post save redirect for Admin modal.
 	 *
 	 * @param string $location The destination URL.
@@ -3121,7 +3136,7 @@ class PodsField_Pick extends PodsField {
 			),
 		);
 
-		$this->admin_modal_bail( $item_id, $item_title, $field_args );
+		$this->admin_modal_bail_JSON( $item_id, $item_title, $field_args );
 
 	}
 

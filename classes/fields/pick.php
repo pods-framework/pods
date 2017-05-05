@@ -1190,6 +1190,8 @@ class PodsField_Pick extends PodsField {
 			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
 		}
 
+		// Determine if this is a selected item
+		$selected = false;
 		if ( is_array( $args->value ) ) {
 			if ( isset( $args->value[ $item_id ] ) ) {
 				$selected = true;
@@ -1199,6 +1201,7 @@ class PodsField_Pick extends PodsField {
 		} elseif ( $item_id === $args->value ) {
 			$selected = true;
 		}
+
 		$item = array(
 			'id'           => $item_id,
 			'use_dashicon' => $use_dashicon,

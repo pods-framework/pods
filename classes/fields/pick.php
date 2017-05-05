@@ -1191,9 +1191,13 @@ class PodsField_Pick extends PodsField {
 		}
 
 		if ( is_array( $args->value ) ) {
-			$selected = ( isset( $args->value[ $item_id ] ) );
-		} else {
-			$selected = ( $args->value == $item_id );
+			if ( isset( $args->value[ $item_id ] ) ) {
+				$selected = true;
+			} elseif ( in_array( $item_id, $args->value, true ) ) {
+				$selected = true;
+			}
+		} elseif ( $item_id === $args->value ) {
+			$selected = true;
 		}
 		$item = array(
 			'id'           => $item_id,

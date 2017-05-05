@@ -1190,6 +1190,11 @@ class PodsField_Pick extends PodsField {
 			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
 		}
 
+		if ( is_array( $args->value ) ) {
+			$selected = ( isset( $args->value[ $item_id ] ) );
+		} else {
+			$selected = ( $args->value == $item_id );
+		}
 		$item = array(
 			'id'           => $item_id,
 			'use_dashicon' => $use_dashicon,
@@ -1197,7 +1202,7 @@ class PodsField_Pick extends PodsField {
 			'name'         => $item_title,
 			'edit_link'    => $edit_link,
 			'link'         => $link,
-			'selected'     => ( isset( $args->value[ $item_id ] ) ),
+			'selected'     => $selected,
 		);
 
 		return $item;

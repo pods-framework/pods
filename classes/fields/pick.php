@@ -1190,6 +1190,19 @@ class PodsField_Pick extends PodsField {
 			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
 		}
 
+		// Determine if this is a selected item
+		$selected = false;
+
+		if ( is_array( $args->value ) ) {
+			if ( isset( $args->value[ $item_id ] ) ) {
+				$selected = true;
+			} elseif ( in_array( $item_id, $args->value, true ) ) {
+				$selected = true;
+			}
+		} elseif ( $item_id === $args->value ) {
+			$selected = true;
+		}
+
 		$item = array(
 			'id'           => $item_id,
 			'use_dashicon' => $use_dashicon,
@@ -1197,7 +1210,7 @@ class PodsField_Pick extends PodsField {
 			'name'         => $item_title,
 			'edit_link'    => $edit_link,
 			'link'         => $link,
-			'selected'     => ( isset( $args->value[ $item_id ] ) ),
+			'selected'     => $selected,
 		);
 
 		return $item;
@@ -2959,6 +2972,21 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Bail to send new saved data back to our modal handler.
+	 *
+	 * @param int    $item_id
+	 * @param string $item_title
+	 * @param object $field_args
+	 */
+	public function admin_modal_bail_JSON( $item_id, $item_title, $field_args ) {
+
+		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
+		echo json_encode( $model_data, JSON_HEX_TAG );
+
+		die();
+	}
+
+	/**
 	 * Bail on Post save redirect for Admin modal.
 	 *
 	 * @param string $location The destination URL.
@@ -3104,7 +3132,7 @@ class PodsField_Pick extends PodsField {
 			$obj = pods( $params['pod'] );
 		}
 
-		if ( ! $obj || $obj->fetch( $id ) ) {
+		if ( ! $obj || ! $obj->fetch( $id ) ) {
 			return;
 		}
 
@@ -3121,7 +3149,7 @@ class PodsField_Pick extends PodsField {
 			),
 		);
 
-		$this->admin_modal_bail( $item_id, $item_title, $field_args );
+		$this->admin_modal_bail_JSON( $item_id, $item_title, $field_args );
 
 	}
 

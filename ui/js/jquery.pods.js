@@ -148,7 +148,7 @@
                 } );
             },
             submit : function () {
-                var $submitbutton;
+                var $submitbutton, id, data;
 
                 // Handle submit of form and translate to AJAX
                 $( 'form.pods-submittable' ).on( 'submit', function ( e ) {
@@ -243,32 +243,57 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
-                            if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
-                                var id = d.match( /\d*$/, '' );
 
-                                if ( 0 < id.length ) {
-                                    id = parseInt( id[ 0 ] );
-
-                                    if ( isNaN( id ) )
-                                        id = 0;
-                                }
-                                else
-                                    id = 0;
-
-                                if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d, $submittable, id );
-                                else if ( 'undefined' != typeof $submittable.data( 'location' ) )
-                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
-                                else
-                                    document.location.reload( true );
+                            // Make sure we're able to parse what was returned as data
+                            try {
+                                data = $.parseJSON( d );
                             }
-                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
+                            catch ( e ) {
+                                data = undefined;
+                            }
+
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d && undefined !== data ) {
+
+                                // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
+                                if ( 'object' === typeof data ) {
+
+                                    // Phone home with the data
+                                    window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );
+                                }
+                                else {
+                                    id = d.match( /\d*$/, '' );
+
+                                    if ( 0 < id.length ) {
+                                        id = parseInt( id[ 0 ] );
+
+                                        if ( isNaN( id ) ) {
+                                            id = 0;
+                                        }
+                                    }
+                                    else {
+                                        id = 0;
+                                    }
+
+                                    if ( 'undefined' != typeof pods_admin_submit_callback ) {
+                                        pods_admin_submit_callback( d, $submittable, id );
+                                    }
+                                    else if ( 'undefined' != typeof $submittable.data( 'location' ) ) {
+                                        document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
+                                    }
+                                    else {
+                                        document.location.reload( true );
+                                    }
+                                }
+                            }
+                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) ) {
                                 document.location.href = $submittable.data( 'error-location' );
+                            }
                             else {
                                 var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
 
-                                if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                     pods_admin_submit_error_callback( err_msg, $submittable );
+                                }
                                 else {
                                     alert( 'Error: ' + err_msg );
                                     if ( window.console ) console.log( err_msg );
@@ -288,8 +313,9 @@
                         error : function () {
                             var err_msg = 'Unable to process request, please try again.';
 
-                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                 pods_admin_submit_error_callback( err_msg, $submittable );
+                            }
                             else {
                                 alert( 'Error: ' + err_msg );
                                 if ( window.console ) console.log( err_msg );

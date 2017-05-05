@@ -1192,6 +1192,7 @@ class PodsField_Pick extends PodsField {
 
 		// Determine if this is a selected item
 		$selected = false;
+
 		if ( is_array( $args->value ) ) {
 			if ( isset( $args->value[ $item_id ] ) ) {
 				$selected = true;

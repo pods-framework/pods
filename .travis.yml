@@ -15,6 +15,8 @@ matrix:
      - env: WP_VERSION=nightly WP_MULTISITE=0
 
     include:
+    - php: 7.2
+      env: WP_VERSION=latest WP_MULTISITE=0
     - php: 7.1
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm

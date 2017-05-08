@@ -864,6 +864,12 @@ class PodsField_Pick extends PodsField {
 			$options['view_name'] = $format_type;
 		}
 
+		// Only allow modal new/edit one level deep
+		if ( pods_is_modal_window() ) {
+			$options[ $args->type . '_allow_add_new' ] = false;
+			$options[ $args->type . '_show_edit_link' ] = false;
+		}
+
 		$options[ $args->type . '_limit' ] = $limit;
 
 		return $options;

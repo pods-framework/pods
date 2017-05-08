@@ -1,7 +1,9 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 import template from '~/ui/js/pods-dfv/_src/pick/pick-layout.html';
 
+import {PodsDFVFieldModel} from '~/ui/js/pods-dfv/_src/core/pods-field-model';
 import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+
 import {IframeFrame} from '~/ui/js/pods-dfv/_src/core/iframe-frame';
 
 import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
@@ -32,19 +34,10 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	template: _.template( template ),
 
 	regions: {
-		list  : '.pods-pick-values',
-		addNew: '.pods-ui-add-new'
+		autocomplete: '.pods-ui-list-autocomplete',
+		list        : '.pods-pick-values',
+		addNew      : '.pods-ui-add-new'
 	},
-
-	ui: {
-		selectFromExisting: 'a.dfv-list-select'
-	},
-
-	triggers: {
-		'click @ui.selectFromExisting': 'select:from:existing:click'
-	},
-
-	inSelectFromExisting: false,
 
 	/**
 	 *
@@ -59,9 +52,42 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 */
 	onRender: function () {
-		let viewName, View, list, addNew;
-
 		this.fieldConfig = new PickFieldModel( this.model.get( 'fieldConfig' ) );
+
+		// Autocomplete?
+		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
+			this.showAutocomplete();
+		}
+
+		this.showList();
+
+		// Add New?
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
+			this.showAddNew();
+		}
+	},
+
+	/**
+	 *
+	 */
+	showAutocomplete: function () {
+		let fieldConfig = {
+			view_name         : 'select2',
+			pick_format_type  : 'multi',
+			selectFromExisting: true
+		};
+		let model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
+		let collection = this.collection.filterByUnselected();
+
+		let view = new SelectView( { collection: collection, fieldModel: model } );
+		this.showChildView( 'autocomplete', view );
+	},
+
+	/**
+	 *
+	 */
+	showList: function () {
+		let viewName, View, list;
 
 		// Setup the view to be used
 		viewName = this.fieldConfig.get( 'view_name' );
@@ -71,43 +97,38 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		View = views[ viewName ];
 		list = new View( { collection: this.collection, fieldModel: this.model } );
 		this.showChildView( 'list', list );
-
-		// Show Add New?
-		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
-			addNew = new AddNew( { fieldModel: this.model } );
-			this.showChildView( 'addNew', addNew );
-		}
 	},
 
 	/**
 	 *
 	 */
-	onSelectFromExistingClick: function () {
-		let view;
+	showAddNew: function () {
+		let addNew = new AddNew( { fieldModel: this.model } );
+		this.showChildView( 'addNew', addNew );
+	},
 
-		this.inSelectFromExisting = !this.inSelectFromExisting;
-
-		if ( this.inSelectFromExisting ) {
-			view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
-		}
-		else {
-			view = new ListView( { collection: this.collection, fieldModel: this.model } );
-		}
-
-		this.showChildView( 'list', view );
+	/**
+	 *
+	 */
+	refreshAutocomplete: function () {
+		let autocomplete = this.getChildView( 'autocomplete' );
+		autocomplete.collection = this.collection.filterByUnselected();
+		autocomplete.render();
 	},
 
 	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
-	 * @param args
 	 */
 	onChildviewRemoveItemClick: function ( childView ) {
-		const list = this.getChildView( 'list' );
-
 		childView.model.toggleSelected();
-		list.render();
+		this.getChildView( 'list' ).render();
+
+		// Keep autocomplete in sync, removed items should now be available choices
+		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
+			this.refreshAutocomplete();
+		}
 	},
 
 	/**
@@ -143,6 +164,19 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewChangeSelected: function ( childView ) {
+
+		// Refresh the autocomplete and List View lists on autocomplete selection
+		if ( childView.fieldConfig.selectFromExisting ) {
+			this.refreshAutocomplete();
+			this.getChildView( 'list' ).render();
+		}
+	},
+
+	/**
 	 * @param event
 	 * @param data
 	 */
@@ -153,7 +187,8 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			// Edit: update an existing model and force a re-render
 			itemModel.set( data );
 			this.getChildView( 'list' ).render();
-		} else {
+		}
+		else {
 			// Add new: create a new model in the collection
 			this.collection.add( data );
 		}

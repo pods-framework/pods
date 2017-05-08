@@ -1775,15 +1775,16 @@ class PodsField_Pick extends PodsField {
 			'limit'       => 0,
 		), $object_params );
 
-		$name        = $object_params['name'];
-		$value       = $object_params['value'];
-		$options     = $object_params['options'] = (array) $object_params['options'];
-		$pod         = $object_params['pod'];
-		$id          = $object_params['id'];
-		$context     = $object_params['context'];
-		$data_params = $object_params['data_params'] = (array) $object_params['data_params'];
-		$page        = min( 1, (int) $object_params['page'] );
-		$limit       = (int) $object_params['limit'];
+		$name         = $object_params[ 'name' ];
+		$value        = $object_params[ 'value' ];
+		$options      = $object_params[ 'options' ] = (array) $object_params[ 'options' ];
+		$pod          = $object_params[ 'pod' ];
+		$id           = $object_params[ 'id' ];
+		$context      = $object_params[ 'context' ];
+		$data_params  = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
+		$page         = min( 1, (int) $object_params[ 'page' ] );
+		$limit        = (int) $object_params[ 'limit' ];
+		$autocomplete = false;
 
 		if ( isset( $options['options'] ) ) {
 			$options = array_merge( $options, $options['options'] );
@@ -1962,8 +1963,6 @@ class PodsField_Pick extends PodsField {
 						$params['select'] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
 					}
 				}
-
-				$autocomplete = false;
 
 				if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
 					if ( in_array( pods_v( self::$type . '_format_single', $options, 'dropdown' ), array( 'autocomplete', 'list' ) ) ) {

@@ -864,27 +864,10 @@ class PodsField_Pick extends PodsField {
 			$options['view_name'] = $format_type;
 		}
 
-		// Enforce misc option restrictions
-		$options = $this->restrict_dfv_field_options( $options, $args );
 		$options[ $args->type . '_limit' ] = $limit;
 
 		return $options;
 
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-
-	protected function restrict_dfv_field_options( $options, $args ) {
-
-		// Disallow add/edit outside the admin and when we're already in a modal
-		if ( ! is_admin() || pods_is_modal_window() ) {
-			$options[ $args->type . '_allow_add_new' ]  = false;
-			$options[ $args->type . '_show_edit_link' ] = false;
-		}
-
-		return $options;
 	}
 
 	/**
@@ -896,6 +879,12 @@ class PodsField_Pick extends PodsField {
 
 		if ( ! isset( $config['optgroup'] ) ) {
 			$config['optgroup'] = false;
+		}
+
+		// Disallow add/edit outside the admin and when we're already in a modal
+		if ( ! is_admin() || pods_is_modal_window() ) {
+			$config[ $args->type . '_allow_add_new' ]  = false;
+			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
 		$file_name  = '';

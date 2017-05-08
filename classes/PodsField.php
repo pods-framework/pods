@@ -361,29 +361,6 @@ class PodsField {
 	}
 
 	/**
-	 * @param array     $options
-	 * @param object $args {
-	 *     Field information arguments.
-	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
-	 * }
-	 *
-	 * @return array The options with any required modifications
-	 */
-
-	protected function restrict_dfv_field_options( $options, $args ) {
-
-		return $options;
-
-	}
-
-
-	/**
 	 * Build field HTML attributes for Pods DFV.
 	 *
 	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.

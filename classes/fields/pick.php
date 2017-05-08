@@ -1965,10 +1965,14 @@ class PodsField_Pick extends PodsField {
 
 				$autocomplete = false;
 
-				if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) && 'autocomplete' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
-					$autocomplete = true;
-				} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) && 'autocomplete' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
-					$autocomplete = true;
+				if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+					if ( in_array( pods_v( self::$type . '_format_single', $options, 'dropdown' ), array( 'autocomplete', 'list') ) ) {
+						$autocomplete = true;
+					}
+				} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+					if ( in_array( pods_v( self::$type . '_format_multi', $options, 'checkbox' ), array('autocomplete','list') ) ) {
+						$autocomplete = true;
+					}
 				}
 
 				$hierarchy = false;

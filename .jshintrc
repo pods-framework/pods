@@ -1,5 +1,4 @@
 {
-  "esnext": true,
   "esversion": 6,
   "mocha": true,
   "module": true,

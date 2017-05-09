@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, select2, wp */
+/*global jQuery, _, Backbone, Marionette, select2, wp, ajaxurl */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
@@ -159,16 +159,46 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * Initialize Select2, setup drag-drop reordering
 	 */
 	setupSelect2: function () {
-		const UL_TARGET = 'ul.select2-selection__rendered';
-		const SELECTED_TARGET = '.select2-selection__choice';
+		const SELECT2_DEBOUNCE_DELAY = 400;
+		const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;
+		const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
+		const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
 		const $select2 = this.$el;
-		let $ulContainer;
+		const ajaxData = this.options.fieldModel.get( 'fieldConfig' ).ajax_data;
+		let $ulContainer, select2Options;
+
+		if ( ajaxData.ajax ) {
+			select2Options = {
+				minimumInputLength: SELECT2_AJAX_MINIMUM_INPUT_LENGTH,
+				ajax: {
+					url     : ajaxurl + '?pods_ajax=1',
+					type    : 'POST',
+					dataType: 'json',
+					delay   : SELECT2_DEBOUNCE_DELAY,
+					data    : function ( params ) {
+						return {
+							_wpnonce: ajaxData._wpnonce,
+							action  : 'pods_relationship',
+							method  : 'select2',
+							pod     : ajaxData.pod,
+							field   : ajaxData.field,
+							uri     : ajaxData.uri,
+							id      : ajaxData.id,
+							query   : params.term // ToDo: term{lang}
+						};
+					},
+					results : function ( data, page ) {
+						return data;
+					}
+				}
+			};
+		}
 
 		// Initialize select2
-		$select2.select2();
+		$select2.select2( select2Options );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
-		$ulContainer = $select2.parent().find( UL_TARGET );
+		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );
 
 		// Make the list drag-drop sortable
 		$ulContainer.sortable( {
@@ -178,7 +208,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		// With select2 4.0, sortable is just reordering the UI elements.  Keep the underlying select/option list
 		// synced with the changes.  See: https://github.com/select2/select2/issues/3004
 		$ulContainer.on( 'sortstop', function () {
-			const $selected = $ulContainer.find( SELECTED_TARGET ).get().reverse();
+			const $selected = $ulContainer.find( SELECT2_SELECTED_TARGET ).get().reverse();
 
 			jQuery( $selected ).each( function () {
 				const id = jQuery( this ).data( 'data' ).id;

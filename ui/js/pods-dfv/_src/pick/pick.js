@@ -71,15 +71,21 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 *
 	 */
 	showAutocomplete: function () {
-		let fieldConfig = {
+		let fieldConfig, model, collection, view;
+
+		fieldConfig = {
+			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
 			view_name         : 'select2',
 			pick_format_type  : 'multi',
 			selectFromExisting: true
 		};
-		let model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
-		let collection = this.collection.filterByUnselected();
 
-		let view = new SelectView( { collection: collection, fieldModel: model } );
+		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
+
+		collection = this.collection.filterByUnselected();
+
+		view = new SelectView( { collection: collection, fieldModel: model } );
+
 		this.showChildView( 'autocomplete', view );
 	},
 

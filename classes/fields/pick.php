@@ -866,6 +866,25 @@ class PodsField_Pick extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $limit;
 
+		$pod_id = (int) $args->pod->pod_id;
+		$field_id = (int) $options['id'];
+		$id = (int) $args->id;
+		if ( is_user_logged_in() ) {
+			$uid = 'user_' . get_current_user_id();
+		} else {
+			$uid = @session_id();
+		}
+		$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+		$options[ 'ajax_data' ] = array(
+			'ajax'     => $ajax,
+			'pod'      => $pod_id,
+			'field'    => $field_id,
+			'id'       => $id,
+			'uri'      => $uri_hash,
+			'_wpnonce' => $field_nonce
+		);
+
 		return $options;
 
 	}

@@ -77,22 +77,14 @@
     display: inline-block;
 }
 
-.pods-form-ui-field .pods-pick-values {
+.pods-pick-values {
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
-    max-height: 220px;
+    max-height: 250px;
     overflow-y: auto;
-    margin: 5px 0;
-
+    padding: 2px 0;
 }
-
-/* the list view when scrolled would not show the borders on top and bottom. Instead give them to the outer div pods-pick-values */
-.pods-pick-values .pods-dfv-list{
-	border: none;
-	margin: 0;
-}
-
 
 /* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
 .pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {

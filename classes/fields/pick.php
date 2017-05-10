@@ -948,7 +948,8 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$config['iframe_src']   = $iframe_src;
-		$config['iframe_title'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$config['iframe_title_add'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$config['iframe_title_edit'] = sprintf( __( '%s: Edit', 'pods' ), $args->options['label'] );
 
 		return $config;
 

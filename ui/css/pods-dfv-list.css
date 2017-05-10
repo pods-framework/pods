@@ -5,6 +5,8 @@ ul.pods-dfv-list {
 	border-radius: 0;
 	border: 1px solid #dfdfdf;
 	overflow: hidden;
+	max-height: 220px;
+	overflow-y: auto;
 }
 
 ul.pods-dfv-list:empty {

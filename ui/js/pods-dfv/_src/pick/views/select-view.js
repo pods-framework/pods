@@ -166,10 +166,9 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
-		const selectionLimit = fieldConfig.pick_limit;
 		let $ulContainer, select2Options;
 
-		select2Options = {	maximumSelectionLength: selectionLimit };
+		select2Options = {	maximumSelectionLength: fieldConfig.pick_limit };
 
 		if ( ajaxData.ajax ) {
 			jQuery.extend(select2Options, {

@@ -38,8 +38,8 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 		$fields[] = $prefix . $name;
 	}
 	if ( post_type_supports( $pod_name, 'thumbnail' ) ) {
-		$fields[] = '{$prefix}post_thumbnail';
-		$fields[] = '{$prefix}post_thumbnail_url';
+		$fields[] = "{$prefix}post_thumbnail";
+		$fields[] = "{$prefix}post_thumbnail_url";
 		$sizes = get_intermediate_image_sizes();
 		foreach ( $sizes as $size ) {
 			$fields[] = "{$prefix}post_thumbnail.{$size}";

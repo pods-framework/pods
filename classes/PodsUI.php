@@ -3493,7 +3493,7 @@ class PodsUI {
 
                                 $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
-                                if ( 'title' == $attributes[ 'field_id' ] ) {
+                                if ( 'title' === $attributes[ 'field_id' ] ) {
 									$default_action = $this->do_hook( 'default_action', 'edit', $row );
 
                                     if ( $first_field ) {
@@ -3648,7 +3648,7 @@ class PodsUI {
                 </td>
 <?php
                                 }
-                                elseif ( 'date' == $attributes[ 'type' ] ) {
+                                elseif ( 'date' === $attributes[ 'type' ] ) {
                                     ?>
                                     <td class="date column-date<?php echo esc_attr( $css_classes ); ?>"><abbr title="<?php echo esc_attr( $row_value ); ?>"><?php echo $row_value; ?></abbr></td>
                                     <?php

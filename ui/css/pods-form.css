@@ -176,8 +176,11 @@ select.pods-pick-multi {
     padding: 10px 0;
 }
 
-.pods-field{
-	border-bottom: 1px solid #ececec;
+.pods-metabox tr.pods-field {
+    border-top: 1px solid #ececec;
+}
+.pods-metabox tr.pods-field:first-child {
+    border-top: 0;
 }
 
 

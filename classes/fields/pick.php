@@ -866,7 +866,12 @@ class PodsField_Pick extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $limit;
 
-		$pod_id = (int) $args->pod->pod_id;
+		if ( is_object( $args->pod ) ) {
+			$pod_id = (int) $args->pod->pod_id;
+		} else {
+			$pod_id = 0;
+		}
+
 		$field_id = (int) $options['id'];
 		$id = (int) $args->id;
 		if ( is_user_logged_in() ) {

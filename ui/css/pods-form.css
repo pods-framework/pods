@@ -97,6 +97,8 @@
 /* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
 .pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
     border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* HTML select field fix */

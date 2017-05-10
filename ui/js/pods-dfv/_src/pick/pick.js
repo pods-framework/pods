@@ -117,7 +117,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
-			title: fieldConfig.iframe_title,
+			title: fieldConfig.iframe_title_add,
 			src  : fieldConfig.iframe_src
 		} );
 
@@ -133,7 +133,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
-			title: fieldConfig.iframe_title,
+			title: fieldConfig.iframe_title_edit,
 			src  : childView.ui.editButton.attr( 'href' )
 		} );
 

@@ -164,13 +164,17 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
 		const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
 		const $select2 = this.$el;
-		const ajaxData = this.options.fieldModel.get( 'fieldConfig' ).ajax_data;
+		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
+		const ajaxData = fieldConfig.ajax_data;
+		const selectionLimit = fieldConfig.pick_limit;
 		let $ulContainer, select2Options;
 
+		select2Options = {	maximumSelectionLength: selectionLimit };
+
 		if ( ajaxData.ajax ) {
-			select2Options = {
+			jQuery.extend(select2Options, {
 				minimumInputLength: SELECT2_AJAX_MINIMUM_INPUT_LENGTH,
-				ajax: {
+				ajax              : {
 					url     : ajaxurl + '?pods_ajax=1',
 					type    : 'POST',
 					dataType: 'json',
@@ -191,7 +195,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 						return data;
 					}
 				}
-			};
+			} );
 		}
 
 		// Initialize select2

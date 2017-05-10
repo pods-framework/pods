@@ -2,7 +2,7 @@
     $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
     // Migrate pick object when saving
-    if ( 'pod' == pods_var( 'pick_object', $field ) ) {
+    if ( 'pod' == pods_v_sanitized( 'pick_object', $field ) ) {
         if ( isset( PodsMeta::$post_types[ $field[ 'pick_val' ] ] ) )
             $field[ 'pick_object' ] = 'post_type';
         elseif ( isset( PodsMeta::$taxonomies[ $field[ 'pick_val' ] ] ) )
@@ -23,9 +23,9 @@
 
     $ignored_pick_objects = apply_filters( '', array( 'table' ) );
 
-    if ( !in_array( pods_var( 'pick_object', $field ), $ignored_pick_objects ) ) {
+    if ( !in_array( pods_v_sanitized( 'pick_object', $field ), $ignored_pick_objects ) ) {
         // Set pick object
-        $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+        $field[ 'pick_object' ] = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
     }
 
     // Unset pick_val for the field to be used above
@@ -43,20 +43,20 @@
         'row' => $pods_i
     );
 ?>
-<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_var( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
+<tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_v_sanitized( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
     <th scope="row" class="check-field pods-manage-sort">
         <img src="<?php echo esc_url( PODS_URL ); ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
     </th>
     <td class="pods-manage-row-label">
         <strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
-            <?php echo esc_html( pods_var_raw( 'label', $field ) ); ?>
-        </a> <abbr title="required" class="required<?php echo esc_attr( 1 == pods_var_raw( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
+            <?php echo esc_html( pods_v( 'label', $field ) ); ?>
+        </a> <abbr title="required" class="required<?php echo esc_attr( 1 == pods_v( 'required', $field ) ? '' : ' hidden' ); ?>">*</abbr> </strong>
 
         <?php
-        if ( '__1' != pods_var( 'id', $field ) ) {
+        if ( '__1' != pods_v_sanitized( 'id', $field ) ) {
             ?>
             <span class="pods-manage-row-more">
-                        [id: <?php echo esc_html( pods_var( 'id', $field ) ); ?>]
+                        [id: <?php echo esc_html( pods_v_sanitized( 'id', $field ) ); ?>]
                     </span>
             <?php
         }
@@ -77,25 +77,25 @@
             <input type="hidden" name="field_data_json[<?php echo esc_attr( $pods_i ); ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
 
             <div class="pods-manage-field pods-dependency">
-                <input type="hidden" name="field_data[<?php echo esc_attr( $pods_i ); ?>][id]" value="<?php echo esc_attr( pods_var_raw( 'id', $field ) ); ?>" />
+                <input type="hidden" name="field_data[<?php echo esc_attr( $pods_i ); ?>][id]" value="<?php echo esc_attr( pods_v( 'id', $field ) ); ?>" />
             <div>
         </div>
     </td>
     <td class="pods-manage-row-name">
-        <a title="Edit this field" class="pods-manage-row-edit row-name" href="#edit-field"><?php echo esc_html( pods_var_raw( 'name', $field ) ); ?></a>
+        <a title="Edit this field" class="pods-manage-row-edit row-name" href="#edit-field"><?php echo esc_html( pods_v( 'name', $field ) ); ?></a>
     </td>
     <td class="pods-manage-row-type">
         <?php
             $type = 'Unknown';
 
-            if ( isset( $field_types[ pods_var( 'type', $field ) ] ) )
-                $type = $field_types[ pods_var( 'type', $field ) ][ 'label' ];
+            if ( isset( $field_types[ pods_v_sanitized( 'type', $field ) ] ) )
+                $type = $field_types[ pods_v_sanitized( 'type', $field ) ][ 'label' ];
 
-            echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_var( 'type', $field ) . ']</span>';
+            echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_v_sanitized( 'type', $field ) . ']</span>';
 
-            $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+            $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sanitized( 'pick_val', $field ), '-' );
 
-            if ( 'pick' == pods_var( 'type', $field ) && '' != pods_var( 'pick_object', $field, '' ) ) {
+            if ( 'pick' == pods_v_sanitized( 'type', $field ) && '' != pods_v_sanitized( 'pick_object', $field, '' ) ) {
                 $pick_object_name = null;
 
                 foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
@@ -121,7 +121,7 @@
                             }
                         }
                     }
-                    elseif ( pods_var( 'pick_object', $field ) == $object ) {
+                    elseif ( pods_v_sanitized( 'pick_object', $field ) == $object ) {
                         $pick_object_name = $object_label;
 
                         break;
@@ -129,10 +129,10 @@
                 }
 
                 if ( null === $pick_object_name ) {
-                    $pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_var_raw( 'pick_object', $field ) ) );
+                    $pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
 
-                    if ( 0 < strlen( pods_var_raw( 'pick_val', $field ) ) )
-                        $pick_object_name = pods_var_raw( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
+                    if ( 0 < strlen( pods_v( 'pick_val', $field ) ) )
+                        $pick_object_name = pods_v( 'pick_val', $field ) . ' (' . $pick_object_name . ')';
                 }
         ?>
             <br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>

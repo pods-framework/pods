@@ -1271,6 +1271,7 @@ class PodsMeta {
             return $form_fields;
 
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $id = null;
 
@@ -1442,6 +1443,7 @@ class PodsMeta {
      */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
 
@@ -1627,6 +1629,7 @@ class PodsMeta {
      */
     public function meta_user ( $user_id ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $user_id );
 
@@ -1815,6 +1818,7 @@ class PodsMeta {
      */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
 
@@ -1881,6 +1885,7 @@ class PodsMeta {
      */
     public function meta_comment_new ( $form_fields ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -2006,6 +2011,7 @@ class PodsMeta {
      */
     public function meta_comment ( $comment, $metabox ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );
 

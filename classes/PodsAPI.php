@@ -6973,7 +6973,7 @@ class PodsAPI {
      * @param array $field Field data array
      * @param array $pod Pod data array
      *
-     * @return array
+     * @return int[]
      *
      * @since 2.0
      *
@@ -6985,13 +6985,12 @@ class PodsAPI {
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
 
-        foreach ( $ids as $k => $id ) {
-            $ids[ $k ] = (int) $id;
-        }
+        $ids = array_map( 'absint', $ids );
 
         $ids = array_unique( array_filter( $ids ) );
 
 	    $idstring = implode( ',', $ids );
+
 	    if ( 0 != $pod_id && 0 != $field_id && isset( self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ] ) ) {
 		    // Check cache first, no point in running the same query multiple times
 		    return self::$related_item_cache[ $pod_id ][ $field_id ][ $idstring ];

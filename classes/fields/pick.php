@@ -899,10 +899,8 @@ class PodsField_Pick extends PodsField {
 		 */
 		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false );
 
-		$is_admin = is_admin();
-
 		// Disallow add/edit outside the admin and when we're already in a modal
-		if ( ( ! $is_admin && ! $show_on_front ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {
+		if ( ( ! $show_on_front && ! is_admin() ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {
 			$config[ $args->type . '_allow_add_new' ]  = false;
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}

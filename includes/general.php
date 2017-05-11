@@ -215,7 +215,7 @@ function pods_error( $error, $obj = null ) {
 
 			// die with error
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
-				wp_die( $error );
+				wp_die( $error, '', array( 'back_link' => true ) );
 			} else {
 				die( sprintf( '<e>%s</e>', $error ) );
 			}
@@ -271,7 +271,7 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     $debug = '<e>' . $debug;
 
     if ( 2 === $die )
-        wp_die( $debug );
+        wp_die( $debug, '', array( 'back_link' => true ) );
     elseif ( true === $die )
         die( $debug );
 
@@ -802,7 +802,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Pod not found</p>';
 
 	$found = 0;
-	
+
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
 	if ( ! $is_singular ) {
@@ -1860,7 +1860,7 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -1886,7 +1886,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -1932,7 +1932,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 )
 				) );
 			}
-			
+
 			if ( !pods_tableless() ) {
 				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
 					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
@@ -2076,7 +2076,7 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )

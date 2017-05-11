@@ -495,7 +495,7 @@ class PodsComponents {
 
     public function admin ( $options, $settings, $component ) {
         if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component' );
+            wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
 
         $component_label = $this->components[ $component ][ 'Name' ];
 
@@ -632,7 +632,7 @@ class PodsComponents {
 
     public function admin_ajax_settings ( $component, $params ) {
         if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component' );
+            wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
         elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
             pods_error( 'Component options method does not exist', $this );
 

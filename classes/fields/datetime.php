@@ -235,6 +235,31 @@ class PodsField_DateTime extends PodsField {
         return $schema;
     }
 
+	/**
+	 * Change the value of the field
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 *
+	 * @return mixed|null|string
+	 *
+	 * @since 2.7
+	 */
+	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		if ( pods_v( static::$type . '_allow_empty', $options, 1 ) &&
+		     in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) )
+		) {
+			$value = '';
+		}
+
+		return $value;
+
+	}
+
     /**
      * Change the way the value of the field is displayed with Pods::get
      *

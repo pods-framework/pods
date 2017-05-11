@@ -1054,9 +1054,18 @@ class PodsField_Pick extends PodsField {
 					'collection' => $this->build_dfv_field_item_data_recurse( $item_title, $args ),
 				);
 			} else {
-				$item_data[] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
+				// Key by item_id temporarily to be able to sort based on $args->value
+				$item_data[ $item_id ] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
 			}
 		}
+
+		// Maintain any saved sort order from $args->value
+		if ( is_array( $args->value ) && 1 < count( $args->value ) ) {
+			$item_data = array_replace( $args->value, $item_data );
+		}
+
+		// Convert from associative to numeric array
+		$item_data = array_values( $item_data );
 
 		return $item_data;
 

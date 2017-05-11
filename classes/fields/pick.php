@@ -1635,8 +1635,6 @@ class PodsField_Pick extends PodsField {
                         $results = $search_data->select( $params );
                     }
                 }
-                else
-                    $autocomplete = false;
 
                 if ( 'data' == $context ) {
                     self::$field_data = array(

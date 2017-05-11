@@ -1060,7 +1060,7 @@ class PodsField_Pick extends PodsField {
 		}
 
 		// Maintain any saved sort order from $args->value
-		if ( is_array( $args->value ) && 1 < count( $args->value ) ) {
+		if ( is_array( $args->value ) && 1 < count( $args->value ) && $this->is_autocomplete( $args->options ) ) {
 			$item_data = array_replace( $args->value, $item_data );
 		}
 
@@ -2026,15 +2026,7 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
-				if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
-					if ( in_array( pods_v( self::$type . '_format_single', $options, 'dropdown' ), array( 'autocomplete', 'list' ) ) ) {
-						$autocomplete = true;
-					}
-				} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
-					if ( in_array( pods_v( self::$type . '_format_multi', $options, 'checkbox' ), array( 'autocomplete', 'list' ) ) ) {
-						$autocomplete = true;
-					}
-				}
+				$autocomplete = $this->is_autocomplete( $options );
 
 				$hierarchy = false;
 
@@ -2292,6 +2284,28 @@ class PodsField_Pick extends PodsField {
 
 		return $data;
 
+	}
+
+	/**
+	 * @param array $options Field options
+	 *
+	 * @return bool
+	 */
+	public function is_autocomplete( $options ) {
+
+		$autocomplete = false;
+
+		if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+			if ( in_array( pods_v( self::$type . '_format_single', $options, 'dropdown' ), array( 'autocomplete', 'list' ) ) ) {
+				$autocomplete = true;
+			}
+		} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+			if ( in_array( pods_v( self::$type . '_format_multi', $options, 'checkbox' ), array( 'autocomplete', 'list' ) ) ) {
+				$autocomplete = true;
+			}
+		}
+
+		return $autocomplete;
 	}
 
 	/**

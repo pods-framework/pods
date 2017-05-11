@@ -290,7 +290,21 @@ class PodsInit {
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
-		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			// Deregister the outdated Pods handlebars script on TEC event screen
+			if ( $screen && 'tribe_events' === $screen->post_type ) {
+				$register_handlebars = false;
+			}
+		}
+
+		if ( $register_handlebars ) {
+			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		}
+
 	}
 
 	/**

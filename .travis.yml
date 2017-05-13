@@ -6,11 +6,9 @@ php:
     - 7.0
 
 env:
-    #- WP_VERSION=nightly WP_MULTISITE=0
-    #- WP_VERSION=latest WP_MULTISITE=0
-    #- WP_VERSION=latest WP_MULTISITE=1
-    - WP_VERSION=4.72 WP_MULTISITE=0
-    - WP_VERSION=4.73 WP_MULTISITE=0
+    - WP_VERSION=nightly WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=0
+    - WP_VERSION=latest WP_MULTISITE=1
 
 matrix:
     allow_failures:
@@ -18,17 +16,13 @@ matrix:
 
     include:
     - php: 7.1
-      env: WP_VERSION=4.72 WP_MULTISITE=0
-    - php: 7.1
-      env: WP_VERSION=4.73 WP_MULTISITE=0
-
-    #- php: hhvm
-    #  env: WP_VERSION=latest WP_MULTISITE=0
-    #- php: 5.6
-    #  env: WP_VERSION=latest WP_MULTISITE=0
-    #- php: 5.3
-    #  env: WP_VERSION=4.0 WP_MULTISITE=0
-
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: hhvm
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.6
+      env: WP_VERSION=latest WP_MULTISITE=0
+    - php: 5.3
+      env: WP_VERSION=4.0 WP_MULTISITE=0
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
     # MySQL 8.0

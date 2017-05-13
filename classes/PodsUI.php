@@ -1995,7 +1995,7 @@ class PodsUI {
     }
 
 	/**
-     * Callback for exporting items in bulk
+	 * Callback for exporting items in bulk
 	 */
 	public function export_bulk() {
 
@@ -2003,40 +2003,41 @@ class PodsUI {
 			if ( ! empty( $_POST['bulk_export_fields'] ) ) {
 				$export_fields = $_POST['bulk_export_fields'];
 
-                $this->fields['export'] = array();
+				$this->fields['export '] = array();
 
-                if ( $this->pod ) {
-                    $fields = $this->pod->fields();
+				if ( $this->pod ) {
+					$fields = $this->pod->fields();
 
-                    foreach ( $fields as $field ) {
-                        if ( in_array( $field['name'], $export_fields ) ) {
-                            $this->fields['export'][] = $field;
-                        }
-                    }
-                }
+					foreach ( $fields as $field ) {
+						if ( in_array( $field['name'], $export_fields ) ) {
+							$this->fields['export'][] = $field;
+						}
+					}
+				}
 			}
 
 			// Set up where clause so that export function finds it
-            if ( ! empty( $_POST['action_bulk_ids'] ) ) {
-                $ids = (array) explode(',', $_POST['action_bulk_ids']);
-                $ids = array_map( 'absint', $ids );
-                $ids = array_filter( $ids );
+			if ( ! empty( $_POST['action_bulk_ids'] ) ) {
+				$ids = (array) explode( ',', $_POST['action_bulk_ids'] );
+				$ids = array_map( 'absint', $ids );
+				$ids = array_filter( $ids );
 
-                if ( ! empty( $ids ) ) {
-                    $ids = implode( ', ', $ids );
+				if ( ! empty( $ids ) ) {
+					$ids = implode( ', ', $ids );
 
-                    $this->where = array(
-                        'manage' => '`' . pods_sanitize( $this->sql['field_id'] ) . '` IN ( ' . $ids . ' )',
-                    );
-                }
-            }
+					$this->where = array(
+						'manage' => '`' . pods_sanitize( $this->sql['field_id'] ) . '` IN ( ' . $ids . ' )',
+					);
+				}
+			}
 
 			$this->export( $_POST['bulk_export_type'] );
 
 			// Cleanup since export function calls get_data before returning
 			$this->action_bulk = '';
-			$this->where = array();
-			$this->data  = false;
+			$this->where       = array();
+			$this->data        = false;
+
 			$_GET['action_bulk_ids'] = '';
 
 			$this->manage();

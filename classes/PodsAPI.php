@@ -8322,9 +8322,9 @@ class PodsAPI {
         $id = $this->save_pod_item( $params );
 
         // Always return $id for AJAX requests.
-	    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-		    return $id;
-	    }
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            return $id;
+        }
 
         if ( 0 < $id && ! empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );

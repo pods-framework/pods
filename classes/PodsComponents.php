@@ -24,7 +24,7 @@ class PodsComponents {
     /**
      * Available components
      *
-     * @var string
+     * @var array
      *
      * @since 2.0
      */
@@ -33,7 +33,7 @@ class PodsComponents {
     /**
      * Components settings
      *
-     * @var string
+     * @var array
      *
      * @since 2.0
      */
@@ -523,26 +523,41 @@ class PodsComponents {
 
     }
 
-    /**
-     * Activate a component
-     *
-     * @param string $component The component name to activate
-     *
-     * @since 2.7
-     */
-    public function activate_component( $component ) {
+	/**
+	 * Activate a component
+	 *
+	 * @param string $component The component name to activate
+	 *
+	 * @return boolean Whether the component was activated.
+	 *
+	 * @since 2.7
+	 */
+	public function activate_component( $component ) {
 
-        if ( ! $this->is_component_active( $component ) ) {
-            if ( isset( $this->components[ $component ] ) ) {
-                $this->settings[ 'components' ][ $component ] = array();
+		$activated = false;
 
-                $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+		if ( ! $this->is_component_active( $component ) ) {
+			if ( empty( $this->components ) ) {
+				// Setup components
+				PodsInit::$components->get_components();
+			}
 
-                update_option( 'pods_component_settings', $settings );
-            }
-        }
+			if ( isset( $this->components[ $component ] ) ) {
+				$this->settings['components'][ $component ] = array();
 
-    }
+				$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+				update_option( 'pods_component_settings', $settings );
+
+				$activated = true;
+			}
+		} else {
+			$activated = true;
+		}
+
+		return $activated;
+
+	}
 
     /**
      * Deactivate a component

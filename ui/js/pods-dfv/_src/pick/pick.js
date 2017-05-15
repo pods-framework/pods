@@ -68,7 +68,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
-	 *
+	 * This is for the List View's autocomplete for select from existing
 	 */
 	showAutocomplete: function () {
 		let fieldConfig, model, collection, view;
@@ -81,10 +81,11 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		};
 
 		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
-
 		collection = this.collection.filterByUnselected();
-
 		view = new SelectView( { collection: collection, fieldModel: model } );
+
+		// Provide a custom list filter for the autocomplete portion's AJAX data lists
+		view.filterAjaxList = this.filterAjaxList.bind( this );
 
 		this.showChildView( 'autocomplete', view );
 	},
@@ -116,10 +117,29 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 *
 	 */
-	refreshAutocomplete: function () {
+	refreshAutocomplete: function ( newCollection ) {
 		let autocomplete = this.getChildView( 'autocomplete' );
-		autocomplete.collection = this.collection.filterByUnselected();
+		autocomplete.collection = newCollection;
 		autocomplete.render();
+	},
+
+	/**
+	 * List Views need to filter items already selected from their select from existing list.  The AJAX function
+	 * itself does not filter.
+	 *
+	 * @param data
+	 */
+	filterAjaxList: function( data ) {
+		const selectedItems = this.collection.filterBySelected();
+		const returnList = [];
+
+		_.each( data.results, function ( element, index, list ) {
+			if ( ! selectedItems.get( element.id ) ) {
+				returnList.push( element );
+			}
+		} );
+
+		return { 'results': returnList };
 	},
 
 	/**
@@ -133,7 +153,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Keep autocomplete in sync, removed items should now be available choices
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
-			this.refreshAutocomplete();
+			this.refreshAutocomplete( this.collection.filterByUnselected() );
 		}
 	},
 
@@ -177,7 +197,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {
-			this.refreshAutocomplete();
+			this.refreshAutocomplete( this.collection.filterByUnselected() );
 			this.getChildView( 'list' ).render();
 		}
 	},

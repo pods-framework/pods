@@ -407,7 +407,7 @@ class PodsInit {
 
 			$pods_post_types      = $pods_taxonomies = array();
 			$supported_post_types = $supported_taxonomies = array();
-			
+
 			$post_format_post_types = array();
 
 			foreach ( $post_types as $post_type ) {
@@ -502,7 +502,7 @@ class PodsInit {
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
 						$cpt_supports[] = $cpt_support;
-						
+
 						if ( 'post-formats' === $cpt_support ) {
 							$post_format_post_types[] = $post_type_name;
 						}
@@ -783,7 +783,7 @@ class PodsInit {
 
 				$pods_cpt_ct['post_types'][ $post_type ] = $options;
 			}
-			
+
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );

@@ -8280,7 +8280,7 @@ class PodsAPI {
             $id = $obj->id();
         }
 
-        if ( !empty( $fields ) ) {
+        if ( ! empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
@@ -8321,7 +8321,12 @@ class PodsAPI {
 
         $id = $this->save_pod_item( $params );
 
-        if ( 0 < $id && !empty( $thank_you ) ) {
+        // Always return $id for AJAX requests.
+	    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+		    return $id;
+	    }
+
+        if ( 0 < $id && ! empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
             pods_redirect( $thank_you );

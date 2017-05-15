@@ -3014,7 +3014,8 @@ class Pods implements Iterator {
 			'id' => $id,
 			'fields' => null,
 			'depth' => 2,
-			'flatten' => false
+			'flatten' => false,
+			'context' => null,
 		);
 
 		if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
@@ -3989,6 +3990,6 @@ class Pods implements Iterator {
 		}
 
 		return $string;
-		
+
 	}
 }

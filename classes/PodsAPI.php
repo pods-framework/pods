@@ -4353,19 +4353,19 @@ class PodsAPI {
                 return false;
         }
 
-        $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
-        $depth = (int) pods_var_raw( 'depth', $params, 2, null, true );
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
-        $flatten = (boolean) pods_var( 'flatten', $params, false, null, true );
+        $params['fields'] = (array) pods_v( 'fields', $params, array(), true );
+        $params['depth'] = (int) pods_v( 'depth', $params, 2, true );
+        $params['object_fields'] = (array) pods_v( 'object_fields', $pod->pod_data, array(), true );
+        $params['flatten'] = (boolean) pods_v( 'flatten', $params, false, true );
+        $params['context'] = pods_v( 'context', $params, null, true );
 
-        if ( empty( $fields ) ) {
-            $fields = $pod->fields;
-            $fields = array_merge( $fields, $object_fields );
+        if ( empty( $params['fields'] ) ) {
+            $params['fields'] = array_merge( $pod->fields, $params['object_fields'] );
         }
 
-        $data = $this->export_pod_item_level( $pod, $fields, $depth, $flatten );
+        $data = $this->export_pod_item_level( $pod, $params );
 
-        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $fields, $depth, $flatten );
+        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $params['fields'], $params['depth'], $params['flatten'], $params );
 
         return $data;
     }
@@ -4374,22 +4374,35 @@ class PodsAPI {
      * Export a pod item by depth level
      *
      * @param Pods $pod Pods object
-     * @param array $fields Fields to export
-     * @param int $depth Depth limit
-     * @param boolean $flatten Whether to flatten arrays for display
-     * @param int $current_depth Current depth level
+     * @param array $params Export params
      *
      * @return array Data array
      *
      * @since 2.3
      */
-    private function export_pod_item_level ( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
+    private function export_pod_item_level ( $pod, $params ) {
+	    $fields        = $params['fields'];
+	    $depth         = $params['depth'];
+	    $flatten       = $params['flatten'];
+	    $current_depth = pods_v( 'current_depth', $params, 1, true );
+	    $context       = $params['context'];
+
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+        $object_fields = (array) pods_v( 'object_fields', $pod->pod_data, array(), true );
 
         $export_fields = array();
+
+		$pod_type = $pod->pod_data['type'];
+
+		if ( 'post_type' === $pod_type ) {
+			$pod_type = 'post';
+		} elseif ( 'taxonomy' === $pod_type ) {
+			$pod_type = 'term';
+		}
+
+		$registered_meta_keys = get_registered_meta_keys( $pod_type );
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
@@ -4400,6 +4413,14 @@ class PodsAPI {
             }
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
+	            if ( 'rest' === $context ) {
+		            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
+			            continue;
+		            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {
+			            continue;
+		            }
+	            }
+
                 $field = $pod->fields[ $field[ 'name' ] ];
                 $field[ 'lookup_name' ] = $field[ 'name' ];
 
@@ -4460,9 +4481,17 @@ class PodsAPI {
 
                         foreach ( $related_ids as $related_id ) {
                             if ( $related_pod->fetch( $related_id ) ) {
-                                $related_item = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+	                            $related_params = array(
+		                            'related_fields' => $related_fields,
+		                            'depth'          => $depth,
+		                            'flatten'        => $flatten,
+		                            'current_depth'  => $current_depth + 1,
+		                            'context'        => $context,
+	                            );
 
-                                $related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                                $related_item = $this->export_pod_item_level( $related_pod, $related_params );
+
+                                $related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
                             }
                         }
 

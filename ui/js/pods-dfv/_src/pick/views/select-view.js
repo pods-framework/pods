@@ -3,6 +3,11 @@
 import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
 
+const SELECT2_DEBOUNCE_DELAY = 300;
+const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;
+const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
+const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
+
 /**
  * option
  *
@@ -156,13 +161,20 @@ export const SelectView = Marionette.CollectionView.extend( {
 	},
 
 	/**
+	 * No filtering, by default.  Consuming views can override this function to provide custom filtering
+	 * (e.g. List View needs to filter items already selected for its select from existing list)
+	 *
+	 * @param data
+	 */
+	filterAjaxList: function ( data ) {
+		return data;
+	},
+
+	/**
 	 * Initialize Select2, setup drag-drop reordering
 	 */
 	setupSelect2: function () {
-		const SELECT2_DEBOUNCE_DELAY = 400;
-		const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;
-		const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
-		const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
+		const self = this;
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
@@ -190,8 +202,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 							query   : params.term // ToDo: term{lang}
 						};
 					},
-					results : function ( data, page ) {
-						return data;
+					processResults: function ( data, params ) {
+						return self.filterAjaxList( data, params );
 					}
 				}
 			} );

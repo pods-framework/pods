@@ -179,6 +179,9 @@ final class PodsI18n {
 			'Edit' =>
 				__( 'Edit', 'pods' ),
 
+			'Search' =>
+				__( 'Search', 'pods' ),
+
 			'Navigating away from this page will discard any changes you have made.' =>
 				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 

@@ -19,7 +19,7 @@ var PodsI18n = (function () {
 			if ( typeof podsLocalizedStrings[ ref ] !== 'undefined' ) {
 				translated = podsLocalizedStrings[ ref ];
 			}
-			else if ( podsLocalizedStrings.debug == true ) {
+			else if ( podsLocalizedStrings.debug ) {
 				console.log( 'PodsI18n: String not found "' + str + '" (reference used: "' + ref + '")' );
 			}
 		}

@@ -39,49 +39,29 @@ var PodsI18n = (function () {
 		if ( ! args.length ) {
 			return str;
 		}
+		var i, s, d,
+			multi_s = ( -1 !== str.indexOf( '%1$s' ) ),
+			multi_d = ( -1 !== str.indexOf( '%1$d' ) );
 
-		if ( 1 < args.length ) {
-
-			var i, s, d,
-				multi_s = ( -1 !== str.indexOf( '%1$s' ) ),
-				multi_d = ( -1 !== str.indexOf( '%1$d' ) );
-
-			for ( i=0, s=1, d=1; i < args.length; i++ ) {
-				// Only support numbers other than strings
-				if ( 'string' !== typeof args[ i ] ) {
-					if ( multi_d ) {
-						str = str.replace( "%" + d + "$d", args[ i ] );
-						d++;
-					} else {
-						str = str.replace( "%d", args[ i ] );
-					}
+		for ( i=0, s=1, d=1; i < args.length; i++ ) {
+			// Only support numbers other than strings
+			if ( 'string' !== typeof args[ i ] ) {
+				if ( multi_d ) {
+					str = str.replace( "%" + d + "$d", args[ i ] );
+					d++;
 				} else {
-					if ( multi_s ) {
-						str = str.replace( "%" + s + "$s", args[ i ] );
-						s++;
-					} else {
-						str = str.replace( "%s", args[ i ] );
-					}
-				}
-			}
-
-		} else {
-
-			if ( -1 === str.indexOf( '%1$s' ) && -1 === str.indexOf( '%1$d' ) ) {
-				if ( 'string' !== typeof args[0] ) {
-					str = str.replace( "%d", args[0] );
-				} else {
-					str = str.replace( "%s", args[0] );
+					str = str.replace( "%d", args[ i ] );
 				}
 			} else {
-				if ( 'string' !== typeof args[0] ) {
-					str = str.replace( "%1$d", args[0] );
+				if ( multi_s ) {
+					str = str.replace( "%" + s + "$s", args[ i ] );
+					s++;
 				} else {
-					str = str.replace( "%1$s", args[0] );
+					str = str.replace( "%s", args[ i ] );
 				}
 			}
-
 		}
+
 		return str;
 	};
 

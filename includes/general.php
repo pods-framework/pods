@@ -1306,7 +1306,7 @@ function pods_by_title ( $title, $output = OBJECT, $type = 'page', $status = nul
             'publish'
         );
 
-        if ( current_user_can( 'read_private_' . $type . 's') )
+        if ( current_user_can( 'read_private_' . $type . 's' ) )
             $status[] = 'private';
 
         if ( current_user_can( 'edit_' . $type . 's' ) )

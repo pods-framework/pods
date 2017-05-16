@@ -31,9 +31,18 @@ var PodsI18n = (function () {
 	 * The returned object, this is what we'll expose to the outside world
 	 */
 	return {
+		/**
+		 * @param {string} str
+		 * @returns {string}
+		 */
 		__: function ( str ) {
 			return translateString( str );
 		},
+		/**
+		 * @param {string} str
+		 * @param {array} args
+		 * @returns {string}
+		 */
 		_s: function( str, args ) {
 			str = translateString( str );
 			if ( ! args.length ) {

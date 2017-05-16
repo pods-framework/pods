@@ -36,10 +36,16 @@ var PodsI18n = (function () {
 	 * @returns {string}
 	 */
 	var sprintf = function ( str, args ) {
-		var i, s, d;
+		if ( ! args.length ) {
+			return str;
+		}
+
 		if ( 1 < args.length ) {
-			var multi_s = ( -1 !== str.indexOf( '%1$s' ) );
-			var multi_d = ( -1 !== str.indexOf( '%1$d' ) );
+
+			var i, s, d,
+				multi_s = ( -1 !== str.indexOf( '%1$s' ) ),
+				multi_d = ( -1 !== str.indexOf( '%1$d' ) );
+
 			for ( i=0, s=1, d=1; i < args.length; i++ ) {
 				// Only support numbers other than strings
 				if ( 'string' !== typeof args[ i ] ) {
@@ -58,7 +64,9 @@ var PodsI18n = (function () {
 					}
 				}
 			}
+
 		} else {
+
 			if ( -1 === str.indexOf( '%1$s' ) && -1 === str.indexOf( '%1$d' ) ) {
 				if ( 'string' !== typeof args[0] ) {
 					str = str.replace( "%d", args[0] );
@@ -72,6 +80,7 @@ var PodsI18n = (function () {
 					str = str.replace( "%1$s", args[0] );
 				}
 			}
+
 		}
 		return str;
 	};
@@ -93,11 +102,7 @@ var PodsI18n = (function () {
 		 * @returns {string}
 		 */
 		_s: function( str, args ) {
-			str = translateString( str );
-			if ( ! args.length ) {
-				return str;
-			}
-			return sprintf( str, args );
+			return sprintf( PodsI18n.__( str ), args );
 		}
 	};
 

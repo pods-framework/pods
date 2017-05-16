@@ -214,7 +214,7 @@
                     if ( 'undefined' !== typeof postdata.method ) {
 	                    if ( 'save_pod' === postdata.method ) {
 	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
-		                        alert( PodsI18n.__( 'Not all field data is saved' ) );
+		                        alert( PodsI18n.__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' ) );
 		                        valid_form = false;
 	                        }
 	                    }

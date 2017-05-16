@@ -210,6 +210,16 @@
                         }
                     } );
 
+                    // Check for unsaved open fields. (separate if's to prevent possible unneeded jQuery selector)
+                    if ( 'undefined' !== typeof postdata.method ) {
+	                    if ( 'save_pod' === postdata.method ) {
+	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
+		                        alert( PodsI18n.__( 'Not all field data is saved' ) );
+		                        valid_form = false;
+	                        }
+	                    }
+                    }
+
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
 

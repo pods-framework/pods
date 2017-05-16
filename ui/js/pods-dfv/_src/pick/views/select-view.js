@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, select2, wp, ajaxurl */
+/*global jQuery, _, Backbone, Marionette, select2, wp, ajaxurl, PodsI18n */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
@@ -180,17 +180,21 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const ajaxData = fieldConfig.ajax_data;
 		let $ulContainer, select2Options;
 
-		select2Options = {	maximumSelectionLength: fieldConfig.pick_limit };
+		select2Options = {
+			maximumSelectionLength: fieldConfig.pick_limit,
+			placeholder           : `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`,
+			allowClear            : false
+		};
 
 		if ( ajaxData.ajax ) {
-			jQuery.extend(select2Options, {
+			jQuery.extend( select2Options, {
 				minimumInputLength: SELECT2_AJAX_MINIMUM_INPUT_LENGTH,
 				ajax              : {
-					url     : ajaxurl + '?pods_ajax=1',
-					type    : 'POST',
-					dataType: 'json',
-					delay   : SELECT2_DEBOUNCE_DELAY,
-					data    : function ( params ) {
+					url           : ajaxurl + '?pods_ajax=1',
+					type          : 'POST',
+					dataType      : 'json',
+					delay         : SELECT2_DEBOUNCE_DELAY,
+					data          : function ( params ) {
 						return {
 							_wpnonce: ajaxData._wpnonce,
 							action  : 'pods_relationship',

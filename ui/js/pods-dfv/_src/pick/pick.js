@@ -75,6 +75,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		fieldConfig = {
 			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
+			label             : this.fieldConfig.get( 'label' ),
 			view_name         : 'select2',
 			pick_format_type  : 'multi',
 			selectFromExisting: true

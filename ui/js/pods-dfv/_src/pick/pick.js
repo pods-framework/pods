@@ -56,7 +56,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Autocomplete?
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
-			this.showAutocomplete();
+			this.buildAutocomplete();
 		}
 
 		this.showList();
@@ -70,16 +70,23 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * This is for the List View's autocomplete for select from existing
 	 */
-	showAutocomplete: function () {
+	buildAutocomplete: function () {
 		let fieldConfig, model, collection, view;
+		const pick_limit = +this.fieldConfig.get( 'pick_limit' ); // Unary plus forces cast to number
 
 		fieldConfig = {
-			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
-			label             : this.fieldConfig.get( 'label' ),
 			view_name         : 'select2',
 			pick_format_type  : 'multi',
-			selectFromExisting: true
+			selectFromExisting: true,
+			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
+			label             : this.fieldConfig.get( 'label' ),
+			pick_limit        : this.fieldConfig.get( 'pick_limit' )
 		};
+
+		// The autocomplete portion of List View doesn't track selected items; disable if we're at the selection limit
+		if ( this.collection.filterBySelected().length >= pick_limit && 0 !== pick_limit ) {
+			fieldConfig.limitDisable = true;
+		}
 
 		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
 		collection = this.collection.filterByUnselected();
@@ -87,6 +94,11 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Provide a custom list filter for the autocomplete portion's AJAX data lists
 		view.filterAjaxList = this.filterAjaxList.bind( this );
+
+		// Destroy any existing view and rebuild from scratch
+		if ( this.getChildView( 'autocomplete' ) ) {
+			this.getChildView( 'autocomplete' ).destroy();
+		}
 
 		this.showChildView( 'autocomplete', view );
 	},
@@ -116,21 +128,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
-	 *
-	 */
-	refreshAutocomplete: function ( newCollection ) {
-		let autocomplete = this.getChildView( 'autocomplete' );
-		autocomplete.collection = newCollection;
-		autocomplete.render();
-	},
-
-	/**
 	 * List Views need to filter items already selected from their select from existing list.  The AJAX function
 	 * itself does not filter.
 	 *
 	 * @param data
 	 */
-	filterAjaxList: function( data ) {
+	filterAjaxList: function ( data ) {
 		const selectedItems = this.collection.filterBySelected();
 		const returnList = [];
 
@@ -154,7 +157,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Keep autocomplete in sync, removed items should now be available choices
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
-			this.refreshAutocomplete( this.collection.filterByUnselected() );
+			this.buildAutocomplete();
 		}
 	},
 
@@ -198,7 +201,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// Refresh the autocomplete and List View lists on autocomplete selection
 		if ( childView.fieldConfig.selectFromExisting ) {
-			this.refreshAutocomplete( this.collection.filterByUnselected() );
+			this.buildAutocomplete();
 			this.getChildView( 'list' ).render();
 		}
 	},

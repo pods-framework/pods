@@ -178,12 +178,19 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
-		let $ulContainer, select2Options;
+		let $ulContainer, select2Options, placeholder;
+
+		if ( fieldConfig.limitDisable ) {
+			placeholder = ` ${fieldConfig.pick_limit} ${PodsI18n.__( 'item limit' )}`;
+		} else {
+			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`
+		}
 
 		select2Options = {
 			maximumSelectionLength: fieldConfig.pick_limit,
-			placeholder           : `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`,
-			allowClear            : false
+			placeholder           : placeholder,
+			allowClear            : false,
+			disabled              : fieldConfig.limitDisable
 		};
 
 		if ( ajaxData.ajax ) {

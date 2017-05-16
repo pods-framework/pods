@@ -45,8 +45,10 @@ var PodsI18n = (function () {
 					str = str.replace( "%" + c + "$s", args[ i ] );
 				}
 			} else {
-				for ( i=0; i < args.length; i++ ) {
-					str = str.replace( "%s", args[ i ] );
+				if ( -1 === str.indexOf( '%1$s' ) ) {
+					str = str.replace( "%s", args[0] );
+				} else {
+					str = str.replace( "%1$s", args[0] );
 				}
 			}
 			return str;

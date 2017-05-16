@@ -81,7 +81,7 @@
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     min-width: 125px;
-    max-height: 220px;
+    max-height: 250px;
     overflow-y: auto;
     padding: 2px 0;
 }
@@ -90,6 +90,8 @@
 .pods-form-ui-field .pods-pick-values,
 .pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
     border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* HTML select field fix */
@@ -168,6 +170,14 @@ select.pods-pick-multi {
 .pods-field, p.pods-add-file {
     padding: 10px 0;
 }
+
+.pods-metabox tr.pods-field {
+    border-top: 1px solid #ececec;
+}
+.pods-metabox tr.pods-field:first-child {
+    border-top: 0;
+}
+
 
 div.pods-textfield input,
 .pods-textarea textarea {

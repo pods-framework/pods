@@ -8358,7 +8358,7 @@ class PodsAPI {
 	     * @param array     $params save_pod_item parameters.
 	     * @param null|Pods $obj    Pod object (if set).
 	     */
-        do_action( 'pods_api_process_form', $id, $params, $obj );
+        do_action( 'pods_api_processed_form', $id, $params, $obj );
 
         if ( 0 < $id && !empty( $thank_you ) ) {
             $thank_you = str_replace( 'X_ID_X', $id, $thank_you );

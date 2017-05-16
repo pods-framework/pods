@@ -303,7 +303,20 @@ class PodsInit {
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.css', array(), '4.0.3' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '4.0.3' );
 
-		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			// Deregister the outdated Pods handlebars script on TEC event screen
+			if ( $screen && 'tribe_events' === $screen->post_type ) {
+				$register_handlebars = false;
+			}
+		}
+
+		if ( $register_handlebars ) {
+			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		}
 
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
@@ -325,7 +338,9 @@ class PodsInit {
 			PODS_VERSION,
 			true
 		);
+
 		wp_register_style( 'pods-dfv-list', PODS_URL . 'ui/css/pods-dfv-list.css', array(), PODS_VERSION );
+
 	}
 
 	/**
@@ -428,7 +443,7 @@ class PodsInit {
 
 			$pods_post_types      = $pods_taxonomies = array();
 			$supported_post_types = $supported_taxonomies = array();
-			
+
 			$post_format_post_types = array();
 
 			foreach ( $post_types as $post_type ) {
@@ -536,7 +551,7 @@ class PodsInit {
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
 						$cpt_supports[] = $cpt_support;
-						
+
 						if ( 'post-formats' === $cpt_support ) {
 							$post_format_post_types[] = $post_type_name;
 						}
@@ -824,7 +839,7 @@ class PodsInit {
 
 				$pods_cpt_ct['post_types'][ $post_type ] = $options;
 			}
-			
+
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );

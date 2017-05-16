@@ -116,12 +116,12 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onChildviewAddNewClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
-		const modalFrame = new IframeFrame( {
-			title: fieldConfig.iframe_title,
+		modalIFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title_add,
 			src  : fieldConfig.iframe_src
 		} );
 
-		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
 	},
@@ -129,15 +129,15 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewEditClick: function ( childView ) {
+	onChildviewEditItemClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
-		const modalFrame = new IframeFrame( {
-			title: fieldConfig.iframe_title,
-			src  : fieldConfig.iframe_src
+		modalIFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title_edit,
+			src  : childView.ui.editButton.attr( 'href' )
 		} );
 
-		jQuery( window ).once( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
 	},
@@ -147,7 +147,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param data
 	 */
 	modalSuccess: function ( event, data ) {
-		this.collection.add( data );
+		const itemModel = this.collection.get( data.id );
+
+		if ( itemModel ) {
+			// Edit: update an existing model and force a re-render
+			itemModel.set( data );
+			this.getChildView( 'list' ).render();
+		} else {
+			// Add new: create a new model in the collection
+			this.collection.add( data );
+		}
 
 		modalIFrame.modal.close();
 	}

@@ -119,8 +119,8 @@ class PodsField_Pick extends PodsField {
 		add_action( 'load-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
 		add_action( 'load-edit-link-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
 		add_action( 'personal_options_update', array( $this, 'admin_modal_bail_user_action' ) );
-		add_action( 'edit_user_profile_update', array( $this, 'admin_modal_bail_user_action' ) );
-		add_action( 'pods_api_process_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
+		add_action( 'user_register', array( $this, 'admin_modal_bail_user_action' ) );
+		add_action( 'pods_api_processed_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
 
 	}
 
@@ -881,6 +881,30 @@ class PodsField_Pick extends PodsField {
 			$config['optgroup'] = false;
 		}
 
+		/**
+		 * Filter on whether to allow modals to be used on the front of the site (in an non-admin area).
+		 *
+		 * @param boolean $show_on_front
+		 *
+		 * @since 2.7
+		 */
+		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false );
+
+		/**
+		 * Filter on whether to allow nested modals to be used (modals within modals).
+		 *
+		 * @param boolean $allow_nested_modals
+		 *
+		 * @since 2.7
+		 */
+		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false );
+
+		// Disallow add/edit outside the admin and when we're already in a modal
+		if ( ( ! $show_on_front && ! is_admin() ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {
+			$config[ $args->type . '_allow_add_new' ]  = false;
+			$config[ $args->type . '_show_edit_link' ] = false;
+		}
+
 		$file_name  = '';
 		$query_args = array();
 
@@ -948,7 +972,8 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$config['iframe_src']   = $iframe_src;
-		$config['iframe_title'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$config['iframe_title_add'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$config['iframe_title_edit'] = sprintf( __( '%s: Edit', 'pods' ), $args->options['label'] );
 
 		return $config;
 
@@ -1184,6 +1209,25 @@ class PodsField_Pick extends PodsField {
 			$use_dashicon = true;
 		}
 
+		// Support modal editing
+		if ( ! empty( $edit_link ) ) {
+			// @todo: Replace string literal with defined constant
+			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
+		}
+
+		// Determine if this is a selected item
+		$selected = false;
+
+		if ( is_array( $args->value ) ) {
+			if ( isset( $args->value[ $item_id ] ) ) {
+				$selected = true;
+			} elseif ( in_array( $item_id, $args->value, true ) ) {
+				$selected = true;
+			}
+		} elseif ( $item_id === $args->value ) {
+			$selected = true;
+		}
+
 		$item = array(
 			'id'           => $item_id,
 			'use_dashicon' => $use_dashicon,
@@ -1191,7 +1235,7 @@ class PodsField_Pick extends PodsField {
 			'name'         => $item_title,
 			'edit_link'    => $edit_link,
 			'link'         => $link,
-			'selected'     => ( isset( $args->value[ $item_id ] ) ),
+			'selected'     => $selected,
 		);
 
 		return $item;
@@ -2953,6 +2997,21 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
+	 * Bail to send new saved data back to our modal handler.
+	 *
+	 * @param int    $item_id
+	 * @param string $item_title
+	 * @param object $field_args
+	 */
+	public function admin_modal_bail_JSON( $item_id, $item_title, $field_args ) {
+
+		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
+		echo json_encode( $model_data, JSON_HEX_TAG );
+
+		die();
+	}
+
+	/**
 	 * Bail on Post save redirect for Admin modal.
 	 *
 	 * @param string $location The destination URL.
@@ -3098,7 +3157,7 @@ class PodsField_Pick extends PodsField {
 			$obj = pods( $params['pod'] );
 		}
 
-		if ( ! $obj || $obj->fetch( $id ) ) {
+		if ( ! $obj || ! $obj->fetch( $id ) ) {
 			return;
 		}
 
@@ -3115,7 +3174,7 @@ class PodsField_Pick extends PodsField {
 			),
 		);
 
-		$this->admin_modal_bail( $item_id, $item_title, $field_args );
+		$this->admin_modal_bail_JSON( $item_id, $item_title, $field_args );
 
 	}
 

@@ -33,6 +33,23 @@ var PodsI18n = (function () {
 	return {
 		__: function ( str ) {
 			return translateString( str );
+		},
+		_s: function( str, args ) {
+			str = translateString( str );
+			if ( ! args.length ) {
+				return str;
+			}
+			var i, c;
+			if ( 1 < args.length ) {
+				for ( i=0, c=1; i < args.length; i++, c++ ) {
+					str = str.replace( "%" + c + "$s", args[ i ] );
+				}
+			} else {
+				for ( i=0; i < args.length; i++ ) {
+					str = str.replace( "%s", args[ i ] );
+				}
+			}
+			return str;
 		}
 	};
 

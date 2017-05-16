@@ -215,7 +215,7 @@ function pods_error( $error, $obj = null ) {
 
 			// die with error
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
-				wp_die( $error );
+				wp_die( $error, '', array( 'back_link' => true ) );
 			} else {
 				die( sprintf( '<e>%s</e>', $error ) );
 			}
@@ -271,7 +271,7 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     $debug = '<e>' . $debug;
 
     if ( 2 === $die )
-        wp_die( $debug );
+        wp_die( $debug, '', array( 'back_link' => true ) );
     elseif ( true === $die )
         die( $debug );
 

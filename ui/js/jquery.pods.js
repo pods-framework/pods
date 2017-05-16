@@ -1699,9 +1699,10 @@
                         }
 
                         $row_content.slideUp( 'slow', function () {
-                            $row.toggleClass( 'pods-manage-row-expanded' );
-                            $row_label.prop( 'colspan', '1' );
-                            $row.removeClass( 'pods-field-new' );
+	                        $row_label.prop( 'colspan', '1' );
+	                        $row.removeClass( 'pods-manage-row-expanded' );
+	                        $row.removeClass( 'pods-field-new' );
+	                        $row.addClass( 'pods-field-updated' );
                         } );
                     }
 

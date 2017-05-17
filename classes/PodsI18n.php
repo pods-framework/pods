@@ -204,10 +204,10 @@ final class PodsI18n {
 			'You can only select' =>
 				__( 'You can only select', 'pods' ),
 
-			'%i item' =>
+			'%s item' =>
 				__( '%s item', 'pods' ),
 
-			'%i items' =>
+			'%s items' =>
 				__( '%s items', 'pods' ),
 
 			'Icon' =>

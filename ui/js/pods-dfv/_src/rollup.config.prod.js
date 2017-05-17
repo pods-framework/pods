@@ -11,8 +11,10 @@ export default {
 			"babelrc": false, // Ignore the .babelrc file which is there for mocha tests
 			"presets": [ 'es2015-rollup' ],
 			"plugins": [
-				"transform-html-import-to-string",
-				"babel-root-import"
+				[ "module-resolver", {
+					"alias": { "pods-dfv": "./ui/js/pods-dfv" }
+				} ],
+				"transform-html-import-to-string"
 			]
 		} ),
 		uglify()

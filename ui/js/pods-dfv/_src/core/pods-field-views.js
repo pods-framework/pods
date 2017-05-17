@@ -1,5 +1,4 @@
 /*global jQuery, _, Backbone, Marionette */
-import {PodsDFVFieldModel} from '~/ui/js/pods-dfv/_src/core/pods-field-model';
 
 /**
  *

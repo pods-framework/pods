@@ -1,15 +1,15 @@
 /*global jQuery, _, Backbone, Marionette */
-import template from '~/ui/js/pods-dfv/_src/file-upload/file-upload-layout.html';
+import template from 'pods-dfv/_src/file-upload/file-upload-layout.html';
 
-import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import {PodsDFVFieldLayout} from 'pods-dfv/_src/core/pods-field-views';
 
-import {FileUploadCollection, FileUploadModel} from '~/ui/js/pods-dfv/_src/file-upload/file-upload-model';
+import {FileUploadCollection} from 'pods-dfv/_src/file-upload/file-upload-model';
 
-import {FileUploadList} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-list';
-import {FileUploadForm} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-form';
+import {FileUploadList} from 'pods-dfv/_src/file-upload/views/file-upload-list';
+import {FileUploadForm} from 'pods-dfv/_src/file-upload/views/file-upload-form';
 
-import {Plupload} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/plupload';
-import {MediaModal} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/media-modal';
+import {Plupload} from 'pods-dfv/_src/file-upload/uploaders/plupload';
+import {MediaModal} from 'pods-dfv/_src/file-upload/uploaders/media-modal';
 
 const Uploaders = [
 	Plupload,

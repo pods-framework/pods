@@ -1,19 +1,19 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
-import template from '~/ui/js/pods-dfv/_src/pick/pick-layout.html';
+import template from 'pods-dfv/_src/pick/pick-layout.html';
 
-import {PodsDFVFieldModel} from '~/ui/js/pods-dfv/_src/core/pods-field-model';
-import {PodsDFVFieldLayout} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
+import {PodsDFVFieldLayout} from 'pods-dfv/_src/core/pods-field-views';
 
-import {IframeFrame} from '~/ui/js/pods-dfv/_src/core/iframe-frame';
+import {IframeFrame} from 'pods-dfv/_src/core/iframe-frame';
 
-import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
-import {PickFieldModel} from '~/ui/js/pods-dfv/_src/pick/pick-field-model';
+import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
+import {PickFieldModel} from 'pods-dfv/_src/pick/pick-field-model';
 
-import {RadioView} from '~/ui/js/pods-dfv/_src/pick/views/radio-view';
-import {CheckboxView} from '~/ui/js/pods-dfv/_src/pick/views/checkbox-view';
-import {SelectView} from '~/ui/js/pods-dfv/_src/pick/views/select-view';
-import {ListView} from '~/ui/js/pods-dfv/_src/pick/views/list-view';
-import {AddNew} from '~/ui/js/pods-dfv/_src/pick/views/add-new';
+import {RadioView} from 'pods-dfv/_src/pick/views/radio-view';
+import {CheckboxView} from 'pods-dfv/_src/pick/views/checkbox-view';
+import {SelectView} from 'pods-dfv/_src/pick/views/select-view';
+import {ListView} from 'pods-dfv/_src/pick/views/list-view';
+import {AddNew} from 'pods-dfv/_src/pick/views/add-new';
 
 const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
 

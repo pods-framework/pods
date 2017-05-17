@@ -271,6 +271,7 @@ form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name
 
 .pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice:hover {
 	background-color: #fafafa;
+	border-color: #bbb;
 	cursor: move;
 }
 

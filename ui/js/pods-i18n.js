@@ -48,24 +48,16 @@ var PodsI18n = (function () {
 		 *
 		 * @returns {string}
 		 */
-		_n: function( single, plural, number ) {
+		_n: function ( single, plural, number ) {
 
 			// Unary + will implicitly cast to numeric
 			if ( +number === 1 ) {
 				return translateString( single );
-			} else {
+			}
+			else {
 				return translateString( plural );
 			}
 		},
-
-		/**
-		 * @param {string} str
-		 * @param {array} args
-		 * @returns {string}
-		 */
-		_s: function( str, args ) {
-			return sprintf( PodsI18n.__( str ), args );
-		}
 	};
 
 }());

@@ -229,6 +229,11 @@ input.pods-form-ui-field-type-color {
     border-color: #dfdfdf;
     line-height: 1.2;
 }
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice:hover {
+    background-color: #fafafa;
+    cursor: move;
+}
+
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
 }

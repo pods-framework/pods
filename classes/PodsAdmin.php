@@ -1389,6 +1389,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+					'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'show_in_menu' => true )
                 ),
@@ -1622,6 +1625,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'menu_location' => array( 'objects', 'top' ) )
                 ),
@@ -1852,6 +1858,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'menu_location' => 'top' )
                 ),
@@ -1900,6 +1909,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'show_in_menu' => true )
                 ),

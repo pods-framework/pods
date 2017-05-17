@@ -153,18 +153,7 @@ class PodsField_Number extends PodsField {
 			$length = 64;
 		}
 
-		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2, true );
-
-		if ( $decimals < 1 ) {
-			$decimals = 0;
-		}
-		elseif ( 30 < $decimals ) {
-			$decimals = 30;
-		}
-
-		if ( $length < $decimals ) {
-			$decimals = $length;
-		}
+		$decimals = $this->get_max_decimals( $options );
 
 		$schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 

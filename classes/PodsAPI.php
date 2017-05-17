@@ -3933,13 +3933,15 @@ class PodsAPI {
 				$old_fields_cache[ $cache_key ] = array();
 
 				if ( ! empty( $id ) ) {
-					if ( empty( $changed_pods_cache[ $cache_key ] ) ) {
+					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
 						$changed_pods_cache[ $pod ] = pods( $pod );
 					}
 
-					$changed_pods_cache[ $pod ]->fetch( $id );
+					if ( $changed_pods_cache[ $pod ] && $changed_pods_cache[ $pod ]->valid() ) {
+						$changed_pods_cache[ $pod ]->fetch( $id );
 
-					$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+						$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+					}
 				}
 			}
 		}
@@ -3952,6 +3954,8 @@ class PodsAPI {
 			$old_fields = $old_fields_cache[ $cache_key ];
 
 			if ( 'get' === $mode ) {
+				$changed_fields_cache[ $cache_key ] = array();
+
 				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
 					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
 						$changed_pods_cache[ $pod ]->fetch( $id );
@@ -3980,7 +3984,7 @@ class PodsAPI {
 	 * @param array $pieces Pieces array from save_pod_item
 	 *
 	 * @return array Array of fields and values that have changed
-	 *               
+	 *
 	 * @deprecated Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {
@@ -4403,17 +4407,24 @@ class PodsAPI {
      * @since 1.12
      */
     public function export_pod_item ( $params, $pod = null ) {
-        if ( !is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
-            if ( empty( $params ) )
-                return false;
 
-            $params = (object) pods_sanitize( $params );
+	    if ( ! is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
+		    if ( empty( $params ) ) {
+			    return false;
+		    }
 
-            $pod = pods( $params->pod, $params->id, false );
+		    if ( is_object( $params ) ) {
+			    $params = get_object_vars( (object) $params );
+		    }
 
-            if ( empty( $pod ) )
-                return false;
-        }
+		    $params = pods_sanitize( $params );
+
+		    $pod = pods( $params['pod'], $params['id'], false );
+
+		    if ( empty( $pod ) ) {
+			    return false;
+		    }
+	    }
 
         $params['fields'] = (array) pods_v( 'fields', $params, array(), true );
         $params['depth'] = (int) pods_v( 'depth', $params, 2, true );
@@ -4464,7 +4475,11 @@ class PodsAPI {
 			$pod_type = 'term';
 		}
 
-		$registered_meta_keys = get_registered_meta_keys( $pod_type );
+		$registered_meta_keys = false;
+
+		if ( function_exists( 'get_registered_meta_keys' ) ) {
+			$registered_meta_keys = get_registered_meta_keys( $pod_type );
+		}
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
@@ -4475,7 +4490,7 @@ class PodsAPI {
             }
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
-	            if ( 'rest' === $context ) {
+	            if ( 'rest' === $context && false !== $registered_meta_keys ) {
 		            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
 			            continue;
 		            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {

@@ -159,7 +159,7 @@ class Pods_Component_I18n extends PodsComponent {
 				//add_filter( 'pods_admin_setup_edit_options', array( $this, 'pod_options' ), 12, 2 );
 
 				//Add options metabox to the pod edit screens
-				add_action( 'pods_add_meta_boxes', array( $this, 'admin_meta_box' ), 10 );
+				add_action( 'pods_add_meta_boxes', array( $this, 'admin_meta_box' ) );
 
 				//Add the i18n input fields based on existing fields
 				add_filter( 'pods_form_ui_field_text', array( $this, 'add_i18n_inputs' ), 10, 6 );

@@ -3300,6 +3300,10 @@ class PodsAPI {
 			'changed_fields'
 		);
 
+		if ( $track_changed_fields ) {
+			self::handle_changed_fields( $params->pod, $params->id, 'set' );
+		}
+
         if ( false === $bypass_helpers ) {
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
@@ -3358,10 +3362,6 @@ class PodsAPI {
                 }
             }
         }
-
-		if ( $track_changed_fields ) {
-			$changed_fields = $this->get_changed_fields( compact( $pieces ) );
-		}
 
         $table_data = $table_formats = $update_values = $rel_fields = $rel_field_ids = array();
 
@@ -3735,7 +3735,7 @@ class PodsAPI {
 										 *
 										 * @param array $tag_data Fields for creating new item.
 										 * @param int $v Field ID of tag.
-										 * @param obj $search_data Search object for tag.
+										 * @param Pods $search_data Search object for tag.
 										 * @param string $field Table info for field.
 										 * @param array	$pieces Field array.
 										 *
@@ -3828,19 +3828,23 @@ class PodsAPI {
         }
 
         if ( false === $bypass_helpers ) {
-            $pieces = compact( $pieces );
+			if ( $track_changed_fields ) {
+				$changed_fields = self::handle_changed_fields( $params->pod, $params->id, 'get' );
+			}
+
+            $compact_pieces = compact( $pieces );
 
             // Plugin hooks
-            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item, $params->id );
-            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
+            $this->do_hook( 'post_save_pod_item', $compact_pieces, $is_new_item, $params->id );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $compact_pieces, $is_new_item, $params->id );
 
             if ( $is_new_item ) {
-                $this->do_hook( 'post_create_pod_item', $pieces, $params->id );
-                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
+                $this->do_hook( 'post_create_pod_item', $compact_pieces, $params->id );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $compact_pieces, $params->id );
             }
             else {
-                $this->do_hook( 'post_edit_pod_item', $pieces, $params->id );
-                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces, $params->id );
+                $this->do_hook( 'post_edit_pod_item', $compact_pieces, $params->id );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $compact_pieces, $params->id );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -3900,30 +3904,88 @@ class PodsAPI {
     }
 
 	/**
+	 *Handle tracking changed fields or get them
+	 *
+	 * @param string $pod
+	 * @param int    $id
+	 * @param string $mode
+	 *
+	 * @return array List of changed fields (if $mode = 'get')
+	 */
+	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
+
+		static $changed_pods_cache = array();
+		static $old_fields_cache = array();
+		static $changed_fields_cache = array();
+
+		$cache_key = $pod . '|' . $id;
+
+		$export_params = array(
+			'depth' => 1,
+		);
+
+		if ( in_array( $mode, array( 'set', 'reset' ), true ) ) {
+			if ( isset( $changed_fields_cache[ $cache_key ] ) ) {
+				unset( $changed_fields_cache[ $cache_key ] );
+			}
+
+			if ( empty( $old_fields_cache[ $cache_key ] ) || 'reset' === $mode ) {
+				$old_fields_cache[ $cache_key ] = array();
+
+				if ( ! empty( $id ) ) {
+					if ( empty( $changed_pods_cache[ $cache_key ] ) ) {
+						$changed_pods_cache[ $pod ] = pods( $pod );
+					}
+
+					$changed_pods_cache[ $pod ]->fetch( $id );
+
+					$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+				}
+			}
+		}
+
+		$changed_fields = array();
+
+		if ( isset( $changed_fields_cache[ $cache_key ] ) ) {
+			$changed_fields = $changed_fields_cache[ $cache_key ];
+		} elseif ( isset( $old_fields_cache[ $cache_key ] ) ) {
+			$old_fields = $old_fields_cache[ $cache_key ];
+
+			if ( 'get' === $mode ) {
+				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
+					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
+						$changed_pods_cache[ $pod ]->fetch( $id );
+					}
+
+					$new_fields = $changed_pods_cache[ $pod ]->export( $export_params );
+
+					foreach ( $new_fields as $field => $value ) {
+						if ( ! isset( $old_fields[ $field ] ) || $value != $old_fields[ $field ] ) {
+							$changed_fields[ $field ] = $value;
+						}
+					}
+
+					$changed_fields_cache[ $cache_key ] = $changed_fields;
+				}
+			}
+		}
+
+		return $changed_fields;
+
+	}
+
+	/**
 	 * Get the fields that have changed during a save
 	 *
 	 * @param array $pieces Pieces array from save_pod_item
 	 *
 	 * @return array Array of fields and values that have changed
+	 *               
+	 * @deprecated Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {
 
-		$fields = $pieces[ 'fields' ];
-		$fields_active = $pieces[ 'fields_active' ];
-
-		$fields_changed = array();
-
-		if ( 0 < $pieces[ 'params' ]->id ) {
-			$pod = pods( $pieces[ 'params' ]->pod, $pieces[ 'params' ]->id );
-
-			foreach ( $fields_active as $field ) {
-				if ( isset( $fields[ $field ] ) && $pod->raw( $field ) != $fields[ $field ][ 'value' ] ) {
-					$fields_changed[ $field ] = $fields[ $field ][ 'value' ];
-				}
-			}
-		}
-
-		return $fields_changed;
+		return self::handle_changed_fields( $pieces['params']->pod, $pieces['params']->id, 'get' );
 
 	}
 

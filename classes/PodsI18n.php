@@ -62,7 +62,8 @@ final class PodsI18n {
 	public function enqueue_scripts() {
 
 		// Register our i18n script for JS
-		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
+		wp_register_script( 'sprintf', PODS_URL. 'ui/js/sprintf/sprintf.min.js', array(), '1.1.0', true );
+		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array( 'sprintf' ), PODS_VERSION, true );
 
 		self::localize_assets();
 	}

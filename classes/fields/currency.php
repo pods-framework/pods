@@ -340,6 +340,7 @@ class PodsField_Currency extends PodsField_Number {
 		$format_args = $this->get_number_format_args( $options );
 		$thousands   = $format_args['thousands'];
 		$dot         = $format_args['dot'];
+		$decimals    = $format_args['decimals'];
 
 		$currency = 'usd';
 
@@ -368,25 +369,6 @@ class PodsField_Currency extends PodsField_Number {
 		$value = trim( $value );
 
 		$value = preg_replace( '/[^0-9\.\-]/', '', $value );
-
-		$length = (int) pods_v( static::$type . '_max_length', $options, 12, true );
-
-		if ( $length < 1 || 64 < $length ) {
-			$length = 64;
-		}
-
-		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2, true );
-
-		if ( $decimals < 1 ) {
-			$decimals = 0;
-		}
-		elseif ( 30 < $decimals ) {
-			$decimals = 30;
-		}
-
-		if ( $length < $decimals ) {
-			$decimals = $length;
-		}
 
 		$value = number_format( (float) $value, $decimals, '.', '' );
 

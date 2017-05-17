@@ -358,10 +358,11 @@ class PodsField_Number extends PodsField {
 
         $check = preg_replace( '/[0-9\.\-\s]/', '', $check );
 
-        $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+        $label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-        if ( 0 < strlen( $check ) )
-            return sprintf( __( '%s is not numeric', 'pods' ), $label );
+        if ( 0 < strlen( $check ) ) {
+	        return sprintf( __( '%s is not numeric', 'pods' ), $label );
+        }
 
         return true;
     }
@@ -385,26 +386,12 @@ class PodsField_Number extends PodsField {
 	    $format_args = $this->get_number_format_args( $options );
 	    $thousands   = $format_args['thousands'];
 	    $dot         = $format_args['dot'];
+	    $decimals    = $format_args['decimals'];
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
         $value = trim( $value );
 
         $value = preg_replace( '/[^0-9\.\-]/', '', $value );
-
-        $length = (int) pods_var( static::$type . '_max_length', $options, 12, null, true );
-
-        if ( $length < 1 || 64 < $length )
-            $length = 64;
-
-        $decimals = (int) pods_var( static::$type . '_decimals', $options, 0, null, true );
-
-        if ( $decimals < 1 )
-            $decimals = 0;
-        elseif ( 30 < $decimals )
-            $decimals = 30;
-
-        if ( $length < $decimals )
-            $decimals = $length;
 
         $value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -514,6 +501,24 @@ class PodsField_Number extends PodsField {
 		    $dot = $wp_locale->number_format[ 'decimal_point' ];
 	    }
 
+	    $decimals = $this->get_max_decimals( $options );
+
+	    return array(
+	    	'thousands' => $thousands,
+	        'dot'       => $dot,
+	        'decimals'  => $decimals,
+	    );
+    }
+
+    /**
+     * Get the max allowed decimals.
+     *
+     * @since 2.7
+     * @param array $options
+     * @return int
+     */
+    public function get_max_decimals( $options ) {
+
 	    $length = (int) pods_v( static::$type . '_max_length', $options, 12, true );
 
 	    if ( $length < 1 || 64 < $length ) {
@@ -533,10 +538,6 @@ class PodsField_Number extends PodsField {
 		    $decimals = $length;
 	    }
 
-	    return array(
-	    	'thousands' => $thousands,
-	        'dot'       => $dot,
-	        'decimals'  => $decimals,
-	    );
+	    return $decimals;
     }
 }

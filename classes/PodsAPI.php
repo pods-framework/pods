@@ -5415,7 +5415,6 @@ class PodsAPI {
 	    $bypass_cache = false;
 
 	    // Get current language data
-
 		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
@@ -8310,7 +8309,7 @@ class PodsAPI {
             $id = $obj->id();
         }
 
-        if ( !empty( $fields ) ) {
+        if ( ! empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
@@ -8360,11 +8359,14 @@ class PodsAPI {
 	     */
         do_action( 'pods_api_processed_form', $id, $params, $obj );
 
-        if ( 0 < $id && !empty( $thank_you ) ) {
-            $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
+		// Always return $id for AJAX requests.
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			if ( 0 < $id && ! empty( $thank_you ) ) {
+				$thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            pods_redirect( $thank_you );
-        }
+				pods_redirect( $thank_you );
+			}
+		}
 
         return $id;
     }

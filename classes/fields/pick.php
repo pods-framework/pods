@@ -866,7 +866,59 @@ class PodsField_Pick extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $limit;
 
+		$options[ 'ajax_data' ] = $this->build_dfv_autocomplate_ajax_data( $options, $args, $ajax );
+
 		return $options;
+
+	}
+
+	/**
+	 * @param array     $options
+	 * @param object    $args    {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @param Boolean   $ajax    True if ajax mode should be used
+	 *
+	 * @return array
+	 */
+	public function build_dfv_autocomplate_ajax_data( $options, $args, $ajax ) {
+
+		if ( is_object( $args->pod ) ) {
+			$pod_id = (int) $args->pod->pod_id;
+		} else {
+			$pod_id = 0;
+		}
+
+		$field_id = (int) $options[ 'id' ];
+
+		$id = (int) $args->id;
+
+		if ( is_user_logged_in() ) {
+			$uid = 'user_' . get_current_user_id();
+		} else {
+			$uid = @session_id();
+		}
+
+		$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+
+		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+
+		return array(
+			'ajax'     => $ajax,
+			'pod'      => $pod_id,
+			'field'    => $field_id,
+			'id'       => $id,
+			'uri'      => $uri_hash,
+			'_wpnonce' => $field_nonce
+		);
 
 	}
 
@@ -1026,9 +1078,18 @@ class PodsField_Pick extends PodsField {
 					'collection' => $this->build_dfv_field_item_data_recurse( $item_title, $args ),
 				);
 			} else {
-				$item_data[] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
+				// Key by item_id temporarily to be able to sort based on $args->value
+				$item_data[ $item_id ] = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args );
 			}
 		}
+
+		// Maintain any saved sort order from $args->value
+		if ( is_array( $args->value ) && 1 < count( $args->value ) && $this->is_autocomplete( $args->options ) ) {
+			$item_data = array_replace( $args->value, $item_data );
+		}
+
+		// Convert from associative to numeric array
+		$item_data = array_values( $item_data );
 
 		return $item_data;
 
@@ -1800,15 +1861,16 @@ class PodsField_Pick extends PodsField {
 			'limit'       => 0,
 		), $object_params );
 
-		$name        = $object_params['name'];
-		$value       = $object_params['value'];
-		$options     = $object_params['options'] = (array) $object_params['options'];
-		$pod         = $object_params['pod'];
-		$id          = $object_params['id'];
-		$context     = $object_params['context'];
-		$data_params = $object_params['data_params'] = (array) $object_params['data_params'];
-		$page        = min( 1, (int) $object_params['page'] );
-		$limit       = (int) $object_params['limit'];
+		$name         = $object_params[ 'name' ];
+		$value        = $object_params[ 'value' ];
+		$options      = $object_params[ 'options' ] = (array) $object_params[ 'options' ];
+		$pod          = $object_params[ 'pod' ];
+		$id           = $object_params[ 'id' ];
+		$context      = $object_params[ 'context' ];
+		$data_params  = $object_params[ 'data_params' ] = (array) $object_params[ 'data_params' ];
+		$page         = min( 1, (int) $object_params[ 'page' ] );
+		$limit        = (int) $object_params[ 'limit' ];
+		$autocomplete = false;
 
 		if ( isset( $options['options'] ) ) {
 			$options = array_merge( $options, $options['options'] );
@@ -1988,13 +2050,7 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
-				$autocomplete = false;
-
-				if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) && 'autocomplete' === pods_v( self::$type . '_format_single', $options, 'dropdown' ) ) {
-					$autocomplete = true;
-				} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) && 'autocomplete' === pods_v( self::$type . '_format_multi', $options, 'checkbox' ) ) {
-					$autocomplete = true;
-				}
+				$autocomplete = $this->is_autocomplete( $options );
 
 				$hierarchy = false;
 
@@ -2252,6 +2308,28 @@ class PodsField_Pick extends PodsField {
 
 		return $data;
 
+	}
+
+	/**
+	 * @param array $options Field options
+	 *
+	 * @return bool
+	 */
+	public function is_autocomplete( $options ) {
+
+		$autocomplete = false;
+
+		if ( 'single' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+			if ( in_array( pods_v( self::$type . '_format_single', $options, 'dropdown' ), array( 'autocomplete', 'list' ) ) ) {
+				$autocomplete = true;
+			}
+		} elseif ( 'multi' === pods_v( self::$type . '_format_type', $options, 'single' ) ) {
+			if ( in_array( pods_v( self::$type . '_format_multi', $options, 'checkbox' ), array( 'autocomplete', 'list' ) ) ) {
+				$autocomplete = true;
+			}
+		}
+
+		return $autocomplete;
 	}
 
 	/**

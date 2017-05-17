@@ -180,6 +180,9 @@ final class PodsI18n {
 			'Edit' =>
 				__( 'Edit', 'pods' ),
 
+			'Search' =>
+				__( 'Search', 'pods' ),
+
 			'Navigating away from this page will discard any changes you have made.' =>
 				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
@@ -197,6 +200,15 @@ final class PodsI18n {
 
 			'Select from existing' =>
 				__( 'Select from existing', 'pods' ),
+
+			'You can only select' =>
+				__( 'You can only select', 'pods' ),
+
+			'%s item' =>
+				__( '%s item', 'pods' ),
+
+			'%s items' =>
+				__( '%s items', 'pods' ),
 
 			'Icon' =>
 				__( 'Icon', 'pods' ),

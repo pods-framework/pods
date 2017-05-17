@@ -171,8 +171,9 @@ class PodsRESTHandlers {
 							$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
 
 							$params = array(
-								'fields' => $fields,
-								'depth'  => $depth,
+								'fields'  => $fields,
+								'depth'   => $depth,
+								'context' => 'rest',
 							);
 
 							$items[] = $related_pod->export( $params );

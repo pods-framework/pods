@@ -661,7 +661,11 @@ class PodsField_DateTime extends PodsField {
 
                 $datetime = DateTime::createFromFormat( $format, (string) $date, $datetimezone );
 
-	            if ( $return_timestamp ) {
+                if ( false === $datetime ) {
+                    $datetime = DateTime::createFromFormat( static::$storage_format, (string) $date, $datetimezone );
+                }
+
+	            if ( false !== $datetime && $return_timestamp ) {
 		            return $datetime;
 	            }
             }

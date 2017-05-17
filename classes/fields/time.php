@@ -83,6 +83,9 @@ class PodsField_Time extends PodsField_DateTime {
                 'label' => __( 'Time Format Type', 'pods' ),
                 'default' => '12', // Backwards compatibility
                 'type' => 'pick',
+                'help' => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>'
+                          . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>'
+                          . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
                 'data' => array(
 	                'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
                     '12' => __( '12 hour', 'pods' ),

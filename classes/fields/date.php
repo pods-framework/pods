@@ -84,6 +84,9 @@ class PodsField_Date extends PodsField_DateTime {
 	            'label' => __( 'Date Format Type', 'pods' ),
 	            'default' => 'format', // Backwards compatibility
 	            'type' => 'pick',
+	            'help' => __( 'WordPress Default is the format used in Settings, General under "Date Format".', 'pods' ) . '<br>'
+	                      . __( 'Predefined Format will allow you to select from a list of commonly used date formats.', 'pods' ) . '<br>'
+	                      . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
 	            'data' => array(
 		            'wp' => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'date_format' ) ),
 		            'format' => __( 'Predefined format', 'pods' ),

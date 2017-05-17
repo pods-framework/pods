@@ -4475,7 +4475,11 @@ class PodsAPI {
 			$pod_type = 'term';
 		}
 
-		$registered_meta_keys = get_registered_meta_keys( $pod_type );
+		$registered_meta_keys = false;
+
+		if ( function_exists( 'get_registered_meta_keys' ) ) {
+			$registered_meta_keys = get_registered_meta_keys( $pod_type );
+		}
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
@@ -4486,7 +4490,7 @@ class PodsAPI {
             }
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
-	            if ( 'rest' === $context ) {
+	            if ( 'rest' === $context && false !== $registered_meta_keys ) {
 		            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
 			            continue;
 		            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {

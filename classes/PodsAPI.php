@@ -4407,17 +4407,24 @@ class PodsAPI {
      * @since 1.12
      */
     public function export_pod_item ( $params, $pod = null ) {
-        if ( !is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
-            if ( empty( $params ) )
-                return false;
 
-            $params = (object) pods_sanitize( $params );
+	    if ( ! is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
+		    if ( empty( $params ) ) {
+			    return false;
+		    }
 
-            $pod = pods( $params->pod, $params->id, false );
+		    if ( is_object( $params ) ) {
+			    $params = get_object_vars( (object) $params );
+		    }
 
-            if ( empty( $pod ) )
-                return false;
-        }
+		    $params = pods_sanitize( $params );
+
+		    $pod = pods( $params['pod'], $params['id'], false );
+
+		    if ( empty( $pod ) ) {
+			    return false;
+		    }
+	    }
 
         $params['fields'] = (array) pods_v( 'fields', $params, array(), true );
         $params['depth'] = (int) pods_v( 'depth', $params, 2, true );

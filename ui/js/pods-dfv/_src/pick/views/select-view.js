@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
 // Note: this is a template-less view
-import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
-import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
+import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
+import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
 
 const SELECT2_DEBOUNCE_DELAY = 300;
 const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;

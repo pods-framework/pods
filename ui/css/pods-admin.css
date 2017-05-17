@@ -223,6 +223,25 @@ tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manag
 }
 
 /*
+ * Pods Field statuses
+ */
+tbody.pods-manage-list .pods-manage-row th.check-field {
+    border: 5px solid transparent; /* separates items from each other */
+    border-right: 0;
+    padding: 3px 5px;
+    transition: border-color 300ms ease; /* ooh, fancy! */
+}
+/* Any changed or new field */
+tbody.pods-manage-list .pods-field-updated th.check-field {
+    border-left-color: #95BF3B;
+}
+/* Applies to a new field just added or existing field being modified. */
+tbody.pods-manage-list .pods-manage-row-expanded th.check-field,
+tbody.pods-manage-list .pods-field-new th.check-field {
+    border-left-color: #E35036;
+}
+
+/*
  * Pods Toggled
  */
 .pods-toggled {

@@ -23,6 +23,8 @@ const views = {
 	'list'    : ListView
 };
 
+let modalIFrame;
+
 /**
  * @extends Backbone.View
  */
@@ -33,6 +35,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		list  : '.pods-pick-values',
 		addNew: '.pods-ui-add-new'
 	},
+
+	ui: {
+		selectFromExisting: 'a.dfv-list-select'
+	},
+
+	triggers: {
+		'click @ui.selectFromExisting': 'select:from:existing:click'
+	},
+
+	inSelectFromExisting: false,
 
 	/**
 	 *
@@ -61,10 +73,28 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		this.showChildView( 'list', list );
 
 		// Show Add New?
-		if ( this.fieldConfig.get( 'iframe_src' ) !== '' ) {
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
 			addNew = new AddNew( { fieldModel: this.model } );
 			this.showChildView( 'addNew', addNew );
 		}
+	},
+
+	/**
+	 *
+	 */
+	onSelectFromExistingClick: function () {
+		let view;
+
+		this.inSelectFromExisting = !this.inSelectFromExisting;
+
+		if ( this.inSelectFromExisting ) {
+			view = new CheckboxView( { collection: this.collection, fieldModel: this.model } );
+		}
+		else {
+			view = new ListView( { collection: this.collection, fieldModel: this.model } );
+		}
+
+		this.showChildView( 'list', view );
 	},
 
 	/**
@@ -73,10 +103,10 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	 * @param childView
 	 * @param args
 	 */
-	onChildviewRemoveItemClick: function ( childView, args ) {
-		const list = this.childView( 'list' );
+	onChildviewRemoveItemClick: function ( childView ) {
+		const list = this.getChildView( 'list' );
 
-		args.model.toggleSelected();
+		childView.model.toggleSelected();
 		list.render();
 	},
 
@@ -86,18 +116,49 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onChildviewAddNewClick: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
-		const modalFrame = new IframeFrame( {
-			title: PodsI18n.__( 'The Title' ),
+		modalIFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title_add,
 			src  : fieldConfig.iframe_src
 		} );
-		modalFrame.modal.open();
+
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+
+		modalIFrame.modal.open();
 	},
 
 	/**
-	 * @param response
+	 * @param childView
 	 */
-	addNewSuccess: function ( response ) {
-		console.log( response );
+	onChildviewEditItemClick: function ( childView ) {
+		const fieldConfig = this.model.get( 'fieldConfig' );
+
+		modalIFrame = new IframeFrame( {
+			title: fieldConfig.iframe_title_edit,
+			src  : childView.ui.editButton.attr( 'href' )
+		} );
+
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+
+		modalIFrame.modal.open();
+	},
+
+	/**
+	 * @param event
+	 * @param data
+	 */
+	modalSuccess: function ( event, data ) {
+		const itemModel = this.collection.get( data.id );
+
+		if ( itemModel ) {
+			// Edit: update an existing model and force a re-render
+			itemModel.set( data );
+			this.getChildView( 'list' ).render();
+		} else {
+			// Add new: create a new model in the collection
+			this.collection.add( data );
+		}
+
+		modalIFrame.modal.close();
 	}
 
 } );

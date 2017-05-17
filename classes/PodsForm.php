@@ -831,24 +831,30 @@ class PodsForm {
      * @since 2.0
      */
     public static function dependencies( $options, $prefix = '' ) {
+
         $options = (array) $options;
+        $classes = $data = array();
 
-        $depends_on = $excludes_on = array();
-        if ( isset( $options[ 'depends-on' ] ) )
+        $depends_on = $excludes_on = $wildcard_on = array();
+        if ( isset( $options[ 'depends-on' ] ) ) {
             $depends_on = (array) $options[ 'depends-on' ];
+        }
 
-        if ( isset( $options[ 'excludes-on' ] ) )
+        if ( isset( $options[ 'excludes-on' ] ) ) {
             $excludes_on = (array) $options[ 'excludes-on' ];
+        }
 
-        $classes = array();
+        if ( isset( $options[ 'wildcard-on' ] ) ) {
+            $wildcard_on = (array) $options[ 'wildcard-on' ];
+        }
 
-        if ( !empty( $depends_on ) ) {
+        if ( ! empty( $depends_on ) ) {
             $classes[] = 'pods-depends-on';
 
             foreach ( $depends_on as $depends => $on ) {
                 $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-                if ( !is_bool( $on ) ) {
+                if ( ! is_bool( $on ) ) {
                     $on = (array) $on;
 
                     foreach ( $on as $o ) {
@@ -858,7 +864,7 @@ class PodsForm {
             }
         }
 
-        if ( !empty( $excludes_on ) ) {
+        if ( ! empty( $excludes_on ) ) {
             $classes[] = 'pods-excludes-on';
             foreach ( $excludes_on as $excludes => $on ) {
                 $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
@@ -871,9 +877,20 @@ class PodsForm {
             }
         }
 
+        if ( ! empty( $wildcard_on ) ) {
+            $classes[] = 'pods-wildcard-on';
+
+            // Add the appropriate classes and data attribs per value dependency
+            foreach ( $wildcard_on as $target => $wildcards ) {
+                $target = $prefix . self::clean( $target, true );
+                $classes[] = 'pods-wildcard-on-' . $target;
+                $data[ 'pods-wildcard-' . $target ] = $wildcards;
+            }
+        }
+
         $classes = implode( ' ', $classes );
 
-        return $classes;
+        return array( 'classes' => $classes, 'data' => $data );
     }
 
     /**
@@ -1210,10 +1227,11 @@ class PodsForm {
             $field_types = self::field_types();
 
             foreach ( $field_types as $field_type => $field_type_data ) {
-                $has_ajax = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
+                $has_admin_init = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
 
-                if ( false !== $has_ajax )
-                    $admin_field_types[] = $field_type;
+                if ( false !== $has_admin_init ) {
+	                $admin_field_types[] = $field_type;
+                }
             }
 
             pods_transient_set( 'pods_form_admin_init_field_types', $admin_field_types );
@@ -1431,7 +1449,13 @@ class PodsForm {
 	    static $field_types = null;
 
 	    if ( null === $field_types ) {
-		    $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+		    $field_types = array(
+			    'pick',
+			    'file',
+			    'avatar',
+			    'taxonomy',
+			    'comment',
+		    );
 
 		    $field_types = apply_filters( 'pods_tableless_field_types', $field_types );
 	    }

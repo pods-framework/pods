@@ -254,7 +254,8 @@ tr.pods-toggled-off {
  * Pods Dependency
  */
 .pods-depends-on,
-.pods-excludes-on {
+.pods-excludes-on,
+.pods-wildcard-on {
     display: none;
 }
 
@@ -281,6 +282,10 @@ tr.pods-toggled-off {
 div.pods-manage-field div {
     overflow: hidden;
     zoom: 1;
+}
+
+div.pods-manage-field .description {
+    clear: both;
 }
 
 div.pods-manage-field .pods-field-option,

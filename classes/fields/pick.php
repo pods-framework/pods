@@ -103,6 +103,25 @@ class PodsField_Pick extends PodsField {
 		add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 		add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
+		// Handle modal input.
+		add_action( 'edit_form_top', array( $this, 'admin_modal_input' ) );
+		add_action( 'show_user_profile', array( $this, 'admin_modal_input' ) );
+		add_action( 'edit_user_profile', array( $this, 'admin_modal_input' ) );
+		add_action( 'edit_category_form', array( $this, 'admin_modal_input' ) );
+		add_action( 'edit_link_category_form', array( $this, 'admin_modal_input' ) );
+		add_action( 'edit_tag_form', array( $this, 'admin_modal_input' ) );
+		add_action( 'add_tag_form', array( $this, 'admin_modal_input' ) );
+		add_action( 'pods_meta_box_pre', array( $this, 'admin_modal_input' ) );
+
+		// Handle modal saving.
+		add_filter( 'redirect_post_location', array( $this, 'admin_modal_bail_post_redirect' ), 10, 2 );
+		add_action( 'load-edit-tags.php', array( $this, 'admin_modal_bail_term_action' ) );
+		add_action( 'load-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
+		add_action( 'load-edit-link-categories.php', array( $this, 'admin_modal_bail_term_action' ) );
+		add_action( 'personal_options_update', array( $this, 'admin_modal_bail_user_action' ) );
+		add_action( 'user_register', array( $this, 'admin_modal_bail_user_action' ) );
+		add_action( 'pods_api_processed_form', array( $this, 'admin_modal_bail_pod' ), 10, 3 );
+
 	}
 
 	/**
@@ -151,6 +170,15 @@ class PodsField_Pick extends PodsField {
 					)
 				),
 				'dependency' => true,
+			),
+			self::$type . '_allow_add_new' => array(
+				'label'       => __( 'Allow Add New', 'pods' ),
+				'help'        => __( 'Allow new related records to be created in a modal window', 'pods' ),
+				'wildcard-on' => array(
+					self::$type . '_object' => array( '^post-type-(?!(custom-css|customize-changeset)).*$', '^taxonomy-.*$', '^user$', '^pod-.*$' )
+				),
+				'type'        => 'boolean',
+				'default'     => 1
 			),
 			self::$type . '_taggable'       => array(
 				'label'       => __( 'Taggable', 'pods' ),
@@ -758,12 +786,12 @@ class PodsField_Pick extends PodsField {
 
 		$options['grouped'] = 1;
 
-		if ( empty( $options['pick_object'] ) ) {
-			$options['pick_object'] = '';
+		if ( empty( $options[ $args->type . '_object' ] ) ) {
+			$options[ $args->type . '_object' ] = '';
 		}
 
-		if ( empty( $options['pick_val'] ) ) {
-			$options['pick_val'] = '';
+		if ( empty( $options[ $args->type . '_val' ] ) ) {
+			$options[ $args->type . '_val' ] = '';
 		}
 
 		$options['table_info'] = array();
@@ -791,6 +819,8 @@ class PodsField_Pick extends PodsField {
 		$options[ $args->type . '_ajax' ] = (int) $ajax;
 
 		$format_type = pods_v( $args->type . '_format_type', $options, 'single', true );
+
+		$limit = 1;
 
 		if ( 'single' === $format_type ) {
 			$format_single = pods_v( $args->type . '_format_single', $options, 'dropdown', true );
@@ -824,9 +854,17 @@ class PodsField_Pick extends PodsField {
 			} else {
 				$options['view_name'] = $format_multi;
 			}
+
+			$limit = 0;
+
+			if ( ! empty( $options[ $args->type . '_limit' ] ) ) {
+				$limit = absint( $options[ $args->type . '_limit' ] );
+			}
 		} else {
 			$options['view_name'] = $format_type;
 		}
+
+		$options[ $args->type . '_limit' ] = $limit;
 
 		return $options;
 
@@ -841,6 +879,30 @@ class PodsField_Pick extends PodsField {
 
 		if ( ! isset( $config['optgroup'] ) ) {
 			$config['optgroup'] = false;
+		}
+
+		/**
+		 * Filter on whether to allow modals to be used on the front of the site (in an non-admin area).
+		 *
+		 * @param boolean $show_on_front
+		 *
+		 * @since 2.7
+		 */
+		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false );
+
+		/**
+		 * Filter on whether to allow nested modals to be used (modals within modals).
+		 *
+		 * @param boolean $allow_nested_modals
+		 *
+		 * @since 2.7
+		 */
+		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false );
+
+		// Disallow add/edit outside the admin and when we're already in a modal
+		if ( ( ! $show_on_front && ! is_admin() ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {
+			$config[ $args->type . '_allow_add_new' ]  = false;
+			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
 		$file_name  = '';
@@ -863,7 +925,8 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				if ( ! empty( $args->options['pick_val'] ) ) {
+				// @todo Fix add new modal issues
+				/*if ( ! empty( $args->options['pick_val'] ) ) {
 					$taxonomy_obj = get_taxonomy( $args->options['pick_val'] );
 
 					if ( $taxonomy_obj && current_user_can( $taxonomy_obj->cap->edit_terms ) ) {
@@ -872,7 +935,7 @@ class PodsField_Pick extends PodsField {
 							'taxonomy' => $args->options['pick_val'],
 						);
 					}
-				}
+				}*/
 
 				break;
 
@@ -908,7 +971,9 @@ class PodsField_Pick extends PodsField {
 			$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
 		}
 
-		$config['iframe_src'] = $iframe_src;
+		$config['iframe_src']   = $iframe_src;
+		$config['iframe_title_add'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$config['iframe_title_edit'] = sprintf( __( '%s: Edit', 'pods' ), $args->options['label'] );
 
 		return $config;
 
@@ -989,9 +1054,15 @@ class PodsField_Pick extends PodsField {
 	 */
 	public function build_dfv_field_item_data_recurse_item( $item_id, $item_title, $args ) {
 
-		$icon      = '';
-		$edit_link = '';
-		$link      = '';
+		$use_dashicon = false;
+		$icon         = '';
+		$img_icon     = '';
+		$edit_link    = '';
+		$link         = '';
+
+		if ( ! isset( $args->options['supports_thumbnails'] ) ) {
+			$args->options['supports_thumbnails'] = null;
+		}
 
 		switch ( $args->options['pick_object'] ) {
 			case 'post_type':
@@ -1002,10 +1073,39 @@ class PodsField_Pick extends PodsField {
 				}
 
 				if ( true === $args->options['supports_thumbnails'] ) {
-					$thumb = wp_get_attachment_image_src( $item_id, 'thumbnail', true );
+					$post_thumbnail_id = get_post_thumbnail_id( $item_id );
+
+					if ( $post_thumbnail_id ) {
+						$thumb = wp_get_attachment_image_src( $post_thumbnail_id, 'thumbnail', false );
+					}
 
 					if ( ! empty( $thumb[0] ) ) {
-						$icon = $thumb[0];
+						$img_icon = $thumb[0];
+					}
+				}
+
+				if ( empty( $img_icon ) ) {
+
+					// Default icon for posts.
+					$icon = 'dashicons-admin-post';
+
+					// Post type icons.
+					$post_type = (array) get_post_type_object( get_post_type( $item_id ) );
+
+					if ( ! empty( $post_type['menu_icon'] ) ) {
+						// Post specific icon.
+						$icon = $post_type['menu_icon'];
+					} elseif ( isset( $post_type['name'] ) && 'page' ) {
+						switch ( $post_type['name'] ) {
+							case 'page':
+								// Default for pages.
+								$icon = 'dashicons-admin-page';
+							break;
+							case 'attachment':
+								// Default for attachments.
+								$icon = 'dashicons-admin-media';
+							break;
+						}
 					}
 				}
 
@@ -1019,6 +1119,19 @@ class PodsField_Pick extends PodsField {
 				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
+
+					// Default icon for taxonomy.
+					$icon = 'dashicons-category';
+
+					// Change icon for non-hierarchical taxonomies.
+					$taxonomy = get_term( $item_id );
+					if ( isset( $taxonomy->taxonomy ) ) {
+						$taxonomy = (array) get_taxonomy( $taxonomy->taxonomy );
+						if ( isset( $taxonomy['hierarchical'] ) && ! $taxonomy['hierarchical'] ) {
+							$icon = 'dashicons-tag';
+						}
+					}
+
 					$edit_link = get_edit_term_link( $item_id, $args->options['pick_val'] );
 
 					$link = get_term_link( $item_id, $args->options['pick_val'] );
@@ -1031,7 +1144,8 @@ class PodsField_Pick extends PodsField {
 
 				$args->options['supports_thumbnails'] = true;
 
-				$icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
+				$icon = 'dashicons-admin-users';
+				$img_icon = get_avatar_url( $item_id, array( 'size' => 150 ) );
 
 				$edit_link = get_edit_user_link( $item_id );
 
@@ -1044,7 +1158,8 @@ class PodsField_Pick extends PodsField {
 
 				$args->options['supports_thumbnails'] = true;
 
-				$icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
+				$icon = 'dashicons-admin-comments';
+				$img_icon = get_avatar_url( get_comment( $item_id ), array( 'size' => 150 ) );
 
 				$edit_link = get_edit_comment_link( $item_id );
 
@@ -1056,6 +1171,9 @@ class PodsField_Pick extends PodsField {
 				$item_id = (int) $item_id;
 
 				if ( ! empty( $args->options['pick_val'] ) ) {
+
+					$icon = 'dashicons-pods';
+
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
 						$file_name  = 'admin.php';
 						$query_args = array(
@@ -1074,13 +1192,50 @@ class PodsField_Pick extends PodsField {
 				break;
 		}
 
+		// Image icons always overwrite default icons
+		if ( ! empty( $img_icon ) ) {
+			$icon = $img_icon;
+		}
+
+		// Parse icon type
+		if ( 'none' === $icon || 'div' === $icon ) {
+			$icon = '';
+			$use_dashicon = true;
+		} elseif ( 0 === strpos( $icon, 'data:image/svg+xml;base64,' ) ) {
+			$icon = esc_attr( $icon );
+			$use_dashicon = false;
+		} elseif ( 0 === strpos( $icon, 'dashicons-' ) ) {
+			$icon = sanitize_html_class( $icon );
+			$use_dashicon = true;
+		}
+
+		// Support modal editing
+		if ( ! empty( $edit_link ) ) {
+			// @todo: Replace string literal with defined constant
+			$edit_link = add_query_arg( array( 'pods_modal' => '1' ), $edit_link );
+		}
+
+		// Determine if this is a selected item
+		$selected = false;
+
+		if ( is_array( $args->value ) ) {
+			if ( isset( $args->value[ $item_id ] ) ) {
+				$selected = true;
+			} elseif ( in_array( $item_id, $args->value, true ) ) {
+				$selected = true;
+			}
+		} elseif ( $item_id === $args->value ) {
+			$selected = true;
+		}
+
 		$item = array(
-			'id'        => $item_id,
-			'icon'      => $icon,
-			'name'      => $item_title,
-			'edit_link' => $edit_link,
-			'link'      => $link,
-			'selected'  => ( isset( $args->value[ $item_id ] ) ),
+			'id'           => $item_id,
+			'use_dashicon' => $use_dashicon,
+			'icon'         => $icon,
+			'name'         => $item_title,
+			'edit_link'    => $edit_link,
+			'link'         => $link,
+			'selected'     => $selected,
 		);
 
 		return $item;
@@ -2802,6 +2957,224 @@ class PodsField_Pick extends PodsField {
 		global $wp_locale;
 
 		return $wp_locale->month;
+
+	}
+
+	/**
+	 * Add our modal input to the form so we can track whether we're in our modal during saving or not.
+	 */
+	public function admin_modal_input() {
+
+		if ( ! pods_is_modal_window() ) {
+			return;
+		}
+
+		echo '<input name="pods_modal" type="hidden" value="1" />';
+
+	}
+
+	/**
+	 * Bail to send new saved data back to our modal handler.
+	 *
+	 * @param int    $item_id
+	 * @param string $item_title
+	 * @param object $field_args
+	 */
+	public function admin_modal_bail( $item_id, $item_title, $field_args ) {
+
+		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
+		?>
+			<script type="text/javascript">
+				window.parent.jQuery( window.parent ).trigger(
+					'dfv:modal:update',
+					<?php echo json_encode( $model_data, JSON_HEX_TAG ); ?>
+				);
+			</script>
+		<?php
+
+		die();
+
+	}
+
+	/**
+	 * Bail to send new saved data back to our modal handler.
+	 *
+	 * @param int    $item_id
+	 * @param string $item_title
+	 * @param object $field_args
+	 */
+	public function admin_modal_bail_JSON( $item_id, $item_title, $field_args ) {
+
+		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
+		echo json_encode( $model_data, JSON_HEX_TAG );
+
+		die();
+	}
+
+	/**
+	 * Bail on Post save redirect for Admin modal.
+	 *
+	 * @param string $location The destination URL.
+	 * @param int    $post_id  The post ID.
+	 *
+	 * @return string
+	 */
+	public function admin_modal_bail_post_redirect( $location, $post_id ) {
+
+		if ( ! pods_is_modal_window() ) {
+			return $location;
+		}
+
+		$post_title = get_the_title( $post_id );
+
+		$field_args = (object) array(
+			'options' => array(
+				'pick_object' => 'post_type',
+				'pick_val'    => get_post_type( $post_id ),
+			),
+			'value'   => array(
+				$post_id => $post_title,
+			),
+		);
+
+		$this->admin_modal_bail( $post_id, $post_title, $field_args );
+
+		return $location;
+
+	}
+
+	/**
+	 * Hook into term updating process to bail on redirect.
+	 */
+	public function admin_modal_bail_term_action() {
+
+		if ( ! pods_is_modal_window() ) {
+			return;
+		}
+
+		add_action( 'created_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
+		add_action( 'edited_term', array( $this, 'admin_modal_bail_term' ), 10, 3 );
+
+	}
+
+	/**
+	 * Bail on Term save redirect for Admin modal.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param int    $tt_id    Term taxonomy ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	public function admin_modal_bail_term( $term_id, $tt_id, $taxonomy ) {
+
+		if ( ! pods_is_modal_window() ) {
+			return;
+		}
+
+		$term = get_term( $term_id );
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return;
+		}
+
+		$field_args = (object) array(
+			'options' => array(
+				'pick_object' => 'taxonomy',
+				'pick_val'    => $term->taxonomy,
+			),
+			'value'   => array(
+				$term->term_id => $term->name,
+			),
+		);
+
+		$this->admin_modal_bail( $term->term_id, $term->name, $field_args );
+
+	}
+
+	/**
+	 * Hook into user updating process to bail on redirect.
+	 */
+	public function admin_modal_bail_user_action() {
+
+		if ( ! pods_is_modal_window() ) {
+			return;
+		}
+
+		add_filter( 'wp_redirect', array( $this, 'admin_modal_bail_user_redirect' ) );
+
+	}
+
+	/**
+	 * Bail on User save redirect for Admin modal.
+	 *
+	 * @param string $location The destination URL.
+	 *
+	 * @return string
+	 */
+	public function admin_modal_bail_user_redirect( $location ) {
+
+		if ( ! pods_is_modal_window() ) {
+			return $location;
+		}
+
+		global $user_id;
+
+		$user = get_userdata( $user_id );
+
+		if ( ! $user || is_wp_error( $user ) ) {
+			return $location;
+		}
+
+		$field_args = (object) array(
+			'options' => array(
+				'pick_object' => 'user',
+				'pick_val'    => '',
+			),
+			'value'   => array(
+				$user->ID => $user->display_name,
+			),
+		);
+
+		$this->admin_modal_bail( $user->ID, $user->display_name, $field_args );
+
+		return $location;
+
+	}
+
+	/**
+	 * Bail on Pod item save for Admin modal.
+	 *
+	 * @param int       $id     Item ID.
+	 * @param array     $params save_pod_item parameters.
+	 * @param null|Pods $obj    Pod object (if set).
+	 */
+	public function admin_modal_bail_pod( $id, $params, $obj ) {
+
+		if ( ! pods_is_modal_window() ) {
+			return;
+		}
+
+		if ( ! $obj ) {
+			$obj = pods( $params['pod'] );
+		}
+
+		if ( ! $obj || ! $obj->fetch( $id ) ) {
+			return;
+		}
+
+		$item_id    = $obj->id();
+		$item_title = $obj->index();
+
+		$field_args = (object) array(
+			'options' => array(
+				'pick_object' => $obj->pod_data['type'],
+				'pick_val'    => $obj->pod,
+			),
+			'value'   => array(
+				$obj->id() => $item_title,
+			),
+		);
+
+		$this->admin_modal_bail_JSON( $item_id, $item_title, $field_args );
 
 	}
 

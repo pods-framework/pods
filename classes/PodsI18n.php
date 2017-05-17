@@ -185,14 +185,17 @@ final class PodsI18n {
 			'Unable to process request, please try again.' =>
 				__( 'Unable to process request, please try again.', 'pods' ),
 
-			'There was an issue with the file upload, please try again.' =>
-				__( 'There was an issue with the file upload, please try again.', 'pods' ),
+			'Error uploading file: ' =>
+				__( 'Error uploading file: ', 'pods' ),
 
 			'Allowed Files' =>
 				__( 'Allowed Files', 'pods' ),
 
 			'The Title' =>
 				__( 'The Title', 'pods' ),
+
+			'Select from existing' =>
+				__( 'Select from existing', 'pods' ),
 
 			'Icon' =>
 				__( 'Icon', 'pods' ),

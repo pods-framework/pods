@@ -51,8 +51,6 @@ export const CheckboxView = PodsFieldListView.extend( {
 		const limit = fieldConfig.pick_limit;
 		const numSelected = this.collection.filterBySelected().length;
 
-		console.log( limit, numSelected, childView.model.get( 'selected' ) );
-
 		// Enforce selection limit, ignoring de-selection.  Note that 'selected' is the value before the change here
 		if ( numSelected < limit || childView.model.get( 'selected' ) ) {
 			childView.model.toggleSelected();

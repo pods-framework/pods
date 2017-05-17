@@ -3933,13 +3933,15 @@ class PodsAPI {
 				$old_fields_cache[ $cache_key ] = array();
 
 				if ( ! empty( $id ) ) {
-					if ( empty( $changed_pods_cache[ $cache_key ] ) ) {
+					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
 						$changed_pods_cache[ $pod ] = pods( $pod );
 					}
 
-					$changed_pods_cache[ $pod ]->fetch( $id );
+					if ( $changed_pods_cache[ $pod ] && $changed_pods_cache[ $pod ]->valid() ) {
+						$changed_pods_cache[ $pod ]->fetch( $id );
 
-					$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+						$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+					}
 				}
 			}
 		}
@@ -3952,6 +3954,8 @@ class PodsAPI {
 			$old_fields = $old_fields_cache[ $cache_key ];
 
 			if ( 'get' === $mode ) {
+				$changed_fields_cache[ $cache_key ] = array();
+
 				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
 					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
 						$changed_pods_cache[ $pod ]->fetch( $id );
@@ -3980,7 +3984,7 @@ class PodsAPI {
 	 * @param array $pieces Pieces array from save_pod_item
 	 *
 	 * @return array Array of fields and values that have changed
-	 *               
+	 *
 	 * @deprecated Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {

@@ -2149,6 +2149,10 @@ class PodsAPI {
 
                 $field_data = $field;
 
+	            if ( ! empty( $params->duplicating ) ) {
+		            $field_data['duplicating'] = true;
+	            }
+
                 $field = $this->save_field( $field_data, $field_table_operation, true, $db );
 
                 if ( true !== $db ) {
@@ -2460,7 +2464,11 @@ class PodsAPI {
                 unset( $field[ 'sister_id' ] );
         }
 
-        $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
+	    if ( ! empty( $params->duplicating ) ) {
+		    $field['options'] = array_merge( $options, $field['options'] );
+	    } else {
+		    $field['options'] = array_merge( $field['options'], $options );
+	    }
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
@@ -4121,6 +4129,8 @@ class PodsAPI {
         foreach ( $pod[ 'fields' ] as $field => $field_data ) {
             unset( $pod[ 'fields' ][ $field ][ 'id' ] );
         }
+
+	    $pod['duplicating'] = true;
 
         return $this->save_pod( $pod );
     }

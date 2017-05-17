@@ -64,7 +64,7 @@
 }
 
 .pods-boolean label {
-    margin-left: 20px;
+    margin-left: 22px;
     padding-top: 1px;
 }
 
@@ -122,7 +122,7 @@ select.pods-form-ui-field-type-pick[multiple] {
     border-bottom: 1px solid #f4f4f4;
     line-height: 1em;
     margin: 0;
-    padding: 3px 6px 2px;
+    padding: 3px 6px 3px;
 }
 
 .pods-pick-values li:nth-child(even) {
@@ -150,7 +150,7 @@ select.pods-form-ui-field-type-pick[multiple] {
 }
 
 .pods-pick-values li .pods-boolean input {
-    top: 5px;
+    top: 4px;
 }
 
 

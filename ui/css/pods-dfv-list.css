@@ -102,7 +102,7 @@ ul.pods-dfv-list li.pods-dfv-list-edit a:before,
 ul.pods-dfv-list li.pods-dfv-list-link a:before,
 ul.pods-dfv-list li.pods-dfv-list-download a:before,
 ul.pods-dfv-list li.pods-dfv-list-remove a:before {
-	margin-left: -20px;
+	margin: 0 24px 0 -24px;
 	font: 400 20px/1 dashicons;
 	line-height: 32px;
 }

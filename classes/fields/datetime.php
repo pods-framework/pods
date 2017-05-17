@@ -667,7 +667,7 @@ class PodsField_DateTime extends PodsField {
             }
         }
 
-        if ( null === $datetime ) {
+        if ( in_array( $datetime, array( null, false ), true ) ) {
         	if ( empty( $date ) ) {
 		        $timestamp = time();
 	        } else {
@@ -677,6 +677,7 @@ class PodsField_DateTime extends PodsField {
 			        return $timestamp;
 		        }
 	        }
+
 	        if ( $timestamp ) {
 		        $datetime = new DateTime( date_i18n( static::$storage_format, $timestamp ) );
 	        }

@@ -33,10 +33,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 
 	modelChanged: function () {
 		this.render();
-	},
-
-	onToggleSelected: function () {
-		this.model.toggleSelected();
 	}
 } );
 
@@ -48,5 +44,17 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 	className: 'pods-checkbox-view',
 
-	childView: CheckboxItem
+	childView: CheckboxItem,
+
+	onChildviewToggleSelected: function ( childView ) {
+		const fieldConfig = this.fieldModel.get( 'fieldConfig' );
+		const limit = fieldConfig.pick_limit;
+		const numSelected = this.collection.filterBySelected().length;
+
+		// Enforce selection limit, ignoring de-selection.  Note that 'selected' is the value before the change here
+		if ( numSelected < limit || childView.model.get( 'selected' ) ) {
+			childView.model.toggleSelected();
+		}
+	}
+
 } );

@@ -217,6 +217,9 @@ input.pods-form-ui-field-type-color {
     min-height: 28px;
 }
 
+.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
+    background: none;
+}
 .pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
     margin-right: 5px;
     line-height: 1;

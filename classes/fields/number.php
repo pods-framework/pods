@@ -89,7 +89,15 @@ class PodsField_Number extends PodsField {
             self::$type . '_decimals' => array(
                 'label' => __( 'Decimals', 'pods' ),
                 'default' => 0,
-                'type' => 'number'
+                'type' => 'number',
+	            'dependency' => true
+            ),
+            self::$type . '_format_soft' => array(
+	            'label'      => __( 'Soft format?', 'pods' ),
+	            'help'       => __( 'Remove trailing decimals (0)', 'pods' ),
+	            'default'    => 0,
+	            'type'       => 'boolean',
+	            'excludes-on' => array( self::$type . '_decimals' => 0 ),
             ),
             self::$type . '_step' => array(
                 'label' => __( 'Slider Increment (Step)', 'pods' ),
@@ -505,6 +513,16 @@ class PodsField_Number extends PodsField {
             $value = number_format_i18n( (float) $value, $decimals );
         else
             $value = number_format( (float) $value, $decimals, $dot, $thousands );
+
+        // Optionally remove trailing decimal zero's.
+        if ( pods_v( self::$type . '_format_soft', $options, 0 ) ) {
+        	$parts = explode( $dot, $value );
+        	if ( isset( $parts[1] ) ) {
+        		$parts[1] = rtrim( $parts[1], '0' );
+        		$parts = array_filter( $parts );
+	        }
+	        $value = implode( $dot, $parts );
+        }
 
         return $value;
     }

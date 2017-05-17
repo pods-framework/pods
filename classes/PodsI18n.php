@@ -201,6 +201,15 @@ final class PodsI18n {
 			'Select from existing' =>
 				__( 'Select from existing', 'pods' ),
 
+			'You can only select' =>
+				__( 'You can only select', 'pods' ),
+
+			'%i item' =>
+				__( '%s item', 'pods' ),
+
+			'%i items' =>
+				__( '%s items', 'pods' ),
+
 			'Icon' =>
 				__( 'Icon', 'pods' ),
 

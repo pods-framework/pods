@@ -1,4 +1,4 @@
-/*global jQuery, _, Backbone, Marionette, select2, wp, ajaxurl, PodsI18n */
+/*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from '~/ui/js/pods-dfv/_src/pick/relationship-model';
@@ -178,16 +178,17 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
+		const limit = fieldConfig.pick_limit;
 		let $ulContainer, select2Options, placeholder;
 
 		if ( fieldConfig.limitDisable ) {
-			placeholder = ` ${fieldConfig.pick_limit} ${PodsI18n.__( 'item limit' )}`;
+			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
 		} else {
 			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`
 		}
 
 		select2Options = {
-			maximumSelectionLength: fieldConfig.pick_limit,
+			maximumSelectionLength: limit,
 			placeholder           : placeholder,
 			allowClear            : false,
 			disabled              : fieldConfig.limitDisable

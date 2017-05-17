@@ -177,6 +177,8 @@ Join us in further translating the Pods interface at: [wp-translate.org/projects
 
 == Changelog ==
 
+= 2.6.9 - May 19th 2017 =
+
 = 2.6.8 - January 17th 2017 =
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]
 * Added: Add action after successful AJAX in admin_ajax. This allows other scripts to hook in the ajax handlers from Pods. Fixes (#3839). (#3840). [@JoryHogeveen]

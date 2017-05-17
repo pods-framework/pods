@@ -3942,7 +3942,7 @@ class PodsUI {
                                 <?php
                                 if ( true === $this->pagination ) {
                                     ?>
-                                    <input type="text" class="screen-per-page" name="wp_screen_options[value]" id="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page" maxlength="3" value="20"> <label for="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page"><?php echo esc_html( $this->items ); ?> per page</label>
+                                    <input type="text" class="screen-per-page" name="wp_screen_options[value]" id="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page" maxlength="3" value="20"> <label for="<?php echo esc_attr( $this->unique_identifier ); ?>_per_page"><?php echo esc_html( sprintf( __( '%s per page', 'pods' ), $this->items ) ); ?></label>
                                     <?php
                                 }
                                 $this->do_hook( 'screen_meta_screen_submit' );

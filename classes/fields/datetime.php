@@ -349,7 +349,7 @@ class PodsField_DateTime extends PodsField {
 	        if ( false === $check ) {
                 $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-	            return sprintf( __( '%s was not provided in a recognizable format', 'pods' ), $label );
+	            return sprintf( __( '%s was not provided in a recognizable format: "%s"', 'pods' ), $label, $value );
 		    }
 	    }
 

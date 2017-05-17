@@ -151,7 +151,7 @@ ul.pods-dfv-list li.pods-dfv-list-name input[type=text] {
 	width: 100% !important;
 	font-size: 1em; /*1vh*/
 	line-height: 1;
-	padding: .3vh 10px;
+	padding: .3vh 5px;
 	margin: 0;
 }
 

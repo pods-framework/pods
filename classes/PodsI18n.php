@@ -186,6 +186,9 @@ final class PodsI18n {
 			'Navigating away from this page will discard any changes you have made.' =>
 				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
+			'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' =>
+				__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.', 'pods' ),
+
 			'Unable to process request, please try again.' =>
 				__( 'Unable to process request, please try again.', 'pods' ),
 

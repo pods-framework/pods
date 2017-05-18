@@ -178,7 +178,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( 'select' === view_name && 'multi' === format_type ) {
 			if ( this.validateSelectionLimit() ) {
-				this.$el.find( 'option)' ).prop( 'disabled', false );
+				this.$el.find( 'option' ).prop( 'disabled', false );
 			}
 			else {
 				this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );

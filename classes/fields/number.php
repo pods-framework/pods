@@ -162,31 +162,6 @@ class PodsField_Number extends PodsField {
 	}
 
 	/**
-	 * Change the value of the field
-	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
-	 *
-	 * @return mixed|null|string
-	 *
-	 * @since 2.7
-	 */
-	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		if ( pods_v( static::$type . '_allow_empty', $options, 1 ) &&
-		     in_array( rtrim( $value, '0' ), array( '0.', '0,' ) )
-		) {
-			$value = '';
-		}
-
-		return $value;
-
-	}
-
-	/**
 	 * Define the current field's preparation for sprintf
 	 *
 	 * @param array $options

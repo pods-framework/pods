@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
+
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
@@ -52,6 +53,8 @@ export const Optgroup = PodsFieldListView.extend( {
  */
 export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
+
+	multiLastSelection: [],
 
 	triggers: {
 		"change": {
@@ -161,7 +164,12 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		// Check initial selection limit status for regular multiselect and enforce it if needed
 		if ( 'select' === view_name && 'multi' === format_type ) {
-			if ( ! this.validateSelectionLimit() ) {
+
+			// Store initial selection in case we need to revert back from an invalid state
+			this.multiLastSelection = this.$el.val();
+
+			// If we're at the limit: disable all unselected items so no selections can be added
+			if ( !this.validateSelectionLimit() ) {
 				this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 			}
 		}
@@ -171,25 +179,42 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @var {RelationshipCollection} this.collection
 	 */
 	onChangeSelected: function () {
+		const limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
 
+		// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
+		if ( limit < this.$el.val().length ) {
+
+			// Revert to the last valid selection and punt on what they attempted
+			this.$el.val( this.multiLastSelection );
+			window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
+			return;
+		}
+
+		// Update the collection based on the new selections
 		this.collection.setSelected( this.$el.val() );
 
+		// Dynamically enforce selection limits for normal multiselects
 		if ( 'select' === view_name && 'multi' === format_type ) {
+
 			if ( this.validateSelectionLimit() ) {
+				// Not at limit, make sure all items are enabled
 				this.$el.find( 'option' ).prop( 'disabled', false );
 			}
 			else {
+				// At the limit: disable all unselected items so no further selections can be added
 				this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 			}
 		}
 	},
 
 	/**
+	 * @var {RelationshipCollection} this.collection
+	 *
 	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
 	 */
-	validateSelectionLimit: function() {
+	validateSelectionLimit: function () {
 		let limit, numSelected;
 
 		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
@@ -197,7 +222,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( 0 === limit || numSelected < limit ) {
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	},

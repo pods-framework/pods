@@ -836,8 +836,6 @@ class PodsField_DateTime extends PodsField {
 	 * Get the i18n files for jquery datepicker from the github repository
 	 *
 	 * @since  2.7
-	 * @link   https://jqueryui.com/datepicker/#localization
-	 * @link   https://github.com/jquery/jquery-ui/tree/master/ui/i18n
 	 * @param  array  $args  datepicker arguments
 	 * @return array
 	 */
@@ -873,6 +871,11 @@ class PodsField_DateTime extends PodsField {
 			if ( in_array( 'time', $types, true ) ) {
 
 				// Local files.
+				if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
+					// Fallback to the base language (non-region specific).
+					$locale = substr( $locale, 0, 2 );
+				}
+
 				if ( ! in_array( 'time', $done, true ) &&
 				     ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
 				     file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' )

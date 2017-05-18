@@ -169,6 +169,21 @@ class PodsField {
 	}
 
 	/**
+	 * Check if the field is empty.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7
+	 */
+	public function is_empty( $value ) {
+
+		return empty( $value );
+
+	}
+
+	/**
 	 * Change the value of the field
 	 *
 	 * @param mixed|null  $value

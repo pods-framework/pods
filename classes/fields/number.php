@@ -200,6 +200,21 @@ class PodsField_Number extends PodsField {
         return $format;
     }
 
+	/**
+	 * Check if the field is empty.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7
+	 */
+	public function is_empty( $value = null ) {
+
+		return empty( $value + 0 );
+
+	}
+
     /**
      * Change the way the value of the field is displayed with Pods::get
      *

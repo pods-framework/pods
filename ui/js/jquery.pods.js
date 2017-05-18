@@ -254,7 +254,7 @@
                         data : postdata,
                         success : function ( d ) {
 
-                            // Make sure we're able to parse what was returned as data
+                            // Attempt to parse what was returned as data
                             try {
                                 data = $.parseJSON( d );
                             }
@@ -262,7 +262,7 @@
                                 data = undefined;
                             }
 
-                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d && undefined !== data ) {
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
 
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
                                 if ( 'object' === typeof data ) {

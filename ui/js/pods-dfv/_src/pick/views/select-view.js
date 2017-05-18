@@ -54,7 +54,7 @@ export const Optgroup = PodsFieldListView.extend( {
 export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
 
-	multiLastSelection: [],
+	multiLastValidSelection: [],
 
 	triggers: {
 		"change": {
@@ -190,7 +190,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			if ( limit < this.$el.val().length ) {
 
 				// Revert to the last valid selection and punt on what they attempted
-				this.$el.val( this.multiLastSelection );
+				this.$el.val( this.multiLastValidSelection );
 				window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
 				return;
 			}
@@ -198,7 +198,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		// Update the collection and last valid selection based on the new selections
 		this.collection.setSelected( this.$el.val() );
-		this.multiLastSelection = this.$el.val();
+		this.multiLastValidSelection = this.$el.val();
 
 		// Dynamically enforce selection limits for normal multiselects
 		if ( 'select' === view_name && 'multi' === format_type ) {

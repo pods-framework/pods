@@ -861,15 +861,8 @@ class PodsField_DateTime extends PodsField {
 				break;
 			}
 
-			if ( in_array( 'date', $types, true ) ) {
-				// URL to the raw file on github
-				$url_base = 'https://rawgit.com/jquery/jquery-ui/master/ui/i18n/';
-				// Filename prefix
-				$file_prefix = 'datepicker-';
-				// Full URL
-				$i18n_file = $url_base.$file_prefix . $locale . '.js';
-				// Enqueue script
-				wp_enqueue_script( 'jquery-ui-i18n-' . $locale, $i18n_file, array( 'jquery-ui-datepicker' ) );
+			if ( in_array( 'date', $types, true ) && function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {
+				wp_localize_jquery_ui_datepicker();
 			}
 			if ( in_array( 'time', $types, true ) ) {
 				// Local files.

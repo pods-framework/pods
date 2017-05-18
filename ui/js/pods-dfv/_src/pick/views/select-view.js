@@ -183,13 +183,17 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
 
-		// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
-		if ( limit < this.$el.val().length ) {
+		// Regular multiselect may need to reject the selection change
+		if ( 'select' === view_name && 'multi' === format_type ) {
 
-			// Revert to the last valid selection and punt on what they attempted
-			this.$el.val( this.multiLastSelection );
-			window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
-			return;
+			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
+			if ( limit < this.$el.val().length ) {
+
+				// Revert to the last valid selection and punt on what they attempted
+				this.$el.val( this.multiLastSelection );
+				window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
+				return;
+			}
 		}
 
 		// Update the collection based on the new selections

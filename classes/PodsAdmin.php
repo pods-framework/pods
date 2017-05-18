@@ -2732,7 +2732,7 @@ class PodsAdmin {
 			    ),
 			    'read_all'    => array(
 				    'label'             => __( 'Show All Fields?', 'pods' ),
-				    'help'              => __( 'Show all fields in REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'help'              => __( 'Show all fields in REST API. ', 'pods' ) && __( 'If unchecked fields must be enabled on a field by field basis.', 'pods' ),,
 				    'type'              => 'boolean',
 				    'default'           => '',
 				    'boolean_yes_label' => '',
@@ -2740,7 +2740,7 @@ class PodsAdmin {
 			    ),
 			    'write_all'   => array(
 				    'label'             => __( 'Allow All Fields To Be Updated?', 'pods' ),
-				    'help'              => __( 'Allow all fields to be updated via the REST API. If unchecked fields must be enabled on a field by field basis.', 'pods' ),
+				    'help'              => __( 'Allow all fields to be updated via the REST API.', 'pods' ) && __( 'If unchecked fields must be enabled on a field by field basis.', 'pods' ),
 				    'type'              => 'boolean',
 				    'default'           => pods_v( 'name', $pod ),
 				    'boolean_yes_label' => '',

@@ -145,19 +145,54 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 	/**
 	 * Setup to be done once attached to the DOM.  Select2 has some setup needs.
+	 *
+	 * @var {RelationshipCollection} this.collection
 	 */
 	onAttach: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+		const limit = this.fieldConfig.pick_limit;
+		const numSelected = this.collection.filterBySelected().length;
 
-		if ( this.fieldConfig.view_name === 'select2' ) {
+		// Initialize select2 fields
+		if ( 'select2' === view_name ) {
 			this.setupSelect2();
+		}
+
+		// Check initial selection limit status for regual multiselect and enforce it if needed
+		if ( 'select' === view_name && 'multi' === format_type && numSelected >= limit ) {
+			this.disableUnselected();
+		}
+	},
+
+	/**
+	 * @var {RelationshipCollection} this.collection
+	 */
+	onChangeSelected: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+		const limit = this.fieldConfig.pick_limit;
+		let numSelected;
+
+		this.collection.setSelected( this.$el.val() );
+		numSelected = this.collection.filterBySelected().length;
+
+		if ( 'select' === view_name && 'multi' === format_type && numSelected >= limit ) {
+			this.disableUnselected();
+		} else {
+			this.enableAll();
 		}
 	},
 
 	/**
 	 *
 	 */
-	onChangeSelected: function () {
-		this.collection.setSelected( this.$el.val() );
+	disableUnselected: function () {
+		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
+	},
+
+	enableAll: function () {
+		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', false );
 	},
 
 	/**
@@ -183,8 +218,9 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
-		} else {
-			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`
+		}
+		else {
+			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`;
 		}
 
 		select2Options = {

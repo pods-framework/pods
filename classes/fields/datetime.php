@@ -840,87 +840,50 @@ class PodsField_DateTime extends PodsField {
 	public function enqueue_jquery_ui_i18n() {
 		static $done = array();
 
-		$locale = $this->get_locale_jquery_ui_i18n();
-
-		if ( ! empty( $locale ) ) {
-
-			$types = array();
-			switch ( static::$type ) {
-				case 'time':
-					$types[] = 'time';
-				break;
-				case 'date':
-					$types[] = 'date';
-				break;
-				case 'datetime':
-					$types[] = 'time';
-					$types[] = 'date';
-				break;
-			}
-
-			if ( in_array( 'date', $types, true ) &&
-			     ! in_array( 'date', $done, true ) &&
-			     function_exists( 'wp_localize_jquery_ui_datepicker' )
-			) {
-				wp_localize_jquery_ui_datepicker();
-				$done[] = 'date';
-			}
-
-			if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
-
-				// Local files.
-				if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
-					// Fallback to the base language (non-region specific).
-					$locale = substr( $locale, 0, 2 );
-				}
-
-				if ( ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
-				     file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' )
-				) {
-					wp_enqueue_script(
-						'jquery-ui-timepicker-i18n-' . $locale,
-						PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js',
-						array( 'jquery-ui-timepicker' ),
-						'1.6.3'
-					);
-					$done[] = 'time';
-				}
-			}
-		}
-	}
-
-	/**
-	 * Get the locale according to the format available in the jquery ui i18n file list
-	 *
-	 * @since  2.7
-	 * @url    https://github.com/jquery/jquery-ui/tree/master/ui/i18n
-	 * @return string ex: "fr" or "en-GB"
-	 */
-	public function get_locale_jquery_ui_i18n() {
-		//replace _ by - in "en_GB" for example
-		$locale = str_replace( '_', '-', get_locale() );
-		switch ( $locale ) {
-			case 'ar-DZ':
-			case 'cy-GB':
-			case 'en-AU':
-			case 'en-GB':
-			case 'en-NZ':
-			case 'fr-CH':
-			case 'nl-BE':
-			case 'pt-BR':
-			case 'sr-SR':
-			case 'zh-CN':
-			case 'zh-HK':
-			case 'zh-TW':
-				//For all this locale do nothing the file already exist
+		$types = array();
+		switch ( static::$type ) {
+			case 'time':
+				$types[] = 'time';
 			break;
-			default:
-				//for other locale keep the first part of the locale (ex: "fr-FR" -> "fr")
+			case 'date':
+				$types[] = 'date';
+			break;
+			case 'datetime':
+				$types[] = 'time';
+				$types[] = 'date';
+			break;
+		}
+
+		if ( in_array( 'date', $types, true ) &&
+		     ! in_array( 'date', $done, true ) &&
+		     function_exists( 'wp_localize_jquery_ui_datepicker' )
+		) {
+			wp_localize_jquery_ui_datepicker();
+			$done[] = 'date';
+		}
+
+		if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
+
+			$locale = str_replace( '_', '-', get_locale() );
+
+			// Local files.
+			if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
+				// Fallback to the base language (non-region specific).
 				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
-				//English is the default locale
-				$locale = ( $locale == 'en' ) ? '' : $locale;
-			break;
+			}
+
+			if ( ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
+			     file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' )
+			) {
+				wp_enqueue_script(
+					'jquery-ui-timepicker-i18n-' . $locale,
+					PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js',
+					array( 'jquery-ui-timepicker' ),
+					'1.6.3'
+				);
+			}
+
+			$done[] = 'time';
 		}
-		return $locale;
 	}
 }

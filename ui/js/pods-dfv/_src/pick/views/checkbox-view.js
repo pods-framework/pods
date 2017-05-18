@@ -46,14 +46,44 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 	childView: CheckboxItem,
 
-	onChildviewToggleSelected: function ( childView ) {
-		const fieldConfig = this.fieldModel.get( 'fieldConfig' );
-		const limit = fieldConfig.pick_limit;
-		const numSelected = this.collection.filterBySelected().length;
+	onAttach: function () {
 
-		// Enforce selection limit, ignoring de-selection.  Note that 'selected' is the value before the change here
-		if ( numSelected < limit || childView.model.get( 'selected' ) ) {
-			childView.model.toggleSelected();
+		// Check initial selection limit status and enforce it if needed
+		if ( ! this.validateSelectionLimit() ) {
+			this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+		}
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewToggleSelected: function ( childView ) {
+
+		childView.model.toggleSelected();
+
+		// Dynamically enforce selection limit
+		if ( this.validateSelectionLimit() ) {
+			this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
+		} else {
+			this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+		}
+	},
+
+	/**
+	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
+	 */
+	validateSelectionLimit: function ( ) {
+		const fieldConfig = this.fieldModel.get( 'fieldConfig' );
+		let limit, numSelected;
+
+		limit = +fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
+		numSelected = this.collection.filterBySelected().length;
+
+		if ( 0 === limit || numSelected < limit ) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

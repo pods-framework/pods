@@ -297,7 +297,7 @@ class PodsInit {
 				'jquery-ui-core',
 				'jquery-ui-datepicker',
 				'jquery-ui-slider'
-			), '1.1.1' );
+			), '1.6.3' );
 		}
 
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.css', array(), '4.0.3' );

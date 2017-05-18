@@ -196,8 +196,9 @@ export const SelectView = Marionette.CollectionView.extend( {
 			}
 		}
 
-		// Update the collection based on the new selections
+		// Update the collection and last valid selection based on the new selections
 		this.collection.setSelected( this.$el.val() );
+		this.multiLastSelection = this.$el.val();
 
 		// Dynamically enforce selection limits for normal multiselects
 		if ( 'select' === view_name && 'multi' === format_type ) {

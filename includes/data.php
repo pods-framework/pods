@@ -984,7 +984,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 		elseif ( 'user' == $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
-			$user_data = get_object_vars( $user->data );
+			$user_data = $user->to_array();
 
 			// Role
 			if ( 'role' == $var ) {

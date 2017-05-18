@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette */
-import {PodsDFVFieldModel} from '~/ui/js/pods-dfv/_src/core/pods-field-model';
+import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
 
-import * as fields from '~/ui/js/pods-dfv/_src/field-manifest';
+import * as fields from 'pods-dfv/_src/field-manifest';
 
 // jQuery selector for inline scripts with field definitions
 const SCRIPT_TARGET = 'script.pods-dfv-field-data';

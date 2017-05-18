@@ -136,6 +136,7 @@ class PodsMeta {
         add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
         add_action( 'transition_post_status', array( $this, 'save_post_detect_new' ), 10, 3 );
         add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );
+        add_filter( 'wp_insert_post_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
 
         if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
             // Handle *_post_meta
@@ -176,6 +177,7 @@ class PodsMeta {
 				// Handle Term Editor
 				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
 				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
+				add_action( 'edit_terms', array( $this, 'save_taxonomy_track_changed_fields' ), 10, 2 );
 
 				if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 					// Handle *_term_meta
@@ -217,6 +219,7 @@ class PodsMeta {
 
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
+        	add_filter( 'wp_insert_attachment_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
 
             if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
                 // Handle *_post_meta
@@ -243,6 +246,7 @@ class PodsMeta {
             add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
             add_action( 'user_register', array( $this, 'save_user' ) );
             add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
+            add_filter( 'pre_user_login', array( $this, 'save_user_track_changed_fields' ));
 
             if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
                 // Handle *_user_meta
@@ -269,6 +273,7 @@ class PodsMeta {
             add_filter( 'pre_comment_approved', array( $this, 'validate_comment' ), 10, 2 );
             add_action( 'comment_post', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
+            add_action( 'wp_update_comment_data', array( $this, 'save_comment_track_changed_fields' ), 10, 3 );
 
             if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
                 // Handle *_comment_meta
@@ -1238,7 +1243,7 @@ class PodsMeta {
 				// Fix for Pods doing it's own sanitizing
 				$data = pods_unslash( (array) $data );
 
-				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item ) );
+				$pod->save( $data, null, null, array( 'is_new_item' => $is_new_item, 'podsmeta' => true ) );
 			} elseif ( ! empty( $id ) ) {
 				foreach ( $data as $field => $value ) {
 					update_post_meta( $id, $field, $value );
@@ -1257,6 +1262,29 @@ class PodsMeta {
 			do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type, $is_new_item );
 			do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post, $is_new_item );
 		}
+
+	}
+
+	/**
+	 * Track changed fields before save for posts.
+	 *
+	 * @param array $data
+	 * @param array $postarr
+	 *
+	 * @return array
+	 */
+	public function save_post_track_changed_fields( $data, $postarr ) {
+
+		$no_conflict = pods_no_conflict_check( 'post' );
+
+		if ( ! $no_conflict && ! empty( $data['post_type'] ) && ! empty( $postarr['ID'] ) ) {
+			$pod = $data['post_type'];
+			$id  = $postarr['ID'];
+
+			PodsAPI::handle_changed_fields( $pod, $id, 'reset' );
+		}
+
+		return $data;
 
 	}
 
@@ -1626,6 +1654,25 @@ class PodsMeta {
 		return $term_id;
     }
 
+	/**
+	 * Track changed fields before save for terms.
+	 *
+	 * @param int    $term_id
+	 * @param string $taxonomy
+	 */
+	public function save_taxonomy_track_changed_fields( $term_id, $taxonomy ) {
+
+		$no_conflict = pods_no_conflict_check( 'term' );
+
+		if ( ! $no_conflict ) {
+			$pod = $taxonomy;
+			$id  = $term_id;
+
+			PodsAPI::handle_changed_fields( $pod, $id, 'reset' );
+		}
+
+	}
+
     /**
      * @param $user_id
      */
@@ -1811,6 +1858,32 @@ class PodsMeta {
 
 			do_action( 'pods_meta_save_user', $data, $pod, $id, $groups, $is_new_item );
 		}
+
+	}
+
+	/**
+	 * Track changed fields before save for users.
+	 *
+	 * @param string $user_login
+	 *
+	 * @return string
+	 */
+	public function save_user_track_changed_fields( $user_login ) {
+
+		$no_conflict = pods_no_conflict_check( 'user' );
+
+		if ( ! $no_conflict ) {
+			$user = get_user_by( 'login', $user_login );
+
+			if ( $user && ! is_wp_error( $user ) ) {
+				$pod = 'user';
+				$id  = $user->ID;
+
+				PodsAPI::handle_changed_fields( $pod, $id, 'reset' );
+			}
+		}
+
+		return $user_login;
 
 	}
 
@@ -2202,6 +2275,30 @@ class PodsMeta {
 
         return $comment_id;
     }
+
+	/**
+	 * Track changed fields before save for comments.
+	 *
+	 * @param array $data       The new, processed comment data.
+	 * @param array $comment    The old, unslashed comment data.
+	 * @param array $commentarr The new, raw comment data.
+	 *
+	 * @return array
+	 */
+	public function save_comment_track_changed_fields( $data, $comment, $commentarr ) {
+
+		$no_conflict = pods_no_conflict_check( 'user' );
+
+		if ( ! $no_conflict && ! empty( $comment['comment_type'] ) && ! empty( $comment['comment_ID'] ) ) {
+			$pod = $comment['comment_type'];
+			$id  = $comment['comment_ID'];
+
+			PodsAPI::handle_changed_fields( $pod, $id, 'reset' );
+		}
+
+		return $data;
+
+	}
 
     /**
      * All *_*_meta filter handler aliases

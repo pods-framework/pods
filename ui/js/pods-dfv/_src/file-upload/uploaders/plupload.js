@@ -1,6 +1,6 @@
 /*global jQuery, _, Backbone, Marionette, wp, plupload, PodsI18n */
-import {PodsFileUploader} from '~/ui/js/pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
-import {FileUploadQueueModel, FileUploadQueue} from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-queue';
+import {PodsFileUploader} from 'pods-dfv/_src/file-upload/uploaders/pods-file-uploader';
+import {FileUploadQueueModel, FileUploadQueue} from 'pods-dfv/_src/file-upload/views/file-upload-queue';
 
 export const Plupload = PodsFileUploader.extend( {
 	plupload: {},

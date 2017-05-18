@@ -1,10 +1,10 @@
 <?php
 /**
- * Name: Polylang / WPML admin label integration
+ * Name: Translate Pods Admin
  *
- * Menu Name: Supported Admin Languages
+ * Menu Name: Translate Pods
  *
- * Description: Allow UI of Pods and fields to be translated, with support for Polylang and WPML plugins.
+ * Description: Allow UI of Pods and fields to be translated
  *
  * Version: 0.1
  *
@@ -30,7 +30,7 @@ class Pods_Component_I18n extends PodsComponent {
 	public $languages_translated = array();
 	public $cur_pod = null;
 	public $option_key = 'pods_component_i18n_settings';
-	public $admin_page = 'pods-component-polylang-wpml-admin-label-integration';
+	public $admin_page = 'pods-component-translate-pods-admin';
 	public $capability = 'pods_i18n_activate_lanuages';
 	public $nonce = 'pods_i18n_activate_lanuages';
 

@@ -854,11 +854,12 @@ class PodsField_DateTime extends PodsField {
 			break;
 		}
 
-		if ( in_array( 'date', $types, true ) &&
-		     ! in_array( 'date', $done, true ) &&
-		     function_exists( 'wp_localize_jquery_ui_datepicker' )
-		) {
-			wp_localize_jquery_ui_datepicker();
+		if ( in_array( 'date', $types, true ) && ! in_array( 'date', $done, true ) ) {
+
+			if ( function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {
+				wp_localize_jquery_ui_datepicker();
+			}
+
 			$done[] = 'date';
 		}
 

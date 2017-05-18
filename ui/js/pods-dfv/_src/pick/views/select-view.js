@@ -159,7 +159,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			this.setupSelect2();
 		}
 
-		// Check initial selection limit status for regual multiselect and enforce it if needed
+		// Check initial selection limit status for regular multiselect and enforce it if needed
 		if ( 'select' === view_name && 'multi' === format_type && numSelected >= limit ) {
 			this.disableUnselected();
 		}
@@ -177,10 +177,13 @@ export const SelectView = Marionette.CollectionView.extend( {
 		this.collection.setSelected( this.$el.val() );
 		numSelected = this.collection.filterBySelected().length;
 
-		if ( 'select' === view_name && 'multi' === format_type && numSelected >= limit ) {
-			this.disableUnselected();
-		} else {
-			this.enableAll();
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			if ( numSelected >= limit ) {
+				this.disableUnselected();
+			}
+			else {
+				this.enableAll();
+			}
 		}
 	},
 

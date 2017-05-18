@@ -153,18 +153,7 @@ class PodsField_Number extends PodsField {
 			$length = 64;
 		}
 
-		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2, true );
-
-		if ( $decimals < 1 ) {
-			$decimals = 0;
-		}
-		elseif ( 30 < $decimals ) {
-			$decimals = 30;
-		}
-
-		if ( $length < $decimals ) {
-			$decimals = $length;
-		}
+		$decimals = $this->get_max_decimals( $options );
 
 		$schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 
@@ -209,30 +198,10 @@ class PodsField_Number extends PodsField {
 
 		$format = static::$prepare;
 
-		$length = (int) pods_v( static::$type . '_max_length', $options, 12, true );
-
-		if ( $length < 1 || 64 < $length ) {
-			$length = 64;
-		}
-
-		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2, true );
-
-		if ( $decimals < 1 ) {
-			$decimals = 0;
-		}
-		elseif ( 30 < $decimals ) {
-			$decimals = 30;
-		}
-
-		if ( $length < $decimals ) {
-			$decimals = $length;
-		}
+		$decimals = $this->get_max_decimals( $options );
 
 		if ( 0 < $decimals ) {
 			$format = '%01.' . $decimals . 'F';
-		}
-		else {
-			$format = '%d';
 		}
 
 		return $format;
@@ -525,7 +494,7 @@ class PodsField_Number extends PodsField {
 		    $length = 64;
 	    }
 
-	    $decimals = (int) pods_v( static::$type . '_decimals', $options, 2 );
+	    $decimals = (int) pods_v( static::$type . '_decimals', $options, 0 );
 
 	    if ( $decimals < 1 ) {
 		    $decimals = 0;

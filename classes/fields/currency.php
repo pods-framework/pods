@@ -675,4 +675,36 @@ class PodsField_Currency extends PodsField_Number {
 
 		return static::$currencies;
 	}
+
+	/**
+	 * Get the max allowed decimals.
+	 * Overwrites the default value of Number field. 2 decimals instead of 0.
+	 *
+	 * @since 2.7
+	 * @param array $options
+	 * @return int
+	 */
+	public function get_max_decimals( $options ) {
+
+		$length = (int) pods_v( static::$type . '_max_length', $options, 12, true );
+
+		if ( $length < 1 || 64 < $length ) {
+			$length = 64;
+		}
+
+		$decimals = (int) pods_v( static::$type . '_decimals', $options, 2 );
+
+		if ( $decimals < 1 ) {
+			$decimals = 0;
+		}
+		elseif ( 30 < $decimals ) {
+			$decimals = 30;
+		}
+
+		if ( $length < $decimals ) {
+			$decimals = $length;
+		}
+
+		return $decimals;
+	}
 }

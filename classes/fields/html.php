@@ -95,7 +95,7 @@ class PodsField_HTML extends PodsField {
                         'default' => 1,
                         'type' => 'boolean',
                         'help' => array(
-                            __( 'Changes double line-breaks in the text into HTML htmls', 'pods' ),
+                            __( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
                             'http://codex.wordpress.org/Function_Reference/wpautop'
                         )
                     ),

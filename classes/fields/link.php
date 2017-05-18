@@ -77,6 +77,12 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'boolean',
 				'dependency' => true
 			),
+			self::$type . '_new_window'      => array(
+				'label'      => __( 'Open link in new window by default?', 'pods' ),
+				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, self::$type ),
+				'type'       => 'boolean',
+				'dependency' => false
+			),
 			'output_options'                   => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
 				'group' => array(
@@ -132,7 +138,7 @@ class PodsField_Link extends PodsField_Website {
 	 *
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0
 	 */
 	public function schema( $options = null ) {
@@ -203,7 +209,9 @@ class PodsField_Link extends PodsField_Website {
 
 			$atts = '';
 
-			if ( ! empty( $value['target'] ) ) {
+			if ( ! empty( $value['target'] ) ||
+			     ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_new_window', $options ) )
+			) {
 				// Possible support for other targets in future
 				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
 			}
@@ -242,6 +250,10 @@ class PodsField_Link extends PodsField_Website {
 		$options         = (array) $options;
 		$form_field_type = PodsForm::$field_type;
 		$field_type      = 'link';
+
+		// Ensure proper format
+		$value = $this->pre_save( $value, $id, $name, $options, null, $pod );
+
 		pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
 
 	}
@@ -255,6 +267,8 @@ class PodsField_Link extends PodsField_Website {
 	 * @param array  $fields
 	 * @param array  $pod
 	 * @param int    $id
+	 *
+	 * @return bool|array
 	 *
 	 * @since 2.0
 	 */
@@ -299,11 +313,18 @@ class PodsField_Link extends PodsField_Website {
 	 * @param array  $pod
 	 * @param object $params
 	 *
+	 * @return array
+	 *
 	 * @since 2.0
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
 		$options = (array) $options;
+
+		// Update from a single (non array) input field (like website) if the field updates
+		if ( is_string( $value ) ) {
+			$value = array( 'url' => $value );
+		}
 
 		$value = array_merge( array( 'url' => '', 'text' => '', 'target' => '' ), (array) $value );
 
@@ -319,7 +340,9 @@ class PodsField_Link extends PodsField_Website {
 
 		// Start Target format
 		if ( ! empty( $value['target'] ) ) {
-			$value['target'] = $this->validate_target( $value['target'], $options );
+			$value['target'] = $this->validate_target( $value['target'] );
+		} elseif ( ! isset( $value['target'] ) && 1 == pods_v( self::$type . '_new_window', $options, 0 ) ) {
+			$value['target'] = '_blank';
 		}
 
 		return $value;
@@ -359,6 +382,6 @@ class PodsField_Link extends PodsField_Website {
 			wp_editor( '', 'pods-link-editor-hidden' );
 			echo '</div>';
 		}
-	
+
 	}
 }

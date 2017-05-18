@@ -17,11 +17,11 @@
   ],
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
-    "babel-core": "~6.10.4",
+    "babel-core": "6.24.1",
+    "babel-plugin-module-resolver": "^3.0.0-beta.3",
     "babel-plugin-transform-html-import-to-string": "0.0.1",
-    "babel-preset-es2015": "~6.9.0",
-    "babel-preset-es2015-rollup": "~1.1.1",
-    "babel-root-import": "^4.0.1",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-es2015-rollup": "3.0.0",
     "backbone": "~1.3.3",
     "backbone.marionette": "~3.1.0",
     "glob": "^7.0.*",
@@ -40,15 +40,15 @@
     "grunt-svn-copy": "^0.1.4",
     "grunt-text-replace": "^0.4.0",
     "jquery": "~1.12.4",
-    "jsdom": "~9.4.1",
+    "jsdom": "9.12.0",
     "load-grunt-tasks": "^3.5.0",
-    "mocha": "~2.5.3",
-    "rollup": "~0.25.4",
-    "rollup-plugin-babel": "~2.3.9",
-    "rollup-plugin-uglify": "~0.2.0",
+    "mocha": "3.4.1",
+    "rollup": "0.41.6",
+    "rollup-plugin-babel": "2.7.1",
+    "rollup-plugin-uglify": "1.0.2",
     "underscore": "~1.8.3"
   },
   "scripts": {
-    "test-mv-fields": "mocha --compilers js:babel-core/register --reporter dot --recursive tests/js"
+    "pods-test-dfv": "mocha --compilers js:babel-core/register --reporter dot --recursive tests/js"
   }
 }

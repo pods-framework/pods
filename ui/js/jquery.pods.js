@@ -148,7 +148,7 @@
                 } );
             },
             submit : function () {
-                var $submitbutton;
+                var $submitbutton, id, data;
 
                 // Handle submit of form and translate to AJAX
                 $( 'form.pods-submittable' ).on( 'submit', function ( e ) {
@@ -210,6 +210,16 @@
                         }
                     } );
 
+                    // Check for unsaved open fields. (separate if's to prevent possible unneeded jQuery selector)
+                    if ( 'undefined' !== typeof postdata.method ) {
+	                    if ( 'save_pod' === postdata.method ) {
+	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
+		                        alert( PodsI18n.__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' ) );
+		                        valid_form = false;
+	                        }
+	                    }
+                    }
+
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
 
@@ -243,32 +253,57 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
-                            if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
-                                var id = d.match( /\d*$/, '' );
 
-                                if ( 0 < id.length ) {
-                                    id = parseInt( id[ 0 ] );
-
-                                    if ( isNaN( id ) )
-                                        id = 0;
-                                }
-                                else
-                                    id = 0;
-
-                                if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d, $submittable, id );
-                                else if ( 'undefined' != typeof $submittable.data( 'location' ) )
-                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
-                                else
-                                    document.location.reload( true );
+                            // Make sure we're able to parse what was returned as data
+                            try {
+                                data = $.parseJSON( d );
                             }
-                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
+                            catch ( e ) {
+                                data = undefined;
+                            }
+
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d && undefined !== data ) {
+
+                                // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
+                                if ( 'object' === typeof data ) {
+
+                                    // Phone home with the data
+                                    window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );
+                                }
+                                else {
+                                    id = d.match( /\d*$/, '' );
+
+                                    if ( 0 < id.length ) {
+                                        id = parseInt( id[ 0 ] );
+
+                                        if ( isNaN( id ) ) {
+                                            id = 0;
+                                        }
+                                    }
+                                    else {
+                                        id = 0;
+                                    }
+
+                                    if ( 'undefined' != typeof pods_admin_submit_callback ) {
+                                        pods_admin_submit_callback( d, $submittable, id );
+                                    }
+                                    else if ( 'undefined' != typeof $submittable.data( 'location' ) ) {
+                                        document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
+                                    }
+                                    else {
+                                        document.location.reload( true );
+                                    }
+                                }
+                            }
+                            else if ( 'undefined' != typeof $submittable.data( 'error-location' ) ) {
                                 document.location.href = $submittable.data( 'error-location' );
+                            }
                             else {
                                 var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
 
-                                if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                     pods_admin_submit_error_callback( err_msg, $submittable );
+                                }
                                 else {
                                     alert( 'Error: ' + err_msg );
                                     if ( window.console ) console.log( err_msg );
@@ -288,8 +323,9 @@
                         error : function () {
                             var err_msg = 'Unable to process request, please try again.';
 
-                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback ) {
                                 pods_admin_submit_error_callback( err_msg, $submittable );
+                            }
                             else {
                                 alert( 'Error: ' + err_msg );
                                 if ( window.console ) console.log( err_msg );
@@ -847,8 +883,15 @@
             },
             setup_dependencies : function( $el ) {
                 var $current = $el.closest( '.pods-dependency' ),
-					$field = $el,
-					val = $el.val();
+                    $field = $el,
+                    val = $el.val(),
+                    $field_type,
+                    dependent_flag,
+                    dependent_specific,
+                    exclude_flag,
+                    exclude_specific,
+                    wildcard_target,
+                    wildcard_target_value;
 
                 /**
                  * Check if this element is a child from an 'advanced field options' group.
@@ -862,7 +905,7 @@
                     // And are we also in the "Additional Field Options" tab?
                     if ( $el.parents('.pods-additional-field-options').length ) {
                         // Get this field's type
-                        var $field_type = $current.find( '.pods-form-ui-field-name-field-data-type' ).val();
+                        $field_type = $current.find( '.pods-form-ui-field-name-field-data-type' ).val();
                         // Check if this element resides within the correct "Additional Field Options" tab
                         if ( ! $el.parents( '.pods-additional-field-options > .pods-depends-on-field-data-type-' + $field_type ).length ) {
                             // This is not an option for this field. Empty the value
@@ -871,16 +914,16 @@
                     }
                 }
 
-				if ( null === val ) {
-					val = '';
-				}
+                if ( null === val ) {
+                    val = '';
+                }
 
-                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' ),
-					dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
+                dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                dependent_specific = dependent_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( dependent_flag ).each( function () {
                     var $dependent_el = $( this ),
-						dependency_trigger;
+                        dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -984,12 +1027,12 @@
                     }
                 } );
 
-                var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
+                exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                exclude_specific = exclude_flag + '-' + val.replace( /\_/gi, '-' );
 
                 $current.find( exclude_flag ).each( function () {
                     var $dependent_el = $( this ),
-						dependency_trigger;
+                        dependency_trigger;
 
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
@@ -1093,20 +1136,40 @@
                     }
                 } );
 
-                var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
-                var wildcard_value = val.replace( /\_/gi, '-' );
+                // Search for wildcard dependencies on this element's value
+                wildcard_target = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                wildcard_target_value = val.replace( /\_/gi, '-' );
 
-                $current.find( wildcard_flag ).each( function () {
+                $current.find( wildcard_target ).each( function () {
                     var $dependent_el = $( this ),
-						wildcard = $dependent_el.data( 'wildcard' ),
-						dependency_trigger;
+                        data_attribute = 'pods-wildcard-' + $field.data( 'name-clean' ),
+                        wildcard_data = $dependent_el.data( data_attribute ),
+                        match_found,
+                        dependency_trigger;
 
+                    // Could support objects but limiting to a single string for now
+                    if ( 'string' !== typeof wildcard_data ) {
+                        return true; // Continues the outer each() loop
+                    }
+
+                    // Check for a wildcard match.  Can be multiple wildcards in a comma separated list
+                    match_found = false;
+                    $.each( wildcard_data.split( ',' ), function( index, this_wildcard ) {
+                        if ( null !== wildcard_target_value.match( this_wildcard ) ) {
+                            match_found = true;
+                            return false; // Stop iterating through further each() elements
+                        }
+                    } );
+
+                    // Set the state of the dependent element
                     if ( $dependent_el.parent().is( ':visible' ) ) {
-                        if ( null !== wildcard_value.match( wildcard ) ) {
-                            if ( $dependent_el.is( 'tr' ) )
+                        if ( match_found ) {
+                            if ( $dependent_el.is( 'tr' ) ) {
                                 $dependent_el.show().addClass( 'pods-dependent-visible' );
-                            else
+                            }
+                            else {
                                 $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                            }
 
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1124,15 +1187,17 @@
                                 dependency_trigger( $dependent_el );
                             }
                         }
-                        else {
-                            if ( $dependent_el.is( 'tr' ) )
+                        else { // No wildcard matches
+                            if ( $dependent_el.is( 'tr' ) ) {
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );
-                            else
+                            }
+                            else {
                                 $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
+                            }
                         }
                     }
-                    else {
-                        if ( null !== wildcard_value.match( wildcard ) ) {
+                    else { // Parent element wasn't visible
+                        if ( match_found ) {
                             $dependent_el.show().addClass( 'pods-dependent-visible' );
                             $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
                             $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
@@ -1150,8 +1215,9 @@
                                 dependency_trigger( $dependent_el );
                             }
                         }
-                        else
+                        else { // No wildcard matches
                             $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                        }
                     }
                 } );
             },
@@ -1403,7 +1469,7 @@
                                 $field_wrapper.append( edit_row );
 
                                 // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                                $row_content.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                                $row_content.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
                             }
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
@@ -1643,9 +1709,10 @@
                         }
 
                         $row_content.slideUp( 'slow', function () {
-                            $row.toggleClass( 'pods-manage-row-expanded' );
-                            $row_label.prop( 'colspan', '1' );
-                            $row.removeClass( 'pods-field-new' );
+	                        $row_label.prop( 'colspan', '1' );
+	                        $row.removeClass( 'pods-manage-row-expanded' );
+	                        $row.removeClass( 'pods-field-new' );
+	                        $row.addClass( 'pods-field-updated' );
                         } );
                     }
 
@@ -1701,7 +1768,7 @@
                         $new_row = $tbody.find( 'tr#row-' + row_counter );
 
                         // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                        $new_row.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
 
                         $new_row.data( 'row', row_counter );
                         $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
@@ -1759,7 +1826,7 @@
                         $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
 
                         // ToDo: Duct tape to handle fields added dynamically.  Find out if we can avoid this
-                        $new_row.find( '.pods-form-ui-field' ).podsMVFieldsInit( PodsMVFields.fieldInstances );
+                        $new_row.find( '.pods-form-ui-field' ).PodsDFVInit( PodsDFV.fieldInstances );
 
                         field_data[ 'name' ] += '_copy';
                         field_data[ 'label' ] += ' (' + PodsI18n.__( 'Copy' ) + ')';

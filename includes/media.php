@@ -234,6 +234,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
     if ( is_wp_error( $attachment_id ) )
         return 0;
 
+    require_once( ABSPATH . 'wp-admin/includes/media.php' );
     require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
     wp_update_attachment_metadata( $attachment_id, $meta_data = wp_generate_attachment_metadata( $attachment_id, $new_file ) );

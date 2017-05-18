@@ -201,17 +201,19 @@ class PodsField_Number extends PodsField {
     }
 
 	/**
-	 * Check if the field is empty.
-	 *
-	 * @param mixed $value
-	 *
-	 * @return bool
-	 *
-	 * @since 2.7
+	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
 
-		return empty( $value + 0 );
+		$is_empty = false;
+
+		$value += 0;
+
+		if ( empty( $value ) ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
 
 	}
 

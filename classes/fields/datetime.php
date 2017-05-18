@@ -242,17 +242,19 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * Check if the field is empty.
-	 *
-	 * @param mixed $value
-	 *
-	 * @return bool
-	 *
-	 * @since 2.7
+	 * {@inheritdoc}
 	 */
 	public function is_empty( $value = null ) {
 
-		return ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) );
+		$is_empty = false;
+
+		$value = trim( $value );
+
+		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
 
 	}
 

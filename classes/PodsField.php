@@ -179,7 +179,17 @@ class PodsField {
 	 */
 	public function is_empty( $value ) {
 
-		return empty( $value );
+		$is_empty = false;
+
+		if ( is_string( $value ) ) {
+			$value = trim( $value );
+		}
+
+		if ( empty( $value ) ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
 
 	}
 

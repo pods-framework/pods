@@ -160,8 +160,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		// Check initial selection limit status for regular multiselect and enforce it if needed
-		if ( 'select' === view_name && 'multi' === format_type && numSelected >= limit ) {
-			this.disableUnselected();
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			if ( ! this.validateSelectionLimit() ) {
+				this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
+			}
 		}
 	},
 
@@ -171,31 +173,33 @@ export const SelectView = Marionette.CollectionView.extend( {
 	onChangeSelected: function () {
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
-		const limit = this.fieldConfig.pick_limit;
-		let numSelected;
 
 		this.collection.setSelected( this.$el.val() );
-		numSelected = this.collection.filterBySelected().length;
 
 		if ( 'select' === view_name && 'multi' === format_type ) {
-			if ( numSelected >= limit ) {
-				this.disableUnselected();
+			if ( this.validateSelectionLimit() ) {
+				this.$el.find( 'option)' ).prop( 'disabled', false );
 			}
 			else {
-				this.enableAll();
+				this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 			}
 		}
 	},
 
 	/**
-	 *
+	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
 	 */
-	disableUnselected: function () {
-		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
-	},
+	validateSelectionLimit: function() {
+		let limit, numSelected;
 
-	enableAll: function () {
-		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', false );
+		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
+		numSelected = this.collection.filterBySelected().length;
+
+		if ( 0 === limit || numSelected < limit ) {
+			return true;
+		} else {
+			return false;
+		}
 	},
 
 	/**

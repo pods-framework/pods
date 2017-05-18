@@ -259,7 +259,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		select2Options = {
 			maximumSelectionLength: limit,
 			placeholder           : placeholder,
-			allowClear            : false,
+			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
 			disabled              : fieldConfig.limitDisable
 		};
 

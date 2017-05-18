@@ -33,6 +33,8 @@
 	if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
 		$args[ 'ampm' ] = true;
 
+	$args = PodsForm::field_method( 'time', 'enqueue_locale_jquery_ui_i18n', $args );
+
 	$html5_format = 'H:i:s';
 
 	$date = PodsForm::field_method( 'time', 'createFromFormat', $format, (string) $value );

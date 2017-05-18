@@ -831,4 +831,95 @@ class PodsField_DateTime extends PodsField {
 		}
 		return $new_format;
 	}
+
+	/**
+	 * Get the i18n files for jquery datepicker from the github repository
+	 *
+	 * @since  2.7
+	 * @link   https://jqueryui.com/datepicker/#localization
+	 * @link   https://github.com/jquery/jquery-ui/tree/master/ui/i18n
+	 * @param  array  $args  datepicker arguments
+	 * @return array
+	 */
+	public function enqueue_locale_jquery_ui_i18n( $args ) {
+
+		$locale = $this->get_locale_jquery_ui_i18n();
+
+		if ( ! empty( $locale ) ) {
+
+			$types = array();
+			switch ( static::$type ) {
+				case 'time':
+					$types[] = 'time';
+				break;
+				case 'date':
+					$types[] = 'date';
+				break;
+				case 'datetime':
+					$types[] = 'time';
+					$types[] = 'date';
+				break;
+			}
+
+			if ( in_array( 'date', $types, true ) ) {
+				// URL to the raw file on github
+				$url_base = 'https://rawgit.com/jquery/jquery-ui/master/ui/i18n/';
+				// Filename prefix
+				$file_prefix = 'datepicker-';
+				// Full URL
+				$i18n_file = $url_base.$file_prefix . $locale . '.js';
+				// Enqueue script
+				wp_enqueue_script( 'jquery-ui-i18n-' . $locale, $i18n_file, array( 'jquery-ui-datepicker' ) );
+			}
+			if ( in_array( 'time', $types, true ) ) {
+				// Local files.
+				if ( file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
+					wp_enqueue_script(
+						'jquery-ui-timepicker-i18n-' . $locale,
+						PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js',
+						array( 'jquery-ui-timepicker' ),
+						'1.6.3'
+					);
+				}
+			}
+			// Add i18n argument to the datepicker
+			$args['regional'] = $locale;
+		}
+		return $args;
+	}
+
+	/**
+	 * Get the locale according to the format available in the jquery ui i18n file list
+	 *
+	 * @since  2.7
+	 * @url    https://github.com/jquery/jquery-ui/tree/master/ui/i18n
+	 * @return string ex: "fr" or "en-GB"
+	 */
+	public function get_locale_jquery_ui_i18n() {
+		//replace _ by - in "en_GB" for example
+		$locale = str_replace( '_', '-', get_locale() );
+		switch ( $locale ) {
+			case 'ar-DZ':
+			case 'cy-GB':
+			case 'en-AU':
+			case 'en-GB':
+			case 'en-NZ':
+			case 'fr-CH':
+			case 'nl-BE':
+			case 'pt-BR':
+			case 'sr-SR':
+			case 'zh-CN':
+			case 'zh-HK':
+			case 'zh-TW':
+				//For all this locale do nothing the file already exist
+			break;
+			default:
+				//for other locale keep the first part of the locale (ex: "fr-FR" -> "fr")
+				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
+				//English is the default locale
+				$locale = ( $locale == 'en' ) ? '' : $locale;
+			break;
+		}
+		return $locale;
+	}
 }

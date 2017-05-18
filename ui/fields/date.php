@@ -30,6 +30,8 @@
 		'firstDay' => (int) get_option( 'start_of_week', 0 ),
 	);
 
+	$args = PodsForm::field_method( 'date', 'enqueue_locale_jquery_ui_i18n', $args );
+
 	$html5_format = 'Y-m-d';
 
 	$date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );

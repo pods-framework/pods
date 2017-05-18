@@ -210,23 +210,21 @@ class PodsMeta {
         add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
         if ( !empty( self::$media ) ) {
-            if ( pods_version_check( 'wp', '3.5' ) ) {
-                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-                add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-            }
+            add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+            add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
 
             add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
-        	add_filter( 'wp_insert_attachment_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
+            add_filter( 'wp_insert_attachment_data', array( $this, 'save_post_track_changed_fields' ), 10, 2 );
 
             if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
                 // Handle *_post_meta
                 if ( !has_filter( 'get_post_metadata', array( $this, 'get_post_meta' ) ) ) {
-					if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
-                    	add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
-					}
+                    if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
+                        add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
+                    }
 
                     if ( !pods_tableless() ) {
                         add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
@@ -726,10 +724,8 @@ class PodsMeta {
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
             if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
-                if ( pods_version_check( 'wp', '3.5' ) ) {
-                    add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-                    add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
-                }
+                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+                add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
 
                 add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
@@ -2677,17 +2673,17 @@ class PodsMeta {
             $object_name = $object->post_type;
         }
         elseif ( 'taxonomy' == $object_type ) {
-            if ( pods_version_check( 'wp', '4.4' ) ) {
-            	$object = get_term( $object_id );
+            $object = get_term( $object_id );
 
-            	if ( !is_object( $object ) || !isset( $object->taxonomy ) )
-                	return false;
+            if ( !is_object( $object ) || !isset( $object->taxonomy ) ){
+                return false;
+            }
 
-            	$object_name = $object->taxonomy;
-            } elseif ( empty( $aux ) ) {
-            	$object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
+            $object_name = $object->taxonomy;
+            if ( empty( $aux ) ) {
+                $object_name = $wpdb->get_var( $wpdb->prepare( "SELECT `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_id` = %d", $object_id ) );
             } else {
-            	$object_name = $aux;
+                $object_name = $aux;
             }
         }
         elseif ( 'settings' == $object_type )

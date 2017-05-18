@@ -287,16 +287,27 @@ class PodsInit {
 		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
+		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
+			// No need to add dependencies. All managed by jquery-ui-timepicker.
+			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
+		}
+		if ( ! wp_script_is( 'jquery-ui-timepicker-i18n', 'registered' ) ) {
+			// No need to add dependencies. All managed by jquery-ui-timepicker.
+			wp_register_script( 'jquery-ui-timepicker-i18n', PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js', array(), '0.3' );
+		}
+
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.6.3' );
+			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
 		}
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
+			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-datepicker',
-				'jquery-ui-slider'
+				'jquery-ui-slider',
+				'jquery-ui-slideraccess',
+				'jquery-ui-timepicker-i18n',
 			), '1.6.3' );
 		}
 

@@ -1263,6 +1263,8 @@ class Pods implements Iterator {
 									$where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );
 								}
 							}
+							
+							$params->params['where'] = '`t`.`post_status` IN ( "pending", "publish", "draft" )';
 
 							/**
 							 * @var $related_obj Pods

@@ -10,6 +10,8 @@
 	wp_enqueue_style( 'jquery-ui' );
 	wp_enqueue_style( 'jquery-ui-timepicker' );
 
+	PodsForm::field_method( 'time', 'enqueue_jquery_ui_i18n' );
+
 	$attributes = array();
 
 	$type = 'text';
@@ -32,8 +34,6 @@
 
 	if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
 		$args[ 'ampm' ] = true;
-
-	$args = PodsForm::field_method( 'time', 'enqueue_locale_jquery_ui_i18n', $args );
 
 	$html5_format = 'H:i:s';
 

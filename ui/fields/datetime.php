@@ -10,6 +10,8 @@
 	wp_enqueue_style( 'jquery-ui' );
 	wp_enqueue_style( 'jquery-ui-timepicker' );
 
+	PodsForm::field_method( 'datetime', 'enqueue_jquery_ui_i18n' );
+
 	$attributes = array();
 
 	$type = 'text';
@@ -54,8 +56,6 @@
 
 		$args[ 'timezone' ] = (string) $timezone;
 	}
-
-	$args = PodsForm::field_method( 'datetime', 'enqueue_locale_jquery_ui_i18n', $args );
 
 	$date = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );
 	$date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );

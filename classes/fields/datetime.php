@@ -833,13 +833,11 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * Get the i18n files for jquery datepicker from the github repository
+	 * Enqueue the i18n files for jquery date/timepicker
 	 *
 	 * @since  2.7
-	 * @param  array  $args  datepicker arguments
-	 * @return array
 	 */
-	public function enqueue_locale_jquery_ui_i18n( $args ) {
+	public function enqueue_jquery_ui_i18n() {
 		static $done = array();
 
 		$locale = $this->get_locale_jquery_ui_i18n();
@@ -868,7 +866,7 @@ class PodsField_DateTime extends PodsField {
 				$done[] = 'date';
 			}
 
-			if ( in_array( 'time', $types, true ) ) {
+			if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
 
 				// Local files.
 				if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
@@ -876,8 +874,7 @@ class PodsField_DateTime extends PodsField {
 					$locale = substr( $locale, 0, 2 );
 				}
 
-				if ( ! in_array( 'time', $done, true ) &&
-				     ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
+				if ( ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
 				     file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' )
 				) {
 					wp_enqueue_script(
@@ -890,7 +887,6 @@ class PodsField_DateTime extends PodsField {
 				}
 			}
 		}
-		return $args;
 	}
 
 	/**

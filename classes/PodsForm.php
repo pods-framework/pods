@@ -953,15 +953,38 @@ class PodsForm {
 
         $tableless_field_types = self::tableless_field_types();
 
-        if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
-            if ( is_array( $value ) && !in_array( $type, $tableless_field_types ) ) {
-                foreach ( $value as $k => $display_value ) {
-                    $value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
-                }
-            }
-            else
-                $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $value, $name, $options, $pod, $id, $traverse ) );
-        }
+        if ( method_exists( self::$loaded[ $type ], 'display_list' ) ) {
+		    $value = call_user_func_array( array( self::$loaded[ $type ], 'display_list' ), array(
+			    $value,
+			    $name,
+			    $options,
+			    $pod,
+			    $id,
+			    $traverse
+		    ) );
+	    } elseif ( method_exists( self::$loaded[ $type ], 'display' ) ) {
+		    if ( is_array( $value ) && ! in_array( $type, $tableless_field_types ) ) {
+			    foreach ( $value as $k => $display_value ) {
+				    $value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
+					    $display_value,
+					    $name,
+					    $options,
+					    $pod,
+					    $id,
+					    $traverse
+				    ) );
+			    }
+		    } else {
+			    $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
+				    $value,
+				    $name,
+				    $options,
+				    $pod,
+				    $id,
+				    $traverse
+			    ) );
+		    }
+	    }
 
         $value = apply_filters( 'pods_form_display_' . $type, $value, $name, $options, $pod, $id, $traverse );
 

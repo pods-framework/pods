@@ -541,7 +541,6 @@ class PodsInit {
 					$cpt_supported['supports_jetpack_markdown']  = (boolean) pods_var( 'supports_jetpack_markdown', $post_type, false );
 				}
 
-				// WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
 				$cpt_supports = array();
 
 				foreach ( $cpt_supported as $cpt_support => $supported ) {

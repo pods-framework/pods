@@ -231,13 +231,7 @@ function pods_unsanitize( $input, $params = array() ) {
 		}
 	}
 	else {
-		// @todo Figure out what to do to unescape mysql_real_escape_string
-		if ( pods_version_check( 'wp', '3.6' ) ) {
-			$output = stripslashes( $input );
-		}
-		else {
-			$output = stripslashes( $input );
-		}
+		$output = wp_unslash( $input );
 	}
 
 	return $output;
@@ -281,13 +275,7 @@ function pods_unslash( $input ) {
 		}
 	}
 	else {
-		// @todo Figure out what to do to unescape mysql_real_escape_string
-		if ( pods_version_check( 'wp', '3.6' ) ) {
-			$output = wp_unslash( $input );
-		}
-		else {
-			$output = stripslashes( $input );
-		}
+		$output = wp_unslash( $input );
 	}
 
 	return $output;

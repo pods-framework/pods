@@ -4,9 +4,6 @@ import {SelectView} from 'pods-dfv/_src/pick/views/select-view';
 import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
 
-/**
- * @type {RelationshipCollection} collection
- */
 const collection = new RelationshipCollection( [
 	{ id: 0, name: 'zero' },
 	{ id: 1, name: 'one' },
@@ -21,15 +18,14 @@ const collection = new RelationshipCollection( [
 ] );
 
 /**
- *
  * @type {Object[]}  cases
  *
- * @type {string}    thisCase.name                Descriptive name for this test case
- * @type {Object}    thisCase.fieldConfig         Field configuration for the view
+ * @type {string}    thisCase.name                 Descriptive name for this test case
+ * @type {Object}    thisCase.fieldConfig          Field configuration for the view
  *
- * @type {Object[]}  thisCase.steps               Multiple steps, each making a selection
- * @type {number[]}  thisCase.steps.optionIndexes select options indexes that get simulated clicks in this step
- * @type {number[]}  thisCase.steps.expected      Expected value after performing this step
+ * @type {Object[]}  thisCase.steps                Multiple steps, each making a selection
+ * @type {string[]}  thisCase.steps.optionIndexes  select option indexes that get simulated clicks in this step
+ * @type {string[]}  thisCase.steps.expected       Expected value after performing this step
  */
 const cases = [
 	{

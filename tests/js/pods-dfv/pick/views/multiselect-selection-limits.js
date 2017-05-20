@@ -30,7 +30,6 @@ const collection = new RelationshipCollection( [
  * @type {Object[]}  thisCase.steps               Multiple steps, each making a selection
  * @type {number[]}  thisCase.steps.optionIndexes select options indexes that get simulated clicks in this step
  * @type {number[]}  thisCase.steps.expected      Expected value after performing this step
-
  */
 const cases = [
 	{

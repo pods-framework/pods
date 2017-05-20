@@ -1,4 +1,4 @@
-global.document = require( 'jsdom' ).jsdom( '<!doctype html><body></body></html>' );
+global.document = require( 'jsdom' ).jsdom( '<!doctype html><html><body></body></html>' );
 global.window = document.defaultView;
 global.jQuery = require( 'jquery' );
 global._ = require( 'underscore' );

@@ -118,10 +118,12 @@ const cases = [
 
 // Main test entry point
 describe( 'Multiselect Selection Limits', function () {
+	let $el;
 
 	// Pre-test setup, before every it()
 	beforeEach( function () {
 		jQuery( document.body ).append( '<div id="target">' );
+		$el = jQuery( '#target' );
 	} );
 
 	// Post-test clean-up, after every it()
@@ -131,19 +133,20 @@ describe( 'Multiselect Selection Limits', function () {
 
 	// Iterate data-driven cases
 	cases.forEach( function ( thisCase ) {
-		testCase( thisCase, collection );
+		testCase( $el, thisCase, collection );
 	} );
 
 } );
 
 /**
  *
+ * @param {jQuery} $el
  * @param {Object} thisCase
  * @param {RelationshipCollection} collection
  */
-function testCase( thisCase, collection ) {
+function testCase( $el, thisCase, collection ) {
 	let $option;
-	const view = createView( thisCase.fieldConfig, collection );
+	const view = createView( $el, thisCase.fieldConfig, collection );
 
 	// Test this case
 	it( thisCase.name, function () {
@@ -169,10 +172,11 @@ function testCase( thisCase, collection ) {
 
 /**
  *
+ * @param {jQuery} $el
  * @param {Object} fieldConfig
  * @param {RelationshipCollection} collection
  */
-function createView( fieldConfig, collection ) {
+function createView( $el, fieldConfig, collection ) {
 
 	const fieldModel = new PodsDFVFieldModel( {
 		htmlAttr   : {
@@ -183,7 +187,7 @@ function createView( fieldConfig, collection ) {
 	} );
 
 	const view = new SelectView( {
-		$el       : jQuery( '#target' ),
+		$el       : $el,
 		fieldModel: fieldModel,
 		collection: collection
 	} );

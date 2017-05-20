@@ -166,7 +166,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		if ( 'select' === view_name && 'multi' === format_type ) {
 
 			// Store initial selection in case we need to revert back from an invalid state
-			this.multiLastSelection = this.$el.val();
+			this.multiLastValidSelection = this.$el.val();
 
 			// If we're at the limit: disable all unselected items so no selections can be added
 			if ( !this.validateSelectionLimit() ) {

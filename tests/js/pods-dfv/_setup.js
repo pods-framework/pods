@@ -1,5 +1,4 @@
-global.document = require( 'jsdom' ).jsdom( '<!doctype html><html><body></body></html>' );
-global.window = document.defaultView;
+require('jsdom-global')( ``, { beforeParse( window ) { window.alert = function(){}; } } );
 global.jQuery = require( 'jquery' );
 global._ = require( 'underscore' );
 global.Backbone = require( 'backbone' );

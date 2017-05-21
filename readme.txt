@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 3.8
-Tested up to: 4.7.1
+Tested up to: 4.7.5
 Stable tag: 2.6.9-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -17,7 +17,7 @@ Manage all your custom content needs in ONE location with the Pods Framework. Yo
 * Easily display your custom content, whether you want to use shortcodes, widgets, the code-free Pods Template approach, or use standard PHP in WordPress Theme templates and functions.
 * Create connections between any of your content to help organize it in logical and useful ways with relationship fields.
 
-Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](http://pods.io/) for our User Guide, Support Forum, and other resources to help you develop with Pods.
+Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](http://pods.io/) for our User Guide, [Support Forum](https://pods.io/forums/), and our [Slack Chat](https://pods.io/chat/) to help you develop with Pods.
 
 = Introduction =
 [youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
@@ -122,8 +122,8 @@ We also do our best to integrate and play nicely with other projects:
  * [Timber](http://upstatement.com/timber/)
  * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://github.com/pods-framework/pods-gravity-forms)
  * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
- * [WordPress JSON REST API (WP-API)](http://wp-api.org) Using the [Pods JSON API](https://github.com/pods-framework/pods-json-api)
 * Themes we've integrated with
+ * [Beaver Builder](https://beaverbuilder.com) (BeaverBuilder)
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
 
@@ -140,7 +140,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = Where do we go for Support on your plugin? =
 
-Our primary Support is handled through our Support Forums at [http://pods.io/forums/](http://pods.io/forums/). For the fastest support, you can contact us on our Slack Chat at [http://pods.io/chat/](http://pods.io/chat/) in the #support channel. We do not staff our Slack channel 24 hours, but we do check any questions that come through daily and reply to any unanswered questions.
+Our primary Support is handled through our Support Forums at [https://pods.io/forums/](https://pods.io/forums/). For the fastest support, you can contact us on our Slack Chat at [https://pods.io/chat/](https://pods.io/chat/) in the #support channel. We do not staff our Slack channel 24 hours, but we do check any questions that come through daily and reply to any unanswered questions.
 
 We do have a community of Pods users and developers that hang out on Slack so you're sure to get an answer quickly. We answer our Forum questions once a week with follow-up during the week as we're prioritizing resources towards restructuring and improving our documentation.
 
@@ -173,11 +173,35 @@ Pods really wouldn't be where it is without all of the contributions both financ
 
 Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
 
-Join us in further translating the Pods interface at: [wp-translate.org/projects/pods](http://wp-translate.org/projects/pods)
+Join us in further translating the Pods interface at: [https://translate.wordpress.org/projects/wp-plugins/pods](https://translate.wordpress.org/projects/wp-plugins/pods)
+
+We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
 
-= 2.6.9 - May 19th 2017 =
+= 2.6.9 - May 22nd 2017 =
+* Added: Pods Template Component is now automatically active on initial installation or reinstallation of Pods. Fixes (#3446). (#4060,#4180). [@pglewis,@sc0ttkclark]
+* Added: Auto Template Fix: Add configurations setting to override and allow Auto Templates to run against the_content outside of the WordPress_Loop. By default now, it will only run inside the WP Loop. (#4088). [@jamesgol]
+* Added: Allow raw value in PodsUI rows. New type "raw" that can output HTML form elements; used in i18n component. Fixes (#3959). (#3960). [@JoryHogeveen]
+* Fixed: Template Reference in Template Editor now properly displays without running out of memory. Fixes (#3370,#3992). (#4088,#4000). [@jamesgol]
+* Fixed: post_author querying now works through traversal of related post type. Fixes (#3931). (#3953,#4065). [@sc0ttkclark,@pglewis]
+* Fixed: Search the proper SQL column with "search" and meta based CPT. Fixes (#3858). (#4007). [@jamesgol]
+* Fixed: Ensure call to pods_view returns shortcode generated content, instead of echo'ing. Fixes (#3433). (#4010) [@dom111]
+* Fixed: Additional CSS Classes were not saved (#4003) so new Duplicating Pod now gives preference to existing field options values on duplication (#4028). [@pglewis]
+* Fixed: duplicate_pod_item now works for WP objects. Fixes (#3238,#4025). (#4070). [@pglewis]
+* Fixed: Hidden field did not save Default Values on fields with both Visibility hidden and a Default Value set. Fixes (#3996). (#4061). [@pglewis]
+* Fixed: Use register_taxonomy_for_object_type for post types that support post formats. Was not originally being registered for Pods CPT. Fixes (#2165). (#4076,#4084). [@sc0ttkclark]
+* Fixed: Help Text for HTML fields wpautop reference. Fixes (#4090,#4091). (#4089). [@JoryHogeveen]
+* Fixed: Corrected Pods overriding preview link for post updated messages. Fixes (#4092). (#4093). [@tuanmh]
+* Fixed: When using shortcodes/magic tags with PDF attachments, ._src returns an image since WP 4.7. This will now output the URL of the file. You can still get PDF generated images using ._src.image_size or ._img. Fixes (#4040). (#4111). [@JoryHogeveen]
+* Fixed: Audio attachments will now work properly with pods_attachment_import. (#4155) [@sc0ttkclark]
+* Fixed: Handling of Single & Double Quotes in post_thumbnail interpolation. Fixes (#4166). (#4167). [@quasel]
+* Fixed: Adding back_link to wp_die() usage which allows Modal Add/Edit to give you a way to go back in the edit screen. Fixes (#4168). (#4169). [@sc0ttkclark]
+* Fixed: Conflict with The Event Calendar issue with Handlebars (as we're using an older implementation). Tempoary hack until 2.7 with the correct fix. (#4173). [@sc0ttkclark]
+* Fixed: Missing images in unit test (#4177). [@sc0ttkclark]
+* Fixed: Invalid AJAX error with frontend forms and Settings Pods; $id will always return for AJAX requests. Fixes (#4181). (#4184). [@JoryHogeveen]
+* Fixed: Allow float values for menu positions and the option to remove trailing decimals from number field. Fixes issue where Pods Converted menu positions with decimals to INT on save. Fixes (#2839). (#4192). [@JoryHogeveen]
+* Fixed: Composer: composer installers v1.2 to v1.3. (#4239) [@Ramoonus]
 
 = 2.6.8 - January 17th 2017 =
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]

@@ -365,14 +365,20 @@ class PodsField_Address extends PodsField {
 
 		if ( ! empty( $value['address'] ) ) {
 			foreach ( $value['address'] as $key => $val ) {
-				if ( $key == 'region' && $options[ self::$type . '_address_region_input' ] == 'pick' && $options[ self::$type . '_address_region_output' ] == 'long' ) {
+				if ( 'region' === $key &&
+				     'pick' === pods_v( self::$type . '_address_region_input', $options ) &&
+				     'long' === pods_v( self::$type . '_address_region_output', $options )
+				) {
 					// Display full region names if enabled
 					$regions = PodsForm::field_method( 'pick', 'data_us_states' );
 
 					if ( array_key_exists( $val, $regions ) ) {
 						$value['address'][ $key ] = $regions[ $val ];
 					}
-				} elseif ( $key == 'country' && $options[ self::$type . '_address_country_input' ] == 'pick' && $options[ self::$type . '_address_country_output' ] == 'long' ) {
+				} elseif ( 'country' === $key &&
+				           'pick' === pods_v( self::$type . '_address_country_input', $options ) &&
+				           'long' === pods_v( self::$type . '_address_country_output', $options )
+				) {
 					// Display full country names if enabled
 					$countries = PodsForm::field_method( 'pick', 'data_countries' );
 

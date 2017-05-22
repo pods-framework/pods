@@ -1,5 +1,6 @@
 /*global assert */
 const inspect = require( 'util' ).inspect;
+
 import {SelectView} from 'pods-dfv/_src/pick/views/select-view';
 import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
@@ -17,16 +18,6 @@ const collection = new RelationshipCollection( [
 	{ id: 9, name: 'nine' },
 ] );
 
-/**
- * @type {Object[]}  cases
- *
- * @type {string}    thisCase.name                 Descriptive name for this test case
- * @type {Object}    thisCase.fieldConfig          Field configuration for the view
- *
- * @type {Object[]}  thisCase.steps                Multiple steps, each making a selection
- * @type {string[]}  thisCase.steps.optionIndexes  select option indexes that get simulated clicks in this step
- * @type {string[]}  thisCase.steps.expected       Expected value after performing this step
- */
 const cases = [
 	{
 		name: "Unlimited, individual selection",
@@ -39,25 +30,35 @@ const cases = [
 
 		steps: [
 			{
-				desc         : "First item is selected",
-				optionIndexes: [ '0' ],
-				expected     : [ '0' ]
+				desc            : "Select the first option",
+				optionIndexes   : [ '0' ],
+				expectedValue   : [ '0' ],
+				expectedDisabled: []
 			},
 			{
-				desc         : "Second item is selected",
-				optionIndexes: [ '1' ],
-				expected     : [ '0', '1' ]
+				desc            : "Select the second option",
+				optionIndexes   : [ '1' ],
+				expectedValue   : [ '0', '1' ],
+				expectedDisabled: []
 			},
 			{
-				desc         : "Third item is selected",
-				optionIndexes: [ '2' ],
-				expected     : [ '0', '1', '2' ]
+				desc            : "Select the third option",
+				optionIndexes   : [ '2' ],
+				expectedValue   : [ '0', '1', '2' ],
+				expectedDisabled: []
 			},
 			{
-				desc         : "Fourth item is selected",
-				optionIndexes: [ '3' ],
-				expected     : [ '0', '1', '2', '3' ]
+				desc            : "Select the fourth option",
+				optionIndexes   : [ '3' ],
+				expectedValue   : [ '0', '1', '2', '3' ],
+				expectedDisabled: []
 			},
+			{
+				desc            : "Deselect the fourth option",
+				optionIndexes   : [ '3' ],
+				expectedValue   : [ '0', '1', '2' ],
+				expectedDisabled: []
+			}
 		]
 	},
 	{
@@ -71,25 +72,47 @@ const cases = [
 
 		steps: [
 			{
-				desc         : "First item is selected",
-				optionIndexes: [ '0' ],
-				expected     : [ '0' ]
+				desc            : "Select the first option",
+				optionIndexes   : [ '0' ],
+				expectedValue   : [ '0' ],
+				expectedDisabled: []
 			},
 			{
-				desc         : "Second item is selected",
-				optionIndexes: [ '1' ],
-				expected     : [ '0', '1' ]
+				desc            : "Select the second option",
+				optionIndexes   : [ '1' ],
+				expectedValue   : [ '0', '1' ],
+				expectedDisabled: []
 			},
 			{
-				desc         : "Third item is selected",
-				optionIndexes: [ '2' ],
-				expected     : [ '0', '1', '2' ]
+				desc            : "Select the third option, reach limit, disable other options",
+				optionIndexes   : [ '2' ],
+				expectedValue   : [ '0', '1', '2' ],
+				expectedDisabled: [ '3', '4', '5', '6', '7', '8', '9' ]
 			},
 			{
-				desc         : "Limit 3, the fourth item should be refused",
-				optionIndexes: [ '3' ],
-				expected     : [ '0', '1', '2' ]
+				desc            : "Limit 3, the fourth option should be refused",
+				optionIndexes   : [ '3' ],
+				expectedValue   : [ '0', '1', '2' ],
+				expectedDisabled: [ '3', '4', '5', '6', '7', '8', '9' ]
 			},
+			{
+				desc            : "Deselect first option, should clear diabled options",
+				optionIndexes   : [ '0' ],
+				expectedValue   : [ '1', '2' ],
+				expectedDisabled: []
+			},
+			{
+				desc            : "Deselect second option",
+				optionIndexes   : [ '1' ],
+				expectedValue   : [ '2' ],
+				expectedDisabled: []
+			},
+			{
+				desc            : "Deselect third option, selection should be empty again",
+				optionIndexes   : [ '2' ],
+				expectedValue   : null,  // Note: behavior for val() changes to an empty array in jQuery 3.0
+				expectedDisabled: []
+			}
 		]
 	},
 	{
@@ -103,14 +126,22 @@ const cases = [
 
 		steps: [
 			{
-				desc         : "Select two staggered items",
-				optionIndexes: [ '0', '2' ],
-				expected     : [ '0', '2' ]
+				desc            : "Select five items, should be refused",
+				optionIndexes   : [ '0', '1', '2', '3', '4' ],
+				expectedValue   : null, // Note: behavior for val() changes to an empty array in jQuery 3.0
+				expectedDisabled: []
 			},
 			{
-				desc         : "Attempt to select three more options, should refuse and revert to last good value",
-				optionIndexes: [ '7', '8', '9' ],
-				expected     : [ '0', '2' ]
+				desc            : "Select two staggered items",
+				optionIndexes   : [ '0', '2' ],
+				expectedValue   : [ '0', '2' ],
+				expectedDisabled: []
+			},
+			{
+				desc            : "Attempt to select three more options, should refuse and revert to last good value",
+				optionIndexes   : [ '7', '8', '9' ],
+				expectedValue   : [ '0', '2' ],
+				expectedDisabled: []
 			}
 		]
 	}
@@ -118,81 +149,105 @@ const cases = [
 
 // Main test entry point
 describe( 'Multiselect Selection Limits', function () {
-	let $el;
-
-	// Pre-test setup, before every it()
-	beforeEach( function () {
-		jQuery( document.body ).append( '<div id="target">' );
-		$el = jQuery( '#target' );
+	cases.forEach( function ( thisCase, index ) {
+		// Note: do not refactor the testCase function inline here, we need the closure of the function due to Mocha's
+		// asynch execution of it() blocks.
+		testCase( thisCase, collection, index );
 	} );
-
-	// Post-test clean-up, after every it()
-	afterEach( function () {
-		jQuery( document.body ).empty();
-	} );
-
-	// Iterate data-driven cases
-	cases.forEach( function ( thisCase ) {
-		testCase( $el, thisCase, collection );
-	} );
-
 } );
 
 /**
  *
- * @param {jQuery} $el
- * @param {Object} thisCase
- * @param {RelationshipCollection} collection
+ * @param {Object}                  thisCase
+ * @param {RelationshipCollection}  collection
+ * @param {number}                  index
  */
-function testCase( $el, thisCase, collection ) {
-	let $option;
-	const view = createView( $el, thisCase.fieldConfig, collection );
+function testCase( thisCase, collection, index ) {
+	// Note: this needs to be here, between the function and the it() block.  Move it and you'll probably be sorry
+	const view = createView( thisCase.fieldConfig, collection, index );
 
 	// Test this case
 	it( thisCase.name, function () {
+		const containerID = `target-${index}`;
+		let $container;
+
+		// Note: This setup cannout be placed outside the it() block. Mocha runs all it() blocks asynch
+		jQuery( document.body ).append( `<form id="${containerID}"></form>` );
+		$container = jQuery( `#${containerID}` );
+		$container.append( view.$el );
 
 		// Loop through the steps for this case
-		thisCase.steps.forEach( function ( thisStep ) {
+		thisCase.steps.forEach( function ( thisStep, stepIndex ) {
+			let value, disabled;
 
-			// Attempt to select all specified options
-			thisStep.optionIndexes.forEach( function ( thisIndex ) {
-				$option = view.$el.find( `option:eq(${thisIndex})` );
-				$option.attr( 'selected', 'selected' );
-			} );
-			$option.parent().focus().change();
+			// Perform the step and grab the state
+			doStep( thisStep, view );
 
-			assert.deepEqual( view.$el.val(), thisStep.expected,
-				`Step: ${thisStep.desc} \n
-				expected: ${inspect( thisStep.expected )} actual: ${inspect( view.$el.val() )}`
+			value = view.$el.val();
+			disabled = view.$el.find( 'option:disabled' ).map( function () {
+				return this.value;
+			} ).toArray();
+
+			// Check value
+			assert.deepEqual( value, thisStep.expectedValue,
+				`\nStep: ${thisStep.desc}` +
+				`\nExpected value: ${inspect( thisStep.expectedValue )} ` +
+				`Actual value: ${inspect( value )}\n`
+			);
+
+			// Check options we expect to be disabled
+			assert.deepEqual( disabled, thisStep.expectedDisabled,
+				`\nStep: ${thisStep.desc}` +
+				`\nExpected disabled options: ${inspect( thisStep.expectedDisabled )} ` +
+				`Actual disabled options: ${inspect( disabled )}\n`
 			);
 		} );
 
+		// Note: Tear-down for unique references must be inside the it() block. Mocha runs all it() blocks asynch
+		view.destroy();
 	} );
 }
 
 /**
  *
- * @param {jQuery} $el
- * @param {Object} fieldConfig
- * @param {RelationshipCollection} collection
+ * @param {Object} thisStep
+ * @param {Object} view
  */
-function createView( $el, fieldConfig, collection ) {
+function doStep( thisStep, view ) {
 
-	const fieldModel = new PodsDFVFieldModel( {
+	// Attempt to "click" (toggle) the specified options, one at a time
+	thisStep.optionIndexes.forEach( function ( thisIndex ) {
+		const $option = view.$el.find( `option:eq( ${thisIndex} )` );
+
+		// Respect disabled options, cannot be clicked in the UI and we're vaguely simulating mouse clicks
+		if ( !$option.prop( 'disabled' ) ) {
+			$option.prop( 'selected', !$option.prop( 'selected' ) );
+		}
+	} );
+	view.$el.focus().change();
+}
+
+/**
+ *
+ * @param {Object}                  fieldConfig
+ * @param {RelationshipCollection}  collection
+ * @param {number}                  index
+ */
+function createView( fieldConfig, collection, index ) {
+	let fieldModel, view;
+
+	fieldModel = new PodsDFVFieldModel( {
 		htmlAttr   : {
-			id  : 'test-view-id',
-			name: 'test-view-name'
+			id  : `test-view-id-${index}`,
+			name: `test-view-name-${index}`
 		},
 		fieldConfig: fieldConfig
 	} );
 
-	const view = new SelectView( {
-		$el       : $el,
+	view = new SelectView( {
 		fieldModel: fieldModel,
 		collection: collection
-	} );
-
-	view.render();
+	} ).render();
 
 	return view;
 }

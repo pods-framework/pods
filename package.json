@@ -17,7 +17,7 @@
   ],
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
-    "glob": "^7.0.*",
+    "glob": "^7.1.*",
     "grunt": "^1.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",

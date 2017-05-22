@@ -277,6 +277,11 @@ class Pods_Component_Maps extends PodsComponent {
 					//'number_format_type' => 'slider'
 				)
 			),
+			'map_scrollwheel'  => array(
+				'label'   => __( 'Enable scroll wheel?', 'pods' ),
+				'default' => 1,
+				'type'    => 'boolean',
+			),
 			'map_marker'       => array(
 				'label'   => __( 'Default Map Custom Marker', 'pods' ),
 				'type'    => 'file',
@@ -385,6 +390,11 @@ class Pods_Component_Maps extends PodsComponent {
 				'number_format'     => '9999.99',
 				//'number_format_type' => 'slider'
 			)
+		);
+		$options['maps_scrollwheel']         = array(
+			'label'   => __( 'Enable scroll wheel?', 'pods' ),
+			'default' => 1,
+			'type'    => 'boolean',
 		);
 		$options['maps_info_window']         = array(
 			'label'      => __( 'Display an Info Window', 'pods' ),

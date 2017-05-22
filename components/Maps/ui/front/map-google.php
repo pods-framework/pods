@@ -11,20 +11,22 @@ $map_options = array();
 if ( ! empty( $options['maps_zoom'] ) ) {
 	$map_options['zoom'] = (int) $options['maps_zoom'];
 } else {
-	$map_options['zoom'] = (int) Pods_Component_Maps::$options['map_zoom'];
+	$map_options['zoom'] = (int) pods_v( 'map_zoom', Pods_Component_Maps::$options );
 }
 
 if ( ! empty( $options['maps_type'] ) ) {
 	$map_options['type'] = $options['maps_type'];
 } else {
-	$map_options['type'] = Pods_Component_Maps::$options['map_type'];
+	$map_options['type'] = pods_v( 'map_type', Pods_Component_Maps::$options );
 }
 
 if ( ! empty( $options['maps_marker'] ) ) {
 	$map_options['marker'] = $options['maps_marker'];
 } else {
-	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
+	$map_options['marker'] = pods_v( 'map_marker', Pods_Component_Maps::$options );
 }
+
+$map_options['scrollwheel'] = (bool) pods_v( 'maps_scrollwheel', $options, pods_v( 'map_scrollwheel', Pods_Component_Maps::$options, true ) );
 
 if ( ! empty( $map_options['marker'] ) ) {
 	$map_options['marker'] = wp_get_attachment_image_url( $map_options['marker'], 'full' );
@@ -54,7 +56,8 @@ $value['address_html'] = $address_html;
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
 				marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
 				zoom: <?php echo absint( $map_options['zoom'] ); ?>,
-				mapTypeId: '<?php echo esc_attr( $map_options['type'] ); ?>'
+				mapTypeId: '<?php echo esc_attr( $map_options['type'] ); ?>',
+				scrollwheel: <?php echo ( $map_options['scrollwheel'] ) ? 'true' : 'false'; ?>
 			},
 			marker_icon = <?php echo ( ! empty( $map_options['marker'] ) ? '\'' . esc_url( $map_options['marker'] ) . '\'' : 'null' ) ?>;
 

@@ -187,7 +187,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		if ( 'select' === view_name && 'multi' === format_type ) {
 
 			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
-			if ( 0 !== limit && limit < this.$el.val().length ) {
+			if ( null !== this.$el.val() && 0 !== limit && limit < this.$el.val().length ) {
 
 				// Revert to the last valid selection and punt on what they attempted
 				this.$el.val( this.multiLastValidSelection );

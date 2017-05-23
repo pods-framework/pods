@@ -167,11 +167,11 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 			// Store initial selection in case we need to revert back from an invalid state
 			this.multiLastValidSelection = this.$el.val();
+		}
 
-			// If we're at the limit: disable all unselected items so no selections can be added
-			if ( !this.validateSelectionLimit() ) {
-				this.multiselectLimitOver();
-			}
+		// If we're at the limit: disable all unselected items so no selections can be added
+		if ( !this.validateSelectionLimit() ) {
+			this.selectionLimitOver();
 		}
 	},
 
@@ -200,15 +200,12 @@ export const SelectView = Marionette.CollectionView.extend( {
 		this.collection.setSelected( this.$el.val() );
 		this.multiLastValidSelection = this.$el.val();
 
-		// Dynamically enforce selection limits for normal multiselects
-		if ( 'select' === view_name && 'multi' === format_type ) {
-
-			if ( this.validateSelectionLimit() ) {
-				this.multiselectLimitUnder();
-			}
-			else {
-				this.multiselectLimitOver();
-			}
+		// Dynamically enforce selection limits
+		if ( this.validateSelectionLimit() ) {
+			this.selectionLimitUnder();
+		}
+		else {
+			this.selectionLimitOver();
 		}
 	},
 
@@ -234,18 +231,30 @@ export const SelectView = Marionette.CollectionView.extend( {
 	/**
 	 *
 	 */
-	multiselectLimitOver: function ( ) {
-		// At the limit: disable all unselected items so no further selections can be added
-		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
+	selectionLimitOver: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			// At the limit: disable all unselected items so no further selections can be added
+			this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
+		}
+
 		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
 	},
 
 	/**
 	 *
 	 */
-	multiselectLimitUnder: function ( ) {
-		// Not at limit, make sure all items are enabled
-		this.$el.find( 'option' ).prop( 'disabled', false );
+	selectionLimitUnder: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			// Not at limit, make sure all items are enabled
+			this.$el.find( 'option' ).prop( 'disabled', false );
+		}
+
 		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated
 	},
 

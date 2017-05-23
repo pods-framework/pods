@@ -1,4 +1,11 @@
 <?php
+/**
+ * @var array  $value
+ * @var string $name
+ * @var array  $options
+ * @var bool   $multiple  Value contains an array of multiple values?
+ */
+
 wp_enqueue_script( 'googlemaps' );
 wp_enqueue_script( 'pods-maps' );
 wp_enqueue_style( 'pods-maps' );
@@ -32,16 +39,29 @@ if ( ! empty( $map_options['marker'] ) ) {
 	$map_options['marker'] = wp_get_attachment_image_url( $map_options['marker'], 'full' );
 }
 
-if ( ! isset( $address_html ) ) {
-	// @todo Check field type
-	$format = PodsForm::field_method( 'address', 'default_display_format' );
-	if ( $options['address_display_type'] == 'custom' ) {
-		$format = $options['address_display_type_custom'];
-	}
-	$address_html = PodsForm::field_method( 'address', 'format_to_html', $format, $value, $options );
+if ( ! array_key_exists( 0, $value ) ) {
+	$value = array( $value );
+	$multiple = false;
 }
 
-$value['address_html'] = $address_html;
+foreach( $value as $key => $val ) {
+	if ( ! isset( $address_html ) || $multiple ) {
+		// @todo Check field type
+		if ( ! empty( $val['info_window'] ) ) {
+			$format = $val['info_window'];
+		} else {
+			$format = PodsForm::field_method( 'address', 'default_display_format' );
+			if ( 'custom' === pods_v( 'address_display_type', $options ) ) {
+				$format = pods_v( 'address_display_type_custom', $options );
+			}
+		}
+		$address_html = PodsForm::field_method( 'address', 'format_to_html', $format, $val, $options );
+	}
+
+	unset( $value[ $key ]['info_window'] );
+	$value[ $key ]['address_html'] = $address_html;
+}
+
 ?>
 <div id="<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>"
 	class="pods-address-maps-map-canvas"
@@ -72,89 +92,81 @@ $value['address_html'] = $address_html;
 		}
 
 		//------------------------------------------------------------------------
-		// Initialze the map
+		// Initialize the map, set default center to the first item.
 		//
-		if ( value.hasOwnProperty('geo') ) {
-			latlng = value.geo;
+		if ( value.length && value[0].hasOwnProperty('geo') ) {
+			latlng = value[0].geo;
 			mapOptions.center = new google.maps.LatLng( latlng );
 		}
 
 		var map = new google.maps.Map( mapCanvas, mapOptions );
-		var geocoder = new google.maps.Geocoder();
+		var bounds = new google.maps.LatLngBounds();
+		//var geocoder = new google.maps.Geocoder();
 
 		//------------------------------------------------------------------------
-		// Initialze marker
+		// Basic marker options.
 		//
 		var markerOptions = {
 			map : map,
-			position: latlng,
 			draggable: false
 		};
-
 		if ( marker_icon ) {
 			markerOptions.icon = marker_icon;
 		}
+		var autoOpenInfoWindow = ( 1 === value.length );
 
-		var marker = new google.maps.Marker( markerOptions );
-		map.setCenter( mapOptions.center );
+		// Add the markers
+		$.each( value, function( i, val ) {
 
-		//------------------------------------------------------------------------
-		// Initialze info window
-		//
-		var infowindowContent = value.address_html;
-		if ( value.info_window ) {
-			infowindowContent = podsFormatFieldsToHTML( value.info_window, value.address );
-		}
-		var infowindow = new google.maps.InfoWindow();
-		podsMapsInfoWindow( true );
+			if ( value[ i ].hasOwnProperty('geo') ) {
+				markerOptions.position = value[ i ].geo;
 
-		function podsMapsInfoWindow( open ) {
+				// Add the marker.
+				value[ i ].marker = new google.maps.Marker( markerOptions );
+				bounds.extend( markerOptions.position );
 
-			if ( ! infowindow ) {
-				infowindow = new google.maps.InfoWindow();
+				//------------------------------------------------------------------------
+				// Initialize info window.
+				//
+				if ( value[ i ].address_html ) {
+
+					value[ i ].infowindowOpen = function( open ) {
+						if ( ! this.infowindow ) {
+							this.infowindow = new google.maps.InfoWindow();
+						}
+
+						this.infowindow.setContent( this.address_html );
+						if ( open ) {
+							this.infowindow.open( map, this.marker );
+						}
+					};
+
+					value[ i ].infowindowOpen( autoOpenInfoWindow );
+
+					// InfoWindow trigger
+					google.maps.event.addListener( value[ i ].marker, 'click', function () {
+						value[ i ].infowindowOpen( true );
+					} );
+				}
 			}
 
-			infowindow.setContent( infowindowContent );
-			if ( open ) {
-				infowindow.open( map, marker );
-			}
-		}
+		} );
 
+		if ( 1 < value.length ) {
 
-		// InfoWindow trigger
-		if ( infowindow !== false ) {
-			google.maps.event.addListener( marker, 'click', function () {
-				podsMapsInfoWindow( true );
-			} );
-		}
+			// Automatic sizing for multiple markers.
+			map.fitBounds( bounds );
+			map.panToBounds( bounds );
+			mapOptions.center = map.getCenter();
 
-		//------------------------------------------------------------------------
-		// Helpers
-		//
-		function podsFormatFieldsToHTML( html, fields ) {
-			// Convert magic tags to field values or remove them
-			$.each( fields, function( key, field ) {
-				if ( field.length ) {
-					html = html.replace( '{{' + key + '}}', field );
-				} else {
-					// Replace with {{PODS}} so we can remove this line if needed
-					html = html.replace( '{{' + key + '}}', '{{REMOVE}}' );
-				}
-			} );
-			// Remove empty lines
-			var lines = html.split( '<br>' );
-			$.each( lines, function( key, line ) {
-				if ( line === '{{REMOVE}}' ) {
-					// Delete the key it this line only has {{REMOVE}}
-					delete lines[ key ];
-				} else {
-					// Remove {{REMOVE}}
-					lines[ key ] = line.replace('{{REMOVE}}', '')
-				}
-			} );
-			// Reset array keys and join it back together
-			html = lines.filter(function(){return true;}).join( '<br>' );
-			return html;
+			//(optional) restore the zoom level after the map is done scaling
+			/*var listener = google.maps.event.addListener( map, "idle", function () {
+				map.setZoom( mapOptions.zoom );
+				google.maps.event.removeListener( listener );
+			} );*/
+
+		} else {
+			map.setCenter( mapOptions.center );
 		}
 
 	} ); // end document ready

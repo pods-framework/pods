@@ -59,12 +59,13 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			this.buildAutocomplete();
 		}
 
-		this.showList();
-
 		// Add New?
 		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
 			this.showAddNew();
 		}
+
+		// Build the list last, events fired by the list (like selection limit) may impact state in other views we manage
+		this.showList();
 	},
 
 	/**
@@ -147,6 +148,28 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitOver: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.disable();
+		}
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitUnder: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.enable();
+		}
+	},
+
+	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
@@ -164,7 +187,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewAddNewClick: function ( childView ) {
+	onChildviewAddNew: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {

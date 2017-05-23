@@ -60,6 +60,10 @@ foreach( $value as $key => $val ) {
 
 	unset( $value[ $key ]['info_window'] );
 	$value[ $key ]['address_html'] = $address_html;
+
+	if ( ! empty( $val['marker_icon'] ) && is_numeric( $val['marker_icon'] ) ) {
+		$value[ $key ]['marker_icon'] = wp_get_attachment_image_url( $val['marker_icon'], 'full' );
+	}
 }
 
 ?>
@@ -104,26 +108,32 @@ foreach( $value as $key => $val ) {
 		//var geocoder = new google.maps.Geocoder();
 
 		//------------------------------------------------------------------------
-		// Basic marker options.
+		// Add the items.
 		//
-		var markerOptions = {
-			map : map,
-			draggable: false
-		};
-		if ( marker_icon ) {
-			markerOptions.icon = marker_icon;
-		}
 		var autoOpenInfoWindow = ( 1 === value.length );
-
-		// Add the markers
 		$.each( value, function( i, val ) {
 
 			if ( value[ i ].hasOwnProperty('geo') ) {
-				markerOptions.position = value[ i ].geo;
+
+				//------------------------------------------------------------------------
+				// Initialize marker.
+				//
+				value[ i ].markerOptions = {
+					map : map,
+					draggable: false
+				};
+
+				value[ i ].markerOptions.position = value[ i ].geo;
+
+				if ( value[ i ].hasOwnProperty('marker_icon') ) {
+					value[ i ].markerOptions.icon = value[ i ].marker_icon;
+				} else if ( marker_icon ) {
+					value[ i ].markerOptions.icon = marker_icon;
+				}
 
 				// Add the marker.
-				value[ i ].marker = new google.maps.Marker( markerOptions );
-				bounds.extend( markerOptions.position );
+				value[ i ].marker = new google.maps.Marker( value[ i ].markerOptions );
+				bounds.extend( value[ i ].markerOptions.position );
 
 				//------------------------------------------------------------------------
 				// Initialize info window.

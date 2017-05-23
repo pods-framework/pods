@@ -64,6 +64,10 @@ foreach( $value as $key => $val ) {
 	if ( ! empty( $val['marker_icon'] ) && is_numeric( $val['marker_icon'] ) ) {
 		$value[ $key ]['marker_icon'] = wp_get_attachment_image_url( $val['marker_icon'], 'full' );
 	}
+
+	if ( ! empty( $val['geo'] ) && is_array( $val['geo'] ) ) {
+		$value[ $key ]['geo'] = array_map( 'floatval', $val['geo'] );
+	}
 }
 
 ?>

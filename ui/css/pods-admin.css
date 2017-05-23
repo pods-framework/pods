@@ -319,6 +319,10 @@ div.pods-manage-field .pods-field {
     position: relative;
 }
 
+div.pods-manage-field .pods-pick-values li {
+    margin: 0;
+}
+
 div.pods-manage-field .pods-field-option:nth-child(odd),
 div.pods-manage-field .pods-field-option-group:nth-child(odd) {
     background: #fff;
@@ -330,14 +334,19 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     float: left;
     width: 30%;
     max-width: 150px;
+    margin-right: 2%;
 }
 
 .pods-manage-field .pods-field.pods-boolean label,
 .pods-manage-field .pods-field-option .pods-pick-values label {
-    padding-top: 0;
     float: none;
     width: auto;
     max-width: 100%;
+    display: block;
+    margin-left: 22px;
+    padding: 5px 0;
+    line-height: 14px;
+    margin-right: 0;
 }
 
 .pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean {
@@ -360,9 +369,9 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     max-width: 25em;
 }
 
-.pods-manage-field .pods-pick-values {
+.pods-manage-field label + div .pods-pick-values {
     /* Match width to input fields */
-    width: 93%;
+    width: 96%;
 }
 
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-wysiwyg textarea {
@@ -401,18 +410,11 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     margin: 5px 0;
 }
 
-.pods-manage-field .pods-field.pods-boolean label,
-.pods-manage-field .pods-pick-values label {
-    padding-top: 0;
-    display: inline-block;
-}
-
 .pods-manage-field input[type="checkbox"],
 .pods-manage-field input[type="radio"] {
 	display: inline-block;
-    left: 2px;
-    margin: 1px 2px 1px 0;
-    float: none;
+    margin: 4px 2px 4px 0;
+    float: left;
     vertical-align: middle;
 }
 
@@ -473,6 +475,13 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 
 .pods-sluggable .pods-slug-edit {
     display: none;
+}
+
+/**
+ * Pods DFV
+ */
+.pods-manage-field .pods-dfv-field .pods-pick-values > ul {
+    border: 0;
 }
 
 /*

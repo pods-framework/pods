@@ -454,8 +454,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     max-width: 95%;
 }
 
-.pods-manage-field .pods-field.pods-boolean:hover {
-    background: #ffffd8;
+.pods-manage-field li > .pods-field.pods-boolean:hover {
+    background: #f5f5f5;
 }
 
 .pods-manage-field input.pods-form-ui-no-label {
@@ -505,10 +505,6 @@ tbody.pods-manage-list tr.flexible-row {
 div.row-actions.row-actions-toggle {
     display: block;
     visibility: visible;
-}
-
-.pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label {
-    background: #ffffcc;
 }
 
 /*

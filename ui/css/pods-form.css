@@ -156,7 +156,7 @@ select.pods-form-ui-field-type-pick[multiple] {
 
 .pods-field.pods-boolean:hover,
 .pods-pick-values .pods-radio li:hover {
-    background: #ffffd8;
+    background: #f5f5f5;
 }
 
 select.pods-pick-multi {

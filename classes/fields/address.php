@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class PodsField_AddressMap
  * @package Pods\Fields
@@ -134,7 +133,7 @@ class PodsField_Address extends PodsField {
 				'type'       => 'pick',
 				'data'       => array(
 					'long'  => __( 'Full name', 'pods' ),
-					'short' => __( 'Stage / Province code', 'pods' )
+					'short' => __( 'State / Province code', 'pods' )
 				)
 			),
 			self::$type . '_address_country_input'  => array(

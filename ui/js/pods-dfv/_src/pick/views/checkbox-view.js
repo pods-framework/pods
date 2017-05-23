@@ -50,7 +50,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 		// Check initial selection limit status and enforce it if needed
 		if ( ! this.validateSelectionLimit() ) {
-			this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+			this.selectionLimitOver();
 		}
 	},
 
@@ -64,9 +64,9 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 		// Dynamically enforce selection limit
 		if ( this.validateSelectionLimit() ) {
-			this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
+			this.selectionLimitUnder();
 		} else {
-			this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+			this.selectionLimitOver();
 		}
 	},
 
@@ -85,6 +85,22 @@ export const CheckboxView = PodsFieldListView.extend( {
 		} else {
 			return false;
 		}
+	},
+
+	/**
+	 *
+	 */
+	selectionLimitOver: function ( ) {
+		this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
+		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
+	},
+
+	/**
+	 *
+	 */
+	selectionLimitUnder: function ( ) {
+		this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
+		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated
 	}
 
 } );

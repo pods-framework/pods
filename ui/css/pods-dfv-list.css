@@ -1,4 +1,5 @@
-ul.pods-dfv-list {
+ul.pods-dfv-list,
+.pods-dfv-field .pods-pick-values > ul {
 	background: #fff;
 	margin: 0 0 5px 0;
 	padding: 0;

@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/file-upload/views/file-upload-item.html';
+import template from 'pods-dfv/_src/file-upload/views/file-upload-item.html';
 
-import { PodsFieldListView, PodsFieldView } from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  * Individual list items, representing a single file

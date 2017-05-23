@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-import template from '~/ui/js/pods-dfv/_src/pick/views/checkbox-item.html';
+import template from 'pods-dfv/_src/pick/views/checkbox-item.html';
 
-import {PodsFieldListView, PodsFieldView} from '~/ui/js/pods-dfv/_src/core/pods-field-views';
+import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  *
@@ -33,10 +33,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 
 	modelChanged: function () {
 		this.render();
-	},
-
-	onToggleSelected: function () {
-		this.model.toggleSelected();
 	}
 } );
 
@@ -48,5 +44,17 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 	className: 'pods-checkbox-view',
 
-	childView: CheckboxItem
+	childView: CheckboxItem,
+
+	onChildviewToggleSelected: function ( childView ) {
+		const fieldConfig = this.fieldModel.get( 'fieldConfig' );
+		const limit = fieldConfig.pick_limit;
+		const numSelected = this.collection.filterBySelected().length;
+
+		// Enforce selection limit, ignoring de-selection.  Note that 'selected' is the value before the change here
+		if ( numSelected < limit || childView.model.get( 'selected' ) ) {
+			childView.model.toggleSelected();
+		}
+	}
+
 } );

@@ -3300,6 +3300,10 @@ class PodsAPI {
 			'changed_fields'
 		);
 
+		if ( $track_changed_fields ) {
+			self::handle_changed_fields( $params->pod, $params->id, 'set' );
+		}
+
         if ( false === $bypass_helpers ) {
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
@@ -3358,10 +3362,6 @@ class PodsAPI {
                 }
             }
         }
-
-		if ( $track_changed_fields ) {
-			$changed_fields = $this->get_changed_fields( compact( $pieces ) );
-		}
 
         $table_data = $table_formats = $update_values = $rel_fields = $rel_field_ids = array();
 
@@ -3735,7 +3735,7 @@ class PodsAPI {
 										 *
 										 * @param array $tag_data Fields for creating new item.
 										 * @param int $v Field ID of tag.
-										 * @param obj $search_data Search object for tag.
+										 * @param Pods $search_data Search object for tag.
 										 * @param string $field Table info for field.
 										 * @param array	$pieces Field array.
 										 *
@@ -3828,19 +3828,23 @@ class PodsAPI {
         }
 
         if ( false === $bypass_helpers ) {
-            $pieces = compact( $pieces );
+			if ( $track_changed_fields ) {
+				$changed_fields = self::handle_changed_fields( $params->pod, $params->id, 'get' );
+			}
+
+            $compact_pieces = compact( $pieces );
 
             // Plugin hooks
-            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item, $params->id );
-            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
+            $this->do_hook( 'post_save_pod_item', $compact_pieces, $is_new_item, $params->id );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $compact_pieces, $is_new_item, $params->id );
 
             if ( $is_new_item ) {
-                $this->do_hook( 'post_create_pod_item', $pieces, $params->id );
-                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
+                $this->do_hook( 'post_create_pod_item', $compact_pieces, $params->id );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $compact_pieces, $params->id );
             }
             else {
-                $this->do_hook( 'post_edit_pod_item', $pieces, $params->id );
-                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces, $params->id );
+                $this->do_hook( 'post_edit_pod_item', $compact_pieces, $params->id );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $compact_pieces, $params->id );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -3900,30 +3904,92 @@ class PodsAPI {
     }
 
 	/**
+	 *Handle tracking changed fields or get them
+	 *
+	 * @param string $pod
+	 * @param int    $id
+	 * @param string $mode
+	 *
+	 * @return array List of changed fields (if $mode = 'get')
+	 */
+	public static function handle_changed_fields( $pod, $id, $mode = 'set' ) {
+
+		static $changed_pods_cache = array();
+		static $old_fields_cache = array();
+		static $changed_fields_cache = array();
+
+		$cache_key = $pod . '|' . $id;
+
+		$export_params = array(
+			'depth' => 1,
+		);
+
+		if ( in_array( $mode, array( 'set', 'reset' ), true ) ) {
+			if ( isset( $changed_fields_cache[ $cache_key ] ) ) {
+				unset( $changed_fields_cache[ $cache_key ] );
+			}
+
+			if ( empty( $old_fields_cache[ $cache_key ] ) || 'reset' === $mode ) {
+				$old_fields_cache[ $cache_key ] = array();
+
+				if ( ! empty( $id ) ) {
+					if ( ! isset( $changed_pods_cache[ $pod ] ) ) {
+						$changed_pods_cache[ $pod ] = pods( $pod );
+					}
+
+					if ( $changed_pods_cache[ $pod ] && $changed_pods_cache[ $pod ]->valid() ) {
+						$changed_pods_cache[ $pod ]->fetch( $id );
+
+						$old_fields_cache[ $cache_key ] = $changed_pods_cache[ $pod ]->export( $export_params );
+					}
+				}
+			}
+		}
+
+		$changed_fields = array();
+
+		if ( isset( $changed_fields_cache[ $cache_key ] ) ) {
+			$changed_fields = $changed_fields_cache[ $cache_key ];
+		} elseif ( isset( $old_fields_cache[ $cache_key ] ) ) {
+			$old_fields = $old_fields_cache[ $cache_key ];
+
+			if ( 'get' === $mode ) {
+				$changed_fields_cache[ $cache_key ] = array();
+
+				if ( ! empty( $changed_pods_cache[ $pod ] ) ) {
+					if ( $id != $changed_pods_cache[ $pod ]->id() ) {
+						$changed_pods_cache[ $pod ]->fetch( $id );
+					}
+
+					$new_fields = $changed_pods_cache[ $pod ]->export( $export_params );
+
+					foreach ( $new_fields as $field => $value ) {
+						if ( ! isset( $old_fields[ $field ] ) || $value != $old_fields[ $field ] ) {
+							$changed_fields[ $field ] = $value;
+						}
+					}
+
+					$changed_fields_cache[ $cache_key ] = $changed_fields;
+				}
+			}
+		}
+
+		return $changed_fields;
+
+	}
+
+	/**
 	 * Get the fields that have changed during a save
 	 *
 	 * @param array $pieces Pieces array from save_pod_item
 	 *
 	 * @return array Array of fields and values that have changed
+	 *
+	 * @deprecated Use PodsAPI::handle_changed_fields
 	 */
 	public function get_changed_fields( $pieces ) {
 
-		$fields = $pieces[ 'fields' ];
-		$fields_active = $pieces[ 'fields_active' ];
-
-		$fields_changed = array();
-
-		if ( 0 < $pieces[ 'params' ]->id ) {
-			$pod = pods( $pieces[ 'params' ]->pod, $pieces[ 'params' ]->id );
-
-			foreach ( $fields_active as $field ) {
-				if ( isset( $fields[ $field ] ) && $pod->raw( $field ) != $fields[ $field ][ 'value' ] ) {
-					$fields_changed[ $field ] = $fields[ $field ][ 'value' ];
-				}
-			}
-		}
-
-		return $fields_changed;
+		return self::handle_changed_fields( $pieces['params']->pod, $pieces['params']->id, 'get' );
 
 	}
 
@@ -4341,31 +4407,38 @@ class PodsAPI {
      * @since 1.12
      */
     public function export_pod_item ( $params, $pod = null ) {
-        if ( !is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
-            if ( empty( $params ) )
-                return false;
 
-            $params = (object) pods_sanitize( $params );
+	    if ( ! is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
+		    if ( empty( $params ) ) {
+			    return false;
+		    }
 
-            $pod = pods( $params->pod, $params->id, false );
+		    if ( is_object( $params ) ) {
+			    $params = get_object_vars( (object) $params );
+		    }
 
-            if ( empty( $pod ) )
-                return false;
+		    $params = pods_sanitize( $params );
+
+		    $pod = pods( $params['pod'], $params['id'], false );
+
+		    if ( empty( $pod ) ) {
+			    return false;
+		    }
+	    }
+
+        $params['fields'] = (array) pods_v( 'fields', $params, array(), true );
+        $params['depth'] = (int) pods_v( 'depth', $params, 2, true );
+        $params['object_fields'] = (array) pods_v( 'object_fields', $pod->pod_data, array(), true );
+        $params['flatten'] = (boolean) pods_v( 'flatten', $params, false, true );
+        $params['context'] = pods_v( 'context', $params, null, true );
+
+        if ( empty( $params['fields'] ) ) {
+            $params['fields'] = array_merge( $pod->fields, $params['object_fields'] );
         }
 
-        $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
-        $depth = (int) pods_var_raw( 'depth', $params, 2, null, true );
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
-        $flatten = (boolean) pods_var( 'flatten', $params, false, null, true );
+        $data = $this->export_pod_item_level( $pod, $params );
 
-        if ( empty( $fields ) ) {
-            $fields = $pod->fields;
-            $fields = array_merge( $fields, $object_fields );
-        }
-
-        $data = $this->export_pod_item_level( $pod, $fields, $depth, $flatten );
-
-        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $fields, $depth, $flatten );
+        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $params['fields'], $params['depth'], $params['flatten'], $params );
 
         return $data;
     }
@@ -4374,22 +4447,39 @@ class PodsAPI {
      * Export a pod item by depth level
      *
      * @param Pods $pod Pods object
-     * @param array $fields Fields to export
-     * @param int $depth Depth limit
-     * @param boolean $flatten Whether to flatten arrays for display
-     * @param int $current_depth Current depth level
+     * @param array $params Export params
      *
      * @return array Data array
      *
      * @since 2.3
      */
-    private function export_pod_item_level ( $pod, $fields, $depth, $flatten = false, $current_depth = 1 ) {
+    private function export_pod_item_level ( $pod, $params ) {
+	    $fields        = $params['fields'];
+	    $depth         = $params['depth'];
+	    $flatten       = $params['flatten'];
+	    $current_depth = pods_v( 'current_depth', $params, 1, true );
+	    $context       = $params['context'];
+
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::simple_tableless_objects();
 
-        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+        $object_fields = (array) pods_v( 'object_fields', $pod->pod_data, array(), true );
 
         $export_fields = array();
+
+		$pod_type = $pod->pod_data['type'];
+
+		if ( 'post_type' === $pod_type ) {
+			$pod_type = 'post';
+		} elseif ( 'taxonomy' === $pod_type ) {
+			$pod_type = 'term';
+		}
+
+		$registered_meta_keys = false;
+
+		if ( function_exists( 'get_registered_meta_keys' ) ) {
+			$registered_meta_keys = get_registered_meta_keys( $pod_type );
+		}
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
@@ -4400,6 +4490,14 @@ class PodsAPI {
             }
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
+	            if ( 'rest' === $context && false !== $registered_meta_keys ) {
+		            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
+			            continue;
+		            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {
+			            continue;
+		            }
+	            }
+
                 $field = $pod->fields[ $field[ 'name' ] ];
                 $field[ 'lookup_name' ] = $field[ 'name' ];
 
@@ -4460,9 +4558,17 @@ class PodsAPI {
 
                         foreach ( $related_ids as $related_id ) {
                             if ( $related_pod->fetch( $related_id ) ) {
-                                $related_item = $this->export_pod_item_level( $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+	                            $related_params = array(
+		                            'related_fields' => $related_fields,
+		                            'depth'          => $depth,
+		                            'flatten'        => $flatten,
+		                            'current_depth'  => $current_depth + 1,
+		                            'context'        => $context,
+	                            );
 
-                                $related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ) );
+                                $related_item = $this->export_pod_item_level( $related_pod, $related_params );
+
+                                $related_data[ $related_id ] = $this->do_hook( 'export_pod_item_level', $related_item, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, $flatten, ( $current_depth + 1 ), $params );
                             }
                         }
 
@@ -5415,7 +5521,6 @@ class PodsAPI {
 	    $bypass_cache = false;
 
 	    // Get current language data
-
 		$lang_data = PodsInit::$i18n->get_current_language_data();
 
 	    if ( $lang_data ) {
@@ -8310,7 +8415,7 @@ class PodsAPI {
             $id = $obj->id();
         }
 
-        if ( !empty( $fields ) ) {
+        if ( ! empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
@@ -8360,11 +8465,14 @@ class PodsAPI {
 	     */
         do_action( 'pods_api_processed_form', $id, $params, $obj );
 
-        if ( 0 < $id && !empty( $thank_you ) ) {
-            $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
+		// Always return $id for AJAX requests.
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			if ( 0 < $id && ! empty( $thank_you ) ) {
+				$thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            pods_redirect( $thank_you );
-        }
+				pods_redirect( $thank_you );
+			}
+		}
 
         return $id;
     }

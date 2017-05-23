@@ -3,7 +3,7 @@ language: php
 sudo: false
 
 php:
-    - 7.0
+    - 7.1
 
 env:
     - WP_VERSION=nightly WP_MULTISITE=0
@@ -15,14 +15,14 @@ matrix:
      - env: WP_VERSION=nightly WP_MULTISITE=0
 
     include:
-    - php: 7.1
+    - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: hhvm
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.3
-      env: WP_VERSION=4.0 WP_MULTISITE=0
+      env: WP_VERSION=4.4 WP_MULTISITE=0
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
     # MySQL 8.0

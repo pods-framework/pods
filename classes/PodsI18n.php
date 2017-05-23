@@ -62,7 +62,8 @@ final class PodsI18n {
 	public function enqueue_scripts() {
 
 		// Register our i18n script for JS
-		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array(), PODS_VERSION, true );
+		wp_register_script( 'sprintf', PODS_URL. 'ui/js/sprintf/sprintf.min.js', array(), '1.1.0', true );
+		wp_register_script( 'pods-i18n', PODS_URL . 'ui/js/pods-i18n.js', array( 'sprintf' ), PODS_VERSION, true );
 
 		self::localize_assets();
 	}
@@ -170,6 +171,9 @@ final class PodsI18n {
 			'Remove' =>
 				__( 'Remove', 'pods' ),
 
+			'Deselect' =>
+				__( 'Deselect', 'pods' ),
+
 			'Download' =>
 				__( 'Download', 'pods' ),
 
@@ -179,8 +183,14 @@ final class PodsI18n {
 			'Edit' =>
 				__( 'Edit', 'pods' ),
 
+			'Search' =>
+				__( 'Search', 'pods' ),
+
 			'Navigating away from this page will discard any changes you have made.' =>
 				__( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
+
+			'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' =>
+				__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.', 'pods' ),
 
 			'Unable to process request, please try again.' =>
 				__( 'Unable to process request, please try again.', 'pods' ),
@@ -196,6 +206,15 @@ final class PodsI18n {
 
 			'Select from existing' =>
 				__( 'Select from existing', 'pods' ),
+
+			'You can only select' =>
+				__( 'You can only select', 'pods' ),
+
+			'%s item' =>
+				__( '%s item', 'pods' ),
+
+			'%s items' =>
+				__( '%s items', 'pods' ),
 
 			'Icon' =>
 				__( 'Icon', 'pods' ),

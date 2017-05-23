@@ -210,6 +210,16 @@
                         }
                     } );
 
+                    // Check for unsaved open fields. (separate if's to prevent possible unneeded jQuery selector)
+                    if ( 'undefined' !== typeof postdata.method ) {
+	                    if ( 'save_pod' === postdata.method ) {
+	                        if ( $( 'tbody.pods-manage-list tr.pods-manage-row-expanded', $submittable ).length ) {
+		                        alert( PodsI18n.__( 'Some fields have changes that were not saved yet, please save them or cancel the changes before saving the Pod.' ) );
+		                        valid_form = false;
+	                        }
+	                    }
+                    }
+
                     if ( 'undefined' != typeof pods_admin_submit_validation )
                         valid_form = pods_admin_submit_validation( valid_form, $submittable );
 
@@ -244,7 +254,7 @@
                         data : postdata,
                         success : function ( d ) {
 
-                            // Make sure we're able to parse what was returned as data
+                            // Attempt to parse what was returned as data
                             try {
                                 data = $.parseJSON( d );
                             }
@@ -252,7 +262,7 @@
                                 data = undefined;
                             }
 
-                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d && undefined !== data ) {
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
 
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
                                 if ( 'object' === typeof data ) {
@@ -1699,9 +1709,10 @@
                         }
 
                         $row_content.slideUp( 'slow', function () {
-                            $row.toggleClass( 'pods-manage-row-expanded' );
-                            $row_label.prop( 'colspan', '1' );
-                            $row.removeClass( 'pods-field-new' );
+	                        $row_label.prop( 'colspan', '1' );
+	                        $row.removeClass( 'pods-manage-row-expanded' );
+	                        $row.removeClass( 'pods-field-new' );
+	                        $row.addClass( 'pods-field-updated' );
                         } );
                     }
 

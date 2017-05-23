@@ -252,6 +252,14 @@ form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name
 /*
  * Select 2
  */
+.pods-dfv-field .select2-container .select2-selection--single {
+	height: 30px;
+}
+.pods-dfv-field .select2-container--default .select2-selection--single .select2-selection__clear {
+	height: 28px;
+	line-height: 26px;
+}
+
 .pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
 	background: none;
 }

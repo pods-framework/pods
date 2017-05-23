@@ -233,6 +233,9 @@ input.pods-form-ui-field-type-color {
 .form-table td .pods-form-ui-field {
     max-width: 95%;
 }
+.form-table td .pods-form-ui-field .pods-form-ui-field {
+    max-width: none;
+}
 
 .form-table.pods-form-ui-table-type-avatar tr.form-field > td,
 .form-table.pods-form-ui-table-type-file tr.form-field > td {

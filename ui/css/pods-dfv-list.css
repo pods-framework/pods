@@ -270,14 +270,15 @@ form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name
 	vertical-align: top;
 }
 
-.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice {
+.pods-dfv-field .select2-container--default .select2-selection--multiple li.select2-selection__choice {
 	padding: 3px 5px;
 	background-color: #f5f5f5;
 	border-color: #dfdfdf;
 	line-height: 1.2;
+	margin: 5px 5px 5px 0;
 }
 
-.pods-dfv-field .select2-container--default .select2-selection--multiple .select2-selection__choice:hover {
+.pods-dfv-field .select2-container--default .select2-selection--multiple li.select2-selection__choice:hover {
 	background-color: #fafafa;
 	border-color: #bbb;
 	cursor: move;
@@ -298,10 +299,17 @@ form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name
 	-webkit-box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
 	box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
 }
-
-/* Select2 responsive search input issue: https://github.com/select2/select2/issues/3278#issuecomment-298035731 */
-.select2-selection--multiple .select2-search--inline .select2-search__field {
-	width: auto !important;
+/* Select2 list styles (overwrite default pick styles) */
+.pods-pick-values .select2-container li {
+	padding: 0;
+	line-height: inherit;
+}
+/* Select2 responsive search input issue, enhancement upon: https://github.com/select2/select2/issues/3278#issuecomment-298035731 */
+.select2-container .select2-selection--multiple .select2-search--inline {
+	float: none;
+}
+.select2-container .select2-selection--multiple .select2-search--inline:first-child .select2-search__field {
+	width: 100% !important;
 }
 
 /*

@@ -1,4 +1,5 @@
-ul.pods-dfv-list {
+ul.pods-dfv-list,
+.pods-dfv-field .pods-pick-values > ul {
 	background: #fff;
 	margin: 0 0 5px 0;
 	padding: 0;
@@ -288,6 +289,11 @@ form.pods-form .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-name
 	border-color: #5b9dd9;
 	-webkit-box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
 	box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
+}
+
+/* Select2 responsive search input issue: https://github.com/select2/select2/issues/3278#issuecomment-298035731 */
+.select2-selection--multiple .select2-search--inline .select2-search__field {
+	width: auto !important;
 }
 
 /*

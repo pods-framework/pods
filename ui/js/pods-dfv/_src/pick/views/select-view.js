@@ -170,7 +170,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 			// If we're at the limit: disable all unselected items so no selections can be added
 			if ( !this.validateSelectionLimit() ) {
-				this.selectionLimitOver();
+				this.multiselectLimitOver();
 			}
 		}
 	},
@@ -204,10 +204,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 		if ( 'select' === view_name && 'multi' === format_type ) {
 
 			if ( this.validateSelectionLimit() ) {
-				this.selectionLimitUnder();
+				this.multiselectLimitUnder();
 			}
 			else {
-				this.selectionLimitOver();
+				this.multiselectLimitOver();
 			}
 		}
 	},
@@ -234,7 +234,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	/**
 	 *
 	 */
-	selectionLimitOver: function ( ) {
+	multiselectLimitOver: function ( ) {
 		// At the limit: disable all unselected items so no further selections can be added
 		this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
@@ -243,7 +243,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	/**
 	 *
 	 */
-	selectionLimitUnder: function ( ) {
+	multiselectLimitUnder: function ( ) {
 		// Not at limit, make sure all items are enabled
 		this.$el.find( 'option' ).prop( 'disabled', false );
 		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated

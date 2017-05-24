@@ -43,6 +43,10 @@
     Form fields.
  */
 
+.pods-field {
+    padding: 10px 0;
+}
+
 .pods-field label {
     cursor: pointer;
     display: block;
@@ -118,6 +122,7 @@ input.pods-form-ui-field-type-color {
 
 .pods-boolean {
     position: relative;
+    padding: 0;
 }
 
 .form-field .pods-boolean input,
@@ -134,7 +139,8 @@ input.pods-form-ui-field-type-color {
 
 .pods-boolean label {
     margin-left: 26px;
-    padding-top: 1px;
+    padding: 7px 0;
+    line-height: 1;
 }
 
 .pods-pick select {
@@ -205,11 +211,6 @@ select.pods-pick-multi {
     background: transparent;
 }
 
-.pods-pick-values label {
-    display: block;
-    padding: 7px 0;
-}
-
 .pods-pick-values li:last-of-type {
     border-bottom: 0;
 }
@@ -227,8 +228,8 @@ select.pods-pick-multi {
     background: #f5f5f5;
 }
 
-.pods-field, p.pods-add-file {
-    padding: 10px 0;
+p.pods-add-file {
+    padding: 5px 0 10px;
 }
 
 .pods-metabox tr.pods-field {

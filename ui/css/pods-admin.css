@@ -431,9 +431,15 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     width: 100%;
     max-width: 100%;
 }
+.pods-manage-field .pods-pick-values.pods-zebra li {
+    margin-bottom: 4px;
+}
 
-.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean {
-    padding: 3px;
+.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean input {
+    margin: 4px;
+}
+.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean label {
+    margin-left: 26px;
 }
 
 .pods-manage-field .pods-pick-values li.pods-zebra-odd {
@@ -550,6 +556,8 @@ div.row-actions.row-actions-toggle {
         width: 100%;
         max-width: none;
         padding-bottom: 4px;
+        margin-bottom: 0;
+        line-height: 22px;
     }
 
     .pods-manage-field .pods-field-option input[type="text"],
@@ -563,6 +571,13 @@ div.row-actions.row-actions-toggle {
         margin: 0;
         width: 100%;
         max-width: none;
+    }
+
+    .pods-manage-field .pods-field.pods-boolean label,
+    .pods-manage-field .pods-field-option .pods-pick-values label {
+        line-height: 22px;
+        font-size: 14px;
+        margin-left: 34px;
     }
 
     .pods-manage-field .pods-pick-values li.pods-zebra-odd,

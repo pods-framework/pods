@@ -54,17 +54,18 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onRender: function () {
 		this.fieldConfig = new PickFieldModel( this.model.get( 'fieldConfig' ) );
 
+		// Add New?
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
+			this.showAddNew();
+		}
+
 		// Autocomplete?
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
 			this.buildAutocomplete();
 		}
 
+		// Build the list last, events fired by the list (like selection limit) may impact state in other views we manage
 		this.showList();
-
-		// Add New?
-		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
-			this.showAddNew();
-		}
 	},
 
 	/**
@@ -80,12 +81,18 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			selectFromExisting: true,
 			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
 			label             : this.fieldConfig.get( 'label' ),
-			pick_limit        : this.fieldConfig.get( 'pick_limit' )
+			pick_limit        : pick_limit
 		};
 
 		// The autocomplete portion of List View doesn't track selected items; disable if we're at the selection limit
 		if ( this.collection.filterBySelected().length >= pick_limit && 0 !== pick_limit ) {
+
 			fieldConfig.limitDisable = true;
+			this.onChildviewSelectionLimitOver();
+
+		} else {
+
+			this.onChildviewSelectionLimitUnder();
 		}
 
 		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
@@ -147,6 +154,28 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	},
 
 	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitOver: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.disable();
+		}
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitUnder: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.enable();
+		}
+	},
+
+	/**
 	 * "Remove" in list view just toggles an item's selected attribute
 	 *
 	 * @param childView
@@ -164,7 +193,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewAddNewClick: function ( childView ) {
+	onChildviewAddNew: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {

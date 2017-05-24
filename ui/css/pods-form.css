@@ -21,6 +21,32 @@
     width: 50%;
 }
 
+/**
+    Form tables.
+ */
+
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+    border-bottom: none;
+}
+
+.form-table td .pods-form-ui-field {
+    max-width: 95%;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+    padding: 0 10px;
+}
+
+/**
+    Form fields.
+ */
+
+.pods-field {
+    padding: 10px 0;
+}
+
 .pods-field label {
     cursor: pointer;
     display: block;
@@ -43,31 +69,23 @@
     margin: 5px 0 0 2px !important;
 }
 
-.pods-pick select {
-    display: block;
-    min-width: 125px;
+div.pods-textfield input,
+.pods-textarea textarea {
+    width: 100%;
 }
 
-.pods-boolean {
-    position: relative;
+/* textarea/wysiwyg */
+.pods-field .wp-editor-container {
+    background-color: #FFF;
 }
 
-.pods-boolean input {
-    display: block;
-    min-height: 16px;
-    left: 2px;
-    margin: 1px 7px 0 0;
-    padding: 0;
-    position: absolute;
-    top: 10px;
-    width: auto;
+textarea.pods-form-ui-field-type-paragraph {
+    font-family: monospace;
+    min-height: 100px;
+    resize: vertical;
 }
 
-.pods-boolean label {
-    margin-left: 22px;
-    padding-top: 1px;
-}
-
+/* Link */
 .pods-link-options {
     background: #fff;
     padding: 5px 10px 10px;
@@ -75,6 +93,59 @@
 }
 .pods-link-options > div {
     display: inline-block;
+}
+
+/* Date */
+.pods-date input.pods-date-field.hasDatepicker {
+    background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
+    cursor: pointer;
+    padding-left: 25px !important;
+    padding-top: 6px !important;
+    width: 150px;
+}
+
+/* Color */
+input.pods-form-ui-field-type-color {
+    width: 80px;
+}
+
+/* Codemirror */
+.pods-field .CodeMirror {
+    border: 1px solid #999;
+    background-color: #fff;
+    margin: 0;
+}
+
+/**
+    Form fields - boolean/pick/select values.
+ */
+
+.pods-boolean {
+    position: relative;
+    padding: 0;
+}
+
+.form-field .pods-boolean input,
+.pods-boolean input {
+    display: block;
+    min-height: 16px;
+    left: 2px;
+    margin-left: 3px;
+    padding: 0;
+    position: absolute;
+    top: 10px;
+    width: auto;
+    overflow: hidden;
+}
+
+.pods-boolean label {
+    padding: 7px 0 7px 26px;
+    line-height: 1;
+}
+
+.pods-pick select {
+    display: block;
+    min-width: 125px;
 }
 
 .pods-pick-values {
@@ -86,7 +157,7 @@
     padding: 2px 0;
 }
 
-/* Newer MV based views don't all need borders but we don't want to break other applications of the rule above */
+/* Newer DFV based views don't all need borders but we don't want to break other applications of the rule above */
 .pods-form-ui-field .pods-pick-values,
 .pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
     border: none;
@@ -109,7 +180,12 @@ select.pods-form-ui-field-type-pick[multiple] {
     border: 1px solid #dfdfdf;
     border-radius: 3px;
     width: 100%;
+    max-width: none;
     max-height: 200px;
+}
+
+select.pods-pick-multi {
+    height: auto !important;
 }
 
 .pods-pick-values ul {
@@ -122,7 +198,7 @@ select.pods-form-ui-field-type-pick[multiple] {
     border-bottom: 1px solid #f4f4f4;
     line-height: 1em;
     margin: 0;
-    padding: 3px 6px 3px;
+    padding: 0;
 }
 
 .pods-pick-values li:nth-child(even) {
@@ -135,40 +211,30 @@ select.pods-form-ui-field-type-pick[multiple] {
     background: transparent;
 }
 
-.pods-pick-values label {
-    display: block;
-    padding-bottom: 3px;
-    padding-top: 3px;
-}
-
 .pods-pick-values li:last-of-type {
     border-bottom: 0;
 }
 
 .pods-pick-values li .pods-field {
-    padding: 3px 0 2px;
+    padding: 0;
 }
-
-.pods-pick-values li .pods-boolean input {
-    top: 4px;
-}
-
 
 .pods-pick-values .pods-radio {
     border: 1px solid #dfdfdf;
 }
 
-.pods-field.pods-boolean:hover,
-.pods-pick-values .pods-radio li:hover {
-    background: #ffffd8;
+.pods-field.pods-boolean label:hover,
+.pods-pick-values .pods-radio li label:hover {
+    background: #f5f5f5;
+}
+/* Do not show hover for disabled options */
+.pods-field.pods-boolean input[disabled] + label:hover,
+.pods-pick-values .pods-radio li input[disabled] + label:hover {
+    background: inherit;
 }
 
-select.pods-pick-multi {
-    height: auto !important;
-}
-
-.pods-field, p.pods-add-file {
-    padding: 10px 0;
+p.pods-add-file {
+    padding: 5px 0 10px;
 }
 
 .pods-metabox tr.pods-field {
@@ -176,34 +242,6 @@ select.pods-pick-multi {
 }
 .pods-metabox tr.pods-field:first-child {
     border-top: 0;
-}
-
-
-div.pods-textfield input,
-.pods-textarea textarea {
-    width: 100%;
-}
-
-.pods-date input, .pods-number input {
-    min-width: 125px;
-}
-
-textarea.pods-form-ui-field-type-paragraph {
-    font-family: monospace;
-    min-height: 100px;
-    resize: vertical;
-}
-
-.pods-date input.pods-date-field.hasDatepicker {
-    background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
-    cursor: pointer;
-    padding-left: 25px !important;
-    padding-top: 6px !important;
-    width: 150px;
-}
-
-input.pods-form-ui-field-type-color {
-    width: 80px;
 }
 
 /* @todo Improve this, select2 adds inline fixed widths preventing responsive scaling */
@@ -221,28 +259,6 @@ input.pods-form-ui-field-type-color {
     clear: both;
 }
 
-/**
-    Form tables.
- */
-
-.form-table tr.pods-field:last-child > th,
-.form-table tr.pods-field:last-child > td {
-    border-bottom: none;
-}
-
-.form-table td .pods-form-ui-field {
-    max-width: 95%;
-}
-
-.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
-.form-table.pods-form-ui-table-type-file tr.form-field > td {
-    padding: 0 10px;
-}
-
-.pods-field .wp-editor-container {
-    background-color: #FFF;
-}
-
 /* Side location */
 #side-sortables .form-table .pods-field {
     display: block;
@@ -258,13 +274,6 @@ input.pods-form-ui-field-type-color {
     display: block;
     line-height: inherit;
     padding: 0;
-    margin: 0;
-}
-
-/* Codemirror */
-.pods-field .CodeMirror {
-    border: 1px solid #999;
-    background-color: #fff;
     margin: 0;
 }
 
@@ -397,12 +406,15 @@ input.pods-form-ui-field-type-color {
 
 @media screen and (max-width: 782px) {
     .pods-pick-values li .pods-boolean input {
-        height: 18px;
-        top: 2px;
+        height: 25px;
+        width: 25px;
+        top: 4px;
+        margin: 0 3px;
     }
 
-    .pods-pick-values li .pods-boolean input:before {
-        font: 400 2.5vh/1 dashicons;
+    .pods-pick-values .pods-boolean label {
+        margin-left: 36px;
+        padding: 10px 0;
     }
 
     .form-table td .pods-form-ui-field {

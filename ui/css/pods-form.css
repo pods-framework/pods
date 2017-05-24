@@ -135,6 +135,7 @@ input.pods-form-ui-field-type-color {
     position: absolute;
     top: 10px;
     width: auto;
+    overflow: hidden;
 }
 
 .pods-boolean label {

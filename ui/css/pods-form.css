@@ -396,12 +396,15 @@ input.pods-form-ui-field-type-color {
 
 @media screen and (max-width: 782px) {
     .pods-pick-values li .pods-boolean input {
-        height: 18px;
-        top: 2px;
+        height: 25px;
+        width: 25px;
+        top: 4px;
+        margin: 0 3px;
     }
 
-    .pods-pick-values li .pods-boolean input:before {
-        font: 400 2.5vh/1 dashicons;
+    .pods-pick-values .pods-boolean label {
+        margin-left: 36px;
+        padding: 10px 0;
     }
 
     .form-table td .pods-form-ui-field {

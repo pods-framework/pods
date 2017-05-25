@@ -6,6 +6,8 @@ import {PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 const DISABLED_CLASS = 'button-disabled';
 
 export const AddNew = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'div',
 
 	className: 'podsform-dfv-list-relationship-container',
@@ -25,7 +27,6 @@ export const AddNew = PodsFieldView.extend( {
 	 */
 	disable: function () {
 		const addButton = this.getUI( 'addButton' );
-
 		addButton.addClass( DISABLED_CLASS ); // Note: this just styles the link (button), click event enforces
 	},
 
@@ -34,7 +35,6 @@ export const AddNew = PodsFieldView.extend( {
 	 */
 	enable: function () {
 		const addButton = this.getUI( 'addButton' );
-
 		addButton.removeClass( DISABLED_CLASS ); // Note: this just styles the link (button), click event enforces
 	},
 
@@ -46,7 +46,7 @@ export const AddNew = PodsFieldView.extend( {
 
 		// Only pass the event up the view chain if we're enabled
 		if ( ! addButton.hasClass( DISABLED_CLASS ) ) {
-			this.triggerMethod( 'add:new' );  // @todo: change to just trigger() once Mn is updated
+			this.trigger( 'childview:add:new', this );
 		}
 	}
 } );

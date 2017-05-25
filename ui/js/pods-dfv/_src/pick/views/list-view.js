@@ -7,6 +7,8 @@ import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-vi
  *
  */
 export const ListItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	className: 'pods-dfv-list-item pods-relationship',
@@ -15,12 +17,12 @@ export const ListItem = PodsFieldView.extend( {
 
 	ui: {
 		removeButton: '.pods-dfv-list-remove a',
-		editButton:   '.pods-dfv-list-edit a'
+		editButton  : '.pods-dfv-list-edit a'
 	},
 
 	triggers: {
 		'click @ui.removeButton': 'remove:item:click',
-		'click @ui.editButton': 'edit:item:click'
+		'click @ui.editButton'  : 'edit:item:click'
 	},
 
 	templateContext: function () {
@@ -35,11 +37,19 @@ export const ListItem = PodsFieldView.extend( {
  *  Represents the markup of the container as a whole
  */
 export const ListView = PodsFieldListView.extend( {	// Cache the template function for the overall container
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-dfv-list pods-relationship',
 
 	childView: ListItem,
+
+	// Pass these up the containment chain
+	childViewTriggers: {
+		'remove:item:click': 'childview:remove:item:click',
+		'edit:item:click'  : 'childview:edit:item:click'
+	},
 
 	filter: function ( child, index, collection ) {
 		return child.attributes.selected;

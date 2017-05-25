@@ -7,6 +7,8 @@ import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-vi
  *
  */
 export const CheckboxItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	template: _.template( template ),
@@ -40,12 +42,21 @@ export const CheckboxItem = PodsFieldView.extend( {
  *
  */
 export const CheckboxView = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-checkbox-view',
 
 	childView: CheckboxItem,
 
+	childViewEvents: {
+		'toggle:selected': 'onChildviewToggleSelected'
+	},
+
+	/**
+	 *
+	 */
 	onAttach: function () {
 
 		// Check initial selection limit status and enforce it if needed
@@ -92,7 +103,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitOver: function ( ) {
 		this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
-		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'selection:limit:over', this );
 	},
 
 	/**
@@ -100,7 +111,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitUnder: function ( ) {
 		this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
-		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'selection:limit:under', this );
 	}
 
 } );

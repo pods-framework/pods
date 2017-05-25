@@ -1,4 +1,8 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
+
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 import template from 'pods-dfv/_src/pick/pick-layout.html';
 
 import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
@@ -37,6 +41,15 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		autocomplete: '.pods-ui-list-autocomplete',
 		list        : '.pods-pick-values',
 		addNew      : '.pods-ui-add-new'
+	},
+
+	childViewEvents: {
+		'childview:remove:item:click'    : 'onChildviewRemoveItemClick',
+		'childview:edit:item:click'      : 'onChildviewEditItemClick',
+		'childview:selection:limit:over' : 'onChildviewSelectionLimitOver',
+		'childview:selection:limit:under': 'onChildviewSelectionLimitUnder',
+		'childview:change:selected'      : 'onChildviewChangeSelected',
+		'childview:add:new'              : 'onChildviewAddNew'
 	},
 
 	/**
@@ -123,6 +136,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		}
 		View = views[ viewName ];
 		list = new View( { collection: this.collection, fieldModel: this.model } );
+
 		this.showChildView( 'list', list );
 	},
 
@@ -145,7 +159,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const returnList = [];
 
 		_.each( data.results, function ( element, index, list ) {
-			if ( ! selectedItems.get( element.id ) ) {
+			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}
 		} );

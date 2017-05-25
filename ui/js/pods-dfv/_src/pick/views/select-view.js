@@ -1,5 +1,8 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
 
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
@@ -37,6 +40,7 @@ export const SelectItem = PodsFieldView.extend( {
  */
 export const Optgroup = PodsFieldListView.extend( {
 	tagName  : 'optgroup',
+
 	childView: SelectItem,
 
 	attributes: function () {
@@ -54,15 +58,16 @@ export const Optgroup = PodsFieldListView.extend( {
 export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
 
-	multiLastValidSelection: [],
-
 	triggers: {
-		"change": {
-			event          : "change:selected",
-			stopPropagation: false
-		}
+		"change": "change:selected",
 	},
 
+	multiLastValidSelection: [],
+
+	/**
+	 *
+	 * @param options
+	 */
 	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
 		this.fieldConfig = this.fieldModel.get( 'fieldConfig' );
@@ -192,6 +197,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 				// Revert to the last valid selection and punt on what they attempted
 				this.$el.val( this.multiLastValidSelection );
 				window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
+				this.trigger( 'childview:change:selected', this );
 				return;
 			}
 		}
@@ -207,6 +213,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 		else {
 			this.selectionLimitOver();
 		}
+
+		this.trigger( 'childview:change:selected', this );
 	},
 
 	/**
@@ -240,7 +248,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 		}
 
-		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'childview:selection:limit:over', this );
 	},
 
 	/**
@@ -255,7 +263,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			this.$el.find( 'option' ).prop( 'disabled', false );
 		}
 
-		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'childview:selection:limit:under', this );
 	},
 
 	/**

@@ -1,4 +1,8 @@
 /*global jQuery, _, Backbone, Marionette */
+
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 import template from 'pods-dfv/_src/file-upload/file-upload-layout.html';
 
 import {PodsDFVFieldLayout} from 'pods-dfv/_src/core/pods-field-views';
@@ -28,6 +32,11 @@ export const FileUpload = PodsDFVFieldLayout.extend( {
 		list    : '.pods-ui-file-list',
 		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
 		form    : '.pods-ui-form'
+	},
+
+	childViewEvents: {
+		'childview:remove:file:click': 'onChildviewRemoveFileClick',
+		'childview:add:file:click'   : 'onChildviewAddFileClick'
 	},
 
 	uploader: {},

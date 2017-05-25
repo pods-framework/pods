@@ -1,13 +1,19 @@
 /*global jQuery, _, Backbone, Marionette, wp */
+
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 import template from 'pods-dfv/_src/file-upload/views/file-upload-item.html';
 
-import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
+import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  * Individual list items, representing a single file
  */
 export const FileUploadItem = PodsFieldView.extend( {
 	tagName: 'li',
+
+	template: _.template( template ),
 
 	className: 'pods-dfv-list-item',
 
@@ -19,8 +25,6 @@ export const FileUploadItem = PodsFieldView.extend( {
 		removeButton: '.pods-dfv-list-remove',
 		itemName    : '.pods-dfv-list-name'
 	},
-
-	template: _.template( template ),
 
 	triggers: {
 		'click @ui.removeButton': 'remove:file:click'
@@ -36,6 +40,10 @@ export const FileUploadList = PodsFieldListView.extend( {
 	className: 'pods-dfv-list',
 
 	childView: FileUploadItem,
+
+	childViewTriggers: {
+		'remove:file:click': 'childview:remove:file:click'
+	},
 
 	onAttach: function () {
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );

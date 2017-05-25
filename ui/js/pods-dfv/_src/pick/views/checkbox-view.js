@@ -1,4 +1,8 @@
 /*global jQuery, _, Backbone, Marionette, wp */
+
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 import template from 'pods-dfv/_src/pick/views/checkbox-item.html';
 
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
@@ -16,6 +20,9 @@ export const CheckboxItem = PodsFieldView.extend( {
 	ui: {
 		checkbox: 'input.pods-form-ui-field-type-pick'
 	},
+
+	// Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+	childViewEventPrefix: false,
 
 	triggers: {
 		'click @ui.checkbox': 'toggle:selected'
@@ -46,6 +53,16 @@ export const CheckboxView = PodsFieldListView.extend( {
 
 	childView: CheckboxItem,
 
+	// Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+	childViewEventPrefix: false,
+
+	childViewEvents: {
+		'toggle:selected': 'onChildviewToggleSelected'
+	},
+
+	/**
+	 *
+	 */
 	onAttach: function () {
 
 		// Check initial selection limit status and enforce it if needed
@@ -92,7 +109,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitOver: function ( ) {
 		this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
-		this.triggerMethod( 'selection:limit:over', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'selection:limit:over', this );
 	},
 
 	/**
@@ -100,7 +117,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitUnder: function ( ) {
 		this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
-		this.triggerMethod( 'selection:limit:under', this );  // @todo: change to just trigger() when Mn is updated
+		this.trigger( 'selection:limit:under', this );
 	}
 
 } );

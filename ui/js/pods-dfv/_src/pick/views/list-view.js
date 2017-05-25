@@ -1,4 +1,8 @@
 /*global jQuery, _, Backbone, Marionette, wp */
+
+// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+Marionette.setEnabled( 'childViewEventPrefix', false );
+
 import template from 'pods-dfv/_src/pick/views/list-item.html';
 
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
@@ -15,12 +19,12 @@ export const ListItem = PodsFieldView.extend( {
 
 	ui: {
 		removeButton: '.pods-dfv-list-remove a',
-		editButton:   '.pods-dfv-list-edit a'
+		editButton  : '.pods-dfv-list-edit a'
 	},
 
 	triggers: {
 		'click @ui.removeButton': 'remove:item:click',
-		'click @ui.editButton': 'edit:item:click'
+		'click @ui.editButton'  : 'edit:item:click'
 	},
 
 	templateContext: function () {
@@ -40,6 +44,12 @@ export const ListView = PodsFieldListView.extend( {	// Cache the template functi
 	className: 'pods-dfv-list pods-relationship',
 
 	childView: ListItem,
+
+	// Pass these up the containment chain
+	childViewTriggers: {
+		'remove:item:click': 'childview:remove:item:click',
+		'edit:item:click'  : 'childview:edit:item:click'
+	},
 
 	filter: function ( child, index, collection ) {
 		return child.attributes.selected;

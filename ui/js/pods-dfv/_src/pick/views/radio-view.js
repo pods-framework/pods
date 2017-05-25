@@ -1,8 +1,4 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-
-// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-Marionette.setEnabled( 'childViewEventPrefix', false );
-
 import template from 'pods-dfv/_src/pick/views/radio-item.html';
 
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
@@ -11,6 +7,8 @@ import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-vi
  *
  */
 export const RadioItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	template: _.template( template ),
@@ -31,6 +29,8 @@ export const RadioItem = PodsFieldView.extend( {
  *
  */
 export const RadioView = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-radio',

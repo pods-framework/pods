@@ -1,8 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 
-// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-Marionette.setEnabled( 'childViewEventPrefix', false );
-
 import template from 'pods-dfv/_src/pick/pick-layout.html';
 
 import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
@@ -35,6 +32,8 @@ let modalIFrame;
  * @extends Backbone.View
  */
 export const Pick = PodsDFVFieldLayout.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	template: _.template( template ),
 
 	regions: {

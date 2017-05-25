@@ -1,8 +1,4 @@
 /*global jQuery, _, Backbone, Marionette, wp */
-
-// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-Marionette.setEnabled( 'childViewEventPrefix', false );
-
 import template from 'pods-dfv/_src/file-upload/views/file-upload-item.html';
 
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
@@ -11,6 +7,8 @@ import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-vi
  * Individual list items, representing a single file
  */
 export const FileUploadItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'li',
 
 	template: _.template( template ),
@@ -35,6 +33,8 @@ export const FileUploadItem = PodsFieldView.extend( {
  * The file list container
  */
 export const FileUploadList = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'ul',
 
 	className: 'pods-dfv-list',

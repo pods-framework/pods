@@ -1,8 +1,4 @@
 /*global jQuery, _, Backbone, Marionette */
-
-// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-Marionette.setEnabled( 'childViewEventPrefix', false );
-
 import template from 'pods-dfv/_src/file-upload/file-upload-layout.html';
 
 import {PodsDFVFieldLayout} from 'pods-dfv/_src/core/pods-field-views';
@@ -26,6 +22,8 @@ const UNLIMITED_FILES = 0;
  * @extends Backbone.View
  */
 export const FileUpload = PodsDFVFieldLayout.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	template: _.template( template ),
 
 	regions: {

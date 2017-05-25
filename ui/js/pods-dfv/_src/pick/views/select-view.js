@@ -1,8 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
 
-// Globally disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-Marionette.setEnabled( 'childViewEventPrefix', false );
-
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
@@ -18,6 +15,8 @@ const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
  * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'option',
 
 	template: false,
@@ -39,6 +38,8 @@ export const SelectItem = PodsFieldView.extend( {
  * @extends Backbone.View
  */
 export const Optgroup = PodsFieldListView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName  : 'optgroup',
 
 	childView: SelectItem,
@@ -56,6 +57,8 @@ export const Optgroup = PodsFieldListView.extend( {
  * @extends Backbone.View
  */
 export const SelectView = Marionette.CollectionView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'select',
 
 	triggers: {

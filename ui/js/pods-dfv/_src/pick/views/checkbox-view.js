@@ -21,9 +21,6 @@ export const CheckboxItem = PodsFieldView.extend( {
 		checkbox: 'input.pods-form-ui-field-type-pick'
 	},
 
-	// Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-	childViewEventPrefix: false,
-
 	triggers: {
 		'click @ui.checkbox': 'toggle:selected'
 	},
@@ -52,9 +49,6 @@ export const CheckboxView = PodsFieldListView.extend( {
 	className: 'pods-checkbox-view',
 
 	childView: CheckboxItem,
-
-	// Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
-	childViewEventPrefix: false,
 
 	childViewEvents: {
 		'toggle:selected': 'onChildviewToggleSelected'

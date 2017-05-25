@@ -40,7 +40,7 @@ export const SelectItem = PodsFieldView.extend( {
 export const Optgroup = PodsFieldListView.extend( {
 	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
-	tagName  : 'optgroup',
+	tagName: 'optgroup',
 
 	childView: SelectItem,
 
@@ -62,7 +62,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
 
 	triggers: {
-		"change": "change:selected",
+		"change": {
+			event          : "change:selected",
+			stopPropagation: false
+		},
 	},
 
 	multiLastValidSelection: [],

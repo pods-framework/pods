@@ -27,15 +27,23 @@
 	</li>
 	<li class="pods-dfv-list-col pods-dfv-list-actions">
 		<ul>
-			<li class="pods-dfv-list-col pods-dfv-list-remove"><a href="#remove"><%- PodsI18n.__( 'Remove' ) %></a></li>
+			<li class="pods-dfv-list-col pods-dfv-list-remove">
+				<a href="#remove" title="<%- PodsI18n.__( 'Deselect' ) %>"><%- PodsI18n.__( 'Deselect' ) %></a>
+			</li>
 			<% if ( 1 == fieldConfig.file_linked && '' != download ) { %>
-				<li class="pods-dfv-list-col pods-dfv-list-download"><a href="<%- download %>" target="_blank"><%- PodsI18n.__( 'Download' ) %></a></li>
+				<li class="pods-dfv-list-col pods-dfv-list-download">
+					<a href="<%- download %>" target="_blank" title="<%- PodsI18n.__( 'Download' ) %>"><%- PodsI18n.__( 'Download' ) %></a>
+				</li>
 			<% } %>
 			<% if ( 1 == fieldConfig.file_show_view_link && '' != link ) { %>
-				<li class="pods-dfv-list-col pods-dfv-list-link"><a href="<%- link %>" target="_blank"><%- PodsI18n.__( 'View' ) %></a></li>
+				<li class="pods-dfv-list-col pods-dfv-list-link">
+					<a href="<%- link %>" target="_blank" title="<%- PodsI18n.__( 'View' ) %>"><%- PodsI18n.__( 'View' ) %></a>
+				</li>
 			<% } %>
 			<% if ( 1 == fieldConfig.file_show_edit_link && '' != edit_link ) { %>
-				<li class="pods-dfv-list-col pods-dfv-list-edit"><a href="<%- edit_link %>" target="_blank"><%- PodsI18n.__( 'Edit' ) %></a></li>
+				<li class="pods-dfv-list-col pods-dfv-list-edit">
+					<a href="<%- edit_link %>" target="_blank" title="<%- PodsI18n.__( 'Edit' ) %>"><%- PodsI18n.__( 'Edit' ) %></a>
+				</li>
 			<% } %>
 		</ul>
 	</li>

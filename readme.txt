@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.s
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 3.8
-Tested up to: 4.7.5
+Tested up to: 4.8
 Stable tag: 2.6.9-a-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -120,7 +120,7 @@ We also do our best to integrate and play nicely with other projects:
  * [WPML](http://wpml.org/)
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
- * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://github.com/pods-framework/pods-gravity-forms)
+ * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
 * Themes we've integrated with
  * [Beaver Builder](https://beaverbuilder.com) (BeaverBuilder)

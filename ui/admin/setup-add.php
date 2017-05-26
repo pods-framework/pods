@@ -183,7 +183,7 @@
                                                 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
-                                                echo PodsForm::label( 'create_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
+                                                echo PodsForm::label( 'create_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Identifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
                                                 echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ) ) );
                                             ?>
                                         </div>
@@ -194,7 +194,7 @@
                                                 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
-                                                echo PodsForm::label( 'create_setting_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
+                                                echo PodsForm::label( 'create_setting_name', __( 'Pod Name', 'pods' ), __( '<h6>Pod Identifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
                                                 echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ) ) );
                                             ?>
                                         </div>

@@ -179,7 +179,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.6.9 - May 26th 2017 =
+= 2.6.9 - May 30th 2017 =
 * Added: Pods Template Component is now automatically active on initial installation or reinstallation of Pods. Fixes (#3446). (#4060,#4180). [@pglewis,@sc0ttkclark]
 * Added: Auto Template Fix: Add configurations setting to override and allow Auto Templates to run against the_content outside of the WordPress_Loop. By default now, it will only run inside the WP Loop. (#4088). [@jamesgol]
 * Added: Allow raw value in PodsUI rows. New type "raw" that can output HTML form elements; used in i18n component. Fixes (#3959). (#3960). [@JoryHogeveen]
@@ -203,6 +203,8 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Allow float values for menu positions and the option to remove trailing decimals from number field. Fixes issue where Pods Converted menu positions with decimals to INT on save. Fixes (#2839). (#4192). [@JoryHogeveen]
 * Fixed: Composer: composer installers v1.2 to v1.3. (#4239) [@Ramoonus]
 * Fixed: Editable Titles in Multiple File Upload fields are 'editable' again (broke in 2.6.8) without breaking bidirectional relationship saving. Fixes (#4112) and resolves (#3477,#3720). (#4264). [@sc0ttkclark]
+* Fixed: Spelling error in UI. Fixes (#4266). (#4267). [@danmaby]
+* Updated: Brand assets for Pods (icons and banners) for WordPress Plugin Directory. Fixes (#3948). (#4268) [@jimtrue]
 
 = 2.6.8 - January 17th 2017 =
 * Added: WP Gallery display options for image fields. Fixes (#3905). (#3910). [@JoryHogeveen]

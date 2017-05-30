@@ -3764,10 +3764,13 @@ class PodsAPI {
                     }
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
+                    $values    = array_unique( array_filter( $values ) );
 
                     // Limit values
-                    if ( 0 < $related_limit && !empty( $value_ids ) )
-                        $value_ids = array_slice( $value_ids, 0, $related_limit );
+                    if ( 0 < $related_limit && !empty( $value_ids ) ) {
+	                    $value_ids = array_slice( $value_ids, 0, $related_limit );
+	                    $values    = array_slice( $values, 0, $related_limit );
+                    }
 
                     // Get current values
                     if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
@@ -3786,8 +3789,14 @@ class PodsAPI {
                     if ( !empty( $value_ids ) )
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
+                    $field_save_values = $value_ids;
+
+                    if ( 'file' === $type ) {
+                    	$field_save_values = $values;
+                    }
+
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $field_save_values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed

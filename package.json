@@ -9,12 +9,7 @@
     "type": "git",
     "url": "git://github.com/pods-framework/pods.git"
   },
-  "licenses": [
-    {
-      "type": "GPL-2.0+",
-      "url": "https://github.com/pods-framework/pods/blob/master/license.txt"
-    }
-  ],
+  "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
     "glob": "^7.0.*",

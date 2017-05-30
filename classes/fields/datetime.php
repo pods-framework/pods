@@ -242,27 +242,19 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * Change the value of the field
-	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
-	 *
-	 * @return mixed|null|string
-	 *
-	 * @since 2.7
+	 * {@inheritdoc}
 	 */
-	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+	public function is_empty( $value = null ) {
 
-		if ( pods_v( static::$type . '_allow_empty', $options, 1 ) &&
-			 in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) )
-		) {
-			$value = '';
+		$is_empty = false;
+
+		$value = trim( $value );
+
+		if ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
+			$is_empty = true;
 		}
 
-		return $value;
+		return $is_empty;
 
 	}
 

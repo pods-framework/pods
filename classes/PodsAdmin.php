@@ -1669,15 +1669,13 @@ class PodsAdmin {
                 )
             );
 
-            if ( pods_version_check( 'wp', '3.5' ) ) {
-                $options[ 'admin-ui' ][ 'show_admin_column' ] = array(
-                    'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
-                    'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => false,
-                    'boolean_yes_label' => ''
-                );
-            }
+			$options[ 'admin-ui' ][ 'show_admin_column' ] = array(
+				'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
+				'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
+				'type' => 'boolean',
+				'default' => false,
+				'boolean_yes_label' => ''
+			);
 
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {

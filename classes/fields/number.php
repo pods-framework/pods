@@ -183,6 +183,23 @@ class PodsField_Number extends PodsField {
 
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function is_empty( $value = null ) {
+
+		$is_empty = false;
+
+		$value += 0;
+
+		if ( empty( $value ) ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
+
+	}
+
     /**
      * Change the way the value of the field is displayed with Pods::get
      *

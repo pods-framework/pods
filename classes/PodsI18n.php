@@ -171,6 +171,9 @@ final class PodsI18n {
 			'Remove' =>
 				__( 'Remove', 'pods' ),
 
+			'Deselect' =>
+				__( 'Deselect', 'pods' ),
+
 			'Download' =>
 				__( 'Download', 'pods' ),
 

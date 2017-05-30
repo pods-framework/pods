@@ -526,18 +526,11 @@ elseif ( 'taxonomy' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
                 <?php
                     }
                 ?>
-
-                <?php
-                    if ( pods_version_check( 'wp', '3.5' ) ) {
-                ?>
-                    <li>
-                        <div class="pods-field pods-boolean">
-                            <?php echo PodsForm::field( 'built_in_post_types_attachment', pods_v( 'built_in_post_types_attachment', $pod, false ), 'boolean', array( 'boolean_yes_label' => 'Media <small>(attachment)</small>' ) ); ?>
-                        </div>
-                    </li>
-                <?php
-                    }
-                ?>
+                <li>
+                    <div class="pods-field pods-boolean">
+                        <?php echo PodsForm::field( 'built_in_post_types_attachment', pods_v( 'built_in_post_types_attachment', $pod, false ), 'boolean', array( 'boolean_yes_label' => 'Media <small>(attachment)</small>' ) ); ?>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

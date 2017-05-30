@@ -1,6 +1,6 @@
 {
   "name": "pods",
-  "version": "2.6.8",
+  "version": "2.6.9-a-1",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
   "homepage": "http://pods.io/",
@@ -9,12 +9,7 @@
     "type": "git",
     "url": "git://github.com/pods-framework/pods.git"
   },
-  "licenses": [
-    {
-      "type": "GPL-2.0+",
-      "url": "https://github.com/pods-framework/pods/blob/master/license.txt"
-    }
-  ],
+  "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
     "glob": "^7.0.*",

@@ -1030,6 +1030,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+					'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'show_in_menu' => true )
                 ),
@@ -1143,7 +1146,7 @@ class PodsAdmin {
                 ),
                 'rewrite' => array(
                     'label' => __( 'Rewrite', 'pods' ),
-                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Reading. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
+                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'dependency' => true,
@@ -1255,6 +1258,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'menu_location' => array( 'objects', 'top' ) )
                 ),
@@ -1470,6 +1476,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'menu_location' => 'top' )
                 ),
@@ -1518,6 +1527,9 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
+                    'number_decimals' => 2,
+                    'number_format' => '9999.99',
+                    'number_format_soft' => 1,
                     'default' => 0,
                     'depends-on' => array( 'show_in_menu' => true )
                 ),

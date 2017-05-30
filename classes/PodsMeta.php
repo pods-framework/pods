@@ -1081,9 +1081,9 @@ class PodsMeta {
         do_action( 'pods_meta_' . __FUNCTION__ . '_post', $post );
 
         foreach ( $hidden_fields as $hidden_field ) {
-            $field = $hidden_field[ 'field' ];
+            $field_data = $hidden_field[ 'field' ];
 
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+            echo PodsForm::field( 'pods_meta_' . $field_data[ 'name' ], $hidden_field[ 'value' ], 'hidden', $field_data );
         }
     ?>
 
@@ -1706,9 +1706,9 @@ class PodsMeta {
     </table>
 <?php
             foreach ( $hidden_fields as $hidden_field ) {
-                $field = $hidden_field[ 'field' ];
+                $field_data = $hidden_field[ 'field' ];
 
-                echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+                echo PodsForm::field( 'pods_meta_' . $field_data[ 'name' ], $hidden_field[ 'value' ], 'hidden', $field_data );
             }
         }
 
@@ -2064,9 +2064,9 @@ class PodsMeta {
     </table>
 <?php
         foreach ( $hidden_fields as $hidden_field ) {
-            $field = $hidden_field[ 'field' ];
+            $field_data = $hidden_field[ 'field' ];
 
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $hidden_field[ 'value' ], 'hidden' );
+            echo PodsForm::field( 'pods_meta_' . $field_data[ 'name' ], $hidden_field[ 'value' ], 'hidden', $field_data );
         }
 
         do_action( 'pods_meta_' . __FUNCTION__ . '_post', $comment, $metabox );

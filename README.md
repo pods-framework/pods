@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/pods-framework/pods.png?label=ready&title=Ready)](https://waffle.io/pods-framework/pods)
 # [Pods Framework](http://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=master)](http://travis-ci.org/pods-framework/pods)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/pods-framework/pods/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/pods-framework/pods/?branch=master)

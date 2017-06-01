@@ -1379,7 +1379,7 @@ class PodsForm {
         $field_types = array(
             'text',
             'website',
-            'link',
+            //'link',
             'phone',
             'email',
             'password',

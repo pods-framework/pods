@@ -58,7 +58,7 @@ class PodsRESTFields {
 		} else {
 			$type = $pod->pod_data['type'];
 
-			if ( in_array( $type, array( 'post_type', 'user', 'taxonomy' ) ) ) {
+			if ( in_array( $type, array( 'post_type', 'user', 'taxonomy', 'media', 'comment' ) ) ) {
 				$this->pod = $pod;
 			} else {
 				$this->pod = false;
@@ -122,8 +122,18 @@ class PodsRESTFields {
 				break;
 		}
 
+		$object_type = $this->pod->pod;
+
+		if ( 'media' == $object_type ) {
+			$object_type = 'attachment';
+		}
+
 		if ( $read || $write ) {
-			register_rest_field( $this->pod->pod, $field_name, $args );
+			if ( function_exists( 'register_rest_field' ) ) {
+				register_rest_field( $object_type, $field_name, $args );
+			} elseif ( function_exists( 'register_api_field' ) ) {
+				register_api_field( $object_type, $field_name, $args );
+			}
 		}
 
 	}

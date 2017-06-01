@@ -73,51 +73,49 @@ else
 
 $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
-if ( pods_version_check( 'wp', '3.5' ) ) {
-    $mime_types = wp_get_mime_types();
+$mime_types = wp_get_mime_types();
 
-    if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
-        $new_limit_types = array();
+if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
+    $new_limit_types = array();
+
+    foreach ( $mime_types as $type => $mime ) {
+        if ( 0 === strpos( $mime, $limit_file_type ) ) {
+            $type = explode( '|', $type );
+
+            $new_limit_types = array_merge( $new_limit_types, $type );
+        }
+    }
+
+    if ( !empty( $new_limit_types ) )
+        $limit_types = implode( ',', $new_limit_types );
+}
+elseif ( 'any' != $limit_file_type ) {
+    $new_limit_types = array();
+
+    $limit_types = explode( ',', $limit_types );
+
+    foreach ( $limit_types as $k => $limit_type ) {
+        $found = false;
 
         foreach ( $mime_types as $type => $mime ) {
-            if ( 0 === strpos( $mime, $limit_file_type ) ) {
+            if ( 0 === strpos( $mime, $limit_type ) ) {
                 $type = explode( '|', $type );
 
-                $new_limit_types = array_merge( $new_limit_types, $type );
-            }
-        }
-
-        if ( !empty( $new_limit_types ) )
-            $limit_types = implode( ',', $new_limit_types );
-    }
-    elseif ( 'any' != $limit_file_type ) {
-        $new_limit_types = array();
-
-        $limit_types = explode( ',', $limit_types );
-
-        foreach ( $limit_types as $k => $limit_type ) {
-            $found = false;
-
-            foreach ( $mime_types as $type => $mime ) {
-                if ( 0 === strpos( $mime, $limit_type ) ) {
-                    $type = explode( '|', $type );
-
-                    foreach ( $type as $t ) {
-                        if ( !in_array( $t, $new_limit_types ) )
-                            $new_limit_types[] = $t;
-                    }
-
-                    $found = true;
+                foreach ( $type as $t ) {
+                    if ( !in_array( $t, $new_limit_types ) )
+                        $new_limit_types[] = $t;
                 }
-            }
 
-            if ( !$found )
-                $new_limit_types[] = $limit_type;
+                $found = true;
+            }
         }
 
-        if ( !empty( $new_limit_types ) )
-            $limit_types = implode( ',', $new_limit_types );
+        if ( !$found )
+            $new_limit_types[] = $limit_type;
     }
+
+    if ( !empty( $new_limit_types ) )
+        $limit_types = implode( ',', $new_limit_types );
 }
 
 if ( !empty( $limit_types ) )
@@ -205,17 +203,25 @@ else
             } );
         } );
 
-        var pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
-            list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-            queue_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
-            maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> = <?php echo esc_js( $file_limit ); ?>;
+        var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
+            list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
+            queue = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
+            maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
-        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.init();
+        list.find( 'li.pods-file:first' ).removeClass('hidden');
+
+        pods_uploader.init();
+
+        // Store a reference to this Plupload instance in window.pods_uploaders
+        if (!('pods_uploaders' in window)) {
+            pods_uploaders = {};
+        }
+        pods_uploaders['<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>'] = pods_uploader;
 
         // Plupload FilesAdded Event Handler
-        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.bind( 'FilesAdded', function ( up, files ) {
+        pods_uploader.bind( 'FilesAdded', function ( up, files ) {
             // Hide any existing files (for use in single/limited field configuration)
-            if ( 1 == maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> ) {
+            if ( 1 == maxFiles ) {
                 jQuery( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list li.pods-file' ).remove();
                 jQuery( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).hide();
             }
@@ -225,7 +231,7 @@ else
                     tmpl = Handlebars.compile( $( '#<?php echo esc_js( $css_id ); ?>-progress-template' ).html() ),
                     html = tmpl( binding );
 
-                queue_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.append( html );
+                queue.append( html );
                 //$('#' + file.id).show('slide', {direction: 'up'}, 1000);
                 $( '#' + file.id ).fadeIn( 800 );
 
@@ -237,14 +243,14 @@ else
         } );
 
         // Plupload UploadProgress Event Handler
-        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.bind( 'UploadProgress', function ( up, file ) {
+        pods_uploader.bind( 'UploadProgress', function ( up, file ) {
             var prog_bar = $( '#' + file.id ).find( '.progress-bar' );
 
             prog_bar.css( 'width', file.percent + '%' );
         } );
 
         // Plupload FileUploaded Event Handler
-        pods_uploader_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.bind( 'FileUploaded', function ( up, file, resp ) {
+        pods_uploader.bind( 'FileUploaded', function ( up, file, resp ) {
             var file_div = jQuery( '#' + file.id ),
                 response = resp.response;
 
@@ -274,7 +280,7 @@ else
                 }
 
                 file_div.fadeOut( 800, function () {
-                    list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.show();
+                    list.show();
 
                     if ( $( this ).parent().children().length == 1 )
                         jQuery( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ).hide();
@@ -293,15 +299,15 @@ else
 
                 var html = tmpl( binding );
 
-                list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.prepend( html );
-                list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                list.prepend( html );
+                list.find( 'li.pods-file:first' ).hide().removeClass('hidden').slideDown( 'fast' );
 
-                var items = list_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.find( 'li.pods-file' ),
-                    itemCount = items.size();
+                var items = list.find( 'li.pods-file' ),
+                    itemCount = items.length;
 
-                if ( 0 < maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> && itemCount > maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> ) {
+                if ( 0 < maxFiles && itemCount > maxFiles ) {
                     items.each( function ( idx, elem ) {
-                        if ( idx + 1 > maxFiles_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?> ) {
+                        if ( idx + 1 > maxFiles ) {
                             jQuery( elem ).remove();
                         }
                     } );

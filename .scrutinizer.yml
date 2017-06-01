@@ -1,15 +1,15 @@
 filter:
-    excluded_paths: [vendor/*, tests/*, .tx/*, languages/*, includes/libraries/*, bin/*, assets/*, templates/* ]
+    excluded_paths: [vendor/*, tests/*, .tx/*, includes/libraries/*, bin/*, assets/*, templates/* ]
 
 tools:
     php_code_sniffer:
         config:
             # https://scrutinizer-ci.com/docs/tools/php/code-sniffer/standards
             standard: WordPress
-    
+
 tools:
 
-    php_mess_detector: 
+    php_mess_detector:
         config:
             code_size_rules:
                 cyclomatic_complexity:  false
@@ -65,5 +65,4 @@ checks:
         missing_arguments: true
         argument_type_checks: false
         no_error_suppression: false
-        return_doc_comments: false
         property_assignments: false

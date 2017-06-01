@@ -1028,7 +1028,7 @@ class PodsData {
                         }
                         elseif ( isset( $params->fields[ $field ] ) ) {
                             if ( $params->meta_fields )
-                                $fieldfield = $fieldfield . '.`' . $params->pod_table_prefix . '`';
+                                $fieldfield = $fieldfield . '.`meta_value`';
                             else
                                 $fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
                         }
@@ -1282,6 +1282,11 @@ class PodsData {
             $joins = array();
 
             if ( !empty( $find ) ) {
+                // See: "#3294 OrderBy Failing on PHP7"  Non-zero array keys
+                // here in PHP 7 cause odd behavior so just strip the keys
+                $find = array_values( $find );
+                $replace = array_values( $replace );
+
                 $params->select = preg_replace( $find, $replace, $params->select );
                 $params->where = preg_replace( $find, $replace, $params->where );
                 $params->groupby = preg_replace( $find, $replace, $params->groupby );
@@ -2133,11 +2138,11 @@ class PodsData {
             $wpdb->term_relationships
         );
 
-        $showTables = mysql_list_tables( DB_NAME );
+        $showTables = $wpdb->get_results( 'SHOW TABLES in ' . DB_NAME, ARRAY_A );
 
         $finalTables = array();
 
-        while ( $table = mysql_fetch_row( $showTables ) ) {
+        foreach ( $showTables as $table ) {
             if ( !$pods_tables && 0 === ( strpos( $table[ 0 ], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) // don't include pods tables
                 continue;
             elseif ( !$wp_core && in_array( $table[ 0 ], $core_wp_tables ) )
@@ -2191,13 +2196,9 @@ class PodsData {
      * @since 2.0
      */
     public static function get_column_data ( $column_name, $table ) {
-        $describe_data = mysql_query( 'DESCRIBE ' . $table );
+	    global $wpdb;
 
-        $column_data = array();
-
-        while ( $column_row = mysql_fetch_assoc( $describe_data ) ) {
-            $column_data[] = $column_row;
-        }
+        $column_data = $wpdb->get_results( 'DESCRIBE ' . $table, ARRAY_A );
 
         foreach ( $column_data as $single_column ) {
             if ( $column_name == $single_column[ 'Field' ] )
@@ -2802,9 +2803,7 @@ class PodsData {
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 
-        if ( 'taxonomy' == $traverse[ 'type' ] )
-            $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'type' ], $traverse[ 'name' ] );
-        elseif ( in_array( $traverse[ 'type' ], $file_field_types ) )
+        if ( in_array( $traverse[ 'type' ], $file_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
         elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
@@ -2921,8 +2920,39 @@ class PodsData {
                 $joined_id = $table_info[ 'field_id' ];
                 $joined_index = $table_info[ 'field_index' ];
             }
-        }
-        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
+        } elseif ( 'comment' == $traverse[ 'type' ] ) {
+            if ( pods_tableless() ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+                ";
+
+                $joined_id = $table_info[ 'meta_field_id' ];
+                $joined_index = $table_info[ 'meta_field_index' ];
+            } elseif ( $meta_data_table ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+                ";
+            }
+            else {
+                $the_join = "
+                    LEFT JOIN `{$wpdb->comments}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+                ";
+
+				// Override $rel_alias
+				$rel_alias = $field_joined;
+
+                $joined_id = $table_info[ 'field_id' ];
+                $joined_index = $table_info[ 'field_index' ];
+            }
+        } elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
             if ( pods_tableless() ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2951,6 +2981,13 @@ class PodsData {
                  ";
             }
             else {
+                if (
+                    ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] )
+                    && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) )
+                    && 'post_author' == $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] + 1 ] ) {
+                    $table_info[ 'recurse' ] = false;
+                }
+
                 $the_join = "
                     LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
                         `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
@@ -2960,8 +2997,7 @@ class PodsData {
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
             }
-        }
-        elseif ( 'meta' == $pod_data[ 'storage' ] ) {
+        } elseif ( 'meta' == $pod_data[ 'storage' ] ) {
             if (
                 ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] )
                 && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) )

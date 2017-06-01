@@ -44,7 +44,7 @@ class PodsField_Code extends PodsField {
      * @since 2.0
      */
     public function __construct () {
-
+	    self::$label = __( 'Code (Syntax Highlighting)', 'pods' );
     }
 
     /**

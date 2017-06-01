@@ -15,19 +15,19 @@ foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
     elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) ) {
-        if ( pods_var( 'hidden', $field[ 'options' ], false ) )
+        if ( pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
             $fields[ $k ][ 'type' ] = 'hidden';
         else
             unset( $fields[ $k ] );
     }
-    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_var( 'hidden', $field[ 'options' ], false ) )
+    elseif ( !pods_has_permissions( $field[ 'options' ] ) && pods_v_sanitized( 'hidden', $field[ 'options' ], false ) )
         $fields[ $k ][ 'type' ] = 'hidden';
 }
 
 $submittable_fields = $fields;
 
 foreach ( $submittable_fields as $k => $field ) {
-    if ( pods_var( 'readonly', $field, false ) )
+    if ( pods_v_sanitized( 'readonly', $field, false ) )
         unset( $submittable_fields[ $k ] );
 }
 
@@ -109,18 +109,20 @@ $do = 'save';
                     if ( 'hidden' == $field[ 'type' ] )
                         continue;
 
-                    $depends = PodsForm::dependencies( $field );
+                    $dep_options = PodsForm::dependencies( $field );
+                    $dep_classes = $dep_options[ 'classes' ];
+                    $dep_data = $dep_options[ 'data' ];
 
-                    if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
+            if ( ( !empty( $depends_on ) || !empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
                         if ( !empty( $depends_on ) ) {
             ?>
                 </tbody>
             <?php
                         }
 
-                        if ( !empty( $depends ) ) {
+                        if ( !empty( $dep_classes ) ) {
             ?>
-                <tbody class="pods-field-option-container <?php echo esc_attr( $depends ); ?>">
+                <tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
             <?php
                         }
                     }
@@ -135,8 +137,8 @@ $do = 'save';
                     </td>
                 </tr>
             <?php
-                    if ( false !== $depends_on || !empty( $depends ) )
-                        $depends_on = $depends;
+                    if ( false !== $depends_on || !empty( $dep_classes ) )
+                        $depends_on = $dep_classes;
                 }
 
                 if ( !empty( $depends_on ) ) {

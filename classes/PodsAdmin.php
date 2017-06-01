@@ -178,9 +178,11 @@ class PodsAdmin {
      * @since 2.0
      */
     public function admin_menu () {
-        $advanced_content_types = PodsMeta::$advanced_content_types;
-        $taxonomies = PodsMeta::$taxonomies;
-        $settings = PodsMeta::$settings;
+		$pods_meta = PodsMeta::init();
+
+        $advanced_content_types = $pods_meta->get_objects( 'pod' );
+        $taxonomies = $pods_meta->get_objects( 'taxonomy' );
+        $settings = $pods_meta->get_objects( 'settings' );
 
         $all_pods = pods_api()->load_pods( array( 'count' => true ) );
 
@@ -550,7 +552,7 @@ class PodsAdmin {
         global $current_screen;
 
         if ( isset( $current_screen ) && ! empty( $current_screen->taxonomy ) ) {
-            $taxonomies = PodsMeta::$taxonomies;
+            $taxonomies = PodsMeta::init()->get_objects( 'taxonomy' );
             if ( !empty( $taxonomies ) ) {
                 foreach ( (array) $taxonomies as $pod ) {
                     if ( $current_screen->taxonomy !== $pod[ 'name' ] )

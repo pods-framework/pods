@@ -705,38 +705,98 @@ class PodsComponents {
         die(); // KBAI!
     }
 
-    public function admin_ajax_settings ( $component, $params ) {
-        if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
-        elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
-            pods_error( 'Component options method does not exist', $this );
+	public function admin_ajax_settings( $component, $params ) {
 
-        $options = $this->components[ $component ][ 'object' ]->options( $this->settings[ 'components' ][ $component ] );
+		if ( ! isset( $this->components[ $component ] ) ) {
+			wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
+		} elseif ( ! method_exists( $this->components[ $component ]['object'], 'options' ) ) {
+			pods_error( 'Component options method does not exist', $this );
+		}
 
-        if ( empty( $this->settings[ 'components' ][ $component ] ) )
-            $this->settings[ 'components' ][ $component ] = array();
+		$options = $this->components[ $component ]['object']->options( $this->settings['components'][ $component ] );
 
-        foreach ( $options as $field_name => $field_option ) {
-            $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+		if ( empty( $this->settings['components'][ $component ] ) ) {
+			$this->settings['components'][ $component ] = array();
+		}
 
-            if ( !is_array( $field_option[ 'group' ] ) ) {
-                $field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
+		// @todo Use save_pod_item() functionality instead, this doesn't cover much
 
-                $this->settings[ 'components' ][ $component ][ $field_name ] = $field_value;
-            }
-            else {
-                foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
-                    $field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
+		foreach ( $options as $field_name => $field_option ) {
+			$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
 
-                    $this->settings[ 'components' ][ $component ][ $field_group_name ] = $field_value;
-                }
-            }
-        }
+			if ( ! is_array( $field_option['group'] ) ) {
+				$field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
 
-        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+				if ( in_array( $field_option['type'], array( 'pick', 'file' ), true ) ) {
+					$field_value = $this->handle_pick_file_value_saving( $field_value, $field_option );
+				}
 
-        update_option( 'pods_component_settings', $settings );
+				$this->settings['components'][ $component ][ $field_name ] = $field_value;
+			} else {
+				foreach ( $field_option['group'] as $field_group_name => $field_group_option ) {
+					$field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
 
-        return '1';
-    }
+					if ( in_array( $field_group_option['type'], array( 'pick', 'file' ), true ) ) {
+						$field_value = $this->handle_pick_file_value_saving( $field_value, $field_group_option );
+					}
+
+					$this->settings['components'][ $component ][ $field_group_name ] = $field_value;
+				}
+			}
+		}
+
+		$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+		update_option( 'pods_component_settings', $settings );
+
+		return '1';
+
+	}
+
+	/**
+	 * Handle saving for file/pick fields which requires some array work
+	 *
+	 * @param array|string $value
+	 * @param array        $field
+	 *
+	 * @return array|string
+	 */
+	public function handle_pick_file_value_saving( $value, $field ) {
+
+    	if ( empty( $value ) ) {
+    		$value = array();
+	    } elseif ( ! is_array( $value ) ) {
+    		$value = array( $value );
+	    }
+
+	    if ( 'file' === $field['type'] && ! empty( $value ) ) {
+    		// Fix file upload saved values coming from submission
+			$first_value = current( $value );
+
+			if ( is_array( $first_value ) && ! empty( $first_value['id'] ) ) {
+				$value = wp_list_pluck( $value, 'id' );
+				$value = array_map( 'absint', $value );
+			}
+		}
+
+		if ( $value ) {
+    		$single = false;
+
+			if ( 'single' === pods_v( $field['type'] . '_format_type', $field, 'single', true ) ) {
+				$single = true;
+			} elseif ( 1 === (int) pods_v( $field['type'] . '_limit', $field ) ) {
+				$single = true;
+			}
+
+			if ( $single ) {
+				$value = current( $value );
+			}
+		} else {
+			$value = '';
+		}
+
+		return $value;
+
+	}
+
 }

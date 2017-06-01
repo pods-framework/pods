@@ -1,0 +1,21 @@
+
+.pods-form-ui-row-type-address .pods-submittable-fields * + label { padding-top: 6px; }
+
+.pods-form-ui-row-type-address label + p.description { margin-bottom: 8px; }
+
+/*.pods-form-ui-row-type-address .pods-form-ui-field-type-wysiwyg {
+	width: 95%;
+}*/
+
+/* Admin */
+.pods-maps-map-canvas {
+	margin-top: 10px;
+	height:     300px;
+	/*width:      95%;*/
+}
+
+/* Front */
+.pods-address-maps-map-canvas {
+	min-height: 250px;
+	width: 100%;
+}

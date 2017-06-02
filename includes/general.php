@@ -2170,11 +2170,11 @@ function pods_is_modal_window() {
 }
 
 /**
- * Check if the pod object is valid.
+ * Check if the pod object is valid and the pod exists.
  *
  * @param Pods|mixed $pod The pod object or something that isn't a pod object
  *
- * @return bool
+ * @return bool Whether the pod object is valid and exists
  *
  * @since 2.7
  */
@@ -2186,4 +2186,23 @@ function pod_is_valid( $pod ) {
 	}
 
 	return $is_valid;
+}
+
+/**
+ * Check if the pod object has item(s).
+ *
+ * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ *
+ * @return bool Whether the pod object has items
+ *
+ * @since 2.7
+ */
+function pod_has_items( $pod ) {
+	$has_items = false;
+
+	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
+		$has_items = true;
+	}
+
+	return $has_items;
 }

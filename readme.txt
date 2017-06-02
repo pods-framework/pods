@@ -197,7 +197,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 * Fixed: Audio attachments will now work properly with pods_attachment_import. (#4155) [@sc0ttkclark]
 * Fixed: Handling of Single & Double Quotes in post_thumbnail interpolation. Fixes (#4166). (#4167). [@quasel]
 * Fixed: Adding back_link to wp_die() usage which allows Modal Add/Edit to give you a way to go back in the edit screen. Fixes (#4168). (#4169). [@sc0ttkclark]
-* Fixed: Conflict with The Event Calendar issue with Handlebars (as we're using an older implementation). Tempoary hack until 2.7 with the correct fix. (#4173). [@sc0ttkclark]
+* Fixed: Conflict with The Event Calendar issue with Handlebars (as we're using an older implementation). Temporary hack until 2.7 with the correct fix. (#4173). [@sc0ttkclark]
 * Fixed: Missing images in unit test (#4177). [@sc0ttkclark]
 * Fixed: Invalid AJAX error with frontend forms and Settings Pods; $id will always return for AJAX requests. Fixes (#4181). (#4184). [@JoryHogeveen]
 * Fixed: Allow float values for menu positions and the option to remove trailing decimals from number field. Fixes issue where Pods Converted menu positions with decimals to INT on save. Fixes (#2839). (#4192). [@JoryHogeveen]

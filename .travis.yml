@@ -52,7 +52,7 @@ before_script:
 
 script:
     - vendor/bin/phpunit
-    - npm run pods-test-dfv
+    - npm run test-dfv
 
 branches:
     only:

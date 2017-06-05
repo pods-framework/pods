@@ -290,7 +290,21 @@ class PodsInit {
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
-		wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
+
+		if ( is_admin() ) {
+			$screen = get_current_screen();
+
+			// Deregister the outdated Pods handlebars script on TEC event screen
+			if ( $screen && 'tribe_events' === $screen->post_type ) {
+				$register_handlebars = false;
+			}
+		}
+
+		if ( $register_handlebars ) {
+			wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
+		}
+
 	}
 
 	/**
@@ -394,6 +408,8 @@ class PodsInit {
 			$pods_post_types      = $pods_taxonomies = array();
 			$supported_post_types = $supported_taxonomies = array();
 
+			$post_format_post_types = array();
+
 			foreach ( $post_types as $post_type ) {
 				// Post Type exists already
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
@@ -486,6 +502,10 @@ class PodsInit {
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
 						$cpt_supports[] = $cpt_support;
+
+						if ( 'post-formats' === $cpt_support ) {
+							$post_format_post_types[] = $post_type_name;
+						}
 					}
 				}
 
@@ -764,6 +784,8 @@ class PodsInit {
 				$pods_cpt_ct['post_types'][ $post_type ] = $options;
 			}
 
+			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
+
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
 		}
 
@@ -825,6 +847,11 @@ class PodsInit {
 
 			register_post_type( $post_type, $options );
 
+			// Register post format taxonomy for this post type
+			if ( isset( $pods_cpt_ct['post_format_post_types'] ) && in_array( $post_type, $pods_cpt_ct['post_format_post_types'], true ) ) {
+				register_taxonomy_for_object_type( 'post_format', $post_type );
+			}
+
 			if ( ! isset( self::$content_types_registered['post_types'] ) ) {
 				self::$content_types_registered['post_types'] = array();
 			}
@@ -875,6 +902,17 @@ class PodsInit {
 			return $messages;
 		}
 
+		/**
+		 * Use get_preview_post_link function added in 4.4, which eventually applies preview_post_link filter
+		 * Before 4.4, this filter is defined in wp-admin/includes/meta-boxes.php, $post parameter added in 4.0
+		 * there wasn't post parameter back in 3.8
+		 * Let's add $post in the filter as it won't hurt anyway.
+		 * @since 2.6.8.1
+		*/
+		$preview_post_link = function_exists( 'get_preview_post_link' )
+									? get_preview_post_link( $post )
+									: apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
+
 		foreach ( $post_types as $post_type ) {
 			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
 				continue;
@@ -892,10 +930,10 @@ class PodsInit {
 				5  => isset( $_GET['revision'] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 				6  => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
-				8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels['singular_name'] ),
+				8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 				9  => sprintf( __( '%s scheduled for: <strong>%s</strong>. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], // translators: Publish box date format, see http://php.net/date
 					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels['singular_name'] ),
-				10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels['singular_name'] )
+				10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] )
 			);
 
 			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {

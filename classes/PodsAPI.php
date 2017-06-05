@@ -3751,10 +3751,13 @@ class PodsAPI {
                     }
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
+                    $values    = array_unique( array_filter( $values ) );
 
                     // Limit values
-                    if ( 0 < $related_limit && !empty( $value_ids ) )
-                        $value_ids = array_slice( $value_ids, 0, $related_limit );
+                    if ( 0 < $related_limit && !empty( $value_ids ) ) {
+	                    $value_ids = array_slice( $value_ids, 0, $related_limit );
+	                    $values    = array_slice( $values, 0, $related_limit );
+                    }
 
                     // Get current values
                     if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
@@ -3773,8 +3776,14 @@ class PodsAPI {
                     if ( !empty( $value_ids ) )
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
+                    $field_save_values = $value_ids;
+
+                    if ( 'file' === $type ) {
+                    	$field_save_values = $values;
+                    }
+
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $field_save_values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -4243,6 +4252,7 @@ class PodsAPI {
 
 		if ( in_array( $pod->pod_data['type'], array( 'post_type', 'media' ) ) ) {
 			$ignore_fields = array(
+				'ID',
 				'post_name',
 				'post_date',
 				'post_date_gmt',
@@ -4252,16 +4262,21 @@ class PodsAPI {
 		        );
 		} elseif ( 'term' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'term_id',
 				'term_taxonomy_id',
 				'slug',
 		        );
 		} elseif ( 'user' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'ID',
 				'user_nicename',
 		        );
 		} elseif ( 'comment' == $pod->pod_data['type'] ) {
 			$ignore_fields = array(
+				'comment_ID',
 		        );
+		} elseif ( 'settings' == $pod->pod_data['type'] ) {
+			return pods_error( __( 'Settings do not support duplication.', 'pods' ), $this );
 		}
 
 		/**
@@ -8274,7 +8289,7 @@ class PodsAPI {
             $id = $obj->id();
         }
 
-        if ( !empty( $fields ) ) {
+        if ( ! empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
@@ -8315,11 +8330,14 @@ class PodsAPI {
 
         $id = $this->save_pod_item( $params );
 
-        if ( 0 < $id && !empty( $thank_you ) ) {
-            $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
+	// Always return $id for AJAX requests.
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		if ( 0 < $id && ! empty( $thank_you ) ) {
+			$thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            pods_redirect( $thank_you );
-        }
+			pods_redirect( $thank_you );
+		}
+	}
 
         return $id;
     }

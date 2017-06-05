@@ -1442,6 +1442,11 @@ class Pods implements Iterator {
 										elseif ( ( ( false !== strpos( $full_field, '_src' ) || 'guid' == $field ) && ( in_array( $table[ 'type' ], array( 'attachment', 'media' ) ) || in_array( $last_type, PodsForm::file_field_types() ) ) ) || ( in_array( $field, array( '_link', 'detail_url' ) ) || in_array( $field, array( 'permalink', 'the_permalink' ) ) && in_array( $last_type, PodsForm::file_field_types() ) ) ) {
 											$size = 'full';
 
+											if ( false === strpos( 'image', get_post_mime_type( $item_id ) ) ) {
+												// No default sizes for non-images. When a size is defined this will be overwritten.
+												$size = null;
+											}
+
 											if ( false !== strpos( $full_field, '_src.' ) && 5 < strlen( $full_field ) )
 												$size = substr( $full_field, 5 );
 											elseif ( false !== strpos( $full_field, '_src_relative.' ) && 14 < strlen( $full_field ) )
@@ -1449,7 +1454,11 @@ class Pods implements Iterator {
 											elseif ( false !== strpos( $full_field, '_src_schemeless.' ) && 16 < strlen( $full_field ) )
 												$size = substr( $full_field, 16 );
 
-											$value_url = pods_image_url( $item_id, $size );
+											if ( $size ) {
+												$value_url = pods_image_url( $item_id, $size );
+											} else {
+												$value_url = wp_get_attachment_url( $item_id );
+											}
 
 											if ( false !== strpos( $full_field, '_src_relative' ) && !empty( $value_url ) ) {
 												$value_url_parsed = parse_url( $value_url );

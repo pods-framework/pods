@@ -24,7 +24,7 @@ class PodsComponents {
     /**
      * Available components
      *
-     * @var string
+     * @var array
      *
      * @since 2.0
      */
@@ -33,7 +33,7 @@ class PodsComponents {
     /**
      * Components settings
      *
-     * @var string
+     * @var array
      *
      * @since 2.0
      */
@@ -495,11 +495,89 @@ class PodsComponents {
 
     public function admin ( $options, $settings, $component ) {
         if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component' );
+            wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
 
         $component_label = $this->components[ $component ][ 'Name' ];
 
         include PODS_DIR . 'ui/admin/components-admin.php';
+    }
+
+    /**
+     * Check if a component is active or not
+     *
+     * @param string $component The component name to check if active
+     *
+     * @return bool
+     *
+     * @since 2.7
+     */
+    public function is_component_active( $component ) {
+
+        $active = false;
+
+        if ( isset( $this->components[ $component ] ) && isset( $this->settings[ 'components' ][ $component ] ) && 0 !== $this->settings[ 'components' ][ $component ] ) {
+            $active = true;
+        }
+
+        return $active;
+
+    }
+
+	/**
+	 * Activate a component
+	 *
+	 * @param string $component The component name to activate
+	 *
+	 * @return boolean Whether the component was activated.
+	 *
+	 * @since 2.7
+	 */
+	public function activate_component( $component ) {
+
+		$activated = false;
+
+		if ( ! $this->is_component_active( $component ) ) {
+			if ( empty( $this->components ) ) {
+				// Setup components
+				PodsInit::$components->get_components();
+			}
+
+			if ( isset( $this->components[ $component ] ) ) {
+				$this->settings['components'][ $component ] = array();
+
+				$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+				update_option( 'pods_component_settings', $settings );
+
+				$activated = true;
+			}
+		} else {
+			$activated = true;
+		}
+
+		return $activated;
+
+	}
+
+    /**
+     * Deactivate a component
+     *
+     * @param string $component The component name to deactivate
+     *
+     * @since 2.7
+     */
+    public function deactivate_component( $component ) {
+
+        if ( $this->is_component_active( $component ) ) {
+            if ( isset( $this->components[ $component ] ) ) {
+                $this->settings[ 'components' ][ $component ] = 0;
+
+                $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+                update_option( 'pods_component_settings', $settings );
+            }
+        }
+
     }
 
     /**
@@ -512,24 +590,21 @@ class PodsComponents {
      * @since 2.0
      */
     public function toggle ( $component ) {
-        $toggle = null;
 
-        if ( isset( $this->components[ $component ] ) ) {
-            if ( 1 == pods_var( 'toggle', 'get' ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) ) {
-                $this->settings[ 'components' ][ $component ] = array();
-                $toggle = true;
-            }
-            elseif ( 0 == pods_var( 'toggle', 'get' ) ) {
-                $this->settings[ 'components' ][ $component ] = 0;
-                $toggle = false;
-            }
-        }
+	    $toggle = null;
 
-        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+	    $toggle_mode = (int) pods_v( 'toggle', 'get' );
 
-        update_option( 'pods_component_settings', $settings );
+	    if ( 1 == $toggle_mode ) {
+		    $this->activate_component( $component );
+		    $toggle = true;
+	    } else {
+		    $this->deactivate_component( $component );
+		    $toggle = false;
+	    }
 
-        return $toggle;
+	    return $toggle;
+
     }
 
     /**
@@ -632,7 +707,7 @@ class PodsComponents {
 
     public function admin_ajax_settings ( $component, $params ) {
         if ( !isset( $this->components[ $component ] ) )
-            wp_die( 'Invalid Component' );
+            wp_die( 'Invalid Component', '', array( 'back_link' => true ) );
         elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
             pods_error( 'Component options method does not exist', $this );
 

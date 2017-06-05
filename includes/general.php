@@ -215,7 +215,7 @@ function pods_error( $error, $obj = null ) {
 
 			// die with error
 			if ( ! defined( 'DOING_AJAX' ) && ! headers_sent() && ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-comments-post.php' ) ) ) {
-				wp_die( $error );
+				wp_die( $error, '', array( 'back_link' => true ) );
 			} else {
 				die( sprintf( '<e>%s</e>', $error ) );
 			}
@@ -271,7 +271,7 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     $debug = '<e>' . $debug;
 
     if ( 2 === $die )
-        wp_die( $debug );
+        wp_die( $debug, '', array( 'back_link' => true ) );
     elseif ( true === $die )
         die( $debug );
 
@@ -725,7 +725,7 @@ function pods_shortcode ( $tags, $content = null ) {
 		$return = '';
 
 		if ( !file_exists( $tags[ 'view' ] ) ) {
-			$return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
+			$return = pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ], true );
 
 			if ( $tags[ 'shortcodes' ] && defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
 				$return = do_shortcode( $return );
@@ -802,7 +802,7 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Pod not found</p>';
 
 	$found = 0;
-	
+
 	$is_singular = ( ! empty( $id ) || $tags['use_current'] );
 
 	if ( ! $is_singular ) {
@@ -998,24 +998,23 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		return $content;
 	}
 
-	// Store all shortcodes, to restore later
-	$temp_shortcode_tags = $shortcode_tags;
-
-	// Loop through all shortcodes and remove those not being used right now
-	foreach ( $shortcode_tags as $tag => $callback ) {
-		if ( ! in_array( $tag, $shortcodes ) ) {
-			unset( $shortcode_tags[ $tag ] );
-		}
+	if ( !empty( $shortcodes ) ) {
+		$temp_shortcode_filter = function ( $return, $tag, $attr, $m ) use ( $shortcodes ) {
+			if ( in_array( $m[2], $shortcodes ) ) {
+				// If shortcode being called is in list, return false to allow it to run
+				return false;
+			}
+			// Return original shortcode string if we aren't going to handle at this time
+			return $m[0];
+		};
+		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
-	// Build Shortcode regex pattern just for the shortcodes we want
-	$pattern = get_shortcode_regex();
+	$content = do_shortcode( $content );
 
-	// Call shortcode callbacks just for the shortcodes we want
-	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
-
-	// Restore all shortcode tags
-	$shortcode_tags = $temp_shortcode_tags;
+	if ( isset( $temp_shortcode_filter ) ) {
+		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );
+	}
 
 	return $content;
 
@@ -1861,7 +1860,7 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -1887,7 +1886,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
@@ -1933,7 +1932,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
 					array( 'get_term_metadata', array( PodsInit::$meta, 'get_term_meta' ), 10, 4 )
 				) );
 			}
-			
+
 			if ( !pods_tableless() ) {
 				$no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
 					array( 'add_term_metadata', array( PodsInit::$meta, 'add_term_meta' ), 10, 5 ),
@@ -2077,7 +2076,7 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     elseif ( 'term' == $object_type )
         $object_type = 'taxonomy';
 
-    if ( ! class_exists( 'PodsInit' ) ) 
+    if ( ! class_exists( 'PodsInit' ) )
         pods_init();
 
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )

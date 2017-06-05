@@ -10,6 +10,16 @@ require PODS_TEST_PLUGIN_DIR . '/classes/fields/pick.php';
 
 class Pods_UnitTestCase extends \WP_UnitTestCase {
 	/**
+	 * Demo image used for attachments.
+	 *
+	 * This is currently set to the Pods logo Gravatar on Scott's Gravatar account.
+	 *
+	 * @var string
+	 * @static
+	 */
+	public static $sample_image = 'http://en.gravatar.com/userimage/3291122/ee00b7f0e64c35bc6463829c7c9e1f22.png?size=200';
+
+	/**
 	 * A collection of supported pod types
 	 *
 	 * @var    array
@@ -633,7 +643,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		$related_avatar = 0;
 
 		// Get and store sample image for use later
-		$sample_image = pods_attachment_import( 'https://en.gravatar.com/userimage/3291122/028049e6b4e179bdc7deb878bbfced8f.jpg?size=200' );
+		$sample_image = pods_attachment_import( self::$sample_image );
+
+		if ( empty( $sample_image ) ) {
+			throw new \Exception( sprintf( 'The sample image must have been deleted! Sample image: %s', self::$sample_image ) );
+		}
+
 		$sample_image = get_attached_file( $sample_image );
 
 		$new_related_items = array();

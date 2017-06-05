@@ -35,7 +35,10 @@ cache:
 
 before_script:
     - phpenv config-rm xdebug.ini
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]]; then composer require --dev --no-update "phpunit/phpunit:4.8"; fi
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then composer require --dev --no-update "phpunit/phpunit:5.*"; fi    
     - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then composer require --dev --no-update "phpunit/phpunit:6.*"; fi
+    - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then composer require --dev --no-update "phpunit/phpunit:6.*"; fi
     - composer self-update
     - composer install --no-interaction --prefer-source
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION

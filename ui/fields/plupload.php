@@ -294,7 +294,8 @@ else
                     id : json.ID,
                     icon : json.thumbnail,
                     name : json.post_title,
-                    link : json.link
+                    link : json.link,
+                    date : json.post_date
                 };
 
                 var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

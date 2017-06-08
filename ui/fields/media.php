@@ -309,7 +309,8 @@ else
                         }
                     });
                 });
-
+		//add additional commands to the uploader
+		<?php do_action( 'pods_media', 'pods_media_' . esc_js( pods_js_name( $attributes[ 'id' ] ) ), $attributes, $options ); ?>
                 // open the frame
                 pods_media_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.open();
                 pods_media_<?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>.content.mode('<?php echo esc_js( $router ); ?>');

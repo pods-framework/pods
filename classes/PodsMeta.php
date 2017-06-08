@@ -997,6 +997,8 @@ class PodsMeta {
 	}
 
         $pod = self::$current_pod;
+	// filter the pods metas to display
+	$metabox[ 'args' ][ 'group' ][ 'fields' ] = apply_filters( 'pods_meta_' . __FUNCTION__ . '_fields', $metabox[ 'args' ][ 'group' ][ 'fields' ], $id );
 
 	$fields = $metabox['args']['group']['fields'];
 

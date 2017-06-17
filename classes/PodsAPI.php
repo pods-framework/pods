@@ -3752,12 +3752,12 @@ class PodsAPI {
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
 
-                    //Filter unique values not equal to false in case of a multidimensional array
-                    $filtered_values = $this->array_filter_walker($values);
-                    $serialized_values = array_map('serialize', $filtered_values);
-                    $unique_serialized_values = array_unique($serialized_values);
+                    // Filter unique values not equal to false in case of a multidimensional array
+                    $filtered_values = $this->array_filter_walker( $values );
+                    $serialized_values = array_map( 'serialize', $filtered_values );
+                    $unique_serialized_values = array_unique( $serialized_values );
 
-	                $values = array_map('unserialize', $unique_serialized_values);
+	            $values = array_map( 'unserialize', $unique_serialized_values );
 
                     // Limit values
                     if ( 0 < $related_limit && !empty( $value_ids ) ) {
@@ -8627,24 +8627,26 @@ class PodsAPI {
     }
 
 	/**
-	 * Remove multidimensional array values that are equal to false
+	 * Remove multidimensional array values that are equal to false.
 	 *
 	 * @param array $values
 	 *
 	 * @return array
 	 *
-	 * @since 2.6.9
+	 * @since 2.6.10
 	 */
 	private function array_filter_walker( $values = array() ) {
-		foreach ($values as $k => $v){
-			if (is_array($v) || is_object($v)){
-				$this->array_filter_walker($v);
-			} else {
-				if (false === (bool)$v){
-					unset($values[$k]);
-				}
+
+		foreach ( $values as $k => $v ){
+			if ( is_array( $v ) || is_object( $v ) ){
+				$this->array_filter_walker( $v );
+			} elseif ( false === (bool) $v ){
+				unset( $values[ $k ] );
 			}
 		}
+
 		return $values;
+
 	}
+
 }

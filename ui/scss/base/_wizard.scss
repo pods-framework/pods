@@ -1,32 +1,22 @@
-// Import less mixins
-@import "mixins.less";
-
-// Todo: finish converting font colors to variables
-@green-dark: #6f9472;
-@green-light: #e6f9e6;
-@green-mid: #caebcc;
-@grey-border: #dfdfdf;
-@width: 780px;
-
 // Upgrade wizard specific styles
 #pods-wizard-box {
-    width: @width + 2;
+    width: $width + 2;
     color: #555555;
     margin: 20px;
     &.pods-wizard-steps-1 #pods-wizard-heading ul li {
-        width: @width;
+        width: $width;
     }
     &.pods-wizard-steps-2 #pods-wizard-heading ul li {
-        width: @width / 2;
+        width: $width / 2;
     }
     &.pods-wizard-steps-3 #pods-wizard-heading ul li {
-        width: @width / 3;
+        width: $width / 3;
     }
     &.pods-wizard-steps-4 #pods-wizard-heading ul li {
-        width: @width / 4;
+        width: $width / 4;
     }
     &.pods-wizard-steps-5 #pods-wizard-heading ul li {
-        width: @width / 5;
+        width: $width / 5;
     }
     #pods-wizard-heading {
         ul {
@@ -42,9 +32,9 @@
                 margin-bottom: 0;
                 font: 18px 'Garamond, Georgia';
                 position: relative;
-                border-top: 1px solid @grey-border;
-                border-bottom: 1px solid @grey-border;
-                .vertical-gradient(#f9f9f9, #ededed);
+                border-top: 1px solid $grey-border;
+                border-bottom: 1px solid $grey-border;
+                @include vertical-gradient(#f9f9f9, #ededed);
                 i {
                     display: block;
                     width: 11px;
@@ -66,28 +56,28 @@
                     box-shadow: none;
                     font-size: 20px;
                     font-weight: bold;
-                    .multi-border-radius(30px, 30px, 30px, 30px);
+                    @include multi-border-radius(30px, 30px, 30px, 30px);
                 }
                 &.pods-wizard-menu-current {
                     color: #fff;
                     border-bottom: 1px solid #6e6e6e;
                     border-top: 1px solid #808080;
                     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-                    .vertical-gradient(#808080, #6e6e6e);
+                    @include vertical-gradient(#808080, #6e6e6e);
                     span {
                         text-shadow: none;
                         background: #fff;
                         color: #6f6f6f;
-                        .box-shadow(1px, 1px, 2px, 0.2);
+                        @include box-shadow(1px, 1px, 2px, 0.2);
                     }
                     &+ li > i {
                         background: url(../images/arrow_current.png);
                     }
                 }
                 &.pods-wizard-menu-complete {
-                    color: @green-dark;
+                    color: $green-dark;
                     border-bottom: 1px solid #bbddbd;
-                    .vertical-gradient(#d4f4d6, #bbddbd);
+                    @include vertical-gradient(#d4f4d6, #bbddbd);
                     &+ li > i {
                         background: url(../images/arrow_complete.png);
                     }
@@ -95,8 +85,8 @@
                         background: url(../images/arrow_complete_previous.png);
                     }
                     span {
-                        background: @green-dark;
-                        color: @green-mid;
+                        background: $green-dark;
+                        color: $green-mid;
                     }
                     em {
                         display: block;
@@ -117,12 +107,12 @@
                     i {
                         background: none;
                     }
-                    border-left: 1px solid @grey-border;
-                    .multi-border-radius(8px, 0, 0, 0);
+                    border-left: 1px solid $grey-border;
+                    @include multi-border-radius(8px, 0, 0, 0);
                 }
                 &:last-child {
-                    border-right: 1px solid @grey-border;
-                    .multi-border-radius(0, 8px, 0, 0);
+                    border-right: 1px solid $grey-border;
+                    @include multi-border-radius(0, 8px, 0, 0);
                 }
             }
         }
@@ -193,8 +183,8 @@
         }
         .pods-wizard-panel {
             display: none;
-            border-left: 1px solid @grey-border;
-            border-right: 1px solid @grey-border;
+            border-left: 1px solid $grey-border;
+            border-right: 1px solid $grey-border;
             padding-bottom: 25px;
             &:first-child {
                 display: block;
@@ -313,8 +303,8 @@
                         background: #f9f9f9;
                         position: relative;
                         text-decoration: none;
-                        .multi-border-radius(8px, 8px, 8px, 8px);
-                        .box-shadow(0px, 0px, 4px, 0.3);
+                        @include multi-border-radius(8px, 8px, 8px, 8px);
+                        @include box-shadow(0px, 0px, 4px, 0.3);
                         h2 {
                             color: #21759B;
                             font-weight: bold;
@@ -351,7 +341,7 @@
                                 text-align: center;
                                 color: #fff;
                                 font: 13px/30px bold Garamond, Georgia;
-                                .multi-border-radius(0, 0, 8px, 8px);
+                                @include multi-border-radius(0, 0, 8px, 8px);
                             }
                         }
                         &:visited {
@@ -375,11 +365,11 @@
     }
     #pods-wizard-actions {
         height: 35px;
-        border: 1px solid @grey-border;
+        border: 1px solid $grey-border;
         position: relative;
         clear: both;
-        .multi-border-radius(0, 0, 8px, 8px);
-        .vertical-gradient(#ededed, #f9f9f9);
+        @include multi-border-radius(0, 0, 8px, 8px);
+        @include vertical-gradient(#ededed, #f9f9f9);
         .button {
             display: block;
             height: 35px;
@@ -395,8 +385,8 @@
             &.button-primary {
                 right: 0;
                 color: #fff;
-                .vertical-gradient(#278ab8, #22789f);
-                .multi-border-radius(0, 0, 8px, 0);
+                @include vertical-gradient(#278ab8, #22789f);
+                @include multi-border-radius(0, 0, 8px, 0);
                 &:hover {
                     background: #22789f;
                 }
@@ -404,8 +394,8 @@
             &.button-secondary {
                 left: 0;
                 color: #7b7b7b;
-                .vertical-gradient(#dfdfdf, #b2b2b2);
-                .multi-border-radius(0, 0, 0, 8px);
+                @include vertical-gradient(#dfdfdf, #b2b2b2);
+                @include multi-border-radius(0, 0, 0, 8px);
                 &:hover {
                     background: #b2b2b2;
                 }
@@ -421,8 +411,8 @@
             color: #fff;
             font-weight: bold;
             text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-            .vertical-gradient(#808080, #6e6e6e);
-            .multi-border-radius(0, 0, 8px, 8px);
+            @include vertical-gradient(#808080, #6e6e6e);
+            @include multi-border-radius(0, 0, 8px, 8px);
         }
         #pods-wizard-next.finished {
             width: 150px;
@@ -430,8 +420,8 @@
     }
     &.pods-wizard-hide-first {
         #pods-wizard-main {
-            border-bottom: 1px solid @grey-border;
-            .multi-border-radius(0, 0, 8px, 8px);
+            border-bottom: 1px solid $grey-border;
+            @include multi-border-radius(0, 0, 8px, 8px);
         }
         #pods-wizard-actions {
             display: none;

@@ -39,6 +39,7 @@
     "jsdom-global": "3.0.2",
     "load-grunt-tasks": "^3.5.0",
     "mocha": "^3.4.2",
+    "node-sass": "^4.5.3",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-uglify": "^2.0.1",
@@ -47,6 +48,7 @@
   },
   "scripts": {
     "test-dfv": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js",
-    "build-podsjs": "node node_modules/rollup/bin/rollup -c"
+    "build-podsjs": "node node_modules/rollup/bin/rollup -c",
+    "scss": "node-sass --output-style compressed -o ui/scss/dist ui/scss"
   }
 }

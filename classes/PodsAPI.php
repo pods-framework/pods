@@ -8636,6 +8636,7 @@ class PodsAPI {
 	 * @since 2.6.10
 	 */
 	private function array_filter_walker( $values = array() ) {
+		$values = (array) $values;
 
 		foreach ( $values as $k => $v ){
 			if ( is_object( $v ) ) {

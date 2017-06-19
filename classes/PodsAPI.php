@@ -8627,7 +8627,7 @@ class PodsAPI {
     }
 
 	/**
-	 * Remove multidimensional array values that are equal to false.
+	 * Filter an array of arrays without causing PHP notices/warnings.
 	 *
 	 * @param array $values
 	 *
@@ -8638,10 +8638,21 @@ class PodsAPI {
 	private function array_filter_walker( $values = array() ) {
 
 		foreach ( $values as $k => $v ){
-			if ( is_array( $v ) || is_object( $v ) ){
-				$this->array_filter_walker( $v );
-			} elseif ( false === (bool) $v ){
-				unset( $values[ $k ] );
+			if ( is_object( $v ) ) {
+				// Skip objects
+				continue;
+			} elseif ( is_array( $v ) ){
+				if ( empty( $v ) ) {
+					// Filter values with empty arrays
+					unset( $values[ $k ] );
+				}
+			} else {
+				$check = (bool) $v;
+
+				if ( ! $v ) {
+					// Filter empty values
+					unset( $values[ $k ] );
+				}
 			}
 		}
 

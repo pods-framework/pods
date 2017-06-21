@@ -8649,8 +8649,6 @@ class PodsAPI {
 					unset( $values[ $k ] );
 				}
 			} else {
-				$check = (bool) $v;
-
 				if ( ! $v ) {
 					// Filter empty values
 					unset( $values[ $k ] );

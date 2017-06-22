@@ -125,8 +125,8 @@ class PodsField_Number extends PodsField {
             ),
 		static::$type . '_placeholder' => array(
 			'label' => __( 'HTML Placeholder', 'pods' ),
-			'default' => 12,
-			'type' => 'number',
+			'default' => '',
+			'type' => 'text',
 			'help' => array(
 				__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 				'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',

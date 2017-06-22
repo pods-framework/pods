@@ -46,12 +46,8 @@ class PodsField_Slug extends PodsField {
     }
 
 	/**
-	* Add options and set defaults to
-	*
-	* @param array $options
-	*
-	* @since 2.0
-	*/
+	 * {@inheritdoc}
+	 */
 	public function options () {
 
 		$options = array(

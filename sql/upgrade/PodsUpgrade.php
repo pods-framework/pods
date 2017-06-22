@@ -34,54 +34,71 @@ class PodsUpgrade {
         $this->get_progress();
     }
 
-    /**
-     *
-     */
-    public function install ( $_blog_id = null ) {
-        /**
-         * @var $wpdb WPDB
-         */
-        global $wpdb;
+	/**
+	 *
+	 */
+	public function install( $_blog_id = null ) {
 
-        // Switch DB table prefixes
-        if ( null !== $_blog_id && $_blog_id != $wpdb->blogid )
-            switch_to_blog( pods_absint( $_blog_id ) );
-        else
-            $_blog_id = null;
+		/**
+		 * @var $wpdb WPDB
+		 */
+		global $wpdb;
 
-        $pods_version = get_option( 'pods_version' );
+		// Switch DB table prefixes
+		if ( null !== $_blog_id && $_blog_id != $wpdb->blogid ) {
+			switch_to_blog( pods_absint( $_blog_id ) );
+		} else {
+			$_blog_id = null;
+		}
 
-        do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
+		$pods_version = get_option( 'pods_version' );
 
-        if ( ( !pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_install' ] ) ) {
-            $sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
-            $sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
+		do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
-            $charset_collate = 'DEFAULT CHARSET utf8';
+		if ( ( ! pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && ! isset( $_GET['pods_bypass_install'] ) ) {
+			$sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
+			$sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
 
-            if ( !empty( $wpdb->charset ) )
-                $charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			$charset_collate = 'DEFAULT CHARSET utf8';
 
-            if ( !empty( $wpdb->collate ) )
-                $charset_collate .= " COLLATE {$wpdb->collate}";
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+			}
 
-            if ( 'DEFAULT CHARSET utf8' != $charset_collate )
-                $sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
 
-            $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
+			if ( 'DEFAULT CHARSET utf8' != $charset_collate ) {
+				$sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
+			}
 
-            for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
-                $query = trim( $sql[ $i ] );
+			$sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
-                if ( empty( $query ) )
-                    continue;
+			for ( $i = 0, $z = count( $sql ); $i < $z; $i ++ ) {
+				$query = trim( $sql[ $i ] );
 
-                pods_query( $query, 'Cannot setup SQL tables' );
-            }
-        }
+				if ( empty( $query ) ) {
+					continue;
+				}
 
-        do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
-    }
+				pods_query( $query, 'Cannot setup SQL tables' );
+			}
+
+			// Auto activate component.
+			if ( empty( PodsInit::$components ) ) {
+				if ( ! defined( 'PODS_LIGHT' ) || ! PODS_LIGHT ) {
+					PodsInit::$components = pods_components();
+				}
+			}
+
+			if ( ! empty( PodsInit::$components ) ) {
+				PodsInit::$components->activate_component( 'templates' );
+			}
+		}
+
+		do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
+	}
 
     /**
      *

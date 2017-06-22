@@ -3752,9 +3752,18 @@ class PodsAPI {
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
 
+                    // Filter unique values not equal to false in case of a multidimensional array
+                    $filtered_values = $this->array_filter_walker( $values );
+                    $serialized_values = array_map( 'serialize', $filtered_values );
+                    $unique_serialized_values = array_unique( $serialized_values );
+
+	            $values = array_map( 'unserialize', $unique_serialized_values );
+
                     // Limit values
-                    if ( 0 < $related_limit && !empty( $value_ids ) )
-                        $value_ids = array_slice( $value_ids, 0, $related_limit );
+                    if ( 0 < $related_limit && !empty( $value_ids ) ) {
+	                    $value_ids = array_slice( $value_ids, 0, $related_limit );
+	                    $values    = array_slice( $values, 0, $related_limit );
+                    }
 
                     // Get current values
                     if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
@@ -3773,8 +3782,14 @@ class PodsAPI {
                     if ( !empty( $value_ids ) )
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
+                    $field_save_values = $value_ids;
+
+                    if ( 'file' === $type ) {
+                    	$field_save_values = $values;
+                    }
+
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $field_save_values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -8280,7 +8295,7 @@ class PodsAPI {
             $id = $obj->id();
         }
 
-        if ( !empty( $fields ) ) {
+        if ( ! empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
@@ -8321,11 +8336,14 @@ class PodsAPI {
 
         $id = $this->save_pod_item( $params );
 
-        if ( 0 < $id && !empty( $thank_you ) ) {
-            $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
+	// Always return $id for AJAX requests.
+	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+		if ( 0 < $id && ! empty( $thank_you ) ) {
+			$thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-            pods_redirect( $thank_you );
-        }
+			pods_redirect( $thank_you );
+		}
+	}
 
         return $id;
     }
@@ -8607,4 +8625,39 @@ class PodsAPI {
         else
             pods_deprecated( "PodsAPI::{$name}", '2.0' );
     }
+
+	/**
+	 * Filter an array of arrays without causing PHP notices/warnings.
+	 *
+	 * @param array $values
+	 *
+	 * @return array
+	 *
+	 * @since 2.6.10
+	 */
+	private function array_filter_walker( $values = array() ) {
+
+		$values = (array) $values;
+
+		foreach ( $values as $k => $v ){
+			if ( is_object( $v ) ) {
+				// Skip objects
+				continue;
+			} elseif ( is_array( $v ) ){
+				if ( empty( $v ) ) {
+					// Filter values with empty arrays
+					unset( $values[ $k ] );
+				}
+			} else {
+				if ( ! $v ) {
+					// Filter empty values
+					unset( $values[ $k ] );
+				}
+			}
+		}
+
+		return $values;
+
+	}
+
 }

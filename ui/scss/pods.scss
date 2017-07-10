@@ -3,8 +3,8 @@
 @import "helpers/mixins";
 @import "helpers/typography";
 
-@import "libs/smoothness/jquery-ui-custom.css";
-@import "libs/jquery.qtip.min.css";
+@import "libs/smoothness/jquery-ui-custom";
+@import "libs/jquery-qtip";
 
 @import "base/admin";
 @import "base/advanced";
@@ -17,6 +17,6 @@
 @import "base/ui-list-table";
 @import "base/wizard";
 
-@import "overrides/codemirror.css";
-@import "overrides/jquery.cleditor.css";
-@import "overrides/jquery.ui.timepicker.css";
+@import "overrides/codemirror";
+@import "overrides/jquery-cleditor";
+@import "overrides/jquery-ui-timepicker";

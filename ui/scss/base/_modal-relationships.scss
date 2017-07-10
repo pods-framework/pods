@@ -1,32 +1,32 @@
-#wpadminbar,
-#adminmenuback,
-#adminmenuwrap,
-#preview-action,
-#wpfooter,
-body.edit-tags-php #col-right,
-body.edit-tags-php .search-form {
-	display: none;
-}
+.pods-modal-window {
+	margin-top: -32px;
 
-html.wp-toolbar {
-	padding-top: 0 ;
-}
+	&.edit-tags-php #col-left,
+	&.edit-tags-php #col-left input,
+	&.edit-tags-php #col-left textarea {
+		width: 100%;
+	}
 
-#wpbody-content {
-	padding-bottom: 0;
-}
+	#wpadminbar,
+	#adminmenuback,
+	#adminmenuwrap,
+	#preview-action,
+	#wpfooter,
+	body.edit-tags-php #col-right,
+	body.edit-tags-php .search-form {
+		display: none;
+	}
 
-#wpcontent {
-	padding: 0;
-	margin: 0 1.25em;
-}
+	#wpbody-content {
+		padding-bottom: 0;
+	}
 
-.wrap {
-	margin: 0;
-}
+	#wpcontent {
+		padding: 0;
+		margin: 0 1.25em;
+	}
 
-body.edit-tags-php #col-left,
-body.edit-tags-php #col-left input,
-body.edit-tags-php #col-left textarea {
-	width: 100%;
+	.wrap {
+		margin: 0;
+	}
 }

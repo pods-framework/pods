@@ -175,6 +175,8 @@ class PodsAdmin {
         }
 
         wp_enqueue_style( 'pods-font' );
+        // New Styles Enqueue
+        wp_enqueue_style( 'pods-styles' );
     }
 
     /**

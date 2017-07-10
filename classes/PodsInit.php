@@ -341,6 +341,9 @@ class PodsInit {
 
 		wp_register_style( 'pods-dfv-list', PODS_URL . 'ui/css/pods-dfv-list.css', array(), PODS_VERSION );
 
+		// There can only be one
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/scss/dist/pods.css', array(), PODS_VERSION );
+
 	}
 
 	/**

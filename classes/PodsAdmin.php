@@ -128,11 +128,8 @@ class PodsAdmin {
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-sortable' );
 
-                wp_enqueue_style( 'jquery-ui' );
-
                 wp_enqueue_script( 'pods-floatmenu' );
 
-                wp_enqueue_style( 'jquery-qtip2' );
                 wp_enqueue_script( 'jquery-qtip2' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
@@ -142,14 +139,10 @@ class PodsAdmin {
                     wp_enqueue_script( 'post' );
                 elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
                     wp_enqueue_script( 'post' );
-                    //wp_enqueue_style( 'pods-admin' );
                 }
-                else
-                    wp_enqueue_style( 'pods-admin' );
 
                 if ( 'pods-advanced' == $page ) {
                     wp_register_style( 'pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0' );
-                    wp_enqueue_style( 'pods-advanced' );
 
                     wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
                     wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
@@ -158,23 +151,9 @@ class PodsAdmin {
                     wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
                 }
-                elseif ( 'pods-packages' == $page )
-                    wp_enqueue_style( 'pods-wizard' );
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
-                    wp_enqueue_style( 'pods-wizard' );
-
-                    if ( 'pods-upgrade' == $page )
-                        wp_enqueue_script( 'pods-upgrade' );
-                }
             }
         }
 
-        // Flexible Relationships
-        if ( pods_is_modal_window() ) {
-            wp_enqueue_style( 'pods-modal-relationships', PODS_URL . 'ui/css/pods-modal-relationships.css', array(), '1.0' );
-        }
-
-        wp_enqueue_style( 'pods-font' );
         // New Styles Enqueue
         wp_enqueue_style( 'pods-styles' );
     }

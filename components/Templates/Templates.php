@@ -113,10 +113,10 @@ class Pods_Templates extends PodsComponent {
 
 		}
 
-		add_filter( 'members_get_capabilities', array( $this, 'pods_templates_get_capabilities' ) );
+		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
 	}
 
-	public function pods_templates_get_capabilities( $caps ) {
+	public function get_capabilities( $caps ) {
 		$caps = array_merge( $caps, array(
 			'edit_' . $this->capability_type,
 			'read_' . $this->capability_type,

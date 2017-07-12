@@ -286,6 +286,8 @@ class PodsInit {
 			), '1.1.1' );
 		}
 
+		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '4.0.3' );
+
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
 		if ( is_admin() ) {

@@ -1010,7 +1010,11 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
-	$content = do_shortcode( $content );
+	// Build Shortcode regex pattern just for the shortcodes we want
+	$pattern = get_shortcode_regex();
+
+	// Call shortcode callbacks just for the shortcodes we want
+	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
 
 	if ( isset( $temp_shortcode_filter ) ) {
 		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );

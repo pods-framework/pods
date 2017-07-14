@@ -56,6 +56,13 @@ class Pods_Pages extends PodsComponent {
      */
     static $content_called = false;
 
+	/**
+	 * The capability type.
+	 * @link https://codex.wordpress.org/Function_Reference/register_post_type
+	 * @var string
+	 */
+	private $capability_type = 'pods_page';
+
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
@@ -80,7 +87,7 @@ class Pods_Pages extends PodsComponent {
         );
 
         if ( !pods_is_admin() )
-            $args[ 'capability_type' ] = 'pods_page';
+            $args[ 'capability_type' ] = $this->capability_type;
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
@@ -107,7 +114,23 @@ class Pods_Pages extends PodsComponent {
 
             add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
         }
+
+	    add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
     }
+
+	public function get_capabilities( $caps ) {
+		$caps = array_merge( $caps, array(
+			'edit_' . $this->capability_type,
+			'read_' . $this->capability_type,
+			'delete_' . $this->capability_type,
+			'edit_' . $this->capability_type . 's',
+			'edit_others_' . $this->capability_type . 's',
+			'publish_' . $this->capability_type . 's',
+			'read_private_' . $this->capability_type . 's',
+			'edit_' . $this->capability_type . 's',
+		) );
+		return $caps;
+	}
 
     /**
      * Pod Page Content Shortcode support for use anywhere that supports WP Shortcodes

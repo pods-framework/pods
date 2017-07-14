@@ -15,6 +15,7 @@ module.exports = function ( grunt ) {
 		'!.gitignore',
 		'!.gitmodules',
 		'!.travis.yml',
+		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',
@@ -69,7 +70,13 @@ module.exports = function ( grunt ) {
 					allowEmpty: true
 				},
 				files: {
-					src: [ 'readme.txt', 'init.php', 'package.json', 'Gruntfile.js' ]
+					src: [
+						'readme.txt',
+						'init.php',
+						'package.json',
+						'Gruntfile.js',
+						'README.md'
+					]
 				}
 			}
 		},

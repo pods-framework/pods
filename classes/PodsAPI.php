@@ -3751,7 +3751,13 @@ class PodsAPI {
                     }
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
-                    $values    = array_unique( array_filter( $values ) );
+
+                    // Filter unique values not equal to false in case of a multidimensional array
+                    $filtered_values = $this->array_filter_walker( $values );
+                    $serialized_values = array_map( 'serialize', $filtered_values );
+                    $unique_serialized_values = array_unique( $serialized_values );
+
+	            $values = array_map( 'unserialize', $unique_serialized_values );
 
                     // Limit values
                     if ( 0 < $related_limit && !empty( $value_ids ) ) {
@@ -8619,4 +8625,39 @@ class PodsAPI {
         else
             pods_deprecated( "PodsAPI::{$name}", '2.0' );
     }
+
+	/**
+	 * Filter an array of arrays without causing PHP notices/warnings.
+	 *
+	 * @param array $values
+	 *
+	 * @return array
+	 *
+	 * @since 2.6.10
+	 */
+	private function array_filter_walker( $values = array() ) {
+
+		$values = (array) $values;
+
+		foreach ( $values as $k => $v ){
+			if ( is_object( $v ) ) {
+				// Skip objects
+				continue;
+			} elseif ( is_array( $v ) ){
+				if ( empty( $v ) ) {
+					// Filter values with empty arrays
+					unset( $values[ $k ] );
+				}
+			} else {
+				if ( ! $v ) {
+					// Filter empty values
+					unset( $values[ $k ] );
+				}
+			}
+		}
+
+		return $values;
+
+	}
+
 }

@@ -1,10 +1,10 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher, keraweb, ramoonus, pcfreak30
-Donate link: http://podsfoundation.org/donate/
+Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
 Requires at least: 3.8
 Tested up to: 4.8
-Stable tag: 2.6.10-a-1
+Stable tag: 2.6.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

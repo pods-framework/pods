@@ -15,6 +15,7 @@ module.exports = function ( grunt ) {
 		'!.gitignore',
 		'!.gitmodules',
 		'!.travis.yml',
+		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',

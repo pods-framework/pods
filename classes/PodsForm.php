@@ -512,7 +512,7 @@ class PodsForm {
                 $attributes[ 'class' ] = $classes;
         }
 
-	$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) );
+	$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) ) );
 
 	if ( ! empty( $placeholder ) ) {
 		$attributes['placeholder'] = $placeholder;

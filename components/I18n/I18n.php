@@ -128,14 +128,6 @@ class Pods_Component_I18n extends PodsComponent {
 			// Field specific
 			//add_filter( 'pods_field_pick_data', array( $this, 'field_pick_data_i18n' ), 10, 6 );
 
-			// Date field
-			// @todo  Maybe move this to the Date field in core?
-			global $wp_version;
-			if ( version_compare( $wp_version, '4.6', '<' ) ) {
-				add_filter( 'pods_form_ui_field_date_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
-				add_filter( 'pods_form_ui_field_datetime_args', array( $this, 'field_date_args_i18n' ), 10, 6 );
-			}
-
 			if ( $is_pods_edit_page ) {
 
 				$pod = null;
@@ -369,71 +361,6 @@ class Pods_Component_I18n extends PodsComponent {
 			}
 		}
 		return $options;
-	}
-
-	/**
-	 * Get the i18n files for jquery datepicker from the github repository
-	 *
-	 * @since  0.1
-	 * @link   https://jqueryui.com/datepicker/#localization
-	 * @link   https://github.com/jquery/jquery-ui/tree/master/ui/i18n
-	 * @param  array  $args            datepicker arguments
-	 * @param  string $type            datepicker type
-	 * @param  array  $options         field options
-	 * @param  array  $attributes      field attibutes
-	 * @param  string $name            field name
-	 * @param  string $form_field_type field type
-	 * @return array
-	 */
-	public function field_date_args_i18n( $args, $type, $options, $attributes, $name, $form_field_type ) {
-		$locale = $this->get_locale_jquery_ui_i18n();
-		if ( ! empty( $locale ) ) {
-			// URL to the raw file on github
-			$url_base = 'https://rawgit.com/jquery/jquery-ui/master/ui/i18n/';
-			// Filename prefix
-			$file_prefix = 'datepicker-';
-			// Full URL
-			$i18n_file = $url_base.$file_prefix . $locale . '.js';
-			// Enqueue script
-			wp_enqueue_script( 'jquery-ui-i18n-' . $locale, $i18n_file, array( 'jquery-ui-datepicker' ) );
-			// Add i18n argument to the datepicker
-			$args['regional'] = $locale;
-		}
-		return $args;
-	}
-
-	/**
-	 * Get the locale according to the format available in the jquery ui i18n file list
-	 *
-	 * @url    https://github.com/jquery/jquery-ui/tree/master/ui/i18n
-	 * @return string ex: "fr" or "en-GB"
-	 */
-	public function get_locale_jquery_ui_i18n() {
-		//replace _ by - in "en_GB" for example
-		$locale = str_replace( '_', '-', get_locale() );
-		switch ( $locale ) {
-			case 'ar-DZ':
-			case 'cy-GB':
-			case 'en-AU':
-			case 'en-GB':
-			case 'en-NZ':
-			case 'fr-CH':
-			case 'nl-BE':
-			case 'pt-BR':
-			case 'sr-SR':
-			case 'zh-CN':
-			case 'zh-HK':
-			case 'zh-TW':
-				//For all this locale do nothing the file already exist
-				break;
-			default:
-				//for other locale keep the first part of the locale (ex: "fr-FR" -> "fr")
-				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
-				//English is the default locale
-				$locale = ( $locale == 'en' ) ? '' : $locale;
-				break;
-		}
-		return $locale;
 	}
 
 	/**

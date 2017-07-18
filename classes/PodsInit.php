@@ -326,7 +326,7 @@ class PodsInit {
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
-			
+
 			function add_classes_to_body_class( $classes ) {
 				$classes .= 'pods-modal-window';
 
@@ -335,11 +335,10 @@ class PodsInit {
 
 			add_filter( 'body_class', 'add_classes_to_body_class' );
 			add_filter( 'admin_body_class', 'add_classes_to_body_class' );
-		}	
-
+		}
 
 		// There can only be one
-		wp_register_style( 'pods-styles', PODS_URL . 'ui/css/pods.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
 
 	}
 

@@ -512,11 +512,11 @@ class PodsForm {
                 $attributes[ 'class' ] = $classes;
         }
 
-	$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) ) );
+		$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) ) );
 
-	if ( ! empty( $placeholder ) ) {
-		$attributes['placeholder'] = $placeholder;
-	}
+		if ( ! empty( $placeholder ) ) {
+			$attributes['placeholder'] = $placeholder;
+		}
 
         if ( 1 === (int) pods_v( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';

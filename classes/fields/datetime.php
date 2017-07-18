@@ -823,4 +823,60 @@ class PodsField_DateTime extends PodsField {
 		}
 		return $new_format;
 	}
+
+	/**
+	 * Enqueue the i18n files for jquery date/timepicker
+	 *
+	 * @since  2.7
+	 */
+	public function enqueue_jquery_ui_i18n() {
+		static $done = array();
+
+		$types = array();
+		switch ( static::$type ) {
+			case 'time':
+				$types[] = 'time';
+			break;
+			case 'date':
+				$types[] = 'date';
+			break;
+			case 'datetime':
+				$types[] = 'time';
+				$types[] = 'date';
+			break;
+		}
+
+		if ( in_array( 'date', $types, true ) && ! in_array( 'date', $done, true ) ) {
+
+			if ( function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {
+				wp_localize_jquery_ui_datepicker();
+			}
+
+			$done[] = 'date';
+		}
+
+		if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
+
+			$locale = str_replace( '_', '-', get_locale() );
+
+			// Local files.
+			if ( ! file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' ) ) {
+				// Fallback to the base language (non-region specific).
+				$locale = substr( $locale, 0, strpos( $locale, '-' ) );
+			}
+
+			if ( ! wp_script_is( 'jquery-ui-timepicker-i18n-' . $locale, 'registered' ) &&
+			     file_exists( PODS_DIR . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js' )
+			) {
+				wp_enqueue_script(
+					'jquery-ui-timepicker-i18n-' . $locale,
+					PODS_URL . 'ui/js/timepicker/i18n/jquery-ui-timepicker-' . $locale . '.js',
+					array( 'jquery-ui-timepicker' ),
+					'1.6.3'
+				);
+			}
+
+			$done[] = 'time';
+		}
+	}
 }

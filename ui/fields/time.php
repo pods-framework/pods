@@ -10,6 +10,8 @@
 	wp_enqueue_style( 'jquery-ui' );
 	wp_enqueue_style( 'jquery-ui-timepicker' );
 
+	PodsForm::field_method( 'time', 'enqueue_jquery_ui_i18n' );
+
 	$attributes = array();
 
 	$type = 'text';

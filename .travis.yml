@@ -20,7 +20,7 @@ matrix:
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.3
-      env: WP_VERSION=4.4 WP_MULTISITE=0
+      env: WP_VERSION=4.5 WP_MULTISITE=0
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
     # MySQL 8.0
@@ -44,18 +44,10 @@ install:
     - npm install
 
 before_script:
-    - phpenv config-rm xdebug.ini
-    - composer self-update
-    - composer install --no-interaction --prefer-source
+    - bash bin/init.sh
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
     - vendor/bin/phpunit
     - npm run test-dfv
-
-branches:
-    only:
-        - master
-        - 2.x
-        - release/2.7

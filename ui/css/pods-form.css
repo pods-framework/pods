@@ -3,6 +3,10 @@
     background: none;
 }
 
+.pods-hidden {
+    display: none;
+}
+
 .pods-admin #navigation-actions .previous-item {
     display: block;
     text-align: left;
@@ -17,9 +21,35 @@
     width: 50%;
 }
 
+/**
+    Form tables.
+ */
+
+.form-table tr.pods-field:last-child > th,
+.form-table tr.pods-field:last-child > td {
+    border-bottom: none;
+}
+
+.form-table td .pods-form-ui-field {
+    max-width: 95%;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+    padding: 0 10px;
+}
+
+/**
+    Form fields.
+ */
+
+.pods-field {
+    padding: 10px 0;
+}
+
 .pods-field label {
     cursor: pointer;
-    display: inline-block;
+    display: block;
     padding: 0 0 4px 2px;
 }
 
@@ -39,103 +69,14 @@
     margin: 5px 0 0 2px !important;
 }
 
-.pods-pick select {
-    display: block;
-    min-width: 125px;
-}
-
-.pods-boolean {
-    position: relative;
-}
-
-.pods-boolean input {
-    display: block;
-    min-height: 16px;
-    left: 2px;
-    margin: 1px 7px 0 0;
-    padding: 0;
-    position: absolute;
-    top: 10px;
-    width: auto;
-}
-
-.pods-boolean label {
-    margin-left: 20px;
-    padding-top: 1px;
-}
-
-.pods-pick-values {
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 3px;
-    min-width: 125px;
-    max-height: 200px;
-    overflow: auto;
-    padding: 2px 0;
-}
-
-select.pods-form-ui-field-type-pick[multiple] {
-    background: #fff;
-    border: 1px solid #dfdfdf;
-    border-radius: 3px;
-    width: 100%;
-    max-height: 200px;
-}
-
-.pods-pick-values ul {
-    overflow: auto;
-    margin: 0;
-}
-
-.pods-pick-values li {
-    border-bottom: 1px solid #f4f4f4;
-    line-height: 1em;
-    margin: 0;
-    padding: 3px 6px 2px;
-}
-
-.pods-pick-values li:nth-child(even) {
-    background: #fcfcfc;
-}
-
-.pods-pick-values label {
-    display: block;
-    padding-bottom: 3px;
-    padding-top: 3px;
-}
-
-.pods-pick-values li:last-of-type {
-    border-bottom: 0;
-}
-
-.pods-pick-values li .pods-field {
-    padding: 3px 0 2px;
-}
-
-.pods-pick-values li .pods-boolean input {
-    top: 5px;
-}
-
-.pods-field.pods-boolean:hover,
-.pods-pick-values.pods-pick-radio li:hover {
-    background: #ffffd8;
-}
-
-select.pods-pick-multi {
-    height: auto !important;
-}
-
-.pods-field, p.pods-add-file {
-    padding: 10px 0;
-}
-
 div.pods-textfield input,
 .pods-textarea textarea {
     width: 100%;
 }
 
-.pods-date input, .pods-number input {
-    min-width: 125px;
+/* textarea/wysiwyg */
+.pods-field .wp-editor-container {
+    background-color: #FFF;
 }
 
 textarea.pods-form-ui-field-type-paragraph {
@@ -144,6 +85,17 @@ textarea.pods-form-ui-field-type-paragraph {
     resize: vertical;
 }
 
+/* Link */
+.pods-link-options {
+    background: #fff;
+    padding: 5px 10px 10px;
+    border: 1px solid #dfdfdf;
+}
+.pods-link-options > div {
+    display: inline-block;
+}
+
+/* Date */
 .pods-date input.pods-date-field.hasDatepicker {
     background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
     cursor: pointer;
@@ -152,42 +104,9 @@ textarea.pods-form-ui-field-type-paragraph {
     width: 150px;
 }
 
+/* Color */
 input.pods-form-ui-field-type-color {
     width: 80px;
-}
-
-.pods-form-ui-field-type-select2 {
-    min-width: 20%;
-    width: auto;
-    min-height: 28px;
-}
-
-.pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
-    height: auto;
-}
-
-.form-table tr.pods-field:last-child > th,
-.form-table tr.pods-field:last-child > td {
-    border-bottom: none;
-}
-
-.form-table tr.pods-field > td {
-    line-height: inherit;
-    padding: 10px 0;
-}
-
-.form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
-.form-table tr.pods-field.pods-form-ui-row-type-file > td {
-    padding: 0;
-}
-
-.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
-.form-table.pods-form-ui-table-type-file tr.form-field > td {
-    padding: 0 10px;
-}
-
-.pods-field .wp-editor-container {
-    background-color: #FFF;
 }
 
 /* Codemirror */
@@ -197,6 +116,170 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
+/**
+    Form fields - boolean/pick/select values.
+ */
+
+.pods-boolean {
+    position: relative;
+    padding: 0;
+}
+
+.form-field .pods-boolean input,
+.pods-boolean input {
+    display: block;
+    min-height: 16px;
+    left: 2px;
+    margin-left: 3px;
+    padding: 0;
+    position: absolute;
+    top: 10px;
+    width: auto;
+    overflow: hidden;
+}
+
+.pods-boolean label {
+    padding: 7px 0 7px 26px;
+    line-height: 1;
+}
+
+.pods-pick select {
+    display: block;
+    min-width: 125px;
+}
+
+.pods-pick-values {
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    min-width: 125px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 2px 0;
+}
+
+/* Newer DFV based views don't all need borders but we don't want to break other applications of the rule above */
+.pods-form-ui-field .pods-pick-values,
+.pods-form-ui-field .pods-pick-values li.pods-dfv-list-col {
+    border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* HTML select field fix */
+.pods-form-ui-row-type-pick .pods-form-ui-field select {
+    width: 25em;
+}
+
+/* This one does need a border, however */
+.pods-pick-values .pods-checkbox-view {
+    border: 1px solid #dfdfdf;
+}
+
+select.pods-form-ui-field-type-pick[multiple] {
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    width: 100%;
+    max-width: none;
+    max-height: 200px;
+}
+
+select.pods-pick-multi {
+    height: auto !important;
+}
+
+.pods-pick-values ul {
+    overflow: auto;
+    margin: 0;
+}
+
+.pods-pick-values li {
+    background-color: #fff;
+    border-bottom: 1px solid #f4f4f4;
+    line-height: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+.pods-pick-values li:nth-child(even) {
+    background: #fcfcfc;
+}
+
+/* Remove backgrounds from inner child lists */
+.pods-pick-values li li:nth-child(even),
+.pods-pick-values li li {
+    background: transparent;
+}
+
+.pods-pick-values li:last-of-type {
+    border-bottom: 0;
+}
+
+.pods-pick-values li .pods-field {
+    padding: 0;
+}
+
+.pods-pick-values .pods-radio {
+    border: 1px solid #dfdfdf;
+}
+
+.pods-field.pods-boolean label:hover,
+.pods-pick-values .pods-radio li label:hover {
+    background: #f5f5f5;
+}
+/* Do not show hover for disabled options */
+.pods-field.pods-boolean input[disabled] + label:hover,
+.pods-pick-values .pods-radio li input[disabled] + label:hover {
+    background: inherit;
+}
+
+p.pods-add-file {
+    padding: 5px 0 10px;
+}
+
+.pods-metabox tr.pods-field {
+    border-top: 1px solid #ececec;
+}
+.pods-metabox tr.pods-field:first-child {
+    border-top: 0;
+}
+
+/* @todo Improve this, select2 adds inline fixed widths preventing responsive scaling */
+.pods-form-ui-field .select2-container {
+    width: 100% !important;
+}
+
+.pods-form-ui-field-type-select2 {
+    min-width: 20%;
+    width: auto;
+    min-height: 28px;
+}
+
+.pods-ui-add-new {
+    clear: both;
+}
+
+/* Side location */
+#side-sortables .form-table .pods-field {
+    display: block;
+}
+
+#side-sortables .form-table th {
+    display: block;
+    width: 100%;
+    padding: 0 0 10px;
+    margin: 0;
+}
+#side-sortables .form-table tr.pods-field > td {
+    display: block;
+    line-height: inherit;
+    padding: 0;
+    margin: 0;
+}
+
+/**
+    Pods form frontend
+ */
 .pods-form-front ul.pods-form-fields {
     list-style: none;
     margin: 0;
@@ -249,7 +332,7 @@ input.pods-form-ui-field-type-color {
     width: 100%;
 }
 
-.pods-form-front ul.pods-files li.pods-file-icon img {
+.pods-form-front ul.pods-dfv-list li.pods-dfv-list-icon img {
     width: 40px;
 }
 
@@ -307,7 +390,69 @@ input.pods-form-ui-field-type-color {
 .pods-meta div.pods-form-ui-field-type-pick:after,
 .pods-form-front .pods-submittable-fields:after,
 .pods-form-front li.pods-field:after {
-    content: “\00a0”;
+    content: "\00a0";
     clear: both;
     display: block;
+    height: 0;
+}
+
+#wpbody .form-table td select.pods-form-ui-field-type-pick[multiple] {
+    height: 12em;
+}
+
+.pods-related-add-new {
+    margin-top: 1em !important;
+}
+
+@media screen and (max-width: 782px) {
+    .pods-pick-values li .pods-boolean input {
+        height: 25px;
+        width: 25px;
+        top: 4px;
+        margin: 0 3px;
+    }
+
+    .pods-pick-values .pods-boolean label {
+        margin-left: 36px;
+        padding: 10px 0;
+    }
+
+    .form-table td .pods-form-ui-field {
+        max-width: none;
+    }
+
+    /* WP fix */
+    .form-table td input,
+    .form-table td select {
+        margin: 0;
+    }
+    /* HTML select field fix */
+    .pods-form-ui-row-type-pick .pods-form-ui-field select {
+        width: 100%;
+    }
+}
+
+/*
+ * Modal For DFV List View Relationships
+ */
+.pods-modal-frame.hide-menu .media-frame-title {
+    left: 0;
+}
+.media-modal .media-modal-content .pods-modal-frame {
+    height: 100%;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe {
+    height: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe {
+    height: 100%;
+    position: relative;
+}
+.media-modal .media-modal-content .pods-modal-frame .media-frame-iframe .media-iframe iframe {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: none;
 }

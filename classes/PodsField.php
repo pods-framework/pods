@@ -1,78 +1,83 @@
 <?php
+
 /**
+ * Pods Field class for common type-specific methods.
+ *
  * @package Pods
  */
 class PodsField {
 
-    /**
-     * Whether this field is running under 1.x deprecated forms
-     *
-     * @var bool
-     * @since 2.0
-     */
-    public static $deprecated = false;
+	/**
+	 * Whether this field is running under 1.x deprecated forms
+	 *
+	 * @var bool
+	 * @since 2.0
+	 */
+	public static $deprecated = false;
 
-    /**
-     * Field Type Identifier
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $type = 'text';
+	/**
+	 * Field Type Identifier
+	 *
+	 * @var string
+	 * @since 2.0
+	 */
+	public static $type = 'text';
 
-    /**
-     * Field Type Label
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $label = 'Unknown';
+	/**
+	 * Field Type Label
+	 *
+	 * @var string
+	 * @since 2.0
+	 */
+	public static $label = 'Unknown';
 
-    /**
-     * Field Type Preparation
-     *
-     * @var string
-     * @since 2.0
-     */
-    public static $prepare = '%s';
+	/**
+	 * Field Type Preparation
+	 *
+	 * @var string
+	 * @since 2.0
+	 */
+	public static $prepare = '%s';
 
-    /**
-     * Pod Types supported on (true for all, false for none, or give array of specific types supported)
-     *
-     * @var array|bool
-     * @since 2.1
-     */
-    public static $pod_types = true;
+	/**
+	 * Pod Types supported on (true for all, false for none, or give array of specific types supported)
+	 *
+	 * @var array|bool
+	 * @since 2.1
+	 */
+	public static $pod_types = true;
 
-    /**
-     * API caching for fields that need it during validate/save
-     *
-     * @var \PodsAPI
-     * @since 2.3
-     */
-    private static $api = false;
+	/**
+	 * API caching for fields that need it during validate/save
+	 *
+	 * @var \PodsAPI
+	 * @since 2.3
+	 */
+	private static $api = false;
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @return \PodsField
-     *
-     * @since 2.0
-     */
-    public function __construct () {
+	/**
+	 * Do things like register/enqueue scripts and stylesheets
+	 *
+	 * @since 2.0
+	 */
+	public function __construct() {
 
-    }
+		// Subclasses utilize this method if needed.
 
-    /**
-     * Add options and set defaults for field type, shows in admin area
-     *
-     * @return array $options
-     *
-     * @since 2.0
-     * @see PodsField::ui_options
-     */
-    public function options () {
-        $options = array( /*
+	}
+
+	/**
+	 * Add options and set defaults for field type, shows in admin area
+	 *
+	 * @return array $options
+	 *
+	 * @since 2.0
+	 * @see   PodsField::ui_options
+	 */
+	public function options() {
+
+		$options = array(
+			/*
             'option_name' => array(
                 'label' => 'Option Label',
                 'depends-on' => array( 'another_option' => 'specific-value' ),
@@ -107,278 +112,560 @@ class PodsField {
                         'type' => 'boolean'
                     )
                 )
-            ) */
-        );
+            )
+            */
+		);
 
-        return $options;
-    }
+		return $options;
 
-    /**
-     * Options for the Admin area, defaults to $this->options()
-     *
-     * @return array $options
-     *
-     * @since 2.0
-     * @see PodsField::options
-     */
-    public function ui_options () {
-        return $this->options();
-    }
+	}
 
-    /**
-     * Define the current field's schema for DB table storage
-     *
-     * @param array $options
-     *
-     * @return string
-     * @since 2.0
-     */
-    public function schema ( $options = null ) {
-        $schema = 'VARCHAR(255)';
+	/**
+	 * Options for the Admin area, defaults to $this->options()
+	 *
+	 * @return array $options
+	 *
+	 * @since 2.0
+	 * @see   PodsField::options
+	 */
+	public function ui_options() {
 
-        return $schema;
-    }
+		return $this->options();
 
-    /**
-     * Define the current field's preparation for sprintf
-     *
-     * @param array $options
-     *
-     * @return array
-     * @since 2.0
-     */
-    public function prepare ( $options = null ) {
-        $format = self::$prepare;
+	}
 
-        return $format;
-    }
+	/**
+	 * Define the current field's schema for DB table storage
+	 *
+	 * @param array|null $options
+	 *
+	 * @return string
+	 *
+	 * @since 2.0
+	 */
+	public function schema( $options = null ) {
 
-    /**
-     * Change the value of the field
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.3
-     */
-    public function value ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return $value;
-    }
+		$schema = 'VARCHAR(255)';
 
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return mixed|null|string
-     * @since 2.0
-     */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return $value;
-    }
+		return $schema;
 
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     *
-     * @return void
-     *
-     * @since 2.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-        $form_field_type = PodsForm::$field_type;
+	}
 
-        if ( is_array( $value ) )
-            $value = implode( ' ', $value );
+	/**
+	 * Define the current field's preparation for sprintf
+	 *
+	 * @param array|null $options
+	 *
+	 * @return string
+	 *
+	 * @since 2.0
+	 */
+	public function prepare( $options = null ) {
 
-        pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+		$format = self::$prepare;
 
-    /**
-     * Get the data from the field
-     *
-     * @param string $name The name of the field
-     * @param string|array $value The value of the field
-     * @param array $options
-     * @param array $pod
-     * @param int $id
-     * @param boolean $in_form
-     *
-     * @return array Array of possible field data
-     *
-     * @since 2.0
-     */
-    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
-        return (array) $value;
-    }
+		return $format;
 
-    /**
-     * Build regex necessary for JS validation
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @return bool
-     * @since 2.0
-     */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return false;
-    }
+	}
 
-    /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     * @param array $params
-     *
-     * @return bool
-     * @since 2.0
-     */
-    public function validate ( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        return true;
-    }
+	/**
+	 * Check if the field is empty.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7
+	 */
+	public function is_empty( $value ) {
 
-    /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return mixed
-     * @since 2.0
-     */
-    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        return $value;
-    }
+		$is_empty = false;
 
-    /**
-     * Save the value to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @return bool|void Whether the value was saved
-     *
-     * @since 2.3
-     */
-    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        return null;
-    }
+		if ( is_string( $value ) ) {
+			$value = trim( $value );
+		}
 
-    /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since void
-     *
-     * @since 2.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+		if ( empty( $value ) ) {
+			$is_empty = true;
+		}
 
-    }
+		return $is_empty;
 
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param null $options
-     * @param string $pod
-     *
-     * @since void
-     *
-     * @since 2.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+	}
 
-    }
+	/**
+	 * Change the value of the field
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 *
+	 * @return mixed|null|string
+	 *
+	 * @since 2.3
+	 */
+	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-    /**
-     * Delete the value from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since void
-     *
-     * @since 2.3
-     */
-    public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
+		return $value;
 
-    }
+	}
 
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since void
-     *
-     * @since 2.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+	/**
+	 * Change the way the value of the field is displayed with Pods::get
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 *
+	 * @return mixed|null|string
+	 *
+	 * @since 2.0
+	 */
+	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
-    }
+		return $value;
 
-    /**
-     * Customize the Pods UI manage table column output
-     *
-     * @param int $id
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     *
-     * @since string Value to be shown in the UI
-     *
-     * @since 2.0
-     */
-    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        return $value;
-    }
+	}
+
+	/**
+	 * Customize output of the form field
+	 *
+	 * @param string     $name
+	 * @param mixed|null $value
+	 * @param array|null $options
+	 * @param array|null $pod
+	 * @param int|null   $id
+	 *
+	 * @since 2.0
+	 */
+	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$options = (array) $options;
+
+		$form_field_type = PodsForm::$field_type;
+
+		if ( is_array( $value ) ) {
+			$value = implode( ' ', $value );
+		}
+
+		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+
+		return;
+
+		// @todo Eventually use this code
+		$options = (array) $options;
+
+		$type = pods_v( 'type', $options, static::$type );
+
+		$args = compact( array_keys( get_defined_vars() ) );
+		$args = (object) $args;
+
+		$this->render_input_script( $args );
+
+	}
+
+	/**
+	 * Render input script for Pods DFV
+	 *
+	 * @param array|object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 */
+	public function render_input_script( $args ) {
+
+		if ( is_array( $args ) ) {
+			$args = (object) $args;
+		}
+
+		$script_content = json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
+	?>
+		<div class="pods-form-ui-field pods-dfv-field">
+			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content ?></script>
+		</div>
+	<?php
+
+	}
+
+	/**
+	 * Build field data for Pods DFV
+	 *
+	 * @param object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name            Field name
+	 *     @type string     $type            Pod field type
+	 *     @type string     $form_field_type HTML field type
+	 *     @type array      $options         Field options
+	 *     @type mixed      $value           Current value
+	 *     @type array      $pod             Pod information
+	 *     @type int|string $id              Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_data( $args ) {
+
+		// Handle DFV options.
+		$args->options = $this->build_dfv_field_options( $args->options, $args );
+
+		// Handle DFV attributes.
+		$attributes = PodsForm::merge_attributes( array(), $args->name, $args->type, $args->options );
+		$attributes = $this->build_dfv_field_attributes( $attributes, $args );
+		$attributes = array_map( 'esc_attr', $attributes );
+
+		// Build DFV field data.
+		$data = array(
+			'htmlAttr'       => array(
+				'id'         => $attributes['id'],
+				'class'      => $attributes['class'],
+				'name'       => $attributes['name'],
+				'name_clean' => $attributes['data-name-clean'],
+			),
+			'fieldType'      => $args->type,
+			'fieldItemData'  => $this->build_dfv_field_item_data( $args ),
+			'fieldConfig'    => $this->build_dfv_field_config( $args ),
+		);
+
+		/**
+		 * Filter Pods DFV field data to further customize functionality.
+		 *
+		 * @since 2.7
+		 *
+		 * @param array  $data DFV field data
+		 * @param object $args {
+		 *     Field information arguments.
+		 *
+		 *     @type string     $name            Field name
+		 *     @type string     $type            Pod field type
+		 *     @type string     $form_field_type HTML field type
+		 *     @type array      $options         Field options
+		 *     @type mixed      $value           Current value
+		 *     @type array      $pod             Pod information
+		 *     @type int|string $id              Current item ID
+		 * }
+		 * @param array  $attributes HTML attributes
+		 */
+		$data = apply_filters( 'pods_field_dfv_data', $data, $args, $attributes );
+
+		return $data;
+
+	}
+
+	/**
+	 * Build field options and handle any validation/customization for Pods DFV
+	 *
+	 * @param array  $options
+	 * @param object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_options( $options, $args ) {
+
+		return $options;
+
+	}
+
+	/**
+	 * Build field HTML attributes for Pods DFV.
+	 *
+	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.
+	 * @param object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_attributes( $attributes, $args ) {
+
+		return $attributes;
+
+	}
+
+	/**
+	 * Build field config for Pods DFV using field options.
+	 *
+	 * This is for customizing the options and adding output-specific config values.
+	 *
+	 * @param object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_config( $args ) {
+
+		$config = $args->options;
+
+		unset( $config['data'] );
+
+		$config['item_id'] = (int) $args->id;
+
+		return $config;
+
+	}
+
+	/**
+	 * Build array of item data for Pods DFV
+	 *
+	 * @param object $args {
+	 *     Field information arguments.
+	 *
+	 *     @type string     $name    Field name
+	 *     @type string     $type    Field type
+	 *     @type array      $options Field options
+	 *     @type mixed      $value   Current value
+	 *     @type array      $pod     Pod information
+	 *     @type int|string $id      Current item ID
+	 * }
+	 *
+	 * @return array
+	 */
+	public function build_dfv_field_item_data( $args ) {
+
+		$data = array();
+
+		if ( ! empty( $args->options['data'] ) && is_array( $args->options['data'] ) ) {
+			$data = $args->options['data'];
+		}
+
+		return $data;
+
+	}
+
+	/**
+	 * Get the data from the field
+	 *
+	 * @param string            $name  The name of the field
+	 * @param string|array|null $value The value of the field
+	 * @param array|null        $options
+	 * @param array|null        $pod
+	 * @param int|null          $id
+	 * @param boolean           $in_form
+	 *
+	 * @return array Array of possible field data
+	 *
+	 * @since 2.0
+	 */
+	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
+
+		return (array) $value;
+
+	}
+
+	/**
+	 * Build regex necessary for JS validation
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param string|null $pod
+	 * @param int|null    $id
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0
+	 */
+	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		return false;
+
+	}
+
+	/**
+	 * Validate a value before it's saved
+	 *
+	 * @param mixed       $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $fields
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 * @param array|null  $params
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0
+	 */
+	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+
+		return true;
+
+	}
+
+	/**
+	 * Change the value or perform actions after validation but before saving to the DB
+	 *
+	 * @param mixed       $value
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $fields
+	 * @param array|null  $pod
+	 * @param object|null $params
+	 *
+	 * @return mixed
+	 *
+	 * @since 2.0
+	 */
+	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+		return $value;
+
+	}
+
+	/**
+	 * Save the value to the DB
+	 *
+	 * @param mixed       $value
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $fields
+	 * @param array|null  $pod
+	 * @param object|null $params
+	 *
+	 * @return bool|null Whether the value was saved, returning null means no save needed to occur
+	 *
+	 * @since 2.3
+	 */
+	public function save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+		return null;
+
+	}
+
+	/**
+	 * Perform actions after saving to the DB
+	 *
+	 * @param mixed       $value
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $fields
+	 * @param array|null  $pod
+	 * @param object|null $params
+	 *
+	 * @since 2.0
+	 */
+	public function post_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+		// Subclasses utilize this method if needed.
+
+	}
+
+	/**
+	 * Perform actions before deleting from the DB
+	 *
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param string|null $pod
+	 *
+	 * @since 2.0
+	 */
+	public function pre_delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Subclasses utilize this method if needed.
+
+	}
+
+	/**
+	 * Delete the value from the DB
+	 *
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 *
+	 * @since 2.3
+	 */
+	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Subclasses utilize this method if needed.
+
+	}
+
+	/**
+	 * Perform actions after deleting from the DB
+	 *
+	 * @param int|null    $id
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 *
+	 * @since 2.0
+	 */
+	public function post_delete( $id = null, $name = null, $options = null, $pod = null ) {
+
+		// Subclasses utilize this method if needed.
+
+	}
+
+	/**
+	 * Customize the Pods UI manage table column output
+	 *
+	 * @param int         $id
+	 * @param mixed       $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $fields
+	 * @param array|null  $pod
+	 *
+	 * @return string Value to be shown in the UI
+	 *
+	 * @since 2.0
+	 */
+	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+
+		return $value;
+
+	}
+
+	/**
+	 * Placeholder function to allow var_export() use with classes
+	 *
+	 * @param array $properties
+	 *
+	 * @return object|void
+	 */
+	public static function __set_state( $properties ) {
+
+		return;
+
+	}
+
 }

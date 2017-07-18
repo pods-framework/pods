@@ -61,18 +61,36 @@ function frontier_decode_template( $code, $atts ) {
  * processes if condition within a template
  *
  *
- * @param array attributes from template
- * @param string encoded template to be decoded
+ * @param array  $atts attributes from template
+ * @param string $code encoded template to be decoded
  *
  * @return string
  * @since 2.4
  */
 function frontier_if_block( $atts, $code ) {
 
-	$pod = pods( $atts[ 'pod' ], $atts[ 'id' ] );
+	$pod = pods( $atts['pod'], $atts['id'] );
+
+	if ( ! $pod || ! $pod->valid() || ! $pod->exists() ) {
+		return '';
+	}
+
 	$code = explode( '[else]', frontier_decode_template( $code, $atts ) );
 
-	$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 0 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+	$allowed_shortcodes = array(
+		'each',
+		'pod_sub_template',
+		'once',
+		'pod_once_template',
+		'before',
+		'pod_before_template',
+		'after',
+		'pod_after_template',
+		'if',
+		'pod_if_field',
+	);
+
+	$template = pods_do_shortcode( $pod->do_magic_tags( $code[0] ), $allowed_shortcodes );
 
 	// sysvals
 	$system_values = array(
@@ -81,66 +99,74 @@ function frontier_if_block( $atts, $code ) {
 
 	// field data
 	$field_data = null;
+	$field_type = null;
 
-	if ( in_array( $atts[ 'field' ], $system_values) ) {
-		switch ( $atts[ 'field' ] ){
+	if ( in_array( $atts['field'], $system_values, true ) ) {
+		switch ( $atts['field'] ) {
 			case '_index':
 				$field_data = $atts['index'];
+
 				break;
 		}
+	} else {
+		$field_data = $pod->field( $atts['field'] );
+
+		$field_type = $pod->fields( $atts['field'], 'type' );
 	}
-	else{
 
-		$field_data = $pod->field( $atts[ 'field' ] );
+	$is_empty = true;
 
+	if ( null !== $field_data ) {
+		if ( empty( $field_type ) ) {
+			$field_type = 'text';
+		}
+
+		$is_empty = PodsForm::field_method( $field_type, 'is_empty', $field_data );
 	}
 
-	if ( ! empty( $field_data ) || isset( $atts[ 'value' ] ) ) {
+	$output = '';
+
+	if ( ! $is_empty || isset( $atts['value'] ) ) {
 		// theres a field - let go deeper
-		if ( isset( $atts[ 'value' ] ) ) {
+		if ( isset( $atts['value'] ) ) {
 
 			// check if + or - are present
-			if( substr( $atts[ 'value' ], 0, 1) === '+' ){
+			if ( '+' === substr( $atts['value'], 0, 1 ) ) {
 				// is greater
-				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) + 1;
-				if(  (float) $field_data > $atts[ 'value' ] ){
-					// is greater - set it the same to allow
-					$atts[ 'value' ] = $field_data;
-				}
+				$atts['value'] = (float) substr( $atts['value'], 1 ) + 1;
 
-			}elseif( substr( $atts[ 'value' ], 0, 1) === '-' ){
+				if ( (float) $field_data > $atts['value'] ) {
+					// is greater - set it the same to allow
+					$atts['value'] = $field_data;
+				}
+			} elseif ( substr( $atts['value'], 0, 1 ) === '-' ) {
 				// is smaller
-				$atts[ 'value' ] = (float) substr( $atts[ 'value' ], 1) - 1;
-				if( (float) $field_data <  $atts[ 'value' ] ){
+				$atts['value'] = (float) substr( $atts['value'], 1 ) - 1;
+
+				if ( (float) $field_data < $atts['value'] ) {
 					// is greater - set it the same to allow
-					$atts[ 'value' ] = $field_data;
+					$atts['value'] = $field_data;
 				}
-
 			}
 
-			if ( $field_data == $atts[ 'value' ] ) {
-				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+			if ( (string) $field_data === (string) $atts['value'] ) {
+				return pods_do_shortcode( $template, $allowed_shortcodes );
+			} elseif ( isset( $code[1] ) ) {
+				$template = pods_do_shortcode( $pod->do_magic_tags( $code[1] ), $allowed_shortcodes );
+
+				return pods_do_shortcode( $template, $allowed_shortcodes );
 			} else {
-				if ( isset( $code[ 1 ] ) ) {
-					$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-
-					return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-				} else {
-					// Value did not match, nothing should be displayed
-					return '';
-				}
+				// Value did not match, nothing should be displayed
+				return '';
 			}
 		}
 
-		return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+		$output = pods_do_shortcode( $template, $allowed_shortcodes );
+	} elseif ( isset( $code[1] ) ) {
+		$output = pods_do_shortcode( $pod->do_magic_tags( $code[1] ), $allowed_shortcodes );
 	}
-	else {
-		if ( isset( $code[ 1 ] ) ) {
-			$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
 
-			return $template;
-		}
-	}
+	return $output;
 
 }
 

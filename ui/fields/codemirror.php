@@ -8,6 +8,7 @@ $attributes = array();
 $attributes[ 'tabindex' ] = 2;
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options, 'pods-ui-field-codemirror' );
 ?>
+<div class="pods-codemirror pods-form-ui-field">
 <div class="code-toolbar"><!-- Placeholder --></div>
 <textarea<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>><?php echo esc_textarea( $value ); ?></textarea>
 <div class="code-footer"><!-- Placeholder --></div>
@@ -40,3 +41,4 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
         }
     } );
 </script>
+</div>

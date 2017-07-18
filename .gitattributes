@@ -4,8 +4,11 @@
 # Ignore
 /sources export-ignore
 /tests export-ignore
+/ui/js/pods-dfv/_src export-ignore
+/ui/js/pods-dfv/pods-dfv.min.js.map export-ignore
 .travis.yml export-ignore
 composer.json export-ignore
+rollup.config.js export-ignore
 CONTRIBUTING.md export-ignore
 Gruntfile.js export-ignore
 git-workflow.md export-ignore

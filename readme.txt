@@ -1,10 +1,10 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, pglewis, jimtrue, Shelob9, jamesgol, clubduece, dan.stefan, Desertsnowman, curtismchale, logikal16, mikedamage, jchristopher, keraweb, ramoonus, pcfreak30
-Donate link: http://podsfoundation.org/donate/
+Donate link: https://pods.io/friends-of-pods/
 Tags: pods, custom post types, custom taxonomies, content types, custom fields, cck, database, user fields, comment fields, media fields, relationships, drupal
-Requires at least: 3.8
+Requires at least: 4.5
 Tested up to: 4.8
-Stable tag: 2.6.10-a-1
+Stable tag: 2.7.0-b-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -178,6 +178,14 @@ Join us in further translating the Pods interface at: [https://translate.wordpre
 We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our translators get started and to support them on the process.
 
 == Changelog ==
+
+= 2.6.10 = July 14th 2017 =
+* Fixed: Pods Templates were creating erroneous output with nested `[if _fieldname_][else][/if]` and `[each _fieldname_][/each] template tags inside HTML entities after 2.6.9 upgrade. This fix bypasses `do_shortcode` and also bypasses `do_shortcodes_in_html_tags` which was the problem with this particular fix. Fixes (#4324,#4307,#4307). (#4335). [@pglewis]
+* Fixed: Multi-file fields save was causing array to string conversion warning. New function & helper added called `array_filter_walker` for backwards compatibility. Also fixes the 'editable' titles in Multiple File Upload. Fixes (#4112,#4313). (#4314). [@mgratch,@JoryHogeveen,@sc0ttkclark]
+* Added: Pods Templates & Page Capabilities have been added to the Members Cap Filter and Pods Role Manager from Components, Roles & Capabilities. This corrects an issue where Pods Templates and Pods Pages were not available to Admins, only Network Admins. Admins will still need to have the pods_templates_ and pods_pages_ capabilities added to their role, but now they'll be able to do this without additional code. Fixes (#4311). (#4342). [@JoryHogeveen]
+* Fixed: Corrected 2.x branch for GitHub Feed. Fixes (#4305). (#4306). [@sc0ttkclark]
+* Fixed: Minor Spelling fixes related to i18n. (#4276) [@garrett-eclipse]
+* Updated: Removed CodeClimate Integration (#4275) and updated glob 7.1 (#4242). [@Ramoonus]
 
 = 2.6.9 - May 30th 2017 =
 * Added: Pods Template Component is now automatically active on initial installation or reinstallation of Pods. Fixes (#3446). (#4060,#4180). [@pglewis,@sc0ttkclark]

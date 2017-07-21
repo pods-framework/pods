@@ -17,11 +17,11 @@
 
 @font-face {
     font-family: "pods";
-    src: url("../../fonts/pods.eot");
-    src: url("../../fonts/pods.eot?#iefix") format("embedded-opentype"),
-    url("../../fonts/pods.woff") format("woff"),
-    url("../../fonts/pods.ttf") format("truetype"),
-    url("../../fonts/pods.svg#pods") format("svg");
+    src: url("#{$FontsPath}/pods.eot");
+    src: url("#{$FontsPath}/pods.eot?#iefix") format("embedded-opentype"),
+    url("#{$FontsPath}/pods.woff") format("woff"),
+    url("#{$FontsPath}/pods.ttf") format("truetype"),
+    url("#{$FontsPath}/pods.svg#pods") format("svg");
     font-weight: normal;
     font-style: normal;
 }

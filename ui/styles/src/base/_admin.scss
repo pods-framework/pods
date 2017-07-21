@@ -22,7 +22,7 @@
 }
 
 .icon32#icon-pods {
-    background: url(../images/icon32.png) no-repeat;
+    background: url(#{$ImagesPath}/icon32.png) no-repeat;
 }
 
 .pods-admin .waiting {

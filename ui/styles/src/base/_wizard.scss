@@ -42,7 +42,7 @@
                     position: absolute;
                     top: 0;
                     left: 0;
-                    background: url(../images/arrow_next.png);
+                    background: url(#{$ImagesPath}/arrow_next.png);
                 }
                 span {
                     display: inline-block;
@@ -71,7 +71,7 @@
                         @include box-shadow(1px, 1px, 2px, 0.2);
                     }
                     &+ li > i {
-                        background: url(../images/arrow_current.png);
+                        background: url(#{$ImagesPath}/arrow_current.png);
                     }
                 }
                 &.pods-wizard-menu-complete {
@@ -79,10 +79,10 @@
                     border-bottom: 1px solid #bbddbd;
                     @include vertical-gradient(#d4f4d6, #bbddbd);
                     &+ li > i {
-                        background: url(../images/arrow_complete.png);
+                        background: url(#{$ImagesPath}/arrow_complete.png);
                     }
                     &+ li.pods-wizard-menu-complete > i {
-                        background: url(../images/arrow_complete_previous.png);
+                        background: url(#{$ImagesPath}/arrow_complete_previous.png);
                     }
                     span {
                         background: $green-dark;
@@ -92,7 +92,7 @@
                         display: block;
                         top: 10px;
                         right: 5px;
-                        background: url(../images/tick.png) no-repeat right center;
+                        background: url(#{$ImagesPath}/tick.png) no-repeat right center;
                         width: 17px;
                         height: 17px;
                         position: absolute;
@@ -246,7 +246,7 @@
                             display: inline-block;
                             width: 17px;
                             height: 17px;
-                            background: url(../images/tick.png);
+                            background: url(#{$ImagesPath}/tick.png);
                         }
                     }
                     &.pods-wizard-table-warning td {

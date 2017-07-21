@@ -1,26 +1,26 @@
-.ui-timepicker-div .ui-widget-header {
-    margin-bottom: 8px;
-}
-
-.ui-timepicker-div dl {
+.ui-timepicker-div {
+    .ui-widget-header {
+        margin-bottom: 8px;
+    }
+    dl {
     text-align: left;
-}
-
-.ui-timepicker-div dl dt {
-    height: 25px;
-    margin-bottom: -25px;
-}
-
-.ui-timepicker-div dl dd {
-    margin: 0 10px 10px 65px;
-}
-
-.ui-timepicker-div td {
-    font-size: 90%;
-}
-
-.ui-timepicker-div .ui_tpicker_unit_hide { 
-    display: none; 
+        dt {
+            height: 25px;
+            margin-bottom: -25px;
+        }
+        dd {
+            margin: 0 10px 10px 65px;
+        }
+    }
+    td {
+        font-size: 90%;
+    }
+    .ui_tpicker_unit_hide {
+        display: none;
+    }
+    .ui_tpicker_time_input {
+        width: 100%;
+    }
 }
 
 .ui-tpicker-grid-label {
@@ -32,13 +32,11 @@
 
 .ui-timepicker-rtl {
     direction: rtl;
-}
-
-.ui-timepicker-rtl dl {
-    text-align: right;
-}
-
-.ui-timepicker-rtl dl dd {
-    margin: 0 65px 10px 10px;
+        dl {
+            text-align: right;
+        dd {
+            margin: 0 65px 10px 10px;
+        }
+    }
 }
 

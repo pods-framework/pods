@@ -19,6 +19,10 @@
     font-size: 90%;
 }
 
+.ui-timepicker-div .ui_tpicker_unit_hide { 
+    display: none; 
+}
+
 .ui-tpicker-grid-label {
     background: none;
     border: none;
@@ -37,3 +41,4 @@
 .ui-timepicker-rtl dl dd {
     margin: 0 65px 10px 10px;
 }
+

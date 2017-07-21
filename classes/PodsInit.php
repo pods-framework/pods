@@ -279,7 +279,7 @@ class PodsInit {
 			// No need to add dependencies. All managed by jquery-ui-timepicker.
 			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
-		
+
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
 				'jquery',
@@ -341,8 +341,10 @@ class PodsInit {
 			add_filter( 'admin_body_class', 'add_classes_to_body_class' );
 		}
 
-		// There can only be one
+		// As of 2.7 we combine styles to just three .css files
 		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-front', PODS_URL . 'ui/styles/dist/pods-front.css', array(), PODS_VERSION );
 
 	}
 

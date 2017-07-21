@@ -6,7 +6,7 @@
  */
 
 	wp_enqueue_script( 'jquery-ui-datepicker' );
-	wp_enqueue_style( 'jquery-ui' );
+	wp_enqueue_style( 'pods-styles' );
 
 	PodsForm::field_method( 'date', 'enqueue_jquery_ui_i18n' );
 

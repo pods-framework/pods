@@ -100,17 +100,9 @@ class PodsAdmin {
      * @since 2.0
      */
     public function admin_head () {
-        wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
-
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
 
         wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-manage', PODS_URL . 'ui/css/pods-manage.css', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-wizard', PODS_URL . 'ui/css/pods-wizard.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
@@ -142,14 +134,19 @@ class PodsAdmin {
                 }
 
                 if ( 'pods-advanced' == $page ) {
-                    wp_register_style( 'pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0' );
-
+                    wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
                     wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
                     wp_enqueue_script( 'jquery-ui-dialog' );
-
-                    wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
+                } elseif ( 'pods-packages' == $page ) {
+                    wp_enqueue_style( 'pods-wizard' );
+                }  elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
+                    wp_enqueue_style( 'pods-wizard' );
+
+                    if ( 'pods-upgrade' == $page ) {
+                        wp_enqueue_script( 'pods-upgrade' );
+                    }
                 }
             }
         }
@@ -700,7 +697,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-dfv-list' );
+            wp_enqueue_style( 'pods-styles' );
     }
 
     /**

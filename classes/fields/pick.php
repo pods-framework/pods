@@ -760,7 +760,6 @@ class PodsField_Pick extends PodsField {
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
 
-		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
 
 		wp_enqueue_style( 'pods-select2' );

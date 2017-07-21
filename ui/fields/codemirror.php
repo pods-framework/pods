@@ -1,6 +1,6 @@
 <?php
 wp_enqueue_script( 'pods-codemirror' );
-wp_enqueue_style( 'pods-codemirror' );
+wp_enqueue_style( 'pods-styles' );
 wp_enqueue_script( 'pods-codemirror-loadmode' );
 
 $type = 'textarea';

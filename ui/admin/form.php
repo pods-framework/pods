@@ -1,6 +1,6 @@
 <?php
 wp_enqueue_script( 'pods' );
-wp_enqueue_style( 'pods-form' );
+wp_enqueue_style( 'pods-styles' );
 
 if ( empty( $fields ) || !is_array( $fields ) )
     $fields = $obj->pod->fields;

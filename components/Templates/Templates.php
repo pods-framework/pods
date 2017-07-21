@@ -196,7 +196,7 @@ class Pods_Templates extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function admin_assets () {
-		wp_enqueue_style( 'pods-admin' );
+		wp_enqueue_style( 'pods-styles' );
 	}
 
 	/**

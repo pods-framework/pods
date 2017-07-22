@@ -512,23 +512,22 @@ class PodsForm {
                 $attributes[ 'class' ] = $classes;
         }
 
-        if ( isset( $options[ 'placeholder' ] ) && !empty( $options[ 'placeholder' ] ) ) {
-            if ( is_array( $options[ 'placeholder' ] ) )
-                $options[ 'placeholder' ] = implode( ' ', $options[ 'placeholder' ] );
+		$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) ) );
 
-            $options[ 'placeholder' ] = (string) $options[ 'placeholder' ];
-			$attributes[ 'placeholder' ] = trim( $options[ 'placeholder' ] );
-        }
+		if ( ! empty( $placeholder ) ) {
+			$attributes['placeholder'] = $placeholder;
+		}
 
-        if ( 1 == pods_v( 'required', $options, 0 ) )
+        if ( 1 === (int) pods_v( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
 
-        $max_length = (int) pods_var( 'maxlength', $options, pods_v( $type . '_max_length', $options, 0 ), null, true );
+        $max_length = (int) pods_v( 'maxlength', $options, pods_v( $type . '_max_length', $options, 0 ) );
 
         if ( 0 < $max_length )
             $attributes[ 'maxlength' ] = $max_length;
 
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
+
         return $attributes;
     }
 

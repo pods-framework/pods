@@ -973,7 +973,7 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_post ( $post, $metabox ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
 		$pod_type = 'post';
@@ -1296,7 +1296,7 @@ class PodsMeta {
         if ( empty( $groups ) || 'attachment' == pods_var( 'typenow', 'global' ) )
             return $form_fields;
 
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         $id = null;
@@ -1468,7 +1468,7 @@ class PodsMeta {
      * @param null $taxonomy
      */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $tag, $taxonomy );
@@ -1673,7 +1673,7 @@ class PodsMeta {
      * @param $user_id
      */
     public function meta_user ( $user_id ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $user_id );
@@ -1888,7 +1888,7 @@ class PodsMeta {
      * @param $user_identity
      */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $commenter, $user_identity );
@@ -1955,7 +1955,7 @@ class PodsMeta {
      * @return array
      */
     public function meta_comment_new ( $form_fields ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
@@ -2081,7 +2081,7 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_comment ( $comment, $metabox ) {
-        wp_enqueue_style( 'pods-styles' );
+        wp_enqueue_style( 'pods-form' );
         wp_enqueue_script( 'pods' );
 
         do_action( 'pods_meta_' . __FUNCTION__, $comment, $metabox );

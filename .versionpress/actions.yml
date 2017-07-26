@@ -1,0 +1,7 @@
+pods_relationship:
+  actions:
+    create: Created Pods relationship
+    update:
+      message: Updated Pods relationship
+      priority: 12
+    delete: Deleted Pods relationship

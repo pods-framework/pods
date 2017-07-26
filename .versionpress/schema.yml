@@ -1,0 +1,15 @@
+pods_relationship:
+  table: podsrel
+  id: id
+  references:
+    pod_id: post
+    field_id: post
+    item_id: post
+    related_pod_id: post
+    related_field_id: post
+    related_item_id: post
+
+postmeta:
+  value-references:
+    meta_key@meta_value:
+      _pods_*[/\d+/]: post

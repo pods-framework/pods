@@ -139,8 +139,9 @@ input.pods-form-ui-field-type-color {
 }
 
 .pods-boolean label {
-    padding: 7px 0 7px 26px;
+    padding: 7px 5px 7px 26px;
     line-height: 1;
+    display: inline-block;
 }
 
 .pods-pick select {
@@ -221,16 +222,6 @@ select.pods-pick-multi {
 
 .pods-pick-values .pods-radio {
     border: 1px solid #dfdfdf;
-}
-
-.pods-field.pods-boolean label:hover,
-.pods-pick-values .pods-radio li label:hover {
-    background: #f5f5f5;
-}
-/* Do not show hover for disabled options */
-.pods-field.pods-boolean input[disabled] + label:hover,
-.pods-pick-values .pods-radio li input[disabled] + label:hover {
-    background: inherit;
 }
 
 p.pods-add-file {

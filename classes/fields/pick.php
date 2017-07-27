@@ -1289,7 +1289,7 @@ class PodsField_Pick extends PodsField {
 			} elseif ( in_array( $item_id, $args->value, true ) ) {
 				$selected = true;
 			}
-		} elseif ( $item_id === $args->value ) {
+		} elseif ( (string) $item_id === (string) $args->value ) {
 			$selected = true;
 		}
 

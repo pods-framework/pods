@@ -1081,7 +1081,7 @@ class Pods implements Iterator {
 							$params->single = false;
 
 
-						$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, (int) $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
+						$value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
 					}
 
 					if ( !$no_conflict )

@@ -70,15 +70,15 @@ form.pods-manage .pods-boolean label {
     margin-left: 20px;
 }
 
-form.pods-manage .pods-file label {
+form.pods-manage .pods-dfv-list-item label {
     padding-bottom: 8px;
 }
 
-form.pods-manage .pods-file input {
+form.pods-manage .pods-dfv-list-item input {
     display: none;
 }
 
-form.pods-manage ul.pods-files {
+form.pods-manage ul.pods-dfv-list {
     background: #fbfbfb;
     border: 1px solid #dfdfdf;
     border-bottom: 0;
@@ -88,7 +88,7 @@ form.pods-manage ul.pods-files {
     padding: 0;
 }
 
-form.pods-manage ul.pods-files li {
+form.pods-manage ul.pods-dfv-list li {
     background: #fff;
     border-bottom: 1px solid #dfdfdf;
     margin: 0;
@@ -96,49 +96,49 @@ form.pods-manage ul.pods-files li {
     padding-bottom: 10px;
 }
 
-form.pods-manage ul.pods-files li span {
+form.pods-manage ul.pods-dfv-list li span {
     display: inline-block;
     float: none;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-reorder {
+form.pods-manage ul.pods-dfv-list li span.pods-file-reorder {
     left: 3px;
     position: absolute;
     top: 15px;
     width: 30px;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-reorder img {
+form.pods-manage ul.pods-dfv-list li span.pods-file-reorder img {
     cursor: move;
     display: block;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-thumb {
+form.pods-manage ul.pods-dfv-list li span.pods-file-thumb {
     left: 35px;
     position: absolute;
     top: 2px;
     width: 45px;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail {
+form.pods-manage ul.pods-dfv-list li span.pods-file-thumb .pinkynail {
     float: none;
     margin: 0;
     max-width: 40px !important;
     max-height: 40px !important;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-name {
+form.pods-manage ul.pods-dfv-list li span.pods-dfv-list-name {
     padding: 11px 35px 0 85px;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-remove {
+form.pods-manage ul.pods-dfv-list li span.pods-file-remove {
     position: absolute;
     right: 10px;
     top: 10px;
     width: 25px;
 }
 
-form.pods-manage ul.pods-files li span.pods-file-remove img {
+form.pods-manage ul.pods-dfv-list li span.pods-file-remove img {
     cursor: pointer;
     display: block;
 }

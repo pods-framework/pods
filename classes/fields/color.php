@@ -108,13 +108,7 @@ class PodsField_Color extends PodsField {
             $value = implode( ' ', $value );
 
         // WP Color Picker for 3.5+
-        if ( pods_version_check( 'wp', '3.5' ) ) {
-            $field_type = 'color';
-        }
-        // Farbtastic for below 3.5
-        else {
-            $field_type = 'farbtastic';
-        }
+        $field_type = 'color';
 
         if ( isset( $options[ 'name' ] ) && false === PodsForm::permission( self::$type, $options[ 'name' ], $options, null, $pod, $id ) ) {
             if ( pods_v( 'read_only', $options, false ) ) {

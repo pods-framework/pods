@@ -16,6 +16,17 @@ add_shortcode( "pod_before_template", "frontier_template_blocks" );
 add_shortcode( "pod_if_field", "frontier_if_block" );
 
 /**
+ * Return array of valid frontier type shortcode tags
+ *
+ * @return array
+ */
+function frontier_get_shortcodes() {
+	$shortcodes = array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' );
+
+	return $shortcodes;
+}
+
+/**
  * @param $content
  *
  * @return string
@@ -23,7 +34,7 @@ add_shortcode( "pod_if_field", "frontier_if_block" );
  */
 function frontier_do_shortcode( $content ) {
 
-	$content = pods_do_shortcode( $content, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+	$content = pods_do_shortcode( $content, frontier_get_shortcodes() );
 
 	return $content;
 
@@ -72,8 +83,6 @@ function frontier_if_block( $atts, $code ) {
 	$pod = pods( $atts[ 'pod' ], $atts[ 'id' ] );
 	$code = explode( '[else]', frontier_decode_template( $code, $atts ) );
 
-	$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 0 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-
 	// sysvals
 	$system_values = array(
 		'_index',
@@ -119,28 +128,39 @@ function frontier_if_block( $atts, $code ) {
 			}
 
 			if ( $field_data == $atts[ 'value' ] ) {
-				return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+				// IF statement true, use [IF] content as template
+				$template = $pod->do_magic_tags( $code[ 0 ] );
 			} else {
 				if ( isset( $code[ 1 ] ) ) {
-					$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-
-					return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+					// Switch [else] portion of shortcode into active content
+					$template = $pod->do_magic_tags( $code[ 1 ] );
 				} else {
 					// Value did not match, nothing should be displayed
-					return '';
+					$template = '';
 				}
 			}
+		} else {
+			// Field exists and is not empty, use [if] content
+			$template = $pod->do_magic_tags( $code[ 0 ] );
 		}
-
-		return pods_do_shortcode( $template, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-	}
-	else {
+	} else {
+		// No 'field' value, switch to [else] content
 		if ( isset( $code[ 1 ] ) ) {
-			$template = pods_do_shortcode( $pod->do_magic_tags( $code[ 1 ] ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
-
-			return $template;
+			$template = $pod->do_magic_tags( $code[ 1 ] );
+		} else {
+			// No 'field' value and no [else] tag
+			$template = '';
 		}
 	}
+	if ( defined( 'PODS_SHORTCODE_ALLOW_SUB_SHORTCODES' ) && PODS_SHORTCODE_ALLOW_SUB_SHORTCODES ) {
+		// Allow all nested shortcodes
+		$template = do_shortcode( $template );
+	} else {
+		// Only allow nested frontier shortcodes
+		$template = pods_do_shortcode( $template, frontier_get_shortcodes() );
+	}
+
+	return $template;
 
 }
 
@@ -209,7 +229,7 @@ function frontier_template_once_blocks( $atts, $code ) {
 	}
 	$frontier_once_hashes[ ] = $blockhash;
 
-	return pods_do_shortcode( frontier_decode_template( $code, $atts ), array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+	return pods_do_shortcode( frontier_decode_template( $code, $atts ), frontier_get_shortcodes() );
 }
 
 /**
@@ -489,5 +509,5 @@ function frontier_end_template( $code, $base, $template, $pod ) {
 		unset( $template_post_blocks[ 'after' ][ $pod->pod ] );
 	}
 
-	return pods_do_shortcode( $code, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+	return pods_do_shortcode( $code, frontier_get_shortcodes() );
 }

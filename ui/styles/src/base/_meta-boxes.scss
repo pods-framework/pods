@@ -117,8 +117,7 @@ table.DMB_metabox .DMB_upload_status .img_status img {
 
 table.DMB_metabox .DMB_upload_status .img_status .remove_file_button {
     text-indent: -9999px;
-    background: url(<?php bloginfo('stylesheet_directory');
-    ? > /lib/ metabox /images/ ico-delete . png);
+    // background: url(<?php bloginfo('stylesheet_directory'); ?> /lib/metabox/images/ico-delete.png);
     width: 16px;
     height: 16px;
 }

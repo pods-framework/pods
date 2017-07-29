@@ -97,7 +97,7 @@ textarea.pods-form-ui-field-type-paragraph {
 
 /* Date */
 .pods-date input.pods-date-field.hasDatepicker {
-    background: #fff url(../images/calendar16.png) no-repeat 5px 5px;
+    background: #fff url(#{$ImagesPath}/calendar16.png) no-repeat 5px 5px;
     cursor: pointer;
     padding-left: 25px !important;
     padding-top: 6px !important;
@@ -139,8 +139,9 @@ input.pods-form-ui-field-type-color {
 }
 
 .pods-boolean label {
-    padding: 7px 0 7px 26px;
+    padding: 7px 5px 7px 26px;
     line-height: 1;
+    display: inline-block;
 }
 
 .pods-pick select {
@@ -221,16 +222,6 @@ select.pods-pick-multi {
 
 .pods-pick-values .pods-radio {
     border: 1px solid #dfdfdf;
-}
-
-.pods-field.pods-boolean label:hover,
-.pods-pick-values .pods-radio li label:hover {
-    background: #f5f5f5;
-}
-/* Do not show hover for disabled options */
-.pods-field.pods-boolean input[disabled] + label:hover,
-.pods-pick-values .pods-radio li input[disabled] + label:hover {
-    background: inherit;
 }
 
 p.pods-add-file {
@@ -370,7 +361,7 @@ p.pods-add-file {
     border: 1px solid;
     margin: 10px 0;
     padding: 15px 10px 15px 50px;
-    background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
+    background: #DFF2BF url(#{$ImagesPath}/green-check.png) no-repeat 10px center;
 }
 
 .pods-form-ui-row-type-hidden {

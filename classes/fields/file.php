@@ -333,7 +333,6 @@ class PodsField_File extends PodsField {
 			return;
 		}
 
-		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
 
 		$this->render_input_script( $args );

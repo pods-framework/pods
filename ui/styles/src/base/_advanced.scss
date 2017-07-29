@@ -28,11 +28,11 @@
 }
 
 .pods-parts-icon-edit {
-    background: url(../images/page_white_edit.png) left center no-repeat;
+    background: url(#{$ImagesPath}/page_white_edit.png) left center no-repeat;
 }
 
 .pods-parts-icon-add {
-    background: url(../images/bullet_add.png) left center no-repeat;
+    background: url(#{$ImagesPath}/bullet_add.png) left center no-repeat;
 }
 
 #pods-parts-left {

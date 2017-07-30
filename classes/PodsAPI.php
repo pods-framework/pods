@@ -6243,6 +6243,7 @@ class PodsAPI {
      * $params['type'] array The field types
      * $params['options'] array Field Option(s) key=>value array to filter by
      * $params['where'] string WHERE clause of query
+     * $params['object_fields'] bool Whether to include the object fields for WP objects, default true
      *
      * @param array $params An associative array of parameters
      * @param bool $strict  Whether to require a field exist or not when loading the info
@@ -6286,6 +6287,12 @@ class PodsAPI {
         else
             $params->type = (array) $params->type;
 
+        if ( ! isset( $params->object_fields ) ) {
+            $params->object_fields = true;
+        } else {
+            $params->object_fields = (boolean) $params->object_fields;
+        }
+
         $fields = array();
 
         if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
@@ -6298,7 +6305,9 @@ class PodsAPI {
                 return $fields;
             }
 
-			$pod[ 'fields' ] = array_merge( pods_var_raw( 'object_fields', $pod, array() ), $pod[ 'fields' ] );
+            if ( $params->object_fields && ! empty( $pod['object_fields'] ) ) {
+                $pod[ 'fields' ] = array_merge( $pod['object_fields'], $pod[ 'fields' ] );
+            }
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )

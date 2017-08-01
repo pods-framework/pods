@@ -214,7 +214,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : fieldConfig.iframe_src
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).one( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
 	},
@@ -230,7 +230,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : childView.ui.editButton.attr( 'href' )
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).one( 'dfv:modal:update', this.modalSuccess.bind( this ) );
 
 		modalIFrame.modal.open();
 	},

@@ -5,7 +5,18 @@ global.Backbone = require( 'backbone' );
 global.Marionette = require( 'backbone.marionette' );
 global.sprintf = require( 'sprintf-js' ).sprintf;
 global.assert = require( 'assert' );
-global.wp = { media: { view: { Frame: { extend : function(){} } } } }; // Stub
+global.wp = {
+	media: {
+		view: {
+			Frame: {
+				extend : function(){}
+			},
+			Modal: {
+				extend : function(){}
+			}
+		}
+	}
+}; // Stubs
 
 //--!! We need to build the PodsI18n object as a module so it's importable
 /*global podsLocalizedStrings */

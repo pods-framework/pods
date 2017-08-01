@@ -3020,32 +3020,33 @@ class PodsAdmin {
 
     }
 
-    /**
-     * Check if Pod type <em>could</em> extend core REST API response
-     *
-     * @since 2.5.6
-     *
-     * @access protected
-     *
-     * @param array $pod
-     *
-     * @return bool
-     */
-    protected function restable_pod( $pod ) {
-        $type =  $pod[ 'type' ];
-        if( in_array( $type, array(
-                'post_type',
-                'user',
-                'taxonomy'
-            )
-        )
-        ) {
-            return true;
+	/**
+	 * Check if Pod type <em>could</em> extend core REST API response
+	 *
+	 * @since 2.5.6
+	 *
+	 * @access protected
+	 *
+	 * @param array $pod
+	 *
+	 * @return bool
+	 */
+	protected function restable_pod( $pod ) {
 
-        }
+		$type = $pod['type'];
 
-    }
+		$restable_types = array(
+			'post_type',
+			'user',
+			'taxonomy',
+			'media',
+		);
 
+		if ( in_array( $type, $restable_types, true ) ) {
+			return true;
+		}
+
+	}
 
     /**
      * Add a rest api tab.

@@ -212,6 +212,10 @@ select.pods-pick-multi {
     background: transparent;
 }
 
+.pods-pick-values li:hover {
+    background: #f5f5f5;
+}
+
 .pods-pick-values li:last-of-type {
     border-bottom: 0;
 }

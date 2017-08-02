@@ -2875,7 +2875,7 @@ class PodsUI {
 		include_once ABSPATH . 'wp-admin/includes/template.php';
 
         wp_enqueue_script( 'thickbox' );
-        wp_enqueue_style( 'pods-ui-list-table', PODS_URL . 'ui/css/pods-ui-list-table.css', array( 'thickbox' ), PODS_VERSION );
+        wp_enqueue_style( 'pods-styles' );
 
         $filters = $this->filters;
 

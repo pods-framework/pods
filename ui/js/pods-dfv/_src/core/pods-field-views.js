@@ -4,6 +4,8 @@
  *
  */
 export const PodsFieldListView = Marionette.CollectionView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
 		this.childViewOptions = { fieldModel: options.fieldModel };
@@ -14,6 +16,8 @@ export const PodsFieldListView = Marionette.CollectionView.extend( {
  * @extends Backbone.View
  */
 export const PodsFieldView = Marionette.View.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	serializeData: function () {
 		const fieldModel = this.options.fieldModel;
 		let data = this.model ? this.model.toJSON() : {};
@@ -29,6 +33,7 @@ export const PodsFieldView = Marionette.View.extend( {
  * Top-level "main field container"
  */
 export const PodsDFVFieldLayout = Marionette.View.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
 
 	initialize: function ( options ) {
 		this.fieldItemData = options.fieldItemData;

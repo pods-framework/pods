@@ -707,7 +707,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
             </div>
             <!-- /#submitdiv -->
             <div class="pods-submittable-fields">
-            <?php do_meta_boxes( '_pods_pod', 'side', $pod ); ?>
+            <?php do_meta_boxes( '_pods_pod', 'side', $pod_post ); ?>
             </div>
         </div>
     </div>

@@ -641,15 +641,15 @@ class PodsAPI {
 
         unset( $term_data['taxonomy'] );
 
-        if ( empty( $term_data['term_id'] ) ) {
-        	$term_name = $term_data['name'];
+		if ( empty( $term_data['term_id'] ) ) {
+			$term_name = $term_data['name'];
 
-        	unset( $term_data['name'] );
+			unset( $term_data['name'] );
 
-            $term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
-		} elseif ( 2 < count( $term_data ) ) {
-            $term_data['term_id'] = wp_update_term( $term_data['term_id'], $taxonomy, $term_data );
-        }
+			$term_data['term_id'] = wp_insert_term( $term_name, $taxonomy, $term_data );
+		} elseif ( 1 < count( $term_data ) ) {
+			$term_data['term_id'] = wp_update_term( $term_data['term_id'], $taxonomy, $term_data );
+		}
 
         if ( is_wp_error( $term_data['term_id'] ) ) {
             if ( !$conflicted )
@@ -3765,9 +3765,18 @@ class PodsAPI {
 
                     $value_ids = array_unique( array_filter( $value_ids ) );
 
+                    // Filter unique values not equal to false in case of a multidimensional array
+                    $filtered_values = $this->array_filter_walker( $values );
+                    $serialized_values = array_map( 'serialize', $filtered_values );
+                    $unique_serialized_values = array_unique( $serialized_values );
+
+	            $values = array_map( 'unserialize', $unique_serialized_values );
+
                     // Limit values
-                    if ( 0 < $related_limit && !empty( $value_ids ) )
-                        $value_ids = array_slice( $value_ids, 0, $related_limit );
+                    if ( 0 < $related_limit && !empty( $value_ids ) ) {
+	                    $value_ids = array_slice( $value_ids, 0, $related_limit );
+	                    $values    = array_slice( $values, 0, $related_limit );
+                    }
 
                     // Get current values
                     if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
@@ -3786,8 +3795,14 @@ class PodsAPI {
                     if ( !empty( $value_ids ) )
                         $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
+                    $field_save_values = $value_ids;
+
+                    if ( 'file' === $type ) {
+                    	$field_save_values = $values;
+                    }
+
                     // Run save function for field type (where needed)
-                    PodsForm::save( $type, $value_ids, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+                    PodsForm::save( $type, $field_save_values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
                 }
 
                 // Unset data no longer needed
@@ -8534,4 +8549,39 @@ class PodsAPI {
         else
             pods_deprecated( "PodsAPI::{$name}", '2.0' );
     }
+
+	/**
+	 * Filter an array of arrays without causing PHP notices/warnings.
+	 *
+	 * @param array $values
+	 *
+	 * @return array
+	 *
+	 * @since 2.6.10
+	 */
+	private function array_filter_walker( $values = array() ) {
+
+		$values = (array) $values;
+
+		foreach ( $values as $k => $v ){
+			if ( is_object( $v ) ) {
+				// Skip objects
+				continue;
+			} elseif ( is_array( $v ) ){
+				if ( empty( $v ) ) {
+					// Filter values with empty arrays
+					unset( $values[ $k ] );
+				}
+			} else {
+				if ( ! $v ) {
+					// Filter empty values
+					unset( $values[ $k ] );
+				}
+			}
+		}
+
+		return $values;
+
+	}
+
 }

@@ -1,0 +1,32 @@
+.pods-modal-window {
+	margin-top: -32px;
+
+	&.edit-tags-php #col-left,
+	&.edit-tags-php #col-left input,
+	&.edit-tags-php #col-left textarea {
+		width: 100%;
+	}
+
+	#wpadminbar,
+	#adminmenuback,
+	#adminmenuwrap,
+	#preview-action,
+	#wpfooter,
+	body.edit-tags-php #col-right,
+	body.edit-tags-php .search-form {
+		display: none;
+	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+
+	#wpcontent {
+		padding: 0;
+		margin: 0 1.25em;
+	}
+
+	.wrap {
+		margin: 0;
+	}
+}

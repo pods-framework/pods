@@ -235,6 +235,25 @@ class PodsField_Link extends PodsField_Website {
 	}
 
 	/**
+	 * Change the way the a list of values of the field are displayed with Pods::field
+	 *
+	 * @param mixed|null  $value
+	 * @param string|null $name
+	 * @param array|null  $options
+	 * @param array|null  $pod
+	 * @param int|null    $id
+	 *
+	 * @return mixed|null|string
+	 *
+	 * @since 2.7
+	 */
+	public function display_list( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+
+		return call_user_func_array( array( $this, 'display' ), func_get_args() );
+
+	}
+
+	/**
 	 * Customize output of the form field
 	 *
 	 * @param string $name

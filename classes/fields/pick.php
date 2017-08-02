@@ -760,7 +760,6 @@ class PodsField_Pick extends PodsField {
 		$args = compact( array_keys( get_defined_vars() ) );
 		$args = (object) $args;
 
-		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
 
 		wp_enqueue_style( 'pods-select2' );
@@ -1015,7 +1014,11 @@ class PodsField_Pick extends PodsField {
 
 		$iframe_src = '';
 
+		// Potential valid modal target if we've set the file name
 		if ( ! empty( $file_name ) ) {
+			// We extend wp.media.view.Modal for modal add/edit, we must ensure we load the template for it
+			wp_enqueue_media();
+
 			// @todo: Replace string literal with defined constant
 			$query_args['pods_modal'] = 1;
 

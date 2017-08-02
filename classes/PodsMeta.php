@@ -1202,6 +1202,13 @@ class PodsMeta {
 		$pod  = self::$current_pod;
 		$data = array();
 
+		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+
+		// Block REST API saves, we handle those separately in PodsRESTHandlers
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+			return;
+		}
+
 		if ( false !== $nonced && ! empty( $groups ) ) {
 			foreach ( $groups as $group ) {
 				if ( empty( $group['fields'] ) ) {
@@ -1409,6 +1416,15 @@ class PodsMeta {
             }
         }
 
+        if ( $pod ) {
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+
+			// Block REST API saves, we handle those separately in PodsRESTHandlers
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+				return $post;
+			}
+		}
+
         do_action( 'pods_meta_save_pre_media', $data, $pod, $id, $groups, $post, $attachment );
 
         if ( !empty( $pod ) ) {
@@ -1580,41 +1596,53 @@ class PodsMeta {
 		$has_fields = false;
 
         foreach ( $groups as $group ) {
-            if ( empty( $group[ 'fields' ] ) )
-                continue;
+	        if ( empty( $group['fields'] ) ) {
+		        continue;
+	        }
 
-			if ( null === $term ) {
-				$term = get_term( $term_id, $taxonomy );
+	        if ( null === $term ) {
+		        $term = get_term( $term_id, $taxonomy );
 
-				$data = array(
-					'name' => $term->name
-				);
-			}
+		        $data = array(
+			        'name' => $term->name
+		        );
+	        }
 
-			$has_fields = true;
+	        $has_fields = true;
 
-			if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
-				if ( !is_object( self::$current_pod ) || self::$current_pod->pod != $group[ 'pod' ][ 'name' ] )
-					self::$current_pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
-				elseif ( self::$current_pod->id() != $id )
-					self::$current_pod->fetch( $id );
+	        if ( null === $pod || ( is_object( $pod ) && $pod->id() != $id ) ) {
+		        if ( ! is_object( self::$current_pod ) || self::$current_pod->pod != $group['pod']['name'] ) {
+			        self::$current_pod = pods( $group['pod']['name'], $id, true );
+		        } elseif ( self::$current_pod->id() != $id ) {
+			        self::$current_pod->fetch( $id );
+		        }
 
-				$pod = self::$current_pod;
-			}
+		        $pod = self::$current_pod;
+	        }
 
-            foreach ( $group[ 'fields' ] as $field ) {
+	        foreach ( $group['fields'] as $field ) {
+		        if ( false === PodsForm::permission( $field['type'], $field['name'], $field, $group['fields'], $pod, $id ) ) {
+			        if ( ! pods_var( 'hidden', $field['options'], false ) ) {
+				        continue;
+			        }
+		        }
 
-                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) ) {
-                    if ( !pods_var( 'hidden', $field[ 'options' ], false ) )
-                        continue;
-                }
+		        $data[ $field['name'] ] = '';
 
-                $data[ $field[ 'name' ] ] = '';
-
-                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
-            }
+		        if ( isset( $_POST[ 'pods_meta_' . $field['name'] ] ) ) {
+			        $data[ $field['name'] ] = $_POST[ 'pods_meta_' . $field['name'] ];
+		        }
+	        }
         }
+
+        if ( $pod ) {
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+
+			// Block REST API saves, we handle those separately in PodsRESTHandlers
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+				return $term_id;
+			}
+		}
 
 		if ( !$has_fields ) {
 			return $term_id;
@@ -1801,6 +1829,15 @@ class PodsMeta {
 
 		$pod  = self::$current_pod;
 		$data = array();
+
+        if ( $pod ) {
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+
+			// Block REST API saves, we handle those separately in PodsRESTHandlers
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+				return;
+			}
+		}
 
 		if ( false !== $nonced && ! empty( $groups ) ) {
 			foreach ( $groups as $group ) {
@@ -2248,6 +2285,15 @@ class PodsMeta {
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
         }
+
+        if ( $pod ) {
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+
+			// Block REST API saves, we handle those separately in PodsRESTHandlers
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+				return $comment_id;
+			}
+		}
 
         do_action( 'pods_meta_save_pre_comment', $data, $pod, $id, $groups );
 

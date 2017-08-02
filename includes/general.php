@@ -462,13 +462,6 @@ function pods_help ( $text, $url = null ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
 
-	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
-		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
-	}
-	elseif ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
-		wp_enqueue_style( 'jquery-qtip2' );
-	}
-
 	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
 		wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
 			'jquery',
@@ -1010,7 +1003,11 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
-	$content = do_shortcode( $content );
+	// Build Shortcode regex pattern just for the shortcodes we want
+	$pattern = get_shortcode_regex();
+
+	// Call shortcode callbacks just for the shortcodes we want
+	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
 
 	if ( isset( $temp_shortcode_filter ) ) {
 		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );

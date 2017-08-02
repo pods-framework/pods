@@ -404,6 +404,8 @@ p.pods-add-file {
 }
 
 @media screen and (max-width: 782px) {
+    .pods-boolean input,
+    .form-field .pods-boolean input,
     .pods-pick-values li .pods-boolean input {
         height: 25px;
         width: 25px;
@@ -411,6 +413,7 @@ p.pods-add-file {
         margin: 0 3px;
     }
 
+    .pods-boolean label,
     .pods-pick-values .pods-boolean label {
         margin-left: 36px;
         padding: 10px 0;

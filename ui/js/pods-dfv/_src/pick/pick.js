@@ -214,8 +214,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : fieldConfig.iframe_src
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
-
+		this.setModalListeners();
 		modalIFrame.modal.open();
 	},
 
@@ -230,8 +229,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : childView.ui.editButton.attr( 'href' )
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
-
+		this.setModalListeners();
 		modalIFrame.modal.open();
 	},
 
@@ -246,6 +244,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			this.buildAutocomplete();
 			this.getChildView( 'list' ).render();
 		}
+	},
+
+	setModalListeners: function() {
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).on( 'dfv:modal:cancel', this.modalCancel.bind( this ) );
+	},
+
+	clearModalListeners: function() {
+		jQuery( window ).off( 'dfv:modal:update' );
+		jQuery( window ).off( 'dfv:modal:cancel' );
 	},
 
 	/**
@@ -265,7 +273,15 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			this.collection.add( data );
 		}
 
-		modalIFrame.modal.close();
+		this.clearModalListeners();
+		modalIFrame.modal.close( {} );
+	},
+
+	/**
+	 *
+	 */
+	modalCancel: function() {
+		this.clearModalListeners();
 	}
 
 } );

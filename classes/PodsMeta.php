@@ -596,7 +596,7 @@ class PodsMeta {
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
         if ( is_array( $pod ) && !empty( $pod ) && !isset( $pod[ 'name' ] ) ) {
             foreach ( $pod as $p ) {
-                $this->group_add( $pod, $label, $fields, $context, $priority );
+                $this->group_add( $p, $label, $fields, $context, $priority );
             }
 
             return true;

@@ -2153,13 +2153,53 @@ function pods_session_start() {
  * @todo: replace string literal with a defined constant
  *
  * @return bool
+ *
+ * @since 2.7
  */
 function pods_is_modal_window() {
 	$is_modal_window = false;
 
-	if ( isset( $_GET['pods_modal'] ) || isset( $_POST['pods_modal'] ) ) {
+	if ( ! empty( $_GET['pods_modal'] ) || ! empty( $_POST['pods_modal'] ) ) {
 		$is_modal_window = true;
 	}
 
-    return $is_modal_window;
+	return $is_modal_window;
+}
+
+/**
+ * Check if the pod object is valid and the pod exists.
+ *
+ * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ *
+ * @return bool Whether the pod object is valid and exists
+ *
+ * @since 2.7
+ */
+function pod_is_valid( $pod ) {
+	$is_valid = false;
+
+	if ( $pod && is_a( $pod, 'Pods' ) && $pod->valid() ) {
+		$is_valid = true;
+	}
+
+	return $is_valid;
+}
+
+/**
+ * Check if the pod object has item(s).
+ *
+ * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ *
+ * @return bool Whether the pod object has items
+ *
+ * @since 2.7
+ */
+function pod_has_items( $pod ) {
+	$has_items = false;
+
+	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
+		$has_items = true;
+	}
+
+	return $has_items;
 }

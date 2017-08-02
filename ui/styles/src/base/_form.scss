@@ -428,6 +428,13 @@ p.pods-add-file {
     .form-table td select {
         margin: 0;
     }
+    /* Fix for Pods field bottom border */
+    .pods-metabox tr.pods-field > th {
+        padding-top: 15px;
+    }
+    .pods-metabox tr.pods-field > td {
+        padding-bottom: 15px;
+    }
     /* HTML select field fix */
     .pods-form-ui-row-type-pick .pods-form-ui-field select {
         width: 100%;

@@ -220,6 +220,10 @@ select.pods-pick-multi {
     padding: 0;
 }
 
+.pods-pick-values .pods-boolean label {
+    display: block;
+}
+
 .pods-pick-values .pods-radio {
     border: 1px solid #dfdfdf;
 }

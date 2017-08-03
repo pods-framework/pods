@@ -289,6 +289,9 @@ class PodsInit {
 				'jquery-ui-slideraccess',
 			), '1.6.3' );
 		}
+		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
+			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
+		}
 
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '4.0.3' );
 		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.css', array(), '4.0.3' );

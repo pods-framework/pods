@@ -212,12 +212,20 @@ select.pods-pick-multi {
     background: transparent;
 }
 
+.pods-pick-values li:hover {
+    background: #f5f5f5;
+}
+
 .pods-pick-values li:last-of-type {
     border-bottom: 0;
 }
 
 .pods-pick-values li .pods-field {
     padding: 0;
+}
+
+.pods-pick-values .pods-boolean label {
+    display: block;
 }
 
 .pods-pick-values .pods-radio {
@@ -396,6 +404,8 @@ p.pods-add-file {
 }
 
 @media screen and (max-width: 782px) {
+    .pods-boolean input,
+    .form-field .pods-boolean input,
     .pods-pick-values li .pods-boolean input {
         height: 25px;
         width: 25px;
@@ -403,6 +413,7 @@ p.pods-add-file {
         margin: 0 3px;
     }
 
+    .pods-boolean label,
     .pods-pick-values .pods-boolean label {
         margin-left: 36px;
         padding: 10px 0;
@@ -416,6 +427,13 @@ p.pods-add-file {
     .form-table td input,
     .form-table td select {
         margin: 0;
+    }
+    /* Fix for Pods field bottom border */
+    .pods-metabox tr.pods-field > th {
+        padding-top: 15px;
+    }
+    .pods-metabox tr.pods-field > td {
+        padding-bottom: 15px;
     }
     /* HTML select field fix */
     .pods-form-ui-row-type-pick .pods-form-ui-field select {

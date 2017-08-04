@@ -265,6 +265,8 @@ class PodsInit {
 			'jquery-qtip2'
 		), PODS_VERSION, true );
 
+		wp_register_script( 'jquery-ui-touch-punch', PODS_URL . 'ui/js/jquery-ui-touch-punch.js', array( 'jquery', 'jquery-ui-core' ), PODS_VERSION );
+
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
 		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
@@ -323,6 +325,7 @@ class PodsInit {
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
+				'jquery-ui-touch-punch',
 				'pods-i18n',
 				'marionette',
 				'media-views',

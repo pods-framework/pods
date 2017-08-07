@@ -3122,7 +3122,7 @@ class PodsData {
 	 *
 	 * @param string $sql SQL Query string
 	 *
-	 @since 2.7
+	 * @since 2.7
 	 */
 	$sql = apply_filters( 'pods_get_sql', $sql );
 

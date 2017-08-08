@@ -324,7 +324,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 			maximumSelectionLength: limit,
 			placeholder           : placeholder,
 			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
-			disabled              : fieldConfig.limitDisable
+			disabled              : fieldConfig.limitDisable,
+			escapeMarkup          : function ( text ) { return text; }
 		};
 
 		if ( ajaxData.ajax ) {

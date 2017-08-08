@@ -287,12 +287,19 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @param data
 	 */
 	filterAjaxList: function ( data ) {
+		const selectedItems = this.collection.filterBySelected();
+		const returnList = [];
 
 		_.each( data.results, function ( element, index, list ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
+
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			if ( !selectedItems.get( element.id ) ) {
+				returnList.push( element );
+			}
 		} );
 
-		return data;
+		return { 'results': returnList };
 	},
 
 	/**

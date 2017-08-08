@@ -104,4 +104,12 @@ class Tests_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$content = base64_encode( '{@number2}[else]{@number1}' );
 		$this->assertEquals( '456', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number2']{$content}[/pod_if_field]" ) );
 	}
+
+	public function test_if_in_html() {
+		$pod_name = self::$pod_name;
+		$id = pods( $pod_name )->add( array( 'name' => 'my post title', 'number1' => 123, 'number2' => 456 ) );
+		$content = base64_encode( "{@number1}[else]{@number2}" );
+		// This isn't supposed to be perfect HTML, just good enough for the test
+		$this->assertEquals( '<img src="123">', do_shortcode( "<img src=\"[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]\">" ) );
+	}
 }

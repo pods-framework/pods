@@ -92,6 +92,16 @@ class Tests_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	}
 
+	public function test_if_nested_external_shortcodes() {
+		$this->markTestIncomplete( 'Nested shortcodes currently broken, test disabled until issue resolved' );
+
+		$pod_name = self::$pod_name;
+		$id = pods( $pod_name )->add( array( 'name' => __FUNCTION__ . '1', 'number1' => 123, 'number2' => 456 ) );
+		$content = base64_encode( '[test_if_text][else]INVALID' );
+		$this->assertEquals( 'abc123', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]" ) );
+	}
+
+
 	public function test_if_with_magic_tags() {
 		$pod_name = self::$pod_name;
 		$id = pods( $pod_name )->add( array( 'name' => 'my post title', 'number1' => 123, 'number2' => 456 ) );

@@ -8,7 +8,7 @@ namespace Pods_Unit_Tests\Shortcodes;
  * @group pods-shortcodes
  * @group pods-shortcodes-if
  */
-class Tests_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
+class Test_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	protected static $pod_name = 'test_if';
 

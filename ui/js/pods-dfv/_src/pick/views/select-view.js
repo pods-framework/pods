@@ -291,6 +291,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 		_.each( data.results, function ( element, index, list ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 		} );
+
+		return data;
 	},
 
 	/**

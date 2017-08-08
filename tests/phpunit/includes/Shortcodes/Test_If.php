@@ -35,6 +35,17 @@ class Tests_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			'type'   => 'number'
 		);
 		pods_api()->save_field( $params );
+		$params = array(
+			'pod'    => self::$pod_name,
+			'pod_id' => self::$pod_id,
+			'name'   => 'related_field',
+			'type'   => 'pick',
+			'pick_object' => 'post_type',
+			'pick_val' => self::$pod_name,
+			'pick_format_type' => 'single',
+		);
+		pods_api()->save_field( $params );
+
 	}
 
 	static public function tearDownAfterClass() {
@@ -121,5 +132,20 @@ class Tests_If extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$content = base64_encode( "{@number1}[else]{@number2}" );
 		// This isn't supposed to be perfect HTML, just good enough for the test
 		$this->assertEquals( '<img src="123">', do_shortcode( "<img src=\"[pod_if_field pod='{$pod_name}' id='{$id}' field='number1']{$content}[/pod_if_field]\">" ) );
+	}
+
+	/**
+	 * @group bug-4403
+	 */
+	public function test_if_related_field() {
+		$pod_name = self::$pod_name;
+		$id1 = pods( $pod_name )->add( array( 'post_status' => 'publish', 'name' => 'first post title', 'number1' => 123, 'number2' => 456 ) );
+		$id2 = pods( $pod_name )->add( array( 'post_status' => 'publish', 'name' => 'second post title', 'number1' => 987, 'number2' => 654, 'related_field' => $id1 ) );
+
+		// Not exactly related to the shortcode test but lets make sure we can at least retrieve the proper data
+		$this->assertEquals( '123', pods( $pod_name, $id2 )->field( 'related_field.number1' ) );
+
+		$content = base64_encode( '{@related_field.post_title}' );
+		$this->assertEquals( 'first post title', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$id2}' field='number1']{$content}[/pod_if_field]" ) );
 	}
 }

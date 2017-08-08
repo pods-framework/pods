@@ -21,6 +21,8 @@ matrix:
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.3
       env: WP_VERSION=3.8 WP_MULTISITE=0
+      dist: precise
+
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
     # MySQL 8.0

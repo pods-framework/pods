@@ -2650,6 +2650,10 @@ class PodsMeta {
 			$single = false;
 		}
 
+		if ( 'user' === $object_type && 'locale' === $meta_key ) {
+			return $_null; // don't interfere with locale
+		}
+
         $object = $this->get_object( $object_type, $object_id );
 
         if ( empty( $object_id ) || empty( $object ) )

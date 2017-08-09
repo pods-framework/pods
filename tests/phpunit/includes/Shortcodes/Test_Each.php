@@ -83,6 +83,21 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$main_id = $pod->add( array( 'post_status' => 'publish', 'name' => 'main post', 'number1' => 123, 'number2' => 456, 'related_field' => $sub_ids ) );
 		$content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
 		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_sub_template]" ) );
+		// Testing [each] inside [if]
+		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
+		$content = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template]" );
+		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
+
+		// Testing [each] inside [if] with [else]
+		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
+		$content = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
+		$this->assertEquals( '1_12_43_94_165_25', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
+
+		// Testing [each] inside [if] with [else] and no relationships
+		$main_id = $pod->add( array( 'post_status' => 'publish', 'name' => 'post with no related fields', 'number1' => 123, 'number2' => 456,  ) );
+		$inner_content = base64_encode( '[if number1]{@number1}_{@number2}[/if]' );
+		$content = base64_encode( "[pod_sub_template pod='{$pod_name}' id='{$main_id}' field='related_field']{$inner_content}[/pod_sub_template][else]No related field" );
+		$this->assertEquals( 'No related field', do_shortcode( "[pod_if_field pod='{$pod_name}' id='{$main_id}' field='related_field']{$content}[/pod_if_field]" ) );
 	}
 
 	public function test_each_nested_in_external() {

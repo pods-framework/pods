@@ -14,8 +14,7 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	protected static $pod_id;
 
-	static public function setUpBeforeClass() {
-		parent::setupBeforeClass();
+	static public function wpSetUpBeforeClass() {
 		add_shortcode( 'test_each_recurse', function( $args, $content ) { return do_shortcode( $content ); } );
 
 		self::$pod_id = pods_api()->save_pod( array( 'storage' => 'meta', 'type' => 'post_type', 'name' => self::$pod_name ) );
@@ -47,8 +46,7 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	}
 
-	static public function tearDownAfterClass() {
-		parent::tearDownAfterClass();
+	static public function wpTearDownAfterClass() {
 		if ( shortcode_exists( 'test_each_recurse') ) {
 			remove_shortcode( 'test_each_recurse' );
 		}

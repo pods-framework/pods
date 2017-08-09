@@ -2268,11 +2268,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( 'admin_ajax_relationship' === $context ) {
-							$items[] = array(
-								'id'    => $result[ $search_data->field_id ],
-								'text'  => $result[ $search_data->field_index ],
-								'image' => '',
-							);
+							$items[] = $this->build_dfv_field_item_data_recurse_item( $result['ID'], $result['post_title'], (object) $object_params );
 						} else {
 							$data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
 						}
@@ -2300,8 +2296,7 @@ class PodsField_Pick extends PodsField {
 				foreach ( $data as $k => $v ) {
 					$items[] = array(
 						'id'    => $k,
-						'text'  => $v,
-						'image' => '',
+						'text'  => $v
 					);
 				}
 			}

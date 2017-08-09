@@ -72,6 +72,14 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 	/**
 	 *
+	 * @param newCollection
+	 */
+	setCollection: function( newCollection ) {
+		this.collection = newCollection;
+	},
+
+	/**
+	 *
 	 * @param options
 	 */
 	initialize: function ( options ) {
@@ -279,7 +287,19 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @param data
 	 */
 	filterAjaxList: function ( data ) {
-		return data;
+		const selectedItems = this.collection.filterBySelected();
+		const returnList = [];
+
+		_.each( data.results, function ( element, index, list ) {
+			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
+
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			if ( !selectedItems.get( element.id ) ) {
+				returnList.push( element );
+			}
+		} );
+
+		return { 'results': returnList };
 	},
 
 	/**
@@ -304,7 +324,8 @@ export const SelectView = Marionette.CollectionView.extend( {
 			maximumSelectionLength: limit,
 			placeholder           : placeholder,
 			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
-			disabled              : fieldConfig.limitDisable
+			disabled              : fieldConfig.limitDisable,
+			escapeMarkup          : function ( text ) { return text; }
 		};
 
 		if ( ajaxData.ajax ) {

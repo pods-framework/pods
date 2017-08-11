@@ -597,7 +597,42 @@
                             var $current_tab = $tabbed.find( '.pods-tab-group .pods-tab' + tab_hash );
 
                             $( '.pods-dependent-toggle', $current_tab ).each( function () {
-                                methods[ 'setup_dependencies' ]( $( this ) );
+                                var elementId = $( this ).attr( 'id' );
+                                var runDependencies = true;
+                                var selectionTypes = [
+                                    {
+                                        name           : 'single',
+                                        pickFormatRegex: /pick-format-single$/g
+                                    },
+                                    {
+                                        name           : 'multi',
+                                        pickFormatRegex: /pick-format-multi$/g
+                                    }
+                                ];
+
+                                // Pick multi/single select: Bypass dependency checks on the format of selection types
+                                // that aren't currently chosen. We shouldn't check dependencies against format_single
+                                // if multi is selected and vice versa.
+                                selectionTypes.forEach( function( thisSelectionType ) {
+                                    var pickSelectionTypeId = null;
+
+                                    // Is this the format list for one of the selection types?
+                                    if ( thisSelectionType.pickFormatRegex.test( elementId ) ) {
+
+                                        // Get the HTML ID of the "selection type" select box so we can check its value
+                                        pickSelectionTypeId = elementId.replace( thisSelectionType.pickFormatRegex, 'pick-format-type' );
+
+                                        // Bypass dependency checks if this format value is for a selection type
+                                        // that isn't currently selected
+                                        if ( $( '#' + pickSelectionTypeId ).val() !== thisSelectionType.name ) {
+                                            runDependencies = false;
+                                        }
+                                    }
+                                } );
+
+                                if ( runDependencies ) {
+                                    methods[ 'setup_dependencies' ]( $( this ) );
+                                }
                             } );
 
                             $current_tab.slideDown();
@@ -1034,6 +1069,14 @@
                     var $dependent_el = $( this ),
                         dependency_trigger;
 
+                    //--!! Debugging
+                    var $peskyTarget = $('#pods-additional-field-options-1 div:nth-child(17) div:nth-child(6)');
+                    var onAdditionalFieldOptions = $('a[href=#pods-additional-field-options-1]').hasClass('selected');
+                    var isTarget = ( $dependent_el.is( $peskyTarget ) && onAdditionalFieldOptions );
+
+                    if ( isTarget ) {
+                        console.log( 'hi' );
+                    }
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
                             if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( exclude_specific ) ) ) {

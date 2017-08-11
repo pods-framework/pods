@@ -825,65 +825,65 @@ class PodsForm {
      * @param array $options array( 'depends-on' => ..., 'excludes-on' => ...)
      * @param string $prefix
      *
-     * @return string
+     * @return array
      * @static
      * @since 2.0
      */
     public static function dependencies( $options, $prefix = '' ) {
-
         $options = (array) $options;
         $classes = $data = array();
-
         $depends_on = $excludes_on = $wildcard_on = array();
+
         if ( isset( $options[ 'depends-on' ] ) ) {
             $depends_on = (array) $options[ 'depends-on' ];
-        }
 
-        if ( isset( $options[ 'excludes-on' ] ) ) {
-            $excludes_on = (array) $options[ 'excludes-on' ];
-        }
+            if ( ! empty( $depends_on ) ) {
+                $classes[] = 'pods-depends-on';
 
-        if ( isset( $options[ 'wildcard-on' ] ) ) {
-            $wildcard_on = (array) $options[ 'wildcard-on' ];
-        }
+                foreach ( $depends_on as $depends => $on ) {
+                    $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-        if ( ! empty( $depends_on ) ) {
-            $classes[] = 'pods-depends-on';
+                    if ( ! is_bool( $on ) ) {
+                        $on = (array) $on;
 
-            foreach ( $depends_on as $depends => $on ) {
-                $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
-
-                if ( ! is_bool( $on ) ) {
-                    $on = (array) $on;
-
-                    foreach ( $on as $o ) {
-                        $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                        foreach ( $on as $o ) {
+                            $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                        }
                     }
                 }
             }
         }
 
-        if ( ! empty( $excludes_on ) ) {
-            $classes[] = 'pods-excludes-on';
-            foreach ( $excludes_on as $excludes => $on ) {
-                $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
+        if ( isset( $options[ 'excludes-on' ] ) ) {
+            $excludes_on = (array) $options[ 'excludes-on' ];
 
-                $on = (array) $on;
+            if ( ! empty( $excludes_on ) ) {
+                $classes[] = 'pods-excludes-on';
 
-                foreach ( $on as $o ) {
-                    $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
+                foreach ( $excludes_on as $excludes => $on ) {
+                    $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
+
+                    $on = (array) $on;
+
+                    foreach ( $on as $o ) {
+                        $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
+                    }
                 }
             }
         }
 
-        if ( ! empty( $wildcard_on ) ) {
-            $classes[] = 'pods-wildcard-on';
+        if ( isset( $options[ 'wildcard-on' ] ) ) {
+            $wildcard_on = (array) $options[ 'wildcard-on' ];
 
-            // Add the appropriate classes and data attribs per value dependency
-            foreach ( $wildcard_on as $target => $wildcards ) {
-                $target = $prefix . self::clean( $target, true );
-                $classes[] = 'pods-wildcard-on-' . $target;
-                $data[ 'pods-wildcard-' . $target ] = $wildcards;
+            if ( ! empty( $wildcard_on ) ) {
+                $classes[] = 'pods-wildcard-on';
+
+                // Add the appropriate classes and data attribs per value dependency
+                foreach ( $wildcard_on as $target => $wildcards ) {
+                    $target = $prefix . self::clean( $target, true );
+                    $classes[] = 'pods-wildcard-on-' . $target;
+                    $data[ 'pods-wildcard-' . $target ] = $wildcards;
+                }
             }
         }
 

@@ -454,7 +454,7 @@ function frontier_backtrack_template( $code, $aliases ) {
 			$content = $used[ 5 ][ $key ];
 			$atts = shortcode_parse_atts( $used[ 3 ][ $key ] );
 			if ( !empty( $atts ) ) {
-				if ( !empty( $atts[ 'field' ] ) ) {
+				if ( !empty( $atts[ 'field' ] ) && false !== strpos( $atts[ 'field' ], '.' ) ) {
 					$content = str_replace( $atts[ 'field' ] . '.', '', $content );
 				}
 				preg_match_all( '/' . $regex . '/s', $content, $subused );

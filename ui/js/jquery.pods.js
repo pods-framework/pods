@@ -1069,14 +1069,6 @@
                     var $dependent_el = $( this ),
                         dependency_trigger;
 
-                    //--!! Debugging
-                    var $peskyTarget = $('#pods-additional-field-options-1 div:nth-child(17) div:nth-child(6)');
-                    var onAdditionalFieldOptions = $('a[href=#pods-additional-field-options-1]').hasClass('selected');
-                    var isTarget = ( $dependent_el.is( $peskyTarget ) && onAdditionalFieldOptions );
-
-                    if ( isTarget ) {
-                        console.log( 'hi' );
-                    }
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) ) {
                             if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( exclude_specific ) ) ) {

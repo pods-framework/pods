@@ -1262,7 +1262,20 @@
 
                 // Handle dependent toggle
                 $( '.pods-admin' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                    var selectionTypeRegex = /pick-format-type$/g;
+                    var elementId = $( this ).attr( 'id' );
+                    var selectionType, selectionFormatId;
+
+                    // Setup dependencies for the field that changed
                     methods[ 'setup_dependencies' ]( $( this ) );
+
+                    // Also force a dependency update for the appropriate format when "selection type" changes
+                    if ( selectionTypeRegex.test( elementId ) ) {
+                        selectionType = $( this ).val();
+                        selectionFormatId = elementId.replace( selectionTypeRegex, 'pick-format-' + selectionType );
+                        methods[ 'setup_dependencies' ]( $( '#' + selectionFormatId ) );
+                    }
+
                 } );
 
                 if ( 'undefined' != typeof init && init ) {

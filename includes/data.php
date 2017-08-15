@@ -1734,7 +1734,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
             return $original_value[ $params->field_index ];
         elseif ( null !== $params->field_index && isset( $value[ $params->field_index ] ) )
             return $value[ $params->field_index ];
-        elseif ( !isset( $value[ 0 ] ) )
+        elseif ( !is_array( $value ) )
             $value = array( $value );
 
         foreach ( $value as $k => $v ) {

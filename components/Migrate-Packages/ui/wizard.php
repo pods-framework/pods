@@ -91,7 +91,7 @@
                                 <div class="inside pods-manage-field pods-dependency">
                                     <div class="pods-field-option">
                                         <?php
-                                            echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
+                                            echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 100%; max-width: 100%; height: 300px;' ) ) );
                                         ?>
                                     </div>
                                 </div>

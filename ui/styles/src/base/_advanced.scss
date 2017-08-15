@@ -1,0 +1,215 @@
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.dialogWithDropShadow {
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#pods-parts-right {
+    width: 250px;
+    margin-right: 10px;
+}
+
+.pods-parts-icon {
+    display: inline-block;
+    padding: 10px 0 10px 25px;
+    text-decoration: none;
+}
+
+.pods-parts-icon-edit {
+    background: url(#{$ImagesPath}/page_white_edit.png) left center no-repeat;
+}
+
+.pods-parts-icon-add {
+    background: url(#{$ImagesPath}/bullet_add.png) left center no-repeat;
+}
+
+#pods-parts-left {
+    margin-right: -260px;
+    width: 100%;
+}
+
+#pods-parts-content-editors {
+    margin-right: 280px;
+}
+
+.editor-wide {
+    width: 100%;
+    height: 369px;
+    background: #f6f6f6;
+    color: #666;
+}
+
+.editor-wide:focus {
+    background: #f9f9f9;
+    color: #333;
+}
+
+#pods-parts-popup label {
+    width: 70px;
+    display: block;
+    float: left;
+    text-align: right;
+    margin-right: 10px;
+    clear: left;
+    margin-top: 3px;
+    font-size: 12px;
+    font-family: Georgia;
+    font-style: italic;
+    color: #6c6c6c;
+    letter-spacing: .2px;
+}
+
+#pods-parts-popup input[type=text], #pods-parts-popup select {
+    width: 188px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    padding: 2px;
+}
+
+#pods-parts-popup input[type=text] {
+    padding: 5px;
+}
+
+#pods-parts-popup .button-primary {
+    float: right;
+    text-align: center;
+}
+
+#pods-parts-popup p {
+    color: #858585;
+}
+
+#pods-parts-popup .blue {
+    display: block;
+}
+
+#pods-parts-popup .blue a {
+    color: #21759B;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#pods-parts-popup .gray {
+    color: #9c9c9c;
+    font-size: 11px;
+}
+
+#pods-parts-popup table {
+    padding: 0;
+    margin: 0;
+}
+
+#pods-parts-popup table td .bluehighlight {
+    padding: 4px 6px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+#pods-parts-popup table td .bluehighlight .actions {
+    display: none;
+    font-size: 11px;
+}
+
+#pods-parts-popup table td .bluehighlight .actions a {
+    color: #21759B;
+    text-decoration: none;
+}
+
+#pods-parts-popup table td .bluehighlight .actions a.deletepodspart {
+    color: #ff0000;
+}
+
+#pods-parts-popup table td .bluehighlight .actions a:hover {
+    text-decoration: underline;
+}
+
+#pods-parts-popup table td .bluehighlight:hover {
+    background: #f6f6f6;
+}
+
+#pods-parts-popup table td .bluehighlight:hover .actions {
+    display: inline;
+    float: right;
+    text-align: right;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+}
+
+#ui-dialog-title-pods-parts-popup {
+    font-family: Georgia !important;
+    font-weight: normal;
+}
+
+.button-secondary {
+    text-align: center;
+}
+
+.lightgraybackground {
+    background: #f6f6f6;
+    padding: 2px 7px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#pods-parts-search {
+    width: 390px;
+    float: left;
+}
+
+#pods-parts-search label, #pods-parts-filter label, #pods-parts-display-per-page label {
+    width: auto;
+    margin-top: 6px;
+    font-family: Georgia;
+    color: #6c6c6c;
+    font-style: italic;
+    letter-spacing: .5px;
+}
+
+#pods-parts-display-per-page select {
+    width: 50px;
+}
+
+#pods-parts-search .button-secondary {
+    width: 120px;
+    margin-left: 5px;
+}
+
+#pods-parts-filter {
+    width: 320px;
+    float: right;
+    text-align: right;
+}
+
+#pods-parts-filter select {
+    width: 115px;
+}
+
+#pods-parts-filter .button-secondary {
+    width: 60px;
+    margin-left: 5px;
+}
+
+.pods-parts-pagination .current-page {
+    width: 40px !important;
+    margin: 0 2px;
+}
+
+.pods-parts-pagination a {
+    margin: 0 2px;
+}

@@ -1,0 +1,31 @@
+{
+  "esversion": 6,
+  "mocha": true,
+  "module": true,
+  "node": true,
+  "browser": true,
+
+  "trailing": true,
+  "white": true,
+  "noempty": true,
+  "nomen": true,
+  "noarg": true,
+  "smarttabs": true,
+  "eqeqeq": true,
+  "newcap": true,
+  "nocomma": true,
+  "immed": true,
+  "nonbsp": true,
+  "bitwise": true,
+  "curly": true,
+  "undef": true,
+  "nonew": true,
+  "forin": true,
+
+  "globals": {
+    "jQuery": false,
+    "_": false,
+    "Backbone": false,
+    "Marionette": false
+  }
+}

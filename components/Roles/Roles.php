@@ -183,9 +183,9 @@ class Pods_Roles extends PodsComponent {
             return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ][ 'name' ] ) );
         }
 
-        $wp_user_search = new WP_User_Search( '', '', $id );
+        $wp_user_query = new WP_User_Query( array( 'role' => $id ) );
 
-        $users = $wp_user_search->get_results();
+        $users = $wp_user_query->get_results();
 
         if ( !empty( $users ) && is_array( $users ) ) {
             foreach ( $users as $user ) {

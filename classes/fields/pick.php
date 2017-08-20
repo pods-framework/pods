@@ -936,19 +936,23 @@ class PodsField_Pick extends PodsField {
 		 * Filter on whether to allow modals to be used on the front of the site (in an non-admin area).
 		 *
 		 * @param boolean $show_on_front
+		 * @param array $config
+		 * @param array $args
 		 *
 		 * @since 2.7
 		 */
-		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false );
+		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false, $config, $args );
 
 		/**
 		 * Filter on whether to allow nested modals to be used (modals within modals).
 		 *
 		 * @param boolean $allow_nested_modals
+		 * @param array $config
+		 * @param array $args
 		 *
 		 * @since 2.7
 		 */
-		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false );
+		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false, $config, $args );
 
 		// Disallow add/edit outside the admin and when we're already in a modal
 		if ( ( ! $show_on_front && ! is_admin() ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {

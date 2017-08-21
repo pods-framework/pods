@@ -631,7 +631,15 @@ class PodsData {
 
         $cache_key = $results = false;
 
-        $params = apply_filters( 'pods_data_pre_select_params', $params );
+        /**
+         * Filter select parameters before the query
+         *
+         * @param array|object $params
+         * @param PodsData|object $this The current PodsData class instance.
+         *
+         * @since unknown
+         */
+        $params = apply_filters( 'pods_data_pre_select_params', $params, $this );
 
         // Debug purposes
         if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
@@ -666,6 +674,15 @@ class PodsData {
                 pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
         }
 
+        /**
+         * Filter results of Pods Query
+         *
+         * @param array $results
+         * @param array|object $params
+         * @param PodsData|object $this The current PodsData class instance.
+         *
+         * @since unknown
+         */
         $results = apply_filters( 'pods_data_select', $results, $params, $this );
 
         $this->data = $results;

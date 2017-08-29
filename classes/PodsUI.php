@@ -3649,6 +3649,10 @@ class PodsUI {
 
                                 $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
+                                if ( !empty( $attributes[ 'custom_display_formatted' ] ) && is_callable( $attributes[ 'custom_display_formatted' ] ) ) {
+									$row_value = call_user_func_array( $attributes[ 'custom_display_formatted' ], array( $row, &$this, $row_value, $field, $attributes ) );
+                                }
+
                                 if ( 'title' === $attributes[ 'field_id' ] ) {
 									$default_action = $this->do_hook( 'default_action', 'edit', $row );
 

@@ -1294,6 +1294,9 @@ class Pods implements Iterator {
 									'expires' => 180  // @todo This could potentially cause issues if someone changes the data within this time and persistent storage is used
 								);
 
+								if ( !empty( $table[ 'where_default'] ) ) {
+									$sql[ 'where_default' ] = $table[ 'where_default' ];
+								}
 								// Output types
 								if ( in_array( $params->output, array( 'ids', 'objects', 'pods' ), true ) )
 									$sql[ 'select' ] = '`t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`';

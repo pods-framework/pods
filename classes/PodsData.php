@@ -868,7 +868,7 @@ class PodsData {
 
 		$params->where_defaulted = false;
 
-		if ( ! isset( $params->where_default ) || false !== $params->where_default ) {
+		if ( empty( $params->where_default ) && false !== $params->where_default ) {
 			$params->where_default = $this->where_default;
 		}
 

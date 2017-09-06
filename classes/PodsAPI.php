@@ -3532,55 +3532,58 @@ class PodsAPI {
             $object_data[ $object_name_field ] = $object_name;
         }
 
-        if ( ( 'meta' == $pod[ 'storage' ] || 'settings' == $pod[ 'type' ] || ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] ) ) && !in_array( $pod[ 'type' ], array( 'pod', 'table', '' ) ) ) {
-            if ( $allow_custom_fields && !empty( $custom_data ) )
-                $object_meta = array_merge( $custom_data, $object_meta );
-
-			$fields_to_send = array_flip( array_keys( $object_meta ) );
-
+		if ( ! in_array( $pod['type'], array( 'pod', 'table', '' ) ) ) {
+			$meta_fields = array();
+		
+			if ( 'meta' === $pod['storage'] || 'settings' === $pod['type'] || ( 'taxonomy' === $pod['type'] && 'none' === $pod['storage'] ) ) {
+				$meta_fields = $object_meta;
+			}
+		
+			if ( $allow_custom_fields && ! empty( $custom_data ) ) {
+				$meta_fields = array_merge( $custom_data, $meta_fields );
+			}
+		
+			$fields_to_send = array_flip( array_keys( $meta_fields ) );
+		
 			foreach ( $fields_to_send as $field => $field_data ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$field_data = $object_fields[ $field ];
-				}
-				elseif ( isset( $fields[ $field ] ) ) {
+				} elseif ( isset( $fields[ $field ] ) ) {
 					$field_data = $fields[ $field ];
-				}
-				else {
+				} else {
 					unset( $fields_to_send[ $field ] );
 				}
-
+		
 				$fields_to_send[ $field ] = $field_data;
 			}
+		
+			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, false, true, $fields_to_send );
+		
+			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
+				$params->id = $pod['id'];
+			}
+		}
 
-            $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true, $fields_to_send );
+		if ( 'table' == $pod['storage'] ) {
+			// Every row should have an id set here, otherwise Pods with nothing
+			// but relationship fields won't get properly ID'd
+			if ( empty( $params->id ) ) {
+				$params->id = 0;
+			}
 
-            if ( !empty( $params->id ) && 'settings' == $object_type )
-                $params->id = $pod[ 'id' ];
-        }
-        else {
-            if ( ! in_array( $pod[ 'type' ], array( 'pod', 'table', '' ) ) ) {
-                $params->id = $this->save_wp_object( $object_type, $object_data, array(), false, true );
-            }
+			$table_data = array( 'id' => $params->id ) + $table_data;
+			array_unshift( $table_formats, '%d' );
 
-            if ( 'table' == $pod[ 'storage' ] ) {
-                // Every row should have an id set here, otherwise Pods with nothing
-                // but relationship fields won't get properly ID'd
-                if ( empty( $params->id ) )
-                    $params->id = 0;
+			if ( ! empty( $table_data ) ) {
+				$sql = pods_data()->insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
 
-                $table_data = array( 'id' => $params->id ) + $table_data;
-                array_unshift( $table_formats, '%d' );
+				$id = pods_query( $sql, 'Cannot add/save table row' );
 
-                if ( !empty( $table_data ) ) {
-                    $sql = pods_data()->insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
-
-                    $id = pods_query( $sql, 'Cannot add/save table row' );
-
-                    if ( empty( $params->id ) )
-                        $params->id = $id;
-                }
-            }
-        }
+				if ( empty( $params->id ) ) {
+					$params->id = $id;
+				}
+			}
+		}
 
         $params->id = (int) $params->id;
 

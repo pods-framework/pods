@@ -2003,7 +2003,7 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
-				$options['table_info'] = pods_api()->get_table_info( pods_v( self::$type . '_object', $options ), $pick_val, null, null, $options );
+				$options['table_info'] = pods_api()->get_table_info( pods_v( self::$type . '_object', $options ), $pick_val, null, null, $object_params );
 
 				$search_data = pods_data();
 				$search_data->table( $options['table_info'] );

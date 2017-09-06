@@ -585,6 +585,13 @@ class PodsField_Pick extends PodsField {
 				'data_callback' => array( $this, 'data_us_states' ),
 			);
 
+			self::$related_objects['ca_province'] = array(
+				'label'         => __( 'CA Provinces', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_ca_provinces' ),
+			);
+
 			self::$related_objects['days_of_week'] = array(
 				'label'         => __( 'Calendar - Days of Week', 'pods' ),
 				'group'         => __( 'Predefined Lists', 'pods' ),
@@ -3004,6 +3011,41 @@ class PodsField_Pick extends PodsField {
 			'WV' => __( 'West Virginia' ),
 			'WI' => __( 'Wisconsin' ),
 			'WY' => __( 'Wyoming' ),
+		);
+
+		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
+	}
+
+	/**
+	 * Data callback for CA Provinces
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3
+	 */
+	public function data_ca_provinces( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array(
+			'AB' => __( 'Alberta' ),
+			'BC' => __( 'British Columbia' ),
+			'MB' => __( 'Manitoba' ),
+			'NB' => __( 'New Brunswick' ),
+			'NL' => __( 'Newfoundland and Labrador' ),
+			'NT' => __( 'Northwest Territories' ),
+			'NS' => __( 'Nova Scotia' ),
+			'NU' => __( 'Nunavut' ),
+			'ON' => __( 'Ontario' ),
+			'PE' => __( 'Prince Edward Island' ),
+			'QC' => __( 'Quebec' ),
+			'SK' => __( 'Saskatchewan' ),
+			'YT' => __( 'Yukon' ),
 		);
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );

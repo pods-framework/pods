@@ -57,3 +57,7 @@ global $current_user;
 
 $current_user = new WP_User(1);
 $current_user->set_role('administrator');
+
+$classLoader = require PODS_TEST_PLUGIN_DIR . '/vendor/autoload.php';
+$classLoader->addPsr4( 'Pods_Unit_Tests\\', dirname( __FILE__ ) . '/includes', true );
+

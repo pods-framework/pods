@@ -960,7 +960,11 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
-		$iframe = array( 'url' => '', 'query_args' => array() );
+		$iframe = array(
+			'src'        => '',
+			'url'        => '',
+			'query_args' => array(),
+		);
 
 		// Set the file name and args based on the content type of the relationship
 		switch ( $args->options['pick_object'] ) {
@@ -1044,8 +1048,8 @@ class PodsField_Pick extends PodsField {
 
 		}
 
-		$config['iframe_src']   = $iframe['src'];
-		$config['iframe_title_add'] = $iframe['title_add'];
+		$config['iframe_src']        = $iframe['src'];
+		$config['iframe_title_add']  = $iframe['title_add'];
 		$config['iframe_title_edit'] = $iframe['title_edit'];
 
 		return $config;

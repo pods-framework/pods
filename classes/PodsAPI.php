@@ -7761,6 +7761,8 @@ class PodsAPI {
             // Pick field post_status option
             if ( ! empty( $field['options']['pick_post_status'] ) ) {
                 $post_status = (array) $field['options']['pick_post_status'];
+            } elseif ( ! empty( $field['pick_post_status'] ) ) {
+                $post_status = (array) $field['pick_post_status'];
             }
 
 		    /**

@@ -3625,7 +3625,7 @@ class Pods implements Iterator {
 		 *
 		 * @since 2.7
 		 */
-		$pre = apply_filters( "pods_pre_do_magic_tags", null, $code, $this );
+		$pre = apply_filters( 'pods_pre_do_magic_tags', null, $code, $this );
 		if ( null !== $pre ) {
 			return $pre;
 		}

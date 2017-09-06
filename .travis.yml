@@ -3,7 +3,7 @@ language: php
 sudo: false
 
 php:
-    - 7.0
+    - 7.1
 
 env:
     - WP_VERSION=nightly WP_MULTISITE=0
@@ -15,12 +15,12 @@ matrix:
      - env: WP_VERSION=nightly WP_MULTISITE=0
 
     include:
-    - php: 7.1
+    - php: 7.0
       env: WP_VERSION=latest WP_MULTISITE=0
     - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=0
-    - php: 5.3
-      env: WP_VERSION=3.8 WP_MULTISITE=0
+    - php: 5.
+      env: WP_VERSION=4.5 WP_MULTISITE=0
       dist: precise
 
     # MySQL 5.7
@@ -28,19 +28,28 @@ matrix:
     # MySQL 8.0
     #- env: DB=mysql-8.0-dmr WP_VERSION=latest WP_MULTISITE=0
 
-## Cache composer bits
+## Cache composer and node bits
 cache:
-  apt: true
-  directories:
-    - vendor
-    - $HOME/.composer/cache
+    apt: true
+    directories:
+        - vendor
+        - node_modules
+        - $HOME/.composer/cache
+
+install:
+    # We need the latest stable node
+    - . $HOME/.nvm/nvm.sh
+    - nvm install stable
+    - nvm use stable
+
+    # Dependencies
+    - npm install
 
 before_script:
-    - phpenv config-rm xdebug.ini
-    - composer self-update
-    - composer install --no-interaction --prefer-source
+    - bash bin/init.sh
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
     - vendor/bin/phpunit
+    - npm run test-dfv

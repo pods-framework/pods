@@ -1259,8 +1259,13 @@ class Pods implements Iterator {
 									$where = array( implode( ' OR ', $where ) );
 								}
 
-								if ( !empty( $table[ 'where' ] ) ) {
-									$where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );
+								if ( ! empty( $table['where'] ) ) {
+									$where = array_merge( $where, array_values( (array) $table['where'] ) );
+								}
+
+								// Add where_default too, so default pod info not used (allows field-specific default to be used instead)
+								if ( ! empty( $table['where_default'] ) ) {
+									$where = array_merge( $where, array_values( (array) $table['where_default'] ) );
 								}
 							}
 

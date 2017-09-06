@@ -866,6 +866,7 @@ class PodsData {
             $params->join = $this->join;
 
 		$params->where_defaulted = false;
+
 		if ( empty( $params->where_default ) ) {
 			$params->where_default = $this->where_default;
 		}

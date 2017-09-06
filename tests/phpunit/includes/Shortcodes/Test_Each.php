@@ -25,14 +25,18 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			'name'   => 'number1',
 			'type'   => 'number'
 		);
+
 		pods_api()->save_field( $params );
+
 		$params = array(
 			'pod'    => self::$pod_name,
 			'pod_id' => self::$pod_id,
 			'name'   => 'number2',
 			'type'   => 'number'
 		);
+
 		pods_api()->save_field( $params );
+
 		$params = array(
 			'pod'    => self::$pod_name,
 			'pod_id' => self::$pod_id,
@@ -42,6 +46,7 @@ class Test_Each extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			'pick_val' => self::$pod_name,
 			'pick_format_type' => 'multi',
 		);
+
 		pods_api()->save_field( $params );
 
 	}

@@ -3618,6 +3618,22 @@ class Pods implements Iterator {
 	 * @since 2.0
 	 */
 	public function do_magic_tags ( $code ) {
+
+		/**
+		 * Filters the Pods magic tags content before the default function.
+		 * Allows complete replacement of the Pods magic tag engine.
+		 *
+		 * @param null   $pre  Default is null which processes magic tags normally. Return any other value to override.
+		 * @param string $code The content to evaluate
+		 * @param Pods   $pods The Pods Object
+		 *
+		 * @since 2.7
+		 */
+		$pre = apply_filters( 'pods_pre_do_magic_tags', null, $code, $this );
+		if ( null !== $pre ) {
+			return $pre;
+		}
+
 		return preg_replace_callback( '/({@(.*?)})/m', array( $this, 'process_magic_tags' ), $code );
 	}
 

@@ -1,5 +1,5 @@
 <?php
-wp_enqueue_style( 'pods-form', false, array(), false, true );
+wp_enqueue_style( 'pods-form' );
 
 if ( wp_script_is( 'pods', 'registered' ) && !wp_script_is( 'pods', 'done' ) ) {
     wp_print_scripts( 'pods' );

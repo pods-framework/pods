@@ -96,7 +96,7 @@ class Pods_Templates extends PodsComponent {
 		if ( is_admin() ) {
 			add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
 
-			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+			add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ) );
 
 			add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
 
@@ -196,7 +196,7 @@ class Pods_Templates extends PodsComponent {
 	 * @since 2.0
 	 */
 	public function admin_assets () {
-		wp_enqueue_style( 'pods-admin' );
+		wp_enqueue_style( 'pods-styles' );
 	}
 
 	/**
@@ -382,7 +382,7 @@ class Pods_Templates extends PodsComponent {
 					'post_content' => $meta_value
 				);
 
-				remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
+				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
 
 				$revisions = false;
 

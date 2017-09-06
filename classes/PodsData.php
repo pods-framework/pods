@@ -3138,6 +3138,16 @@ class PodsData {
         if ( empty( $sql ) )
             $sql = $this->sql;
 
+	/**
+	 * Allow SQL query to be manipulated.
+	 *
+	 * @param string   $sql       SQL Query string
+	 * @param PodsData $pods_data PodsData object
+	 *
+	 * @since 2.7
+	 */
+	$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
+
         $sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
 
         $sql = str_replace( '{prefix}', '@wp_', $sql );

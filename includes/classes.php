@@ -185,6 +185,15 @@ function pods_array ( $container ) {
 }
 
 /**
+ * @since 2.7
+ */
+function pods_i18n() {
+    require_once( PODS_DIR . 'classes/PodsI18n.php' );
+
+    return PodsI18n::get_instance();
+}
+
+/**
  * Include a file that's child/parent theme-aware, and can be cached into object cache or transients
  *
  * @see PodsView::view

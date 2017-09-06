@@ -91,7 +91,16 @@ class PodsField_Text extends PodsField {
                 'default' => 255,
                 'type' => 'number',
                 'help' => __( 'Set to -1 for no limit', 'pods' )
-            )/*,
+            ),
+			self::$type . '_placeholder' => array(
+				'label' => __( 'HTML Placeholder', 'pods' ),
+				'default' => '',
+				'type' => 'text',
+				'help' => array(
+					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
+					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
+				),
+			),/*,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

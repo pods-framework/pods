@@ -755,6 +755,7 @@ class PodsData {
             'table' => null,
             'join' => null,
             'where' => null,
+            'where_default' => null,
             'groupby' => null,
             'having' => null,
             'orderby' => null,
@@ -867,14 +868,14 @@ class PodsData {
 
 		$params->where_defaulted = false;
 
-		if ( empty( $params->where_default ) ) {
+		if ( ! isset( $params->where_default ) || array() !== $params->where_default ) {
 			$params->where_default = $this->where_default;
 		}
 
 		if ( false === $params->strict ) {
 			// Set default where
-            if ( !empty( $this->where_default ) && empty( $params->where ) ) {
-				$params->where = array_values( (array) $this->where_default );
+            if ( !empty( $params->where_default ) && empty( $params->where ) ) {
+				$params->where = array_values( (array) $params->where_default );
 
 				$params->where_defaulted = true;
 			}

@@ -585,6 +585,13 @@ class PodsField_Pick extends PodsField {
 				'data_callback' => array( $this, 'data_us_states' ),
 			);
 
+			self::$related_objects['ca_province'] = array(
+				'label'         => __( 'CA Provinces', 'pods' ),
+				'group'         => __( 'Predefined Lists', 'pods' ),
+				'simple'        => true,
+				'data_callback' => array( $this, 'data_ca_provinces' ),
+			);
+
 			self::$related_objects['days_of_week'] = array(
 				'label'         => __( 'Calendar - Days of Week', 'pods' ),
 				'group'         => __( 'Predefined Lists', 'pods' ),
@@ -936,19 +943,23 @@ class PodsField_Pick extends PodsField {
 		 * Filter on whether to allow modals to be used on the front of the site (in an non-admin area).
 		 *
 		 * @param boolean $show_on_front
+		 * @param array $config
+		 * @param array $args
 		 *
 		 * @since 2.7
 		 */
-		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false );
+		$show_on_front = apply_filters( 'pods_ui_dfv_pick_modals_show_on_front', false, $config, $args );
 
 		/**
 		 * Filter on whether to allow nested modals to be used (modals within modals).
 		 *
 		 * @param boolean $allow_nested_modals
+		 * @param array $config
+		 * @param array $args
 		 *
 		 * @since 2.7
 		 */
-		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false );
+		$allow_nested_modals = apply_filters( 'pods_ui_dfv_pick_modals_allow_nested', false, $config, $args );
 
 		// Disallow add/edit outside the admin and when we're already in a modal
 		if ( ( ! $show_on_front && ! is_admin() ) || ( ! $allow_nested_modals && pods_is_modal_window() ) ) {
@@ -956,8 +967,11 @@ class PodsField_Pick extends PodsField {
 			$config[ $args->type . '_show_edit_link' ] = false;
 		}
 
-		$file_name  = '';
-		$query_args = array();
+		$iframe = array(
+			'src'        => '',
+			'url'        => '',
+			'query_args' => array(),
+		);
 
 		// Set the file name and args based on the content type of the relationship
 		switch ( $args->options['pick_object'] ) {
@@ -966,8 +980,8 @@ class PodsField_Pick extends PodsField {
 					$post_type_obj = get_post_type_object( $args->options['pick_val'] );
 
 					if ( $post_type_obj && current_user_can( $post_type_obj->cap->create_posts ) ) {
-						$file_name  = 'post-new.php';
-						$query_args = array(
+						$iframe['url']  = admin_url( 'post-new.php' );
+						$iframe['query_args'] = array(
 							'post_type' => $args->options['pick_val'],
 						);
 					}
@@ -981,8 +995,8 @@ class PodsField_Pick extends PodsField {
 					$taxonomy_obj = get_taxonomy( $args->options['pick_val'] );
 
 					if ( $taxonomy_obj && current_user_can( $taxonomy_obj->cap->edit_terms ) ) {
-						$file_name  = 'edit-tags.php';
-						$query_args = array(
+						$iframe['url']  = admin_url( 'edit-tags.php' );
+						$iframe['query_args'] = array(
 							'taxonomy' => $args->options['pick_val'],
 						);
 					}
@@ -992,7 +1006,7 @@ class PodsField_Pick extends PodsField {
 
 			case 'user':
 				if ( current_user_can( 'create_users' ) ) {
-					$file_name  = 'user-new.php';
+					$iframe['url']  = admin_url( 'user-new.php' );
 				}
 
 				break;
@@ -1000,8 +1014,8 @@ class PodsField_Pick extends PodsField {
 			case 'pod':
 				if ( ! empty( $args->options['pick_val'] ) ) {
 					if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $args->options['pick_val'] ) ) ) {
-						$file_name  = 'admin.php';
-						$query_args = array(
+						$iframe['url']  = admin_url( 'admin.php' );
+						$iframe['query_args'] = array(
 							'page'   => 'pods-manage-' . $args->options['pick_val'],
 							'action' => 'add',
 						);
@@ -1012,23 +1026,38 @@ class PodsField_Pick extends PodsField {
 				break;
 		}
 
-		$iframe_src = '';
-
 		// Potential valid modal target if we've set the file name
-		if ( ! empty( $file_name ) ) {
+		if ( ! empty( $iframe['url'] ) ) {
+			// @todo: Replace string literal with defined constant
+			$iframe['query_args']['pods_modal'] = 1;
+
+			// Add args we always need
+			$iframe['src'] = add_query_arg( $iframe['query_args'], $iframe['url'] );
+		}
+
+		$iframe['title_add'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
+		$iframe['title_edit'] = sprintf( __( '%s: Edit', 'pods' ), $args->options['label'] );
+
+		/**
+		 * Allow filtering iframe configuration
+		 *
+		 * @param array $iframe
+		 * @param array $config
+		 * @param array $args
+		 *
+		 * @since 2.7
+		 */
+		$iframe = apply_filters( 'pods_ui_dfv_pick_modals_iframe', $iframe, $config, $args );
+
+		if ( ! empty( $iframe['src'] ) ) {
 			// We extend wp.media.view.Modal for modal add/edit, we must ensure we load the template for it
 			wp_enqueue_media();
 
-			// @todo: Replace string literal with defined constant
-			$query_args['pods_modal'] = 1;
-
-			// Add args we always need
-			$iframe_src = add_query_arg( $query_args, admin_url( $file_name ) );
 		}
 
-		$config['iframe_src']   = $iframe_src;
-		$config['iframe_title_add'] = sprintf( __( '%s: Add New', 'pods' ), $args->options['label'] );
-		$config['iframe_title_edit'] = sprintf( __( '%s: Edit', 'pods' ), $args->options['label'] );
+		$config['iframe_src']        = $iframe['src'];
+		$config['iframe_title_add']  = $iframe['title_add'];
+		$config['iframe_title_edit'] = $iframe['title_edit'];
 
 		return $config;
 
@@ -1974,7 +2003,7 @@ class PodsField_Pick extends PodsField {
 					}
 				}
 
-				$options['table_info'] = pods_api()->get_table_info( pods_v( self::$type . '_object', $options ), $pick_val, null, null, $options );
+				$options['table_info'] = pods_api()->get_table_info( pods_v( self::$type . '_object', $options ), $pick_val, null, null, $object_params );
 
 				$search_data = pods_data();
 				$search_data->table( $options['table_info'] );
@@ -2268,11 +2297,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( 'admin_ajax_relationship' === $context ) {
-							$items[] = array(
-								'id'    => $result[ $search_data->field_id ],
-								'text'  => $result[ $search_data->field_index ],
-								'image' => '',
-							);
+							$items[] = $this->build_dfv_field_item_data_recurse_item( $result['ID'], $result['post_title'], (object) $object_params );
 						} else {
 							$data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
 						}
@@ -2300,8 +2325,7 @@ class PodsField_Pick extends PodsField {
 				foreach ( $data as $k => $v ) {
 					$items[] = array(
 						'id'    => $k,
-						'text'  => $v,
-						'image' => '',
+						'text'  => $v
 					);
 				}
 			}
@@ -2987,6 +3011,41 @@ class PodsField_Pick extends PodsField {
 			'WV' => __( 'West Virginia' ),
 			'WI' => __( 'Wisconsin' ),
 			'WY' => __( 'Wyoming' ),
+		);
+
+		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+
+	}
+
+	/**
+	 * Data callback for CA Provinces
+	 *
+	 * @param string       $name    The name of the field
+	 * @param string|array $value   The value of the field
+	 * @param array        $options Field options
+	 * @param array        $pod     Pod data
+	 * @param int          $id      Item ID
+	 *
+	 * @return array
+	 *
+	 * @since 2.3
+	 */
+	public function data_ca_provinces( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
+		$data = array(
+			'AB' => __( 'Alberta' ),
+			'BC' => __( 'British Columbia' ),
+			'MB' => __( 'Manitoba' ),
+			'NB' => __( 'New Brunswick' ),
+			'NL' => __( 'Newfoundland and Labrador' ),
+			'NT' => __( 'Northwest Territories' ),
+			'NS' => __( 'Nova Scotia' ),
+			'NU' => __( 'Nunavut' ),
+			'ON' => __( 'Ontario' ),
+			'PE' => __( 'Prince Edward Island' ),
+			'QC' => __( 'Quebec' ),
+			'SK' => __( 'Saskatchewan' ),
+			'YT' => __( 'Yukon' ),
 		);
 
 		return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );

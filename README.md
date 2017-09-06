@@ -1,4 +1,4 @@
-# [Pods Framework](http://pods.io) #
+# [Pods Framework](https://pods.io) #
 [![Travis](https://secure.travis-ci.org/pods-framework/pods.png?branch=2.x)](http://travis-ci.org/pods-framework/pods)
 [![Dependency Status](https://gemnasium.com/badges/github.com/pods-framework/pods.svg)](https://gemnasium.com/github.com/pods-framework/pods)
 [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://github.com/pods-framework/pods/blob/2.x/license.txt)
@@ -15,9 +15,9 @@
 
 ## Description
 
-Check out <http://pods.io/> for our User Guide and many other resources to help you develop with Pods.
+Check out <https://pods.io/> for our User Guide and many other resources to help you develop with Pods.
 
-For detailed setup instructions, visit the official [Documentation](http://pods.io/docs/) page.
+For detailed setup instructions, visit the official [Documentation](https://pods.io/docs/) page.
 
 1. You can clone the GitHub repository: `https://github.com/pods-framework/pods.git`
 2. Or download it directly as a ZIP file: `https://github.com/pods-framework/pods/archive/2.x.zip`
@@ -39,7 +39,7 @@ Anyone is welcome to contribute to Pods Framework. Please read the [guidelines f
 There are various ways you can contribute:
 
 1. Raise an [Issue](https://github.com/pods-framework/pods/issues) on GitHub
-2. Send us a Pull Request with your bug fixes and/or enhancements
+2. Send us a [Pull Request](https://github.com/pods-framework/pods/pulls) with your bug fixes and/or enhancements
 3. Translate Pods Framework into different languages via [WP Translate](https://translate.wordpress.org/projects/wp-plugins/pods), just sign in with your wordpress.org account and add translations where you can
 4. Provide feedback and suggestions on [enhancements](https://github.com/pods-framework/pods/issues?direction=desc&labels=Enhancement&page=1&sort=created&state=open)
 

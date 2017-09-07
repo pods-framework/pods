@@ -3547,17 +3547,17 @@ class PodsAPI {
 
 		if ( ! in_array( $pod['type'], array( 'pod', 'table', '' ) ) ) {
 			$meta_fields = array();
-		
+
 			if ( 'meta' === $pod['storage'] || 'settings' === $pod['type'] || ( 'taxonomy' === $pod['type'] && 'none' === $pod['storage'] ) ) {
 				$meta_fields = $object_meta;
 			}
-		
+
 			if ( $allow_custom_fields && ! empty( $custom_data ) ) {
 				$meta_fields = array_merge( $custom_data, $meta_fields );
 			}
-		
+
 			$fields_to_send = array_flip( array_keys( $meta_fields ) );
-		
+
 			foreach ( $fields_to_send as $field => $field_data ) {
 				if ( isset( $object_fields[ $field ] ) ) {
 					$field_data = $object_fields[ $field ];
@@ -3566,12 +3566,12 @@ class PodsAPI {
 				} else {
 					unset( $fields_to_send[ $field ] );
 				}
-		
+
 				$fields_to_send[ $field ] = $field_data;
 			}
-		
+
 			$params->id = $this->save_wp_object( $object_type, $object_data, $meta_fields, false, true, $fields_to_send );
-		
+
 			if ( ! empty( $params->id ) && 'settings' === $pod['type'] ) {
 				$params->id = $pod['id'];
 			}
@@ -4499,6 +4499,17 @@ class PodsAPI {
 			$registered_meta_keys = get_registered_meta_keys( $pod_type );
 		}
 
+		$show_in_rest = false;
+
+        // If in rest, check if this pod can be exposed
+		if ( 'rest' === $context ) {
+			$read_all = (int) pods_v( 'read_all', $pod->pod_data['options'], 0 );
+
+			if ( 1 === $read_all ) {
+				$show_in_rest = true;
+			}
+		}
+
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
                 $field = array(
@@ -4508,11 +4519,19 @@ class PodsAPI {
             }
 
             if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
-	            if ( 'rest' === $context && false !== $registered_meta_keys ) {
-		            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
-			            continue;
-		            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {
-			            continue;
+            	// If in rest, check if this field can be exposed
+	            if ( 'rest' === $context && false === $show_in_rest ) {
+	            	$show_in_rest = PodsRESTFields::field_allowed_to_extend( $field[ 'name' ], $pod, 'read' );
+
+	            	if ( false === $show_in_rest ) {
+	            		// Fallback to checking $registered_meta_keys
+			            if ( false !== $registered_meta_keys ) {
+				            if ( ! isset( $registered_meta_keys[ $field['name'] ] ) ) {
+					            continue;
+				            } elseif ( empty( $registered_meta_keys[ $field['name'] ]['show_in_rest'] ) ) {
+					            continue;
+				            }
+			            }
 		            }
 	            }
 
@@ -4577,11 +4596,11 @@ class PodsAPI {
                         foreach ( $related_ids as $related_id ) {
                             if ( $related_pod->fetch( $related_id ) ) {
 	                            $related_params = array(
-		                            'related_fields' => $related_fields,
-		                            'depth'          => $depth,
-		                            'flatten'        => $flatten,
-		                            'current_depth'  => $current_depth + 1,
-		                            'context'        => $context,
+		                            'fields'        => $related_fields,
+		                            'depth'         => $depth,
+		                            'flatten'       => $flatten,
+		                            'current_depth' => $current_depth + 1,
+		                            'context'       => $context,
 	                            );
 
                                 $related_item = $this->export_pod_item_level( $related_pod, $related_params );

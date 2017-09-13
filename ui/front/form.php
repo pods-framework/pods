@@ -7,6 +7,17 @@ if ( wp_script_is( 'pods', 'registered' ) && !wp_script_is( 'pods', 'done' ) ) {
 
 // unset fields
 foreach ( $fields as $k => $field ) {
+
+	// Make sure all required array keys exist.
+	$field = wp_parse_args( $field, array(
+		'name' => '',
+		'type' => '',
+		'label' => '',
+		'help' => '',
+		'options' => array(),
+	) );
+	$fields[ $k ] = $field;
+
 	if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) ) {
 		unset( $fields[ $k ] );
 	}

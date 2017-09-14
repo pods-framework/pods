@@ -2303,7 +2303,7 @@ class PodsUI {
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
 
-        $find_params = apply_filters('pods_ui_get_params', $find_params, ( is_object( $this->pod ) ? $this->pod->pod_data : null ), $this);
+        $find_params = apply_filters('pods_ui_get_params', $find_params, ( is_object( $this->pod ) ? $this->pod->pod : null ), $this);
 
 		/**
 		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.

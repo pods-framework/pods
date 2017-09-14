@@ -1452,7 +1452,7 @@ class PodsUI {
 
             if ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
 				$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
-	
+
 				if ( !empty( $this->action_links[ 'manage' ] ) ) {
 					$link = $this->action_links[ 'manage' ];
 				}
@@ -2303,7 +2303,7 @@ class PodsUI {
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
 
-        $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
+        $find_params = apply_filters('pods_ui_get_params', $find_params, ( is_object( $this->pod ) ? $this->pod->pod_data : null ), $this);
 
 		/**
 		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.

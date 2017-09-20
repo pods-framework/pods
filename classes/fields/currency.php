@@ -248,7 +248,7 @@ class PodsField_Currency extends PodsField {
 		}
 
 		if ( 0 < $decimals ) {
-			$format = '%01.' . $decimals . 'F';
+			$format = '%F';
 		}
 		else {
 			$format = '%d';

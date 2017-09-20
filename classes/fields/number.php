@@ -185,7 +185,7 @@ class PodsField_Number extends PodsField {
 		$decimals = $this->get_max_decimals( $options );
 
 		if ( 0 < $decimals ) {
-			$format = '%01.' . $decimals . 'F';
+			$format = '%F';
 		}
 
 		return $format;

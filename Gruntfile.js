@@ -167,13 +167,13 @@ module.exports = function ( grunt ) {
 				overwrite   : true,
 				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?branch=release/3.0"
+					to  : "?branch=release/2.7"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?b=release/3.0"
+					to  : "?b=release/2.7"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to  : "/blob/release/3.0/"
+					to  : "/blob/release/2.7/"
 				} ]
 
 			},
@@ -182,7 +182,7 @@ module.exports = function ( grunt ) {
 				overwrite   : true,
 				replacements: [ {
 					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: release/3.0"
+					to  : "GitHub Branch: release/2.7"
 				} ]
 			}
 		},

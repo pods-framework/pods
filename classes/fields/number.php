@@ -193,7 +193,7 @@ class PodsField_Number extends PodsField {
             $decimals = $length;
 
         if ( 0 < $decimals )
-            $format = '%01.' . $decimals . 'f';
+            $format = '%F';
         else
             $format = '%d';
 

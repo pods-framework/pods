@@ -304,9 +304,26 @@ class PodsMeta {
         if ( function_exists( 'pll_current_language' ) )
             add_action( 'init', array( $this, 'cache_pods' ), 101 );
 
+        // Priority 20 because PodsInit has priority 15
+        add_action( 'admin_enqueue_scripts', array( $this, 'assets' ), 20 );
+        add_action( 'wp_enqueue_scripts', array( $this, 'assets' ), 20 );
+
         do_action( 'pods_meta_init' );
 
         return $this;
+    }
+
+    /**
+     * Add styles and scripts globally or conditionally
+     * @since 2.6.8
+     */
+    public function assets() {
+
+        // Add Pods form styles to the Media Library
+        if ( is_admin() && get_current_screen()->base == 'upload' ) {
+            wp_enqueue_style( 'pods-form' );
+            //wp_enqueue_script( 'pods' );
+        }
     }
 
     public static function enqueue () {
@@ -1321,6 +1338,46 @@ class PodsMeta {
             }
         }
 
+        /**
+         * Add hierarchical taxonomies as checkboxes
+         * Based on Enhanced Media Library
+         */
+        if ( function_exists( 'wp_terms_checklist' ) ) {
+            foreach ( $form_fields as $field => $args ) {
+                if ( ! empty( $args[ 'hierarchical' ] ) && ( ! isset( $form_fields[ $field ][ 'input' ] ) || $form_fields[ $field ][ 'input' ] != 'html' ) ) {
+
+                    ob_start();
+
+                    wp_terms_checklist( $post->ID, array( 'taxonomy' => $field, 'checked_ontop' => false ) );
+
+                    $content = ob_get_contents();
+
+                    if ( $content ) {
+                        $html = '<ul class="term-list pods-term-list">' . $content . '</ul>';
+                    } else {
+                        $html = '<ul class="term-list pods-term-list"><li>No ' . $args[ 'label' ] . ' found.</li></ul>';
+                    }
+
+                    ob_end_clean();
+
+                    /**
+                     * Ensure data is send and saved.
+                     * Default array structures not working in update
+                     * @todo file bug at WP trac?
+                     */
+                    $counter = 0;
+                    while( false !== strpos( $html, '['.$field.'][]' ) ) {
+                        $html = preg_replace( '/\['.$field.'\]\[\]/', '['.$field.']['.($counter++).']', $html, 1 );
+                    }
+
+                    unset( $form_fields[ $field ][ 'value' ] );
+
+                    $form_fields[ $field ][ 'input' ] = 'html';
+                    $form_fields[ $field ][ 'html' ]  = $html;
+                }
+            }
+        }
+
         $form_fields = apply_filters( 'pods_meta_' . __FUNCTION__, $form_fields );
 
         return $form_fields;
@@ -1434,6 +1491,24 @@ class PodsMeta {
 
         if ( empty( $_REQUEST[ 'attachments' ][ $id ] ) )
             $_REQUEST[ 'attachments' ][ $id ][ '_fix_wp' ] = 1;
+
+        /**
+         * Update taxonomies when changed to checkboxes in the attachment modal
+         * @since 2.6.8
+         */
+        if ( ! empty( $_POST['tax_input'] ) ) {
+            foreach ( $_POST['tax_input'] as $tax => $terms ) {
+                /**
+                 * Validate for an array
+                 * Otherwise we didn't change this functionality since this is a string by default in WP core
+                 */
+                if ( is_taxonomy_hierarchical( $tax ) && is_array( $terms ) ) {
+                    $tax = sanitize_title( $tax );
+                    $terms = array_map( 'intval', $terms );
+                    wp_set_post_terms( $id, $terms, $tax );
+                }
+            }
+        }
     }
 
     /**

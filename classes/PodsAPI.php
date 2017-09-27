@@ -5692,7 +5692,7 @@ class PodsAPI {
                 return false;
             }
 
-            if ( is_array( $pod ) )
+            if ( is_array( $pod ) && ! empty( $pod[0] ) )
                 $pod = $pod[ 0 ];
 
             $_pod = get_object_vars( $pod );
@@ -6236,7 +6236,7 @@ class PodsAPI {
                     'post_parent' => $params->pod_id
                 ) );
 
-                if ( empty( $field ) ) {
+                if ( empty( $field ) || empty( $field[0] ) ) {
                     if ( $strict )
                         return pods_error( __( 'Field not found', 'pods' ), $this );
 
@@ -7571,7 +7571,7 @@ class PodsAPI {
 					)
 				) );
 
-				if ( !empty( $slug_field ) ) {
+				if ( !empty( $slug_field[0] ) ) {
 					$slug_field = $slug_field[ 0 ];
 
 					$info[ 'field_slug' ] = $info[ 'pod_field_slug' ] = $slug_field->post_name;

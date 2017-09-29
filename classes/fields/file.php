@@ -1031,15 +1031,15 @@ class PodsField_File extends PodsField {
 			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field['options'] );
 
 			if ( ! empty( $limit_size ) ) {
-				if ( false !== stripos( $limit_size, 'MB' ) ) {
+				if ( false !== stripos( $limit_size, 'GB' ) ) {
+					$limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
+					$limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+				} elseif ( false !== stripos( $limit_size, 'MB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
 					$limit_size = $limit_size * 1025 * 1025; // convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025; // convert to B
-				} elseif ( false !== stripos( $limit_size, 'GB' ) ) {
-					$limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+					$limit_size = $limit_size * 1025; // convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );
 				} else {

@@ -111,6 +111,20 @@ class PodsRESTHandlers {
 			if ( 'pick' === pods_v( 'type', $field_data ) ) {
 				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
 
+				/**
+				 * What output type to use for a related field REST response.
+				 *
+				 * @since 2.7
+				 *
+				 * @param string                 $output_type The pick response output type.
+				 * @param string                 $field_name  The name of the field
+				 * @param array                  $field_data  The field data
+				 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+				 * @param int                    $id          Current item ID
+				 * @param object|WP_REST_Request Current      request object.
+				 */
+				$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
+
 				if ( 'array' === $output_type ) {
 					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
 

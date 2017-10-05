@@ -265,7 +265,7 @@
                             if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
 
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
-                                if ( 'object' === typeof data ) {
+                                if ( 'object' === typeof data && null !== data ) {
 
                                     // Phone home with the data
                                     window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );

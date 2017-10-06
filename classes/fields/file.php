@@ -128,6 +128,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_restrict_filesize'      => array(
 				'label'      => __( 'Restrict File Size', 'pods' ),
+				'help'       => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'default'    => '10MB',
 				'type'       => 'text',

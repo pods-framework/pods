@@ -882,9 +882,6 @@ class PodsInit {
 			$ct_post_types = $options['post_types'];
 			$options       = $options['options'];
 
-			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy );
-			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy );
-
 			$options = self::object_label_fix( $options, 'taxonomy' );
 
 			/**
@@ -908,6 +905,24 @@ class PodsInit {
 				pods_debug( array( $taxonomy, $ct_post_types, $options ) );
 			}
 
+			/**
+			 * Allow filtering of taxonomy options per taxonomy.
+			 *
+			 * @param array  $options       Taxonomy options
+			 * @param string $taxonomy      Taxonomy name
+			 * @param array  $ct_post_types Associated Post Types
+			 */
+			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy, $ct_post_types );
+
+			/**
+			 * Allow filtering of taxonomy options.
+			 *
+			 * @param array  $options       Taxonomy options
+			 * @param string $taxonomy      Taxonomy name
+			 * @param array  $ct_post_types Associated post types
+			 */
+			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy, $ct_post_types );
+
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
 
 			if ( ! empty( $options['show_in_rest'] ) ) {
@@ -926,9 +941,6 @@ class PodsInit {
 				continue;
 			}
 
-			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
-			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
-
 			$options = self::object_label_fix( $options, 'post_type' );
 
 			// Max length for post types are 20 characters
@@ -942,6 +954,22 @@ class PodsInit {
 			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 				pods_debug( array( $post_type, $options ) );
 			}
+
+			/**
+			 * Allow filtering of post type options per post type.
+			 *
+			 * @param array  $options   Post type options
+			 * @param string $post_type Post type name
+			 */
+			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
+
+			/**
+			 * Allow filtering of post type options.
+			 *
+			 * @param array  $options   Post type options
+			 * @param string $post_type Post type name
+			 */
+			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
 
 			register_post_type( $post_type, $options );
 

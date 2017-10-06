@@ -901,10 +901,6 @@ class PodsInit {
 				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL taxonomy slug', 'pods' );
 			}
 
-			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( $taxonomy, $ct_post_types, $options ) );
-			}
-
 			/**
 			 * Allow filtering of taxonomy options per taxonomy.
 			 *
@@ -922,6 +918,10 @@ class PodsInit {
 			 * @param array  $ct_post_types Associated post types
 			 */
 			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy, $ct_post_types );
+
+			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				pods_debug( array( 'register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ) );
+			}
 
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
 
@@ -951,10 +951,6 @@ class PodsInit {
 				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL slug', 'pods' );
 			}
 
-			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( $post_type, $options ) );
-			}
-
 			/**
 			 * Allow filtering of post type options per post type.
 			 *
@@ -970,6 +966,10 @@ class PodsInit {
 			 * @param string $post_type Post type name
 			 */
 			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
+
+			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
+				pods_debug( array( 'register_post_type', compact( 'post_type', 'options' ) ) );
+			}
 
 			register_post_type( $post_type, $options );
 

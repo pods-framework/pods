@@ -258,7 +258,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 	$pod = pods( $atts[ 'pod' ], $atts[ 'id' ] );
 	$field_name = $atts[ 'field' ];
 
-	$entries = $pod->field( $field_name );
+	$entries = (array) $pod->field( $field_name );
 	if ( ! empty( $entries ) ) {
 
 		$field = $pod->fields[ $field_name ];

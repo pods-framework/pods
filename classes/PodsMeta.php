@@ -1210,6 +1210,7 @@ class PodsMeta {
 				return;
 			}
 		}
+		// The following code will run for all post_types (not just Pods)
 
 		if ( false !== $nonced && ! empty( $groups ) ) {
 			foreach ( $groups as $group ) {

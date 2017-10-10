@@ -348,8 +348,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 
 			// This is essentially Pods->process_magic_tags() but with the Pods specific code ripped out
 			if ( is_array( $tag ) ) {
-				if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
+				if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 ) {
 					return '';
+				}
 
 				$tag = $tag[ 2 ];
 			}

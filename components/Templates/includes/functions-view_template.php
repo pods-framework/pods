@@ -320,8 +320,10 @@ function frontier_do_subtemplate( $atts, $content ) {
 			// Relationship to something other than a Pod (ie: user)
 			foreach ( $entries as $key => $entry ) {
 				$template = frontier_decode_template( $content, $atts );
-				$content = str_replace( '{_index}', $key, $template );
-
+				$template = str_replace( '{_index}', $key, $template );
+				if ( !is_array( $entry ) ) {
+					$entry = array( '_key' => $key, '_value' => $entry );
+				}
 				$out .= pods_do_shortcode( frontier_pseudo_magic_tags( $template, $entry, $pod ), frontier_get_shortcodes() );
 			}
 		}
@@ -375,6 +377,8 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 					}
 				}
 
+			} else {
+				$value = '';
 			}
 
 			if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )

@@ -339,6 +339,7 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param array $data
  *
  * @return string
+ * @since 2.7
  */
 function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 

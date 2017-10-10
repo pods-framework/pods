@@ -401,9 +401,8 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 
 			return '';
 		}
-		, $template );
-
-	return '';
+		, $template
+	);
 }
 
 /**

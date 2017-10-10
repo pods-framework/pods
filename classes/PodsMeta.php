@@ -1202,12 +1202,15 @@ class PodsMeta {
 		$pod  = self::$current_pod;
 		$data = array();
 
-		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
+		if ( $pod ) {
+			$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
 
-		// Block REST API saves, we handle those separately in PodsRESTHandlers
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
-			return;
+			// Block REST API saves, we handle those separately in PodsRESTHandlers
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST && $rest_enable ) {
+				return;
+			}
 		}
+		// The following code will run for all post_types (not just Pods)
 
 		if ( false !== $nonced && ! empty( $groups ) ) {
 			foreach ( $groups as $group ) {

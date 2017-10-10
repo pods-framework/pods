@@ -26,8 +26,6 @@ function frontier_get_shortcodes() {
 	return $shortcodes;
 }
 
-
-
 /**
  * @param $content
  *
@@ -343,8 +341,10 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @return string
  */
 function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
+
 	return preg_replace_callback( '/({@(.*?)})/m',
 		function( $tag ) use ( $pod, $data ) {
+
 			// This is essentially Pods->process_magic_tags() but with the Pods specific code ripped out
 			if ( is_array( $tag ) ) {
 				if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
@@ -356,8 +356,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 			$tag = trim( $tag, ' {@}' );
 			$tag = explode( ',', $tag );
 
-			if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
+			if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 ) {
 				return '';
+			}
 
 			foreach ( $tag as $k => $v ) {
 				$tag[ $k ] = trim( $v );
@@ -376,29 +377,32 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 						$value = $pod->helper( $helper_name, $value, $field_name );
 					}
 				}
-
 			} else {
 				$value = '';
 			}
 
-			if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
+			if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) ) {
 				$before = $tag[ 2 ];
+			}
 
-			if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
+			if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) ) {
 				$after = $tag[ 3 ];
+			}
 
 			$value = apply_filters( 'pods_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
 
-			if ( is_array( $value ) )
+			if ( is_array( $value ) ) {
 				$value = pods_serial_comma( $value, array( 'field' => $field_name, 'fields' => $this->fields ) );
+			}
 
-			if ( null !== $value && false !== $value )
+			if ( null !== $value && false !== $value ) {
 				return $before . $value . $after;
+			}
 
 			return '';
-
 		}
 		, $template );
+
 	return '';
 }
 

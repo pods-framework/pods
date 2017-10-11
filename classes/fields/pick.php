@@ -2297,7 +2297,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( 'admin_ajax_relationship' === $context ) {
-							$items[] = $this->build_dfv_field_item_data_recurse_item( $result['ID'], $result[ $search_data->field_index ], (object) $object_params );
+							$items[] = $this->build_dfv_field_item_data_recurse_item( $result[ $search_data->field_id ], $result[ $search_data->field_index ], (object) $object_params );
 						} else {
 							$data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
 						}

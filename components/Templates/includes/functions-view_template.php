@@ -374,7 +374,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
 
 			$helper_name = $before = $after = '';
 
-			if ( isset( $data[ $field_name ] ) ) {
+			if ( is_array( $data) && isset( $data[ $field_name ] ) ) {
 				$value = $data[ $field_name ];
 				if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
 					$helper_name = $tag[ 1 ];

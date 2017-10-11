@@ -311,6 +311,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$content = str_replace( '{@_img', '{@image_attachment.' . $entry[ 'ID' ], $content );
 				$content = str_replace( '{@_src', '{@image_attachment_url.' . $entry[ 'ID' ], $content );
 				$content = str_replace( '{@' . $field_name . '}', '{@image_attachment.' . $entry[ 'ID' ] . '}', $content );
+				$content = frontier_pseudo_magic_tags( $content, $entry, $pod, true );
 
 				$out .= pods_do_shortcode( $pod->do_magic_tags( $content ), frontier_get_shortcodes() );
 			}
@@ -338,14 +339,15 @@ function frontier_do_subtemplate( $atts, $content ) {
  * @param Pod $pod
  * @param string $template
  * @param array $data
+ * @param boolean $skip_unknown If true then values not in $data will not be touched
  *
  * @return string
  * @since 2.7
  */
-function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
+function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknown = false ) {
 
 	return preg_replace_callback( '/({@(.*?)})/m',
-		function( $tag ) use ( $pod, $data ) {
+		function( $tag ) use ( $pod, $data, $skip_unknown ) {
 
 			// This is essentially Pods->process_magic_tags() but with the Pods specific code ripped out
 			if ( is_array( $tag ) ) {
@@ -353,6 +355,7 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 					return '';
 				}
 
+				$original_tag = $tag[0];
 				$tag = $tag[ 2 ];
 			}
 
@@ -381,6 +384,9 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null ) {
 					}
 				}
 			} else {
+				if ( $skip_unknown ) {
+					return $original_tag;
+				}
 				$value = '';
 			}
 

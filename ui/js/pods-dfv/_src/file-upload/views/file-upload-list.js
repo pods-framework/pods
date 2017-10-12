@@ -47,12 +47,12 @@ export const FileUploadList = PodsFieldListView.extend( {
 
 	onAttach: function () {
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
+		let sort_axis = 'y';
 
 		// @todo
 		// http://stackoverflow.com/questions/1735372/jquery-sortable-list-scroll-bar-jumps-up-when-sorting/4187833#4187833
 
 		if ( 1 != fieldConfig[ 'file_limit' ] ) {
-			var sort_axis = 'y';
 
 			if ( 'tiles' == fieldConfig[ 'file_field_template' ] ) {
 				sort_axis = '';

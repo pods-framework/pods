@@ -725,9 +725,10 @@ class Pods_Component_I18n extends PodsComponent {
 	 * @todo Store enabled languages serialized instead of separate inputs
 	 *
 	 * @since  0.1
-	 * @param  array $pod
 	 */
-	public function meta_box( $pod ) {
+	public function meta_box() {
+
+		$pod = $this->cur_pod;
 
 		if ( ! empty( $this->languages ) ) {
 		?>

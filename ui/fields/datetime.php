@@ -7,8 +7,10 @@
 
 	wp_enqueue_script( 'jquery-ui-datepicker' );
 	wp_enqueue_script( 'jquery-ui-timepicker' );
-	wp_enqueue_style( 'jquery-ui' );
+	wp_enqueue_style( 'pods-styles' );
 	wp_enqueue_style( 'jquery-ui-timepicker' );
+
+	PodsForm::field_method( 'datetime', 'enqueue_jquery_ui_i18n' );
 
 	$attributes = array();
 

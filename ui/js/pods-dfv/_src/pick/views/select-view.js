@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
+
 // Note: this is a template-less view
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
@@ -14,6 +15,8 @@ const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
  * @extends Backbone.View
  */
 export const SelectItem = PodsFieldView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'option',
 
 	template: false,
@@ -35,7 +38,10 @@ export const SelectItem = PodsFieldView.extend( {
  * @extends Backbone.View
  */
 export const Optgroup = PodsFieldListView.extend( {
-	tagName  : 'optgroup',
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
+	tagName: 'optgroup',
+
 	childView: SelectItem,
 
 	attributes: function () {
@@ -51,15 +57,31 @@ export const Optgroup = PodsFieldListView.extend( {
  * @extends Backbone.View
  */
 export const SelectView = Marionette.CollectionView.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	tagName: 'select',
 
 	triggers: {
 		"change": {
 			event          : "change:selected",
 			stopPropagation: false
-		}
+		},
 	},
 
+	multiLastValidSelection: [],
+
+	/**
+	 *
+	 * @param newCollection
+	 */
+	setCollection: function( newCollection ) {
+		this.collection = newCollection;
+	},
+
+	/**
+	 *
+	 * @param options
+	 */
 	initialize: function ( options ) {
 		this.fieldModel = options.fieldModel;
 		this.fieldConfig = this.fieldModel.get( 'fieldConfig' );
@@ -145,19 +167,117 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 	/**
 	 * Setup to be done once attached to the DOM.  Select2 has some setup needs.
+	 *
+	 * @var {RelationshipCollection} this.collection
 	 */
 	onAttach: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+		const limit = this.fieldConfig.pick_limit;
+		const numSelected = this.collection.filterBySelected().length;
 
-		if ( this.fieldConfig.view_name === 'select2' ) {
+		// Initialize select2 fields
+		if ( 'select2' === view_name ) {
 			this.setupSelect2();
+		}
+
+		// Check initial selection limit status for regular multiselect and enforce it if needed
+		if ( 'select' === view_name && 'multi' === format_type ) {
+
+			// Store initial selection in case we need to revert back from an invalid state
+			this.multiLastValidSelection = this.$el.val();
+		}
+
+		// If we're at the limit: disable all unselected items so no selections can be added
+		if ( !this.validateSelectionLimit() ) {
+			this.selectionLimitOver();
+		}
+	},
+
+	/**
+	 * @var {RelationshipCollection} this.collection
+	 */
+	onChangeSelected: function () {
+		const limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+
+		// Regular multiselect may need to reject the selection change
+		if ( 'select' === view_name && 'multi' === format_type ) {
+
+			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
+			if ( null !== this.$el.val() && 0 !== limit && limit < this.$el.val().length ) {
+
+				// Revert to the last valid selection and punt on what they attempted
+				this.$el.val( this.multiLastValidSelection );
+				window.alert( `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}` );
+				this.trigger( 'childview:change:selected', this );
+				return;
+			}
+		}
+
+		// Update the collection and last valid selection based on the new selections
+		this.collection.setSelected( this.$el.val() );
+		this.multiLastValidSelection = this.$el.val();
+
+		// Dynamically enforce selection limits
+		if ( this.validateSelectionLimit() ) {
+			this.selectionLimitUnder();
+		}
+		else {
+			this.selectionLimitOver();
+		}
+
+		this.trigger( 'childview:change:selected', this );
+	},
+
+	/**
+	 * @var {RelationshipCollection} this.collection
+	 *
+	 * @returns {boolean} true if unlimited selections are allowed or we're below the selection limit
+	 */
+	validateSelectionLimit: function () {
+		let limit, numSelected;
+
+		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
+		numSelected = this.collection.filterBySelected().length;
+
+		if ( 0 === limit || numSelected < limit ) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	},
 
 	/**
 	 *
 	 */
-	onChangeSelected: function () {
-		this.collection.setSelected( this.$el.val() );
+	selectionLimitOver: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			// At the limit: disable all unselected items so no further selections can be added
+			this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
+		}
+
+		this.trigger( 'childview:selection:limit:over', this );
+	},
+
+	/**
+	 *
+	 */
+	selectionLimitUnder: function () {
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+
+		if ( 'select' === view_name && 'multi' === format_type ) {
+			// Not at limit, make sure all items are enabled
+			this.$el.find( 'option' ).prop( 'disabled', false );
+		}
+
+		this.trigger( 'childview:selection:limit:under', this );
 	},
 
 	/**
@@ -167,7 +287,19 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @param data
 	 */
 	filterAjaxList: function ( data ) {
-		return data;
+		const selectedItems = this.collection.filterBySelected();
+		const returnList = [];
+
+		_.each( data.results, function ( element, index, list ) {
+			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
+
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			if ( !selectedItems.get( element.id ) ) {
+				returnList.push( element );
+			}
+		} );
+
+		return { 'results': returnList };
 	},
 
 	/**
@@ -183,15 +315,17 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
-		} else {
-			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`
+		}
+		else {
+			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`;
 		}
 
 		select2Options = {
 			maximumSelectionLength: limit,
 			placeholder           : placeholder,
 			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
-			disabled              : fieldConfig.limitDisable
+			disabled              : fieldConfig.limitDisable,
+			escapeMarkup          : function ( text ) { return text; }
 		};
 
 		if ( ajaxData.ajax ) {

@@ -1,5 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
 
+import {PodsDFVModal} from 'pods-dfv/_src/core/dfv-modal';
+
 /**
  * A frame for displaying a modal popup with iframe content
  *
@@ -47,7 +49,7 @@ export const IframeFrame = wp.media.view.Frame.extend( {
 	},
 
 	initModal: function () {
-		this.modal = new wp.media.view.Modal( {
+		this.modal = new PodsDFVModal( {
 			controller: this
 		} );
 

@@ -512,23 +512,22 @@ class PodsForm {
                 $attributes[ 'class' ] = $classes;
         }
 
-        if ( isset( $options[ 'placeholder' ] ) && !empty( $options[ 'placeholder' ] ) ) {
-            if ( is_array( $options[ 'placeholder' ] ) )
-                $options[ 'placeholder' ] = implode( ' ', $options[ 'placeholder' ] );
+		$placeholder = trim( pods_v( 'placeholder', $options, pods_v( $type . '_placeholder', $options ) ) );
 
-            $options[ 'placeholder' ] = (string) $options[ 'placeholder' ];
-			$attributes[ 'placeholder' ] = trim( $options[ 'placeholder' ] );
-        }
+		if ( ! empty( $placeholder ) ) {
+			$attributes['placeholder'] = $placeholder;
+		}
 
-        if ( 1 == pods_v( 'required', $options, 0 ) )
+        if ( 1 === (int) pods_v( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
 
-        $max_length = (int) pods_var( 'maxlength', $options, pods_v( $type . '_max_length', $options, 0 ), null, true );
+        $max_length = (int) pods_v( 'maxlength', $options, pods_v( $type . '_max_length', $options, 0 ) );
 
         if ( 0 < $max_length )
             $attributes[ 'maxlength' ] = $max_length;
 
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
+
         return $attributes;
     }
 
@@ -826,65 +825,65 @@ class PodsForm {
      * @param array $options array( 'depends-on' => ..., 'excludes-on' => ...)
      * @param string $prefix
      *
-     * @return string
+     * @return array
      * @static
      * @since 2.0
      */
     public static function dependencies( $options, $prefix = '' ) {
-
         $options = (array) $options;
         $classes = $data = array();
-
         $depends_on = $excludes_on = $wildcard_on = array();
+
         if ( isset( $options[ 'depends-on' ] ) ) {
             $depends_on = (array) $options[ 'depends-on' ];
-        }
 
-        if ( isset( $options[ 'excludes-on' ] ) ) {
-            $excludes_on = (array) $options[ 'excludes-on' ];
-        }
+            if ( ! empty( $depends_on ) ) {
+                $classes[] = 'pods-depends-on';
 
-        if ( isset( $options[ 'wildcard-on' ] ) ) {
-            $wildcard_on = (array) $options[ 'wildcard-on' ];
-        }
+                foreach ( $depends_on as $depends => $on ) {
+                    $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-        if ( ! empty( $depends_on ) ) {
-            $classes[] = 'pods-depends-on';
+                    if ( ! is_bool( $on ) ) {
+                        $on = (array) $on;
 
-            foreach ( $depends_on as $depends => $on ) {
-                $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
-
-                if ( ! is_bool( $on ) ) {
-                    $on = (array) $on;
-
-                    foreach ( $on as $o ) {
-                        $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                        foreach ( $on as $o ) {
+                            $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                        }
                     }
                 }
             }
         }
 
-        if ( ! empty( $excludes_on ) ) {
-            $classes[] = 'pods-excludes-on';
-            foreach ( $excludes_on as $excludes => $on ) {
-                $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
+        if ( isset( $options[ 'excludes-on' ] ) ) {
+            $excludes_on = (array) $options[ 'excludes-on' ];
 
-                $on = (array) $on;
+            if ( ! empty( $excludes_on ) ) {
+                $classes[] = 'pods-excludes-on';
 
-                foreach ( $on as $o ) {
-                    $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
+                foreach ( $excludes_on as $excludes => $on ) {
+                    $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true );
+
+                    $on = (array) $on;
+
+                    foreach ( $on as $o ) {
+                        $classes[] = 'pods-excludes-on-' . $prefix . self::clean( $excludes, true ) . '-' . self::clean( $o, true );
+                    }
                 }
             }
         }
 
-        if ( ! empty( $wildcard_on ) ) {
-            $classes[] = 'pods-wildcard-on';
+        if ( isset( $options[ 'wildcard-on' ] ) ) {
+            $wildcard_on = (array) $options[ 'wildcard-on' ];
 
-            // Add the appropriate classes and data attribs per value dependency
-            foreach ( $wildcard_on as $target => $wildcards ) {
-                $target = $prefix . self::clean( $target, true );
-                $classes[] = 'pods-wildcard-on-' . $target;
-                $data[ 'pods-wildcard-' . $target ] = $wildcards;
+            if ( ! empty( $wildcard_on ) ) {
+                $classes[] = 'pods-wildcard-on';
+
+                // Add the appropriate classes and data attribs per value dependency
+                foreach ( $wildcard_on as $target => $wildcards ) {
+                    $target = $prefix . self::clean( $target, true );
+                    $classes[] = 'pods-wildcard-on-' . $target;
+                    $data[ 'pods-wildcard-' . $target ] = $wildcards;
+                }
             }
         }
 
@@ -953,15 +952,38 @@ class PodsForm {
 
         $tableless_field_types = self::tableless_field_types();
 
-        if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
-            if ( is_array( $value ) && !in_array( $type, $tableless_field_types ) ) {
-                foreach ( $value as $k => $display_value ) {
-                    $value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
-                }
-            }
-            else
-                $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $value, $name, $options, $pod, $id, $traverse ) );
-        }
+        if ( method_exists( self::$loaded[ $type ], 'display_list' ) ) {
+		    $value = call_user_func_array( array( self::$loaded[ $type ], 'display_list' ), array(
+			    $value,
+			    $name,
+			    $options,
+			    $pod,
+			    $id,
+			    $traverse
+		    ) );
+	    } elseif ( method_exists( self::$loaded[ $type ], 'display' ) ) {
+		    if ( is_array( $value ) && ! in_array( $type, $tableless_field_types ) ) {
+			    foreach ( $value as $k => $display_value ) {
+				    $value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
+					    $display_value,
+					    $name,
+					    $options,
+					    $pod,
+					    $id,
+					    $traverse
+				    ) );
+			    }
+		    } else {
+			    $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
+				    $value,
+				    $name,
+				    $options,
+				    $pod,
+				    $id,
+				    $traverse
+			    ) );
+		    }
+	    }
 
         $value = apply_filters( 'pods_form_display_' . $type, $value, $name, $options, $pod, $id, $traverse );
 
@@ -1379,7 +1401,7 @@ class PodsForm {
         $field_types = array(
             'text',
             'website',
-            'link',
+            //'link',
             'phone',
             'email',
             'password',

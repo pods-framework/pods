@@ -462,13 +462,6 @@ function pods_help ( $text, $url = null ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
 
-	if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
-		wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
-	}
-	elseif ( ! wp_style_is( 'jquery-qtip2', 'queue' ) && ! wp_style_is( 'jquery-qtip2', 'to_do' ) && ! wp_style_is( 'jquery-qtip2', 'done' ) ) {
-		wp_enqueue_style( 'jquery-qtip2' );
-	}
-
 	if ( ! wp_script_is( 'pods-qtip-init', 'registered' ) ) {
 		wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
 			'jquery',
@@ -817,7 +810,7 @@ function pods_shortcode ( $tags, $content = null ) {
 				$params[ 'where' ] = $tags[ 'where' ];
 
 				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params[ 'where' ] = pods_evaluate_tags( $params[ 'where' ] );
+					$params[ 'where' ] = pods_evaluate_tags( html_entity_decode( $params[ 'where' ] ) );
 				}
 			}
 
@@ -825,7 +818,7 @@ function pods_shortcode ( $tags, $content = null ) {
 				$params[ 'having' ] = $tags[ 'having' ];
 
 				if ( defined( 'PODS_SHORTCODE_ALLOW_EVALUATE_TAGS' ) && PODS_SHORTCODE_ALLOW_EVALUATE_TAGS ) {
-					$params[ 'having' ] = pods_evaluate_tags( $id );
+					$params[ 'having' ] = pods_evaluate_tags( html_entity_decode( $params[ 'having' ] ) );
 				}
 			}
 
@@ -1010,7 +1003,11 @@ function pods_do_shortcode( $content, $shortcodes ) {
 		add_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter, 10, 4 );
 	}
 
-	$content = do_shortcode( $content );
+	// Build Shortcode regex pattern just for the shortcodes we want
+	$pattern = get_shortcode_regex();
+
+	// Call shortcode callbacks just for the shortcodes we want
+	$content = preg_replace_callback( "/$pattern/s", 'do_shortcode_tag', $content );
 
 	if ( isset( $temp_shortcode_filter ) ) {
 		remove_filter( 'pre_do_shortcode_tag', $temp_shortcode_filter );
@@ -2156,13 +2153,53 @@ function pods_session_start() {
  * @todo: replace string literal with a defined constant
  *
  * @return bool
+ *
+ * @since 2.7
  */
 function pods_is_modal_window() {
 	$is_modal_window = false;
 
-	if ( isset( $_GET['pods_modal'] ) || isset( $_POST['pods_modal'] ) ) {
+	if ( ! empty( $_GET['pods_modal'] ) || ! empty( $_POST['pods_modal'] ) ) {
 		$is_modal_window = true;
 	}
 
-    return $is_modal_window;
+	return $is_modal_window;
+}
+
+/**
+ * Check if the pod object is valid and the pod exists.
+ *
+ * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ *
+ * @return bool Whether the pod object is valid and exists
+ *
+ * @since 2.7
+ */
+function pod_is_valid( $pod ) {
+	$is_valid = false;
+
+	if ( $pod && is_a( $pod, 'Pods' ) && $pod->valid() ) {
+		$is_valid = true;
+	}
+
+	return $is_valid;
+}
+
+/**
+ * Check if the pod object has item(s).
+ *
+ * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ *
+ * @return bool Whether the pod object has items
+ *
+ * @since 2.7
+ */
+function pod_has_items( $pod ) {
+	$has_items = false;
+
+	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
+		$has_items = true;
+	}
+
+	return $has_items;
 }

@@ -17,6 +17,7 @@ module.exports = function ( grunt ) {
 		'!.gitignore',
 		'!.gitmodules',
 		'!.travis.yml',
+		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',
@@ -37,12 +38,6 @@ module.exports = function ( grunt ) {
 	// Project configuration.
 	grunt.initConfig( {
 		pkg: grunt.file.readJSON( 'package.json' ),
-
-		exec: {
-			dfv_rollup_dev : 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.dev.js',
-			dfv_rollup_prod: 'node node_modules/rollup/bin/rollup -c ui/js/pods-dfv/_src/rollup.config.prod.js',
-			dfv_test       : 'node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js'
-		},
 
 		clean: {
 			post_build: [
@@ -79,7 +74,13 @@ module.exports = function ( grunt ) {
 					allowEmpty: true
 				},
 				files  : {
-					src: [ 'readme.txt', 'init.php', 'package.json', 'Gruntfile.js' ]
+					src: [
+						'readme.txt',
+						'init.php',
+						'package.json',
+						'Gruntfile.js',
+						'README.md'
+					]
 				}
 			}
 		},
@@ -166,13 +167,13 @@ module.exports = function ( grunt ) {
 				overwrite   : true,
 				replacements: [ {
 					from: /\?branch=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?branch=release/3.0"
+					to  : "?branch=release/2.7"
 				}, {
 					from: /\?b=(release\/|)([\.\d\w\-]*)/g,
-					to  : "?b=release/3.0"
+					to  : "?b=release/2.7"
 				}, {
 					from: /\/blob\/(release\/|)([\.\d\w\-]*)\//g,
-					to  : "/blob/release/3.0/"
+					to  : "/blob/release/2.7/"
 				} ]
 
 			},
@@ -181,7 +182,7 @@ module.exports = function ( grunt ) {
 				overwrite   : true,
 				replacements: [ {
 					from: /GitHub Branch: (release\/|)([\.\d\w\-]*)/,
-					to  : "GitHub Branch: release/3.0"
+					to  : "GitHub Branch: release/2.7"
 				} ]
 			}
 		},
@@ -240,10 +241,4 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'do_svn', [ 'svn_checkout', 'copy:svn_trunk', 'push_svn', 'svn_copy' ] );
 	grunt.registerTask( 'do_git', [ 'gitcommit', 'gittag', 'gitpush' ] );
 	grunt.registerTask( 'release', [ 'pre_vcs', 'do_svn', 'do_git', 'clean:post_build' ] );
-
-	// build tasks
-	grunt.registerTask( 'exec_dfv_rollup_dev', [ 'exec:dfv_rollup_dev' ] );
-	grunt.registerTask( 'exec_dfv_rollup_prod', [ 'exec:dfv_rollup_prod' ] );
-	grunt.registerTask( 'exec_dfv_test', [ 'exec:dfv_test' ] );
-
 };

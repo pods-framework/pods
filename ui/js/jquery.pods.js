@@ -254,7 +254,7 @@
                         data : postdata,
                         success : function ( d ) {
 
-                            // Make sure we're able to parse what was returned as data
+                            // Attempt to parse what was returned as data
                             try {
                                 data = $.parseJSON( d );
                             }
@@ -262,10 +262,10 @@
                                 data = undefined;
                             }
 
-                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d && undefined !== data ) {
+                            if ( -1 === d.indexOf( '<e>' ) && -1 === d.indexOf( '</e>' ) && -1 !== d ) {
 
                                 // Added for modal add/edit support.  If we get a valid JSON object, we assume we're modal
-                                if ( 'object' === typeof data ) {
+                                if ( 'object' === typeof data && null !== data ) {
 
                                     // Phone home with the data
                                     window.parent.jQuery( window.parent ).trigger('dfv:modal:update', data );
@@ -597,7 +597,42 @@
                             var $current_tab = $tabbed.find( '.pods-tab-group .pods-tab' + tab_hash );
 
                             $( '.pods-dependent-toggle', $current_tab ).each( function () {
-                                methods[ 'setup_dependencies' ]( $( this ) );
+                                var elementId = $( this ).attr( 'id' );
+                                var runDependencies = true;
+                                var selectionTypes = [
+                                    {
+                                        name           : 'single',
+                                        pickFormatRegex: /pick-format-single$/g
+                                    },
+                                    {
+                                        name           : 'multi',
+                                        pickFormatRegex: /pick-format-multi$/g
+                                    }
+                                ];
+
+                                // Pick multi/single select: Bypass dependency checks on the format of selection types
+                                // that aren't currently chosen. We shouldn't check dependencies against format_single
+                                // if multi is selected and vice versa.
+                                selectionTypes.forEach( function( thisSelectionType ) {
+                                    var pickSelectionTypeId = null;
+
+                                    // Is this the format list for one of the selection types?
+                                    if ( thisSelectionType.pickFormatRegex.test( elementId ) ) {
+
+                                        // Get the HTML ID of the "selection type" select box so we can check its value
+                                        pickSelectionTypeId = elementId.replace( thisSelectionType.pickFormatRegex, 'pick-format-type' );
+
+                                        // Bypass dependency checks if this format value is for a selection type
+                                        // that isn't currently selected
+                                        if ( $( '#' + pickSelectionTypeId ).val() !== thisSelectionType.name ) {
+                                            runDependencies = false;
+                                        }
+                                    }
+                                } );
+
+                                if ( runDependencies ) {
+                                    methods[ 'setup_dependencies' ]( $( this ) );
+                                }
                             } );
 
                             $current_tab.slideDown();
@@ -1227,7 +1262,20 @@
 
                 // Handle dependent toggle
                 $( '.pods-admin' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
+                    var selectionTypeRegex = /pick-format-type$/g;
+                    var elementId = $( this ).attr( 'id' );
+                    var selectionType, selectionFormatId;
+
+                    // Setup dependencies for the field that changed
                     methods[ 'setup_dependencies' ]( $( this ) );
+
+                    // Also force a dependency update for the appropriate format when "selection type" changes
+                    if ( selectionTypeRegex.test( elementId ) ) {
+                        selectionType = $( this ).val();
+                        selectionFormatId = elementId.replace( selectionTypeRegex, 'pick-format-' + selectionType );
+                        methods[ 'setup_dependencies' ]( $( '#' + selectionFormatId ) );
+                    }
+
                 } );
 
                 if ( 'undefined' != typeof init && init ) {

@@ -1,4 +1,5 @@
 /*global jQuery, _, Backbone, Marionette, wp, PodsI18n */
+
 import template from 'pods-dfv/_src/pick/pick-layout.html';
 
 import {PodsDFVFieldModel} from 'pods-dfv/_src/core/pods-field-model';
@@ -31,12 +32,23 @@ let modalIFrame;
  * @extends Backbone.View
  */
 export const Pick = PodsDFVFieldLayout.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	template: _.template( template ),
 
 	regions: {
 		autocomplete: '.pods-ui-list-autocomplete',
 		list        : '.pods-pick-values',
 		addNew      : '.pods-ui-add-new'
+	},
+
+	childViewEvents: {
+		'childview:remove:item:click'    : 'onChildviewRemoveItemClick',
+		'childview:edit:item:click'      : 'onChildviewEditItemClick',
+		'childview:selection:limit:over' : 'onChildviewSelectionLimitOver',
+		'childview:selection:limit:under': 'onChildviewSelectionLimitUnder',
+		'childview:change:selected'      : 'onChildviewChangeSelected',
+		'childview:add:new'              : 'onChildviewAddNew'
 	},
 
 	/**
@@ -54,17 +66,18 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	onRender: function () {
 		this.fieldConfig = new PickFieldModel( this.model.get( 'fieldConfig' ) );
 
+		// Add New?
+		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
+			this.showAddNew();
+		}
+
 		// Autocomplete?
 		if ( 'list' === this.fieldConfig.get( 'view_name' ) ) {
 			this.buildAutocomplete();
 		}
 
+		// Build the list last, events fired by the list (like selection limit) may impact state in other views we manage
 		this.showList();
-
-		// Add New?
-		if ( '' !== this.fieldConfig.get( 'iframe_src' ) && 1 == this.fieldConfig.get( 'pick_allow_add_new' ) ) {
-			this.showAddNew();
-		}
 	},
 
 	/**
@@ -80,12 +93,18 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			selectFromExisting: true,
 			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
 			label             : this.fieldConfig.get( 'label' ),
-			pick_limit        : this.fieldConfig.get( 'pick_limit' )
+			pick_limit        : pick_limit
 		};
 
 		// The autocomplete portion of List View doesn't track selected items; disable if we're at the selection limit
 		if ( this.collection.filterBySelected().length >= pick_limit && 0 !== pick_limit ) {
+
 			fieldConfig.limitDisable = true;
+			this.onChildviewSelectionLimitOver();
+
+		} else {
+
+			this.onChildviewSelectionLimitUnder();
 		}
 
 		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
@@ -116,6 +135,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		}
 		View = views[ viewName ];
 		list = new View( { collection: this.collection, fieldModel: this.model } );
+
 		this.showChildView( 'list', list );
 	},
 
@@ -137,13 +157,43 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		const selectedItems = this.collection.filterBySelected();
 		const returnList = [];
 
+		// Loop through the items returned via ajax
 		_.each( data.results, function ( element, index, list ) {
-			if ( ! selectedItems.get( element.id ) ) {
+			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
+
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}
 		} );
 
+		// The collection may be partial in ajax mode, make sure we add any items we didn't yet have
+		this.collection.add( returnList );
+		this.getChildView( 'autocomplete' ).setCollection( this.collection.filterByUnselected() );
+
 		return { 'results': returnList };
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitOver: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.disable();
+		}
+	},
+
+	/**
+	 *
+	 * @param childView
+	 */
+	onChildviewSelectionLimitUnder: function ( childView ) {
+		const addNew = this.getChildView( 'addNew' );
+		if ( addNew ) {
+			addNew.enable();
+		}
 	},
 
 	/**
@@ -164,7 +214,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	/**
 	 * @param childView
 	 */
-	onChildviewAddNewClick: function ( childView ) {
+	onChildviewAddNew: function ( childView ) {
 		const fieldConfig = this.model.get( 'fieldConfig' );
 
 		modalIFrame = new IframeFrame( {
@@ -172,8 +222,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : fieldConfig.iframe_src
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
-
+		this.setModalListeners();
 		modalIFrame.modal.open();
 	},
 
@@ -188,8 +237,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			src  : childView.ui.editButton.attr( 'href' )
 		} );
 
-		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
-
+		this.setModalListeners();
 		modalIFrame.modal.open();
 	},
 
@@ -204,6 +252,16 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			this.buildAutocomplete();
 			this.getChildView( 'list' ).render();
 		}
+	},
+
+	setModalListeners: function() {
+		jQuery( window ).on( 'dfv:modal:update', this.modalSuccess.bind( this ) );
+		jQuery( window ).on( 'dfv:modal:cancel', this.modalCancel.bind( this ) );
+	},
+
+	clearModalListeners: function() {
+		jQuery( window ).off( 'dfv:modal:update' );
+		jQuery( window ).off( 'dfv:modal:cancel' );
 	},
 
 	/**
@@ -223,7 +281,15 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			this.collection.add( data );
 		}
 
-		modalIFrame.modal.close();
+		this.clearModalListeners();
+		modalIFrame.modal.close( {} );
+	},
+
+	/**
+	 *
+	 */
+	modalCancel: function() {
+		this.clearModalListeners();
 	}
 
 } );

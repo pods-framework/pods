@@ -128,6 +128,7 @@ class PodsField_File extends PodsField {
 			),
 			static::$type . '_restrict_filesize'      => array(
 				'label'      => __( 'Restrict File Size', 'pods' ),
+				'help'       => __( 'Valid size suffixes are: GB (gigabytes), MB (megabytes), KB (kilobytes), or B (bytes).  Defaults to the <a href="https://developer.wordpress.org/reference/functions/wp_max_upload_size/">wp_max_upload_size</a> setting.', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'plupload' ),
 				'default'    => '10MB',
 				'type'       => 'text',
@@ -333,7 +334,6 @@ class PodsField_File extends PodsField {
 			return;
 		}
 
-		wp_enqueue_style( 'pods-dfv-list' );
 		wp_enqueue_script( 'pods-dfv' );
 
 		$this->render_input_script( $args );
@@ -1032,15 +1032,15 @@ class PodsField_File extends PodsField {
 			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field['options'] );
 
 			if ( ! empty( $limit_size ) ) {
-				if ( false !== stripos( $limit_size, 'MB' ) ) {
+				if ( false !== stripos( $limit_size, 'GB' ) ) {
+					$limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
+					$limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+				} elseif ( false !== stripos( $limit_size, 'MB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
 					$limit_size = $limit_size * 1025 * 1025; // convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025; // convert to B
-				} elseif ( false !== stripos( $limit_size, 'GB' ) ) {
-					$limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+					$limit_size = $limit_size * 1025; // convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );
 				} else {
@@ -1078,53 +1078,51 @@ class PodsField_File extends PodsField {
 				','
 			), $limit_types ), ',' );
 
-			if ( pods_version_check( 'wp', '3.5' ) ) {
-				$mime_types = wp_get_mime_types();
+			$mime_types = wp_get_mime_types();
 
-				if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ), true ) ) {
-					$new_limit_types = array();
+			if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ), true ) ) {
+				$new_limit_types = array();
+
+				foreach ( $mime_types as $type => $mime ) {
+					if ( 0 === strpos( $mime, $limit_file_type ) ) {
+						$type = explode( '|', $type );
+
+						$new_limit_types = array_merge( $new_limit_types, $type );
+					}
+				}
+
+				if ( ! empty( $new_limit_types ) ) {
+					$limit_types = implode( ',', $new_limit_types );
+				}
+			} elseif ( 'any' != $limit_file_type ) {
+				$new_limit_types = array();
+
+				$limit_types = explode( ',', $limit_types );
+
+				foreach ( $limit_types as $k => $limit_type ) {
+					$found = false;
 
 					foreach ( $mime_types as $type => $mime ) {
-						if ( 0 === strpos( $mime, $limit_file_type ) ) {
+						if ( 0 === strpos( $mime, $limit_type ) ) {
 							$type = explode( '|', $type );
 
-							$new_limit_types = array_merge( $new_limit_types, $type );
-						}
-					}
-
-					if ( ! empty( $new_limit_types ) ) {
-						$limit_types = implode( ',', $new_limit_types );
-					}
-				} elseif ( 'any' != $limit_file_type ) {
-					$new_limit_types = array();
-
-					$limit_types = explode( ',', $limit_types );
-
-					foreach ( $limit_types as $k => $limit_type ) {
-						$found = false;
-
-						foreach ( $mime_types as $type => $mime ) {
-							if ( 0 === strpos( $mime, $limit_type ) ) {
-								$type = explode( '|', $type );
-
-								foreach ( $type as $t ) {
-									if ( ! in_array( $t, $new_limit_types, true ) ) {
-										$new_limit_types[] = $t;
-									}
+							foreach ( $type as $t ) {
+								if ( ! in_array( $t, $new_limit_types, true ) ) {
+									$new_limit_types[] = $t;
 								}
-
-								$found = true;
 							}
-						}
 
-						if ( ! $found ) {
-							$new_limit_types[] = $limit_type;
+							$found = true;
 						}
 					}
 
-					if ( ! empty( $new_limit_types ) ) {
-						$limit_types = implode( ',', $new_limit_types );
+					if ( ! $found ) {
+						$new_limit_types[] = $limit_type;
 					}
+				}
+
+				if ( ! empty( $new_limit_types ) ) {
+					$limit_types = implode( ',', $new_limit_types );
 				}
 			}
 

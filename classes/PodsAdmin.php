@@ -100,17 +100,9 @@ class PodsAdmin {
      * @since 2.0
      */
     public function admin_head () {
-        wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-font', PODS_URL . 'ui/css/pods-font.css', array(), PODS_VERSION );
-
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
 
         wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-manage', PODS_URL . 'ui/css/pods-manage.css', array(), PODS_VERSION );
-
-        wp_register_style( 'pods-wizard', PODS_URL . 'ui/css/pods-wizard.css', array(), PODS_VERSION );
 
         wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
@@ -128,11 +120,8 @@ class PodsAdmin {
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-sortable' );
 
-                wp_enqueue_style( 'jquery-ui' );
-
                 wp_enqueue_script( 'pods-floatmenu' );
 
-                wp_enqueue_style( 'jquery-qtip2' );
                 wp_enqueue_script( 'jquery-qtip2' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
@@ -142,39 +131,28 @@ class PodsAdmin {
                     wp_enqueue_script( 'post' );
                 elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
                     wp_enqueue_script( 'post' );
-                    //wp_enqueue_style( 'pods-admin' );
                 }
-                else
-                    wp_enqueue_style( 'pods-admin' );
 
                 if ( 'pods-advanced' == $page ) {
-                    wp_register_style( 'pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0' );
-                    wp_enqueue_style( 'pods-advanced' );
-
+                    wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
                     wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
                     wp_enqueue_script( 'jquery-ui-dialog' );
-
-                    wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
-                }
-                elseif ( 'pods-packages' == $page )
+                } elseif ( 'pods-packages' == $page ) {
                     wp_enqueue_style( 'pods-wizard' );
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
+                }  elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
                     wp_enqueue_style( 'pods-wizard' );
 
-                    if ( 'pods-upgrade' == $page )
+                    if ( 'pods-upgrade' == $page ) {
                         wp_enqueue_script( 'pods-upgrade' );
+                    }
                 }
             }
         }
 
-        // Flexible Relationships
-        if ( pods_is_modal_window() ) {
-            wp_enqueue_style( 'pods-modal-relationships', PODS_URL . 'ui/css/pods-modal-relationships.css', array(), '1.0' );
-        }
-
-        wp_enqueue_style( 'pods-font' );
+        // New Styles Enqueue
+        wp_enqueue_style( 'pods-styles' );
     }
 
     /**
@@ -719,7 +697,7 @@ class PodsAdmin {
      */
     public function register_media_assets () {
         if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
-            wp_enqueue_style( 'pods-dfv-list' );
+            wp_enqueue_style( 'pods-styles' );
     }
 
     /**
@@ -1513,7 +1491,7 @@ class PodsAdmin {
                 ),
                 'rewrite' => array(
                     'label' => __( 'Rewrite', 'pods' ),
-                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enbabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
+                    'help' => __( 'Allows you to use pretty permalinks, if set in WordPress Settings->Permalinks. If not enabled, your links will be in the form of "example.com/?pod_name=post_slug" regardless of your permalink settings.', 'pods' ),
                     'type' => 'boolean',
                     'default' => true,
                     'dependency' => true,
@@ -1669,15 +1647,13 @@ class PodsAdmin {
                 )
             );
 
-            if ( pods_version_check( 'wp', '3.5' ) ) {
-                $options[ 'admin-ui' ][ 'show_admin_column' ] = array(
-                    'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
-                    'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
-                    'type' => 'boolean',
-                    'default' => false,
-                    'boolean_yes_label' => ''
-                );
-            }
+			$options[ 'admin-ui' ][ 'show_admin_column' ] = array(
+				'label' => __( 'Show Taxonomy column on Post Types', 'pods' ),
+				'help' => __( 'Whether to add a column for this taxonomy on the associated post types manage screens', 'pods' ),
+				'type' => 'boolean',
+				'default' => false,
+				'boolean_yes_label' => ''
+			);
 
 			// Integration for Single Value Taxonomy UI
 			if ( function_exists( 'tax_single_value_meta_box' ) ) {
@@ -3044,32 +3020,33 @@ class PodsAdmin {
 
     }
 
-    /**
-     * Check if Pod type <em>could</em> extend core REST API response
-     *
-     * @since 2.5.6
-     *
-     * @access protected
-     *
-     * @param array $pod
-     *
-     * @return bool
-     */
-    protected function restable_pod( $pod ) {
-        $type =  $pod[ 'type' ];
-        if( in_array( $type, array(
-                'post_type',
-                'user',
-                'taxonomy'
-            )
-        )
-        ) {
-            return true;
+	/**
+	 * Check if Pod type <em>could</em> extend core REST API response
+	 *
+	 * @since 2.5.6
+	 *
+	 * @access protected
+	 *
+	 * @param array $pod
+	 *
+	 * @return bool
+	 */
+	protected function restable_pod( $pod ) {
 
-        }
+		$type = $pod['type'];
 
-    }
+		$restable_types = array(
+			'post_type',
+			'user',
+			'taxonomy',
+			'media',
+		);
 
+		if ( in_array( $type, $restable_types, true ) ) {
+			return true;
+		}
+
+	}
 
     /**
      * Add a rest api tab.

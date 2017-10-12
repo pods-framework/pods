@@ -1,6 +1,6 @@
 <?php
     wp_enqueue_script( 'jquery-ui-slider' );
-    wp_enqueue_style( 'jquery-ui' );
+    wp_enqueue_style( 'pods-styles' );
 
     if ( is_array( $value ) )
         $value = implode( ',', $value );

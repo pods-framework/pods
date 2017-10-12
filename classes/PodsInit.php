@@ -251,15 +251,7 @@ class PodsInit {
 	 */
 	public function register_assets() {
 
-		if ( ! wp_style_is( 'jquery-ui', 'registered' ) ) {
-			wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
-		}
-
 		wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
-
-		if ( ! wp_style_is( 'jquery-qtip2', 'registered' ) ) {
-			wp_register_style( 'jquery-qtip2', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.2' );
-		}
 
 		if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 			wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
@@ -273,12 +265,8 @@ class PodsInit {
 			'jquery-qtip2'
 		), PODS_VERSION, true );
 
-		wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
-
-		wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
-		wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '4.8' );
 		wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '4.8', true );
 		wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/addon/mode/loadmode.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-overlay', PODS_URL . 'ui/js/codemirror/addon/mode/overlay.js', array( 'pods-codemirror' ), '4.8', true );
@@ -287,21 +275,26 @@ class PodsInit {
 		wp_register_script( 'pods-codemirror-mode-html', PODS_URL . 'ui/js/codemirror/mode/htmlmixed/htmlmixed.js', array( 'pods-codemirror' ), '4.8', true );
 		wp_register_script( 'pods-codemirror-mode-css', PODS_URL . 'ui/js/codemirror/mode/css/css.js', array( 'pods-codemirror' ), '4.8', true );
 
-		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.1.1' );
+		if ( ! wp_script_is( 'jquery-ui-slideraccess', 'registered' ) ) {
+			// No need to add dependencies. All managed by jquery-ui-timepicker.
+			wp_register_script( 'jquery-ui-slideraccess', PODS_URL . 'ui/js/timepicker/jquery-ui-sliderAccess.js', array(), '0.3' );
 		}
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
+			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-datepicker',
-				'jquery-ui-slider'
-			), '1.1.1' );
+				'jquery-ui-slider',
+				'jquery-ui-slideraccess',
+			), '1.6.3' );
+		}
+		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
+			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
 		}
 
-		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.css', array(), '4.0.3' );
 		wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery', 'pods-i18n' ), '4.0.3' );
+		wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.css', array(), '4.0.3' );
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
 
@@ -339,7 +332,23 @@ class PodsInit {
 			true
 		);
 
-		wp_register_style( 'pods-dfv-list', PODS_URL . 'ui/css/pods-dfv-list.css', array(), PODS_VERSION );
+		// Check if Pod is a Modal Window
+		if ( pods_is_modal_window() ) {
+
+			function add_classes_to_body_class( $classes ) {
+				$classes .= 'pods-modal-window';
+
+				return $classes;
+			}
+
+			add_filter( 'body_class', 'add_classes_to_body_class' );
+			add_filter( 'admin_body_class', 'add_classes_to_body_class' );
+		}
+
+		// As of 2.7 we combine styles to just three .css files
+		wp_register_style( 'pods-styles', PODS_URL . 'ui/styles/dist/pods.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-wizard', PODS_URL . 'ui/styles/dist/pods-wizard.css', array(), PODS_VERSION );
+		wp_register_style( 'pods-form', PODS_URL . 'ui/styles/dist/pods-form.css', array(), PODS_VERSION );
 
 	}
 
@@ -401,6 +410,9 @@ class PodsInit {
 		if ( empty( self::$version ) ) {
 			return;
 		}
+
+        require_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
+        require_once( PODS_DIR . 'classes/PodsRESTFields.php' );
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -541,12 +553,7 @@ class PodsInit {
 					$cpt_supported['supports_jetpack_markdown']  = (boolean) pods_var( 'supports_jetpack_markdown', $post_type, false );
 				}
 
-				// WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
 				$cpt_supports = array();
-
-				if ( ! pods_version_check( 'wp', '3.5' ) ) {
-					$cpt_supports = array( '_bug_fix_pre_35' );
-				}
 
 				foreach ( $cpt_supported as $cpt_support => $supported ) {
 					if ( true === $supported ) {
@@ -558,7 +565,7 @@ class PodsInit {
 					}
 				}
 
-				if ( empty( $cpt_supports ) && pods_version_check( 'wp', '3.5' ) ) {
+				if ( empty( $cpt_supports ) ) {
 					$cpt_supports = false;
 				}
 
@@ -619,6 +626,17 @@ class PodsInit {
 					'query_var'           => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
 					'can_export'          => (boolean) pods_var( 'can_export', $post_type, true )
 				);
+
+				// REST API
+				$rest_enabled = (boolean) pods_v( 'rest_enable', $post_type, false );
+
+				if ( $rest_enabled ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $post_type, $post_type_name ) );
+
+					$pods_post_types[ $post_type_name ]['show_in_rest']          = true;
+					$pods_post_types[ $post_type_name ]['rest_base']             = $rest_base;
+					$pods_post_types[ $post_type_name ]['rest_controller_class'] = 'WP_REST_Posts_Controller';
+				}
 
 				// YARPP doesn't use 'supports' array option (yet)
 				if ( ! empty( $cpt_supports['yarpp_support'] ) ) {
@@ -780,6 +798,17 @@ class PodsInit {
 					$pods_taxonomies[ $taxonomy_name ]['query_var'] = 'taxonomy_' . $pods_taxonomies[ $taxonomy_name ]['query_var'];
 				}
 
+				// REST API
+				$rest_enabled = (boolean) pods_v( 'rest_enable', $taxonomy, false );
+
+				if ( $rest_enabled ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $taxonomy, $taxonomy_name ) );
+
+					$pods_taxonomies[ $taxonomy_name ]['show_in_rest']          = true;
+					$pods_taxonomies[ $taxonomy_name ]['rest_base']             = $rest_base;
+					$pods_taxonomies[ $taxonomy_name ]['rest_controller_class'] = 'WP_REST_Terms_Controller';
+				}
+
 				// Integration for Single Value Taxonomy UI
 				if ( function_exists( 'tax_single_value_meta_box' ) ) {
 					$pods_taxonomies[ $taxonomy_name ]['single_value'] = (boolean) pods_var( 'single_value', $taxonomy, false );
@@ -853,9 +882,6 @@ class PodsInit {
 			$ct_post_types = $options['post_types'];
 			$options       = $options['options'];
 
-			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy );
-			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy );
-
 			$options = self::object_label_fix( $options, 'taxonomy' );
 
 			/**
@@ -875,11 +901,33 @@ class PodsInit {
 				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL taxonomy slug', 'pods' );
 			}
 
+			/**
+			 * Allow filtering of taxonomy options per taxonomy.
+			 *
+			 * @param array  $options       Taxonomy options
+			 * @param string $taxonomy      Taxonomy name
+			 * @param array  $ct_post_types Associated Post Types
+			 */
+			$options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options, $taxonomy, $ct_post_types );
+
+			/**
+			 * Allow filtering of taxonomy options.
+			 *
+			 * @param array  $options       Taxonomy options
+			 * @param string $taxonomy      Taxonomy name
+			 * @param array  $ct_post_types Associated post types
+			 */
+			$options = apply_filters( 'pods_register_taxonomy', $options, $taxonomy, $ct_post_types );
+
 			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( $taxonomy, $ct_post_types, $options ) );
+				pods_debug( array( 'register_taxonomy', compact( 'taxonomy', 'ct_post_types', 'options' ) ) );
 			}
 
 			register_taxonomy( $taxonomy, $ct_post_types, $options );
+
+			if ( ! empty( $options['show_in_rest'] ) ) {
+				new PodsRESTFields( $taxonomy );
+			}
 
 			if ( ! isset( self::$content_types_registered['taxonomies'] ) ) {
 				self::$content_types_registered['taxonomies'] = array();
@@ -893,9 +941,6 @@ class PodsInit {
 				continue;
 			}
 
-			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
-			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
-
 			$options = self::object_label_fix( $options, 'post_type' );
 
 			// Max length for post types are 20 characters
@@ -906,8 +951,24 @@ class PodsInit {
 				$options['rewrite']['slug'] = _x( $options['rewrite']['slug'], 'URL slug', 'pods' );
 			}
 
+			/**
+			 * Allow filtering of post type options per post type.
+			 *
+			 * @param array  $options   Post type options
+			 * @param string $post_type Post type name
+			 */
+			$options = apply_filters( 'pods_register_post_type_' . $post_type, $options, $post_type );
+
+			/**
+			 * Allow filtering of post type options.
+			 *
+			 * @param array  $options   Post type options
+			 * @param string $post_type Post type name
+			 */
+			$options = apply_filters( 'pods_register_post_type', $options, $post_type );
+
 			if ( 1 == pods_var( 'pods_debug_register', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				pods_debug( array( $post_type, $options ) );
+				pods_debug( array( 'register_post_type', compact( 'post_type', 'options' ) ) );
 			}
 
 			register_post_type( $post_type, $options );
@@ -917,11 +978,84 @@ class PodsInit {
 				register_taxonomy_for_object_type( 'post_format', $post_type );
 			}
 
+			if ( ! empty( $options['show_in_rest'] ) ) {
+				new PodsRESTFields( $post_type );
+			}
+
 			if ( ! isset( self::$content_types_registered['post_types'] ) ) {
 				self::$content_types_registered['post_types'] = array();
 			}
 
 			self::$content_types_registered['post_types'][] = $post_type;
+		}
+
+		// Handle existing post types / taxonomies settings (just REST for now)
+		global $wp_post_types, $wp_taxonomies;
+
+		foreach ( $existing_post_types as $post_type_name => $post_type_obj ) {
+			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type_name, self::$content_types_registered['post_types'] ) ) {
+				continue;
+			} elseif ( empty( $post_types[ $post_type_name ] ) ) {
+				continue;
+			}
+
+			$pod = $post_types[ $post_type_name ];
+
+			// REST API
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+
+			if ( $rest_enabled ) {
+				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], $post_type_name ) );
+
+				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
+				$wp_post_types[ $post_type_name ]->rest_controller_class = 'WP_REST_Posts_Controller';
+
+				new PodsRESTFields( $post_type_name );
+			}
+		}
+
+		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_obj ) {
+			if ( isset( self::$content_types_registered['taxonomies'] ) && in_array( $taxonomy_name, self::$content_types_registered['taxonomies'] ) ) {
+				continue;
+			} elseif ( empty( $taxonomies[ $taxonomy_name ] ) ) {
+				continue;
+			}
+
+			$pod = $taxonomies[ $taxonomy_name ];
+
+			// REST API
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+
+			if ( $rest_enabled ) {
+				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], $taxonomy_name ) );
+
+				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
+				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
+
+				new PodsRESTFields( $taxonomy_name );
+			}
+		}
+
+		if ( ! empty( PodsMeta::$user ) ) {
+			$pod = current( PodsMeta::$user );
+
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+
+			if ( $rest_enabled ) {
+				new PodsRESTFields( $pod['name'] );
+			}
+		}
+
+		if ( ! empty( PodsMeta::$media ) ) {
+			$pod = current( PodsMeta::$media );
+
+			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
+
+			if ( $rest_enabled ) {
+				new PodsRESTFields( $pod['name'] );
+			}
 		}
 
 	}
@@ -1377,7 +1511,6 @@ class PodsInit {
 
 		if ( ! did_action( 'init' ) ) {
 			add_action( 'init', array( $this, 'core' ), 11 );
-			add_action( 'init', array( $this, 'add_rest_support' ), 12 );
 			add_action( 'init', array( $this, 'setup_content_types' ), 11 );
 
 			if ( is_admin() ) {
@@ -1385,7 +1518,6 @@ class PodsInit {
 			}
 		} else {
 			$this->core();
-			$this->add_rest_support();
 			$this->setup_content_types();
 
 			if ( is_admin() ) {
@@ -1581,76 +1713,6 @@ class PodsInit {
 					'href'  => admin_url( 'admin.php?page=pods-manage-' . $pod['name'] . '&action=edit&id=' . $pods->id() )
 				) );
 			}
-		}
-
-	}
-
-	/**
-	 * Add REST API support to post type and taxonomy objects.
-	 *
-	 * @uses  "init"
-	 *
-	 * @since 2.5.6
-	 */
-	public function add_rest_support() {
-
-		if ( empty( self::$version ) ) {
-			return;
-		}
-
-		static $rest_support_added;
-
-		if ( ! function_exists( 'register_rest_field' ) ) {
-			return;
-		}
-
-		include_once( PODS_DIR . 'classes/PodsRESTFields.php' );
-		include_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
-
-		$rest_bases = pods_transient_get( 'pods_rest_bases' );
-
-		if ( empty( $rest_bases ) ) {
-	        $pods = pods_api()->load_pods( array( 'type' => array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ), 'fields' => false, 'table_info' => false ) );
-
-			$rest_bases = array();
-
-			if ( ! empty( $pods ) && is_array( $pods ) ) {
-				foreach ( $pods as $pod ) {
-					$type = $pod['type'];
-
-					if ( in_array( $type, array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ) ) ) {
-						if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
-							$rest_bases[ $pod['name'] ] = array(
-								'type' => $type,
-								'base' => sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ),
-							);
-						}
-					}
-				}
-			}
-
-			if ( empty( $rest_bases ) ) {
-				$rest_bases = 'none';
-			}
-
-			pods_transient_set( 'pods_rest_bases', $rest_bases );
-		}
-
-		if ( empty( $rest_support_added ) && ! empty( $rest_bases ) && 'none' !== $rest_bases ) {
-			foreach ( $rest_bases as $pod_name => $pod_info ) {
-				$pod_type  = $pod_info['type'];
-				$rest_base = $pod_info['base'];
-
-				if ( 'post_type' == $pod_type ) {
-					PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
-				} elseif ( 'taxonomy' == $pod_type ) {
-					PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
-				}
-
-				new PodsRESTFields( $pod_name );
-			}
-
-			$rest_support_added = true;
 		}
 
 	}

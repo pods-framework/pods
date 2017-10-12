@@ -24,7 +24,7 @@
         $feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
 
         if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
+            $max_items = $feed->get_item_quantity( 10 );
             $rss_items = $feed->get_items( 0, $max_items );
 
             if ( 0 < $max_items ) {
@@ -66,10 +66,10 @@
             }
         }
 
-        $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/' . PODS_GITHUB_BRANCH . '.atom' );
+        $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/2.x.atom' );
 
         if ( !is_wp_error( $feed ) ) {
-            $max_items = $feed->get_item_quantity( 6 );
+            $max_items = $feed->get_item_quantity( 10 );
             $rss_items = $feed->get_items( 0, $max_items );
 
             if ( 0 < $max_items ) {

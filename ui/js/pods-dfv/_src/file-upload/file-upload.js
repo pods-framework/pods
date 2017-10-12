@@ -22,12 +22,19 @@ const UNLIMITED_FILES = 0;
  * @extends Backbone.View
  */
 export const FileUpload = PodsDFVFieldLayout.extend( {
+	childViewEventPrefix: false, // Disable implicit event listeners in favor of explicit childViewTriggers and childViewEvents
+
 	template: _.template( template ),
 
 	regions: {
 		list    : '.pods-ui-file-list',
 		uiRegion: '.pods-ui-region', // "Utility" container for uploaders to use
 		form    : '.pods-ui-form'
+	},
+
+	childViewEvents: {
+		'childview:remove:file:click': 'onChildviewRemoveFileClick',
+		'childview:add:file:click'   : 'onChildviewAddFileClick'
 	},
 
 	uploader: {},

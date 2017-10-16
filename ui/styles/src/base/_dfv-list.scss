@@ -109,23 +109,23 @@ ul.pods-dfv-list li.pods-dfv-list-remove a:before {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-handle span:before {
-	content: "\f156";
+	@include Dashicons-Sort;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-edit a:before {
-	content: "\f464";
+	@include Dashicons-Edit;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-link a:before {
-	content: "\f504";
+	@include Dashicons-External;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-download a:before {
-	content: "\f316";
+	@include Dashicons-Download;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-remove a:before {
-	content: "\f158";
+	@include Dashicons-No;
 }
 
 ul.pods-dfv-list li.pods-dfv-list-handle span,

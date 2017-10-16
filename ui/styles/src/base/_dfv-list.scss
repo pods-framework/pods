@@ -237,7 +237,7 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle span:before {
-	content: "\f545";
+	@include Dashicons-Move;
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {

@@ -109,7 +109,7 @@ ul.pods-dfv-list li.pods-dfv-list-remove a:before {
 }
 
 ul.pods-dfv-list li.pods-dfv-list-handle span:before {
-	content: "\f333";
+	content: "\f156";
 }
 
 ul.pods-dfv-list li.pods-dfv-list-edit a:before {
@@ -234,6 +234,10 @@ ul.pods-dfv-list-queue li.pods-dfv-list-item ul.pods-dfv-list-meta:after {
 	height: 150px;
 	line-height: 150px;
 	text-align: center;
+}
+
+.pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-handle span:before {
+	content: "\f545";
 }
 
 .pods-field-template-tiles ul.pods-dfv-list li.pods-dfv-list-icon img {

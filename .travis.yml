@@ -42,6 +42,6 @@ before_script:
 
 ## Work
 script:
-    - vendor/bin/phpunit
+    - phpunit
 
 ## Cleanup

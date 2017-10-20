@@ -393,14 +393,6 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     border-bottom: none;
 }
 
-/*.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-flex-list li.pods-flex-name {
-    left: 46px;
-    right: 30px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}*/
-
 .pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table,
 .pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
     margin-top: 0;
@@ -516,7 +508,6 @@ div.row-actions.row-actions-toggle {
 /*
  * REST API Tab
  */
-
 #pods-rest-api label[for="pods-form-ui-no-dependencies"] {
     width: 100%;
     max-width: initial;

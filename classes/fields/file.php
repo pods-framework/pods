@@ -335,6 +335,7 @@ class PodsField_File extends PodsField {
 		}
 
 		wp_enqueue_script( 'pods-dfv' );
+		wp_enqueue_media();  // Ensure the media library is initialized
 
 		$this->render_input_script( $args );
 

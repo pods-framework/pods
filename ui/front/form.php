@@ -1,5 +1,6 @@
 <?php
 wp_enqueue_style( 'pods-form' );
+wp_enqueue_script( 'pods' );
 
 // unset fields
 foreach ( $fields as $k => $field ) {

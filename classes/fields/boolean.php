@@ -87,6 +87,23 @@ class PodsField_Boolean extends PodsField {
         return $schema;
     }
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function is_empty( $value = null ) {
+
+		$is_empty = false;
+
+		$value = filter_var( $value, FILTER_VALIDATE_BOOLEAN );
+
+		if ( ! $value ) {
+			$is_empty = true;
+		}
+
+		return $is_empty;
+
+	}
+
     /**
      * Change the way the value of the field is displayed with Pods::get
      *

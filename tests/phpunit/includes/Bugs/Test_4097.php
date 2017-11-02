@@ -40,7 +40,6 @@ class Bug_4097 extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	public function run_test( $type, $storage ) {
 		$pod_name = $this->setup_pod( $type, $storage );
 		$pod = pods( $pod_name );
-		var_dump( $pod_name );
 		$id = $pod->add( array( 'color' => array( 0 => 'green', 1 => 'brown', 2 => 'red' ) ) );
 		$pod->fetch( $id );
 		$value = $pod->display( 'color' );

@@ -8518,7 +8518,7 @@ class PodsAPI {
 			if ( 0 < $id && ! empty( $thank_you ) ) {
 				$thank_you = str_replace( 'X_ID_X', $id, $thank_you );
 
-				pods_redirect( $thank_you );
+				pods_redirect( $thank_you, 302, false );
 			}
 		}
 

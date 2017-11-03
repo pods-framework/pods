@@ -22,6 +22,7 @@ matrix:
     - php: 5.3
       env: WP_VERSION=4.5 WP_MULTISITE=0
       dist: precise
+      node_js: 7.10.1
 
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
@@ -37,11 +38,6 @@ cache:
         - $HOME/.composer/cache
 
 install:
-    # We need the latest stable node
-    - . $HOME/.nvm/nvm.sh
-    - nvm install stable
-    - nvm use stable
-
     # Dependencies
     - npm install
 

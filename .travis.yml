@@ -42,6 +42,9 @@ cache:
 
 install:
     # Dependencies
+    - npm install
+    # Display version
+    - npm version
 
 before_script:
     - bash bin/init.sh

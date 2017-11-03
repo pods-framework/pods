@@ -10,6 +10,13 @@ env:
     - WP_VERSION=latest WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=1
 
+addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-4.8
+
 matrix:
     allow_failures:
      - env: WP_VERSION=nightly WP_MULTISITE=0

@@ -39,8 +39,8 @@ cache:
 install:
     # We need the latest stable node
     - . $HOME/.nvm/nvm.sh
-    - nvm install stable
-    - nvm use stable
+    - nvm install 7
+    - nvm use 7
 
     # Dependencies
     - npm install

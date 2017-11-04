@@ -12,7 +12,6 @@ if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]];
 		composer require --dev --no-update "phpunit/phpunit:4.8"
 		echo "PHP: 5.3 / PHPUnit 4.8"
 		echo "Install NodeJS version 7"
-		source $HOME/.nvm/nvm.sh
 		nvm install 7
 elif  [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; 
 	then 

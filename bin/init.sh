@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-echo "Removeing xdebug from PHP"
+echo "Removing xdebug from PHP"
 phpenv config-rm xdebug.ini
 
 # @todo: TRAVIS_PHP_VERSION = PHPEnv

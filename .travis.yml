@@ -5,6 +5,9 @@ sudo: false
 php:
     - 7.1
 
+node_js:
+    - "node"
+
 env:
     - WP_VERSION=nightly WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
@@ -22,6 +25,7 @@ matrix:
     - php: 5.3
       env: WP_VERSION=4.5 WP_MULTISITE=0
       dist: precise
+      node_js: "7"
 
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
@@ -37,18 +41,16 @@ cache:
         - $HOME/.composer/cache
 
 install:
-    # We need the latest stable node
-    - . $HOME/.nvm/nvm.sh
-    - nvm install stable
-    - nvm use stable
-
-    # Dependencies
-    - npm install
+    - source $HOME/.nvm/nvm.sh
 
 before_script:
     - bash bin/init.sh
     - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
+    # Dependencies
+    - npm install
+    # Display version
+    - npm version
 
 script:
     - vendor/bin/phpunit

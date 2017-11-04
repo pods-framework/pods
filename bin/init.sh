@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-echo "Removeding xdebug from PHP"
+echo "Removing xdebug from PHP"
 phpenv config-rm xdebug.ini
 
 # @todo: TRAVIS_PHP_VERSION = PHPEnv
@@ -11,6 +11,8 @@ if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]];
 	then 
 		composer require --dev --no-update "phpunit/phpunit:4.8"
 		echo "PHP: 5.3 / PHPUnit 4.8"
+		echo "Install NodeJS version 7"
+		nvm install 7
 elif  [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; 
 	then 
 		composer require --dev --no-update "phpunit/phpunit:5.*"  
@@ -36,3 +38,4 @@ echo "Composer: update"
 composer self-update
 echo "Composer: installing dependancies"
 composer install --no-interaction --prefer-source
+

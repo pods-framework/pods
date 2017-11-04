@@ -23,11 +23,6 @@ matrix:
       env: WP_VERSION=4.5 WP_MULTISITE=0 NODE_RELEASE=7
       dist: precise
 
-    # MySQL 5.7
-    #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0
-    # MySQL 8.0
-    #- env: DB=mysql-8.0-dmr WP_VERSION=latest WP_MULTISITE=0
-
 ## Cache composer and node bits
 cache:
     apt: true

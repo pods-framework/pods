@@ -2,8 +2,6 @@ language: php
 
 sudo: false
 
-node:
-
 php:
     - 7.1
 

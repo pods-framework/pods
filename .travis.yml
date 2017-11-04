@@ -34,8 +34,6 @@ cache:
 before_install:
     - . $HOME/.nvm/nvm.sh
     - nvm install ${NODE_RELEASE}
-    - nvm use ${NODE_RELEASE}
-    - nvm current
     - npm install
 
 before_script:

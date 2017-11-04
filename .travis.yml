@@ -6,27 +6,22 @@ php:
     - 7.1
 
 env:
-    - WP_VERSION=nightly WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
-    - NODE_RELEASE=stable
-    - NODE_RELEASE=7
+    #- WP_VERSION=nightly WP_MULTISITE=0 NODE_RELEASE=stable
+    - WP_VERSION=latest WP_MULTISITE=0 NODE_RELEASE=stable
+    #- WP_VERSION=latest WP_MULTISITE=1 NODE_RELEASE=stable
 
 matrix:
     allow_failures:
      - env: WP_VERSION=nightly WP_MULTISITE=0
 
     include:
-    - php: 7.0
-      env: WP_VERSION=latest WP_MULTISITE=0
-      env: NODE_RELEASE=stable
-    - php: 5.6
-      env: WP_VERSION=latest WP_MULTISITE=0
-      env: NODE_RELEASE=stable
-    - php: 5.3
-      env: WP_VERSION=4.5 WP_MULTISITE=0
-      dist: precise
-      env: NODE_RELEASE=7
+    #- php: 7.0
+    #  env: WP_VERSION=latest WP_MULTISITE=0
+    #- php: 5.6
+    #  env: WP_VERSION=latest WP_MULTISITE=0
+    #- php: 5.3
+    #  env: WP_VERSION=4.5 WP_MULTISITE=0
+    #  dist: precise
 
     # MySQL 5.7
     #- env: DB=mysql-5.7 WP_VERSION=latest WP_MULTISITE=0

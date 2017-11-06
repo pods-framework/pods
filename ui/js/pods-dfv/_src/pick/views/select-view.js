@@ -310,6 +310,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
+		const select2Overrides = fieldConfig.select2Overrides;
 		const limit = fieldConfig.pick_limit;
 		let $ulContainer, select2Options, placeholder;
 
@@ -356,7 +357,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		// Initialize select2
-		$select2.selectWoo( select2Options );
+		$select2.selectWoo( jQuery.extend( select2Options, select2Overrides ) );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
 		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );

@@ -356,7 +356,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		// Initialize select2
-		$select2.select2( select2Options );
+		$select2.selectWoo( select2Options );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
 		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );

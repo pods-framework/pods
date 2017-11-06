@@ -917,13 +917,35 @@ class PodsField_Pick extends PodsField {
 
 		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
+		/**
+		 *
+		 * Filter to specify the select2 ajax delay value
+		 *
+		 * @param int $delay Time to wait after typing has stopped before sending a request in ajax mode (in milliseconds)
+		 *
+		 * @since 2.7
+		 */
+		$ajax_delay = apply_filters( 'pods_select2_ajax_delay', 300 );
+
+		/**
+		 *
+		 * Filter to specify the select2 ajax minimum input length
+		 *
+		 * @param int $minimum_input_length Number of characters necessary to start a search
+		 *
+		 * @since 2.7
+		 */
+		$ajax_minimum_input_length = apply_filters( 'pods_select2_ajax_minimum_input_length', 1 );
+
 		return array(
-			'ajax'     => $ajax,
-			'pod'      => $pod_id,
-			'field'    => $field_id,
-			'id'       => $id,
-			'uri'      => $uri_hash,
-			'_wpnonce' => $field_nonce
+			'ajax'                 => $ajax,
+			'delay'                => $ajax_delay,
+			'minimum_input_length' => $ajax_minimum_input_length,
+			'pod'                  => $pod_id,
+			'field'                => $field_id,
+			'id'                   => $id,
+			'uri'                  => $uri_hash,
+			'_wpnonce'             => $field_nonce
 		);
 
 	}

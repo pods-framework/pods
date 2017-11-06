@@ -1164,20 +1164,26 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
  *
  * @param string $location The path to redirect to
  * @param int $status Status code to use
+ * @param boolean $die If true, PHP code exection will stop
  *
  * @return void
  *
  * @since 2.0
  */
-function pods_redirect ( $location, $status = 302 ) {
+function pods_redirect ( $location, $status = 302, $die = true ) {
     if ( !headers_sent() ) {
         wp_redirect( $location, $status );
-        die();
+        if ( $die ) {
+            die();
+        }
     }
     else {
-        die( '<script type="text/javascript">'
+        echo '<script type="text/javascript">'
             . 'document.location = "' . str_replace( '&amp;', '&', esc_js( $location ) ) . '";'
-            . '</script>' );
+            . '</script>';
+        if ( $die ) {
+            die();
+        }
     }
 }
 

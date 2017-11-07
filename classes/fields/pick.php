@@ -872,7 +872,7 @@ class PodsField_Pick extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $limit;
 
-		$options[ 'ajax_data' ] = $this->build_dfv_autocomplate_ajax_data( $options, $args, $ajax );
+		$options[ 'ajax_data' ] = $this->build_dfv_autocomplete_ajax_data( $options, $args, $ajax );
 
 		return $options;
 
@@ -895,7 +895,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_autocomplate_ajax_data( $options, $args, $ajax ) {
+	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax ) {
 
 		if ( is_object( $args->pod ) ) {
 			$pod_id = (int) $args->pod->pod_id;

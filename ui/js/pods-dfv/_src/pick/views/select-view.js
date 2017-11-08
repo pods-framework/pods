@@ -311,8 +311,23 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
 		const limit = fieldConfig.pick_limit;
+		const isSingle = ( 'single' === fieldConfig.pick_format_type );
+		const selectedCount = this.collection.filterBySelected().length;
 		let $ulContainer, select2Options, placeholder;
 
+		// 'placeholder' for single select requires an empty option.  None of the examples set selected but
+		// it did not work for me in testing with just an empty option like the examples.
+		//
+		// https://select2.org/placeholders#single-select-placeholders
+		// https://github.com/select2/select2/issues/3553
+		if ( 0 === selectedCount && isSingle ) {
+			$select2.prepend( '<option selected="selected">' );
+		}
+
+		// ToDo:
+		// limitDisable is only used to control the List View's select2 component, it won't be set
+		// for regular autocomplete.  This function should be generic and not have to poke around with
+		// special properties like this for exception cases.
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
 		}
@@ -321,9 +336,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		select2Options = {
-			maximumSelectionLength: limit,
+			maximumSelectionLength: isSingle ? undefined : limit,
 			placeholder           : placeholder,
-			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
+			allowClear            : isSingle,
+			minimumResultsForSearch: 30,
 			disabled              : fieldConfig.limitDisable,
 			escapeMarkup          : function ( text ) { return text; }
 		};

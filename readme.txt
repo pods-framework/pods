@@ -120,10 +120,10 @@ We also do our best to integrate and play nicely with other projects:
  * [WPML](http://wpml.org/)
  * [Conductor](https://conductorplugin.com/)
  * [Timber](http://upstatement.com/timber/)
+ * [Beaver Builder and Themer](https://www.wpbeaverbuilder.com) Using the [Pods Beaver Themer Add-on](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
  * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
 * Themes we've integrated with
- * [Beaver Builder](https://beaverbuilder.com) (BeaverBuilder)
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
 

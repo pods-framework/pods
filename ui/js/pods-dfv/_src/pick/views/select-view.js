@@ -261,8 +261,6 @@ export const SelectView = Marionette.CollectionView.extend( {
 			// At the limit: disable all unselected items so no further selections can be added
 			this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 		}
-
-		this.trigger( 'childview:selection:limit:over', this );
 	},
 
 	/**
@@ -276,8 +274,6 @@ export const SelectView = Marionette.CollectionView.extend( {
 			// Not at limit, make sure all items are enabled
 			this.$el.find( 'option' ).prop( 'disabled', false );
 		}
-
-		this.trigger( 'childview:selection:limit:under', this );
 	},
 
 	/**

@@ -43,8 +43,6 @@ export const Pick = PodsDFVFieldLayout.extend( {
 	childViewEvents: {
 		'childview:remove:item:click'    : 'onChildviewRemoveItemClick',
 		'childview:edit:item:click'      : 'onChildviewEditItemClick',
-		'childview:selection:limit:over' : 'onChildviewSelectionLimitOver',
-		'childview:selection:limit:under': 'onChildviewSelectionLimitUnder',
 		'childview:change:selected'      : 'onChildviewChangeSelected',
 		'childview:add:new'              : 'onChildviewAddNew'
 	},
@@ -96,13 +94,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 
 		// The autocomplete portion of List View doesn't track selected items; disable if we're at the selection limit
 		if ( this.collection.filterBySelected().length >= pick_limit && 0 !== pick_limit ) {
-
 			fieldConfig.limitDisable = true;
-			this.onChildviewSelectionLimitOver();
-
-		} else {
-
-			this.onChildviewSelectionLimitUnder();
 		}
 
 		model = new PodsDFVFieldModel( { fieldConfig: fieldConfig } );
@@ -170,28 +162,6 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		this.getChildView( 'autocomplete' ).setCollection( this.collection.filterByUnselected() );
 
 		return { 'results': returnList };
-	},
-
-	/**
-	 *
-	 * @param childView
-	 */
-	onChildviewSelectionLimitOver: function ( childView ) {
-		const addNew = this.getChildView( 'addNew' );
-		if ( addNew ) {
-			addNew.disable();
-		}
-	},
-
-	/**
-	 *
-	 * @param childView
-	 */
-	onChildviewSelectionLimitUnder: function ( childView ) {
-		const addNew = this.getChildView( 'addNew' );
-		if ( addNew ) {
-			addNew.enable();
-		}
 	},
 
 	/**

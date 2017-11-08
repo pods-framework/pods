@@ -91,11 +91,7 @@ export const CheckboxView = PodsFieldListView.extend( {
 		limit = +fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
 		numSelected = this.collection.filterBySelected().length;
 
-		if ( 0 === limit || numSelected < limit ) {
-			return true;
-		} else {
-			return false;
-		}
+		return ( 0 === limit || numSelected < limit );
 	},
 
 	/**
@@ -103,7 +99,6 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitOver: function ( ) {
 		this.$el.find( 'input:checkbox:not(:checked)' ).prop( 'disabled', true );
-		this.trigger( 'selection:limit:over', this );
 	},
 
 	/**
@@ -111,7 +106,6 @@ export const CheckboxView = PodsFieldListView.extend( {
 	 */
 	selectionLimitUnder: function ( ) {
 		this.$el.find( 'input:checkbox' ).prop( 'disabled', false );
-		this.trigger( 'selection:limit:under', this );
 	}
 
 } );

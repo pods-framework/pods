@@ -16,8 +16,6 @@ import {SelectView} from 'pods-dfv/_src/pick/views/select-view';
 import {ListView} from 'pods-dfv/_src/pick/views/list-view';
 import {AddNew} from 'pods-dfv/_src/pick/views/add-new';
 
-const AJAX_ADD_NEW_ACTION = 'pods_relationship_popup';
-
 const views = {
 	'checkbox': CheckboxView,
 	'select'  : SelectView,

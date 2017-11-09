@@ -310,7 +310,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
-		const select2Overrides = fieldConfig.select2Overrides;
+		const select2Overrides = fieldConfig.select2_overrides;
 		const limit = fieldConfig.pick_limit;
 		let $ulContainer, select2Options, placeholder;
 

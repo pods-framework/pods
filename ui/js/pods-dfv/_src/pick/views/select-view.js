@@ -339,7 +339,6 @@ export const SelectView = Marionette.CollectionView.extend( {
 			maximumSelectionLength: isSingle ? undefined : limit, // Should not be set for single select, messes up placeholder
 			placeholder           : placeholder,
 			allowClear            : isSingle,
-			minimumResultsForSearch: 30,
 			disabled              : fieldConfig.limitDisable,
 			escapeMarkup          : function ( text ) { return text; }
 		};

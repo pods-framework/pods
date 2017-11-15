@@ -431,6 +431,14 @@ class PodsMeta {
 		}
     }
 
+	/**
+	 * Admin Columns: Remove internal meta keys + add existing (public) Pod field keys.
+	 *
+	 * @param array $meta_fields
+	 * @param \AC_Settings_Column_CustomField $storage_model
+	 *
+	 * @return array
+	 */
     public function cpac_meta_keys ( $meta_fields, $storage_model ) {
         $object_type = 'post_type';
 	    $object = null;
@@ -497,8 +505,14 @@ class PodsMeta {
         return $meta_fields;
     }
 
+	/**
+	 * Admin Columns: Remove internal Pods post types.
+	 *
+	 * @param  array $post_types
+	 * @return array
+	 */
     public function cpac_post_types ( $post_types ) {
-        // Remove internal Pods post types
+
         foreach ( $post_types as $post_type => $post_type_name ) {
             if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) )
                 unset( $post_types[ $post_type ] );
@@ -507,6 +521,15 @@ class PodsMeta {
         return $post_types;
     }
 
+	/**
+	 * Admin Columns: For custom field column types.
+	 *
+	 * @param mixed $meta
+	 * @param int $id
+	 * @param \AC_Column $obj
+	 *
+	 * @return mixed
+	 */
     public function cpac_meta_value ( $meta, $id, $obj ) {
         $tableless_field_types = PodsForm::tableless_field_types();
 

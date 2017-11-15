@@ -603,43 +603,6 @@ class PodsMeta {
                 $meta = $podterms->field( $field );
             }
 
-        }
-
-        return $meta;
-    }
-
-    public function cpac_meta_values ( $meta, $field_type, $field, $type, $id ) {
-        $tableless_field_types = PodsForm::tableless_field_types();
-
-        $object = $type;
-
-        if ( 'wp-media' == $type )
-            $object = 'media';
-        elseif ( 'wp-users' == $type )
-            $object = 'user';
-        elseif ( 'wp-comments' == $type )
-            $object = 'comment';
-
-        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
-            self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
-
-        $pod = self::$current_pod_data;
-
-        // Add Pods fields
-        if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'taxonomy', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
-                $metadata_type = $pod['type'];
-
-                if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
-                    $metadata_type = 'post';
-                } elseif ( 'taxonomy' == $metadata_type ) {
-                    $metadata_type = 'term';
-                }
-
-                $meta = get_metadata( $metadata_type, $id, $field, true );
-            }
-
-            $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
             $meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, array_merge( $pod['fields'][ $field ], $pod['fields'][ $field ]['options'] ), $pod['fields'], $pod );
         }
 

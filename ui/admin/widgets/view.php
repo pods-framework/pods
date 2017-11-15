@@ -31,12 +31,12 @@
 			'none'           => __( 'Disable Caching', 'pods' ),
 			'cache'          => __( 'Object Cache', 'pods' ),
 			'transient'      => __( 'Transient', 'pods' ),
-			'site-transient' => __( 'Site Transient', 'pods' )
+			'site-transient' => __( 'Site Transient', 'pods' ),
 		);
 		?>
 		<select id="<?php echo esc_attr( $this->get_field_id( 'cache_mode' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'cache_mode' ) ); ?>">
-			<?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
-				<?php $selected = ( $cache_mode_option == $cache_mode ) ? 'selected' : ''; ?>
+			<?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ) : ?>
+				<?php $selected = ( $cache_mode_option === $cache_mode ) ? 'selected' : ''; ?>
 				<option value="<?php echo esc_attr( $cache_mode_option ); ?>"<?php selected( $cache_mode_option, $cache_mode ); ?>>
 					<?php echo esc_html( $cache_mode_label ); ?>
 				</option>

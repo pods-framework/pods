@@ -10,7 +10,7 @@
 		'prev_next' => $params->prev_next,
 		'prev_text' => $params->prev_text,
 		'next_text' => $params->next_text,
-		'type'      => 'list'
+		'type'      => 'list',
 	);
 
 	echo paginate_links( $args );

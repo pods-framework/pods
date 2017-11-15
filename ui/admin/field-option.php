@@ -98,18 +98,18 @@ foreach ( $field_options as $field_name => $field_option ) {
 							<?php echo PodsForm::field( $row_name, $value, $field_group_option['type'], $field_group_option ); ?>
 						</li>
 						<?php
-					}
+					}//end foreach
 					?>
 				</ul>
 			</div>
 		</div>
 		<?php
-	}
+	}//end if
 
 	if ( false !== $depends_on || ! empty( $dep_classes ) ) {
 		$depends_on = $dep_classes;
 	}
-}
+}//end foreach
 
 if ( ! empty( $depends_on ) ) {
 	?>

@@ -6,13 +6,15 @@ wp_enqueue_script( 'pods' );
 foreach ( $fields as $k => $field ) {
 
 	// Make sure all required array keys exist.
-	$field        = wp_parse_args( $field, array(
-		'name'    => '',
-		'type'    => '',
-		'label'   => '',
-		'help'    => '',
-		'options' => array(),
-	) );
+	$field        = wp_parse_args(
+		$field, array(
+			'name'    => '',
+			'type'    => '',
+			'label'   => '',
+			'help'    => '',
+			'options' => array(),
+		)
+	);
 	$fields[ $k ] = $field;
 
 	if ( in_array( $field['name'], array( 'created', 'modified' ) ) ) {
@@ -32,7 +34,7 @@ foreach ( $fields as $k => $field ) {
 			$fields[ $k ]['readonly'] = true;
 		}
 	}
-}
+}//end foreach
 
 $submittable_fields = $fields;
 
@@ -78,7 +80,7 @@ if ( ! $fields_only ) {
 			<?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $submittable_fields ) ), 'hidden' ); ?>
 			<?php echo PodsForm::field( '_pods_location', $_SERVER['REQUEST_URI'], 'hidden' ); ?>
 			<?php
-			}
+}
 
 			/**
 			 * Runs before fields are outputted.
@@ -117,9 +119,16 @@ if ( ! $fields_only ) {
 						</div>
 
 						<div class="pods-field-input">
-							<?php echo PodsForm::field( $field_prefix . $field['name'], $pod->field( array( 'name'    => $field['name'],
-							                                                                                'in_form' => true
-							) ), $field['type'], $field, $pod, $pod->id() ); ?>
+							<?php
+							echo PodsForm::field(
+								$field_prefix . $field['name'], $pod->field(
+									array(
+										'name'    => $field['name'],
+										'in_form' => true,
+									)
+								), $field['type'], $field, $pod, $pod->id()
+							);
+							?>
 
 							<?php echo PodsForm::comment( $field_prefix . $field['name'], null, $field ); ?>
 						</div>
@@ -136,7 +145,7 @@ if ( ! $fields_only ) {
 					 * @since  2.3.19
 					 */
 					do_action( 'pods_form_after_field', $field, $fields, $pod, $params );
-				}
+				}//end foreach
 				?>
 			</ul>
 
@@ -146,9 +155,14 @@ if ( ! $fields_only ) {
 					continue;
 				}
 
-				echo PodsForm::field( $field_prefix . $field['name'], $pod->field( array( 'name'    => $field['name'],
-				                                                                          'in_form' => true
-				) ), 'hidden' );
+				echo PodsForm::field(
+					$field_prefix . $field['name'], $pod->field(
+						array(
+							'name'    => $field['name'],
+							'in_form' => true,
+						)
+					), 'hidden'
+				);
 			}
 
 			/**
@@ -190,4 +204,4 @@ if ( ! $fields_only ) {
 		}
 	</script>
 	<?php
-}
+			}//end if

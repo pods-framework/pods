@@ -13,7 +13,7 @@ if ( strlen( $value ) < 1 ) {
 $values = explode( ',', $value );
 $values = array(
 	pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
-	pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
+	pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) ),
 );
 
 $values[0] = max( $values[0], pods_var( $form_field_type . '_min', $options, 0 ) );
@@ -48,31 +48,30 @@ $attributes          = PodsForm::merge_attributes( $attributes, $name, $form_fie
 																			 max         : <?php echo esc_js( pods_v( $form_field_type . '_max', $options, 100 ) ); ?>,
 																			 step        : <?php echo esc_js( pods_v( $form_field_type . '_step', $options, 1 ) ); ?>,
 
-			                                                                 <?php
-			                                                                 if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
-			                                                                 ?>
-																			 range  : true,
-																			 values : [
-				                                                                 <?php echo esc_js( $values[0] ); ?>,
-				                                                                 <?php echo esc_js( $values[1] ); ?>
-																			 ],
-																			 slide  : function ( event, ui ) {
+																				<?php
+																				if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
+																					?>
+																				   range  : true,
+																				   values : [
+																					<?php echo esc_js( $values[0] ); ?>,
+																					<?php echo esc_js( $values[1] ); ?>
+																				],
+																				slide  : function ( event, ui ) {
 																				 $( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.values[0] + ',' + ui.values[1] );
 																				 $( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.values[0] + ' - ' + ui.values[1] );
-																			 }
-			                                                                 <?php
-			                                                                 }
-			                                                                 else {
-			                                                                 ?>
-																			 range  : false,
-																			 value  : <?php echo esc_js( $value ); ?>,
-																			 slide  : function ( event, ui ) {
+																				}
+																				<?php
+																				} else {
+																					?>
+																				   range  : false,
+																				   value  : <?php echo esc_js( $value ); ?>,
+																				slide  : function ( event, ui ) {
 																				 $( "#<?php echo esc_js( $attributes['id'] ); ?>" ).val( ui.value );
 																				 $( "#<?php echo esc_js( $attributes['id'] ); ?>-amount-display" ).html( ui.value );
-																			 }
-			                                                                 <?php
-			                                                                 }
-			                                                                 ?>
+																				}
+																				<?php
+																				}//end if
+																				?>
 																		 } );
 	} );
 </script>

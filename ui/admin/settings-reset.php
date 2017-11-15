@@ -22,7 +22,7 @@ if ( isset( $_POST['_wpnonce'] ) && false !== wp_verify_nonce( $_POST['_wpnonce'
 	} elseif ( 1 == pods_v( 'pods_cleanup_1x_success' ) ) {
 		pods_message( 'Pods 1.x data has been deleted.' );
 	}
-}
+}//end if
 
 // Monday Mode
 $monday_mode = pods_v( 'pods_monday_mode', 'get', 0, true );
@@ -37,7 +37,7 @@ if ( pods_v_sanitized( 'pods_reset_weekend', 'post', pods_v_sanitized( 'pods_res
 	}
 }
 
-//Please Note:
+// Please Note:
 $please_note = __( 'Please Note:' );
 
 $old_version = get_option( 'pods_version' );
@@ -101,7 +101,7 @@ if ( ! empty( $old_version ) ) {
 		<input type="submit" class="button button-primary" name="pods_reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?> " onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
 	</p>
 	<?php
-}
+}//end if
 
 if ( $monday_mode ) {
 	?>

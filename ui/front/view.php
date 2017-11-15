@@ -11,13 +11,15 @@ wp_enqueue_style( 'pods-form' );
 		<?php
 		foreach ( $fields as $field ) {
 			if ( isset( $field['custom_display'] ) && is_callable( $field['custom_display'] ) ) {
-				$value = call_user_func_array( $field['custom_display'], array(
-					$pod->row(),
-					$pod,
-					$pod->field( $field['name'] ),
-					$field['name'],
-					$field
-				) );
+				$value = call_user_func_array(
+					$field['custom_display'], array(
+						$pod->row(),
+						$pod,
+						$pod->field( $field['name'] ),
+						$field['name'],
+						$field,
+					)
+				);
 			} else {
 				$value = $pod->display( $field['name'] );
 			}
@@ -31,6 +33,8 @@ wp_enqueue_style( 'pods-form' );
 					<?php echo $value; ?>
 				</div>
 			</li>
-		<?php } ?>
+		<?php
+		}//end foreach
+	?>
 	</ul>
 </div>

@@ -6,7 +6,7 @@ $pick_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 $multiple   = false;
 
 if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
-	$name                   .= '[]';
+	$name                  .= '[]';
 	$attributes['multiple'] = 'multiple';
 	$multiple               = true;
 }
@@ -70,7 +70,7 @@ $selection_made = false;
 						<option value="<?php echo esc_attr( $sub_option_value ); ?>"<?php echo $selected; ?>><?php echo esc_html( $sub_option_label ); ?></option>
 						<?php
 					}
-				}
+				}//end foreach
 				?>
 			</optgroup>
 			<?php
@@ -98,7 +98,7 @@ $selection_made = false;
 				<option value="<?php echo esc_attr( $option_value ); ?>"<?php echo $selected; ?>><?php echo esc_html( $option_label ); ?></option>
 				<?php
 			}
-		}
-	}
+		}//end if
+	}//end foreach
 	?>
 </select>

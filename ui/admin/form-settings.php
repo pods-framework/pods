@@ -57,8 +57,8 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$params = pods_unslash( (array) $_POST );
 		$id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
-		$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-		$error   = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
+		$error   = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < $id ) {
 			echo $obj->message( $message );
@@ -71,15 +71,15 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 } elseif ( isset( $_GET['do'] ) ) {
 	$action = __( 'saved', 'pods' );
 
-	$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-	$error   = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
+	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
+	$error   = sprintf( __( '<strong>Error:</strong> %1$s not %2$s.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < $pod->id() ) {
 		echo $obj->message( $message );
 	} else {
 		echo $obj->error( $error );
 	}
-}
+}//end if
 
 if ( ! isset( $label ) ) {
 	$label = __( 'Save', 'pods' );
@@ -106,9 +106,14 @@ $do = 'save';
 				continue;
 			}
 
-			echo PodsForm::field( 'pods_field_' . $field['name'], $pod->field( array( 'name'    => $field['name'],
-			                                                                          'in_form' => true
-			) ), 'hidden' );
+			echo PodsForm::field(
+				'pods_field_' . $field['name'], $pod->field(
+					array(
+						'name'    => $field['name'],
+						'in_form' => true,
+					)
+				), 'hidden'
+			);
 		}
 		?>
 		<table class="form-table pods-manage-field">
@@ -118,36 +123,43 @@ $do = 'save';
 			foreach ( $fields
 
 			as $field ) {
-			if ( 'hidden' === $field['type'] ) {
-				continue;
-			}
+				if ( 'hidden' === $field['type'] ) {
+					continue;
+				}
 
-			$dep_options = PodsForm::dependencies( $field );
-			$dep_classes = $dep_options['classes'];
-			$dep_data    = $dep_options['data'];
+				$dep_options = PodsForm::dependencies( $field );
+				$dep_classes = $dep_options['classes'];
+				$dep_data    = $dep_options['data'];
 
-			if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
-			if ( ! empty( $depends_on ) ) {
-				?>
-				</tbody>
+				if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
+					if ( ! empty( $depends_on ) ) {
+						?>
+						</tbody>
+						<?php
+					}
+
+					if ( ! empty( $dep_classes ) ) {
+						?>
+						<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 				<?php
-			}
-
-			if ( ! empty( $dep_classes ) ) {
-			?>
-			<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-			<?php
-			}
-			}
+					}
+				}
 			?>
 			<tr valign="top" class="pods-field-option pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
 				<th>
 					<?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?>
 				</th>
 				<td>
-					<?php echo PodsForm::field( 'pods_field_' . $field['name'], $pod->field( array( 'name'    => $field['name'],
-					                                                                                'in_form' => true
-					) ), $field['type'], $field, $pod, $pod->id() ); ?>
+					<?php
+					echo PodsForm::field(
+						'pods_field_' . $field['name'], $pod->field(
+							array(
+								'name'    => $field['name'],
+								'in_form' => true,
+							)
+						), $field['type'], $field, $pod, $pod->id()
+					);
+					?>
 					<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
 				</td>
 			</tr>
@@ -155,13 +167,13 @@ $do = 'save';
 			if ( false !== $depends_on || ! empty( $dep_classes ) ) {
 				$depends_on = $dep_classes;
 			}
-			}
+			}//end foreach
 
 			if ( ! empty( $depends_on ) ) {
 			?>
 			</tbody>
 		<?php
-		}
+			}
 		?>
 		</table>
 

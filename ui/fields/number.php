@@ -29,14 +29,18 @@ if ( '9999.99' == pods_var( 'number_format', $options ) ) {
 <script>
 	jQuery( function ( $ ) {
 		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).on( 'blur', function () {
-			if ( !/^[0-9\<?php
+			if ( !/^[0-9\
+			<?php
 					echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-					?>\-]$/.test( $( this ).val() ) ) {
+					?>
+					\-]$/.test( $( this ).val() ) ) {
 				var newval = $( this )
 					.val()
-					.replace( /[^0-9\<?php
+					.replace( /[^0-9\
+					<?php
 						echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-						?>\-]/g, '' );
+						?>
+						\-]/g, '' );
 				$( this ).val( newval );
 			}
 		} );

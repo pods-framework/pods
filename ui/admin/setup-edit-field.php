@@ -39,7 +39,7 @@ unset( $field['options'] );
 unset( $field['table_info'] );
 
 $data = array(
-	'row' => $pods_i
+	'row' => $pods_i,
 );
 ?>
 <tr id="row-<?php echo esc_attr( $pods_i ); ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_v_sanitized( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>
@@ -58,20 +58,20 @@ $data = array(
 		if ( '__1' != pods_v_sanitized( 'id', $field ) ) {
 			?>
 			<span class="pods-manage-row-more">
-                        [id: <?php echo esc_html( pods_v_sanitized( 'id', $field ) ); ?>]
-                    </span>
+						[id: <?php echo esc_html( pods_v_sanitized( 'id', $field ) ); ?>]
+					</span>
 			<?php
 		}
 		?>
 
 		<div class="row-actions">
-                    <span class="edit">
-                        <a title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" class="pods-manage-row-edit" href="#edit-field"><?php _e( 'Edit', 'pods' ); ?></a> |
-                    </span> <span class="duplicate">
-                        <a title="<?php esc_attr_e( 'Duplicate this field', 'pods' ); ?>" class="pods-manage-row-duplicate" href="#duplicate-field"><?php _e( 'Duplicate', 'pods' ); ?></a> |
-                    </span> <span class="trash pods-manage-row-delete">
-                        <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
-                    </span>
+					<span class="edit">
+						<a title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" class="pods-manage-row-edit" href="#edit-field"><?php _e( 'Edit', 'pods' ); ?></a> |
+					</span> <span class="duplicate">
+						<a title="<?php esc_attr_e( 'Duplicate this field', 'pods' ); ?>" class="pods-manage-row-duplicate" href="#duplicate-field"><?php _e( 'Duplicate', 'pods' ); ?></a> |
+					</span> <span class="trash pods-manage-row-delete">
+						<a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
+					</span>
 		</div>
 		<div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo esc_attr( $pods_i ); ?>">
 			<input type="hidden" name="field_data_json[<?php echo esc_attr( $pods_i ); ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
@@ -110,7 +110,7 @@ $data = array(
 
 				if ( is_array( $object_label ) ) {
 					foreach ( $object_label as $sub_object => $sub_object_label ) {
-						if ( $pick_object == $sub_object ) {
+						if ( $pick_object === $sub_object ) {
 							$ies = strlen( $object ) - 3;
 
 							if ( $ies === strpos( $object, 'ies' ) ) {
@@ -124,12 +124,12 @@ $data = array(
 							break;
 						}
 					}
-				} elseif ( pods_v_sanitized( 'pick_object', $field ) == $object ) {
+				} elseif ( pods_v_sanitized( 'pick_object', $field ) === $object ) {
 					$pick_object_name = $object_label;
 
 					break;
-				}
-			}
+				}//end if
+			}//end foreach
 
 			if ( null === $pick_object_name ) {
 				$pick_object_name = ucwords( str_replace( array( '-', '_' ), ' ', pods_v( 'pick_object', $field ) ) );
@@ -141,7 +141,7 @@ $data = array(
 			?>
 			<br /><span class="pods-manage-field-type-desc">&rsaquo; <?php echo $pick_object_name; ?></span>
 			<?php
-		}
+		}//end if
 		?>
 	</td>
 </tr>

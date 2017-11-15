@@ -16,7 +16,7 @@ $show_preview = (int) pods_v( $form_field_type . '_show_preview', $options, 0 );
 	<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 
 <?php
-if ( 1 == $show_preview ) {
+if ( 1 === $show_preview ) {
 	$oembed_width  = ( isset( $options['oembed_width'] ) ) ? (int) $options['oembed_width'] : 0;
 	$oembed_height = ( isset( $options['oembed_height'] ) ) ? (int) $options['oembed_height'] : 0;
 	?>
@@ -73,5 +73,5 @@ if ( 1 == $show_preview ) {
 		} );
 	</script>
 	<?php
-}
+}//end if
 PodsForm::regex( $form_field_type, $options );

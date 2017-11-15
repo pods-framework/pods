@@ -99,7 +99,7 @@ if ( 0 < $data_count ) {
 		}
 
 		$counter ++;
-	}
+	}//end foreach
 
 	if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
 		?>
@@ -107,4 +107,4 @@ if ( 0 < $data_count ) {
 		</div>
 		<?php
 	}
-}
+}//end if

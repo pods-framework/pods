@@ -44,12 +44,14 @@ $date_default = PodsForm::field_method( 'time', 'createFromFormat', 'H:i:s', (st
 
 $formatted_date = $value;
 
-if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array(
+if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array(
+	$value, array(
 		'',
 		'0000-00-00',
 		'0000-00-00 00:00:00',
-		'00:00:00'
-	) ) ) {
+		'00:00:00',
+	)
+) ) {
 	$formatted_date = $value = '';
 } elseif ( 'text' !== $type ) {
 	$formatted_date = $value;
@@ -108,12 +110,11 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 			jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		}
 		<?php
-		}
-		else {
+		} else {
 		?>
 		jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		<?php
-		}
+		}//end if
 		?>
 	} );
 </script>

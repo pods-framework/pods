@@ -2,17 +2,19 @@
 wp_enqueue_style( 'wp-color-picker' );
 
 if ( ! is_admin() ) {
-	wp_enqueue_script( 'iris', admin_url( 'js/iris.min.js' ), array(
-		'jquery-ui-draggable',
-		'jquery-ui-slider',
-		'jquery-touch-punch'
-	) );
-	wp_enqueue_script( 'wp-color-picker', admin_url( "js/color-picker.min.js" ), array( 'iris' ), '3.5', true );
+	wp_enqueue_script(
+		'iris', admin_url( 'js/iris.min.js' ), array(
+			'jquery-ui-draggable',
+			'jquery-ui-slider',
+			'jquery-touch-punch',
+		)
+	);
+	wp_enqueue_script( 'wp-color-picker', admin_url( 'js/color-picker.min.js' ), array( 'iris' ), '3.5', true );
 	$colorpicker_l10n = array(
 		'clear'         => __( 'Clear' ),
 		'defaultString' => __( 'Default' ),
 		'pick'          => __( 'Select Color' ),
-		'current'       => __( 'Current Color' )
+		'current'       => __( 'Current Color' ),
 	);
 	wp_localize_script( 'wp-color-picker', 'wpColorPickerL10n', $colorpicker_l10n );
 } else {

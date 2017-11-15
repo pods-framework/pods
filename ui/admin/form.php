@@ -44,16 +44,16 @@ foreach ( $groups as $g => $group ) {
 			} elseif ( pods_v_sanitized( 'read_only', $field['options'], false ) ) {
 				$group['fields'][ $k ]['readonly'] = true;
 			}
-		}
+		}//end if
 
 		if ( ! pods_v_sanitized( 'readonly', $field, false ) ) {
 			$submittable_fields[ $field['name'] ] = $group['fields'][ $k ];
 		}
 
 		$group_fields[ $field['name'] ] = $group['fields'][ $k ];
-	}
+	}//end foreach
 	$groups[ $g ] = $group;
-}
+}//end foreach
 
 if ( ! isset( $thank_you_alt ) ) {
 	$thank_you_alt = $thank_you;
@@ -83,13 +83,13 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$params = pods_unslash( (array) $_POST );
 		$id     = $pod->api->process_form( $params, $pod, $submittable_fields, $thank_you );
 
-		$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+		$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
 			$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 		}
 
-		$error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+		$error = sprintf( __( '<strong>Error:</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 		if ( 0 < $id ) {
 			echo $obj->message( $message );
@@ -108,20 +108,20 @@ if ( isset( $_POST['_pods_nonce'] ) ) {
 		$action = __( 'duplicated', 'pods' );
 	}
 
-	$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+	$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < strlen( pods_v_sanitized( 'detail_url', $pod_options ) ) ) {
 		$message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
 	}
 
-	$error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
+	$error = sprintf( __( '<strong>Error:</strong> %1$s not %2$s.', 'pods' ), $obj->item, $action );
 
 	if ( 0 < $pod->id() ) {
 		echo $obj->message( $message );
 	} else {
 		echo $obj->error( $error );
 	}
-}
+}//end if
 
 if ( ! isset( $label ) ) {
 	$label = __( 'Save', 'pods' );
@@ -156,10 +156,14 @@ if ( 0 < $pod->id() ) {
 				continue;
 			}
 
-			echo PodsForm::field( 'pods_field_' . $field['name'], $pod->field( array(
-				'name'    => $field['name'],
-				'in_form' => true
-			) ), 'hidden' );
+			echo PodsForm::field(
+				'pods_field_' . $field['name'], $pod->field(
+					array(
+						'name'    => $field['name'],
+						'in_form' => true,
+					)
+				), 'hidden'
+			);
 		}
 
 		/**
@@ -255,27 +259,31 @@ if ( 0 < $pod->id() ) {
 												?>
 											</div>
 											<?php
-										}
+										}//end if
 										?>
 									</div>
 									<!-- /#minor-publishing -->
 									<?php
-								}
+								}//end if
 								?>
 
 								<div id="major-publishing-actions">
 									<?php
-									if ( pods_is_admin( array(
+									if ( pods_is_admin(
+										array(
 											'pods',
-											'pods_delete_' . $pod->pod
-										) ) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled ) && ! in_array( 'delete', (array) $obj->actions_hidden ) ) {
-										$link = pods_query_arg( array(
-											'action'   => 'delete',
-											'_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' )
-										) );
+											'pods_delete_' . $pod->pod,
+										)
+									) && null !== $pod->id() && ! $duplicate && ! in_array( 'delete', (array) $obj->actions_disabled ) && ! in_array( 'delete', (array) $obj->actions_hidden ) ) {
+										$link = pods_query_arg(
+											array(
+												'action'   => 'delete',
+												'_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ),
+											)
+										);
 										?>
 										<div id="delete-action">
-											<a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('<?php _e( "You are about to permanently delete this item. Choose CANCEL to stop, OK to delete.", 'pods' ); ?>');"><?php _e( 'Delete', 'pods' ); ?></a>
+											<a class="submitdelete deletion" href="<?php echo esc_url( $link ); ?>" onclick="return confirm('<?php _e( 'You are about to permanently delete this item. Choose CANCEL to stop, OK to delete.', 'pods' ); ?>');"><?php _e( 'Delete', 'pods' ); ?></a>
 										</div>
 										<!-- /#delete-action -->
 									<?php } ?>
@@ -338,7 +346,7 @@ if ( 0 < $pod->id() ) {
 						if ( empty( $prev_next ) ) {
 							$prev_next = array(
 								'prev' => $pod->prev_id(),
-								'next' => $pod->next_id()
+								'next' => $pod->next_id(),
 							);
 						}
 
@@ -408,8 +416,8 @@ if ( 0 < $pod->id() ) {
 								?>
 							</div> <!-- /#navigatediv -->
 							<?php
-						}
-					}
+						}//end if
+					}//end if
 					?>
 				</div>
 				<!-- /#side-sortables -->
@@ -512,11 +520,11 @@ if ( 0 < $pod->id() ) {
 								</div>
 								<!-- /#titlediv -->
 								<?php
-							}
+							}//end if
 
 							unset( $group_fields[ $field['name'] ] );
-						}
-					}
+						}//end foreach
+					}//end if
 
 					if ( 0 < count( $groups ) ) {
 						if ( $more && 1 == count( $groups ) ) {
@@ -550,18 +558,18 @@ if ( 0 < $pod->id() ) {
 									<div id="pods-meta-box-<?php echo esc_attr( sanitize_title( $group['label'] ) ); ?>" class="postbox">
 										<div class="handlediv" title="Click to toggle"><br /></div>
 										<h3 class="hndle">
-                                <span>
-                                    <?php
-                                    if ( ! $more && 1 == count( $groups ) ) {
-	                                    $title = __( 'Fields', 'pods' );
-                                    } else {
-	                                    $title = $group['label'];
-                                    }
+								<span>
+									<?php
+									if ( ! $more && 1 == count( $groups ) ) {
+										$title = __( 'Fields', 'pods' );
+									} else {
+										$title = $group['label'];
+									}
 
-                                    /** This filter is documented in classes/PodsMeta.php */
-                                    echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
-                                    ?>
-                                </span>
+									/** This filter is documented in classes/PodsMeta.php */
+									echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields, $pod->api->pod_data['type'], $pod->pod );
+									?>
+								</span>
 										</h3>
 
 										<div class="inside">
@@ -578,26 +586,32 @@ if ( 0 < $pod->id() ) {
 														<tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>">
 															<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
 															<td>
-																<?php echo PodsForm::field( 'pods_field_' . $field['name'], $pod->field( array(
-																	'name'    => $field['name'],
-																	'in_form' => true
-																) ), $field['type'], $field, $pod, $pod->id() ); ?>
+																<?php
+																echo PodsForm::field(
+																	'pods_field_' . $field['name'], $pod->field(
+																		array(
+																			'name'    => $field['name'],
+																			'in_form' => true,
+																		)
+																	), $field['type'], $field, $pod, $pod->id()
+																);
+																?>
 																<?php echo PodsForm::comment( 'pods_field_' . $field['name'], $field['description'], $field ); ?>
 															</td>
 														</tr>
 														<?php
-													}
+													}//end foreach
 													?>
 												</table>
 												<?php
-											}
+											}//end if
 											?>
 										</div>
 										<!-- /.inside -->
 									</div>
 									<!-- /#pods-meta-box -->
 									<?php
-								}
+								}//end foreach
 
 								/**
 								 * Action that runs after the main fields metabox in the editor for an Advanced Content Type
@@ -615,8 +629,8 @@ if ( 0 < $pod->id() ) {
 							<!-- /#normal-sortables -->
 
 							<?php
-						}
-					}
+						}//end if
+					}//end if
 					?>
 
 					<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">

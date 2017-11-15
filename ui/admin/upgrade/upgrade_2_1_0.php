@@ -39,7 +39,7 @@ global $wpdb;
 					</p>
 				</div>
 
-				<?php include_once PODS_DIR . 'ui/admin/upgrade/backup.php'; ?>
+				<?php require_once PODS_DIR . 'ui/admin/upgrade/backup.php'; ?>
 			</div>
 			<!-- // Getting Started Panel -->
 

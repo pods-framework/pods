@@ -48,8 +48,7 @@ if ( 'format' === pods_v( $form_field_type . '_type', $options, 'format', true )
 	$args['ampm']       = false;
 	$args['separator']  = 'T';
 	$args['timeFormat'] = 'HH:mm:ssz';
-	//$args[ 'showTimezone' ] = true;
-
+	// $args[ 'showTimezone' ] = true;
 	$timezone = (int) get_option( 'gmt_offset' );
 	$timezone = $timezone * 60;
 
@@ -65,12 +64,14 @@ $date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H
 
 $formatted_date = $value;
 
-if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array(
+if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array(
+	$value, array(
 		'',
 		'0000-00-00',
 		'0000-00-00 00:00:00',
-		'00:00:00'
-	) ) ) {
+		'00:00:00',
+	)
+) ) {
 	$formatted_date = $value = '';
 } elseif ( 'text' !== $type ) {
 	$formatted_date = $value;
@@ -128,12 +129,11 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 			jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		}
 		<?php
-		}
-		else {
+		} else {
 		?>
 		jQuery( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).<?php echo esc_js( $method ); ?>( <?php echo esc_js( pods_js_name( $attributes['id'] ) ); ?>_args );
 		<?php
-		}
+		}//end if
 		?>
 	} );
 </script>

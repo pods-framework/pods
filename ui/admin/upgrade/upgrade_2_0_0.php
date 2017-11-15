@@ -39,7 +39,7 @@ global $wpdb;
 					</p>
 				</div>
 
-				<?php include_once PODS_DIR . 'ui/admin/upgrade/backup.php'; ?>
+				<?php require_once PODS_DIR . 'ui/admin/upgrade/backup.php'; ?>
 			</div>
 			<!-- // Getting Started Panel -->
 
@@ -59,7 +59,7 @@ global $wpdb;
 					</thead>
 					<tbody>
 					<?php
-					$pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
+					$pods  = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
 					$count = count( $pods );
 					?>
 					<tr class="pods-wizard-table-<?php echo esc_attr( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">

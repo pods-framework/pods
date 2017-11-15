@@ -1495,7 +1495,7 @@
 
                             $row.fadeOut( 'slow', function () {
                                 $( this ).remove();
-                                if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                                if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                     $tbody.find( 'tr.no-items' ).show();
                             } );
 
@@ -1930,7 +1930,7 @@
 
                         $row.fadeOut( 'slow', function () {
                             $( this ).remove();
-                            if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                            if ( 0 === $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                                 $tbody.find( 'tr.no-items' ).show();
                         } );
 

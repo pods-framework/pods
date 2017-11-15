@@ -60,20 +60,22 @@ wp_enqueue_style( 'pods-form' );
 											?>
 										</div>
 										<?php
-									}
+									}//end if
 									?>
 								</div>
 								<!-- /#minor-publishing -->
 								<?php
-							}
+							}//end if
 							?>
 
 							<div id="major-publishing-actions">
 								<?php
-								if ( pods_is_admin( array(
+								if ( pods_is_admin(
+									array(
 										'pods',
-										'pods_delete_' . $pod->pod
-									) ) && ! in_array( 'delete', $obj->actions_disabled ) && ! in_array( 'delete', $obj->actions_hidden ) ) {
+										'pods_delete_' . $pod->pod,
+									)
+								) && ! in_array( 'delete', $obj->actions_disabled ) && ! in_array( 'delete', $obj->actions_hidden ) ) {
 									?>
 									<div id="delete-action">
 										<a class="submitdelete deletion" href="<?php echo esc_url( pods_query_arg( array( 'action' => 'delete' ) ) ); ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
@@ -139,8 +141,8 @@ wp_enqueue_style( 'pods-form' );
 							<!-- /.inside -->
 						</div> <!-- /#navigatediv -->
 						<?php
-					}
-				}
+					}//end if
+				}//end if
 				?>
 			</div>
 			<!-- /#side-sortables -->
@@ -176,8 +178,8 @@ wp_enqueue_style( 'pods-form' );
 						<!-- /#titlediv -->
 						<?php
 						unset( $fields[ $k ] );
-					}
-				}
+					}//end foreach
+				}//end if
 
 				if ( 0 < count( $fields ) ) {
 					?>
@@ -204,13 +206,15 @@ wp_enqueue_style( 'pods-form' );
 									<?php
 									foreach ( $fields as $field ) {
 										if ( isset( $field['custom_display'] ) && is_callable( $field['custom_display'] ) ) {
-											$value = call_user_func_array( $field['custom_display'], array(
-												$pod->row(),
-												$obj,
-												$pod->field( $field['name'] ),
-												$field['name'],
-												$field
-											) );
+											$value = call_user_func_array(
+												$field['custom_display'], array(
+													$pod->row(),
+													$obj,
+													$pod->field( $field['name'] ),
+													$field['name'],
+													$field,
+												)
+											);
 										} else {
 											$value = $pod->display( $field['name'] );
 										}
@@ -224,7 +228,7 @@ wp_enqueue_style( 'pods-form' );
 											</td>
 										</tr>
 										<?php
-									}
+									}//end foreach
 									?>
 								</table>
 							</div>
@@ -234,7 +238,9 @@ wp_enqueue_style( 'pods-form' );
 					</div>
 					<!-- /#normal-sortables -->
 
-				<?php } ?>
+				<?php
+				}//end if
+	?>
 
 				<!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
 				</div>

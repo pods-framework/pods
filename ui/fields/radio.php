@@ -87,7 +87,7 @@ foreach ( $options['data'] as $val => $label ) {
 	}
 
 	$counter ++;
-}
+}//end foreach
 
 if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
 	?>

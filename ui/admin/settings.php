@@ -7,9 +7,9 @@
 		$default = 'tools';
 
 		$tabs = array(
-			//'settings' => __( 'Settings', 'pods' ),
+			// 'settings' => __( 'Settings', 'pods' ),
 			'tools' => __( 'Tools', 'pods' ),
-			'reset' => __( 'Cleanup &amp; Reset', 'pods' )
+			'reset' => __( 'Cleanup &amp; Reset', 'pods' ),
 		);
 		?>
 

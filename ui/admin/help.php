@@ -19,7 +19,7 @@
 	<hr />
 
 	<?php
-	include_once( ABSPATH . WPINC . '/feed.php' );
+	require_once ABSPATH . WPINC . '/feed.php';
 
 	$feed = fetch_feed( 'http://pods.io/forums/forum/pods-2-x/feed/' );
 
@@ -58,14 +58,14 @@
 						<br /> on <?php echo $item->get_date( 'm/d/Y' ); ?>
 					</li>
 					<?php
-				}
+				}//end foreach
 				?>
 			</ul>
 
 			<hr />
 			<?php
-		}
-	}
+		}//end if
+	}//end if
 
 	$feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/2.x.atom' );
 
@@ -104,12 +104,12 @@
 						<br /> on <?php echo $item->get_date( 'm/d/Y' ); ?>
 					</li>
 					<?php
-				}
+				}//end foreach
 				?>
 			</ul>
 			<?php
-		}
-	}
+		}//end if
+	}//end if
 	?>
 
 </div>

@@ -83,7 +83,7 @@ $versions = array(
 	'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
 	'Pods Light Mode Activated'     => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
 	'Currently Active Theme'        => $theme_name,
-	'Currently Active Plugins'      => $plugins
+	'Currently Active Plugins'      => $plugins,
 );
 
 foreach ( $versions as $what => $version ) {

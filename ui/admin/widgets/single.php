@@ -30,15 +30,15 @@
 			<?php _e( 'Pod', 'pods' ); ?>
 		</label>
 
-		<?php if ( 0 < count( $all_pods ) ): ?>
+		<?php if ( 0 < count( $all_pods ) ) : ?>
 			<select id="<?php echo esc_attr( $this->get_field_id( 'pod_type' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'pod_type' ) ); ?>">
-				<?php foreach ( $all_pods as $pod_name => $pod_label ): ?>
+				<?php foreach ( $all_pods as $pod_name => $pod_label ) : ?>
 					<option value="<?php echo esc_attr( $pod_name ); ?>"<?php selected( $pod_name, $pod_type ); ?>>
 						<?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
 					</option>
 				<?php endforeach; ?>
 			</select>
-		<?php else: ?>
+		<?php else : ?>
 			<strong class="red"><?php _e( 'None Found', 'pods' ); ?></strong>
 		<?php endif; ?>
 	</li>
@@ -70,7 +70,7 @@
 
 			<select name="<?php echo esc_attr( $this->get_field_name( 'template' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>">
 				<option value="">- <?php _e( 'Custom Template', 'pods' ); ?> -</option>
-				<?php foreach ( $all_templates as $tpl ): ?>
+				<?php foreach ( $all_templates as $tpl ) : ?>
 					<option value="<?php echo esc_attr( $tpl['name'] ); ?>"<?php selected( $tpl['name'], $template ); ?>>
 						<?php echo esc_html( $tpl['name'] ); ?>
 					</option>
@@ -86,7 +86,7 @@
 			<input class="widefat" type="text" id="<?php echo esc_attr( $this->get_field_id( 'template' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'template' ) ); ?>" value="<?php echo esc_attr( $template ); ?>" />
 		</li>
 		<?php
-	}
+	}//end if
 	?>
 
 	<li>

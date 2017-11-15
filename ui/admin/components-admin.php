@@ -22,41 +22,41 @@
 				foreach ( $options
 
 				as $field_name => $field_option ) {
-				$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
+					$field_option = PodsForm::field_setup( $field_option, null, $field_option['type'] );
 
-				$dep_options = PodsForm::dependencies( $field_option );
-				$dep_classes = $dep_options['classes'];
-				$dep_data    = $dep_options['data'];
+					$dep_options = PodsForm::dependencies( $field_option );
+					$dep_classes = $dep_options['classes'];
+					$dep_data    = $dep_options['data'];
 
-				if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
-				if ( ! empty( $depends_on ) ) {
-					?>
-					</tbody>
+					if ( ( ! empty( $depends_on ) || ! empty( $dep_classes ) ) && $depends_on != $dep_classes ) {
+						if ( ! empty( $depends_on ) ) {
+							?>
+							</tbody>
+							<?php
+						}
+
+						if ( ! empty( $dep_classes ) ) {
+							?>
+							<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
 					<?php
-				}
+						}
+					}
 
-				if ( ! empty( $dep_classes ) ) {
-				?>
-				<tbody class="pods-field-option-container <?php echo esc_attr( $dep_classes ); ?>" <?php PodsForm::data( $dep_data ); ?>>
-				<?php
-				}
-				}
-
-				if ( ! is_array( $field_option['group'] ) ) {
-					$value = pods_v( $field_name, $settings, $field_option['default'] );
-					?>
-					<tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
+					if ( ! is_array( $field_option['group'] ) ) {
+						$value = pods_v( $field_name, $settings, $field_option['default'] );
+						?>
+						<tr valign="top" class="pods-field-option" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th>
 							<?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option['label'], $field_option['help'], $field_option ); ?>
 						</th>
 						<td>
 							<?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option['type'], $field_option ); ?>
 						</td>
-					</tr>
-					<?php
-				} else {
-					?>
-					<tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
+						</tr>
+						<?php
+					} else {
+						?>
+						<tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo esc_attr( $field_name ); ?>">
 						<th class="pods-field-option-group-label">
 							<?php echo $field_option['label']; ?>
 						</th>
@@ -84,22 +84,22 @@
 									<?php
 								}
 								?>
-							</ul>
-						</td>
-					</tr>
-					<?php
-				}
+								</ul>
+								</td>
+							</tr>
+							<?php
+					}//end if
 
-				if ( false !== $depends_on || ! empty( $dep_classes ) ) {
-					$depends_on = $dep_options;
-				}
-				}
+					if ( false !== $depends_on || ! empty( $dep_classes ) ) {
+						$depends_on = $dep_options;
+					}
+				}//end foreach
 
 				if ( ! empty( $depends_on ) ) {
 				?>
 				</tbody>
 			<?php
-			}
+				}
 			?>
 			</table>
 

@@ -37,9 +37,11 @@ $currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
 <script>
 	jQuery( function ( $ ) {
 		$( 'input#<?php echo esc_js( $attributes['id'] ); ?>' ).on( 'blur', function () {
-			if ( !/^[0 - 9\<?php
+			if ( !/^[0 - 9\
+			<?php
 			echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-			?>]
+			?>
+			]
 			$ /
 		.
 			test( $( this ).val() )
@@ -47,9 +49,11 @@ $currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
 			{
 				var newval = $( this )
 								 .val()
-								 .replace( / [ ^ 0 - 9 -\\<?php echo esc_js( $currency_sign ); ?>\<?php
-				echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
-				?>]/
+								 .replace( / [ ^ 0 - 9 -\\<?php echo esc_js( $currency_sign ); ?>\
+																		<?php
+																		echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
+				?>
+				]/
 				g, ''
 			)
 				;$( this ).val( newval );

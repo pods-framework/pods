@@ -178,18 +178,23 @@ if ( !$fields_only ) {
 </form>
 
 <script type="text/javascript">
-    if ( 'undefined' == typeof pods_form_init && 'undefined' != typeof jQuery( document ).Pods ) {
-        var pods_form_init = true;
+	if ( 'undefined' === typeof pods_form_init ) {
+		var pods_form_init = true;
 
-        if ( 'undefined' == typeof ajaxurl ) {
-            var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
-        }
+		jQuery(document).ready( function( $ ) {
+			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
-        jQuery( function ( $ ) {
-            $( document ).Pods( 'validate' );
-            $( document ).Pods( 'submit' );
-        } );
-    }
+				if ( 'undefined' === typeof ajaxurl ) {
+					var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+				}
+
+				jQuery( function ( $ ) {
+					$( document ).Pods( 'validate' );
+					$( document ).Pods( 'submit' );
+				} );
+			}
+		} );
+	}
 </script>
 <?php
 }

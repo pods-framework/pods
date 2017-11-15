@@ -461,10 +461,7 @@ final class PodsI18n {
 
 		if ( $is_settings ) {
 			$post_types['_pods_template'] = '_pods_template';
-		}/* else {
-			// Force enable this post type for translation.
-			$post_types['_pods_template'] = '_pods_template';
-		}*/
+		}
 
 		return $post_types;
 	}

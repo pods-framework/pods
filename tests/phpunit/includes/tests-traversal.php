@@ -1217,9 +1217,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_pod_data = self::$related_items[ $related_pod_field['name'] ];
 					} elseif ( isset( self::$related_items[ $related_object ] ) ) {
 						$related_pod_data = self::$related_items[ $related_object ];
-					} /*elseif ( isset( self::$related_items[ $related_pod[ 'name' ] ] ) ) {
-							$related_pod_data = self::$related_items[ $related_pod[ 'name' ] ];
-						}*/ else {
+					} else {
 						//var_dump( array( 7, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 
 						$this->assertTrue( false, sprintf( 'Invalid related item [%s]', $variant_id ) );

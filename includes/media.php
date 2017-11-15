@@ -46,8 +46,8 @@ function pods_image_id_from_field( $image ) {
 					$id = $guid[0]->ID;
 				}
 			}
-		}
-	}
+		}//end if
+	}//end if
 
 	$id = (int) $id;
 
@@ -158,7 +158,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 				$url = wp_get_attachment_url( $id );
 			}
 		}
-	}
+	}//end if
 
 	if ( empty( $url ) && 0 < $default ) {
 		if ( $force ) {
@@ -182,7 +182,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 				$url = wp_get_attachment_url( $default );
 			}
 		}
-	}
+	}//end if
 
 	return $url;
 }
@@ -249,8 +249,8 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 		return 0;
 	}
 
-	require_once( ABSPATH . 'wp-admin/includes/media.php' );
-	require_once( ABSPATH . 'wp-admin/includes/image.php' );
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
 
 	wp_update_attachment_metadata( $attachment_id, $meta_data = wp_generate_attachment_metadata( $attachment_id, $new_file ) );
 
@@ -307,13 +307,13 @@ function pods_image_resize( $attachment_id, $size ) {
 		}
 
 		$size = $size_data['width'] . 'x' . $size_data['height'];
-	}
+	}//end if
 
 	if ( empty( $size_data ) ) {
 		return false;
 	}
 
-	require_once( ABSPATH . 'wp-admin/includes/image.php' );
+	require_once ABSPATH . 'wp-admin/includes/image.php';
 
 	$attachment = get_post( $attachment_id );
 	$file       = get_attached_file( $attachment_id );
@@ -358,7 +358,6 @@ function pods_audio( $url, $args = false ) {
 		} else {
 			return;
 		}
-
 	}
 
 	$audio_args = array( 'src' => $url );
@@ -392,7 +391,6 @@ function pods_video( $url, $args = false ) {
 		} else {
 			return;
 		}
-
 	}
 
 	$video_args = array( 'src' => $url );

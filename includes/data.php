@@ -24,7 +24,8 @@ function pods_sanitize( $input, $params = array() ) {
 
 	$defaults = array(
 		'nested' => false,
-		'type'   => null // %s %d %f etc
+		'type'   => null,
+	// %s %d %f etc
 	);
 
 	if ( ! is_array( $params ) ) {
@@ -65,7 +66,7 @@ function pods_sanitize( $input, $params = array() ) {
 		$output = wp_slash( $input );
 	} else {
 		$output = esc_sql( $input );
-	}
+	}//end if
 
 	return $output;
 
@@ -134,7 +135,8 @@ function pods_slash( $input, $params = array() ) {
 	$output = array();
 
 	$defaults = array(
-		'type' => null // %s %d %f etc
+		'type' => null,
+	// %s %d %f etc
 	);
 
 	if ( ! is_array( $params ) ) {
@@ -170,7 +172,7 @@ function pods_slash( $input, $params = array() ) {
 		$output = wp_slash( $input );
 	} else {
 		$output = addslashes( $input );
-	}
+	}//end if
 
 	return $output;
 
@@ -216,7 +218,7 @@ function pods_unsanitize( $input, $params = array() ) {
 		}
 	} else {
 		$output = wp_unslash( $input );
-	}
+	}//end if
 
 	return $output;
 
@@ -297,7 +299,7 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
 		} else {
 			$output = trim( $input, $charlist );
 		}
-	}
+	}//end if
 
 	return $output;
 
@@ -321,7 +323,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 	$defaults = array(
 		'casting' => false,
-		'allowed' => null
+		'allowed' => null,
 	);
 
 	$params = (object) array_merge( $defaults, (array) $params );
@@ -595,7 +597,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					} elseif ( ! is_array( $value ) && 0 < strlen( $value ) ) {
 						$output = $value;
 					}
-				}
+				}//end if
 				break;
 			case 'option':
 				$output = get_option( $var, $default );
@@ -631,7 +633,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 						$output = wp_cache_get( $var, $group, $force );
 					}
-				}
+				}//end if
 				break;
 			case 'pods-transient':
 				$callback = null;
@@ -689,7 +691,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 						$output = pods_cache_get( $var, $group, $callback );
 					}
-				}
+				}//end if
 				break;
 			case 'pods-option-cache':
 				$group    = 'default';
@@ -734,7 +736,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 						if ( is_array( $output ) ) {
 							$options = array(
 								'field'  => $var,
-								'fields' => $pods->fields
+								'fields' => $pods->fields,
 							);
 
 							$output = pods_serial_comma( $output, $options );
@@ -766,7 +768,6 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 					}
 				}
 				// Add other translation plugin specific code here
-
 				/**
 				 * Filter to override post_id
 				 *
@@ -785,8 +786,8 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				break;
 			default:
 				$output = apply_filters( 'pods_var_' . $type, $default, $var, $strict, $params );
-		}
-	}
+		}//end switch
+	}//end if
 
 	if ( null !== $default ) {
 		// Set default
@@ -916,7 +917,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$ret = http_build_url( $url );
 			} else {
 				$ret = add_query_arg( array( $var => $value ) );
-			}
+			}//end if
 		} elseif ( 'server' === $type ) {
 			$_SERVER[ $var ] = $value;
 
@@ -950,7 +951,12 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 				$user->set_role( $value );
 			} elseif ( isset( $user_data[ $var ] ) ) {
 				// Core field
-				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
+				wp_update_user(
+					array(
+						'ID' => $user->ID,
+						$var => $value,
+					)
+				);
 			} else {
 				// Meta field
 				update_user_meta( $user->ID, $var, $value );
@@ -968,8 +974,8 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			}
 		} else {
 			$ret = apply_filters( 'pods_var_set_' . $type, $value, $var );
-		}
-	}
+		}//end if
+	}//end if
 
 	return $ret;
 
@@ -996,12 +1002,19 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
 
 	if ( 'raw' === $context ) {
-		$output = pods_v( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
+		$output = pods_v(
+			$var, $type, $default, $strict, array(
+				'allowed' => $allowed,
+				'casting' => $casting,
+			)
+		);
 	} else {
-		$output = pods_v_sanitized( $var, $type, $default, $strict, array(
-			'allowed' => $allowed,
-			'casting' => $casting
-		) );
+		$output = pods_v_sanitized(
+			$var, $type, $default, $strict, array(
+				'allowed' => $allowed,
+				'casting' => $casting,
+			)
+		);
 	}
 
 	return $output;
@@ -1027,7 +1040,12 @@ function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = nul
  */
 function pods_var_raw( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
 
-	return pods_v( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
+	return pods_v(
+		$var, $type, $default, $strict, array(
+			'allowed' => $allowed,
+			'casting' => $casting,
+		)
+	);
 
 }
 
@@ -1096,7 +1114,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 				$query_args[ $key ] = false;
 			}
 		}
-	}
+	}//end foreach
 
 	if ( ! empty( $excluded ) ) {
 		foreach ( $excluded as $exclusion ) {
@@ -1126,7 +1144,7 @@ function pods_query_arg( $array = null, $allowed = null, $excluded = null, $url 
 				}
 			}
 		}
-	}
+	}//end if
 
 	if ( null === $url ) {
 		$url = add_query_arg( $query_args );
@@ -1196,15 +1214,15 @@ function pods_cast( $value, $cast_from = null ) {
  */
 function pods_create_slug( $orig, $strict = true ) {
 
-	$str = preg_replace( "/([_ \\/])/", "-", trim( $orig ) );
+	$str = preg_replace( '/([_ \\/])/', '-', trim( $orig ) );
 
 	if ( $strict ) {
-		$str = preg_replace( "/([^0-9a-z\-])/", "", strtolower( $str ) );
+		$str = preg_replace( '/([^0-9a-z\-])/', '', strtolower( $str ) );
 	} else {
 		$str = urldecode( sanitize_title( strtolower( $str ) ) );
 	}
 
-	$str = preg_replace( "/(\-){2,}/", "-", $str );
+	$str = preg_replace( '/(\-){2,}/', '-', $str );
 	$str = trim( $str, '-' );
 	$str = apply_filters( 'pods_create_slug', $str, $orig );
 
@@ -1240,7 +1258,12 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 	$id     = absint( $id );
 
 	if ( empty( $pod_data ) ) {
-		$pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ), false );
+		$pod_data = pods_api()->load_pod(
+			array(
+				'id'   => $pod_id,
+				'name' => $pod,
+			), false
+		);
 	}
 
 	if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) ) {
@@ -1527,7 +1550,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 
 		$tag = array(
 			$first_tag,
-			implode( '.', $tag )
+			implode( '.', $tag ),
 		);
 	}
 
@@ -1550,7 +1573,7 @@ function pods_evaluate_tag( $tag, $sanitize = false ) {
 		'network-home-url',
 		'network-admin-url',
 		'user-admin-url',
-		'prefix'
+		'prefix',
 	);
 
 	if ( in_array( $tag[0], $single_supported ) ) {
@@ -1604,7 +1627,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		'and'         => $and,
 		'field_index' => $field_index,
 		'separator'   => ',',
-		'serial'      => true
+		'serial'      => true,
 	);
 
 	if ( is_array( $field ) ) {
@@ -1643,7 +1666,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		}
 	} else {
 		$params->field = null;
-	}
+	}//end if
 
 	if ( $simple && is_array( $params->field ) && ! is_array( $value ) && '' !== $value && null !== $value ) {
 		$value = PodsForm::field_method( 'pick', 'simple_value', $params->field['name'], $value, $params->field );
@@ -1728,7 +1751,7 @@ function pods_serial_comma( $value, $field = null, $fields = null, $and = null, 
 		}
 	} else {
 		$value = $last;
-	}
+	}//end if
 
 	$value = trim( $value, $params->separator . ' ' );
 
@@ -1793,7 +1816,7 @@ function pods_hierarchical_list( $list, $args = array() ) {
 		'orphans'       => true,
 		'found'         => array(),
 		'list'          => array(),
-		'current_depth' => - 1
+		'current_depth' => - 1,
 	);
 
 	$args = array_merge( $defaults, (array) $args );
@@ -1859,12 +1882,12 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
 			$args['found'][ $k ] = $list_item;
 		} else {
 			continue;
-		}
+		}//end if
 
 		$new[ $k ] = $list_item;
 
 		$args['current_depth'] = $depth;
-	}
+	}//end foreach
 
 	if ( 0 == $depth && empty( $new ) && ! empty( $list ) ) {
 		$first = current( array_slice( $list, 0, 1 ) );
@@ -1931,7 +1954,7 @@ function pods_hierarchical_select( $list, $args = array() ) {
 	$defaults = array(
 		'index'    => 'name',
 		'children' => 'children',
-		'prefix'   => '&nbsp;&nbsp;&nbsp;'
+		'prefix'   => '&nbsp;&nbsp;&nbsp;',
 	);
 
 	$args = array_merge( $defaults, (array) $args );
@@ -1993,7 +2016,7 @@ function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
 				$data[ $ck ] = $cv;
 			}
 		}
-	}
+	}//end foreach
 
 	return $data;
 }
@@ -2058,7 +2081,7 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 		} else {
 			continue;
 		}
-	}
+	}//end foreach
 
 	if ( $object ) {
 		$filtered = (object) $filtered;

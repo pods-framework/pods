@@ -1267,7 +1267,7 @@ class Pods implements Iterator {
 							$last_options  = $all_fields[ $pod ][ $field ];
 
 							// Temporary hack until there's some better handling here
-							$last_limit = $last_limit * count( $ids );
+							$last_limit *= count( $ids );
 
 							// Get related IDs
 							if ( ! isset( $all_fields[ $pod ][ $field ]['pod_id'] ) ) {
@@ -1488,7 +1488,7 @@ class Pods implements Iterator {
 											} else {
 												$item = pods( $object, (int) $item_id );
 											}
-										} else                                      
+										} else
 // arrays
 										{
 											$item = get_object_vars( (object) $item );
@@ -2085,7 +2085,7 @@ class Pods implements Iterator {
 					$params['where'] = "`t`.`{$this->data->field_id}` < {$id}";
 				}
 			} elseif ( isset( $params['offset'] ) && 0 < $params['offset'] ) {
-				$params['offset'] -= 1;
+				$params['offset']--;
 			} elseif ( ! isset( $params['offset'] ) && ! empty( $this->params ) && 0 < $this->row_number ) {
 				$params['offset'] = $this->row_number - 1;
 			} else {
@@ -2180,7 +2180,7 @@ class Pods implements Iterator {
 					$params['offset'] = 1;
 				}
 			} else {
-				$params['offset'] += 1;
+				$params['offset']++;
 			}
 
 			$params['select'] = "`t`.`{$this->data->field_id}`";

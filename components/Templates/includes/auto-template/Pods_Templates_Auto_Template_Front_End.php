@@ -10,7 +10,7 @@ if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
  */
 class Pods_Templates_Auto_Template_Front_End {
 
-	function __construct() {
+	public function __construct() {
 
 		if ( ! is_admin() ) {
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
@@ -77,7 +77,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @return array Of Pod names.
 	 */
-	function the_pods() {
+	public function the_pods() {
 
 		//use the cached results
 		$key      = '_pods_pfat_the_pods';
@@ -110,7 +110,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	function auto_pods() {
+	public function auto_pods() {
 
 		/**
 		 * Filter to override all settings for which templates are used.
@@ -220,7 +220,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	function current_post_type() {
+	public function current_post_type() {
 
 		//start by getting current post or stdClass object
 		global $wp_query;
@@ -254,7 +254,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	function front( $content ) {
+	public function front( $content ) {
 
 		// get the current post type
 		$current_post_type = $this->current_post_type();
@@ -323,7 +323,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	function load_template( $template_name, $content, $pods, $append = true ) {
+	public function load_template( $template_name, $content, $pods, $append = true ) {
 
 		//prevent infinite loops caused by this method acting on post_content
 		remove_filter( 'the_content', array( $this, 'front' ) );
@@ -351,7 +351,7 @@ class Pods_Templates_Auto_Template_Front_End {
 			} elseif ( $append === 'prepend' ) {
 				$content = $template . $content;
 			} elseif ( $append || $append === 'append' ) {
-				$content = $content . $template;
+				$content .= $template;
 			} else {
 				$content = $template;
 			}
@@ -365,7 +365,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 *
 	 * @since 2.4.5
 	 */
-	function set_frontier_style_script() {
+	public function set_frontier_style_script() {
 
 		if ( ! class_exists( 'Pods_Frontier' ) ) {
 			return;

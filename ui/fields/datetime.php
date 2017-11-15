@@ -50,7 +50,7 @@ if ( 'format' === pods_v( $form_field_type . '_type', $options, 'format', true )
 	$args['timeFormat'] = 'HH:mm:ssz';
 	// $args[ 'showTimezone' ] = true;
 	$timezone = (int) get_option( 'gmt_offset' );
-	$timezone = $timezone * 60;
+	$timezone *= 60;
 
 	if ( 0 <= $timezone ) {
 		$timezone = '+' . (string) $timezone;

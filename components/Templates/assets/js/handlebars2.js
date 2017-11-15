@@ -2375,7 +2375,7 @@ var Handlebars = {};
 			lexer.options = {};
 			lexer.performAction = function anonymous( yy, yy_, $avoiding_name_collisions, YY_START ) {
 
-				var YYSTATE = YY_START
+				var YYSTATE = YY_START;
 				switch ( $avoiding_name_collisions ) {
 					case 0:
 						yy_.yytext = "\\";
@@ -2579,7 +2579,7 @@ var Handlebars = {};
 				}
 			};
 			return lexer;
-		})()
+		})();
 		parser.lexer = lexer;
 
 		function Parser() {

@@ -62,7 +62,7 @@ class PodsUI {
 	/**
 	 * @var array
 	 */
-	static $excluded = array(
+	public static $excluded = array(
 		'do',
 		'id',
 		'pg',
@@ -85,7 +85,7 @@ class PodsUI {
 		'message',
 	);
 	// used in var_update
-	static $allowed = array(
+	public static $allowed = array(
 		'page',
 		'post_type',
 	);
@@ -3114,7 +3114,7 @@ class PodsUI {
 					} elseif ( ! in_array( 'export', $this->actions_disabled ) && ! in_array( 'export', $this->actions_hidden ) ) {
 						?>
 						<div class="alignleft actions">
-							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location='
+							<input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location=';
 																	<?php
 																	echo pods_slash(
 																		pods_query_arg(
@@ -4206,7 +4206,7 @@ class PodsUI {
 										<?php if ( $first_field ) { ?>
 											<button type="button" class="toggle-row">
 											<span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span>
-											</button><?php }; ?>
+											</button><?php } ?>
 									</td>
 									<?php
 								} else {
@@ -4230,7 +4230,7 @@ class PodsUI {
 										<?php if ( $first_field ) { ?>
 											<button type="button" class="toggle-row">
 											<span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span>
-											</button><?php }; ?>
+											</button><?php } ?>
 									</td>
 									<?php
 								}//end if

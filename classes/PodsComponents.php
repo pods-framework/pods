@@ -10,7 +10,7 @@ class PodsComponents {
 	/**
 	 * @var PodsComponents
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * Root of Components directory
@@ -50,7 +50,7 @@ class PodsComponents {
 	public static function init() {
 
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsComponents();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -737,10 +737,7 @@ class PodsComponents {
 		}
 
 		// Cleaning up $params
-		unset( $params->action );
-		unset( $params->component );
-		unset( $params->method );
-		unset( $params->_wpnonce );
+		unset( $params->action, $params->component, $params->method, $params->_wpnonce );
 
 		$params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
 

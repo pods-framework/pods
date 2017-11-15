@@ -2347,7 +2347,7 @@ class PodsField_Pick extends PodsField {
 						}
 
 						if ( in_array( $options[ self::$type . '_object' ], array( 'site', 'network' ), true ) ) {
-							$result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result['path'];
+							$result[ $search_data->field_index ] .= $result['path'];
 						} elseif ( strlen( $result[ $search_data->field_index ] ) < 1 ) {
 							$result[ $search_data->field_index ] = '(No Title)';
 						}

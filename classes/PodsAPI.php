@@ -8,12 +8,12 @@ class PodsAPI {
 	/**
 	 * @var PodsAPI
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var array PodsAPI
 	 */
-	static $instances = array();
+	public static $instances = array();
 
 	/**
 	 * @var bool
@@ -86,12 +86,12 @@ class PodsAPI {
 		if ( null !== $pod || null !== $format ) {
 			if ( ! isset( self::$instances[ $pod ] ) ) {
 				// Cache API singleton per Pod
-				self::$instances[ $pod ] = new PodsAPI( $pod, $format );
+				self::$instances[ $pod ] = new self( $pod, $format );
 			}
 
 			return self::$instances[ $pod ];
 		} elseif ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsAPI();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -2608,8 +2608,7 @@ class PodsAPI {
 			$field['options']['pick_val']    = $field['pick_val'];
 			$field['options']['sister_id']   = pods_var( 'sister_id', $field );
 
-			unset( $field['pick_object'] );
-			unset( $field['pick_val'] );
+			unset( $field['pick_object'], $field['pick_val'] );
 
 			if ( isset( $field['sister_id'] ) ) {
 				unset( $field['sister_id'] );
@@ -4040,8 +4039,7 @@ class PodsAPI {
 				if ( 'pick' === $type ) {
 					foreach ( $data as $field => $values ) {
 						if ( isset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] ) ) {
-							unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ]['id'] ]['related_field']['id'] ] );
-							unset( PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] );
+							unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $fields[ $field ]['id'] ]['related_field']['id'] ], PodsField_Pick::$related_data[ $fields[ $field ]['id'] ] );
 						}
 					}
 				}
@@ -6095,10 +6093,7 @@ class PodsAPI {
 		$pod['object']  = $pod['options']['object'];
 		$pod['alias']   = $pod['options']['alias'];
 
-		unset( $pod['options']['type'] );
-		unset( $pod['options']['storage'] );
-		unset( $pod['options']['object'] );
-		unset( $pod['options']['alias'] );
+		unset( $pod['options']['type'], $pod['options']['storage'], $pod['options']['object'], $pod['options']['alias'] );
 
 		if ( $table_info ) {
 			$pod = array_merge( $this->get_table_info( $pod['type'], $pod['object'], $pod['name'], $pod ), $pod );
@@ -7661,7 +7656,7 @@ class PodsAPI {
 			}
 
 			// Temporary hack until there's some better handling here
-			$related_pick_limit = $related_pick_limit * count( $ids );
+			$related_pick_limit *= count( $ids );
 		}
 
 		if ( 'taxonomy' === $field_type ) {

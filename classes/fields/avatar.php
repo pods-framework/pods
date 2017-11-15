@@ -53,14 +53,7 @@ class PodsField_Avatar extends PodsField_File {
 
 		$options = parent::options();
 
-		unset( $options[ self::$type . '_type' ] );
-		unset( $options[ self::$type . '_allowed_extensions' ] );
-		unset( $options[ self::$type . '_field_template' ] );
-		unset( $options[ self::$type . '_wp_gallery_output' ] );
-		unset( $options[ self::$type . '_wp_gallery_link' ] );
-		unset( $options[ self::$type . '_wp_gallery_columns' ] );
-		unset( $options[ self::$type . '_wp_gallery_random_sort' ] );
-		unset( $options[ self::$type . '_wp_gallery_size' ] );
+		unset( $options[ self::$type . '_type' ], $options[ self::$type . '_allowed_extensions' ], $options[ self::$type . '_field_template' ], $options[ self::$type . '_wp_gallery_output' ], $options[ self::$type . '_wp_gallery_link' ], $options[ self::$type . '_wp_gallery_columns' ], $options[ self::$type . '_wp_gallery_random_sort' ], $options[ self::$type . '_wp_gallery_size' ] );
 
 		return $options;
 

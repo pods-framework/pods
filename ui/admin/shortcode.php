@@ -248,44 +248,44 @@
 				case 'single':
 					$( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 				case 'list':
 					$( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 				case 'field':
 					$( '#pod_select, #pod_slug, #pod_field, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 				case 'field-current':
 					$( '#pod_field, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 				case 'form':
 					$( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 				case 'view':
 					$( '#pod_view, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 
 			<?php if ( class_exists( 'Pods_Pages' ) ) { ?>
 				case 'page':
 					$( '#pods_page, #pods_insert_shortcode' ).each( function () {
 						$( this ).closest( '.pods-section' ).removeClass( 'hide' );
-					} )
+					} );
 					break;
 			<?php } ?>
 			}
@@ -375,7 +375,7 @@
 						<?php echo esc_html( $pod_label . ' (' . $pod_name . ')' ); ?>
 					</option>
 					<?php } ?>
-				</select> 
+				</select>
 				<?php
 					} else {
 					?>

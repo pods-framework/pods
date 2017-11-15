@@ -141,7 +141,7 @@ class Pods_Roles extends PodsComponent {
 		pods_ui( $ui );
 	}
 
-	function admin_add( $obj ) {
+	public function admin_add( $obj ) {
 
 		global $wp_roles;
 
@@ -156,7 +156,7 @@ class Pods_Roles extends PodsComponent {
 		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
-	function admin_edit( $duplicate, $obj ) {
+	public function admin_edit( $duplicate, $obj ) {
 
 		global $wp_roles;
 
@@ -187,7 +187,7 @@ class Pods_Roles extends PodsComponent {
 		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
-	function admin_delete( $id, $obj ) {
+	public function admin_delete( $id, $obj ) {
 
 		global $wp_roles;
 
@@ -377,7 +377,7 @@ class Pods_Roles extends PodsComponent {
 	 *
 	 * @return array
 	 */
-	function count_users( $role ) {
+	public function count_users( $role ) {
 
 		$count_users = count_users();
 
@@ -398,7 +398,7 @@ class Pods_Roles extends PodsComponent {
 		return $avail_roles[ $role ];
 	}
 
-	function get_capabilities() {
+	public function get_capabilities() {
 
 		global $wp_roles;
 
@@ -436,7 +436,7 @@ class Pods_Roles extends PodsComponent {
 		return $capabilities;
 	}
 
-	function get_wp_capabilities() {
+	public function get_wp_capabilities() {
 
 		$defaults = array(
 			'activate_plugins',
@@ -493,7 +493,7 @@ class Pods_Roles extends PodsComponent {
 		return $defaults;
 	}
 
-	function get_default_capabilities() {
+	public function get_default_capabilities() {
 
 		$capabilities = array(
 			'read'
@@ -507,7 +507,7 @@ class Pods_Roles extends PodsComponent {
 		return $capabilities;
 	}
 
-	function remove_deprecated_capabilities( $capabilities ) {
+	public function remove_deprecated_capabilities( $capabilities ) {
 
 		$deprecated_capabilities = array(
 			'level_0',

@@ -29,7 +29,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @since 2.0
 	 */
-	static $exists = null;
+	public static $exists = null;
 
 	/**
 	 * Object type
@@ -47,7 +47,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @since 2.1
 	 */
-	static $checked = false;
+	public static $checked = false;
 
 	/**
 	 * Keep track of if pods_content has been called yet
@@ -56,7 +56,7 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @since 2.3
 	 */
-	static $content_called = false;
+	public static $content_called = false;
 
 	/**
 	 * The capability type.
@@ -153,13 +153,13 @@ class Pods_Pages extends PodsComponent {
 			$tags['page'] = null;
 		}
 
-		$pods_page = Pods_Pages::exists( $tags['page'] );
+		$pods_page = self::exists( $tags['page'] );
 
 		if ( empty( $pods_page ) ) {
 			return '<p>Pods Page not found</p>';
 		}
 
-		return Pods_Pages::content( true, $pods_page );
+		return self::content( true, $pods_page );
 	}
 
 	/**

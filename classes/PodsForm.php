@@ -13,32 +13,32 @@ class PodsForm {
 	/**
 	 * @var string
 	 */
-	static $field = null;
+	public static $field = null;
 
 	/**
 	 * @var string
 	 */
-	static $field_group = null;
+	public static $field_group = null;
 
 	/**
 	 * @var string
 	 */
-	static $field_type = null;
+	public static $field_type = null;
 
 	/**
 	 * @var array
 	 */
-	static $field_types = array();
+	public static $field_types = array();
 
 	/**
 	 * @var array
 	 */
-	static $loaded = array();
+	public static $loaded = array();
 
 	/**
 	 * @var int
 	 */
-	static $form_counter = 0;
+	public static $form_counter = 0;
 
 	/**
 	 * Singleton handling for a basic pods_form() request
@@ -50,7 +50,7 @@ class PodsForm {
 	public static function init() {
 
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsForm();
+			self::$instance = new self();
 		}
 
 		return self::$instance;

@@ -304,7 +304,7 @@
 		}
 
 		return true;
-	}
+	};
 
 	var pods_admin_submit_callback = function ( id ) {
 		jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside' ).html( id );

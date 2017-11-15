@@ -8,7 +8,7 @@ class PodsMeta {
 	/**
 	 * @var PodsMeta
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var PodsAPI
@@ -95,7 +95,7 @@ class PodsMeta {
 	public static function init() {
 
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsMeta();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -106,7 +106,7 @@ class PodsMeta {
 	 *
 	 * @since 2.0
 	 */
-	function __construct() {
+	public function __construct() {
 
 	}
 

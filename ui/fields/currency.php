@@ -42,19 +42,19 @@ $currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
 			echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
 			?>
 			]
-			$ /
+			$ /;
 		.
-			test( $( this ).val() )
+			test( $( this ).val() );
 		)
 			{
 				var newval = $( this )
 								 .val()
-								 .replace( / [ ^ 0 - 9 -\\<?php echo esc_js( $currency_sign ); ?>\
+								 .replace( / [ ^ 0 - 9 -;\\<?php echo esc_js( $currency_sign ); ?>\
 																		<?php
 																		echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
 				?>
 				]/
-				g, ''
+				g, '';
 			)
 				;$( this ).val( newval );
 			}

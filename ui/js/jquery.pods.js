@@ -868,7 +868,7 @@
 
                         window.location.hash = '';
                     }
-                }
+                };
 
                 // Next button event binding
                 $( '#pods-wizard-next' ).on( 'click', function ( e ) {

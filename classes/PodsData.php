@@ -8,7 +8,7 @@ class PodsData {
 	/**
 	 * @var PodsData
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var string
@@ -240,9 +240,9 @@ class PodsData {
 	public static function init( $pod = null, $id = 0, $strict = true ) {
 
 		if ( ( true !== $pod && null !== $pod ) || 0 != $id ) {
-			return new PodsData( $pod, $id, $strict );
+			return new self( $pod, $id, $strict );
 		} elseif ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsData();
+			self::$instance = new self();
 		} else {
 			$vars = get_class_vars( __CLASS__ );
 
@@ -1150,16 +1150,16 @@ class PodsData {
 							if ( false === $params->search_across_files ) {
 								continue;
 							} else {
-								$fieldfield = $fieldfield . '.`post_title`';
+								$fieldfield .= '.`post_title`';
 							}
 						} elseif ( isset( $params->fields[ $field ] ) ) {
 							if ( $params->meta_fields ) {
-								$fieldfield = $fieldfield . '.`meta_value`';
+								$fieldfield .= '.`meta_value`';
 							} else {
 								$fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
 							}
 						} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) && 'meta' === $pod['storage'] ) {
-							$fieldfield = $fieldfield . '.`meta_value`';
+							$fieldfield .= '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
 						}//end if
@@ -1237,15 +1237,15 @@ class PodsData {
 
 					$filterfield = $filterfield . '.`' . $attributes['table_info']['field_index'] . '`';
 				} elseif ( in_array( $attributes['type'], $file_field_types ) ) {
-					$filterfield = $filterfield . '.`post_title`';
+					$filterfield .= '.`post_title`';
 				} elseif ( isset( $params->fields[ $field ] ) ) {
 					if ( $params->meta_fields && 'meta' === $pod['storage'] ) {
-						$filterfield = $filterfield . '.`meta_value`';
+						$filterfield .= '.`meta_value`';
 					} else {
 						$filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
 					}
 				} elseif ( ! empty( $params->object_fields ) && ! isset( $params->object_fields[ $field ] ) && 'meta' === $pod['storage'] ) {
-					$filterfield = $filterfield . '.`meta_value`';
+					$filterfield .= '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
 				}//end if
@@ -2896,7 +2896,7 @@ class PodsData {
 	 *
 	 * @since 2.0
 	 */
-	function traverse_build( $fields = null, $params = null ) {
+	public function traverse_build( $fields = null, $params = null ) {
 
 		if ( null === $fields ) {
 			$fields = $this->fields;
@@ -2932,7 +2932,7 @@ class PodsData {
 	 *
 	 * @since 2.0
 	 */
-	function traverse_recurse( $traverse_recurse ) {
+	public function traverse_recurse( $traverse_recurse ) {
 
 		global $wpdb;
 
@@ -3360,7 +3360,7 @@ class PodsData {
 	 *
 	 * @return array Array of joins
 	 */
-	function traverse( $fields = null, $all_fields = null, $params = null ) {
+	public function traverse( $fields = null, $all_fields = null, $params = null ) {
 
 		$joins = array();
 

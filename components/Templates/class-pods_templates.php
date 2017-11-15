@@ -171,7 +171,7 @@ class Pods_Templates_Frontier {
 	 *
 	 * @return    null
 	 */
-	function add_metaboxes( $slug, $post = false ) {
+	public function add_metaboxes( $slug, $post = false ) {
 
 		if ( ! empty( $post ) ) {
 			if ( ! in_array( $post->post_type, array( '_pods_template' ) ) ) {
@@ -220,7 +220,7 @@ class Pods_Templates_Frontier {
 	 *
 	 * @return    null
 	 */
-	function render_metaboxes_custom( $post, $args ) {
+	public function render_metaboxes_custom( $post, $args ) {
 
 		// include the metabox view
 		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
@@ -256,7 +256,7 @@ class Pods_Templates_Frontier {
 	 *
 	 *
 	 */
-	function save_post_metaboxes( $pid, $post ) {
+	public function save_post_metaboxes( $pid, $post ) {
 
 		if ( ! isset( $_POST['pods_templates_metabox'] ) || ! isset( $_POST['pods_templates_metabox_prefix'] ) ) {
 			return;
@@ -466,7 +466,7 @@ class Pods_Templates_Frontier {
 	 * Get the current URL
 	 *
 	 */
-	static function get_url( $src = null, $path = null ) {
+	public static function get_url( $src = null, $path = null ) {
 
 		if ( ! empty( $path ) ) {
 			return plugins_url( $src, $path );
@@ -479,7 +479,7 @@ class Pods_Templates_Frontier {
 	 * Get the current URL
 	 *
 	 */
-	static function get_path( $src = null ) {
+	public static function get_path( $src = null ) {
 
 		return plugin_dir_path( $src );
 

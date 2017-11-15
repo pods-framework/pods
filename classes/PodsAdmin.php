@@ -8,7 +8,7 @@ class PodsAdmin {
 	/**
 	 * @var PodsAdmin
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * Singleton handling for a basic pods_admin() request
@@ -20,7 +20,7 @@ class PodsAdmin {
 	public static function init() {
 
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsAdmin();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -959,8 +959,7 @@ class PodsAdmin {
 		if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
 			pods_message( 'Pod not found', 'error' );
 
-			unset( $_GET['id'] );
-			unset( $_GET['action'] );
+			unset( $_GET['id'], $_GET['action'] );
 		}
 
 		$ui = array(
@@ -2134,8 +2133,7 @@ class PodsAdmin {
 
 				$options['admin-ui']['ui_fields_manage']['data']['id'] = 'ID';
 			} else {
-				unset( $options['admin-ui']['ui_fields_manage'] );
-				unset( $options['admin-ui']['ui_filters'] );
+				unset( $options['admin-ui']['ui_fields_manage'], $options['admin-ui']['ui_filters'] );
 			}//end if
 
 			// @todo fill this in
@@ -3098,8 +3096,7 @@ class PodsAdmin {
 		}
 
 		// Cleaning up $params
-		unset( $params->action );
-		unset( $params->method );
+		unset( $params->action, $params->method );
 
 		if ( true !== $method->custom_nonce ) {
 			unset( $params->_wpnonce );
@@ -3186,7 +3183,7 @@ class PodsAdmin {
 	 *
 	 * @since 3.0.0
 	 */
-	function configuration( $pod = null, $full_field_info = false ) {
+	public function configuration( $pod = null, $full_field_info = false ) {
 
 		$api = pods_api();
 

@@ -10,11 +10,11 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 	class PodsBuilderModuleSingle extends LayoutModule {
 
-		var $_name = '';
-		var $_var = 'pods-builder-single';
-		var $_description = '';
-		var $_editor_width = 500;
-		var $_can_remove_wrappers = true;
+		public $_name = '';
+		public $_var = 'pods-builder-single';
+		public $_description = '';
+		public $_editor_width = 500;
+		public $_can_remove_wrappers = true;
 
 		/**
 		 * Register the Module
@@ -35,7 +35,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 		 *
 		 * @return mixed
 		 */
-		function _get_defaults( $defaults ) {
+		public function _get_defaults( $defaults ) {
 
 			$new_defaults = array(
 				'pod_type'        => '',
@@ -54,7 +54,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 		 * @param object $form Form class
 		 * @param bool   $results
 		 */
-		function _before_table_edit( $form, $results = true ) {
+		public function _before_table_edit( $form, $results = true ) {
 
 			?>
 			<p><?php echo $this->_description; ?></p>
@@ -67,7 +67,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 		 * @param object $form Form class
 		 * @param bool   $results
 		 */
-		function _start_table_edit( $form, $results = true ) {
+		public function _start_table_edit( $form, $results = true ) {
 
 			$api      = pods_api();
 			$all_pods = $api->load_pods( array( 'names' => true ) );
@@ -159,7 +159,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 		/**
 		 * Module Output
 		 */
-		function _render( $fields ) {
+		public function _render( $fields ) {
 
 			$args = array(
 				'name'     => trim( pods_var_raw( 'pod_type', $fields['data'], '' ) ),

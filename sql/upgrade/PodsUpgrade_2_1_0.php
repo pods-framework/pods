@@ -13,7 +13,7 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 	/**
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 	}
 
 	/**

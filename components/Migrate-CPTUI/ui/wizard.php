@@ -159,11 +159,11 @@
 	var pods_admin_submit_callback = function ( id ) {
 		id = parseInt( id );
 		document.location = 'admin.php?page=pods&do=create';
-	}
+	};
 
 	var pods_admin_option_select_callback = function ( $opt ) {
 		jQuery( '#pods_cleanup' ).val( $opt.data( 'opt' ) );
-	}
+	};
 
 	jQuery( function ( $ ) {
 		$( document ).Pods( 'validate' );

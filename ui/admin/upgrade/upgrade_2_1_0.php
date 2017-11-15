@@ -137,7 +137,7 @@ global $wpdb;
 				jQuery( '#pods-wizard-box' ).PodsUpgrade( 'migrate' );
 			}
 		}
-	}
+	};
 
 	jQuery( function ( $ ) {
 		$( '#pods-wizard-box' ).Pods( 'wizard' );

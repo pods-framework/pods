@@ -10,7 +10,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> --<field>=<value>
 	 */
-	function add( $args, $assoc_args ) {
+	public function add( $args, $assoc_args ) {
 
 		$pod  = $assoc_args['pod'];
 		$item = pods_var_raw( 'item', $assoc_args );
@@ -41,7 +41,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> [--item=<item>] --<field>=<value>
 	 */
-	function save( $args, $assoc_args ) {
+	public function save( $args, $assoc_args ) {
 
 		$pod  = $assoc_args['pod'];
 		$item = pods_var_raw( 'item', $assoc_args );
@@ -72,7 +72,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> --item=<item>
 	 */
-	function duplicate( $args, $assoc_args ) {
+	public function duplicate( $args, $assoc_args ) {
 
 		$id = pods( $assoc_args['pod'], $assoc_args['item'] )->duplicate();
 
@@ -90,7 +90,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> --item=<item>
 	 */
-	function delete( $args, $assoc_args ) {
+	public function delete( $args, $assoc_args ) {
 
 		$deleted = pods( $assoc_args['pod'], $assoc_args['item'] )->delete();
 

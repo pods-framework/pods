@@ -85,7 +85,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.5.5
 	 */
-	function tab( $tabs, $pod, $addtl_args ) {
+	public function tab( $tabs, $pod, $addtl_args ) {
 
 		$tabs['pods-pfat'] = __( 'Auto Template Options', 'pods' );
 
@@ -104,7 +104,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 * @since 2.5.5
 	 *
 	 */
-	function options( $options, $pod ) {
+	public function options( $options, $pod ) {
 
 		//check if it's a post type pod and add fields for that.
 		if ( $pod['type'] === 'post_type' ) {
@@ -262,7 +262,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.5.5
 	 */
-	function front_end( $load_in_admin = false ) {
+	public function front_end( $load_in_admin = false ) {
 
 		if ( ! is_admin() || $load_in_admin ) {
 			include_once( dirname( __FILE__ ) . '/Pods_Templates_Auto_Template_Front_End.php' );
@@ -288,7 +288,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.5.5
 	 */
-	function reset( $option, $old_value, $value ) {
+	public function reset( $option, $old_value, $value ) {
 
 		if ( $option === '_transient_pods_flush_rewrites' ) {
 			$this->reseter();
@@ -301,7 +301,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.5.5
 	 */
-	function reseter() {
+	public function reseter() {
 
 		$keys = array( 'pods_pfat_the_pods', 'pods_pfat_auto_pods', 'pods_pfat_archive_test' );
 		foreach ( $keys as $key ) {
@@ -317,7 +317,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.4.5
 	 */
-	function archive_test() {
+	public function archive_test() {
 
 		//try to get cached results of this method
 		$key          = 'pods_pfat_archive_test';
@@ -351,7 +351,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 *
 	 * @since 2.4.5
 	 */
-	function archive_warning() {
+	public function archive_warning() {
 
 		//create $page variable to check if we are on pods admin page
 		$page = pods_v( 'page', 'get', false, true );

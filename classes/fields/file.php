@@ -1025,9 +1025,7 @@ class PodsField_File extends PodsField {
 		$method = $params->method;
 
 		// Cleaning up $params
-		unset( $params->action );
-		unset( $params->method );
-		unset( $params->_wpnonce );
+		unset( $params->action, $params->method, $params->_wpnonce );
 
 		$params->post_id = (int) pods_v( 'post_id', $params, 0 );
 
@@ -1050,7 +1048,7 @@ class PodsField_File extends PodsField {
 					// convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025;
+					$limit_size *= 1025;
 					// convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );

@@ -11,7 +11,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --name=<name> --type=<type> --<field>=<value>
 	 * @subcommand add-pod
 	 */
-	function add_pod( $args, $assoc_args ) {
+	public function add_pod( $args, $assoc_args ) {
 
 		if ( isset( $assoc_args['id'] ) ) {
 			unset( $assoc_args['id'] );
@@ -34,7 +34,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --<field>=<value>
 	 * @subcommand save-pod
 	 */
-	function save_pod( $args, $assoc_args ) {
+	public function save_pod( $args, $assoc_args ) {
 
 		$id = pods_api()->save_pod( $assoc_args );
 
@@ -53,7 +53,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --<field>=<value>
 	 * @subcommand duplicate-pod
 	 */
-	function duplicate_pod( $args, $assoc_args ) {
+	public function duplicate_pod( $args, $assoc_args ) {
 
 		$id = pods_api()->duplicate_pod( $assoc_args );
 
@@ -72,7 +72,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --<field>=<value>
 	 * @subcommand reset-pod
 	 */
-	function reset_pod( $args, $assoc_args ) {
+	public function reset_pod( $args, $assoc_args ) {
 
 		$reset = pods_api()->reset_pod( $assoc_args );
 
@@ -90,7 +90,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --<field>=<value>
 	 * @subcommand delete-pod
 	 */
-	function delete_pod( $args, $assoc_args ) {
+	public function delete_pod( $args, $assoc_args ) {
 
 		$deleted = pods_api()->delete_pod( $assoc_args );
 
@@ -108,7 +108,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --component=<component>
 	 * @subcommand activate-component
 	 */
-	function activate_component( $args, $assoc_args ) {
+	public function activate_component( $args, $assoc_args ) {
 
 		if ( ! class_exists( 'PodsInit' ) ) {
 			WP_CLI::error( __( 'PodsInit not available', 'pods' ) );
@@ -136,7 +136,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --component=<component>
 	 * @subcommand deactivate-component
 	 */
-	function deactivate_component( $args, $assoc_args ) {
+	public function deactivate_component( $args, $assoc_args ) {
 
 		if ( ! class_exists( 'PodsInit' ) ) {
 			WP_CLI::error( __( 'PodsInit not available', 'pods' ) );
@@ -163,7 +163,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand clear-cache
 	 */
-	function clear_cache() {
+	public function clear_cache() {
 
 		pods_api()->cache_flush_pods();
 

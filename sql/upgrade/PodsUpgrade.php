@@ -28,7 +28,7 @@ class PodsUpgrade {
 	/**
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 
 		$this->api = pods_api();
 
@@ -124,7 +124,7 @@ class PodsUpgrade {
 	/**
 	 *
 	 */
-	function get_progress() {
+	public function get_progress() {
 
 		$methods = get_class_methods( $this );
 

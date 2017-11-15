@@ -8,15 +8,15 @@ class PodsAPI_Deprecated {
 
 	private $obj;
 
-	var $snap = false;
+	public $snap = false;
 
-	var $dt = 0;
+	public $dt = 0;
 
-	var $dtname = '';
+	public $dtname = '';
 
-	var $fields = array();
+	public $fields = array();
 
-	var $use_pod_id = false;
+	public $use_pod_id = false;
 
 	/**
 	 * Constructor - PodsAPI Deprecated functionality (pre 2.0)

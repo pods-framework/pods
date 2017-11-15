@@ -492,7 +492,7 @@ class Pods_Component_I18n extends PodsComponent {
 	 *
 	 * @return array
 	 */
-	function pods_filter_object_strings_i18n( $options, $object ) {
+	public function pods_filter_object_strings_i18n( $options, $object ) {
 
 		/**
 		 * @todo allow labels to be set even if the default language isn't

@@ -8,7 +8,7 @@ class PodsView {
 	/**
 	 * @var array $cache_modes Array of available cache modes
 	 */
-	static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'option-cache' );
+	public static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache', 'option-cache' );
 
 	/**
 	 * @return \PodsView

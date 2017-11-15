@@ -113,7 +113,7 @@ class Pod {
 
 	public $meta_extra = '';
 
-	function __construct( $type = null, $id = null ) {
+	public function __construct( $type = null, $id = null ) {
 
 		if ( self::$deprecated_notice ) {
 			pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
@@ -224,7 +224,7 @@ class PodAPI {
 
 	public static $deprecated_notice = true;
 
-	function __construct( $type = null, $format = null ) {
+	public function __construct( $type = null, $format = null ) {
 
 		if ( self::$deprecated_notice ) {
 			pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );

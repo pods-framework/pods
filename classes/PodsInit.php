@@ -8,59 +8,59 @@ class PodsInit {
 	/**
 	 * @var PodsInit
 	 */
-	static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * @var array
 	 */
-	static $no_conflict = array();
+	public static $no_conflict = array();
 
 	/**
 	 * @var array
 	 */
-	static $content_types_registered = array();
+	public static $content_types_registered = array();
 
 	/**
 	 * @var PodsComponents
 	 */
-	static $components;
+	public static $components;
 
 	/**
 	 * @var PodsMeta
 	 */
-	static $meta;
+	public static $meta;
 
 	/**
 	 * @var PodsI18n
 	 */
-	static $i18n;
+	public static $i18n;
 
 	/**
 	 * @var PodsAdmin
 	 */
-	static $admin;
+	public static $admin;
 
 	/**
 	 * @var mixed|void
 	 */
-	static $version;
+	public static $version;
 
 	/**
 	 * @var mixed|void
 	 */
-	static $version_last;
+	public static $version_last;
 
 	/**
 	 * @var mixed|void
 	 */
-	static $db_version;
+	public static $db_version;
 
 	/**
 	 * Upgrades to trigger (last installed version => upgrade version)
 	 *
 	 * @var array
 	 */
-	static $upgrades = array(
+	public static $upgrades = array(
 		'1.0.0' => '2.0.0',
 		// '2.0.0' => '2.1.0'
 	);
@@ -70,14 +70,14 @@ class PodsInit {
 	 *
 	 * @var bool
 	 */
-	static $upgraded;
+	public static $upgraded;
 
 	/**
 	 * Whether an Upgrade is needed
 	 *
 	 * @var bool
 	 */
-	static $upgrade_needed = false;
+	public static $upgrade_needed = false;
 
 	/**
 	 * Singleton handling for a basic pods_init() request
@@ -89,7 +89,7 @@ class PodsInit {
 	public static function init() {
 
 		if ( ! is_object( self::$instance ) ) {
-			self::$instance = new PodsInit();
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -103,7 +103,7 @@ class PodsInit {
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   1.8.9
 	 */
-	function __construct() {
+	public function __construct() {
 
 		self::$version      = get_option( 'pods_framework_version' );
 		self::$version_last = get_option( 'pods_framework_version_last' );
@@ -807,7 +807,7 @@ class PodsInit {
 
 				if ( is_array( $ct_rewrite ) && ! $pods_taxonomies[ $taxonomy_name ]['query_var'] ) {
 					$pods_taxonomies[ $taxonomy_name ]['query_var'] = pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true );
-				};
+				}
 
 				// Prevent reserved query_var issues
 				if ( in_array( $pods_taxonomies[ $taxonomy_name ]['query_var'], $reserved_query_vars ) ) {

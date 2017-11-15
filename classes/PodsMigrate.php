@@ -8,17 +8,17 @@ class PodsMigrate {
 	/**
 	 * @var null|string
 	 */
-	var $type = 'php';
+	public $type = 'php';
 
 	/**
 	 * @var array
 	 */
-	var $types = array( 'php', 'json', 'sv', 'xml' );
+	public $types = array( 'php', 'json', 'sv', 'xml' );
 
 	/**
 	 * @var array
 	 */
-	var $mimes = array(
+	public $mimes = array(
 		'json' => 'application/json',
 		'csv'  => 'text/csv',
 		'tsv'  => 'text/tsv',
@@ -28,12 +28,12 @@ class PodsMigrate {
 	/**
 	 * @var null|string
 	 */
-	var $delimiter = ',';
+	public $delimiter = ',';
 
 	/**
 	 * @var null
 	 */
-	var $data = array(
+	public $data = array(
 		'items'   => array(),
 		'columns' => array(),
 		'fields'  => array(),
@@ -42,17 +42,17 @@ class PodsMigrate {
 	/**
 	 * @var null
 	 */
-	var $input;
+	public $input;
 
 	/**
 	 * @var
 	 */
-	var $parsed;
+	public $parsed;
 
 	/**
 	 * @var
 	 */
-	var $built;
+	public $built;
 
 	/**
 	 * Migrate Data to and from Pods
@@ -66,7 +66,7 @@ class PodsMigrate {
 	 * @license http://www.gnu.org/licenses/gpl-2.0.html
 	 * @since   2.0
 	 */
-	function __construct( $type = null, $delimiter = null, $data = null ) {
+	public function __construct( $type = null, $delimiter = null, $data = null ) {
 
 		if ( ! empty( $type ) && in_array( $type, $this->types ) ) {
 			$this->type = $type;
@@ -81,7 +81,7 @@ class PodsMigrate {
 		}
 	}
 
-	function set_data( $data ) {
+	public function set_data( $data ) {
 
 		$defaults = array(
 			'items'   => array(),
@@ -99,7 +99,7 @@ class PodsMigrate {
 	 * @param string $type      Export Type (php, json, sv, xml)
 	 * @param string $delimiter Delimiter for export type 'sv'
 	 */
-	function import( $data = null, $type = null, $delimiter = null ) {
+	public function import( $data = null, $type = null, $delimiter = null ) {
 
 		if ( ! empty( $data ) ) {
 			$this->input = $data;
@@ -1029,10 +1029,7 @@ class PodsMigrate {
 
 					$params['columns'][ $field ] = $value;
 
-					unset( $value );
-					unset( $field_data );
-					unset( $field_info );
-					unset( $fk );
+					unset( $value, $field_data, $field_info, $fk );
 				}//end foreach
 
 				if ( empty( $params['columns'] ) ) {
@@ -1099,9 +1096,7 @@ class PodsMigrate {
 					$data['post_save']( $params, $row, $data );
 				}
 
-				unset( $params );
-				unset( $result[ $k ] );
-				unset( $row );
+				unset( $params, $result[ $k ], $row );
 
 				wp_cache_flush();
 				$wpdb->queries = array();
@@ -1134,10 +1129,7 @@ class PodsMigrate {
 				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - <strong style='color:green;'>Done Importing: " . $data['pod']['name'] . "</strong>\n";
 			}
 
-			unset( $result );
-			unset( $import[ $datatype ] );
-			unset( $datatype );
-			unset( $data );
+			unset( $result, $import[ $datatype ], $datatype, $data );
 
 			wp_cache_flush();
 			$wpdb->queries = array();

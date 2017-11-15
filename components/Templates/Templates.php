@@ -38,7 +38,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @since 2.0
 	 */
-	static $obj = null;
+	public static $obj = null;
 
 	/**
 	 * Whether to enable deprecated functionality based on old function usage
@@ -47,7 +47,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @since 2.0
 	 */
-	static $deprecated = false;
+	public static $deprecated = false;
 
 	/**
 	 * Object type
@@ -209,7 +209,7 @@ class Pods_Templates extends PodsComponent {
 	 *
 	 * @since 2.0.5
 	 */
-	function remove_row_actions( $actions, $post ) {
+	public function remove_row_actions( $actions, $post ) {
 
 		global $current_screen;
 

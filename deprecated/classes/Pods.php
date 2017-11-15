@@ -8,13 +8,13 @@ class Pods_Deprecated {
 
 	private $obj;
 
-	var $id;
+	public $id;
 
-	var $data;
+	public $data;
 
-	var $datatype;
+	public $datatype;
 
-	var $datatype_id;
+	public $datatype_id;
 
 	/**
 	 * Constructor - Pods Deprecated functionality (pre 2.0)

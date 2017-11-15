@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods\Widgets
  */
@@ -21,55 +22,56 @@ class PodsWidgetForm extends WP_Widget {
 	 *                                for information on accepted arguments. Default empty array.
 	 */
 	public function __construct( $id_base = 'pods_widget_form', $name = 'Pods - Form', $widget_options = array(), $control_options = array() ) {
-	    parent::__construct(
-            'pods_widget_form',
-            'Pods - Form',
-            array( 'classname' => 'pods_widget_form', 'description' => 'Display a form for creating and editing Pod items' ),
-            array( 'width' => 200 )
-        );
 
-    }
+		parent::__construct( 'pods_widget_form', 'Pods - Form', array( 'classname'   => 'pods_widget_form',
+		                                                               'description' => 'Display a form for creating and editing Pod items'
+			), array( 'width' => 200 ) );
 
-    public function widget ( $args, $instance ) {
-        extract( $args );
+	}
 
-        // Get widget fields
-        $title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+	public function widget( $args, $instance ) {
 
-        $args = array(
-            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
-            'fields' => trim( pods_var_raw( 'fields', $instance, '' ) ),
-            'label' => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
-            'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
-            'form' => 1
-        );
+		extract( $args );
 
-        if ( 0 < strlen( $args[ 'name' ] ) ) {
-            require PODS_DIR . 'ui/front/widgets.php';
-        }
-    }
+		// Get widget fields
+		$title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
 
-    public function update ( $new_instance, $old_instance ) {
-        $instance = $old_instance;
-        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
-        $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
-        $instance[ 'fields' ] = pods_var_raw( 'fields', $new_instance, '' );
-        $instance[ 'label' ] = pods_var_raw( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
-        $instance[ 'thank_you' ] = pods_var_raw( 'thank_you', $new_instance, '' );
+		$args = array(
+			'name'      => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+			'slug'      => trim( pods_var_raw( 'slug', $instance, '' ) ),
+			'fields'    => trim( pods_var_raw( 'fields', $instance, '' ) ),
+			'label'     => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
+			'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
+			'form'      => 1
+		);
 
-        return $instance;
-    }
+		if ( 0 < strlen( $args['name'] ) ) {
+			require PODS_DIR . 'ui/front/widgets.php';
+		}
+	}
 
-    public function form ( $instance ) {
-        $title = pods_var_raw( 'title', $instance, '' );
-        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
-        $slug = pods_var_raw( 'slug', $instance, '' );
-        $fields = pods_var_raw( 'fields', $instance, '' );
-        $label = pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true );
-        $thank_you = pods_var_raw( 'thank_you', $instance, '' );
+	public function update( $new_instance, $old_instance ) {
 
-        require PODS_DIR . 'ui/admin/widgets/form.php';
-    }
+		$instance              = $old_instance;
+		$instance['title']     = pods_var_raw( 'title', $new_instance, '' );
+		$instance['pod_type']  = pods_var_raw( 'pod_type', $new_instance, '' );
+		$instance['slug']      = pods_var_raw( 'slug', $new_instance, '' );
+		$instance['fields']    = pods_var_raw( 'fields', $new_instance, '' );
+		$instance['label']     = pods_var_raw( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
+		$instance['thank_you'] = pods_var_raw( 'thank_you', $new_instance, '' );
+
+		return $instance;
+	}
+
+	public function form( $instance ) {
+
+		$title     = pods_var_raw( 'title', $instance, '' );
+		$pod_type  = pods_var_raw( 'pod_type', $instance, '' );
+		$slug      = pods_var_raw( 'slug', $instance, '' );
+		$fields    = pods_var_raw( 'fields', $instance, '' );
+		$label     = pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true );
+		$thank_you = pods_var_raw( 'thank_you', $instance, '' );
+
+		require PODS_DIR . 'ui/admin/widgets/form.php';
+	}
 }

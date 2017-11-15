@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class PodsRESTHandlers
  *
@@ -91,9 +92,9 @@ class PodsRESTHandlers {
 		 * @param WP_REST_Request $request     Current request
 		 * @param string          $object_type Rest Object type
 		 */
-		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type  );
+		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type );
 
-		$id  = pods_v( 'id', $object );
+		$id = pods_v( 'id', $object );
 
 		if ( empty( $id ) ) {
 			$id = pods_v( 'ID', $object );

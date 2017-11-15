@@ -76,8 +76,7 @@ class PodsField {
 	 */
 	public function options() {
 
-		$options = array(
-			/*
+		$options = array(/*
             'option_name' => array(
                 'label' => 'Option Label',
                 'depends-on' => array( 'another_option' => 'specific-value' ),
@@ -271,15 +270,15 @@ class PodsField {
 	/**
 	 * Render input script for Pods DFV
 	 *
-	 * @param array|object $args {
-	 *     Field information arguments.
+	 * @param array|object $args    {
+	 *                              Field information arguments.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @type string        $name    Field name
+	 * @type string        $type    Field type
+	 * @type array         $options Field options
+	 * @type mixed         $value   Current value
+	 * @type array         $pod     Pod information
+	 * @type int|string    $id      Current item ID
 	 * }
 	 */
 	public function render_input_script( $args ) {
@@ -289,27 +288,27 @@ class PodsField {
 		}
 
 		$script_content = json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
-	?>
+		?>
 		<div class="pods-form-ui-field pods-dfv-field">
 			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content ?></script>
 		</div>
-	<?php
+		<?php
 
 	}
 
 	/**
 	 * Build field data for Pods DFV
 	 *
-	 * @param object $args {
-	 *     Field information arguments.
+	 * @param object    $args            {
+	 *                                   Field information arguments.
 	 *
-	 *     @type string     $name            Field name
-	 *     @type string     $type            Pod field type
-	 *     @type string     $form_field_type HTML field type
-	 *     @type array      $options         Field options
-	 *     @type mixed      $value           Current value
-	 *     @type array      $pod             Pod information
-	 *     @type int|string $id              Current item ID
+	 * @type string     $name            Field name
+	 * @type string     $type            Pod field type
+	 * @type string     $form_field_type HTML field type
+	 * @type array      $options         Field options
+	 * @type mixed      $value           Current value
+	 * @type array      $pod             Pod information
+	 * @type int|string $id              Current item ID
 	 * }
 	 *
 	 * @return array
@@ -326,15 +325,15 @@ class PodsField {
 
 		// Build DFV field data.
 		$data = array(
-			'htmlAttr'       => array(
+			'htmlAttr'      => array(
 				'id'         => $attributes['id'],
 				'class'      => $attributes['class'],
 				'name'       => $attributes['name'],
 				'name_clean' => $attributes['data-name-clean'],
 			),
-			'fieldType'      => $args->type,
-			'fieldItemData'  => $this->build_dfv_field_item_data( $args ),
-			'fieldConfig'    => $this->build_dfv_field_config( $args ),
+			'fieldType'     => $args->type,
+			'fieldItemData' => $this->build_dfv_field_item_data( $args ),
+			'fieldConfig'   => $this->build_dfv_field_config( $args ),
 		);
 
 		/**
@@ -342,19 +341,20 @@ class PodsField {
 		 *
 		 * @since 2.7
 		 *
-		 * @param array  $data DFV field data
-		 * @param object $args {
-		 *     Field information arguments.
+		 * @param array     $data            DFV field data
+		 * @param object    $args            {
+		 *                                   Field information arguments.
 		 *
-		 *     @type string     $name            Field name
-		 *     @type string     $type            Pod field type
-		 *     @type string     $form_field_type HTML field type
-		 *     @type array      $options         Field options
-		 *     @type mixed      $value           Current value
-		 *     @type array      $pod             Pod information
-		 *     @type int|string $id              Current item ID
+		 * @type string     $name            Field name
+		 * @type string     $type            Pod field type
+		 * @type string     $form_field_type HTML field type
+		 * @type array      $options         Field options
+		 * @type mixed      $value           Current value
+		 * @type array      $pod             Pod information
+		 * @type int|string $id              Current item ID
 		 * }
-		 * @param array  $attributes HTML attributes
+		 *
+		 * @param array     $attributes      HTML attributes
 		 */
 		$data = apply_filters( 'pods_field_dfv_data', $data, $args, $attributes );
 
@@ -365,16 +365,16 @@ class PodsField {
 	/**
 	 * Build field options and handle any validation/customization for Pods DFV
 	 *
-	 * @param array  $options
-	 * @param object $args {
-	 *     Field information arguments.
+	 * @param array     $options
+	 * @param object    $args    {
+	 *                           Field information arguments.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @type string     $name    Field name
+	 * @type string     $type    Field type
+	 * @type array      $options Field options
+	 * @type mixed      $value   Current value
+	 * @type array      $pod     Pod information
+	 * @type int|string $id      Current item ID
 	 * }
 	 *
 	 * @return array
@@ -388,16 +388,16 @@ class PodsField {
 	/**
 	 * Build field HTML attributes for Pods DFV.
 	 *
-	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.
-	 * @param object $args {
-	 *     Field information arguments.
+	 * @param array     $attributes Default HTML attributes from field and PodsForm::merge_attributes.
+	 * @param object    $args       {
+	 *                              Field information arguments.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @type string     $name       Field name
+	 * @type string     $type       Field type
+	 * @type array      $options    Field options
+	 * @type mixed      $value      Current value
+	 * @type array      $pod        Pod information
+	 * @type int|string $id         Current item ID
 	 * }
 	 *
 	 * @return array
@@ -413,15 +413,15 @@ class PodsField {
 	 *
 	 * This is for customizing the options and adding output-specific config values.
 	 *
-	 * @param object $args {
-	 *     Field information arguments.
+	 * @param object    $args    {
+	 *                           Field information arguments.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @type string     $name    Field name
+	 * @type string     $type    Field type
+	 * @type array      $options Field options
+	 * @type mixed      $value   Current value
+	 * @type array      $pod     Pod information
+	 * @type int|string $id      Current item ID
 	 * }
 	 *
 	 * @return array
@@ -441,15 +441,15 @@ class PodsField {
 	/**
 	 * Build array of item data for Pods DFV
 	 *
-	 * @param object $args {
-	 *     Field information arguments.
+	 * @param object    $args    {
+	 *                           Field information arguments.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @type string     $name    Field name
+	 * @type string     $type    Field type
+	 * @type array      $options Field options
+	 * @type mixed      $value   Current value
+	 * @type array      $pod     Pod information
+	 * @type int|string $id      Current item ID
 	 * }
 	 *
 	 * @return array

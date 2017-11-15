@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class PodsRESTFields
  *
@@ -12,7 +13,7 @@ class PodsRESTFields {
 	/**
 	 * Pods object
 	 *
-	 * @since 2.5.6
+	 * @since  2.5.6
 	 *
 	 * @access protected
 	 *

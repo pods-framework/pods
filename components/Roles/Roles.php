@@ -4,486 +4,527 @@
  *
  * Menu Name: Roles &amp; Capabilities
  *
- * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin by Justin Tadlock
+ * Description: Create and Manage WordPress User Roles and Capabilities; Uses the '<a
+ * href="http://wordpress.org/plugins/members/" target="_blank">Members</a>' plugin filters for additional plugin
+ * integrations; Portions of code based on the '<a href="http://wordpress.org/plugins/members/"
+ * target="_blank">Members</a>' plugin by Justin Tadlock
  *
  * Version: 1.0
  *
  * Category: Tools
  *
- * @package Pods\Components
+ * @package    Pods\Components
  * @subpackage Roles
  */
 
-if ( class_exists( 'Pods_Roles' ) )
-    return;
+if ( class_exists( 'Pods_Roles' ) ) {
+	return;
+}
 
 class Pods_Roles extends PodsComponent {
 
-    /**
-     * Do things like register/enqueue scripts and stylesheets
-     *
-     * @since 2.0
-     */
-    public function __construct () {
-        add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
-    }
-
-    /**
-     * Enqueue styles
-     *
-     * @since 2.0
-     */
-    public function admin_assets () {
-        wp_enqueue_style( 'pods-wizard' );
-    }
-
-    /**
-     * Build admin area
-     *
-     * @param $options
-     * @param $component
-     *
-     * @return void
-     * @since 2.0
-     */
-    public function admin ( $options, $component ) {
-        global $wp_roles;
-
-        // Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
-        if ( class_exists( 'RGForms' ) && !has_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) ) )
-            add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
-
-        $default_role = get_option( 'default_role' );
-
-        $roles = array();
-
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            $count = $this->count_users( $key );
-
-            $roles[ $key ] = array(
-                'id' => $key,
-                'label' => $wp_roles->role_names[ $key ],
-                'name' => $key,
-                'capabilities' => count( (array) $role->capabilities ),
-                'users' => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
-            );
-
-            if ( $default_role == $key )
-                $roles[ $key ][ 'label' ] .= ' (site default)';
-
-            if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
-                $roles[ $key ][ 'users' ] .= '<br /><a href="'
-                                             . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
-                                             . __( 'View Users', 'pods' ) . '</a>';
-            }
-        }
-
-        $ui = array(
-            'component' => $component,
-            'data' => $roles,
-            'total' => count( $roles ),
-            'total_found' => count( $roles ),
-            'items' => 'Roles',
-            'item' => 'Role',
-            'fields' => array(
-                'manage' => array(
-                    'label' => array( 'label' => __( 'Label', 'pods' ) ),
-                    'name' => array( 'label' => __( 'Name', 'pods' ) ),
-                    'capabilities' => array( 'label' => __( 'Capabilities', 'pods' ) ),
-                    'users' => array(
-                        'label' => __( 'Users', 'pods' ),
-                        'type' => 'text',
-                        'options' => array(
-                            'text_allow_html' => 1,
-                            'text_allowed_html_tags' => ''
-                        )
-                    )
-                )
-            ),
-            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
-            'actions_custom' => array(
-                'add' => array( $this, 'admin_add' ),
-                'edit' => array( $this, 'admin_edit' ),
-                'delete' => array( $this, 'admin_delete' )
-            ),
-            'search' => false,
-            'searchable' => false,
-            'sortable' => false,
-            'pagination' => false
-        );
-
-        if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
-            $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
-
-        if ( !pods_is_admin( array( 'pods_roles_add' ) ) )
-            $ui[ 'actions_disabled' ][] = 'add';
-
-        if ( !pods_is_admin( array( 'pods_roles_edit' ) ) )
-            $ui[ 'actions_disabled' ][] = 'edit';
+	/**
+	 * Do things like register/enqueue scripts and stylesheets
+	 *
+	 * @since 2.0
+	 */
+	public function __construct() {
+
+		add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
+	}
+
+	/**
+	 * Enqueue styles
+	 *
+	 * @since 2.0
+	 */
+	public function admin_assets() {
+
+		wp_enqueue_style( 'pods-wizard' );
+	}
+
+	/**
+	 * Build admin area
+	 *
+	 * @param $options
+	 * @param $component
+	 *
+	 * @return void
+	 * @since 2.0
+	 */
+	public function admin( $options, $component ) {
+
+		global $wp_roles;
+
+		// Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
+		if ( class_exists( 'RGForms' ) && ! has_filter( 'members_get_capabilities', array(
+				'RGForms',
+				'members_get_capabilities'
+			) ) ) {
+			add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
+		}
+
+		$default_role = get_option( 'default_role' );
+
+		$roles = array();
+
+		foreach ( $wp_roles->role_objects as $key => $role ) {
+			$count = $this->count_users( $key );
+
+			$roles[ $key ] = array(
+				'id'           => $key,
+				'label'        => $wp_roles->role_names[ $key ],
+				'name'         => $key,
+				'capabilities' => count( (array) $role->capabilities ),
+				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
+			);
+
+			if ( $default_role == $key ) {
+				$roles[ $key ]['label'] .= ' (site default)';
+			}
+
+			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
+				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
+			}
+		}
+
+		$ui = array(
+			'component'        => $component,
+			'data'             => $roles,
+			'total'            => count( $roles ),
+			'total_found'      => count( $roles ),
+			'items'            => 'Roles',
+			'item'             => 'Role',
+			'fields'           => array(
+				'manage' => array(
+					'label'        => array( 'label' => __( 'Label', 'pods' ) ),
+					'name'         => array( 'label' => __( 'Name', 'pods' ) ),
+					'capabilities' => array( 'label' => __( 'Capabilities', 'pods' ) ),
+					'users'        => array(
+						'label'   => __( 'Users', 'pods' ),
+						'type'    => 'text',
+						'options' => array(
+							'text_allow_html'        => 1,
+							'text_allowed_html_tags' => ''
+						)
+					)
+				)
+			),
+			'actions_disabled' => array( 'duplicate', 'view', 'export' ),
+			'actions_custom'   => array(
+				'add'    => array( $this, 'admin_add' ),
+				'edit'   => array( $this, 'admin_edit' ),
+				'delete' => array( $this, 'admin_delete' )
+			),
+			'search'           => false,
+			'searchable'       => false,
+			'sortable'         => false,
+			'pagination'       => false
+		);
+
+		if ( isset( $roles[ pods_var( 'id', 'get', - 1 ) ] ) ) {
+			$ui['row'] = $roles[ pods_var( 'id', 'get', - 1 ) ];
+		}
 
-        if ( count( $roles ) < 2 || !pods_is_admin( array( 'pods_roles_delete' ) ) )
-            $ui[ 'actions_disabled' ][] = 'delete';
+		if ( ! pods_is_admin( array( 'pods_roles_add' ) ) ) {
+			$ui['actions_disabled'][] = 'add';
+		}
 
-        pods_ui( $ui );
-    }
+		if ( ! pods_is_admin( array( 'pods_roles_edit' ) ) ) {
+			$ui['actions_disabled'][] = 'edit';
+		}
 
-    function admin_add ( $obj ) {
-        global $wp_roles;
+		if ( count( $roles ) < 2 || ! pods_is_admin( array( 'pods_roles_delete' ) ) ) {
+			$ui['actions_disabled'][] = 'delete';
+		}
 
-        $capabilities = $this->get_capabilities();
+		pods_ui( $ui );
+	}
 
-        $defaults = $this->get_default_capabilities();
+	function admin_add( $obj ) {
 
-        $component = $obj->x[ 'component' ];
+		global $wp_roles;
 
-        $method = 'add'; // ajax_add
+		$capabilities = $this->get_capabilities();
 
-        pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+		$defaults = $this->get_default_capabilities();
 
-    function admin_edit ( $duplicate, $obj ) {
-        global $wp_roles;
+		$component = $obj->x['component'];
 
-        $id = $obj->id;
+		$method = 'add'; // ajax_add
 
-        $capabilities = $this->get_capabilities();
+		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
+	}
 
-        $role_name = $role_label = $role_capabilities = null;
+	function admin_edit( $duplicate, $obj ) {
 
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            if ( $key != $id )
-                continue;
+		global $wp_roles;
 
-            $role_name = $key;
-            $role_label = $wp_roles->role_names[ $key ];
-            $role_capabilities = $role->capabilities;
-        }
+		$id = $obj->id;
 
-        if ( empty( $role ) )
-            return $obj->error( __( 'Role not found, cannot edit it.', 'pods' ) );
+		$capabilities = $this->get_capabilities();
 
-        $component = $obj->x[ 'component' ];
+		$role_name = $role_label = $role_capabilities = null;
 
-        $method = 'edit'; // ajax_edit
+		foreach ( $wp_roles->role_objects as $key => $role ) {
+			if ( $key != $id ) {
+				continue;
+			}
 
-        pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+			$role_name         = $key;
+			$role_label        = $wp_roles->role_names[ $key ];
+			$role_capabilities = $role->capabilities;
+		}
 
-    function admin_delete ( $id, $obj ) {
-        global $wp_roles;
+		if ( empty( $role ) ) {
+			return $obj->error( __( 'Role not found, cannot edit it.', 'pods' ) );
+		}
 
-        $id = $obj->id;
+		$component = $obj->x['component'];
 
-        if ( !isset( $obj->data[ $id ] ) )
-            return $obj->error( __( 'Role not found, it cannot be deleted.', 'pods' ) );
+		$method = 'edit'; // ajax_edit
 
-        $default_role = get_option( 'default_role' );
+		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
+	}
 
-        if ( $id == $default_role ) {
-            return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ][ 'name' ] ) );
-        }
+	function admin_delete( $id, $obj ) {
 
-        $wp_user_query = new WP_User_Query( array( 'role' => $id ) );
+		global $wp_roles;
 
-        $users = $wp_user_query->get_results();
+		$id = $obj->id;
 
-        if ( !empty( $users ) && is_array( $users ) ) {
-            foreach ( $users as $user ) {
-                $user_object = new WP_User( $user );
+		if ( ! isset( $obj->data[ $id ] ) ) {
+			return $obj->error( __( 'Role not found, it cannot be deleted.', 'pods' ) );
+		}
 
-                if ( $user_object->has_cap( $id ) ) {
-                    $user_object->remove_role( $id );
-                    $user_object->set_role( $default_role );
-                }
-            }
-        }
+		$default_role = get_option( 'default_role' );
 
-        remove_role( $id );
+		if ( $id == $default_role ) {
+			return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ]['name'] ) );
+		}
 
-        $roles = array();
+		$wp_user_query = new WP_User_Query( array( 'role' => $id ) );
 
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            $count = $this->count_users( $key );
+		$users = $wp_user_query->get_results();
 
-            $roles[ $key ] = array(
-                'id' => $key,
-                'label' => $wp_roles->role_names[ $key ],
-                'name' => $key,
-                'capabilities' => count( (array) $role->capabilities ),
-                'users' => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
-            );
+		if ( ! empty( $users ) && is_array( $users ) ) {
+			foreach ( $users as $user ) {
+				$user_object = new WP_User( $user );
 
-            if ( $default_role == $key )
-                $roles[ $key ][ 'label' ] .= ' (site default)';
+				if ( $user_object->has_cap( $id ) ) {
+					$user_object->remove_role( $id );
+					$user_object->set_role( $default_role );
+				}
+			}
+		}
 
-            if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
-                $roles[ $key ][ 'users' ] .= '<br /><a href="'
-                                             . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
-                                             . __( 'View Users', 'pods' ) . '</a>';
-            }
-        }
+		remove_role( $id );
 
-        $name = $obj->data[ $id ][ 'label' ] . ' (' . $obj->data[ $id ][ 'name' ] . ')';
+		$roles = array();
 
-        $obj->data = $roles;
-        $obj->total = count( $roles );
-        $obj->total_found = count( $roles );
+		foreach ( $wp_roles->role_objects as $key => $role ) {
+			$count = $this->count_users( $key );
 
-        $obj->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
-    }
+			$roles[ $key ] = array(
+				'id'           => $key,
+				'label'        => $wp_roles->role_names[ $key ],
+				'name'         => $key,
+				'capabilities' => count( (array) $role->capabilities ),
+				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
+			);
 
-    /**
-     * Handle the Add Role AJAX
-     *
-     * @param $params
-     * @return mixed|void
-     */
-    public function ajax_add ( $params ) {
-        global $wp_roles;
+			if ( $default_role == $key ) {
+				$roles[ $key ]['label'] .= ' (site default)';
+			}
 
-        $role_name = pods_var_raw( 'role_name', $params );
-        $role_label = pods_var_raw( 'role_label', $params );
+			if ( 0 < $count && pods_is_admin( array( 'list_users' ) ) ) {
+				$roles[ $key ]['users'] .= '<br /><a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . __( 'View Users', 'pods' ) . '</a>';
+			}
+		}
 
-        $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+		$name = $obj->data[ $id ]['label'] . ' (' . $obj->data[ $id ]['name'] . ')';
 
-        $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
-        $params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
+		$obj->data        = $roles;
+		$obj->total       = count( $roles );
+		$obj->total_found = count( $roles );
 
-        $capabilities = array();
+		$obj->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
+	}
 
-        foreach ( $params->capabilities as $capability => $x ) {
-            if ( empty( $capability ) || true !== (boolean) $x )
-                continue;
+	/**
+	 * Handle the Add Role AJAX
+	 *
+	 * @param $params
+	 *
+	 * @return mixed|void
+	 */
+	public function ajax_add( $params ) {
 
-            $capabilities[ esc_attr( $capability ) ] = true;
-        }
+		global $wp_roles;
 
-        foreach ( $params->custom_capabilities as $x => $capability ) {
-            if ( empty( $capability ) || '--1' == $x )
-                continue;
+		$role_name  = pods_var_raw( 'role_name', $params );
+		$role_label = pods_var_raw( 'role_label', $params );
 
-            $capabilities[ esc_attr( $capability ) ] = true;
-        }
+		$params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
 
-        if ( empty( $role_name ) )
-            return pods_error( __( 'Role name is required', 'pods' ) );
+		$params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
+		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
-        if ( empty( $role_label ) )
-            return pods_error( __( 'Role label is required', 'pods' ) );
+		$capabilities = array();
 
-        return add_role( $role_name, $role_label, $capabilities );
-    }
+		foreach ( $params->capabilities as $capability => $x ) {
+			if ( empty( $capability ) || true !== (boolean) $x ) {
+				continue;
+			}
 
-    /**
-     * Handle the Edit Role AJAX
-     *
-     * @todo allow rename role_label
-     *
-     * @param $params
-     * @return bool|mixed|void
-     */
-    public function ajax_edit ( $params ) {
-        global $wp_roles;
+			$capabilities[ esc_attr( $capability ) ] = true;
+		}
 
-        $capabilities = $this->get_capabilities();
+		foreach ( $params->custom_capabilities as $x => $capability ) {
+			if ( empty( $capability ) || '--1' == $x ) {
+				continue;
+			}
 
-        $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+			$capabilities[ esc_attr( $capability ) ] = true;
+		}
 
-        $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
-        $params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
+		if ( empty( $role_name ) ) {
+			return pods_error( __( 'Role name is required', 'pods' ) );
+		}
 
-        if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
-            return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
+		if ( empty( $role_label ) ) {
+			return pods_error( __( 'Role label is required', 'pods' ) );
+		}
 
-        /**
-         * @var $role WP_Role
-         */
-        $role = $wp_roles->role_objects[ $params->id ];
-        $role_name = $params->id;
-        $role_label = $wp_roles->role_names[ $params->id ];
-        $role_capabilities = $role->capabilities;
+		return add_role( $role_name, $role_label, $capabilities );
+	}
 
-        $new_capabilities = array();
+	/**
+	 * Handle the Edit Role AJAX
+	 *
+	 * @todo allow rename role_label
+	 *
+	 * @param $params
+	 *
+	 * @return bool|mixed|void
+	 */
+	public function ajax_edit( $params ) {
 
-        foreach ( $params->capabilities as $capability => $x ) {
-            if ( empty( $capability ) || true !== (boolean) $x )
-                continue;
+		global $wp_roles;
 
-            $new_capabilities[] = esc_attr( $capability );
+		$capabilities = $this->get_capabilities();
 
-            if ( !$role->has_cap( $capability ) )
-                $role->add_cap( $capability );
-        }
+		$params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
 
-        foreach ( $params->custom_capabilities as $x => $capability ) {
-            if ( empty( $capability ) )
-                continue;
+		$params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
+		$params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
-            if ( in_array( $capability, $new_capabilities ) )
-                continue;
+		if ( ! isset( $params->id ) || empty( $params->id ) || ! isset( $wp_roles->role_objects[ $params->id ] ) ) {
+			return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
+		}
 
-            $new_capabilities[] = esc_attr( $capability );
+		/**
+		 * @var $role WP_Role
+		 */
+		$role              = $wp_roles->role_objects[ $params->id ];
+		$role_name         = $params->id;
+		$role_label        = $wp_roles->role_names[ $params->id ];
+		$role_capabilities = $role->capabilities;
 
-            if ( !$role->has_cap( $capability ) )
-                $role->add_cap( $capability );
-        }
+		$new_capabilities = array();
 
-        foreach ( $role_capabilities as $capability => $x ) {
-            if ( !in_array( $capability, $new_capabilities ) && false === strpos( $capability, 'level_' ) )
-                $role->remove_cap( $capability );
-        }
+		foreach ( $params->capabilities as $capability => $x ) {
+			if ( empty( $capability ) || true !== (boolean) $x ) {
+				continue;
+			}
 
-        return true;
-    }
+			$new_capabilities[] = esc_attr( $capability );
 
-    /**
-     * Basic logic from Members plugin, it counts users of a specific role
-     *
-     * @param $role
-     *
-     * @return array
-     */
-    function count_users ( $role ) {
-        $count_users = count_users();
+			if ( ! $role->has_cap( $capability ) ) {
+				$role->add_cap( $capability );
+			}
+		}
 
-        $avail_roles = array();
+		foreach ( $params->custom_capabilities as $x => $capability ) {
+			if ( empty( $capability ) ) {
+				continue;
+			}
 
-        foreach ( $count_users[ 'avail_roles' ] as $count_role => $count ) {
-            $avail_roles[ $count_role ] = $count;
-        }
+			if ( in_array( $capability, $new_capabilities ) ) {
+				continue;
+			}
 
-        if ( empty( $role ) )
-            return $avail_roles;
+			$new_capabilities[] = esc_attr( $capability );
 
-        if ( !isset( $avail_roles[ $role ] ) )
-            $avail_roles[ $role ] = 0;
+			if ( ! $role->has_cap( $capability ) ) {
+				$role->add_cap( $capability );
+			}
+		}
 
-        return $avail_roles[ $role ];
-    }
+		foreach ( $role_capabilities as $capability => $x ) {
+			if ( ! in_array( $capability, $new_capabilities ) && false === strpos( $capability, 'level_' ) ) {
+				$role->remove_cap( $capability );
+			}
+		}
 
-    function get_capabilities () {
-        global $wp_roles;
+		return true;
+	}
 
-        $default_caps = $this->get_wp_capabilities();
+	/**
+	 * Basic logic from Members plugin, it counts users of a specific role
+	 *
+	 * @param $role
+	 *
+	 * @return array
+	 */
+	function count_users( $role ) {
 
-        $role_caps = array();
+		$count_users = count_users();
 
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            if ( is_array( $role->capabilities ) ) {
-                foreach ( $role->capabilities as $cap => $grant ) {
-                    $role_caps[ $cap ] = $cap;
-                }
-            }
-        }
+		$avail_roles = array();
 
-        $role_caps = array_unique( $role_caps );
-
-        $plugin_caps = array(
-            'pods_roles_add',
-            'pods_roles_delete',
-            'pods_roles_edit'
-        );
-
-        $capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
-
-        // To support Members filters
-        $capabilities = apply_filters( 'members_get_capabilities', $capabilities );
-
-        $capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
-
-        sort( $capabilities );
-
-        $capabilities = array_unique( $capabilities );
-
-        return $capabilities;
-    }
-
-    function get_wp_capabilities () {
-        $defaults = array(
-            'activate_plugins',
-            'add_users',
-            'create_users',
-            'delete_others_pages',
-            'delete_others_posts',
-            'delete_pages',
-            'delete_plugins',
-            'delete_posts',
-            'delete_private_pages',
-            'delete_private_posts',
-            'delete_published_pages',
-            'delete_published_posts',
-            'delete_users',
-            'edit_dashboard',
-            'edit_files',
-            'edit_others_pages',
-            'edit_others_posts',
-            'edit_pages',
-            'edit_plugins',
-            'edit_posts',
-            'edit_private_pages',
-            'edit_private_posts',
-            'edit_published_pages',
-            'edit_published_posts',
-            'edit_theme_options',
-            'edit_themes',
-            'edit_users',
-            'import',
-            'install_plugins',
-            'install_themes',
-            'list_users',
-            'manage_categories',
-            'manage_links',
-            'manage_options',
-            'moderate_comments',
-            'promote_users',
-            'publish_pages',
-            'publish_posts',
-            'read',
-            'read_private_pages',
-            'read_private_posts',
-            'remove_users',
-            'switch_themes',
-            'unfiltered_html',
-            'unfiltered_upload',
-            'update_core',
-            'update_plugins',
-            'update_themes',
-            'upload_files'
-        );
-
-        return $defaults;
-    }
-
-    function get_default_capabilities () {
-        $capabilities = array(
-            'read'
-        );
-
-        // To support Members filters
-        $capabilities = apply_filters( 'members_new_role_default_capabilities', $capabilities );
-
-        $capabilities = apply_filters( 'pods_roles_default_capabilities', $capabilities );
-
-        return $capabilities;
-    }
-
-    function remove_deprecated_capabilities ( $capabilities ) {
-        $deprecated_capabilities = array(
-            'level_0',
-            'level_1',
-            'level_2',
-            'level_3',
-            'level_4',
-            'level_5',
-            'level_6',
-            'level_7',
-            'level_8',
-            'level_9',
-            'level_10'
-        );
-
-        $capabilities = array_diff( $capabilities, $deprecated_capabilities );
-
-        return $capabilities;
-    }
+		foreach ( $count_users['avail_roles'] as $count_role => $count ) {
+			$avail_roles[ $count_role ] = $count;
+		}
+
+		if ( empty( $role ) ) {
+			return $avail_roles;
+		}
+
+		if ( ! isset( $avail_roles[ $role ] ) ) {
+			$avail_roles[ $role ] = 0;
+		}
+
+		return $avail_roles[ $role ];
+	}
+
+	function get_capabilities() {
+
+		global $wp_roles;
+
+		$default_caps = $this->get_wp_capabilities();
+
+		$role_caps = array();
+
+		foreach ( $wp_roles->role_objects as $key => $role ) {
+			if ( is_array( $role->capabilities ) ) {
+				foreach ( $role->capabilities as $cap => $grant ) {
+					$role_caps[ $cap ] = $cap;
+				}
+			}
+		}
+
+		$role_caps = array_unique( $role_caps );
+
+		$plugin_caps = array(
+			'pods_roles_add',
+			'pods_roles_delete',
+			'pods_roles_edit'
+		);
+
+		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
+
+		// To support Members filters
+		$capabilities = apply_filters( 'members_get_capabilities', $capabilities );
+
+		$capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
+
+		sort( $capabilities );
+
+		$capabilities = array_unique( $capabilities );
+
+		return $capabilities;
+	}
+
+	function get_wp_capabilities() {
+
+		$defaults = array(
+			'activate_plugins',
+			'add_users',
+			'create_users',
+			'delete_others_pages',
+			'delete_others_posts',
+			'delete_pages',
+			'delete_plugins',
+			'delete_posts',
+			'delete_private_pages',
+			'delete_private_posts',
+			'delete_published_pages',
+			'delete_published_posts',
+			'delete_users',
+			'edit_dashboard',
+			'edit_files',
+			'edit_others_pages',
+			'edit_others_posts',
+			'edit_pages',
+			'edit_plugins',
+			'edit_posts',
+			'edit_private_pages',
+			'edit_private_posts',
+			'edit_published_pages',
+			'edit_published_posts',
+			'edit_theme_options',
+			'edit_themes',
+			'edit_users',
+			'import',
+			'install_plugins',
+			'install_themes',
+			'list_users',
+			'manage_categories',
+			'manage_links',
+			'manage_options',
+			'moderate_comments',
+			'promote_users',
+			'publish_pages',
+			'publish_posts',
+			'read',
+			'read_private_pages',
+			'read_private_posts',
+			'remove_users',
+			'switch_themes',
+			'unfiltered_html',
+			'unfiltered_upload',
+			'update_core',
+			'update_plugins',
+			'update_themes',
+			'upload_files'
+		);
+
+		return $defaults;
+	}
+
+	function get_default_capabilities() {
+
+		$capabilities = array(
+			'read'
+		);
+
+		// To support Members filters
+		$capabilities = apply_filters( 'members_new_role_default_capabilities', $capabilities );
+
+		$capabilities = apply_filters( 'pods_roles_default_capabilities', $capabilities );
+
+		return $capabilities;
+	}
+
+	function remove_deprecated_capabilities( $capabilities ) {
+
+		$deprecated_capabilities = array(
+			'level_0',
+			'level_1',
+			'level_2',
+			'level_3',
+			'level_4',
+			'level_5',
+			'level_6',
+			'level_7',
+			'level_8',
+			'level_9',
+			'level_10'
+		);
+
+		$capabilities = array_diff( $capabilities, $deprecated_capabilities );
+
+		return $capabilities;
+	}
 }

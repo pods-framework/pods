@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods
  */
@@ -182,7 +183,6 @@ class PodsInit {
 		self::$i18n = pods_i18n();
 	}
 
-
 	/**
 	 * Set up the Pods core
 	 */
@@ -295,7 +295,10 @@ class PodsInit {
 			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
 		}
 
-		wp_register_script( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array( 'jquery', 'pods-i18n' ), '1.0.1' );
+		wp_register_script( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array(
+			'jquery',
+			'pods-i18n'
+		), '1.0.1' );
 		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.1' );
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
@@ -315,13 +318,13 @@ class PodsInit {
 
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
-		wp_register_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array( 'backbone', 'backbone.radio' ), '3.1.0', true );
+		wp_register_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array(
+			'backbone',
+			'backbone.radio'
+		), '3.1.0', true );
 
 		// MV stuff
-		wp_register_script(
-			'pods-dfv',
-			PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js',
-			array(
+		wp_register_script( 'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-sortable',
@@ -329,15 +332,13 @@ class PodsInit {
 				'marionette',
 				'media-views',
 				'media-models'
-			),
-			PODS_VERSION,
-			true
-		);
+			), PODS_VERSION, true );
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
 
 			function add_classes_to_body_class( $classes ) {
+
 				$classes .= 'pods-modal-window';
 
 				return $classes;
@@ -413,8 +414,8 @@ class PodsInit {
 			return;
 		}
 
-        require_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
-        require_once( PODS_DIR . 'classes/PodsRESTFields.php' );
+		require_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
+		require_once( PODS_DIR . 'classes/PodsRESTFields.php' );
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -747,19 +748,19 @@ class PodsInit {
 				 * Default tax capabilities
 				 * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
 				 */
-				$capability_type = pods_var( 'capability_type', $taxonomy, 'default' );
+				$capability_type  = pods_var( 'capability_type', $taxonomy, 'default' );
 				$tax_capabilities = array();
 
 				if ( 'custom' == $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
 					if ( ! empty( $capability_type ) && 'default' != $capability_type ) {
-						$capability_type .=  '_term';
-						$capability_type_plural =  $capability_type . 's';
-						$tax_capabilities = array(
+						$capability_type        .= '_term';
+						$capability_type_plural = $capability_type . 's';
+						$tax_capabilities       = array(
 							// Singular
-							'edit_term'   => 'edit_' . $capability_type,
-							'delete_term' => 'delete_' . $capability_type,
-							'assign_term' => 'assign_' . $capability_type,
+							'edit_term'    => 'edit_' . $capability_type,
+							'delete_term'  => 'delete_' . $capability_type,
+							'assign_term'  => 'assign_' . $capability_type,
 							// Plural
 							'manage_terms' => 'manage_' . $capability_type_plural,
 							'edit_terms'   => 'edit_' . $capability_type_plural,
@@ -889,7 +890,7 @@ class PodsInit {
 			/**
 			 * Hide tagcloud compatibility
 			 * @todo check https://core.trac.wordpress.org/ticket/36964
-			 * @see wp-admin/edit-tags.php L389
+			 * @see  wp-admin/edit-tags.php L389
 			 */
 			if ( true != (boolean) pods_var( 'show_tagcloud_in_edit', $options, (boolean) pods_var( 'show_tagcloud', $options, true ) ) ) {
 				$options['labels']['popular_items'] = null;
@@ -1109,10 +1110,8 @@ class PodsInit {
 		 * there wasn't post parameter back in 3.8
 		 * Let's add $post in the filter as it won't hurt anyway.
 		 * @since 2.6.8.1
-		*/
-		$preview_post_link = function_exists( 'get_preview_post_link' )
-									? get_preview_post_link( $post )
-									: apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
+		 */
+		$preview_post_link = function_exists( 'get_preview_post_link' ) ? get_preview_post_link( $post ) : apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
 
 		foreach ( $post_types as $post_type ) {
 			if ( ! isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
@@ -1391,7 +1390,7 @@ class PodsInit {
 		delete_option( 'pods_framework_db_version' );
 		add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
-		self::$version = PODS_VERSION;
+		self::$version    = PODS_VERSION;
 		self::$db_version = PODS_DB_VERSION;
 
 		pods_api()->cache_flush_pods();

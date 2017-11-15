@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Pods\Widgets
  */
@@ -21,59 +22,60 @@ class PodsWidgetField extends WP_Widget {
 	 *                                for information on accepted arguments. Default empty array.
 	 */
 	public function __construct( $id_base = 'pods_widget_field', $name = 'Pods - Field Value', $widget_options = array(), $control_options = array() ) {
-	    parent::__construct(
-            'pods_widget_field',
-            'Pods - Field Value',
-            array( 'classname' => 'pods_widget_field', 'description' => "Display a single Pod item's field value" ),
-            array( 'width' => 200 )
-        );
-		
-    }
 
-    /**
-     * Output of widget
-     */
-    public function widget ( $args, $instance ) {
-        extract( $args );
+		parent::__construct( 'pods_widget_field', 'Pods - Field Value', array( 'classname'   => 'pods_widget_field',
+		                                                                       'description' => "Display a single Pod item's field value"
+			), array( 'width' => 200 ) );
 
-        // Get widget fields
-        $title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+	}
 
-        $args = array(
-            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
-            'field' => trim( pods_var_raw( 'field', $instance, '' ) )
-        );
+	/**
+	 * Output of widget
+	 */
+	public function widget( $args, $instance ) {
 
-        if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) ) {
-            require PODS_DIR . 'ui/front/widgets.php';
-        }
-    }
+		extract( $args );
 
-    /**
-     * Updates the new instance of widget arguments
-     *
-     * @returns array $instance Updated instance
-     */
-    public function update ( $new_instance, $old_instance ) {
-        $instance = $old_instance;
-        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
-        $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
-        $instance[ 'field' ] = pods_var_raw( 'field', $new_instance, '' );
+		// Get widget fields
+		$title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
 
-        return $instance;
-    }
+		$args = array(
+			'name'  => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+			'slug'  => trim( pods_var_raw( 'slug', $instance, '' ) ),
+			'field' => trim( pods_var_raw( 'field', $instance, '' ) )
+		);
 
-    /**
-     * Widget Form
-     */
-    public function form ( $instance ) {
-        $title = pods_var_raw( 'title', $instance, '' );
-        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
-        $slug = pods_var_raw( 'slug', $instance, '' );
-        $field = pods_var_raw( 'field', $instance, '' );
+		if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {
+			require PODS_DIR . 'ui/front/widgets.php';
+		}
+	}
 
-        require PODS_DIR . 'ui/admin/widgets/field.php';
-    }
+	/**
+	 * Updates the new instance of widget arguments
+	 *
+	 * @returns array $instance Updated instance
+	 */
+	public function update( $new_instance, $old_instance ) {
+
+		$instance             = $old_instance;
+		$instance['title']    = pods_var_raw( 'title', $new_instance, '' );
+		$instance['pod_type'] = pods_var_raw( 'pod_type', $new_instance, '' );
+		$instance['slug']     = pods_var_raw( 'slug', $new_instance, '' );
+		$instance['field']    = pods_var_raw( 'field', $new_instance, '' );
+
+		return $instance;
+	}
+
+	/**
+	 * Widget Form
+	 */
+	public function form( $instance ) {
+
+		$title    = pods_var_raw( 'title', $instance, '' );
+		$pod_type = pods_var_raw( 'pod_type', $instance, '' );
+		$slug     = pods_var_raw( 'slug', $instance, '' );
+		$field    = pods_var_raw( 'field', $instance, '' );
+
+		require PODS_DIR . 'ui/admin/widgets/field.php';
+	}
 }

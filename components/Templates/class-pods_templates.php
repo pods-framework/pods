@@ -94,7 +94,7 @@ class Pods_Templates_Frontier {
 
 		$screen = get_current_screen();
 
-		if ( !isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
@@ -105,17 +105,17 @@ class Pods_Templates_Frontier {
 				include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 			}
 
-			if ( !empty( $configfiles ) ) {
+			if ( ! empty( $configfiles ) ) {
 
 				foreach ( $configfiles as $key => $fieldfile ) {
 					include $fieldfile;
-					if ( !empty( $group[ 'scripts' ] ) ) {
-						foreach ( $group[ 'scripts' ] as $script ) {
+					if ( ! empty( $group['scripts'] ) ) {
+						foreach ( $group['scripts'] as $script ) {
 							wp_enqueue_script( $this->plugin_slug . '-' . strtok( $script, '.' ), $this->get_url( 'assets/js/' . $script, __FILE__ ), array( 'jquery' ) );
 						}
 					}
-					if ( !empty( $group[ 'styles' ] ) ) {
-						foreach ( $group[ 'styles' ] as $style ) {
+					if ( ! empty( $group['styles'] ) ) {
+						foreach ( $group['styles'] as $style ) {
 							wp_enqueue_style( $this->plugin_slug . '-' . strtok( $style, '.' ), $this->get_url( 'assets/css/' . $style, __FILE__ ) );
 						}
 					}
@@ -173,14 +173,13 @@ class Pods_Templates_Frontier {
 	 */
 	function add_metaboxes( $slug, $post = false ) {
 
-		if ( !empty( $post ) ) {
-			if ( !in_array( $post->post_type, array( '_pods_template' ) ) ) {
+		if ( ! empty( $post ) ) {
+			if ( ! in_array( $post->post_type, array( '_pods_template' ) ) ) {
 				return;
 			}
-		}
-		else {
+		} else {
 			$screen = get_current_screen();
-			if ( !in_array( $screen->base, array( '_pods_template' ) ) ) {
+			if ( ! in_array( $screen->base, array( '_pods_template' ) ) ) {
 				return;
 			}
 		}
@@ -202,14 +201,14 @@ class Pods_Templates_Frontier {
 			$this,
 			'render_metaboxes_custom'
 		), '_pods_template', 'normal', 'high', array(
-			'slug' => 'view_template',
+			'slug'   => 'view_template',
 			'groups' => array()
 		) );
 		add_meta_box( 'pod_reference', __( 'Pod Reference', 'pods' ), array(
 			$this,
 			'render_metaboxes_custom'
 		), '_pods_template', 'side', 'default', array(
-			'slug' => 'pod_reference',
+			'slug'   => 'pod_reference',
 			'groups' => array()
 		) );
 
@@ -225,32 +224,29 @@ class Pods_Templates_Frontier {
 
 		// include the metabox view
 		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
-		echo '<input type="hidden" name="pods_templates_metabox_prefix[]" value="' . esc_attr( $args[ 'args' ][ 'slug' ] ) . '" />';
+		echo '<input type="hidden" name="pods_templates_metabox_prefix[]" value="' . esc_attr( $args['args']['slug'] ) . '" />';
 
 		//get post meta to $atts $ post content - ir the widget option
-		if ( !empty( $post ) ) {
-			$atts = get_post_meta( $post->ID, $args[ 'args' ][ 'slug' ], true );
+		if ( ! empty( $post ) ) {
+			$atts    = get_post_meta( $post->ID, $args['args']['slug'], true );
 			$content = $post->post_content;
-		}
-		else {
-			$atts = get_option( $args[ 'args' ][ 'slug' ] );
+		} else {
+			$atts    = get_option( $args['args']['slug'] );
 			$content = '';
 		}
 
-		if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $args[ 'args' ][ 'slug' ] . '.php' ) ) {
-			include $this->get_path( __FILE__ ) . 'includes/element-' . $args[ 'args' ][ 'slug' ] . '.php';
-		}
-		elseif ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $args[ 'args' ][ 'slug' ] . '.html' ) ) {
-			include $this->get_path( __FILE__ ) . 'includes/element-' . $args[ 'args' ][ 'slug' ] . '.html';
+		if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $args['args']['slug'] . '.php' ) ) {
+			include $this->get_path( __FILE__ ) . 'includes/element-' . $args['args']['slug'] . '.php';
+		} elseif ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $args['args']['slug'] . '.html' ) ) {
+			include $this->get_path( __FILE__ ) . 'includes/element-' . $args['args']['slug'] . '.html';
 		}
 		// add script
-		if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.php' ) ) {
+		if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args['args']['slug'] . '.php' ) ) {
 			echo "<script type=\"text/javascript\">\r\n";
-			include $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.php';
+			include $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args['args']['slug'] . '.php';
 			echo "</script>\r\n";
-		}
-		elseif ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.js' ) ) {
-			wp_enqueue_script( $this->plugin_slug . '-' . $args[ 'args' ][ 'slug' ] . '-script', $this->get_url( 'assets/js/scripts-' . $args[ 'args' ][ 'slug' ] . '.js', __FILE__ ), array( 'jquery' ), self::VERSION, true);
+		} elseif ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $args['args']['slug'] . '.js' ) ) {
+			wp_enqueue_script( $this->plugin_slug . '-' . $args['args']['slug'] . '-script', $this->get_url( 'assets/js/scripts-' . $args['args']['slug'] . '.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 		}
 
 	}
@@ -262,22 +258,22 @@ class Pods_Templates_Frontier {
 	 */
 	function save_post_metaboxes( $pid, $post ) {
 
-		if ( !isset( $_POST[ 'pods_templates_metabox' ] ) || !isset( $_POST[ 'pods_templates_metabox_prefix' ] ) ) {
+		if ( ! isset( $_POST['pods_templates_metabox'] ) || ! isset( $_POST['pods_templates_metabox_prefix'] ) ) {
 			return;
 		}
 
-		if ( !wp_verify_nonce( $_POST[ 'pods_templates_metabox' ], plugin_basename( __FILE__ ) ) ) {
+		if ( ! wp_verify_nonce( $_POST['pods_templates_metabox'], plugin_basename( __FILE__ ) ) ) {
 			return $post->ID;
 		}
-		if ( !current_user_can( 'edit_post', $post->ID ) ) {
+		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
 			return $post->ID;
 		}
 		if ( $post->post_type == 'revision' ) {
 			return;
 		}
 
-		foreach ( $_POST[ 'pods_templates_metabox_prefix' ] as $prefix ) {
-			if ( !isset( $_POST[ $prefix ] ) ) {
+		foreach ( $_POST['pods_templates_metabox_prefix'] as $prefix ) {
+			if ( ! isset( $_POST[ $prefix ] ) ) {
 				continue;
 			}
 
@@ -292,8 +288,8 @@ class Pods_Templates_Frontier {
 	 */
 	public function element_instance_id( $id, $process ) {
 
-		$this->element_instances[ $id ][ $process ][ ] = true;
-		$count = count( $this->element_instances[ $id ][ $process ] );
+		$this->element_instances[ $id ][ $process ][] = true;
+		$count                                        = count( $this->element_instances[ $id ][ $process ] );
 		if ( $count > 1 ) {
 			return $id . ( $count - 1 );
 		}
@@ -309,10 +305,9 @@ class Pods_Templates_Frontier {
 
 		$raw_atts = $atts;
 
-		if ( !empty( $head ) ) {
+		if ( ! empty( $head ) ) {
 			$instanceID = $this->element_instance_id( 'pods_templates' . $slug, 'header' );
-		}
-		else {
+		} else {
 			$instanceID = $this->element_instance_id( 'pods_templates' . $slug, 'footer' );
 		}
 
@@ -324,43 +319,39 @@ class Pods_Templates_Frontier {
 			foreach ( $configfiles as $file ) {
 
 				include $file;
-				foreach ( $group[ 'fields' ] as $variable => $conf ) {
-					if ( !empty( $group[ 'multiple' ] ) ) {
-						$value = array( $this->process_value( $conf[ 'type' ], $conf[ 'default' ] ) );
+				foreach ( $group['fields'] as $variable => $conf ) {
+					if ( ! empty( $group['multiple'] ) ) {
+						$value = array( $this->process_value( $conf['type'], $conf['default'] ) );
+					} else {
+						$value = $this->process_value( $conf['type'], $conf['default'] );
 					}
-					else {
-						$value = $this->process_value( $conf[ 'type' ], $conf[ 'default' ] );
-					}
-					if ( !empty( $group[ 'multiple' ] ) ) {
+					if ( ! empty( $group['multiple'] ) ) {
 						if ( isset( $atts[ $variable . '_1' ] ) ) {
 							$index = 1;
 							$value = array();
 							while ( isset( $atts[ $variable . '_' . $index ] ) ) {
-								$value[ ] = $this->process_value( $conf[ 'type' ], $atts[ $variable . '_' . $index ] );
-								$index++;
+								$value[] = $this->process_value( $conf['type'], $atts[ $variable . '_' . $index ] );
+								$index ++;
 							}
-						}
-						elseif ( isset( $atts[ $variable ] ) ) {
+						} elseif ( isset( $atts[ $variable ] ) ) {
 							if ( is_array( $atts[ $variable ] ) ) {
 								foreach ( $atts[ $variable ] as &$varval ) {
-									$varval = $this->process_value( $conf[ 'type' ], $varval );
+									$varval = $this->process_value( $conf['type'], $varval );
 								}
 								$value = $atts[ $variable ];
-							}
-							else {
-								$value[ ] = $this->process_value( $conf[ 'type' ], $atts[ $variable ] );
+							} else {
+								$value[] = $this->process_value( $conf['type'], $atts[ $variable ] );
 							}
 						}
-					}
-					else {
+					} else {
 						if ( isset( $atts[ $variable ] ) ) {
-							$value = $this->process_value( $conf[ 'type' ], $atts[ $variable ] );
+							$value = $this->process_value( $conf['type'], $atts[ $variable ] );
 						}
 					}
 
-					if ( !empty( $group[ 'multiple' ] ) && !empty( $value ) ) {
+					if ( ! empty( $group['multiple'] ) && ! empty( $value ) ) {
 						foreach ( $value as $key => $val ) {
-							$groups[ $group[ 'master' ] ][ $key ][ $variable ] = $val;
+							$groups[ $group['master'] ][ $key ][ $variable ] = $val;
 						}
 					}
 					$defaults[ $variable ] = $value;
@@ -378,24 +369,22 @@ class Pods_Templates_Frontier {
 		ob_start();
 		if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.php' ) ) {
 			include $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.php';
-		}
-		else {
+		} else {
 			if ( file_exists( $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html' ) ) {
 				include $this->get_path( __FILE__ ) . 'includes/element-' . $slug . '.html';
 			}
 		}
 		$out = ob_get_clean();
 
-		if ( !empty( $head ) ) {
+		if ( ! empty( $head ) ) {
 
 			// process headers - CSS
 			if ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.php' ) ) {
 				ob_start();
 				include $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.php';
-				$this->element_header_styles[ ] = ob_get_clean();
+				$this->element_header_styles[] = ob_get_clean();
 				add_action( 'wp_head', array( $this, 'header_styles' ) );
-			}
-			else {
+			} else {
 				if ( file_exists( $this->get_path( __FILE__ ) . 'assets/css/styles-' . $slug . '.css' ) ) {
 					wp_enqueue_style( $this->plugin_slug . '-' . $slug . '-styles', $this->get_url( 'assets/css/styles-' . $slug . '.css', __FILE__ ), array(), self::VERSION );
 				}
@@ -404,22 +393,43 @@ class Pods_Templates_Frontier {
 			if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.php' ) ) {
 				ob_start();
 				include $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.php';
-				$this->element_footer_scripts[ ] = ob_get_clean();
-			}
-			else {
+				$this->element_footer_scripts[] = ob_get_clean();
+			} else {
 				if ( file_exists( $this->get_path( __FILE__ ) . 'assets/js/scripts-' . $slug . '.js' ) ) {
 					wp_enqueue_script( $this->plugin_slug . '-' . $slug . '-script', $this->get_url( 'assets/js/scripts-' . $slug . '.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 				}
 			}
 			// get clean do shortcode for header checking
 			ob_start();
-			pods_do_shortcode( $out, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+			pods_do_shortcode( $out, array(
+				'each',
+				'pod_sub_template',
+				'once',
+				'pod_once_template',
+				'before',
+				'pod_before_template',
+				'after',
+				'pod_after_template',
+				'if',
+				'pod_if_field'
+			) );
 			ob_get_clean();
 
 			return;
 		}
 
-		return pods_do_shortcode( $out, array( 'each', 'pod_sub_template', 'once', 'pod_once_template', 'before', 'pod_before_template', 'after', 'pod_after_template', 'if', 'pod_if_field' ) );
+		return pods_do_shortcode( $out, array(
+			'each',
+			'pod_sub_template',
+			'once',
+			'pod_once_template',
+			'before',
+			'pod_before_template',
+			'after',
+			'pod_after_template',
+			'if',
+			'pod_if_field'
+		) );
 	}
 
 	/**
@@ -428,7 +438,7 @@ class Pods_Templates_Frontier {
 	 */
 	public function header_styles() {
 
-		if ( !empty( $this->element_header_styles ) ) {
+		if ( ! empty( $this->element_header_styles ) ) {
 			echo "<style type=\"text/css\">\r\n";
 			foreach ( $this->element_header_styles as $styles ) {
 				echo $styles . "\r\n";
@@ -443,7 +453,7 @@ class Pods_Templates_Frontier {
 	 */
 	public function footer_scripts() {
 
-		if ( !empty( $this->element_footer_scripts ) ) {
+		if ( ! empty( $this->element_footer_scripts ) ) {
 			echo "<script type=\"text/javascript\">\r\n";
 			foreach ( $this->element_footer_scripts as $script ) {
 				echo $script . "\r\n";
@@ -458,7 +468,7 @@ class Pods_Templates_Frontier {
 	 */
 	static function get_url( $src = null, $path = null ) {
 
-		if ( !empty( $path ) ) {
+		if ( ! empty( $path ) ) {
 			return plugins_url( $src, $path );
 		}
 

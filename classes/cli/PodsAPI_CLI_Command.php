@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Implements PodsAPI command for WP-CLI
  */

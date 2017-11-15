@@ -90,8 +90,7 @@ class PodsField_File extends PodsField {
 				'data'       => apply_filters( 'pods_form_ui_field_' . static::$type . '_uploader_options', array(
 						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
 						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
-					)
-				),
+					) ),
 				'dependency' => true,
 			),
 			static::$type . '_attachment_tab'         => array(
@@ -144,8 +143,7 @@ class PodsField_File extends PodsField {
 						'text'   => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
 						'any'    => __( 'Any Type (no restriction)', 'pods' ),
 						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
-					)
-				),
+					) ),
 				'dependency' => true,
 			),
 			static::$type . '_allowed_extensions'     => array(
@@ -164,8 +162,7 @@ class PodsField_File extends PodsField {
 				'data'       => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_templates', array(
 						'rows'  => __( 'Rows', 'pods' ),
 						'tiles' => __( 'Tiles', 'pods' ),
-					)
-				),
+					) ),
 			),
 			/*
             static::$type . '_image_size' => array(
@@ -342,7 +339,11 @@ class PodsField_File extends PodsField {
 		return;
 
 		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-		if ( ! in_array( pods_v( $form_field_type . '_uploader', $options ), array( 'attachment', 'plupload', 'media' ) ) ) {
+		if ( ! in_array( pods_v( $form_field_type . '_uploader', $options ), array(
+			'attachment',
+			'plupload',
+			'media'
+		) ) ) {
 			// Support custom File Uploader integration
 			do_action( 'pods_form_ui_field_' . static::$type . '_uploader_' . pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
 			do_action( 'pods_form_ui_field_' . static::$type . '_uploader', pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
@@ -476,8 +477,7 @@ class PodsField_File extends PodsField {
 		$is_user_logged_in = is_user_logged_in();
 
 		// @todo test frontend media modal
-		if ( empty( $options[ static::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in
-			 || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
+		if ( empty( $options[ static::$type . '_uploader' ] ) || ! is_admin() || ! $is_user_logged_in || ( ! current_user_can( 'upload_files' ) && ! current_user_can( 'edit_files' ) ) ) {
 			$options[ static::$type . '_uploader' ] = 'plupload';
 		}
 
@@ -572,7 +572,7 @@ class PodsField_File extends PodsField {
 			// @todo Add access check
 			$edit_link = get_edit_post_link( $attachment->ID, 'raw' );
 
-			$link = get_permalink( $attachment->ID );
+			$link     = get_permalink( $attachment->ID );
 			$download = wp_get_attachment_url( $attachment->ID );
 
 			$thumb = wp_get_attachment_image_src( $id, 'thumbnail', true );
@@ -834,7 +834,7 @@ class PodsField_File extends PodsField {
 	 * @param string $name
 	 *
 	 * @return string
-	 * @since 2.0
+	 * @since      2.0
 	 *
 	 * @deprecated 2.7
 	 */

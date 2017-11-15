@@ -1,38 +1,40 @@
 <?php
+
 /**
  * @package Pods\Upgrade
  */
 class PodsUpgrade {
 
-    /**
-     * @var array
-     */
-    public $tables = array();
+	/**
+	 * @var array
+	 */
+	public $tables = array();
 
-    /**
-     * @var array
-     */
-    protected $progress = array();
+	/**
+	 * @var array
+	 */
+	protected $progress = array();
 
-    /**
-     * @var PodsAPI
-     */
-    protected $api = null;
+	/**
+	 * @var PodsAPI
+	 */
+	protected $api = null;
 
-    /**
-     * @var string
-     */
-    protected $version = null;
+	/**
+	 * @var string
+	 */
+	protected $version = null;
 
-    /**
-     *
-     */
-    function __construct () {
-        $this->api = pods_api();
+	/**
+	 *
+	 */
+	function __construct() {
 
-        $this->get_tables();
-        $this->get_progress();
-    }
+		$this->api = pods_api();
+
+		$this->get_tables();
+		$this->get_progress();
+	}
 
 	/**
 	 *
@@ -100,144 +102,163 @@ class PodsUpgrade {
 		do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
 	}
 
-    /**
-     *
-     */
-    public function get_tables () {
-        /**
-         * @var $wpdb WPDB
-         */
-        global $wpdb;
+	/**
+	 *
+	 */
+	public function get_tables() {
 
-        $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pod%'", ARRAY_N );
+		/**
+		 * @var $wpdb WPDB
+		 */
+		global $wpdb;
 
-        if ( !empty( $tables ) ) {
-            foreach ( $tables as $table ) {
-                $this->tables[] = $table[ 0 ];
-            }
-        }
-    }
+		$tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pod%'", ARRAY_N );
 
-    /**
-     *
-     */
-    function get_progress () {
-        $methods = get_class_methods( $this );
+		if ( ! empty( $tables ) ) {
+			foreach ( $tables as $table ) {
+				$this->tables[] = $table[0];
+			}
+		}
+	}
 
-        foreach ( $methods as $method ) {
-            if ( 0 === strpos( $method, 'migrate_' ) )
-                $this->progress[ str_replace( 'migrate_', '', $method ) ] = false;
-        }
+	/**
+	 *
+	 */
+	function get_progress() {
 
-        $progress = (array) get_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), array() );
+		$methods = get_class_methods( $this );
 
-        if ( !empty( $progress ) )
-            $this->progress = array_merge( $this->progress, $progress );
-    }
+		foreach ( $methods as $method ) {
+			if ( 0 === strpos( $method, 'migrate_' ) ) {
+				$this->progress[ str_replace( 'migrate_', '', $method ) ] = false;
+			}
+		}
 
-    /**
-     * @param $params
-     *
-     * @return mixed|void
-     */
-    public function ajax ( $params ) {
-        if ( !isset( $params->step ) )
-            return pods_error( __( 'Invalid upgrade process.', 'pods' ) );
+		$progress = (array) get_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), array() );
 
-        if ( !isset( $params->type ) )
-            return pods_error( __( 'Invalid upgrade method.', 'pods' ) );
+		if ( ! empty( $progress ) ) {
+			$this->progress = array_merge( $this->progress, $progress );
+		}
+	}
 
-        if ( !method_exists( $this, $params->step . '_' . $params->type ) )
-            return pods_error( __( 'Upgrade method not found.', 'pods' ) );
+	/**
+	 * @param $params
+	 *
+	 * @return mixed|void
+	 */
+	public function ajax( $params ) {
 
-        return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );
-    }
+		if ( ! isset( $params->step ) ) {
+			return pods_error( __( 'Invalid upgrade process.', 'pods' ) );
+		}
 
-    /**
-     * @param $method
-     * @param $v
-     * @param null $x
-     */
-    public function update_progress ( $method, $v, $x = null ) {
-        if ( empty( $this->version ) )
-            return;
+		if ( ! isset( $params->type ) ) {
+			return pods_error( __( 'Invalid upgrade method.', 'pods' ) );
+		}
 
-        $method = str_replace( 'migrate_', '', $method );
+		if ( ! method_exists( $this, $params->step . '_' . $params->type ) ) {
+			return pods_error( __( 'Upgrade method not found.', 'pods' ) );
+		}
 
-        if ( null !== $x )
-            $this->progress[ $method ][ $x ] = (boolean) $v;
-        else
-            $this->progress[ $method ] = $v;
+		return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );
+	}
 
-        update_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), $this->progress );
-    }
+	/**
+	 * @param      $method
+	 * @param      $v
+	 * @param null $x
+	 */
+	public function update_progress( $method, $v, $x = null ) {
 
-    /**
-     * @param $method
-     * @param null $x
-     *
-     * @return bool
-     */
-    public function check_progress ( $method, $x = null ) {
-        $method = str_replace( 'migrate_', '', $method );
+		if ( empty( $this->version ) ) {
+			return;
+		}
 
-        if ( isset( $this->progress[ $method ] ) ) {
-            if ( null === $x )
-                return $this->progress[ $method ];
-            elseif ( isset( $this->progress[ $method ][ $x ] ) )
-                return (boolean) $this->progress[ $method ][ $x ];
-        }
+		$method = str_replace( 'migrate_', '', $method );
 
-        return false;
-    }
+		if ( null !== $x ) {
+			$this->progress[ $method ][ $x ] = (boolean) $v;
+		} else {
+			$this->progress[ $method ] = $v;
+		}
 
-    /**
-     *
-     */
-    public function upgraded () {
-        if ( empty( $this->version ) )
-            return;
+		update_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ), $this->progress );
+	}
 
-        $upgraded = get_option( 'pods_framework_upgraded' );
+	/**
+	 * @param      $method
+	 * @param null $x
+	 *
+	 * @return bool
+	 */
+	public function check_progress( $method, $x = null ) {
 
-        if ( empty( $upgraded ) || !is_array( $upgraded ) )
-            $upgraded = array();
+		$method = str_replace( 'migrate_', '', $method );
 
-        delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
+		if ( isset( $this->progress[ $method ] ) ) {
+			if ( null === $x ) {
+				return $this->progress[ $method ];
+			} elseif ( isset( $this->progress[ $method ][ $x ] ) ) {
+				return (boolean) $this->progress[ $method ][ $x ];
+			}
+		}
 
-        if ( !in_array( $this->version, $upgraded ) )
-            $upgraded[] = $this->version;
+		return false;
+	}
 
-        update_option( 'pods_framework_upgraded', $upgraded );
-    }
+	/**
+	 *
+	 */
+	public function upgraded() {
 
-    /**
-     *
-     */
-    public function cleanup () {
-        /**
-         * @var $wpdb WPDB
-         */
-        global $wpdb;
+		if ( empty( $this->version ) ) {
+			return;
+		}
 
-        foreach ( $this->tables as $table ) {
-            if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table )
-                pods_query( "DROP TABLE `{$table}`", false );
-        }
+		$upgraded = get_option( 'pods_framework_upgraded' );
 
-        delete_option( 'pods_roles' );
-        delete_option( 'pods_version' );
-        delete_option( 'pods_framework_upgrade_2_0' );
-        delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
-        delete_option( 'pods_framework_upgraded_1_x' );
+		if ( empty( $upgraded ) || ! is_array( $upgraded ) ) {
+			$upgraded = array();
+		}
 
-        delete_option( 'pods_disable_file_browser' );
-        delete_option( 'pods_files_require_login' );
-        delete_option( 'pods_files_require_login_cap' );
-        delete_option( 'pods_disable_file_upload' );
-        delete_option( 'pods_upload_require_login' );
-        delete_option( 'pods_upload_require_login_cap' );
+		delete_option( 'pods_framework_upgrade_' . str_replace( '.', '_', $this->version ) );
 
-        pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
-    }
+		if ( ! in_array( $this->version, $upgraded ) ) {
+			$upgraded[] = $this->version;
+		}
+
+		update_option( 'pods_framework_upgraded', $upgraded );
+	}
+
+	/**
+	 *
+	 */
+	public function cleanup() {
+
+		/**
+		 * @var $wpdb WPDB
+		 */
+		global $wpdb;
+
+		foreach ( $this->tables as $table ) {
+			if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table ) {
+				pods_query( "DROP TABLE `{$table}`", false );
+			}
+		}
+
+		delete_option( 'pods_roles' );
+		delete_option( 'pods_version' );
+		delete_option( 'pods_framework_upgrade_2_0' );
+		delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
+		delete_option( 'pods_framework_upgraded_1_x' );
+
+		delete_option( 'pods_disable_file_browser' );
+		delete_option( 'pods_files_require_login' );
+		delete_option( 'pods_files_require_login_cap' );
+		delete_option( 'pods_disable_file_upload' );
+		delete_option( 'pods_upload_require_login' );
+		delete_option( 'pods_upload_require_login_cap' );
+
+		pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
+	}
 }

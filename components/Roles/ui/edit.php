@@ -15,11 +15,12 @@
 			<h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
 			<?php
-			if ( isset( $_GET[ 'do' ] ) ) {
+			if ( isset( $_GET['do'] ) ) {
 				$action = __( 'saved', 'pods' );
 
-				if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+				if ( 'create' == pods_var( 'do', 'get', 'save' ) ) {
 					$action = __( 'created', 'pods' );
+				}
 
 				$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
@@ -91,12 +92,13 @@
 													foreach ( $capabilities as $capability ) {
 														$checked = false;
 
-														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
+														if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) ) {
 															$checked = true;
+														}
 
 														$class = ( $zebra ? 'even' : 'odd' );
 
-														$zebra = ( !$zebra );
+														$zebra = ( ! $zebra );
 														?>
 														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
 															<?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
@@ -125,7 +127,9 @@
 													</li>
 												</ul>
 
-												<p><a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a></p>
+												<p>
+													<a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+												</p>
 											</div>
 										</div>
 									</div>

@@ -44,6 +44,7 @@ class PodsField_Link extends PodsField_Website {
 	 * @since 2.0
 	 */
 	public function __construct() {
+
 		self::$label = __( 'Link', 'pods' );
 	}
 
@@ -77,7 +78,7 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'boolean',
 				'dependency' => true
 			),
-			self::$type . '_new_window'      => array(
+			self::$type . '_new_window'        => array(
 				'label'      => __( 'Open link in new window by default?', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, self::$type ),
 				'type'       => 'boolean',
@@ -209,9 +210,7 @@ class PodsField_Link extends PodsField_Website {
 
 			$atts = '';
 
-			if ( ! empty( $value['target'] ) ||
-			     ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_new_window', $options ) )
-			) {
+			if ( ! empty( $value['target'] ) || ( ! isset( $value['target'] ) && 1 == pods_var( self::$type . '_new_window', $options ) ) ) {
 				// Possible support for other targets in future
 				$atts .= ' target="' . esc_attr( $value['target'] ) . '"';
 			}

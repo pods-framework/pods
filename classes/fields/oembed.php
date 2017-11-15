@@ -98,24 +98,24 @@ class PodsField_OEmbed extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			self::$type . '_width'        => array(
 				'label'   => __( 'Embed Width', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
-				'help'    => __( 'Optional width to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' )
+				'help'    => __( 'Optional width to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
 			),
 			self::$type . '_height'       => array(
 				'label'   => __( 'Embed Height', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
-				'help'    => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' )
+				'help'    => __( 'Optional height to use for this oEmbed. Leave as 0 (zero) to default to none.', 'pods' ),
 			),
 			self::$type . '_show_preview' => array(
 				'label'   => __( 'Show preview', 'pods' ),
 				'default' => 0,
-				'type'    => 'boolean'
+				'type'    => 'boolean',
 			),
 		);
 
@@ -140,7 +140,7 @@ class PodsField_OEmbed extends PodsField {
 			$options[ self::$type . '_enable_providers' ]   = array(
 				'label'      => __( 'Select enabled providers', 'pods' ),
 				'depends-on' => array( self::$type . '_restrict_providers' => true ),
-				'group'      => array()
+				'group'      => array(),
 			);
 			// Add all the oEmbed providers
 			foreach ( $unique_providers as $provider ) {
@@ -150,7 +150,7 @@ class PodsField_OEmbed extends PodsField {
 					'default' => 0,
 				);
 			}
-		}
+		}//end if
 
 		return $options;
 	}
@@ -201,7 +201,8 @@ class PodsField_OEmbed extends PodsField {
 		/**
 		 * @var $embed WP_Embed
 		 */
-		/*$embed = $GLOBALS[ 'wp_embed' ];
+		/*
+		$embed = $GLOBALS[ 'wp_embed' ];
 
 		if ( 0 < $width && 0 < $height ) {
 			$this->width = $width;
@@ -388,10 +389,12 @@ class PodsField_OEmbed extends PodsField {
 		$content = wp_replace_in_html_tags( $content, array( "\n" => '<!-- wp-line-break -->' ) );
 
 		// Find URLs that are on their own line.
-		$content = preg_replace_callback( '|^(\s*)(https?://[^\s"]+)(\s*)$|im', array(
-			$this,
-			'autoembed_callback'
-		), $content );
+		$content = preg_replace_callback(
+			'|^(\s*)(https?://[^\s"]+)(\s*)$|im', array(
+				$this,
+				'autoembed_callback',
+			), $content
+		);
 
 		// Put the line breaks back.
 		return str_replace( '<!-- wp-line-break -->', "\n", $content );
@@ -437,7 +440,7 @@ class PodsField_OEmbed extends PodsField {
 		}
 
 		if ( file_exists( ABSPATH . WPINC . '/class-oembed.php' ) ) {
-			require_once( ABSPATH . WPINC . '/class-oembed.php' );
+			require_once ABSPATH . WPINC . '/class-oembed.php';
 		}
 
 		if ( function_exists( '_wp_oembed_get_object' ) ) {
@@ -462,7 +465,7 @@ class PodsField_OEmbed extends PodsField {
 			$this->providers = $providers;
 
 			return $providers;
-		}
+		}//end if
 
 		// Return an empty array if no providers could be found
 		return array();
@@ -504,11 +507,11 @@ class PodsField_OEmbed extends PodsField {
 			}
 
 			if ( preg_match( $matchmask, $url ) ) {
-				//$provider = str_replace( '{format}', 'json', $providerurl ); // JSON is easier to deal with than XML
+				// $provider = str_replace( '{format}', 'json', $providerurl ); // JSON is easier to deal with than XML
 				$provider = $match;
 				break;
 			}
-		}
+		}//end foreach
 
 		return $provider;
 	}
@@ -539,7 +542,8 @@ class PodsField_OEmbed extends PodsField {
 			/**
 			 * @todo Future compat to enable serialised strings as field options
 			 */
-			/*if ( empty( $options[ self::$type . '_enabled_providers_' ][ $provider['host'] ] ) ) {
+			/*
+			if ( empty( $options[ self::$type . '_enabled_providers_' ][ $provider['host'] ] ) ) {
 				unset( $providers[ $key ] );
 			} else*/
 
@@ -594,10 +598,11 @@ class PodsField_OEmbed extends PodsField {
 			} else {
 				wp_send_json_success( $value );
 			}
-		}
+		}//end if
 		wp_send_json_error( __( 'Unauthorized request', 'pods' ) );
 
-		die(); // Kill it!
+		die();
+		// Kill it!
 	}
 
 }

@@ -58,20 +58,20 @@ class PodsField_Boolean extends PodsField {
 				'data'       => array(
 					'checkbox' => __( 'Checkbox', 'pods' ),
 					'radio'    => __( 'Radio Buttons', 'pods' ),
-					'dropdown' => __( 'Drop Down', 'pods' )
+					'dropdown' => __( 'Drop Down', 'pods' ),
 				),
-				'dependency' => true
+				'dependency' => true,
 			),
 			self::$type . '_yes_label'   => array(
 				'label'   => __( 'Yes Label', 'pods' ),
 				'default' => __( 'Yes', 'pods' ),
-				'type'    => 'text'
+				'type'    => 'text',
 			),
 			self::$type . '_no_label'    => array(
 				'label'   => __( 'No Label', 'pods' ),
 				'default' => __( 'No', 'pods' ),
-				'type'    => 'text'
-			)
+				'type'    => 'text',
+			),
 		);
 
 		return $options;
@@ -125,7 +125,7 @@ class PodsField_Boolean extends PodsField {
 
 		$yesno = array(
 			1 => pods_var_raw( self::$type . '_yes_label', $options ),
-			0 => pods_var_raw( self::$type . '_no_label', $options )
+			0 => pods_var_raw( self::$type . '_no_label', $options ),
 		);
 
 		// Deprecated handling for 1.x
@@ -202,11 +202,11 @@ class PodsField_Boolean extends PodsField {
 		if ( 'checkbox' != pods_v( self::$type . '_format_type', $options ) ) {
 			$data = array(
 				1 => pods_var_raw( self::$type . '_yes_label', $options ),
-				0 => pods_var_raw( self::$type . '_no_label', $options )
+				0 => pods_var_raw( self::$type . '_no_label', $options ),
 			);
 		} else {
 			$data = array(
-				1 => pods_var_raw( self::$type . '_yes_label', $options )
+				1 => pods_var_raw( self::$type . '_yes_label', $options ),
 			);
 		}
 
@@ -297,7 +297,7 @@ class PodsField_Boolean extends PodsField {
 
 		$yesno = array(
 			1 => pods_var_raw( self::$type . '_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
-			0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true )
+			0 => pods_var_raw( self::$type . '_no_label', $options, __( 'No', 'pods' ), null, true ),
 		);
 
 		if ( isset( $yesno[ (int) $value ] ) ) {

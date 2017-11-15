@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'classes/fields/datetime.php' );
+require_once PODS_DIR . 'classes/fields/datetime.php';
 
 /**
  * @package Pods\Fields
@@ -80,20 +80,21 @@ class PodsField_Time extends PodsField_DateTime {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			static::$type . '_type'             => array(
-				'label'      => __( 'Time Format Type', 'pods' ),
-				'default'    => '12', // Backwards compatibility
-				'type'       => 'pick',
-				'help'       => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
-				'data'       => array(
+				'label'                        => __( 'Time Format Type', 'pods' ),
+				'default'                      => '12',
+				// Backwards compatibility
+										'type' => 'pick',
+				'help'                         => __( 'WordPress Default is the format used in Settings, General under "Time Format".', 'pods' ) . '<br>' . __( '12/24 hour will allow you to select from a list of commonly used time formats.', 'pods' ) . '<br>' . __( 'Custom will allow you to enter your own using PHP Date/Time Strings.', 'pods' ),
+				'data'                         => array(
 					'wp'     => __( 'WordPress default', 'pods' ) . ': ' . date_i18n( get_option( 'time_format' ) ),
 					'12'     => __( '12 hour', 'pods' ),
 					'24'     => __( '24 hour', 'pods' ),
 					'custom' => __( 'Custom format', 'pods' ),
 				),
-				'dependency' => true
+				'dependency'                   => true,
 			),
 			static::$type . '_format_custom'    => array(
 				'label'      => __( 'Time format for display', 'pods' ),
@@ -124,9 +125,9 @@ class PodsField_Time extends PodsField_DateTime {
 					'h_mm'       => date_i18n( 'g:i' ),
 					'h_mm_ss'    => date_i18n( 'g:i:s' ),
 					'hh_mm'      => date_i18n( 'h:i' ),
-					'hh_mm_ss'   => date_i18n( 'h:i:s' )
+					'hh_mm_ss'   => date_i18n( 'h:i:s' ),
 				),
-				'dependency' => true
+				'dependency' => true,
 			),
 			static::$type . '_format_24'        => array(
 				'label'      => __( 'Time Format', 'pods' ),
@@ -135,19 +136,19 @@ class PodsField_Time extends PodsField_DateTime {
 				'type'       => 'pick',
 				'data'       => array(
 					'hh_mm'    => date_i18n( 'H:i' ),
-					'hh_mm_ss' => date_i18n( 'H:i:s' )
-				)
+					'hh_mm_ss' => date_i18n( 'H:i:s' ),
+				),
 			),
 			static::$type . '_allow_empty'      => array(
 				'label'   => __( 'Allow empty value?', 'pods' ),
 				'default' => 1,
-				'type'    => 'boolean'
+				'type'    => 'boolean',
 			),
 			static::$type . '_html5'            => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, static::$type ),
-				'type'    => 'boolean'
-			)
+				'type'    => 'boolean',
+			),
 		);
 
 		$options[ static::$type . '_type' ]['default']      = apply_filters( 'pods_form_ui_field_time_format_type_default', $options[ static::$type . '_type' ]['default'] );
@@ -226,7 +227,7 @@ class PodsField_Time extends PodsField_DateTime {
 					$format = $this->convert_format( $format, array( 'source' => 'php' ) );
 				}
 				break;
-		}
+		}//end switch
 
 		return $format;
 	}

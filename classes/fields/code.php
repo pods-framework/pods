@@ -65,7 +65,7 @@ class PodsField_Code extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			'output_options'            => array(
 				'label' => __( 'Output Options', 'pods' ),
@@ -74,16 +74,17 @@ class PodsField_Code extends PodsField {
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
-						'dependency' => true
-					)
-				)
+						'dependency' => true,
+					),
+				),
 			),
 			self::$type . '_max_length' => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 0,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' )
-			)/*,
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
+			), /*
+		,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

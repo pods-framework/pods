@@ -64,7 +64,7 @@ class PodsField_HTML extends PodsField {
 						'label'      => __( 'Allow HTML?', 'pods' ),
 						'default'    => 1,
 						'type'       => 'boolean',
-						'dependency' => true
+						'dependency' => true,
 					),
 					self::$type . '_oembed'          => array(
 						'label'   => __( 'Enable oEmbed?', 'pods' ),
@@ -72,8 +72,8 @@ class PodsField_HTML extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Embed videos, images, tweets, and other content.', 'pods' ),
-							'http://codex.wordpress.org/Embeds'
-						)
+							'http://codex.wordpress.org/Embeds',
+						),
 					),
 					self::$type . '_wptexturize'     => array(
 						'label'   => __( 'Enable wptexturize?', 'pods' ),
@@ -81,8 +81,8 @@ class PodsField_HTML extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wptexturize'
-						)
+							'http://codex.wordpress.org/Function_Reference/wptexturize',
+						),
 					),
 					self::$type . '_convert_chars'   => array(
 						'label'   => __( 'Enable convert_chars?', 'pods' ),
@@ -90,8 +90,8 @@ class PodsField_HTML extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Converts text into valid XHTML and Unicode', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/convert_chars'
-						)
+							'http://codex.wordpress.org/Function_Reference/convert_chars',
+						),
 					),
 					self::$type . '_wpautop'         => array(
 						'label'   => __( 'Enable wpautop?', 'pods' ),
@@ -99,8 +99,8 @@ class PodsField_HTML extends PodsField {
 						'type'    => 'boolean',
 						'help'    => array(
 							__( 'Changes double line-breaks in the text into HTML paragraphs.', 'pods' ),
-							'http://codex.wordpress.org/Function_Reference/wpautop'
-						)
+							'http://codex.wordpress.org/Function_Reference/wpautop',
+						),
 					),
 					self::$type . '_allow_shortcode' => array(
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
@@ -109,11 +109,11 @@ class PodsField_HTML extends PodsField {
 						'dependency' => true,
 						'help'       => array(
 							__( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
-							'http://codex.wordpress.org/Shortcode_API'
-						)
-					)
-				)
-			)
+							'http://codex.wordpress.org/Shortcode_API',
+						),
+					),
+				),
+			),
 		);
 
 		return $options;

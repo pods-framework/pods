@@ -64,18 +64,18 @@ class PodsField_Email extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			self::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' )
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			self::$type . '_html5'       => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-				'type'    => 'boolean'
+				'type'    => 'boolean',
 			),
 			self::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -85,7 +85,8 @@ class PodsField_Email extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			),/*,
+			), /*
+		,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

@@ -87,10 +87,12 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'File Uploader', 'pods' ),
 				'default'    => 'attachment',
 				'type'       => 'pick',
-				'data'       => apply_filters( 'pods_form_ui_field_' . static::$type . '_uploader_options', array(
-					'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
-					'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
-				) ),
+				'data'       => apply_filters(
+					'pods_form_ui_field_' . static::$type . '_uploader_options', array(
+						'attachment' => __( 'Upload and/or Select (Media Library)', 'pods' ),
+						'plupload'   => __( 'Upload only (Plupload)', 'pods' ),
+					)
+				),
 				'dependency' => true,
 			),
 			static::$type . '_attachment_tab'         => array(
@@ -136,14 +138,16 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Restrict File Types', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_default', 'images' ),
 				'type'       => 'pick',
-				'data'       => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_options', array(
-					'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
-					'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
-					'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
-					'text'   => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
-					'any'    => __( 'Any Type (no restriction)', 'pods' ),
-					'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
-				) ),
+				'data'       => apply_filters(
+					'pods_form_ui_field_' . static::$type . '_type_options', array(
+						'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
+						'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
+						'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
+						'text'   => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
+						'any'    => __( 'Any Type (no restriction)', 'pods' ),
+						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
+					)
+				),
 				'dependency' => true,
 			),
 			static::$type . '_allowed_extensions'     => array(
@@ -159,10 +163,12 @@ class PodsField_File extends PodsField {
 				'depends-on' => array( static::$type . '_type' => 'images' ),
 				'default'    => apply_filters( 'pods_form_ui_field_' . static::$type . '_template_default', 'rows' ),
 				'type'       => 'pick',
-				'data'       => apply_filters( 'pods_form_ui_field_' . static::$type . '_type_templates', array(
-					'rows'  => __( 'Rows', 'pods' ),
-					'tiles' => __( 'Tiles', 'pods' ),
-				) ),
+				'data'       => apply_filters(
+					'pods_form_ui_field_' . static::$type . '_type_templates', array(
+						'rows'  => __( 'Rows', 'pods' ),
+						'tiles' => __( 'Tiles', 'pods' ),
+					)
+				),
 			),
 			/*
             static::$type . '_image_size' => array(
@@ -332,18 +338,20 @@ class PodsField_File extends PodsField {
 		}
 
 		wp_enqueue_script( 'pods-dfv' );
-		wp_enqueue_media();  // Ensure the media library is initialized
-
+		wp_enqueue_media();
+		// Ensure the media library is initialized
 		$this->render_input_script( $args );
 
 		return;
 
 		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-		if ( ! in_array( pods_v( $form_field_type . '_uploader', $options ), array(
-			'attachment',
-			'plupload',
-			'media'
-		) ) ) {
+		if ( ! in_array(
+			pods_v( $form_field_type . '_uploader', $options ), array(
+				'attachment',
+				'plupload',
+				'media',
+			)
+		) ) {
 			// Support custom File Uploader integration
 			do_action( 'pods_form_ui_field_' . static::$type . '_uploader_' . pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
 			do_action( 'pods_form_ui_field_' . static::$type . '_uploader', pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
@@ -359,10 +367,10 @@ class PodsField_File extends PodsField {
 	public function build_dfv_field_options( $options, $args ) {
 
 		if ( ! is_admin() ) {
-			include_once( ABSPATH . '/wp-admin/includes/template.php' );
+			include_once ABSPATH . '/wp-admin/includes/template.php';
 
 			if ( is_multisite() ) {
-				include_once( ABSPATH . '/wp-admin/includes/ms.php' );
+				include_once ABSPATH . '/wp-admin/includes/ms.php';
 			}
 		}
 
@@ -463,13 +471,13 @@ class PodsField_File extends PodsField {
 					if ( ! $found ) {
 						$new_limit_types[] = $limit_type;
 					}
-				}
-			}
+				}//end if
+			}//end foreach
 
 			if ( ! empty( $new_limit_types ) ) {
 				$limit_types = implode( ',', $new_limit_types );
 			}
-		}
+		}//end if
 
 		$options['limit_types']      = $limit_types;
 		$options['limit_extensions'] = $limit_extensions;
@@ -525,7 +533,7 @@ class PodsField_File extends PodsField {
 					'uri'      => $uri_hash,
 				),
 			);
-		}
+		}//end if
 
 		return $options;
 
@@ -595,7 +603,7 @@ class PodsField_File extends PodsField {
 				'link'      => $link,
 				'download'  => $download,
 			);
-		}
+		}//end foreach
 
 		return $data;
 
@@ -617,7 +625,6 @@ class PodsField_File extends PodsField {
 
 		// @todo Check file size
 		// @todo Check file extensions
-
 		return true;
 
 	}
@@ -682,7 +689,7 @@ class PodsField_File extends PodsField {
 
 				self::$api->save_wp_object( 'media', $attachment_data );
 			}
-		}
+		}//end foreach
 
 	}
 
@@ -993,7 +1000,7 @@ class PodsField_File extends PodsField {
 		$pod   = array();
 		$field = array(
 			'type'    => 'file',
-			'options' => array()
+			'options' => array(),
 		);
 
 		if ( empty( self::$api ) ) {
@@ -1035,13 +1042,16 @@ class PodsField_File extends PodsField {
 			if ( ! empty( $limit_size ) ) {
 				if ( false !== stripos( $limit_size, 'GB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+					$limit_size = $limit_size * 1025 * 1025 * 1025;
+					// convert to MB to KB to B
 				} elseif ( false !== stripos( $limit_size, 'MB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025 * 1025; // convert to KB to B
+					$limit_size = $limit_size * 1025 * 1025;
+					// convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
-					$limit_size = $limit_size * 1025; // convert to B
+					$limit_size = $limit_size * 1025;
+					// convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {
 					$limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );
 				} else {
@@ -1054,7 +1064,7 @@ class PodsField_File extends PodsField {
 
 					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
 				}
-			}
+			}//end if
 
 			$limit_file_type = pods_v( $field['type'] . '_type', $field['options'], 'images' );
 
@@ -1072,12 +1082,16 @@ class PodsField_File extends PodsField {
 				$limit_types = pods_v( $field['type'] . '_allowed_extensions', $field['options'], '', true );
 			}
 
-			$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array(
-				'',
-				',',
-				',',
-				','
-			), $limit_types ), ',' );
+			$limit_types = trim(
+				str_replace(
+					array( ' ', '.', "\n", "\t", ';' ), array(
+						'',
+						',',
+						',',
+						',',
+					), $limit_types
+				), ','
+			);
 
 			$mime_types = wp_get_mime_types();
 
@@ -1120,12 +1134,12 @@ class PodsField_File extends PodsField {
 					if ( ! $found ) {
 						$new_limit_types[] = $limit_type;
 					}
-				}
+				}//end foreach
 
 				if ( ! empty( $new_limit_types ) ) {
 					$limit_types = implode( ',', $new_limit_types );
 				}
-			}
+			}//end if
 
 			$limit_types = explode( ',', $limit_types );
 
@@ -1152,7 +1166,7 @@ class PodsField_File extends PodsField {
 
 					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
 				}
-			}
+			}//end if
 
 			$custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params, $field );
 
@@ -1187,12 +1201,12 @@ class PodsField_File extends PodsField {
 					$attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 
 					wp_send_json( $attachment );
-				}
-			}
-		}
+				}//end if
+			}//end if
+		}//end if
 
-		die(); // KBAI!
-
+		die();
+		// KBAI!
 	}
 
 }

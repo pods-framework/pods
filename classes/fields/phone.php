@@ -64,7 +64,7 @@ class PodsField_Phone extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			self::$type . '_format'      => array(
 				'label'   => __( 'Format', 'pods' ),
@@ -74,12 +74,12 @@ class PodsField_Phone extends PodsField {
 					__( 'US', 'pods' )            => array(
 						'999-999-9999 x999'   => '123-456-7890 x123',
 						'(999) 999-9999 x999' => '(123) 456-7890 x123',
-						'999.999.9999 x999'   => '123.456.7890 x123'
+						'999.999.9999 x999'   => '123.456.7890 x123',
 					),
 					__( 'International', 'pods' ) => array(
-						'international' => __( 'Any (no validation available)', 'pods' )
-					)
-				)
+						'international' => __( 'Any (no validation available)', 'pods' ),
+					),
+				),
 			),
 			self::$type . '_options'     => array(
 				'label' => __( 'Phone Options', 'pods' ),
@@ -87,20 +87,20 @@ class PodsField_Phone extends PodsField {
 					self::$type . '_enable_phone_extension' => array(
 						'label'   => __( 'Enable Phone Extension?', 'pods' ),
 						'default' => 1,
-						'type'    => 'boolean'
-					)
-				)
+						'type'    => 'boolean',
+					),
+				),
 			),
 			self::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 25,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' )
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			self::$type . '_html5'       => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-				'type'    => 'boolean'
+				'type'    => 'boolean',
 			),
 			self::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -110,7 +110,8 @@ class PodsField_Phone extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			),/*,
+			), /*
+		,
             self::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -248,16 +249,18 @@ class PodsField_Phone extends PodsField {
 			// Clean input
 			$number = preg_replace( '/([^0-9ext])/', '', $value );
 
-			$number = str_replace( array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ), array(
-				'',
-				'',
-				'|',
-				'|',
-				'',
-				'',
-				'',
-				'',
-			), $number );
+			$number = str_replace(
+				array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ), array(
+					'',
+					'',
+					'|',
+					'|',
+					'',
+					'',
+					'',
+					'',
+				), $number
+			);
 
 			// Get extension
 			$extension = explode( '|', $number );
@@ -273,7 +276,7 @@ class PodsField_Phone extends PodsField {
 
 			if ( isset( $numbers[3] ) ) {
 				$numbers[2] .= $numbers[3];
-				$numbers    = array( $numbers[0], $numbers[1], $numbers[2] );
+				$numbers     = array( $numbers[0], $numbers[1], $numbers[2] );
 			} elseif ( isset( $numbers[1] ) ) {
 				$numbers = array( $numbers[0], $numbers[1] );
 			}
@@ -287,7 +290,7 @@ class PodsField_Phone extends PodsField {
 				}
 			} elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) ) {
 				$value = implode( '.', $numbers );
-			} else //if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
+			} else          // if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
 			{
 				$value = implode( '-', $numbers );
 			}
@@ -296,7 +299,7 @@ class PodsField_Phone extends PodsField {
 			if ( 1 == pods_var( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
 				$value .= ' x' . $extension;
 			}
-		}
+		}//end if
 
 		$length = (int) pods_var( self::$type . '_max_length', $options, 25 );
 

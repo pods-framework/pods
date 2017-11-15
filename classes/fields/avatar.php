@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'classes/fields/file.php' );
+require_once PODS_DIR . 'classes/fields/file.php';
 
 /**
  * @package Pods\Fields
@@ -167,9 +167,9 @@ class PodsField_Avatar extends PodsField_File {
 							pods_cache_set( $user_id . '-' . $size, $avatar, 'pods_avatars' );
 						}
 					}
-				}
-			}
-		}
+				}//end if
+			}//end if
+		}//end if
 
 		return $avatar;
 

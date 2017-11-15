@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'classes/fields/website.php' );
+require_once PODS_DIR . 'classes/fields/website.php';
 
 /**
  * @package Pods\Fields
@@ -69,20 +69,20 @@ class PodsField_Link extends PodsField_Website {
 					'force-www'         => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
 					'no-http'           => __( 'example.com', 'pods' ),
 					'no-http-no-www'    => __( 'example.com (force removal of www)', 'pods' ),
-					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
-				)
+					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
+				),
 			),
 			self::$type . '_select_existing'   => array(
 				'label'      => __( 'Enable Selecting from Existing Links?', 'pods' ),
 				'default'    => 1,
 				'type'       => 'boolean',
-				'dependency' => true
+				'dependency' => true,
 			),
 			self::$type . '_new_window'        => array(
 				'label'      => __( 'Open link in new window by default?', 'pods' ),
 				'default'    => apply_filters( 'pods_form_ui_field_link_new_window', 0, self::$type ),
 				'type'       => 'boolean',
-				'dependency' => false
+				'dependency' => false,
 			),
 			'output_options'                   => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
@@ -91,23 +91,24 @@ class PodsField_Link extends PodsField_Website {
 						'label'      => __( 'Allow Shortcodes?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
-						'dependency' => true
+						'dependency' => true,
 					),
 					self::$type . '_allow_html'      => array(
 						'label'      => __( 'Allow HTML?', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
-						'dependency' => true
-					)
-				)
+						'dependency' => true,
+					),
+				),
 			),
 			self::$type . '_allowed_html_tags' => array(
 				'label'      => __( 'Allowed HTML Tags', 'pods' ),
 				'depends-on' => array( self::$type . '_allow_html' => true ),
 				'default'    => 'strong em a ul ol li b i',
-				'type'       => 'text'
+				'type'       => 'text',
 			),
-			/*self::$type . '_max_length' => array(
+			/*
+			self::$type . '_max_length' => array(
 				'label' => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type' => 'number',
@@ -116,8 +117,9 @@ class PodsField_Link extends PodsField_Website {
 			self::$type . '_html5'             => array(
 				'label'   => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-				'type'    => 'boolean'
-			)/*,
+				'type'    => 'boolean',
+			), /*
+		,
 			self::$type . '_size' => array(
 				'label' => __( 'Field Size', 'pods' ),
 				'default' => 'medium',
@@ -226,7 +228,7 @@ class PodsField_Link extends PodsField_Website {
 		} elseif ( ! empty( $value['text'] ) ) {
 			// No URL data found (probably database error), return text is this is available
 			$value = $value['text'];
-		}
+		}//end if
 
 		// Return database value or display value if above conditions are met
 		return $value;
@@ -344,7 +346,13 @@ class PodsField_Link extends PodsField_Website {
 			$value = array( 'url' => $value );
 		}
 
-		$value = array_merge( array( 'url' => '', 'text' => '', 'target' => '' ), (array) $value );
+		$value = array_merge(
+			array(
+				'url'    => '',
+				'text'   => '',
+				'target' => '',
+			), (array) $value
+		);
 
 		// Start URL format
 		if ( ! empty( $value['url'] ) ) {
@@ -390,7 +398,7 @@ class PodsField_Link extends PodsField_Website {
 	public function add_link_modal() {
 
 		if ( ! class_exists( '_WP_Editors', false ) && file_exists( ABSPATH . WPINC . '/class-wp-editor.php' ) ) {
-			require_once( ABSPATH . WPINC . '/class-wp-editor.php' );
+			require_once ABSPATH . WPINC . '/class-wp-editor.php';
 		}
 
 		if ( class_exists( '_WP_Editors' ) && method_exists( '_WP_Editors', 'wp_link_dialog' ) ) {

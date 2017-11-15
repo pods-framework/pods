@@ -64,7 +64,7 @@ class PodsField_Number extends PodsField {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			static::$type . '_format_type' => array(
 				'label'      => __( 'Input Type', 'pods' ),
@@ -72,9 +72,9 @@ class PodsField_Number extends PodsField {
 				'type'       => 'pick',
 				'data'       => array(
 					'number' => __( 'Freeform Number', 'pods' ),
-					'slider' => __( 'Slider', 'pods' )
+					'slider' => __( 'Slider', 'pods' ),
 				),
-				'dependency' => true
+				'dependency' => true,
 			),
 			static::$type . '_format'      => array(
 				'label'   => __( 'Format', 'pods' ),
@@ -86,14 +86,14 @@ class PodsField_Number extends PodsField {
 					'9.999,99' => '1.234,00',
 					'9 999,99' => '1 234,00',
 					'9999.99'  => '1234.00',
-					'9999,99'  => '1234,00'
-				)
+					'9999,99'  => '1234,00',
+				),
 			),
 			static::$type . '_decimals'    => array(
 				'label'      => __( 'Decimals', 'pods' ),
 				'default'    => 0,
 				'type'       => 'number',
-				'dependency' => true
+				'dependency' => true,
 			),
 			static::$type . '_format_soft' => array(
 				'label'       => __( 'Soft format?', 'pods' ),
@@ -106,25 +106,25 @@ class PodsField_Number extends PodsField {
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 1,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_min'         => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 0,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_max'         => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 100,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_max_length'  => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 12,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' )
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_placeholder' => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -134,7 +134,8 @@ class PodsField_Number extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			),/*,
+			), /*
+		,
             static::$type . '_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -321,11 +322,13 @@ class PodsField_Number extends PodsField {
 		$thousands   = $format_args['thousands'];
 		$dot         = $format_args['dot'];
 
-		$check = str_replace( array( $thousands, $dot, html_entity_decode( $thousands ) ), array(
-			'',
-			'.',
-			''
-		), $value );
+		$check = str_replace(
+			array( $thousands, $dot, html_entity_decode( $thousands ) ), array(
+				'',
+				'.',
+				'',
+			), $value
+		);
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );
@@ -433,6 +436,7 @@ class PodsField_Number extends PodsField {
 
 	/**
 	 * Get the formatting arguments for numbers.
+	 *
 	 * @since 2.7
 	 *
 	 * @param array $options Field options.
@@ -468,7 +472,7 @@ class PodsField_Number extends PodsField {
 		} else {
 			$thousands = $wp_locale->number_format['thousands_sep'];
 			$dot       = $wp_locale->number_format['decimal_point'];
-		}
+		}//end if
 
 		$decimals = $this->get_max_decimals( $options );
 

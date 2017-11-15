@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'classes/fields/number.php' );
+require_once PODS_DIR . 'classes/fields/number.php';
 
 /**
  * @package Pods\Fields
@@ -72,7 +72,7 @@ class PodsField_Currency extends PodsField_Number {
 			if ( $value['label'] != $value['name'] ) {
 				$currency .= ': ' . $value['name'];
 			}
-			$currency                 .= ' (' . $value['sign'] . ')';
+			$currency                .= ' (' . $value['sign'] . ')';
 			$currency_options[ $key ] = $currency;
 		}
 
@@ -84,7 +84,7 @@ class PodsField_Currency extends PodsField_Number {
 				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
 				'boolean_yes_label' => '',
 				'dependency'        => true,
-				'developer_mode'    => true
+				'developer_mode'    => true,
 			),
 			static::$type . '_format_type'      => array(
 				'label'      => __( 'Input Type', 'pods' ),
@@ -92,16 +92,16 @@ class PodsField_Currency extends PodsField_Number {
 				'type'       => 'pick',
 				'data'       => array(
 					'number' => __( 'Freeform Number', 'pods' ),
-					'slider' => __( 'Slider', 'pods' )
+					'slider' => __( 'Slider', 'pods' ),
 				),
-				'dependency' => true
+				'dependency' => true,
 			),
 			static::$type . '_format_sign'      => array(
 				'label'   => __( 'Currency Sign', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
 				'type'    => 'pick',
-				//'pick_format_single' => 'autocomplete',
-				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options )
+				// 'pick_format_single' => 'autocomplete',
+				'data'    => apply_filters( 'pods_form_ui_field_number_currency_options', $currency_options ),
 			),
 			static::$type . '_format_placement' => array(
 				'label'   => __( 'Currency Placement', 'pods' ),
@@ -111,8 +111,8 @@ class PodsField_Currency extends PodsField_Number {
 					'before'          => __( 'Before (ex. $100)', 'pods' ),
 					'after'           => __( 'After (ex. 100$)', 'pods' ),
 					'none'            => __( 'None (ex. 100)', 'pods' ),
-					'beforeaftercode' => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' )
-				)
+					'beforeaftercode' => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' ),
+				),
 			),
 			static::$type . '_format'           => array(
 				'label'   => __( 'Format', 'pods' ),
@@ -125,13 +125,13 @@ class PodsField_Currency extends PodsField_Number {
 					'9.999,99'  => '1.234,00',
 					'9 999,99'  => '1 234,00',
 					'9999.99'   => '1234.00',
-					'9999,99'   => '1234,00'
-				)
+					'9999,99'   => '1234,00',
+				),
 			),
 			static::$type . '_decimals'         => array(
 				'label'   => __( 'Decimals', 'pods' ),
 				'default' => 2,
-				'type'    => 'number'
+				'type'    => 'number',
 			),
 			static::$type . '_decimal_handling' => array(
 				'label'   => __( 'Decimal handling when zero', 'pods' ),
@@ -141,31 +141,31 @@ class PodsField_Currency extends PodsField_Number {
 					'none'   => __( 'Default', 'pods' ),
 					'remove' => __( 'Remove decimals', 'pods' ),
 					'dash'   => __( 'Convert to dash', 'pods' ) . ' (-)',
-				)
+				),
 			),
 			static::$type . '_step'             => array(
 				'label'      => __( 'Slider Increment (Step)', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 1,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_min'              => array(
 				'label'      => __( 'Minimum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 0,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_max'              => array(
 				'label'      => __( 'Maximum Number', 'pods' ),
 				'depends-on' => array( static::$type . '_format_type' => 'slider' ),
 				'default'    => 1000,
-				'type'       => 'text'
+				'type'       => 'text',
 			),
 			static::$type . '_max_length'       => array(
 				'label'   => __( 'Maximum Length', 'pods' ),
 				'default' => 12,
 				'type'    => 'number',
-				'help'    => __( 'Set to -1 for no limit', 'pods' )
+				'help'    => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			static::$type . '_placeholder'      => array(
 				'label'   => __( 'HTML Placeholder', 'pods' ),
@@ -176,7 +176,8 @@ class PodsField_Currency extends PodsField_Number {
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
 			),
-			/*,
+			/*
+			,
 			static::$type . '_size' => array(
 				'label' => __( 'Field Size', 'pods' ),
 				'default' => 'medium',
@@ -301,14 +302,16 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
 		// Remove currency and thousands symbols
-		$check = str_replace( array(
-			$thousands,
-			$currency_sign,
-			$currency_entity,
-			html_entity_decode( $thousands ),
-			html_entity_decode( $currency_sign ),
-			html_entity_decode( $currency_entity ),
-		), '', $value );
+		$check = str_replace(
+			array(
+				$thousands,
+				$currency_sign,
+				$currency_entity,
+				html_entity_decode( $thousands ),
+				html_entity_decode( $currency_sign ),
+				html_entity_decode( $currency_entity ),
+			), '', $value
+		);
 		// Convert decimal type for numeric type
 		$check = str_replace( $dot, '.', $check );
 		$check = trim( $check );
@@ -356,14 +359,16 @@ class PodsField_Currency extends PodsField_Number {
 		$currency_entity = static::$currencies[ $currency ]['entity'];
 
 		// Convert decimal type for numeric type
-		$value = str_replace( array(
-			$thousands,
-			$currency_sign,
-			$currency_entity,
-			html_entity_decode( $thousands ),
-			html_entity_decode( $currency_sign ),
-			html_entity_decode( $currency_entity ),
-		), '', $value );
+		$value = str_replace(
+			array(
+				$thousands,
+				$currency_sign,
+				$currency_entity,
+				html_entity_decode( $thousands ),
+				html_entity_decode( $currency_sign ),
+				html_entity_decode( $currency_entity ),
+			), '', $value
+		);
 		// Convert decimal type for numeric type
 		$value = str_replace( $dot, '.', $value );
 		$value = trim( $value );
@@ -425,6 +430,7 @@ class PodsField_Currency extends PodsField_Number {
 
 	/**
 	 * Get the currencies and place them in the local property
+	 *
 	 * @since  2.6.8
 	 * @return array
 	 */
@@ -670,8 +676,8 @@ class PodsField_Currency extends PodsField_Number {
 			} else {
 				// Invalid
 				unset( static::$currencies[ $key ] );
-			}
-		}
+			}//end if
+		}//end foreach
 
 		return static::$currencies;
 	}

@@ -433,23 +433,41 @@ class PodsMeta {
 
     public function cpac_meta_keys ( $meta_fields, $storage_model ) {
         $object_type = 'post_type';
-        $object = $storage_model->key;
+	    $object = null;
+	    $obj = null;
 
-        if ( in_array( $storage_model->key, array( 'wp-links', 'link' ) ) ) {
+        if ( ! method_exists( $storage_model, 'get_column' ) ) {
+	        // Codepress Admin Columns < 2.x
+	        $object = $storage_model->key;
+        	$type = $storage_model->type;
+		} else {
+	        // Codepress Admin Columns 3.x +
+        	$obj = $storage_model->get_column();
+	        $object = $obj->get_list_screen()->get_key();
+	        $type = $obj->get_list_screen()->get_meta_type();
+		}
+
+        if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
             $object_type = $object = 'link';
         }
-        elseif ( in_array( $storage_model->key, array( 'wp-media', 'media' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
             $object_type = $object = 'media';
         }
-        elseif ( in_array( $storage_model->key, array( 'wp-users', 'user' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
             $object_type = $object = 'user';
         }
-        elseif ( in_array( $storage_model->key, array( 'wp-comments', 'comment' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
             $object_type = $object = 'comment';
         }
-        elseif ( 'taxonomy' === $storage_model->type ) {
+        elseif ( 'taxonomy' === $type ) {
             $object_type = 'taxonomy';
-            $object = $storage_model->taxonomy;
+	        if ( ! $obj ) {
+		        // Codepress Admin Columns < 2.x
+		        $object = $storage_model->taxonomy;
+	        } else {
+		        // Codepress Admin Columns 3.x +
+		        $object = $obj->get_taxonomy();
+	        }
         }
 
         if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
@@ -493,23 +511,40 @@ class PodsMeta {
         $tableless_field_types = PodsForm::tableless_field_types();
 
         $object_type = 'post_type';
-        $object = $obj->storage_model->key;
+        $object = null;
+        $type = null;
 
-        if ( in_array( $obj->storage_model->type, array( 'wp-links', 'link' ) ) ) {
+        if ( ! method_exists( $obj, 'get_list_screen' ) ) {
+	        // Codepress Admin Columns < 2.x
+			$object = $obj->storage_model->key;
+			$type = $obj->storage_model->type;
+		} else {
+	        // Codepress Admin Columns 3.x +
+        	$object = $obj->get_list_screen()->get_key();
+        	$type = $obj->get_list_screen()->get_meta_type();
+		}
+
+        if ( in_array( $type, array( 'wp-links', 'link' ), true ) ) {
             $object_type = $object = 'link';
         }
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-media', 'media' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-media', 'media' ), true ) ) {
             $object_type = $object = 'media';
         }
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-users', 'user' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-users', 'user' ), true ) ) {
             $object_type = $object = 'user';
         }
-        elseif ( in_array( $obj->storage_model->type, array( 'wp-comments', 'comment' ) ) ) {
+        elseif ( in_array( $type, array( 'wp-comments', 'comment' ), true ) ) {
             $object_type = $object = 'comment';
         }
-        elseif ( 'taxonomy' === $obj->storage_model->type ) {
+        elseif ( 'taxonomy' === $type ) {
             $object_type = 'taxonomy';
-            $object = $obj->storage_model->taxonomy;
+            if ( ! method_exists( $obj, 'get_taxonomy' ) ) {
+	            // Codepress Admin Columns < 2.x
+	            $object = $obj->storage_model->taxonomy;
+            } else {
+	            // Codepress Admin Columns 3.x +
+            	$object = $obj->get_taxonomy();
+			}
         }
 
         $field = substr( $obj->get_option( 'field' ), 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );

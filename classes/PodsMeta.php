@@ -547,40 +547,39 @@ class PodsMeta {
 			}
         }
 
-        $field = substr( $obj->get_option( 'field' ), 0, 10 ) == "cpachidden" ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
+        $field = ( "cpachidden" === substr( $obj->get_option( 'field' ), 0, 10 ) ) ? str_replace( 'cpachidden', '', $obj->get_option( 'field' ) ) : $obj->get_option( 'field' );
         $field_type = $obj->get_option( 'field_type' );
 
-        if ( empty( self::$current_pod_data ) || !is_object( self::$current_pod_data ) || self::$current_pod_data[ 'name' ] != $object )
+        if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] !== $object )
             self::$current_pod_data = pods_api()->load_pod( array( 'name' => $object ), false );
 
         $pod = self::$current_pod_data;
 
         // Add Pods fields
-        if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'taxonomy', 'user', 'comment', 'media' ) ) && ( !empty( $field_type ) || in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) ) {
+        if ( !empty( $pod ) && isset( $pod['fields'][ $field ] ) ) {
+            if ( in_array( $pod['type'], array( 'post_type', 'media', 'taxonomy', 'user', 'comment', 'media' ), true ) && ( ! empty( $field_type ) || in_array( $pod['fields'][ $field ]['type'], $tableless_field_types, true ) ) ) {
                 $metadata_type = $pod['type'];
 
-                if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
+                if ( in_array( $metadata_type, array( 'post_type', 'media' ), true ) ) {
                     $metadata_type = 'post';
-                } elseif ( 'taxonomy' == $metadata_type ) {
+                } elseif ( 'taxonomy' === $metadata_type ) {
                     $metadata_type = 'term';
                 }
 
-                if ( 'term' == $metadata_type && ! function_exists( 'get_term_meta' ) ) {
+                if ( 'term' === $metadata_type && ! function_exists( 'get_term_meta' ) ) {
                     $podterms = pods( $pod['name'], $id );
 
                     $meta = $podterms->field( $field );
                 } else {
-                    $meta = get_metadata( $metadata_type, $id, $field, true );
+                    $meta = get_metadata( $metadata_type, $id, $field, ( 'array' !== $field_type ) );
                 }
             }
-            elseif ( 'taxonomy' == $pod['type'] ) {
+            elseif ( 'taxonomy' === $pod['type'] ) {
                 $podterms = pods( $pod['name'], $id );
 
                 $meta = $podterms->field( $field );
             }
 
-            $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
         }
 
         return $meta;
@@ -618,6 +617,7 @@ class PodsMeta {
             }
 
             $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ], $pod[ 'fields' ][ $field ][ 'options' ] ), $pod[ 'fields' ], $pod );
+            $meta = PodsForm::field_method( $pod['fields'][ $field ]['type'], 'ui', $id, $meta, $field, array_merge( $pod['fields'][ $field ], $pod['fields'][ $field ]['options'] ), $pod['fields'], $pod );
         }
 
         return $meta;

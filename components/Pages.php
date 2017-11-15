@@ -20,6 +20,9 @@ if ( class_exists( 'Pods_Pages' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Pages
+ */
 class Pods_Pages extends PodsComponent {
 
 	/**
@@ -122,6 +125,11 @@ class Pods_Pages extends PodsComponent {
 		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
 	}
 
+	/**
+	 * @param $caps
+	 *
+	 * @return array
+	 */
 	public function get_capabilities( $caps ) {
 
 		$caps = array_merge( $caps, array(
@@ -233,6 +241,12 @@ class Pods_Pages extends PodsComponent {
 	 * Fix filters, specifically removing balanceTags
 	 *
 	 * @since 2.0.1
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -243,6 +257,11 @@ class Pods_Pages extends PodsComponent {
 	 * Remove unused row actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 * @param $post
+	 *
+	 * @return
 	 */
 	public function remove_row_actions( $actions, $post ) {
 
@@ -272,6 +291,10 @@ class Pods_Pages extends PodsComponent {
 	 * Remove unused bulk actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 *
+	 * @return
 	 */
 	public function remove_bulk_actions( $actions ) {
 
@@ -286,6 +309,12 @@ class Pods_Pages extends PodsComponent {
 	 * Clear cache on save
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -321,6 +350,11 @@ class Pods_Pages extends PodsComponent {
 	 * Change post title placeholder text
 	 *
 	 * @since 2.0
+	 *
+	 * @param $text
+	 * @param $post
+	 *
+	 * @return string|void
 	 */
 	public function set_title_text( $text, $post ) {
 
@@ -867,6 +901,8 @@ class Pods_Pages extends PodsComponent {
 	 *
 	 * @param bool $return Whether to return or not (default is to echo)
 	 *
+	 * @param bool $pods_page
+	 *
 	 * @return string
 	 */
 	public static function content( $return = false, $pods_page = false ) {
@@ -1296,8 +1332,9 @@ function pod_page_exists( $uri = null ) {
  *
  * @param bool $return Whether to return or not (default is to echo)
  *
- * @return string
+ * @param bool $pods_page
  *
+ * @return string
  * @since 1.7.0
  */
 function pods_content( $return = false, $pods_page = false ) {

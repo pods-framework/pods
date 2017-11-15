@@ -8,6 +8,9 @@ if ( ! class_exists( 'LayoutModule' ) ) {
 }
 
 if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
+	/**
+	 * Class PodsBuilderModuleForm
+	 */
 	class PodsBuilderModuleForm extends LayoutModule {
 
 		public $_name = '';
@@ -130,6 +133,8 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 
 		/**
 		 * Module Output
+		 *
+		 * @param $fields
 		 */
 		public function _render( $fields ) {
 

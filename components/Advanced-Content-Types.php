@@ -20,6 +20,9 @@ if ( class_exists( 'Pods_Advanced_Content_Types' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Advanced_Content_Types
+ */
 class Pods_Advanced_Content_Types extends PodsComponent {
 
 	/**

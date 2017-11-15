@@ -127,11 +127,12 @@ class PodsField_Code extends PodsField {
 	 * @param mixed  $value
 	 * @param string $name
 	 * @param array  $options
-	 * @param array  $fields
 	 * @param array  $pod
 	 * @param int    $id
 	 *
-	 * @since 2.0
+	 * @return mixed|null|string
+	 * @internal param array $fields
+	 * @since    2.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -182,6 +183,7 @@ class PodsField_Code extends PodsField {
 	 * @param object $params
 	 *
 	 * @since 2.0
+	 * @return mixed|string
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 

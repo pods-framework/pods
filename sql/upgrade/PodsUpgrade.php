@@ -37,7 +37,7 @@ class PodsUpgrade {
 	}
 
 	/**
-	 *
+	 * @param null $_blog_id
 	 */
 	public function install( $_blog_id = null ) {
 

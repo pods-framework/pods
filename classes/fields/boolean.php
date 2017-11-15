@@ -292,6 +292,7 @@ class PodsField_Boolean extends PodsField {
 	 * @param array  $pod
 	 *
 	 * @since 2.0
+	 * @return mixed|string
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 

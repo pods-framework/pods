@@ -11,6 +11,11 @@
 if ( ! function_exists( 'json_encode' ) ) {
 	require_once ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php';
 
+	/**
+	 * @param $str
+	 *
+	 * @return mixed
+	 */
 	function json_encode( $str ) {
 
 		$json = new Moxiecode_JSON();
@@ -18,6 +23,11 @@ if ( ! function_exists( 'json_encode' ) ) {
 		return $json->encode( $str );
 	}
 
+	/**
+	 * @param $str
+	 *
+	 * @return mixed
+	 */
 	function json_decode( $str ) {
 
 		$json = new Moxiecode_JSON();
@@ -28,6 +38,9 @@ if ( ! function_exists( 'json_encode' ) ) {
 
 // WP 3.4.x support
 if ( ! function_exists( 'wp_send_json' ) ) {
+	/**
+	 * @param $response
+	 */
 	function wp_send_json( $response ) {
 
 		@header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
@@ -65,6 +78,11 @@ if ( ! function_exists( 'get_current_url' ) ) {
  *
  * @since      1.x
  * @deprecated deprecated since version 2.0
+ *
+ * @param        $sql
+ * @param string $error
+ * @param null   $results_error
+ * @param null   $no_results_error
  *
  * @return array|bool|mixed|null|void Result of the query
  */
@@ -113,6 +131,12 @@ class Pod {
 
 	public $meta_extra = '';
 
+	/**
+	 * Pod constructor.
+	 *
+	 * @param null $type
+	 * @param null $id
+	 */
 	public function __construct( $type = null, $id = null ) {
 
 		if ( self::$deprecated_notice ) {
@@ -128,6 +152,10 @@ class Pod {
 	 * Handle variables that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 *
+	 * @return array|bool|int|mixed|PodsData
 	 */
 	public function __get( $name ) {
 
@@ -170,6 +198,11 @@ class Pod {
 	 * Handle variables that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 * @param $value
+	 *
+	 * @return mixed
 	 */
 	public function __set( $name, $value ) {
 
@@ -184,6 +217,11 @@ class Pod {
 	 * Handle methods that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 * @param $args
+	 *
+	 * @return mixed
 	 */
 	public function __call( $name, $args ) {
 
@@ -196,6 +234,10 @@ class Pod {
 	 * Handle variables that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 *
+	 * @return bool
 	 */
 	public function __isset( $name ) {
 
@@ -224,6 +266,12 @@ class PodAPI {
 
 	public static $deprecated_notice = true;
 
+	/**
+	 * PodAPI constructor.
+	 *
+	 * @param null $type
+	 * @param null $format
+	 */
 	public function __construct( $type = null, $format = null ) {
 
 		if ( self::$deprecated_notice ) {
@@ -237,6 +285,10 @@ class PodAPI {
 	 * Handle variables that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 *
+	 * @return null
 	 */
 	public function __get( $name ) {
 
@@ -251,6 +303,11 @@ class PodAPI {
 	 * Handle methods that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 * @param $args
+	 *
+	 * @return mixed
 	 */
 	public function __call( $name, $args ) {
 
@@ -265,6 +322,10 @@ class PodAPI {
  *
  * @since      2.0
  * @deprecated deprecated since version 2.0
+ *
+ * @param $obj
+ *
+ * @return PodsUI
  */
 function pods_ui_manage( $obj ) {
 
@@ -278,6 +339,12 @@ function pods_ui_manage( $obj ) {
  *
  * @since      1.x
  * @deprecated deprecated since version 2.0
+ *
+ * @param $object
+ * @param $access
+ * @param $what
+ *
+ * @return bool
  */
 function pods_ui_access( $object, $access, $what ) {
 
@@ -325,6 +392,13 @@ function pods_url_variable( $key = 'last', $type = 'url' ) {
  *
  * @since      1.2.0
  * @deprecated deprecated since version 2.0
+ *
+ * @param     $datatype
+ * @param     $uri_hash
+ * @param     $columns
+ * @param int $form_count
+ *
+ * @return mixed|string|void
  */
 function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
 
@@ -340,6 +414,14 @@ function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
  *
  * @since      1.2.0
  * @deprecated deprecated since version 2.0
+ *
+ * @param      $token
+ * @param      $datatype
+ * @param      $uri_hash
+ * @param null $columns
+ * @param int  $form_count
+ *
+ * @return mixed|void
  */
 function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form_count = 1 ) {
 
@@ -394,6 +476,10 @@ function pods_ui_error( $message ) {
  *
  * @since     1.10.1
  * @deprcated 2.3
+ *
+ * @param $point
+ *
+ * @return int|string
  */
 function pods_point_to_version( $point ) {
 
@@ -427,6 +513,10 @@ function pods_point_to_version( $point ) {
  *
  * @since     1.10
  * @deprcated 2.3
+ *
+ * @param $version
+ *
+ * @return array|string
  */
 function pods_version_to_point( $version ) {
 

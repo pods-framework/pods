@@ -18,6 +18,9 @@ if ( class_exists( 'Pods_Frontier_Template_Editor' ) || class_exists( 'Pods_Temp
 	return;
 }
 
+/**
+ * Class Pods_Templates_Frontier
+ */
 class Pods_Templates_Frontier {
 
 	/**
@@ -138,6 +141,10 @@ class Pods_Templates_Frontier {
 	/**
 	 * Process a field value
 	 *
+	 * @param $type
+	 * @param $value
+	 *
+	 * @return mixed
 	 */
 	public function process_value( $type, $value ) {
 
@@ -169,7 +176,10 @@ class Pods_Templates_Frontier {
 	 * setup meta boxes.
 	 *
 	 *
-	 * @return    null
+	 * @param      $slug
+	 * @param bool $post
+	 *
+	 * @return null
 	 */
 	public function add_metaboxes( $slug, $post = false ) {
 
@@ -218,7 +228,10 @@ class Pods_Templates_Frontier {
 	 * render template based meta boxes.
 	 *
 	 *
-	 * @return    null
+	 * @param $post
+	 * @param $args
+	 *
+	 * @return null
 	 */
 	public function render_metaboxes_custom( $post, $args ) {
 
@@ -254,7 +267,8 @@ class Pods_Templates_Frontier {
 	/**
 	 * save metabox data
 	 *
-	 *
+	 * @param $pid
+	 * @param $post
 	 */
 	public function save_post_metaboxes( $pid, $post ) {
 
@@ -285,6 +299,10 @@ class Pods_Templates_Frontier {
 	/**
 	 * create and register an instance ID
 	 *
+	 * @param $id
+	 * @param $process
+	 *
+	 * @return string
 	 */
 	public function element_instance_id( $id, $process ) {
 
@@ -300,6 +318,12 @@ class Pods_Templates_Frontier {
 	/**
 	 * Render the element
 	 *
+	 * @param      $atts
+	 * @param      $content
+	 * @param      $slug
+	 * @param bool $head
+	 *
+	 * @return string|void
 	 */
 	public function render_element( $atts, $content, $slug, $head = false ) {
 
@@ -465,6 +489,10 @@ class Pods_Templates_Frontier {
 	/***
 	 * Get the current URL
 	 *
+	 * @param null $src
+	 * @param null $path
+	 *
+	 * @return string
 	 */
 	public static function get_url( $src = null, $path = null ) {
 
@@ -478,6 +506,9 @@ class Pods_Templates_Frontier {
 	/***
 	 * Get the current URL
 	 *
+	 * @param null $src
+	 *
+	 * @return string
 	 */
 	public static function get_path( $src = null ) {
 

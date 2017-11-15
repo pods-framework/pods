@@ -426,11 +426,15 @@ function frontier_pseudo_magic_tags( $template, $data, $pod = null, $skip_unknow
  * processes template code within an each command from the base template
  *
  *
- * @param array  attributes from template
- * @param string template to be processed
+ * @param $code
+ * @param $template
+ * @param $pod
  *
  * @return null
- * @since 2.4
+ * @internal param attributes $array from template
+ * @internal param template $string to be processed
+ *
+ * @since    2.4
  */
 function frontier_prefilter_template( $code, $template, $pod ) {
 
@@ -525,6 +529,12 @@ function frontier_prefilter_template( $code, $template, $pod ) {
 	return $code;
 }
 
+/**
+ * @param $code
+ * @param $aliases
+ *
+ * @return mixed
+ */
 function frontier_backtrack_template( $code, $aliases ) {
 
 	$regex = frontier_get_regex( $aliases );
@@ -554,6 +564,11 @@ function frontier_backtrack_template( $code, $aliases ) {
 	return $code;
 }
 
+/**
+ * @param $codes
+ *
+ * @return string
+ */
 function frontier_get_regex( $codes ) {
 
 	// A custom version of the shortcode regex as to only use podsfrontier codes.
@@ -580,6 +595,14 @@ function frontier_get_regex( $codes ) {
 
 }
 
+/**
+ * @param $code
+ * @param $base
+ * @param $template
+ * @param $pod
+ *
+ * @return string
+ */
 function frontier_end_template( $code, $base, $template, $pod ) {
 
 	global $template_post_blocks;

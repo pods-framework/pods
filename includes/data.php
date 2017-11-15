@@ -1206,7 +1206,9 @@ function pods_cast( $value, $cast_from = null ) {
 /**
  * Create a slug from an input string
  *
- * @param $orig
+ * @param      $orig
+ *
+ * @param bool $strict
  *
  * @return string Sanitized slug
  *
@@ -1238,6 +1240,8 @@ function pods_create_slug( $orig, $strict = true ) {
  * @param int          $pod_id      The Pod ID
  * @param int          $id          The item ID
  * @param object       $obj         (optional)
+ *
+ * @param bool         $strict
  *
  * @return string The unique slug name
  * @since 1.7.2
@@ -1933,12 +1937,13 @@ function pods_hierarchical_list_recurse( $parent, $list, &$args ) {
 /**
  * Take a one-level list of items and make it hierarchical for <select>
  *
- * @param array|object $list         List of items
- * @param array        $args         Array of index, parent, children, id, and prefix keys to use
- * @param string       $children_key Key to recurse children into
+ * @param array|object $list List of items
+ * @param array        $args Array of index, parent, children, id, and prefix keys to use
  *
  * @return array|object
- * @since 2.3
+ * @internal param string $children_key Key to recurse children into
+ *
+ * @since    2.3
  */
 function pods_hierarchical_select( $list, $args = array() ) {
 
@@ -1971,13 +1976,16 @@ function pods_hierarchical_select( $list, $args = array() ) {
 /**
  * Recurse list of hierarchical data
  *
- * @param array|object $list         List of items
- * @param array        $args         Array of children and prefix keys to use
- * @param string       $children_key Key to recurse children into
+ * @param       $items
+ * @param array $args Array of children and prefix keys to use
+ * @param int   $depth
  *
- * @see   pods_hierarchical_select
  * @return array
- * @since 2.3
+ * @internal param array|object $list List of items
+ * @internal param string $children_key Key to recurse children into
+ *
+ * @see      pods_hierarchical_select
+ * @since    2.3
  */
 function pods_hierarchical_select_recurse( $items, $args, $depth = 0 ) {
 

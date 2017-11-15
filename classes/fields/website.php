@@ -50,10 +50,10 @@ class PodsField_Website extends PodsField {
 
 	/**
 	 * Add options and set defaults to
+	 * @return array
+	 * @internal param array $options
 	 *
-	 * @param array $options
-	 *
-	 * @since 2.0
+	 * @since    2.0
 	 */
 	public function options() {
 
@@ -235,8 +235,9 @@ class PodsField_Website extends PodsField {
 	 * @param array  $pod
 	 * @param int    $id
 	 *
-	 * @return bool|array
+	 * @param null   $params
 	 *
+	 * @return array|bool
 	 * @since 2.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {

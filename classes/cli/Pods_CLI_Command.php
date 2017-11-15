@@ -9,6 +9,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 *
 	 * @synopsis --pod=<pod> --<field>=<value>
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function add( $args, $assoc_args ) {
 
@@ -40,6 +43,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 *
 	 * @synopsis --pod=<pod> [--item=<item>] --<field>=<value>
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function save( $args, $assoc_args ) {
 
@@ -71,6 +77,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 *
 	 * @synopsis --pod=<pod> --item=<item>
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function duplicate( $args, $assoc_args ) {
 
@@ -89,6 +98,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 *
 	 * @synopsis --pod=<pod> --item=<item>
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function delete( $args, $assoc_args ) {
 

@@ -52,6 +52,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 
 	@define( 'MARKDOWN_PARSER_CLASS', 'Markdown_Parser' );
 
+	/**
+	 * @param $text
+	 *
+	 * @return mixed
+	 */
 	function Markdown( $text ) {
 
 		#
@@ -115,6 +120,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			$mdwp_placeholders = explode( ' ', str_rot13( 'pEj07ZbbBZ U1kqgh4w4p pre2zmeN6K QTi31t9pre ol0MP1jzJR ' . 'ML5IjmbRol ulANi1NsGY J7zRLJqPul liA8ctl16T K9nhooUHli' ) );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed|string
+		 */
 		function mdwp_add_p( $text ) {
 
 			if ( ! preg_match( '{^$|^<(p|ul|ol|dl|pre|blockquote)>}i', $text ) ) {
@@ -125,11 +135,21 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $t
+		 *
+		 * @return mixed
+		 */
 		function mdwp_strip_p( $t ) {
 
 			return preg_replace( '{</?p>}i', '', $t );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		function mdwp_hide_tags( $text ) {
 
 			global $mdwp_hidden_tags, $mdwp_placeholders;
@@ -137,6 +157,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return str_replace( $mdwp_hidden_tags, $mdwp_placeholders, $text );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		function mdwp_show_tags( $text ) {
 
 			global $mdwp_hidden_tags, $mdwp_placeholders;
@@ -147,6 +172,9 @@ if ( ! function_exists( 'Markdown' ) ) :
 
 	### bBlog Plugin Info ###
 
+	/**
+	 * @return array
+	 */
 	function identify_modifier_markdown() {
 
 		return array(
@@ -163,6 +191,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 
 	### Smarty Modifier Interface ###
 
+	/**
+	 * @param $text
+	 *
+	 * @return mixed
+	 */
 	function smarty_modifier_markdown( $text ) {
 
 		return Markdown( $text );
@@ -177,8 +210,19 @@ if ( ! function_exists( 'Markdown' ) ) :
 		@include_once 'smartypants.php';
 
 		# Fake Textile class. It calls Markdown instead.
+
+		/**
+		 * Class Textile
+		 */
 		class Textile {
 
+			/**
+			 * @param        $text
+			 * @param string $lite
+			 * @param string $encode
+			 *
+			 * @return mixed
+			 */
 			public function TextileThis( $text, $lite = '', $encode = '' ) {
 
 				if ( $lite == '' && $encode == '' ) {
@@ -192,12 +236,26 @@ if ( ! function_exists( 'Markdown' ) ) :
 			}
 
 			# Fake restricted version: restrictions are not supported for now.
+
+			/**
+			 * @param        $text
+			 * @param string $lite
+			 * @param string $noimage
+			 *
+			 * @return mixed
+			 */
 			public function TextileRestricted( $text, $lite = '', $noimage = '' ) {
 
 				return $this->TextileThis( $text, $lite );
 			}
 
 			# Workaround to ensure compatibility with TextPattern 4.0.3.
+
+			/**
+			 * @param $text
+			 *
+			 * @return mixed
+			 */
 			public function blockLite( $text ) {
 
 				return $text;
@@ -209,6 +267,9 @@ if ( ! function_exists( 'Markdown' ) ) :
 	# Markdown Parser Class
 	#
 
+	/**
+	 * Class Markdown_Parser
+	 */
 	class Markdown_Parser {
 
 		### Configuration Variables ###
@@ -239,6 +300,9 @@ if ( ! function_exists( 'Markdown' ) ) :
 		public $escape_chars = '\`*_{}[]()>#+-.!';
 		public $escape_chars_re;
 
+		/**
+		 * Markdown_Parser constructor.
+		 */
 		public function __construct() {
 
 			#
@@ -292,6 +356,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			$this->html_hashes = array();
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function transform( $text ) {
 
 			#
@@ -339,6 +408,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			"runBasicBlockGamut" => 30,
 		);
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function stripLinkDefinitions( $text ) {
 
 			#
@@ -374,6 +448,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _stripLinkDefinitions_callback( $matches ) {
 
 			$link_id                  = strtolower( $matches[1] );
@@ -384,6 +463,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return ''; # String that will replace the block
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function hashHTMLBlocks( $text ) {
 
 			if ( $this->no_markup ) {
@@ -520,6 +604,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _hashHTMLBlocks_callback( $matches ) {
 
 			$text = $matches[1];
@@ -528,6 +617,12 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "\n\n$key\n\n";
 		}
 
+		/**
+		 * @param        $text
+		 * @param string $boundary
+		 *
+		 * @return string
+		 */
 		public function hashPart( $text, $boundary = 'X' ) {
 
 			#
@@ -552,6 +647,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $key; # String that will replace the tag.
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function hashBlock( $text ) {
 
 			#
@@ -573,6 +673,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			"doBlockQuotes" => 60,
 		);
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function runBlockGamut( $text ) {
 
 			#
@@ -588,6 +693,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->runBasicBlockGamut( $text );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function runBasicBlockGamut( $text ) {
 
 			#
@@ -605,6 +715,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doHorizontalRules( $text ) {
 
 			# Do Horizontal Rules:
@@ -644,6 +759,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			"doHardBreaks"     => 60,
 		);
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function runSpanGamut( $text ) {
 
 			#
@@ -656,17 +776,32 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doHardBreaks( $text ) {
 
 			# Do hard breaks:
 			return preg_replace_callback( '/ {2,}\n/', array( &$this, '_doHardBreaks_callback' ), $text );
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doHardBreaks_callback( $matches ) {
 
 			return $this->hashPart( "<br$this->empty_element_suffix\n" );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doAnchors( $text ) {
 
 			#
@@ -739,6 +874,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doAnchors_reference_callback( $matches ) {
 
 			$whole_match = $matches[1];
@@ -775,6 +915,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $result;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doAnchors_inline_callback( $matches ) {
 
 			$whole_match = $matches[1];
@@ -796,6 +941,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->hashPart( $result );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doImages( $text ) {
 
 			#
@@ -851,6 +1001,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doImages_reference_callback( $matches ) {
 
 			$whole_match = $matches[1];
@@ -880,6 +1035,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $result;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doImages_inline_callback( $matches ) {
 
 			$whole_match = $matches[1];
@@ -899,6 +1059,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->hashPart( $result );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doHeaders( $text ) {
 
 			# Setext-style headers:
@@ -932,6 +1097,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doHeaders_callback_setext( $matches ) {
 
 			# Terrible hack to check we haven't found an empty list item.
@@ -945,6 +1115,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "\n" . $this->hashBlock( $block ) . "\n\n";
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doHeaders_callback_atx( $matches ) {
 
 			$level = strlen( $matches[1] );
@@ -953,6 +1128,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "\n" . $this->hashBlock( $block ) . "\n\n";
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doLists( $text ) {
 
 			#
@@ -1018,6 +1198,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doLists_callback( $matches ) {
 
 			# Re-usable patterns to match list item bullets and number markers:
@@ -1040,6 +1225,12 @@ if ( ! function_exists( 'Markdown' ) ) :
 
 		public $list_level = 0;
 
+		/**
+		 * @param $list_str
+		 * @param $marker_any_re
+		 *
+		 * @return mixed
+		 */
 		public function processListItems( $list_str, $marker_any_re ) {
 
 			#
@@ -1088,6 +1279,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $list_str;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _processListItems_callback( $matches ) {
 
 			$item               = $matches[4];
@@ -1110,6 +1306,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "<li>" . $item . "</li>\n";
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doCodeBlocks( $text ) {
 
 			#
@@ -1129,6 +1330,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doCodeBlocks_callback( $matches ) {
 
 			$codeblock = $matches[1];
@@ -1144,6 +1350,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "\n\n" . $this->hashBlock( $codeblock ) . "\n\n";
 		}
 
+		/**
+		 * @param $code
+		 *
+		 * @return string
+		 */
 		public function makeCodeSpan( $code ) {
 
 			#
@@ -1194,6 +1405,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			}
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function doItalicsAndBold( $text ) {
 
 			$token_stack  = array( '' );
@@ -1318,6 +1534,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text_stack[0];
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doBlockQuotes( $text ) {
 
 			$text = preg_replace_callback( '/
@@ -1334,6 +1555,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doBlockQuotes_callback( $matches ) {
 
 			$bq = $matches[1];
@@ -1349,6 +1575,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return "\n" . $this->hashBlock( "<blockquote>\n$bq\n</blockquote>" ) . "\n\n";
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return mixed
+		 */
 		public function _doBlockQuotes_callback2( $matches ) {
 
 			$pre = $matches[1];
@@ -1357,6 +1588,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $pre;
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return string
+		 */
 		public function formParagraphs( $text ) {
 
 			#
@@ -1426,6 +1662,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return implode( "\n\n", $grafs );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function encodeAttribute( $text ) {
 
 			#
@@ -1438,6 +1679,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function encodeAmpsAndAngles( $text ) {
 
 			#
@@ -1458,6 +1704,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function doAutoLinks( $text ) {
 
 			$text = preg_replace_callback( '{<((https?|ftp|dict):[^\'">\s]+)>}i', array(
@@ -1492,6 +1743,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doAutoLinks_tel_callback( $matches ) {
 
 			$url  = $this->encodeAttribute( $matches[1] );
@@ -1501,6 +1757,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->hashPart( $link );
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doAutoLinks_url_callback( $matches ) {
 
 			$url  = $this->encodeAttribute( $matches[1] );
@@ -1509,6 +1770,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->hashPart( $link );
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _doAutoLinks_email_callback( $matches ) {
 
 			$address = $matches[1];
@@ -1517,6 +1783,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $this->hashPart( $link );
 		}
 
+		/**
+		 * @param $addr
+		 *
+		 * @return string
+		 */
 		public function encodeEmailAddress( $addr ) {
 
 			#
@@ -1561,6 +1832,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $addr;
 		}
 
+		/**
+		 * @param $str
+		 *
+		 * @return string
+		 */
 		public function parseSpan( $str ) {
 
 			#
@@ -1620,6 +1896,12 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $output;
 		}
 
+		/**
+		 * @param $token
+		 * @param $str
+		 *
+		 * @return string
+		 */
 		public function handleSpanToken( $token, &$str ) {
 
 			#
@@ -1644,6 +1926,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			}
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function outdent( $text ) {
 
 			#
@@ -1657,6 +1944,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 		# hanlde UTF-8 if the default function does not exist.
 		public $utf8_strlen = 'mb_strlen';
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function detab( $text ) {
 
 			#
@@ -1671,6 +1963,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return $text;
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return string
+		 */
 		public function _detab_callback( $matches ) {
 
 			$line   = $matches[0];
@@ -1706,6 +2003,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			$text, $m);' );
 		}
 
+		/**
+		 * @param $text
+		 *
+		 * @return mixed
+		 */
 		public function unhash( $text ) {
 
 			#
@@ -1714,6 +2016,11 @@ if ( ! function_exists( 'Markdown' ) ) :
 			return preg_replace_callback( '/(.)\x1A[0-9]+\1/', array( &$this, '_unhash_callback' ), $text );
 		}
 
+		/**
+		 * @param $matches
+		 *
+		 * @return mixed
+		 */
 		public function _unhash_callback( $matches ) {
 
 			return $this->html_hashes[ $matches[0] ];

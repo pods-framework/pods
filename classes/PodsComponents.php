@@ -541,6 +541,11 @@ class PodsComponents {
 		}
 	}
 
+	/**
+	 * @param $options
+	 * @param $settings
+	 * @param $component
+	 */
 	public function admin( $options, $settings, $component ) {
 
 		if ( ! isset( $this->components[ $component ] ) ) {
@@ -767,6 +772,12 @@ class PodsComponents {
 		// KBAI!
 	}
 
+	/**
+	 * @param $component
+	 * @param $params
+	 *
+	 * @return string
+	 */
 	public function admin_ajax_settings( $component, $params ) {
 
 		if ( ! isset( $this->components[ $component ] ) ) {

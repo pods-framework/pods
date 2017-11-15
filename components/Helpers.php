@@ -22,6 +22,9 @@ if ( class_exists( 'Pods_Helpers' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Helpers
+ */
 class Pods_Helpers extends PodsComponent {
 
 	/**
@@ -91,6 +94,11 @@ class Pods_Helpers extends PodsComponent {
 		}
 	}
 
+	/**
+	 * @param $post_types
+	 *
+	 * @return array
+	 */
 	public function disable_builder_layout( $post_types ) {
 
 		$post_types[] = $this->object_type;
@@ -155,6 +163,12 @@ class Pods_Helpers extends PodsComponent {
 	 * Fix filters, specifically removing balanceTags
 	 *
 	 * @since 2.0.1
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -165,6 +179,11 @@ class Pods_Helpers extends PodsComponent {
 	 * Remove unused row actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 * @param $post
+	 *
+	 * @return
 	 */
 	public function remove_row_actions( $actions, $post ) {
 
@@ -194,6 +213,10 @@ class Pods_Helpers extends PodsComponent {
 	 * Remove unused bulk actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 *
+	 * @return
 	 */
 	public function remove_bulk_actions( $actions ) {
 
@@ -208,6 +231,12 @@ class Pods_Helpers extends PodsComponent {
 	 * Clear cache on save
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -235,6 +264,11 @@ class Pods_Helpers extends PodsComponent {
 	 * Change post title placeholder text
 	 *
 	 * @since 2.0
+	 *
+	 * @param $text
+	 * @param $post
+	 *
+	 * @return string|void
 	 */
 	public function set_title_text( $text, $post ) {
 

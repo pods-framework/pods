@@ -2361,6 +2361,9 @@ class PodsUI {
 
 	}
 
+	/**
+	 * @param null $export_type
+	 */
 	public function export( $export_type = null ) {
 
 		if ( empty( $export_type ) ) {
@@ -2456,6 +2459,8 @@ class PodsUI {
 	 *
 	 * @param null|array  $params
 	 * @param null|string $action
+	 *
+	 * @return array|mixed|void
 	 */
 	public function get_params( $params = null, $action = null ) {
 
@@ -2587,9 +2592,11 @@ class PodsUI {
 	}
 
 	/**
-	 * @param bool $full Whether to get ALL data or use pagination
+	 * @param null $params
 	 *
 	 * @return bool
+	 * @internal param bool $full Whether to get ALL data or use pagination
+	 *
 	 */
 	public function get_data( $params = null ) {
 
@@ -2711,6 +2718,9 @@ class PodsUI {
 	}
 
 	/**
+	 * @param int  $counter
+	 * @param null $method
+	 *
 	 * @return array
 	 */
 	public function get_row( &$counter = 0, $method = null ) {
@@ -4821,6 +4831,12 @@ class PodsUI {
 		return $exclusion;
 	}
 
+	/**
+	 * @param string $action
+	 * @param null   $row
+	 *
+	 * @return bool
+	 */
 	public function restricted( $action = 'edit', $row = null ) {
 
 		$restricted = false;

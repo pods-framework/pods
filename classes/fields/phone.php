@@ -49,10 +49,10 @@ class PodsField_Phone extends PodsField {
 
 	/**
 	 * Add options and set defaults to
+	 * @return array
+	 * @internal param array $options
 	 *
-	 * @param array $options
-	 *
-	 * @since 2.0
+	 * @since    2.0
 	 */
 	public function options() {
 
@@ -197,6 +197,9 @@ class PodsField_Phone extends PodsField {
 	 * @param array  $pod
 	 * @param int    $id
 	 *
+	 * @param null   $params
+	 *
+	 * @return array|bool|mixed|string
 	 * @since 2.0
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -238,6 +241,7 @@ class PodsField_Phone extends PodsField {
 	 * @param object $params
 	 *
 	 * @since 2.0
+	 * @return mixed|string
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 

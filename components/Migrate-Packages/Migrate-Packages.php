@@ -21,6 +21,9 @@ if ( class_exists( 'Pods_Migrate_Packages' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Migrate_Packages
+ */
 class Pods_Migrate_Packages extends PodsComponent {
 
 	/**
@@ -46,6 +49,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 * Build admin area
 	 *
 	 * @param $options
+	 *
+	 * @param $component
 	 *
 	 * @since 2.0
 	 */

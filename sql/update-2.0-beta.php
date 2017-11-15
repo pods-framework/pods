@@ -332,6 +332,10 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
  *
  * ===================================
  */
+/**
+ * @param $id
+ * @param $options
+ */
 function pods_2_beta_migrate_type( $id, $options ) {
 
 	global $wpdb;
@@ -348,6 +352,9 @@ function pods_2_beta_migrate_type( $id, $options ) {
 	}
 }
 
+/**
+ * @return array
+ */
 function pods_2_alpha_migrate_pods() {
 
 	$api = pods_api();
@@ -424,6 +431,9 @@ function pods_2_alpha_migrate_pods() {
 	return $pod_ids;
 }
 
+/**
+ * @return array
+ */
 function pods_2_alpha_migrate_helpers() {
 
 	$api = pods_api();
@@ -451,6 +461,9 @@ function pods_2_alpha_migrate_helpers() {
 	return $helper_ids;
 }
 
+/**
+ * @return array
+ */
 function pods_2_alpha_migrate_pages() {
 
 	$api = pods_api();
@@ -477,6 +490,9 @@ function pods_2_alpha_migrate_pages() {
 	return $page_ids;
 }
 
+/**
+ * @return array
+ */
 function pods_2_alpha_migrate_templates() {
 
 	$api = pods_api();

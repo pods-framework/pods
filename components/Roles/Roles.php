@@ -21,6 +21,9 @@ if ( class_exists( 'Pods_Roles' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Roles
+ */
 class Pods_Roles extends PodsComponent {
 
 	/**
@@ -141,6 +144,9 @@ class Pods_Roles extends PodsComponent {
 		pods_ui( $ui );
 	}
 
+	/**
+	 * @param $obj
+	 */
 	public function admin_add( $obj ) {
 
 		global $wp_roles;
@@ -156,6 +162,12 @@ class Pods_Roles extends PodsComponent {
 		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
+	/**
+	 * @param $duplicate
+	 * @param $obj
+	 *
+	 * @return mixed
+	 */
 	public function admin_edit( $duplicate, $obj ) {
 
 		global $wp_roles;
@@ -187,6 +199,12 @@ class Pods_Roles extends PodsComponent {
 		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
+	/**
+	 * @param $id
+	 * @param $obj
+	 *
+	 * @return mixed
+	 */
 	public function admin_delete( $id, $obj ) {
 
 		global $wp_roles;
@@ -398,6 +416,9 @@ class Pods_Roles extends PodsComponent {
 		return $avail_roles[ $role ];
 	}
 
+	/**
+	 * @return array|mixed|void
+	 */
 	public function get_capabilities() {
 
 		global $wp_roles;
@@ -436,6 +457,9 @@ class Pods_Roles extends PodsComponent {
 		return $capabilities;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_wp_capabilities() {
 
 		$defaults = array(
@@ -493,6 +517,9 @@ class Pods_Roles extends PodsComponent {
 		return $defaults;
 	}
 
+	/**
+	 * @return array|mixed|void
+	 */
 	public function get_default_capabilities() {
 
 		$capabilities = array(
@@ -507,6 +534,11 @@ class Pods_Roles extends PodsComponent {
 		return $capabilities;
 	}
 
+	/**
+	 * @param $capabilities
+	 *
+	 * @return array
+	 */
 	public function remove_deprecated_capabilities( $capabilities ) {
 
 		$deprecated_capabilities = array(

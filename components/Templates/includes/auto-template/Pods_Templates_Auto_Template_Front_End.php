@@ -10,6 +10,9 @@ if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
  */
 class Pods_Templates_Auto_Template_Front_End {
 
+	/**
+	 * Pods_Templates_Auto_Template_Front_End constructor.
+	 */
 	public function __construct() {
 
 		if ( ! is_admin() ) {

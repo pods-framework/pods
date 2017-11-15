@@ -22,6 +22,9 @@ if ( class_exists( 'Pods_Component_I18n' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Component_I18n
+ */
 class Pods_Component_I18n extends PodsComponent {
 
 	public $settings = array();
@@ -947,6 +950,9 @@ class Pods_Component_I18n extends PodsComponent {
 		return '';
 	}
 
+	/**
+	 * @return mixed|void
+	 */
 	public function get_translatable_fields() {
 
 		return apply_filters( 'pods_translatable_fields', $this->translatable_fields );

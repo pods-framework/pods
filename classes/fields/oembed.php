@@ -176,11 +176,12 @@ class PodsField_OEmbed extends PodsField {
 	 * @param mixed  $value
 	 * @param string $name
 	 * @param array  $options
-	 * @param array  $fields
 	 * @param array  $pod
 	 * @param int    $id
 	 *
-	 * @since 2.0
+	 * @return false|mixed|null|string
+	 * @internal param array $fields
+	 * @since    2.0
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 

@@ -206,6 +206,11 @@ class PodsArray implements ArrayAccess {
 	 * Mapping >> offsetSet
 	 *
 	 * @since 2.0
+	 *
+	 * @param $offset
+	 * @param $value
+	 *
+	 * @return mixed|void
 	 */
 	public function __set( $offset, $value ) {
 
@@ -216,6 +221,10 @@ class PodsArray implements ArrayAccess {
 	 * Mapping >> offsetGet
 	 *
 	 * @since 2.0
+	 *
+	 * @param $offset
+	 *
+	 * @return mixed|null
 	 */
 	public function __get( $offset ) {
 
@@ -226,6 +235,10 @@ class PodsArray implements ArrayAccess {
 	 * Mapping >> offsetExists
 	 *
 	 * @since 2.0
+	 *
+	 * @param $offset
+	 *
+	 * @return bool
 	 */
 	public function __isset( $offset ) {
 
@@ -236,6 +249,8 @@ class PodsArray implements ArrayAccess {
 	 * Mapping >> offsetUnset
 	 *
 	 * @since 2.0
+	 *
+	 * @param $offset
 	 */
 	public function __unset( $offset ) {
 

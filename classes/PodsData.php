@@ -3417,6 +3417,10 @@ class PodsData {
 	 * Get the complete sql
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $sql
+	 *
+	 * @return mixed|string|void
 	 */
 	public function get_sql( $sql ) {
 

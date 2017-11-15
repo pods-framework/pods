@@ -13,6 +13,12 @@ class Bug_4097 extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	protected $pod_id;
 
+	/**
+	 * @param string $storage
+	 * @param string $type
+	 *
+	 * @return string
+	 */
 	public function setup_pod( $storage = 'meta', $type = 'post_type' ) {
 
 		$pod_name     = $this->pod_name . '_' . substr( $storage, 2 ) . '_' . substr( $type, 2 );
@@ -47,6 +53,10 @@ class Bug_4097 extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		}
 	}
 
+	/**
+	 * @param $type
+	 * @param $storage
+	 */
 	public function run_test( $type, $storage ) {
 
 		$pod_name = $this->setup_pod( $type, $storage );

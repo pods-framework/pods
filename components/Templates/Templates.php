@@ -29,6 +29,9 @@ new Pods_Templates_Auto_Template_Settings();
 
 Pods_Templates_Frontier::get_instance();
 
+/**
+ * Class Pods_Templates
+ */
 class Pods_Templates extends PodsComponent {
 
 	/**
@@ -118,6 +121,11 @@ class Pods_Templates extends PodsComponent {
 		add_filter( 'members_get_capabilities', array( $this, 'get_capabilities' ) );
 	}
 
+	/**
+	 * @param $caps
+	 *
+	 * @return array
+	 */
 	public function get_capabilities( $caps ) {
 
 		$caps = array_merge( $caps, array(
@@ -134,6 +142,11 @@ class Pods_Templates extends PodsComponent {
 		return $caps;
 	}
 
+	/**
+	 * @param $post_types
+	 *
+	 * @return array
+	 */
 	public function disable_builder_layout( $post_types ) {
 
 		$post_types[] = $this->object_type;
@@ -198,6 +211,12 @@ class Pods_Templates extends PodsComponent {
 	 * Fix filters, specifically removing balanceTags
 	 *
 	 * @since 2.0.1
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -208,6 +227,11 @@ class Pods_Templates extends PodsComponent {
 	 * Remove unused row actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 * @param $post
+	 *
+	 * @return
 	 */
 	public function remove_row_actions( $actions, $post ) {
 
@@ -237,6 +261,10 @@ class Pods_Templates extends PodsComponent {
 	 * Remove unused bulk actions
 	 *
 	 * @since 2.0.5
+	 *
+	 * @param $actions
+	 *
+	 * @return
 	 */
 	public function remove_bulk_actions( $actions ) {
 
@@ -251,6 +279,12 @@ class Pods_Templates extends PodsComponent {
 	 * Clear cache on save
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $data
+	 * @param null $pod
+	 * @param null $id
+	 * @param null $groups
+	 * @param null $post
 	 */
 	public function clear_cache( $data, $pod = null, $id = null, $groups = null, $post = null ) {
 
@@ -278,6 +312,11 @@ class Pods_Templates extends PodsComponent {
 	 * Change post title placeholder text
 	 *
 	 * @since 2.0
+	 *
+	 * @param $text
+	 * @param $post
+	 *
+	 * @return string|void
 	 */
 	public function set_title_text( $text, $post ) {
 
@@ -520,6 +559,7 @@ class Pods_Templates extends PodsComponent {
 	 * @param object $obj  The Pods object
 	 *
 	 * @since 1.8.5
+	 * @return mixed|string|void
 	 */
 	public static function do_template( $code, $obj = null ) {
 

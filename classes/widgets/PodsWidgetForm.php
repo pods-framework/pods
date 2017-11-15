@@ -31,6 +31,10 @@ class PodsWidgetForm extends WP_Widget {
 
 	}
 
+	/**
+	 * @param array $args
+	 * @param array $instance
+	 */
 	public function widget( $args, $instance ) {
 
 		extract( $args );
@@ -52,6 +56,12 @@ class PodsWidgetForm extends WP_Widget {
 		}
 	}
 
+	/**
+	 * @param array $new_instance
+	 * @param array $old_instance
+	 *
+	 * @return array
+	 */
 	public function update( $new_instance, $old_instance ) {
 
 		$instance              = $old_instance;
@@ -65,6 +75,9 @@ class PodsWidgetForm extends WP_Widget {
 		return $instance;
 	}
 
+	/**
+	 * @param array $instance
+	 */
 	public function form( $instance ) {
 
 		$title     = pods_var_raw( 'title', $instance, '' );

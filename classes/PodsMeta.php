@@ -379,6 +379,12 @@ class PodsMeta {
 		);
 	}
 
+	/**
+	 * @param $type
+	 * @param $pod
+	 *
+	 * @return array|bool|int
+	 */
 	public function register( $type, $pod ) {
 
 		$pod_type = $type;
@@ -419,6 +425,12 @@ class PodsMeta {
 		return false;
 	}
 
+	/**
+	 * @param $pod
+	 * @param $field
+	 *
+	 * @return array|bool|int
+	 */
 	public function register_field( $pod, $field ) {
 
 		if ( is_array( $pod ) && ! empty( $pod ) && ! isset( $pod['name'] ) ) {
@@ -474,6 +486,12 @@ class PodsMeta {
 		add_filter( 'cac/column/meta/value', array( $this, 'cpac_meta_value' ), 10, 3 );
 	}
 
+	/**
+	 * @param $meta_fields
+	 * @param $storage_model
+	 *
+	 * @return array
+	 */
 	public function cpac_meta_keys( $meta_fields, $storage_model ) {
 
 		$object_type = 'post_type';
@@ -523,6 +541,11 @@ class PodsMeta {
 		return $meta_fields;
 	}
 
+	/**
+	 * @param $post_types
+	 *
+	 * @return mixed
+	 */
 	public function cpac_post_types( $post_types ) {
 
 		// Remove internal Pods post types
@@ -535,6 +558,13 @@ class PodsMeta {
 		return $post_types;
 	}
 
+	/**
+	 * @param $meta
+	 * @param $id
+	 * @param $obj
+	 *
+	 * @return mixed|null
+	 */
 	public function cpac_meta_value( $meta, $id, $obj ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
@@ -603,6 +633,15 @@ class PodsMeta {
 		return $meta;
 	}
 
+	/**
+	 * @param $meta
+	 * @param $field_type
+	 * @param $field
+	 * @param $type
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public function cpac_meta_values( $meta, $field_type, $field, $type, $id ) {
 
 		$tableless_field_types = PodsForm::tableless_field_types();
@@ -835,6 +874,12 @@ class PodsMeta {
 		}//end if
 	}
 
+	/**
+	 * @param $type
+	 * @param $name
+	 *
+	 * @return array|bool|mixed|void
+	 */
 	public function object_get( $type, $name ) {
 
 		$object = self::$post_types;
@@ -1721,6 +1766,8 @@ class PodsMeta {
 	 * @param $term_id
 	 * @param $term_taxonomy_id
 	 * @param $taxonomy
+	 *
+	 * @return mixed
 	 */
 	public function save_taxonomy( $term_id, $term_taxonomy_id, $taxonomy ) {
 
@@ -2391,6 +2438,8 @@ class PodsMeta {
 	/**
 	 * @param $approved
 	 * @param $commentdata
+	 *
+	 * @return mixed
 	 */
 	public function validate_comment( $approved, $commentdata ) {
 
@@ -2451,6 +2500,8 @@ class PodsMeta {
 
 	/**
 	 * @param $comment_id
+	 *
+	 * @return mixed
 	 */
 	public function save_comment( $comment_id ) {
 
@@ -3352,6 +3403,11 @@ class PodsMeta {
 		return $_null;
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool|void
+	 */
 	public function delete_post( $id ) {
 
 		$post = get_post( $id );
@@ -3366,6 +3422,9 @@ class PodsMeta {
 		return $this->delete_object( 'post_type', $id, $post_type );
 	}
 
+	/**
+	 * @param $id
+	 */
 	public function delete_taxonomy( $id ) {
 
 		/**
@@ -3406,21 +3465,43 @@ class PodsMeta {
 
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_user( $id ) {
 
 		return $this->delete_object( 'user', $id );
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_comment( $id ) {
 
 		return $this->delete_object( 'comment', $id );
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 */
 	public function delete_media( $id ) {
 
 		return $this->delete_object( 'media', $id );
 	}
 
+	/**
+	 * @param      $type
+	 * @param      $id
+	 * @param null $name
+	 *
+	 * @return bool
+	 */
 	public function delete_object( $type, $id, $name = null ) {
 
 		if ( empty( $name ) ) {

@@ -388,11 +388,13 @@ function pods_strict( $include_debug = true ) {
 /**
  * Determine if Deprecated Mode is enabled
  *
- * @param bool $include_debug Whether to include strict mode
+ * @param bool $strict
  *
  * @return bool Whether Deprecated Mode is enabled
  *
- * @since 2.3.10
+ * @internal param bool $include_debug Whether to include strict mode
+ *
+ * @since    2.3.10
  */
 function pods_allow_deprecated( $strict = true ) {
 
@@ -515,6 +517,7 @@ function pods_help( $text, $url = null ) {
 /**
  * Check whether or not something is a specific version minimum and/or maximum
  *
+ * @param        $what
  * @param string $minimum_version Minimum version
  * @param string $comparison      Comparison operator
  * @param string $maximum_version Maximum version
@@ -1838,14 +1841,16 @@ function pods_register_type( $type, $name, $object = null ) {
 /**
  * Add a new Pod field outside of the DB
  *
- * @see   PodsMeta::register_field
+ * @see      PodsMeta::register_field
  *
- * @param string|array $pod    The pod name or array of pod names
- * @param string       $name   The name of the Pod
- * @param array        $object (optional) Pod array, including any 'fields' arrays
+ * @param string|array $pod  The pod name or array of pod names
+ * @param string       $name The name of the Pod
+ * @param null         $field
  *
- * @return array|boolean Field data or false if unsuccessful
- * @since 2.1
+ * @return array|bool Field data or false if unsuccessful
+ * @internal param array $object (optional) Pod array, including any 'fields' arrays
+ *
+ * @since    2.1
  */
 function pods_register_field( $pod, $name, $field = null ) {
 

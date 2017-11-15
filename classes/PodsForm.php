@@ -296,6 +296,12 @@ class PodsForm {
 	 * Used for field names and other places where only [a-z0-9_] is accepted
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $name
+	 * @param null $value
+	 * @param null $options
+	 *
+	 * @return mixed|void
 	 */
 	protected static function field_db( $name, $value = null, $options = null ) {
 
@@ -312,6 +318,12 @@ class PodsForm {
 
 	/**
 	 * Output a hidden field
+	 *
+	 * @param      $name
+	 * @param null $value
+	 * @param null $options
+	 *
+	 * @return mixed|void
 	 */
 	protected static function field_hidden( $name, $value = null, $options = null ) {
 
@@ -348,6 +360,7 @@ class PodsForm {
 	 *                                       cleaner.
 	 *
 	 * @since 3.0
+	 * @return string
 	 */
 	public static function submit_button( $text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null ) {
 
@@ -447,6 +460,11 @@ class PodsForm {
 	 * Output a field's attributes
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $attributes
+	 * @param null $name
+	 * @param null $type
+	 * @param null $options
 	 */
 	public static function attributes( $attributes, $name = null, $type = null, $options = null ) {
 
@@ -465,6 +483,11 @@ class PodsForm {
 	 * Output a field's data (for use with jQuery)
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $data
+	 * @param null $name
+	 * @param null $type
+	 * @param null $options
 	 */
 	public static function data( $data, $name = null, $type = null, $options = null ) {
 
@@ -489,6 +512,14 @@ class PodsForm {
 	 * Merge attributes and handle classes
 	 *
 	 * @since 2.0
+	 *
+	 * @param        $attributes
+	 * @param null   $name
+	 * @param null   $type
+	 * @param null   $options
+	 * @param string $classes
+	 *
+	 * @return array
 	 */
 	public static function merge_attributes( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
 
@@ -634,10 +665,11 @@ class PodsForm {
 	 *
 	 * @static
 	 *
-	 * @param $type
+	 * @param      $type
+	 *
+	 * @param null $options
 	 *
 	 * @return array|null
-	 *
 	 * @since 2.0
 	 */
 	public static function options_setup( $type = null, $options = null ) {
@@ -950,15 +982,17 @@ class PodsForm {
 	/**
 	 * Change the value of the field
 	 *
+	 * @param        $type
 	 * @param mixed  $value
 	 * @param string $name
 	 * @param array  $options
-	 * @param array  $fields
 	 * @param array  $pod
 	 * @param int    $id
 	 * @param array  $traverse
 	 *
-	 * @since 2.3
+	 * @return array|mixed|null|object
+	 * @internal param array $fields
+	 * @since    2.3
 	 */
 	public static function value( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
 
@@ -1008,15 +1042,17 @@ class PodsForm {
 	/**
 	 * Change the way the value of the field is displayed with Pods::get
 	 *
+	 * @param        $type
 	 * @param mixed  $value
 	 * @param string $name
 	 * @param array  $options
-	 * @param array  $fields
 	 * @param array  $pod
 	 * @param int    $id
 	 * @param array  $traverse
 	 *
-	 * @since 2.0
+	 * @return array|mixed|null|void
+	 * @internal param array $fields
+	 * @since    2.0
 	 */
 	public static function display( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
 
@@ -1135,6 +1171,7 @@ class PodsForm {
 	 * @static
 	 *
 	 * @since 2.0
+	 * @return bool|mixed|void
 	 */
 	public static function validate( $type, $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -1166,6 +1203,7 @@ class PodsForm {
 	 * @static
 	 *
 	 * @since 2.0
+	 * @return mixed
 	 */
 	public static function pre_save( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -1193,6 +1231,7 @@ class PodsForm {
 	 * @static
 	 *
 	 * @since 2.3
+	 * @return null
 	 */
 	public static function save( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -1219,6 +1258,7 @@ class PodsForm {
 	 * @static
 	 *
 	 * @since 2.3
+	 * @return null
 	 */
 	public static function delete( $type, $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -1247,6 +1287,7 @@ class PodsForm {
 	 * @static
 	 *
 	 * @since 2.0
+	 * @return bool
 	 */
 	public static function permission( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -1261,6 +1302,15 @@ class PodsForm {
 	 * Parse the default the value
 	 *
 	 * @since 2.0
+	 *
+	 * @param        $value
+	 * @param string $type
+	 * @param null   $name
+	 * @param null   $options
+	 * @param null   $pod
+	 * @param null   $id
+	 *
+	 * @return mixed|void
 	 */
 	public static function default_value( $value, $type = 'text', $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -1297,6 +1347,12 @@ class PodsForm {
 	 * Clean a value for use in class / id
 	 *
 	 * @since 2.0
+	 *
+	 * @param      $input
+	 * @param bool $noarray
+	 * @param bool $db_field
+	 *
+	 * @return mixed|string
 	 */
 	public static function clean( $input, $noarray = false, $db_field = false ) {
 
@@ -1433,15 +1489,14 @@ class PodsForm {
 
 	/**
 	 * Run a method from a Field Type's class
-	 *
-	 * @param string $field_type Field Type indentifier
-	 * @param string $method     Method name
-	 * @param mixed  $arg        More arguments
-	 *
 	 * @return mixed
-	 * @access public
+	 * @internal param string $field_type Field Type indentifier
+	 * @internal param string $method Method name
+	 * @internal param mixed $arg More arguments
+	 *
+	 * @access   public
 	 * @static
-	 * @since  2.0
+	 * @since    2.0
 	 */
 	public static function field_method() {
 

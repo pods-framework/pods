@@ -21,6 +21,9 @@ if ( class_exists( 'Pods_Migrate_CPTUI' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Migrate_CPTUI
+ */
 class Pods_Migrate_CPTUI extends PodsComponent {
 
 	/** @var array
@@ -80,6 +83,9 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
 	/**
 	 * Show the Admin
+	 *
+	 * @param $options
+	 * @param $component
 	 */
 	public function admin( $options, $component ) {
 
@@ -172,6 +178,10 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	 *
 	 *
 	 * @since 2.0
+	 *
+	 * @param $post_type
+	 *
+	 * @return bool|int|mixed
 	 */
 	private function migrate_post_type( $post_type ) {
 
@@ -264,6 +274,10 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 	 *
 	 *
 	 * @since 2.0
+	 *
+	 * @param $taxonomy
+	 *
+	 * @return bool|int|mixed
 	 */
 	private function migrate_taxonomy( $taxonomy ) {
 

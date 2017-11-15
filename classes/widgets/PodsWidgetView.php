@@ -33,6 +33,9 @@ class PodsWidgetView extends WP_Widget {
 
 	/**
 	 * Output of widget
+	 *
+	 * @param array $args
+	 * @param array $instance
 	 */
 	public function widget( $args, $instance ) {
 
@@ -55,7 +58,10 @@ class PodsWidgetView extends WP_Widget {
 	/**
 	 * Updates the new instance of widget arguments
 	 *
-	 * @returns array $instance Updated instance
+	 * @param array $new_instance
+	 * @param array $old_instance
+	 *
+	 * @return array $instance Updated instance
 	 */
 	public function update( $new_instance, $old_instance ) {
 
@@ -70,6 +76,10 @@ class PodsWidgetView extends WP_Widget {
 
 	/**
 	 * Widget Form
+	 *
+	 * @param array $instance
+	 *
+	 * @return string|void
 	 */
 	public function form( $instance ) {
 

@@ -9,6 +9,10 @@ require PODS_TEST_PLUGIN_DIR . '/components/Table-Storage.php';
 
 require PODS_TEST_PLUGIN_DIR . '/classes/fields/pick.php';
 
+/**
+ * Class Pods_UnitTestCase
+ * @package Pods_Unit_Tests
+ */
 class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 	/**
@@ -386,6 +390,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		parent::assertPreConditions();
 	}
 
+	/**
+	 * @param $url
+	 */
 	public function go_to( $url ) {
 
 		$GLOBALS['_SERVER']['REQUEST_URI'] = $url = str_replace( network_home_url(), '', $url );
@@ -457,11 +464,20 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		$GLOBALS['wp']->main( $parts['query'] );
 	}
 
+	/**
+	 * @param $user_id
+	 */
 	public function set_current_user( $user_id ) {
 
 		wp_set_current_user( $user_id );
 	}
 
+	/**
+	 * @param $class
+	 * @param $property
+	 *
+	 * @return mixed
+	 */
 	public function getReflectionPropertyValue( $class, $property ) {
 
 		$reflection = new \ReflectionProperty( $class, $property );
@@ -470,6 +486,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		return $reflection->getValue( $class );
 	}
 
+	/**
+	 * @param $class
+	 * @param $property
+	 * @param $value
+	 */
 	public function setReflectionPropertyValue( $class, $property, $value ) {
 
 		$reflection = new \ReflectionProperty( $class, $property );
@@ -478,6 +499,12 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		return $reflection->setValue( $class, $value );
 	}
 
+	/**
+	 * @param $class
+	 * @param $method
+	 *
+	 * @return mixed
+	 */
 	public function reflectionMethodInvoke( $class, $method ) {
 
 		$reflection = new \ReflectionMethod( $class, $method );
@@ -486,6 +513,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 		return $reflection->invoke( $class );
 	}
 
+	/**
+	 * @param $class
+	 * @param $method
+	 * @param $args
+	 *
+	 * @return mixed
+	 */
 	public function reflectionMethodInvokeArgs( $class, $method, $args ) {
 
 		$reflection = new \ReflectionMethod( $class, $method );

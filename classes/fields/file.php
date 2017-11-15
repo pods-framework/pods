@@ -840,6 +840,9 @@ class PodsField_File extends PodsField {
 	 * @param string $icon
 	 * @param string $name
 	 *
+	 * @param bool   $linked
+	 * @param null   $link
+	 *
 	 * @return string
 	 * @since      2.0
 	 *

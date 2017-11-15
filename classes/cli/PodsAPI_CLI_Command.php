@@ -10,6 +10,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --name=<name> --type=<type> --<field>=<value>
 	 * @subcommand add-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function add_pod( $args, $assoc_args ) {
 
@@ -33,6 +36,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --<field>=<value>
 	 * @subcommand save-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function save_pod( $args, $assoc_args ) {
 
@@ -52,6 +58,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --<field>=<value>
 	 * @subcommand duplicate-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function duplicate_pod( $args, $assoc_args ) {
 
@@ -71,6 +80,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --<field>=<value>
 	 * @subcommand reset-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function reset_pod( $args, $assoc_args ) {
 
@@ -89,6 +101,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --<field>=<value>
 	 * @subcommand delete-pod
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function delete_pod( $args, $assoc_args ) {
 
@@ -107,6 +122,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --component=<component>
 	 * @subcommand activate-component
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function activate_component( $args, $assoc_args ) {
 
@@ -135,6 +153,9 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis   --component=<component>
 	 * @subcommand deactivate-component
+	 *
+	 * @param $args
+	 * @param $assoc_args
 	 */
 	public function deactivate_component( $args, $assoc_args ) {
 

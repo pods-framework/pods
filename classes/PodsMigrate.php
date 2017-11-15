@@ -81,6 +81,9 @@ class PodsMigrate {
 		}
 	}
 
+	/**
+	 * @param $data
+	 */
 	public function set_data( $data ) {
 
 		$defaults = array(
@@ -98,6 +101,8 @@ class PodsMigrate {
 	 * @param array  $data      Array of data
 	 * @param string $type      Export Type (php, json, sv, xml)
 	 * @param string $delimiter Delimiter for export type 'sv'
+	 *
+	 * @return bool
 	 */
 	public function import( $data = null, $type = null, $delimiter = null ) {
 
@@ -123,6 +128,8 @@ class PodsMigrate {
 	/**
 	 * @param array  $data Array of data
 	 * @param string $type Export Type (php, json, sv, xml)
+	 *
+	 * @return bool
 	 */
 	public function import_pod_items( $data = null, $type = null ) {
 
@@ -633,6 +640,14 @@ class PodsMigrate {
 		return $this->built;
 	}
 
+	/**
+	 * @param        $item
+	 * @param        $column
+	 * @param int    $level
+	 * @param string $column_name
+	 *
+	 * @return string
+	 */
 	public function build_xml_level( $item, $column, $level = 2, $column_name = '' ) {
 
 		$column = pods_clean_name( $column, false, false );

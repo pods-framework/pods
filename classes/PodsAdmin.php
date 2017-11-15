@@ -1046,6 +1046,8 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod option tabs
 	 *
+	 * @param $pod
+	 *
 	 * @return array
 	 */
 	public function admin_setup_edit_tabs( $pod ) {
@@ -1126,6 +1128,8 @@ class PodsAdmin {
 
 	/**
 	 * Get list of Pod options
+	 *
+	 * @param $pod
 	 *
 	 * @return array
 	 */
@@ -2169,6 +2173,8 @@ class PodsAdmin {
 	/**
 	 * Get list of Pod field option tabs
 	 *
+	 * @param $pod
+	 *
 	 * @return array
 	 */
 	public function admin_setup_edit_field_tabs( $pod ) {
@@ -2198,6 +2204,8 @@ class PodsAdmin {
 
 	/**
 	 * Get list of Pod field options
+	 *
+	 * @param $pod
 	 *
 	 * @return array
 	 */
@@ -2443,10 +2451,10 @@ class PodsAdmin {
 	/**
 	 * Duplicate a pod
 	 *
-	 * @param $id
 	 * @param $obj
 	 *
 	 * @return mixed
+	 * @internal param $id
 	 */
 	public function admin_setup_duplicate( $obj ) {
 
@@ -2493,6 +2501,8 @@ class PodsAdmin {
 	 *
 	 * @param $obj
 	 *
+	 * @param $id
+	 *
 	 * @return mixed
 	 */
 	public function admin_setup_reset( $obj, $id ) {
@@ -2520,6 +2530,7 @@ class PodsAdmin {
 	 * @param PodsUI $obj
 	 *
 	 * @since 2.3.10
+	 * @return bool
 	 */
 	public function admin_setup_reset_restrict( $restricted, $restrict, $action, $row, $obj ) {
 

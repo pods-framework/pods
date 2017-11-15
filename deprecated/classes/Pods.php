@@ -61,6 +61,10 @@ class Pods_Deprecated {
 	 * Display HTML for all datatype fields
 	 *
 	 * @deprecated deprecated since 2.0
+	 *
+	 * @param null   $id
+	 * @param null   $public_fields
+	 * @param string $label
 	 */
 	public function showform( $id = null, $public_fields = null, $label = 'Save changes' ) {
 
@@ -364,6 +368,10 @@ class Pods_Deprecated {
 	 * Build public input form
 	 *
 	 * @deprecated deprecated since 2.0
+	 *
+	 * @param null   $fields
+	 * @param string $label
+	 * @param null   $thankyou_url
 	 */
 	public function publicForm( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
 
@@ -406,6 +414,8 @@ class Pods_Deprecated {
 	 * Build HTML for a single field
 	 *
 	 * @deprecated deprecated since 2.0
+	 *
+	 * @param $field
 	 */
 	public function build_field_html( $field ) {
 
@@ -439,6 +449,7 @@ class Pods_Deprecated {
 	 *
 	 * @since      1.2.0
 	 * @deprecated deprecated since version 2.0
+	 * @return array|mixed
 	 */
 	public function get_field( $name, $orderby = null ) {
 
@@ -491,6 +502,13 @@ class Pods_Deprecated {
 	 *
 	 * @since      1.x
 	 * @deprecated deprecated since version 2.0
+	 *
+	 * @param null $orderby
+	 * @param int  $rows_per_page
+	 * @param null $where
+	 * @param null $sql
+	 *
+	 * @return
 	 */
 	public function findRecords( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
 
@@ -570,6 +588,10 @@ class Pods_Deprecated {
 	 *
 	 * @since      1.x
 	 * @deprecated deprecated since version 2.0
+	 *
+	 * @param $id
+	 *
+	 * @return
 	 */
 	public function getRecordById( $id ) {
 
@@ -598,6 +620,10 @@ class Pods_Deprecated {
 	 * (Re)set the MySQL result pointer
 	 *
 	 * @deprecated deprecated since version 2.0
+	 *
+	 * @param int $row_number
+	 *
+	 * @return
 	 */
 	public function resetPointer( $row_number = 0 ) {
 
@@ -612,6 +638,8 @@ class Pods_Deprecated {
 	 * Display the pagination controls
 	 *
 	 * @deprecated deprecated since 2.0
+	 *
+	 * @param string $label
 	 */
 	public function getPagination( $label = 'Go to page:' ) {
 
@@ -631,6 +659,10 @@ class Pods_Deprecated {
 	 * Display the list filters
 	 *
 	 * @deprecated deprecated since 2.0
+	 *
+	 * @param null   $filters
+	 * @param string $label
+	 * @param string $action
 	 */
 	public function getFilters( $filters = null, $label = 'Filter', $action = '' ) {
 
@@ -654,9 +686,13 @@ class Pods_Deprecated {
 	/**
 	 * Run a helper within a Pod Page or WP Template
 	 *
-	 * @param string $helper The helper name
+	 * @param      $helper_name
+	 * @param null $value
+	 * @param null $name
 	 *
 	 * @return mixed Anything returned by the helper
+	 * @internal   param string $helper The helper name
+	 *
 	 * @since      1.2.0
 	 * @deprecated deprecated since version 2.0
 	 */
@@ -680,6 +716,11 @@ class Pods_Deprecated {
 	 * Display the page template
 	 *
 	 * @deprecated deprecated since version 2.0
+	 *
+	 * @param      $template_name
+	 * @param null $code
+	 *
+	 * @return
 	 */
 	public function showTemplate( $template_name, $code = null ) {
 

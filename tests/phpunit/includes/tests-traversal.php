@@ -5,6 +5,10 @@ namespace Pods_Unit_Tests;
 use Mockery;
 use Pods;
 
+/**
+ * Class Test_Traversal
+ * @package Pods_Unit_Tests
+ */
 class Test_Traversal extends Pods_UnitTestCase {
 
 	/**

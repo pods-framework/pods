@@ -4243,10 +4243,12 @@ class PodsAPI {
 	/**
 	 * Save relationships
 	 *
-	 * @param int       $id         ID of item
-	 * @param int|array $related_id ID or IDs to save
-	 * @param array     $pod        Pod data
-	 * @param array     $field      Field data
+	 * @param int   $id    ID of item
+	 * @param       $related_ids
+	 * @param array $pod   Pod data
+	 * @param array $field Field data
+	 *
+	 * @internal param array|int $related_id ID or IDs to save
 	 */
 	public function save_relationships( $id, $related_ids, $pod, $field ) {
 
@@ -4950,11 +4952,10 @@ class PodsAPI {
 	 * $params['id'] int The Pod ID
 	 * $params['name'] string The Pod name
 	 *
-	 * @param array $params An associative array of parameters
-	 * @param array $pod    Pod data
+	 * @param array      $params An associative array of parameters
+	 * @param array|bool $pod    Pod data
 	 *
 	 * @return bool
-	 *
 	 * @uses  pods_query
 	 * @uses  pods_cache_clear
 	 *
@@ -5545,12 +5546,12 @@ class PodsAPI {
 	 * Delete an object from tableless fields
 	 *
 	 * @param int    $id
-	 * @param string $type
+	 * @param        $object
 	 * @param string $name
 	 *
 	 * @return bool
-	 *
-	 * @since 2.3
+	 * @internal param string $type
+	 * @since    2.3
 	 */
 	public function delete_object_from_relationships( $id, $object, $name = null ) {
 
@@ -5777,6 +5778,8 @@ class PodsAPI {
 	 * $params['name'] string Pod name
 	 *
 	 * @param array $params An associative array of parameters
+	 *
+	 * @param null  $type
 	 *
 	 * @return bool True if exists
 	 *
@@ -8667,11 +8670,10 @@ class PodsAPI {
 	/**
 	 * Validate a package
 	 *
-	 * @param array|string $data   (optional) An associative array containing a package, or the json encoded package
-	 * @param bool         $output (optional)
+	 * @param array|bool|string $data   (optional) An associative array containing a package, or the json encoded package
+	 * @param bool              $output (optional)
 	 *
 	 * @return array|bool
-	 *
 	 * @since      1.9.0
 	 * @deprecated 2.0
 	 */
@@ -8918,6 +8920,8 @@ class PodsAPI {
 	 *
 	 * @param string $data The CSV input
 	 *
+	 * @param string $delimiter
+	 *
 	 * @return array
 	 * @since      1.7.1
 	 *
@@ -9096,6 +9100,10 @@ class PodsAPI {
 	 * Handle variables that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 *
+	 * @return null
 	 */
 	public function __get( $name ) {
 
@@ -9123,6 +9131,11 @@ class PodsAPI {
 	 * Handle methods that have been deprecated
 	 *
 	 * @since 2.0
+	 *
+	 * @param $name
+	 * @param $args
+	 *
+	 * @return mixed
 	 */
 	public function __call( $name, $args ) {
 

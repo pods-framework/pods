@@ -4,6 +4,10 @@ namespace Pods_Unit_Tests;
 
 use \WP_UnitTest_Factory_For_Thing;
 
+/**
+ * Class Pods_UnitTest_Factory
+ * @package Pods_Unit_Tests
+ */
 class Pods_UnitTest_Factory extends \WP_UnitTest_Factory {
 
 	/**
@@ -16,6 +20,9 @@ class Pods_UnitTest_Factory extends \WP_UnitTest_Factory {
 	 */
 	public $field;
 
+	/**
+	 * Pods_UnitTest_Factory constructor.
+	 */
 	public function __construct() {
 
 		parent::__construct();
@@ -24,8 +31,17 @@ class Pods_UnitTest_Factory extends \WP_UnitTest_Factory {
 	}
 }
 
+/**
+ * Class Pods_UnitTest_Factory_For_Pod
+ * @package Pods_Unit_Tests
+ */
 class Pods_UnitTest_Factory_For_Pod extends WP_UnitTest_Factory_For_Thing {
 
+	/**
+	 * Pods_UnitTest_Factory_For_Pod constructor.
+	 *
+	 * @param null $factory
+	 */
 	public function __construct( $factory = null ) {
 
 		parent::__construct( $factory );
@@ -36,22 +52,43 @@ class Pods_UnitTest_Factory_For_Pod extends WP_UnitTest_Factory_For_Thing {
 		);
 	}
 
+	/**
+	 * @param $args
+	 *
+	 * @return int
+	 */
 	public function create_object( $args ) {
 
 		return pods_api()->save_pod( $args );
 	}
 
+	/**
+	 * @param $post_id
+	 * @param $fields
+	 */
 	public function update_object( $post_id, $fields ) {
 		// not yet implemented
 	}
 
+	/**
+	 * @param $post_id
+	 */
 	public function get_object_by_id( $post_id ) {
 		// not yet implemented
 	}
 }
 
+/**
+ * Class Pods_UnitTest_Factory_For_Field
+ * @package Pods_Unit_Tests
+ */
 class Pods_UnitTest_Factory_For_Field extends WP_UnitTest_Factory_For_Thing {
 
+	/**
+	 * Pods_UnitTest_Factory_For_Field constructor.
+	 *
+	 * @param null $factory
+	 */
 	public function __construct( $factory = null ) {
 
 		parent::__construct( $factory );
@@ -62,14 +99,24 @@ class Pods_UnitTest_Factory_For_Field extends WP_UnitTest_Factory_For_Thing {
 		);
 	}
 
+	/**
+	 * @param $args
+	 */
 	public function create_object( $args ) {
 		// not yet implemented
 	}
 
+	/**
+	 * @param $post_id
+	 * @param $fields
+	 */
 	public function update_object( $post_id, $fields ) {
 		// not yet implemented
 	}
 
+	/**
+	 * @param $post_id
+	 */
 	public function get_object_by_id( $post_id ) {
 		// not yet implemented
 	}

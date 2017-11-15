@@ -71,6 +71,7 @@ class PodsAPI_Deprecated {
 	 * @param array $params An associative array of parameters
 	 *
 	 * @since 1.7.9
+	 * @return bool
 	 */
 	public function save_roles( $params ) {
 

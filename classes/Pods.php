@@ -450,8 +450,8 @@ class Pods implements Iterator {
 	/**
 	 * Return a field input for a specific field
 	 *
-	 * @param string|array $field Field name or Field data array
-	 * @param string       $field Input field name to use (overrides default name)
+	 * @param array|string $field Input field name to use (overrides default name)
+	 * @param null         $input_name
 	 * @param mixed        $value Current value to use
 	 *
 	 * @return string Field Input HTML
@@ -2134,11 +2134,13 @@ class Pods implements Iterator {
 	/**
 	 * Return the next item ID, loops at the first id to return the last
 	 *
-	 * @param int   $id
-	 * @param array $find_params
+	 * @param int  $id
+	 * @param null $params_override
 	 *
 	 * @return int
-	 * @since 2.0
+	 * @internal param array $find_params
+	 *
+	 * @since    2.0
 	 */
 	public function next_id( $id = null, $params_override = null ) {
 
@@ -3234,6 +3236,8 @@ class Pods implements Iterator {
 	 * @param array $fields (optional) Fields to export
 	 * @param int   $id     (optional) ID of the pod item to export
 	 *
+	 * @param null  $format
+	 *
 	 * @return array|bool Data array of the exported pod item
 	 *
 	 * @since 2.0
@@ -3542,16 +3546,17 @@ class Pods implements Iterator {
 	/**
 	 * Display the page template
 	 *
-	 * @see   Pods_Templates::template
+	 * @see      Pods_Templates::template
 	 *
-	 * @param string $template   The template name
+	 * @param        $template_name
 	 * @param string $code       Custom template code to use instead
 	 * @param bool   $deprecated Whether to use deprecated functionality based on old function usage
 	 *
 	 * @return mixed Template output
 	 *
-	 * @since 2.0
-	 * @link  http://pods.io/docs/template/
+	 * @internal param string $template The template name
+	 * @since    2.0
+	 * @link     http://pods.io/docs/template/
 	 */
 	public function template( $template_name, $code = null, $deprecated = false ) {
 
@@ -3841,11 +3846,12 @@ class Pods implements Iterator {
 	 * Replace magic tags with their values
 	 *
 	 * @param string $code The content to evaluate
-	 * @param object $obj  The Pods object
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *
-	 * @since 2.0
+	 * @internal param object $obj The Pods object
+	 *
+	 * @since    2.0
 	 */
 	public function do_magic_tags( $code ) {
 
@@ -3871,11 +3877,12 @@ class Pods implements Iterator {
 	 * Replace magic tags with their values
 	 *
 	 * @param string $tag The magic tag to process
-	 * @param object $obj The Pods object
 	 *
 	 * @return string Code with Magic Tags evaluated
 	 *
-	 * @since 2.0.2
+	 * @internal param object $obj The Pods object
+	 *
+	 * @since    2.0.2
 	 */
 	private function process_magic_tags( $tag ) {
 

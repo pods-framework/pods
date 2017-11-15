@@ -19,6 +19,9 @@ if ( class_exists( 'Pods_Advanced_Relationships' ) ) {
 	return;
 }
 
+/**
+ * Class Pods_Advanced_Relationships
+ */
 class Pods_Advanced_Relationships extends PodsComponent {
 
 	/**

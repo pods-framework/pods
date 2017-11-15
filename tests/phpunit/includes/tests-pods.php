@@ -12,6 +12,10 @@ if ( ! class_exists( 'Pods' ) ) {
 	require_once PODS_TEST_PLUGIN_DIR . '/classes/Pods.php';
 }
 
+/**
+ * Class Test_Pods
+ * @package Pods_Unit_Tests
+ */
 class Test_Pods extends Pods_UnitTestCase {
 
 	/**

@@ -349,6 +349,11 @@ class PodsInit {
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
 
+			/**
+			 * @param $classes
+			 *
+			 * @return string
+			 */
 			function add_classes_to_body_class( $classes ) {
 
 				$classes .= 'pods-modal-window';
@@ -419,6 +424,8 @@ class PodsInit {
 
 	/**
 	 * Register Post Types and Taxonomies
+	 *
+	 * @param bool $force
 	 */
 	public function setup_content_types( $force = false ) {
 
@@ -1299,7 +1306,10 @@ class PodsInit {
 	}
 
 	/**
+	 * @param null $current
+	 * @param null $last
 	 *
+	 * @return bool
 	 */
 	public function needs_upgrade( $current = null, $last = null ) {
 

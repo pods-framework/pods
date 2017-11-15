@@ -1,10 +1,16 @@
 <?php
 
+/**
+ * Class Pods_I18n_WPML
+ */
 class Pods_I18n_WPML {
 
 	public $languages = array();
 	public $textdomain = 'sitepress-multilingual-cms';
 
+	/**
+	 * Pods_I18n_WPML constructor.
+	 */
 	public function __construct() {
 
 		$languages = apply_filters( 'wpml_active_languages', array() );
@@ -25,6 +31,11 @@ class Pods_I18n_WPML {
 
 	}
 
+	/**
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
 	public function pods_component_i18n_admin_data( $data ) {
 
 		foreach ( $data as $lang => $field_data ) {
@@ -38,6 +49,12 @@ class Pods_I18n_WPML {
 		return $data;
 	}
 
+	/**
+	 * @param $fields
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
 	public function pods_component_i18n_admin_ui_fields( $fields, $data ) {
 
 		$fields['manage']['wpml'] = array(

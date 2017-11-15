@@ -2,6 +2,11 @@
 
 add_action( 'wp_ajax_pq_loadpod', 'pq_loadpod' );
 
+/**
+ * @param bool $podname
+ *
+ * @return array
+ */
 function pq_loadpod( $podname = false ) {
 
 	if ( ! pods_is_admin() ) {
@@ -27,6 +32,13 @@ function pq_loadpod( $podname = false ) {
 	return $fields;
 }
 
+/**
+ * @param        $pod_name
+ * @param string $prefix
+ * @param array  $pods_visited
+ *
+ * @return array
+ */
 function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array() ) {
 
 	$fields = array();

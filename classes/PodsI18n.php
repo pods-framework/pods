@@ -146,35 +146,35 @@ final class PodsI18n {
 
 		return array(
 
-			'%s is required.' => __( '%s is required.', 'pods' ),
+			'%s is required.'                              => __( '%s is required.', 'pods' ),
 
-			'This field is required.' => __( 'This field is required.', 'pods' ),
+			'This field is required.'                      => __( 'This field is required.', 'pods' ),
 
-			'Add' => __( 'Add', 'pods' ),
+			'Add'                                          => __( 'Add', 'pods' ),
 
-			'Add New' => __( 'Add New', 'pods' ),
+			'Add New'                                      => __( 'Add New', 'pods' ),
 
-			'Add New Record' => __( 'Add New Record', 'pods' ),
+			'Add New Record'                               => __( 'Add New Record', 'pods' ),
 
-			'Added!' => __( 'Added!', 'pods' ),
+			'Added!'                                       => __( 'Added!', 'pods' ),
 
 			'Added! Choose another or <a href="#">close this box</a>' => __( 'Added! Choose another or <a href="#">close this box</a>', 'pods' ),
 
-			'Copy' => __( 'Copy', 'pods' ),
+			'Copy'                                         => __( 'Copy', 'pods' ),
 
-			'Reorder' => __( 'Reorder', 'pods' ),
+			'Reorder'                                      => __( 'Reorder', 'pods' ),
 
-			'Remove' => __( 'Remove', 'pods' ),
+			'Remove'                                       => __( 'Remove', 'pods' ),
 
-			'Deselect' => __( 'Deselect', 'pods' ),
+			'Deselect'                                     => __( 'Deselect', 'pods' ),
 
-			'Download' => __( 'Download', 'pods' ),
+			'Download'                                     => __( 'Download', 'pods' ),
 
-			'View' => __( 'View', 'pods' ),
+			'View'                                         => __( 'View', 'pods' ),
 
-			'Edit' => __( 'Edit', 'pods' ),
+			'Edit'                                         => __( 'Edit', 'pods' ),
 
-			'Search' => __( 'Search', 'pods' ),
+			'Search'                                       => __( 'Search', 'pods' ),
 
 			'Navigating away from this page will discard any changes you have made.' => __( 'Navigating away from this page will discard any changes you have made.', 'pods' ),
 
@@ -182,21 +182,21 @@ final class PodsI18n {
 
 			'Unable to process request, please try again.' => __( 'Unable to process request, please try again.', 'pods' ),
 
-			'Error uploading file: ' => __( 'Error uploading file: ', 'pods' ),
+			'Error uploading file: '                       => __( 'Error uploading file: ', 'pods' ),
 
-			'Allowed Files' => __( 'Allowed Files', 'pods' ),
+			'Allowed Files'                                => __( 'Allowed Files', 'pods' ),
 
-			'The Title' => __( 'The Title', 'pods' ),
+			'The Title'                                    => __( 'The Title', 'pods' ),
 
-			'Select from existing' => __( 'Select from existing', 'pods' ),
+			'Select from existing'                         => __( 'Select from existing', 'pods' ),
 
-			'You can only select' => __( 'You can only select', 'pods' ),
+			'You can only select'                          => __( 'You can only select', 'pods' ),
 
-			'%s item' => __( '%s item', 'pods' ),
+			'%s item'                                      => __( '%s item', 'pods' ),
 
-			'%s items' => __( '%s items', 'pods' ),
+			'%s items'                                     => __( '%s items', 'pods' ),
 
-			'Icon' => __( 'Icon', 'pods' ),
+			'Icon'                                         => __( 'Icon', 'pods' ),
 
 		);
 
@@ -216,9 +216,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language( $args = array() ) {
 
-		$args = wp_parse_args( $args, array(
-			'refresh' => false,
-		) );
+		$args = wp_parse_args(
+			$args, array(
+				'refresh' => false,
+			)
+		);
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language ) ) {
 			return self::$current_language;
@@ -244,9 +246,11 @@ final class PodsI18n {
 	 */
 	public function get_current_language_data( $args = array() ) {
 
-		$args = wp_parse_args( $args, array(
-			'refresh' => false,
-		) );
+		$args = wp_parse_args(
+			$args, array(
+				'refresh' => false,
+			)
+		);
 
 		if ( ! $args['refresh'] && ! empty( self::$current_language_data ) ) {
 			return self::$current_language_data;
@@ -293,6 +297,7 @@ final class PodsI18n {
 				 * Polylang support
 				 * Get the current user's preferred language.
 				 * This is a user meta setting that will overwrite the language returned from pll_current_language()
+				 *
 				 * @see polylang/admin/admin-base.php -> init_user()
 				 */
 				$current_language = get_user_meta( get_current_user_id(), 'pll_filter_content', true );
@@ -326,7 +331,7 @@ final class PodsI18n {
 							// Overwrite the current language if this is a translatable post_type
 							$current_language = pll_get_post_language( (int) $_GET['post'] );
 						}
-					}
+					}//end if
 
 					/**
 					 * Polylang support (1.0.1+)
@@ -367,7 +372,7 @@ final class PodsI18n {
 							// Overwrite the current language if this is a translatable taxonomy
 							$current_language = pll_get_term_language( (int) $_GET['tag_ID'] );
 						}
-					}
+					}//end if
 
 					/**
 					 * Polylang support (1.0.1+)
@@ -377,9 +382,9 @@ final class PodsI18n {
 					if ( $translator == 'PLL' && ! empty( $_GET['new_lang'] ) && ! empty( $_GET['taxonomy'] ) && pll_is_translated_taxonomy( sanitize_text_field( $_GET['taxonomy'] ) ) ) {
 						$current_language = $_GET['new_lang'];
 					}
-				}
-			}
-		}
+				}//end if
+			}//end if
+		}//end if
 
 		$current_language = pods_sanitize( sanitize_text_field( $current_language ) );
 
@@ -419,8 +424,8 @@ final class PodsI18n {
 					$lang_data['tl_tt_id'] = (int) $current_language_t->tl_term_taxonomy_id;
 					$lang_data['term']     = $current_language_t;
 				}
-			}
-		}
+			}//end if
+		}//end if
 
 		/**
 		 * Override language data used by Pods.

@@ -61,8 +61,8 @@ class PodsInit {
 	 * @var array
 	 */
 	static $upgrades = array(
-		'1.0.0' => '2.0.0'
-		//'2.0.0' => '2.1.0'
+		'1.0.0' => '2.0.0',
+		// '2.0.0' => '2.1.0'
 	);
 
 	/**
@@ -204,7 +204,7 @@ class PodsInit {
 			'pods_files_require_login_cap'  => '',
 			'pods_disable_file_upload'      => 0,
 			'pods_upload_require_login'     => 1,
-			'pods_upload_require_login_cap' => ''
+			'pods_upload_require_login_cap' => '',
 		);
 
 		foreach ( $security_settings as $security_setting => $setting ) {
@@ -225,17 +225,19 @@ class PodsInit {
 				if ( 0 < strlen( $security_settings[ $security_setting . '_cap' ] ) ) {
 					$setting = $security_settings[ $security_setting . '_cap' ];
 				}
-			} elseif ( in_array( $security_setting, array(
-				'pods_files_require_login_cap',
-				'pods_upload_require_login_cap'
-			) ) ) {
+			} elseif ( in_array(
+				$security_setting, array(
+					'pods_files_require_login_cap',
+					'pods_upload_require_login_cap',
+				)
+			) ) {
 				continue;
 			}
 
 			if ( ! defined( strtoupper( $security_setting ) ) ) {
 				define( strtoupper( $security_setting ), $setting );
 			}
-		}
+		}//end foreach
 
 		$this->register_pods();
 
@@ -259,13 +261,15 @@ class PodsInit {
 			wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.2' );
 		}
 
-		wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
-			'jquery',
-			'pods-dfv',
-			'pods-i18n',
-			'pods-json',
-			'jquery-qtip2'
-		), PODS_VERSION, true );
+		wp_register_script(
+			'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
+				'jquery',
+				'pods-dfv',
+				'pods-i18n',
+				'pods-json',
+				'jquery-qtip2',
+			), PODS_VERSION, true
+		);
 
 		wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
@@ -283,22 +287,26 @@ class PodsInit {
 		}
 
 		if ( ! wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
-			wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
-				'jquery',
-				'jquery-ui-core',
-				'jquery-ui-datepicker',
-				'jquery-ui-slider',
-				'jquery-ui-slideraccess',
-			), '1.6.3' );
+			wp_register_script(
+				'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.js', array(
+					'jquery',
+					'jquery-ui-core',
+					'jquery-ui-datepicker',
+					'jquery-ui-slider',
+					'jquery-ui-slideraccess',
+				), '1.6.3'
+			);
 		}
 		if ( ! wp_style_is( 'jquery-ui-timepicker', 'registered' ) ) {
 			wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/js/timepicker/jquery-ui-timepicker-addon.min.css', array(), '1.6.3' );
 		}
 
-		wp_register_script( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array(
-			'jquery',
-			'pods-i18n'
-		), '1.0.1' );
+		wp_register_script(
+			'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.js", array(
+				'jquery',
+				'pods-i18n',
+			), '1.0.1'
+		);
 		wp_register_style( 'pods-select2', PODS_URL . "ui/js/selectWoo/selectWoo{$maybe_min}.css", array(), '1.0.1' );
 
 		$register_handlebars = apply_filters( 'pods_script_register_handlebars', true );
@@ -318,21 +326,25 @@ class PodsInit {
 
 		// Marionette dependencies for MV fields
 		wp_register_script( 'backbone.radio', PODS_URL . 'ui/js/marionette/backbone.radio.js', array( 'backbone' ), '2.0.0', true );
-		wp_register_script( 'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array(
-			'backbone',
-			'backbone.radio'
-		), '3.1.0', true );
+		wp_register_script(
+			'marionette', PODS_URL . 'ui/js/marionette/backbone.marionette.js', array(
+				'backbone',
+				'backbone.radio',
+			), '3.1.0', true
+		);
 
 		// MV stuff
-		wp_register_script( 'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-sortable',
-			'pods-i18n',
-			'marionette',
-			'media-views',
-			'media-models'
-		), PODS_VERSION, true );
+		wp_register_script(
+			'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-sortable',
+				'pods-i18n',
+				'marionette',
+				'media-views',
+				'media-models',
+			), PODS_VERSION, true
+		);
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
@@ -371,7 +383,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => false,
 			'supports'        => array( 'title', 'author' ),
-			'menu_icon'       => 'dashicons-pods'
+			'menu_icon'       => 'dashicons-pods',
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -389,7 +401,7 @@ class PodsInit {
 			'has_archive'     => false,
 			'hierarchical'    => true,
 			'supports'        => array( 'title', 'editor', 'author' ),
-			'menu_icon'       => 'dashicons-pods'
+			'menu_icon'       => 'dashicons-pods',
 		);
 
 		$args = self::object_label_fix( $args, 'post_type' );
@@ -414,8 +426,8 @@ class PodsInit {
 			return;
 		}
 
-		require_once( PODS_DIR . 'classes/PodsRESTHandlers.php' );
-		require_once( PODS_DIR . 'classes/PodsRESTFields.php' );
+		require_once PODS_DIR . 'classes/PodsRESTHandlers.php';
+		require_once PODS_DIR . 'classes/PodsRESTFields.php';
 
 		$post_types = PodsMeta::$post_types;
 		$taxonomies = PodsMeta::$taxonomies;
@@ -444,7 +456,7 @@ class PodsInit {
 			$reserved_query_vars = array(
 				'post_type',
 				'taxonomy',
-				'output'
+				'output',
 			);
 
 			if ( is_object( $wp_query ) ) {
@@ -453,7 +465,7 @@ class PodsInit {
 
 			$pods_cpt_ct = array(
 				'post_types' => array(),
-				'taxonomies' => array()
+				'taxonomies' => array(),
 			);
 
 			$pods_post_types      = $pods_taxonomies = array();
@@ -523,7 +535,7 @@ class PodsInit {
 					'comments'        => (boolean) pods_v( 'supports_comments', $post_type, false ),
 					'revisions'       => (boolean) pods_v( 'supports_revisions', $post_type, false ),
 					'page-attributes' => (boolean) pods_v( 'supports_page_attributes', $post_type, false ),
-					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false )
+					'post-formats'    => (boolean) pods_v( 'supports_post_formats', $post_type, false ),
 				);
 
 				// Custom Supported
@@ -578,7 +590,7 @@ class PodsInit {
 					'slug'       => pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', $post_type_name ), null, true ),
 					'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
 					'feeds'      => (boolean) pods_var( 'rewrite_feeds', $post_type, (boolean) pods_var( 'has_archive', $post_type, false ) ),
-					'pages'      => (boolean) pods_var( 'rewrite_pages', $post_type, true )
+					'pages'      => (boolean) pods_var( 'rewrite_pages', $post_type, true ),
 				);
 
 				if ( false !== $cpt_rewrite ) {
@@ -618,16 +630,16 @@ class PodsInit {
 					'menu_position'       => (int) pods_var( 'menu_position', $post_type, 0, null, true ),
 					'menu_icon'           => $menu_icon,
 					'capability_type'     => $capability_type,
-					//'capabilities' => $cpt_capabilities,
+					// 'capabilities' => $cpt_capabilities,
 					'map_meta_cap'        => (boolean) pods_var( 'capability_type_extra', $post_type, true ),
 					'hierarchical'        => (boolean) pods_var( 'hierarchical', $post_type, false ),
 					'supports'            => $cpt_supports,
-					//'register_meta_box_cb' => array($this, 'manage_meta_box'),
-					//'permalink_epmask' => EP_PERMALINK,
+					// 'register_meta_box_cb' => array($this, 'manage_meta_box'),
+					// 'permalink_epmask' => EP_PERMALINK,
 					'has_archive'         => pods_v( 'has_archive_slug', $post_type, (boolean) pods_v( 'has_archive', $post_type, false ), true ),
 					'rewrite'             => $cpt_rewrite,
 					'query_var'           => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, $post_type_name, null, true ) : false ),
-					'can_export'          => (boolean) pods_var( 'can_export', $post_type, true )
+					'can_export'          => (boolean) pods_var( 'can_export', $post_type, true ),
 				);
 
 				// REST API
@@ -689,7 +701,7 @@ class PodsInit {
 				} else {
 					$supported_taxonomies[ $post_type_name ] = $cpt_taxonomies;
 				}
-			}
+			}//end foreach
 
 			foreach ( $taxonomies as $taxonomy ) {
 				// Taxonomy Type exists already
@@ -737,7 +749,7 @@ class PodsInit {
 				$ct_rewrite_array = array(
 					'slug'         => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', $taxonomy_name ), null, true ),
 					'with_front'   => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
-					'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) )
+					'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) ),
 				);
 
 				if ( false !== $ct_rewrite ) {
@@ -746,6 +758,7 @@ class PodsInit {
 
 				/**
 				 * Default tax capabilities
+				 *
 				 * @see https://codex.wordpress.org/Function_Reference/register_taxonomy
 				 */
 				$capability_type  = pods_var( 'capability_type', $taxonomy, 'default' );
@@ -754,7 +767,7 @@ class PodsInit {
 				if ( 'custom' === $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
 					if ( ! empty( $capability_type ) && 'default' !== $capability_type ) {
-						$capability_type        .= '_term';
+						$capability_type       .= '_term';
 						$capability_type_plural = $capability_type . 's';
 						$tax_capabilities       = array(
 							// Singular
@@ -782,9 +795,9 @@ class PodsInit {
 					'show_tagcloud_in_edit' => (boolean) pods_var( 'show_tagcloud_in_edit', $taxonomy, (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ) ),
 					'show_in_quick_edit'    => (boolean) pods_var( 'show_in_quick_edit', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
 					'hierarchical'          => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
-					//'capability_type'       => $capability_type,
+					// 'capability_type'       => $capability_type,
 					'capabilities'          => $tax_capabilities,
-					//'map_meta_cap'          => (boolean) pods_var( 'capability_type_extra', $taxonomy, true ),
+					// 'map_meta_cap'          => (boolean) pods_var( 'capability_type_extra', $taxonomy, true ),
 					'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
 					'query_var'             => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, $taxonomy_name, null, true ) : false ),
 					'rewrite'               => $ct_rewrite,
@@ -843,7 +856,7 @@ class PodsInit {
 				} else {
 					$supported_post_types[ $taxonomy_name ] = $ct_post_types;
 				}
-			}
+			}//end foreach
 
 			$pods_post_types = apply_filters( 'pods_wp_post_types', $pods_post_types );
 			$pods_taxonomies = apply_filters( 'pods_wp_taxonomies', $pods_taxonomies );
@@ -860,7 +873,7 @@ class PodsInit {
 
 				$pods_cpt_ct['taxonomies'][ $taxonomy ] = array(
 					'post_types' => $ct_post_types,
-					'options'    => $options
+					'options'    => $options,
 				);
 			}
 
@@ -875,7 +888,7 @@ class PodsInit {
 			$pods_cpt_ct['post_format_post_types'] = $post_format_post_types;
 
 			pods_transient_set( 'pods_wp_cpt_ct', $pods_cpt_ct );
-		}
+		}//end if
 
 		foreach ( $pods_cpt_ct['taxonomies'] as $taxonomy => $options ) {
 			if ( isset( self::$content_types_registered['taxonomies'] ) && in_array( $taxonomy, self::$content_types_registered['taxonomies'] ) ) {
@@ -889,6 +902,7 @@ class PodsInit {
 
 			/**
 			 * Hide tagcloud compatibility
+			 *
 			 * @todo check https://core.trac.wordpress.org/ticket/36964
 			 * @see  wp-admin/edit-tags.php L389
 			 */
@@ -937,7 +951,7 @@ class PodsInit {
 			}
 
 			self::$content_types_registered['taxonomies'][] = $taxonomy;
-		}
+		}//end foreach
 
 		foreach ( $pods_cpt_ct['post_types'] as $post_type => $options ) {
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type, self::$content_types_registered['post_types'] ) ) {
@@ -990,7 +1004,7 @@ class PodsInit {
 			}
 
 			self::$content_types_registered['post_types'][] = $post_type;
-		}
+		}//end foreach
 
 		// Handle existing post types / taxonomies settings (just REST for now)
 		global $wp_post_types, $wp_taxonomies;
@@ -1016,7 +1030,7 @@ class PodsInit {
 
 				new PodsRESTFields( $post_type_name );
 			}
-		}
+		}//end foreach
 
 		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_obj ) {
 			if ( isset( self::$content_types_registered['taxonomies'] ) && in_array( $taxonomy_name, self::$content_types_registered['taxonomies'] ) ) {
@@ -1039,7 +1053,7 @@ class PodsInit {
 
 				new PodsRESTFields( $taxonomy_name );
 			}
-		}
+		}//end foreach
 
 		if ( ! empty( PodsMeta::$user ) ) {
 			$pod = current( PodsMeta::$user );
@@ -1109,6 +1123,7 @@ class PodsInit {
 		 * Before 4.4, this filter is defined in wp-admin/includes/meta-boxes.php, $post parameter added in 4.0
 		 * there wasn't post parameter back in 3.8
 		 * Let's add $post in the filter as it won't hurt anyway.
+		 *
 		 * @since 2.6.8.1
 		 */
 		$preview_post_link = function_exists( 'get_preview_post_link' ) ? get_preview_post_link( $post ) : apply_filters( 'preview_post_link', add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ), $post );
@@ -1122,29 +1137,35 @@ class PodsInit {
 			$labels = $labels['labels'];
 
 			$messages[ $post_type['name'] ] = array(
-				1  => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
+				1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				2  => __( 'Custom field updated.', 'pods' ),
 				3  => __( 'Custom field deleted.', 'pods' ),
 				4  => sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] ),
 				/* translators: %s: date and time of the revision */
-				5  => isset( $_GET['revision'] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-				6  => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
+				5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels['singular_name'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+				6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels['singular_name'], esc_url( get_permalink( $post_ID ) ), $labels['view_item'] ),
 				7  => sprintf( __( '%s saved.', 'pods' ), $labels['singular_name'] ),
-				8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
-				9  => sprintf( __( '%s scheduled for: <strong>%s</strong>. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], // translators: Publish box date format, see http://php.net/date
-					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels['singular_name'] ),
-				10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] )
+				8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
+				9  => sprintf(
+					__( '%1$s scheduled for: <strong>%2$s</strong>. <a target="_blank" href="%3$s">Preview %4$s</a>', 'pods' ), $labels['singular_name'],
+					// translators: Publish box date format, see http://php.net/date
+					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels['singular_name']
+				),
+				10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels['singular_name'], esc_url( $preview_post_link ), $labels['singular_name'] ),
 			);
 
 			if ( false === (boolean) $pods_cpt_ct['post_types'][ $post_type['name'] ]['public'] ) {
-				$messages[ $post_type['name'] ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][6]  = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
-				$messages[ $post_type['name'] ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels['singular_name'], // translators: Publish box date format, see http://php.net/date
-					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
+				$messages[ $post_type['name'] ][1] = sprintf( __( '%s updated.', 'pods' ), $labels['singular_name'] );
+				$messages[ $post_type['name'] ][6] = sprintf( __( '%s published.', 'pods' ), $labels['singular_name'] );
+				$messages[ $post_type['name'] ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels['singular_name'] );
+				$messages[ $post_type['name'] ][9] = sprintf(
+					__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels['singular_name'],
+					// translators: Publish box date format, see http://php.net/date
+					date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+				);
 				$messages[ $post_type['name'] ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels['singular_name'] );
 			}
-		}
+		}//end foreach
 
 		return $messages;
 	}
@@ -1220,7 +1241,7 @@ class PodsInit {
 			$labels['no_terms']                   = pods_v( 'no_terms', $labels, sprintf( __( 'No %s', 'pods' ), $label ), true );
 			$labels['items_list_navigation']      = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
 			$labels['items_list']                 = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
-		}
+		}//end if
 
 		$args['labels'] = $labels;
 
@@ -1294,7 +1315,8 @@ class PodsInit {
 
 		if ( ! empty( $current ) ) {
 			foreach ( self::$upgrades as $old_version => $new_version ) {
-				/*if ( '2.1.0' === $new_version && ( is_developer() ) )
+				/*
+				if ( '2.1.0' === $new_version && ( is_developer() ) )
 					continue;*/
 
 				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 != self::$upgraded ) {
@@ -1359,7 +1381,6 @@ class PodsInit {
 			}
 		} elseif ( $this->needs_upgrade( $pods_version, $pods_version_last ) ) {
 			// Upgrade Wizard needed
-
 			// Do not do anything
 			return;
 		} elseif ( version_compare( $pods_version, PODS_VERSION, '<=' ) ) {
@@ -1369,11 +1390,11 @@ class PodsInit {
 
 				// Update 2.0 alpha / beta sites
 				if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) ) {
-					include( PODS_DIR . 'sql/update-2.0-beta.php' );
+					include PODS_DIR . 'sql/update-2.0-beta.php';
 				}
 
 				if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) ) {
-					include( PODS_DIR . 'sql/update.php' );
+					include PODS_DIR . 'sql/update.php';
 				}
 
 				do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
@@ -1383,7 +1404,7 @@ class PodsInit {
 			add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
 
 			self::$version_last = $pods_version;
-		}
+		}//end if
 
 		delete_option( 'pods_framework_version' );
 		add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
@@ -1419,7 +1440,12 @@ class PodsInit {
 
 		$api = pods_api();
 
-		$pods = $api->load_pods( array( 'names_ids' => true, 'table_info' => false ) );
+		$pods = $api->load_pods(
+			array(
+				'names_ids'  => true,
+				'table_info' => false,
+			)
+		);
 
 		foreach ( $pods as $pod_id => $pod_label ) {
 			$api->delete_pod( array( 'id' => $pod_id ) );
@@ -1454,14 +1480,16 @@ class PodsInit {
 		}
 
 		// Remove any orphans
-		$wpdb->query( "
+		$wpdb->query(
+			"
                 DELETE `p`, `pm`
                 FROM `{$wpdb->posts}` AS `p`
                 LEFT JOIN `{$wpdb->postmeta}` AS `pm`
                     ON `pm`.`post_id` = `p`.`ID`
                 WHERE
                     `p`.`post_type` LIKE '_pods_%'
-            " );
+            "
+		);
 
 		delete_option( 'pods_framework_version' );
 		delete_option( 'pods_framework_db_version' );
@@ -1655,7 +1683,7 @@ class PodsInit {
 			'PodsWidgetList',
 			'PodsWidgetField',
 			'PodsWidgetForm',
-			'PodsWidgetView'
+			'PodsWidgetView',
 		);
 
 		foreach ( $widgets as $widget ) {
@@ -1680,7 +1708,13 @@ class PodsInit {
 			return;
 		}
 
-		$all_pods = pods_api()->load_pods( array( 'type' => 'pod', 'fields' => false, 'table_info' => false ) );
+		$all_pods = pods_api()->load_pods(
+			array(
+				'type'       => 'pod',
+				'fields'     => false,
+				'table_info' => false,
+			)
+		);
 
 		// Add New item links for all pods
 		foreach ( $all_pods as $pod ) {
@@ -1694,12 +1728,14 @@ class PodsInit {
 
 			$singular_label = pods_var_raw( 'label_singular', $pod['options'], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), null, true ), null, true );
 
-			$wp_admin_bar->add_node( array(
-				'id'     => 'new-pod-' . $pod['name'],
-				'title'  => $singular_label,
-				'parent' => 'new-content',
-				'href'   => admin_url( 'admin.php?page=pods-manage-' . $pod['name'] . '&action=add' )
-			) );
+			$wp_admin_bar->add_node(
+				array(
+					'id'     => 'new-pod-' . $pod['name'],
+					'title'  => $singular_label,
+					'parent' => 'new-content',
+					'href'   => admin_url( 'admin.php?page=pods-manage-' . $pod['name'] . '&action=add' ),
+				)
+			);
 		}
 
 		// Add edit link if we're on a pods page
@@ -1709,11 +1745,13 @@ class PodsInit {
 			if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ) ) ) {
 				$singular_label = pods_var_raw( 'label_singular', $pod['options'], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod['name'] ) ), null, true ), null, true );
 
-				$wp_admin_bar->add_node( array(
-					'title' => sprintf( __( 'Edit %s', 'pods' ), $singular_label ),
-					'id'    => 'edit-pod',
-					'href'  => admin_url( 'admin.php?page=pods-manage-' . $pod['name'] . '&action=edit&id=' . $pods->id() )
-				) );
+				$wp_admin_bar->add_node(
+					array(
+						'title' => sprintf( __( 'Edit %s', 'pods' ), $singular_label ),
+						'id'    => 'edit-pod',
+						'href'  => admin_url( 'admin.php?page=pods-manage-' . $pod['name'] . '&action=edit&id=' . $pods->id() ),
+					)
+				);
 			}
 		}
 

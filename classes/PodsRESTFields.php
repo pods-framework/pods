@@ -73,7 +73,7 @@ class PodsRESTFields {
 			} else {
 				$this->pod = false;
 			}
-		}
+		}//end if
 
 	}
 
@@ -184,8 +184,8 @@ class PodsRESTFields {
 						$allowed = true;
 					}
 				}
-			}
-		}
+			}//end if
+		}//end if
 
 		return $allowed;
 

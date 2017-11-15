@@ -63,7 +63,6 @@ class PodsField {
 	public function __construct() {
 
 		// Subclasses utilize this method if needed.
-
 	}
 
 	/**
@@ -290,7 +289,7 @@ class PodsField {
 		$script_content = json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
 		<div class="pods-form-ui-field pods-dfv-field">
-			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content ?></script>
+			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
 		</div>
 		<?php
 
@@ -299,8 +298,8 @@ class PodsField {
 	/**
 	 * Build field data for Pods DFV
 	 *
-	 * @param object    $args            {
-	 *                                   Field information arguments.
+	 * @param object $args            {
+	 *                                Field information arguments.
 	 *
 	 * @type string     $name            Field name
 	 * @type string     $type            Pod field type
@@ -365,9 +364,9 @@ class PodsField {
 	/**
 	 * Build field options and handle any validation/customization for Pods DFV
 	 *
-	 * @param array     $options
-	 * @param object    $args    {
-	 *                           Field information arguments.
+	 * @param array  $options
+	 * @param object $args    {
+	 *                        Field information arguments.
 	 *
 	 * @type string     $name    Field name
 	 * @type string     $type    Field type
@@ -388,9 +387,9 @@ class PodsField {
 	/**
 	 * Build field HTML attributes for Pods DFV.
 	 *
-	 * @param array     $attributes Default HTML attributes from field and PodsForm::merge_attributes.
-	 * @param object    $args       {
-	 *                              Field information arguments.
+	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.
+	 * @param object $args       {
+	 *                           Field information arguments.
 	 *
 	 * @type string     $name       Field name
 	 * @type string     $type       Field type
@@ -413,8 +412,8 @@ class PodsField {
 	 *
 	 * This is for customizing the options and adding output-specific config values.
 	 *
-	 * @param object    $args    {
-	 *                           Field information arguments.
+	 * @param object $args    {
+	 *                        Field information arguments.
 	 *
 	 * @type string     $name    Field name
 	 * @type string     $type    Field type
@@ -441,8 +440,8 @@ class PodsField {
 	/**
 	 * Build array of item data for Pods DFV
 	 *
-	 * @param object    $args    {
-	 *                           Field information arguments.
+	 * @param object $args    {
+	 *                        Field information arguments.
 	 *
 	 * @type string     $name    Field name
 	 * @type string     $type    Field type
@@ -584,7 +583,6 @@ class PodsField {
 	public function post_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
 		// Subclasses utilize this method if needed.
-
 	}
 
 	/**
@@ -600,7 +598,6 @@ class PodsField {
 	public function pre_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
 		// Subclasses utilize this method if needed.
-
 	}
 
 	/**
@@ -616,7 +613,6 @@ class PodsField {
 	public function delete( $id = null, $name = null, $options = null, $pod = null ) {
 
 		// Subclasses utilize this method if needed.
-
 	}
 
 	/**
@@ -632,7 +628,6 @@ class PodsField {
 	public function post_delete( $id = null, $name = null, $options = null, $pod = null ) {
 
 		// Subclasses utilize this method if needed.
-
 	}
 
 	/**

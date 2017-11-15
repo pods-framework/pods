@@ -107,7 +107,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> --file=<file> [--item=<item>] [--format=<format>] [--fields=<fields>] [--depth=<depth>]
 	 */
-	/*function export ( $args, $assoc_args ) {
+	/*
+	function export ( $args, $assoc_args ) {
 
 		$params = array(
 			'fields' => pods_var_raw( 'fields', $assoc_args ),
@@ -127,7 +128,8 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @synopsis --pod=<pod> --file=<file> [--format=<format>] [--numeric-mode=<numeric_mode>]
 	 */
-	/*function import ( $args, $assoc_args ) {
+	/*
+	function import ( $args, $assoc_args ) {
 
 		$data = array(); // @todo get data from file
 

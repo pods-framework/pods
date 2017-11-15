@@ -16,7 +16,6 @@ class PodsView {
 	private function __construct() {
 
 		// !nope
-
 	}
 
 	/**
@@ -263,14 +262,14 @@ class PodsView {
 						delete_option( $transient_timeout );
 					}
 				}
-			}
+			}//end if
 
 			if ( false !== $value ) {
 				$value = apply_filters( 'transient_' . $key, $value );
 			}
 		} else {
 			$value = false;
-		}
+		}//end if
 
 		if ( false === $value && is_callable( $callback ) && ! $called ) {
 			// Callback function should do it's own set/update for cache
@@ -363,13 +362,13 @@ class PodsView {
 
 					$result = update_option( $key, $value );
 				}
-			}
+			}//end if
 
 			if ( $result ) {
 				do_action( 'set_transient_' . $key );
 				do_action( 'setted_transient', $key );
 			}
-		}
+		}//end if
 
 		do_action( 'pods_view_set_' . $cache_mode, $original_key, $value, $expires, $group );
 
@@ -473,7 +472,7 @@ class PodsView {
 			if ( $result ) {
 				do_action( 'deleted_transient', $key );
 			}
-		}
+		}//end if
 
 		do_action( 'pods_view_clear_' . $cache_mode, $original_key, $group );
 
@@ -490,7 +489,8 @@ class PodsView {
 	 */
 	public static function get_template_part( $_view, $_data = null ) {
 
-		/* to be reviewed later, should have more checks and restrictions like a whitelist etc
+		/*
+		 to be reviewed later, should have more checks and restrictions like a whitelist etc
 		if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
 			$_view = apply_filters( 'pods_view_url_include', $_view );
 
@@ -554,7 +554,7 @@ class PodsView {
 			}
 
 			return $_view;
-		}
+		}//end if
 
 		// Keep it safe
 		$_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
@@ -579,8 +579,8 @@ class PodsView {
 			} else {
 				$located = apply_filters( 'pods_view_locate_template', $located, $_view );
 			}
-
-		} else { // The view's file is outside the plugin directory
+		} else {
+			// The view's file is outside the plugin directory
 			$_real_view = trim( $_real_view, '/' );
 
 			if ( empty( $_real_view ) ) {
@@ -593,7 +593,7 @@ class PodsView {
 			} elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) ) {
 				$located = realpath( get_template_directory() . '/' . $_real_view );
 			}
-		}
+		}//end if
 
 		return $located;
 
@@ -620,13 +620,13 @@ class PodsView {
 						pods_var_raw( 'anonymous', $expires, false ),
 						pods_var_raw( 'user', $expires, false ),
 						pods_var_raw( 'user_with_access', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true )
+						pods_var_raw( 'capability', $expires, null, null, true ),
 					);
 				} elseif ( isset( $expires['anonymous'] ) ) {
 					$expires = array(
 						pods_var_raw( 'anonymous', $expires, false ),
 						pods_var_raw( 'user', $expires, false ),
-						pods_var_raw( 'capability', $expires, null, null, true )
+						pods_var_raw( 'capability', $expires, null, null, true ),
 					);
 				}
 			} else {
@@ -650,7 +650,7 @@ class PodsView {
 
 				$expires = pods_var_user( $anon, $user, $capability );
 			}
-		}
+		}//end if
 
 		if ( 'none' === $cache_mode ) {
 			$expires = false;

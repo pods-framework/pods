@@ -12,7 +12,6 @@ class PodsWidgetSingle extends WP_Widget {
 	 *
 	 * Note: params are totally ignored. Included for the sake of strict standards.
 	 *
-	 *
 	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
 	 *                                a portion of the widget's class name will be used Has to be unique.
 	 * @param string $name            Name for the widget displayed on the configuration page.
@@ -23,10 +22,12 @@ class PodsWidgetSingle extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_single', $name = 'Pods - Single Item', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_single', 'Pods - Single Item', array(
-			'classname'   => 'pods_widget_single',
-			'description' => 'Display a Single Pod Item'
-		), array( 'width' => 200 ) );
+		parent::__construct(
+			'pods_widget_single', 'Pods - Single Item', array(
+				'classname'   => 'pods_widget_single',
+				'description' => 'Display a Single Pod Item',
+			), array( 'width' => 200 )
+		);
 	}
 
 	/**
@@ -43,7 +44,7 @@ class PodsWidgetSingle extends WP_Widget {
 			'name'        => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
 			'slug'        => trim( pods_var_raw( 'slug', $instance, '' ) ),
 			'use_current' => trim( pods_var_raw( 'use_current', $instance, '' ) ),
-			'template'    => trim( pods_var_raw( 'template', $instance, '' ) )
+			'template'    => trim( pods_var_raw( 'template', $instance, '' ) ),
 		);
 
 		$content = trim( pods_var_raw( 'template_custom', $instance, '' ) );

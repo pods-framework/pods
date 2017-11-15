@@ -176,7 +176,8 @@ class PodsData {
 	/**
 	 * @var string
 	 */
-	public $search_mode = 'int'; // int | text | text_like
+	public $search_mode = 'int';
+	// int | text | text_like
 	/**
 	 * @var string
 	 */
@@ -346,7 +347,7 @@ class PodsData {
 
 				$this->fetch( $this->id );
 			}
-		}
+		}//end if
 	}
 
 	/**
@@ -432,7 +433,7 @@ class PodsData {
 			if ( isset( $this->pod_data['orderby'] ) ) {
 				$this->orderby = $this->pod_data['orderby'];
 			}
-		}
+		}//end if
 	}
 
 	/**
@@ -519,7 +520,7 @@ class PodsData {
 
 		foreach ( $columns as $column ) {
 			$update[] = "`{$column}` = VALUES( `{$column}` )";
-			$values[] = "%s";
+			$values[] = '%s';
 		}
 
 		if ( empty( $formats ) ) {
@@ -527,7 +528,7 @@ class PodsData {
 		}
 
 		$columns_data = implode( '`, `', $columns );
-		$formats      = implode( ", ", $formats );
+		$formats      = implode( ', ', $formats );
 		$update       = implode( ', ', $update );
 
 		$sql = "INSERT INTO `{$table}` ( `{$columns_data}` ) VALUES ( {$formats} ) ON DUPLICATE KEY UPDATE {$update}";
@@ -592,13 +593,15 @@ class PodsData {
 			}
 		}
 
-		list( $table, $data, $where, $format, $where_format ) = $this->do_hook( 'update', array(
-			$table,
-			$data,
-			$where,
-			$format,
-			$where_format
-		) );
+		list( $table, $data, $where, $format, $where_format ) = $this->do_hook(
+			'update', array(
+				$table,
+				$data,
+				$where,
+				$format,
+				$where_format,
+			)
+		);
 
 		$result = $wpdb->update( $table, $data, $where, $format, $where_format );
 
@@ -654,10 +657,12 @@ class PodsData {
 
 		$sql = "DELETE FROM `$table` WHERE " . implode( ' AND ', $wheres );
 
-		list( $sql, $where ) = $this->do_hook( 'delete', array(
-			$sql,
-			array_values( $where )
-		), $table, $where, $where_format, $wheres );
+		list( $sql, $where ) = $this->do_hook(
+			'delete', array(
+				$sql,
+				array_values( $where ),
+			), $table, $where, $where_format, $wheres
+		);
 
 		return $this->query( self::prepare( $sql, $where ) );
 	}
@@ -708,10 +713,14 @@ class PodsData {
 
 			// Debug purposes
 			if ( ( 1 == pods_v( 'pods_debug_sql', 'get', 0 ) || 1 == pods_v( 'pods_debug_sql_all', 'get', 0 ) ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array(
-						'@wp_users',
-						'@wp_'
-					), array( $wpdb->users, $wpdb->prefix ), $this->sql ) ) . '</textarea>';
+				echo '<textarea cols="100" rows="24">' . esc_textarea(
+					str_replace(
+						array(
+							'@wp_users',
+							'@wp_',
+						), array( $wpdb->users, $wpdb->prefix ), $this->sql
+					)
+				) . '</textarea>';
 			}
 
 			if ( empty( $this->sql ) ) {
@@ -725,7 +734,7 @@ class PodsData {
 			if ( false !== $cache_key ) {
 				pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
 			}
-		}
+		}//end if
 
 		/**
 		 * Filter results of Pods Query
@@ -780,7 +789,7 @@ class PodsData {
 		if ( false !== $this->total_sql ) {
 			$total = @current( $wpdb->get_col( $this->get_sql( $this->total_sql ) ) );
 		} else {
-			$total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
+			$total = @current( $wpdb->get_col( 'SELECT FOUND_ROWS()' ) );
 		}
 
 		$total                        = $this->do_hook( 'select_total', $total );
@@ -806,21 +815,21 @@ class PodsData {
 		$file_field_types         = PodsForm::file_field_types();
 
 		$defaults = array(
-			'select'        => '*',
-			'calc_rows'     => false,
-			'distinct'      => true,
-			'table'         => null,
-			'join'          => null,
-			'where'         => null,
-			'where_default' => null,
-			'groupby'       => null,
-			'having'        => null,
-			'orderby'       => null,
-			'limit'         => - 1,
-			'offset'        => null,
+			'select'              => '*',
+			'calc_rows'           => false,
+			'distinct'            => true,
+			'table'               => null,
+			'join'                => null,
+			'where'               => null,
+			'where_default'       => null,
+			'groupby'             => null,
+			'having'              => null,
+			'orderby'             => null,
+			'limit'               => - 1,
+			'offset'              => null,
 
-			'id'    => null,
-			'index' => null,
+			'id'                  => null,
+			'index'               => null,
 
 			'page'                => 1,
 			'pagination'          => $this->pagination,
@@ -832,15 +841,15 @@ class PodsData {
 			'search_across_files' => false,
 			'filters'             => array(),
 
-			'fields'           => array(),
-			'object_fields'    => array(),
-			'pod_table_prefix' => null,
+			'fields'              => array(),
+			'object_fields'       => array(),
+			'pod_table_prefix'    => null,
 
-			'traverse' => array(),
+			'traverse'            => array(),
 
-			'sql' => null,
+			'sql'                 => null,
 
-			'strict' => false
+			'strict'              => false,
 		);
 
 		$params = (object) array_merge( $defaults, (array) $params );
@@ -921,10 +930,12 @@ class PodsData {
 
 		$params->meta_fields = false;
 
-		if ( ! empty( $pod ) && ! in_array( $pod['type'], array(
+		if ( ! empty( $pod ) && ! in_array(
+			$pod['type'], array(
 				'pod',
-				'table'
-			) ) && ( 'meta' === $pod['storage'] || ( 'none' === $pod['storage'] && function_exists( 'get_term_meta' ) ) ) ) {
+				'table',
+			)
+		) && ( 'meta' === $pod['storage'] || ( 'none' === $pod['storage'] && function_exists( 'get_term_meta' ) ) ) ) {
 			$params->meta_fields = true;
 		}
 
@@ -996,9 +1007,7 @@ class PodsData {
 					} elseif ( strpos( $orderby, '.meta_value_date' ) ) {
 						$params->orderby[ $i ] = 'CAST(' . str_replace( '.meta_value_date', '.meta_value', $orderby ) . ' AS DATE)';
 					}
-
 				}
-
 			}
 
 			$params->orderby = (array) $params->orderby;
@@ -1042,13 +1051,15 @@ class PodsData {
 		// Pull Aliases from SQL query too
 		if ( null !== $params->sql ) {
 			$temp_sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $params->sql ) );
-			$temp_sql = preg_replace( array(
-				'/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
-				'/\sSELECT\s/i'
-			), array(
-				' SELECT ',
-				' SELECT SQL_CALC_FOUND_ROWS '
-			), $temp_sql );
+			$temp_sql = preg_replace(
+				array(
+					'/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+					'/\sSELECT\s/i',
+				), array(
+					' SELECT ',
+					' SELECT SQL_CALC_FOUND_ROWS ',
+				), $temp_sql
+			);
 			preg_match( '/\sSELECT SQL_CALC_FOUND_ROWS\s(.*)\sFROM/i', $temp_sql, $selectmatches );
 			if ( isset( $selectmatches[1] ) && ! empty( $selectmatches[1] ) && false !== stripos( $selectmatches[1], ' AS ' ) ) {
 				$selectsfound .= ( ! empty( $selectsfound ) ? ', ' : '' ) . $selectmatches[1];
@@ -1080,7 +1091,7 @@ class PodsData {
 					$this->aliases[ $field ] = $real_field;
 				}
 			}
-		}
+		}//end if
 
 		// Search
 		if ( ! empty( $params->search ) && ! empty( $params->fields ) ) {
@@ -1095,7 +1106,7 @@ class PodsData {
 						} else {
 							$attributes = array(
 								'type'    => '',
-								'options' => array()
+								'options' => array(),
 							);
 						}
 
@@ -1103,17 +1114,19 @@ class PodsData {
 							continue;
 						}
 
-						if ( in_array( $attributes['type'], array(
-							'date',
-							'time',
-							'datetime',
-							'number',
-							'decimal',
-							'currency',
-							'phone',
-							'password',
-							'boolean'
-						) ) ) {
+						if ( in_array(
+							$attributes['type'], array(
+								'date',
+								'time',
+								'datetime',
+								'number',
+								'decimal',
+								'currency',
+								'phone',
+								'password',
+								'boolean',
+							)
+						) ) {
 							continue;
 						}
 
@@ -1149,7 +1162,7 @@ class PodsData {
 							$fieldfield = $fieldfield . '.`meta_value`';
 						} else {
 							$fieldfield = '`t`.' . $fieldfield;
-						}
+						}//end if
 
 						if ( isset( $this->aliases[ $field ] ) ) {
 							$fieldfield = '`' . $this->aliases[ $field ] . '`';
@@ -1164,7 +1177,7 @@ class PodsData {
 						} else {
 							$where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
 						}
-					}
+					}//end foreach
 				} elseif ( ! empty( $params->index ) ) {
 					$attributes = array();
 
@@ -1189,7 +1202,7 @@ class PodsData {
 					} else {
 						$where[] = "{$fieldfield} LIKE '%" . pods_sanitize_like( $params->search_query ) . "%'";
 					}
-				}
+				}//end if
 
 				if ( ! empty( $where ) ) {
 					$params->where[] = '( ' . implode( ' OR ', $where ) . ' )';
@@ -1198,7 +1211,7 @@ class PodsData {
 				if ( ! empty( $having ) ) {
 					$params->having[] = '( ' . implode( ' OR ', $having ) . ' )';
 				}
-			}
+			}//end if
 
 			// Filter
 			foreach ( $params->filters as $filter ) {
@@ -1235,7 +1248,7 @@ class PodsData {
 					$filterfield = $filterfield . '.`meta_value`';
 				} else {
 					$filterfield = '`t`.' . $filterfield;
-				}
+				}//end if
 
 				if ( isset( $this->aliases[ $field ] ) ) {
 					$filterfield = '`' . $this->aliases[ $field ] . '`';
@@ -1277,8 +1290,8 @@ class PodsData {
 							} else {
 								$where[] = "{$filterfield} = " . $filter_v;
 							}
-						}
-					}
+						}//end if
+					}//end foreach
 				} elseif ( in_array( $attributes['type'], array( 'date', 'datetime' ) ) ) {
 					$start_value = pods_v( 'filter_' . $field . '_start', 'get', false );
 					$end_value   = pods_v( 'filter_' . $field . '_end', 'get', false );
@@ -1330,7 +1343,7 @@ class PodsData {
 					} else {
 						$where[] = "{$filterfield} LIKE '%" . pods_sanitize_like( $filter_value ) . "%'";
 					}
-				}
+				}//end if
 
 				if ( ! empty( $where ) ) {
 					$params->where[] = implode( ' AND ', $where );
@@ -1339,15 +1352,15 @@ class PodsData {
 				if ( ! empty( $having ) ) {
 					$params->having[] = implode( ' AND ', $having );
 				}
-			}
-		}
+			}//end foreach
+		}//end if
 
 		// Traverse the Rabbit Hole
 		if ( ! empty( $this->pod ) ) {
 			$haystack = implode( ' ', (array) $params->select ) . ' ' . implode( ' ', (array) $params->where ) . ' ' . implode( ' ', (array) $params->groupby ) . ' ' . implode( ' ', (array) $params->having ) . ' ' . implode( ' ', (array) $params->orderby );
 			$haystack = preg_replace( '/\s/', ' ', $haystack );
 			$haystack = preg_replace( '/\w\(/', ' ', $haystack );
-			$haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
+			$haystack = str_replace( array( '(', ')', '  ', '\\\'', '\\"' ), ' ', $haystack );
 
 			preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
@@ -1361,8 +1374,8 @@ class PodsData {
 
 				if ( 't' === $value[0] ) {
 					continue;
-				} elseif ( array_key_exists( $value[0], $params->join ) ) // Don't traverse for tables we are already going to join
-				{
+				} elseif ( array_key_exists( $value[0], $params->join ) ) {
+					// Don't traverse for tables we are already going to join
 					continue;
 				} elseif ( 1 == count( $value ) && '' == preg_replace( '/[0-9]*/', '', $value[0] ) && '' == preg_replace( '/[0-9]*/', '', $last_value ) ) {
 					continue;
@@ -1389,7 +1402,7 @@ class PodsData {
 				if ( ! in_array( $value, $traverse ) ) {
 					$traverse[ $key ] = $value;
 				}
-			}
+			}//end foreach
 
 			if ( ! empty( $this->traverse ) ) {
 				foreach ( (array) $this->traverse as $key => $traverse ) {
@@ -1411,7 +1424,7 @@ class PodsData {
 						$traverse[ 'traverse_' . $key ] = explode( '.', $traverse );
 					}
 				}
-			}
+			}//end if
 
 			$joins = array();
 
@@ -1433,7 +1446,7 @@ class PodsData {
 					$joins = $this->traverse( null, $params->fields, $params );
 				}
 			}
-		}
+		}//end if
 
 		// Traversal Search
 		if ( ! empty( $params->search ) && ! empty( $this->search_where ) ) {
@@ -1448,23 +1461,23 @@ class PodsData {
 
 		// Build
 		if ( null === $params->sql ) {
-			$sql = "
+			$sql = '
                 SELECT
-                " . ( $params->calc_rows ? 'SQL_CALC_FOUND_ROWS' : '' ) . "
-                " . ( $params->distinct ? 'DISTINCT' : '' ) . "
-                " . ( ! empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
+                ' . ( $params->calc_rows ? 'SQL_CALC_FOUND_ROWS' : '' ) . '
+                ' . ( $params->distinct ? 'DISTINCT' : '' ) . '
+                ' . ( ! empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
-                " . ( ! empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
-                " . ( ! empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . "
-                " . ( ! empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
-                " . ( ! empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
-                " . ( ! empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
-                " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . "
-            ";
+                " . ( ! empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . '
+                ' . ( ! empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . '
+                ' . ( ! empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . '
+                ' . ( ! empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . '
+                ' . ( ! empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . '
+                ' . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . '
+            ';
 
 			if ( ! $params->calc_rows ) {
 				// Handle COUNT() SELECT
-				$total_sql_select = "COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )";
+				$total_sql_select = 'COUNT( ' . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . ' )';
 
 				// If 'having' is set, we have to select all so it has access to anything it needs
 				if ( ! empty( $params->having ) ) {
@@ -1474,22 +1487,24 @@ class PodsData {
 				$this->total_sql = "
 					SELECT {$total_sql_select}
 					FROM {$params->table} AS `t`
-					" . ( ! empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
-					" . ( ! empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . "
-					" . ( ! empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
-					" . ( ! empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . "
-				";
+					" . ( ! empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . '
+                    ' . ( ! empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND  ', $params->where ) : $params->where ) : '' ) . '
+                    ' . ( ! empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . '
+                    ' . ( ! empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND  ', $params->having ) : $params->having ) : '' ) . '
+                ';
 			}
 		} else {
 			// Rewrite
 			$sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $params->sql ) );
-			$sql = preg_replace( array(
-				'/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
-				'/\sSELECT\s/i'
-			), array(
-				' SELECT ',
-				' SELECT SQL_CALC_FOUND_ROWS '
-			), $sql );
+			$sql = preg_replace(
+				array(
+					'/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+					'/\sSELECT\s/i',
+				), array(
+					' SELECT ',
+					' SELECT SQL_CALC_FOUND_ROWS ',
+				), $sql
+			);
 
 			// Insert variables based on existing statements
 			if ( false === stripos( $sql, '%%SELECT%%' ) ) {
@@ -1610,21 +1625,23 @@ class PodsData {
 			if ( 0 < $params->page && 0 < $params->limit ) {
 				$start = ( $params->page - 1 ) * $params->limit;
 				$end   = $start + $params->limit;
-				$sql   .= 'LIMIT ' . (int) $start . ', ' . (int) $end;
+				$sql  .= 'LIMIT ' . (int) $start . ', ' . (int) $end;
 			}
 
 			// Clear any unused variables
-			$sql = str_ireplace( array(
-				'%%SELECT%%',
-				'%%JOIN%%',
-				'%%WHERE%%',
-				'%%GROUPBY%%',
-				'%%HAVING%%',
-				'%%ORDERBY%%',
-				'%%LIMIT%%'
-			), '', $sql );
+			$sql = str_ireplace(
+				array(
+					'%%SELECT%%',
+					'%%JOIN%%',
+					'%%WHERE%%',
+					'%%GROUPBY%%',
+					'%%HAVING%%',
+					'%%ORDERBY%%',
+					'%%LIMIT%%',
+				), '', $sql
+			);
 			$sql = str_replace( array( '``', '`' ), array( '  ', ' ' ), $sql );
-		}
+		}//end if
 
 		return $sql;
 	}
@@ -1664,7 +1681,8 @@ class PodsData {
 	 */
 	public function zebra() {
 
-		return $this->nth( 'odd' ); // Odd numbers
+		return $this->nth( 'odd' );
+		// Odd numbers
 	}
 
 	/**
@@ -1705,7 +1723,7 @@ class PodsData {
 			}
 
 			$nth = (int) trim( $nth[0], ' n' );
-		}
+		}//end if
 
 		$nth    = (int) $nth;
 		$offset = (int) $offset;
@@ -1748,10 +1766,10 @@ class PodsData {
 		 */
 		global $wpdb;
 
-		$sql = "CREATE TABLE";
+		$sql = 'CREATE TABLE';
 
 		if ( true === $if_not_exists ) {
-			$sql .= " IF NOT EXISTS";
+			$sql .= ' IF NOT EXISTS';
 		}
 
 		$sql .= " `{$wpdb->prefix}" . self::$prefix . "{$table}` ({$fields})";
@@ -1858,12 +1876,14 @@ class PodsData {
 		$success = false;
 		$ids     = (array) $ids;
 
-		list( $table, $weight_field, $id_field, $ids ) = $this->do_hook( 'reorder', array(
-			$table,
-			$weight_field,
-			$id_field,
-			$ids
-		) );
+		list( $table, $weight_field, $id_field, $ids ) = $this->do_hook(
+			'reorder', array(
+				$table,
+				$weight_field,
+				$id_field,
+				$ids,
+			)
+		);
 
 		if ( ! empty( $ids ) ) {
 			$success = true;
@@ -1928,8 +1948,8 @@ class PodsData {
 				if ( 0 < $current_row_id ) {
 					$row = $current_row_id;
 				}
-			}
-		}
+			}//end if
+		}//end if
 
 		if ( null !== $row || 'settings' === $this->pod_data['type'] ) {
 			if ( $explicit_set ) {
@@ -1981,7 +2001,7 @@ class PodsData {
 					$args = array(
 						'post_type'   => $post_type,
 						'name'        => $id,
-						'numberposts' => 5
+						'numberposts' => 5,
 					);
 
 					$find = get_posts( $args );
@@ -2036,7 +2056,7 @@ class PodsData {
 					$this->row = get_term( $id, $taxonomy, ARRAY_A );
 				} else {
 					$this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
-				}
+				}//end if
 
 				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
 					$this->row = false;
@@ -2077,7 +2097,6 @@ class PodsData {
 				$this->row = get_comment( $id, ARRAY_A );
 
 				// No slug handling here
-
 				if ( is_wp_error( $this->row ) || empty( $this->row ) ) {
 					$this->row = false;
 				} else {
@@ -2108,7 +2127,7 @@ class PodsData {
 					'orderby' => "`t`.`{$this->field_id}` DESC",
 					'page'    => 1,
 					'limit'   => 1,
-					'search'  => false
+					'search'  => false,
 				);
 
 				if ( 'slug' === $mode && ! empty( $this->field_slug ) ) {
@@ -2124,7 +2143,7 @@ class PodsData {
 					$current_row = (array) $this->row;
 					$this->row   = get_object_vars( (object) @current( $current_row ) );
 				}
-			}
+			}//end if
 
 			if ( ! $explicit_set && ! empty( $this->row ) && is_array( $this->row ) && ! empty( $old_row ) ) {
 				$this->row = array_merge( $old_row, $this->row );
@@ -2132,13 +2151,13 @@ class PodsData {
 
 			if ( 'table' === $this->pod_data['storage'] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
 				$params = array(
-					'table'   => $wpdb->prefix . "pods_",
+					'table'   => $wpdb->prefix . 'pods_',
 					'where'   => "`t`.`id` = {$current_row_id}",
-					'orderby' => "`t`.`id` DESC",
+					'orderby' => '`t`.`id` DESC',
 					'page'    => 1,
 					'limit'   => 1,
 					'search'  => false,
-					'strict'  => true
+					'strict'  => true,
 				);
 
 				if ( empty( $this->pod_data['object'] ) ) {
@@ -2159,12 +2178,12 @@ class PodsData {
 						$this->row = $row;
 					}
 				}
-			}
+			}//end if
 
 			if ( ! empty( $this->pod ) && ! $already_cached ) {
 				pods_cache_set( $id, $this->row, 'pods_items_' . $this->pod, 0 );
 			}
-		}
+		}//end if
 
 		$this->row = apply_filters( 'pods_data_fetch', $this->row, $id, $this->row_number, $this );
 
@@ -2245,7 +2264,7 @@ class PodsData {
 			'error'            => $error,
 			'results_error'    => $results_error,
 			'no_results_error' => $no_results_error,
-			'display_errors'   => $display_errors
+			'display_errors'   => $display_errors,
 		);
 
 		// Handle Preparations of Values (sprintf format)
@@ -2267,12 +2286,16 @@ class PodsData {
 			}
 
 			if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
-				echo '<textarea cols="100" rows="24">' . esc_textarea( str_replace( array(
-						'@wp_users',
-						'@wp_'
-					), array( $wpdb->users, $wpdb->prefix ), $params->sql ) ) . '</textarea>';
+				echo '<textarea cols="100" rows="24">' . esc_textarea(
+					str_replace(
+						array(
+							'@wp_users',
+							'@wp_',
+						), array( $wpdb->users, $wpdb->prefix ), $params->sql
+					)
+				) . '</textarea>';
 			}
-		}
+		}//end if
 
 		$params->sql = trim( $params->sql );
 
@@ -2328,7 +2351,7 @@ class PodsData {
 			$wpdb->links,
 			$wpdb->terms,
 			$wpdb->term_taxonomy,
-			$wpdb->term_relationships
+			$wpdb->term_relationships,
 		);
 
 		$showTables = $wpdb->get_results( 'SHOW TABLES in ' . DB_NAME, ARRAY_A );
@@ -2336,8 +2359,8 @@ class PodsData {
 		$finalTables = array();
 
 		foreach ( $showTables as $table ) {
-			if ( ! $pods_tables && 0 === ( strpos( $table[0], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) // don't include pods tables
-			{
+			if ( ! $pods_tables && 0 === ( strpos( $table[0], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) {
+				// don't include pods tables
 				continue;
 			} elseif ( ! $wp_core && in_array( $table[0], $core_wp_tables ) ) {
 				continue;
@@ -2505,7 +2528,7 @@ class PodsData {
 					$haystack = implode( ' ', (array) $query_fields );
 					$haystack = preg_replace( '/\s/', ' ', $haystack );
 					$haystack = preg_replace( '/\w\(/', ' ', $haystack );
-					$haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
+					$haystack = str_replace( array( '(', ')', '  ', '\\\'', '\\"' ), ' ', $haystack );
 
 					preg_match_all( '/`?[\w\-]+`?(?:\\.`?[\w\-]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
@@ -2523,12 +2546,12 @@ class PodsData {
 					}
 				} elseif ( ! empty( $params->query_fields ) && in_array( 'post_status', $params->query_fields ) ) {
 					$post_status_found = true;
-				}
+				}//end if
 
 				if ( ! $post_status_found ) {
 					$query_fields[] = $params->where_default;
 				}
-			}
+			}//end if
 
 			if ( 1 < count( $query_fields ) ) {
 				$query_fields = '( ( ' . implode( ' ) ' . $relation . ' ( ', $query_fields ) . ' ) )';
@@ -2537,7 +2560,7 @@ class PodsData {
 			}
 		} else {
 			$query_fields = null;
-		}
+		}//end if
 
 		// query_fields level complete
 		if ( 1 == $params->query_field_level ) {
@@ -2580,7 +2603,7 @@ class PodsData {
 				'value'           => pods_var_raw( 'value', $q, $q, null, true ),
 				'sanitize'        => pods_var_raw( 'sanitize', $q, true ),
 				'sanitize_format' => pods_var_raw( 'sanitize_format', $q ),
-				'cast'            => pods_var_raw( 'cast', $q )
+				'cast'            => pods_var_raw( 'cast', $q ),
 			);
 
 			if ( is_array( $new_q['value'] ) ) {
@@ -2594,7 +2617,7 @@ class PodsData {
 			}
 
 			$q = $new_q;
-		}
+		}//end if
 
 		$field_name            = trim( pods_var_raw( 'field', $q, pods_var_raw( 'key', $q, $field, null, true ), null, true ) );
 		$field_type            = strtoupper( trim( pods_var_raw( 'type', $q, 'CHAR', null, true ) ) );
@@ -2612,16 +2635,18 @@ class PodsData {
 		if ( 'NUMERIC' === $field_type ) {
 			// Deprecated WP type
 			$field_type = 'SIGNED';
-		} elseif ( ! in_array( $field_type, array(
-			'BINARY',
-			'CHAR',
-			'DATE',
-			'DATETIME',
-			'DECIMAL',
-			'SIGNED',
-			'TIME',
-			'UNSIGNED'
-		) ) ) {
+		} elseif ( ! in_array(
+			$field_type, array(
+				'BINARY',
+				'CHAR',
+				'DATE',
+				'DATETIME',
+				'DECIMAL',
+				'SIGNED',
+				'TIME',
+				'UNSIGNED',
+			)
+		) ) {
 			// Restrict to supported types
 			$field_type = 'CHAR';
 		}
@@ -2677,7 +2702,7 @@ class PodsData {
 							} else {
 								$field_cast = "`t`.`{$field_name}`";
 							}
-						}
+						}//end if
 
 						if ( empty( $field_cast ) ) {
 							if ( 'meta' === $pod['storage'] ) {
@@ -2686,19 +2711,19 @@ class PodsData {
 								$field_cast = "`t`.`{$field_name}`";
 							}
 						}
-					}
+					}//end if
 				} else {
 					$field_cast = '`' . str_replace( '.', '`.`', $field_name ) . '`';
-				}
+				}//end if
 			} else {
 				$field_cast = $field_name;
-			}
+			}//end if
 
 			// Cast field if needed
 			if ( 'CHAR' !== $field_type ) {
 				$field_cast = 'CAST( ' . $field_cast . ' AS ' . $field_type . ' )';
 			}
-		}
+		}//end if
 
 		// Setup string sanitizing for $wpdb->prepare()
 		if ( empty( $field_sanitize_format ) ) {
@@ -2712,49 +2737,55 @@ class PodsData {
 		}
 
 		// Restrict to supported comparisons
-		if ( ! in_array( $field_compare, array(
-			'=',
-			'!=',
-			'>',
-			'>=',
-			'<',
-			'<=',
-			'LIKE',
-			'NOT LIKE',
-			'IN',
-			'NOT IN',
-			'ALL',
-			'BETWEEN',
-			'NOT BETWEEN',
-			'EXISTS',
-			'NOT EXISTS',
-			'REGEXP',
-			'NOT REGEXP',
-			'RLIKE'
-		) ) ) {
-			$field_compare = '=';
-		}
-
-		if ( is_array( $field_value ) && ! in_array( $field_compare, array(
+		if ( ! in_array(
+			$field_compare, array(
+				'=',
+				'!=',
+				'>',
+				'>=',
+				'<',
+				'<=',
+				'LIKE',
+				'NOT LIKE',
 				'IN',
 				'NOT IN',
 				'ALL',
 				'BETWEEN',
-				'NOT BETWEEN'
-			) ) ) {
+				'NOT BETWEEN',
+				'EXISTS',
+				'NOT EXISTS',
+				'REGEXP',
+				'NOT REGEXP',
+				'RLIKE',
+			)
+		) ) {
+			$field_compare = '=';
+		}
+
+		if ( is_array( $field_value ) && ! in_array(
+			$field_compare, array(
+				'IN',
+				'NOT IN',
+				'ALL',
+				'BETWEEN',
+				'NOT BETWEEN',
+			)
+		) ) {
 			// Restrict to supported array comparisons
 			if ( in_array( $field_compare, array( '!=', 'NOT LIKE' ) ) ) {
 				$field_compare = 'NOT IN';
 			} else {
 				$field_compare = 'IN';
 			}
-		} elseif ( ! is_array( $field_value ) && in_array( $field_compare, array(
+		} elseif ( ! is_array( $field_value ) && in_array(
+			$field_compare, array(
 				'IN',
 				'NOT IN',
 				'ALL',
 				'BETWEEN',
-				'NOT BETWEEN'
-			) ) ) {
+				'NOT BETWEEN',
+			)
+		) ) {
 			// Restrict to supported string comparisons
 			$check_value = preg_split( '/[,\s]+/', $field_value );
 
@@ -2765,7 +2796,7 @@ class PodsData {
 			} else {
 				$field_compare = '=';
 			}
-		}
+		}//end if
 
 		// Restrict to two values, force = and != if only one value provided
 		if ( in_array( $field_compare, array( 'BETWEEN', 'NOT BETWEEN' ) ) ) {
@@ -2783,12 +2814,14 @@ class PodsData {
 		if ( 1 == count( $field_value ) && $field_compare == 'ALL' ) {
 			// Single array handling
 			$field_compare = '=';
-		} elseif ( empty( $field_value ) && in_array( $field_compare, array(
+		} elseif ( empty( $field_value ) && in_array(
+			$field_compare, array(
 				'IN',
 				'NOT IN',
 				'BETWEEN',
-				'NOT BETWEEN'
-			) ) ) {
+				'NOT BETWEEN',
+			)
+		) ) {
 			// Empty array handling
 			$field_compare = 'EXISTS';
 		}
@@ -2801,7 +2834,7 @@ class PodsData {
 			'compare'         => $field_compare,
 			'sanitize'        => $field_sanitize,
 			'sanitize_format' => $field_sanitize_format,
-			'cast'            => $field_cast
+			'cast'            => $field_cast,
 		);
 
 		// Make the query
@@ -2845,7 +2878,7 @@ class PodsData {
 			$field_query = $field_cast . ' IS NOT NULL';
 		} elseif ( 'NOT EXISTS' === $field_compare ) {
 			$field_query = $field_cast . ' IS NULL';
-		}
+		}//end if
 
 		$field_query = apply_filters( 'pods_data_field_query', $field_query, $q );
 
@@ -2911,7 +2944,7 @@ class PodsData {
 			'joined_id'       => 'id',
 			'joined_index'    => 'id',
 			'params'          => new stdClass(),
-			'last_table_info' => array()
+			'last_table_info' => array(),
 		);
 
 		$traverse_recurse = array_merge( $defaults, $traverse_recurse );
@@ -2937,7 +2970,12 @@ class PodsData {
 				$pod_data = array();
 
 				if ( in_array( $traverse_recurse['pod'], array( 'user', 'comment' ) ) ) {
-					$pod = $this->api->load_pod( array( 'name' => $traverse_recurse['pod'], 'table_info' => true ) );
+					$pod = $this->api->load_pod(
+						array(
+							'name'       => $traverse_recurse['pod'],
+							'table_info' => true,
+						)
+					);
 
 					if ( ! empty( $pod ) && $pod['type'] == $pod ) {
 						$pod_data = $pod;
@@ -2957,7 +2995,7 @@ class PodsData {
 						'type'          => $traverse_recurse['pod'],
 						'storage'       => $default_storage,
 						'fields'        => array(),
-						'object_fields' => $this->api->get_wp_object_fields( $traverse_recurse['pod'] )
+						'object_fields' => $this->api->get_wp_object_fields( $traverse_recurse['pod'] ),
 					);
 
 					$pod_data = array_merge( $this->api->get_table_info( $traverse_recurse['pod'], '' ), $pod_data );
@@ -2968,17 +3006,19 @@ class PodsData {
 				$traverse_recurse['pod'] = $pod_data['name'];
 			} else {
 				return $joins;
-			}
+			}//end if
 		} else {
-			$pod_data = $this->api->load_pod( array(
-				'name'       => $traverse_recurse['pod'],
-				'table_info' => true
-			), false );
+			$pod_data = $this->api->load_pod(
+				array(
+					'name'       => $traverse_recurse['pod'],
+					'table_info' => true,
+				), false
+			);
 
 			if ( empty( $pod_data ) ) {
 				return $joins;
 			}
-		}
+		}//end if
 
 		if ( isset( $pod_data['object_fields'] ) ) {
 			$pod_data['fields'] = array_merge( $pod_data['fields'], $pod_data['object_fields'] );
@@ -3000,7 +3040,7 @@ class PodsData {
 
 		$ignore_aliases = array(
 			'wpml_languages',
-			'polylang_languages'
+			'polylang_languages',
 		);
 
 		$ignore_aliases = apply_filters( 'pods_data_traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse, $this );
@@ -3027,11 +3067,11 @@ class PodsData {
 				'name'        => $field,
 				'type'        => $field_type,
 				'pick_object' => $traverse_recurse['last_table_info']['pod']['type'],
-				'pick_val'    => $traverse_recurse['last_table_info']['pod']['name']
+				'pick_val'    => $traverse_recurse['last_table_info']['pod']['name'],
 			);
 
 			$meta_data_table = true;
-		}
+		}//end if
 
 		// Fallback to meta table if the pod type supports it
 		if ( ! isset( $pod_data['fields'][ $field ] ) ) {
@@ -3043,13 +3083,15 @@ class PodsData {
 
 			if ( 'post_type' === $pod_data['type'] && isset( $pod_data['object_fields'][ $field ] ) && in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
 				$pod_data['fields'][ $field ] = $pod_data['object_fields'][ $field ];
-			} elseif ( 'meta_value' === $last && in_array( $pod_data['type'], array(
+			} elseif ( 'meta_value' === $last && in_array(
+				$pod_data['type'], array(
 					'post_type',
 					'media',
 					'taxonomy',
 					'user',
-					'comment'
-				) ) ) {
+					'comment',
+				)
+			) ) {
 				$pod_data['fields'][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
 			} else {
 				if ( 'post_type' === $pod_data['type'] ) {
@@ -3063,10 +3105,10 @@ class PodsData {
 				} else {
 					return $joins;
 				}
-			}
+			}//end if
 		} elseif ( isset( $pod_data['object_fields'] ) && isset( $pod_data['object_fields'][ $field ] ) && ! in_array( $pod_data['object_fields'][ $field ]['type'], $tableless_field_types ) ) {
 			return $joins;
-		}
+		}//end if
 
 		$traverse = $pod_data['fields'][ $field ];
 
@@ -3090,7 +3132,7 @@ class PodsData {
 
 				$traverse['table_info'] = $this->api->get_table_info( $traverse['pick_object'], $traverse['pick_val'], null, $traverse['pod'], $traverse );
 			}
-		}
+		}//end if
 
 		if ( isset( $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] ) ) {
 			$traverse = array_merge( $traverse, (array) $this->traversal[ $traverse_recurse['pod'] ][ $traverse['name'] ] );
@@ -3188,7 +3230,7 @@ class PodsData {
 
 				$joined_id    = $table_info['field_id'];
 				$joined_index = $table_info['field_index'];
-			}
+			}//end if
 		} elseif ( 'comment' === $traverse['type'] ) {
 			if ( pods_tableless() ) {
 				$the_join = "
@@ -3219,7 +3261,7 @@ class PodsData {
 
 				$joined_id    = $table_info['field_id'];
 				$joined_index = $table_info['field_index'];
-			}
+			}//end if
 		} elseif ( in_array( $traverse['type'], $tableless_field_types ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
 			if ( pods_tableless() ) {
 				$the_join = "
@@ -3259,7 +3301,7 @@ class PodsData {
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
-			}
+			}//end if
 		} elseif ( 'meta' === $pod_data['storage'] ) {
 			if ( ( $traverse_recurse['depth'] + 2 ) == count( $traverse_recurse['fields'] ) && ( 'pick' !== $traverse['type'] || ! in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) ) && $table_info['meta_field_value'] == $traverse_recurse['fields'][ $traverse_recurse['depth'] + 1 ] ) {
 				$the_join = "
@@ -3279,7 +3321,7 @@ class PodsData {
 				$joined_id    = $table_info['meta_field_id'];
 				$joined_index = $table_info['meta_field_index'];
 			}
-		}
+		}//end if
 
 		$traverse_recursive = array(
 			'pod'             => pods_var_raw( 'name', pods_var_raw( 'pod', $table_info ) ),
@@ -3290,7 +3332,7 @@ class PodsData {
 			'joined_index'    => $joined_index,
 			'params'          => $traverse_recurse['params'],
 			'rel_alias'       => $rel_alias,
-			'last_table_info' => $table_info
+			'last_table_info' => $table_info,
 		);
 
 		$the_join = apply_filters( 'pods_data_traverse_the_join', $the_join, $traverse_recurse, $traverse_recursive, $this );
@@ -3333,7 +3375,7 @@ class PodsData {
 				'params'          => $params,
 				'last_table_info' => $this->pod_data,
 				'joined_id'       => $this->pod_data['field_id'],
-				'joined_index'    => $this->pod_data['field_index']
+				'joined_index'    => $this->pod_data['field_index'],
 			);
 
 			if ( is_array( $field_group ) ) {
@@ -3346,7 +3388,7 @@ class PodsData {
 
 				return $joins;
 			}
-		}
+		}//end foreach
 
 		$joins = array_filter( $joins );
 

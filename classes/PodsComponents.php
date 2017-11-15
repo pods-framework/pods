@@ -169,16 +169,16 @@ class PodsComponents {
 				'menu_page'  => $menu_page,
 				'page_title' => $component_data['Name'],
 				'capability' => 'read',
-				'callback'   => array( $this, 'admin_handler' )
+				'callback'   => array( $this, 'admin_handler' ),
 			);
 
 			if ( isset( $component_data['object'] ) && method_exists( $component_data['object'], 'admin_assets' ) ) {
 				$pods_component_menu_items[ $component_data['MenuName'] ]['assets'] = array(
 					$component_data['object'],
-					'admin_assets'
+					'admin_assets',
 				);
 			}
-		}
+		}//end foreach
 
 		/**
 		 * Add or change the items in the Pods Components Submenu.
@@ -223,7 +223,8 @@ class PodsComponents {
 						if ( $menu[2] == $menu_page ) {
 							$menu_page = $component_data['MenuPage'];
 
-							/*if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
+							/*
+							if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
 								if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $component_data[ 'MenuAddPage' ] ) )
 									$menu_page = $component_data[ 'MenuAddPage' ];
 							}*/
@@ -233,18 +234,20 @@ class PodsComponents {
 							$page = current( explode( '?', $menu[2] ) );
 
 							if ( isset( $component_data['object'] ) && method_exists( $component_data['object'], 'admin_assets' ) ) {
-								add_action( 'admin_print_styles-' . $page, array(
-									$component_data['object'],
-									'admin_assets'
-								) );
+								add_action(
+									'admin_print_styles-' . $page, array(
+										$component_data['object'],
+										'admin_assets',
+									)
+								);
 							}
 
 							break;
-						}
-					}
-				}
-			}
-		}
+						}//end if
+					}//end foreach
+				}//end if
+			}//end foreach
+		}//end if
 	}
 
 	/**
@@ -301,7 +304,7 @@ class PodsComponents {
 
 			if ( ( ! empty( $component_data['Class'] ) && class_exists( $component_data['Class'] ) ) || isset( $component_data['object'] ) ) {
 				if ( ! isset( $this->components[ $component ]['object'] ) ) {
-					$this->components[ $component ]['object'] = new $component_data['Class'];
+					$this->components[ $component ]['object'] = new $component_data['Class']();
 				}
 
 				if ( method_exists( $this->components[ $component ]['object'], 'options' ) ) {
@@ -319,8 +322,8 @@ class PodsComponents {
 				if ( method_exists( $this->components[ $component ]['object'], 'handler' ) ) {
 					$this->components[ $component ]['object']->handler( $this->settings['components'][ $component ] );
 				}
-			}
-		}
+			}//end if
+		}//end foreach
 	}
 
 	/**
@@ -363,10 +366,10 @@ class PodsComponents {
 					} elseif ( '.php' == substr( $file, - 4 ) ) {
 						$component_files[] = $file;
 					}
-				}
+				}//end while
 
 				closedir( $component_dir );
-			}
+			}//end if
 
 			$default_headers = array(
 				'ID'               => 'ID',
@@ -391,7 +394,7 @@ class PodsComponents {
 				'DeveloperMode'    => 'Developer Mode',
 				'TablelessMode'    => 'Tableless Mode',
 				'Capability'       => 'Capability',
-				'Plugin'           => 'Plugin'
+				'Plugin'           => 'Plugin',
 			);
 
 			$component_files = apply_filters( 'pods_components_register', $component_files );
@@ -474,14 +477,14 @@ class PodsComponents {
 				$component_data['File'] = $component_file;
 
 				$components[ $component_data['ID'] ] = $component_data;
-			}
+			}//end foreach
 
 			ksort( $components );
 
 			pods_transient_set( 'pods_components_refresh', 1, ( 60 * 60 * 12 ) );
 
 			pods_transient_set( 'pods_components', $components );
-		}
+		}//end if
 
 		if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) ) {
 			pods_debug( $components );
@@ -689,7 +692,7 @@ class PodsComponents {
 			if ( ! in_array( $capability, $capabilities ) ) {
 				$capabilities[] = $capability;
 			}
-		}
+		}//end foreach
 
 		return $capabilities;
 	}
@@ -763,7 +766,8 @@ class PodsComponents {
 			echo $output;
 		}
 
-		die(); // KBAI!
+		die();
+		// KBAI!
 	}
 
 	public function admin_ajax_settings( $component, $params ) {

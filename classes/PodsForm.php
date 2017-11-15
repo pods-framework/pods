@@ -278,7 +278,7 @@ class PodsForm {
 			 * @deprecated 2.7
 			 */
 			do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
-		}
+		}//end if
 
 		$output = ob_get_clean();
 
@@ -362,11 +362,11 @@ class PodsForm {
 		$button_shorthand = array(
 			'primary',
 			'small',
-			'large'
+			'large',
 		);
 
 		$classes = array(
-			'button'
+			'button',
 		);
 
 		foreach ( $type as $t ) {
@@ -397,13 +397,15 @@ class PodsForm {
 
 		if ( is_array( $other_attributes ) ) {
 			foreach ( $other_attributes as $attribute => $value ) {
-				$attributes .= $attribute . '="' . esc_attr( $value ) . '" '; // Trailing space is important
+				$attributes .= $attribute . '="' . esc_attr( $value ) . '" ';
+				// Trailing space is important
 			}
-		} elseif ( ! empty( $other_attributes ) ) { // Attributes provided as a string
+		} elseif ( ! empty( $other_attributes ) ) {
+			// Attributes provided as a string
 			$attributes = $other_attributes;
 		}
 
-		$button = '<input type="submit" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class );
+		$button  = '<input type="submit" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class );
 		$button .= '" value="' . esc_attr( $text ) . '" ' . $attributes . ' />';
 
 		if ( $wrap ) {
@@ -517,7 +519,7 @@ class PodsForm {
 			}
 		} elseif ( isset( $options[ $type . '_attributes' ] ) && is_array( $options[ $type . '_attributes' ] ) && ! empty( $options[ $type . '_attributes' ] ) ) {
 			$attributes = array_merge( $attributes, $options[ $type . '_attributes' ] );
-		}
+		}//end if
 
 		if ( isset( $options['class'] ) && ! empty( $options['class'] ) ) {
 			if ( is_array( $options['class'] ) ) {
@@ -587,7 +589,7 @@ class PodsForm {
 			$options = array_merge( $options_temp, $options );
 
 			$override = array(
-				'class'
+				'class',
 			);
 
 			foreach ( $override as $check ) {
@@ -656,7 +658,7 @@ class PodsForm {
 			'dependency'     => false,
 			'depends-on'     => array(),
 			'excludes-on'    => array(),
-			'options'        => array()
+			'options'        => array(),
 		);
 
 		if ( ! empty( $options ) && is_array( $options ) ) {
@@ -717,7 +719,7 @@ class PodsForm {
 			'dependency'     => false,
 			'depends-on'     => array(),
 			'excludes-on'    => array(),
-			'options'        => array()
+			'options'        => array(),
 		);
 
 		self::field_loader( $type );
@@ -739,7 +741,6 @@ class PodsForm {
 
 	/**
 	 * Get options for a field and setup defaults
-	 *
 	 *
 	 * @param null $fields
 	 * @param null $core_defaults
@@ -769,7 +770,7 @@ class PodsForm {
 				'dependency'     => false,
 				'depends-on'     => array(),
 				'excludes-on'    => array(),
-				'options'        => array()
+				'options'        => array(),
 			);
 		}
 
@@ -826,7 +827,7 @@ class PodsForm {
 				'dependency'     => false,
 				'depends-on'     => array(),
 				'excludes-on'    => array(),
-				'options'        => array()
+				'options'        => array(),
 			);
 
 			if ( null !== $type ) {
@@ -836,7 +837,7 @@ class PodsForm {
 					$options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
 				}
 			}
-		}
+		}//end if
 
 		if ( ! is_array( $field ) ) {
 			$field = array( 'default' => $field );
@@ -940,7 +941,10 @@ class PodsForm {
 
 		$classes = implode( ' ', $classes );
 
-		return array( 'classes' => $classes, 'data' => $data );
+		return array(
+			'classes' => $classes,
+			'data'    => $data,
+		);
 	}
 
 	/**
@@ -977,22 +981,26 @@ class PodsForm {
 		if ( method_exists( self::$loaded[ $type ], 'value' ) ) {
 			if ( is_array( $value ) && in_array( $type, self::tableless_field_types() ) ) {
 				foreach ( $value as &$display_value ) {
-					$display_value = call_user_func_array( array(
-						self::$loaded[ $type ],
-						'value'
-					), array( $display_value, $name, $options, $pod, $id, $traverse ) );
+					$display_value = call_user_func_array(
+						array(
+							self::$loaded[ $type ],
+							'value',
+						), array( $display_value, $name, $options, $pod, $id, $traverse )
+					);
 				}
 			} else {
-				$value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array(
-					$value,
-					$name,
-					$options,
-					$pod,
-					$id,
-					$traverse
-				) );
-			}
-		}
+				$value = call_user_func_array(
+					array( self::$loaded[ $type ], 'value' ), array(
+						$value,
+						$name,
+						$options,
+						$pod,
+						$id,
+						$traverse,
+					)
+				);
+			}//end if
+		}//end if
 
 		return $value;
 	}
@@ -1017,37 +1025,43 @@ class PodsForm {
 		$tableless_field_types = self::tableless_field_types();
 
 		if ( method_exists( self::$loaded[ $type ], 'display_list' ) ) {
-			$value = call_user_func_array( array( self::$loaded[ $type ], 'display_list' ), array(
-				$value,
-				$name,
-				$options,
-				$pod,
-				$id,
-				$traverse
-			) );
-		} elseif ( method_exists( self::$loaded[ $type ], 'display' ) ) {
-			if ( is_array( $value ) && ! in_array( $type, $tableless_field_types ) ) {
-				foreach ( $value as $k => $display_value ) {
-					$value[ $k ] = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
-						$display_value,
-						$name,
-						$options,
-						$pod,
-						$id,
-						$traverse
-					) );
-				}
-			} else {
-				$value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array(
+			$value = call_user_func_array(
+				array( self::$loaded[ $type ], 'display_list' ), array(
 					$value,
 					$name,
 					$options,
 					$pod,
 					$id,
-					$traverse
-				) );
-			}
-		}
+					$traverse,
+				)
+			);
+		} elseif ( method_exists( self::$loaded[ $type ], 'display' ) ) {
+			if ( is_array( $value ) && ! in_array( $type, $tableless_field_types ) ) {
+				foreach ( $value as $k => $display_value ) {
+					$value[ $k ] = call_user_func_array(
+						array( self::$loaded[ $type ], 'display' ), array(
+							$display_value,
+							$name,
+							$options,
+							$pod,
+							$id,
+							$traverse,
+						)
+					);
+				}
+			} else {
+				$value = call_user_func_array(
+					array( self::$loaded[ $type ], 'display' ), array(
+						$value,
+						$name,
+						$options,
+						$pod,
+						$id,
+						$traverse,
+					)
+				);
+			}//end if
+		}//end if
 
 		$value = apply_filters( 'pods_form_display_' . $type, $value, $name, $options, $pod, $id, $traverse );
 
@@ -1360,8 +1374,8 @@ class PodsForm {
 	public static function field_loader( $field_type, $file = '' ) {
 
 		if ( isset( self::$loaded[ $field_type ] ) ) {
-			$class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
-
+			$class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) );
+			// PHP 5.2.x workaround
 			self::$field_group = ( isset( $class_vars['group'] ) ? $class_vars['group'] : '' );
 			self::$field_type  = $class_vars['type'];
 
@@ -1407,8 +1421,8 @@ class PodsForm {
 			$class_name = 'PodsField';
 		}
 
-		$class_vars = get_class_vars( $class_name ); // PHP 5.2.x workaround
-
+		$class_vars = get_class_vars( $class_name );
+		// PHP 5.2.x workaround
 		self::$field_group = ( isset( $class_vars['group'] ) ? $class_vars['group'] : '' );
 		self::$field_type  = $class_vars['type'];
 
@@ -1466,8 +1480,8 @@ class PodsForm {
 		if ( empty( $field_type ) || $field_type['type'] != $type || $field_type['file'] != $file ) {
 			self::field_loader( $type, $file );
 
-			$class_vars = get_class_vars( get_class( self::$loaded[ $type ] ) ); // PHP 5.2.x workaround
-
+			$class_vars = get_class_vars( get_class( self::$loaded[ $type ] ) );
+			// PHP 5.2.x workaround
 			self::$field_types[ $type ]         = $class_vars;
 			self::$field_types[ $type ]['file'] = $file;
 
@@ -1491,7 +1505,7 @@ class PodsForm {
 		$field_types = array(
 			'text',
 			'website',
-			//'link',
+			// 'link',
 			'phone',
 			'email',
 			'password',
@@ -1536,8 +1550,8 @@ class PodsForm {
 					continue;
 				}
 
-				$class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
-
+				$class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) );
+				// PHP 5.2.x workaround
 				$field_types[ $field_type ]         = $class_vars;
 				$field_types[ $field_type ]['file'] = $file;
 			}
@@ -1547,7 +1561,7 @@ class PodsForm {
 			pods_transient_set( 'pods_field_types', self::$field_types );
 		} else {
 			self::$field_types = array_merge( $field_types, self::$field_types );
-		}
+		}//end if
 
 		return self::$field_types;
 	}
@@ -1623,7 +1637,7 @@ class PodsForm {
 				'text',
 				'time',
 				'website',
-				'wysiwyg'
+				'wysiwyg',
 			);
 
 			$field_types = apply_filters( 'pods_repeatable_field_types', $field_types );
@@ -1732,7 +1746,7 @@ class PodsForm {
 		static $object_types = null;
 
 		if ( null === $object_types ) {
-			$object_types = PodsForm::field_method( 'pick', 'simple_objects' );
+			$object_types = self::field_method( 'pick', 'simple_objects' );
 		}
 
 		return $object_types;

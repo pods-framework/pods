@@ -12,7 +12,6 @@ class PodsWidgetForm extends WP_Widget {
 	 *
 	 * Note: params are totally ignored. Included for the sake of strict standards.
 	 *
-	 *
 	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
 	 *                                a portion of the widget's class name will be used Has to be unique.
 	 * @param string $name            Name for the widget displayed on the configuration page.
@@ -23,10 +22,12 @@ class PodsWidgetForm extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_form', $name = 'Pods - Form', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_form', 'Pods - Form', array(
-			'classname'   => 'pods_widget_form',
-			'description' => 'Display a form for creating and editing Pod items'
-		), array( 'width' => 200 ) );
+		parent::__construct(
+			'pods_widget_form', 'Pods - Form', array(
+				'classname'   => 'pods_widget_form',
+				'description' => 'Display a form for creating and editing Pod items',
+			), array( 'width' => 200 )
+		);
 
 	}
 
@@ -43,7 +44,7 @@ class PodsWidgetForm extends WP_Widget {
 			'fields'    => trim( pods_var_raw( 'fields', $instance, '' ) ),
 			'label'     => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
 			'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
-			'form'      => 1
+			'form'      => 1,
 		);
 
 		if ( 0 < strlen( $args['name'] ) ) {

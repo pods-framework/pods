@@ -36,7 +36,7 @@ class PodsMigrate {
 	var $data = array(
 		'items'   => array(),
 		'columns' => array(),
-		'fields'  => array()
+		'fields'  => array(),
 	);
 
 	/**
@@ -86,7 +86,7 @@ class PodsMigrate {
 		$defaults = array(
 			'items'   => array(),
 			'columns' => array(),
-			'fields'  => array()
+			'fields'  => array(),
 		);
 
 		$this->data = array_merge( $defaults, (array) $data );
@@ -180,7 +180,7 @@ class PodsMigrate {
 		$data = array(
 			'columns' => array(),
 			'items'   => array(),
-			'fields'  => array()
+			'fields'  => array(),
 		);
 
 		foreach ( $items as $key => $item ) {
@@ -226,7 +226,7 @@ class PodsMigrate {
 
 		$data = array(
 			'columns' => array(),
-			'items'   => array()
+			'items'   => array(),
 		);
 
 		foreach ( $rows as $key => $row ) {
@@ -279,7 +279,7 @@ class PodsMigrate {
 		$data = preg_split( $split, trim( $line ), - 1, PREG_SPLIT_NO_EMPTY );
 
 		if ( '\n' !== $delimiter ) {
-			$data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", "$1", $data );
+			$data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", '$1', $data );
 		}
 
 		return $data;
@@ -302,7 +302,10 @@ class PodsMigrate {
 			return false;
 		}
 
-		$data = array( 'columns' => array(), 'items' => array() );
+		$data = array(
+			'columns' => array(),
+			'items'   => array(),
+		);
 
 		/**
 		 * @var $child      SimpleXMLElement
@@ -368,7 +371,7 @@ class PodsMigrate {
 			if ( ! empty( $item ) ) {
 				$data['items'][] = $item;
 			}
-		}
+		}//end foreach
 
 		$this->parsed = $data;
 
@@ -472,8 +475,8 @@ class PodsMigrate {
 		$data = array(
 			'items' => array(
 				'count' => count( $this->data['items'] ),
-				'item'  => array()
-			)
+				'item'  => array(),
+			),
 		);
 
 		foreach ( $this->data['items'] as $item ) {
@@ -501,10 +504,10 @@ class PodsMigrate {
 				}
 
 				$row[ $column ] = $value;
-			}
+			}//end foreach
 
 			$data['items']['item'][] = $row;
-		}
+		}//end foreach
 
 		$this->built = @json_encode( $data );
 
@@ -564,20 +567,22 @@ class PodsMigrate {
 				}
 
 				if ( is_array( $value ) || is_object( $value ) ) {
-					$value = pods_serial_comma( $value, array(
-						'field'  => $column,
-						'fields' => pods_var_raw( $column, $this->data['fields'] ),
-						'and'    => ''
-					) );
+					$value = pods_serial_comma(
+						$value, array(
+							'field'  => $column,
+							'fields' => pods_var_raw( $column, $this->data['fields'] ),
+							'and'    => '',
+						)
+					);
 				}
 
 				$value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
 
 				$line .= '"' . $value . '"' . $this->delimiter;
-			}
+			}//end foreach
 
 			$lines .= substr( $line, 0, - 1 ) . "\n";
-		}
+		}//end foreach
 
 		if ( ! empty( $lines ) ) {
 			$lines = "\n" . substr( $lines, 0, - 1 );
@@ -673,7 +678,7 @@ class PodsMigrate {
 		} elseif ( false !== strpos( $value, '<' ) ) {
 			$value = str_replace( array( '<![CDATA[', ']]>' ), array( '&lt;![CDATA[', ']]&gt;' ), $value );
 
-			$line .= "<![CDATA[" . $value . "]]>";
+			$line .= '<![CDATA[' . $value . ']]>';
 		} else {
 			$line .= str_replace( '&', '&amp;', $value );
 		}
@@ -745,7 +750,7 @@ class PodsMigrate {
 			'post_parent'    => null,
 			'post_title'     => 'Pods Export (' . $export_file . ')',
 			'post_content'   => '',
-			'post_status'    => 'private'
+			'post_status'    => 'private',
 		);
 
 		// insert attachment
@@ -762,7 +767,8 @@ class PodsMigrate {
 	/*
 	* The real enchilada!
 	*/
-	/* EXAMPLES
+	/*
+	 EXAMPLES
 	//// minimal import (if your fields match on both your pods and tables)
 	$import = array('my_pod' => array('table' => 'my_table')); // if your table name doesn't match the pod name
 	$import = array('my_pod'); // if your table name matches your pod name
@@ -783,7 +789,7 @@ class PodsMigrate {
 	*/
 	/**
 	 * @param      $import
-	 * @param bool $output
+	 * @param bool   $output
 	 */
 	public function heres_the_beef( $import, $output = true ) {
 
@@ -792,7 +798,8 @@ class PodsMigrate {
 		$api = pods_api();
 
 		for ( $i = 0; $i < 40000; $i ++ ) {
-			echo "  \t"; // extra spaces
+			echo "  \t";
+			// extra spaces
 		}
 
 		$default_data = array(
@@ -811,10 +818,13 @@ class PodsMigrate {
 			'page'           => null,
 			'output'         => null,
 			'page_var'       => 'ipg',
-			'bypass_helpers' => false
+			'bypass_helpers' => false,
 		);
 
-		$default_field_data = array( 'field' => null, 'filter' => null );
+		$default_field_data = array(
+			'field'  => null,
+			'filter' => null,
+		);
 
 		if ( ! is_array( $import ) ) {
 			$import = array( $import );
@@ -854,7 +864,7 @@ class PodsMigrate {
 			}
 
 			if ( false !== $output ) {
-				echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - <em>" . $data['pod']['name'] . "</em> - <strong>Loading Pod: " . $data['pod']['name'] . "</strong>\n";
+				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <em>' . $data['pod']['name'] . '</em> - <strong>Loading Pod: ' . $data['pod']['name'] . "</strong>\n";
 			}
 
 			if ( 2 > count( $data['pod'] ) ) {
@@ -871,10 +881,15 @@ class PodsMigrate {
 
 			if ( $data['reset'] === true ) {
 				if ( false !== $output ) {
-					echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - <strong style='color:blue;'>Resetting Pod: " . $data['pod']['name'] . "</strong>\n";
+					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - <strong style='color:blue;'>Resetting Pod: " . $data['pod']['name'] . "</strong>\n";
 				}
 
-				$api->reset_pod( array( 'id' => $data['pod']['id'], 'name' => $data['pod']['name'] ) );
+				$api->reset_pod(
+					array(
+						'id'   => $data['pod']['id'],
+						'name' => $data['pod']['name'],
+					)
+				);
 			}
 
 			if ( null === $data['sort'] && null !== $data['update_on'] && isset( $data['fields'][ $data['update_on'] ] ) ) {
@@ -892,21 +907,21 @@ class PodsMigrate {
 			}
 
 			if ( null === $data['sql'] ) {
-				$data['sql'] = "SELECT * FROM {$data['table']}" . ( null !== $data['where'] ? " WHERE {$data['where']}" : '' ) . ( null !== $data['sort'] ? " ORDER BY {$data['sort']}" : '' ) . ( null !== $data['limit'] ? " LIMIT " . ( 1 < $page ? ( ( $page - 1 ) * $data['limit'] ) . ',' : '' ) . "{$data['limit']}" : '' );
+				$data['sql'] = "SELECT * FROM {$data['table']}" . ( null !== $data['where'] ? " WHERE {$data['where']}" : '' ) . ( null !== $data['sort'] ? " ORDER BY {$data['sort']}" : '' ) . ( null !== $data['limit'] ? ' LIMIT ' . ( 1 < $page ? ( ( $page - 1 ) * $data['limit'] ) . ',' : '' ) . "{$data['limit']}" : '' );
 			}
 
 			if ( false !== $output ) {
-				echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Getting Results: " . $data['pod']['name'] . "\n";
+				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Getting Results: ' . $data['pod']['name'] . "\n";
 			}
 
 			if ( false !== $output ) {
-				echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Using Query: <small><code>" . $data['sql'] . "</code></small>\n";
+				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Using Query: <small><code>' . $data['sql'] . "</code></small>\n";
 			}
 
 			$result = $wpdb->get_results( $data['sql'], ARRAY_A );
 
 			if ( false !== $output ) {
-				echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Results Found: " . count( $result ) . "\n";
+				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Results Found: ' . count( $result ) . "\n";
 			}
 
 			$avg_time     = - 1;
@@ -931,7 +946,7 @@ class PodsMigrate {
 			timer_start();
 
 			if ( false !== $output && 1 == $import_counter ) {
-				echo "<div style='width:50%;background-color:navy;padding:10px 10px 30px 10px;color:#FFF;position:absolute;top:10px;left:25%;text-align:center;'><p id='progress_status' align='center'>" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Running Importer..</p><br /><small>This will automatically update every " . $avg_unit . " rows</small></div>\n";
+				echo "<div style='width:50%;background-color:navy;padding:10px 10px 30px 10px;color:#FFF;position:absolute;top:10px;left:25%;text-align:center;'><p id='progress_status' align='center'>" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Importer..</p><br /><small>This will automatically update every ' . $avg_unit . " rows</small></div>\n";
 			}
 
 			foreach ( $result as $k => $row ) {
@@ -940,12 +955,12 @@ class PodsMigrate {
 				usleep( 50000 );
 
 				if ( false !== $output ) {
-					echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Processing Row #" . ( $k + 1 ) . "\n";
+					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Processing Row #' . ( $k + 1 ) . "\n";
 				}
 
 				if ( null !== $data['row_filter'] && function_exists( $data['row_filter'] ) ) {
 					if ( false !== $output ) {
-						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Filtering <strong>" . $data['row_filter'] . "</strong> on Row #" . ( $k + 1 ) . "\n";
+						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Filtering <strong>' . $data['row_filter'] . '</strong> on Row #' . ( $k + 1 ) . "\n";
 					}
 
 					$row = $data['row_filter']( $row, $data );
@@ -958,7 +973,7 @@ class PodsMigrate {
 				$params = array(
 					'datatype'       => $data['pod']['name'],
 					'columns'        => array(),
-					'bypass_helpers' => $data['bypass_helpers']
+					'bypass_helpers' => $data['bypass_helpers'],
 				);
 
 				foreach ( $data['pod']['fields'] as $fk => $field_info ) {
@@ -999,7 +1014,7 @@ class PodsMigrate {
 					if ( null !== $field_data['filter'] ) {
 						if ( function_exists( $field_data['filter'] ) ) {
 							if ( false !== $output ) {
-								echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Filtering <strong>" . $field_data['filter'] . "</strong> on Field: " . $field . "\n";
+								echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Filtering <strong>' . $field_data['filter'] . '</strong> on Field: ' . $field . "\n";
 							}
 
 							$value = $field_data['filter']( $value, $row, $data );
@@ -1018,7 +1033,7 @@ class PodsMigrate {
 					unset( $field_data );
 					unset( $field_info );
 					unset( $fk );
-				}
+				}//end foreach
 
 				if ( empty( $params['columns'] ) ) {
 					continue;
@@ -1028,17 +1043,19 @@ class PodsMigrate {
 
 				if ( null !== $data['update_on'] && isset( $params['columns'][ $data['update_on'] ] ) ) {
 					if ( false !== $output ) {
-						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Checking for Existing Item\n";
+						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - Checking for Existing Item\n";
 					}
 
 					$check = new Pod( $data['pod']['name'] );
-					$check->findRecords( array(
-						'orderby' => 't.id',
-						'limit'   => 1,
-						'where'   => "t.{$data['update_on']} = '{$params['columns'][$data['update_on']]}'",
-						'search'  => false,
-						'page'    => 1
-					) );
+					$check->findRecords(
+						array(
+							'orderby' => 't.id',
+							'limit'   => 1,
+							'where'   => "t.{$data['update_on']} = '{$params['columns'][$data['update_on']]}'",
+							'search'  => false,
+							'page'    => 1,
+						)
+					);
 
 					if ( 0 < $check->getTotalRows() ) {
 						$check->fetchRecord();
@@ -1047,20 +1064,20 @@ class PodsMigrate {
 						$params['pod_id']     = $check->get_pod_id();
 
 						if ( false !== $output ) {
-							echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Found Existing Item w/ ID: " . $params['tbl_row_id'] . "\n";
+							echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Found Existing Item w/ ID: ' . $params['tbl_row_id'] . "\n";
 						}
 
 						unset( $check );
 					}
 
 					if ( ! isset( $params['tbl_row_id'] ) && false !== $output ) {
-						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Existing item not found - Creating New\n";
+						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - Existing item not found - Creating New\n";
 					}
-				}
+				}//end if
 
 				if ( null !== $data['pre_save'] && function_exists( $data['pre_save'] ) ) {
 					if ( false !== $output ) {
-						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Running Pre Save <strong>" . $data['pre_save'] . "</strong> on " . $data['pod']['name'] . "\n";
+						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Pre Save <strong>' . $data['pre_save'] . '</strong> on ' . $data['pod']['name'] . "\n";
 					}
 
 					$params = $data['pre_save']( $params, $row, $data );
@@ -1069,14 +1086,14 @@ class PodsMigrate {
 				$id = $api->save_pod_item( $params );
 
 				if ( false !== $output ) {
-					echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - <strong>Saved Row #" . ( $k + 1 ) . " w/ ID: " . $id . "</strong>\n";
+					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <strong>Saved Row #' . ( $k + 1 ) . ' w/ ID: ' . $id . "</strong>\n";
 				}
 
 				$params['tbl_row_id'] = $id;
 
 				if ( null !== $data['post_save'] && function_exists( $data['post_save'] ) ) {
 					if ( false !== $output ) {
-						echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - Running Post Save <strong>" . $data['post_save'] . "</strong> on " . $data['pod']['name'] . "\n";
+						echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - Running Post Save <strong>' . $data['post_save'] . '</strong> on ' . $data['pod']['name'] . "\n";
 					}
 
 					$data['post_save']( $params, $row, $data );
@@ -1095,26 +1112,26 @@ class PodsMigrate {
 				if ( $avg_counter == $avg_unit && false !== $output ) {
 					$avg_counter         = 0;
 					$avg_time            = timer_stop( 0, 10 );
-					$total_time          += $avg_time;
+					$total_time         += $avg_time;
 					$rows_left           = $result_count - $counter;
 					$estimated_time_left = ( ( $total_time / $counter ) * $rows_left ) / 60;
 					$percent_complete    = 100 - ( ( $rows_left * 100 ) / $result_count );
 
-					echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em><br /><strong>" . $percent_complete . "% Complete</strong><br /><strong>Estimated Time Left:</strong> " . $estimated_time_left . " minute(s) or " . ( $estimated_time_left / 60 ) . " hours(s)<br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . " minute(s)<br /><strong>Rows Done:</strong> " . ( $result_count - $rows_left ) . "/" . $result_count . "<br /><strong>Rows Left:</strong> " . $rows_left . "';</script>\n";
-					echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - <strong>Updated Status:</strong> " . $percent_complete . "% Complete</strong>\n";
+					echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em><br /><strong>' . $percent_complete . '% Complete</strong><br /><strong>Estimated Time Left:</strong> ' . $estimated_time_left . ' minute(s) or ' . ( $estimated_time_left / 60 ) . ' hours(s)<br /><strong>Time Spent:</strong> ' . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Done:</strong> ' . ( $result_count - $rows_left ) . '/' . $result_count . '<br /><strong>Rows Left:</strong> ' . $rows_left . "';</script>\n";
+					echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . '</em> - <strong>Updated Status:</strong> ' . $percent_complete . "% Complete</strong>\n";
 				}
-			}
+			}//end foreach
 
 			if ( false !== $output ) {
 				$avg_counter         = 0;
 				$avg_time            = timer_stop( 0, 10 );
-				$total_time          += $avg_time;
+				$total_time         += $avg_time;
 				$rows_left           = $result_count - $counter;
 				$estimated_time_left = ( ( $total_time / $counter ) * $rows_left ) / 60;
 				$percent_complete    = 100 - ( ( $rows_left * 100 ) / $result_count );
 
-				echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em><br /><strong style=\'color:green;\'>100% Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . " minute(s)<br /><strong>Rows Imported:</strong> " . $result_count . ( false !== $paginated ? "<br /><br />" . $paginated : '' ) . "';</script>\n";
-				echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <em>" . $data['pod']['name'] . "</em> - <strong style='color:green;'>Done Importing: " . $data['pod']['name'] . "</strong>\n";
+				echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em><br /><strong style=\'color:green;\'>100% Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . $result_count . ( false !== $paginated ? '<br /><br />' . $paginated : '' ) . "';</script>\n";
+				echo '<br />' . date( 'Y-m-d h:i:sa' ) . ' - <em>' . $data['pod']['name'] . "</em> - <strong style='color:green;'>Done Importing: " . $data['pod']['name'] . "</strong>\n";
 			}
 
 			unset( $result );
@@ -1124,16 +1141,16 @@ class PodsMigrate {
 
 			wp_cache_flush();
 			$wpdb->queries = array();
-		}
+		}//end foreach
 
 		if ( false !== $output ) {
 			$avg_counter = 0;
 			$avg_time    = timer_stop( 0, 10 );
-			$total_time  += $avg_time;
+			$total_time += $avg_time;
 			$rows_left   = $result_count - $counter;
 
-			echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <strong style=\'color:green;\'>Import Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . " minute(s)<br /><strong>Rows Imported:</strong> " . $result_count . ( false !== $paginated ? "<br /><br />" . $paginated : '' ) . "';</script>\n";
-			echo "<br />" . date( 'Y-m-d h:i:sa' ) . " - <strong style='color:green;'>Import Complete</strong>\n";
+			echo "<script type='text/javascript'>document.getElementById('progress_status').innerHTML = '" . date( 'Y-m-d h:i:sa' ) . " - <strong style=\'color:green;\'>Import Complete</strong><br /><br /><strong>Time Spent:</strong> " . ( $total_time / 60 ) . ' minute(s)<br /><strong>Rows Imported:</strong> ' . $result_count . ( false !== $paginated ? '<br /><br />' . $paginated : '' ) . "';</script>\n";
+			echo '<br />' . date( 'Y-m-d h:i:sa' ) . " - <strong style='color:green;'>Import Complete</strong>\n";
 		}
 	}
 }

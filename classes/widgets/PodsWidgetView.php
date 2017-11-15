@@ -12,7 +12,6 @@ class PodsWidgetView extends WP_Widget {
 	 *
 	 * Note: params are totally ignored. Included for the sake of strict standards.
 	 *
-	 *
 	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
 	 *                                a portion of the widget's class name will be used Has to be unique.
 	 * @param string $name            Name for the widget displayed on the configuration page.
@@ -23,10 +22,12 @@ class PodsWidgetView extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_view', $name = 'Pods - View', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_view', 'Pods - View', array(
-			'classname'   => 'pods_widget_view',
-			'description' => "Include a file from a theme, with caching options"
-		), array( 'width' => 200 ) );
+		parent::__construct(
+			'pods_widget_view', 'Pods - View', array(
+				'classname'   => 'pods_widget_view',
+				'description' => 'Include a file from a theme, with caching options',
+			), array( 'width' => 200 )
+		);
 
 	}
 
@@ -43,7 +44,7 @@ class PodsWidgetView extends WP_Widget {
 		$args = array(
 			'view'       => trim( pods_var_raw( 'view', $instance, '' ) ),
 			'expires'    => (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) ),
-			'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) )
+			'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) ),
 		);
 
 		if ( 0 < strlen( $args['view'] ) ) {

@@ -176,7 +176,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --pod=<pod> --file=<file>
 	 * @subcommand export-pod
 	 */
-	/*function export_pod ( $args, $assoc_args ) {
+	/*
+	function export_pod ( $args, $assoc_args ) {
 		$data = pods_api()->load_pod( array( 'name' => $assoc_args[ 'pod' ] ) );
 
 		if ( !empty( $data ) ) {
@@ -194,7 +195,8 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * @synopsis   --file=<file>
 	 * @subcommand import-pod
 	 */
-	/*function import_pod ( $args, $assoc_args ) {
+	/*
+	function import_pod ( $args, $assoc_args ) {
 		$data = ''; // @todo get data from file
 
 		$package = array();

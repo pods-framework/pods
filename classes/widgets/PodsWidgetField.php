@@ -12,7 +12,6 @@ class PodsWidgetField extends WP_Widget {
 	 *
 	 * Note: params are totally ignored. Included for the sake of strict standards.
 	 *
-	 *
 	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
 	 *                                a portion of the widget's class name will be used Has to be unique.
 	 * @param string $name            Name for the widget displayed on the configuration page.
@@ -23,10 +22,12 @@ class PodsWidgetField extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_field', $name = 'Pods - Field Value', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_field', 'Pods - Field Value', array(
-			'classname'   => 'pods_widget_field',
-			'description' => "Display a single Pod item's field value"
-		), array( 'width' => 200 ) );
+		parent::__construct(
+			'pods_widget_field', 'Pods - Field Value', array(
+				'classname'   => 'pods_widget_field',
+				'description' => "Display a single Pod item's field value",
+			), array( 'width' => 200 )
+		);
 
 	}
 
@@ -43,7 +44,7 @@ class PodsWidgetField extends WP_Widget {
 		$args = array(
 			'name'  => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
 			'slug'  => trim( pods_var_raw( 'slug', $instance, '' ) ),
-			'field' => trim( pods_var_raw( 'field', $instance, '' ) )
+			'field' => trim( pods_var_raw( 'field', $instance, '' ) ),
 		);
 
 		if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {

@@ -179,7 +179,7 @@ class PodsArray implements ArrayAccess {
 			} elseif ( ! isset( $extra[ $value ] ) ) {
 				$value = $default;
 			}
-		}
+		}//end if
 
 		$this->offsetSet( $offset, $value );
 

@@ -277,7 +277,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 
 		/**
 		 * Note on the change below for issue #3018:
-		 * ... || 'taxonomy' == $pod->fields[ $atts[ 'field' ] ][ 'type' ]
+		 * ... || 'taxonomy' === $pod->fields[ $atts[ 'field' ] ][ 'type' ]
 		 *
 		 * calling field() above for a taxonomy object field will populate
 		 * $pod->fields[ $field_name ] for the object field's data, in this
@@ -286,7 +286,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 		 * the $pod->fields array and is something to not expect to be there in
 		 * 3.0 as this was unintentional.
 		 */
-		if ( in_array( $field['pick_object'], $object_types ) || 'taxonomy' == $field['type'] ) {
+		if ( in_array( $field['pick_object'], $object_types ) || 'taxonomy' === $field['type'] ) {
 			// Match any Pod object or taxonomy
 			foreach ( $entries as $key => $entry ) {
 				$subpod = pods( $field['pick_val'] );
@@ -315,7 +315,7 @@ function frontier_do_subtemplate( $atts, $content ) {
 				), $template );
 
 			}
-		} elseif ( 'file' == $field['type'] && 'attachment' == $field['options']['file_uploader'] && 'multi' == $field['options']['file_format_type'] ) {
+		} elseif ( 'file' === $field['type'] && 'attachment' === $field['options']['file_uploader'] && 'multi' === $field['options']['file_format_type'] ) {
 			$template = frontier_decode_template( $content, $atts );
 			foreach ( $entries as $key => $entry ) {
 				$content = str_replace( '{_index}', $key, $template );

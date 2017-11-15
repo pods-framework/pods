@@ -246,13 +246,13 @@
                                                 $data[ 'taxonomy' ] = __( 'Taxonomies (Categories, Tags, etc..)', 'pods' );
                                             }
 
-                                            if ( isset( $all_pods[ 'media' ] ) && 'media' == $all_pods[ 'media' ][ 'type' ] )
+                                            if ( isset( $all_pods[ 'media' ] ) && 'media' === $all_pods[ 'media' ][ 'type' ] )
                                                 unset( $data[ 'media' ] );
 
-                                            if ( isset( $all_pods[ 'user' ] ) && 'user' == $all_pods[ 'user' ][ 'type' ] )
+                                            if ( isset( $all_pods[ 'user' ] ) && 'user' === $all_pods[ 'user' ][ 'type' ] )
                                                 unset( $data[ 'user' ] );
 
-                                            if ( isset( $all_pods[ 'comment' ] ) && 'comment' == $all_pods[ 'comment' ][ 'type' ] )
+                                            if ( isset( $all_pods[ 'comment' ] ) && 'comment' === $all_pods[ 'comment' ][ 'type' ] )
                                                 unset( $data[ 'comment' ] );
 
                                             $data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
@@ -273,7 +273,7 @@
                                                     unset( $post_types[ $post_type ] );
                                                     continue;
                                                 }
-                                                elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' == $all_pods[ $post_type ][ 'type' ] ) {
+                                                elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' === $all_pods[ $post_type ][ 'type' ] ) {
                                                     unset( $post_types[ $post_type ] );
                                                     continue;
                                                 }
@@ -302,7 +302,7 @@
                                                     unset( $taxonomies[ $taxonomy ] );
                                                     continue;
                                                 }
-                                                elseif ( isset( $all_pods[ $taxonomy ] ) && 'taxonomy' == $all_pods[ $taxonomy ][ 'type' ] ) {
+                                                elseif ( isset( $all_pods[ $taxonomy ] ) && 'taxonomy' === $all_pods[ $taxonomy ][ 'type' ] ) {
                                                     unset( $taxonomies[ $taxonomy ] );
                                                     continue;
                                                 }

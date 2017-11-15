@@ -23,9 +23,10 @@ class PodsWidgetSingle extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_single', $name = 'Pods - Single Item', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_single', 'Pods - Single Item', array( 'classname'   => 'pods_widget_single',
-		                                                                        'description' => 'Display a Single Pod Item'
-			), array( 'width' => 200 ) );
+		parent::__construct( 'pods_widget_single', 'Pods - Single Item', array(
+			'classname'   => 'pods_widget_single',
+			'description' => 'Display a Single Pod Item'
+		), array( 'width' => 200 ) );
 	}
 
 	/**

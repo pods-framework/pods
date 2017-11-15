@@ -71,9 +71,9 @@ class PodsField_WYSIWYG extends PodsField {
 				'default'    => 'tinymce',
 				'type'       => 'pick',
 				'data'       => apply_filters( 'pods_form_ui_field_wysiwyg_editors', array(
-						'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
-						'cleditor' => __( 'CLEditor', 'pods' )
-					) ),
+					'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
+					'cleditor' => __( 'CLEditor', 'pods' )
+				) ),
 				'dependency' => true
 			),
 			'editor_options'                   => array(

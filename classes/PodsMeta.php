@@ -348,11 +348,11 @@ class PodsMeta {
 
 		$pod_type = $type;
 
-		if ( 'post_type' == $type ) {
+		if ( 'post_type' === $type ) {
 			$type = 'post_types';
-		} elseif ( 'taxonomy' == $type ) {
+		} elseif ( 'taxonomy' === $type ) {
 			$type = 'taxonomies';
-		} elseif ( 'pod' == $type ) {
+		} elseif ( 'pod' === $type ) {
 			$type = 'advanced_content_types';
 		}
 
@@ -405,11 +405,11 @@ class PodsMeta {
 		if ( ! empty( $pod ) ) {
 			$type = $pod['type'];
 
-			if ( 'post_type' == $pod['type'] ) {
+			if ( 'post_type' === $pod['type'] ) {
 				$type = 'post_types';
-			} elseif ( 'taxonomy' == $pod['type'] ) {
+			} elseif ( 'taxonomy' === $pod['type'] ) {
 				$type = 'taxonomies';
-			} elseif ( 'pod' == $pod['type'] ) {
+			} elseif ( 'pod' === $pod['type'] ) {
 				$type = 'advanced_content_types';
 			}
 
@@ -543,18 +543,18 @@ class PodsMeta {
 
 				if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
 					$metadata_type = 'post';
-				} elseif ( 'taxonomy' == $metadata_type ) {
+				} elseif ( 'taxonomy' === $metadata_type ) {
 					$metadata_type = 'term';
 				}
 
-				if ( 'term' == $metadata_type && ! function_exists( 'get_term_meta' ) ) {
+				if ( 'term' === $metadata_type && ! function_exists( 'get_term_meta' ) ) {
 					$podterms = pods( $pod['name'], $id );
 
 					$meta = $podterms->field( $field );
 				} else {
 					$meta = get_metadata( $metadata_type, $id, $field, true );
 				}
-			} elseif ( 'taxonomy' == $pod['type'] ) {
+			} elseif ( 'taxonomy' === $pod['type'] ) {
 				$podterms = pods( $pod['name'], $id );
 
 				$meta = $podterms->field( $field );
@@ -572,11 +572,11 @@ class PodsMeta {
 
 		$object = $type;
 
-		if ( 'wp-media' == $type ) {
+		if ( 'wp-media' === $type ) {
 			$object = 'media';
-		} elseif ( 'wp-users' == $type ) {
+		} elseif ( 'wp-users' === $type ) {
 			$object = 'user';
-		} elseif ( 'wp-comments' == $type ) {
+		} elseif ( 'wp-comments' === $type ) {
 			$object = 'comment';
 		}
 
@@ -599,7 +599,7 @@ class PodsMeta {
 
 				if ( in_array( $metadata_type, array( 'post_type', 'media' ) ) ) {
 					$metadata_type = 'post';
-				} elseif ( 'taxonomy' == $metadata_type ) {
+				} elseif ( 'taxonomy' === $metadata_type ) {
 					$metadata_type = 'term';
 				}
 
@@ -668,7 +668,7 @@ class PodsMeta {
 			$pod = array_merge( $defaults, $pod );
 		}
 
-		if ( 'post' == $pod['type'] ) {
+		if ( 'post' === $pod['type'] ) {
 			$pod['type'] = 'post_type';
 		}
 
@@ -684,7 +684,7 @@ class PodsMeta {
 
 		$object_name = $pod['object'];
 
-		if ( 'pod' == $pod['type'] ) {
+		if ( 'pod' === $pod['type'] ) {
 			$object_name = $pod['name'];
 		}
 
@@ -750,14 +750,14 @@ class PodsMeta {
 		self::$groups[ $pod['type'] ][ $object_name ][] = $group;
 
 		// Hook it up!
-		if ( 'post_type' == $pod['type'] ) {
+		if ( 'post_type' === $pod['type'] ) {
 			if ( ! has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) ) {
 				add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 			}
 
 			/*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 3 ) )
                 add_action( 'save_post', array( $this, 'save_post' ), 10, 3 );*/
-		} elseif ( 'taxonomy' == $pod['type'] ) {
+		} elseif ( 'taxonomy' === $pod['type'] ) {
 			if ( ! has_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
 				add_action( $pod['object'] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
 				add_action( $pod['object'] . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
@@ -767,7 +767,7 @@ class PodsMeta {
 				add_action( 'edited_term', array( $this, 'save_taxonomy' ), 10, 3 );
 				add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 			}
-		} elseif ( 'media' == $pod['type'] ) {
+		} elseif ( 'media' === $pod['type'] ) {
 			if ( ! has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
 				add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 				add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
@@ -777,14 +777,14 @@ class PodsMeta {
 				add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
 				add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
 			}
-		} elseif ( 'user' == $pod['type'] ) {
+		} elseif ( 'user' === $pod['type'] ) {
 			if ( ! has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
 				add_action( 'show_user_profile', array( $this, 'meta_user' ) );
 				add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
 				add_action( 'user_register', array( $this, 'save_user' ) );
 				add_action( 'profile_update', array( $this, 'save_user' ), 10, 2 );
 			}
-		} elseif ( 'comment' == $pod['type'] ) {
+		} elseif ( 'comment' === $pod['type'] ) {
 			if ( ! has_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 ) ) {
 				add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
 				add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
@@ -799,21 +799,21 @@ class PodsMeta {
 
 		$object = self::$post_types;
 
-		if ( 'term' == $type ) {
+		if ( 'term' === $type ) {
 			$type = 'taxonomy';
 		}
 
-		if ( 'taxonomy' == $type ) {
+		if ( 'taxonomy' === $type ) {
 			$object = self::$taxonomies;
-		} elseif ( 'media' == $type ) {
+		} elseif ( 'media' === $type ) {
 			$object = self::$media;
-		} elseif ( 'user' == $type ) {
+		} elseif ( 'user' === $type ) {
 			$object = self::$user;
-		} elseif ( 'comment' == $type ) {
+		} elseif ( 'comment' === $type ) {
 			$object = self::$comment;
 		}
 
-		if ( 'pod' != $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
+		if ( 'pod' !== $type && ! empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) ) {
 			$pod = $object[ $name ];
 		} else {
 			if ( empty( self::$current_pod_data ) || ! is_object( self::$current_pod_data ) || self::$current_pod_data['name'] != $name ) {
@@ -857,10 +857,10 @@ class PodsMeta {
 	 */
 	public function groups_get( $type, $name, $default_fields = null ) {
 
-		if ( 'post_type' == $type && 'attachment' == $name ) {
+		if ( 'post_type' === $type && 'attachment' === $name ) {
 			$type = 'media';
 			$name = 'media';
-		} elseif ( 'term' == $type ) {
+		} elseif ( 'term' === $type ) {
 			$type = 'taxonomy';
 		}
 
@@ -871,15 +871,15 @@ class PodsMeta {
 
 		$object = self::$post_types;
 
-		if ( 'taxonomy' == $type ) {
+		if ( 'taxonomy' === $type ) {
 			$object = self::$taxonomies;
-		} elseif ( 'media' == $type ) {
+		} elseif ( 'media' === $type ) {
 			$object = self::$media;
-		} elseif ( 'user' == $type ) {
+		} elseif ( 'user' === $type ) {
 			$object = self::$user;
-		} elseif ( 'comment' == $type ) {
+		} elseif ( 'comment' === $type ) {
 			$object = self::$comment;
-		} elseif ( 'pod' == $type ) {
+		} elseif ( 'pod' === $type ) {
 			$object = self::$advanced_content_types;
 		}
 
@@ -964,7 +964,7 @@ class PodsMeta {
 	 */
 	public function meta_post_add( $post_type, $post = null ) {
 
-		if ( 'comment' == $post_type ) {
+		if ( 'comment' === $post_type ) {
 			return;
 		}
 
@@ -1003,9 +1003,9 @@ class PodsMeta {
 			if ( $field_found ) {
 				$pods_field_found = true;
 				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), $group['label'], array(
-						$this,
-						'meta_post'
-					), $post_type, $group['context'], $group['priority'], array( 'group' => $group ) );
+					$this,
+					'meta_post'
+				), $post_type, $group['context'], $group['priority'], array( 'group' => $group ) );
 
 			}
 		}
@@ -1037,7 +1037,7 @@ class PodsMeta {
 
 		$pod_type = 'post';
 
-		if ( 'attachment' == $post->post_type ) {
+		if ( 'attachment' === $post->post_type ) {
 			$pod_type = 'media';
 		}
 
@@ -1107,7 +1107,7 @@ class PodsMeta {
 					$value = get_post_meta( $id, $field['name'], true );
 				}
 
-				if ( 'hidden' == $field['type'] ) {
+				if ( 'hidden' === $field['type'] ) {
 					$hidden_fields[] = array(
 						'field' => $field,
 						'value' => $value
@@ -1197,11 +1197,11 @@ class PodsMeta {
 
 		if ( is_bool( $update ) ) {
 			$is_new_item = ! $update;
-		} // false is new item
-		elseif ( isset( self::$old_post_status[ $post->post_type ] ) && in_array( self::$old_post_status[ $post->post_type ], array(
+		} elseif ( isset( self::$old_post_status[ $post->post_type ] ) && in_array( self::$old_post_status[ $post->post_type ], array(
 				'new',
 				'auto-draft'
 			), true ) ) {
+			// false is new item
 			$is_new_item = true;
 		}
 
@@ -1453,7 +1453,7 @@ class PodsMeta {
 			return $post;
 		}
 
-		if ( is_array( $post ) && ! empty( $post ) && isset( $post['ID'] ) && 'attachment' == $post['post_type'] ) {
+		if ( is_array( $post ) && ! empty( $post ) && isset( $post['ID'] ) && 'attachment' === $post['post_type'] ) {
 			$post_id = $post['ID'];
 		}
 
@@ -1548,7 +1548,7 @@ class PodsMeta {
 
 		$post = get_post( $id, ARRAY_A );
 
-		if ( 'attachment' != $post['post_type'] ) {
+		if ( 'attachment' !== $post['post_type'] ) {
 			return;
 		}
 
@@ -1630,7 +1630,7 @@ class PodsMeta {
 
 				if ( ! is_object( $tag ) ) {
 					?>
-					<div class="form-field pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+					<div class="form-field pods-field" style="<?php echo esc_attr( 'hidden' === $field['type'] ? 'display:none;' : '' ); ?>">
 						<?php
 						echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
 						echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
@@ -1640,7 +1640,7 @@ class PodsMeta {
 					<?php
 				} else {
 					?>
-					<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+					<tr class="form-field pods-field <?php echo esc_attr( 'pods-form-ui-row-type-' . $field['type'] . ' pods-form-ui-row-name-' . PodsForm::clean( $field['name'], true ) ); ?>" style="<?php echo esc_attr( 'hidden' === $field['type'] ? 'display:none;' : '' ); ?>">
 						<th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field ); ?></th>
 						<td>
 							<?php
@@ -1861,7 +1861,7 @@ class PodsMeta {
 						pods_no_conflict_off( 'user' );
 					}
 
-					if ( 'hidden' == $field['type'] ) {
+					if ( 'hidden' === $field['type'] ) {
 						$hidden_fields[] = array(
 							'field' => $field,
 							'value' => $value
@@ -2077,7 +2077,7 @@ class PodsMeta {
 					pods_no_conflict_off( 'comment' );
 				}
 				?>
-				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?>  pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?>  pods-field" style="<?php echo esc_attr( 'hidden' === $field['type'] ? 'display:none;' : '' ); ?>">
 					<?php
 					echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
 					echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
@@ -2149,7 +2149,7 @@ class PodsMeta {
 
 				ob_start();
 				?>
-				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?> pods-field" style="<?php echo esc_attr( 'hidden' == $field['type'] ? 'display:none;' : '' ); ?>">
+				<p class="comment-form-author comment-form-pods-meta-<?php echo esc_attr( $field['name'] ); ?> pods-field" style="<?php echo esc_attr( 'hidden' === $field['type'] ? 'display:none;' : '' ); ?>">
 					<?php
 					echo PodsForm::label( 'pods_meta_' . $field['name'], $field['label'], $field['help'], $field );
 					echo PodsForm::field( 'pods_meta_' . $field['name'], $value, $field['type'], $field, $pod, $id );
@@ -2212,9 +2212,9 @@ class PodsMeta {
 
 			if ( $field_found ) {
 				add_meta_box( 'pods-meta-' . sanitize_title( $group['label'] ), $group['label'], array(
-						$this,
-						'meta_comment'
-					), $comment_type, $group['context'], $group['priority'], array( 'group' => $group ) );
+					$this,
+					'meta_comment'
+				), $comment_type, $group['context'], $group['priority'], array( 'group' => $group ) );
 			}
 		}
 	}
@@ -2267,7 +2267,7 @@ class PodsMeta {
 					$value = $pod->field( array( 'name' => $field['name'], 'in_form' => true ) );
 				}
 
-				if ( 'hidden' == $field['type'] ) {
+				if ( 'hidden' === $field['type'] ) {
 					$hidden_fields[] = array(
 						'field' => $field,
 						'value' => $value
@@ -2840,21 +2840,21 @@ class PodsMeta {
 
 		global $wpdb;
 
-		if ( 'term' == $object_type ) {
+		if ( 'term' === $object_type ) {
 			$object_type = 'taxonomy';
 		}
 
-		if ( 'post_type' == $object_type ) {
+		if ( 'post_type' === $object_type ) {
 			$objects = self::$post_types;
-		} elseif ( 'taxonomy' == $object_type ) {
+		} elseif ( 'taxonomy' === $object_type ) {
 			$objects = self::$taxonomies;
-		} elseif ( 'media' == $object_type ) {
+		} elseif ( 'media' === $object_type ) {
 			$objects = self::$media;
-		} elseif ( 'user' == $object_type ) {
+		} elseif ( 'user' === $object_type ) {
 			$objects = self::$user;
-		} elseif ( 'comment' == $object_type ) {
+		} elseif ( 'comment' === $object_type ) {
 			$objects = self::$comment;
-		} elseif ( 'settings' == $object_type ) {
+		} elseif ( 'settings' === $object_type ) {
 			$objects = self::$settings;
 		} else {
 			return false;
@@ -2866,13 +2866,13 @@ class PodsMeta {
 
 		$object_name = null;
 
-		if ( 'media' == $object_type ) {
+		if ( 'media' === $object_type ) {
 			return @current( $objects );
-		} elseif ( 'user' == $object_type ) {
+		} elseif ( 'user' === $object_type ) {
 			return @current( $objects );
-		} elseif ( 'comment' == $object_type ) {
+		} elseif ( 'comment' === $object_type ) {
 			return @current( $objects );
-		} elseif ( 'post_type' == $object_type ) {
+		} elseif ( 'post_type' === $object_type ) {
 			$object = get_post( $object_id );
 
 			if ( ! is_object( $object ) || ! isset( $object->post_type ) ) {
@@ -2880,7 +2880,7 @@ class PodsMeta {
 			}
 
 			$object_name = $object->post_type;
-		} elseif ( 'taxonomy' == $object_type ) {
+		} elseif ( 'taxonomy' === $object_type ) {
 			$object = get_term( $object_id );
 
 			if ( ! is_object( $object ) || ! isset( $object->taxonomy ) ) {
@@ -2893,7 +2893,7 @@ class PodsMeta {
 			} else {
 				$object_name = $aux;
 			}
-		} elseif ( 'settings' == $object_type ) {
+		} elseif ( 'settings' === $object_type ) {
 			$object = $object_id;
 		} else {
 			return false;
@@ -2905,9 +2905,9 @@ class PodsMeta {
 
 		$reserved_post_types = apply_filters( 'pods_meta_reserved_post_types', $reserved_post_types, $object_type, $object_id, $object_name, $objects );
 
-		if ( empty( $object_name ) || ( 'post_type' == $object_type && ( 0 === strpos( $object_name, '_pods_' ) ) || in_array( $object_name, $reserved_post_types ) ) ) {
+		if ( empty( $object_name ) || ( 'post_type' === $object_type && ( 0 === strpos( $object_name, '_pods_' ) ) || in_array( $object_name, $reserved_post_types ) ) ) {
 			return false;
-		} elseif ( 'attachment' == $object_name ) {
+		} elseif ( 'attachment' === $object_name ) {
 			return @current( self::$media );
 		}
 
@@ -2919,7 +2919,7 @@ class PodsMeta {
 				$recheck[] = $pod;
 			}
 
-			if ( '' == $pod['object'] && $object_name == $pod['name'] ) {
+			if ( '' === $pod['object'] && $object_name == $pod['name'] ) {
 				return $pod;
 			}
 		}
@@ -2950,7 +2950,7 @@ class PodsMeta {
 
 		if ( in_array( $meta_type, array( 'post_type', 'media' ) ) ) {
 			$meta_type = 'post';
-		} elseif ( 'taxonomy' == $meta_type ) {
+		} elseif ( 'taxonomy' === $meta_type ) {
 			$meta_type = 'term';
 		}
 
@@ -3091,8 +3091,8 @@ class PodsMeta {
 			} else {
 				$value = array();
 			}
-		} // get_metadata requires $meta[ 0 ] to be set for first value to be retrieved
-		elseif ( ! is_array( $value ) ) {
+		} elseif ( ! is_array( $value ) ) {
+			// get_metadata requires $meta[ 0 ] to be set for first value to be retrieved
 			$value = array( $value );
 		}
 

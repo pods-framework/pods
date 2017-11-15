@@ -41,7 +41,7 @@
 
 	if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '', '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
 		$formatted_date = $value = '';
-	elseif ( 'text' != $type ) {
+	elseif ( 'text' !== $type ) {
 		$formatted_date = $value;
 
 		if ( false !== $date )
@@ -67,7 +67,7 @@
 		var <?php echo esc_js( pods_js_name( $attributes[ 'id' ] ) ); ?>_args = <?php echo json_encode( $args ); ?>;
 
 		<?php
-			if ( 'text' != $type ) {
+			if ( 'text' !== $type ) {
 		?>
 			if ( 'undefined' == typeof pods_test_date_field_<?php echo esc_js( $type ); ?> ) {
 				// Test whether or not the browser supports date inputs

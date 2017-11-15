@@ -206,7 +206,7 @@
         $( '#pod_cache_mode' ).on( 'change', function () {
             var $this = $( this );
 
-            if ( 'none' == $this.val() ) {
+            if ( 'none' === $this.val() ) {
                 $( this ).closest( '.pods-section' ).addClass( 'hide' );
             }
             else {

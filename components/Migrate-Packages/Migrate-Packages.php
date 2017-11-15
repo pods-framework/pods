@@ -63,7 +63,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 */
 	public function ajax_import_export( $params ) {
 
-		if ( 'import' == $params->import_export ) {
+		if ( 'import' === $params->import_export ) {
 			$data = trim( $params->import_package );
 
 			$content = '<div class="pods-wizard-content">';
@@ -93,7 +93,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 			$content .= '</div>';
 
 			echo $content;
-		} elseif ( 'export' == $params->import_export ) {
+		} elseif ( 'export' === $params->import_export ) {
 			$params = get_object_vars( $params );
 			foreach ( $params as $k => $v ) {
 				if ( is_array( $v ) ) {
@@ -149,11 +149,11 @@ class Pods_Migrate_Packages extends PodsComponent {
 			return false;
 		}
 
-		// Pods 1.x < 1.10
 		if ( false === strpos( $data['meta']['version'], '.' ) && (int) $data['meta']['version'] < 1000 ) {
+			// Pods 1.x < 1.10
 			$data['meta']['version'] = implode( '.', str_split( $data['meta']['version'] ) );
-		} // Pods 1.10 <= 2.0
-		elseif ( false === strpos( $data['meta']['version'], '.' ) ) {
+		} elseif ( false === strpos( $data['meta']['version'], '.' ) ) {
+			// Pods 1.10 <= 2.0
 			$data['meta']['version'] = pods_version_to_point( $data['meta']['version'] );
 		}
 
@@ -227,17 +227,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 						foreach ( $pod_data['fields'] as $k => $field ) {
 							$field_type = $field['coltype'];
 
-							if ( 'txt' == $field_type ) {
+							if ( 'txt' === $field_type ) {
 								$field_type = 'text';
-							} elseif ( 'desc' == $field_type ) {
+							} elseif ( 'desc' === $field_type ) {
 								$field_type = 'wysiwyg';
-							} elseif ( 'code' == $field_type ) {
+							} elseif ( 'code' === $field_type ) {
 								$field_type = 'paragraph';
-							} elseif ( 'bool' == $field_type ) {
+							} elseif ( 'bool' === $field_type ) {
 								$field_type = 'boolean';
-							} elseif ( 'num' == $field_type ) {
+							} elseif ( 'num' === $field_type ) {
 								$field_type = 'number';
-							} elseif ( 'date' == $field_type ) {
+							} elseif ( 'date' === $field_type ) {
 								$field_type = 'datetime';
 							}
 
@@ -264,17 +264,17 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 							$found_fields[] = $new_field['name'];
 
-							if ( 'pick' == $field_type ) {
+							if ( 'pick' === $field_type ) {
 								$new_field['pick_object'] = 'pod';
 								$new_field['pick_val']    = $field['pickval'];
 
-								if ( 'wp_user' == $field['pickval'] ) {
+								if ( 'wp_user' === $field['pickval'] ) {
 									$new_field['pick_object'] = 'user';
-								} elseif ( 'wp_post' == $field['pickval'] ) {
+								} elseif ( 'wp_post' === $field['pickval'] ) {
 									$new_field['pick_object'] = 'post_type-post';
-								} elseif ( 'wp_page' == $field['pickval'] ) {
+								} elseif ( 'wp_page' === $field['pickval'] ) {
 									$new_field['pick_object'] = 'post_type-page';
-								} elseif ( 'wp_taxonomy' == $field['pickval'] ) {
+								} elseif ( 'wp_taxonomy' === $field['pickval'] ) {
 									$new_field['pick_object'] = 'taxonomy-category';
 								}
 
@@ -295,14 +295,14 @@ class Pods_Migrate_Packages extends PodsComponent {
 									$new_field['options']['pick_format_single'] = 'dropdown';
 									$new_field['options']['pick_limit']         = 1;
 								}
-							} elseif ( 'file' == $field_type ) {
+							} elseif ( 'file' === $field_type ) {
 								$new_field['options']['file_format_type'] = 'multi';
 								$new_field['options']['file_type']        = 'any';
-							} elseif ( 'number' == $field_type ) {
+							} elseif ( 'number' === $field_type ) {
 								$new_field['options']['number_decimals'] = 2;
-							} elseif ( 'desc' == $field['coltype'] ) {
+							} elseif ( 'desc' === $field['coltype'] ) {
 								$new_field['options']['wysiwyg_editor'] = 'tinymce';
-							} elseif ( 'text' == $field_type ) {
+							} elseif ( 'text' === $field_type ) {
 								$new_field['options']['text_max_length'] = 128;
 							}
 
@@ -524,9 +524,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				if ( isset( $helper_data['type'] ) ) {
-					if ( 'before' == $helper_data['type'] ) {
+					if ( 'before' === $helper_data['type'] ) {
 						$helper_data['type'] = 'pre_save';
-					} elseif ( 'after' == $helper_data['type'] ) {
+					} elseif ( 'after' === $helper_data['type'] ) {
 						$helper_data['type'] = 'post_save';
 					}
 				}

@@ -7,7 +7,7 @@ $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
 $pod_type = pods_v( 'type', $pod );
 
-if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields', 'get' ) ) {
+if ( 'taxonomy' === $pod[ 'type' ] && 'none' === $pod[ 'storage' ] && 1 == pods_v( 'enable_extra_fields', 'get' ) ) {
     $api->save_pod( array( 'id' => $obj->id, 'storage' => 'table' ) );
 
     $pod = $api->load_pod( array( 'id' => $obj->id ) );
@@ -237,7 +237,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 
 	$do = pods_v( 'do', 'get', 'save' );
 
-    if ( 'create' == $do )
+    if ( 'create' === $do )
         $action = __( 'created', 'pods' );
     elseif ( 'duplicate' ==$do )
         $action = __( 'duplicated', 'pods' );
@@ -360,7 +360,7 @@ if ( isset( $tabs[ 'advanced' ] ) ) {
 ?>
 <div id="pods-advanced" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
-if ( 'post_type' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
+if ( 'post_type' === $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     $fields = $tab_options[ 'advanced' ];
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
@@ -499,7 +499,7 @@ if ( 'post_type' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     </div>
     <?php
 }
-elseif ( 'taxonomy' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
+elseif ( 'taxonomy' === $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     $fields = $tab_options[ 'advanced' ];
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
@@ -536,7 +536,7 @@ elseif ( 'taxonomy' == $pod_type && strlen( pods_v( 'object', $pod ) ) < 1 ) {
     </div>
     <?php
 }
-elseif ( 'pod' == $pod_type ) {
+elseif ( 'pod' === $pod_type ) {
 ?>
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'detail_url', __( 'Detail Page URL', 'pods' ), __( 'help', 'pods' ) ); ?>
@@ -566,7 +566,7 @@ elseif ( 'pod' == $pod_type ) {
         $hierarchical_fields = array();
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_v( 'pick_object', $field ) && $pod[ 'name' ] == pods_v( 'pick_val', $field ) && 'single' == pods_v( 'pick_format_type', $field[ 'options' ] ) )
+            if ( 'pick' === $field[ 'type' ] && 'pod' == pods_v( 'pick_object', $field ) && $pod[ 'name' ] == pods_v( 'pick_val', $field ) && 'single' == pods_v( 'pick_format_type', $field[ 'options' ] ) )
                 $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 
@@ -745,7 +745,7 @@ if ( isset( $tabs[ 'extra-fields' ] ) ) {
                 $pods_pick_objects[] = "'" . esc_js( $sub_object ) . "' : '" . esc_js( $sub_object_label ) . $object . "'";
             }
         }
-        elseif ( '-- Select --' != $object_label )
+        elseif ( '-- Select --' !== $object_label )
             $pods_pick_objects[] = "'" . esc_js( $object ) . "' : '" . esc_js( $object_label ) . "'";
     }
     ?>

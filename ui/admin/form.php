@@ -147,7 +147,7 @@ if ( 0 < $pod->id() ) {
             echo PodsForm::field( '_pods_location', $_SERVER[ 'REQUEST_URI' ], 'hidden' );
 
             foreach ( $group_fields as $field ) {
-                if ( 'hidden' != $field[ 'type' ] )
+                if ( 'hidden' !== $field[ 'type' ] )
                     continue;
 
                 echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
@@ -422,7 +422,7 @@ if ( 0 < $pod->id() ) {
 
                         if ( $pod->pod_data[ 'field_index' ] != $pod->pod_data[ 'field_id' ] ) {
                             foreach ( $group_fields as $field ) {
-                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
+                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' !== $field[ 'type' ] )
                                     continue;
 
                                 $more = true;
@@ -557,7 +557,7 @@ if ( 0 < $pod->id() ) {
                                 <table class="form-table pods-metabox">
                                     <?php
                                                 foreach ( $group[ 'fields' ] as $field ) {
-                                                    if ( 'hidden' == $field[ 'type' ] || $more === $field[ 'name' ] || !isset( $group_fields[ $field[ 'name' ] ] ) )
+                                                    if ( 'hidden' === $field[ 'type' ] || $more === $field[ 'name' ] || !isset( $group_fields[ $field[ 'name' ] ] ) )
                                                 continue;
                                     ?>
                                         <tr class="form-field pods-field pods-field-input <?php echo esc_attr( 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . PodsForm::clean( $field[ 'name' ], true ) ); ?>">

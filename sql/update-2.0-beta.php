@@ -130,7 +130,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 			$charset_collate .= " COLLATE {$wpdb->collate}";
 		}
 
-		if ( 'DEFAULT CHARSET utf8' != $charset_collate ) {
+		if ( 'DEFAULT CHARSET utf8' !== $charset_collate ) {
 			$sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
 		}
 
@@ -165,7 +165,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		foreach ( $fields as $field ) {
 			$new_type = get_post_meta( $field->ID, 'date_format_type', true );
 
-			if ( 'datetime' == $new_type ) {
+			if ( 'datetime' === $new_type ) {
 				$new = array(
 					'date_format'      => 'datetime_format',
 					'date_time_type'   => 'datetime_time_type',
@@ -174,7 +174,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
-			} elseif ( 'time' == $new_type ) {
+			} elseif ( 'time' === $new_type ) {
 				$new = array(
 					'date_time_type'   => 'time_type',
 					'date_time_format' => 'time_format',
@@ -200,7 +200,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		foreach ( $fields as $field ) {
 			$new_type = get_post_meta( $field->ID, 'number_format_type', true );
 
-			if ( 'currency' == $new_type ) {
+			if ( 'currency' === $new_type ) {
 				$new = array(
 					'number_format_currency_sign'      => 'currency_format_sign',
 					'number_format_currency_placement' => 'currency_format_placement',
@@ -229,7 +229,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		foreach ( $fields as $field ) {
 			$new_type = get_post_meta( $field->ID, 'paragraph_format_type', true );
 
-			if ( 'plain' != $new_type ) {
+			if ( 'plain' !== $new_type ) {
 				$new_type = 'wysiwyg';
 
 				$new = array(
@@ -259,7 +259,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		foreach ( $fields as $field ) {
 			$new_type = get_post_meta( $field->ID, 'text_format_type', true );
 
-			if ( 'website' == $new_type ) {
+			if ( 'website' === $new_type ) {
 				$new = array(
 					'text_format_website' => 'website_format',
 					'text_max_length'     => 'website_max_length',
@@ -268,7 +268,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
-			} elseif ( 'phone' == $new_type ) {
+			} elseif ( 'phone' === $new_type ) {
 				$new = array(
 					'text_format_phone' => 'phone_format',
 					'text_max_length'   => 'phone_max_length',
@@ -277,7 +277,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
-			} elseif ( 'email' == $new_type ) {
+			} elseif ( 'email' === $new_type ) {
 				$new = array(
 					'text_max_length' => 'email_max_length',
 					'text_html5'      => 'email_html5',
@@ -285,7 +285,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
-			} elseif ( 'password' == $new_type ) {
+			} elseif ( 'password' === $new_type ) {
 				$new = array(
 					'text_max_length' => 'password_max_length',
 					'text_size'       => 'password_size'
@@ -358,7 +358,7 @@ function pods_2_alpha_migrate_pods() {
 		foreach ( $field_rows as $row ) {
 			$field_opts = json_decode( $row->options, true );
 
-			if ( 'permalink' == $row->type ) {
+			if ( 'permalink' === $row->type ) {
 				$row->type = 'slug';
 			}
 

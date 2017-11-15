@@ -36,7 +36,7 @@ function pods_image_id_from_field( $image ) {
 
 				if ( false === $the_post_type ) {
 					$id = 0;
-				} elseif ( 'attachment' != $the_post_type ) {
+				} elseif ( 'attachment' !== $the_post_type ) {
 					$id = get_post_thumbnail_id( $id );
 				}
 			} else {
@@ -93,7 +93,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 			$full = wp_get_attachment_image_src( $id, 'full' );
 			$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( 'full' != $size && $full[0] == $src[0] ) {
+			if ( 'full' !== $size && $full[0] == $src[0] ) {
 				pods_image_resize( $id, $size );
 			}
 		}
@@ -106,7 +106,7 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
 			$full = wp_get_attachment_image_src( $default, 'full' );
 			$src  = wp_get_attachment_image_src( $default, $size );
 
-			if ( 'full' != $size && $full[0] == $src[0] ) {
+			if ( 'full' !== $size && $full[0] == $src[0] ) {
 				pods_image_resize( $default, $size );
 			}
 		}
@@ -141,7 +141,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 			$full = wp_get_attachment_image_src( $id, 'full' );
 			$src  = wp_get_attachment_image_src( $id, $size );
 
-			if ( 'full' != $size && $full[0] == $src[0] ) {
+			if ( 'full' !== $size && $full[0] == $src[0] ) {
 				pods_image_resize( $id, $size );
 			}
 		}
@@ -150,8 +150,8 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 
 		if ( ! empty( $src ) ) {
 			$url = $src[0];
-		} // Handle non-images
-		else {
+		} else {
+			// Handle non-images
 			$attachment = get_post( $id );
 
 			if ( ! preg_match( '!^image/!', get_post_mime_type( $attachment ) ) ) {
@@ -165,7 +165,7 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 			$full = wp_get_attachment_image_src( $default, 'full' );
 			$src  = wp_get_attachment_image_src( $default, $size );
 
-			if ( 'full' != $size && $full[0] == $src[0] ) {
+			if ( 'full' !== $size && $full[0] == $src[0] ) {
 				pods_image_resize( $default, $size );
 			}
 		}
@@ -174,8 +174,8 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
 
 		if ( ! empty( $src ) ) {
 			$url = $src[0];
-		} // Handle non-images
-		else {
+		} else {
+			// Handle non-images
 			$attachment = get_post( $default );
 
 			if ( ! preg_match( '!^image/!', get_post_mime_type( $attachment ) ) ) {
@@ -275,15 +275,15 @@ function pods_image_resize( $attachment_id, $size ) {
 
 	$size_data = array();
 
-	// Basic image size string
 	if ( ! is_array( $size ) ) {
+		// Basic image size string
 		global $wp_image_sizes;
 
-		// Registered image size
 		if ( isset( $wp_image_sizes[ $size ] ) && ! empty( $wp_image_sizes[ $size ] ) ) {
+			// Registered image size
 			$size_data = $wp_image_sizes[ $size ];
-		} // Custom on-the-fly image size
-		elseif ( preg_match( '/[0-9]+x[0-9]+/', $size ) || preg_match( '/[0-9]+x[0-9]+x[0-1]/', $size ) ) {
+		} elseif ( preg_match( '/[0-9]+x[0-9]+/', $size ) || preg_match( '/[0-9]+x[0-9]+x[0-1]/', $size ) ) {
+			// Custom on-the-fly image size
 			$size = explode( 'x', $size );
 
 			$size_data = array(
@@ -294,8 +294,8 @@ function pods_image_resize( $attachment_id, $size ) {
 
 			$size = $size_data['width'] . 'x' . $size_data['height'];
 		}
-	} // Image size array
-	elseif ( 2 <= count( $size ) ) {
+	} elseif ( 2 <= count( $size ) ) {
+		// Image size array
 		if ( isset( $size['width'] ) ) {
 			$size_data = $size;
 		} else {

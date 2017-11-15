@@ -115,7 +115,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) )
 			);
 
-			if ( 0 < strlen( $args['view'] ) && 'none' != $args['cache_mode'] ) {
+			if ( 0 < strlen( $args['view'] ) && 'none' !== $args['cache_mode'] ) {
 				echo pods_shortcode( $args );
 			}
 		}

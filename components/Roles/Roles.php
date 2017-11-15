@@ -281,7 +281,7 @@ class Pods_Roles extends PodsComponent {
 		}
 
 		foreach ( $params->custom_capabilities as $x => $capability ) {
-			if ( empty( $capability ) || '--1' == $x ) {
+			if ( empty( $capability ) || '--1' === $x ) {
 				continue;
 			}
 

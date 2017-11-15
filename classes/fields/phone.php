@@ -249,15 +249,15 @@ class PodsField_Phone extends PodsField {
 			$number = preg_replace( '/([^0-9ext])/', '', $value );
 
 			$number = str_replace( array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ), array(
-					'',
-					'',
-					'|',
-					'|',
-					'',
-					'',
-					'',
-					'',
-				), $number );
+				'',
+				'',
+				'|',
+				'|',
+				'',
+				'',
+				'',
+				'',
+			), $number );
 
 			// Get extension
 			$extension = explode( '|', $number );

@@ -9,10 +9,10 @@
 			if ( empty( $field ) ) {
 				continue;
 			}
-			if ( 'pick' == $field['type'] && ! empty( $field['pick_object'] ) ) {
+			if ( 'pick' === $field['type'] && ! empty( $field['pick_object'] ) ) {
 				$pick_object = $field['pick_object'];
 				$pick_val    = $field['pick_val'];
-				if ( 'pod' == $pick_object ) {
+				if ( 'pod' === $pick_object ) {
 					$pick_pod    = $this->api->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['object'];
@@ -70,7 +70,7 @@
 					foreach ( $field_data as $val ) {
 						$active = ( empty( $val['active'] ) ) ? '' : ' selected';
 						$value  = $val['id'];
-						if ( 'text' == $this->search_mode ) {
+						if ( 'text' === $this->search_mode ) {
 							$value = $val['name'];
 						}
 						?>

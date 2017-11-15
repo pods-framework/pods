@@ -23,9 +23,10 @@ class PodsWidgetList extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_list', $name = 'Pods - List Items', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_list', 'Pods - List Items', array( 'classname'   => 'pods_widget_list',
-		                                                                     'description' => 'Display multiple Pod items'
-			), array( 'width' => 200 ) );
+		parent::__construct( 'pods_widget_list', 'Pods - List Items', array(
+			'classname'   => 'pods_widget_list',
+			'description' => 'Display multiple Pod items'
+		), array( 'width' => 200 ) );
 
 	}
 

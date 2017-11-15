@@ -64,7 +64,7 @@
                                     foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
                                         $field_group_option = PodsForm::field_setup( $field_group_option, null, $field_group_option[ 'type' ] );
 
-                                        if ( 'boolean' != $field_group_option[ 'type' ] )
+                                        if ( 'boolean' !== $field_group_option[ 'type' ] )
                                             continue;
 
                                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];

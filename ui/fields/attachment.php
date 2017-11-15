@@ -31,15 +31,15 @@ $limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 $title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 $linked = pods_var( $form_field_type . '_linked', $options, 0 );
 
-if ( 'images' == $limit_file_type )
+if ( 'images' === $limit_file_type )
     $limit_types = 'jpg,jpeg,png,gif';
-elseif ( 'video' == $limit_file_type )
+elseif ( 'video' === $limit_file_type )
     $limit_types = 'mpg,mov,flv,mp4';
-elseif ( 'audio' == $limit_file_type )
+elseif ( 'audio' === $limit_file_type )
     $limit_types = 'mp3,m4a,wav,wma';
-elseif ( 'text' == $limit_file_type )
+elseif ( 'text' === $limit_file_type )
     $limit_types = 'txt,rtx,csv,tsv';
-elseif ( 'any' == $limit_file_type )
+elseif ( 'any' === $limit_file_type )
     $limit_types = '';
 else
     $limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '' );
@@ -48,9 +48,9 @@ $limit_types = str_replace( ' ', '', $limit_types );
 
 $tab = pods_var( $form_field_type . '_attachment_tab', $options, 'type', null, true );
 
-if ( 'upload' == $tab )
+if ( 'upload' === $tab )
     $tab = 'type';
-elseif ( 'browse' == $tab )
+elseif ( 'browse' === $tab )
     $tab = 'library';
 
 $file_limit = 1;

@@ -148,11 +148,11 @@ class PodsField_Pick extends PodsField {
 				'default'    => 'dropdown',
 				'type'       => 'pick',
 				'data'       => apply_filters( 'pods_form_ui_field_pick_format_single_options', array(
-						'dropdown'     => __( 'Drop Down', 'pods' ),
-						'radio'        => __( 'Radio Buttons', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
-					) ),
+					'dropdown'     => __( 'Drop Down', 'pods' ),
+					'radio'        => __( 'Radio Buttons', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List view', 'pods' ),
+				) ),
 				'dependency' => true,
 			),
 			self::$type . '_format_multi'   => array(
@@ -162,11 +162,11 @@ class PodsField_Pick extends PodsField {
 				'default'    => 'checkbox',
 				'type'       => 'pick',
 				'data'       => apply_filters( 'pods_form_ui_field_pick_format_multi_options', array(
-						'checkbox'     => __( 'Checkboxes', 'pods' ),
-						'multiselect'  => __( 'Multi Select', 'pods' ),
-						'autocomplete' => __( 'Autocomplete', 'pods' ),
-						'list'         => __( 'List view', 'pods' ),
-					) ),
+					'checkbox'     => __( 'Checkboxes', 'pods' ),
+					'multiselect'  => __( 'Multi Select', 'pods' ),
+					'autocomplete' => __( 'Autocomplete', 'pods' ),
+					'list'         => __( 'List view', 'pods' ),
+				) ),
 				'dependency' => true,
 			),
 			self::$type . '_allow_add_new'  => array(
@@ -1967,12 +1967,12 @@ class PodsField_Pick extends PodsField {
 				$simple = true;
 			} elseif ( isset( self::$related_objects[ $options[ self::$type . '_object' ] ] ) && isset( self::$related_objects[ $options[ self::$type . '_object' ] ]['data_callback'] ) && is_callable( self::$related_objects[ $options[ self::$type . '_object' ] ]['data_callback'] ) ) {
 				$data = call_user_func_array( self::$related_objects[ $options[ self::$type . '_object' ] ]['data_callback'], array(
-						$name,
-						$value,
-						$options,
-						$pod,
-						$id,
-					) );
+					$name,
+					$value,
+					$options,
+					$pod,
+					$id,
+				) );
 
 				if ( 'data' === $context ) {
 					self::$field_data = array(

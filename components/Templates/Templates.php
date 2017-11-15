@@ -365,7 +365,7 @@ class Pods_Templates extends PodsComponent {
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
 
-		if ( 'code' == $meta_key ) {
+		if ( 'code' === $meta_key ) {
 			$post = get_post( $post_ID );
 
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
@@ -388,7 +388,7 @@ class Pods_Templates extends PodsComponent {
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
 
-		if ( 'code' == $meta_key ) {
+		if ( 'code' === $meta_key ) {
 			$post = get_post( $post_ID );
 
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {

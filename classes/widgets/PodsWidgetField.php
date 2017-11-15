@@ -23,9 +23,10 @@ class PodsWidgetField extends WP_Widget {
 	 */
 	public function __construct( $id_base = 'pods_widget_field', $name = 'Pods - Field Value', $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct( 'pods_widget_field', 'Pods - Field Value', array( 'classname'   => 'pods_widget_field',
-		                                                                       'description' => "Display a single Pod item's field value"
-			), array( 'width' => 200 ) );
+		parent::__construct( 'pods_widget_field', 'Pods - Field Value', array(
+			'classname'   => 'pods_widget_field',
+			'description' => "Display a single Pod item's field value"
+		), array( 'width' => 200 ) );
 
 	}
 

@@ -137,7 +137,7 @@ class Pods_Deprecated {
 				$pick_object  = $field['pick_object'];
 				$pick_val     = $field['pick_val'];
 
-				if ( 'pod' == $pick_object ) {
+				if ( 'pod' === $pick_object ) {
 					$pick_pod    = $this->obj->api->load_pod( array( 'name' => $pick_val ) );
 					$pick_object = $pick_pod['type'];
 					$pick_val    = $pick_pod['name'];
@@ -449,8 +449,8 @@ class Pods_Deprecated {
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
 				$value = array( $value );
-			} // fix for single tableless fields
-			elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) ) {
+			} elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) ) {
+				// fix for single tableless fields
 				$value = current( $value );
 			}
 		}

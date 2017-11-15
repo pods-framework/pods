@@ -89,9 +89,9 @@ function pods_message( $message, $type = null ) {
 
 	$class = '';
 
-	if ( 'notice' == $type ) {
+	if ( 'notice' === $type ) {
 		$class = 'updated';
-	} elseif ( 'error' == $type ) {
+	} elseif ( 'error' === $type ) {
 		$class = 'error';
 	}
 
@@ -373,8 +373,8 @@ function pods_strict( $include_debug = true ) {
 
 	if ( defined( 'PODS_STRICT' ) && PODS_STRICT ) {
 		return true;
-	} // @deprecated PODS_STRICT_MODE since 2.3.5
-	elseif ( pods_allow_deprecated( false ) && defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
+	} elseif ( pods_allow_deprecated( false ) && defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
+		// @deprecated PODS_STRICT_MODE since 2.3.5
 		return true;
 	} elseif ( $include_debug && defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		return true;
@@ -498,7 +498,7 @@ function pods_help( $text, $url = null ) {
 		$text = $text[0];
 	}
 
-	if ( 'help' == $text ) {
+	if ( 'help' === $text ) {
 		return;
 	}
 
@@ -522,7 +522,7 @@ function pods_version_check( $what, $minimum_version, $comparison = '<=', $maxim
 
 	global $wp_version, $wpdb;
 
-	if ( 'php' == $what ) {
+	if ( 'php' === $what ) {
 		$version = phpversion();
 	} elseif ( 'mysql' === $what ) {
 		$version = $wpdb->db_version();
@@ -566,7 +566,7 @@ function pods_current_url() {
 
 	$url = 'http';
 
-	if ( isset( $_SERVER['HTTPS'] ) && 'off' != $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'] ) {
+	if ( isset( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'] ) {
 		$url = 'https';
 	}
 
@@ -642,7 +642,7 @@ function pods_access( $privs, $method = 'OR' ) {
 		}
 
 		if ( current_user_can( $priv ) ) {
-			if ( 'OR' == $method ) {
+			if ( 'OR' === $method ) {
 				return true;
 			}
 
@@ -907,7 +907,7 @@ function pods_shortcode( $tags, $content = null ) {
 				}
 			}
 
-			if ( ! empty( $tags['cache_mode'] ) && 'none' != $tags['cache_mode'] ) {
+			if ( ! empty( $tags['cache_mode'] ) && 'none' !== $tags['cache_mode'] ) {
 				$params['cache_mode'] = $tags['cache_mode'];
 				$params['expires']    = (int) $tags['expires'];
 			}
@@ -921,12 +921,12 @@ function pods_shortcode( $tags, $content = null ) {
 	}
 
 	if ( ! empty( $tags['form'] ) ) {
-		if ( 'user' == $pod->pod ) {
-			// Further hardening of User-based forms
+		if ( 'user' === $pod->pod ) {
 			if ( false !== strpos( $tags['fields'], '_capabilities' ) || false !== strpos( $tags['fields'], '_user_level' ) ) {
+				// Further hardening of User-based forms
 				return '';
-			} // Only explicitly allow user edit forms
-			elseif ( $is_singular && ( ! defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || ! PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+			} elseif ( $is_singular && ( ! defined( 'PODS_SHORTCODE_ALLOW_USER_EDIT' ) || ! PODS_SHORTCODE_ALLOW_USER_EDIT ) ) {
+				// Only explicitly allow user edit forms
 				return '';
 			}
 		}
@@ -962,7 +962,7 @@ function pods_shortcode( $tags, $content = null ) {
 
 	ob_start();
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'before' == $tags['filters_location'] ) {
+	if ( ! $is_singular && false !== $tags['filters'] && 'before' === $tags['filters_location'] ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
@@ -982,7 +982,7 @@ function pods_shortcode( $tags, $content = null ) {
 		echo $pod->pagination( $tags['pagination_label'] );
 	}
 
-	if ( ! $is_singular && false !== $tags['filters'] && 'after' == $tags['filters_location'] ) {
+	if ( ! $is_singular && false !== $tags['filters'] && 'after' === $tags['filters_location'] ) {
 		echo $pod->filters( $tags['filters'], $tags['filters_label'] );
 	}
 
@@ -1975,9 +1975,9 @@ function pods_is_plugin_active( $plugin ) {
  */
 function pods_no_conflict_check( $object_type = 'post' ) {
 
-	if ( 'post_type' == $object_type ) {
+	if ( 'post_type' === $object_type ) {
 		$object_type = 'post';
-	} elseif ( 'term' == $object_type ) {
+	} elseif ( 'term' === $object_type ) {
 		$object_type = 'taxonomy';
 	}
 
@@ -2004,9 +2004,9 @@ function pods_no_conflict_check( $object_type = 'post' ) {
  */
 function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
-	if ( 'post_type' == $object_type ) {
+	if ( 'post_type' === $object_type ) {
 		$object_type = 'post';
-	} elseif ( 'term' == $object_type ) {
+	} elseif ( 'term' === $object_type ) {
 		$object_type = 'taxonomy';
 	}
 
@@ -2028,7 +2028,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 	// Filters = Usually get/update/delete meta functions
 	// Actions = Usually insert/update/save/delete object functions
-	if ( 'post' == $object_type ) {
+	if ( 'post' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'post' ) ) {
 			// Handle *_post_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'post' ) ) {
@@ -2051,7 +2051,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 ),
 			array( 'wp_insert_post_data', array( PodsInit::$meta, 'save_post_track_changed_fields' ), 10, 2 ),
 		);
-	} elseif ( 'taxonomy' == $object_type ) {
+	} elseif ( 'taxonomy' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'term' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'term' ) ) {
@@ -2074,7 +2074,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 				array( 'edit_terms', array( PodsInit::$meta, 'save_taxonomy_track_changed_fields' ), 10, 2 ),
 			);
 		}
-	} elseif ( 'media' == $object_type ) {
+	} elseif ( 'media' === $object_type ) {
 		$no_conflict['filter'] = array(
 			array( 'attachment_fields_to_save', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
 			array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
@@ -2099,7 +2099,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 
 			$no_conflict['action'] = array();
 		}
-	} elseif ( 'user' == $object_type ) {
+	} elseif ( 'user' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'user' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'user' ) ) {
@@ -2122,7 +2122,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'profile_update', array( PodsInit::$meta, 'save_user' ), 10, 2 ),
 			array( 'pre_user_login', array( PodsInit::$meta, 'save_user_track_changed_fields' ) ),
 		);
-	} elseif ( 'comment' == $object_type ) {
+	} elseif ( 'comment' === $object_type ) {
 		if ( apply_filters( 'pods_meta_handler', true, 'comment' ) ) {
 			// Handle *_term_meta
 			if ( apply_filters( 'pods_meta_handler_get', true, 'comment' ) ) {
@@ -2146,7 +2146,7 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
 			array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) ),
 			array( 'wp_update_comment_data', array( PodsInit::$meta, 'save_comment_track_changed_fields' ), 10, 3 ),
 		);
-	} elseif ( 'settings' == $object_type ) {
+	} elseif ( 'settings' === $object_type ) {
 		$no_conflict['filter'] = array();
 
 		// @todo Better handle settings conflicts apart from each other
@@ -2201,9 +2201,9 @@ function pods_no_conflict_on( $object_type = 'post', $object = null ) {
  */
 function pods_no_conflict_off( $object_type = 'post' ) {
 
-	if ( 'post_type' == $object_type ) {
+	if ( 'post_type' === $object_type ) {
 		$object_type = 'post';
-	} elseif ( 'term' == $object_type ) {
+	} elseif ( 'term' === $object_type ) {
 		$object_type = 'taxonomy';
 	}
 
@@ -2252,20 +2252,21 @@ function pods_session_start() {
 
 	$save_path = session_save_path();
 
-	// Check if headers were sent
 	if ( false !== headers_sent() ) {
+		// Check if headers were sent
 		return false;
-	} // Allow for bypassing Pods session autostarting
-	elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+	} elseif ( defined( 'PODS_SESSION_AUTO_START' ) && ! PODS_SESSION_AUTO_START ) {
+		// Allow for bypassing Pods session autostarting
 		return false;
-	} // Allow for non-file based sessions, like Memcache
-	elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+	} elseif ( 0 === strpos( $save_path, 'tcp://' ) ) {
+		// Allow for non-file based sessions, like Memcache
+
 		// This is OK, but we don't want to check if file_exists on next statement
-	} // Check if session path exists and can be written to, avoiding PHP fatal errors
-	elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
+	} elseif ( empty( $save_path ) || ! @file_exists( $save_path ) || ! is_writable( $save_path ) ) {
+		// Check if session path exists and can be written to, avoiding PHP fatal errors
 		return false;
-	} // Check if session ID is already set
-	elseif ( '' != session_id() ) {
+	} elseif ( '' != session_id() ) {
+		// Check if session ID is already set
 		return false;
 	}
 

@@ -1365,7 +1365,7 @@ class PodsForm {
 			self::$field_group = ( isset( $class_vars['group'] ) ? $class_vars['group'] : '' );
 			self::$field_type  = $class_vars['type'];
 
-			if ( 'Unknown' != $class_vars['label'] ) {
+			if ( 'Unknown' !== $class_vars['label'] ) {
 				return self::$loaded[ $field_type ];
 			}
 		}

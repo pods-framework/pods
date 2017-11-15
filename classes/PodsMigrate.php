@@ -267,7 +267,7 @@ class PodsMigrate {
 		$line = str_replace( "\r\n", "\n", $line );
 		$line = str_replace( "\r", "\n", $line );
 
-		if ( '\n' != $delimiter && function_exists( 'str_getcsv' ) ) {
+		if ( '\n' !== $delimiter && function_exists( 'str_getcsv' ) ) {
 			return str_getcsv( $line, $delimiter, $enclosure, $escape );
 		}
 
@@ -278,7 +278,7 @@ class PodsMigrate {
 
 		$data = preg_split( $split, trim( $line ), - 1, PREG_SPLIT_NO_EMPTY );
 
-		if ( '\n' != $delimiter ) {
+		if ( '\n' !== $delimiter ) {
 			$data = preg_replace( "/^{$enclosure}(.*){$enclosure}$/s", "$1", $data );
 		}
 
@@ -314,7 +314,7 @@ class PodsMigrate {
 			foreach ( $xml->columns->children() as $child ) {
 				$sub = $child->getName();
 
-				if ( empty( $sub ) || 'column' != $sub ) {
+				if ( empty( $sub ) || 'column' !== $sub ) {
 					continue;
 				}
 
@@ -333,7 +333,7 @@ class PodsMigrate {
 		foreach ( $xml->items->children() as $child ) {
 			$sub = $child->getName();
 
-			if ( empty( $sub ) || 'item' != $sub ) {
+			if ( empty( $sub ) || 'item' !== $sub ) {
 				continue;
 			}
 
@@ -564,9 +564,10 @@ class PodsMigrate {
 				}
 
 				if ( is_array( $value ) || is_object( $value ) ) {
-					$value = pods_serial_comma( $value, array( 'field'  => $column,
-					                                           'fields' => pods_var_raw( $column, $this->data['fields'] ),
-					                                           'and'    => ''
+					$value = pods_serial_comma( $value, array(
+						'field'  => $column,
+						'fields' => pods_var_raw( $column, $this->data['fields'] ),
+						'and'    => ''
 					) );
 				}
 
@@ -705,8 +706,8 @@ class PodsMigrate {
 
 		$extension = 'txt';
 
-		if ( 'sv' == $this->type ) {
-			if ( ',' == $this->delimiter ) {
+		if ( 'sv' === $this->type ) {
+			if ( ',' === $this->delimiter ) {
 				$extension = 'csv';
 			} elseif ( "\t" == $this->delimiter ) {
 				$extension = 'tsv';

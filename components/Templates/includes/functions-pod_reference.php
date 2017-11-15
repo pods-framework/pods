@@ -62,7 +62,7 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 			$sizes = get_intermediate_image_sizes();
 			foreach ( $sizes as $size ) {
 				$fields[] = "{$prefix}{$name}._src.{$size}";
-				if ( 'multi' != $field['options']['file_format_type'] ) {
+				if ( 'multi' !== $field['options']['file_format_type'] ) {
 					$fields[] = "{$prefix}{$name}._src_relative.{$size}";
 					$fields[] = "{$prefix}{$name}._src_schemeless.{$size}";
 				}

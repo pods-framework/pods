@@ -71,7 +71,7 @@ class PodsUpgrade {
 				$charset_collate .= " COLLATE {$wpdb->collate}";
 			}
 
-			if ( 'DEFAULT CHARSET utf8' != $charset_collate ) {
+			if ( 'DEFAULT CHARSET utf8' !== $charset_collate ) {
 				$sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
 			}
 

@@ -88,7 +88,7 @@ class PodsAdmin {
 
 			if ( in_array( pods_var( 'action', 'get' ), $pods_admin_ajax_actions ) || in_array( pods_var( 'action', 'post' ), $pods_admin_ajax_actions ) ) {
 				foreach ( $_POST as $key => $value ) {
-					if ( 'action' == $key || 0 === strpos( $key, '_podsfix_' ) ) {
+					if ( 'action' === $key || 0 === strpos( $key, '_podsfix_' ) ) {
 						continue;
 					}
 
@@ -117,7 +117,7 @@ class PodsAdmin {
 
 		if ( isset( $_GET['page'] ) ) {
 			$page = $_GET['page'];
-			if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
+			if ( 'pods' === $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
 				?>
 				<script type="text/javascript">
 					var PODS_URL = "<?php echo esc_js( PODS_URL ); ?>";
@@ -140,21 +140,21 @@ class PodsAdmin {
 					wp_enqueue_script( 'post' );
 				}
 
-				if ( 'pods-advanced' == $page ) {
+				if ( 'pods-advanced' === $page ) {
 					wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
 					wp_enqueue_script( 'jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array( 'jquery' ), '1.8.8' );
 					wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
 					wp_enqueue_script( 'jquery-ui-dialog' );
 					wp_enqueue_script( 'pods-advanced' );
-				} elseif ( 'pods-packages' == $page ) {
+				} elseif ( 'pods-packages' === $page ) {
 					wp_enqueue_style( 'pods-wizard' );
-				} elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array(
+				} elseif ( 'pods-wizard' === $page || 'pods-upgrade' === $page || ( in_array( $page, array(
 							'pods',
 							'pods-add-new'
 						) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
 					wp_enqueue_style( 'pods-wizard' );
 
-					if ( 'pods-upgrade' == $page ) {
+					if ( 'pods-upgrade' === $page ) {
 						wp_enqueue_script( 'pods-upgrade' );
 					}
 				}
@@ -365,7 +365,7 @@ class PodsAdmin {
 					$capability = 'manage_categories';
 
 					if ( ! empty( $pod['options']['capability_type'] ) ) {
-						if ( 'custom' == $pod['options']['capability_type'] && ! empty( $pod['options']['capability_type_custom'] ) ) {
+						if ( 'custom' === $pod['options']['capability_type'] && ! empty( $pod['options']['capability_type_custom'] ) ) {
 							$capability = 'manage_' . (string) $pod['options']['capability_type_custom'] . '_terms';
 						}
 					}
@@ -401,34 +401,34 @@ class PodsAdmin {
 					$menu_location        = pods_var( 'menu_location', $pod['options'], 'default' );
 					$menu_location_custom = pods_var( 'menu_location_custom', $pod['options'], '' );
 
-					if ( 'default' == $menu_location ) {
+					if ( 'default' === $menu_location ) {
 						continue;
 					}
 
 					$taxonomy_data = get_taxonomy( $pod['name'] );
 
 					foreach ( (array) $taxonomy_data->object_type as $post_type ) {
-						if ( 'post' == $post_type ) {
+						if ( 'post' === $post_type ) {
 							remove_submenu_page( 'edit.php', 'edit-tags.php?taxonomy=' . $pod['name'] );
-						} elseif ( 'attachment' == $post_type ) {
+						} elseif ( 'attachment' === $post_type ) {
 							remove_submenu_page( 'upload.php', 'edit-tags.php?taxonomy=' . $pod['name'] . '&amp;post_type=' . $post_type );
 						} else {
 							remove_submenu_page( 'edit.php?post_type=' . $post_type, 'edit-tags.php?taxonomy=' . $pod['name'] . '&amp;post_type=' . $post_type );
 						}
 					}
 
-					if ( 'settings' == $menu_location ) {
+					if ( 'settings' === $menu_location ) {
 						add_options_page( $page_title, $menu_label, 'read', $menu_slug );
-					} elseif ( 'appearances' == $menu_location ) {
+					} elseif ( 'appearances' === $menu_location ) {
 						add_theme_page( $page_title, $menu_label, 'read', $menu_slug );
-					} elseif ( 'objects' == $menu_location ) {
+					} elseif ( 'objects' === $menu_location ) {
 						if ( empty( $menu_position ) ) {
 							$menu_position = null;
 						}
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
-					} elseif ( 'top' == $menu_location ) {
+					} elseif ( 'top' === $menu_location ) {
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
-					} elseif ( 'submenu' == $menu_location && ! empty( $menu_location_custom ) ) {
+					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
 							$submenu_items[ $menu_location_custom ] = array();
 						}
@@ -468,17 +468,17 @@ class PodsAdmin {
 					$menu_location        = pods_var( 'menu_location', $pod['options'], 'settings' );
 					$menu_location_custom = pods_var( 'menu_location_custom', $pod['options'], '' );
 
-					if ( 'settings' == $menu_location ) {
+					if ( 'settings' === $menu_location ) {
 						add_options_page( $page_title, $menu_label, 'read', $menu_slug, array(
 							$this,
 							'admin_content_settings'
 						) );
-					} elseif ( 'appearances' == $menu_location ) {
+					} elseif ( 'appearances' === $menu_location ) {
 						add_theme_page( $page_title, $menu_label, 'read', $menu_slug, array(
 							$this,
 							'admin_content_settings'
 						) );
-					} elseif ( 'objects' == $menu_location ) {
+					} elseif ( 'objects' === $menu_location ) {
 						if ( empty( $menu_position ) ) {
 							$menu_position = null;
 						}
@@ -486,12 +486,12 @@ class PodsAdmin {
 							$this,
 							'admin_content_settings'
 						), $menu_icon, $menu_position );
-					} elseif ( 'top' == $menu_location ) {
+					} elseif ( 'top' === $menu_location ) {
 						add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array(
 							$this,
 							'admin_content_settings'
 						), $menu_icon, $menu_position );
-					} elseif ( 'submenu' == $menu_location && ! empty( $menu_location_custom ) ) {
+					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						if ( ! isset( $submenu_items[ $menu_location_custom ] ) ) {
 							$submenu_items[ $menu_location_custom ] = array();
 						}
@@ -590,7 +590,7 @@ class PodsAdmin {
 				}
 
 				// Don't just show the help page
-				if ( false === $parent && 'pods-help' == $page ) {
+				if ( false === $parent && 'pods-help' === $page ) {
 					continue;
 				}
 
@@ -603,7 +603,7 @@ class PodsAdmin {
 
 					$menu = __( 'Pods Admin', 'pods' );
 
-					if ( 'pods-upgrade' == $parent ) {
+					if ( 'pods-upgrade' === $parent ) {
 						$menu = __( 'Pods Upgrade', 'pods' );
 					}
 
@@ -612,7 +612,7 @@ class PodsAdmin {
 
 				add_submenu_page( $parent, $menu_item['label'], $menu_item['label'], 'read', $page, $menu_item['function'] );
 
-				if ( 'pods-components' == $page && is_object( PodsInit::$components ) ) {
+				if ( 'pods-components' === $page && is_object( PodsInit::$components ) ) {
 					PodsInit::$components->menu( $parent );
 				}
 			}
@@ -644,15 +644,15 @@ class PodsAdmin {
 					$menu_location        = pods_var( 'menu_location', $pod['options'], 'default' );
 					$menu_location_custom = pods_var( 'menu_location_custom', $pod['options'], '' );
 
-					if ( 'settings' == $menu_location ) {
+					if ( 'settings' === $menu_location ) {
 						$parent_file = 'options-general.php';
-					} elseif ( 'appearances' == $menu_location ) {
+					} elseif ( 'appearances' === $menu_location ) {
 						$parent_file = 'themes.php';
-					} elseif ( 'objects' == $menu_location ) {
+					} elseif ( 'objects' === $menu_location ) {
 						$parent_file = $menu_slug;
-					} elseif ( 'top' == $menu_location ) {
+					} elseif ( 'top' === $menu_location ) {
 						$parent_file = $menu_slug;
-					} elseif ( 'submenu' == $menu_location && ! empty( $menu_location_custom ) ) {
+					} elseif ( 'submenu' === $menu_location && ! empty( $menu_location_custom ) ) {
 						$parent_file = $menu_location_custom;
 					}
 
@@ -822,13 +822,13 @@ class PodsAdmin {
 			$_GET['action'] = 'add';
 		}
 
-		if ( 'pods-add-new' == $_GET['page'] ) {
-			if ( isset( $_GET['action'] ) && 'add' != $_GET['action'] ) {
+		if ( 'pods-add-new' === $_GET['page'] ) {
+			if ( isset( $_GET['action'] ) && 'add' !== $_GET['action'] ) {
 				pods_redirect( pods_query_arg( array( 'page' => 'pods', 'action' => $_GET['action'] ) ) );
 			} else {
 				$_GET['action'] = 'add';
 			}
-		} elseif ( isset( $_GET['action'] ) && 'add' == $_GET['action'] ) {
+		} elseif ( isset( $_GET['action'] ) && 'add' === $_GET['action'] ) {
 			pods_redirect( pods_query_arg( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
 		}
 
@@ -868,7 +868,7 @@ class PodsAdmin {
 			if ( isset( $types[ $pod['type'] ] ) ) {
 				if ( in_array( $pod['type'], array( 'post_type', 'taxonomy' ) ) ) {
 					if ( empty( $pod['object'] ) ) {
-						if ( 'post_type' == $pod['type'] ) {
+						if ( 'post_type' === $pod['type'] ) {
 							$pod['type'] = 'cpt';
 						} else {
 							$pod['type'] = 'ct';
@@ -882,7 +882,7 @@ class PodsAdmin {
 					$pod_types_found[ $pod['type'] ] ++;
 				}
 
-				if ( 'all' != $view && $view != $pod['type'] ) {
+				if ( 'all' !== $view && $view != $pod['type'] ) {
 					unset( $pods[ $k ] );
 
 					continue;
@@ -890,7 +890,7 @@ class PodsAdmin {
 
 				$pod['real_type'] = $pod['type'];
 				$pod['type']      = $types[ $pod['type'] ];
-			} elseif ( 'all' != $view ) {
+			} elseif ( 'all' !== $view ) {
 				continue;
 			}
 
@@ -1442,7 +1442,7 @@ class PodsAdmin {
 			);
 		}
 
-		if ( 'post_type' == $pod['type'] ) {
+		if ( 'post_type' === $pod['type'] ) {
 			$options['admin-ui'] = array(
 				'description'          => array(
 					'label'   => __( 'Post Type Description', 'pods' ),
@@ -1665,7 +1665,7 @@ class PodsAdmin {
 					'default'     => apply_filters( 'pods_api_default_status_' . pods_var_raw( 'name', $pod, 'post_type', null, true ), 'draft', $pod )
 				)
 			);
-		} elseif ( 'taxonomy' == $pod['type'] ) {
+		} elseif ( 'taxonomy' === $pod['type'] ) {
 			$options['admin-ui'] = array(
 				'show_ui'               => array(
 					'label'             => __( 'Show Admin UI', 'pods' ),
@@ -1910,7 +1910,7 @@ class PodsAdmin {
 					'default' => ''
 				),
 			);
-		} elseif ( 'settings' == $pod['type'] ) {
+		} elseif ( 'settings' === $pod['type'] ) {
 			$options['admin-ui'] = array(
 				'ui_style'             => array(
 					'label'      => __( 'Admin UI Style', 'pods' ),
@@ -1966,7 +1966,7 @@ class PodsAdmin {
 			$options['advanced'] = array(
 				'temporary' => 'This type has the fields hardcoded' // :(
 			);
-		} elseif ( 'pod' == $pod['type'] ) {
+		} elseif ( 'pod' === $pod['type'] ) {
 			$options['admin-ui'] = array(
 				'ui_style'             => array(
 					'label'      => __( 'Admin UI Style', 'pods' ),
@@ -2549,11 +2549,11 @@ class PodsAdmin {
 				unset( $components[ $component ] );
 
 				continue;
-			} elseif ( 'recommended' == $view && ! in_array( $component_data['ID'], $recommended ) ) {
+			} elseif ( 'recommended' === $view && ! in_array( $component_data['ID'], $recommended ) ) {
 				unset( $components[ $component ] );
 
 				continue;
-			} elseif ( 'dev' == $view && pods_developer() && ! pods_var_raw( 'DeveloperMode', $component_data, false ) ) {
+			} elseif ( 'dev' === $view && pods_developer() && ! pods_var_raw( 'DeveloperMode', $component_data, false ) ) {
 				unset( $components[ $component ] );
 
 				continue;
@@ -2861,9 +2861,9 @@ class PodsAdmin {
 		$capabilities[] = 'pods_components';
 
 		foreach ( $pods as $pod ) {
-			if ( 'settings' == $pod['type'] ) {
+			if ( 'settings' === $pod['type'] ) {
 				$capabilities[] = 'pods_edit_' . $pod['name'];
-			} elseif ( 'post_type' == $pod['type'] ) {
+			} elseif ( 'post_type' === $pod['type'] ) {
 				$capability_type = pods_var( 'capability_type_custom', $pod['options'], pods_var_raw( 'name', $pod ) );
 
 				if ( 'custom' == pods_var( 'capability_type', $pod['options'] ) && 0 < strlen( $capability_type ) ) {
@@ -2886,7 +2886,7 @@ class PodsAdmin {
 						$capabilities[] = 'delete_others_' . $capability_type_plural;
 					}
 				}
-			} elseif ( 'taxonomy' == $pod['type'] ) {
+			} elseif ( 'taxonomy' === $pod['type'] ) {
 				if ( 'custom' == pods_var( 'capability_type', $pod['options'], 'terms' ) ) {
 					$capability_type = pods_var( 'capability_type_custom', $pod['options'], pods_var_raw( 'name', $pod ) . 's' );
 
@@ -2907,13 +2907,13 @@ class PodsAdmin {
 				$capabilities[] = 'pods_add_' . $pod['name'];
 				$capabilities[] = 'pods_edit_' . $pod['name'];
 
-				if ( isset( $pod['fields']['author'] ) && 'pick' == $pod['fields']['author']['type'] && 'user' == $pod['fields']['author']['pick_object'] ) {
+				if ( isset( $pod['fields']['author'] ) && 'pick' === $pod['fields']['author']['type'] && 'user' === $pod['fields']['author']['pick_object'] ) {
 					$capabilities[] = 'pods_edit_others_' . $pod['name'];
 				}
 
 				$capabilities[] = 'pods_delete_' . $pod['name'];
 
-				if ( isset( $pod['fields']['author'] ) && 'pick' == $pod['fields']['author']['type'] && 'user' == $pod['fields']['author']['pick_object'] ) {
+				if ( isset( $pod['fields']['author'] ) && 'pick' === $pod['fields']['author']['type'] && 'user' === $pod['fields']['author']['pick_object'] ) {
 					$capabilities[] = 'pods_delete_others_' . $pod['name'];
 				}
 
@@ -2976,7 +2976,7 @@ class PodsAdmin {
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
-			if ( 'action' == $key ) {
+			if ( 'action' === $key ) {
 				continue;
 			}
 
@@ -3048,14 +3048,14 @@ class PodsAdmin {
 
 		$api->display_errors = false;
 
-		if ( 'upgrade' == $method->name ) {
+		if ( 'upgrade' === $method->name ) {
 			$output = (string) pods_upgrade( $params->version )->ajax( $params );
-		} elseif ( 'migrate' == $method->name ) {
+		} elseif ( 'migrate' === $method->name ) {
 			$output = (string) apply_filters( 'pods_api_migrate_run', $params );
 		} else {
 			if ( ! method_exists( $api, $method->name ) ) {
 				pods_error( 'API method does not exist', $this );
-			} elseif ( 'save_pod' == $method->name ) {
+			} elseif ( 'save_pod' === $method->name ) {
 				if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
 					$params->fields = $params->field_data_json;
 

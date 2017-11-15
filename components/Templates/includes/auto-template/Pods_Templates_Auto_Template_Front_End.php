@@ -87,12 +87,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( false === $the_pods ) {
 			//get all post type pods
 			$the_pods = pods_api()->load_pods( array(
-					'type'  => array(
-						'taxonomy',
-						'post_type'
-					),
-					'names' => true
-				) );
+				'type'  => array(
+					'taxonomy',
+					'post_type'
+				),
+				'names' => true
+			) );
 
 			//cache the results
 			pods_transient_set( $key, $the_pods );
@@ -190,7 +190,7 @@ class Pods_Templates_Auto_Template_Front_End {
 					);
 				}
 
-			} //endforeach
+			}
 
 			//cache the results
 			pods_transient_set( $key, $auto_pods );
@@ -286,13 +286,15 @@ class Pods_Templates_Auto_Template_Front_End {
 				//load the template
 				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
 
-			} //if pfat_archive was set and we're in the blog index, try to append template
-			elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
+			} elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
+				//if pfat_archive was set and we're in the blog index, try to append template
+
 				//append the template
 				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
 
-			} //if is taxonomy archive of the selected taxonomy
-			elseif ( is_tax( $current_post_type ) ) {
+			} elseif ( is_tax( $current_post_type ) ) {
+				//if is taxonomy archive of the selected taxonomy
+
 				//if pfat_single was set try to use that template
 				if ( $this_pod['archive'] ) {
 					//append the template
@@ -376,33 +378,33 @@ class Pods_Templates_Auto_Template_Front_End {
 		$possible_pods = $this->auto_pods();
 
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
-
 			$this_pod = $possible_pods[ $current_post_type ];
 
 			if ( $this_pod['single'] && is_singular( $current_post_type ) ) {
 				//set template
 				$template = $this_pod['single'];
 
-			}
-			//if pfat_archive was set try to use that template
-			//check if we are on an archive of the post type
-			elseif ( $this_pod['archive'] && is_post_type_archive( $current_post_type ) ) {
+			} elseif ( $this_pod['archive'] && is_post_type_archive( $current_post_type ) ) {
+				//if pfat_archive was set try to use that template
+				//check if we are on an archive of the post type
+
 				//set template
 				$template = $this_pod['archive'];
 
-			} //if pfat_archive was set and we're in the blog index, try to append template
-			elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
+			} elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
+				//if pfat_archive was set and we're in the blog index, try to append template
+
 				//set template
 				$template = $this_pod['archive'];
 
-			} //if is taxonomy archive of the selected taxonomy
-			elseif ( is_tax( $current_post_type ) ) {
+			} elseif ( is_tax( $current_post_type ) ) {
+				//if is taxonomy archive of the selected taxonomy
+
 				//if pfat_single was set try to use that template
 				if ( $this_pod['archive'] ) {
 					//set template
 					$template = $this_pod['archive'];
 				}
-
 			}
 
 			if ( isset( $template ) ) {

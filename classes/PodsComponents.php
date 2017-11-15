@@ -336,7 +336,7 @@ class PodsComponents {
 			$components = array();
 		}
 
-		if ( PodsInit::$version != PODS_VERSION || ! is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET['page'] ) && 'pods-components' == $_GET['page'] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+		if ( PodsInit::$version != PODS_VERSION || ! is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET['page'] ) && 'pods-components' === $_GET['page'] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
 			do_action( 'pods_components_get' );
 
 			$component_dir   = @opendir( untrailingslashit( $this->components_dir ) );
@@ -415,7 +415,7 @@ class PodsComponents {
 
 				$component_data = get_file_data( $component, $default_headers, 'pods_component' );
 
-				if ( ( empty( $component_data['Name'] ) && empty( $component_data['ComponentName'] ) && empty( $component_data['PluginName'] ) ) || 'yes' == $component_data['Hide'] ) {
+				if ( ( empty( $component_data['Name'] ) && empty( $component_data['ComponentName'] ) && empty( $component_data['PluginName'] ) ) || 'yes' === $component_data['Hide'] ) {
 					continue;
 				}
 
@@ -463,9 +463,9 @@ class PodsComponents {
 
 				$component_data['External'] = (boolean) $external;
 
-				if ( 'on' == strtolower( $component_data['MustUse'] ) || '1' == $component_data['MustUse'] ) {
+				if ( 'on' == strtolower( $component_data['MustUse'] ) || '1' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = true;
-				} elseif ( 'off' == strtolower( $component_data['MustUse'] ) || '0' == $component_data['MustUse'] ) {
+				} elseif ( 'off' == strtolower( $component_data['MustUse'] ) || '0' === $component_data['MustUse'] ) {
 					$component_data['MustUse'] = false;
 				} else {
 					$component_data['MustUse'] = $component_data['External'];
@@ -528,11 +528,11 @@ class PodsComponents {
 				$this->components[ $component ]['object']->init( $this->settings['components'][ $component ], $component );
 			}
 
-			// Component Admin handler
 			if ( method_exists( $this->components[ $component ]['object'], 'admin' ) ) {
+				// Component Admin handler
 				$this->components[ $component ]['object']->admin( $this->settings['components'][ $component ], $component );
-			} // Built-in Admin Handler
-			elseif ( method_exists( $this->components[ $component ]['object'], 'options' ) ) {
+			} elseif ( method_exists( $this->components[ $component ]['object'], 'options' ) ) {
+				// Built-in Admin Handler
 				$this->admin( $this->components[ $component ]['object']->options( $this->settings['components'][ $component ] ), $this->settings['components'][ $component ], $component );
 			}
 		}
@@ -711,7 +711,7 @@ class PodsComponents {
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
-			if ( 'action' == $key ) {
+			if ( 'action' === $key ) {
 				continue;
 			}
 
@@ -748,14 +748,14 @@ class PodsComponents {
 			$this->components[ $component ]['object']->init( $this->settings['components'][ $component ], $component );
 		}
 
-		// Handle internal methods
 		if ( isset( $this->components[ $component ]['object'] ) && ! method_exists( $this->components[ $component ]['object'], 'ajax_' . $method ) && method_exists( $this, 'admin_ajax_' . $method ) ) {
+			// Handle internal methods
 			$output = call_user_func( array( $this, 'admin_ajax_' . $method ), $component, $params );
-		} // Make sure method exists
-		elseif ( ! isset( $this->components[ $component ]['object'] ) || ! method_exists( $this->components[ $component ]['object'], 'ajax_' . $method ) ) {
+		} elseif ( ! isset( $this->components[ $component ]['object'] ) || ! method_exists( $this->components[ $component ]['object'], 'ajax_' . $method ) ) {
+			// Make sure method exists
 			pods_error( 'API method does not exist', $this );
-		} // Dynamically call the component method
-		else {
+		} else {
+			// Dynamically call the component method
 			$output = call_user_func( array( $this->components[ $component ]['object'], 'ajax_' . $method ), $params );
 		}
 

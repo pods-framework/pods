@@ -369,7 +369,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				$found_fields = array();
 
 				foreach ( $field_rows as $row ) {
-					if ( 'name' == $row->name ) {
+					if ( 'name' === $row->name ) {
 						continue;
 					}
 
@@ -383,17 +383,17 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 					$field_type = $row->coltype;
 
-					if ( 'txt' == $field_type ) {
+					if ( 'txt' === $field_type ) {
 						$field_type = 'text';
-					} elseif ( 'desc' == $field_type ) {
+					} elseif ( 'desc' === $field_type ) {
 						$field_type = 'wysiwyg';
-					} elseif ( 'code' == $field_type ) {
+					} elseif ( 'code' === $field_type ) {
 						$field_type = 'paragraph';
-					} elseif ( 'bool' == $field_type ) {
+					} elseif ( 'bool' === $field_type ) {
 						$field_type = 'boolean';
-					} elseif ( 'num' == $field_type ) {
+					} elseif ( 'num' === $field_type ) {
 						$field_type = 'number';
-					} elseif ( 'date' == $field_type ) {
+					} elseif ( 'date' === $field_type ) {
 						$field_type = 'datetime';
 					}
 
@@ -418,16 +418,16 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 					$found_fields[] = $field_params['name'];
 
-					if ( 'pick' == $field_type ) {
+					if ( 'pick' === $field_type ) {
 						$field_params['pick_object'] = 'pod-' . $row->pickval;
 
-						if ( 'wp_user' == $row->pickval ) {
+						if ( 'wp_user' === $row->pickval ) {
 							$field_params['pick_object'] = 'user';
-						} elseif ( 'wp_post' == $row->pickval ) {
+						} elseif ( 'wp_post' === $row->pickval ) {
 							$field_params['pick_object'] = 'post_type-post';
-						} elseif ( 'wp_page' == $row->pickval ) {
+						} elseif ( 'wp_page' === $row->pickval ) {
 							$field_params['pick_object'] = 'post_type-page';
-						} elseif ( 'wp_taxonomy' == $row->pickval ) {
+						} elseif ( 'wp_taxonomy' === $row->pickval ) {
 							$field_params['pick_object'] = 'taxonomy-category';
 						}
 
@@ -450,14 +450,14 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 							$field_params['options']['pick_format_single'] = 'dropdown';
 							$field_params['options']['pick_limit']         = 1;
 						}
-					} elseif ( 'file' == $field_type ) {
+					} elseif ( 'file' === $field_type ) {
 						$field_params['options']['file_format_type'] = 'multi';
 						$field_params['options']['file_type']        = 'any';
-					} elseif ( 'number' == $field_type ) {
+					} elseif ( 'number' === $field_type ) {
 						$field_params['options']['number_decimals'] = 2;
-					} elseif ( 'desc' == $row->coltype ) {
+					} elseif ( 'desc' === $row->coltype ) {
 						$field_params['options']['wysiwyg_editor'] = 'tinymce';
-					} elseif ( 'text' == $field_type ) {
+					} elseif ( 'text' === $field_type ) {
 						$field_params['options']['text_max_length'] = 128;
 					}
 
@@ -636,7 +636,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 				$related_field_id = 0;
 				$related_item_id  = $r->tbl_row_id;
 
-				if ( 'pick' == $field['type'] ) {
+				if ( 'pick' === $field['type'] ) {
 					$old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field['options'], 0 );
 
 					if ( 0 < $old_sister_id ) {
@@ -668,7 +668,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
 						$related_pod_id   = $related_field['pod_id'];
 						$related_field_id = $related_field['id'];
-					} elseif ( 'pod' == $field['pick_object'] && 0 < strlen( $field['pick_val'] ) ) {
+					} elseif ( 'pod' === $field['pick_object'] && 0 < strlen( $field['pick_val'] ) ) {
 						$related_pod = $this->api->load_pod( array( 'name' => $field['pick_val'] ), false );
 
 						if ( empty( $related_pod ) ) {
@@ -873,7 +873,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 			foreach ( $helpers as $helper ) {
 				unset( $helper->id );
 
-				if ( 'input' == $helper->helper_type ) {
+				if ( 'input' === $helper->helper_type ) {
 					$helper->status = 'draft';
 
 					$notice = true;

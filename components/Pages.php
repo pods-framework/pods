@@ -577,7 +577,7 @@ class Pods_Pages extends PodsComponent {
 	 */
 	public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
 
-		if ( 'code' == $meta_key ) {
+		if ( 'code' === $meta_key ) {
 			$post = get_post( $post_ID );
 
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
@@ -600,7 +600,7 @@ class Pods_Pages extends PodsComponent {
 	 */
 	public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
 
-		if ( 'code' == $meta_key ) {
+		if ( 'code' === $meta_key ) {
 			$post = get_post( $post_ID );
 
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
@@ -689,7 +689,7 @@ class Pods_Pages extends PodsComponent {
 
 		$home = parse_url( get_home_url() );
 
-		if ( ! empty( $home ) && isset( $home['path'] ) && '/' != $home['path'] ) {
+		if ( ! empty( $home ) && isset( $home['path'] ) && '/' !== $home['path'] ) {
 			$uri = substr( $uri, strlen( $home['path'] ) );
 		}
 
@@ -775,7 +775,7 @@ class Pods_Pages extends PodsComponent {
 				if ( ! empty( $found_rewrite_page_id ) ) {
 					$object = get_post( $found_rewrite_page_id, ARRAY_A );
 
-					if ( empty( $object ) || '_pods_page' != $object['post_type'] ) {
+					if ( empty( $object ) || '_pods_page' !== $object['post_type'] ) {
 						$object = false;
 					}
 				}
@@ -1026,7 +1026,7 @@ class Pods_Pages extends PodsComponent {
 
 			if ( isset( $pods->meta ) && is_array( $pods->meta ) && ! empty( $pods->meta ) ) {
 				foreach ( $pods->meta as $name => $content ) {
-					if ( 'title' == $name ) {
+					if ( 'title' === $name ) {
 						continue;
 					}
 					?>
@@ -1067,7 +1067,7 @@ class Pods_Pages extends PodsComponent {
 				$page_title = $pods->do_magic_tags( $page_title );
 			}
 
-			$title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
+			$title = ( 'right' === $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
 		} elseif ( strlen( trim( $title ) ) < 1 ) {
 			$uri = explode( '?', $_SERVER['REQUEST_URI'] );
 			$uri = preg_replace( '@^([/]?)(.*?)([/]?)$@', '$2', $uri[0] );
@@ -1077,7 +1077,7 @@ class Pods_Pages extends PodsComponent {
 			$title = '';
 
 			foreach ( $uri as $key => $page_title ) {
-				$title .= ( 'right' == $seplocation ) ? ucwords( $page_title ) . " {$sep} " : " {$sep} " . ucwords( $page_title );
+				$title .= ( 'right' === $seplocation ) ? ucwords( $page_title ) . " {$sep} " : " {$sep} " . ucwords( $page_title );
 			}
 		}
 
@@ -1170,7 +1170,7 @@ class Pods_Pages extends PodsComponent {
 
 			do_action( 'pods_page', $template, self::$exists );
 
-			if ( '_custom' == $template ) {
+			if ( '_custom' === $template ) {
 				pods_content();
 			} elseif ( null !== $render_function && is_callable( $render_function ) ) {
 				call_user_func( $render_function, $template, self::$exists );
@@ -1202,7 +1202,7 @@ class Pods_Pages extends PodsComponent {
 
 				$template = locate_template( $default_templates, true );
 
-				if ( '' != $template ) {
+				if ( '' !== $template ) {
 					// found the template and included it, we're good to go!
 				} else {
 					$template = false;

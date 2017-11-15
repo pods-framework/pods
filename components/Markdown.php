@@ -909,9 +909,9 @@ if ( ! function_exists( 'Markdown' ) ) :
 			#	  --------
 			#
 			$text = preg_replace_callback( '{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx', array(
-					&$this,
-					'_doHeaders_callback_setext'
-				), $text );
+				&$this,
+				'_doHeaders_callback_setext'
+			), $text );
 
 			# atx-style headers:
 			#	# Header 1
@@ -1461,9 +1461,9 @@ if ( ! function_exists( 'Markdown' ) ) :
 		function doAutoLinks( $text ) {
 
 			$text = preg_replace_callback( '{<((https?|ftp|dict):[^\'">\s]+)>}i', array(
-					&$this,
-					'_doAutoLinks_url_callback'
-				), $text );
+				&$this,
+				'_doAutoLinks_url_callback'
+			), $text );
 
 			# Email addresses: <address@domain.foo>
 			$text = preg_replace_callback( '{

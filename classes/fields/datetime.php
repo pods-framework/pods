@@ -201,12 +201,12 @@ class PodsField_DateTime extends PodsField {
 		// Check if PHP DateTime::createFromFormat exists for additional supported formats
 		if ( method_exists( 'DateTime', 'createFromFormat' ) || apply_filters( 'pods_form_ui_field_datetime_custom_formatter', false ) ) {
 			$options[ static::$type . '_format' ]['data'] = array_merge( $options[ static::$type . '_format' ]['data'], array(
-					'dmy'      => date_i18n( 'd/m/Y' ),
-					'dmy_dash' => date_i18n( 'd-m-Y' ),
-					'dmy_dot'  => date_i18n( 'd.m.Y' ),
-					'dMy'      => date_i18n( 'd/M/Y' ),
-					'dMy_dash' => date_i18n( 'd-M-Y' )
-				) );
+				'dmy'      => date_i18n( 'd/m/Y' ),
+				'dmy_dash' => date_i18n( 'd-m-Y' ),
+				'dmy_dot'  => date_i18n( 'd.m.Y' ),
+				'dMy'      => date_i18n( 'd/M/Y' ),
+				'dMy_dash' => date_i18n( 'd-M-Y' )
+			) );
 		}
 
 		$options[ static::$type . '_format' ]['data']    = apply_filters( 'pods_form_ui_field_date_format_options', $options[ static::$type . '_format' ]['data'] );

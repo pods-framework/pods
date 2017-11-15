@@ -325,14 +325,14 @@ class PodsInit {
 
 		// MV stuff
 		wp_register_script( 'pods-dfv', PODS_URL . 'ui/js/pods-dfv/pods-dfv.min.js', array(
-				'jquery',
-				'jquery-ui-core',
-				'jquery-ui-sortable',
-				'pods-i18n',
-				'marionette',
-				'media-views',
-				'media-models'
-			), PODS_VERSION, true );
+			'jquery',
+			'jquery-ui-core',
+			'jquery-ui-sortable',
+			'pods-i18n',
+			'marionette',
+			'media-views',
+			'media-models'
+		), PODS_VERSION, true );
 
 		// Check if Pod is a Modal Window
 		if ( pods_is_modal_window() ) {
@@ -587,7 +587,7 @@ class PodsInit {
 
 				$capability_type = pods_var( 'capability_type', $post_type, 'post' );
 
-				if ( 'custom' == $capability_type ) {
+				if ( 'custom' === $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $post_type, 'post' );
 				}
 
@@ -751,9 +751,9 @@ class PodsInit {
 				$capability_type  = pods_var( 'capability_type', $taxonomy, 'default' );
 				$tax_capabilities = array();
 
-				if ( 'custom' == $capability_type ) {
+				if ( 'custom' === $capability_type ) {
 					$capability_type = pods_var( 'capability_type_custom', $taxonomy, 'default' );
-					if ( ! empty( $capability_type ) && 'default' != $capability_type ) {
+					if ( ! empty( $capability_type ) && 'default' !== $capability_type ) {
 						$capability_type        .= '_term';
 						$capability_type_plural = $capability_type . 's';
 						$tax_capabilities       = array(
@@ -1173,7 +1173,7 @@ class PodsInit {
 		$labels['name']          = $label;
 		$labels['singular_name'] = $singular_label;
 
-		if ( 'post_type' == $type ) {
+		if ( 'post_type' === $type ) {
 			$labels['menu_name']             = pods_v( 'menu_name', $labels, $label, true );
 			$labels['name_admin_bar']        = pods_v( 'name_admin_bar', $labels, $singular_label, true );
 			$labels['add_new']               = pods_v( 'add_new', $labels, __( 'Add New', 'pods' ), true );
@@ -1201,7 +1201,7 @@ class PodsInit {
 			$labels['filter_items_list']     = pods_v( 'filter_items_list', $labels, sprintf( __( 'Filter %s lists', 'pods' ), $label ), true );
 			$labels['items_list_navigation'] = pods_v( 'items_list_navigation', $labels, sprintf( __( '%s navigation', 'pods' ), $label ), true );
 			$labels['items_list']            = pods_v( 'items_list', $labels, sprintf( __( '%s list', 'pods' ), $label ), true );
-		} elseif ( 'taxonomy' == $type ) {
+		} elseif ( 'taxonomy' === $type ) {
 			$labels['menu_name']                  = pods_v( 'menu_name', $labels, $label, true );
 			$labels['search_items']               = pods_v( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), true );
 			$labels['popular_items']              = pods_v( 'popular_items', $labels, sprintf( __( 'Popular %s', 'pods' ), $label ), true );
@@ -1294,7 +1294,7 @@ class PodsInit {
 
 		if ( ! empty( $current ) ) {
 			foreach ( self::$upgrades as $old_version => $new_version ) {
-				/*if ( '2.1.0' == $new_version && ( is_developer() ) )
+				/*if ( '2.1.0' === $new_version && ( is_developer() ) )
 					continue;*/
 
 				if ( version_compare( $last, $old_version, '>=' ) && version_compare( $last, $new_version, '<' ) && version_compare( $current, $new_version, '>=' ) && 1 != self::$upgraded ) {
@@ -1341,8 +1341,8 @@ class PodsInit {
 		$pods_version      = get_option( 'pods_framework_version' );
 		$pods_version_last = get_option( 'pods_framework_version_last' );
 
-		// Install Pods
 		if ( empty( $pods_version ) ) {
+			// Install Pods
 			pods_upgrade()->install( $_blog_id );
 
 			$old_version = get_option( 'pods_version' );
@@ -1357,12 +1357,13 @@ class PodsInit {
 
 				self::$version_last = $old_version;
 			}
-		} // Upgrade Wizard needed
-		elseif ( $this->needs_upgrade( $pods_version, $pods_version_last ) ) {
+		} elseif ( $this->needs_upgrade( $pods_version, $pods_version_last ) ) {
+			// Upgrade Wizard needed
+
 			// Do not do anything
 			return;
-		} // Update Pods and run any required DB updates
-		elseif ( version_compare( $pods_version, PODS_VERSION, '<=' ) ) {
+		} elseif ( version_compare( $pods_version, PODS_VERSION, '<=' ) ) {
+			// Update Pods and run any required DB updates
 			if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && ! isset( $_GET['pods_bypass_update'] ) ) {
 				do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
@@ -1702,7 +1703,7 @@ class PodsInit {
 		}
 
 		// Add edit link if we're on a pods page
-		if ( is_object( $pods ) && ! is_wp_error( $pods ) && ! empty( $pods->id ) && isset( $pods->pod_data ) && ! empty( $pods->pod_data ) && 'pod' == $pods->pod_data['type'] ) {
+		if ( is_object( $pods ) && ! is_wp_error( $pods ) && ! empty( $pods->id ) && isset( $pods->pod_data ) && ! empty( $pods->pod_data ) && 'pod' === $pods->pod_data['type'] ) {
 			$pod = $pods->pod_data;
 
 			if ( pods_is_admin( array( 'pods', 'pods_content', 'pods_edit_' . $pod['name'] ) ) ) {

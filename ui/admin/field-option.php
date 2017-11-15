@@ -66,7 +66,7 @@ foreach ( $field_options as $field_name => $field_option ) {
                     foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
                         $field_group_option = (array) $field_group_option;
 
-                        if ( 'boolean' != $field_group_option[ 'type' ] )
+                        if ( 'boolean' !== $field_group_option[ 'type' ] )
                             continue;
 
                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];

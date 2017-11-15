@@ -229,11 +229,11 @@ class PodsField_Currency extends PodsField_Number {
 			$currency_gap = ' ';
 		}
 
-		if ( 'before' == $placement ) {
+		if ( 'before' === $placement ) {
 			$value = $currency_sign . $currency_gap . $value;
-		} elseif ( 'after' == $placement ) {
+		} elseif ( 'after' === $placement ) {
 			$value .= $currency_gap . $currency_sign;
-		} elseif ( 'beforeaftercode' == $placement ) {
+		} elseif ( 'beforeaftercode' === $placement ) {
 			$value = $currency_sign . $currency_gap . $value . ' ' . $currency_label;
 		}
 

@@ -101,7 +101,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 			<ul class="pods-form-fields">
 				<?php
 					foreach ( $fields as $field ) {
-						if ( 'hidden' == $field[ 'type' ] ) {
+						if ( 'hidden' === $field[ 'type' ] ) {
 							continue;
 						}
 
@@ -146,7 +146,7 @@ do_action( 'pods_form_pre_fields', $fields, $pod, $params );
 
 			<?php
 				foreach ( $fields as $field ) {
-					if ( 'hidden' != $field[ 'type' ] ) {
+					if ( 'hidden' !== $field[ 'type' ] ) {
 						continue;
 					}
 

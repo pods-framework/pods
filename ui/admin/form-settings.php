@@ -95,7 +95,7 @@ $do = 'save';
 
         <?php
             foreach ( $fields as $field ) {
-                if ( 'hidden' != $field[ 'type' ] )
+                if ( 'hidden' !== $field[ 'type' ] )
                     continue;
 
                 echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
@@ -106,7 +106,7 @@ $do = 'save';
                 $depends_on = false;
 
                 foreach ( $fields as $field ) {
-                    if ( 'hidden' == $field[ 'type' ] )
+                    if ( 'hidden' === $field[ 'type' ] )
                         continue;
 
                     $dep_options = PodsForm::dependencies( $field );

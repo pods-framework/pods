@@ -128,15 +128,15 @@ class PodsArray implements ArrayAccess {
 		if ( empty( $value ) && null !== $default && false !== $value ) {
 			$value = $default;
 		}
-		if ( 'array' == $type || 'array_merge' == $type ) {
+		if ( 'array' === $type || 'array_merge' === $type ) {
 			if ( ! is_array( $value ) ) {
 				$value = explode( ',', $value );
 			}
 
-			if ( 'array_merge' == $type && $value !== $default ) {
+			if ( 'array_merge' === $type && $value !== $default ) {
 				$value = array_merge( $default, $value );
 			}
-		} elseif ( 'object' == $type || 'object_merge' == $type ) {
+		} elseif ( 'object' === $type || 'object_merge' === $type ) {
 			if ( ! is_object( $value ) ) {
 				if ( ! is_array( $value ) ) {
 					$value = explode( ',', $value );
@@ -144,22 +144,22 @@ class PodsArray implements ArrayAccess {
 				$value = (object) $value;
 			}
 
-			if ( 'object_merge' == $type && $value !== $default ) {
+			if ( 'object_merge' === $type && $value !== $default ) {
 				$value = (object) array_merge( (array) $default, (array) $value );
 			}
-		} elseif ( 'integer' == $type || 'int' == $type || 'absint' == $type ) {
+		} elseif ( 'integer' === $type || 'int' === $type || 'absint' === $type ) {
 			if ( ! is_numeric( trim( $value ) ) ) {
 				$value = 0;
 			} else {
 				$value = intval( $value );
 			}
 
-			if ( 'absint' == $type ) {
+			if ( 'absint' === $type ) {
 				$value = abs( $value );
 			}
-		} elseif ( 'boolean' == $type || 'bool' == $type ) {
+		} elseif ( 'boolean' === $type || 'bool' === $type ) {
 			$value = (boolean) $value;
-		} elseif ( 'in_array' == $type && is_array( $default ) ) {
+		} elseif ( 'in_array' === $type && is_array( $default ) ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $k => $v ) {
 					if ( ! in_array( $v, $extra ) ) {
@@ -169,7 +169,7 @@ class PodsArray implements ArrayAccess {
 			} elseif ( ! in_array( $value, $extra ) ) {
 				$value = $default;
 			}
-		} elseif ( 'isset' == $type && is_array( $default ) ) {
+		} elseif ( 'isset' === $type && is_array( $default ) ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $k => $v ) {
 					if ( ! isset( $extra[ $v ] ) ) {

@@ -3,7 +3,7 @@
 
         <?php
             foreach ( $fields as $name => $field ) {
-                if ( 'pick' == $field[ 'type' ] && 'pick-custom' != $field[ 'pick_object' ] && !empty( $field[ 'pick_object' ] ) ) {
+                if ( 'pick' === $field[ 'type' ] && 'pick-custom' !== $field[ 'pick_object' ] && !empty( $field[ 'pick_object' ] ) ) {
                     $field[ 'options' ][ 'pick_format_type' ] = 'single';
                     $field[ 'options' ][ 'pick_format_single' ] = 'dropdown';
                     $field[ 'options' ][ 'pick_select_text' ] = '-- ' . $field[ 'label' ] . ' --';

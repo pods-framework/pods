@@ -151,7 +151,7 @@ wp_enqueue_style( 'pods-form' );
 
 			if ( $pod->pod_data[ 'field_index' ] != $pod->pod_data[ 'field_id' ] ) {
 				foreach ( $fields as $k => $field ) {
-					if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
+					if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' !== $field[ 'type' ] )
 						continue;
 
 					$more = true;

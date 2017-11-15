@@ -60,8 +60,8 @@ function pods_sanitize( $input, $params = array() ) {
 		global $wpdb;
 
 		$output = $wpdb->prepare( $params['type'], $output );
-	} // @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
-	elseif ( function_exists( 'wp_slash' ) ) {
+	} elseif ( function_exists( 'wp_slash' ) ) {
+		// @todo Switch this full over to esc_sql once we get sanitization sane again in PodsAPI so we *don't* have to unsanitize in various places
 		$output = wp_slash( $input );
 	} else {
 		$output = esc_sql( $input );
@@ -290,9 +290,9 @@ function pods_trim( $input, $charlist = null, $lr = null ) {
 			$output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
 		}
 	} else {
-		if ( 'l' == $lr ) {
+		if ( 'l' === $lr ) {
 			$output = ltrim( $input, $charlist );
-		} elseif ( 'r' == $lr ) {
+		} elseif ( 'r' === $lr ) {
 			$output = rtrim( $input, $charlist );
 		} else {
 			$output = trim( $input, $charlist );
@@ -362,9 +362,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
-				if ( 'first' == $var ) {
+				if ( 'first' === $var ) {
 					$var = 0;
-				} elseif ( 'last' == $var ) {
+				} elseif ( 'last' === $var ) {
 					$var = - 1;
 				}
 
@@ -384,9 +384,9 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
-				if ( 'first' == $var ) {
+				if ( 'first' === $var ) {
 					$var = 0;
-				} elseif ( 'last' == $var ) {
+				} elseif ( 'last' === $var ) {
 					$var = - 1;
 				}
 
@@ -580,7 +580,7 @@ function pods_v( $var = null, $type = 'get', $default = null, $strict = false, $
 
 					if ( isset( $user->{$var} ) ) {
 						$value = $user->{$var};
-					} elseif ( 'role' == $var ) {
+					} elseif ( 'role' === $var ) {
 						$value = '';
 
 						if ( ! empty( $user->roles ) ) {
@@ -880,27 +880,27 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 	} else {
 		$type = strtolower( $type );
 
-		if ( 'get' == $type ) {
+		if ( 'get' === $type ) {
 			$_GET[ $var ] = $value;
 
 			$ret = $_GET;
-		} elseif ( 'post' == $type ) {
+		} elseif ( 'post' === $type ) {
 			$_POST[ $var ] = $value;
 
 			$ret = $_POST;
-		} elseif ( 'request' == $type ) {
+		} elseif ( 'request' === $type ) {
 			$_REQUEST[ $var ] = $value;
 
 			$ret = $_REQUEST;
-		} elseif ( 'url' == $type ) {
+		} elseif ( 'url' === $type ) {
 			if ( is_numeric( $var ) && function_exists( 'http_build_url' ) ) {
 				$url = parse_url( pods_current_url() );
 				$uri = trim( $url['path'], '/' );
 				$uri = array_filter( explode( '/', $uri ) );
 
-				if ( 'first' == $var ) {
+				if ( 'first' === $var ) {
 					$var = 0;
-				} elseif ( 'last' == $var ) {
+				} elseif ( 'last' === $var ) {
 					$var = - 1;
 				}
 
@@ -917,7 +917,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			} else {
 				$ret = add_query_arg( array( $var => $value ) );
 			}
-		} elseif ( 'server' == $type ) {
+		} elseif ( 'server' === $type ) {
 			$_SERVER[ $var ] = $value;
 
 			$ret = $_SERVER;
@@ -925,39 +925,39 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 			$GLOBALS[ $var ] = $value;
 
 			$ret = $GLOBALS;
-		} elseif ( 'session' == $type ) {
+		} elseif ( 'session' === $type ) {
 			// Session start
 			pods_session_start();
 
 			$_SESSION[ $var ] = $value;
 
 			$ret = $_SESSION;
-		} elseif ( 'cookie' == $type && ! headers_sent() ) {
+		} elseif ( 'cookie' === $type && ! headers_sent() ) {
 			setcookie( $var, $value, time() + 10 * DAY_IN_SECONDS, COOKIEPATH );
 
 			$ret = $_COOKIE;
-		} elseif ( 'constant' == $type && ! defined( $var ) && ( is_scalar( $value ) || null === $value ) ) {
+		} elseif ( 'constant' === $type && ! defined( $var ) && ( is_scalar( $value ) || null === $value ) ) {
 			define( $var, $value );
 
 			$ret = constant( $var );
-		} elseif ( 'user' == $type && is_user_logged_in() ) {
+		} elseif ( 'user' === $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
 			$user_data = $user->to_array();
 
-			// Role
-			if ( 'role' == $var ) {
+			if ( 'role' === $var ) {
+				// Role
 				$user->set_role( $value );
-			} // Core field
-			elseif ( isset( $user_data[ $var ] ) ) {
+			} elseif ( isset( $user_data[ $var ] ) ) {
+				// Core field
 				wp_update_user( array( 'ID' => $user->ID, $var => $value ) );
-			} // Meta field
-			else {
+			} else {
+				// Meta field
 				update_user_meta( $user->ID, $var, $value );
 			}
 
 			$ret = get_userdata( $user->ID );
-		} elseif ( 'pods' == $type ) {
+		} elseif ( 'pods' === $type ) {
 			/**
 			 * @var $pods Pods
 			 */
@@ -995,7 +995,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
  */
 function pods_var( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
 
-	if ( 'raw' == $context ) {
+	if ( 'raw' === $context ) {
 		$output = pods_v( $var, $type, $default, $strict, array( 'allowed' => $allowed, 'casting' => $casting ) );
 	} else {
 		$output = pods_v_sanitized( $var, $type, $default, $strict, array(
@@ -1247,7 +1247,7 @@ function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj
 		return $slug;
 	}
 
-	if ( 'table' != $pod_data['storage'] || ! in_array( $pod_data['type'], array( 'pod', 'table' ) ) ) {
+	if ( 'table' !== $pod_data['storage'] || ! in_array( $pod_data['type'], array( 'pod', 'table' ) ) ) {
 		return $slug;
 	}
 
@@ -2049,11 +2049,11 @@ function pods_list_filter( $list, $args = array(), $operator = 'AND' ) {
 			}
 		}
 
-		if ( 'AND' == $operator && $matched == $count ) {
+		if ( 'AND' === $operator && $matched == $count ) {
 			$filtered[ $key ] = $obj;
-		} elseif ( 'OR' == $operator && $matched > 0 ) {
+		} elseif ( 'OR' === $operator && $matched > 0 ) {
 			$filtered[ $key ] = $obj;
-		} elseif ( 'NOT' == $operator && 0 == $matched ) {
+		} elseif ( 'NOT' === $operator && 0 == $matched ) {
 			$filtered[ $key ] = $obj;
 		} else {
 			continue;

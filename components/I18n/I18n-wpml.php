@@ -11,7 +11,7 @@ class Pods_I18n_WPML {
 		if ( ! empty( $languages ) ) {
 			foreach ( $languages as $lang => $lang_data ) {
 				if ( isset( $lang_data['default_locale'] ) ) {
-					$locale = $lang_data['default_locale'];
+					$locale            = $lang_data['default_locale'];
 					$this->languages[] = $locale;
 				}
 			}

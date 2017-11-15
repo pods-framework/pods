@@ -55,7 +55,7 @@ class Pods_Term_Splitting {
 			$this->update_podsrel_taxonomy( $taxonomy_pod['id'] );
 
 			// Update the Pods table if the taxonomy is a table based Pod
-			if ( 'table' == $taxonomy_pod['storage'] ) {
+			if ( 'table' === $taxonomy_pod['storage'] ) {
 				$this->update_pod_table( $taxonomy_pod['pod_table'] );
 			}
 		}
@@ -160,7 +160,7 @@ class Pods_Term_Splitting {
 			foreach ( $this_pod['fields'] as $this_field_name => $this_field ) {
 
 				// Ignore everything except relationship fields to this taxonomy
-				if ( 'pick' != $this_field['type'] || 'taxonomy' != $this_field['pick_object'] || $this->taxonomy != $this_field['pick_val'] ) {
+				if ( 'pick' !== $this_field['type'] || 'taxonomy' !== $this_field['pick_object'] || $this->taxonomy != $this_field['pick_val'] ) {
 					continue;
 				}
 

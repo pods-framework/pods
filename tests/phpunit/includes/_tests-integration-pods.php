@@ -47,9 +47,10 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$this->fields['start_date']['id'] = pods_api()->save_field( $params );
 
 		//add item
-		$this->item = $this->pod->save( array( 'name'        => 'Sample Event',
-		                                       'description' => 'My first event',
-		                                       'start_date'  => 'May 5, 2014 11:00 PM'
+		$this->item = $this->pod->save( array(
+			'name'        => 'Sample Event',
+			'description' => 'My first event',
+			'start_date'  => 'May 5, 2014 11:00 PM'
 		) );
 	}
 

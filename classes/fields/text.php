@@ -315,7 +315,7 @@ class PodsField_Text extends PodsField {
 				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
 			}
 
-			if ( ! empty( $allowed_html_tags ) && '<>' != $allowed_html_tags ) {
+			if ( ! empty( $allowed_html_tags ) && '<>' !== $allowed_html_tags ) {
 				$value = strip_tags( $value, $allowed_html_tags );
 			}
 		} else {

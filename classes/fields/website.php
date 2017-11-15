@@ -388,7 +388,7 @@ class PodsField_Website extends PodsField {
 					$value = $this->build_url( $url, $options );
 					$value = str_replace( trim( $url['scheme'] . '://', ':' ), '', $value );
 
-					if ( '/' == $url['path'] ) {
+					if ( '/' === $url['path'] ) {
 						$value = trim( $value, '/' );
 					}
 				} elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
@@ -399,7 +399,7 @@ class PodsField_Website extends PodsField {
 					$value = $this->build_url( $url, $options );
 					$value = str_replace( trim( $url['scheme'] . '://', ':' ), '', $value );
 
-					if ( '/' == $url['path'] ) {
+					if ( '/' === $url['path'] ) {
 						$value = trim( $value, '/' );
 					}
 				} elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
@@ -410,7 +410,7 @@ class PodsField_Website extends PodsField {
 					$value = $this->build_url( $url, $options );
 					$value = str_replace( trim( $url['scheme'] . '://', ':' ), '', $value );
 
-					if ( '/' == $url['path'] ) {
+					if ( '/' === $url['path'] ) {
 						$value = trim( $value, '/' );
 					}
 				}
@@ -456,7 +456,7 @@ class PodsField_Website extends PodsField {
 				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
 			}
 
-			if ( ! empty( $allowed_html_tags ) && '<>' != $allowed_html_tags ) {
+			if ( ! empty( $allowed_html_tags ) && '<>' !== $allowed_html_tags ) {
 				$value = strip_tags( $value, $allowed_html_tags );
 			}
 		} else {

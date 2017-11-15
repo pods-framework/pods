@@ -7,15 +7,15 @@
             $field[ 'pick_object' ] = 'post_type';
         elseif ( isset( PodsMeta::$taxonomies[ $field[ 'pick_val' ] ] ) )
             $field[ 'pick_object' ] = 'taxonomy';
-        elseif ( 'user' == $field[ 'pick_val' ] && !empty( PodsMeta::$user ) ) {
+        elseif ( 'user' === $field[ 'pick_val' ] && !empty( PodsMeta::$user ) ) {
             $field[ 'pick_object' ] = 'user';
             $field[ 'pick_val' ] = '';
         }
-        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( PodsMeta::$comment ) ) {
+        elseif ( 'comment' === $field[ 'pick_val' ] && !empty( PodsMeta::$comment ) ) {
             $field[ 'pick_object' ] = 'comment';
             $field[ 'pick_val' ] = '';
         }
-        elseif ( 'media' == $field[ 'pick_val' ] && !empty( PodsMeta::$media ) ) {
+        elseif ( 'media' === $field[ 'pick_val' ] && !empty( PodsMeta::$media ) ) {
             $field[ 'pick_object' ] = 'media';
             $field[ 'pick_val' ] = '';
         }
@@ -102,7 +102,7 @@
                     if ( null !== $pick_object_name )
                         break;
 
-                    if ( '-- Select --' == $object_label )
+                    if ( '-- Select --' === $object_label )
                         continue;
 
                     if ( is_array( $object_label ) ) {

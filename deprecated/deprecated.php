@@ -133,27 +133,27 @@ class Pod {
 
 		$name = (string) $name;
 
-		if ( 'data' == $name ) {
+		if ( 'data' === $name ) {
 			if ( self::$deprecated_notice ) {
 				pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
 			}
 
 			$var = $this->new->row();
-		} elseif ( '_data' == $name ) {
+		} elseif ( '_data' === $name ) {
 			$var = $this->new->data;
-		} elseif ( 'total' == $name ) {
+		} elseif ( 'total' === $name ) {
 			if ( self::$deprecated_notice ) {
 				pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
 			}
 
 			$var = $this->new->total();
-		} elseif ( 'total_rows' == $name ) {
+		} elseif ( 'total_rows' === $name ) {
 			if ( self::$deprecated_notice ) {
 				pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
 			}
 
 			$var = $this->new->total_found();
-		} elseif ( 'zebra' == $name ) {
+		} elseif ( 'zebra' === $name ) {
 			if ( self::$deprecated_notice ) {
 				pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
 			}

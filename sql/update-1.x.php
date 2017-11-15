@@ -317,10 +317,11 @@ if ( version_compare( $old_version, '1.7.6', '<' ) ) {
 					image_downsize( $attach_id, $size );
 				}
 
-				$rels[] = array( 'pod_id'     => $item->pod_id,
-				                 'tbl_row_id' => $item->tbl_row_id,
-				                 'attach_id'  => $attach_id,
-				                 'field_id'   => $row->field_id
+				$rels[] = array(
+					'pod_id'     => $item->pod_id,
+					'tbl_row_id' => $item->tbl_row_id,
+					'attach_id'  => $attach_id,
+					'field_id'   => $row->field_id
 				);
 
 				$success = true;

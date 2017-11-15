@@ -529,7 +529,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'options' => array()
 			);
 
-			if ( 'pod' == $pod_type ) {
+			if ( 'pod' === $pod_type ) {
 				$main_pod['options']['pod_index'] = 'name';
 			}
 
@@ -551,7 +551,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 				$pod_object = $object;
 
-				if ( '%d' == $pod_object ) {
+				if ( '%d' === $pod_object ) {
 					$pod_object = 'test_' . substr( $pod_type, 0, 4 );
 
 					$object_pod['object'] = '';
@@ -568,13 +568,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$pod['name'] = $pod_object . '_' . substr( $storage_type, 0, 3 ) . '_' . $test_pod;
 					}
 
-					if ( 'taxonomy' == $pod_type && 'none' == $storage_type && function_exists( 'get_term_meta' ) ) {
+					if ( 'taxonomy' === $pod_type && 'none' === $storage_type && function_exists( 'get_term_meta' ) ) {
 						$storage_type = 'meta';
 					}
 
 					$pod['storage'] = $storage_type;
 
-					if ( 'none' != $storage_type ) {
+					if ( 'none' !== $storage_type ) {
 						$pod['fields'] = self::$supported_fields;
 
 						if ( isset( $options['fields'] ) ) {
@@ -684,9 +684,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			// Get latest, as we're updating as we go
 			$item_data = self::$related_items[ $item ];
 
-			if ( ! empty( $item_data['is_build'] ) || 'test_non_pod_ct' == $item ) {
+			if ( ! empty( $item_data['is_build'] ) || 'test_non_pod_ct' === $item ) {
 				continue;
-			} elseif ( '%s' != $item ) {
+			} elseif ( '%s' !== $item ) {
 				foreach ( $item_data['data'] as $k => $v ) {
 					if ( is_array( $v ) ) {
 						foreach ( $v as $kv => $vv ) {
@@ -708,13 +708,13 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				$item_data['field_index'] = $p->pod_data['field_index'];
 
 				// Add term id for the Non-Pod Taxonomy field
-				if ( 'post_type' == $p->pod_data['type'] ) {
+				if ( 'post_type' === $p->pod_data['type'] ) {
 					$item_data['data']['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
-				} elseif ( 'pod' == $p->pod_data['type'] ) {
+				} elseif ( 'pod' === $p->pod_data['type'] ) {
 					$item_data['data']['author'] = $related_author;
 				}
 
-				if ( 'media' == $item_data['pod'] ) {
+				if ( 'media' === $item_data['pod'] ) {
 					// Create new attachment from sample image
 					$id = pods_attachment_import( $sample_image );
 
@@ -734,7 +734,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						$sub_item_data                              = $item_data['data'];
 						$sub_item_data[ $item_data['field_index'] ] .= ' (' . $x . ')';
 
-						if ( 'media' == $item_data['pod'] ) {
+						if ( 'media' === $item_data['pod'] ) {
 							// Create new attachment from sample image
 							$id = pods_attachment_import( $sample_image );
 
@@ -749,11 +749,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					}
 
 					$id = $ids;
-				} elseif ( 'test_rel_user' == $item ) {
+				} elseif ( 'test_rel_user' === $item ) {
 					$related_author = $id;
-				} elseif ( 'test_rel_media' == $item ) {
+				} elseif ( 'test_rel_media' === $item ) {
 					$related_media = $id;
-				} elseif ( 'avatar' == $item ) {
+				} elseif ( 'avatar' === $item ) {
 					$related_avatar = $id;
 				}
 
@@ -823,22 +823,22 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 
 							if ( in_array( $pod_type, array( 'post_type', 'media' ) ) ) {
 								$pod_item_data['data']['post_author'] = $related_author;
-							} elseif ( 'comment' == $pod_type ) {
+							} elseif ( 'comment' === $pod_type ) {
 								$pod_item_data['data']['user_id'] = $related_author;
-							} elseif ( 'user' == $pod_type ) {
+							} elseif ( 'user' === $pod_type ) {
 								$pod_item_data['data']['avatar'] = $related_avatar;
-							} elseif ( 'pod' == $pod_type ) {
+							} elseif ( 'pod' === $pod_type ) {
 								$pod_item_data['data']['author'] = $related_author;
 							}
 
 							// Add term id for the Non-Pod Taxonomy field
-							if ( 'post_type' == $pod_type ) {
+							if ( 'post_type' === $pod_type ) {
 								$pod_item_data['data']['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
 							}
 
 							$id = $p->add( $pod_item_data['data'] );
 
-							if ( 'post_type' == $pod_type ) {
+							if ( 'post_type' === $pod_type ) {
 								set_post_thumbnail( $id, $related_media );
 							}
 
@@ -874,11 +874,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					$save_data = $r_item_data['data'];
 				}
 
-				if ( 'post_type' == $p->pod_data['type'] ) {
+				if ( 'post_type' === $p->pod_data['type'] ) {
 					// Add term id for the Non-Pod Taxonomy field
 					// @todo This should be working on it's own
 					$save_data['test_non_pod_ct'] = (int) self::$related_items['test_non_pod_ct']['id'];
-				} elseif ( 'user' == $p->pod_data['type'] ) {
+				} elseif ( 'user' === $p->pod_data['type'] ) {
 					// Avatar gets added after user is added, have to add it back
 					$save_data['avatar'] = (int) self::$related_items['avatar']['id'];
 				}

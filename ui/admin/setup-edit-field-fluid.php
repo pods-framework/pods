@@ -43,7 +43,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                                 if ( $tab == $default )
                                     $class = ' selected';
 
-                                if ( 'additional-field' == $tab )
+                                if ( 'additional-field' === $tab )
                                     $extra_classes = ' pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-' . implode( ' pods-excludes-on-field-data-type-', $no_additional );
                         ?>
                             <li class="pods-tab<?php echo esc_attr( $extra_classes ); ?>">
@@ -106,7 +106,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                                             <?php echo PodsForm::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
                                         </li>
                                         <?php
-                                            if ( 'table' == $pod[ 'storage' ] ) {
+                                            if ( 'table' === $pod[ 'storage' ] ) {
                                         ?>
                                             <li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
                                                 <?php echo PodsForm::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
@@ -123,14 +123,14 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                             foreach ( $field_tabs as $tab => $tab_label ) {
                                 $tab = sanitize_title( $tab );
 
-                                if ( 'basic' == $tab || !isset( $field_tab_options[ $tab ] ) || empty( $field_tab_options[ $tab ] ) )
+                                if ( 'basic' === $tab || !isset( $field_tab_options[ $tab ] ) || empty( $field_tab_options[ $tab ] ) )
                                     continue;
                         ?>
                             <div id="pods-<?php echo esc_attr( $tab ); ?>-options-<?php echo esc_attr( $pods_i ); ?>" class="pods-tab pods-<?php echo esc_attr( $tab ); ?>-options">
                                 <?php
                                     $field_tab_fields = $field_tab_options[ $tab ];
 
-                                    if ( 'additional-field' == $tab ) {
+                                    if ( 'additional-field' === $tab ) {
                                         foreach ( $field_tab_fields as $field_type => $field_type_fields ) {
                                             $first_field = current( $field_type_fields );
                                         ?>
@@ -213,7 +213,7 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                 if ( null !== $pick_object_name )
                     break;
 
-                if ( '-- Select --' == $object_label )
+                if ( '-- Select --' === $object_label )
                     continue;
 
                 if ( is_array( $object_label ) ) {

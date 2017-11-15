@@ -322,10 +322,10 @@ class PodsField_Number extends PodsField {
 		$dot         = $format_args['dot'];
 
 		$check = str_replace( array( $thousands, $dot, html_entity_decode( $thousands ) ), array(
-				'',
-				'.',
-				''
-			), $value );
+			'',
+			'.',
+			''
+		), $value );
 		$check = trim( $check );
 
 		$check = preg_replace( '/[0-9\.\-\s]/', '', $check );

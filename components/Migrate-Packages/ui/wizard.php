@@ -28,10 +28,10 @@
 					<?php
 					$api = pods_api();
 
-					$pods = $api->load_pods( array( 'fields' => false ) );
+					$pods          = $api->load_pods( array( 'fields' => false ) );
 					$pod_templates = $api->load_templates();
-					$pod_pages = $api->load_pages();
-					$pod_helpers = $api->load_helpers();
+					$pod_pages     = $api->load_pages();
+					$pod_helpers   = $api->load_helpers();
 
 					$export = true;
 
@@ -58,17 +58,17 @@
 
 							<?php
 							if ( $export ) {
-							?>
-							<div class="pods-wizard-option">
-								<a href="#pods-wizard-export" data-opt="export">
-									<h2><?php _e( 'Export', 'pods' ); ?></h2>
+								?>
+								<div class="pods-wizard-option">
+									<a href="#pods-wizard-export" data-opt="export">
+										<h2><?php _e( 'Export', 'pods' ); ?></h2>
 
-									<p><?php _e( 'Choose which Pods, Fields, and other settings to export into a package.', 'pods' ); ?></p>
-								</a>
+										<p><?php _e( 'Choose which Pods, Fields, and other settings to export into a package.', 'pods' ); ?></p>
+									</a>
 
-								<p><br /></p>
-							</div>
-							<?php
+									<p><br /></p>
+								</div>
+								<?php
 							}
 							?>
 						</div>
@@ -100,167 +100,167 @@
 
 							<?php
 							if ( ! empty( $pods ) ) {
-							$data = $pods;
-							$data_name = 'pods';
-							?>
-							<div class="stuffbox pods-package-import-group">
-								<h3>
-									<label for="link_name"><?php _e( 'Choose which Pods to export', 'pods' ); ?></label>
-								</h3>
+								$data      = $pods;
+								$data_name = 'pods';
+								?>
+								<div class="stuffbox pods-package-import-group">
+									<h3>
+										<label for="link_name"><?php _e( 'Choose which Pods to export', 'pods' ); ?></label>
+									</h3>
 
-								<div class="inside pods-manage-field pods-dependency">
-									<div class="pods-field-option-group">
-										<p>
-											<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-										</p>
+									<div class="inside pods-manage-field pods-dependency">
+										<div class="pods-field-option-group">
+											<p>
+												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+											</p>
 
-										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
-											<ul>
-												<?php
-												$zebra = false;
+											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<ul>
+													<?php
+													$zebra = false;
 
-												foreach ( $data as $item ) {
-												$checked = true;
+													foreach ( $data as $item ) {
+														$checked = true;
 
-												$class = ( $zebra ? 'even' : 'odd' );
+														$class = ( $zebra ? 'even' : 'odd' );
 
-												$zebra = ( ! $zebra );
-												?>
-												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-													<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
-												</li>
-												<?php
-												}
-												?>
-											</ul>
+														$zebra = ( ! $zebra );
+														?>
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+														</li>
+														<?php
+													}
+													?>
+												</ul>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<?php
+								<?php
 							}
 
 							if ( ! empty( $pod_templates ) ) {
-							$data = $pod_templates;
-							$data_name = 'templates';
-							?>
-							<div class="stuffbox pods-package-import-group">
-								<h3>
-									<label for="link_name"><?php _e( 'Choose which Pod Templates to export', 'pods' ); ?></label>
-								</h3>
+								$data      = $pod_templates;
+								$data_name = 'templates';
+								?>
+								<div class="stuffbox pods-package-import-group">
+									<h3>
+										<label for="link_name"><?php _e( 'Choose which Pod Templates to export', 'pods' ); ?></label>
+									</h3>
 
-								<div class="inside pods-manage-field pods-dependency">
-									<div class="pods-field-option-group">
-										<p>
-											<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-										</p>
+									<div class="inside pods-manage-field pods-dependency">
+										<div class="pods-field-option-group">
+											<p>
+												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+											</p>
 
-										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
-											<ul>
-												<?php
-												$zebra = false;
+											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<ul>
+													<?php
+													$zebra = false;
 
-												foreach ( $data as $item ) {
-												$checked = true;
+													foreach ( $data as $item ) {
+														$checked = true;
 
-												$class = ( $zebra ? 'even' : 'odd' );
+														$class = ( $zebra ? 'even' : 'odd' );
 
-												$zebra = ( ! $zebra );
-												?>
-												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-													<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
-												</li>
-												<?php
-												}
-												?>
-											</ul>
+														$zebra = ( ! $zebra );
+														?>
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+														</li>
+														<?php
+													}
+													?>
+												</ul>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<?php
+								<?php
 							}
 
 							if ( ! empty( $pod_pages ) ) {
-							$data = $pod_pages;
-							$data_name = 'pages';
-							?>
-							<div class="stuffbox pods-package-import-group">
-								<h3>
-									<label for="link_name"><?php _e( 'Choose which Pod Pages to export', 'pods' ); ?></label>
-								</h3>
+								$data      = $pod_pages;
+								$data_name = 'pages';
+								?>
+								<div class="stuffbox pods-package-import-group">
+									<h3>
+										<label for="link_name"><?php _e( 'Choose which Pod Pages to export', 'pods' ); ?></label>
+									</h3>
 
-								<div class="inside pods-manage-field pods-dependency">
-									<div class="pods-field-option-group">
-										<p>
-											<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-										</p>
+									<div class="inside pods-manage-field pods-dependency">
+										<div class="pods-field-option-group">
+											<p>
+												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+											</p>
 
-										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
-											<ul>
-												<?php
-												$zebra = false;
+											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<ul>
+													<?php
+													$zebra = false;
 
-												foreach ( $data as $item ) {
-												$checked = true;
+													foreach ( $data as $item ) {
+														$checked = true;
 
-												$class = ( $zebra ? 'even' : 'odd' );
+														$class = ( $zebra ? 'even' : 'odd' );
 
-												$zebra = ( ! $zebra );
-												?>
-												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-													<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
-												</li>
-												<?php
-												}
-												?>
-											</ul>
+														$zebra = ( ! $zebra );
+														?>
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+														</li>
+														<?php
+													}
+													?>
+												</ul>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<?php
+								<?php
 							}
 
 							if ( ! empty( $pod_helpers ) ) {
-							$data = $pod_helpers;
-							$data_name = 'helpers';
-							?>
-							<div class="stuffbox pods-package-import-group">
-								<h3>
-									<label for="link_name"><?php _e( 'Choose which Pod Helpers to export', 'pods' ); ?></label>
-								</h3>
+								$data      = $pod_helpers;
+								$data_name = 'helpers';
+								?>
+								<div class="stuffbox pods-package-import-group">
+									<h3>
+										<label for="link_name"><?php _e( 'Choose which Pod Helpers to export', 'pods' ); ?></label>
+									</h3>
 
-								<div class="inside pods-manage-field pods-dependency">
-									<div class="pods-field-option-group">
-										<p>
-											<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
-										</p>
+									<div class="inside pods-manage-field pods-dependency">
+										<div class="pods-field-option-group">
+											<p>
+												<a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo esc_attr( $data_name ); ?>"><?php _e( 'Toggle all on / off', 'pods' ); ?></a>
+											</p>
 
-										<div class="pods-pick-values pods-pick-checkbox pods-zebra">
-											<ul>
-												<?php
-												$zebra = false;
+											<div class="pods-pick-values pods-pick-checkbox pods-zebra">
+												<ul>
+													<?php
+													$zebra = false;
 
-												foreach ( $data as $item ) {
-												$checked = true;
+													foreach ( $data as $item ) {
+														$checked = true;
 
-												$class = ( $zebra ? 'even' : 'odd' );
+														$class = ( $zebra ? 'even' : 'odd' );
 
-												$zebra = ( ! $zebra );
-												?>
-												<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
-													<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
-												</li>
-												<?php
-												}
-												?>
-											</ul>
+														$zebra = ( ! $zebra );
+														?>
+														<li class="pods-zebra-<?php echo esc_attr( $class ); ?>">
+															<?php echo PodsForm::field( $data_name . '[' . $item['id'] . ']', $checked, 'boolean', array( 'boolean_yes_label' => $item['name'] . ( ! empty( $item['label'] ) ? ' (' . $item['label'] . ')' : '' ) ) ); ?>
+														</li>
+														<?php
+													}
+													?>
+												</ul>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<?php
+								<?php
 							}
 
 							do_action( 'pods_packages_export_options', $pods, $pod_templates, $pod_pages, $pod_helpers );

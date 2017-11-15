@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'deprecated/deprecated.php' );
+require_once PODS_DIR . 'deprecated/deprecated.php';
 
 /**
  * @package Pods\Deprecated
@@ -163,7 +163,7 @@ class Pods_Deprecated {
 						$pick_table      = '@wp_terms';
 						$pick_field_id   = 'term_id';
 						$pick_field_name = 'name';
-						$pick_join       = "`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id";
+						$pick_join       = '`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id';
 						$pick_where      = "tx.`taxonomy` = '{$pick_val}' AND tx.`taxonomy` IS NOT NULL";
 						break;
 					case 'user':
@@ -182,9 +182,9 @@ class Pods_Deprecated {
 						$pick_field_id   = 'id';
 						$pick_field_name = 'name';
 						break;
-				}
+				}//end switch
 
-				$sql = "SELECT `related_item_id` FROM `@wp_podsrel` WHERE `item_id` = %d AND `field_id` = %d";
+				$sql = 'SELECT `related_item_id` FROM `@wp_podsrel` WHERE `item_id` = %d AND `field_id` = %d';
 
 				$sql = array( $sql, array( $id, $field['id'] ) );
 
@@ -215,7 +215,7 @@ class Pods_Deprecated {
 				$exclude = false;
 
 				if ( 1 == $field['unique'] ) {
-					$unique_where = ( empty( $id ) ) ? '' : " AND `item_id` != %d";
+					$unique_where = ( empty( $id ) ) ? '' : ' AND `item_id` != %d';
 
 					$sql = "SELECT `related_item_id` FROM `@wp_podsrel` WHERE `field_id` = %d {$unique_where}";
 
@@ -237,7 +237,7 @@ class Pods_Deprecated {
 
 						$exclude = implode( ',', $exclude );
 					}
-				}
+				}//end if
 
 				if ( ! empty( $field['options']['pick_filter'] ) ) {
 					$pick_where .= ' AND ' . $field['options']['pick_filter'];
@@ -251,7 +251,7 @@ class Pods_Deprecated {
 					'field_name'   => $pick_field_name,
 					'join'         => $pick_join,
 					'orderby'      => $field['options']['pick_orderby'],
-					'where'        => $pick_where
+					'where'        => $pick_where,
 				);
 
 				$this->obj->row[ $key ] = $this->get_dropdown_values( $params );
@@ -264,10 +264,10 @@ class Pods_Deprecated {
 						$this->obj->row[ $key ] = null;
 					}
 				}
-			}
+			}//end if
 
 			$this->obj->build_field_html( $field );
-		}
+		}//end foreach
 
 		$uri_hash = wp_hash( $_SERVER['REQUEST_URI'] );
 
@@ -275,7 +275,7 @@ class Pods_Deprecated {
 			'type'    => 'button',
 			'class'   => 'button btn_save',
 			'value'   => $label,
-			'onclick' => "saveForm(1)"
+			'onclick' => 'saveForm(1)',
 		);
 
 		$save_button_atts = apply_filters( 'pods_showform_save_button_atts', $save_button_atts, $this );
@@ -340,7 +340,7 @@ class Pods_Deprecated {
             {$params->orderby}
         ";
 
-		//override with custom dropdown values
+		// override with custom dropdown values
 		$sql = apply_filters( 'pods_get_dropdown_values', $sql, $params, $this );
 
 		$val    = array();
@@ -383,19 +383,21 @@ class Pods_Deprecated {
 					$name = $field['name'];
 				}
 
-				if ( in_array( $name, array(
+				if ( in_array(
+					$name, array(
 						'created',
 						'modified',
-						'author'
-					) ) && isset( $this->obj->fields[ $name . '2' ] ) ) {
+						'author',
+					)
+				) && isset( $this->obj->fields[ $name . '2' ] ) ) {
 					$name .= '2';
 				}
 
 				$field['name'] = $name;
 
 				$fields[ $k ] = $field;
-			}
-		}
+			}//end foreach
+		}//end if
 
 		echo $this->obj->form( $fields, $label, $thankyou_url );
 	}
@@ -444,7 +446,13 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
 		}
 
-		$value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby, 'deprecated' => true ) );
+		$value = $this->obj->field(
+			array(
+				'name'       => $name,
+				'orderby'    => $orderby,
+				'deprecated' => true,
+			)
+		);
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			if ( false === strpos( $name, '.' ) && ! isset( $value[0] ) ) {
@@ -506,7 +514,7 @@ class Pods_Deprecated {
 			' p.pod_id',
 			'`p`.`pod_id`',
 			'`p`.pod_id',
-			' p.`pod_id`'
+			' p.`pod_id`',
 		);
 
 		$replace = array(
@@ -525,7 +533,7 @@ class Pods_Deprecated {
 			' t.id',
 			'`t`.`id`',
 			'`t`.id',
-			' t.`id`'
+			' t.`id`',
 		);
 
 		$params = array(
@@ -536,7 +544,7 @@ class Pods_Deprecated {
 			'search'              => $this->obj->search,
 			'search_across'       => true,
 			'search_across_picks' => false,
-			'sql'                 => $sql
+			'sql'                 => $sql,
 		);
 
 		if ( is_array( $orderby ) ) {
@@ -611,7 +619,12 @@ class Pods_Deprecated {
 			pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 		}
 
-		echo $this->obj->pagination( array( 'type' => 'advanced', 'label' => $label ) );
+		echo $this->obj->pagination(
+			array(
+				'type'  => 'advanced',
+				'label' => $label,
+			)
+		);
 	}
 
 	/**
@@ -628,7 +641,7 @@ class Pods_Deprecated {
 		$params = array(
 			'fields' => $filters,
 			'label'  => $label,
-			'action' => $action
+			'action' => $action,
 		);
 
 		if ( is_array( $filters ) ) {
@@ -657,7 +670,7 @@ class Pods_Deprecated {
 			'helper'     => $helper_name,
 			'value'      => $value,
 			'name'       => $name,
-			'deprecated' => true
+			'deprecated' => true,
 		);
 
 		return $this->obj->helper( $params );

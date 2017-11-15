@@ -41,17 +41,24 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		pods_no_conflict_on( 'post' );
 
-		$post_id = wp_insert_post( array(
-			'post_title'  => 'Testing',
-			'post_type'   => 'post',
-			'post_status' => 'draft'
-		) );
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Testing',
+				'post_type'   => 'post',
+				'post_status' => 'draft',
+			)
+		);
 
 		pods_no_conflict_off( 'post' );
 
 		$this->assertArrayNotHasKey( 'post', \PodsMeta::$old_post_status );
 
-		wp_update_post( array( 'ID' => $post_id, 'post_status' => 'publish' ) );
+		wp_update_post(
+			array(
+				'ID'          => $post_id,
+				'post_status' => 'publish',
+			)
+		);
 
 		$this->assertArrayHasKey( 'post', \PodsMeta::$old_post_status );
 		$this->assertEquals( 'draft', \PodsMeta::$old_post_status['post'] );
@@ -70,7 +77,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		pods_no_conflict_on( 'post' );
 
-		wp_insert_post( array( 'post_title' => 'Testing 1', 'post_type' => 'post', 'post_status' => 'draft' ) );
+		wp_insert_post(
+			array(
+				'post_title'  => 'Testing 1',
+				'post_type'   => 'post',
+				'post_status' => 'draft',
+			)
+		);
 
 		pods_no_conflict_off( 'post' );
 
@@ -80,7 +93,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		$this->_reset_hooks();
 
-		wp_insert_post( array( 'post_title' => 'Testing 2', 'post_type' => 'post', 'post_status' => 'draft' ) );
+		wp_insert_post(
+			array(
+				'post_title'  => 'Testing 2',
+				'post_type'   => 'post',
+				'post_status' => 'draft',
+			)
+		);
 
 		$this->assertArrayHasKey( 'pods_api_post_save_pod_item', self::$hooked );
 		$this->assertArrayHasKey( 'pods_api_post_create_pod_item', self::$hooked );
@@ -103,11 +122,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		pods_no_conflict_on( 'post' );
 
-		$post_id = wp_insert_post( array(
-			'post_title'  => 'Testing 1',
-			'post_type'   => 'post',
-			'post_status' => 'draft'
-		) );
+		$post_id = wp_insert_post(
+			array(
+				'post_title'  => 'Testing 1',
+				'post_type'   => 'post',
+				'post_status' => 'draft',
+			)
+		);
 
 		pods_no_conflict_off( 'post' );
 
@@ -117,7 +138,12 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		$this->_reset_hooks();
 
-		wp_update_post( array( 'ID' => $post_id, 'post_status' => 'publish' ) );
+		wp_update_post(
+			array(
+				'ID'          => $post_id,
+				'post_status' => 'publish',
+			)
+		);
 
 		$this->assertArrayHasKey( 'pods_api_post_save_pod_item', self::$hooked );
 		$this->assertArrayNotHasKey( 'pods_api_post_create_pod_item', self::$hooked );
@@ -140,11 +166,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		pods_no_conflict_on( 'user' );
 
-		wp_insert_user( array(
-			'user_login' => '1' . wp_generate_password( 10, false ),
-			'user_email' => '1' . wp_generate_password( 10, false ) . '@example.com',
-			'user_pass'  => wp_generate_password()
-		) );
+		wp_insert_user(
+			array(
+				'user_login' => '1' . wp_generate_password( 10, false ),
+				'user_email' => '1' . wp_generate_password( 10, false ) . '@example.com',
+				'user_pass'  => wp_generate_password(),
+			)
+		);
 
 		pods_no_conflict_off( 'user' );
 
@@ -154,11 +182,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		$this->_reset_hooks();
 
-		wp_insert_user( array(
-			'user_login' => '2' . wp_generate_password( 10, false ),
-			'user_email' => '2' . wp_generate_password( 10, false ) . '@example.com',
-			'user_pass'  => wp_generate_password()
-		) );
+		wp_insert_user(
+			array(
+				'user_login' => '2' . wp_generate_password( 10, false ),
+				'user_email' => '2' . wp_generate_password( 10, false ) . '@example.com',
+				'user_pass'  => wp_generate_password(),
+			)
+		);
 
 		$this->assertArrayHasKey( 'pods_api_post_save_pod_item', self::$hooked );
 		$this->assertArrayHasKey( 'pods_api_post_create_pod_item', self::$hooked );
@@ -181,11 +211,13 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		pods_no_conflict_on( 'user' );
 
-		$user_id = wp_insert_user( array(
-			'user_login' => '3' . wp_generate_password( 10, false ),
-			'user_email' => '3' . wp_generate_password( 10, false ) . '@example.com',
-			'user_pass'  => wp_generate_password()
-		) );
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => '3' . wp_generate_password( 10, false ),
+				'user_email' => '3' . wp_generate_password( 10, false ) . '@example.com',
+				'user_pass'  => wp_generate_password(),
+			)
+		);
 
 		pods_no_conflict_off( 'user' );
 
@@ -195,10 +227,12 @@ class Test_Pods_Meta extends Pods_UnitTestCase {
 
 		$this->_reset_hooks();
 
-		wp_update_user( array(
-			'ID'         => $user_id,
-			'user_email' => '4' . wp_generate_password( 10, false ) . '@example.com'
-		) );
+		wp_update_user(
+			array(
+				'ID'         => $user_id,
+				'user_email' => '4' . wp_generate_password( 10, false ) . '@example.com',
+			)
+		);
 
 		$this->assertArrayHasKey( 'pods_api_post_save_pod_item', self::$hooked );
 		$this->assertArrayNotHasKey( 'pods_api_post_create_pod_item', self::$hooked );

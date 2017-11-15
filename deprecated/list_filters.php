@@ -5,7 +5,12 @@
 			$filters = explode( ',', $filters );
 		}
 		foreach ( $filters as $field_name ) {
-			$field = $this->api->load_column( array( 'name' => $field_name, 'pod' => $this->pod ) );
+			$field = $this->api->load_column(
+				array(
+					'name' => $field_name,
+					'pod'  => $this->pod,
+				)
+			);
 			if ( empty( $field ) ) {
 				continue;
 			}
@@ -32,7 +37,7 @@
 					case 'taxonomy':
 						$pick_table     = '@wp_terms';
 						$pick_column_id = 'term_id';
-						$pick_join      = "`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id";
+						$pick_join      = '`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id';
 						$pick_where     = "tx.`taxonomy` = '{$pick_val}' AND tx.`taxonomy` IS NOT NULL";
 						break;
 					case 'user':
@@ -48,7 +53,7 @@
 						$pick_table     = "{$pick_val}";
 						$pick_column_id = 'id';
 						break;
-				}
+				}//end switch
 				$pick_params = array(
 					'selected_ids' => $selected_ids,
 					'table'        => $pick_table,
@@ -56,7 +61,7 @@
 					'column_name'  => $field_name,
 					'join'         => $pick_join,
 					'orderby'      => $field['options']['pick_orderby'],
-					'where'        => $pick_where
+					'where'        => $pick_where,
 				);
 				$field_data  = $this->get_dropdown_values( $pick_params );
 				$field_label = ucwords( str_replace( '_', ' ', $field_name ) );
@@ -80,9 +85,9 @@
 					?>
 				</select>
 				<?php
-			}
-		}
-	}
+			}//end if
+		}//end foreach
+	}//end if
 	// Display the search box and submit button
 	$search = empty( $_GET[ $this->search_var ] ) ? '' : pods_unslash( $_GET[ $this->search_var ] );
 	if ( false !== $show_textbox ) {

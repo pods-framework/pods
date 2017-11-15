@@ -213,10 +213,9 @@ class Test_Traversal extends Pods_UnitTestCase {
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
-		//global $wpdb;
-		//$wpdb->suppress_errors( true );
-		//$wpdb->hide_errors();
-
+		// global $wpdb;
+		// $wpdb->suppress_errors( true );
+		// $wpdb->hide_errors();
 		// Options
 		$pod_type     = $options['pod_type'];
 		$storage_type = $options['storage_type'];
@@ -366,8 +365,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 						array(
 							'pod_type'     => $pod_type,
 							'storage_type' => $storage_type,
-							'pod'          => $pod
-						)
+							'pod'          => $pod,
+						),
 					);
 				}
 			}
@@ -393,12 +392,14 @@ class Test_Traversal extends Pods_UnitTestCase {
 					$pod['object_fields'] = $api->get_wp_object_fields( $pod_type, $pod );
 
 					foreach ( $pod['fields'] as $field_name => $field ) {
-						if ( in_array( $field['type'], array(
+						if ( in_array(
+							$field['type'], array(
 								'pick',
 								'taxonomy',
 								'avatar',
-								'author'
-							) ) && empty( $field['pick_val'] ) ) {
+								'author',
+							)
+						) && empty( $field['pick_val'] ) ) {
 							if ( empty( $field['pick_object'] ) ) {
 								continue;
 							}
@@ -415,10 +416,10 @@ class Test_Traversal extends Pods_UnitTestCase {
 								'pod_type'     => $pod_type,
 								'storage_type' => $storage_type,
 								'pod'          => $pod,
-								'field'        => $field
-							)
+								'field'        => $field,
+							),
 						);
-					}
+					}//end foreach
 
 					// Non-Pod Taxonomy field
 					if ( 'post_type' === $pod_type ) {
@@ -433,13 +434,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 								'pod_type'     => $pod_type,
 								'storage_type' => $storage_type,
 								'pod'          => $pod,
-								'field'        => $field
-							)
+								'field'        => $field,
+							),
 						);
 					}
-				}
-			}
-		}
+				}//end foreach
+			}//end foreach
+		}//end foreach
 
 		return $data;
 
@@ -484,34 +485,39 @@ class Test_Traversal extends Pods_UnitTestCase {
 								$related_pod_field_name = $related_pod_field['name'];
 
 								$data_deep[] = array(
-									build_query( compact( array(
-										'pod_type',
-										'storage_type',
-										'pod_name',
-										'field_name',
-										'related_pod_name',
-										'related_pod_field_name'
-									) ) ),
+									build_query(
+										compact(
+											array(
+												'pod_type',
+												'storage_type',
+												'pod_name',
+												'field_name',
+												'related_pod_name',
+												'related_pod_field_name',
+											)
+										)
+									),
 									array(
-										'pod_type'          => $pod_type,
-										'storage_type'      => $storage_type,
-										'pod'               => $pod,
-										'field'             => $field,
-										'related_pod'       => $related_pod,
-										'related_pod_field' => $related_pod_field
-									)
+										'pod_type'     => $pod_type,
+										'storage_type' => $storage_type,
+										'pod'          => $pod,
+										'field'        => $field,
+										'related_pod'  => $related_pod,
+										'related_pod_field' => $related_pod_field,
+									),
 								);
 
-								continue; // To be continued..
-
+								continue;
+								// To be continued..
 								// @todo Handle one more level deeper
-
-								if ( ! in_array( $related_pod_field['type'], array(
-									'pick',
-									'taxonomy',
-									'avatar',
-									'author'
-								) ) ) {
+								if ( ! in_array(
+									$related_pod_field['type'], array(
+										'pick',
+										'taxonomy',
+										'avatar',
+										'author',
+									)
+								) ) {
 									continue;
 								}
 
@@ -540,41 +546,46 @@ class Test_Traversal extends Pods_UnitTestCase {
 										$sub_related_pod_field_name = $sub_related_pod_field['name'];
 
 										$data_deep[] = array(
-											build_query( compact( array(
-												'pod_type',
-												'storage_type',
-												'pod_name',
-												'field_name',
-												'related_pod_name',
-												'related_pod_field_name',
-												'sub_related_pod_name',
-												'sub_related_pod_field_name'
-											) ) ),
+											build_query(
+												compact(
+													array(
+														'pod_type',
+														'storage_type',
+														'pod_name',
+														'field_name',
+														'related_pod_name',
+														'related_pod_field_name',
+														'sub_related_pod_name',
+														'sub_related_pod_field_name',
+													)
+												)
+											),
 											array(
-												'pod_type'              => $pod_type,
-												'storage_type'          => $storage_type,
-												'pod'                   => $pod,
-												'field'                 => $field,
-												'related_pod'           => $related_pod,
-												'related_pod_field'     => $related_pod_field,
-												'sub_related_pod'       => $sub_related_pod,
-												'sub_related_pod_field' => $sub_related_pod_field
-											)
+												'pod_type' => $pod_type,
+												'storage_type' => $storage_type,
+												'pod'      => $pod,
+												'field'    => $field,
+												'related_pod' => $related_pod,
+												'related_pod_field' => $related_pod_field,
+												'sub_related_pod' => $sub_related_pod,
+												'sub_related_pod_field' => $sub_related_pod_field,
+											),
 										);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+									}//end foreach
+								}//end if
+							}//end foreach
+						}//end if
+					}//end foreach
+				}//end foreach
+			}//end foreach
+		}//end foreach
 
 		return $data_deep;
 
 	}
 
-	/***
+	/**
+	 *
 	 * Handle all find() base tests based on variations
 	 *
 	 * @param string  $variant_id   Testing variant identification
@@ -586,10 +597,9 @@ class Test_Traversal extends Pods_UnitTestCase {
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
-		//global $wpdb;
-		//$wpdb->suppress_errors( true );
-		//$wpdb->hide_errors();
-
+		// global $wpdb;
+		// $wpdb->suppress_errors( true );
+		// $wpdb->hide_errors();
 		// Options
 		$pod_type     = $options['pod_type'];
 		$storage_type = $options['storage_type'];
@@ -605,7 +615,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		// Base find() $params
 		$params = array(
-			'limit' => 1
+			'limit' => 1,
 		);
 
 		$p = pods( $pod['name'] );
@@ -628,12 +638,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 		if ( $query_fields ) {
 			$where[] = array(
 				'field' => $data['field_id'],
-				'value' => (int) $check_value
+				'value' => (int) $check_value,
 			);
 
 			$where[] = array(
 				'field' => $data['field_index'],
-				'value' => $check_index
+				'value' => $check_index,
 			);
 		} else {
 			$where[] = $prefix . '`' . $data['field_id'] . '`' . ' = ' . (int) $check_value;
@@ -669,9 +679,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 		add_filter( 'pods_error_die', '__return_false' );
 
 		global $wpdb;
-		//$wpdb->suppress_errors( true );
-		//$wpdb->hide_errors();
-
+		// $wpdb->suppress_errors( true );
+		// $wpdb->hide_errors();
 		// Options
 		$pod_type          = $options['pod_type'];
 		$storage_type      = $options['storage_type'];
@@ -701,7 +710,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		// Base find() $params
 		$params = array(
-			'limit' => 1
+			'limit' => 1,
 		);
 
 		$p = pods( $pod['name'] );
@@ -759,7 +768,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 					if ( $query_fields ) {
 						$related_where[] = array(
 							'field'   => $field_name . '.' . $related_data['field_id'],
-							'compare' => 'NOT EXISTS'
+							'compare' => 'NOT EXISTS',
 						);
 					} else {
 						$related_where[] = $prefix . '`' . $related_data['field_id'] . '` IS NULL';
@@ -774,25 +783,25 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_where_set[] = array(
 							'field'   => $field_name . '.' . $related_data['field_id'],
 							'value'   => $check_multi_value,
-							'compare' => 'ALL'
+							'compare' => 'ALL',
 						);
 
 						$related_where_set[] = array(
 							'field'   => $field_name . '.' . $related_data['field_index'],
 							'value'   => $check_multi_index,
-							'compare' => 'ALL'
+							'compare' => 'ALL',
 						);
 					} else {
 						$related_where_set[] = array(
 							'field' => $field_name . '.' . $related_data['field_id'],
-							'value' => (int) $check_value
+							'value' => (int) $check_value,
 						);
 
 						$related_where_set[] = array(
 							'field' => $field_name . '.' . $related_data['field_index'],
-							'value' => $check_index
+							'value' => $check_index,
 						);
-					}
+					}//end if
 
 					$related_where_set['relation'] = 'AND';
 
@@ -803,11 +812,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 					$related_where[] = $prefix . '`' . $related_data['field_id'] . '` = ' . (int) $check_value . ' AND ' . $prefix . '`' . $related_data['field_index'] . '` = "' . pods_sanitize( $check_index ) . '"';
 
 					$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
-				}
+				}//end if
 
 				$where[] = $related_where;
 
-				//var_dump( array( 1, $related_where, $check_value, $check_index ) );
+				// var_dump( array( 1, $related_where, $check_value, $check_index ) );
 			} else {
 				// Related pod traversal
 				$related_pod_type         = $related_pod['type'];
@@ -841,8 +850,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 					} elseif ( isset( self::$related_items[ $related_object ] ) ) {
 						$related_pod_data = self::$related_items[ $related_object ];
 					} else {
-						//var_dump( array( 2, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
-
+						// var_dump( array( 2, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 						$this->assertTrue( false, sprintf( 'Invalid deep related item [%s]', $variant_id ) );
 
 						return;
@@ -870,13 +878,13 @@ class Test_Traversal extends Pods_UnitTestCase {
 						if ( $query_fields ) {
 							$related_where[] = array(
 								'field'   => $field_name . '.' . $related_pod_field['name'] . '.' . $related_pod_data['field_id'],
-								'compare' => 'NOT EXISTS'
+								'compare' => 'NOT EXISTS',
 							);
 						} else {
 							$related_where[] = $prefix . $related_prefix . '`' . $related_pod_data['field_id'] . '` IS NULL';
 						}
 
-						//var_dump( array( 3, $related_where, 'empty $check_value' ) );
+						// var_dump( array( 3, $related_where, 'empty $check_value' ) );
 					}
 
 					if ( $query_fields ) {
@@ -884,12 +892,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 							'relation' => 'AND',
 							array(
 								'field' => $field_name . '.' . $related_pod_field['name'] . '.' . $related_pod_data['field_id'],
-								'value' => (int) $check_value
+								'value' => (int) $check_value,
 							),
 							array(
 								'field' => $field_name . '.' . $related_pod_field['name'] . '.' . $related_pod_data['field_index'],
-								'value' => $check_index
-							)
+								'value' => $check_index,
+							),
 						);
 
 						$related_where['relation'] = 'OR';
@@ -899,10 +907,10 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
 
-					//var_dump( array( 4, $related_where, $check_value, $check_index ) );
+					// var_dump( array( 4, $related_where, $check_value, $check_index ) );
 				} elseif ( 'none' !== $related_pod_storage_type ) {
 					if ( 'pod' === $related_pod_type ) {
-						//$related_prefix = '`t`.';
+						// $related_prefix = '`t`.';
 					} elseif ( 'table' === $related_pod_storage_type ) {
 						$related_prefix = '`d`.';
 					} elseif ( 'meta' === $related_pod_storage_type ) {
@@ -920,7 +928,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 						if ( $query_fields ) {
 							$related_where[] = array(
 								'field'   => $field_name . '.' . $related_pod_field['name'],
-								'compare' => 'NOT EXISTS'
+								'compare' => 'NOT EXISTS',
 							);
 						} else {
 							$related_where[] = $prefix . $related_prefix . '`' . $related_pod_field['name'] . '`' . $related_suffix . ' IS NULL';
@@ -930,7 +938,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 					if ( $query_fields ) {
 						$related_where[] = array(
 							'field' => $field_name . '.' . $related_pod_field['name'],
-							'value' => $check_related_value
+							'value' => $check_related_value,
 						);
 
 						$related_where['relation'] = 'OR';
@@ -940,15 +948,15 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$related_where = '( ' . implode( ' OR ', $related_where ) . ' )';
 					}
 
-					//var_dump( array( 5, $related_where, $related_suffix, $check_related_value, self::$related_items[ $field_name ] ) );
-				}
+					// var_dump( array( 5, $related_where, $related_suffix, $check_related_value, self::$related_items[ $field_name ] ) );
+				}//end if
 
 				if ( ! empty( $related_where ) ) {
 					$where[] = $related_where;
 				}
 
-				//var_dump( array( 6, $where ) );
-			}
+				// var_dump( array( 6, $where ) );
+			}//end if
 		} elseif ( 'none' !== $storage_type && $field_name != $data['field_index'] ) {
 			if ( 'pod' === $pod_type ) {
 				$prefix = '`t`.';
@@ -963,12 +971,12 @@ class Test_Traversal extends Pods_UnitTestCase {
 			if ( $query_fields ) {
 				$where[] = array(
 					'field' => $field_name,
-					'value' => $check_value
+					'value' => $check_value,
 				);
 			} else {
 				$where[] = $prefix . '`' . $field_name . '`' . $suffix . ' = "' . pods_sanitize( $check_value ) . '"';
 			}
-		}
+		}//end if
 
 		$prefix = '`t`.';
 
@@ -977,7 +985,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 		if ( $query_fields ) {
 			$where[] = array(
 				'field' => $data['field_id'],
-				'value' => (int) $check_value
+				'value' => (int) $check_value,
 			);
 		} else {
 			$where[] = $prefix . '`' . $data['field_id'] . '`' . ' = ' . (int) $check_value;
@@ -996,7 +1004,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 			$prepare_data[] = $podsrel_pod_id;
 			$prepare_data[] = $podsrel_field_id;
 
-			$debug_related .= ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` IN ( " . implode( ',', array_fill( 0, count( (array) $podsrel_item_id ), '%d' ) ) . " ) AND `pod_id` = %d AND `field_id` = %d", $prepare_data ) ) ) . ' deep related items';
+			$debug_related .= ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` IN ( " . implode( ',', array_fill( 0, count( (array) $podsrel_item_id ), '%d' ) ) . ' ) AND `pod_id` = %d AND `field_id` = %d', $prepare_data ) ) ) . ' deep related items';
 		}
 
 		$debug = sprintf( '%s | %s | %s', $p->sql, print_r( $where, true ), $debug_related );
@@ -1023,10 +1031,9 @@ class Test_Traversal extends Pods_UnitTestCase {
 		// Suppress MySQL errors
 		add_filter( 'pods_error_die', '__return_false' );
 
-		//global $wpdb;
-		//$wpdb->suppress_errors( true );
-		//$wpdb->hide_errors();
-
+		// global $wpdb;
+		// $wpdb->suppress_errors( true );
+		// $wpdb->hide_errors();
 		// Options
 		$pod_type     = $options['pod_type'];
 		$storage_type = $options['storage_type'];
@@ -1145,7 +1152,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 			$traverse_id    = $prefix . $related_data['field_id'];
 			$traverse_index = $prefix . $related_data['field_index'];
 
-			/*if ( false === $p->field( $traverse_id ) ) {
+			/*
+			if ( false === $p->field( $traverse_id ) ) {
 				var_dump( array(
 					'pod'                 => $pod[ 'name' ],
 					'storage'             => $storage_type,
@@ -1172,7 +1180,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 						$check_value = array_map( 'absint', (array) $check_value );
 						$check_index = (array) $check_index;
 
-						/*var_dump( array(
+						/*
+						var_dump( array(
 							'check_array' => $check_value,
 							'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $traverse_id ) ),
 
@@ -1193,11 +1202,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 						$this->assertEquals( $check_index, get_metadata( $metadata_type, $data['id'], $traverse_index ), sprintf( 'Related Item index field meta value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
 						$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data['id'], $traverse_index, true ), sprintf( 'Related Item index field single meta value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
-					}
+					}//end if
 				} elseif ( 'display' === $method ) {
 					$this->assertEquals( $check_display_value, $p->display( $traverse_id ), sprintf( 'Related Item field display value not as expected (%s) [%s]', $traverse_id, $variant_id ) );
 					$this->assertEquals( $check_display_index, $p->display( $traverse_index ), sprintf( 'Related Item index field display value not as expected (%s) [%s]', $traverse_index, $variant_id ) );
-				}
+				}//end if
 			} else {
 				// Related pod traversal
 				if ( in_array( $related_pod_field['type'], array( 'pick', 'taxonomy', 'avatar', 'author' ) ) ) {
@@ -1218,8 +1227,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 					} elseif ( isset( self::$related_items[ $related_object ] ) ) {
 						$related_pod_data = self::$related_items[ $related_object ];
 					} else {
-						//var_dump( array( 7, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
-
+						// var_dump( array( 7, '$related_pod_field[ \'name\' ]' => $related_pod_field[ 'name' ], '$related_object' => $related_object ) );
 						$this->assertTrue( false, sprintf( 'Invalid related item [%s]', $variant_id ) );
 
 						return;
@@ -1258,20 +1266,33 @@ class Test_Traversal extends Pods_UnitTestCase {
 					}
 
 					if ( 'field' === $method ) {
-						$this->assertEquals( $check_value, $p->field( $related_traverse_id, ! is_array( $check_value ) ), sprintf( 'Deep Related Item field value not as expected (%s) [%s] | %s', $related_traverse_id, $variant_id, var_export( array(
-							'$check_value'                            => $check_value,
-							'$p->field( $related_traverse_id, true )' => $p->field( $related_traverse_id, ! is_array( $check_value ) )
-						), true ) ) );
-						$this->assertEquals( $check_index, $p->field( $related_traverse_index, ! is_array( $check_index ) ), sprintf( 'Deep Related Item index field value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
-							'$check_index'                               => $check_index,
-							'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_value ) )
-						), true ) ) );
+						$this->assertEquals(
+							$check_value, $p->field( $related_traverse_id, ! is_array( $check_value ) ), sprintf(
+								'Deep Related Item field value not as expected (%s) [%s] | %s', $related_traverse_id, $variant_id, var_export(
+									array(
+										'$check_value' => $check_value,
+										'$p->field( $related_traverse_id, true )' => $p->field( $related_traverse_id, ! is_array( $check_value ) ),
+									), true
+								)
+							)
+						);
+						$this->assertEquals(
+							$check_index, $p->field( $related_traverse_index, ! is_array( $check_index ) ), sprintf(
+								'Deep Related Item index field value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export(
+									array(
+										'$check_index' => $check_index,
+										'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_value ) ),
+									), true
+								)
+							)
+						);
 
 						if ( 'meta' === $storage_type && 'taxonomy' !== $related_pod_field['type'] ) {
 							$check_value = array_map( 'absint', (array) $check_value );
 							$check_index = (array) $check_index;
 
-							/*var_dump( array(
+							/*
+							var_dump( array(
 								'check_array' => $check_value,
 								'metadata_array' => array_map( 'absint', get_metadata( $metadata_type, $data[ 'id' ], $related_traverse_id ) ),
 
@@ -1292,11 +1313,11 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 							$this->assertEquals( $check_index, get_metadata( $metadata_type, $data['id'], $related_traverse_index ), sprintf( 'Deep Related Item index field meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 							$this->assertEquals( current( $check_index ), get_metadata( $metadata_type, $data['id'], $related_traverse_index, true ), sprintf( 'Deep Related Item index field single meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
-						}
+						}//end if
 					} elseif ( 'display' === $method ) {
 						$this->assertEquals( $check_display_value, $p->display( $related_traverse_id ), sprintf( 'Deep Related Item field display value not as expected (%s) [%s]', $related_traverse_id, $variant_id ) );
 						$this->assertEquals( $check_display_index, $p->display( $related_traverse_index ), sprintf( 'Deep Related Item index field display value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
-					}
+					}//end if
 				} elseif ( 'none' !== $related_pod_storage_type ) {
 					$check_related_value = $check_related_value_display = '';
 
@@ -1315,11 +1336,17 @@ class Test_Traversal extends Pods_UnitTestCase {
 					$related_traverse_index = $prefix . $related_pod_field['name'];
 
 					if ( 'field' === $method ) {
-						$this->assertEquals( $check_related_value, $p->field( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf( 'Deep Related Item related field index not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
-							'$check_related_value'                       => $check_related_value,
-							'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_related_value ) ),
-							'$related_data'                              => $related_data
-						), true ) ) );
+						$this->assertEquals(
+							$check_related_value, $p->field( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf(
+								'Deep Related Item related field index not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export(
+									array(
+										'$check_related_value' => $check_related_value,
+										'$p->field( $related_traverse_index, true )' => $p->field( $related_traverse_index, ! is_array( $check_related_value ) ),
+										'$related_data' => $related_data,
+									), true
+								)
+							)
+						);
 
 						if ( 'meta' === $storage_type && 'taxonomy' !== $related_pod_field['type'] ) {
 							$check_related_value = (array) $check_related_value;
@@ -1328,14 +1355,20 @@ class Test_Traversal extends Pods_UnitTestCase {
 							$this->assertEquals( current( $check_related_value ), get_metadata( $metadata_type, $data['id'], $related_traverse_index, true ), sprintf( 'Deep Related Item related field single meta value not as expected (%s) [%s]', $related_traverse_index, $variant_id ) );
 						}
 					} elseif ( 'display' === $method ) {
-						$this->assertEquals( $check_related_value_display, $p->display( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf( 'Deep Related Item related field display value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export( array(
-							'$check_related_value'                         => $check_related_value,
-							'$p->display( $related_traverse_index, true )' => $p->display( $related_traverse_index, ! is_array( $check_related_value ) ),
-							'$related_data'                                => $related_data
-						), true ) ) );
-					}
-				}
-			}
+						$this->assertEquals(
+							$check_related_value_display, $p->display( $related_traverse_index, ! is_array( $check_related_value ) ), sprintf(
+								'Deep Related Item related field display value not as expected (%s) [%s] | %s', $related_traverse_index, $variant_id, var_export(
+									array(
+										'$check_related_value' => $check_related_value,
+										'$p->display( $related_traverse_index, true )' => $p->display( $related_traverse_index, ! is_array( $check_related_value ) ),
+										'$related_data' => $related_data,
+									), true
+								)
+							)
+						);
+					}//end if
+				}//end if
+			}//end if
 		} elseif ( isset( $data['data'][ $field['name'] ] ) ) {
 			// Other field assertions
 			$check_value = $data['data'][ $field['name'] ];
@@ -1352,7 +1385,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 			} elseif ( 'display' === $method ) {
 				$this->assertEquals( $check_value, $p->display( $field['name'] ), sprintf( 'Item field display value not as expected [%s]', $variant_id ) );
 			}
-		}
+		}//end if
 
 	}
 

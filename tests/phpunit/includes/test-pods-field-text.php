@@ -158,10 +158,12 @@ class Test_PodsField_Text extends Pods_UnitTestCase {
 	 */
 	public function test_method_display_value_allow_shortcode() {
 
-		add_shortcode( 'fooshortcode', function () {
+		add_shortcode(
+			'fooshortcode', function () {
 
-			return 'foobar';
-		} );
+				return 'foobar';
+			}
+		);
 
 		$this->assertEquals( 'foobar', $this->field->display( '[fooshortcode]foo[/fooshortcode]', 'bar', array( 'text_allow_shortcode' => 1 ) ) );
 	}

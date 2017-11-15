@@ -17,7 +17,7 @@ class Frontier extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$post = array(
 			'post_type'    => '_pods_template',
 			'post_status'  => 'publish',
-			'post_content' => 'All of the true things I am about to tell you are shameless lies.'
+			'post_content' => 'All of the true things I am about to tell you are shameless lies.',
 		);
 		$id   = wp_insert_post( $post );
 		$this->assertGreaterThan( 0, $id );
@@ -26,6 +26,7 @@ class Frontier extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	/**
 	 * This test isn't specifically about the templates, but it's connected with the issue.
 	 * Create an arbitrary post type and insert a post to check to make sure save_meta isn't failing
+	 *
 	 * @group pods-issue-4500
 	 */
 	public function test_create_post_type() {
@@ -37,7 +38,7 @@ class Frontier extends \Pods_Unit_Tests\Pods_UnitTestCase {
 		$post = array(
 			'post_type'    => $post_type,
 			'post_status'  => 'publish',
-			'post_content' => 'All of the true things I am about to tell you are shameless lies.'
+			'post_content' => 'All of the true things I am about to tell you are shameless lies.',
 		);
 		$id   = wp_insert_post( $post );
 		$this->assertGreaterThan( 0, $id );

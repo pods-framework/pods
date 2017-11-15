@@ -9,7 +9,7 @@
 
 // JSON support
 if ( ! function_exists( 'json_encode' ) ) {
-	require_once( ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php' );
+	require_once ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php';
 
 	function json_encode( $str ) {
 
@@ -135,7 +135,7 @@ class Pod {
 
 		if ( 'data' === $name ) {
 			if ( self::$deprecated_notice ) {
-				pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
+				pods_deprecated( "Pods->{$name}", '2.0', 'Pods->row()' );
 			}
 
 			$var = $this->new->row();
@@ -143,25 +143,25 @@ class Pod {
 			$var = $this->new->data;
 		} elseif ( 'total' === $name ) {
 			if ( self::$deprecated_notice ) {
-				pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
+				pods_deprecated( "Pods->{$name}", '2.0', 'Pods->total()' );
 			}
 
 			$var = $this->new->total();
 		} elseif ( 'total_rows' === $name ) {
 			if ( self::$deprecated_notice ) {
-				pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
+				pods_deprecated( "Pods->{$name}", '2.0', 'Pods->total_found()' );
 			}
 
 			$var = $this->new->total_found();
 		} elseif ( 'zebra' === $name ) {
 			if ( self::$deprecated_notice ) {
-				pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
+				pods_deprecated( "Pods->{$name}", '2.0', 'Pods->zebra()' );
 			}
 
 			$var = $this->new->zebra();
 		} else {
 			$var = $this->new->{$name};
-		}
+		}//end if
 
 		return $var;
 	}
@@ -367,7 +367,7 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  */
 function pods_ui_message( $message, $error = false ) {
 
-	pods_deprecated( "pods_message", '2.3' );
+	pods_deprecated( 'pods_message', '2.3' );
 
 	pods_message( $message, ( $error ? 'error' : 'notice' ) );
 }
@@ -384,7 +384,7 @@ function pods_ui_message( $message, $error = false ) {
  */
 function pods_ui_error( $message ) {
 
-	pods_deprecated( "pods_message", '2.3' );
+	pods_deprecated( 'pods_message', '2.3' );
 
 	pods_message( $message, 'error' );
 }
@@ -400,7 +400,8 @@ function pods_point_to_version( $point ) {
 	$version_tmp = explode( '.', $point );
 	$version     = '';
 
-	for ( $x = 0; $x < 3; $x ++ ) { // 3 points max - MAJOR.MINOR.PATCH
+	for ( $x = 0; $x < 3; $x ++ ) {
+		// 3 points max - MAJOR.MINOR.PATCH
 		if ( ! isset( $version_tmp[ $x ] ) || strlen( $version_tmp[ $x ] ) < 1 ) {
 			$version_tmp[ $x ] = '000';
 		}
@@ -440,8 +441,8 @@ function pods_version_to_point( $version ) {
 			$point_tmp = '00' . $point_tmp;
 		}
 
-		if ( 3 == strlen( $version ) ) // older versions prior to 1.9.9
-		{
+		if ( 3 == strlen( $version ) ) {
+			// older versions prior to 1.9.9
 			return implode( '.', str_split( $version ) );
 		}
 	}

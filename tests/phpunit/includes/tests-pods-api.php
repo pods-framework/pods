@@ -23,6 +23,7 @@ class Test_Pods_Api extends Pods_UnitTestCase {
 
 	/**
 	 * Test the init method with no pod defined
+	 *
 	 * @covers  PodsAPI::init
 	 * @depends test_method_exists_init
 	 * @since   3.0

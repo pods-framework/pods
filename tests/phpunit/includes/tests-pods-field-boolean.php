@@ -17,7 +17,7 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 
 	public function setUp() {
 
-		$this->field = new PodsField_Boolean;
+		$this->field = new PodsField_Boolean();
 	}
 
 	public function tearDown() {
@@ -162,7 +162,12 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 	 */
 	public function test_method_data_defaults() {
 
-		$this->assertEquals( array( 1 => null, 0 => null ), $this->field->data( 'foo' ) );
+		$this->assertEquals(
+			array(
+				1 => null,
+				0 => null,
+			), $this->field->data( 'foo' )
+		);
 	}
 
 	/**
@@ -172,14 +177,18 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 	 */
 	public function test_method_data_format_type_radio() {
 
-		$this->assertEquals( array(
-			1 => 'bar',
-			0 => 'baz'
-		), $this->field->data( 'foo', null, array(
-			'boolean_format_type' => 'radio',
-			'boolean_yes_label'   => 'bar',
-			'boolean_no_label'    => 'baz'
-		) ) );
+		$this->assertEquals(
+			array(
+				1 => 'bar',
+				0 => 'baz',
+			), $this->field->data(
+				'foo', null, array(
+					'boolean_format_type' => 'radio',
+					'boolean_yes_label'   => 'bar',
+					'boolean_no_label'    => 'baz',
+				)
+			)
+		);
 	}
 
 	/**
@@ -189,10 +198,14 @@ class Test_PodsField_Boolean extends Pods_UnitTestCase {
 	 */
 	public function test_method_data_format_type_checkbox() {
 
-		$this->assertEquals( array( 1 => 'bar' ), $this->field->data( 'foo', null, array(
-			'boolean_format_type' => 'checkbox',
-			'boolean_yes_label'   => 'bar'
-		) ) );
+		$this->assertEquals(
+			array( 1 => 'bar' ), $this->field->data(
+				'foo', null, array(
+					'boolean_format_type' => 'checkbox',
+					'boolean_yes_label'   => 'bar',
+				)
+			)
+		);
 	}
 
 	/**

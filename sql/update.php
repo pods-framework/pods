@@ -68,7 +68,7 @@ if ( version_compare( $pods_version, '2.3.9-a-1', '<' ) ) {
 		'pods_files_require_login_cap'  => '',
 		'pods_disable_file_upload'      => '0',
 		'pods_upload_require_login'     => '1',
-		'pods_upload_require_login_cap' => ''
+		'pods_upload_require_login_cap' => '',
 	);
 
 	foreach ( $autoload_options as $option_name => $default ) {
@@ -79,4 +79,4 @@ if ( version_compare( $pods_version, '2.3.9-a-1', '<' ) ) {
 	}
 
 	update_option( 'pods_framework_version', '2.3.9-a-1' );
-}
+}//end if

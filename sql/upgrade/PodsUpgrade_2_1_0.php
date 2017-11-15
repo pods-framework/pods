@@ -70,12 +70,12 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 			}
 
 			// Get and loop through relationship meta
-			$sql = "
+			$sql = '
 
-            ";
+            ';
 
 			// if serialized (or array), save as individual meta items and save new order meta key
-		}
+		}//end foreach
 
 		$last_id = true;
 

@@ -25,16 +25,22 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 	public function setUp() {
 
-		//Create a pod
-		$this->pod_id = pods_api()->save_pod( array( 'storage' => 'table', 'type' => 'pod', 'name' => 'foo' ) );
+		// Create a pod
+		$this->pod_id = pods_api()->save_pod(
+			array(
+				'storage' => 'table',
+				'type'    => 'pod',
+				'name'    => 'foo',
+			)
+		);
 		$this->pod    = pods( 'foo' );
 
-		//register the fields
+		// register the fields
 		$params                            = array(
 			'pod'    => 'foo',
 			'pod_id' => $this->pod_id,
 			'name'   => 'description',
-			'type'   => 'text'
+			'type'   => 'text',
 		);
 		$this->fields['description']['id'] = pods_api()->save_field( $params );
 
@@ -42,16 +48,18 @@ class Test_Pods extends \Pods_Unit_Tests\Pods_UnitTestCase {
 			'pod'    => 'foo',
 			'pod_id' => $this->pod_id,
 			'name'   => 'start_date',
-			'type'   => 'datetime'
+			'type'   => 'datetime',
 		);
 		$this->fields['start_date']['id'] = pods_api()->save_field( $params );
 
-		//add item
-		$this->item = $this->pod->save( array(
-			'name'        => 'Sample Event',
-			'description' => 'My first event',
-			'start_date'  => 'May 5, 2014 11:00 PM'
-		) );
+		// add item
+		$this->item = $this->pod->save(
+			array(
+				'name'        => 'Sample Event',
+				'description' => 'My first event',
+				'start_date'  => 'May 5, 2014 11:00 PM',
+			)
+		);
 	}
 
 	public function tearDown() {

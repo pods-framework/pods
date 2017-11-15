@@ -16,7 +16,13 @@ class Bug_4097 extends \Pods_Unit_Tests\Pods_UnitTestCase {
 	public function setup_pod( $storage = 'meta', $type = 'post_type' ) {
 
 		$pod_name     = $this->pod_name . '_' . substr( $storage, 2 ) . '_' . substr( $type, 2 );
-		$this->pod_id = pods_api()->save_pod( array( 'storage' => $storage, 'type' => $type, 'name' => $pod_name ) );
+		$this->pod_id = pods_api()->save_pod(
+			array(
+				'storage' => $storage,
+				'type'    => $type,
+				'name'    => $pod_name,
+			)
+		);
 
 		$params = array(
 			'pod'               => $pod_name,
@@ -45,12 +51,28 @@ class Bug_4097 extends \Pods_Unit_Tests\Pods_UnitTestCase {
 
 		$pod_name = $this->setup_pod( $type, $storage );
 		$pod      = pods( $pod_name );
-		$id       = $pod->add( array( 'color' => array( 0 => 'green', 1 => 'brown', 2 => 'red' ) ) );
+		$id       = $pod->add(
+			array(
+				'color' => array(
+					0 => 'green',
+					1 => 'brown',
+					2 => 'red',
+				),
+			)
+		);
 		$pod->fetch( $id );
 		$value = $pod->display( 'color' );
 		$this->assertEquals( 'Roheline, Pruun, and Punane', $value );
 
-		$id = $pod->add( array( 'color' => array( 2 => 'green', 3 => 'brown', 4 => 'red' ) ) );
+		$id = $pod->add(
+			array(
+				'color' => array(
+					2 => 'green',
+					3 => 'brown',
+					4 => 'red',
+				),
+			)
+		);
 		$pod->fetch( $id );
 		$value = $pod->display( 'color' );
 		$this->assertEquals( 'Roheline, Pruun, and Punane', $value );

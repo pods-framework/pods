@@ -33,76 +33,76 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'%d',
 				'post',
 				'page',
-				'nav_menu_item'
+				'nav_menu_item',
 			),
 			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'meta',
-				'table'
+				'table',
 			),
 			'data'    => array(
-				'post_status' => 'publish'
+				'post_status' => 'publish',
 			),
 			'options' => array(
 				'built_in_taxonomies_category'        => 1,
 				'built_in_taxonomies_post_tag'        => 1,
 				'built_in_taxonomies_nav_menu'        => 1,
-				'built_in_taxonomies_test_non_pod_ct' => 1
-			)
+				'built_in_taxonomies_test_non_pod_ct' => 1,
+			),
 		),
 		'taxonomy'  => array(
 			'object'  => array(
 				'%d',
 				'category',
 				'post_tag',
-				'nav_menu'
+				'nav_menu',
 			),
 			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'table',
-				'none'
+				'none',
 			),
 			'options' => array(
 				'built_in_post_types_post'          => 1,
 				'built_in_post_types_page'          => 1,
-				'built_in_post_types_nav_menu_item' => 1
-			)
+				'built_in_post_types_nav_menu_item' => 1,
+			),
 		),
 		'user'      => array(
 			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'meta',
-				'table'
+				'table',
 			),
 			'fields'  => array(
 				array(
 					'name' => 'avatar',
-					'type' => 'avatar'
-				)
+					'type' => 'avatar',
+				),
 			),
 			'data'    => array(
 				'display_name' => 'User %s',
 				'user_login'   => 'User-%s',
 				'user_email'   => '%s@user.com',
-				'user_pass'    => '%s'
-			)
+				'user_pass'    => '%s',
+			),
 		),
 		'media'     => array(
 			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'meta',
-				'table'
+				'table',
 			),
 			'data'    => array(
 				'post_status' => 'inherit',
-				'post_type'   => 'attachment'
-			)
+				'post_type'   => 'attachment',
+			),
 		),
 		'comment'   => array(
 			// @todo Figure out how to split test meta/table for existing objects
 			'storage' => array(
 				'meta',
-				'table'
+				'table',
 			),
 			'data'    => array(
 				'comment_author'       => 'Comment %s',
@@ -112,8 +112,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_post_ID'      => 1,
 				'comment_type'         => 'comment',
 				'comment_approved'     => 1,
-				'comment_date'         => '2014-11-11'
-			)
+				'comment_date'         => '2014-11-11',
+			),
 		),
 		'pod'       => array(
 			'object'  => array(
@@ -121,33 +121,33 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'test_act',
 			),
 			'storage' => array(
-				'table'
+				'table',
 			),
 			'fields'  => array(
 				array(
 					'name' => 'name',
-					'type' => 'text'
+					'type' => 'text',
 				),
 				array(
 					'name' => 'permalink',
-					'type' => 'slug'
+					'type' => 'slug',
 				),
 				array(
 					'name' => 'test_text_field',
-					'type' => 'test'
+					'type' => 'test',
 				),
 				array(
 					'name'             => 'author',
 					'type'             => 'pick',
 					'pick_object'      => 'user',
 					'pick_val'         => '',
-					'pick_format_type' => 'single'
-				)
+					'pick_format_type' => 'single',
+				),
 			),
 			'data'    => array(
-				'permalink' => 'test-slug-%s'
+				'permalink' => 'test-slug-%s',
 			),
-		)
+		),
 	);
 
 	/**
@@ -162,54 +162,54 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'type'             => 'pick',
 			'pick_object'      => 'user',
 			'pick_val'         => 'user',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name'             => 'test_rel_post',
 			'type'             => 'pick',
 			'pick_object'      => 'post_type',
 			'pick_val'         => 'post',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name'             => 'test_rel_pages',
 			'type'             => 'pick',
 			'pick_object'      => 'post_type',
 			'pick_val'         => 'page',
-			'pick_format_type' => 'multi'
+			'pick_format_type' => 'multi',
 		),
 		array(
 			'name'             => 'test_rel_tag',
 			'type'             => 'pick',
 			'pick_object'      => 'taxonomy',
 			'pick_val'         => 'post_tag',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name'             => 'test_rel_media',
 			'type'             => 'pick',
 			'pick_object'      => 'media',
 			'pick_val'         => '',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name'             => 'test_rel_comment',
 			'type'             => 'pick',
 			'pick_object'      => 'comment',
 			'pick_val'         => '',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name'             => 'test_rel_act',
 			'type'             => 'pick',
 			'pick_object'      => 'pod',
 			'pick_val'         => 'test_act',
-			'pick_format_type' => 'single'
+			'pick_format_type' => 'single',
 		),
 		array(
 			'name' => 'test_text_field',
-			'type' => 'text'
-		)
+			'type' => 'text',
+		),
 	);
 
 	/**
@@ -229,8 +229,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'user_login'      => 'related-user',
 				'user_email'      => 'related@user.com',
 				'user_pass'       => 'changeme',
-				'test_text_field' => 'Test related user text field'
-			)
+				'test_text_field' => 'Test related user text field',
+			),
 		),
 		'test_rel_post'    => array(
 			'pod'          => 'post',
@@ -242,8 +242,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_title'      => 'Related post',
 				'post_content'    => '%s',
 				'post_status'     => 'publish',
-				'test_text_field' => 'Test related post text field'
-			)
+				'test_text_field' => 'Test related post text field',
+			),
 		),
 		'test_rel_pages'   => array(
 			'pod'          => 'page',
@@ -256,10 +256,10 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_title'      => 'Related page',
 				'post_content'    => '%s',
 				'post_status'     => 'publish',
-				'test_text_field' => 'Test related page text field'
+				'test_text_field' => 'Test related page text field',
 			),
 			'sub_data'     => array(),
-			'sub_rel_data' => array()
+			'sub_rel_data' => array(),
 		),
 		'test_rel_tag'     => array(
 			'pod'          => 'post_tag',
@@ -270,8 +270,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data'         => array(
 				'name'            => 'Related post tag',
 				'description'     => '%s',
-				'test_text_field' => 'Test related tag text field'
-			)
+				'test_text_field' => 'Test related tag text field',
+			),
 		),
 		'test_rel_media'   => array(
 			'pod'          => 'media',
@@ -283,8 +283,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_title'      => 'Related media',
 				'post_content'    => '%s',
 				'post_status'     => 'publish',
-				'test_text_field' => 'Test related media text field'
-			)
+				'test_text_field' => 'Test related media text field',
+			),
 		),
 		'test_rel_comment' => array(
 			'pod'          => 'comment',
@@ -301,8 +301,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'comment_type'         => 'comment',
 				'comment_approved'     => 1,
 				'comment_date'         => '2014-11-11 00:00:00',
-				'test_text_field'      => 'Test related comment text field'
-			)
+				'test_text_field'      => 'Test related comment text field',
+			),
 		),
 		'test_rel_act'     => array(
 			'pod'          => 'test_act',
@@ -313,8 +313,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'data'         => array(
 				'name'            => 'Related pod item',
 				'permalink'       => 'related-pod-item',
-				'test_text_field' => 'Test related pod text field'
-			)
+				'test_text_field' => 'Test related pod text field',
+			),
 		),
 		'avatar'           => array(
 			'pod'          => 'media',
@@ -326,8 +326,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'post_title'      => 'Related media',
 				'post_content'    => '%s',
 				'post_status'     => 'publish',
-				'test_text_field' => 'Test avatar text field'
-			)
+				'test_text_field' => 'Test avatar text field',
+			),
 		),
 		'%s'               => array(
 			'pod'          => '%s',
@@ -337,9 +337,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'field_author' => false,
 			'data'         => array(
 				'index'           => 'Testing %s',
-				'test_text_field' => 'Testing %s'
-			)
-		)
+				'test_text_field' => 'Testing %s',
+			),
+		),
 	);
 
 	/**
@@ -368,7 +368,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 	public function setUp() {
 
 		parent::setUp();
-		$this->factory = new Pods_UnitTest_Factory;
+		$this->factory = new Pods_UnitTest_Factory();
 
 		pods_require_component( 'table-storage' );
 		pods_require_component( 'advanced-relationships' );
@@ -405,7 +405,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'multipage',
 				'more',
 				'numpages',
-				'pagenow'
+				'pagenow',
 			) as $v
 		) {
 			if ( isset( $GLOBALS[ $v ] ) ) {
@@ -506,8 +506,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'query_var'    => true,
 			'labels'       => array(
 				'name'          => 'Non-Pod Taxonomy',
-				'singular_name' => 'Non-Pod Taxonomy'
-			)
+				'singular_name' => 'Non-Pod Taxonomy',
+			),
 		);
 
 		register_taxonomy( 'test_non_pod_ct', array( 'post', 'page', 'nav_menu_item' ), $args );
@@ -526,7 +526,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				'fields'  => array(),
 				// Hack for 2.x
 				// @todo Remove for 3.x
-				'options' => array()
+				'options' => array(),
 			);
 
 			if ( 'pod' === $pod_type ) {
@@ -623,8 +623,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 						}
 					}
 
-					//$this->assertGreaterThan( 0, $id, 'Pod not added' );
-
+					// $this->assertGreaterThan( 0, $id, 'Pod not added' );
 					self::$builds[ $pod_type ][ $object ][ $storage_type ]['id'] = $id;
 
 					$test_pod ++;
@@ -634,9 +633,9 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					if ( ! empty( $pod['object'] ) ) {
 						break;
 					}
-				}
-			}
-		}
+				}//end foreach
+			}//end foreach
+		}//end foreach
 
 		global $pods_init;
 
@@ -659,12 +658,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 			'field_index' => 'name',
 			'field_id'    => 'term_id',
 			'data'        => array(
-				'name' => 'Non-Pod Term'
-			)
+				'name' => 'Non-Pod Term',
+			),
 		);
 
 		// @todo In 3.x, we should be able to use pods() on any taxonomy outside of Pods
-
 		$related_author = 0;
 		$related_media  = 0;
 		$related_avatar = 0;
@@ -731,7 +729,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					$ids[] = $id;
 
 					for ( $x = 1; $x < $item_data['limit']; $x ++ ) {
-						$sub_item_data                              = $item_data['data'];
+						$sub_item_data                               = $item_data['data'];
 						$sub_item_data[ $item_data['field_index'] ] .= ' (' . $x . ')';
 
 						if ( 'media' === $item_data['pod'] ) {
@@ -755,7 +753,7 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 					$related_media = $id;
 				} elseif ( 'avatar' === $item ) {
 					$related_avatar = $id;
-				}
+				}//end if
 
 				$item_data['id'] = $id;
 
@@ -845,11 +843,11 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 							$new_related_items[ $pod_item_data['pod'] ]             = $pod_item_data;
 							$new_related_items[ $pod_item_data['pod'] ]['id']       = $id;
 							$new_related_items[ $pod_item_data['pod'] ]['is_build'] = true;
-						}
-					}
-				}
-			}
-		}
+						}//end foreach
+					}//end foreach
+				}//end foreach
+			}//end if
+		}//end foreach
 
 		// Go over related field items and save relations to them too
 		foreach ( self::$related_items as $r_item => $r_item_data ) {
@@ -888,8 +886,8 @@ class Pods_UnitTestCase extends \WP_UnitTestCase {
 				}
 
 				$p->save( $save_data, null, $item_id );
-			}
-		}
+			}//end foreach
+		}//end foreach
 
 		foreach ( $new_related_items as $item => $item_data ) {
 			self::$related_items[ $item ] = $item_data;

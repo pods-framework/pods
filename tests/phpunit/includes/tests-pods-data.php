@@ -64,7 +64,10 @@ class Test_PodsData extends Pods_UnitTestCase {
 	 */
 	public function test_pods_sanitize_returns_array() {
 
-		$array = array( 'foo' => 1, 'bar' => 'a test string' );
+		$array = array(
+			'foo' => 1,
+			'bar' => 'a test string',
+		);
 		$this->assertEquals( $array, pods_sanitize( $array ) );
 	}
 

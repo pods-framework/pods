@@ -97,7 +97,7 @@ class PodsUpgrade {
 			if ( ! empty( PodsInit::$components ) ) {
 				PodsInit::$components->activate_component( 'templates' );
 			}
-		}
+		}//end if
 
 		do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
 	}
@@ -166,7 +166,7 @@ class PodsUpgrade {
 	/**
 	 * @param      $method
 	 * @param      $v
-	 * @param null $x
+	 * @param null   $x
 	 */
 	public function update_progress( $method, $v, $x = null ) {
 
@@ -187,7 +187,7 @@ class PodsUpgrade {
 
 	/**
 	 * @param      $method
-	 * @param null $x
+	 * @param null   $x
 	 *
 	 * @return bool
 	 */

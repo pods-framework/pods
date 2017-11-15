@@ -15,9 +15,9 @@ if ( version_compare( $pods_version, '2.0.0-a-31', '<' ) ) {
 	$templates = pods_2_alpha_migrate_templates();
 	$pod_ids   = pods_2_alpha_migrate_pods();
 
-	pods_query( "DROP TABLE @wp_pods", false );
-	pods_query( "DROP TABLE @wp_pods_fields", false );
-	pods_query( "DROP TABLE @wp_pods_objects", false );
+	pods_query( 'DROP TABLE @wp_pods', false );
+	pods_query( 'DROP TABLE @wp_pods_fields', false );
+	pods_query( 'DROP TABLE @wp_pods_objects', false );
 
 	update_option( 'pods_framework_version', '2.0.0-a-31' );
 }
@@ -39,11 +39,13 @@ if ( version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
 
 // Update to 2.0.0-b-11
 if ( version_compare( $pods_version, '2.0.0-b-11', '<' ) ) {
-	$date_fields = $wpdb->get_results( "
+	$date_fields = $wpdb->get_results(
+		"
             SELECT `ID`
             FROM `{$wpdb->posts}`
             WHERE ( `post_name` = 'created' OR `post_name` = 'modified' ) AND `post_type` = '_pods_field'
-        " );
+        "
+	);
 
 	if ( ! empty( $date_fields ) ) {
 		foreach ( $date_fields as $date ) {
@@ -69,7 +71,8 @@ if ( version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
 
 	$_GET = $oldget;
 
-	$number_fields = $wpdb->get_results( "
+	$number_fields = $wpdb->get_results(
+		"
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
             LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
@@ -77,7 +80,8 @@ if ( version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
                 AND `pm`.`meta_value` = 'number'
-        " );
+        "
+	);
 
 	if ( ! empty( $number_fields ) ) {
 		foreach ( $number_fields as $number ) {
@@ -86,7 +90,7 @@ if ( version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
 	}
 
 	update_option( 'pods_framework_version', '2.0.0-b-12' );
-}
+}//end if
 
 // Update to 2.0.0-b-14
 if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
@@ -145,13 +149,13 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 
 			pods_query( $query, 'Cannot setup SQL tables' );
 		}
-	}
+	}//end if
 
 	pods_no_conflict_on( 'post' );
 
 	// convert field types based on options set
-
-	$fields = $wpdb->get_results( "
+	$fields = $wpdb->get_results(
+		"
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
             LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
@@ -159,7 +163,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
                 AND `pm`.`meta_value` = 'date'
-        " );
+        "
+	);
 
 	if ( ! empty( $fields ) ) {
 		foreach ( $fields as $field ) {
@@ -170,7 +175,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 					'date_format'      => 'datetime_format',
 					'date_time_type'   => 'datetime_time_type',
 					'date_time_format' => 'datetime_time_format',
-					'date_html5'       => 'datetime_html5'
+					'date_html5'       => 'datetime_html5',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
@@ -178,15 +183,16 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				$new = array(
 					'date_time_type'   => 'time_type',
 					'date_time_format' => 'time_format',
-					'date_html5'       => 'time_html5'
+					'date_html5'       => 'time_html5',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
 			}
-		}
-	}
+		}//end foreach
+	}//end if
 
-	$fields = $wpdb->get_results( "
+	$fields = $wpdb->get_results(
+		"
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
             LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
@@ -194,7 +200,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
                 AND `pm`.`meta_value` = 'number'
-        " );
+        "
+	);
 
 	if ( ! empty( $fields ) ) {
 		foreach ( $fields as $field ) {
@@ -207,7 +214,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 					'number_format'                    => 'currency_format',
 					'number_decimals'                  => 'currency_decimals',
 					'number_max_length'                => 'currency_max_length',
-					'number_size'                      => 'currency_size'
+					'number_size'                      => 'currency_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
@@ -215,7 +222,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		}
 	}
 
-	$fields = $wpdb->get_results( "
+	$fields = $wpdb->get_results(
+		"
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
             LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
@@ -223,7 +231,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
                 AND `pm`.`meta_value` = 'paragraph'
-        " );
+        "
+	);
 
 	if ( ! empty( $fields ) ) {
 		foreach ( $fields as $field ) {
@@ -237,7 +246,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 					'paragraph_allow_shortcode'   => 'wysiwyg_allow_shortcode',
 					'paragraph_allowed_html_tags' => 'wysiwyg_allowed_html_tags',
 					'paragraph_max_length'        => 'wysiwyg_max_length',
-					'paragraph_size'              => 'wysiwyg_size'
+					'paragraph_size'              => 'wysiwyg_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
@@ -245,7 +254,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 		}
 	}
 
-	$fields = $wpdb->get_results( "
+	$fields = $wpdb->get_results(
+		"
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
             LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
@@ -253,7 +263,8 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
                 AND `pm`.`meta_value` = 'text'
-        " );
+        "
+	);
 
 	if ( ! empty( $fields ) ) {
 		foreach ( $fields as $field ) {
@@ -264,7 +275,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 					'text_format_website' => 'website_format',
 					'text_max_length'     => 'website_max_length',
 					'text_html5'          => 'website_html5',
-					'text_size'           => 'website_size'
+					'text_size'           => 'website_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
@@ -273,7 +284,7 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 					'text_format_phone' => 'phone_format',
 					'text_max_length'   => 'phone_max_length',
 					'text_html5'        => 'phone_html5',
-					'text_size'         => 'phone_size'
+					'text_size'         => 'phone_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
@@ -281,25 +292,25 @@ if ( version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
 				$new = array(
 					'text_max_length' => 'email_max_length',
 					'text_html5'      => 'email_html5',
-					'text_size'       => 'email_size'
+					'text_size'       => 'email_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
 			} elseif ( 'password' === $new_type ) {
 				$new = array(
 					'text_max_length' => 'password_max_length',
-					'text_size'       => 'password_size'
+					'text_size'       => 'password_size',
 				);
 
 				update_post_meta( $field->ID, 'type', $new_type );
-			}
-		}
-	}
+			}//end if
+		}//end foreach
+	}//end if
 
 	pods_no_conflict_off( 'post' );
 
 	update_option( 'pods_framework_version', '2.0.0-b-14' );
-}
+}//end if
 
 // Update to 2.0.0-b-15
 if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
@@ -314,7 +325,8 @@ if ( version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
 	update_option( 'pods_framework_version', '2.0.0-b-15' );
 }
 
-/* ===================================
+/*
+ ===================================
  *
  * Old upgrade code from Alpha to Beta
  *
@@ -325,10 +337,14 @@ function pods_2_beta_migrate_type( $id, $options ) {
 	global $wpdb;
 
 	foreach ( $options as $old => $new ) {
-		$wpdb->query( $wpdb->prepare( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = %s WHERE `meta_key` = %s", array(
-			$new,
-			$old
-		) ) );
+		$wpdb->query(
+			$wpdb->prepare(
+				"UPDATE `{$wpdb->postmeta}` SET `meta_key` = %s WHERE `meta_key` = %s", array(
+					$new,
+					$old,
+				)
+			)
+		);
 	}
 }
 
@@ -338,7 +354,7 @@ function pods_2_alpha_migrate_pods() {
 
 	$api->display_errors = true;
 
-	$old_pods = pods_query( "SELECT * FROM `@wp_pods`", false );
+	$old_pods = pods_query( 'SELECT * FROM `@wp_pods`', false );
 
 	$pod_ids = array();
 
@@ -370,7 +386,7 @@ function pods_2_alpha_migrate_pods() {
 				'pick_val'        => $row->pick_val,
 				'sister_field_id' => $row->sister_field_id,
 				'weight'          => $row->weight,
-				'options'         => $field_opts
+				'options'         => $field_opts,
 			);
 
 			$fields[] = $field_params;
@@ -381,7 +397,7 @@ function pods_2_alpha_migrate_pods() {
 			'type'    => $pod->type,
 			'storage' => $pod->storage,
 			'fields'  => $fields,
-			'options' => $pod_opts
+			'options' => $pod_opts,
 		);
 
 		$renamed = false;
@@ -403,7 +419,7 @@ function pods_2_alpha_migrate_pods() {
 		}
 
 		$pod_ids[] = $pod_id;
-	}
+	}//end foreach
 
 	return $pod_ids;
 }

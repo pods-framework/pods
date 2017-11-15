@@ -1,5 +1,5 @@
 <?php
-require_once( PODS_DIR . 'deprecated/deprecated.php' );
+require_once PODS_DIR . 'deprecated/deprecated.php';
 
 /**
  * @package Pods\Deprecated

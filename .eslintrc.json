@@ -1,0 +1,27 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+
+  "extends": ["wordpress"],
+
+  "rules": {
+    "space-in-parens": ["error", "always"],
+
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "always",
+      "asyncArrow": "always"
+    }],
+
+    "lines-around-comment": [ "error", {
+      "beforeLineComment": false,
+      "beforeBlockComment": false
+    }],
+
+    "space-unary-ops": [ "error", {
+      "nonwords": false
+    }]
+  }
+}

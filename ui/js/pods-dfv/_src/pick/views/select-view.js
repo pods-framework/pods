@@ -1,8 +1,8 @@
 /*global jQuery, _, Backbone, Marionette, select2, sprintf, wp, ajaxurl, PodsI18n */
 
 // Note: this is a template-less view
-import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
-import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
+import { RelationshipCollection } from 'pods-dfv/_src/pick/relationship-model';
 
 const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
 const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
@@ -60,10 +60,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 	tagName: 'select',
 
 	triggers: {
-		"change": {
-			event          : "change:selected",
+		'change': {
+			event: 'change:selected',
 			stopPropagation: false
-		},
+		}
 	},
 
 	multiLastValidSelection: [],
@@ -72,7 +72,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 *
 	 * @param newCollection
 	 */
-	setCollection: function( newCollection ) {
+	setCollection: function ( newCollection ) {
 		this.collection = newCollection;
 	},
 
@@ -94,8 +94,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 	childView: function ( item ) {
 		if ( this.fieldConfig.optgroup ) {
 			return Optgroup;
-		}
-		else {
+		} else {
 			return SelectItem;
 		}
 	},
@@ -150,16 +149,16 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const fieldConfig = fieldModel.get( 'fieldConfig' );
 
 		let name = htmlAttr.name;
-		if ( fieldConfig.pick_format_type === 'multi' ) {
+		if ( 'multi' === fieldConfig.pick_format_type ) {
 			name = name + '[]';
 		}
 		return {
-			'name'           : name,
-			'class'          : htmlAttr.class,
+			'name': name,
+			'class': htmlAttr.class,
 			'data-name-clean': htmlAttr.name_clean,
-			'id'             : htmlAttr.id,
-			'tabindex'       : '2',
-			'multiple'       : ( fieldConfig.pick_format_type === 'multi' )
+			'id': htmlAttr.id,
+			'tabindex': '2',
+			'multiple': ( 'multi' === fieldConfig.pick_format_type )
 		};
 	},
 
@@ -169,18 +168,16 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @var {RelationshipCollection} this.collection
 	 */
 	onAttach: function () {
-		const view_name = this.fieldConfig.view_name;
-		const format_type = this.fieldConfig.pick_format_type;
-		const limit = this.fieldConfig.pick_limit;
-		const numSelected = this.collection.filterBySelected().length;
+		const viewName = this.fieldConfig.view_name;
+		const formatType = this.fieldConfig.pick_format_type;
 
 		// Initialize select2 fields
-		if ( 'select2' === view_name ) {
+		if ( 'select2' === viewName ) {
 			this.setupSelect2();
 		}
 
 		// Check initial selection limit status for regular multiselect and enforce it if needed
-		if ( 'select' === view_name && 'multi' === format_type ) {
+		if ( 'select' === viewName && 'multi' === formatType ) {
 
 			// Store initial selection in case we need to revert back from an invalid state
 			this.multiLastValidSelection = this.$el.val();
@@ -197,11 +194,11 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 */
 	onChangeSelected: function () {
 		const limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
-		const view_name = this.fieldConfig.view_name;
-		const format_type = this.fieldConfig.pick_format_type;
+		const viewName = this.fieldConfig.view_name;
+		const formatType = this.fieldConfig.pick_format_type;
 
 		// Regular multiselect may need to reject the selection change
-		if ( 'select' === view_name && 'multi' === format_type ) {
+		if ( 'select' === viewName && 'multi' === formatType ) {
 
 			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
 			if ( null !== this.$el.val() && 0 !== limit && limit < this.$el.val().length ) {
@@ -221,8 +218,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		// Dynamically enforce selection limits
 		if ( this.validateSelectionLimit() ) {
 			this.selectionLimitUnder();
-		}
-		else {
+		} else {
 			this.selectionLimitOver();
 		}
 
@@ -240,22 +236,17 @@ export const SelectView = Marionette.CollectionView.extend( {
 		limit = +this.fieldConfig.pick_limit;  // Unary plus will implicitly cast to number
 		numSelected = this.collection.filterBySelected().length;
 
-		if ( 0 === limit || numSelected < limit ) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return 0 === limit || numSelected < limit;
 	},
 
 	/**
 	 *
 	 */
 	selectionLimitOver: function () {
-		const view_name = this.fieldConfig.view_name;
-		const format_type = this.fieldConfig.pick_format_type;
+		const viewName = this.fieldConfig.view_name;
+		const formatType = this.fieldConfig.pick_format_type;
 
-		if ( 'select' === view_name && 'multi' === format_type ) {
+		if ( 'select' === viewName && 'multi' === formatType ) {
 			// At the limit: disable all unselected items so no further selections can be added
 			this.$el.find( 'option:not(:selected)' ).prop( 'disabled', true );
 		}
@@ -267,10 +258,10 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 *
 	 */
 	selectionLimitUnder: function () {
-		const view_name = this.fieldConfig.view_name;
-		const format_type = this.fieldConfig.pick_format_type;
+		const viewName = this.fieldConfig.view_name;
+		const formatType = this.fieldConfig.pick_format_type;
 
-		if ( 'select' === view_name && 'multi' === format_type ) {
+		if ( 'select' === viewName && 'multi' === formatType ) {
 			// Not at limit, make sure all items are enabled
 			this.$el.find( 'option' ).prop( 'disabled', false );
 		}
@@ -288,7 +279,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const selectedItems = this.collection.filterBySelected();
 		const returnList = [];
 
-		_.each( data.results, function ( element, index, list ) {
+		_.each( data.results, function ( element ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 
 			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
@@ -314,37 +305,38 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
-		}
-		else {
+		} else {
 			placeholder = `${PodsI18n.__( 'Search' )} ${fieldConfig.label}...`;
 		}
 
 		select2Options = {
 			maximumSelectionLength: limit,
-			placeholder           : placeholder,
-			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
-			disabled              : fieldConfig.limitDisable,
-			escapeMarkup          : function ( text ) { return text; }
+			placeholder: placeholder,
+			allowClear: ( 'single' === fieldConfig.pick_format_type ),
+			disabled: fieldConfig.limitDisable,
+			escapeMarkup: function ( text ) {
+				return text;
+			}
 		};
 
 		if ( ajaxData.ajax ) {
 			jQuery.extend( select2Options, {
 				minimumInputLength: ajaxData.minimum_input_length,
-				ajax              : {
-					url           : ajaxurl + '?pods_ajax=1',
-					type          : 'POST',
-					dataType      : 'json',
-					delay         : ajaxData.delay,
-					data          : function ( params ) {
+				ajax: {
+					url: ajaxurl + '?pods_ajax=1',
+					type: 'POST',
+					dataType: 'json',
+					delay: ajaxData.delay,
+					data: function ( params ) {
 						return {
 							_wpnonce: ajaxData._wpnonce,
-							action  : 'pods_relationship',
-							method  : 'select2',
-							pod     : ajaxData.pod,
-							field   : ajaxData.field,
-							uri     : ajaxData.uri,
-							id      : ajaxData.id,
-							query   : params.term // ToDo: term{lang}
+							action: 'pods_relationship',
+							method: 'select2',
+							pod: ajaxData.pod,
+							field: ajaxData.field,
+							uri: ajaxData.uri,
+							id: ajaxData.id,
+							query: params.term // ToDo: term{lang}
 						};
 					},
 					processResults: function ( data, params ) {

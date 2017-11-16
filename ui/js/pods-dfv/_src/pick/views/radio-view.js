@@ -1,7 +1,7 @@
 /*global jQuery, _, Backbone, Marionette, wp */
 import template from 'pods-dfv/_src/pick/views/radio-item.html';
 
-import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
+import { PodsFieldListView, PodsFieldView } from 'pods-dfv/_src/core/pods-field-views';
 
 /**
  *

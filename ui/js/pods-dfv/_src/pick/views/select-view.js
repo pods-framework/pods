@@ -4,8 +4,6 @@
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
 
-const SELECT2_DEBOUNCE_DELAY = 300;
-const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;
 const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
 const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
 
@@ -310,6 +308,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
+		const select2Overrides = fieldConfig.select2_overrides;
 		const limit = fieldConfig.pick_limit;
 		const isSingle = ( 'single' === fieldConfig.pick_format_type );
 		const selectedCount = this.collection.filterBySelected().length;
@@ -345,12 +344,12 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		if ( ajaxData.ajax ) {
 			jQuery.extend( select2Options, {
-				minimumInputLength: SELECT2_AJAX_MINIMUM_INPUT_LENGTH,
+				minimumInputLength: ajaxData.minimum_input_length,
 				ajax              : {
 					url           : ajaxurl + '?pods_ajax=1',
 					type          : 'POST',
 					dataType      : 'json',
-					delay         : SELECT2_DEBOUNCE_DELAY,
+					delay         : ajaxData.delay,
 					data          : function ( params ) {
 						return {
 							_wpnonce: ajaxData._wpnonce,
@@ -371,7 +370,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		// Initialize select2
-		$select2.selectWoo( select2Options );
+		$select2.selectWoo( jQuery.extend( true, select2Options, select2Overrides ) );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
 		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );

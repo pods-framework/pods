@@ -1,12 +1,14 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 2016,
     "sourceType": "module"
   },
 
   "extends": ["wordpress"],
 
   "rules": {
+    "object-curly-spacing": ["error", "always"],
+
     "space-in-parens": ["error", "always"],
 
     "space-before-function-paren": ["error", {

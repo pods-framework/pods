@@ -874,6 +874,15 @@ class PodsField_Pick extends PodsField {
 
 		$options[ 'ajax_data' ] = $this->build_dfv_autocomplete_ajax_data( $options, $args, $ajax );
 
+		/**
+		 * Allow overriding some of the Select2 options used in the JS init.
+		 *
+		 * @param array|null $select2_overrides Override options for Select2/SelectWoo
+		 *
+		 * @since 2.7
+		 */
+		$options[ 'select2_overrides' ] = apply_filters( 'pods_pick_select2_overrides', null );
+
 		return $options;
 
 	}

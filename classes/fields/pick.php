@@ -872,7 +872,7 @@ class PodsField_Pick extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $limit;
 
-		$options[ 'ajax_data' ] = $this->build_dfv_autocomplate_ajax_data( $options, $args, $ajax );
+		$options[ 'ajax_data' ] = $this->build_dfv_autocomplete_ajax_data( $options, $args, $ajax );
 
 		/**
 		 * Allow overriding some of the Select2 options used in the JS init.
@@ -904,7 +904,7 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @return array
 	 */
-	public function build_dfv_autocomplate_ajax_data( $options, $args, $ajax ) {
+	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax ) {
 
 		if ( is_object( $args->pod ) ) {
 			$pod_id = (int) $args->pod->pod_id;
@@ -926,13 +926,16 @@ class PodsField_Pick extends PodsField {
 
 		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
+		// Values can be overridden via the `pods_field_dfv_data` filter in $data['fieldConfig']['ajax_data']
 		return array(
-			'ajax'     => $ajax,
-			'pod'      => $pod_id,
-			'field'    => $field_id,
-			'id'       => $id,
-			'uri'      => $uri_hash,
-			'_wpnonce' => $field_nonce
+			'ajax'                 => $ajax,
+			'delay'                => 300,
+			'minimum_input_length' => 1,
+			'pod'                  => $pod_id,
+			'field'                => $field_id,
+			'id'                   => $id,
+			'uri'                  => $uri_hash,
+			'_wpnonce'             => $field_nonce
 		);
 
 	}

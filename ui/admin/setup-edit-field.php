@@ -35,7 +35,6 @@ if ( isset( $field['pick_val'] ) ) {
 unset( $field['weight'], $field['options'], $field['table_info'] );
 
 // Remove options, we don't need it in the JSON
-
 $data = array(
 	'row' => $pods_i,
 );

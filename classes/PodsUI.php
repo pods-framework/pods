@@ -2596,7 +2596,6 @@ class PodsUI {
 	 *
 	 * @return bool
 	 * @internal param bool $full Whether to get ALL data or use pagination
-	 *
 	 */
 	public function get_data( $params = null ) {
 

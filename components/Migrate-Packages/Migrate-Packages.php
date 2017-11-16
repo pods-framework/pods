@@ -56,8 +56,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 	 */
 	public function admin( $options, $component ) {
 
-		$method = 'import_export'; // ajax_import
-
+		$method = 'import_export';
+		// ajax_import
 		pods_view( PODS_DIR . 'components/Migrate-Packages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
@@ -93,7 +93,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 			} else {
 				$content .= '<p>Import Error: Invalid Package</p>';
-			}
+			}//end if
 
 			$content .= '</div>';
 
@@ -113,7 +113,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 			echo PodsForm::field( 'export_package', $package, 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
 
 			echo '</div>';
-		}
+		}//end if
 
 	}
 
@@ -197,9 +197,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 							'options' => array(
 								'datetime_format'      => 'ymd_slash',
 								'datetime_time_type'   => '12',
-								'datetime_time_format' => 'h_mm_ss_A'
+								'datetime_time_format' => 'h_mm_ss_A',
 							),
-							'weight'  => 1
+							'weight'  => 1,
 						),
 						array(
 							'name'    => 'modified',
@@ -208,9 +208,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 							'options' => array(
 								'datetime_format'      => 'ymd_slash',
 								'datetime_time_type'   => '12',
-								'datetime_time_format' => 'h_mm_ss_A'
+								'datetime_time_format' => 'h_mm_ss_A',
 							),
-							'weight'  => 2
+							'weight'  => 2,
 						),
 						array(
 							'name'        => 'author',
@@ -220,10 +220,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 							'options'     => array(
 								'pick_format_type'   => 'single',
 								'pick_format_single' => 'autocomplete',
-								'default_value'      => '{@user.ID}'
+								'default_value'      => '{@user.ID}',
 							),
-							'weight'      => 3
-						)
+							'weight'      => 3,
+						),
 					);
 
 					$found_fields = array();
@@ -257,8 +257,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 								'options'     => array(
 									'required'     => min( max( (int) $field['required'], 0 ), 1 ),
 									'unique'       => min( max( (int) $field['unique'], 0 ), 1 ),
-									'input_helper' => $field['input_helper']
-								)
+									'input_helper' => $field['input_helper'],
+								),
 							);
 
 							if ( in_array( $new_field['name'], $found_fields ) ) {
@@ -285,7 +285,6 @@ class Pods_Migrate_Packages extends PodsComponent {
 
 								// This won't work if the field doesn't exist
 								// $new_field[ 'sister_id' ] = $field[ 'sister_field_id' ];
-
 								$new_field['options']['pick_filter']  = $field['pick_filter'];
 								$new_field['options']['pick_orderby'] = $field['pick_orderby'];
 								$new_field['options']['pick_display'] = '';
@@ -309,15 +308,15 @@ class Pods_Migrate_Packages extends PodsComponent {
 								$new_field['options']['wysiwyg_editor'] = 'tinymce';
 							} elseif ( 'text' === $field_type ) {
 								$new_field['options']['text_max_length'] = 128;
-							}
+							}//end if
 
 							if ( isset( $pod['fields'][ $new_field['name'] ] ) ) {
 								$new_field = array_merge( $pod['fields'][ $new_field['name'] ], $new_field );
 							}
 
 							$pod_data['fields'][ $k ] = $new_field;
-						}
-					}
+						}//end foreach
+					}//end if
 
 					if ( pods_var( 'id', $pod, 0 ) < 1 ) {
 						$pod_data['fields'] = array_merge( $core_fields, $pod_data['fields'] );
@@ -378,10 +377,10 @@ class Pods_Migrate_Packages extends PodsComponent {
 							'post_delete_helpers' => pods_var_raw( 'post_delete_helpers', $pod_data ),
 							'show_in_menu'        => ( 1 == pods_var_raw( 'show_in_menu', $pod_data, 0 ) ? 1 : 0 ),
 							'detail_url'          => pods_var_raw( 'detail_url', $pod_data ),
-							'pod_index'           => 'name'
+							'pod_index'           => 'name',
 						),
 					);
-				}
+				}//end if
 
 				$pod = array_merge( $pod, $pod_data );
 
@@ -395,10 +394,12 @@ class Pods_Migrate_Packages extends PodsComponent {
 					}
 
 					if ( isset( $existing_fields[ $field['name'] ] ) ) {
-						if ( $existing_field = pods_api()->load_field( array(
-							'name' => $field['name'],
-							'pod'  => $pod['name']
-						) ) ) {
+						if ( $existing_field = pods_api()->load_field(
+							array(
+								'name' => $field['name'],
+								'pod'  => $pod['name'],
+							)
+						) ) {
 							$pod['fields'][ $k ]['id'] = $existing_field['id'];
 						}
 					}
@@ -406,7 +407,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 					if ( isset( $field['pod'] ) ) {
 						unset( $pod['fields'][ $k ]['pod'] );
 					}
-				}
+				}//end foreach
 
 				$api->save_pod( $pod );
 
@@ -415,8 +416,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				$found['pods'][ $pod['name'] ] = $pod['label'];
-			}
-		}
+			}//end foreach
+		}//end if
 
 		if ( isset( $data['templates'] ) && is_array( $data['templates'] ) ) {
 			foreach ( $data['templates'] as $template_data ) {
@@ -446,8 +447,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				$found['templates'][ $template['name'] ] = $template['name'];
-			}
-		}
+			}//end foreach
+		}//end if
 
 		// Backwards compatibility
 		if ( isset( $data['pod_pages'] ) ) {
@@ -499,8 +500,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				$found['pages'][ $page['name'] ] = $page['name'];
-			}
-		}
+			}//end foreach
+		}//end if
 
 		if ( isset( $data['helpers'] ) && is_array( $data['helpers'] ) ) {
 			foreach ( $data['helpers'] as $helper_data ) {
@@ -551,8 +552,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 				}
 
 				$found['helpers'][ $helper['name'] ] = $helper['name'];
-			}
-		}
+			}//end foreach
+		}//end if
 
 		$found = apply_filters( 'pods_packages_import', $found, $data, $replace );
 
@@ -583,8 +584,8 @@ class Pods_Migrate_Packages extends PodsComponent {
 		$export = array(
 			'meta' => array(
 				'version' => PODS_VERSION,
-				'build'   => time()
-			)
+				'build'   => time(),
+			),
 		);
 
 		if ( is_object( $params ) ) {
@@ -641,7 +642,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 				'developer_mode',
 				'dependency',
 				'depends-on',
-				'excludes-on'
+				'excludes-on',
 			);
 
 			$field_types = PodsForm::field_types();
@@ -699,11 +700,11 @@ class Pods_Migrate_Packages extends PodsComponent {
 									unset( $field[ $option_data['name'] ] );
 								}
 							}
-						}
-					}
-				}
-			}
-		}
+						}//end foreach
+					}//end foreach
+				}//end if
+			}//end foreach
+		}//end if
 
 		if ( ! empty( $template_ids ) ) {
 			$api_params = array();

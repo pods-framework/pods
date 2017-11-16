@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 	 */
 	class PodsBuilderModuleView extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-view';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-view';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -25,7 +25,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		public function __construct() {
 
 			$this->_name        = __( 'Pods - View', 'pods' );
-			$this->_description = __( "Include a file from a theme, with caching options", 'pods' );
+			$this->_description = __( 'Include a file from a theme, with caching options', 'pods' );
 			$this->module_path  = dirname( __FILE__ );
 
 			$this->LayoutModule();
@@ -43,7 +43,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			$new_defaults = array(
 				'view'       => '',
 				'expires'    => 0,
-				'cache_mode' => 'none'
+				'cache_mode' => 'none',
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
@@ -89,7 +89,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 						'none'           => __( 'Disable Caching', 'pods' ),
 						'cache'          => __( 'Object Cache', 'pods' ),
 						'transient'      => __( 'Transient', 'pods' ),
-						'site-transient' => __( 'Site Transient', 'pods' )
+						'site-transient' => __( 'Site Transient', 'pods' ),
 					);
 
 					$form->add_drop_down( 'cache_mode', $cache_modes );
@@ -117,7 +117,7 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 			$args = array(
 				'view'       => trim( pods_var_raw( 'view', $fields['data'], '' ) ),
 				'expires'    => (int) trim( pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
-				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) )
+				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) ),
 			);
 
 			if ( 0 < strlen( $args['view'] ) && 'none' !== $args['cache_mode'] ) {
@@ -126,6 +126,6 @@ if ( ! class_exists( 'PodsBuilderModuleView' ) ) {
 		}
 
 	}
-}
+}//end if
 
 new PodsBuilderModuleView();

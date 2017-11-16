@@ -60,10 +60,12 @@ class Pods_Roles extends PodsComponent {
 		global $wp_roles;
 
 		// Hook into Gravity Forms roles (since it only adds filter if Members plugin itself is activated
-		if ( class_exists( 'RGForms' ) && ! has_filter( 'members_get_capabilities', array(
+		if ( class_exists( 'RGForms' ) && ! has_filter(
+			'members_get_capabilities', array(
 				'RGForms',
-				'members_get_capabilities'
-			) ) ) {
+				'members_get_capabilities',
+			)
+		) ) {
 			add_filter( 'members_get_capabilities', array( 'RGForms', 'members_get_capabilities' ) );
 		}
 
@@ -79,7 +81,7 @@ class Pods_Roles extends PodsComponent {
 				'label'        => $wp_roles->role_names[ $key ],
 				'name'         => $key,
 				'capabilities' => count( (array) $role->capabilities ),
-				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
+				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count ),
 			);
 
 			if ( $default_role == $key ) {
@@ -108,21 +110,21 @@ class Pods_Roles extends PodsComponent {
 						'type'    => 'text',
 						'options' => array(
 							'text_allow_html'        => 1,
-							'text_allowed_html_tags' => ''
-						)
-					)
-				)
+							'text_allowed_html_tags' => '',
+						),
+					),
+				),
 			),
 			'actions_disabled' => array( 'duplicate', 'view', 'export' ),
 			'actions_custom'   => array(
 				'add'    => array( $this, 'admin_add' ),
 				'edit'   => array( $this, 'admin_edit' ),
-				'delete' => array( $this, 'admin_delete' )
+				'delete' => array( $this, 'admin_delete' ),
 			),
 			'search'           => false,
 			'searchable'       => false,
 			'sortable'         => false,
-			'pagination'       => false
+			'pagination'       => false,
 		);
 
 		if ( isset( $roles[ pods_var( 'id', 'get', - 1 ) ] ) ) {
@@ -157,8 +159,8 @@ class Pods_Roles extends PodsComponent {
 
 		$component = $obj->x['component'];
 
-		$method = 'add'; // ajax_add
-
+		$method = 'add';
+		// ajax_add
 		pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
@@ -194,8 +196,8 @@ class Pods_Roles extends PodsComponent {
 
 		$component = $obj->x['component'];
 
-		$method = 'edit'; // ajax_edit
-
+		$method = 'edit';
+		// ajax_edit
 		pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
 	}
 
@@ -248,7 +250,7 @@ class Pods_Roles extends PodsComponent {
 				'label'        => $wp_roles->role_names[ $key ],
 				'name'         => $key,
 				'capabilities' => count( (array) $role->capabilities ),
-				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
+				'users'        => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count ),
 			);
 
 			if ( $default_role == $key ) {
@@ -440,7 +442,7 @@ class Pods_Roles extends PodsComponent {
 		$plugin_caps = array(
 			'pods_roles_add',
 			'pods_roles_delete',
-			'pods_roles_edit'
+			'pods_roles_edit',
 		);
 
 		$capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );
@@ -511,7 +513,7 @@ class Pods_Roles extends PodsComponent {
 			'update_core',
 			'update_plugins',
 			'update_themes',
-			'upload_files'
+			'upload_files',
 		);
 
 		return $defaults;
@@ -523,7 +525,7 @@ class Pods_Roles extends PodsComponent {
 	public function get_default_capabilities() {
 
 		$capabilities = array(
-			'read'
+			'read',
 		);
 
 		// To support Members filters
@@ -552,7 +554,7 @@ class Pods_Roles extends PodsComponent {
 			'level_7',
 			'level_8',
 			'level_9',
-			'level_10'
+			'level_10',
 		);
 
 		$capabilities = array_diff( $capabilities, $deprecated_capabilities );

@@ -38,23 +38,22 @@ class Pods_Templates_Auto_Template_Settings {
 	 */
 	public function __construct() {
 
-
-		//Add option tab for post types
+		// Add option tab for post types
 		add_filter( 'pods_admin_setup_edit_tabs_post_type', array( $this, 'tab' ), 11, 3 );
 
-		//add the same tab for taxonomies
+		// add the same tab for taxonomies
 		add_filter( 'pods_admin_setup_edit_tabs_taxonomy', array( $this, 'tab' ), 11, 3 );
 
-		//Add options to the new tab
+		// Add options to the new tab
 		add_filter( 'pods_admin_setup_edit_options', array( $this, 'options' ), 12, 2 );
 
-		//Include and init front-end class
+		// Include and init front-end class
 		add_action( 'init', array( $this, 'front_end' ), 25 );
 
-		//Delete transients when Pods settings are updated.
+		// Delete transients when Pods settings are updated.
 		add_action( 'update_option', array( $this, 'reset' ), 21, 3 );
 
-		//admin notice for archives without archives
+		// admin notice for archives without archives
 		add_action( 'admin_notices', array( $this, 'archive_warning' ) );
 
 	}
@@ -67,7 +66,7 @@ class Pods_Templates_Auto_Template_Settings {
 	public function init() {
 
 		if ( ! is_null( $this->instance ) ) {
-			$this->instance = new self;
+			$this->instance = new self();
 		}
 
 		return $this->instance;
@@ -102,11 +101,10 @@ class Pods_Templates_Auto_Template_Settings {
 	 * @return array
 	 *
 	 * @since 2.5.5
-	 *
 	 */
 	public function options( $options, $pod ) {
 
-		//check if it's a post type pod and add fields for that.
+		// check if it's a post type pod and add fields for that.
 		if ( $pod['type'] === 'post_type' ) {
 			$options['pods-pfat'] = array(
 				'pfat_enable'           => array(
@@ -115,7 +113,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
-					'boolean_yes_label' => ''
+					'boolean_yes_label' => '',
 				),
 				'pfat_run_outside_loop' => array(
 					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
@@ -123,14 +121,14 @@ class Pods_Templates_Auto_Template_Settings {
 					'type'              => 'boolean',
 					'default'           => false,
 					'depends-on'        => array( 'pfat_enable' => true ),
-					'boolean_yes_label' => ''
+					'boolean_yes_label' => '',
 				),
 				'pfat_single'           => array(
 					'label'      => __( 'Single item view template', 'pods' ),
 					'help'       => __( 'Name of Pods template to use for single item view.', 'pods' ),
 					'type'       => 'text',
 					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true )
+					'depends-on' => array( 'pfat_enable' => true ),
 				),
 				'pfat_append_single'    => array(
 					'label'      => __( 'Single Template Location', 'pods' ),
@@ -149,7 +147,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'help'       => __( 'Name of Pods template to use for use in this Pods archive pages.', 'pods' ),
 					'type'       => 'text',
 					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true )
+					'depends-on' => array( 'pfat_enable' => true ),
 				),
 				'pfat_append_archive'   => array(
 					'label'      => __( 'Archive Template Location', 'pods' ),
@@ -164,9 +162,9 @@ class Pods_Templates_Auto_Template_Settings {
 					'depends-on' => array( 'pfat_enable' => true ),
 				),
 			);
-		}
+		}//end if
 
-		//check if it's a taxonomy Pod, if so add fields for that
+		// check if it's a taxonomy Pod, if so add fields for that
 		if ( $pod['type'] === 'taxonomy' ) {
 			$options['pods-pfat'] = array(
 				'pfat_enable'           => array(
@@ -175,7 +173,7 @@ class Pods_Templates_Auto_Template_Settings {
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
-					'boolean_yes_label' => ''
+					'boolean_yes_label' => '',
 				),
 				'pfat_run_outside_loop' => array(
 					'label'             => __( 'Execute Auto Template outside of the WordPress loop? (advanced)', 'pods' ),
@@ -183,14 +181,14 @@ class Pods_Templates_Auto_Template_Settings {
 					'type'              => 'boolean',
 					'default'           => false,
 					'depends-on'        => array( 'pfat_enable' => true ),
-					'boolean_yes_label' => ''
+					'boolean_yes_label' => '',
 				),
 				'pfat_archive'          => array(
 					'label'      => __( 'Taxonomy Template', 'pods' ),
 					'help'       => __( 'Name of Pods template to use for this taxonomy.', 'pods' ),
 					'type'       => 'text',
 					'default'    => false,
-					'depends-on' => array( 'pfat_enable' => true )
+					'depends-on' => array( 'pfat_enable' => true ),
 				),
 				'pfat_append_archive'   => array(
 					'label'      => __( 'Template Location', 'pods' ),
@@ -198,11 +196,11 @@ class Pods_Templates_Auto_Template_Settings {
 					'depends-on' => array( 'pfat_enable' => true ),
 				),
 			);
-		}
+		}//end if
 
 		if ( isset( $options['pods-pfat'] ) ) {
 
-			//field options pick values
+			// field options pick values
 			$pick = array(
 				'type'               => 'pick',
 				'pick_format_type'   => 'single',
@@ -210,7 +208,7 @@ class Pods_Templates_Auto_Template_Settings {
 				'default'            => 'true',
 			);
 
-			//get template titles
+			// get template titles
 			$titles = $this->get_template_titles();
 
 			if ( ! empty( $titles ) ) {
@@ -225,7 +223,7 @@ class Pods_Templates_Auto_Template_Settings {
 				$options['pods-pfat']['pfat_single']['data']  = array_combine( $this->get_template_titles(), $this->get_template_titles() );
 			}
 
-			//Add data to $pick for template location
+			// Add data to $pick for template location
 			unset( $pick['data'] );
 			$location_data = array(
 				'append'  => __( 'After', 'pods' ),
@@ -234,20 +232,18 @@ class Pods_Templates_Auto_Template_Settings {
 			);
 			$pick['data']  = $location_data;
 
-			//add location options to fields without type set.
+			// add location options to fields without type set.
 			foreach ( $options['pods-pfat'] as $k => $option ) {
 				if ( ! isset( $option['type'] ) ) {
 					$options['pods-pfat'][ $k ] = array_merge( $option, $pick );
 				}
-
 			}
 
-			//remove single from taxonomy
+			// remove single from taxonomy
 			if ( 'taxonomy' === $pod['type'] ) {
 				unset( $options['pods-pfat']['pfat_single'] );
 			}
-
-		}
+		}//end if
 
 		return $options;
 
@@ -265,7 +261,7 @@ class Pods_Templates_Auto_Template_Settings {
 	public function front_end( $load_in_admin = false ) {
 
 		if ( ! is_admin() || $load_in_admin ) {
-			include_once( dirname( __FILE__ ) . '/Pods_Templates_Auto_Template_Front_End.php' );
+			include_once dirname( __FILE__ ) . '/Pods_Templates_Auto_Template_Front_End.php';
 
 			// Only instantiate if we haven't already
 			if ( is_null( $this->front_end_class ) ) {
@@ -319,7 +315,7 @@ class Pods_Templates_Auto_Template_Settings {
 	 */
 	public function archive_test() {
 
-		//try to get cached results of this method
+		// try to get cached results of this method
 		$key          = 'pods_pfat_archive_test';
 		$archive_test = pods_transient_get( $key );
 
@@ -328,14 +324,15 @@ class Pods_Templates_Auto_Template_Settings {
 			$auto_pods = $front->auto_pods();
 
 			foreach ( $auto_pods as $name => $pod ) {
-				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array( $name, array(
+				if ( ! $pod['has_archive'] && $pod['archive'] && $pod['type'] !== 'taxonomy' && ! in_array(
+					$name, array(
 						'post',
 						'page',
-						'attachment'
-					) ) ) {
+						'attachment',
+					)
+				) ) {
 					$archive_test[ $pod['label'] ] = 'fail';
 				}
-
 			}
 
 			pods_transient_set( $key, $archive_test );
@@ -353,10 +350,10 @@ class Pods_Templates_Auto_Template_Settings {
 	 */
 	public function archive_warning() {
 
-		//create $page variable to check if we are on pods admin page
+		// create $page variable to check if we are on pods admin page
 		$page = pods_v( 'page', 'get', false, true );
 
-		//check if we are on Pods Admin page
+		// check if we are on Pods Admin page
 		if ( $page === 'pods' ) {
 			$archive_test = $this->archive_test();
 			if ( is_array( $archive_test ) ) {
@@ -364,11 +361,8 @@ class Pods_Templates_Auto_Template_Settings {
 					if ( $test === 'fail' ) {
 						echo sprintf( '<div id="message" class="error"><p>%s</p></div>', sprintf( __( 'The Pods post type %1$s has an archive template set to be displayed using Pods auto template, but the Pod does not have an archive. You can enable post type archives in the "Advanced Options" tab.', 'pfat' ), $label ) );
 					}
-
 				}
-
 			}
-
 		}
 
 	}

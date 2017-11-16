@@ -63,6 +63,7 @@ class Pods_Pages extends PodsComponent {
 
 	/**
 	 * The capability type.
+	 *
 	 * @link https://codex.wordpress.org/Function_Reference/register_post_type
 	 * @var string
 	 */
@@ -89,7 +90,7 @@ class Pods_Pages extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods'
+			'menu_icon'    => 'dashicons-pods',
 		);
 
 		if ( ! pods_is_admin() ) {
@@ -132,16 +133,18 @@ class Pods_Pages extends PodsComponent {
 	 */
 	public function get_capabilities( $caps ) {
 
-		$caps = array_merge( $caps, array(
-			'edit_' . $this->capability_type,
-			'read_' . $this->capability_type,
-			'delete_' . $this->capability_type,
-			'edit_' . $this->capability_type . 's',
-			'edit_others_' . $this->capability_type . 's',
-			'publish_' . $this->capability_type . 's',
-			'read_private_' . $this->capability_type . 's',
-			'edit_' . $this->capability_type . 's',
-		) );
+		$caps = array_merge(
+			$caps, array(
+				'edit_' . $this->capability_type,
+				'read_' . $this->capability_type,
+				'delete_' . $this->capability_type,
+				'edit_' . $this->capability_type . 's',
+				'edit_others_' . $this->capability_type . 's',
+				'publish_' . $this->capability_type . 's',
+				'read_private_' . $this->capability_type . 's',
+				'edit_' . $this->capability_type . 's',
+			)
+		);
 
 		return $caps;
 	}
@@ -201,26 +204,32 @@ class Pods_Pages extends PodsComponent {
 		$labels = $post_type->labels;
 
 		$messages[ $post_type->name ] = array(
-			1  => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+			1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			2  => __( 'Custom field updated.', 'pods' ),
 			3  => __( 'Custom field deleted.', 'pods' ),
 			4  => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
 			/* translators: %s: date and time of the revision */
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
-			9  => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name ),
-			10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name )
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			9  => sprintf(
+				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
+				// translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
+			),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
-			$messages[ $post_type->name ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][6]  = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
+			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][9] = sprintf(
+				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
+				// translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+			);
 			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 
@@ -409,7 +418,7 @@ class Pods_Pages extends PodsComponent {
 
 		$pod = array(
 			'name' => $this->object_type,
-			'type' => 'post_type'
+			'type' => 'post_type',
 		);
 
 		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
@@ -446,39 +455,39 @@ class Pods_Pages extends PodsComponent {
 			array(
 				'name'  => 'page_title',
 				'label' => __( 'Page Title', 'pods' ),
-				'type'  => 'text'
+				'type'  => 'text',
 			),
 			array(
 				'name'          => 'code',
 				'label'         => __( 'Page Code', 'pods' ),
 				'type'          => 'code',
 				'attributes'    => array(
-					'id' => 'content'
+					'id' => 'content',
 				),
 				'label_options' => array(
 					'attributes' => array(
-						'for' => 'content'
-					)
-				)
+						'for' => 'content',
+					),
+				),
 			),
 			array(
 				'name'  => 'precode',
 				'label' => __( 'Page Precode', 'pods' ),
 				'type'  => 'code',
-				'help'  => __( 'Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default.', 'pods' )
+				'help'  => __( 'Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default.', 'pods' ),
 			),
 			array(
 				'name'  => 'page_template',
 				'label' => __( 'Page Template', 'pods' ),
 				'type'  => 'pick',
-				'data'  => $page_templates
-			)
+				'data'  => $page_templates,
+			),
 		);
 
 		pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
 
 		$associated_pods = array(
-			0 => __( '-- Select a Pod --', 'pods' )
+			0 => __( '-- Select a Pod --', 'pods' ),
 		);
 
 		$all_pods = pods_api()->load_pods( array( 'names' => true ) );
@@ -498,15 +507,15 @@ class Pods_Pages extends PodsComponent {
 				'default'    => 0,
 				'type'       => 'pick',
 				'data'       => $associated_pods,
-				'dependency' => true
+				'dependency' => true,
 			),
 			array(
 				'name'        => 'pod_slug',
 				'label'       => __( 'Wildcard Slug', 'pods' ),
 				'help'        => __( 'Setting the Wildcard Slug is an easy way to setup a detail page. You can use the special tag {@url.2} to match the *third* level of the URL of a Pod Page named "first/second/*" part of the pod page. This is functionally the same as using pods_v_sanitized( 2, "url" ) in PHP.', 'pods' ),
 				'type'        => 'text',
-				'excludes-on' => array( 'pod' => 0 )
-			)
+				'excludes-on' => array( 'pod' => 0 ),
+			),
 		);
 
 		pods_group_add( $pod, __( 'Pod Association', 'pods' ), $fields, 'normal', 'high' );
@@ -517,18 +526,18 @@ class Pods_Pages extends PodsComponent {
 				'label'      => __( 'Restrict access to Admins?', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
-				'dependency' => true
+				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_role',
 				'label'      => __( 'Restrict access by Role?', 'pods' ),
 				'help'       => array(
 					__( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
-					'http://codex.wordpress.org/Roles_and_Capabilities'
+					'http://codex.wordpress.org/Roles_and_Capabilities',
 				),
 				'default'    => 0,
 				'type'       => 'boolean',
-				'dependency' => true
+				'dependency' => true,
 			),
 			array(
 				'name'              => 'roles_allowed',
@@ -540,19 +549,19 @@ class Pods_Pages extends PodsComponent {
 				'pick_ajax'         => false,
 				'default'           => '',
 				'depends-on'        => array(
-					'restrict_role' => true
-				)
+					'restrict_role' => true,
+				),
 			),
 			array(
 				'name'       => 'restrict_capability',
 				'label'      => __( 'Restrict access by Capability?', 'pods' ),
 				'help'       => array(
 					__( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
-					'http://codex.wordpress.org/Roles_and_Capabilities'
+					'http://codex.wordpress.org/Roles_and_Capabilities',
 				),
 				'default'    => 0,
 				'type'       => 'boolean',
-				'dependency' => true
+				'dependency' => true,
 			),
 			array(
 				'name'              => 'capability_allowed',
@@ -564,15 +573,15 @@ class Pods_Pages extends PodsComponent {
 				'pick_ajax'         => false,
 				'default'           => '',
 				'depends-on'        => array(
-					'restrict_capability' => true
-				)
+					'restrict_capability' => true,
+				),
 			),
 			array(
 				'name'       => 'restrict_redirect',
 				'label'      => __( 'Redirect if Restricted?', 'pods' ),
 				'default'    => 0,
 				'type'       => 'boolean',
-				'dependency' => true
+				'dependency' => true,
 			),
 			array(
 				'name'       => 'restrict_redirect_login',
@@ -581,8 +590,8 @@ class Pods_Pages extends PodsComponent {
 				'type'       => 'boolean',
 				'dependency' => true,
 				'depends-on' => array(
-					'restrict_redirect' => true
-				)
+					'restrict_redirect' => true,
+				),
 			),
 			array(
 				'name'       => 'restrict_redirect_url',
@@ -591,8 +600,8 @@ class Pods_Pages extends PodsComponent {
 				'type'       => 'text',
 				'depends-on' => array(
 					'restrict_redirect'       => true,
-					'restrict_redirect_login' => false
-				)
+					'restrict_redirect_login' => false,
+				),
 			),
 		);
 
@@ -640,7 +649,7 @@ class Pods_Pages extends PodsComponent {
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
 				$postdata = array(
 					'ID'           => $post_ID,
-					'post_content' => $meta_value
+					'post_content' => $meta_value,
 				);
 
 				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
@@ -653,15 +662,15 @@ class Pods_Pages extends PodsComponent {
 					$revisions = true;
 				}
 
-				wp_update_post( (object) $postdata ); // objects will be automatically sanitized
-
+				wp_update_post( (object) $postdata );
+				// objects will be automatically sanitized
 				if ( $revisions ) {
 					add_action( 'pre_post_update', 'wp_save_post_revision' );
 				}
 
 				return true;
-			}
-		}
+			}//end if
+		}//end if
 
 		return $_null;
 	}
@@ -681,7 +690,7 @@ class Pods_Pages extends PodsComponent {
 			'posts_per_page' => - 1,
 			'post_status'    => 'publish',
 			'order'          => 'ASC',
-			'orderby'        => 'title'
+			'orderby'        => 'title',
 		);
 
 		$pod_pages = get_posts( $args );
@@ -736,7 +745,7 @@ class Pods_Pages extends PodsComponent {
 			'wp-includes',
 			'index.php',
 			'wp-login.php',
-			'wp-signup.php'
+			'wp-signup.php',
 		);
 
 		$pods_page_exclusions = apply_filters( 'pods_page_exclusions', $pods_page_exclusions );
@@ -752,7 +761,7 @@ class Pods_Pages extends PodsComponent {
 		}
 
 		$object = apply_filters( 'pods_page_exists', false, $uri );
-		if ( ! empty ( $object ) ) {
+		if ( ! empty( $object ) ) {
 			return $object;
 		}
 
@@ -803,8 +812,8 @@ class Pods_Pages extends PodsComponent {
 						$found_rewrite_page_id = $pod_page_id;
 
 						break;
-					}
-				}
+					}//end if
+				}//end foreach
 
 				if ( ! empty( $found_rewrite_page_id ) ) {
 					$object = get_post( $found_rewrite_page_id, ARRAY_A );
@@ -813,21 +822,22 @@ class Pods_Pages extends PodsComponent {
 						$object = false;
 					}
 				}
-			}
+			}//end if
 
 			$wildcard = true;
-		}
+		}//end if
 
 		if ( ! empty( $object ) ) {
 			$object = array(
-				'id'            => $object['ID'],
-				'uri'           => $object['post_title'],
-				'code'          => $object['post_content'],
-				'phpcode'       => $object['post_content'], // phpcode is deprecated
-				'precode'       => get_post_meta( $object['ID'], 'precode', true ),
-				'page_template' => get_post_meta( $object['ID'], 'page_template', true ),
-				'title'         => get_post_meta( $object['ID'], 'page_title', true ),
-				'options'       => array(
+				'id'                          => $object['ID'],
+				'uri'                         => $object['post_title'],
+				'code'                        => $object['post_content'],
+				'phpcode'                     => $object['post_content'],
+				// phpcode is deprecated
+									'precode' => get_post_meta( $object['ID'], 'precode', true ),
+				'page_template'               => get_post_meta( $object['ID'], 'page_template', true ),
+				'title'                       => get_post_meta( $object['ID'], 'page_title', true ),
+				'options'                     => array(
 					'admin_only'              => (boolean) get_post_meta( $object['ID'], 'admin_only', true ),
 					'restrict_role'           => (boolean) get_post_meta( $object['ID'], 'restrict_role', true ),
 					'restrict_capability'     => (boolean) get_post_meta( $object['ID'], 'restrict_capability', true ),
@@ -838,7 +848,7 @@ class Pods_Pages extends PodsComponent {
 					'restrict_redirect_url'   => get_post_meta( $object['ID'], 'restrict_redirect_url', true ),
 					'pod'                     => get_post_meta( $object['ID'], 'pod', true ),
 					'pod_slug'                => get_post_meta( $object['ID'], 'pod_slug', true ),
-				)
+				),
 			);
 
 			if ( $wildcard ) {
@@ -846,7 +856,7 @@ class Pods_Pages extends PodsComponent {
 			}
 
 			return $object;
-		}
+		}//end if
 
 		return false;
 	}
@@ -893,7 +903,7 @@ class Pods_Pages extends PodsComponent {
 			}
 
 			self::$checked = true;
-		}
+		}//end if
 	}
 
 	/**
@@ -957,7 +967,7 @@ class Pods_Pages extends PodsComponent {
 			if ( $pods_page == self::$exists ) {
 				self::$content_called = true;
 			}
-		}
+		}//end if
 
 		$content = apply_filters( 'pods_content', $content, $pods_page );
 
@@ -1030,7 +1040,7 @@ class Pods_Pages extends PodsComponent {
 					wp_redirect( $redirect_url );
 					die();
 				}
-			}
+			}//end if
 
 			if ( ! $permission || ( ! is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) ) {
 				remove_action( 'template_redirect', array( $this, 'template_redirect' ) );
@@ -1041,7 +1051,7 @@ class Pods_Pages extends PodsComponent {
 				remove_filter( 'status_header', array( $this, 'status_header' ) );
 				remove_action( 'wp', array( $this, 'silence_404' ), 1 );
 			}
-		}
+		}//end if
 	}
 
 	/**
@@ -1082,7 +1092,7 @@ class Pods_Pages extends PodsComponent {
 			if ( isset( $pods->meta_extra ) && 0 < strlen( $pods->meta_extra ) ) {
 				echo $pods->meta_extra;
 			}
-		}
+		}//end if
 	}
 
 	/**
@@ -1251,12 +1261,12 @@ class Pods_Pages extends PodsComponent {
 					get_sidebar();
 					get_footer();
 				}
-			}
+			}//end if
 
 			do_action( 'pods_page_end', $template, self::$exists );
 
 			exit;
-		}
+		}//end if
 	}
 }
 

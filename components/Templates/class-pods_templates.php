@@ -11,6 +11,7 @@
 
 /**
  * Plugin class.
+ *
  * @package Pods_Templates_Frontier
  * @author  David Cramer <david@digilab.co.za>
  */
@@ -60,7 +61,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
-	 *
 	 */
 	private function __construct() {
 
@@ -74,14 +74,13 @@ class Pods_Templates_Frontier {
 	/**
 	 * Return an instance of this class.
 	 *
-	 *
 	 * @return    object    A single instance of this class.
 	 */
 	public static function get_instance() {
 
 		// If the single instance hasn't been set, set it now.
 		if ( null == self::$instance ) {
-			self::$instance = new self;
+			self::$instance = new self();
 		}
 
 		return self::$instance;
@@ -89,7 +88,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * Register and enqueue admin-specific style sheet.
-	 *
 	 *
 	 * @return    null
 	 */
@@ -103,7 +101,7 @@ class Pods_Templates_Frontier {
 
 		if ( in_array( $screen->id, $this->plugin_screen_hook_suffix ) ) {
 			$slug = array_search( $screen->id, $this->plugin_screen_hook_suffix );
-			//$configfiles = glob( $this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php' );
+			// $configfiles = glob( $this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php' );
 			if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
 				include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 			}
@@ -134,7 +132,7 @@ class Pods_Templates_Frontier {
 			wp_enqueue_script( 'pods-codemirror-mode-xml' );
 			wp_enqueue_script( 'pods-codemirror-mode-html' );
 			wp_enqueue_script( 'pods-codemirror-mode-css' );
-		}
+		}//end if
 
 	}
 
@@ -162,7 +160,6 @@ class Pods_Templates_Frontier {
 	/**
 	 * Register metaboxes.
 	 *
-	 *
 	 * @return    null
 	 */
 	public function activate_metaboxes() {
@@ -174,7 +171,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * setup meta boxes.
-	 *
 	 *
 	 * @param      $slug
 	 * @param bool $post
@@ -207,26 +203,29 @@ class Pods_Templates_Frontier {
 		wp_enqueue_style( $this->plugin_slug . '-pod_reference-styles', $this->get_url( 'assets/css/styles-pod_reference.css', __FILE__ ), array(), self::VERSION );
 
 		// add metabox
-		add_meta_box( 'view_template', __( 'Template', 'pods' ), array(
-			$this,
-			'render_metaboxes_custom'
-		), '_pods_template', 'normal', 'high', array(
-			'slug'   => 'view_template',
-			'groups' => array()
-		) );
-		add_meta_box( 'pod_reference', __( 'Pod Reference', 'pods' ), array(
-			$this,
-			'render_metaboxes_custom'
-		), '_pods_template', 'side', 'default', array(
-			'slug'   => 'pod_reference',
-			'groups' => array()
-		) );
+		add_meta_box(
+			'view_template', __( 'Template', 'pods' ), array(
+				$this,
+				'render_metaboxes_custom',
+			), '_pods_template', 'normal', 'high', array(
+				'slug'   => 'view_template',
+				'groups' => array(),
+			)
+		);
+		add_meta_box(
+			'pod_reference', __( 'Pod Reference', 'pods' ), array(
+				$this,
+				'render_metaboxes_custom',
+			), '_pods_template', 'side', 'default', array(
+				'slug'   => 'pod_reference',
+				'groups' => array(),
+			)
+		);
 
 	}
 
 	/**
 	 * render template based meta boxes.
-	 *
 	 *
 	 * @param $post
 	 * @param $args
@@ -239,7 +238,7 @@ class Pods_Templates_Frontier {
 		echo '<input type="hidden" name="pods_templates_metabox" id="pods_templates_metabox" value="' . esc_attr( wp_create_nonce( plugin_basename( __FILE__ ) ) ) . '" />';
 		echo '<input type="hidden" name="pods_templates_metabox_prefix[]" value="' . esc_attr( $args['args']['slug'] ) . '" />';
 
-		//get post meta to $atts $ post content - ir the widget option
+		// get post meta to $atts $ post content - ir the widget option
 		if ( ! empty( $post ) ) {
 			$atts    = get_post_meta( $post->ID, $args['args']['slug'], true );
 			$content = $post->post_content;
@@ -321,7 +320,7 @@ class Pods_Templates_Frontier {
 	 * @param      $atts
 	 * @param      $content
 	 * @param      $slug
-	 * @param bool $head
+	 * @param bool    $head
 	 *
 	 * @return string|void
 	 */
@@ -335,7 +334,7 @@ class Pods_Templates_Frontier {
 			$instanceID = $this->element_instance_id( 'pods_templates' . $slug, 'footer' );
 		}
 
-		//$configfiles = glob($this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php');
+		// $configfiles = glob($this->get_path( __FILE__ ) .'configs/'.$slug.'-*.php');
 		if ( file_exists( $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php' ) ) {
 			include $this->get_path( __FILE__ ) . 'configs/fieldgroups-' . $slug . '.php';
 
@@ -371,7 +370,7 @@ class Pods_Templates_Frontier {
 						if ( isset( $atts[ $variable ] ) ) {
 							$value = $this->process_value( $conf['type'], $atts[ $variable ] );
 						}
-					}
+					}//end if
 
 					if ( ! empty( $group['multiple'] ) && ! empty( $value ) ) {
 						foreach ( $value as $key => $val ) {
@@ -379,10 +378,10 @@ class Pods_Templates_Frontier {
 						}
 					}
 					$defaults[ $variable ] = $value;
-				}
-			}
+				}//end foreach
+			}//end foreach
 			$atts = $defaults;
-		}
+		}//end if
 
 		// pull in the assets
 		$assets = array();
@@ -425,7 +424,27 @@ class Pods_Templates_Frontier {
 			}
 			// get clean do shortcode for header checking
 			ob_start();
-			pods_do_shortcode( $out, array(
+			pods_do_shortcode(
+				$out, array(
+					'each',
+					'pod_sub_template',
+					'once',
+					'pod_once_template',
+					'before',
+					'pod_before_template',
+					'after',
+					'pod_after_template',
+					'if',
+					'pod_if_field',
+				)
+			);
+			ob_get_clean();
+
+			return;
+		}//end if
+
+		return pods_do_shortcode(
+			$out, array(
 				'each',
 				'pod_sub_template',
 				'once',
@@ -435,30 +454,13 @@ class Pods_Templates_Frontier {
 				'after',
 				'pod_after_template',
 				'if',
-				'pod_if_field'
-			) );
-			ob_get_clean();
-
-			return;
-		}
-
-		return pods_do_shortcode( $out, array(
-			'each',
-			'pod_sub_template',
-			'once',
-			'pod_once_template',
-			'before',
-			'pod_before_template',
-			'after',
-			'pod_after_template',
-			'if',
-			'pod_if_field'
-		) );
+				'pod_if_field',
+			)
+		);
 	}
 
 	/**
 	 * Render any header styles
-	 *
 	 */
 	public function header_styles() {
 
@@ -473,7 +475,6 @@ class Pods_Templates_Frontier {
 
 	/**
 	 * Render any footer scripts
-	 *
 	 */
 	public function footer_scripts() {
 
@@ -486,7 +487,8 @@ class Pods_Templates_Frontier {
 		}
 	}
 
-	/***
+	/**
+	 *
 	 * Get the current URL
 	 *
 	 * @param null $src
@@ -503,7 +505,8 @@ class Pods_Templates_Frontier {
 		return trailingslashit( plugins_url( $path, __FILE__ ) );
 	}
 
-	/***
+	/**
+	 *
 	 * Get the current URL
 	 *
 	 * @param null $src

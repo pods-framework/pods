@@ -35,10 +35,10 @@ class Pods_Templates_Auto_Template_Front_End {
 		// get the current post type
 		$current_post_type = $this->current_post_type();
 
-		//now use other methods in class to build array to search in/ use
+		// now use other methods in class to build array to search in/ use
 		$possible_pods = $this->auto_pods();
 
-		//check if $current_post_type is the key of the array of possible pods
+		// check if $current_post_type is the key of the array of possible pods
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
 
 			$this_pod = $possible_pods[ $current_post_type ];
@@ -54,7 +54,6 @@ class Pods_Templates_Auto_Template_Front_End {
 				$filter = $this_pod['archive_filter'];
 
 			}
-
 		}
 		/**
 		 * Allows plugin to append/replace the_excerpt
@@ -82,22 +81,24 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	public function the_pods() {
 
-		//use the cached results
+		// use the cached results
 		$key      = '_pods_pfat_the_pods';
 		$the_pods = pods_transient_get( $key );
 
-		//check if we already have the results cached & use it if we can.
+		// check if we already have the results cached & use it if we can.
 		if ( false === $the_pods ) {
-			//get all post type pods
-			$the_pods = pods_api()->load_pods( array(
-				'type'  => array(
-					'taxonomy',
-					'post_type'
-				),
-				'names' => true
-			) );
+			// get all post type pods
+			$the_pods = pods_api()->load_pods(
+				array(
+					'type'  => array(
+						'taxonomy',
+						'post_type',
+					),
+					'names' => true,
+				)
+			);
 
-			//cache the results
+			// cache the results
 			pods_transient_set( $key, $the_pods );
 
 		}
@@ -131,29 +132,29 @@ class Pods_Templates_Auto_Template_Front_End {
 			return $auto_pods;
 		}
 
-		//try to get cached results of this method
+		// try to get cached results of this method
 		$key       = '_pods_pfat_auto_pods';
 		$auto_pods = pods_transient_get( $key );
 
-		//check if we already have the results cached & use it if we can.
+		// check if we already have the results cached & use it if we can.
 		if ( $auto_pods === false ) {
-			//get possible pods
+			// get possible pods
 			$the_pods = $this->the_pods();
 
-			//start output array empty
+			// start output array empty
 			$auto_pods = array();
 
-			//get pods api class
+			// get pods api class
 			$api = pods_api();
 
-			//loop through each to see if auto templates is enabled
+			// loop through each to see if auto templates is enabled
 			foreach ( $the_pods as $the_pod => $the_pod_label ) {
-				//get this Pods' data.
+				// get this Pods' data.
 				$pod_data = $api->load_pod( array( 'name' => $the_pod ) );
 
-				//if auto template is enabled add info about Pod to array
+				// if auto template is enabled add info about Pod to array
 				if ( 1 == pods_v( 'pfat_enable', $pod_data['options'] ) ) {
-					//check if pfat_single and pfat_archive are set
+					// check if pfat_single and pfat_archive are set
 					$single           = pods_v( 'pfat_single', $pod_data['options'], false, true );
 					$archive          = pods_v( 'pfat_archive', $pod_data['options'], false, true );
 					$single_append    = pods_v( 'pfat_append_single', $pod_data['options'], true, true );
@@ -162,7 +163,7 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive_filter   = pods_v( 'pfat_filter_archive', $pod_data['options'], 'the_content', true );
 					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $pod_data['options'], false, true );
 					$type             = pods_v( 'type', $pod_data, false, true );
-					//check if it's a post type that has an archive
+					// check if it's a post type that has an archive
 					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
 						$has_archive = pods_v( 'has_archive', $pod_data['options'], false, true );
 					} else {
@@ -177,7 +178,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						$archive_filter = 'the_content';
 					}
 
-					//build output array
+					// build output array
 					$auto_pods[ $the_pod ] = array(
 						'name'             => $the_pod,
 						'label'            => $the_pod_label,
@@ -191,13 +192,12 @@ class Pods_Templates_Auto_Template_Front_End {
 						'run_outside_loop' => $run_outside_loop,
 						'type'             => $type,
 					);
-				}
+				}//end if
+			}//end foreach
 
-			}
-
-			//cache the results
+			// cache the results
 			pods_transient_set( $key, $auto_pods );
-		}
+		}//end if
 
 		/**
 		 * Add to or change settings.
@@ -225,17 +225,17 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	public function current_post_type() {
 
-		//start by getting current post or stdClass object
+		// start by getting current post or stdClass object
 		global $wp_query;
 		$obj = $wp_query->get_queried_object();
 
-		//see if we are on a post type and if so, set $current_post_type to post type
+		// see if we are on a post type and if so, set $current_post_type to post type
 		if ( isset( $obj->post_type ) ) {
 			$current_post_type = $obj->post_type;
 
 		} elseif ( isset( $obj->taxonomy ) ) {
 			$current_post_type = $obj->taxonomy;
-		} elseif ( isset ( $obj->name ) ) {
+		} elseif ( isset( $obj->name ) ) {
 			$current_post_type = $obj->name;
 		} elseif ( is_home() ) {
 			$current_post_type = 'post';
@@ -262,12 +262,12 @@ class Pods_Templates_Auto_Template_Front_End {
 		// get the current post type
 		$current_post_type = $this->current_post_type();
 
-		//now use other methods in class to build array to search in/ use
+		// now use other methods in class to build array to search in/ use
 		$possible_pods = $this->auto_pods();
 
-		//check if $current_post_type is the key of the array of possible pods
+		// check if $current_post_type is the key of the array of possible pods
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
-			//get array for the current post type
+			// get array for the current post type
 			$this_pod = $possible_pods[ $current_post_type ];
 
 			if ( ! in_the_loop() && ! pods_v( 'run_outside_loop', $this_pod, false ) ) {
@@ -275,38 +275,33 @@ class Pods_Templates_Auto_Template_Front_End {
 				return $content;
 			}
 
-			//build Pods object for current item
+			// build Pods object for current item
 			global $post;
 			$pods = pods( $current_post_type, $post->ID );
 
 			if ( $this_pod['single'] && is_singular( $current_post_type ) ) {
-				//load the template
+				// load the template
 				$content = $this->load_template( $this_pod['single'], $content, $pods, $this_pod['single_append'] );
-			}
-			//if pfat_archive was set try to use that template
-			//check if we are on an archive of the post type
+			} //end if
+			// check if we are on an archive of the post type
 			elseif ( $this_pod['archive'] && is_post_type_archive( $current_post_type ) ) {
-				//load the template
+				// load the template
 				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
 
 			} elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
-				//if pfat_archive was set and we're in the blog index, try to append template
-
-				//append the template
+				// if pfat_archive was set and we're in the blog index, try to append template
+				// append the template
 				$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
 
 			} elseif ( is_tax( $current_post_type ) ) {
-				//if is taxonomy archive of the selected taxonomy
-
-				//if pfat_single was set try to use that template
+				// if is taxonomy archive of the selected taxonomy
+				// if pfat_single was set try to use that template
 				if ( $this_pod['archive'] ) {
-					//append the template
+					// append the template
 					$content = $this->load_template( $this_pod['archive'], $content, $pods, $this_pod['archive_append'] );
 				}
-
 			}
-
-		}
+		}//end if
 
 		return $content;
 
@@ -328,7 +323,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	 */
 	public function load_template( $template_name, $content, $pods, $append = true ) {
 
-		//prevent infinite loops caused by this method acting on post_content
+		// prevent infinite loops caused by this method acting on post_content
 		remove_filter( 'the_content', array( $this, 'front' ) );
 
 		/**
@@ -345,10 +340,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		$template = $pods->template( $template_name );
 		add_filter( 'the_content', array( $this, 'front' ) );
 
-		//check if we have a valid template
+		// check if we have a valid template
 		if ( ! is_null( $template ) ) {
-			//if so append it to content or replace content.
-
+			// if so append it to content or replace content.
 			if ( $append === 'replace' ) {
 				$content = $template;
 			} elseif ( $append === 'prepend' ) {
@@ -377,38 +371,35 @@ class Pods_Templates_Auto_Template_Front_End {
 		// cet the current post type
 		$current_post_type = $this->current_post_type();
 
-		//now use other methods in class to build array to search in/ use
+		// now use other methods in class to build array to search in/ use
 		$possible_pods = $this->auto_pods();
 
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
 			$this_pod = $possible_pods[ $current_post_type ];
 
 			if ( $this_pod['single'] && is_singular( $current_post_type ) ) {
-				//set template
+				// set template
 				$template = $this_pod['single'];
 
 			} elseif ( $this_pod['archive'] && is_post_type_archive( $current_post_type ) ) {
-				//if pfat_archive was set try to use that template
-				//check if we are on an archive of the post type
-
-				//set template
+				// if pfat_archive was set try to use that template
+				// check if we are on an archive of the post type
+				// set template
 				$template = $this_pod['archive'];
 
 			} elseif ( is_home() && $this_pod['archive'] && $current_post_type === 'post' ) {
-				//if pfat_archive was set and we're in the blog index, try to append template
-
-				//set template
+				// if pfat_archive was set and we're in the blog index, try to append template
+				// set template
 				$template = $this_pod['archive'];
 
 			} elseif ( is_tax( $current_post_type ) ) {
-				//if is taxonomy archive of the selected taxonomy
-
-				//if pfat_single was set try to use that template
+				// if is taxonomy archive of the selected taxonomy
+				// if pfat_single was set try to use that template
 				if ( $this_pod['archive'] ) {
-					//set template
+					// set template
 					$template = $this_pod['archive'];
 				}
-			}
+			}//end if
 
 			if ( isset( $template ) ) {
 				global $frontier_styles, $frontier_scripts;
@@ -419,7 +410,7 @@ class Pods_Templates_Auto_Template_Front_End {
 					// got a template - check for styles & scripts
 					$meta = get_post_meta( $template_post['id'], 'view_template', true );
 
-					$frontier = new Pods_Frontier;
+					$frontier = new Pods_Frontier();
 					if ( ! empty( $meta['css'] ) ) {
 						$frontier_styles .= $meta['css'];
 					}
@@ -429,7 +420,6 @@ class Pods_Templates_Auto_Template_Front_End {
 					}
 				}
 			}
-
-		}
+		}//end if
 	}
 }

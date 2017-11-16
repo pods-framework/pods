@@ -22,7 +22,7 @@
 					$action = __( 'created', 'pods' );
 				}
 
-				$message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+				$message = sprintf( __( '<strong>Success!</strong> %1$s %2$s successfully.', 'pods' ), $obj->item, $action );
 
 				echo $obj->message( $message );
 			}

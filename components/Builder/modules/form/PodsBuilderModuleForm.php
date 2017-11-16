@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 	 */
 	class PodsBuilderModuleForm extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-form';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-form';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -46,7 +46,7 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 				'fields'    => '',
 				'label'     => __( 'Submit', 'pods' ),
 				'thank_you' => '',
-				'sidebar'   => 'none'
+				'sidebar'   => 'none',
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
@@ -144,7 +144,7 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 				'fields'    => trim( pods_var_raw( 'fields', $fields['data'], '' ) ),
 				'label'     => trim( pods_var_raw( 'label', $fields['data'], __( 'Submit', 'pods' ), null, true ) ),
 				'thank_you' => trim( pods_var_raw( 'thank_you', $fields['data'], '' ) ),
-				'form'      => 1
+				'form'      => 1,
 			);
 
 			if ( 0 < strlen( $args['name'] ) ) {
@@ -153,6 +153,6 @@ if ( ! class_exists( 'PodsBuilderModuleForm' ) ) {
 		}
 
 	}
-}
+}//end if
 
 new PodsBuilderModuleForm();

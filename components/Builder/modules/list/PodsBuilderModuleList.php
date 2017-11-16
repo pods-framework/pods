@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 	 */
 	class PodsBuilderModuleList extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-list';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-list';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -49,7 +49,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				'where'           => '',
 				'expires'         => ( 60 * 5 ),
 				'cache_mode'      => 'transient',
-				'sidebar'         => 'none'
+				'sidebar'         => 'none',
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
@@ -105,7 +105,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				$all_templates = (array) $api->load_templates( array() );
 
 				$templates = array(
-					'' => '- ' . __( 'Custom Template', 'pods' ) . ' -'
+					'' => '- ' . __( 'Custom Template', 'pods' ) . ' -',
 				);
 
 				foreach ( $all_templates as $template ) {
@@ -138,7 +138,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 					</td>
 				</tr>
 				<?php
-			}
+			}//end if
 			?>
 
 			<tr>
@@ -146,10 +146,14 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 					<label for="template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
 				</td>
 				<td>
-					<?php $form->add_text_area( 'template_custom', array(
-						'style' => 'width:90%; max-width:100%; min-height:100px;',
-						'rows'  => '8'
-					) ); ?>
+					<?php
+					$form->add_text_area(
+						'template_custom', array(
+							'style' => 'width:90%; max-width:100%; min-height:100px;',
+							'rows'  => '8',
+						)
+					);
+					?>
 				</td>
 			</tr>
 			<tr>
@@ -186,7 +190,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 						'none'           => __( 'Disable Caching', 'pods' ),
 						'cache'          => __( 'Object Cache', 'pods' ),
 						'transient'      => __( 'Transient', 'pods' ),
-						'site-transient' => __( 'Site Transient', 'pods' )
+						'site-transient' => __( 'Site Transient', 'pods' ),
 					);
 
 					$form->add_drop_down( 'cache_mode', $cache_modes );
@@ -218,7 +222,7 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 				'orderby'    => trim( pods_var_raw( 'orderby', $fields['data'], '' ) ),
 				'where'      => trim( pods_var_raw( 'where', $fields['data'], '' ) ),
 				'expires'    => (int) trim( pods_var_raw( 'expires', $fields['data'], ( 60 * 5 ) ) ),
-				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) )
+				'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields['data'], 'transient', null, true ) ),
 			);
 
 			$content = trim( pods_var_raw( 'template_custom', $fields['data'], '' ) );
@@ -229,6 +233,6 @@ if ( ! class_exists( 'PodsBuilderModuleList' ) ) {
 		}
 
 	}
-}
+}//end if
 
 new PodsBuilderModuleList();

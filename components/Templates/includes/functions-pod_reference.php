@@ -24,7 +24,7 @@ function pq_loadpod( $podname = false ) {
 		$fields = pq_recurse_pod_fields( $podname );
 	}
 	if ( ! empty( $_POST['pod_reference']['pod'] ) || ! empty( $_POST['pod'] ) ) {
-		header( "Content-Type:application/json" );
+		header( 'Content-Type:application/json' );
 		echo json_encode( $fields );
 		die;
 	}
@@ -34,8 +34,8 @@ function pq_loadpod( $podname = false ) {
 
 /**
  * @param        $pod_name
- * @param string $prefix
- * @param array  $pods_visited
+ * @param string   $prefix
+ * @param array    $pods_visited
  *
  * @return array
  */
@@ -80,16 +80,14 @@ function pq_recurse_pod_fields( $pod_name, $prefix = '', &$pods_visited = array(
 				}
 				$fields[] = "{$prefix}{$name}._img.{$size}";
 			}
-
 		} elseif ( ! empty( $field['table_info'] ) && ! empty( $field['table_info']['pod'] ) ) {
 			$linked_pod = $field['table_info']['pod']['name'];
 			if ( ! isset( $pods_visited[ $linked_pod ] ) || ! in_array( $name, $pods_visited[ $linked_pod ] ) ) {
 				$pods_visited[ $linked_pod ][] = $name;
 				$recurse_queue[ $linked_pod ]  = "{$prefix}{$name}.";
 			}
-
-		}
-	}
+		}//end if
+	}//end foreach
 	foreach ( $recurse_queue as $recurse_name => $recurse_prefix ) {
 		$fields = array_merge( $fields, pq_recurse_pod_fields( $recurse_name, $recurse_prefix, $pods_visited ) );
 	}

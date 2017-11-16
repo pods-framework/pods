@@ -43,18 +43,18 @@ class Pods_Advanced_Relationships extends PodsComponent {
 
 		PodsField_Pick::$related_objects['table'] = array(
 			'label' => __( 'Database Tables', 'pods' ),
-			'group' => __( 'Advanced Objects', 'pods' )
+			'group' => __( 'Advanced Objects', 'pods' ),
 		);
 
 		if ( is_multisite() ) {
 			PodsField_Pick::$related_objects['site'] = array(
 				'label' => __( 'Multisite Sites', 'pods' ),
-				'group' => __( 'Advanced Objects', 'pods' )
+				'group' => __( 'Advanced Objects', 'pods' ),
 			);
 
 			PodsField_Pick::$related_objects['network'] = array(
 				'label' => __( 'Multisite Networks', 'pods' ),
-				'group' => __( 'Advanced Objects', 'pods' )
+				'group' => __( 'Advanced Objects', 'pods' ),
 			);
 		}
 
@@ -62,35 +62,35 @@ class Pods_Advanced_Relationships extends PodsComponent {
 			'label'         => __( 'Themes', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
-			'data_callback' => array( $this, 'data_themes' )
+			'data_callback' => array( $this, 'data_themes' ),
 		);
 
 		PodsField_Pick::$related_objects['page-template'] = array(
 			'label'         => __( 'Page Templates', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
-			'data_callback' => array( $this, 'data_page_templates' )
+			'data_callback' => array( $this, 'data_page_templates' ),
 		);
 
 		PodsField_Pick::$related_objects['sidebar'] = array(
 			'label'         => __( 'Sidebars', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
-			'data_callback' => array( $this, 'data_sidebars' )
+			'data_callback' => array( $this, 'data_sidebars' ),
 		);
 
 		PodsField_Pick::$related_objects['post-types'] = array(
 			'label'         => __( 'Post Type Objects', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
-			'data_callback' => array( $this, 'data_post_types' )
+			'data_callback' => array( $this, 'data_post_types' ),
 		);
 
 		PodsField_Pick::$related_objects['taxonomies'] = array(
 			'label'         => __( 'Taxonomy Objects', 'pods' ),
 			'group'         => __( 'Advanced Objects', 'pods' ),
 			'simple'        => true,
-			'data_callback' => array( $this, 'data_taxonomies' )
+			'data_callback' => array( $this, 'data_taxonomies' ),
 		);
 	}
 

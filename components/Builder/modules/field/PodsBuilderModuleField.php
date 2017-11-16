@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 	 */
 	class PodsBuilderModuleField extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-field';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-field';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -44,7 +44,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 				'pod_type' => '',
 				'slug'     => '',
 				'field'    => '',
-				'sidebar'  => 'none'
+				'sidebar'  => 'none',
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
@@ -123,7 +123,7 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 			$args = array(
 				'name'  => trim( pods_var_raw( 'pod_type', $fields['data'], '' ) ),
 				'slug'  => trim( pods_var_raw( 'slug', $fields['data'], '' ) ),
-				'field' => trim( pods_var_raw( 'field', $fields['data'], '' ) )
+				'field' => trim( pods_var_raw( 'field', $fields['data'], '' ) ),
 			);
 
 			if ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) && 0 < strlen( $args['field'] ) ) {
@@ -132,6 +132,6 @@ if ( ! class_exists( 'PodsBuilderModuleField' ) ) {
 		}
 
 	}
-}
+}//end if
 
 new PodsBuilderModuleField();

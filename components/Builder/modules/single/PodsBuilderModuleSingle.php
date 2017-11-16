@@ -13,10 +13,10 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 	 */
 	class PodsBuilderModuleSingle extends LayoutModule {
 
-		public $_name = '';
-		public $_var = 'pods-builder-single';
-		public $_description = '';
-		public $_editor_width = 500;
+		public $_name                = '';
+		public $_var                 = 'pods-builder-single';
+		public $_description         = '';
+		public $_editor_width        = 500;
 		public $_can_remove_wrappers = true;
 
 		/**
@@ -45,7 +45,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 				'slug'            => '',
 				'template'        => '',
 				'template_custom' => '',
-				'sidebar'         => 'none'
+				'sidebar'         => 'none',
 			);
 
 			return ITUtility::merge_defaults( $new_defaults, $defaults );
@@ -109,7 +109,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 				$all_templates = (array) $api->load_templates( array() );
 
 				$templates = array(
-					'' => '- ' . __( 'Custom Template', 'pods' ) . ' -'
+					'' => '- ' . __( 'Custom Template', 'pods' ) . ' -',
 				);
 
 				foreach ( $all_templates as $template ) {
@@ -142,7 +142,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 					</td>
 				</tr>
 				<?php
-			}
+			}//end if
 			?>
 
 			<tr>
@@ -150,10 +150,14 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 					<label for="template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
 				</td>
 				<td>
-					<?php $form->add_text_area( 'template_custom', array(
-						'style' => 'width:90%; max-width:100%; min-height:100px;',
-						'rows'  => '8'
-					) ); ?>
+					<?php
+					$form->add_text_area(
+						'template_custom', array(
+							'style' => 'width:90%; max-width:100%; min-height:100px;',
+							'rows'  => '8',
+						)
+					);
+					?>
 				</td>
 			</tr>
 			<?php
@@ -169,7 +173,7 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 			$args = array(
 				'name'     => trim( pods_var_raw( 'pod_type', $fields['data'], '' ) ),
 				'slug'     => trim( pods_var_raw( 'slug', $fields['data'], '' ) ),
-				'template' => trim( pods_var_raw( 'template', $fields['data'], '' ) )
+				'template' => trim( pods_var_raw( 'template', $fields['data'], '' ) ),
 			);
 
 			$content = trim( pods_var_raw( 'template_custom', $fields['data'], '' ) );
@@ -180,6 +184,6 @@ if ( ! class_exists( 'PodsBuilderModuleSingle' ) ) {
 		}
 
 	}
-}
+}//end if
 
 new PodsBuilderModuleSingle();

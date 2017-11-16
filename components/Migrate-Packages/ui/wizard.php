@@ -138,7 +138,7 @@
 									</div>
 								</div>
 								<?php
-							}
+							}//end if
 
 							if ( ! empty( $pod_templates ) ) {
 								$data      = $pod_templates;
@@ -179,7 +179,7 @@
 									</div>
 								</div>
 								<?php
-							}
+							}//end if
 
 							if ( ! empty( $pod_pages ) ) {
 								$data      = $pod_pages;
@@ -220,7 +220,7 @@
 									</div>
 								</div>
 								<?php
-							}
+							}//end if
 
 							if ( ! empty( $pod_helpers ) ) {
 								$data      = $pod_helpers;
@@ -261,7 +261,7 @@
 									</div>
 								</div>
 								<?php
-							}
+							}//end if
 
 							do_action( 'pods_packages_export_options', $pods, $pod_templates, $pod_pages, $pod_helpers );
 							?>

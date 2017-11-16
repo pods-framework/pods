@@ -462,9 +462,9 @@ class PodsForm {
 	 * @since 2.0
 	 *
 	 * @param      $attributes
-	 * @param null $name
-	 * @param null $type
-	 * @param null $options
+	 * @param null       $name
+	 * @param null       $type
+	 * @param null       $options
 	 */
 	public static function attributes( $attributes, $name = null, $type = null, $options = null ) {
 
@@ -514,10 +514,10 @@ class PodsForm {
 	 * @since 2.0
 	 *
 	 * @param        $attributes
-	 * @param null   $name
-	 * @param null   $type
-	 * @param null   $options
-	 * @param string $classes
+	 * @param null       $name
+	 * @param null       $type
+	 * @param null       $options
+	 * @param string     $classes
 	 *
 	 * @return array
 	 */
@@ -1349,8 +1349,8 @@ class PodsForm {
 	 * @since 2.0
 	 *
 	 * @param      $input
-	 * @param bool $noarray
-	 * @param bool $db_field
+	 * @param bool  $noarray
+	 * @param bool  $db_field
 	 *
 	 * @return mixed|string
 	 */
@@ -1489,6 +1489,7 @@ class PodsForm {
 
 	/**
 	 * Run a method from a Field Type's class
+	 *
 	 * @return mixed
 	 * @internal param string $field_type Field Type indentifier
 	 * @internal param string $method Method name

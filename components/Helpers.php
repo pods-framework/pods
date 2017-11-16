@@ -64,7 +64,7 @@ class Pods_Helpers extends PodsComponent {
 			'has_archive'  => false,
 			'hierarchical' => false,
 			'supports'     => array( 'title', 'author', 'revisions' ),
-			'menu_icon'    => 'dashicons-pods'
+			'menu_icon'    => 'dashicons-pods',
 		);
 
 		if ( ! pods_is_admin() ) {
@@ -123,26 +123,32 @@ class Pods_Helpers extends PodsComponent {
 		$labels = $post_type->labels;
 
 		$messages[ $post_type->name ] = array(
-			1  => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+			1  => sprintf( __( '%1$s updated. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			2  => __( 'Custom field updated.', 'pods' ),
 			3  => __( 'Custom field deleted.', 'pods' ),
 			4  => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
 			/* translators: %s: date and time of the revision */
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( '%1$s published. <a href="%2$s">%3$s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
 			7  => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
-			8  => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
-			9  => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name ),
-			10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name )
+			8  => sprintf( __( '%1$s submitted. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
+			9  => sprintf(
+				__( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ), $labels->singular_name,
+				// translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ), $labels->singular_name
+			),
+			10 => sprintf( __( '%1$s draft updated. <a target="_blank" href="%2$s">Preview %3$s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name ),
 		);
 
 		if ( false === (boolean) $post_type->public ) {
-			$messages[ $post_type->name ][1]  = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][6]  = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][8]  = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
-			$messages[ $post_type->name ][9]  = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name, // translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) );
+			$messages[ $post_type->name ][1] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][6] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][8] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+			$messages[ $post_type->name ][9] = sprintf(
+				__( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ), $labels->singular_name,
+				// translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+			);
 			$messages[ $post_type->name ][10] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
 		}
 
@@ -300,7 +306,7 @@ class Pods_Helpers extends PodsComponent {
 
 		$pod = array(
 			'name' => $this->object_type,
-			'type' => 'post_type'
+			'type' => 'post_type',
 		);
 
 		if ( isset( PodsMeta::$post_types[ $pod['name'] ] ) ) {
@@ -320,13 +326,13 @@ class Pods_Helpers extends PodsComponent {
 					'post_save'   => 'Post-Save',
 					'pre_delete'  => 'Pre-Delete',
 					'post_delete' => 'Post-Delete',
-				)
+				),
 			),
 			array(
 				'name'  => 'code',
 				'label' => __( 'Code', 'pods' ),
-				'type'  => 'code'
-			)
+				'type'  => 'code',
+			),
 		);
 
 		pods_group_add( $pod, __( 'Helper', 'pods' ), $fields, 'normal', 'high' );
@@ -373,7 +379,7 @@ class Pods_Helpers extends PodsComponent {
 			if ( is_object( $post ) && $this->object_type == $post->post_type ) {
 				$postdata = array(
 					'ID'           => $post_ID,
-					'post_content' => $meta_value
+					'post_content' => $meta_value,
 				);
 
 				remove_filter( current_filter(), array( $this, __FUNCTION__ ) );
@@ -386,15 +392,15 @@ class Pods_Helpers extends PodsComponent {
 					$revisions = true;
 				}
 
-				wp_update_post( (object) $postdata ); // objects will be automatically sanitized
-
+				wp_update_post( (object) $postdata );
+				// objects will be automatically sanitized
 				if ( $revisions ) {
 					add_action( 'pre_post_update', 'wp_save_post_revision' );
 				}
 
 				return true;
-			}
-		}
+			}//end if
+		}//end if
 
 		return $_null;
 	}
@@ -433,7 +439,7 @@ class Pods_Helpers extends PodsComponent {
 			'helper'     => '',
 			'value'      => '',
 			'name'       => '',
-			'deprecated' => false
+			'deprecated' => false,
 		);
 
 		if ( is_array( $params ) ) {

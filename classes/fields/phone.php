@@ -49,6 +49,7 @@ class PodsField_Phone extends PodsField {
 
 	/**
 	 * Add options and set defaults to
+	 *
 	 * @return array
 	 * @internal param array $options
 	 *
@@ -294,7 +295,7 @@ class PodsField_Phone extends PodsField {
 				}
 			} elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) ) {
 				$value = implode( '.', $numbers );
-			} else          // if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
+			} else 			// if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
 			{
 				$value = implode( '-', $numbers );
 			}

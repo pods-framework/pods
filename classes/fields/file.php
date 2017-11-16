@@ -1050,7 +1050,7 @@ class PodsField_File extends PodsField {
 					$limit_size = $limit_size * 1025 * 1025;
 					// convert to KB to B
 				} elseif ( false !== stripos( $limit_size, 'KB' ) ) {
-					$limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
+					$limit_size  = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
 					$limit_size *= 1025;
 					// convert to B
 				} elseif ( false !== stripos( $limit_size, 'B' ) ) {

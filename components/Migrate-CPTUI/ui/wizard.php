@@ -96,7 +96,7 @@
 									?>
 									<p class="padded"><?php _e( 'No Post Types were found.', 'pods' ); ?></p>
 									<?php
-								}
+								}//end if
 								?>
 							</div>
 						</div>
@@ -135,7 +135,7 @@
 									?>
 									<p class="padded"><?php _e( 'No Taxonomies were found.', 'pods' ); ?></p>
 									<?php
-								}
+								}//end if
 								?>
 							</div>
 						</div>

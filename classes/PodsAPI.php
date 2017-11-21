@@ -4330,7 +4330,8 @@ class PodsAPI {
 
 		$save_params = array(
 			'pod' => $params->pod,
-			'data' => array()
+			'data' => array(),
+			'is_new_item' => true,
 		);
 
 		$ignore_fields = array(

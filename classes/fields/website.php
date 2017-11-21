@@ -326,80 +326,81 @@ class PodsField_Website extends PodsField {
 	 * @since 2.7
 	 */
 	public function validate_url( $value, $options = null ) {
-		if ( empty( $value ) )
+		if ( empty( $value ) ) {
 			return $value;
+		}
 
-		if ( 'none' != pods_var( self::$type . '_format', $options ) ) {
-			if ( is_array( $value ) ) {
-				if ( isset( $value[ 'scheme' ] ) )
-					$value = $this->build_url( $value, $options );
-				else
-					$value = implode( '', $value );
+		if ( 'none' === pods_var( self::$type . '_format', $options ) ) {
+			return $this->strip_html( $value, $options );
+		}
+
+		if ( is_array( $value ) ) {
+			if ( isset( $value[ 'scheme' ] ) )
+				$value = $this->build_url( $value, $options );
+			else
+				$value = implode( '', $value );
+		}
+
+		if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) )
+			$value = 'http://' . $value;
+
+		$url = @parse_url( $value );
+
+		if ( empty( $url ) || count( $url ) < 2 )
+			$value = '';
+		else {
+			$defaults = array(
+				'scheme' => 'http',
+				'host' => '',
+				'port' => '',
+				'path' => '/',
+				'query' => '',
+				'fragment' => ''
+			);
+
+			$url = array_merge( $defaults, $url );
+
+			if ( 'normal' == pods_var( self::$type . '_format', $options ) )
+				$value = $this->build_url( $url, $options );
+			elseif ( 'no-www' == pods_var( self::$type . '_format', $options ) ) {
+				if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
+					$url[ 'host' ] = substr( $url[ 'host' ], 4 );
+
+				$value = $this->build_url( $url, $options );
 			}
+			elseif ( 'force-www' == pods_var( self::$type . '_format', $options ) ) {
+				if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
+					$url[ 'host' ] = 'www.' . $url[ 'host' ];
 
-			if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) )
-				$value = 'http://' . $value;
-
-			$url = @parse_url( $value );
-
-			if ( empty( $url ) || count( $url ) < 2 )
-				$value = '';
-			else {
-				$defaults = array(
-					'scheme' => 'http',
-					'host' => '',
-					'port' => '',
-					'path' => '/',
-					'query' => '',
-					'fragment' => ''
-				);
-
-				$url = array_merge( $defaults, $url );
-
-				if ( 'normal' == pods_var( self::$type . '_format', $options ) )
-					$value = $this->build_url( $url, $options );
-				elseif ( 'no-www' == pods_var( self::$type . '_format', $options ) ) {
-					if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
-						$url[ 'host' ] = substr( $url[ 'host' ], 4 );
-
-					$value = $this->build_url( $url, $options );
-				}
-				elseif ( 'force-www' == pods_var( self::$type . '_format', $options ) ) {
-					if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
-						$url[ 'host' ] = 'www.' . $url[ 'host' ];
-
-					$value = $this->build_url( $url, $options );
-				}
-				elseif ( 'no-http' == pods_var( self::$type . '_format', $options ) ) {
-					$value = $this->build_url( $url, $options );
-					$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-
-					if ( '/' == $url[ 'path' ] )
-						$value = trim( $value, '/' );
-				}
-				elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
-					if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
-						$url[ 'host' ] = substr( $url[ 'host' ], 4 );
-
-					$value = $this->build_url( $url, $options );
-					$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-
-					if ( '/' == $url[ 'path' ] )
-						$value = trim( $value, '/' );
-				}
-				elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
-					if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
-						$url[ 'host' ] = 'www.' . $url[ 'host' ];
-
-					$value = $this->build_url( $url, $options );
-					$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
-
-					if ( '/' == $url[ 'path' ] )
-						$value = trim( $value, '/' );
-				}
+				$value = $this->build_url( $url, $options );
 			}
-		} else {
-			$value = $this->strip_html( $value, $options );
+			elseif ( 'no-http' == pods_var( self::$type . '_format', $options ) ) {
+				$value = $this->build_url( $url, $options );
+				$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
+
+				if ( '/' == $url[ 'path' ] )
+					$value = trim( $value, '/' );
+			}
+			elseif ( 'no-http-no-www' == pods_var( self::$type . '_format', $options ) ) {
+				if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
+					$url[ 'host' ] = substr( $url[ 'host' ], 4 );
+
+				$value = $this->build_url( $url, $options );
+				$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
+
+				if ( '/' == $url[ 'path' ] )
+					$value = trim( $value, '/' );
+			}
+			elseif ( 'no-http-force-www' == pods_var( self::$type . '_format', $options ) ) {
+				if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
+					$url[ 'host' ] = 'www.' . $url[ 'host' ];
+
+				$value = $this->build_url( $url, $options );
+				$value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
+
+				if ( '/' == $url[ 'path' ] )
+					$value = trim( $value, '/' );
+			}
 		}
 
 		return $value;

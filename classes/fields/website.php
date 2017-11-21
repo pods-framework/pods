@@ -402,8 +402,6 @@ class PodsField_Website extends PodsField {
 			$value = $this->strip_html( $value, $options );
 		}
 
-		$value = esc_url( $value );
-
 		return $value;
 	}
 

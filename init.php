@@ -8,9 +8,8 @@ Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
 GitHub Plugin URI: https://github.com/pods-framework/pods
-GitHub Branch: release/2.7
 
-Copyright 2009-2017  Pods Foundation, Inc  (email : contact@podsfoundation.org)
+Copyright 2009-2018  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -6102,8 +6102,9 @@ class PodsAPI {
 	     ( empty( $orderby ) || 'menu_order title' === $orderby ) &&
 	     empty( $ids )
 	) {
+		$total_pods = (int) ( is_array( $the_pods ) ) ? count( $the_pods ) : $the_pods;
             // Too many Pods can cause issues with the DB when caching is not enabled
-            if ( 15 < count( $the_pods ) || 75 < (int) $total_fields ) {
+            if ( 15 < $total_pods || 75 < (int) $total_fields ) {
                 pods_transient_clear( $cache_key );
 
                 if ( pods_api_cache() ) {

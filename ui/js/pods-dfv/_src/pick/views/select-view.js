@@ -339,6 +339,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 			placeholder           : placeholder,
 			allowClear            : isSingle,
 			disabled              : fieldConfig.limitDisable,
+			tags                  : fieldConfig.pick_taggable,
 			escapeMarkup          : function ( text ) { return text; }
 		};
 

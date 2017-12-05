@@ -1056,8 +1056,8 @@ class PodsInit {
 				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
 					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
 
-					$wp_taxonomies[ $taxonomy_name ]->show_in_rest = true;
-					$wp_taxonomies[ $taxonomy_name ]->rest_base    = $rest_base;
+					$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+					$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
 					$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
 				}
 

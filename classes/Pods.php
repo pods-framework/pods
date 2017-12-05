@@ -3310,12 +3310,43 @@ class Pods implements Iterator {
 		if ( is_array( $helper ) )
 			$params = array_merge( $params, $helper );
 
-		if ( class_exists( 'Pods_Helpers' ) )
+		if ( class_exists( 'Pods_Helpers' ) ) {
 			$value = Pods_Helpers::helper( $params, $this );
-		elseif ( function_exists( $params[ 'helper' ] ) )
-			$value = call_user_func( $params[ 'helper' ], $value );
-		else
-			$value = apply_filters( $params[ 'helper' ], $value );
+		} elseif ( function_exists( $params['helper'] ) ) {
+			$blacklist = array(
+				'system',
+				'exec',
+				'popen',
+				'eval',
+				'preg_replace',
+				'create_function',
+				'include',
+				'include_once',
+				'require',
+				'require_once',
+			);
+
+			/**
+			 * Allows adjusting the blacklisted functions as needed.
+			 *
+			 * @param array $blacklist List of callbacks not allowed.
+			 * @param array $params    Parameters used by Pods::helper() method.
+			 *
+			 * @since 2.7
+			 */
+			$blacklist = apply_filters( 'pods_helper_blacklist', $blacklist, $params );
+
+			// Clean up helper callback (if string)
+			if ( is_string( $params['helper'] ) ) {
+				$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) ); 
+			}
+
+			if ( ! in_array( $params['helper'], $blacklist, true ) ) {
+				$value = call_user_func( $params['helper'], $value );
+			}
+		} else {
+			$value = apply_filters( $params['helper'], $value );
+		}
 
 		return $value;
 	}

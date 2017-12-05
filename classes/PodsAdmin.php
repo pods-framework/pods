@@ -3096,7 +3096,7 @@ class PodsAdmin {
 			    ),
 			    'rest_base'   => array(
 				    'label'             => __( 'REST Base (if any)', 'pods' ),
-				    'help'              => __( 'This will form the url for the route. Default / empty value here will use the pod name or the existing REST base setup for the object (if already existing).', 'pods' ),
+				    'help'              => __( 'This will form the url for the route. Default / empty value here will use the pod name.', 'pods' ),
 				    'type'              => 'text',
 				    'default'           => '',
 				    'depends-on'        => array( 'rest_enable' => true ),

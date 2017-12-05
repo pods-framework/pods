@@ -3313,7 +3313,7 @@ class Pods implements Iterator {
 		if ( class_exists( 'Pods_Helpers' ) ) {
 			$value = Pods_Helpers::helper( $params, $this );
 		} elseif ( function_exists( $params['helper'] ) ) {
-			$blacklist = array(
+			$disallowed = array(
 				'system',
 				'exec',
 				'popen',
@@ -3326,22 +3326,44 @@ class Pods implements Iterator {
 				'require_once',
 			);
 
+			$allowed = array();
+
 			/**
-			 * Allows adjusting the blacklisted functions as needed.
+			 * Allows adjusting the disallowed callbacks as needed.
 			 *
-			 * @param array $blacklist List of callbacks not allowed.
-			 * @param array $params    Parameters used by Pods::helper() method.
+			 * @param array $disallowed List of callbacks not allowed.
+			 * @param array $params     Parameters used by Pods::helper() method.
 			 *
 			 * @since 2.7
 			 */
-			$blacklist = apply_filters( 'pods_helper_blacklist', $blacklist, $params );
+			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, $params );
+
+			/**
+			 * Allows adjusting the allowed allowed callbacks as needed.
+			 *
+			 * @param array $allowed List of callbacks explicitly allowed.
+			 * @param array $params  Parameters used by Pods::helper() method.
+			 *
+			 * @since 2.7
+			 */
+			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, $params );
 
 			// Clean up helper callback (if string)
 			if ( is_string( $params['helper'] ) ) {
-				$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) ); 
+				$params['helper'] = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params['helper'] ) );
 			}
 
-			if ( ! in_array( $params['helper'], $blacklist, true ) ) {
+			$is_allowed = false;
+
+			if ( ! empty( $allowed ) ) {
+				if ( in_array( $params['helper'], $allowed, true ) ) {
+					$is_allowed = true;
+				}
+			} elseif ( ! in_array( $params['helper'], $disallowed, true ) ) {
+				$is_allowed = true;
+			}
+
+			if ( $is_allowed ) {
 				$value = call_user_func( $params['helper'], $value );
 			}
 		} else {

@@ -65,7 +65,7 @@
                             <p>
                                 <?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
                                 <br /><br />
-                                <?php _e( 'Not sure what content type you should use? Check out our <a href="http://pods.io/docs/comparisons/compare-content-types/" target="_blank">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
+                                <?php _e( 'Not sure what content type you should use? Check out our <a href="https://pods.io/docs/comparisons/compare-content-types/" target="_blank">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
                             </p>
 
                         </div>
@@ -99,7 +99,7 @@
                                 <div class="inside pods-manage-field pods-dependency">
                                     <div class="pods-field-option">
                                         <?php
-                                            echo PodsForm::label( 'create_pod_type', __( 'Content Type', 'pods' ), array( __( '<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ), 'http://pods.io/docs/comparisons/compare-content-types/' ) );
+                                            echo PodsForm::label( 'create_pod_type', __( 'Content Type', 'pods' ), array( __( '<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ), 'https://pods.io/docs/comparisons/compare-content-types/' ) );
 
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
@@ -122,7 +122,7 @@
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
                                             <?php
-                                                echo PodsForm::label( 'create_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
+                                                echo PodsForm::label( 'create_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'https://pods.io/docs/comparisons/compare-storage-types/' ) );
 
                                                 $data = array(
                                                     'none' => __( 'Do not enable extra fields to be added', 'pods' ),
@@ -222,7 +222,7 @@
                                         ?>
                                             <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type">
                                                 <?php
-                                                    echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
+                                                    echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'https://pods.io/docs/comparisons/compare-storage-types/' ) );
 
                                                     $data = array(
                                                         'meta' => __( 'Meta Based (WP Default)', 'pods' ),
@@ -250,7 +250,7 @@
 
                                     <div class="pods-field-option">
                                         <?php
-                                            echo PodsForm::label( 'extend_pod_type', __( 'Content Type', 'pods' ), array( __( '<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ), 'http://pods.io/docs/comparisons/compare-content-types/' ) );
+                                            echo PodsForm::label( 'extend_pod_type', __( 'Content Type', 'pods' ), array( __( '<h6>Content Types</h6> There are many content types to choose from, we have put together a comparison between them all to help you decide what fits your needs best.', 'pods' ), 'https://pods.io/docs/comparisons/compare-content-types/' ) );
 
                                             $data = array(
                                                 'post_type' => __( 'Post Types (Posts, Pages, etc..)', 'pods' ),
@@ -335,7 +335,7 @@
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                             <?php
-                                                echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
+                                                echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'https://pods.io/docs/comparisons/compare-storage-types/' ) );
 
                                                 $data = array(
                                                     'none' => __( 'Do not enable extra fields to be added', 'pods' ),
@@ -369,7 +369,7 @@
                                             <div class="pods-advanced">
                                                 <div class="pods-field-option">
                                                     <?php
-                                                        echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
+                                                        echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'https://pods.io/docs/comparisons/compare-storage-types/' ) );
 
                                                         $data = array(
                                                             'meta' => __( 'Meta Based (WP Default)', 'pods' ),

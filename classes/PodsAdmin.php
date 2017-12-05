@@ -1375,7 +1375,7 @@ class PodsAdmin {
                 ),
                 'menu_icon' => array(
                     'label' => __( 'Menu Icon', 'pods' ),
-                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="http://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="http://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
+                    'help' => __( 'URL or Dashicon name for the menu icon. You may specify the path to the icon using one of the <a href="https://pods.io/docs/build/special-magic-tags/#site-tags" target="_blank">site tag</a> type <a href="https://pods.io/docs/build/special-magic-tags/" target="_blank">special magic tags</a>. For example, for a file in your theme directory, use "{@template-url}/path/to/image.png". You may also use the name of a <a href="https://developer.wordpress.org/resource/dashicons/" target="_blank">Dashicon</a>. For example, to use the empty star icon, use "dashicons-star-empty".', 'pods' ),
                     'type' => 'text',
                     'default' => '',
                     'depends-on' => array( 'show_in_menu' => true )
@@ -2444,7 +2444,7 @@ class PodsAdmin {
 
             if ( empty( $component_data[ 'Author' ] ) ) {
                 $component_data[ 'Author' ] = 'Pods Framework Team';
-                $component_data[ 'AuthorURI' ] = 'http://pods.io/';
+                $component_data[ 'AuthorURI' ] = 'https://pods.io/';
             }
 
             if ( !empty( $component_data[ 'AuthorURI' ] ) )
@@ -3080,8 +3080,8 @@ class PodsAdmin {
 	    if ( ! function_exists( 'register_rest_field' ) ) {
 		    $options[ 'rest-api' ] = array(
 			    'no_dependencies' => array(
-				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
-				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
+				    'label'      => __( sprintf( 'Pods REST API support requires WordPress 4.3.1 or later and the %s or later.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">WordPress REST API 2.0-beta9</a>' ), 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/</a>'), 'pods' ),
 				    'type'       => 'html',
 			    ),
 		    );
@@ -3123,7 +3123,7 @@ class PodsAdmin {
 		    $options[ 'rest-api' ] = array(
 			    'not_restable' => array(
 				    'label'      => __( 'Pods REST API support covers post type, taxonomy and user Pods.', 'pods' ),
-				    'help'       => __( sprintf( 'See %s for more information.', '<a href="http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">http://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>'), 'pods' ),
+				    'help'       => __( sprintf( 'See %s for more information.', '<a href="https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/" target="_blank">https://pods.io/docs/build/extending-core-wordpress-rest-api-routes-with-pods/"</a>'), 'pods' ),
 				    'type'       => 'html',
 			    ),
 		    );

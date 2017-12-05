@@ -18,7 +18,7 @@ Manage all your custom content needs in ONE location with the Pods Framework. Yo
 * Easily display your custom content, whether you want to use shortcodes, widgets, the code-free Pods Template approach, or use standard PHP in WordPress Theme templates and functions.
 * Create connections between any of your content to help organize it in logical and useful ways with relationship fields.
 
-Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](http://pods.io/) for our User Guide, [Support Forum](https://pods.io/forums/), and our [Slack Chat](https://pods.io/chat/) to help you develop with Pods.
+Let Pods help you grow your development skills and manage content beyond the standard WordPress Posts & Pages. Check out [pods.io](https://pods.io/) for our User Guide, [Support Forum](https://pods.io/forums/), and our [Slack Chat](https://pods.io/chat/) to help you develop with Pods.
 
 = Introduction =
 [youtube http://www.youtube.com/watch?v=bYEE2i3nPOM]
@@ -197,22 +197,22 @@ This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.5+.
 
 ## Significant Improvements and Fixes:
 - Enhancements for Date, Time & Date/Time Fields to improve class inheritance, use WP Defaults and allow for custom options for saving and display @JoryHOgeveen
-- Gallery & Tile View for Upload/Media Fields #3589 @JoryHogeveen 
-- IsEmpty for all Date/Time Fields, Number, Currency, etc. improvements for `[if field][/if]` for Templates @JoryHogeveen 
-- **Major fixes for Pods Templates**: Proper handling of shortcodes within Pods Templates and in if/each blocks. Proper handling of all image tags and user traversal @jamesgol 
+- Gallery & Tile View for Upload/Media Fields #3589 @JoryHogeveen
+- IsEmpty for all Date/Time Fields, Number, Currency, etc. improvements for `[if field][/if]` for Templates @JoryHogeveen
+- **Major fixes for Pods Templates**: Proper handling of shortcodes within Pods Templates and in if/each blocks. Proper handling of all image tags and user traversal @jamesgol
 - Comment Traversal #4118 @sc0ttkclark
 - Update Compatibility with Admin Columns 3.0+ #4570 @JoryHogeveen
 - Filter Added for Select2 Overrides #4571 @sc0ttkclark
 - Fix for Advanced Content Types and Relationships in `[each][/each]` tags correcting for lowercase id. #4585 @0xLBF
 
 ## Behind the Scenes Fixes and Improvements:
-- js unit tests #3640, #4049 @pglewis 
-- pods_ui_get_params hook #3785 @telwing 
-- table storage list fields #4420 @jamesgol 
-- Refactor CSS @nicdford 
-- Built with Node @pglewis 
-- Pods Templates added for Polylang Translation Compatibility @JoryHogeveen 
-- SelectWoo migration from Select2 to address version incompatibilities #4546 @pglewis 
+- js unit tests #3640, #4049 @pglewis
+- pods_ui_get_params hook #3785 @telwing
+- table storage list fields #4420 @jamesgol
+- Refactor CSS @nicdford
+- Built with Node @pglewis
+- Pods Templates added for Polylang Translation Compatibility @JoryHogeveen
+- SelectWoo migration from Select2 to address version incompatibilities #4546 @pglewis
 
 ## Known Issues with this Release
 - Relationships to Taxonomy have Flexible Relationships disabled as the input screen for Taxonomy was not able to be accessed in an iFrame. We’re working on this for a future release.
@@ -558,7 +558,7 @@ This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.5+.
 * Fixed issue where user_url was created as a required field when extending users.
 * Add ability to use pods_group_add() in the ACT editor.
 * Security Update Reminder: As of Pods 2.4.2, we recommend all Pods 2.x installations be updated to the latest version, or replace your plugin files with the download of your version from http://wordpress.org/plugins/pods/developers/
-* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at http://pods.io/help/
+* If you need assistance in upgrading your Pods 2.x site to the latest version of Pods, please don't hesitate to contact us at https://pods.io/help/
 
 = 2.4.3 - June 23rd, 2014 =
 * Fixed: Pods Templates component now has better handling of the new shortcodes

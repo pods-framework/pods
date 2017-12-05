@@ -3,7 +3,7 @@
   "version": "2.7.0-rc-1",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
-  "homepage": "http://pods.io/",
+  "homepage": "https://pods.io/",
   "bugs": "https://github.com/pods-framework/pods/issues",
   "repository": {
     "type": "git",

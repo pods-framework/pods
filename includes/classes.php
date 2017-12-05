@@ -13,7 +13,7 @@
  *
  * @return bool|\Pods returns false if $strict, WP_DEBUG, PODS_STRICT or (PODS_DEPRECATED && PODS_STRICT_MODE) are true
  * @since 2.0
- * @link http://pods.io/docs/pods/
+ * @link https://pods.io/docs/pods/
  */
 function pods ( $type = null, $id = null, $strict = null ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
@@ -41,7 +41,7 @@ function pods ( $type = null, $id = null, $strict = null ) {
  * @return PodsUI
  *
  * @since 2.0
- * @link http://pods.io/docs/pods-ui/
+ * @link https://pods.io/docs/pods-ui/
  */
 function pods_ui ( $obj, $deprecated = false ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
@@ -60,7 +60,7 @@ function pods_ui ( $obj, $deprecated = false ) {
  * @return PodsAPI
  *
  * @since 2.0
- * @link http://pods.io/docs/pods-api/
+ * @link https://pods.io/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
@@ -207,7 +207,7 @@ function pods_i18n() {
  * @return string|bool The view output
  *
  * @since 2.0
- * @link http://pods.io/docs/pods-view/
+ * @link https://pods.io/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );

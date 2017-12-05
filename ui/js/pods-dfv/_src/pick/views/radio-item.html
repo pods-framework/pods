@@ -1,0 +1,19 @@
+<div class="pods-field pods-boolean">
+	<input
+			name="<%- htmlAttr.name %>"
+			data-name-clean="<%- htmlAttr.name_clean %>"
+			data-label="<%- fieldConfig.label %>"
+			id="<%- htmlAttr.id %><%= ordinal %>"
+			class="pods-form-ui-field-type-pick pods-form-ui-field-name-<%- htmlAttr.name_clean %>"
+			type="radio"
+			<% if ( selected ) { %>
+				checked="CHECKED"
+			<% } %>
+			value="<%- id %>"
+			tabindex="2">
+	<label
+		class="pods-form-ui-label pods-form-ui-label-<%- htmlAttr.id %><%= ordinal %>"
+		for="<%- htmlAttr.id %><%= ordinal %>">
+		<%= name %>
+	</label>
+</div>

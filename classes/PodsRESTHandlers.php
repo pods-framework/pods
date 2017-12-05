@@ -30,11 +30,11 @@ class PodsRESTHandlers {
 	 */
 	protected static function get_pod( $pod_name, $id ) {
 
-		if ( ! self::$pod || self::$pod->pod != $pod_name ) {
+		if ( ! self::$pod || self::$pod->pod !== $pod_name ) {
 			self::$pod = pods( $pod_name, $id, true );
 		}
 
-		if ( self::$pod && self::$pod->id != $id ) {
+		if ( self::$pod && (int) self::$pod->id !== (int) $id ) {
 			self::$pod->fetch( $id );
 		}
 
@@ -73,7 +73,7 @@ class PodsRESTHandlers {
 		 */
 
 		if ( empty( $pod_name ) ) {
-			if ( 'attachment' == $object_type ) {
+			if ( 'attachment' === $object_type ) {
 				$pod_name = 'media';
 			} else {
 				$pod_name = $object_type;
@@ -108,10 +108,24 @@ class PodsRESTHandlers {
 
 			$field_data = $pod->fields( $field_name );
 
-			if ( 'pick' == pods_v( 'type', $field_data ) ) {
+			if ( 'pick' === pods_v( 'type', $field_data ) ) {
 				$output_type = pods_v( 'rest_pick_response', $field_data['options'], 'array' );
 
-				if ( 'array' == $output_type ) {
+				/**
+				 * What output type to use for a related field REST response.
+				 *
+				 * @since 2.7
+				 *
+				 * @param string                 $output_type The pick response output type.
+				 * @param string                 $field_name  The name of the field
+				 * @param array                  $field_data  The field data
+				 * @param object|Pods            $pod         The Pods object for Pod relationship is from.
+				 * @param int                    $id          Current item ID
+				 * @param object|WP_REST_Request Current      request object.
+				 */
+				$output_type = apply_filters( 'pods_rest_api_output_type_for_relationship_response', $output_type, $field_name, $field_data, $pod, $id, $request );
+
+				if ( 'array' === $output_type ) {
 					$related_pod_items = $pod->field( $field_name, array( 'output' => 'pod' ) );
 
 					if ( $related_pod_items ) {
@@ -171,8 +185,9 @@ class PodsRESTHandlers {
 							$depth = apply_filters( 'pods_rest_api_depth_for_relationship_response', $depth, $field_name, $pod, $related_pod, $id, $request );
 
 							$params = array(
-								'fields' => $fields,
-								'depth'  => $depth,
+								'fields'  => $fields,
+								'depth'   => $depth,
+								'context' => 'rest',
 							);
 
 							$items[] = $related_pod->export( $params );
@@ -198,158 +213,70 @@ class PodsRESTHandlers {
 	}
 
 	/**
-	 * Handler for updating custom field data.
+	 * Handle saving of Pod fields from REST API write requests.
 	 *
-	 * @since 2.5.6
-	 *
-	 * @param mixed           $value      Value to write
-	 * @param object          $object     The object from the response
-	 * @param string          $field_name Name of field
-	 * @param WP_REST_Request $request     Current request
-	 * @param string          $object_type Type of object
-	 *
-	 * @return bool|int
+	 * @param WP_Post|WP_Term|WP_User|WP_Comment $object   Inserted or updated object.
+	 * @param WP_REST_Request                    $request  Request object.
+	 * @param bool                               $creating True when creating an item, false when updating.
 	 */
-	public static function write_handler( $value, $object, $field_name, $request, $object_type ) {
+	public static function save_handler( $object, $request, $creating ) {
 
-		$pod_name = pods_v( 'type', $object );
+		if ( is_a( $object, 'WP_Post' ) ) {
+			$pod_name = $object->post_type;
 
-		/**
-		 * If $pod_name in the line above is empty then the route invoked
-		 * may be for a taxonomy, so lets try and check for that
-		 *
-		 */
-		if ( empty( $pod_name ) ) {
-			$pod_name = pods_v( 'taxonomy', $object );
-		}
-
-		/**
-		 * $pod_name is still empty, so check lets check $object_type
-		 *
-		 */
-
-		if ( empty( $pod_name ) ) {
-			if ( 'attachment' == $object_type ) {
+			if ( 'attachment' === $pod_name ) {
 				$pod_name = 'media';
-			} else {
-				$pod_name = $object_type;
 			}
+
+			$id = $object->ID;
+		} elseif ( is_a( $object, 'WP_Term' ) ) {
+			$pod_name = $object->taxonomy;
+
+			$id = $object->term_id;
+		} elseif ( is_a( $object, 'WP_User' ) ) {
+			$pod_name = 'user';
+
+			$id = $object->ID;
+		} elseif ( is_a( $object, 'WP_Comment' ) ) {
+			$pod_name = 'comment';
+
+			$id = $object->comment_ID;
+		} else {
+			// Not a supported object
+			return;
 		}
 
-		/**
-		 * Filter the pod name
-		 *
-		 * @since 2.6.7
-		 *
-		 * @param array           $pod_name    Pod name
-		 * @param Pods            $object      Rest object
-		 * @param string          $field_name  Name of the field
-		 * @param WP_REST_Request $request     Current request
-		 * @param string          $object_type Rest Object type
-		 */
-		$pod_name = apply_filters( 'pods_rest_api_pod_name', $pod_name, $object, $field_name, $request, $object_type );
-
-		$id = pods_v( 'id', $object );
-
-		if ( empty( $id ) ) {
-			$id = pods_v( 'ID', $object );
-		}
 		$pod = self::get_pod( $pod_name, $id );
 
-		if ( $pod && PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'write' ) ) {
-			$pod->save( $field_name, $value, $id );
+		global $wp_rest_additional_fields;
 
-			return $pod->field( $field_name );
-		}
+		$rest_enable = (boolean) pods_v( 'rest_enable', $pod->pod_data['options'], false );
 
-		return false;
+		if ( $pod && $rest_enable && ! empty( $wp_rest_additional_fields[ $pod_name ] ) ) {
+			$fields = $pod->fields();
 
-	}
+			$save_fields = array();
 
-	/**
-	 * Add REST API support to a post type
-	 *
-	 * @since 2.5.6
-	 *
-	 * @param string     $post_type_name Name of post type
-	 * @param bool|false $rest_base      Optional. Base url segment. If not set, post type name is used
-	 * @param string     $controller     Optional, controller class for route. If not set "WP_REST_Posts_Controller" is
-	 *                                   used.
-	 */
-	public static function post_type_rest_support( $post_type_name, $rest_base = false, $controller = 'WP_REST_Posts_Controller' ) {
+			$params = array(
+				'is_new_item' => $creating,
+			);
 
-		global $wp_post_types;
-
-		// Only add support for post types that exist
-		if ( isset( $wp_post_types[ $post_type_name ] ) ) {
-			// Only add support if REST base not already set
-			if ( empty( $wp_post_types[ $post_type_name ]->rest_base ) ) {
-				if ( ! $rest_base ) {
-					$rest_base = $post_type_name;
+			foreach ( $fields as $field_name => $field ) {
+				if ( empty( $wp_rest_additional_fields[ $pod_name ][ $field_name ]['pods_update'] ) ) {
+					continue;
+				} elseif ( ! isset( $request[ $field_name ] ) ) {
+					continue;
+				} elseif ( ! PodsRESTFields::field_allowed_to_extend( $field_name, $pod, 'write' ) ) {
+					continue;
 				}
 
-				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
-				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
-				$wp_post_types[ $post_type_name ]->rest_controller_class = $controller;
-			}
-		}
-
-	}
-
-	/**
-	 * Add REST API support to an already registered taxonomy.
-	 *
-	 * @since 2.5.6
-	 *
-	 * @param string     $taxonomy_name Taxonomy name.
-	 * @param bool|false $rest_base     Optional. Base url segment. If not set, taxonomy name is used.
-	 * @param string     $controller    Optional, controller class for route. If not set "WP_REST_Terms_Controller" is
-	 *                                  used.
-	 */
-	public static function taxonomy_rest_support( $taxonomy_name, $rest_base = false, $controller = 'WP_REST_Terms_Controller' ) {
-
-		/** As of WordPress 4.7: https://make.wordpress.org/core/2016/10/29/wp_taxonomy-in-4-7/ */
-		/** @var WP_Taxonomy[] $wp_taxonomies */
-		global $wp_taxonomies;
-
-		// Only add support for taxonomies that exist
-		if ( isset( $wp_taxonomies[ $taxonomy_name ] ) ) {
-			// Only add support if REST base not already set
-			if ( empty( $wp_taxonomies[ $taxonomy_name ]->rest_base ) ) {
-				if ( ! $rest_base ) {
-					$rest_base = $taxonomy_name;
-				}
-
-				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
-				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
-				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = $controller;
+				$save_fields[ $field_name ] = $request[ $field_name ];
 			}
 
+			if ( ! empty( $save_fields ) || $creating ) {
+				$pod->save( $save_fields, null, null, $params );
+			}
 		}
-	}
-
-	/**
-	 * Check if a Pod supports extending core REST response.
-	 *
-	 * @since 2.5.6
-	 *
-	 * @param array|Pods $pod Pod object or the pod_data array
-	 *
-	 * @return bool
-	 */
-	public static function pod_extends_core_route( $pod ) {
-
-		$enabled = false;
-
-		if ( is_object( $pod ) ) {
-			$pod = $pod->pod_data;
-		}
-
-		if ( is_array( $pod ) ) {
-			$enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
-		}
-
-		return $enabled;
 
 	}
 

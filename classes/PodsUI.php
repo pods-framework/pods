@@ -487,6 +487,7 @@ class PodsUI {
             $this->pods_data = pods_data( $this->pod );
 
         $options = $this->do_hook( 'pre_init', $options );
+
         $this->setup( $options );
 
         if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id ) {
@@ -500,6 +501,16 @@ class PodsUI {
             echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
 
             return false;
+        }
+
+        // Assign pod labels
+        // @todo This is also done in setup(), maybe a better / more central way?
+        if ( is_object( $this->pod ) && ! empty( $this->pod->pod_data[ 'options' ] ) ) {
+            $pod_options = $this->pod->pod_data[ 'options' ];
+            $pod_options = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data[ 'name' ], $pod_options, $this->pod->pod_data[ 'name' ] );
+            $pod_options = apply_filters( 'pods_advanced_content_type_pod_data', $pod_options, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_options );
         }
 
         $this->go();
@@ -914,43 +925,53 @@ class PodsUI {
         $item = __( 'Item', 'pods' );
         $items = __( 'Items', 'pods' );
 
+        if ( ! is_array( $this->label ) ) {
+            $this->label = (array) $this->label;
+        }
+
         if ( is_object( $this->pod ) ) {
-            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
-            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+            $pod_data = $this->pod->pod_data;
+            $pod_data = apply_filters( 'pods_advanced_content_type_pod_data_' . $this->pod->pod_data[ 'name' ], $pod_data, $this->pod->pod_data[ 'name' ] );
+            $pod_data = apply_filters( 'pods_advanced_content_type_pod_data', $pod_data, $this->pod->pod_data[ 'name' ] );
+
+            $this->label = array_merge( $this->label, $pod_data['options'] );
+
+            $item = pods_v( 'label_singular', $pod_data['options'], pods_v( 'label', $pod_data, $item, true ), true );
+            $items = pods_v( 'label', $pod_data, $items, true );
         }
 
         $options->validate( 'item', $item );
         $options->validate( 'items', $items );
 
         $options->validate( 'heading', array(
-            'manage' => __( 'Manage', 'pods' ),
-            'add' => __( 'Add New', 'pods' ),
-            'edit' => __( 'Edit', 'pods' ),
-            'duplicate' => __( 'Duplicate', 'pods' ),
-            'view' => __( 'View', 'pods' ),
-            'reorder' => __( 'Reorder', 'pods' ),
-            'search' => __( 'Search', 'pods' ),
-            'views' => __( 'View', 'pods' )
+            'manage'    => pods_v( 'label_manage', $this->label, __( 'Manage', 'pods' ) ),
+            'add'       => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_edit', $this->label, __( 'Edit', 'pods' ) ),
+            'duplicate' => pods_v( 'label_duplicate', $this->label, __( 'Duplicate', 'pods' ) ),
+            'view'      => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) ),
+            'reorder'   => pods_v( 'label_reorder', $this->label, __( 'Reorder', 'pods' ) ),
+            'search'    => pods_v( 'label_search', $this->label, __( 'Search', 'pods' ) ),
+            'views'     => pods_v( 'label_view', $this->label, __( 'View', 'pods' ) )
         ), 'array_merge' );
 
         $options->validate( 'header', array(
-            'manage' => sprintf( __( 'Manage %s', 'pods' ), $options->items ),
-            'add' => sprintf( __( 'Add New %s', 'pods' ), $options->item ),
-            'edit' => sprintf( __( 'Edit %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Duplicate %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items ),
-            'search' => sprintf( __( 'Search %s', 'pods' ), $options->items )
+            'manage'    => pods_v( 'label_manage_items', $this->label, sprintf( __( 'Manage %s', 'pods' ), $options->items ) ),
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'edit'      => pods_v( 'label_edit_item', $this->label, sprintf( __( 'Edit %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) ),
+            'search'    => pods_v( 'label_search_items', $this->label, sprintf( __( 'Search %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'add_new' => __( 'Add New', 'pods' ),
-            'edit' => sprintf( __( 'Save %s', 'pods' ), $options->item ),
-            'duplicate' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
-            'delete' => sprintf( __( 'Delete this %s', 'pods' ), $options->item ),
-            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
-            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items )
+            'add'       => pods_v( 'label_add_new_item', $this->label, sprintf( __( 'Add New %s', 'pods' ), $options->item ) ),
+            'add_new'   => pods_v( 'label_add_new', $this->label, __( 'Add New', 'pods' ) ),
+            'edit'      => pods_v( 'label_update_item', $this->label, sprintf( __( 'Update %s', 'pods' ), $options->item ) ),
+            'duplicate' => pods_v( 'label_duplicate_item', $this->label, sprintf( __( 'Duplicate %s', 'pods' ), $options->item ) ),
+            'delete'    => pods_v( 'label_delete_item', $this->label, sprintf( __( 'Delete this %s', 'pods' ), $options->item ) ),
+            'view'      => pods_v( 'label_view_item', $this->label, sprintf( __( 'View %s', 'pods' ), $options->item ) ),
+            'reorder'   => pods_v( 'label_reorder_items', $this->label, sprintf( __( 'Reorder %s', 'pods' ), $options->items ) )
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1418,6 +1439,10 @@ class PodsUI {
 		if ( false !== $this->callback_action( 'add' ) ) {
 			return null;
 		}
+
+		if ( $this->restricted( $this->action ) ) {
+			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
+		}
         ?>
     <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>><br /></div>
@@ -1425,13 +1450,15 @@ class PodsUI {
             <?php
             echo wp_kses_post( $this->header[ 'add' ] );
 
-			$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+            if ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+				$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
-			if ( !empty( $this->action_links[ 'manage' ] ) ) {
-				$link = $this->action_links[ 'manage' ];
-			}
+				if ( !empty( $this->action_links[ 'manage' ] ) ) {
+					$link = $this->action_links[ 'manage' ];
+				}
             ?>
-            <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+            	<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
+			<?php } ?>
         </h2>
 
         <?php $this->form( true ); ?>
@@ -1457,6 +1484,10 @@ class PodsUI {
 		elseif ( false !== $this->callback_action( 'edit', $duplicate ) ) {
 			return null;
 		}
+
+		if ( $this->restricted( $this->action ) ) {
+			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
+		}
         ?>
     <div class="wrap pods-ui">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-size:100%;background-image:url(<?php echo esc_url( $this->icon ); ?>);"<?php } ?>><br /></div>
@@ -1464,7 +1495,7 @@ class PodsUI {
             <?php
             echo wp_kses_post( $this->do_template( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] ) );
 
-            if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
+            if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
                 $link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'add' ] ) )
@@ -1473,7 +1504,7 @@ class PodsUI {
                 <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading[ 'add' ] ); ?></a>
                 <?php
             }
-            elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
+            elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
                 $link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'manage' ] ) )
@@ -1551,6 +1582,8 @@ class PodsUI {
                 $alt_vars[ 'action' ] = 'manage';
                 unset( $alt_vars[ 'id' ] );
             }
+        } elseif ( $this->restricted( $this->action, $this->row ) ) {
+			return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
         }
 
 		$fields = array();
@@ -1742,7 +1775,7 @@ class PodsUI {
 				<?php
 					echo wp_kses_post( $this->do_template( $this->header[ 'view' ] ) );
 
-					if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
+					if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
 						$link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), self::$allowed, $this->exclusion() );
 
 						if ( !empty( $this->action_links[ 'add' ] ) ) {
@@ -1752,7 +1785,7 @@ class PodsUI {
 					<a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->heading[ 'add' ] ); ?></a>
 				<?php
 					}
-					elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
+					elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
 						$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
 						if ( !empty( $this->action_links[ 'manage' ] ) ) {
@@ -1973,9 +2006,108 @@ class PodsUI {
         $this->manage();
     }
 
+	/**
+	 * Callback for exporting items in bulk
+	 */
+	public function export_bulk() {
 
-	public function export( ) {
-		$export_type = pods_var( 'export_type', 'get', 'csv' );
+		if ( ! empty( $_POST['bulk_export_type'] ) ) {
+			if ( ! empty( $_POST['bulk_export_fields'] ) ) {
+				$export_fields = $_POST['bulk_export_fields'];
+
+				$this->fields['export '] = array();
+
+				if ( $this->pod ) {
+					$fields = $this->pod->fields();
+
+					foreach ( $fields as $field ) {
+						if ( in_array( $field['name'], $export_fields ) ) {
+							$this->fields['export'][] = $field;
+						}
+					}
+				}
+			}
+
+			// Set up where clause so that export function finds it
+			if ( ! empty( $_POST['action_bulk_ids'] ) ) {
+				$ids = (array) explode( ',', $_POST['action_bulk_ids'] );
+				$ids = array_map( 'absint', $ids );
+				$ids = array_filter( $ids );
+
+				if ( ! empty( $ids ) ) {
+					$ids = implode( ', ', $ids );
+
+					$this->where = array(
+						'manage' => '`' . pods_sanitize( $this->sql['field_id'] ) . '` IN ( ' . $ids . ' )',
+					);
+				}
+			}
+
+			$this->export( $_POST['bulk_export_type'] );
+
+			// Cleanup since export function calls get_data before returning
+			$this->action_bulk = '';
+			$this->where       = array();
+			$this->data        = false;
+
+			$_GET['action_bulk_ids'] = '';
+
+			$this->manage();
+		} else {
+			$this->export_fields_form();
+		}
+
+	}
+
+    /**
+     * Select the pods fields to be exported
+    */
+    public function export_fields_form() {
+
+    ?>
+        <div class="wrap pods-admin pods-ui">
+            <h2><?php echo __( 'Choose Export Fields', 'pods' ); ?></h2>
+
+            <form method="post" id="pods_admin_ui_export_form">
+                <?php
+                    // Avoid a bunch of inputs if there's a lot selected
+                    if ( ! empty( $_REQUEST['action_bulk_ids'] ) ) {
+	                    $_GET['action_bulk_ids'] = implode( ',', (array) $_REQUEST['action_bulk_ids'] );
+                    }
+
+                    $this->hidden_vars();
+                ?>
+
+                <ul>
+                     <?php foreach ( $this->pod->fields() as $field_name => $field ) { ?>
+                         <li>
+                             <label for="bulk_export_fields_<?php echo esc_attr( $field['name'] ); ?>">
+	                             <input type="checkbox" name="bulk_export_fields[]" id="bulk_export_fields_<?php echo esc_attr( $field['name'] ); ?>" value="<?php echo esc_attr( $field['name'] ); ?>" />
+	                             <?php echo esc_html( $field['label'] ); ?>
+                             </label>
+                         </li>
+                     <?php } ?>
+                </ul>
+
+	            <p class="submit">
+                    <?php _e( 'Export as:', 'pods' ); ?>&nbsp;&nbsp;
+	                <?php foreach ( $this->export[ 'formats' ] as $format => $separator ) { ?>
+	                    <input type="submit" id="export_type_<?php echo esc_attr( strtoupper( $format ) ); ?>" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " name="bulk_export_type" class="button-primary" />
+	                <?php } ?>
+	            </p>
+            </form>
+        </div>
+    <?php
+
+    }
+
+    public function export( $export_type = null ) {
+
+	    if ( empty( $export_type ) ) {
+		    $export_type = pods_var( 'export_type', 'get', 'csv' );
+	    }
+
+	    $export_type = trim( strtolower( $export_type ) );
 
         $type = 'sv'; // covers csv + tsv
 
@@ -1984,23 +2116,22 @@ class PodsUI {
 
         $delimiter = ',';
 
-        if ( 'tsv' == $export_type )
-            $delimiter = "\t";
+	    if ( ! empty( $this->export['formats'][ $export_type ] ) ) {
+		    $delimiter = $this->export['formats'][ $export_type ];
+	    }
 
-        $columns = array();
+        $columns = array(
+	        $this->sql['field_id'] => 'ID',
+        );
 
-        if ( empty( $this->fields[ 'export' ] ) ) {
-            $this->fields[ 'export' ] = $this->pod->fields;
-
-            $columns = array(
-                $this->pod->pod_data[ 'field_id' ] => 'ID'
-            );
-        }
+	    if ( empty( $this->fields['export'] ) && $this->pod && ! empty( $this->pod->fields ) ) {
+		    $this->fields['export'] = $this->pod->fields;
+	    }
 
 	    if ( ! empty( $this->fields['export'] ) ) {
-			foreach ( $this->fields[ 'export' ] as $field ) {
-				$columns[ $field[ 'name' ] ] = $field[ 'label' ];
-			}
+		    foreach ( $this->fields['export'] as $field ) {
+			    $columns[ $field['name'] ] = $field['label'];
+		    }
 	    }
 
         $params = array(
@@ -2172,7 +2303,7 @@ class PodsUI {
         if ( $params->full )
             $find_params[ 'limit' ] = -1;
 
-        $find_params = apply_filters('pods_ui_get_params', $find_params, $this->pod->pod, $this);
+        $find_params = apply_filters('pods_ui_get_params', $find_params, ( is_object( $this->pod ) ? $this->pod->pod : null ), $this);
 
 		/**
 		 * Filter Pods::find() parameters to make it more easily extended by plugins and developers.
@@ -2361,7 +2492,7 @@ class PodsUI {
 			return null;
 		}
 
-        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && !empty( $this->bulk ) ) {
+        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) && ( ! empty( $this->bulk ) || 'export' == $this->action_bulk ) ) {
 	        if ( empty( $_REQUEST[ '_wpnonce' . $this->num ] ) || false === wp_verify_nonce( $_REQUEST[ '_wpnonce' . $this->num ], 'pods-ui-action-bulk' ) ) {
 		        pods_message( __( 'Invalid bulk request, please try again.', 'pods' ) );
 	        }
@@ -2369,7 +2500,14 @@ class PodsUI {
 				return null;
 			}
             elseif ( 'delete' == $this->action_bulk ) {
-                return $this->delete_bulk();
+                $this->delete_bulk();
+
+                return;
+			}
+            elseif ( 'export' == $this->action_bulk ) {
+                $this->export_bulk();
+
+                return;
 			}
         }
 
@@ -2385,18 +2523,21 @@ class PodsUI {
             if ( true === $reorder ) {
                 echo wp_kses_post( $this->header[ 'reorder' ] );
 
-				$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
+                if ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) && ! $this->restricted( 'manage' ) ) {
+					$link = pods_query_arg( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
-                if ( !empty( $this->action_links[ 'manage' ] ) )
-                    $link = $this->action_links[ 'manage' ];
+					if ( !empty( $this->action_links[ 'manage' ] ) ) {
+                    	$link = $this->action_links[ 'manage' ];
+					}
                 ?>
                 <small>(<a href="<?php echo esc_url( $link ); ?>">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>)</small>
                 <?php
+            	}
             }
             else
                 echo wp_kses_post( $this->header[ 'manage' ] );
 
-            if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
+            if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) && ! $this->restricted( 'add' ) ) {
                 $link = pods_query_arg( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num => '' ), self::$allowed, $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'add' ] ) )
@@ -2405,7 +2546,7 @@ class PodsUI {
                 <a href="<?php echo esc_url( $link ); ?>" class="add-new-h2"><?php echo wp_kses_post( $this->label[ 'add_new' ] ); ?></a>
                 <?php
             }
-            if ( !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {
+            if ( !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] && ! $this->restricted( 'reorder' ) ) {
                 $link = pods_query_arg( array( 'action' . $this->num => 'reorder' ), self::$allowed, $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'reorder' ] ) )
@@ -2700,14 +2841,7 @@ class PodsUI {
                     elseif ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) {
                         ?>
                         <div class="alignleft actions">
-                            <strong><?php _e( 'Export', 'pods' ); ?>:</strong>
-                            <?php
-                            foreach ( $this->export[ 'formats' ] as $format => $separator ) {
-                                ?>
-                                <input type="button" value=" <?php echo esc_attr( strtoupper( $format ) ); ?> " class="button" onclick="document.location='<?php echo pods_slash( pods_query_arg( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format, '_wpnonce' => wp_create_nonce( 'pods-ui-action-export' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
-                                <?php
-                            }
-                            ?>
+                            <input type="button" value="<?php echo esc_attr( sprintf( __( 'Export all %s', 'pods' ), $this->items ) ); ?>" class="button" onclick="document.location='<?php echo pods_slash( pods_query_arg( array( 'action_bulk' . $this->num => 'export', '_wpnonce' => wp_create_nonce( 'pods-ui-action-bulk' ) ), self::$allowed, $this->exclusion() ) ); ?>';" />
                         </div>
                         <?php
                     }
@@ -2756,7 +2890,7 @@ class PodsUI {
 		include_once ABSPATH . 'wp-admin/includes/template.php';
 
         wp_enqueue_script( 'thickbox' );
-        wp_enqueue_style( 'pods-ui-list-table', PODS_URL . 'ui/css/pods-ui-list-table.css', array( 'thickbox' ), PODS_VERSION );
+        wp_enqueue_style( 'pods-styles' );
 
         $filters = $this->filters;
 
@@ -2981,7 +3115,7 @@ class PodsUI {
     public function filters_popup () {
         $filters = $this->filters;
 ?>
-    <div id="pods-ui-posts-filter-popup" class="hidden">
+    <div id="pods-ui-posts-filter-popup" class="pods-hidden">
         <form action="" method="get" class="pods-ui-posts-filter-popup">
             <h2><?php _e( 'Advanced Filters', 'pods' ); ?></h2>
 
@@ -3046,14 +3180,14 @@ class PodsUI {
                                 if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $end = PodsForm::field_method( $filter_field[ 'type' ], 'convert_date', $end, 'n/j/Y' );
                         ?>
-                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? '' : ' hidden' ); ?>">+</span>
-                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? '' : ' pods-hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
                             <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>_start">
                                 <?php echo esc_html( $filter_field[ 'label' ] ); ?>
                             </label>
 
-                            <span class="pods-ui-posts-filter<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>">
+                            <span class="pods-ui-posts-filter<?php echo esc_attr( ( empty( $start ) && empty( $end ) ) ? ' pods-hidden' : '' ); ?>">
                                 <?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $filter_field[ 'type' ], $filter_field ); ?>
 
                                 <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>_end">to</label>
@@ -3078,14 +3212,14 @@ class PodsUI {
 
                                 $options = array_merge( $filter_field, $filter_field[ 'options' ] );
                         ?>
-                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
-                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' pods-hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
                             <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
                                 <?php echo esc_html( $filter_field[ 'label' ] ); ?>
                             </label>
 
-                            <span class="pods-ui-posts-filter<?php echo esc_attr( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
+                            <span class="pods-ui-posts-filter<?php echo esc_attr( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
                                 <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
                             </span>
                         <?php
@@ -3113,14 +3247,14 @@ class PodsUI {
 
                                 $options = array_merge( $filter_field, $filter_field[ 'options' ] );
                         ?>
-                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
-                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' pods-hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
                             <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
                                 <?php echo esc_html( $filter_field[ 'label' ] ); ?>
                             </label>
 
-                            <span class="pods-ui-posts-filter<?php echo esc_attr( strlen( $value ) < 1 ? ' hidden' : '' ); ?>">
+                            <span class="pods-ui-posts-filter<?php echo esc_attr( strlen( $value ) < 1 ? ' pods-hidden' : '' ); ?>">
                                 <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
                             </span>
                         <?php
@@ -3138,14 +3272,14 @@ class PodsUI {
                                 if ( empty( $options[ 'input_helper' ] ) && isset( $filter_field[ 'options' ] ) && isset( $filter_field[ 'options' ][ 'input_helper' ] ) )
                                     $options[ 'input_helper' ] = $filter_field[ 'options' ][ 'input_helper' ];
                         ?>
-                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
-                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo esc_attr( empty( $value ) ? '' : ' pods-hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
 
                             <label for="pods-form-ui-filter-<?php echo esc_attr( $filter ); ?>">
                                 <?php echo esc_html( $filter_field[ 'label' ] ); ?>
                             </label>
 
-                            <span class="pods-ui-posts-filter<?php echo esc_attr( empty( $value ) ? ' hidden' : '' ); ?>">
+                            <span class="pods-ui-posts-filter<?php echo esc_attr( empty( $value ) ? ' pods-hidden' : '' ); ?>">
                                 <?php echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options ); ?>
                             </span>
                         <?php
@@ -3172,14 +3306,14 @@ class PodsUI {
     <script type="text/javascript">
         jQuery( function () {
             jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggle.toggle-on', function ( e ) {
-                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'hidden' );
+                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'pods-hidden' );
 
                 jQuery( this ).hide();
                 jQuery( this ).parent().find( '.toggle-off' ).show();
             } );
 
             jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggle.toggle-off', function ( e ) {
-                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'hidden' );
+                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'pods-hidden' );
                 jQuery( this ).parent().find( 'select, input' ).val( '' );
 
                 jQuery( this ).hide();
@@ -3187,14 +3321,14 @@ class PodsUI {
             } );
 
             jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggled label', function ( e ) {
-                if ( jQuery( this ).parent().find( '.pods-ui-posts-filter' ).hasClass( 'hidden' ) ) {
-                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'hidden' );
+                if ( jQuery( this ).parent().find( '.pods-ui-posts-filter' ).hasClass( 'pods-hidden' ) ) {
+                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'pods-hidden' );
 
                     jQuery( this ).parent().find( '.toggle-on' ).hide();
                     jQuery( this ).parent().find( '.toggle-off' ).show();
                 }
                 else {
-                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'hidden' );
+                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'pods-hidden' );
                     jQuery( this ).parent().find( 'select, input' ).val( '' );
 
                     jQuery( this ).parent().find( '.toggle-on' ).show();
@@ -3218,7 +3352,7 @@ class PodsUI {
 
         if ( empty( $this->data ) ) {
             ?>
-        <p><?php echo sprintf( __( 'No %s found', 'pods' ), $this->items ); ?></p>
+        <p><?php echo pods_v( 'label_no_items_found', $this->label, sprintf( __( 'No %s found', 'pods' ), $this->items ) ); ?></p>
         <?php
             return false;
         }
@@ -3515,6 +3649,10 @@ class PodsUI {
 
                                 $row_value = $this->do_hook( 'field_value', $row_value, $field, $attributes, $row );
 
+                                if ( !empty( $attributes[ 'custom_display_formatted' ] ) && is_callable( $attributes[ 'custom_display_formatted' ] ) ) {
+									$row_value = call_user_func_array( $attributes[ 'custom_display_formatted' ], array( $row, &$this, $row_value, $field, $attributes ) );
+                                }
+
                                 if ( 'title' === $attributes[ 'field_id' ] ) {
 									$default_action = $this->do_hook( 'default_action', 'edit', $row );
 
@@ -3558,96 +3696,8 @@ class PodsUI {
 
                                     if ( true !== $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) {
                                         $toggle = false;
-                                        $actions = array();
 
-                                        if ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) ) {
-                                            $link = pods_query_arg( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
-
-                                            if ( !empty( $this->action_links[ 'view' ] ) )
-                                                $link = $this->do_template( $this->action_links[ 'view' ], $row );
-
-                                            $actions[ 'view' ] = '<span class="view"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
-                                        }
-
-                                        if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
-                                            $link = pods_query_arg( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
-
-                                            if ( !empty( $this->action_links[ 'edit' ] ) )
-                                                $link = $this->do_template( $this->action_links[ 'edit' ], $row );
-
-                                            $actions[ 'edit' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
-                                        }
-
-                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
-                                            $link = pods_query_arg( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
-
-                                            if ( !empty( $this->action_links[ 'duplicate' ] ) )
-                                                $link = $this->do_template( $this->action_links[ 'duplicate' ], $row );
-
-                                            $actions[ 'duplicate' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
-                                        }
-
-                                        if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
-                                            $link = pods_query_arg( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ], '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), self::$allowed, $this->exclusion() );
-
-                                            if ( !empty( $this->action_links[ 'delete' ] ) ) {
-	                                            $link = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links[ 'delete' ], $row ) );
-                                            }
-
-                                            $actions[ 'delete' ] = '<span class="delete"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . esc_attr__( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
-                                        }
-
-                                        if ( is_array( $this->actions_custom ) ) {
-                                            foreach ( $this->actions_custom as $custom_action => $custom_data ) {
-												if ( 'add' != $custom_action && is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) && !in_array( $custom_action, $this->actions_disabled ) && !in_array( $custom_action, $this->actions_hidden ) ) {
-                                                    if ( !in_array( $custom_action, array( 'add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder', 'manage', 'table' ) ) ) {
-                                                        if ( 'toggle' == $custom_action ) {
-                                                            $toggle = true;
-                                                            $toggle_labels = array(
-                                                                __( 'Enable', 'pods' ),
-                                                                __( 'Disable', 'pods' )
-                                                            );
-
-                                                            $custom_data[ 'label' ] = ( $row[ 'toggle' ] ? $toggle_labels[ 1 ] : $toggle_labels[ 0 ] );
-                                                        }
-
-                                                        if ( !isset( $custom_data[ 'label' ] ) )
-                                                            $custom_data[ 'label' ] = ucwords( str_replace( '_', ' ', $custom_action ) );
-
-                                                        if ( !isset( $custom_data[ 'link' ] ) ) {
-                                                            $vars = array(
-                                                                'action' => $custom_action,
-                                                                'id' => $row[ $this->sql[ 'field_id' ] ],
-                                                                '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action )
-                                                            );
-
-                                                            if ( 'toggle' == $custom_action ) {
-                                                                $vars[ 'toggle' ] = (int) ( !$row[ 'toggle' ] );
-                                                                $vars[ 'toggled' ] = 1;
-                                                            }
-
-                                                            $custom_data[ 'link' ] = pods_query_arg( $vars, self::$allowed, $this->exclusion() );
-
-                                                            if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) ) {
-	                                                            $custom_data[ 'link' ] = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
-                                                            }
-                                                        }
-
-                                                        $confirm = '';
-
-                                                        if ( isset( $custom_data[ 'confirm' ] ) )
-                                                            $confirm = ' onclick="if(confirm(\'' . esc_js( $custom_data[ 'confirm' ] ) . '\')){return true;}return false;"';
-
-                                                        if ( $this->restricted( $custom_action, $row ) ) {
-                                                            continue;
-														}
-
-                                                        $actions[ $custom_action ] = '<span class="edit action-' . esc_attr( $custom_action ) . '"><a href="' . esc_url( $this->do_template( $custom_data[ 'link' ], $row ) ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item"' . $confirm . '>' . $custom_data[ 'label' ] . '</a></span>';
-                                                    }
-                                                }
-                                            }
-                                        }
-
+                                        $actions = $this->get_actions( $row );
                                         $actions = $this->do_hook( 'row_actions', $actions, $row[ $this->sql[ 'field_id' ] ] );
 
                                         if ( !empty( $actions ) ) {
@@ -3669,7 +3719,7 @@ class PodsUI {
                                         <input type="hidden" name="order[]" value="<?php echo esc_attr( $row[ $this->sql[ 'field_id' ] ] ); ?>" />
                                         <?php
                                     }
-                                    ?>
+                                    ?><button type="button" class="toggle-row"><span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'pods' ); ?></span></button>
                 </td>
 <?php
                                 }
@@ -3739,6 +3789,109 @@ class PodsUI {
     <?php
     }
 
+	/**
+	 * Get actions for row.
+	 *
+	 * @param array $row
+	 *
+	 * @return array
+	 */
+    public function get_actions( $row ) {
+
+		$actions = array();
+
+		if ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) ) {
+			$link = pods_query_arg( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+
+			if ( !empty( $this->action_links[ 'view' ] ) )
+				$link = $this->do_template( $this->action_links[ 'view' ], $row );
+
+			$actions[ 'view' ] = '<span class="view"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
+		}
+
+		if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
+			$link = pods_query_arg( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+
+			if ( !empty( $this->action_links[ 'edit' ] ) )
+				$link = $this->do_template( $this->action_links[ 'edit' ], $row );
+
+			$actions[ 'edit' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
+		}
+
+		if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) && !$this->restricted( 'edit', $row ) ) {
+			$link = pods_query_arg( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), self::$allowed, $this->exclusion() );
+
+			if ( !empty( $this->action_links[ 'duplicate' ] ) )
+				$link = $this->do_template( $this->action_links[ 'duplicate' ], $row );
+
+			$actions[ 'duplicate' ] = '<span class="edit"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
+		}
+
+		if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && !$this->restricted( 'delete', $row ) ) {
+			$link = pods_query_arg( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ], '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), self::$allowed, $this->exclusion() );
+
+			if ( !empty( $this->action_links[ 'delete' ] ) ) {
+				$link = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-delete' ) ), $this->do_template( $this->action_links[ 'delete' ], $row ) );
+			}
+
+			$actions[ 'delete' ] = '<span class="delete"><a href="' . esc_url( $link ) . '" title="' . esc_attr__( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . esc_attr__( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
+		}
+
+		if ( is_array( $this->actions_custom ) ) {
+			foreach ( $this->actions_custom as $custom_action => $custom_data ) {
+				if ( 'add' !== $custom_action && is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) && !in_array( $custom_action, $this->actions_disabled ) && !in_array( $custom_action, $this->actions_hidden ) ) {
+					if ( !in_array( $custom_action, array( 'add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder', 'manage', 'table' ) ) ) {
+						if ( 'toggle' === $custom_action ) {
+							$toggle = true;
+							$toggle_labels = array(
+								__( 'Enable', 'pods' ),
+								__( 'Disable', 'pods' )
+							);
+
+							$custom_data[ 'label' ] = ( $row[ 'toggle' ] ? $toggle_labels[ 1 ] : $toggle_labels[ 0 ] );
+						}
+
+						if ( !isset( $custom_data[ 'label' ] ) )
+							$custom_data[ 'label' ] = ucwords( str_replace( '_', ' ', $custom_action ) );
+
+						if ( !isset( $custom_data[ 'link' ] ) ) {
+							$vars = array(
+								'action' => $custom_action,
+								'id' => $row[ $this->sql[ 'field_id' ] ],
+								'_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action )
+							);
+
+							if ( 'toggle' === $custom_action ) {
+								$vars[ 'toggle' ] = (int) ( !$row[ 'toggle' ] );
+								$vars[ 'toggled' ] = 1;
+							}
+
+							$custom_data[ 'link' ] = pods_query_arg( $vars, self::$allowed, $this->exclusion() );
+
+							if ( isset( $this->action_links[ $custom_action ] ) && !empty( $this->action_links[ $custom_action ] ) ) {
+								$custom_data[ 'link' ] = add_query_arg( array( '_wpnonce' => wp_create_nonce( 'pods-ui-action-' . $custom_action ) ), $this->do_template( $this->action_links[ $custom_action ], $row ) );
+							}
+						}
+
+						$confirm = '';
+
+						if ( isset( $custom_data[ 'confirm' ] ) )
+							$confirm = ' onclick="if(confirm(\'' . esc_js( $custom_data[ 'confirm' ] ) . '\')){return true;}return false;"';
+
+						if ( $this->restricted( $custom_action, $row ) ) {
+							continue;
+						}
+
+						$actions[ $custom_action ] = '<span class="edit action-' . esc_attr( $custom_action ) . '"><a href="' . esc_url( $this->do_template( $custom_data[ 'link' ], $row ) ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item"' . $confirm . '>' . $custom_data[ 'label' ] . '</a></span>';
+					}
+				}
+			}
+		}
+
+		return $actions;
+
+	}
+
     /**
      *
      */
@@ -3786,7 +3939,7 @@ class PodsUI {
             $this->do_hook( 'screen_meta_pre' );
             if ( 0 < strlen( $screen_html ) ) {
                 ?>
-                <div id="screen-options-wrap" class="hidden">
+                <div id="screen-options-wrap" class="pods-hidden">
                     <form id="adv-settings" action="" method="post">
                         <?php
                         echo $screen_html;
@@ -3841,7 +3994,7 @@ class PodsUI {
             }
             if ( 0 < strlen( $help_html ) ) {
                 ?>
-                <div id="contextual-help-wrap" class="hidden">
+                <div id="contextual-help-wrap" class="pods-hidden">
                     <div class="metabox-prefs">
                         <?php echo $help_html; ?>
                     </div>

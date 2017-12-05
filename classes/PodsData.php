@@ -631,7 +631,15 @@ class PodsData {
 
         $cache_key = $results = false;
 
-        $params = apply_filters( 'pods_data_pre_select_params', $params );
+        /**
+         * Filter select parameters before the query
+         *
+         * @param array|object $params
+         * @param PodsData|object $this The current PodsData class instance.
+         *
+         * @since unknown
+         */
+        $params = apply_filters( 'pods_data_pre_select_params', $params, $this );
 
         // Debug purposes
         if ( 1 == pods_v( 'pods_debug_params', 'get', 0 ) && pods_is_admin( array( 'pods' ) ) )
@@ -666,6 +674,15 @@ class PodsData {
                 pods_view_set( $cache_key, $results, pods_v( 'expires', $params, 0, false ), pods_v( 'cache_mode', $params, 'cache', true ), 'pods_data_select' );
         }
 
+        /**
+         * Filter results of Pods Query
+         *
+         * @param array $results
+         * @param array|object $params
+         * @param PodsData|object $this The current PodsData class instance.
+         *
+         * @since unknown
+         */
         $results = apply_filters( 'pods_data_select', $results, $params, $this );
 
         $this->data = $results;
@@ -738,6 +755,7 @@ class PodsData {
             'table' => null,
             'join' => null,
             'where' => null,
+            'where_default' => null,
             'groupby' => null,
             'having' => null,
             'orderby' => null,
@@ -849,12 +867,15 @@ class PodsData {
             $params->join = $this->join;
 
 		$params->where_defaulted = false;
-		$params->where_default = $this->where_default;
+
+		if ( empty( $params->where_default ) && false !== $params->where_default ) {
+			$params->where_default = $this->where_default;
+		}
 
 		if ( false === $params->strict ) {
 			// Set default where
-            if ( !empty( $this->where_default ) && empty( $params->where ) ) {
-				$params->where = array_values( (array) $this->where_default );
+            if ( !empty( $params->where_default ) && empty( $params->where ) ) {
+				$params->where = array_values( (array) $params->where_default );
 
 				$params->where_defaulted = true;
 			}
@@ -2532,10 +2553,10 @@ class PodsData {
             }
         }
 
-	    // Single array handling
-	    if ( 1 == count( $field_value ) && $field_compare == 'ALL' ) {
-		    $field_compare = '=';
-	    }
+		// Single array handling
+		if ( 1 == count( (array) $field_value ) && $field_compare == 'ALL' ) {
+			$field_compare = '=';
+		}
 		// Empty array handling
 		elseif ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
 			$field_compare = 'EXISTS';
@@ -2803,9 +2824,7 @@ class PodsData {
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 
-        if ( 'taxonomy' == $traverse[ 'type' ] )
-            $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'type' ], $traverse[ 'name' ] );
-        elseif ( in_array( $traverse[ 'type' ], $file_field_types ) )
+        if ( in_array( $traverse[ 'type' ], $file_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( 'post_type', 'attachment' );
         elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
@@ -2922,8 +2941,39 @@ class PodsData {
                 $joined_id = $table_info[ 'field_id' ];
                 $joined_index = $table_info[ 'field_index' ];
             }
-        }
-        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
+        } elseif ( 'comment' == $traverse[ 'type' ] ) {
+            if ( pods_tableless() ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+                        `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$traverse_recurse[ 'joined' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
+                ";
+
+                $joined_id = $table_info[ 'meta_field_id' ];
+                $joined_index = $table_info[ 'meta_field_index' ];
+            } elseif ( $meta_data_table ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+                ";
+            }
+            else {
+                $the_join = "
+                    LEFT JOIN `{$wpdb->comments}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`comment_post_ID` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+                ";
+
+				// Override $rel_alias
+				$rel_alias = $field_joined;
+
+                $joined_id = $table_info[ 'field_id' ];
+                $joined_index = $table_info[ 'field_index' ];
+            }
+        } elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_v( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
             if ( pods_tableless() ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2968,8 +3018,7 @@ class PodsData {
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
             }
-        }
-        elseif ( 'meta' == $pod_data[ 'storage' ] ) {
+        } elseif ( 'meta' == $pod_data[ 'storage' ] ) {
             if (
                 ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] )
                 && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) )
@@ -3088,6 +3137,16 @@ class PodsData {
 
         if ( empty( $sql ) )
             $sql = $this->sql;
+
+	/**
+	 * Allow SQL query to be manipulated.
+	 *
+	 * @param string   $sql       SQL Query string
+	 * @param PodsData $pods_data PodsData object
+	 *
+	 * @since 2.7
+	 */
+	$sql = apply_filters( 'pods_data_get_sql', $sql, $this );
 
         $sql = str_replace( array( '@wp_users', '@wp_' ), array( $wpdb->users, $wpdb->prefix ), $sql );
 

@@ -181,14 +181,14 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 == Upgrade Notice ==
 
 = 2.7 =
-This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.4+.
+This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.5+.
 
 == Changelog ==
 
 = 2.7 - December 4th 2017 =
 ## New PHP & WP Minimum Version Requirements:
 - PHP Version Change Requirement 5.3+
-- WP Version Change Required 4.4+
+- WP Version Change Required 4.5+
 
 ## Major Changes in 2.7 Release: Flexible Relationships:
 - **New Relationship Field Format "List View"**: The power of the new flexible relationships is our new modal window that opens within the existing record for relationship fields. This is modeled after the Media Modal from WordPress and provides full functionality to Add New related records or edit existing records all from within the parent record of the relationship. This is provided through our new List View field format for relationship fields. To see a demo of this field in action [head on over to our YouTube](https://youtu.be/V8c067GAEcA)

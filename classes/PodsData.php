@@ -2553,10 +2553,10 @@ class PodsData {
             }
         }
 
-	    // Single array handling
-	    if ( 1 == count( $field_value ) && $field_compare == 'ALL' ) {
-		    $field_compare = '=';
-	    }
+		// Single array handling
+		if ( 1 == count( (array) $field_value ) && $field_compare == 'ALL' ) {
+			$field_compare = '=';
+		}
 		// Empty array handling
 		elseif ( empty( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) )  ) {
 			$field_compare = 'EXISTS';

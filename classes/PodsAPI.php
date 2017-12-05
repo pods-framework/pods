@@ -6097,9 +6097,15 @@ class PodsAPI {
             }
         }
 
-        if ( ( !function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( ( ! function_exists( 'pll_current_language' ) || ! empty( $params->refresh ) ) &&
+	     ! empty( $cache_key ) && ( 'pods' !== $cache_key || empty( $meta_query ) ) &&
+	     $limit < 1 &&
+	     ( empty( $orderby ) || 'menu_order title' === $orderby ) &&
+	     empty( $ids )
+	) {
+		$total_pods = (int) ( is_array( $the_pods ) ) ? count( $the_pods ) : $the_pods;
             // Too many Pods can cause issues with the DB when caching is not enabled
-            if ( 15 < count( $the_pods ) || 75 < count( $total_fields ) ) {
+            if ( 15 < $total_pods || 75 < (int) $total_fields ) {
                 pods_transient_clear( $cache_key );
 
                 if ( pods_api_cache() ) {

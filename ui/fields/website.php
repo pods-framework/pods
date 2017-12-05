@@ -3,7 +3,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( pods_v( 'website_html5', $options, false ) && in_array( pods_v( 'website_format', $options ), array('normal', 'no-www', 'force-www' ) ) ) {
+if ( pods_v( 'website_html5', $options, false ) && ! in_array( pods_v( 'website_format', $options ), array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ) ) {
 	$type = 'url';
 }
 

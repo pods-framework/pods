@@ -118,7 +118,7 @@
                                     </div>
 
                                     <?php
-                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_taxonomy_storage', false ) ) {
+                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_taxonomy_storage', false ) && ! function_exists( 'get_term_meta' ) ) {
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
                                             <?php
@@ -130,15 +130,6 @@
                                                 );
 
                                                 $default = 'none';
-
-                                                if ( function_exists( 'get_term_meta' ) ) {
-                                                    $data = array(
-                                                        'meta' => __( 'Meta Based (WP Default)', 'pods' ),
-                                                        'table' => $data['table'],
-                                                    );
-
-                                                    $default = 'meta';
-                                                }
 
                                                 echo PodsForm::field( 'create_storage_taxonomy', pods_v( 'create_storage_taxonomy', 'post', $default, null, true ), 'pick', array( 'data' => $data ) );
                                             ?>
@@ -219,8 +210,13 @@
 
                                         <?php
                                             if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_storage', false ) ) {
+						$extra_class = '';
+
+						if ( function_exists( 'get_term_meta' ) ) {
+							$extra_class = ' pods-depends-on-create-pod-type-taxonomy';
+						}
                                         ?>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type">
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type<?php echo esc_attr( $extra_class ); ?>">
                                                 <?php
                                                     echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
 
@@ -331,27 +327,18 @@
                                     </div>
 
                                     <?php
-                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) ) {
+                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) && ! function_exists( 'get_term_meta' ) ) {
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                             <?php
-                                                echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
+						echo PodsForm::label( 'extend_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
 
-                                                $data = array(
-                                                    'none' => __( 'Do not enable extra fields to be added', 'pods' ),
-                                                    'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' )
-                                                );
+						$data = array(
+							'none' => __( 'Do not enable extra fields to be added', 'pods' ),
+							'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' ),
+						);
 
-                                                $default = 'none';
-
-                                                if ( function_exists( 'get_term_meta' ) ) {
-                                                    $data = array(
-                                                        'meta' => __( 'Meta Based (WP Default)', 'pods' ),
-                                                        'table' => $data['table'],
-                                                    );
-
-                                                    $default = 'meta';
-                                                }
+						$default = 'none';
 
                                                 echo PodsForm::field( 'extend_storage_taxonomy', pods_v( 'extend_storage_taxonomy', 'post', $default, null, true ), 'pick', array( 'data' => $data ) );
                                             ?>
@@ -362,8 +349,13 @@
 
                                     <?php
                                         if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_storage', false ) ) {
+						$extra_class = '';
+
+						if ( function_exists( 'get_term_meta' ) ) {
+							$extra_class = ' pods-depends-on-extend-pod-type-taxonomy';
+						}
                                     ?>
-                                        <div class="pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
+                                        <div class="pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment<?php echo esc_attr( $extra_class ); ?>">
                                             <p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a></p>
 
                                             <div class="pods-advanced">

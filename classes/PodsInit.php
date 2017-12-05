@@ -1022,12 +1022,11 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
 
 			if ( $rest_enabled ) {
-				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
+				if ( empty( $wp_post_types[ $post_type_name ]->show_in_rest ) ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
 
-				$wp_post_types[ $post_type_name ]->show_in_rest = true;
-				$wp_post_types[ $post_type_name ]->rest_base    = $rest_base;
-
-				if ( empty( $wp_post_types[ $post_type_name ]->rest_controller_class ) ) {
+					$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+					$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
 					$wp_post_types[ $post_type_name ]->rest_controller_class = 'WP_REST_Posts_Controller';
 				}
 
@@ -1054,12 +1053,11 @@ class PodsInit {
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
 
 			if ( $rest_enabled ) {
-				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
+				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
 
-				$wp_taxonomies[ $taxonomy_name ]->show_in_rest = true;
-				$wp_taxonomies[ $taxonomy_name ]->rest_base    = $rest_base;
-
-				if ( empty( $wp_taxonomies[ $taxonomy_name ]->rest_controller_class ) ) {
+					$wp_taxonomies[ $taxonomy_name ]->show_in_rest = true;
+					$wp_taxonomies[ $taxonomy_name ]->rest_base    = $rest_base;
 					$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
 				}
 

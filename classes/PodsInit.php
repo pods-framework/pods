@@ -461,12 +461,15 @@ class PodsInit {
 			$post_format_post_types = array();
 
 			foreach ( $post_types as $post_type ) {
-				// Post Type exists already
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+					// Post type was setup already
 					continue;
 				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[ $post_type['object'] ] ) ) {
+					// Post type exists already
+
 					continue;
 				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
+					// Post type was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
 
@@ -691,12 +694,15 @@ class PodsInit {
 			}
 
 			foreach ( $taxonomies as $taxonomy ) {
-				// Taxonomy Type exists already
 				if ( isset( $pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] ) ) {
+					// Taxonomy was setup already
 					continue;
 				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
+					// Taxonomy exists already
+
 					continue;
 				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
+					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
 

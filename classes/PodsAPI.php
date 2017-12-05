@@ -1406,7 +1406,7 @@ class PodsAPI {
             'create_label_singular' => '',
             'create_label_plural' => '',
             'create_storage' => 'meta',
-            'create_storage_taxonomy' => ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' ),
+            'create_storage_taxonomy' => '',
 
             'create_setting_name' => '',
             'create_label_title' => '',
@@ -1418,8 +1418,13 @@ class PodsAPI {
             'extend_taxonomy' => 'category',
             'extend_table' => '',
             'extend_storage' => 'meta',
-            'extend_storage_taxonomy' => ( function_exists( 'get_term_meta' ) ? 'meta' : 'table' ),
+            'extend_storage_taxonomy' => '',
         );
+        
+        if ( ! function_exists( 'get_term_meta' ) ) {
+        	$defaults['create_storage_taxonomy'] = 'none';
+        	$defaults['extend_storage_taxonomy'] = 'table';
+        }
 
         $params = (object) array_merge( $defaults, (array) $params );
 
@@ -1467,7 +1472,11 @@ class PodsAPI {
                 if ( empty(  $pod_params[ 'name' ] ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
-                $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
+                $pod_params[ 'storage' ] = $params->create_storage;
+
+                if ( ! function_exists( 'get_term_meta' ) || ! empty( $params->create_storage_taxonomy ) ) {
+	                $pod_params['storage'] = $params->create_storage_taxonomy;
+                }
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );
@@ -1512,7 +1521,11 @@ class PodsAPI {
                 $pod_params[ 'name' ] = $params->extend_post_type;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
+                $pod_params[ 'storage' ] = $params->extend_storage;
+
+                if ( ! function_exists( 'get_term_meta' ) || ! empty( $params->extend_storage_taxonomy ) ) {
+	                $pod_params['storage'] = $params->extend_storage_taxonomy;
+                }
 
                 if ( pods_tableless() )
                     $pod_params[ 'storage' ] = ( function_exists( 'get_term_meta' ) ? 'meta' : 'none' );

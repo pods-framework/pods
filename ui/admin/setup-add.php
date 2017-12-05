@@ -122,23 +122,32 @@
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
                                             <?php
-                                                echo PodsForm::label( 'create_storage_taxonomy', __( 'Enable Extra Fields?', 'pods' ), array( __( '<h6>Storage Types</h6> Taxonomies support extra meta fields natively since WordPress 4.4+. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
-
-                                                $data = array(
-                                                    'none' => __( 'Do not enable extra fields to be added', 'pods' ),
-                                                    'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' ),
-                                                );
-
-                                                $default = 'none';
 
                                                 if ( function_exists( 'get_term_meta' ) ) {
+
                                                     $data = array(
                                                         'meta' => __( 'Meta Based (WP Default)', 'pods' ),
                                                         'table' => __( 'Table Based (Pods)', 'pods' ),
                                                     );
-
                                                     $default = 'meta';
-                                                }
+							
+                                                    $label = __( 'Field storage', 'pods' );
+                                                    $tooltip = __( '<h6>Storage Types</h6> Taxonomies support extra meta fields natively since WordPress 4.4+. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' );
+
+                                                } else {
+
+                                                    $data = array(
+                                                        'none' => __( 'Do not enable extra fields to be added', 'pods' ),
+                                                        'table' => __( 'Enable extra fields for this Taxonomy (Table Based)', 'pods' ),
+                                                    );
+                                                    $default = 'none';
+
+                                                    $label = __( 'Enable Extra Fields?', 'pods' );
+                                                    $tooltip = __( '<h6>Storage Types</h6> Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' );
+
+						}
+
+                                                echo PodsForm::label( 'create_storage_taxonomy', $label, array( $tooltip, 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
 
                                                 echo PodsForm::field( 'create_storage_taxonomy', pods_v( 'create_storage_taxonomy', 'post', $default, null, true ), 'pick', array( 'data' => $data ) );
                                             ?>

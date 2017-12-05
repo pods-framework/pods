@@ -77,7 +77,8 @@ class PodsField_Website extends PodsField {
 					'no-http-no-www' => __( 'example.com (force removal of www)', 'pods' ),
 					'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' ),
 					'none' => __( 'No format', 'pods' ),
-				)
+				),
+				'dependency' => true,
 			),
 			self::$type . '_allow_port' => array(
 				'label' => __( 'Allow port in URL?', 'pods' ),
@@ -101,12 +102,13 @@ class PodsField_Website extends PodsField {
 				'label' => __( 'Maximum Length', 'pods' ),
 				'default' => 255,
 				'type' => 'number',
-				'help' => __( 'Set to -1 for no limit', 'pods' )
+				'help' => __( 'Set to -1 for no limit', 'pods' ),
 			),
 			self::$type . '_html5' => array(
 				'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
 				'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
-				'type' => 'boolean'
+				'type' => 'boolean',
+				'excludes-on' => array( self::$type . '_format' => array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ),
 			),
 			self::$type . '_placeholder' => array(
 				'label' => __( 'HTML Placeholder', 'pods' ),

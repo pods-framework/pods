@@ -425,8 +425,39 @@ class Pods_Helpers extends PodsComponent {
 
             $params = $_safe_params;
         }
-        elseif ( is_callable( (string) $params->helper ) )
-            echo call_user_func( (string) $params->helper, $params->value, $params->name, $params, $obj );
+        elseif ( is_callable( (string) $params->helper ) ) {
+            $params->helper = (string) $params->helper;
+
+            $blacklist = array(
+				'system',
+				'exec',
+				'popen',
+				'eval',
+				'preg_replace',
+				'create_function',
+				'include',
+				'include_once',
+				'require',
+				'require_once',
+			);
+
+			/**
+			 * Allows adjusting the blacklisted functions as needed.
+			 *
+			 * @param array $blacklist List of callbacks not allowed.
+			 * @param array $params    Parameters used by Pods::helper() method.
+			 *
+			 * @since 2.7
+			 */
+			$blacklist = apply_filters( 'pods_helper_blacklist', $blacklist, get_object_vars( $params ) );
+
+			// Clean up helper callback (if string)
+            $params->helper = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params->helper ) ); 
+
+			if ( ! in_array( $params->helper, $blacklist, true ) ) {
+                echo call_user_func( $params->helper, $params->value, $params->name, $params, $obj );
+			}
+        }
 
         $out = ob_get_clean();
 

@@ -191,9 +191,9 @@ This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.4+.
 - WP Version Change Required 4.4+
 
 ## Major Changes in 2.7 Release: Flexible Relationships:
-- **New Relationship Field Format "List View"**: The power of the new flexible relationships is our new modal window that opens within the existing record for relationship fields. This is modeled after the Media Modal from WordPress and provides full functionality to Add New related records or edit existing records all from within the parent record of the relationship. This is provided through our new List View field format for relationship fields.
+- **New Relationship Field Format "List View"**: The power of the new flexible relationships is our new modal window that opens within the existing record for relationship fields. This is modeled after the Media Modal from WordPress and provides full functionality to Add New related records or edit existing records all from within the parent record of the relationship. This is provided through our new List View field format for relationship fields. To see a demo of this field in action [head on over to our YouTube](https://youtu.be/V8c067GAEcA)
 - **Add New with Flexible Relationships**: The new flexible relationships will automatically enable Add New on all your existing relationships, but you can disable this from the Additional Options tab for each relationship field. You can switch field formats to the new List View from additional options tab as well.
-- **Dynamic Field Views**: The relationship fields and file upload fields have been rewritten to take advantage of "Dynamic Field Views", driven by JavaScript. More technical details about the directions we went towards these field changes can be read about in our ["Pods 2.7: What We Did and Why We Did It"](**Needs URL**)
+- **Dynamic Field Views**: The relationship fields and file upload fields have been rewritten to take advantage of "Dynamic Field Views", driven by JavaScript. More technical details about the directions we went towards these field changes can be read about in our ["Pods 2.7: What We Did and Why We Did It"](https://pods.io/2017/12/05/pods-2-7-developer-notes-what-we-did-and-why-we-did-it)
 
 ## Significant Improvements and Fixes:
 - Enhancements for Date, Time & Date/Time Fields to improve class inheritance, use WP Defaults and allow for custom options for saving and display @JoryHOgeveen
@@ -201,7 +201,7 @@ This upgrade requires a minimum PHP version of 5.3+ and WordPress 4.4+.
 - IsEmpty for all Date/Time Fields, Number, Currency, etc. improvements for `[if field][/if]` for Templates @JoryHogeveen 
 - **Major fixes for Pods Templates**: Proper handling of shortcodes within Pods Templates and in if/each blocks. Proper handling of all image tags and user traversal @jamesgol 
 - Comment Traversal #4118 @sc0ttkclark
-- Update Compatibility with Admin Columns 3.0 #4570 @JoryHogeveen
+- Update Compatibility with Admin Columns 3.0+ #4570 @JoryHogeveen
 - Filter Added for Select2 Overrides #4571 @sc0ttkclark
 - Fix for Advanced Content Types and Relationships in `[each][/each]` tags correcting for lowercase id. #4585 @0xLBF
 

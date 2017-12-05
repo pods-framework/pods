@@ -1,0 +1,430 @@
+// Upgrade wizard specific styles
+#pods-wizard-box {
+    width: $width + 2;
+    color: #555555;
+    margin: 20px;
+    &.pods-wizard-steps-1 #pods-wizard-heading ul li {
+        width: $width;
+    }
+    &.pods-wizard-steps-2 #pods-wizard-heading ul li {
+        width: $width / 2;
+    }
+    &.pods-wizard-steps-3 #pods-wizard-heading ul li {
+        width: $width / 3;
+    }
+    &.pods-wizard-steps-4 #pods-wizard-heading ul li {
+        width: $width / 4;
+    }
+    &.pods-wizard-steps-5 #pods-wizard-heading ul li {
+        width: $width / 5;
+    }
+    #pods-wizard-heading {
+        ul {
+            margin: 0;
+            padding: 0;
+            li {
+                list-style:none;
+                display: block;
+                float: left;
+                height: 30px;
+                padding-top: 5px;
+                color: #ababab;
+                margin-bottom: 0;
+                font: 18px 'Garamond, Georgia';
+                position: relative;
+                border-top: 1px solid $grey-border;
+                border-bottom: 1px solid $grey-border;
+                @include vertical-gradient(#f9f9f9, #ededed);
+                i {
+                    display: block;
+                    width: 11px;
+                    height: 35px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    background: url(#{$ImagesPath}/arrow_next.png);
+                }
+                span {
+                    display: inline-block;
+                    margin: 0 5px 0 20px;
+                    width: 25px;
+                    height: 25px;
+                    line-height: 25px;
+                    text-align: center;
+                    background: #ababab;
+                    color: #f2f2f2;
+                    box-shadow: none;
+                    font-size: 20px;
+                    font-weight: bold;
+                    @include multi-border-radius(30px, 30px, 30px, 30px);
+                }
+                &.pods-wizard-menu-current {
+                    color: #fff;
+                    border-bottom: 1px solid #6e6e6e;
+                    border-top: 1px solid #808080;
+                    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+                    @include vertical-gradient(#808080, #6e6e6e);
+                    span {
+                        text-shadow: none;
+                        background: #fff;
+                        color: #6f6f6f;
+                        @include box-shadow(1px, 1px, 2px, 0.2);
+                    }
+                    &+ li > i {
+                        background: url(#{$ImagesPath}/arrow_current.png);
+                    }
+                }
+                &.pods-wizard-menu-complete {
+                    color: $green-dark;
+                    border-bottom: 1px solid #bbddbd;
+                    @include vertical-gradient(#d4f4d6, #bbddbd);
+                    &+ li > i {
+                        background: url(#{$ImagesPath}/arrow_complete.png);
+                    }
+                    &+ li.pods-wizard-menu-complete > i {
+                        background: url(#{$ImagesPath}/arrow_complete_previous.png);
+                    }
+                    span {
+                        background: $green-dark;
+                        color: $green-mid;
+                    }
+                    em {
+                        display: block;
+                        top: 10px;
+                        right: 5px;
+                        background: url(#{$ImagesPath}/tick.png) no-repeat right center;
+                        width: 17px;
+                        height: 17px;
+                        position: absolute;
+                    }
+                    &:last-child {
+                        em {
+                            right: 15px;
+                        }
+                    }
+                }
+                &:first-child {
+                    i {
+                        background: none;
+                    }
+                    border-left: 1px solid $grey-border;
+                    @include multi-border-radius(8px, 0, 0, 0);
+                }
+                &:last-child {
+                    border-right: 1px solid $grey-border;
+                    @include multi-border-radius(0, 8px, 0, 0);
+                }
+            }
+        }
+    }
+    #pods-wizard-main {
+        clear: both;
+        overflow: auto;
+        p {
+            font-size: 13px;
+            line-height: 22px;
+        }
+        p.padded {
+            padding: 0 20px 20px;
+        }
+        #pods-wizard-choices {
+            margin: 15px 20px 25px 20px;
+        }
+        .pods-advanced-toggle {
+            display: inline-block;
+            text-decoration: underline;
+            padding-left: 15px;
+        }
+        .pods-wizard-option-content {
+            display: none;
+
+            .pods-package-import-group {
+                .pods-field-option-group {
+                    padding-top: 0;
+                    p {
+                        margin-top: 0;
+                    }
+                }
+            }
+        }
+        .stuffbox {
+            margin: 15px 15px 0px 15px;
+            h3 {
+                font-size: 15px;
+                font-weight: normal;
+                line-height: 1;
+                padding: 7px 10px;
+                font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+            }
+            .inside {
+                padding: 0;
+                div.pods-wizard-content {
+                    h3 {
+                        margin: 1.33em 20px;
+                        font-size: 1.35em;
+                    }
+                    h4 {
+                        margin: 1.33em 20px;
+                        font-size: 1.2em;
+                    }
+                    ul.normal {
+                        margin: 15px 20px;
+                        list-style: circle;
+                        li {
+                            margin: 0 0 8px 30px;
+                            padding-left: 4px;
+                            line-height: 22px;
+                            font-size: 14px;
+                            list-style: circle;
+                        }
+                    }
+                }
+            }
+        }
+        .pods-wizard-panel {
+            display: none;
+            border-left: 1px solid $grey-border;
+            border-right: 1px solid $grey-border;
+            padding-bottom: 25px;
+            &:first-child {
+                display: block;
+            }
+            .button-primary, .button-secondary {
+                padding: 8px 15px;
+                border-radius: 14px 14px 14px 14px;
+            }
+            .pods-wizard-content {
+                background: #fff;
+                &.pods-wizard-grey {
+                    background: #f9f9f9;
+                }
+                p {
+                    padding: 20px;
+                    margin-top: 0;
+                }
+            }
+            table {
+                width: 100%;
+                th, td {
+                    height: 47px;
+                }
+                th {
+                    text-align: left;
+                    background: #f9f9f9;
+                    text-transform: uppercase;
+                    padding-left: 53px;
+                }
+                tr {
+                    td {
+                        font-size: 20px;
+                        &.pods-wizard-right {
+                            text-align: right;
+                        }
+                        &.pods-wizard-name {
+                            padding-left: 20px;
+                            em {
+                                color: #777;
+                                font-style: normal;
+                                font-size: 14px;
+                            }
+                            .pods-wizard-info {
+                                float: right;
+                                text-align: right;
+                                font-size: 12px;
+                                padding-right: 15px;
+                            }
+                        }
+                        img {
+                            display: none;
+                        }
+                    }
+                    &.pods-wizard-table-complete td {
+                        background: #e6f9e6;
+                        color: #6f9472;
+                        border-top: 1px solid #fff;
+                        i {
+                            display: inline-block;
+                            width: 17px;
+                            height: 17px;
+                            background: url(#{$ImagesPath}/tick.png);
+                        }
+                    }
+                    &.pods-wizard-table-warning td {
+                        background: #ffffe0;
+                        border-top: 1px solid #e7dd5f;
+                        border-bottom: 1px solid #e7dd5f;
+                        &:first-child {
+                            border-left: 1px solid #e7dd5f;
+                        }
+                        &:last-child {
+                            border-right: 1px solid #e7dd5f;
+                        }
+                    }
+                    &.pods-wizard-table-error td {
+                        background: #ffebe8;
+                        border-top: 1px solid #cc0000;
+                        border-bottom: 1px solid #cc0000;
+                        &:first-child {
+                            border-left: 1px solid #cc0000;
+                        }
+                        &:last-child {
+                            border-right: 1px solid #cc0000;
+                        }
+                    }
+                    &.pods-wizard-table-active td {
+                        background: #fff4e0;
+                        border-top: 1px solid #fff;
+                        border-bottom: 1px solid #dfdfdf;
+                        color: #eba600;
+                        img {
+                            display: inline;
+                        }
+                    }
+                    &.pods-wizard-table-pending td {
+                        border-top: 1px solid #fff;
+                        border-bottom: 1px solid #dfdfdf;
+                        color: #ababab;
+                    }
+                }
+            }
+            #pods-wizard-options {
+                text-align: center;
+                .pods-wizard-option {
+                    width: 290px;
+                    display: inline-block;
+                    vertical-align: top;
+                    &:first-child {
+                        margin-right: 40px;
+                    }
+                    a {
+                        height: 140px;
+                        padding-top: 10px;
+                        display: block;
+                        background: #f9f9f9;
+                        position: relative;
+                        text-decoration: none;
+                        @include multi-border-radius(8px, 8px, 8px, 8px);
+                        @include box-shadow(0px, 0px, 4px, 0.3);
+                        h2 {
+                            color: #21759B;
+                            font-weight: bold;
+                            font-size: 1.5em;
+                            padding-right: 0;
+                        }
+                        p {
+                            font-style: normal;
+                            font-size: 14px;
+                            color: #555555;
+                            margin: 7px;
+                            line-height: 17px;
+                        }
+                        &:hover {
+                            background: #feffe0;
+                            h2 {
+                                color: #D54E21;
+                            }
+                        }
+                        span {
+                            display: none;
+                        }
+                        &.pods-wizard-option-active {
+                            background: #feffe0;
+                            color: #D54E21;
+                            span {
+                                width: 290px;
+                                height: 30px;
+                                background: #D54E21;
+                                display: block;
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                                text-align: center;
+                                color: #fff;
+                                font: 13px/30px bold Garamond, Georgia;
+                                @include multi-border-radius(0, 0, 8px, 8px);
+                            }
+                        }
+                        &:visited {
+                            p {
+                                color: #555555;
+                            }
+                        }
+                    }
+                    p {
+                        font-size: 12px;
+                        line-height: 17px;
+                        font-style: italic;
+                        em {
+                            margin: 0;
+                            padding: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #pods-wizard-actions {
+        height: 35px;
+        border: 1px solid $grey-border;
+        position: relative;
+        clear: both;
+        @include multi-border-radius(0, 0, 8px, 8px);
+        @include vertical-gradient(#ededed, #f9f9f9);
+        .button {
+            display: block;
+            height: 35px;
+            width: 110px;
+            position: absolute;
+            top: 0;
+            line-height: 35px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 0;
+            border: none !important;
+            &.button-primary {
+                right: 0;
+                color: #fff;
+                @include vertical-gradient(#278ab8, #22789f);
+                @include multi-border-radius(0, 0, 8px, 0);
+                &:hover {
+                    background: #22789f;
+                }
+            }
+            &.button-secondary {
+                left: 0;
+                color: #7b7b7b;
+                @include vertical-gradient(#dfdfdf, #b2b2b2);
+                @include multi-border-radius(0, 0, 0, 8px);
+                &:hover {
+                    background: #b2b2b2;
+                }
+            }
+        }
+        #pods-wizard-finished {
+            display: none;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            padding-right: 142px;
+            text-transform: uppercase;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+            @include vertical-gradient(#808080, #6e6e6e);
+            @include multi-border-radius(0, 0, 8px, 8px);
+        }
+        #pods-wizard-next.finished {
+            width: 150px;
+        }
+    }
+    &.pods-wizard-hide-first {
+        #pods-wizard-main {
+            border-bottom: 1px solid $grey-border;
+            @include multi-border-radius(0, 0, 8px, 8px);
+        }
+        #pods-wizard-actions {
+            display: none;
+        }
+    }
+}

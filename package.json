@@ -1,9 +1,9 @@
 {
   "name": "pods",
-  "version": "2.6.12-a-1",
+  "version": "2.7",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
-  "homepage": "http://pods.io/",
+  "homepage": "https://pods.io/",
   "bugs": "https://github.com/pods-framework/pods/issues",
   "repository": {
     "type": "git",
@@ -12,13 +12,18 @@
   "license": "GPL-2.0+",
   "contributors": "https://github.com/pods-framework/pods/graphs/contributors",
   "devDependencies": {
+    "babel-core": "6.24.1",
+    "babel-plugin-module-resolver": "^3.0.0-beta.3",
+    "babel-plugin-transform-html-import-to-string": "0.0.1",
+    "babel-preset-es2015": "6.24.1",
+    "backbone": "~1.3.3",
     "glob": "^7.1.*",
     "grunt": "^1.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-connect": "^1.0.0",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-git": "^1.0.0",
+    "grunt-exec": "~0.4.6",
     "grunt-mkdir": "^1.0.0",
     "grunt-newer": "^1.2.0",
     "grunt-push-svn": "^0.2.2",
@@ -26,6 +31,27 @@
     "grunt-svn-checkout": "^0.3.0",
     "grunt-svn-copy": "^0.1.4",
     "grunt-text-replace": "^0.4.0",
-    "load-grunt-tasks": "^3.5.0"
+    "jquery": "~1.12.4",
+    "jsdom-global": "3.0.2",
+    "load-grunt-tasks": "^3.5.0",
+    "mocha": "^3.4.2",
+    "node-sass": "^4.5.3",
+    "rollup": "^0.41.6",
+    "rollup-plugin-uglify": "^2.0.1",
+    "sprintf-js": "^1.1.0",
+    "underscore": "~1.8.3"
+  },
+  "scripts": {
+    "test-dfv": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --reporter dot --recursive tests/js",
+    "build-podsjs": "node node_modules/rollup/bin/rollup -c",
+    "scss": "node-sass --output-style compressed ui/styles/src -o ui/styles/dist --source-map ui/styles/src/sourcemaps",
+    "scss:watch": "node-sass --output-style compressed -w ui/styles/src -o ui/styles/dist"
+  },
+  "dependencies": {
+    "babel-preset-es2015-rollup": "^1.2.0",
+    "backbone.marionette": "^3.5.1",
+    "grunt-git": "^1.0.9",
+    "jsdom": "^9.12.0",
+    "rollup-plugin-babel": "^2.7.1"
   }
 }

@@ -113,13 +113,7 @@ function pods_sanitize_like( $input ) {
 		global $wpdb;
 		$input = pods_unslash( $input );
 
-		if ( pods_version_check( 'wp', '4.0' ) ) {
-			$output = pods_sanitize( $wpdb->esc_like( $input ) );
-		}
-		else {
-			// like_escape is deprecated in WordPress 4.0
-			$output = pods_sanitize( like_escape( $input ) );
-		}
+		$output = pods_sanitize( $wpdb->esc_like( $input ) );
 	}
 
 	return $output;
@@ -237,13 +231,7 @@ function pods_unsanitize( $input, $params = array() ) {
 		}
 	}
 	else {
-		// @todo Figure out what to do to unescape mysql_real_escape_string
-		if ( pods_version_check( 'wp', '3.6' ) ) {
-			$output = stripslashes( $input );
-		}
-		else {
-			$output = stripslashes( $input );
-		}
+		$output = wp_unslash( $input );
 	}
 
 	return $output;
@@ -287,13 +275,7 @@ function pods_unslash( $input ) {
 		}
 	}
 	else {
-		// @todo Figure out what to do to unescape mysql_real_escape_string
-		if ( pods_version_check( 'wp', '3.6' ) ) {
-			$output = wp_unslash( $input );
-		}
-		else {
-			$output = stripslashes( $input );
-		}
+		$output = wp_unslash( $input );
 	}
 
 	return $output;
@@ -990,12 +972,7 @@ function pods_v_set( $value, $var, $type = 'get' ) {
 		elseif ( 'user' == $type && is_user_logged_in() ) {
 			$user = get_userdata( get_current_user_id() );
 
-			if ( !pods_version_check( 'wp', '3.5' ) ) {
-				$user_data = get_object_vars( $user->data );
-			}
-			else {
-				$user_data = $user->to_array();
-			}
+			$user_data = $user->to_array();
 
 			// Role
 			if ( 'role' == $var ) {
@@ -1734,7 +1711,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
             return $original_value[ $params->field_index ];
         elseif ( null !== $params->field_index && isset( $value[ $params->field_index ] ) )
             return $value[ $params->field_index ];
-        elseif ( !isset( $value[ 0 ] ) )
+        elseif ( !is_array( $value ) )
             $value = array( $value );
 
         foreach ( $value as $k => $v ) {

@@ -3,8 +3,9 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == pods_var( 'website_html5', $options ) )
-    $type = 'url';
+if ( pods_v( 'website_html5', $options, false ) && ! in_array( pods_v( 'website_format', $options ), array( 'no-http', 'no-http-no-www', 'no-http-force-www' ) ) ) {
+	$type = 'url';
+}
 
 $attributes[ 'type' ] = $type;
 $attributes[ 'value' ] = $value;

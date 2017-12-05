@@ -12,13 +12,13 @@
             pods_redirect( pods_query_arg( array( 'pods_clearcache' => 1 ), array( 'page', 'tab' ) ) );
         }
     }
-    elseif ( 1 == pods_var( 'pods_clearcache' ) )
+    elseif ( 1 == pods_v_sanitized( 'pods_clearcache' ) )
         pods_message( 'Pods transients and cache have been cleared.' );
 ?>
 
 <h3><?php _e( 'Clear Pods Cache', 'pods' ); ?></h3>
 
-<p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods. ', 'pods' ); ?></p>
+<p><?php esc_html_e( 'This tool will clear all of the transients/cache that are used by Pods.', 'pods' ); ?></p>
 
 <p class="submit">
     <input type="submit" class="button button-primary" name="clearcache" value="<?php esc_attr_e( 'Clear Pods Cache', 'pods' ); ?>" />

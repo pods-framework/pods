@@ -1,3 +1,21 @@
+<?php
+	$ignore = array(
+		'attachment',
+		'revision',
+		'nav_menu_item',
+		'custom_css',
+		'customize_changeset',
+		'post_format',
+	);
+
+	// Only add support for built-in taxonomy "link_category" if link manager is enabled.
+	$link_manager_enabled = (int) get_option( 'link_manager_enabled', 0 );
+
+	if ( 0 === $link_manager_enabled ) {
+		$ignore[] = 'link_category';
+	}
+?>
+
 <div class="wrap pods-admin">
     <script>
         var PODS_URL = '<?php echo esc_js( PODS_URL ); ?>';
@@ -266,11 +284,12 @@
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type">
                                         <?php
                                             $post_types = get_post_types();
-                                            $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
                                             foreach ( $post_types as $post_type => $label ) {
                                                 if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                                                	// Post type is ignored
                                                     unset( $post_types[ $post_type ] );
+
                                                     continue;
                                                 }
                                                 elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' == $all_pods[ $post_type ][ 'type' ] ) {
@@ -290,16 +309,11 @@
                                         <?php
                                             $taxonomies = get_taxonomies();
 
-                                            //Add Support for built-in taxonomy "link_category"
-                                            //if links are in use.
-                                            $bookmarkcount = count(get_bookmarks());
-                                            if ($bookmarkcount < 1){
-                                                $ignore = array( 'link_category' );
-                                            }
-
                                             foreach ( $taxonomies as $taxonomy => $label ) {
                                                 if ( in_array( $taxonomy, $ignore ) ) {
+                                                	// Taxonomy is ignored
                                                     unset( $taxonomies[ $taxonomy ] );
+
                                                     continue;
                                                 }
                                                 elseif ( isset( $all_pods[ $taxonomy ] ) && 'taxonomy' == $all_pods[ $taxonomy ][ 'type' ] ) {

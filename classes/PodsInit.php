@@ -1048,7 +1048,7 @@ class PodsInit {
 				continue;
 			}
 
-			$pod = $taxonomies[ $taxonomy_name ];
+			$pod = $taxonomies[ $pod_id ];
 
 			// REST API
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );

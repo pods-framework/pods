@@ -1,8 +1,32 @@
 <?php
 /**
- * @var array  $value
+ * @var array  $value {
+ *     @type  array       $address {
+ *         @type  string  $line_1
+ *         @type  string  $line_2
+ *         @type  string  $postal_code
+ *         @type  string  $city
+ *         @type  string  $region
+ *         @type  string  $country
+ *     }
+ *     @type  array       $geo {
+ *         @type  int  $lat
+ *         @type  int  $lng
+ *     }
+ *     @type  string      $info_window  The info window content (with magic tags)
+ *     @type  int|string  $marker_icon  (optional) Overwrite default marker from $options?
+ *     @type  Pods        $pod          (optional) The pod object for this value.
+ *     @type  string      $name         (optional) The pod name.
+ *     @type  int         $id           (optional) The ID of this value object.
+ * }
+ * @var array  $options {
+ *     @type  int         $maps_zoom         The default zoom depth.
+ *     @type  string      $maps_type         The maps type
+ *     @type  int|string  $maps_marker       The marker (can be an attachment ID or a URL)
+ *     @type  bool        $maps_scrollwheel  Enable/Disable the scrollwheel?
+ * }
  * @var string $name
- * @var array  $options
+ * @var string $type
  * @var bool   $multiple  Value contains an array of multiple values?
  */
 
@@ -11,7 +35,7 @@ wp_enqueue_script( 'pods-maps' );
 wp_enqueue_style( 'pods-maps' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, '', $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $type, $options );
 
 $map_options = array();
 
@@ -35,11 +59,11 @@ if ( ! empty( $options['maps_marker'] ) ) {
 
 $map_options['scrollwheel'] = (bool) pods_v( 'maps_scrollwheel', $options, pods_v( 'map_scrollwheel', Pods_Component_Maps::$options, true ) );
 
-if ( ! empty( $map_options['marker'] ) ) {
+if ( ! empty( $map_options['marker'] ) && is_numeric( $map_options['marker'] ) ) {
 	$map_options['marker'] = wp_get_attachment_image_url( $map_options['marker'], 'full' );
 }
 
-if ( ! array_key_exists( 0, $value ) ) {
+if ( ! $multiple ) {
 	$value = array( $value );
 	$multiple = false;
 }

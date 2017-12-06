@@ -11,19 +11,19 @@ $map_options = array();
 if ( ! empty( $options['maps_zoom'] ) ) {
 	$map_options['zoom'] = (int) $options['maps_zoom'];
 } else {
-	$map_options['zoom'] = (int) Pods_Component_Maps::$options['map_zoom'];
+	$map_options['zoom'] = (int) Pods_Component_Maps::$options['maps_zoom'];
 }
 
 if ( ! empty( $options['maps_type'] ) ) {
 	$map_options['type'] = $options['maps_type'];
 } else {
-	$map_options['type'] = Pods_Component_Maps::$options['map_type'];
+	$map_options['type'] = Pods_Component_Maps::$options['maps_type'];
 }
 
 if ( ! empty( $options['maps_marker'] ) ) {
 	$map_options['marker'] = $options['maps_marker'];
 } else {
-	$map_options['marker'] = Pods_Component_Maps::$options['map_marker'];
+	$map_options['marker'] = Pods_Component_Maps::$options['maps_marker'];
 }
 
 if ( ! empty( $map_options['marker'] ) ) {

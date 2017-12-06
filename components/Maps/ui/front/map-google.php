@@ -93,6 +93,17 @@ foreach( $value as $key => $val ) {
 		// @todo Check field type
 		if ( ! empty( $val['info_window'] ) ) {
 			$format = $val['info_window'];
+
+		} elseif ( pods_components()->is_component_active( 'templates' ) &&
+				   'template' === pods_v( 'maps_info_window_content', $options ) &&
+				   isset( $val['pod'] ) && $val['pod'] instanceof Pods
+		) {
+			$template = get_post( pods_v( 'maps_info_window_template', $options ) );
+			if ( $template instanceof WP_Post ) {
+				$format = $val['pod']->template( $template->post_title );
+				echo $format;
+			}
+
 		} else {
 			$format = PodsForm::field_method( 'address', 'default_display_format' );
 			if ( 'custom' === pods_v( 'address_display_type', $options ) ) {

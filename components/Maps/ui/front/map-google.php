@@ -69,7 +69,27 @@ if ( ! $multiple ) {
 }
 
 foreach( $value as $key => $val ) {
-	if ( ! isset( $address_html ) || $multiple ) {
+
+	$val = wp_parse_args( $val, array(
+		'address'      => array(),
+		'geo'          => array(),
+		'address_html' => '',
+		'info_window'  => '', // Format.
+		'marker_icon'  => null,
+	) );
+
+	// Allow custom overwrites.
+	if ( 'custom' === pods_v( 'maps_info_window_content', $options, true ) ) {
+		$address_html = '';
+		if ( ! empty( $val['address_html'] ) ) {
+			$address_html = $val['address_html'];
+		} elseif ( ! empty( $val['info_window'] ) ) {
+			$address_html = $val['info_window'];
+		}
+	}
+
+	// Parse format.
+	elseif ( ! isset( $address_html ) || $multiple ) {
 		// @todo Check field type
 		if ( ! empty( $val['info_window'] ) ) {
 			$format = $val['info_window'];
@@ -85,13 +105,15 @@ foreach( $value as $key => $val ) {
 	unset( $value[ $key ]['info_window'] );
 	$value[ $key ]['address_html'] = $address_html;
 
-	if ( ! empty( $val['marker_icon'] ) && is_numeric( $val['marker_icon'] ) ) {
+	if ( is_numeric( $val['marker_icon'] ) ) {
 		$value[ $key ]['marker_icon'] = wp_get_attachment_image_url( $val['marker_icon'], 'full' );
 	}
 
-	if ( ! empty( $val['geo'] ) && is_array( $val['geo'] ) ) {
+	if ( is_array( $val['geo'] ) ) {
 		$value[ $key ]['geo'] = array_map( 'floatval', $val['geo'] );
 	}
+
+	unset( $value[ $key ]['pod'] );
 }
 
 ?>
@@ -102,7 +124,7 @@ foreach( $value as $key => $val ) {
 <script type="text/javascript">
 	jQuery( document ).ready( function ( $ ) {
 		var mapCanvas = document.getElementById( '<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' ),
-			value = $( '#<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' ).attr('data-value'),
+			values = $( '#<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>' ).attr('data-value'),
 			latlng = null,
 			mapOptions = {
 				center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
@@ -113,9 +135,9 @@ foreach( $value as $key => $val ) {
 			},
 			marker_icon = <?php echo ( ! empty( $map_options['marker'] ) ? '\'' . esc_url( $map_options['marker'] ) . '\'' : 'null' ) ?>;
 
-		if ( value ) {
+		if ( values ) {
 			try {
-				value = JSON.parse( value );
+				values = JSON.parse( values );
 			} catch ( err ) {
 				return;
 			}
@@ -126,8 +148,8 @@ foreach( $value as $key => $val ) {
 		//------------------------------------------------------------------------
 		// Initialize the map, set default center to the first item.
 		//
-		if ( value.length && value[0].hasOwnProperty('geo') ) {
-			latlng = value[0].geo;
+		if ( values.length && values[0].hasOwnProperty('geo') ) {
+			latlng = values[0].geo;
 			mapOptions.center = new google.maps.LatLng( latlng );
 		}
 
@@ -135,40 +157,42 @@ foreach( $value as $key => $val ) {
 		var bounds = new google.maps.LatLngBounds();
 		//var geocoder = new google.maps.Geocoder();
 
+		// If there are more than one markers, do not open an infowindow on load.
+		var autoOpenInfoWindow = ( 1 === values.length );
+
 		//------------------------------------------------------------------------
 		// Add the items.
 		//
-		var autoOpenInfoWindow = ( 1 === value.length );
-		$.each( value, function( i, val ) {
+		$.each( values, function( i, val ) {
 
-			if ( value[ i ].hasOwnProperty('geo') ) {
+			if ( values[ i ].hasOwnProperty('geo') ) {
 
 				//------------------------------------------------------------------------
 				// Initialize marker.
 				//
-				value[ i ].markerOptions = {
+				values[ i ].markerOptions = {
 					map : map,
 					draggable: false
 				};
 
-				value[ i ].markerOptions.position = value[ i ].geo;
+				values[ i ].markerOptions.position = values[ i ].geo;
 
-				if ( value[ i ].hasOwnProperty('marker_icon') ) {
-					value[ i ].markerOptions.icon = value[ i ].marker_icon;
+				if ( values[ i ].hasOwnProperty('marker_icon') ) {
+					values[ i ].markerOptions.icon = values[ i ].marker_icon;
 				} else if ( marker_icon ) {
-					value[ i ].markerOptions.icon = marker_icon;
+					values[ i ].markerOptions.icon = marker_icon;
 				}
 
 				// Add the marker.
-				value[ i ].marker = new google.maps.Marker( value[ i ].markerOptions );
-				bounds.extend( value[ i ].markerOptions.position );
+				values[ i ].marker = new google.maps.Marker( values[ i ].markerOptions );
+				bounds.extend( values[ i ].markerOptions.position );
 
 				//------------------------------------------------------------------------
 				// Initialize info window.
 				//
-				if ( value[ i ].address_html ) {
+				if ( values[ i ].address_html ) {
 
-					value[ i ].infowindowOpen = function( open ) {
+					values[ i ].infowindowOpen = function( open ) {
 						if ( ! this.infowindow ) {
 							this.infowindow = new google.maps.InfoWindow();
 						}
@@ -179,18 +203,18 @@ foreach( $value as $key => $val ) {
 						}
 					};
 
-					value[ i ].infowindowOpen( autoOpenInfoWindow );
+					values[ i ].infowindowOpen( autoOpenInfoWindow );
 
 					// InfoWindow trigger
-					google.maps.event.addListener( value[ i ].marker, 'click', function () {
-						value[ i ].infowindowOpen( true );
+					google.maps.event.addListener( values[ i ].marker, 'click', function () {
+						values[ i ].infowindowOpen( true );
 					} );
 				}
 			}
 
 		} );
 
-		if ( 1 < value.length ) {
+		if ( 1 < values.length ) {
 
 			// Automatic sizing for multiple markers.
 			map.fitBounds( bounds );

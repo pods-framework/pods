@@ -59,7 +59,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 	class="pods-maps-map-canvas pods-<?php echo esc_attr( $form_field_type ); ?>-maps-map-canvas"></div>
 
 <script type="text/javascript">
-	jQuery( document ).ready( function ( $ ) {
+jQuery( document ).ready( function ( $ ) {
+	// Window.load required. We need to wait until DFV is ready.
+	$(window).load( function() {
 
 		if ( typeof google !== 'undefined' ) {
 
@@ -80,13 +82,21 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					lat: $( '#<?php echo esc_attr( $attributes['id'] . '-geo-lat' ); ?>' ),
 					lng: $( '#<?php echo esc_attr( $attributes['id'] . '-geo-lng' ); ?>' )
 				},
-			// @todo check pregreplace, maybe this can be done better (nl2br not working)
-			// @todo check field type
-				fieldsFormat = '<?php echo esc_attr( preg_replace( "/\n/m", '<br>', pods_v( 'address_display_type_custom', $options ) ) ); ?>',
+				// @todo check pregreplace, maybe this can be done better (nl2br not working)
+				// @todo check field type
+				fieldsFormat = '<?php echo esc_attr(
+					preg_replace(
+						"/\n/m",
+						'<br>',
+						pods_v( 'address_display_type_custom', $options )
+					)
+				); ?>',
 
 				map = null,
 				marker = null,
-				marker_icon = <?php echo ( ! empty( $map_options['marker'] ) ? '\'' . esc_url( $map_options['marker'] ) . '\'' : 'null' ) ?>,
+				marker_icon = <?php echo( ! empty( $map_options['marker'] ) ? '\'' .
+				                                                              esc_url( $map_options['marker'] ) .
+				                                                              '\'' : 'null' ) ?>,
 				infowindow = <?php echo esc_attr( ( ! empty( $options['maps_info_window'] ) ) ? 'null' : 'false' ); ?>,
 				infowindowContent = '',
 				infowindowEditor = '',
@@ -94,11 +104,12 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 				address = null,
 				latlng = null,
 				mapOptions = {
-					center: new google.maps.LatLng( 41.850033, -87.6500523 ), // default (Chicago)
+					center: new google.maps.LatLng( 41.850033, - 87.6500523 ), // default (Chicago)
 					marker: '<?php echo esc_attr( $map_options['marker'] ); ?>',
 					zoom: <?php echo absint( $map_options['zoom'] ); ?>,
 					mapTypeId: '<?php echo esc_attr( $map_options['type'] ); ?>'
 				};
+
 
 			//------------------------------------------------------------------------
 			// Initialze the map
@@ -209,9 +220,9 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 
 				// Set the marker options
 				var markerOptions = {
-					map : map,
-					position : latlng,
-					draggable : true
+					map: map,
+					position: latlng,
+					draggable: true
 				};
 
 				if ( marker_icon ) {
@@ -299,8 +310,12 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			// Field updates
 			//
 			function podsUpdateLatLng() {
-				if ( fields.lat.length ) { fields.lat.val( latlng.lat )	}
-				if ( fields.lng.length ) { fields.lng.val( latlng.lng )	}
+				if ( fields.lat.length ) {
+					fields.lat.val( latlng.lat )
+				}
+				if ( fields.lng.length ) {
+					fields.lng.val( latlng.lng )
+				}
 			}
 
 			function podsUpdateAddress() {
@@ -309,34 +324,34 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 					if ( fieldType === 'address' ) {
 						// Reset line_1 since this is made of two parts from Google (street_number and route)
 						if ( fields.line_1.length ) {
-							fields.line_1.val('');
+							fields.line_1.val( '' );
 						}
 						$.each( address, function ( i, address_component ) {
-							if ( fields.line_1.length && address_component.types[0] === "street_number" ){
+							if ( fields.line_1.length && address_component.types[ 0 ] === "street_number" ) {
 								fields.line_1.val( ' ' + address_component.long_name );
 							}
-							if ( fields.line_1.length && address_component.types[0] === "route" ){
+							if ( fields.line_1.length && address_component.types[ 0 ] === "route" ) {
 								fields.line_1.val( address_component.long_name + fields.line_1.val() );
 							}
-							if ( fields.city.length && address_component.types[0] === "locality" ){
+							if ( fields.city.length && address_component.types[ 0 ] === "locality" ) {
 								fields.city.val( address_component.long_name );
 							}
-							if ( fields.country.length && address_component.types[0] === "country" ) {
-								if ( fields.country.is('select') ) {
+							if ( fields.country.length && address_component.types[ 0 ] === "country" ) {
+								if ( fields.country.is( 'select' ) ) {
 									fields.country.val( address_component.short_name );
 								} else {
 									fields.country.val( address_component.long_name );
 								}
 							}
-							if ( fields.region.length && address_component.types[0] === "administrative_area_level_1" ) {
-								if ( fields.region.is('select') ) {
+							if ( fields.region.length && address_component.types[ 0 ] === "administrative_area_level_1" ) {
+								if ( fields.region.is( 'select' ) ) {
 									// @todo Validate for US states
 									fields.region.val( address_component.short_name );
 								} else {
 									fields.region.val( address_component.long_name );
 								}
 							}
-							if ( fields.postal_code.length && address_component.types[0] === "postal_code" ) {
+							if ( fields.postal_code.length && address_component.types[ 0 ] === "postal_code" ) {
 								fields.postal_code.val( address_component.long_name );
 							}
 						} );
@@ -345,12 +360,12 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 
 						if ( fields.text.length ) {
 							// Reset value
-							fields.text.val('');
+							fields.text.val( '' );
 							$.each( address, function ( i, address_component ) {
 								if ( address_component.long_name !== '' ) {
-									if ( address_component.types[0] === "route" ) {
+									if ( address_component.types[ 0 ] === "route" ) {
 										fields.text.val( address_component.long_name + fields.text.val() );
-									} else if ( address_component.types[0] === "street_number" ){
+									} else if ( address_component.types[ 0 ] === "street_number" ) {
 										fields.text.val( ' ' + address_component.long_name );
 									} else {
 										if ( fields.text.val() === '' ) {
@@ -372,13 +387,25 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 			//
 			function podsMergeAddressFields() {
 				var tmpAddress = [];
-				if ( fields.line_1.length ) { tmpAddress.push( fields.line_1.val() ); }
-				if ( fields.line_2.length ) { tmpAddress.push( fields.line_2.val() ); }
-				if ( fields.city.length ) { tmpAddress.push( fields.city.val() ); }
-				if ( fields.postal_code.length ) { tmpAddress.push( fields.postal_code.val() ); }
-				if ( fields.region.length ) { tmpAddress.push( fields.region.val() ); }
-				if ( fields.country.length ) { tmpAddress.push( fields.country.val() ); }
-				address = tmpAddress.join(', ');
+				if ( fields.line_1.length ) {
+					tmpAddress.push( fields.line_1.val() );
+				}
+				if ( fields.line_2.length ) {
+					tmpAddress.push( fields.line_2.val() );
+				}
+				if ( fields.city.length ) {
+					tmpAddress.push( fields.city.val() );
+				}
+				if ( fields.postal_code.length ) {
+					tmpAddress.push( fields.postal_code.val() );
+				}
+				if ( fields.region.length ) {
+					tmpAddress.push( fields.region.val() );
+				}
+				if ( fields.country.length ) {
+					tmpAddress.push( fields.country.val() );
+				}
+				address = tmpAddress.join( ', ' );
 				return address;
 			}
 
@@ -400,15 +427,16 @@ echo PodsForm::label( 'map-google', __( 'Google Maps', 'pod' ) );
 						delete lines[ key ];
 					} else {
 						// Remove {{REMOVE}}
-						lines[ key ] = line.replace('{{REMOVE}}', '')
+						lines[ key ] = line.replace( '{{REMOVE}}', '' )
 					}
 				} );
 				// Reset array keys and join it back together
-				html = lines.filter(function(){return true;}).join( '<br>' );
+				html = lines.filter( function () {return true;} ).join( '<br>' );
 				return html;
 			}
 
 		}
 
-	} ); // end document ready
+	} ); // end window load
+} ); // end document ready
 </script>

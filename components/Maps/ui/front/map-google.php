@@ -148,7 +148,7 @@ if ( ! empty( $options['maps_combine_equal_geo'] ) ) {
 }
 ?>
 <div id="<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>"
-	class="pods-address-maps-map-canvas"
+	class="pods-maps-map-canvas pods-<?php echo $type ?>-maps-map-canvas"
 	data-value="<?php echo esc_attr( json_encode( $value ) ); ?>"></div>
 
 <script type="text/javascript">

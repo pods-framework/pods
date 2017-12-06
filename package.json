@@ -1,9 +1,9 @@
 {
   "name": "pods",
-  "version": "2.7.0-rc-1",
+  "version": "2.7.1-a-1",
   "description": "Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.",
   "author": "Pods Foundation, Inc",
-  "homepage": "http://pods.io/",
+  "homepage": "https://pods.io/",
   "bugs": "https://github.com/pods-framework/pods/issues",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "grunt-contrib-connect": "^1.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-exec": "~0.4.6",
-    "grunt-git": "^1.0.0",
+    "grunt-git": "^1.0.9",
     "grunt-mkdir": "^1.0.0",
     "grunt-newer": "^1.2.0",
     "grunt-push-svn": "^0.2.2",

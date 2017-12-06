@@ -425,8 +425,61 @@ class Pods_Helpers extends PodsComponent {
 
             $params = $_safe_params;
         }
-        elseif ( is_callable( (string) $params->helper ) )
-            echo call_user_func( (string) $params->helper, $params->value, $params->name, $params, $obj );
+        elseif ( is_callable( (string) $params->helper ) ) {
+            $params->helper = (string) $params->helper;
+
+			$disallowed = array(
+				'system',
+				'exec',
+				'popen',
+				'eval',
+				'preg_replace',
+				'create_function',
+				'include',
+				'include_once',
+				'require',
+				'require_once',
+			);
+
+			$allowed = array();
+
+			/**
+			 * Allows adjusting the disallowed callbacks as needed.
+			 *
+			 * @param array $disallowed List of callbacks not allowed.
+			 * @param array $params     Parameters used by Pods::helper() method.
+			 *
+			 * @since 2.7
+			 */
+			$disallowed = apply_filters( 'pods_helper_disallowed_callbacks', $disallowed, get_object_vars( $params ) );
+
+			/**
+			 * Allows adjusting the allowed allowed callbacks as needed.
+			 *
+			 * @param array $allowed List of callbacks explicitly allowed.
+			 * @param array $params  Parameters used by Pods::helper() method.
+			 *
+			 * @since 2.7
+			 */
+			$allowed = apply_filters( 'pods_helper_allowed_callbacks', $allowed, get_object_vars( $params ) );
+
+			// Clean up helper callback (if string)
+			$params->helper = strip_tags( str_replace( array( '`', chr( 96 ) ), "'", $params->helper ) );
+
+			$is_allowed = false;
+
+			if ( ! empty( $allowed ) ) {
+				if ( in_array( $params->helper, $allowed, true ) ) {
+					$is_allowed = true;
+				}
+			} elseif ( ! in_array( $params->helper, $disallowed, true ) ) {
+				$is_allowed = true;
+			}
+
+			if ( $is_allowed ) {
+				echo call_user_func( $params->helper, $params->value, $params->name, $params, $obj );
+			}
+        }
 
         $out = ob_get_clean();
 

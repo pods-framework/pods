@@ -293,6 +293,9 @@ function frontier_do_subtemplate( $atts, $content ) {
 				$target_id = null;
 				if ( isset( $entry[ 'ID' ] ) ) {
 					$target_id = $entry[ 'ID' ];
+				} elseif ( isset( $entry[ 'id' ] ) ) {
+					// Advanced Content Types have lowercase 'id'
+					$target_id = $entry[ 'id' ];
 				} elseif ( isset( $entry[ 'term_id' ] ) ) {
 					$target_id = $entry[ 'term_id' ];
 				}

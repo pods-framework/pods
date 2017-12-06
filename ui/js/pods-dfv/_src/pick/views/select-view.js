@@ -168,16 +168,18 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 * @var {RelationshipCollection} this.collection
 	 */
 	onAttach: function () {
-		const viewName = this.fieldConfig.view_name;
-		const formatType = this.fieldConfig.pick_format_type;
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
+		const limit = this.fieldConfig.pick_limit;
+		const numSelected = this.collection.filterBySelected().length;
 
 		// Initialize select2 fields
-		if ( 'select2' === viewName ) {
+		if ( 'select2' === view_name ) {
 			this.setupSelect2();
 		}
 
 		// Check initial selection limit status for regular multiselect and enforce it if needed
-		if ( 'select' === viewName && 'multi' === formatType ) {
+		if ( 'select' === view_name && 'multi' === format_type ) {
 
 			// Store initial selection in case we need to revert back from an invalid state
 			this.multiLastValidSelection = this.$el.val();
@@ -194,11 +196,11 @@ export const SelectView = Marionette.CollectionView.extend( {
 	 */
 	onChangeSelected: function () {
 		const limit = +this.fieldConfig.pick_limit; // Unary plus will implicitly cast to number
-		const viewName = this.fieldConfig.view_name;
-		const formatType = this.fieldConfig.pick_format_type;
+		const view_name = this.fieldConfig.view_name;
+		const format_type = this.fieldConfig.pick_format_type;
 
 		// Regular multiselect may need to reject the selection change
-		if ( 'select' === viewName && 'multi' === formatType ) {
+		if ( 'select' === view_name && 'multi' === format_type ) {
 
 			// Has the selection gone OVER the limit?  Can occur with consecutive item selection.
 			if ( null !== this.$el.val() && 0 !== limit && limit < this.$el.val().length ) {
@@ -301,8 +303,23 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const ajaxData = fieldConfig.ajax_data;
 		const select2Overrides = fieldConfig.select2_overrides;
 		const limit = fieldConfig.pick_limit;
+		const isSingle = ( 'single' === fieldConfig.pick_format_type );
+		const selectedCount = this.collection.filterBySelected().length;
 		let $ulContainer, select2Options, placeholder;
 
+		// 'placeholder' for single select requires an empty option.  None of the examples set selected but
+		// it did not work for me in testing with just an empty option like the examples.
+		//
+		// https://select2.org/placeholders#single-select-placeholders
+		// https://github.com/select2/select2/issues/3553
+		if ( 0 === selectedCount && isSingle ) {
+			$select2.prepend( '<option selected="selected">' );
+		}
+
+		// ToDo:
+		// limitDisable is only used to control the List View's select2 component, it won't be set
+		// for regular autocomplete.  This function should be generic and not have to poke around with
+		// special properties like this for exception cases.
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
 		} else {
@@ -310,13 +327,12 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		select2Options = {
-			maximumSelectionLength: limit,
-			placeholder: placeholder,
-			allowClear: ( 'single' === fieldConfig.pick_format_type ),
-			disabled: fieldConfig.limitDisable,
-			escapeMarkup: function ( text ) {
-				return text;
-			}
+			maximumSelectionLength: isSingle ? undefined : limit, // Should not be set for single select, messes up placeholder
+			placeholder           : placeholder,
+			allowClear            : isSingle,
+			disabled              : fieldConfig.limitDisable,
+			tags                  : fieldConfig.pick_taggable,
+			escapeMarkup          : function ( text ) { return text; }
 		};
 
 		if ( ajaxData.ajax ) {

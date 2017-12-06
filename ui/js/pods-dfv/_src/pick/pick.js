@@ -92,6 +92,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 			pick_format_type  : 'multi',
 			selectFromExisting: true,
 			ajax_data         : this.fieldConfig.get( 'ajax_data' ),
+			select2_overrides : this.fieldConfig.get( 'select2_overrides' ),
 			label             : this.fieldConfig.get( 'label' ),
 			pick_limit        : pick_limit
 		};

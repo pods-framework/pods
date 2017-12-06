@@ -4,8 +4,6 @@
 import {PodsFieldListView, PodsFieldView} from 'pods-dfv/_src/core/pods-field-views';
 import {RelationshipCollection} from 'pods-dfv/_src/pick/relationship-model';
 
-const SELECT2_DEBOUNCE_DELAY = 300;
-const SELECT2_AJAX_MINIMUM_INPUT_LENGTH = 1;
 const SELECT2_UL_TARGET = 'ul.select2-selection__rendered';
 const SELECT2_SELECTED_TARGET = '.select2-selection__choice';
 
@@ -310,9 +308,25 @@ export const SelectView = Marionette.CollectionView.extend( {
 		const $select2 = this.$el;
 		const fieldConfig = this.options.fieldModel.get( 'fieldConfig' );
 		const ajaxData = fieldConfig.ajax_data;
+		const select2Overrides = fieldConfig.select2_overrides;
 		const limit = fieldConfig.pick_limit;
+		const isSingle = ( 'single' === fieldConfig.pick_format_type );
+		const selectedCount = this.collection.filterBySelected().length;
 		let $ulContainer, select2Options, placeholder;
 
+		// 'placeholder' for single select requires an empty option.  None of the examples set selected but
+		// it did not work for me in testing with just an empty option like the examples.
+		//
+		// https://select2.org/placeholders#single-select-placeholders
+		// https://github.com/select2/select2/issues/3553
+		if ( 0 === selectedCount && isSingle ) {
+			$select2.prepend( '<option selected="selected">' );
+		}
+
+		// ToDo:
+		// limitDisable is only used to control the List View's select2 component, it won't be set
+		// for regular autocomplete.  This function should be generic and not have to poke around with
+		// special properties like this for exception cases.
 		if ( fieldConfig.limitDisable ) {
 			placeholder = `${PodsI18n.__( 'You can only select' )} ${sprintf( PodsI18n._n( '%s item', '%s items', limit ), limit )}`;
 		}
@@ -321,21 +335,22 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		select2Options = {
-			maximumSelectionLength: limit,
+			maximumSelectionLength: isSingle ? undefined : limit, // Should not be set for single select, messes up placeholder
 			placeholder           : placeholder,
-			allowClear            : ( 'single' === fieldConfig.pick_format_type ),
+			allowClear            : isSingle,
 			disabled              : fieldConfig.limitDisable,
+			tags                  : fieldConfig.pick_taggable,
 			escapeMarkup          : function ( text ) { return text; }
 		};
 
 		if ( ajaxData.ajax ) {
 			jQuery.extend( select2Options, {
-				minimumInputLength: SELECT2_AJAX_MINIMUM_INPUT_LENGTH,
+				minimumInputLength: ajaxData.minimum_input_length,
 				ajax              : {
 					url           : ajaxurl + '?pods_ajax=1',
 					type          : 'POST',
 					dataType      : 'json',
-					delay         : SELECT2_DEBOUNCE_DELAY,
+					delay         : ajaxData.delay,
 					data          : function ( params ) {
 						return {
 							_wpnonce: ajaxData._wpnonce,
@@ -356,7 +371,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		}
 
 		// Initialize select2
-		$select2.selectWoo( select2Options );
+		$select2.selectWoo( jQuery.extend( true, select2Options, select2Overrides ) );
 
 		// Get a reference to the ul container of the visual UI portion.  Can't do this until select2 is initialized
 		$ulContainer = $select2.parent().find( SELECT2_UL_TARGET );

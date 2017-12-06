@@ -481,12 +481,15 @@ class PodsInit {
 			$post_format_post_types = array();
 
 			foreach ( $post_types as $post_type ) {
-				// Post Type exists already
 				if ( isset( $pods_cpt_ct['post_types'][ $post_type['name'] ] ) ) {
+					// Post type was setup already
 					continue;
 				} elseif ( ! empty( $post_type['object'] ) && isset( $existing_post_types[ $post_type['object'] ] ) ) {
+					// Post type exists already
+
 					continue;
 				} elseif ( ! $force && isset( $existing_post_types[ $post_type['name'] ] ) ) {
+					// Post type was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
 
@@ -711,12 +714,15 @@ class PodsInit {
 			}//end foreach
 
 			foreach ( $taxonomies as $taxonomy ) {
-				// Taxonomy Type exists already
 				if ( isset( $pods_cpt_ct['taxonomies'][ $taxonomy['name'] ] ) ) {
+					// Taxonomy was setup already
 					continue;
 				} elseif ( ! empty( $taxonomy['object'] ) && isset( $existing_taxonomies[ $taxonomy['object'] ] ) ) {
+					// Taxonomy exists already
+
 					continue;
 				} elseif ( ! $force && isset( $existing_taxonomies[ $taxonomy['name'] ] ) ) {
+					// Taxonomy was setup and exists already, but we aren't forcing it to be setup again
 					continue;
 				}
 
@@ -1016,47 +1022,66 @@ class PodsInit {
 		// Handle existing post types / taxonomies settings (just REST for now)
 		global $wp_post_types, $wp_taxonomies;
 
-		foreach ( $existing_post_types as $post_type_name => $post_type_obj ) {
+		$post_type_names = wp_list_pluck( $post_types, 'name', 'id' );
+		$taxonomy_names = wp_list_pluck( $taxonomies, 'name', 'id' );
+
+		foreach ( $existing_post_types as $post_type_name => $post_type_name_again ) {
 			if ( isset( self::$content_types_registered['post_types'] ) && in_array( $post_type_name, self::$content_types_registered['post_types'] ) ) {
-				continue;
-			} elseif ( empty( $post_types[ $post_type_name ] ) ) {
+				// Post type already registered / setup by Pods
 				continue;
 			}
 
-			$pod = $post_types[ $post_type_name ];
+			$pod_id = array_search( $post_type_name, $post_type_names, true );
+
+			if ( ! $pod_id ) {
+				// Post type not a pod
+				continue;
+			}
+
+			$pod = $post_types[ $pod_id ];
 
 			// REST API
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
 
 			if ( $rest_enabled ) {
-				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], $post_type_name ) );
+				if ( empty( $wp_post_types[ $post_type_name ]->show_in_rest ) ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_post_types[ $post_type_name ] ), true ) );
 
-				$wp_post_types[ $post_type_name ]->show_in_rest          = true;
-				$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
-				$wp_post_types[ $post_type_name ]->rest_controller_class = 'WP_REST_Posts_Controller';
+					$wp_post_types[ $post_type_name ]->show_in_rest          = true;
+					$wp_post_types[ $post_type_name ]->rest_base             = $rest_base;
+					$wp_post_types[ $post_type_name ]->rest_controller_class = 'WP_REST_Posts_Controller';
+				}
 
 				new PodsRESTFields( $post_type_name );
 			}
 		}//end foreach
 
-		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_obj ) {
+		foreach ( $existing_taxonomies as $taxonomy_name => $taxonomy_name_again ) {
 			if ( isset( self::$content_types_registered['taxonomies'] ) && in_array( $taxonomy_name, self::$content_types_registered['taxonomies'] ) ) {
-				continue;
-			} elseif ( empty( $taxonomies[ $taxonomy_name ] ) ) {
+				// Taxonomy already registered / setup by Pods
 				continue;
 			}
 
-			$pod = $taxonomies[ $taxonomy_name ];
+			$pod_id = array_search( $taxonomy_name, $taxonomy_names, true );
+
+			if ( ! $pod_id ) {
+				// Taxonomy not a pod
+				continue;
+			}
+
+			$pod = $taxonomies[ $pod_id ];
 
 			// REST API
 			$rest_enabled = (boolean) pods_v( 'rest_enable', $pod['options'], false );
 
 			if ( $rest_enabled ) {
-				$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], $taxonomy_name ) );
+				if ( empty( $wp_taxonomies[ $taxonomy_name ]->show_in_rest ) ) {
+					$rest_base = sanitize_title( pods_v( 'rest_base', $pod['options'], pods_v( 'rest_base', $wp_taxonomies[ $taxonomy_name ] ), true ) );
 
-				$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
-				$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
-				$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
+					$wp_taxonomies[ $taxonomy_name ]->show_in_rest          = true;
+					$wp_taxonomies[ $taxonomy_name ]->rest_base             = $rest_base;
+					$wp_taxonomies[ $taxonomy_name ]->rest_controller_class = 'WP_REST_Terms_Controller';
+				}
 
 				new PodsRESTFields( $taxonomy_name );
 			}

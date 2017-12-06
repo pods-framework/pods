@@ -15,15 +15,43 @@
  */
 class Pods_Component_Maps extends PodsComponent {
 
+	/**
+	 * @var string
+	 */
 	static $component_path;
+
+	/**
+	 * @var string
+	 */
 	static $component_file;
+
+	/**
+	 * @var array
+	 */
 	static $options;
+
+	/**
+	 * @var \Pods_Component_Maps_Provider
+	 */
 	static $provider;
+
+	/**
+	 * @var string
+	 */
 	static $api_key = '';
+
+	/**
+	 * @var string
+	 */
+	static $dir = '';
 
 	private static $nonce = 'pods_maps';
 
 	public function __construct() {
+
+		self::$dir = plugin_dir_path( __FILE__ );
+
+		include_once( self::$dir . 'Maps-Provider.php' );
 
 		// See https://github.com/pods-framework/pods/pull/3711
 		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'field_options' ), 10, 2 );
@@ -83,7 +111,7 @@ class Pods_Component_Maps extends PodsComponent {
 		) );
 
 		// @todo Allways load required front end assets (Maybe as an option?)
-		//       Enqueue doesn't work in the display function anymore (hook is already fires before that)
+		// Enqueue doesn't work in the display function anymore (hook is already fires before that)
 		self::$provider->assets();
 	}
 
@@ -344,7 +372,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_display_value( $output, $value, $view, $display_type, $name, $options, $pod, $id ) {
 
-		if ( ! empty( $options['maps'] ) ) {
+		if ( pods_v( 'maps', $options ) && 'admin' !== pods_v( 'maps_display', $options ) ) {
 			$view     = '';
 			$provider = get_class( self::$provider );
 
@@ -385,7 +413,7 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_input_view_extra( $view, $type, $name, $value, $options, $pod, $id ) {
 
-		if ( ! empty( $options['maps'] ) ) {
+		if ( pods_v( 'maps', $options ) ) {
 			$provider = get_class( self::$provider );
 			if ( is_callable( array( $provider, 'field_input_view' ) ) ) {
 				$view = self::$provider->field_input_view();

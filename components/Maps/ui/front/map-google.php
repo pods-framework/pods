@@ -67,7 +67,6 @@ if ( ! $multiple ) {
 	$value = array( $value );
 	$multiple = false;
 }
-
 foreach( $value as $key => $val ) {
 
 	$val = wp_parse_args( $val, array(
@@ -258,11 +257,13 @@ if ( ! empty( $options['maps_combine_equal_geo'] ) ) {
 			map.panToBounds( bounds );
 			mapOptions.center = map.getCenter();
 
-			//(optional) restore the zoom level after the map is done scaling
-			/*var listener = google.maps.event.addListener( map, "idle", function () {
-				map.setZoom( mapOptions.zoom );
-				google.maps.event.removeListener( listener );
-			} );*/
+			var listener = google.maps.event.addListener( map, "idle", function () {
+				// If the current zoom is higher than the original zoom (due to fitBounds) set it to the original.
+				if ( map.getZoom() > mapOptions.zoom ) {
+					map.setZoom( mapOptions.zoom );
+					google.maps.event.removeListener( listener );
+				}
+			} );
 
 		} else {
 			map.setCenter( mapOptions.center );

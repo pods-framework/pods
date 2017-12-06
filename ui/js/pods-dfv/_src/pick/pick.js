@@ -162,7 +162,7 @@ export const Pick = PodsDFVFieldLayout.extend( {
 		_.each( data.results, function ( element ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 
-			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autocomplete portion
 			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}

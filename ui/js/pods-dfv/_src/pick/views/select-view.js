@@ -170,8 +170,6 @@ export const SelectView = Marionette.CollectionView.extend( {
 	onAttach: function () {
 		const view_name = this.fieldConfig.view_name;
 		const format_type = this.fieldConfig.pick_format_type;
-		const limit = this.fieldConfig.pick_limit;
-		const numSelected = this.collection.filterBySelected().length;
 
 		// Initialize select2 fields
 		if ( 'select2' === view_name ) {
@@ -284,7 +282,7 @@ export const SelectView = Marionette.CollectionView.extend( {
 		_.each( data.results, function ( element ) {
 			element.text = element.name; // Select2 needs the "text" key but our model uses "name"
 
-			// Only keep choices that haven't been selected yet, we don't want selected items in the autoselect portion
+			// Only keep choices that haven't been selected yet, we don't want selected items in the autocomplete portion
 			if ( !selectedItems.get( element.id ) ) {
 				returnList.push( element );
 			}
@@ -328,11 +326,13 @@ export const SelectView = Marionette.CollectionView.extend( {
 
 		select2Options = {
 			maximumSelectionLength: isSingle ? undefined : limit, // Should not be set for single select, messes up placeholder
-			placeholder           : placeholder,
-			allowClear            : isSingle,
-			disabled              : fieldConfig.limitDisable,
-			tags                  : fieldConfig.pick_taggable,
-			escapeMarkup          : function ( text ) { return text; }
+			placeholder: placeholder,
+			allowClear: isSingle,
+			disabled: fieldConfig.limitDisable,
+			tags: fieldConfig.pick_taggable,
+			escapeMarkup: function ( text ) {
+				return text;
+			}
 		};
 
 		if ( ajaxData.ajax ) {

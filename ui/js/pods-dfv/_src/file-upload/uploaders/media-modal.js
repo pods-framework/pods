@@ -67,9 +67,8 @@ export const MediaModal = PodsFileUploader.extend( {
 				// Get thumbnail if it exists
 				if ( sizes.thumbnail !== undefined && sizes.thumbnail.url !== undefined ) {
 					attachmentThumbnail = sizes.thumbnail.url;
-
-				// If thumbnail doesn't exist, get full because this is a small image
 				} else if ( sizes.full !== undefined && sizes.full.url !== undefined ) {
+					// If thumbnail doesn't exist, get full because this is a small image
 					attachmentThumbnail = sizes.full.url;
 				}
 			}

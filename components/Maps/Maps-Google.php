@@ -9,6 +9,10 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 		self::$geocode_url = apply_filters( 'pods_maps_google_geocode_url', 'https://maps.googleapis.com/maps/api/geocode/json' );
 	}
 
+	/**
+	 * Load provider assets.
+	 * @inheritdoc
+	 */
 	public function assets() {
 
 		if ( ! empty( Pods_Component_Maps::$api_key ) ) {
@@ -218,6 +222,10 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 		return $options;
 	}
 
+	/**
+	 * The input field view file. Used by pods_view();
+	 * @inheritdoc
+	 */
 	public function field_input_view() {
 
 		$view = false;
@@ -228,6 +236,10 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 		return $view;
 	}
 
+	/**
+	 * The display field view file. Used by pods_view();
+	 * @inheritdoc
+	 */
 	public function field_display_view() {
 
 		$view = false;
@@ -244,11 +256,14 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 * @param string|array $data Any type of address data
 	 * @param string       $api_key
 	 *
-	 * @return array Latitude, Longitude (format: array( 'lat' => value, 'lng' => value ) )
+	 * @return array {
+	 *     @type  array  $address  See get_address()
+	 *     @type  array  $geo      See get_latlng()
+	 * }
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function geocode_address( $data, $api_key = '' ) {
 
@@ -270,7 +285,7 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function geocode_address_to_latlng( $address, $api_key = '' ) {
 
@@ -294,11 +309,11 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 * @param string|array $lat_lng Lat / long numbers
 	 * @param string       $api_key
 	 *
-	 * @return string Address information
+	 * @return array Address information
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function geocode_latlng_to_address( $lat_lng, $api_key = '' ) {
 
@@ -316,11 +331,18 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 *
 	 * @param array $data The data from Google
 	 *
-	 * @return array
+	 * @return array {
+	 *     @type  string  $line_1       Line 1 address parts, space separated.
+	 *     @type  string  $line_2       Line 2 address parts, space separated.
+	 *     @type  string  $postal_code  Postal/ZIP code.
+	 *     @type  string  $city         City.
+	 *     @type  string  $region       Region parts, space separated.
+	 *     @type  string  $country      Country.
+	 * }
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function get_address( $data ) {
 
@@ -399,11 +421,14 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 *
 	 * @param array $data The data from Google
 	 *
-	 * @return array
+	 * @return array {
+	 *     @type  float|string  $lat  Latitude.
+	 *     @type  float|string  $lng  Longitude.
+	 * }
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function get_latlng( $data ) {
 
@@ -429,7 +454,7 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	 *
 	 * @public
 	 * @static
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	public static function geocode( $data, $api_key = '', $type = 'address' ) {
 
@@ -438,6 +463,7 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 		}
 
 		$url = self::$geocode_url . '?' . $type . '=' . $data;
+
 		/*if ( ! empty( $api_key ) ) {
 			$url .= '&key=' . $api_key;
 		}*/

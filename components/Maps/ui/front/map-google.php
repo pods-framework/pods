@@ -227,6 +227,13 @@ if ( ! empty( $options['maps_combine_equal_geo'] ) ) {
 							this.infowindow = new google.maps.InfoWindow();
 						}
 
+						// Close other intowindows.
+						$.each( values, function( i, val ) {
+							if ( values[ i ].hasOwnProperty('infowindow') ) {
+								values[ i ].infowindow.close();
+							}
+						} );
+
 						this.infowindow.setContent( this.address_html );
 						if ( open ) {
 							this.infowindow.open( map, this.marker );

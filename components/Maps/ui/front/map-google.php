@@ -127,6 +127,25 @@ foreach( $value as $key => $val ) {
 	unset( $value[ $key ]['pod'] );
 }
 
+if ( ! empty( $options['maps_combine_equal_geo'] ) ) {
+
+	// User array keys to match locations.
+	$combined_values = array();
+	foreach ( $value as $key => $val ) {
+		$geo_key = implode( ',', $val['geo'] );
+		if ( array_key_exists( $geo_key, $combined_values ) ) {
+			$combined_values[ $geo_key ]['address_html'] .= $val['address_html'];
+			continue;
+		}
+		$combined_values[ $geo_key ] = $val;
+	}
+
+	// Reset array keys.
+	$value = array();
+	foreach ( $combined_values as $val ) {
+		$value[] = $val;
+	}
+}
 ?>
 <div id="<?php echo esc_attr( $attributes['id'] . '-map-canvas' ); ?>"
 	class="pods-address-maps-map-canvas"

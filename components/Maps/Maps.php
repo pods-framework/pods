@@ -263,8 +263,7 @@ class Pods_Component_Maps extends PodsComponent {
 			'type'       => 'boolean',
 			'dependency' => true
 		);
-		// @todo Autocorrect is not implemented yet
-		/*$options[ 'maps_autocorrect' ] = array(
+		$options['maps_autocorrect'] = array(
 			'label'      => __( 'Autocorrect Address during save', 'pods' ),
 			'depends-on' => array(
 				'maps' => true,
@@ -272,7 +271,7 @@ class Pods_Component_Maps extends PodsComponent {
 			),
 			'default'    => 0,
 			'type'       => 'boolean'
-		);*/
+		);
 		$options['maps_display']             = array(
 			'label'      => __( 'Map Display', 'pods' ),
 			'depends-on' => array( 'maps' => true ),

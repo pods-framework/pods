@@ -453,13 +453,28 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function pods_ui_field_address_pre_save( $value, $type, $id, $name, $options, $fields, $pod, $params ) {
 
+		$org_value = $value;
+
 		// Get geocode from address fields
 		if ( isset( $value['address'] ) ) {
-			$geocode = self::geocode_address_to_latlng( $value['address'] );
+			$geocode = array();
+			if ( pods_v( 'maps_autocorrect', $options, 0 ) ) {
+				$address = self::geocode_address( $value['address'] );
+				if ( ! empty( $address['address'] ) ) {
+					$value['address'] = $address['address'];
+				}
+				if ( ! empty( $address['geo'] ) ) {
+					$geocode = $address['geo'];
+				}
+			} else {
+				$geocode = self::geocode_address_to_latlng( $value['address'] );
+			}
 			if ( isset( $geocode['lat'] ) && isset( $geocode['lng'] ) ) {
 				$value['geo'] = $geocode;
 			}
 		}
+
+		$value = apply_filters( 'pods_ui_field_address_maps_pre_save', $value, $org_value, $type, $id, $name, $options, $fields, $pod, $params );
 
 		return $value;
 

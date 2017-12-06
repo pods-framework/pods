@@ -306,6 +306,30 @@ class Pods_Component_Maps extends PodsComponent {
 	}
 
 	/**
+	 * Get titles of all Pods Templates
+	 *
+	 * @return string[] Array of template names
+	 *
+	 * @since 2.x
+	 */
+	public static function get_template_titles() {
+
+		static $template_titles;
+
+		if ( empty( $template_titles ) ) {
+			$all_templates = (array) pods_api()->load_templates( array() );
+
+			$template_titles = array();
+			foreach ( $all_templates as $template ) {
+				$template_titles[ $template['id'] ] = $template['name'];
+			}
+		}
+
+		return $template_titles;
+
+	}
+
+	/**
 	 * Add/Change the display value
 	 *
 	 * @param $value

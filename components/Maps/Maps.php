@@ -26,7 +26,7 @@ class Pods_Component_Maps extends PodsComponent {
 	public function __construct() {
 
 		// See https://github.com/pods-framework/pods/pull/3711
-		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'maps_options' ), 10, 2 );
+		add_filter( 'pods_admin_setup_edit_address_additional_field_options', array( $this, 'field_options' ), 10, 2 );
 
 		// Add Maps input
 		// do_action( 'pods_ui_field_address_input_view_extra', $view, $type, $name, $value, $options, $pod, $id );

@@ -1,6 +1,6 @@
 <?php
 
-class Pods_Component_Maps_Google {
+class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 
 	public static $geocode_url = '';
 

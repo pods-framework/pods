@@ -275,6 +275,11 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 	public static function geocode_address_to_latlng( $address, $api_key = '' ) {
 
 		if ( is_array( $address ) ) {
+			foreach ( $address as $key => $val ) {
+				if ( is_array( $val ) ) {
+					$address[ $key ] = implode( ', ', $val );
+				}
+			}
 			$address = implode( ', ', $address );
 		}
 

@@ -425,8 +425,13 @@ class Pods_Component_Maps extends PodsComponent {
 
 		// @todo: Validate based on address type ( lat / lon, address fields)
 
+		if ( ! $value ) {
+			return $errors;
+		}
+
 		// Get geocode from address fields
 		if ( isset( $value['address'] ) ) {
+			// @todo: What to do if Google doesn't respond?
 			$geocode = self::geocode_address_to_latlng( $value['address'] );
 			if ( empty( $geocode['lat'] ) && empty( $geocode['lng'] ) ) {
 				$errors[] = __( 'Could not find geodata for this address', 'pods' );

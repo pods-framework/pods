@@ -451,6 +451,16 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 			}
 		}
 
+		// Try again once.
+		$post = wp_remote_post( $url );
+
+		if ( ! empty( $post['body'] ) ) {
+			$data = json_decode( $post['body'], true );
+			if ( ! empty( $data['results'][0] ) ) {
+				return $data['results'][0];
+			}
+		}
+
 		return array();
 	}
 

@@ -123,7 +123,7 @@ class Pods_Component_Maps extends PodsComponent {
 	/**
 	 * Load the selected provider
 	 *
-	 * @since 2.7
+	 * @since 2.x
 	 */
 	private function load_provider() {
 
@@ -212,8 +212,6 @@ class Pods_Component_Maps extends PodsComponent {
 	 */
 	public function options( $settings ) {
 
-		// @todo Put part of this in the maps provider class? This could be different between providers.
-
 		$options = array(
 			'provider'         => array(
 				'label'      => __( 'Maps Provider', 'pods' ),
@@ -227,73 +225,11 @@ class Pods_Component_Maps extends PodsComponent {
 				) ),
 				'dependency' => true
 			),
-			'api_key'          => array(
-				'label'   => __( 'Maps API Key', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
-				'default' => '',
-				'type'    => 'text'
-			),
-			'google_client_id' => array(
-				'label'       => __( 'Google Maps Client ID', 'pods' ),
-				'help'        => __( 'For use with Google Maps API for Business and Geocoding; A Client ID does not come with the Free edition.', 'pods' ),
-				'includes-on' => array( 'provider' => 'google' ),
-				'default'     => '',
-				'type'        => 'text'
-			),
-			'map_style'        => array(
-				'label'   => __( 'Default Map Output Type', 'pods' ),
-				'default' => 'static',
-				'type'    => 'pick',
-				'data'    => array(
-					'static' => __( 'Static (Image)', 'pods' ),
-					'js'     => __( 'Javascript (Interactive)', 'pods' )
-				)
-			),
-			'map_type'         => array(
-				'label'   => __( 'Default Map Type', 'pods' ),
-				'default' => 'roadmap',
-				'type'    => 'pick',
-				'data'    => array(
-					'roadmap'   => __( 'Roadmap', 'pods' ),
-					'satellite' => __( 'Satellite', 'pods' ),
-					'terrain'   => __( 'Terrain', 'pods' ),
-					'hybrid'    => __( 'Hybrid', 'pods' )
-				)
-			),
-			'map_zoom'         => array(
-				'label'   => __( 'Default Map Zoom Level', 'pods' ),
-				'help'    => array(
-					__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
-					'https://developers.google.com/maps/documentation/staticmaps/#Zoomlevels'
-				),
-				'default' => 12,
-				'type'    => 'number',
-				'options' => array(
-					'number_decimals'   => 0, // 2
-					'number_max_length' => 2,
-					'number_min'        => 1,
-					'number_max'        => 21,
-					'number_format'     => '9999.99',
-					//'number_format_type' => 'slider'
-				)
-			),
-			'map_scrollwheel'  => array(
-				'label'   => __( 'Enable scroll wheel?', 'pods' ),
-				'default' => 1,
-				'type'    => 'boolean',
-			),
-			'map_marker'       => array(
-				'label'   => __( 'Default Map Custom Marker', 'pods' ),
-				'type'    => 'file',
-				'options' => array(
-					'file_uploader'          => 'plupload',
-					'file_edit_title'        => 0,
-					'file_restrict_filesize' => '1MB',
-					'file_type'              => 'images',
-					'file_add_button'        => __( 'Upload Marker Icon', 'pods' ),
-				)
-			)
 		);
+
+		if ( is_callable( array( self::$provider, 'options' ) ) ) {
+			$options = self::$provider->options( $options );
+		}
 
 		return $options;
 
@@ -307,11 +243,9 @@ class Pods_Component_Maps extends PodsComponent {
 	 *
 	 * @return array
 	 *
-	 * @since 2.7
+	 * @since 2.x
 	 */
-	public function maps_options( $options, $type ) {
-
-		// @todo Put this in the maps provider class? This could be different between providers.
+	public function field_options( $options, $type ) {
 
 		// Add lat/lng input type
 		$options[ $type . '_type' ]['data']['lat-lng'] = __( 'Latitude / Longitude', 'pods' );
@@ -347,90 +281,14 @@ class Pods_Component_Maps extends PodsComponent {
 			'data'       => array(
 				'replace' => __( 'Replace default display', 'pods' ),
 				'before'  => __( 'Before default display', 'pods' ),
-				'after'   => __( 'After default display', 'pods' )
+				'after'   => __( 'After default display', 'pods' ),
+				'admin'   => __( 'Admin only', 'pods' ),
 			)
 		);
-		$options[ $type . '_map_style' ]     = array(
-			'label'      => __( 'Map Output Type', 'pods' ),
-			'depends-on' => array( 'maps' => true ),
-			'default'    => pods_v( 'maps_style', self::$options, 'static', true ),
-			'type'       => 'pick',
-			'data'       => array(
-				'static' => __( 'Static (Image)', 'pods' ),
-				'js'     => __( 'Javascript (Interactive)', 'pods' )
-			)
-		);
-		$options['maps_type']                = array(
-			'label'      => __( 'Map Type', 'pods' ),
-			'depends-on' => array( 'maps' => true ),
-			'default'    => pods_v( 'maps_type', self::$options, 'roadmap', true ),
-			'type'       => 'pick',
-			'data'       => array(
-				'roadmap'   => __( 'Roadmap', 'pods' ),
-				'satellite' => __( 'Satellite', 'pods' ),
-				'terrain'   => __( 'Terrain', 'pods' ),
-				'hybrid'    => __( 'Hybrid', 'pods' )
-			)
-		);
-		$options['maps_zoom']                = array(
-			'label'      => __( 'Map Zoom Level', 'pods' ),
-			'depends-on' => array( 'maps' => true ),
-			'help'       => array(
-				__( 'Google Maps has documentation on the different zoom levels you can use.', 'pods' ),
-				'https://developers.google.com/maps/documentation/javascript/tutorial#zoom-levels'
-				//'https://developers.google.com/maps/documentation/staticmaps/#Zoomlevels'
-			),
-			'default'    => pods_v( 'maps_zoom', self::$options, 12, true ),
-			'type'       => 'number',
-			'options'    => array(
-				'number_decimals'   => 0, // 2
-				'number_max_length' => 2,
-				'number_min'        => 1,
-				'number_max'        => 21,
-				'number_format'     => '9999.99',
-				//'number_format_type' => 'slider'
-			)
-		);
-		$options['maps_scrollwheel']         = array(
-			'label'   => __( 'Enable scroll wheel?', 'pods' ),
-			'default' => 1,
-			'type'    => 'boolean',
-		);
-		$options['maps_info_window']         = array(
-			'label'      => __( 'Display an Info Window', 'pods' ),
-			'default'    => 0,
-			'type'       => 'boolean',
-			'depends-on' => array( 'maps' => true ),
-			'dependency' => true
-		);
-		$options['maps_info_window_content'] = array(
-			'label'      => __( 'Info Window content', 'pods' ),
-			'depends-on' => array(
-				'maps'             => true,
-				'maps_info_window' => true
-			),
-			'default'    => 'paragraph',
-			'type'       => 'pick',
-			'data'       => array(
-				'paragraph'    => __( 'Custom', 'pods' ),
-				'wysiwyg'      => __( 'Custom (WYSIWYG)', 'pods' ),
-				// @todo 'display_type' is only available for field type 'address'
-				'display_type' => __( 'Display Type', 'pods' )
-			)
-		);
-		$options['maps_marker'] = array(
-			'label'      => __( 'Map Custom Marker', 'pods' ),
-			'depends-on' => array( 'maps' => true ),
-			'default'    => pods_v( 'maps_marker', self::$options ),
-			'type'       => 'file',
-			'options'    => array(
-				'file_uploader'          => 'plupload',
-				'file_edit_title'        => 0,
-				'file_restrict_filesize' => '1MB',
-				'file_type'              => 'images',
-				'file_add_button'        => 'Upload Marker Icon'
-			)
-		);
+
+		if ( is_callable( array( self::$provider, 'field_options' ) ) ) {
+			$options = self::$provider->field_options( $options, $type );
+		}
 
 		// Add option dependencies
 		/*if ( empty( $options[ $type . '_display_type_custom' ]['depends-on'][ $type . '_display_type' ] ) ) {
@@ -441,7 +299,8 @@ class Pods_Component_Maps extends PodsComponent {
 				'custom-map'
 			);
 		}*/
-		$options['maps_microdata']['excludes-on']['maps'] = true;
+
+		//$options['maps_microdata']['excludes-on']['maps'] = true;
 
 		return $options;
 	}

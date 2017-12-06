@@ -328,7 +328,7 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 			$data = $data['results'][0];
 		}
 
-		if ( ! empty( $data['address_components'] ) ) {
+		if ( empty( $data['address_components'] ) ) {
 			return array();
 		}
 
@@ -345,7 +345,8 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 
 			$value = $component['long_name'];
 
-			switch ( $component['types'] ) {
+			// https://developers.google.com/maps/documentation/javascript/geocoding#GeocodingAddressTypes
+			switch ( $component['types'][0] ) {
 				case 'street_number':
 					$address['line_1'][1] = $value;
 					break;
@@ -364,8 +365,23 @@ class Pods_Component_Maps_Google implements Pods_Component_Maps_Provider {
 				case 'administrative_area_level_1':
 				case 'administrative_area_level_2':
 				case 'administrative_area_level_3':
-					$address['region'][] = $value;
+				case 'administrative_area_level_4':
+				case 'administrative_area_level_5':
+					$address['region'][ $component['types'][0] ] = $value;
 					break;
+			}
+		}
+
+		/**
+		 * Change the values and format passed by Google Maps.
+		 * @param  array  $address             The parsed value.
+		 * @param  array  $address_components  The address parts from Google Maps API.
+		 */
+		$address = apply_filters( 'pods_component_maps_google_get_address', $address, $data['address_components'] );
+
+		foreach ( $address as $key => $parts ) {
+			if ( is_array( $parts ) ) {
+				ksort( $address[ $key ] );
 			}
 		}
 

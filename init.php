@@ -56,7 +56,7 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
-		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
+		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.0' );
 	}
 
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );

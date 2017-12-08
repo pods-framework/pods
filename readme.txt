@@ -180,6 +180,13 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
+= 2.7.1 - December 4th 2017 =
+
+* Fix table join logic for taxonomies when renaming meta fields (#4613) [@sc0ttkclark]
+* Fix Pods Form submit errors and 404s (#4618) [@pglewis]
+* Fix dashicons style conflicts with Pods Form (#4626) [@nicdford]
+* Roll-back minimum version requirement for MySQL from 5.5 to 5.1 (#4634) [@sc0ttkclark]
+
 = 2.7 - December 4th 2017 =
 
 **New PHP & WP Minimum Version Requirements:**

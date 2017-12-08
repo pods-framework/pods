@@ -180,7 +180,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 == Changelog ==
 
-= 2.7.1 - December 4th 2017 =
+= 2.7.1 - December 8th 2017 =
 
 * Fix table join logic for taxonomies when renaming meta fields (#4613) [@sc0ttkclark]
 * Fix Pods Form submit errors and 404s (#4618) [@pglewis]

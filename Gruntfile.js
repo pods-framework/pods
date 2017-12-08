@@ -6,6 +6,7 @@ module.exports = function ( grunt ) {
 	var files_list = [
 		'**',
 		'!.git/**',
+		'!.idea/**',
 		'!.sass-cache/**',
 		'!bin/**',
 		'!node_modules/**',
@@ -13,21 +14,29 @@ module.exports = function ( grunt ) {
 		'!sources/**',
 		'!tests/**',
 		'!vendor/**',
+		'!.babelrc',
 		'!.gitattributes',
 		'!.gitignore',
 		'!.gitmodules',
+		'!.jshintrc',
+		'!.scrutinizer.yml',
 		'!.travis.yml',
+		'!audit.sh',
 		'!CODEOWNERS',
 		'!composer.json',
 		'!composer.lock',
 		'!CONTRIBUTING.md',
-		'!Gruntfile.js',
 		'!git-workflow.md',
 		'!grunt-workflow.md',
+		'!Gruntfile.js',
 		'!package.json',
+		'!package-lock.json',
 		'!phpcs.ruleset.xml',
 		'!phpunit.xml.dist',
-		'!README.md'
+		'!README.md',
+		'!report-full.txt',
+		'!report-source.txt',
+		'!rollup.config.js'
 	];
 
 	// load all grunt tasks in package.json matching the `grunt-*` pattern

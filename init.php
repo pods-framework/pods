@@ -55,8 +55,9 @@ if ( defined( 'PODS_VERSION' ) || defined( 'PODS_DIR' ) ) {
 
 	// This should match minimum WP requirements or usage (90%+)
 	// Found at: https://wordpress.org/about/stats/
+	// Using 5.1 for now, many RedHat servers aren't EOL yet and they backport security releases
 	if ( ! defined( 'PODS_MYSQL_VERSION_MINIMUM' ) ) {
-		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.5' );
+		define( 'PODS_MYSQL_VERSION_MINIMUM', '5.1' );
 	}
 
 	define( 'PODS_SLUG', plugin_basename( __FILE__ ) );

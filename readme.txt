@@ -123,7 +123,7 @@ We also do our best to integrate and play nicely with other projects:
  * [Timber](http://upstatement.com/timber/)
  * [Gravity Forms](http://www.gravityforms.com/) Using the [Pods Gravity Forms Add-on](https://wordpress.org/plugins/pods-gravity-forms/)
  * [Caldera Forms](http://calderaforms.com) Using the [Pods Caldera Forms Add-on](https://github.com/pods-framework/pods-caldera-forms)
- * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer] (https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
+ * [Beaver Builder](https://www.wpbeaverbuilder.com/) and [Beaver Themer](https://www.wpbeaverbuilder.com/beaver-themer/) Using the [Pods Beaver Themer Add-On](https://wordpress.org/plugins/pods-beaver-builder-themer-add-on/)
 * Themes we've integrated with
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
@@ -191,7 +191,7 @@ We also have a dedicated [Slack Chat](https://pods.io/chat/) channel to help our
 
 * New Relationship Field Format "List View": The power of the new flexible relationships is our new modal window that opens within the existing record for relationship fields. This is modeled after the Media Modal from WordPress and provides full functionality to Add New related records or edit existing records all from within the parent record of the relationship. This is provided through our new List View field format for relationship fields. To see a demo of this field in action [head on over to our YouTube](https://youtu.be/V8c067GAEcA)
 * Add New with Flexible Relationships: The new flexible relationships will automatically enable Add New on all your existing relationships, but you can disable this from the Additional Options tab for each relationship field. You can switch field formats to the new List View from additional options tab as well.
-* Dynamic Field Views: The relationship fields and file upload fields have been rewritten to take advantage of "Dynamic Field Views", driven by JavaScript. More technical details about the directions we went towards these field changes can be read about in our ["Pods 2.7: What We Did and Why We Did It"](https://pods.io/2017/12/05/pods-2-7-developer-notes-what-we-did-and-why-we-did-it)
+* Dynamic Field Views: The relationship fields and file upload fields have been rewritten to take advantage of "Dynamic Field Views", driven by JavaScript. More technical details about the directions we went towards these field changes can be read about in our ["Pods 2.7: What We Did and Why We Did It"](https://pods.io/2017/12/05/pods-2-7-developer-notes/)
 
 **Significant Improvements and Fixes:**
 

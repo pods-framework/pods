@@ -185,13 +185,11 @@ if ( !$fields_only ) {
 			if ( 'undefined' !== typeof jQuery( document ).Pods ) {
 
 				if ( 'undefined' === typeof ajaxurl ) {
-					var ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
+					window.ajaxurl = '<?php echo pods_slash( admin_url( 'admin-ajax.php' ) ); ?>';
 				}
 
-				jQuery( function ( $ ) {
-					$( document ).Pods( 'validate' );
-					$( document ).Pods( 'submit' );
-				} );
+				$( document ).Pods( 'validate' );
+				$( document ).Pods( 'submit' );
 			}
 		} );
 	}

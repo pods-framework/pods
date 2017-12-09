@@ -2676,9 +2676,17 @@ class PodsAPI {
             if ( !empty( $pod[ 'field_type' ] ) )
                 $prepare[] = $pod[ 'name' ];
 
+			$join_table = $pod['table'];
+
+			// Taxonomies are the odd type out, terrible I know
+			if ( 'taxonomy' === $pod['type'] ) {
+				// wp_term_taxonomy has the 'taxonomy' field we need to limit by
+				$join_table = $wpdb->term_taxonomy;
+			}
+
             pods_query( "
                 UPDATE `{$pod[ 'meta_table' ]}` AS `m`
-                LEFT JOIN `{$pod[ 'table' ]}` AS `t`
+                LEFT JOIN `{$join_table}` AS `t`
                     ON `t`.`{$pod[ 'field_id' ]}` = `m`.`{$pod[ 'meta_field_id' ]}`
                 SET
                     `m`.`{$pod[ 'meta_field_index' ]}` = %s

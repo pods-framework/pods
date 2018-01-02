@@ -21,19 +21,24 @@ class Pods_Templates_Auto_Template_Front_End {
 	}
 
 	/**
-	 * Add hooks for output
-	 *
-	 * @since 2.6.6
+	 * Get the filter used for a Pod.
+	 * @since  1.7.2
+	 * @param  string  $current_post_type
+	 * @param  array   $possible_pods
+	 * @return string
 	 */
-	public function hook_content(){
+	public function get_pod_filter( $current_post_type = '', $possible_pods = array() ) {
 		$filter = 'the_content';
 
-		// get the current post type
-		$current_post_type = $this->current_post_type();
+		if ( ! $current_post_type ) {
+			// get the current post type
+			$current_post_type = $this->current_post_type();
+		}
 
-		//now use other methods in class to build array to search in/ use
-		$possible_pods = $this->auto_pods();
-
+		if ( ! $possible_pods ) {
+			//now use other methods in class to build array to search in/ use
+			$possible_pods = $this->auto_pods();
+		}
 
 		//check if $current_post_type is the key of the array of possible pods
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
@@ -53,6 +58,18 @@ class Pods_Templates_Auto_Template_Front_End {
 			}
 
 		}
+
+		return $filter;
+	}
+
+	/**
+	 * Add hooks for output
+	 *
+	 * @since 2.6.6
+	 */
+	public function hook_content(){
+		$filter = $this->get_pod_filter();
+
 		/**
 		 * Allows plugin to append/replace the_excerpt
 		 *

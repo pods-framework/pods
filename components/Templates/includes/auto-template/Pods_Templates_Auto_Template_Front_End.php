@@ -291,7 +291,7 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			$filter = $this->get_pod_filter( $current_post_type, $possible_pods );
 
-			if ( current_filter() !== $filter && current_action() !== $filter ) {
+			if ( current_filter() !== $filter ) {
 				return $content;
 			}
 

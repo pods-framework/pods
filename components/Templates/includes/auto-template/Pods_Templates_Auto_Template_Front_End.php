@@ -291,6 +291,12 @@ class Pods_Templates_Auto_Template_Front_End {
 			//get array for the current post type
 			$this_pod = $possible_pods[ $current_post_type ];
 
+			$filter = $this->get_pod_filter( $current_post_type, $possible_pods );
+
+			if ( current_filter() !== $filter && current_action() !== $filter ) {
+				return $content;
+			}
+
 			if ( !in_the_loop() && !pods_v( 'run_outside_loop', $this_pod, false ) ) {
 				// If outside of the loop, exit quickly
 				return $content;

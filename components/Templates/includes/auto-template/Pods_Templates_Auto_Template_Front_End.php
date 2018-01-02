@@ -366,6 +366,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pods, $append );
 
 		$template = $pods->template( $template_name );
+		add_filter( 'the_content', array( $this, 'front' ) );
 
 		//check if we have a valid template
 		if ( !is_null( $template ) ) {

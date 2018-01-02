@@ -79,13 +79,11 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
-
 		add_filter( $filter, array( $this, 'front' ), 10.5 );
 
 		if (  PFAT_USE_ON_EXCERPT  ) {
 			add_filter( 'the_excerpt', array ( $this, 'front' ) );
 		}
-
 
 	}
 
@@ -149,7 +147,7 @@ class Pods_Templates_Auto_Template_Front_End {
 		//try to get cached results of this method
 		$key = '_pods_pfat_auto_pods';
 		$auto_pods = pods_transient_get( $key );
-	
+
 
 		//check if we already have the results cached & use it if we can.
 		if ( $auto_pods === false  ) {

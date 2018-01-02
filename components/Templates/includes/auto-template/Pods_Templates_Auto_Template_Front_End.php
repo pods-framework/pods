@@ -46,14 +46,14 @@ class Pods_Templates_Auto_Template_Front_End {
 			$this_pod = $possible_pods[ $current_post_type ];
 
 			if ( is_singular( $current_post_type ) ) {
-				$filter =  $this_pod[ 'single_filter' ];
+				$filter = pods_v( 'single_filter', $this_pod, $filter );
 			} elseif ( is_post_type_archive( $current_post_type ) ) {
-				$filter =  $this_pod[ 'archive_filter' ];
+				$filter = pods_v( 'archive_filter', $this_pod, $filter );
 
 			} elseif ( is_home() && $current_post_type === 'post'  ) {
-				$filter =  $this_pod[ 'archive_filter' ];
+				$filter = pods_v( 'archive_filter', $this_pod, $filter );
 			} elseif ( is_tax( $current_post_type )  ) {
-				$filter =  $this_pod[ 'archive_filter' ];
+				$filter = pods_v( 'archive_filter', $this_pod, $filter );
 
 			}
 

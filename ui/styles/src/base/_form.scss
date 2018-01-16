@@ -116,6 +116,17 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
+/* Currency */
+.pods-form-ui-row-type-currency code {
+    line-height: 20px;
+    float: left;
+    margin: 2px;
+    position: absolute;
+    min-width: 10px;
+    text-align: center;
+    display: none; /* Shown with JS */
+}
+
 /**
     Form fields - boolean/pick/select values.
  */

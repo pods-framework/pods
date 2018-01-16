@@ -417,7 +417,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     margin: 5px 0;
 }
 
-.pods-manage-field .pods-pick-values ul .pods-field.pods-boolean {
+.pods-manage-field .pods-pick-values ul .pods-field.pods-boolean,
+.pods-manage-field .pods-pick-values ul ul {
     margin: 0;
 }
 

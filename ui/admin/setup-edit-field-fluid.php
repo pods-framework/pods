@@ -100,22 +100,25 @@ $pick_object = trim( pods_v_sanitized( 'pick_object', $field ) . '-' . pods_v_sa
                                     <?php _e( 'Options', 'pods' ); ?>
                                 </p>
 
-                                <div class="pods-pick-values pods-pick-checkbox">
-                                    <ul>
-                                        <li>
-                                            <?php echo PodsForm::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
-                                        </li>
-                                        <?php
-                                            if ( 'table' == $pod[ 'storage' ] ) {
-                                        ?>
-                                            <li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
-                                                <?php echo PodsForm::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
-                                            </li>
-                                        <?php
-                                            }
-                                        ?>
-                                    </ul>
-                                </div>
+	                            <?php
+								$required_option = PodsForm::field( 'field_data[' . $pods_i . '][required]', pods_v( 'required', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) );
+	                            if ( 'table' == $pod[ 'storage' ] ) {
+	                            ?>
+									<div class="pods-pick-values pods-pick-checkbox">
+										<ul>
+											<li>
+					                            <?php echo $required_option; ?>
+											</li>
+											<li class="pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean pods-excludes-on-field-data-type-date pods-excludes-on-field-data-type-datetime pods-excludes-on-field-data-type-time">
+					                            <?php echo PodsForm::field( 'field_data[' . $pods_i . '][unique]', pods_v( 'unique', $field, 0 ), 'boolean', array( 'class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
+											</li>
+										</ul>
+									</div>
+								<?php
+	                            } else {
+	                            	echo $required_option;
+	                            }
+	                            ?>
                             </div>
                         </div>
 

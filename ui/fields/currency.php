@@ -40,7 +40,10 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
-        $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ).on( 'blur', function () {
+    	var input = $( 'input#<?php echo esc_js( $attributes[ 'id' ] ); ?>' ),
+    		currency_sign = input.siblings( 'code.currency-sign' );
+
+        input.on( 'blur', function () {
             if ( !/^[0-9\<?php
             echo esc_js( implode( '\\', array_filter( array( $dot, $thousands ) ) ) );
             ?>]$/.test( $( this ).val() ) ) {
@@ -52,5 +55,10 @@ echo '<code class="currency-sign">' . $currency_sign . '</code>';
                 $( this ).val( newval );
             }
         } );
+
+        if ( currency_sign.length ) {
+	        input.css( 'padding-left', parseInt( input.css( 'padding-left' ), 10 ) + currency_sign.width() + 12 );
+	        currency_sign.show();
+        }
     } );
 </script>

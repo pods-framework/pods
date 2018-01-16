@@ -34,6 +34,8 @@ if ( isset( PodsField_Currency::$currencies[ pods_var( 'currency_format_sign', $
     $currency = pods_var( 'currency_format_sign', $options );
 
 $currency_sign = PodsField_Currency::$currencies[ $currency ]['sign'];
+
+echo '<code class="currency-sign">' . $currency_sign . '</code>';
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>

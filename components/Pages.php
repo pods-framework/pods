@@ -1123,40 +1123,45 @@ class Pods_Pages extends PodsComponent {
                 // found the template and included it, we're good to go!
             }
             else {
-                $default_templates = array();
+				$located_template = apply_filters('pods_page_locate_template', $template, self::$exists);
 
-                $uri = explode( '?', self::$exists[ 'uri' ] );
-                $uri = explode( '#', $uri[ 0 ] );
+                if ($located_template != $template) {
+                    $template = $located_template;
+                } else {
+                    $default_templates = array();
 
-                $page_path = explode( '/', $uri[ 0 ] );
+                    $uri = explode('?', self::$exists['uri']);
+                    $uri = explode('#', $uri[0]);
 
-                while ( $last = array_pop( $page_path ) ) {
-                    $file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
-                    $sanitized = sanitize_title( $file_name );
+                    $page_path = explode('/', $uri[0]);
 
-                    $default_templates[] = 'pods/' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-                    $default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
-                }
+                    while ($last = array_pop($page_path)) {
+                        $file_name = str_replace('*', '-w-', implode('/', $page_path) . '/' . $last);
+                        $sanitized = sanitize_title($file_name);
 
-                $default_templates[] = 'pods.php';
+                        $default_templates[] = 'pods/' . trim(str_replace('--', '-', $sanitized), ' -') . '.php';
+                        $default_templates[] = 'pods-' . trim(str_replace('--', '-', $sanitized), ' -') . '.php';
+                    }
 
-                $default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
+                    $default_templates[] = 'pods.php';
 
-                $template = locate_template( $default_templates, true );
+                    $default_templates = apply_filters('pods_page_default_templates', $default_templates);
 
-                if ( '' != $template ) {
-                    // found the template and included it, we're good to go!
-                }
-                else {
-                    $template = false;
+                    $template = locate_template($default_templates, true);
 
-                    // templates not found in theme, default output
-                    do_action( 'pods_page_default', $template, self::$exists );
+                    if ('' != $template) {
+                        // found the template and included it, we're good to go!
+                    } else {
+                        $template = false;
 
-                    get_header();
-                    pods_content();
-                    get_sidebar();
-                    get_footer();
+                        // templates not found in theme, default output
+                        do_action('pods_page_default', $template, self::$exists);
+
+                        get_header();
+                        pods_content();
+                        get_sidebar();
+                        get_footer();
+                    }
                 }
             }
 

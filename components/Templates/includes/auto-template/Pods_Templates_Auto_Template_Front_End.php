@@ -323,20 +323,35 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			//build Pods object for current item
 			global $post;
-            $pod_name = get_post_type($post->ID);
+            $pod_name = $current_post_type;
+            $pod_item = $post->ID;
+            if ( in_the_loop() ) {
+                $pod_name = $post->post_type;
+            } else {
+                // Outside the loop in a taxonomy, we want the term
+                if ( is_tax() ) {
+                    global $wp_query;
+                    $obj = $wp_query->get_queried_object();
+                    $pod_item = $obj->slug;
+                }
+            }
+
+            $pod_name_and_item = array( $pod_name, $pod_item );
             /**
-             * Change which pod -- by name -- to run the template against. The
+             * Change which pod and item to run the template against. The
              * default pod is the the post type of the post about to be
-             * displayed.
+             * displayed, the default item is the post about to be displayed,
+             * except outside the loop in a taxonomy archive, in which case it
+             * is the term the archive is for.
              *
              * @since 2.7.2
              *
-             * @param string  $pod_name         The name of the pod to run the template against.
+             * @param string  $pod_name_and_item  An array of the name of the pod to run the template against and the item (ID or slug) of the item in that pod to use.
              * @param string  $template_source  The name of the pod from which the template was selected.
              * @param Post    $post             The Post object that is about to be displayed.
              */
-            $pod_name = apply_filters('pods_auto_template_pod_name', $pod_name, $current_post_type, $post);
-			$pods = pods( $pod_name, $post->ID );
+            $pod_name_and_item = apply_filters('pods_auto_template_pod_name_and_item', $pod_name_and_item, $current_post_type, $post);
+			$pods = pods( $pod_name_and_item[0], $pod_name_and_item[1] );
 
             // Heuristically decide if this is single or archive
             $s_or_a = 'archive';

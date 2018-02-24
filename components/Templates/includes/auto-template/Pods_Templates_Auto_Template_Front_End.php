@@ -281,7 +281,20 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			//build Pods object for current item
 			global $post;
-			$pods = pods( $current_post_type, $post->ID );
+            $pod_name = get_post_type($post->ID);
+            /**
+             * Change which pod -- by name -- to run the template against. The
+             * default pod is the the post type of the post about to be
+             * displayed.
+             *
+             * @since 2.7.2
+             *
+             * @param string  $pod_name         The name of the pod to run the template against.
+             * @param string  $template_source  The name of the pod from which the template was selected.
+             * @param Post    $post             The Post object that is about to be displayed.
+             */
+            $pod_name = apply_filters('pods_auto_template_pod_name', $pod_name, $current_post_type, $post);
+			$pods = pods( $pod_name, $post->ID );
 
 			if ( $this_pod[ 'single' ] && is_singular( $current_post_type ) ) {
 				//load the template

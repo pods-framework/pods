@@ -171,8 +171,8 @@ class Pods_Templates_Auto_Template_Settings {
 		if ( $pod['type'] === 'taxonomy' ) {
 			$options[ 'pods-pfat' ] = array (
 				'pfat_enable'  => array (
-					'label'             => __( 'Enable Automatic Pods Templates for this Pod?', 'pods' ),
-					'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display items in this Pod in the front-end.', 'pods' ),
+					'label'             => __( 'Enable Automatic Pods Templates for this Taxonomy Pod?', 'pods' ),
+					'help'              => __( 'When enabled you can specify the names of a Pods Template to be used to display information about this taxonomy and/or posts in this taxonomy in the front-end.', 'pods' ),
 					'type'              => 'boolean',
 					'default'           => false,
 					'dependency'        => true,
@@ -186,17 +186,43 @@ class Pods_Templates_Auto_Template_Settings {
 					'depends-on'        => array( 'pfat_enable' => true ),
 					'boolean_yes_label' => ''
 				),
+                'pfat_single'   => array (
+                    'label'      => __( 'Taxonomy Template', 'pods' ),
+                    'help'       => __( 'Name of Pods template to use to present this taxonomy object itself.', 'pods' ),
+                    'type'       => 'text',
+                    'default'    => false,
+                    'depends-on' => array( 'pfat_enable' => true )
+                ),
+                'pfat_append_single' => array (
+                    'label'      => __( 'Template Location', 'pods' ),
+					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
+					'depends-on' => array ( 'pfat_enable' => true ),
+				),
+                'pfat_filter_single' => array (
+                    'label'      => __( 'Taxonomy Template Filter', 'pods' ),
+					'help'       => __( 'Which filter to use for taxonomy view.', 'pods' ),
+					'default'    => 'get_the_archive_description',
+					'type'       => 'text',
+					'depends-on' => array( 'pfat_enable' => true ),
+				),
 				'pfat_archive'  => array (
-					'label'      => __( 'Taxonomy Template', 'pods' ),
-					'help'       => __( 'Name of Pods template to use for this taxonomy.', 'pods' ),
+					'label'      => __( 'Taxonomy Archive Template', 'pods' ),
+					'help'       => __( 'Name of Pods template to use for posts in this taxonomy.', 'pods' ),
 					'type'       => 'text',
 					'default'    => false,
 					'depends-on' => array ( 'pfat_enable' => true )
 				),
 				'pfat_append_archive'  => array (
-					'label'      => __( 'Template Location', 'pods' ),
+					'label'      => __( 'Archive Template Location', 'pods' ),
 					'help'       => __( 'Whether the template will go before, after or in place of the post content.', 'pods' ),
 					'depends-on' => array ( 'pfat_enable' => true ),
+				),
+                'pfat_filter_archive' => array(
+					'label'      => __( 'Archive Template Filter', 'pods' ),
+					'help'       => __( 'Which filter to use for archives.', 'pods' ),
+					'default'    => 'the_content',
+					'type'       => 'text',
+					'depends-on' => array( 'pfat_enable' => true ),
 				),
 			);
 		}
@@ -241,11 +267,6 @@ class Pods_Templates_Auto_Template_Settings {
 					$options[ 'pods-pfat' ][ $k ] = array_merge( $option, $pick );
 				}
 
-			}
-
-			//remove single from taxonomy
-			if( 'taxonomy' === $pod['type'] ){
-				unset( $options[ 'pods-pfat' ][ 'pfat_single' ] );
 			}
 
 		}

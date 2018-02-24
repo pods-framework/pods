@@ -346,6 +346,9 @@ class Pods_Templates_Auto_Template_Front_End {
 		//prevent infinite loops caused by this method acting on post_content
 		remove_filter( 'the_content', array( $this, 'front' ) );
 
+        // Allow template chosen to depend on post type or content via magic
+        // tags
+        $template_name = $pods->do_magic_tags($template_name);
 		/**
 		 * Change which template -- by name -- to be used.
 		 *

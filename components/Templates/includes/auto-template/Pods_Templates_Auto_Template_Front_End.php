@@ -59,10 +59,12 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			$this_pod = $possible_pods[ $current_post_type ];
 
-            if ( !empty( $this_pod[ 'single_filter' ] ) ) {
+            if ( !empty( $this_pod[ 'single' ] )
+                 && !empty( $this_pod[ 'single_filter' ] ) ) {
                 $this->filtered_content[ $this_pod [ 'single_filter' ] ] = 10.5;
             }
-            if ( !empty( $this_pod[ 'archive_filter' ] ) ) {
+            if ( !empty( $this_pod[ 'archive' ] )
+                 && !empty( $this_pod[ 'archive_filter' ] ) ) {
                 $this->filtered_content[ $this_pod [ 'archive_filter' ] ] = 10.5;
             }
 		}
@@ -355,13 +357,16 @@ class Pods_Templates_Auto_Template_Front_End {
 
             // Heuristically decide if this is single or archive
             $s_or_a = 'archive';
+            $s_or_a_filter = 'archive_filter';
             $s_or_a_append = 'archive_append';
             if ( !in_the_loop() || is_singular() ) {
                 $s_or_a = 'single';
+                $s_or_a_filter = 'single_filter';
                 $s_or_a_append = 'single_append';
             }
 
-			if ( $this_pod[ $s_or_a ] ) {
+			if ( $this_pod[ $s_or_a ]
+                 && current_filter() == $this_pod[ $s_or_a_filter] ) {
 				//load the template
 				$content = $this->load_template( $this_pod[ $s_or_a ], $content , $pods, $this_pod[ $s_or_a_append ] );
 			}

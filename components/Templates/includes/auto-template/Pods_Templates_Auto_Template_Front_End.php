@@ -44,6 +44,14 @@ class Pods_Templates_Auto_Template_Front_End {
 		// get the current post type
 		$current_post_type = $this->current_post_type();
 
+        if ( !$current_post_type || is_array($current_post_type) ) {
+            // If we're outside the loop, provide a chance to recompute
+            // the current_post_type when we are in the loop
+            if (!in_the_loop()) {
+                add_action( 'the_post', array( $this, 'hook_content' ) );
+            }
+        }
+
 		//now use other methods in class to build array to search in/ use
 		$possible_pods = $this->auto_pods();
 
@@ -282,6 +290,14 @@ class Pods_Templates_Auto_Template_Front_End {
 			$current_post_type = false;
 		}
 
+        // Once we are in the loop, fair game to use the post itself to
+        // help determine the current post type
+        if ( ( !$current_post_type || is_array($current_post_type) )
+             && in_the_loop() ) {
+            global $post;
+            $current_post_type = $post->post_type;
+        }
+
 		return $current_post_type;
 	}
 
@@ -332,33 +348,18 @@ class Pods_Templates_Auto_Template_Front_End {
             $pod_name = apply_filters('pods_auto_template_pod_name', $pod_name, $current_post_type, $post);
 			$pods = pods( $pod_name, $post->ID );
 
-			if ( $this_pod[ 'single' ] && is_singular( $current_post_type ) ) {
+            // Heuristically decide if this is single or archive
+            $s_or_a = 'archive';
+            $s_or_a_append = 'archive_append';
+            if ( !in_the_loop() || is_singular() ) {
+                $s_or_a = 'single';
+                $s_or_a_append = 'single_append';
+            }
+
+			if ( $this_pod[ $s_or_a ] ) {
 				//load the template
-				$content = $this->load_template( $this_pod[ 'single' ], $content , $pods, $this_pod[ 'single_append' ] );
+				$content = $this->load_template( $this_pod[ $s_or_a ], $content , $pods, $this_pod[ $s_or_a_append ] );
 			}
-			//if pfat_archive was set try to use that template
-			//check if we are on an archive of the post type
-			elseif ( $this_pod[ 'archive' ] && is_post_type_archive( $current_post_type ) ) {
-				//load the template
-				$content = $this->load_template( $this_pod[ 'archive' ], $content , $pods, $this_pod[ 'archive_append' ] );
-
-			}
-			//if pfat_archive was set and we're in the blog index, try to append template
-			elseif ( is_home() && $this_pod[ 'archive' ] && $current_post_type === 'post'  ) {
-				//append the template
-				$content = $this->load_template( $this_pod[ 'archive' ], $content , $pods, $this_pod[ 'archive_append' ] );
-
-			}
-			//if is taxonomy archive of the selected taxonomy
-			elseif ( is_tax( $current_post_type )  ) {
-				//if pfat_single was set try to use that template
-				if ( $this_pod[ 'archive' ] ) {
-					//append the template
-					$content = $this->load_template( $this_pod[ 'archive' ], $content , $pods, $this_pod[ 'archive_append' ] );
-				}
-
-			}
-
 		}
 
 		return $content;

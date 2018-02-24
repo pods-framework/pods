@@ -39,8 +39,6 @@ class Pods_Templates_Auto_Template_Front_End {
         $this->remove_hooks();
         $this->filtered_content = array();
 
-		$filter = 'the_content';
-
 		// get the current post type
 		$current_post_type = $this->current_post_type();
 
@@ -61,18 +59,12 @@ class Pods_Templates_Auto_Template_Front_End {
 
 			$this_pod = $possible_pods[ $current_post_type ];
 
-			if ( is_singular( $current_post_type ) ) {
-				$filter =  $this_pod[ 'single_filter' ];
-			} elseif ( is_post_type_archive( $current_post_type ) ) {
-				$filter =  $this_pod[ 'archive_filter' ];
-
-			} elseif ( is_home() && $current_post_type === 'post'  ) {
-				$filter =  $this_pod[ 'archive_filter' ];
-			} elseif ( is_tax( $current_post_type )  ) {
-				$filter =  $this_pod[ 'archive_filter' ];
-
-			}
-
+            if ( !empty( $this_pod[ 'single_filter' ] ) ) {
+                $this->filtered_content[ $this_pod [ 'single_filter' ] ] = 10.5;
+            }
+            if ( !empty( $this_pod[ 'archive_filter' ] ) ) {
+                $this->filtered_content[ $this_pod [ 'archive_filter' ] ] = 10.5;
+            }
 		}
 		/**
 		 * Allows plugin to append/replace the_excerpt
@@ -82,8 +74,6 @@ class Pods_Templates_Auto_Template_Front_End {
 		if ( !defined( 'PFAT_USE_ON_EXCERPT' ) ) {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
-
-        $this->filtered_content[$filter] = 10.5;
 
         if (  PFAT_USE_ON_EXCERPT  ) {
             $this->filtered_content['the_excerpt'] = 10;

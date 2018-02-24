@@ -249,7 +249,7 @@ class Pods_Templates_Auto_Template_Settings {
 				}
 
 				$options[ 'pods-pfat' ][ 'pfat_archive' ][ 'data' ] = array( null => __('No Archive view template', 'pods') ) + ( array_combine( $this->get_template_titles(), $this->get_template_titles() ) );
-				$options[ 'pods-pfat' ][ 'pfat_single' ][ 'data' ] = array_combine( $this->get_template_titles(), $this->get_template_titles() );
+				$options[ 'pods-pfat' ][ 'pfat_single' ][ 'data' ] = array( null => __('No view template', 'pods') ) + array_combine( $this->get_template_titles(), $this->get_template_titles() );
 			}
 
 			//Add data to $pick for template location

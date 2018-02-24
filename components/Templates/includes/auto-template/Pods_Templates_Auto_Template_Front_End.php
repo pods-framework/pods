@@ -9,8 +9,18 @@ if ( class_exists( 'Pods_PFAT_Frontend' ) ) {
  * Replaces Pods_PFAT_Frontend
  */
 class Pods_Templates_Auto_Template_Front_End {
+	/**
+	 * Currently filtered content functions
+	 *
+	 * @since 2.7.2
+	 *
+	 * @var array of strings
+	 */
+	private $filtered_content;
+
 	function __construct() {
 
+        $this->filtered_content = array();
 		if( !is_admin() ){
 			add_action( 'wp', array( $this, 'set_frontier_style_script' ) );
 		}
@@ -26,6 +36,9 @@ class Pods_Templates_Auto_Template_Front_End {
 	 * @since 2.6.6
 	 */
 	public function hook_content(){
+        $this->remove_hooks();
+        $this->filtered_content = array();
+
 		$filter = 'the_content';
 
 		// get the current post type
@@ -62,15 +75,38 @@ class Pods_Templates_Auto_Template_Front_End {
 			define( 'PFAT_USE_ON_EXCERPT', false );
 		}
 
+        $this->filtered_content[$filter] = 10.5;
 
-		add_filter( $filter, array( $this, 'front' ), 10.5 );
-
-		if (  PFAT_USE_ON_EXCERPT  ) {
-			add_filter( 'the_excerpt', array ( $this, 'front' ) );
+        if (  PFAT_USE_ON_EXCERPT  ) {
+            $this->filtered_content['the_excerpt'] = 10;
 		}
 
-
+        $this->install_hooks();
 	}
+
+    /**
+     * Install the hooks specified by the filtered_content member
+     *
+     * @since 2.7.2
+     *
+     */
+    function install_hooks() {
+        foreach ( $this->filtered_content as $filter => $priority ) {
+            add_filter( $filter, array( $this, 'front' ), $priority );
+        }
+    }
+
+    /**
+     * Remove the hooks specified by the filtered_content member
+     *
+     * @since 2.7.2
+     *
+     */
+    function remove_hooks() {
+        foreach ( $this->filtered_content as $filter => $priority) {
+            remove_filter( $filter, array( $this, 'front' ) );
+        }
+    }
 
 	/**
 	 * Get all post type and taxonomy Pods
@@ -344,7 +380,7 @@ class Pods_Templates_Auto_Template_Front_End {
 	function load_template( $template_name, $content, $pods, $append = true  ) {
 
 		//prevent infinite loops caused by this method acting on post_content
-		remove_filter( 'the_content', array( $this, 'front' ) );
+		$this->remove_hooks();
 
         // Allow template chosen to depend on post type or content via magic
         // tags
@@ -361,7 +397,8 @@ class Pods_Templates_Auto_Template_Front_End {
 		$template_name = apply_filters( 'pods_auto_template_template_name', $template_name, $pods, $append );
 
 		$template = $pods->template( $template_name );
-		add_filter( 'the_content', array( $this, 'front' ) );
+        // Restore the hooks for subsequent posts
+		$this->install_hooks();
 
 		//check if we have a valid template
 		if ( !is_null( $template ) ) {

@@ -8104,10 +8104,10 @@ class PodsAPI {
     /**
      * Export a package
      *
-     * $params['pod'] string Pod Type IDs to export
-     * $params['template'] string Template IDs to export
-     * $params['podpage'] string Pod Page IDs to export
-     * $params['helper'] string Helper IDs to export
+     * $params['pods'] array Pod Type IDs to export
+     * $params['templates'] array Template IDs to export
+     * $params['pages'] array Pod Page IDs to export
+     * $params['helpers'] array Helper IDs to export
      *
      * @param array $params An associative array of parameters
      *

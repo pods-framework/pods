@@ -4845,6 +4845,10 @@ class PodsAPI {
         else
             $params = (object) pods_sanitize( $params );
 
+        if ( ! isset( $params->delete_all ) ) {
+        	$params->delete_all = $delete_all;
+        }
+
         $params->table_info = false;
 
         $pod = $this->load_pod( $params, $strict );
@@ -4859,6 +4863,11 @@ class PodsAPI {
         $params->id = (int) $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
+        // Reset content
+        if ( true === $params->delete_all ) {
+	        $this->reset_pod( $params, $pod );
+        }
+
         foreach ( $pod[ 'fields' ] as $field ) {
             $field[ 'pod' ] = $pod;
 
@@ -4870,10 +4879,6 @@ class PodsAPI {
 
         if ( !$success )
             return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
-
-        // Reset content
-        if ( $delete_all )
-            $this->reset_pod( $params, $pod );
 
         if ( !pods_tableless() ) {
             if ( 'table' == $pod[ 'storage' ] ) {

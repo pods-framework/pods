@@ -7,17 +7,17 @@ class PodsMigrate {
     /**
      * @var null|string
      */
-    var $type = 'php';
+    public $type = 'php';
 
     /**
      * @var array
      */
-    var $types = array( 'php', 'json', 'sv', 'xml' );
+    public $types = array( 'php', 'json', 'sv', 'xml' );
 
     /**
      * @var array
      */
-    var $mimes = array(
+    public $mimes = array(
         'json' => 'application/json',
         'csv' => 'text/csv',
         'tsv' => 'text/tsv',
@@ -27,12 +27,12 @@ class PodsMigrate {
     /**
      * @var null|string
      */
-    var $delimiter = ',';
+    public $delimiter = ',';
 
     /**
      * @var null
      */
-    var $data = array(
+    public $data = array(
         'items'   => array(),
         'columns' => array(),
         'fields'  => array(),
@@ -42,17 +42,17 @@ class PodsMigrate {
     /**
      * @var null
      */
-    var $input;
+    public $input;
 
     /**
      * @var
      */
-    var $parsed;
+    public $parsed;
 
     /**
      * @var
      */
-    var $built;
+    public $built;
 
     /**
      * Migrate Data to and from Pods
@@ -113,17 +113,7 @@ class PodsMigrate {
      * @param string $delimiter Delimiter for export type 'sv'
      */
     function import ( $data = null, $type = null, $delimiter = null ) {
-        if ( !empty( $data ) )
-            $this->input = $data;
-
-        if ( !empty( $type ) && in_array( $type, $this->types ) )
-            $this->type = $type;
-
-        if ( !empty( $delimiter ) )
-            $this->delimiter = $delimiter;
-
-        if ( method_exists( $this, "parse_{$this->type}" ) )
-            call_user_func( array( $this, 'parse_' . $this->type ) );
+        $this->parse( $data, $type, $delimiter );
 
         return $this->import_pod_items();
     }
@@ -144,16 +134,20 @@ class PodsMigrate {
 
     /**
      * @param array $data Array of data
-     * @param string $type Export Type (php, json, sv, xml)
+     * @param string $type Parse Type (php, json, sv, xml)
+     * @param string $delimiter Delimiter for export type 'sv'
      *
      * @return null
      */
-    public function parse ( $data = null, $type = null ) {
+    public function parse ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
             $this->input = $data;
 
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
+
+        if ( !empty( $delimiter ) )
+            $this->delimiter = $delimiter;
 
         if ( method_exists( $this, "parse_{$this->type}" ) )
             return call_user_func( array( $this, 'parse_' . $this->type ) );
@@ -175,22 +169,29 @@ class PodsMigrate {
         if ( !is_array( $items ) )
             return false;
 
-        $data = array(
-            'columns' => array(),
-            'items' => array(),
-            'fields' => array()
-        );
+        // Only export to a basic object if building for a single item.
+        if ( ! empty( $this->data['single'] ) ) {
+        	$data = $items;
+        } else {
+	        $data = array(
+		        'columns' => array(),
+		        'items'   => array(),
+		        'fields'  => array()
+	        );
 
-        foreach ( $items as $key => $item ) {
-            if ( !is_array( $item ) )
-                continue;
+	        foreach ( $items as $key => $item ) {
+		        if ( ! is_array( $item ) ) {
+			        continue;
+		        }
 
-            foreach ( $item as $column => $value ) {
-                if ( !in_array( $column, $data[ 'columns' ] ) )
-                    $data[ 'columns' ][] = $column;
-            }
+		        foreach ( $item as $column => $value ) {
+			        if ( ! in_array( $column, $data['columns'] ) ) {
+				        $data['columns'][] = $column;
+			        }
+		        }
 
-            $data[ 'items' ][ $key ] = $item;
+		        $data['items'][ $key ] = $item;
+	        }
         }
 
         $this->parsed = $data;
@@ -434,47 +435,45 @@ class PodsMigrate {
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
 
-        $data = array(
-            'items' => array(
-                'count' => count( $this->data[ 'items' ] ),
-                'item' => array()
-            )
-        );
-
-        foreach ( $this->data[ 'items' ] as $item ) {
-            $row = array();
-
-            foreach ( $this->data[ 'columns' ] as $column => $label ) {
-                if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
-                    $column = $label;
-
-                $value = '';
-
-                if ( is_object( $item ) ) {
-                    if ( !isset( $item->$column ) )
-                        $item->$column = '';
-
-                    $value = $item->$column;
-                }
-                elseif ( is_array( $item ) ) {
-                    if ( !isset( $item[ $column ] ) )
-                        $item[ $column ] = '';
-
-                    $value = $item[ $column ];
-                }
-
-                $row[ $column ] = $value;
-            }
-
-            $data[ 'items' ][ 'item' ][] = $row;
-        }
-
         // Only export to a basic object if building for a single item.
         if ( ! empty( $this->data['single'] ) ) {
-        	if ( ! empty( $data['items']['item'] ) ) {
-        	    $data = $data['items']['item'];
-	        } else {
-        		$data = null;
+        	$data = $this->data['items'];
+        } else {
+	        $data = array(
+		        'items' => array(
+			        'count' => count( $this->data['items'] ),
+			        'item'  => array()
+		        )
+	        );
+
+	        foreach ( $this->data['items'] as $item ) {
+		        $row = array();
+
+		        foreach ( $this->data['columns'] as $column => $label ) {
+			        if ( is_numeric( $column ) && ( ( is_object( $item ) && ! isset( $item->$column ) ) || ( is_array( $item ) && ! isset( $item[ $column ] ) ) ) ) {
+				        $column = $label;
+			        }
+
+			        $value = '';
+
+			        if ( is_object( $item ) ) {
+				        if ( ! isset( $item->$column ) ) {
+					        $item->$column = '';
+				        }
+
+				        $value = $item->$column;
+			        } elseif ( is_array( $item ) ) {
+				        if ( ! isset( $item[ $column ] ) ) {
+					        $item[ $column ] = '';
+				        }
+
+				        $value = $item[ $column ];
+			        }
+
+			        $row[ $column ] = $value;
+		        }
+
+		        $data['items']['item'][] = $row;
 	        }
         }
 
@@ -1148,4 +1147,46 @@ class PodsMigrate {
 		return $migrate->save( $save_params );
 
 	}
+
+	/**
+	 * Get data from a file.
+	 *
+	 * @param string $file   File to get data from.
+	 * @param bool   $single Whether this is a single item.
+	 *
+	 * @return mixed
+	 */
+	public static function get_data_from_file( $file, $single = false ) {
+
+		$path = ABSPATH;
+
+		// Detect path if it is set in the file param.
+		if ( false !== strpos( $file, '/' ) ) {
+			$path = dirname( $file );
+			$file = basename( $file );
+		}
+
+		$format = 'json';
+
+		// Detect the export format.
+		if ( false !== strpos( $file, '.' ) ) {
+			$format = explode( '.', $file );
+			$format = end( $format );
+		}
+
+		$migrate_data = array(
+			'single' => $single,
+		);
+
+		$migrate = new self( $format, null, $migrate_data );
+
+		$raw_data = file_get_contents( $file );
+
+		// Handle processing the raw data from the format needed.
+		$data = $migrate->parse( $raw_data );
+
+		return $data;
+
+	}
+
 }

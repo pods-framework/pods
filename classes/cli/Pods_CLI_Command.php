@@ -349,7 +349,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 		try {
 			$data = $pod->export_data( $params );
 		} catch ( Exception $e ) {
-			WP_CLI::error( sprintf( __( 'Error exporting pod item: %s', 'pods' ), $e->getMessage() ) );
+			WP_CLI::error( sprintf( __( 'Error exporting pod items: %s', 'pods' ), $e->getMessage() ) );
 		}
 
 		if ( ! empty( $data ) ) {
@@ -361,9 +361,9 @@ class Pods_CLI_Command extends WP_CLI_Command {
 			$export_file = PodsMigrate::export_data_to_file( $file, $data );
 
 			if ( $export_file ) {
-				WP_CLI::success( sprintf( __( 'Pod item exported: %s', 'pods' ), $export_file ) );
+				WP_CLI::success( sprintf( __( 'Pod items exported: %s', 'pods' ), $export_file ) );
 			} else {
-				WP_CLI::error( __( 'Pod item not exported.', 'pods' ) );
+				WP_CLI::error( __( 'Pod items not exported.', 'pods' ) );
 			}
 		} else {
 			WP_CLI::error( __( 'No pod item export data found.', 'pods' ) );

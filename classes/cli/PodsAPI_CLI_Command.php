@@ -203,7 +203,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 * --name=<name>
 	 * : The pod name.
 	 *
-	 * [--delete_all]
+	 * [--delete-all]
 	 * : Delete all pod content for the pod.
 	 *
 	 * ## EXAMPLES
@@ -216,6 +216,13 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	public function delete_pod( $args, $assoc_args ) {
 
 		$api = pods_api();
+
+		// Handle prettified arg name
+		if ( ! empty( $assoc_args['delete-all'] ) ) {
+			$assoc_args['delete_all'] = true;
+
+			unset( $assoc_args['delete-all'] );
+		}
 
 		$deleted = false;
 

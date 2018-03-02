@@ -1603,6 +1603,12 @@ class PodsInit {
 		// Show admin bar links
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
+		// Add WP-CLI commands
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require_once PODS_DIR . 'classes/cli/Pods_CLI_Command.php';
+			require_once PODS_DIR . 'classes/cli/PodsAPI_CLI_Command.php';
+		}
+
 	}
 
 	/**

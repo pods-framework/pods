@@ -273,11 +273,11 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 		$active = PodsInit::$components->is_component_active( $component );
 
 		if ( $active ) {
-			WP_CLI::error( sprintf( __( 'Component %s is already active', 'pods' ), $component ) );
+			WP_CLI::error( sprintf( __( 'Component %s is already active.', 'pods' ), $component ) );
 		} else {
 			PodsInit::$components->activate_component( $component );
 
-			WP_CLI::success( __( 'Component activated', 'pods' ) );
+			WP_CLI::success( __( 'Component activated.', 'pods' ) );
 		}
 
 	}
@@ -309,11 +309,11 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 		$active = PodsInit::$components->is_component_active( $component );
 
 		if ( ! $active ) {
-			WP_CLI::error( sprintf( __( 'Component %s is already not active', 'pods' ), $component ) );
+			WP_CLI::error( sprintf( __( 'Component %s is not active.', 'pods' ), $component ) );
 		} else {
 			PodsInit::$components->deactivate_component( $component );
 
-			WP_CLI::success( __( 'Component deactivated', 'pods' ) );
+			WP_CLI::success( __( 'Component deactivated.', 'pods' ) );
 		}
 
 	}
@@ -331,7 +331,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 
 		pods_api()->cache_flush_pods();
 
-		WP_CLI::success( __( 'Pod cache cleared', 'pods' ) );
+		WP_CLI::success( __( 'Pods cache cleared', 'pods' ) );
 
 	}
 
@@ -418,7 +418,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Export a Pods Package to a file.
+	 * Import a Pods Package from a file.
 	 *
 	 * ## OPTIONS
 	 *

@@ -1,0 +1,8 @@
+# These owners will be the default owners for everything in the repo.
+* @sc0ttkclark @pglewis
+
+# These owners will be the default owners for JS files in the repo.
+# *.js @exampleuser
+
+# These owners will be the default owners for PHP files in the repo.
+# *.php @exampleuser

@@ -159,8 +159,9 @@ class Pods_Templates_Auto_Template_Front_End {
 					$archive_append = pods_v( 'pfat_append_archive', $pod_data[ 'options' ], true, true );
 					$single_filter = pods_v( 'pfat_filter_single', $pod_data[ 'options' ], 'the_content', true );
 					$archive_filter = pods_v( 'pfat_filter_archive', $pod_data[ 'options' ], 'the_content', true );
+					$run_outside_loop = pods_v( 'pfat_run_outside_loop', $pod_data[ 'options' ], false, true );
 					$type = pods_v( 'type', $pod_data, false, true );
-					//check if it's a post type that has an arhive
+					//check if it's a post type that has an archive
 					if ( $type === 'post_type' && $the_pod !== 'post' || $the_pod !== 'page' ) {
 						$has_archive = pods_v( 'has_archive', $pod_data['options'], false, true );
 					}
@@ -187,6 +188,7 @@ class Pods_Templates_Auto_Template_Front_End {
 						'has_archive'	=> $has_archive,
 						'single_filter' => $single_filter,
 						'archive_filter' => $archive_filter,
+						'run_outside_loop' => $run_outside_loop,
 						'type' => $type,
 					);
 				}
@@ -269,14 +271,17 @@ class Pods_Templates_Auto_Template_Front_End {
 
 		//check if $current_post_type is the key of the array of possible pods
 		if ( isset( $possible_pods[ $current_post_type ] ) ) {
+			//get array for the current post type
+			$this_pod = $possible_pods[ $current_post_type ];
+
+			if ( !in_the_loop() && !pods_v( 'run_outside_loop', $this_pod, false ) ) {
+				// If outside of the loop, exit quickly
+				return $content;
+			}
 
 			//build Pods object for current item
 			global $post;
 			$pods = pods( $current_post_type, $post->ID );
-
-			//get array for the current post type
-			$this_pod = $possible_pods[ $current_post_type ];
-
 
 			if ( $this_pod[ 'single' ] && is_singular( $current_post_type ) ) {
 				//load the template

@@ -1,0 +1,52 @@
+// ==========
+// Typography Variables
+// ==========
+//
+// $font-size: 16px;
+// $line-height: 1.6;
+//
+// /* Fonts */
+//
+// @import url( 'https://fonts.googleapis.com/css?family=EB+Garamond|Roboto:400,700|Covered+By+Your+Grace');
+//
+// $serif: "EB Garamond", Georgia, "Times New Roman", serif;
+// $serif-secondary: inherit;
+// $sans-serif: Roboto, Arial, "Helvetica", sans-serif;
+// $sans-serif-secondary: inherit;
+// $cursive: 'Covered By Your Grace', cursive;
+
+@font-face {
+    font-family: "pods";
+    src: url("#{$FontsPath}/pods.eot");
+    src: url("#{$FontsPath}/pods.eot?#iefix") format("embedded-opentype"),
+    url("#{$FontsPath}/pods.woff") format("woff"),
+    url("#{$FontsPath}/pods.ttf") format("truetype"),
+    url("#{$FontsPath}/pods.svg#pods") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="pods-icon-"]:before,
+[class*=" pods-icon-"]:before {
+    font-family: "pods" !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-variant: normal !important;
+    text-transform: none !important;
+    speak: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.pods-icon-dashicon:before {
+    content: "c";
+}
+
+#toplevel_page_pods .dashicons-before,
+#toplevel_page_pods .dashicons-before:before,
+.dashicons-pods:before {
+    font-family: "pods" !important;
+    font-size: 20px;
+    content: "c";
+}

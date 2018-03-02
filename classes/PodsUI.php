@@ -2109,10 +2109,7 @@ class PodsUI {
 
 	    $export_type = trim( strtolower( $export_type ) );
 
-        $type = 'sv'; // covers csv + tsv
-
-        if ( in_array( $export_type, array( 'xml', 'json' ) ) )
-            $type = $export_type;
+        $type = $export_type;
 
         $delimiter = ',';
 
@@ -2155,7 +2152,11 @@ class PodsUI {
 
         $migrate->export();
 
-        $export_file = $migrate->save();
+        $save_params = array(
+        	'attach' => true,
+		);
+
+        $export_file = $migrate->save( $save_params );
 
         $this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
 

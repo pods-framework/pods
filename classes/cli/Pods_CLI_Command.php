@@ -20,7 +20,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * wp pods add --pod=my_pod --my_field_name1=Value --my_field_name2="Another Value"
 	 */
-	function add( $args, $assoc_args ) {
+	public function add( $args, $assoc_args ) {
 
 		$pod_name = $assoc_args['pod'];
 
@@ -72,7 +72,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 * wp pods save --pod=my_pod --item=123 --my_field_name1=Value2 --my_field_name2="Another Value2"
 	 * wp pods save --pod=my_settings_pod --my_option_field_name1=Value --my_option_field_name2="Another Value2"
 	 */
-	function save( $args, $assoc_args ) {
+	public function save( $args, $assoc_args ) {
 
 		$pod_name = $assoc_args['pod'];
 		$item     = pods_v( 'item', $assoc_args );
@@ -129,7 +129,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * wp pods duplicate --pod=my_pod --item=123
 	 */
-	function duplicate( $args, $assoc_args ) {
+	public function duplicate( $args, $assoc_args ) {
 
 		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
 
@@ -173,7 +173,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * wp pods delete --pod=my_pod --item=123
 	 */
-	function delete( $args, $assoc_args ) {
+	public function delete( $args, $assoc_args ) {
 
 		$pod = pods( $assoc_args['pod'], $assoc_args['item'], false );
 
@@ -210,7 +210,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 * : The pod name.
 	 *
 	 * --file=<file>
-	 * :  The file to save to including path (defaults to current path).
+	 * : The file to save to including path (defaults to current path).
 	 *
 	 * [--item=<item>]
 	 * : The item to save for, it is not used for a settings pod.
@@ -230,7 +230,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand export-item
 	 */
-	function export_item( $args, $assoc_args ) {
+	public function export_item( $args, $assoc_args ) {
 
 		$pod_name = $assoc_args['pod'];
 		$item     = pods_v( 'item', $assoc_args );
@@ -292,7 +292,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 * : The pod name.
 	 *
 	 * --file=<file>
-	 * :  The file to save to including path (defaults to current path).
+	 * : The file to save to including path (defaults to current path).
 	 *
 	 * [--fields=<fields>]
 	 * : The comma-separated list of fields to export (defaults to all fields).
@@ -312,7 +312,7 @@ class Pods_CLI_Command extends WP_CLI_Command {
 	 * wp pods export --pod=my_pod --file="items.json" --params="{\"limit\":10,\"orderby\":\"t.ID DESC\"}"
 	 * wp pods export --pod=my_pod --file="items.json" --params="limit=10&orderby=t.ID DESC"
 	 */
-	function export( $args, $assoc_args ) {
+	public function export( $args, $assoc_args ) {
 
 		$pod_name = $assoc_args['pod'];
 

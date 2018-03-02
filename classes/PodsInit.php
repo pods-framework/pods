@@ -1743,4 +1743,74 @@ class PodsInit {
 		}
 
 	}
+
+	/**
+	 * Add REST API support to post type and taxonomy objects.
+	 *
+	 * @uses  "init"
+	 *
+	 * @since 2.5.6
+	 */
+	public function add_rest_support() {
+
+		if ( empty( self::$version ) ) {
+			return;
+		}
+
+		static $rest_support_added;
+
+		if ( ! function_exists( 'register_rest_field' ) ) {
+			return;
+		}
+
+		include_once( PODS_DIR . 'classes/rest/PodsRESTFields.php' );
+		include_once( PODS_DIR . 'classes/rest/PodsRESTHandlers.php' );
+
+		$rest_bases = pods_transient_get( 'pods_rest_bases' );
+
+		if ( empty( $rest_bases ) ) {
+	        $pods = pods_api()->load_pods( array( 'type' => array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ), 'fields' => false, 'table_info' => false ) );
+
+			$rest_bases = array();
+
+			if ( ! empty( $pods ) && is_array( $pods ) ) {
+				foreach ( $pods as $pod ) {
+					$type = $pod['type'];
+
+					if ( in_array( $type, array( 'post_type', 'taxonomy', 'user', 'media', 'comment' ) ) ) {
+						if ( $pod && PodsRESTHandlers::pod_extends_core_route( $pod ) ) {
+							$rest_bases[ $pod['name'] ] = array(
+								'type' => $type,
+								'base' => sanitize_title( pods_v( 'rest_base', $pod['options'], $pod['name'] ) ),
+							);
+						}
+					}
+				}
+			}
+
+			if ( empty( $rest_bases ) ) {
+				$rest_bases = 'none';
+			}
+
+			pods_transient_set( 'pods_rest_bases', $rest_bases );
+		}
+
+		if ( empty( $rest_support_added ) && ! empty( $rest_bases ) && 'none' !== $rest_bases ) {
+			foreach ( $rest_bases as $pod_name => $pod_info ) {
+				$pod_type  = $pod_info['type'];
+				$rest_base = $pod_info['base'];
+
+				if ( 'post_type' == $pod_type ) {
+					PodsRESTHandlers::post_type_rest_support( $pod_name, $rest_base );
+				} elseif ( 'taxonomy' == $pod_type ) {
+					PodsRESTHandlers::taxonomy_rest_support( $pod_name, $rest_base );
+				}
+
+				new PodsRESTFields( $pod_name );
+			}
+
+			$rest_support_added = true;
+		}
+
+	}
 }

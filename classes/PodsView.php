@@ -498,7 +498,8 @@ class PodsView {
 			$response = wp_remote_get( $_view );
 
 			return wp_remote_retrieve_body( $response );
-		}*/
+		}
+		*/
 
 		$_view = self::locate_template( $_view );
 

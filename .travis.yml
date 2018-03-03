@@ -44,5 +44,5 @@ before_script:
     - ln -s . /tmp/wordpress/wp-content/plugins/pods
 
 script:
-    - vendor/bin/phpunit --debug
+    - vendor/bin/phpunit
     - npm run test-dfv

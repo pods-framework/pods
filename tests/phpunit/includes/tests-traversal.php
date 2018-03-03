@@ -661,8 +661,8 @@ class Test_Traversal extends Pods_UnitTestCase {
 
 		$p->find( $params );
 
-		$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
-		$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( $where, true ) ) );
+		$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( array( 'where' => $where, 'params' => $p->params ), true ) ) );
+		$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s | %s', $variant_id, $p->sql, print_r( array( 'where' => $where, 'params' => $p->params ), true ) ) );
 
 		$this->assertNotEmpty( $p->fetch(), sprintf( 'Item not fetched [%s]', $variant_id ) );
 
@@ -1012,7 +1012,7 @@ class Test_Traversal extends Pods_UnitTestCase {
 			$debug_related .= ' | ' . count( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}podsrel` WHERE `item_id` IN ( " . implode( ',', array_fill( 0, count( (array) $podsrel_item_id ), '%d' ) ) . ' ) AND `pod_id` = %d AND `field_id` = %d', $prepare_data ) ) ) . ' deep related items';
 		}
 
-		$debug = sprintf( '%s | %s | %s', $p->sql, print_r( $where, true ), $debug_related );
+		$debug = sprintf( '%s | %s | %s', $p->sql, print_r( array( 'where' => $where, 'params' => $p->params ), true ), $debug_related );
 
 		$this->assertEquals( 1, $p->total(), sprintf( 'Total not correct [%s] | %s', $variant_id, $debug ) );
 		$this->assertEquals( 1, $p->total_found(), sprintf( 'Total found not correct [%s] | %s', $variant_id, $debug ) );

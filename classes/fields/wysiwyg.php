@@ -28,7 +28,7 @@ class PodsField_WYSIWYG extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'WYSIWYG (Visual Editor)', 'pods' );
 	}

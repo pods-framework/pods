@@ -25,7 +25,7 @@ class PodsField_Boolean extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Yes / No', 'pods' );
 	}

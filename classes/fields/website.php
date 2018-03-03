@@ -27,7 +27,7 @@ class PodsField_Website extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Website', 'pods' );
 

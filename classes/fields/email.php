@@ -28,7 +28,7 @@ class PodsField_Email extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'E-mail', 'pods' );
 	}

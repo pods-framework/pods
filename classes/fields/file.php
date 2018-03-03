@@ -28,7 +28,7 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'File / Image / Video', 'pods' );
 

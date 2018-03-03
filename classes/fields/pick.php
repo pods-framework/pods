@@ -84,7 +84,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Relationship', 'pods' );
 	}

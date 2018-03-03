@@ -33,7 +33,7 @@ class PodsField_Avatar extends PodsField_File {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Avatar', 'pods' );
 	}

@@ -52,7 +52,7 @@ class PodsField_OEmbed extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'oEmbed', 'pods' );
 	}

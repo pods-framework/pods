@@ -39,7 +39,7 @@ class PodsField_Date extends PodsField_DateTime {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		static::$label = __( 'Date', 'pods' );
 	}

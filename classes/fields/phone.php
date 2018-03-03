@@ -28,7 +28,7 @@ class PodsField_Phone extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Phone', 'pods' );
 	}

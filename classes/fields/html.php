@@ -28,7 +28,7 @@ class PodsField_HTML extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'HTML', 'pods' );
 	}

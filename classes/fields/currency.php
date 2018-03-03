@@ -37,7 +37,7 @@ class PodsField_Currency extends PodsField_Number {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Currency', 'pods' );
 		static::data_currencies();

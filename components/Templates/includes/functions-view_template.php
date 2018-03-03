@@ -117,7 +117,7 @@ function frontier_if_block( $atts, $code ) {
 			$field_type = 'text';
 		}
 
-		$is_empty = PodsForm::field_method( $field_type, 'is_empty', $field_data );
+		$is_empty = PodsForm::field_method( $field_type, 'values_are_empty', $field_data );
 	}
 
 	$output = '';

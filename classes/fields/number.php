@@ -28,7 +28,7 @@ class PodsField_Number extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Plain Number', 'pods' );
 	}

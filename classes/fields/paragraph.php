@@ -32,7 +32,7 @@ class PodsField_Paragraph extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Plain Paragraph Text', 'pods' );
 	}

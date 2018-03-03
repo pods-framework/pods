@@ -29,7 +29,7 @@ class PodsField_Link extends PodsField_Website {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Link', 'pods' );
 	}

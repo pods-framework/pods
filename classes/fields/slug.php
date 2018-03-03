@@ -31,7 +31,7 @@ class PodsField_Slug extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function __construct() {
+	public function setup() {
 
 		self::$label = __( 'Permalink (url-friendly)', 'pods' );
 	}

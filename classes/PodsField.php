@@ -56,11 +56,22 @@ class PodsField {
 	private static $api;
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
+	 * Initial setup of class object.
 	 *
 	 * @since 2.0
 	 */
 	public function __construct() {
+
+		// Run any setup needed.
+		$this->setup();
+	}
+
+	/**
+	 * Do things like register/enqueue scripts+stylesheets, set labels, etc.
+	 *
+	 * @since 2.7.2
+	 */
+	public function setup() {
 
 		// Subclasses utilize this method if needed.
 	}
@@ -179,7 +190,7 @@ class PodsField {
 	/**
 	 * Check if the field is empty.
 	 *
-	 * @param mixed $value
+	 * @param mixed $value Field value.
 	 *
 	 * @return bool
 	 *
@@ -195,6 +206,42 @@ class PodsField {
 
 		if ( empty( $value ) ) {
 			$is_empty = true;
+		}
+
+		return $is_empty;
+
+	}
+
+	/**
+	 * Check if the field values are empty.
+	 *
+	 * @param array|mixed $values Field values.
+	 * @param boolean     $strict Whether to check if any of the values are non-empty in an array.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7
+	 */
+	public function values_are_empty( $values, $strict = true ) {
+
+		$is_empty = false;
+
+		if ( is_array( $values ) ) {
+			if ( $strict ) {
+				foreach ( $values as $value ) {
+					$is_empty = true;
+
+					if ( ! $this->is_empty( $value ) ) {
+						$is_empty = false;
+
+						break;
+					}
+				}
+			} elseif ( empty( $values ) ) {
+				$is_empty = true;
+			}
+		} else {
+			$is_empty = $this->is_empty( $values );
 		}
 
 		return $is_empty;

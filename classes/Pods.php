@@ -435,8 +435,6 @@ class Pods implements Iterator {
 	/**
 	 * Rewind Iterator
 	 *
-	 * @return void|boolean
-	 *
 	 * @since 2.3.4
 	 *
 	 * @link  http://www.php.net/manual/en/class.iterator.php
@@ -444,12 +442,10 @@ class Pods implements Iterator {
 	public function rewind() {
 
 		if ( ! $this->iterator ) {
+			$this->iterator = true;
+
 			$this->row_number = 0;
-
-			return;
 		}
-
-		return false;
 	}
 
 	/**
@@ -473,7 +469,7 @@ class Pods implements Iterator {
 	/**
 	 * Get current Iterator key
 	 *
-	 * @return int|boolean
+	 * @return int
 	 *
 	 * @since 2.3.4
 	 *
@@ -481,17 +477,13 @@ class Pods implements Iterator {
 	 */
 	public function key() {
 
-		if ( $this->iterator ) {
-			return $this->row_number;
-		}
-
-		return false;
+		return $this->row_number;
 	}
 
 	/**
 	 * Move onto the next Iterator row
 	 *
-	 * @return void|boolean
+	 * @return void
 	 *
 	 * @since 2.3.4
 	 *
@@ -499,13 +491,7 @@ class Pods implements Iterator {
 	 */
 	public function next() {
 
-		if ( $this->iterator ) {
-			$this->row_number ++;
-
-			return;
-		}
-
-		return false;
+		$this->row_number ++;
 	}
 
 	/**
@@ -4011,7 +3997,7 @@ class Pods implements Iterator {
 				 *
 				 * @param string $message Success message.
 				 *
-				 * @since 3.0.0
+				 * @since 2.7
 				 */
 				$message = apply_filters( 'pods_pod_form_success_message', $message );
 

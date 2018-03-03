@@ -359,7 +359,7 @@ class PodsForm {
 	 *                                       string such as 'tabindex="1"', though the array format is typically
 	 *                                       cleaner.
 	 *
-	 * @since 3.0
+	 * @since 2.7
 	 * @return string
 	 */
 	public static function submit_button( $text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null ) {

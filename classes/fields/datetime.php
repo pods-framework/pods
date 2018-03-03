@@ -307,7 +307,7 @@ class PodsField_DateTime extends PodsField {
 				$js = false;
 			}
 
-			$format = $this->format( $options, $js );
+			$format = $this->format_datetime( $options, $js );
 
 			if ( $js ) {
 				$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
@@ -335,7 +335,7 @@ class PodsField_DateTime extends PodsField {
 		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
 			$js = false;
 		}
-		$format = $this->format( $options, $js );
+		$format = $this->format_datetime( $options, $js );
 		if ( $js ) {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
@@ -392,7 +392,7 @@ class PodsField_DateTime extends PodsField {
 		if ( 'custom' !== pods_v( static::$type . '_type', $options, 'format' ) ) {
 			$js = false;
 		}
-		$format = $this->format( $options, $js );
+		$format = $this->format_datetime( $options, $js );
 		if ( $js ) {
 			$format = $this->convert_format( $format, array( 'source' => 'jquery_ui' ) );
 		}
@@ -420,9 +420,16 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Build date and/or time format string based on options
+	 *
+	 * @since  2.7
+	 *
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
+	 *
+	 * @return string
 	 */
-	public function format( $options, $js = false ) {
+	public function format_datetime( $options, $js = false ) {
 
 		$format = $this->format_date( $options, $js );
 

@@ -605,7 +605,7 @@ class PodsView {
 	 *
 	 * @return bool|int
 	 *
-	 * @since 3.0
+	 * @since 2.7
 	 * @static
 	 */
 	public static function expires( $expires, $cache_mode = 'cache' ) {

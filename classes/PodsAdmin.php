@@ -3272,7 +3272,7 @@ class PodsAdmin {
 	 *
 	 * @return array
 	 *
-	 * @since 3.0.0
+	 * @since 2.7
 	 */
 	public function configuration( $pod = null, $full_field_info = false ) {
 

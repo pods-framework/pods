@@ -155,9 +155,8 @@ class PodsField_Date extends PodsField_DateTime {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function format( $options, $js = false ) {
+	public function format_datetime( $options, $js = false ) {
 
-		// @see datetime field.
 		return $this->format_date( $options, $js );
 	}
 }

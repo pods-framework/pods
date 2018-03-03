@@ -7,36 +7,26 @@ require_once PODS_DIR . 'classes/fields/file.php';
 class PodsField_Avatar extends PodsField_File {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Relationships / Media';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'avatar';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Avatar';
 
 	/**
-	 * Pod Types supported on (true for all, false for none, or give array of specific types supported)
-	 *
-	 * @var array|bool
-	 * @since 2.1
+	 * {@inheritdoc}
 	 */
-	public static $pod_types = array( 'user' );
+	public static $pod_types = array(
+		'user',
+	);
 
 	/**
 	 * {@inheritdoc}

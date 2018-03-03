@@ -6,41 +6,30 @@
 class PodsField_Slug extends PodsField {
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'slug';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Permalink (url-friendly)';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%s';
 
 	/**
-	 * Pod Types supported on (true for all, false for none, or give array of specific types supported)
-	 *
-	 * @var array|bool
-	 * @since 2.1
+	 * {@inheritdoc}
 	 */
-	public static $pod_types = array( 'pod', 'table' );
+	public static $pod_types = array(
+		'pod',
+		'table',
+	);
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -69,12 +58,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Define the current field's schema for DB table storage
-	 *
-	 * @param array $options
-	 *
-	 * @return array
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 
@@ -84,16 +68,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -101,15 +76,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Customize output of the form field
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -140,16 +107,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Build regex necessary for JS validation
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param string $pod
-	 * @param int    $id
-	 *
-	 * @return bool
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -157,18 +115,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Validate a value before it's saved
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param int    $id
-	 * @param null   $params
-	 *
-	 * @return bool
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -176,18 +123,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Change the value or perform actions after validation but before saving to the DB
-	 *
-	 * @param mixed  $value
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param object $params
-	 *
-	 * @return mixed|string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -203,17 +139,7 @@ class PodsField_Slug extends PodsField {
 	}
 
 	/**
-	 * Customize the Pods UI manage table column output
-	 *
-	 * @param int    $id
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 *
-	 * @return mixed|void
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 

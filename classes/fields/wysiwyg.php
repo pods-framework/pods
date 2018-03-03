@@ -60,7 +60,7 @@ class PodsField_WYSIWYG extends PodsField {
 				),
 				'dependency' => true,
 			),
-			'editor_options'                   => array(
+			'editor_options'                     => array(
 				'label'      => __( 'Editor Options', 'pods' ),
 				'depends-on' => array( static::$type . '_editor' => 'tinymce' ),
 				'group'      => array(
@@ -71,7 +71,7 @@ class PodsField_WYSIWYG extends PodsField {
 					),
 				),
 			),
-			'output_options'                   => array(
+			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
 					static::$type . '_oembed'          => array(

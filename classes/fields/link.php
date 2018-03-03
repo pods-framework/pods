@@ -66,7 +66,7 @@ class PodsField_Link extends PodsField_Website {
 				'type'       => 'boolean',
 				'dependency' => false,
 			),
-			'output_options'                   => array(
+			'output_options'                     => array(
 				'label' => __( 'Link Text Output Options', 'pods' ),
 				'group' => array(
 					static::$type . '_allow_shortcode' => array(

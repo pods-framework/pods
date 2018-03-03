@@ -52,7 +52,7 @@ class PodsField_Paragraph extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			'output_options'                   => array(
+			'output_options'                     => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
 					static::$type . '_allow_html'      => array(

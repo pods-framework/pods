@@ -7,34 +7,22 @@ require_once PODS_DIR . 'classes/fields/number.php';
 class PodsField_Currency extends PodsField_Number {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Number';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'currency';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Currency';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%d';
 
@@ -47,9 +35,7 @@ class PodsField_Currency extends PodsField_Number {
 	public static $currencies = array();
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -58,11 +44,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Add options and set defaults to
-	 *
-	 * @return array
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function options() {
 
@@ -176,18 +158,6 @@ class PodsField_Currency extends PodsField_Number {
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
 			),
-			/*
-			,
-			static::$type . '_size' => array(
-				'label' => __( 'Field Size', 'pods' ),
-				'default' => 'medium',
-				'type' => 'pick',
-				'data' => array(
-					'small' => __( 'Small', 'pods' ),
-					'medium' => __( 'Medium', 'pods' ),
-					'large' => __( 'Large', 'pods' )
-				)
-			)*/
 		);
 
 		return $options;
@@ -195,16 +165,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null|string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -243,16 +204,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Build regex necessary for JS validation
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param string $pod
-	 * @param int    $id
-	 *
-	 * @return bool|string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -273,18 +225,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Validate a value before it's saved
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param int    $id
-	 * @param null   $params
-	 *
-	 * @return bool|mixed
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
@@ -329,18 +270,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Change the value or perform actions after validation but before saving to the DB
-	 *
-	 * @param mixed  $value
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param object $params
-	 *
-	 * @return mixed|string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -382,16 +312,7 @@ class PodsField_Currency extends PodsField_Number {
 	}
 
 	/**
-	 * Reformat a number to the way the value of the field is displayed
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 

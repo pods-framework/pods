@@ -53,7 +53,7 @@ class PodsField {
 	 * @var \PodsAPI
 	 * @since 2.3
 	 */
-	private static $api = false;
+	private static $api;
 
 	/**
 	 * Do things like register/enqueue scripts and stylesheets

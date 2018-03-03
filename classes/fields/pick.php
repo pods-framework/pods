@@ -21,6 +21,11 @@ class PodsField_Pick extends PodsField {
 	public static $label = 'Relationship';
 
 	/**
+	 * {@inheritdoc}
+	 */
+	protected static $api = false;
+
+	/**
 	 * Available Related Objects.
 	 *
 	 * @var array
@@ -51,14 +56,6 @@ class PodsField_Pick extends PodsField {
 	 * @since 2.3
 	 */
 	public static $field_data = array();
-
-	/**
-	 * API caching for fields that need it during validate/save.
-	 *
-	 * @var \PodsAPI
-	 * @since 2.3
-	 */
-	protected static $api = false;
 
 	/**
 	 * Saved array of simple relationship names.

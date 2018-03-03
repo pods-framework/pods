@@ -8,41 +8,27 @@
 class PodsField_Code extends PodsField {
 
 	/**
-	 * Field Type Group
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $group = 'Paragraph';
 
 	/**
-	 * Field Type Identifier
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $type = 'code';
 
 	/**
-	 * Field Type Label
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $label = 'Code (Syntax Highlighting)';
 
 	/**
-	 * Field Type Preparation
-	 *
-	 * @var string
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public static $prepare = '%s';
 
 	/**
-	 * Do things like register/enqueue scripts and stylesheets
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function __construct() {
 
@@ -50,10 +36,7 @@ class PodsField_Code extends PodsField {
 	}
 
 	/**
-	 * Add options and set defaults to
-	 *
-	 * @return array
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function options() {
 
@@ -67,7 +50,7 @@ class PodsField_Code extends PodsField {
 				'dependency'        => true,
 				'developer_mode'    => true,
 			),
-			'output_options'            => array(
+			'output_options'              => array(
 				'label' => __( 'Output Options', 'pods' ),
 				'group' => array(
 					static::$type . '_allow_shortcode' => array(
@@ -83,30 +66,14 @@ class PodsField_Code extends PodsField {
 				'default' => 0,
 				'type'    => 'number',
 				'help'    => __( 'Set to -1 for no limit', 'pods' ),
-			), /*
-		,
-            static::$type . '_size' => array(
-                'label' => __( 'Field Size', 'pods' ),
-                'default' => 'medium',
-                'type' => 'pick',
-                'data' => array(
-                    'small' => __( 'Small', 'pods' ),
-                    'medium' => __( 'Medium', 'pods' ),
-                    'large' => __( 'Large', 'pods' )
-                )
-            )*/
+			),
 		);
 
 		return $options;
 	}
 
 	/**
-	 * Define the current field's schema for DB table storage
-	 *
-	 * @param array $options
-	 *
-	 * @return array
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function schema( $options = null ) {
 
@@ -122,17 +89,7 @@ class PodsField_Code extends PodsField {
 	}
 
 	/**
-	 * Change the way the value of the field is displayed with Pods::get
-	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @return mixed|null|string
-	 * @internal param array $fields
-	 * @since    2.0
+	 * {@inheritdoc}
 	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
@@ -144,15 +101,7 @@ class PodsField_Code extends PodsField {
 	}
 
 	/**
-	 * Customize output of the form field
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
@@ -172,18 +121,7 @@ class PodsField_Code extends PodsField {
 	}
 
 	/**
-	 * Change the value or perform actions after validation but before saving to the DB
-	 *
-	 * @param mixed  $value
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $fields
-	 * @param array  $pod
-	 * @param object $params
-	 *
-	 * @since 2.0
-	 * @return mixed|string
+	 * {@inheritdoc}
 	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 

@@ -1257,7 +1257,7 @@ class Pods implements Iterator {
 						$single_multi = 'single';
 
 						if ( isset( $this->fields[ $params->name ] ) ) {
-							$single_multi = pods_v( $this->fields[ $params->name ]['type'] . '_format_type', $this->fields[ $params->name ]['options'], 'single' );
+							$single_multi = pods_v( $this->fields[ $params->name ]['type'] . '_format_type', $this->fields[ $params->name ]['options'], $single_multi );
 						}
 
 						if ( $simple && ! is_array( $value ) && 'single' !== $single_multi ) {
@@ -1861,7 +1861,7 @@ class Pods implements Iterator {
 			$this->row[ $params->full_name ] = $value;
 		}
 
-		if ( $params->single && is_array( $value ) && 1 === count( $value ) ) {
+		if ( true === $params->single && is_array( $value ) && 1 === count( $value ) ) {
 			$value = current( $value );
 		}
 

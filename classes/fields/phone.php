@@ -111,18 +111,7 @@ class PodsField_Phone extends PodsField {
 					__( 'Placeholders can provide instructions or an example of the required data format for a field. Please note: It is not a replacement for labels or description text, and it is less accessible for people using screen readers.', 'pods' ),
 					'https://www.w3.org/WAI/tutorials/forms/instructions/#placeholder-text',
 				),
-			), /*
-		,
-            self::$type . '_size' => array(
-                'label' => __( 'Field Size', 'pods' ),
-                'default' => 'medium',
-                'type' => 'pick',
-                'data' => array(
-                    'small' => __( 'Small', 'pods' ),
-                    'medium' => __( 'Medium', 'pods' ),
-                    'large' => __( 'Large', 'pods' )
-                )
-            )*/
+			),
 		);
 
 		return $options;
@@ -133,7 +122,7 @@ class PodsField_Phone extends PodsField {
 	 *
 	 * @param array $options
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0
 	 */
 	public function schema( $options = null ) {
@@ -172,7 +161,7 @@ class PodsField_Phone extends PodsField {
 		$field_type = 'phone';
 
 		if ( isset( $options['name'] ) && false === PodsForm::permission( self::$type, $options['name'], $options, null, $pod, $id ) ) {
-			if ( pods_var( 'read_only', $options, false ) ) {
+			if ( pods_v( 'read_only', $options, false ) ) {
 				$options['readonly'] = true;
 
 				$field_type = 'text';
@@ -215,7 +204,7 @@ class PodsField_Phone extends PodsField {
 			$errors = $check;
 		} else {
 			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-				if ( 1 == pods_var( 'required', $options ) ) {
+				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
 					$errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
@@ -248,7 +237,7 @@ class PodsField_Phone extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 'international' == pods_var( self::$type . '_format', $options ) ) {
+		if ( 'international' === pods_v( self::$type . '_format', $options ) ) {
 			// no validation/changes
 		} else {
 			// Clean input
@@ -287,21 +276,20 @@ class PodsField_Phone extends PodsField {
 			}
 
 			// Format number
-			if ( '(999) 999-9999 x999' == pods_var( self::$type . '_format', $options ) ) {
+			if ( '(999) 999-9999 x999' === pods_v( self::$type . '_format', $options ) ) {
 				if ( 2 == count( $numbers ) ) {
 					$value = implode( '-', $numbers );
 				} else {
 					$value = '(' . $numbers[0] . ') ' . $numbers[1] . '-' . $numbers[2];
 				}
-			} elseif ( '999.999.9999 x999' == pods_var( self::$type . '_format', $options ) ) {
+			} elseif ( '999.999.9999 x999' === pods_v( self::$type . '_format', $options ) ) {
 				$value = implode( '.', $numbers );
-			} else 			// if ( '999-999-9999 x999' == pods_var( self::$type . '_format', $options ) )
-			{
+			} else {
 				$value = implode( '-', $numbers );
 			}
 
 			// Add extension
-			if ( 1 == pods_var( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
+			if ( 1 === (int) pods_v( self::$type . '_enable_phone_extension', $options ) && 0 < strlen( $extension ) ) {
 				$value .= ' x' . $extension;
 			}
 		}//end if

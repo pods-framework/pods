@@ -1330,7 +1330,7 @@ class PodsForm {
 			$default = pods_evaluate_tags( $default );
 		}
 
-		$default = pods_var_raw( pods_v( 'default_value_parameter', $options ), 'request', $default, null, true );
+		$default = pods_v( pods_v( 'default_value_parameter', $options ), 'request', $default, true );
 
 		if ( $default != $value ) {
 			$value = $default;

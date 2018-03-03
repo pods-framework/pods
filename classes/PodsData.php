@@ -2616,7 +2616,7 @@ class PodsData {
 		// Plain queries.
 		if ( is_numeric( $field ) && ! is_array( $q ) ) {
 			return $q;
-		} elseif ( ! is_numeric( $field ) && ( ! is_array( $q ) || ( ! isset( $q['key'] ) && ! isset( $q['field'] ) ) ) ) {
+		} elseif ( ! is_numeric( $field ) && ( ! is_array( $q ) || ! isset( $q['key'], $q['field'] ) ) ) {
 			$new_q = array(
 				'field'           => $field,
 				'compare'         => pods_v( 'compare', $q, '=', true ),
@@ -2642,10 +2642,17 @@ class PodsData {
 		$field_name            = trim( pods_v( 'field', $q, pods_v( 'key', $q, $field, true ), true ) );
 		$field_type            = strtoupper( trim( pods_v( 'type', $q, 'CHAR', true ) ) );
 		$field_value           = pods_v( 'value', $q );
-		$field_compare         = strtoupper( trim( pods_v( 'compare', $q, ( is_array( $field_value ? 'IN' : '=' ) ), true ) ) );
+
+		$field_compare = '=';
+
+		if ( is_array( $field_value ) ) {
+			$field_compare = 'IN';
+		}
+
+		$field_compare         = strtoupper( trim( pods_v( 'compare', $q, $field_compare, true ) ) );
 		$field_sanitize        = (boolean) pods_v( 'sanitize', $q, true );
-		$field_sanitize_format = pods_v( 'sanitize_format', $q, true );
-		$field_cast            = pods_v( 'cast', $q, true );
+		$field_sanitize_format = pods_v( 'sanitize_format', $q, null, true );
+		$field_cast            = pods_v( 'cast', $q, null, true );
 
 		if ( is_object( $params ) ) {
 			$params->meta_query_syntax = true;

@@ -288,17 +288,17 @@ class Pods implements Iterator {
 			if ( $queried_object ) {
 				$id_lookup = true;
 
-				// Post Type Singular
 				if ( isset( $queried_object->post_type ) ) {
+					// Post Type Singular
 					$pod = $queried_object->post_type;
-				} // Term Archive
-				elseif ( isset( $queried_object->taxonomy ) ) {
+				} elseif ( isset( $queried_object->taxonomy ) ) {
+					// Term Archive
 					$pod = $queried_object->taxonomy;
-				} // Author Archive
-				elseif ( isset( $queried_object->user_login ) ) {
+				} elseif ( isset( $queried_object->user_login ) ) {
+					// Author Archive
 					$pod = 'user';
-				} // Post Type Archive
-				elseif ( isset( $queried_object->public, $queried_object->name ) ) {
+				} elseif ( isset( $queried_object->public, $queried_object->name ) ) {
+					// Post Type Archive
 					$pod = $queried_object->name;
 
 					$id_lookup = false;
@@ -559,12 +559,13 @@ class Pods implements Iterator {
 	 */
 	public function input( $field, $input_name = null, $value = '__null' ) {
 
-		// Field data override
 		if ( is_array( $field ) ) {
+			// Field data override
 			$field_data = $field;
-			$field      = pods_v( 'name', $field );
-		} // Get field data from field name
-		else {
+
+			$field = pods_v( 'name', $field );
+		} else {
+			// Get field data from field name
 			$field_data = $this->fields( $field );
 		}
 
@@ -626,11 +627,11 @@ class Pods implements Iterator {
 				$options = array_merge( $this->pod_data['object_fields'][ $field ], $this->pod_data['object_fields'][ $field ]['options'] );
 			}
 
-			// Get a list of available items from a relationship field
 			if ( 'data' === $option && in_array( pods_v( 'type', $options ), PodsForm::tableless_field_types(), true ) ) {
+				// Get a list of available items from a relationship field
 				$field_data = PodsForm::field_method( 'pick', 'get_field_data', $options );
-			} // Return option
-			elseif ( isset( $options[ $option ] ) ) {
+			} elseif ( isset( $options[ $option ] ) ) {
+				// Return option
 				$field_data = $options[ $option ];
 			}
 		}
@@ -1391,8 +1392,8 @@ class Pods implements Iterator {
 							// No items found
 							if ( empty( $ids ) ) {
 								return false;
-							} // @todo This should return array() if not $params->single
-							elseif ( 0 < $last_limit ) {
+							} elseif ( 0 < $last_limit ) {
+								// @todo This should return array() if not $params->single
 								$ids = array_slice( $ids, 0, $last_limit );
 							}
 
@@ -1412,8 +1413,9 @@ class Pods implements Iterator {
 									}
 								}
 							}
-						} // Assume last iteration
-						else {
+						} else {
+							// Assume last iteration
+
 							// Invalid field
 							if ( 0 === $key ) {
 								return false;
@@ -1662,11 +1664,11 @@ class Pods implements Iterator {
 									}
 								}
 
-								// Return entire array
 								if ( $is_field_output_full ) {
+									// Return entire array.
 									$value = $data;
-								} // Return an array of single column values
-								else {
+								} else {
+									// Return an array of single column values.
 									$value = array();
 
 									foreach ( $data as $item_id => $item ) {
@@ -1987,15 +1989,15 @@ class Pods implements Iterator {
 					}
 				}
 			}
-		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+			// Text fields
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
 				return stripos( $current_value, $value );
 			}
-		} // All other fields
-		else {
+		} else {
+			// All other fields
 			return $this->is( $field, $value, $id );
 		}
 
@@ -2085,15 +2087,15 @@ class Pods implements Iterator {
 			if ( $value === $current_value ) {
 				return true;
 			}
-		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+			// Number fields
 			$current_value = $pod->raw( $field );
 
 			if ( (float) $current_value === (float) $value ) {
 				return true;
 			}
-		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+			// Date fields
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2103,15 +2105,15 @@ class Pods implements Iterator {
 			} elseif ( empty( $value ) ) {
 				return true;
 			}
-		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+			// Text fields
 			$current_value = $pod->raw( $field );
 
 			if ( (string) $current_value === (string) $value ) {
 				return true;
 			}
-		} // All other fields
-		else {
+		} else {
+			// All other fields
 			$current_value = $pod->raw( $field );
 
 			if ( $current_value === $value ) {
@@ -2965,13 +2967,13 @@ class Pods implements Iterator {
 			if ( empty( $value ) ) {
 				return $id;
 			}
-		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+			// Number fields
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value + (float) $value );
-		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+			// Date fields
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -2979,8 +2981,8 @@ class Pods implements Iterator {
 			} else {
 				$value = strtotime( $value );
 			}
-		} // Text fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::text_field_types(), true ) ) {
+			// Text fields
 			$current_value = $pod->raw( $field );
 
 			if ( 0 < strlen( $current_value ) ) {
@@ -3096,8 +3098,9 @@ class Pods implements Iterator {
 					$value = array();
 				}
 			}
-		} // Number fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::number_field_types(), true ) ) {
+			// Number fields
+
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;
@@ -3106,8 +3109,9 @@ class Pods implements Iterator {
 			$current_value = (float) $pod->raw( $field );
 
 			$value = ( $current_value - (float) $value );
-		} // Date fields
-		elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+		} elseif ( in_array( $this->fields[ $field ]['type'], PodsForm::date_field_types(), true ) ) {
+			// Date fields
+
 			// Date fields don't support empty for removing
 			if ( empty( $value ) ) {
 				return $id;

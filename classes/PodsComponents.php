@@ -109,7 +109,9 @@ class PodsComponents {
 		$pods_component_menu_items = array();
 
 		foreach ( $this->components as $component => $component_data ) {
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_data['ID'], $component_data['MustUse'], $component_data );
+			$component_id = $component_data['ID'];
+
+			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
 
 			if ( empty( $component_data['MustUse'] ) && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -219,12 +221,6 @@ class PodsComponents {
 						if ( $menu[2] === $menu_page ) {
 							$menu_page = $component_data['MenuPage'];
 
-							/*
-							if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
-								if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $component_data[ 'MenuAddPage' ] ) )
-									$menu_page = $component_data[ 'MenuAddPage' ];
-							}*/
-
 							$menu[2] = $menu_page;
 
 							$page = current( explode( '?', $menu[2] ) );
@@ -256,7 +252,9 @@ class PodsComponents {
 		do_action( 'pods_components_load' );
 
 		foreach ( (array) $this->components as $component => $component_data ) {
-			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_data['ID'], $component_data['MustUse'], $component_data );
+			$component_id = $component_data['ID'];
+
+			$component_data['MustUse'] = apply_filters( 'pods_component_require_' . $component_id, $component_data['MustUse'], $component_data );
 
 			if ( false === $component_data['MustUse'] && ( ! isset( $this->settings['components'][ $component ] ) || 0 === $this->settings['components'][ $component ] ) ) {
 				continue;
@@ -337,33 +335,51 @@ class PodsComponents {
 			$components = array();
 		}
 
-		if ( PodsInit::$version !== PODS_VERSION || ! is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET['page'] ) && 'pods-components' === $_GET['page'] && 1 !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+		if ( PODS_VERSION !== PodsInit::$version || ! is_array( $components ) || empty( $components ) || ( is_admin() && 'pods-components' === pods_v( 'page', 'get' ) && 1 !== (int) pods_transient_get( 'pods_components_refresh' ) ) ) {
 			do_action( 'pods_components_get' );
 
+			// @codingStandardsIgnoreLine
 			$component_dir   = @opendir( untrailingslashit( $this->components_dir ) );
 			$component_files = array();
 
 			if ( false !== $component_dir ) {
-				while ( false !== ( $file = readdir( $component_dir ) ) ) {
+				$file = readdir( $component_dir );
+
+				while ( false !== $file ) {
 					if ( '.' === substr( $file, 0, 1 ) ) {
+						// Get next file
+						$file = readdir( $component_dir );
+
 						continue;
 					} elseif ( is_dir( $this->components_dir . $file ) ) {
+						// @codingStandardsIgnoreLine
 						$component_subdir = @opendir( $this->components_dir . $file );
 
 						if ( $component_subdir ) {
-							while ( false !== ( $subfile = readdir( $component_subdir ) ) ) {
+							$subfile = readdir( $component_subdir );
+
+							while ( false !== $subfile ) {
 								if ( '.' === substr( $subfile, 0, 1 ) ) {
+									// Get next file
+									$subfile = readdir( $component_subdir );
+
 									continue;
 								} elseif ( '.php' === substr( $subfile, - 4 ) ) {
 									$component_files[] = str_replace( '\\', '/', $file . '/' . $subfile );
 								}
+
+								// Get next file
+								$subfile = readdir( $component_subdir );
 							}
 
 							closedir( $component_subdir );
 						}
 					} elseif ( '.php' === substr( $file, - 4 ) ) {
 						$component_files[] = $file;
-					}
+					}//end if
+
+					// Get next file
+					$file = readdir( $component_dir );
 				}//end while
 
 				closedir( $component_dir );
@@ -403,7 +419,8 @@ class PodsComponents {
 				$external = false;
 
 				if ( is_array( $component_file ) && isset( $component_file['File'] ) ) {
-					$component = $component_file = $component_file['File'];
+					$component_file = $component_file['File'];
+					$component      = $component_file;
 
 					$external = true;
 				} else {
@@ -521,7 +538,7 @@ class PodsComponents {
 	 */
 	public function admin_handler() {
 
-		$component = str_replace( 'pods-component-', '', $_GET['page'] );
+		$component = str_replace( 'pods-component-', '', pods_v_sanitized( 'page', 'get' ) );
 
 		if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ]['object'] ) && is_object( $this->components[ $component ]['object'] ) ) {
 			// Component init
@@ -600,13 +617,7 @@ class PodsComponents {
 			if ( isset( $this->components[ $component ] ) ) {
 				$this->settings['components'][ $component ] = array();
 
-				if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
-					$settings = wp_json_encode( $this->settings, JSON_UNESCAPED_UNICODE );
-				} else {
-					$settings = wp_json_encode( $this->settings );
-				}
-
-				update_option( 'pods_component_settings', $settings );
+				$this->update_settings( $this->settings );
 
 				$activated = true;
 			}
@@ -631,9 +642,7 @@ class PodsComponents {
 			if ( isset( $this->components[ $component ] ) ) {
 				$this->settings['components'][ $component ] = 0;
 
-				$settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
-
-				update_option( 'pods_component_settings', $settings );
+				$this->update_settings( $this->settings );
 			}
 		}
 
@@ -721,7 +730,7 @@ class PodsComponents {
 			header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
 		}
 
-		// Sanitize input
+		// Sanitize input @codingStandardsIgnoreLine
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
@@ -771,6 +780,7 @@ class PodsComponents {
 		}
 
 		if ( ! is_bool( $output ) ) {
+			// @codingStandardsIgnoreLine
 			echo $output;
 		}
 
@@ -816,14 +826,25 @@ class PodsComponents {
 			}
 		}
 
+		$this->update_settings( $this->settings );
+
+		return '1';
+	}
+
+	/**
+	 * Update settings.
+	 *
+	 * @param array $settings Component settings.
+	 */
+	public function update_settings( $settings ) {
+
 		if ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ) {
-			$settings = wp_json_encode( $this->settings, JSON_UNESCAPED_UNICODE );
+			$settings = wp_json_encode( $settings, JSON_UNESCAPED_UNICODE );
 		} else {
-			$settings = wp_json_encode( $this->settings );
+			$settings = wp_json_encode( $settings );
 		}
 
 		update_option( 'pods_component_settings', $settings );
 
-		return '1';
 	}
 }

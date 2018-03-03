@@ -227,15 +227,6 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-		$value = $this->display( $value, $name, $options, $pod, $id );
-
-		return $value;
-	}
-
-	/**
 	 * Validate an URL with the options
 	 *
 	 * @param string|array $value   Field value.

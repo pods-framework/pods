@@ -230,9 +230,7 @@ class PodsField_File extends PodsField {
 	 */
 	public function schema( $options = null ) {
 
-		$schema = false;
-
-		return $schema;
+		return false;
 
 	}
 
@@ -578,29 +576,11 @@ class PodsField_File extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return false;
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
 		// @todo Check file size
 		// @todo Check file extensions
 		return true;
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-		return $value;
 
 	}
 

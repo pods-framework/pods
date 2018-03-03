@@ -96,44 +96,45 @@ class PodsField {
 	 */
 	public function options() {
 
-		$options = array(/*
-            'option_name' => array(
-                'label' => 'Option Label',
-                'depends-on' => array( 'another_option' => 'specific-value' ),
-                'default' => 'default-value',
-                'type' => 'field_type',
-                'data' => array(
-                    'value1' => 'Label 1',
+		$options = array();
 
-                    // Group your options together
-                    'Option Group' => array(
-                        'gvalue1' => 'Option Label 1',
-                        'gvalue2' => 'Option Label 2'
-                    ),
+		/*
+		'option_name' => array(
+			'label' => 'Option Label',
+			'depends-on' => array( 'another_option' => 'specific-value' ),
+			'default' => 'default-value',
+			'type' => 'field_type',
+			'data' => array(
+				'value1' => 'Label 1',
 
-                    // below is only if the option_name above is the "{$fieldtype}_format_type"
-                    'value2' => array(
-                        'label' => 'Label 2',
-                        'regex' => '[a-zA-Z]' // Uses JS regex validation for the value saved if this option selected
-                    )
-                ),
+				// Group your options together
+				'Option Group' => array(
+					'gvalue1' => 'Option Label 1',
+					'gvalue2' => 'Option Label 2'
+				),
 
-                // below is only for a boolean group
-                'group' => array(
-                    'option_boolean1' => array(
-                        'label' => 'Option boolean 1?',
-                        'default' => 1,
-                        'type' => 'boolean'
-                    ),
-                    'option_boolean2' => array(
-                        'label' => 'Option boolean 2?',
-                        'default' => 0,
-                        'type' => 'boolean'
-                    )
-                )
-            )
-            */
-		);
+				// below is only if the option_name above is the "{$fieldtype}_format_type"
+				'value2' => array(
+					'label' => 'Label 2',
+					'regex' => '[a-zA-Z]' // Uses JS regex validation for the value saved if this option selected
+				)
+			),
+
+			// below is only for a boolean group
+			'group' => array(
+				'option_boolean1' => array(
+					'label' => 'Option boolean 1?',
+					'default' => 1,
+					'type' => 'boolean'
+				),
+				'option_boolean2' => array(
+					'label' => 'Option boolean 2?',
+					'default' => 0,
+					'type' => 'boolean'
+				)
+			)
+		)
+		*/
 
 		return $options;
 
@@ -156,9 +157,9 @@ class PodsField {
 	/**
 	 * Define the current field's schema for DB table storage
 	 *
-	 * @param array|null $options
+	 * @param array|null $options Field options.
 	 *
-	 * @return string
+	 * @return string|false
 	 *
 	 * @since 2.0
 	 */
@@ -173,7 +174,7 @@ class PodsField {
 	/**
 	 * Define the current field's preparation for sprintf
 	 *
-	 * @param array|null $options
+	 * @param array|null $options Field options.
 	 *
 	 * @return string
 	 *
@@ -251,11 +252,11 @@ class PodsField {
 	/**
 	 * Change the value of the field
 	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @return mixed|null|string
 	 *
@@ -270,11 +271,11 @@ class PodsField {
 	/**
 	 * Change the way the value of the field is displayed with Pods::get
 	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @return mixed|null|string
 	 *
@@ -289,11 +290,11 @@ class PodsField {
 	/**
 	 * Reformat a number to the way the value of the field is displayed.
 	 *
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param int    $id
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @return string|null
 	 * @since 2.0
@@ -307,11 +308,11 @@ class PodsField {
 	/**
 	 * Customize output of the form field
 	 *
-	 * @param string     $name
-	 * @param mixed|null $value
-	 * @param array|null $options
-	 * @param array|null $pod
-	 * @param int|null   $id
+	 * @param string|null     $name    Field name.
+	 * @param mixed|null      $value   Current value.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
 	 *
 	 * @since 2.0
 	 */
@@ -327,9 +328,8 @@ class PodsField {
 
 		pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
 
-		return;
-
-		// @todo Eventually use this code
+		/*
+		 * @todo Eventually use this code
 		$options = (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -338,6 +338,7 @@ class PodsField {
 		$args = (object) $args;
 
 		$this->render_input_script( $args );
+		*/
 
 	}
 
@@ -345,14 +346,15 @@ class PodsField {
 	 * Render input script for Pods DFV
 	 *
 	 * @param array|object $args    {
-	 *                              Field information arguments.
+	 *     Field information arguments.
 	 *
-	 * @type string        $name    Field name
-	 * @type string        $type    Field type
-	 * @type array         $options Field options
-	 * @type mixed         $value   Current value
-	 * @type array         $pod     Pod information
-	 * @type int|string    $id      Current item ID
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 */
 	public function render_input_script( $args ) {
@@ -361,9 +363,10 @@ class PodsField {
 			$args = (object) $args;
 		}
 
-		$script_content = json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
+		$script_content = wp_json_encode( $this->build_dfv_field_data( $args ), JSON_HEX_TAG );
 		?>
 		<div class="pods-form-ui-field pods-dfv-field">
+			<?php // @codingStandardsIgnoreLine ?>
 			<script type="application/json" class="pods-dfv-field-data"><?php echo $script_content; ?></script>
 		</div>
 		<?php
@@ -374,15 +377,15 @@ class PodsField {
 	 * Build field data for Pods DFV
 	 *
 	 * @param object $args            {
-	 *                                Field information arguments.
+	 *     Field information arguments.
 	 *
-	 * @type string     $name            Field name
-	 * @type string     $type            Pod field type
-	 * @type string     $form_field_type HTML field type
-	 * @type array      $options         Field options
-	 * @type mixed      $value           Current value
-	 * @type array      $pod             Pod information
-	 * @type int|string $id              Current item ID
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -415,20 +418,20 @@ class PodsField {
 		 *
 		 * @since 2.7
 		 *
-		 * @param array     $data            DFV field data
-		 * @param object    $args            {
-		 *                                   Field information arguments.
+		 * @param array  $data       DFV field data
+		 * @param object $args       {
+		 *     Field information arguments.
 		 *
-		 * @type string     $name            Field name
-		 * @type string     $type            Pod field type
-		 * @type string     $form_field_type HTML field type
-		 * @type array      $options         Field options
-		 * @type mixed      $value           Current value
-		 * @type array      $pod             Pod information
-		 * @type int|string $id              Current item ID
+		 *     @type string     $name            Field name.
+		 *     @type string     $type            Field type.
+		 *     @type array      $options         Field options.
+		 *     @type mixed      $value           Current value.
+		 *     @type array      $pod             Pod information.
+		 *     @type int|string $id              Current item ID.
+		 *     @type string     $form_field_type HTML field type.
 		 * }
 		 *
-		 * @param array     $attributes      HTML attributes
+		 * @param array  $attributes HTML attributes
 		 */
 		$data = apply_filters( 'pods_field_dfv_data', $data, $args, $attributes );
 
@@ -439,16 +442,17 @@ class PodsField {
 	/**
 	 * Build field options and handle any validation/customization for Pods DFV
 	 *
-	 * @param array  $options
+	 * @param array  $options Field options.
 	 * @param object $args    {
-	 *                        Field information arguments.
+	 *     Field information arguments.
 	 *
-	 * @type string     $name    Field name
-	 * @type string     $type    Field type
-	 * @type array      $options Field options
-	 * @type mixed      $value   Current value
-	 * @type array      $pod     Pod information
-	 * @type int|string $id      Current item ID
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -464,14 +468,15 @@ class PodsField {
 	 *
 	 * @param array  $attributes Default HTML attributes from field and PodsForm::merge_attributes.
 	 * @param object $args       {
-	 *                           Field information arguments.
+	 *     Field information arguments.
 	 *
-	 * @type string     $name       Field name
-	 * @type string     $type       Field type
-	 * @type array      $options    Field options
-	 * @type mixed      $value      Current value
-	 * @type array      $pod        Pod information
-	 * @type int|string $id         Current item ID
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -488,14 +493,15 @@ class PodsField {
 	 * This is for customizing the options and adding output-specific config values.
 	 *
 	 * @param object $args {
-	 *      Field information arguments.
+	 *     Field information arguments.
 	 *
-	 *      @type string     $name    Field name.
-	 *      @type string     $type    Field type.
-	 *      @type array      $options Field options.
-	 *      @type mixed      $value   Current value.
-	 *      @type array      $pod     Pod information.
-	 *      @type int|string $id      Current item ID.
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -516,14 +522,15 @@ class PodsField {
 	 * Build array of item data for Pods DFV.
 	 *
 	 * @param object $args {
-	 *      Field information arguments.
+	 *     Field information arguments.
 	 *
-	 *      @type string     $name    Field name.
-	 *      @type string     $type    Field type.
-	 *      @type array      $options Field options.
-	 *      @type mixed      $value   Current value.
-	 *      @type array      $pod     Pod information.
-	 *      @type int|string $id      Current item ID.
+	 *     @type string     $name            Field name.
+	 *     @type string     $type            Field type.
+	 *     @type array      $options         Field options.
+	 *     @type mixed      $value           Current value.
+	 *     @type array      $pod             Pod information.
+	 *     @type int|string $id              Current item ID.
+	 *     @type string     $form_field_type HTML field type.
 	 * }
 	 *
 	 * @return array
@@ -541,16 +548,16 @@ class PodsField {
 	}
 
 	/**
-	 * Get the data from the field
+	 * Get the data from the field.
 	 *
-	 * @param string            $name  The name of the field
-	 * @param string|array|null $value The value of the field
-	 * @param array|null        $options
-	 * @param array|null        $pod
-	 * @param int|null          $id
-	 * @param boolean           $in_form
+	 * @param string|null     $name    Field name.
+	 * @param mixed|null      $value   Current value.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
+	 * @param boolean         $in_form Whether we are in the form context.
 	 *
-	 * @return array Array of possible field data
+	 * @return array Array of possible field data.
 	 *
 	 * @since 2.0
 	 */
@@ -561,15 +568,15 @@ class PodsField {
 	}
 
 	/**
-	 * Build regex necessary for JS validation
+	 * Build regex necessary for JS validation.
 	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param string|null $pod
-	 * @param int|null    $id
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
 	 *
-	 * @return bool
+	 * @return string|false
 	 *
 	 * @since 2.0
 	 */
@@ -580,15 +587,15 @@ class PodsField {
 	}
 
 	/**
-	 * Validate a value before it's saved
+	 * Validate a value before it's saved.
 	 *
-	 * @param mixed       $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $fields
-	 * @param array|null  $pod
-	 * @param int|null    $id
-	 * @param array|null  $params
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $fields  Pod fields.
+	 * @param array|null      $pod     Pod information.
+	 * @param int|string|null $id      Current item ID.
+	 * @param array|null      $params  Additional parameters.
 	 *
 	 * @return bool
 	 *
@@ -603,13 +610,13 @@ class PodsField {
 	/**
 	 * Change the value or perform actions after validation but before saving to the DB
 	 *
-	 * @param mixed       $value
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $fields
-	 * @param array|null  $pod
-	 * @param object|null $params
+	 * @param mixed|null      $value   Current value.
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $fields  Pod fields.
+	 * @param array|null      $pod     Pod information.
+	 * @param array|null      $params  Additional parameters.
 	 *
 	 * @return mixed
 	 *
@@ -624,13 +631,13 @@ class PodsField {
 	/**
 	 * Save the value to the DB
 	 *
-	 * @param mixed       $value
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $fields
-	 * @param array|null  $pod
-	 * @param object|null $params
+	 * @param mixed|null      $value   Current value.
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $fields  Pod fields.
+	 * @param array|null      $pod     Pod information.
+	 * @param array|null      $params  Additional parameters.
 	 *
 	 * @return bool|null Whether the value was saved, returning null means no save needed to occur
 	 *
@@ -645,13 +652,13 @@ class PodsField {
 	/**
 	 * Perform actions after saving to the DB
 	 *
-	 * @param mixed       $value
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $fields
-	 * @param array|null  $pod
-	 * @param object|null $params
+	 * @param mixed|null      $value   Current value.
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $fields  Pod fields.
+	 * @param array|null      $pod     Pod information.
+	 * @param array|null      $params  Additional parameters.
 	 *
 	 * @since 2.0
 	 */
@@ -663,10 +670,10 @@ class PodsField {
 	/**
 	 * Perform actions before deleting from the DB
 	 *
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param string|null $pod
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
 	 *
 	 * @since 2.0
 	 */
@@ -678,10 +685,10 @@ class PodsField {
 	/**
 	 * Delete the value from the DB
 	 *
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
 	 *
 	 * @since 2.3
 	 */
@@ -693,10 +700,10 @@ class PodsField {
 	/**
 	 * Perform actions after deleting from the DB
 	 *
-	 * @param int|null    $id
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
+	 * @param int|string|null $id      Current Item ID.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $pod     Pod information.
 	 *
 	 * @since 2.0
 	 */
@@ -708,12 +715,12 @@ class PodsField {
 	/**
 	 * Customize the Pods UI manage table column output
 	 *
-	 * @param int         $id
-	 * @param mixed       $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $fields
-	 * @param array|null  $pod
+	 * @param int|string|null $id      Current Item ID.
+	 * @param mixed|null      $value   Current value.
+	 * @param string|null     $name    Field name.
+	 * @param array|null      $options Field options.
+	 * @param array|null      $fields  Pod fields.
+	 * @param array|null      $pod     Pod information.
 	 *
 	 * @return string Value to be shown in the UI
 	 *
@@ -721,7 +728,7 @@ class PodsField {
 	 */
 	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
-		return $value;
+		return $this->display( $value, $name, $options, $pod, $id );
 
 	}
 
@@ -777,15 +784,13 @@ class PodsField {
 	}
 
 	/**
-	 * Placeholder function to allow var_export() use with classes
+	 * Placeholder function to allow var_export() use with classes.
 	 *
-	 * @param array $properties
+	 * @param array $properties Properties to export.
 	 *
-	 * @return object|void
+	 * @return void
 	 */
 	public static function __set_state( $properties ) {
-
-		return;
 
 	}
 

@@ -61,14 +61,6 @@ class PodsField_Color extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
 		$options         = (array) $options;

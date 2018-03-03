@@ -289,14 +289,6 @@ class PodsField_Number extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-
-		return $this->display( $value, $name, $options, $pod, $id );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function format( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		if ( null === $value ) {

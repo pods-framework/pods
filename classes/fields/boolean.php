@@ -172,22 +172,6 @@ class PodsField_Boolean extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-
-		return true;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
 		$yes = strtolower( pods_v( static::$type . '_yes_label', $options, __( 'Yes', 'pods' ), true ) );

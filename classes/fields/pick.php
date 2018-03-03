@@ -1610,18 +1610,7 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Get the data from the field.
-	 *
-	 * @param string            $name    The name of the field.
-	 * @param string|array|null $value   The value of the field.
-	 * @param array|null        $options Field options.
-	 * @param array|null        $pod     Pod data.
-	 * @param int|null          $id      Item ID.
-	 * @param boolean           $in_form Whether we are in form context.
-	 *
-	 * @return array Array of possible field data
-	 *
-	 * @since 2.0
+	 * {@inheritdoc}
 	 */
 	public function data( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
 

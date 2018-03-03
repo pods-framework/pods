@@ -114,15 +114,6 @@ class PodsField_Link extends PodsField_Website {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function value( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
 		// Validate for an array because display is also used for the get_post_meta filters along the function chain

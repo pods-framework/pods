@@ -70,14 +70,6 @@ class PodsField_Slug extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function display( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return $value;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
 
 		$options         = (array) $options;
@@ -109,22 +101,6 @@ class PodsField_Slug extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-
-		return true;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function pre_save( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
 		$index = pods_v( 'pod_index', pods_v( 'options', $pod, $pod, true ), 'id', true );
@@ -136,13 +112,5 @@ class PodsField_Slug extends PodsField {
 		$value = pods_unique_slug( $value, $name, $pod, 0, $params->id, null, false );
 
 		return $value;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-
-		return $this->display( $value, $name, $options, $pod, $id );
 	}
 }

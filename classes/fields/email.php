@@ -123,14 +123,6 @@ class PodsField_Email extends PodsField {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function regex( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function validate( $value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
 
 		$errors = array();

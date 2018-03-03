@@ -440,15 +440,15 @@ class PodsField {
 	 *
 	 * This is for customizing the options and adding output-specific config values.
 	 *
-	 * @param object $args    {
-	 *                        Field information arguments.
+	 * @param object $args {
+	 *      Field information arguments.
 	 *
-	 * @type string     $name    Field name
-	 * @type string     $type    Field type
-	 * @type array      $options Field options
-	 * @type mixed      $value   Current value
-	 * @type array      $pod     Pod information
-	 * @type int|string $id      Current item ID
+	 *      @type string     $name    Field name.
+	 *      @type string     $type    Field type.
+	 *      @type array      $options Field options.
+	 *      @type mixed      $value   Current value.
+	 *      @type array      $pod     Pod information.
+	 *      @type int|string $id      Current item ID.
 	 * }
 	 *
 	 * @return array
@@ -466,17 +466,17 @@ class PodsField {
 	}
 
 	/**
-	 * Build array of item data for Pods DFV
+	 * Build array of item data for Pods DFV.
 	 *
-	 * @param object $args    {
-	 *                        Field information arguments.
+	 * @param object $args {
+	 *      Field information arguments.
 	 *
-	 * @type string     $name    Field name
-	 * @type string     $type    Field type
-	 * @type array      $options Field options
-	 * @type mixed      $value   Current value
-	 * @type array      $pod     Pod information
-	 * @type int|string $id      Current item ID
+	 *      @type string     $name    Field name.
+	 *      @type string     $type    Field type.
+	 *      @type array      $options Field options.
+	 *      @type mixed      $value   Current value.
+	 *      @type array      $pod     Pod information.
+	 *      @type int|string $id      Current item ID.
 	 * }
 	 *
 	 * @return array
@@ -676,6 +676,57 @@ class PodsField {
 
 		return $value;
 
+	}
+
+	/**
+	 * Strip HTML based on options.
+	 *
+	 * @param string|array $value   Field value.
+	 * @param array|null   $options Field options.
+	 *
+	 * @return string
+	 */
+	public function strip_html( $value, $options = null ) {
+
+		if ( is_array( $value ) ) {
+			// @codingStandardsIgnoreLine
+			$value = @implode( ' ', $value );
+		}
+
+		$value = trim( $value );
+
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		$options = (array) $options;
+
+		// Strip HTML
+		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0, true ) ) {
+			$allowed_html_tags = '';
+
+			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
+				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
+				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
+				$allowed_tags = explode( ' ', $allowed_tags );
+				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
+
+				if ( ! empty( $allowed_tags ) ) {
+					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
+				}
+			}
+
+			if ( ! empty( $allowed_html_tags ) ) {
+				$value = strip_tags( $value, $allowed_html_tags );
+			}
+		} else {
+			$value = strip_tags( $value );
+		}
+
+		// Strip shortcodes
+		$value = strip_shortcodes( $value );
+
+		return $value;
 	}
 
 	/**

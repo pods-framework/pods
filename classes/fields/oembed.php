@@ -165,26 +165,6 @@ class PodsField_OEmbed extends PodsField {
 
 		$value = wp_oembed_get( $value, $args );
 
-		/**
-		 * @var $embed WP_Embed
-		 */
-		/*
-		$embed = $GLOBALS[ 'wp_embed' ];
-
-		if ( 0 < $width && 0 < $height ) {
-			$this->width = $width;
-			$this->height = $height;
-
-			// Setup [embed] shortcodes with set width/height
-			$value = $this->autoembed( $value );
-
-			// Run [embed] shortcodes
-			$value = $embed->run_shortcode( $value );
-		} else {
-			// Autoembed URL normally
-			$value = $embed->autoembed( $value );
-		}*/
-
 		return $value;
 	}
 
@@ -225,7 +205,7 @@ class PodsField_OEmbed extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+			if ( 0 < strlen( $value ) && '' === $check ) {
 				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
@@ -271,20 +251,20 @@ class PodsField_OEmbed extends PodsField {
 	}
 
 	/**
-	 * Strip HTML based on options
-	 *
-	 * @param string $value
-	 * @param array  $options
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
 	public function strip_html( $value, $options = null ) {
 
 		if ( is_array( $value ) ) {
+			// @codingStandardsIgnoreLine
 			$value = @implode( ' ', $value );
 		}
 
 		$value = trim( $value );
+
+		if ( empty( $value ) ) {
+			return $value;
+		}
 
 		// Strip HTML
 		$value = strip_tags( $value );
@@ -369,13 +349,18 @@ class PodsField_OEmbed extends PodsField {
 			require_once ABSPATH . WPINC . '/class-oembed.php';
 		}
 
+		// Return an empty array if no providers could be found
+		$providers = array();
+
 		if ( function_exists( '_wp_oembed_get_object' ) ) {
 			$wp_oembed = _wp_oembed_get_object();
 			$providers = $wp_oembed->providers;
+
 			foreach ( $providers as $key => $provider ) {
-				$url  = parse_url( $provider[0] );
+				$url  = wp_parse_url( $provider[0] );
 				$host = $url['host'];
 				$tmp  = explode( '.', $host );
+
 				if ( count( $tmp ) === 3 ) {
 					// Take domain names like .co.uk in consideration
 					if ( ! in_array( 'co', $tmp, true ) ) {
@@ -385,16 +370,16 @@ class PodsField_OEmbed extends PodsField {
 					// Take domain names like .co.uk in consideration
 					unset( $tmp[0] );
 				}
-				$host                      = implode( '.', $tmp );
+
+				$host = implode( '.', $tmp );
+
 				$providers[ $key ]['host'] = $host;
 			}
-			$this->providers = $providers;
 
-			return $providers;
+			$this->providers = $providers;
 		}//end if
 
-		// Return an empty array if no providers could be found
-		return array();
+		return $providers;
 
 	}
 
@@ -433,8 +418,8 @@ class PodsField_OEmbed extends PodsField {
 			}
 
 			if ( preg_match( $matchmask, $url ) ) {
-				// $provider = str_replace( '{format}', 'json', $providerurl ); // JSON is easier to deal with than XML
 				$provider = $match;
+
 				break;
 			}
 		}//end foreach
@@ -443,46 +428,43 @@ class PodsField_OEmbed extends PodsField {
 	}
 
 	/**
-	 * Validate a value with the enabled oEmbed providers (if required)
+	 * Validate a value with the enabled oEmbed providers (if required).
 	 *
 	 * @since 2.7
 	 *
-	 * @param string $value
-	 * @param array  $options Field options
+	 * @param string $value   Field value.
+	 * @param array  $options Field options.
 	 *
 	 * @return bool
 	 */
 	public function validate_provider( $value, $options ) {
 
-		// Do we even need to validate?
+		// Check if we need to validate.
 		if ( 0 === (int) pods_v( static::$type . '_restrict_providers', $options ) ) {
 			return true;
 		}
 
 		$providers = $this->get_providers();
 
-		// Filter existing providers
+		// Filter existing providers.
 		foreach ( $providers as $key => $provider ) {
 			$fieldname = static::$type . '_enabled_providers_' . tag_escape( $provider['host'] );
 
 			/**
 			 * @todo Future compat to enable serialised strings as field options
 			 */
-			/*
-			if ( empty( $options[ static::$type . '_enabled_providers_' ][ $provider['host'] ] ) ) {
-				unset( $providers[ $key ] );
-			} else*/
 
 			/**
-			 * Current solution: all separate field options
+			 * Current solution: all separate field options.
 			 */
 			if ( empty( $options[ $fieldname ] ) ) {
 				unset( $providers[ $key ] );
 			}
 		}
 
-		// Value validation
+		// Value validation.
 		$provider_match = $this->get_provider( $value );
+
 		foreach ( $providers as $match => $provider ) {
 			if ( $provider_match === $match ) {
 				return true;
@@ -493,13 +475,14 @@ class PodsField_OEmbed extends PodsField {
 	}
 
 	/**
-	 * Handle update preview AJAX
+	 * Handle update preview AJAX.
 	 *
 	 * @since 2.7
 	 */
 	public function admin_ajax_oembed_update_preview() {
 
-		// Sanitize input
+		// Sanitize input.
+		// @codingStandardsIgnoreLine
 		$params = pods_unslash( (array) $_POST );
 
 		if ( ! empty( $params['_nonce_pods_oembed'] ) && ! empty( $params['pods_field_oembed_value'] ) && wp_verify_nonce( $params['_nonce_pods_oembed'], 'pods_field_oembed_preview' ) ) {
@@ -507,15 +490,15 @@ class PodsField_OEmbed extends PodsField {
 			$name    = ( ! empty( $params['pods_field_oembed_name'] ) ) ? $this->strip_html( $params['pods_field_oembed_name'] ) : '';
 			$options = ( ! empty( $params['pods_field_oembed_options'] ) ) ? $params['pods_field_oembed_options'] : array();
 
-			// Load the field to get it's options
+			// Load the field to get it's options.
 			$options = pods_api()->load_field( (object) $options );
 
-			// Field options are stored here, if not, just stay with the full options array
+			// Field options are stored here, if not, just stay with the full options array.
 			if ( ! empty( $options['options'] ) ) {
 				$options = $options['options'];
 			}
 
-			// Run display function to run oEmbed
+			// Run display function to run oEmbed.
 			$value = $this->display( $value, $name, $options );
 
 			if ( empty( $value ) ) {

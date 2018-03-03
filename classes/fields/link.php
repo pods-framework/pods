@@ -142,7 +142,7 @@ class PodsField_Link extends PodsField_Website {
 			$link = '<a href="%s"%s>%s</a>';
 
 			// Build the URL
-			$url = $this->build_url( parse_url( $value['url'] ) );
+			$url = $this->build_url( wp_parse_url( $value['url'] ) );
 
 			// Display URL as text by default. If text provided, use the text input
 			$text = $url;
@@ -179,11 +179,11 @@ class PodsField_Link extends PodsField_Website {
 	/**
 	 * Change the way the a list of values of the field are displayed with Pods::field
 	 *
-	 * @param mixed|null  $value
-	 * @param string|null $name
-	 * @param array|null  $options
-	 * @param array|null  $pod
-	 * @param int|null    $id
+	 * @param mixed|null  $value   Field value.
+	 * @param string|null $name    Field name.
+	 * @param array|null  $options Field options.
+	 * @param array|null  $pod     Pod options.
+	 * @param int|null    $id      Item ID.
 	 *
 	 * @return mixed|null|string
 	 *
@@ -227,7 +227,7 @@ class PodsField_Link extends PodsField_Website {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && strlen( $check ) < 1 ) {
+			if ( ! empty( $value['url'] ) && 0 < strlen( $value['url'] ) && '' === $check ) {
 				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {

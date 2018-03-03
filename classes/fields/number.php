@@ -382,7 +382,7 @@ class PodsField_Number extends PodsField {
 	 *
 	 * @since 2.7
 	 *
-	 * @param array $options
+	 * @param array $options Field options.
 	 *
 	 * @return int
 	 */

@@ -184,7 +184,7 @@ class PodsField_Website extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+			if ( 0 < strlen( $value ) && '' === $check ) {
 				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
@@ -238,8 +238,8 @@ class PodsField_Website extends PodsField {
 	/**
 	 * Validate an URL with the options
 	 *
-	 * @param string $value
-	 * @param array  $options
+	 * @param string|array $value   Field value.
+	 * @param array|null   $options Field options.
 	 *
 	 * @return string
 	 *
@@ -258,7 +258,7 @@ class PodsField_Website extends PodsField {
 			if ( isset( $value['scheme'] ) ) {
 				$value = $this->build_url( $value, $options );
 			} else {
-				$value = implode( '', $value );
+				$value = @implode( '', $value );
 			}
 		}
 
@@ -266,7 +266,7 @@ class PodsField_Website extends PodsField {
 			$value = 'http://' . $value;
 		}
 
-		$url = @parse_url( $value );
+		$url = wp_parse_url( $value );
 
 		if ( empty( $url ) || count( $url ) < 2 ) {
 			$value = '';
@@ -332,50 +332,9 @@ class PodsField_Website extends PodsField {
 	}
 
 	/**
-	 * Strip HTML based on options
-	 *
-	 * @param string $value
-	 * @param array  $options
-	 *
-	 * @return string
-	 *
-	 * @since 2.7
-	 */
-	public function strip_html( $value, $options = null ) {
-		if ( is_array( $value ) ) {
-			$value = @implode( ' ', $value );
-		}
-
-		$value = trim( $value );
-
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		$options = (array) $options;
-
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0, true ) ) {
-			$allowed_html_tags = '';
-
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_html_tags = explode( ' ', trim( pods_v( static::$type . '_allowed_html_tags', $options ) ) );
-				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-			}
-
-			if ( ! empty( $allowed_html_tags ) && '<>' !== $allowed_html_tags ) {
-				$value = strip_tags( $value, $allowed_html_tags );
-			}
-		} else {
-			$value = strip_tags( $value );
-		}
-
-		return $value;
-	}
-
-	/**
 	 * Validate an target attribute with the options
 	 *
-	 * @param string $value
+	 * @param string $value Field value.
 	 *
 	 * @return string
 	 *
@@ -393,8 +352,8 @@ class PodsField_Website extends PodsField {
 	/**
 	 * Build a url from url parts
 	 *
-	 * @param array|string $url
-	 * @param array        $options
+	 * @param array|string $url     URL value.
+	 * @param array        $options Field options.
 	 *
 	 * @return string
 	 */

@@ -82,14 +82,21 @@ class PodsField_DateTime extends PodsField {
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
-				'help'       => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+				'help'       => sprintf(
+					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					esc_html__( 'PHP date documentation', 'pods' )
+				),
 			),
 			static::$type . '_format_custom_js'      => array(
 				'label'      => __( 'Date format for input', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
-				'help'       => '<a href="https://api.jqueryui.com/datepicker/" target="_blank">' . __( 'jQuery UI datepicker documentation', 'pods' ) . '</a>' . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
+				'help'       => sprintf(
+					'<a href="https://api.jqueryui.com/datepicker/" target="_blank">%1$s</a><br />%2$s',
+					esc_html__( 'jQuery UI datepicker documentation', 'pods' ),
+					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
+				),
 			),
 			static::$type . '_format'                => array(
 				'label'      => __( 'Date Format', 'pods' ),
@@ -138,7 +145,11 @@ class PodsField_DateTime extends PodsField {
 				'excludes-on' => array( static::$type . '_format' => 'c' ),
 				'default'     => '',
 				'type'        => 'text',
-				'help'        => '<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">' . __( 'jQuery UI timepicker documentation', 'pods' ) . '</a>' . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
+				'help'        => sprintf(
+					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">%1$s</a><br />%2$s',
+					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
+					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
+				),
 			),
 			static::$type . '_time_format'           => array(
 				'label'       => __( 'Time Format', 'pods' ),
@@ -369,9 +380,9 @@ class PodsField_DateTime extends PodsField {
 	/**
 	 * Convert value to the correct format for display.
 	 *
-	 * @param string $value
-	 * @param array  $options
-	 * @param bool   $js Return formatted from jQuery UI format? (only for custom formats).
+	 * @param string $value   Field value.
+	 * @param array  $options Field options.
+	 * @param bool   $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
 	 * @since 2.7
@@ -429,8 +440,8 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  array $options
-	 * @param  bool  $js Return format for jQuery UI?
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
 	 *
 	 * @return string
 	 */
@@ -468,8 +479,8 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  array $options
-	 * @param  bool  $js Return format for jQuery UI?
+	 * @param  array $options Field options.
+	 * @param  bool  $js      Whether to return format for jQuery UI.
 	 *
 	 * @return string
 	 */
@@ -511,7 +522,7 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  bool $js Return formats for jQuery UI?
+	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
 	 * @return array
 	 */
@@ -548,7 +559,7 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  bool $js Return formats for jQuery UI?
+	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
 	 * @return array
 	 */
@@ -581,7 +592,7 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  bool $js Return formats for jQuery UI?
+	 * @param  bool $js Whether to return format for jQuery UI.
 	 *
 	 * @return array
 	 */
@@ -602,9 +613,11 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * @param string  $format
+	 * PHP backwards compatibility for createFromFormat.
+	 *
+	 * @param string  $format           Format string.
 	 * @param string  $date             Defaults to time() if empty.
-	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not
+	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
 	 * @return DateTime|null|int|false
 	 */
@@ -653,12 +666,12 @@ class PodsField_DateTime extends PodsField {
 	}
 
 	/**
-	 * Convert a date from one format to another
+	 * Convert a date from one format to another.
 	 *
-	 * @param         $value
-	 * @param         $new_format
-	 * @param string     $original_format
-	 * @param boolean    $return_timestamp Whether to return the strtotime() or createFromFormat result or not
+	 * @param string  $value            Field value.
+	 * @param string  $new_format       New format string.
+	 * @param string  $original_format  Original format string (if known).
+	 * @param boolean $return_timestamp Whether to return the strtotime() or createFromFormat result or not.
 	 *
 	 * @return string|int|boolean|DateTime
 	 */
@@ -701,8 +714,8 @@ class PodsField_DateTime extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  string $source_format
-	 * @param  array  $args
+	 * @param  string $source_format Source format string.
+	 * @param  array  $args          Format arguments.
 	 *
 	 * @return string
 	 */
@@ -757,37 +770,54 @@ class PodsField_DateTime extends PodsField {
 			// Microsecond
 			'u' => 'c',
 		);
+
 		if ( version_compare( PHP_VERSION, '7.0.0' ) >= 0 ) {
 			// Millisecond
 			$symbols['v'] = 'l';
 		}
+
 		if ( 'jquery_ui' === $args['source'] ) {
 			// Remove empty values.
 			$symbols = array_filter( $symbols );
 			$symbols = array_flip( $symbols );
 		}
+
 		$new_format = '';
 		$escaping   = false;
-		for ( $i = 0; $i < strlen( $source_format ); $i ++ ) {
+
+		$source_format_length = strlen( $source_format );
+
+		for ( $i = 0; $i < $source_format_length; $i ++ ) {
 			$char = $source_format[ $i ];
+
 			// PHP date format escaping character
 			// @todo Do we want to support non-format characters?
-			if ( $char === '\\' ) {
+			if ( '\\' === $char ) {
 				$i ++;
+
 				if ( $escaping ) {
 					$new_format .= $source_format[ $i ];
 				} else {
 					$new_format .= '\'' . $source_format[ $i ];
 				}
+
 				$escaping = true;
 			} else {
 				if ( $escaping ) {
 					$new_format .= "'";
 					$escaping    = false;
 				}
+
+				$symbol_key = false;
+
+				if ( isset( $source_format[ $i + 1 ] ) ) {
+					$symbol_key = $char . $source_format[ $i + 1 ];
+				}
+
 				// Support 2 characters.
-				if ( isset( $source_format[ $i + 1 ] ) && isset( $symbols[ $char . $source_format[ $i + 1 ] ] ) ) {
-					$new_format .= $symbols[ $char . $source_format[ $i + 1 ] ];
+				if ( $symbol_key && isset( $symbols[ $symbol_key ] ) ) {
+					$new_format .= $symbols[ $symbol_key ];
+
 					$i ++;
 				} elseif ( isset( $symbols[ $char ] ) ) {
 					$new_format .= $symbols[ $char ];
@@ -810,21 +840,24 @@ class PodsField_DateTime extends PodsField {
 		static $done = array();
 
 		$types = array();
+
 		switch ( static::$type ) {
 			case 'time':
 				$types[] = 'time';
+
 				break;
 			case 'date':
 				$types[] = 'date';
+
 				break;
 			case 'datetime':
 				$types[] = 'time';
 				$types[] = 'date';
+
 				break;
 		}
 
 		if ( in_array( 'date', $types, true ) && ! in_array( 'date', $done, true ) ) {
-
 			if ( function_exists( 'wp_localize_jquery_ui_datepicker' ) ) {
 				wp_localize_jquery_ui_datepicker();
 			}
@@ -833,7 +866,6 @@ class PodsField_DateTime extends PodsField {
 		}
 
 		if ( in_array( 'time', $types, true ) && ! in_array( 'time', $done, true ) ) {
-
 			$locale = str_replace( '_', '-', get_locale() );
 
 			// Local files.

@@ -458,7 +458,7 @@ class PodsAPI_CLI_Command extends WP_CLI_Command {
 	 *
 	 * @subcommand import-pod
 	 */
-	function import_pod( $args, $assoc_args ) {
+	public function import_pod( $args, $assoc_args ) {
 
 		if ( ! PodsInit::$components->is_component_active( 'migrate-packages' ) ) {
 			WP_CLI::error( sprintf( __( 'Migrate Package is not activated. Try activating it: %s', 'pods' ), 'wp pods-api activate-component --component=migrate-packages' ) );

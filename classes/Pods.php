@@ -4011,8 +4011,6 @@ class Pods implements Iterator {
 				 *
 				 * @param string $message Success message.
 				 *
-				 * @returns string the message
-				 *
 				 * @since 3.0.0
 				 */
 				$message = apply_filters( 'pods_pod_form_success_message', $message );

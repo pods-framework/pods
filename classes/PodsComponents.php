@@ -185,18 +185,16 @@ class PodsComponents {
 		 *
 		 * Can also be used to change which menu components is a submenu of or change title of menu.
 		 *
-		 * @params array $pods_component_menu_items {
-		 *          An array of arguments for add_submenu_page
+		 * @param array $pods_component_menu_items {
+		 *      An array of arguments for add_submenu_page
 		 *
-		 * @param string $parent_slug The slug name for the parent menu (or the file name of a standard WordPress admin page)
-		 * @param string $page_title  The text to be displayed in the title tags of the page when the menu is selected
-		 * @param        $menu_title  The text to be used for the menu
-		 * @param        $capability  The capability required for this menu to be displayed to the user.
-		 * @param        $menu_slug   The slug name to refer to this menu by (should be unique for this menu)
-		 * @param        $function    The function to be called to output the content for this page.
-		 *                            }
-		 *
-		 * @returns array Array of submenu pages to be passed to add_submenu_page()
+		 *     @type string $parent_slug The slug name for the parent menu (or the file name of a standard WordPress admin page)
+		 *     @type string $page_title  The text to be displayed in the title tags of the page when the menu is selected
+		 *     @type string $menu_title  The text to be used for the menu
+		 *     @type string $capability  The capability required for this menu to be displayed to the user.
+		 *     @type string $menu_slug   The slug name to refer to this menu by (should be unique for this menu)
+		 *     @type string $function    The function to be called to output the content for this page.
+		 * }
 		 *
 		 * @since  2.4.1
 		 */

@@ -140,7 +140,7 @@ class PodsField_Email extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+			if ( 0 < strlen( $value ) && '' === $check ) {
 				$label = pods_v( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
 				if ( 1 === (int) pods_v( 'required', $options ) ) {

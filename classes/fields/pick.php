@@ -322,11 +322,11 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Register a related object
+	 * Register a related object.
 	 *
-	 * @param string $name    Object name
-	 * @param string $label   Object label
-	 * @param array  $options Object options
+	 * @param string $name    Object name.
+	 * @param string $label   Object label.
+	 * @param array  $options Object options.
 	 *
 	 * @return array|boolean Object array or false if unsuccessful
 	 * @since 2.3
@@ -355,9 +355,9 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Setup related objects
+	 * Setup related objects.
 	 *
-	 * @param boolean $force Whether to force refresh of related objects
+	 * @param boolean $force Whether to force refresh of related objects.
 	 *
 	 * @return bool True when data has been loaded
 	 * @since 2.3
@@ -601,7 +601,7 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Return available related objects
 	 *
-	 * @param boolean $force Whether to force refresh of related objects
+	 * @param boolean $force Whether to force refresh of related objects.
 	 *
 	 * @return array Field selection array
 	 * @since 2.3
@@ -704,7 +704,7 @@ class PodsField_Pick extends PodsField {
 
 		if ( is_object( $pod ) && isset( $pod->fields ) ) {
 			/**
-			 * @var $pod Pods
+			 * @var $pod Pods Pods object.
 			 */
 			$fields = $pod->fields;
 
@@ -747,14 +747,13 @@ class PodsField_Pick extends PodsField {
 
 		$this->render_input_script( $args );
 
-		return;
-
-		// @todo Support custom integrations.
-		do_action( 'pods_form_ui_field_pick_input_' . pods_v( static::$type . '_format_type', $options, 'single' ) . '_' . pods_v( static::$type . '_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
-		do_action( 'pods_form_ui_field_pick_input', pods_v( static::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
-
-		// @todo Support custom integrations.
-		do_action( 'pods_form_ui_field_pick_input', pods_v( static::$type . '_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
+		/**
+		 * @todo Support custom integrations.
+		 *
+		 * Run the action 'pods_form_ui_field_pick_input_' . pods_v( static::$type . '_format_type', $options, 'single' ) . '_' . pods_v( static::$type . '_format_multi', $options, 'checkbox' )
+		 * Run the action 'pods_form_ui_field_pick_input'
+		 * Pass the arguments: $name, $value, $options, $pod, $id
+		 */
 
 	}
 
@@ -850,7 +849,7 @@ class PodsField_Pick extends PodsField {
 		/**
 		 * Allow overriding some of the Select2 options used in the JS init.
 		 *
-		 * @param array|null $select2_overrides Override options for Select2/SelectWoo
+		 * @param array|null $select2_overrides Override options for Select2/SelectWoo.
 		 *
 		 * @since 2.7
 		 */
@@ -861,23 +860,24 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * @param array   $options
-	 * @param object  $args    {
-	 *   Field information arguments.
+	 * Build DFV autocomplete AJAX data.
 	 *
-	 *     @type string     $name    Field name
-	 *     @type string     $type    Field type
-	 *     @type array      $options Field options
-	 *     @type mixed      $value   Current value
-	 *     @type array      $pod     Pod information
-	 *     @type int|string $id      Current item ID
+	 * @param array  $options DFV options.
+	 * @param object $args    {
+	 *  Field information arguments.
+	 *
+	 *     @type string     $name    Field name.
+	 *     @type string     $type    Field type.
+	 *     @type array      $options Field options.
+	 *     @type mixed      $value   Current value.
+	 *     @type array      $pod     Pod information.
+	 *     @type int|string $id      Current item ID.
 	 * }
-	 *
-	 * @param Boolean $ajax    True if ajax mode should be used
+	 * @param bool   $ajax    True if ajax mode should be used.
 	 *
 	 * @return array
 	 */
-	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax ) {
+	public function build_dfv_autocomplete_ajax_data( $options, $args, $ajax = false ) {
 
 		if ( is_object( $args->pod ) ) {
 			$pod_id = (int) $args->pod->pod_id;
@@ -899,7 +899,7 @@ class PodsField_Pick extends PodsField {
 
 		$field_nonce = wp_create_nonce( 'pods_relationship_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
 
-		// Values can be overridden via the `pods_field_dfv_data` filter in $data['fieldConfig']['ajax_data']
+		// Values can be overridden via the `pods_field_dfv_data` filter in $data['fieldConfig']['ajax_data'].
 		return array(
 			'ajax'                 => $ajax,
 			'delay'                => 300,
@@ -975,8 +975,8 @@ class PodsField_Pick extends PodsField {
 				break;
 
 			case 'taxonomy':
-				// @todo Fix add new modal issues
 				/*
+				 * @todo Fix add new modal issues
 				if ( ! empty( $args->options['pick_val'] ) ) {
 					$taxonomy_obj = get_taxonomy( $args->options['pick_val'] );
 
@@ -986,7 +986,8 @@ class PodsField_Pick extends PodsField {
 							'taxonomy' => $args->options['pick_val'],
 						);
 					}
-				}*/
+				}
+				*/
 
 				break;
 
@@ -1071,14 +1072,14 @@ class PodsField_Pick extends PodsField {
 	 *
 	 * @param array  $data    Item data to expand.
 	 * @param object $args    {
-	 *                        Field information arguments.
+	 *      Field information arguments.
 	 *
-	 * @type string     $name    Field name
-	 * @type string     $type    Field type
-	 * @type array      $options Field options
-	 * @type mixed      $value   Current value
-	 * @type array      $pod     Pod information
-	 * @type int|string $id      Current item ID
+	 *     @type string     $name    Field name.
+	 *     @type string     $type    Field type.
+	 *     @type array      $options Field options.
+	 *     @type mixed      $value   Current value.
+	 *     @type array      $pod     Pod information.
+	 *     @type int|string $id      Current item ID.
 	 * }
 	 *
 	 * @return array
@@ -1116,17 +1117,17 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Loop through relationship data and expand item data with additional information for DFV.
 	 *
-	 * @param int|string $item_id
-	 * @param string     $item_title
-	 * @param object     $args    {
-	 *                            Field information arguments.
+	 * @param int|string $item_id    Item ID.
+	 * @param string     $item_title Item title.
+	 * @param object     $args       {
+	 *      Field information arguments.
 	 *
-	 * @type string      $name    Field name
-	 * @type string      $type    Field type
-	 * @type array       $options Field options
-	 * @type mixed       $value   Current value
-	 * @type array       $pod     Pod information
-	 * @type int|string  $id      Current item ID
+	 *     @type string      $name    Field name.
+	 *     @type string      $type    Field type.
+	 *     @type array       $options Field options.
+	 *     @type mixed       $value   Current value.
+	 *     @type array       $pod     Pod information.
+	 *     @type int|string  $id      Current item ID.
 	 * }
 	 *
 	 * @return array
@@ -1332,8 +1333,10 @@ class PodsField_Pick extends PodsField {
 
 		$simple_tableless_objects = $this->simple_objects();
 
-		$related_pick_limit = 0;
-		$related_field      = $related_pod = $current_related_ids = false;
+		$related_pick_limit  = 0;
+		$related_field       = false;
+		$related_pod         = false;
+		$current_related_ids = false;
 
 		// Bidirectional relationship requirement checks
 		$related_object = pods_v( static::$type . '_object', $options, '' );
@@ -1494,8 +1497,12 @@ class PodsField_Pick extends PodsField {
 				$remove_ids = array();
 
 				if ( 0 < $related_pick_limit && ! empty( $bidirectional_ids ) && ! in_array( $id, $bidirectional_ids, true ) ) {
-					while ( $related_pick_limit <= count( $bidirectional_ids ) ) {
+					$total_bidirectional_ids = count( $bidirectional_ids );
+
+					while ( $related_pick_limit <= $total_bidirectional_ids ) {
 						$remove_ids[] = (int) array_pop( $bidirectional_ids );
+
+						$total_bidirectional_ids = count( $bidirectional_ids );
 					}
 				}
 
@@ -1527,10 +1534,10 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Delete the value from the DB
 	 *
-	 * @param int    $id
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
+	 * @param int|null    $id      Item ID.
+	 * @param string|null $name    Field name.
+	 * @param array|null  $options Field options.
+	 * @param array|null  $pod     Pod options.
 	 *
 	 * @since 2.3
 	 */
@@ -1603,14 +1610,14 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Get the data from the field
+	 * Get the data from the field.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
-	 * @param boolean      $in_form
+	 * @param string            $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
+	 * @param boolean           $in_form Whether we are in form context.
 	 *
 	 * @return array Array of possible field data
 	 *
@@ -1627,18 +1634,18 @@ class PodsField_Pick extends PodsField {
 		$data = pods_v( 'data', $options, null, true );
 
 		$object_params = array(
-			'name'                    => $name,
 			// The name of the field.
-							'value'   => $value,
+			'name'    => $name,
 			// The value of the field.
-							'options' => $options,
+			'value'   => $value,
 			// Field options.
-							'pod'     => $pod,
+			'options' => $options,
 			// Pod data.
-							'id'      => $id,
+			'pod'     => $pod,
 			// Item ID.
-							'context' => 'data',
-		// Data context.
+			'id'      => $id,
+			// Data context.
+			'context' => 'data',
 		);
 
 		if ( null !== $data ) {
@@ -1660,12 +1667,12 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Convert a simple value to the correct value
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
-	 * @param boolean      $raw     Whether to return the raw list of keys (true) or convert to key=>value (false)
+	 * @param string            $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
+	 * @param boolean           $raw     Whether to return the raw list of keys (true) or convert to key=>value (false).
 	 *
 	 * @return mixed Corrected value
 	 */
@@ -1689,18 +1696,18 @@ class PodsField_Pick extends PodsField {
 			$data = pods_v( 'data', $options, null, true );
 
 			$object_params = array(
-				'name'                        => $name,
 				// The name of the field.
-									'value'   => $value,
+				'name'    => $name,
 				// The value of the field.
-									'options' => $options,
+				'value'   => $value,
 				// Field options.
-									'pod'     => $pod,
+				'options' => $options,
 				// Pod data.
-									'id'      => $id,
+				'pod'     => $pod,
 				// Item ID.
-									'context' => 'simple_value',
-			// Data context.
+				'id'      => $id,
+				// Data context.
+				'context' => 'simple_value',
 			);
 
 			if ( null === $data ) {
@@ -1761,13 +1768,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Get the label from a pick value
+	 * Get the label from a pick value.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string            $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return string
 	 *
@@ -1784,18 +1791,18 @@ class PodsField_Pick extends PodsField {
 		$data = pods_v( 'data', $options, null, true );
 
 		$object_params = array(
-			'name'                    => $name,
 			// The name of the field.
-							'value'   => $value,
+			'name'    => $name,
 			// The value of the field.
-							'options' => $options,
+			'value'   => $value,
 			// Field options.
-							'pod'     => $pod,
+			'options' => $options,
 			// Pod data.
-							'id'      => $id,
+			'pod'     => $pod,
 			// Item ID.
-							'context' => 'value_to_label',
-		// Data context.
+			'id'      => $id,
+			// Data context.
+			'context' => 'value_to_label',
 		);
 
 		if ( null !== $data ) {
@@ -1808,8 +1815,8 @@ class PodsField_Pick extends PodsField {
 
 		$check_value = $value;
 
-		foreach ( $check_value as &$check_v ) {
-			$check_v = (string) $check_v;
+		foreach ( $check_value as $check_k => $check_v ) {
+			$check_value[ $check_k ] = (string) $check_v;
 		}
 
 		foreach ( $data as $v => $l ) {
@@ -1827,11 +1834,11 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Get available items from a relationship field
+	 * Get available items from a relationship field.
 	 *
-	 * @param array|string $field         Field array or field name
-	 * @param array        $options       [optional] Field options array overrides
-	 * @param array        $object_params [optional] Additional get_object_data options
+	 * @param array|string $field         Field array or field name.
+	 * @param array        $options       Field options array overrides.
+	 * @param array        $object_params Additional get_object_data options.
 	 *
 	 * @return array An array of available items from a relationship field
 	 */
@@ -1856,10 +1863,10 @@ class PodsField_Pick extends PodsField {
 		// Setup object params.
 		$object_params = array_merge(
 			array(
-				'name'                              => $field,
 				// The name of the field.
-										  'options' => $options,
-			// Field options.
+				'name'    => $field,
+				// Field options.
+				'options' => $options,
 			), $object_params
 		);
 
@@ -1879,9 +1886,9 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Get data from relationship objects
+	 * Get data from relationship objects.
 	 *
-	 * @param array $object_params Object data parameters
+	 * @param array $object_params Object data parameters.
 	 *
 	 * @return array|bool Object data
 	 */
@@ -1908,8 +1915,8 @@ class PodsField_Pick extends PodsField {
 				'context'     => '',
 				// Data parameters.
 				'data_params' => array(
+					// Query being searched.
 					'query' => '',
-				// Query being searched.
 				),
 				// Page number of results to get.
 				'page'        => 1,
@@ -1918,13 +1925,16 @@ class PodsField_Pick extends PodsField {
 			), $object_params
 		);
 
+		$object_params['options']     = (array) $object_params['options'];
+		$object_params['data_params'] = (array) $object_params['data_params'];
+
 		$name         = $object_params['name'];
 		$value        = $object_params['value'];
-		$options      = $object_params['options'] = (array) $object_params['options'];
+		$options      = $object_params['options'];
 		$pod          = $object_params['pod'];
 		$id           = $object_params['id'];
 		$context      = $object_params['context'];
-		$data_params  = $object_params['data_params'] = (array) $object_params['data_params'];
+		$data_params  = $object_params['data_params'];
 		$page         = min( 1, (int) $object_params['page'] );
 		$limit        = (int) $object_params['limit'];
 		$autocomplete = false;
@@ -2045,7 +2055,6 @@ class PodsField_Pick extends PodsField {
 					'where'      => pods_v( static::$type . '_where', $options, (array) $options['table_info']['where_default'], true ),
 					'orderby'    => pods_v( static::$type . '_orderby', $options, null, true ),
 					'groupby'    => pods_v( static::$type . '_groupby', $options, null, true ),
-					// 'having' => pods_v( static::$type . '_having', $options, null, true ),
 					'pagination' => false,
 					'search'     => false,
 				);
@@ -2058,7 +2067,7 @@ class PodsField_Pick extends PodsField {
 					$params['where'] = pods_evaluate_tags( $params['where'], true );
 				}
 
-				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && strlen( trim( $params['where'] ) ) < 1 ) ) {
+				if ( empty( $params['where'] ) || ( ! is_array( $params['where'] ) && '' === trim( $params['where'] ) ) ) {
 					$params['where'] = array();
 				} elseif ( ! is_array( $params['where'] ) ) {
 					$params['where'] = (array) $params['where'];
@@ -2067,16 +2076,6 @@ class PodsField_Pick extends PodsField {
 				if ( 'value_to_label' === $context ) {
 					$params['where'][] = "`t`.`{$search_data->field_id}` = " . number_format( $value, 0, '', '' );
 				}
-
-				/*
-				if ( ! empty( $params['orderby'] ) ) {
-					$params['orderby'] = pods_evaluate_tags( $params['orderby'], true );
-				}
-
-				if ( ! empty( $params['groupby'] ) ) {
-					$params['groupby'] = pods_evaluate_tags( $params['groupby'], true );
-				}
-				*/
 
 				$display = trim( pods_v( static::$type . '_display', $options ), ' {@}' );
 
@@ -2287,13 +2286,14 @@ class PodsField_Pick extends PodsField {
 					foreach ( $results as $result ) {
 						$result = get_object_vars( $result );
 
-						if ( ! isset( $result[ $search_data->field_id ] ) || ! isset( $result[ $search_data->field_index ] ) ) {
+						if ( ! isset( $result[ $search_data->field_id ], $result[ $search_data->field_index ] ) ) {
 							continue;
 						}
 
 						$result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
 
-						$object = $object_type = '';
+						$object      = '';
+						$object_type = '';
 
 						if ( $wpdb->posts === $search_data->table && isset( $result['post_type'] ) ) {
 							$object      = $result['post_type'];
@@ -2324,7 +2324,7 @@ class PodsField_Pick extends PodsField {
 
 						if ( in_array( $options[ static::$type . '_object' ], array( 'site', 'network' ), true ) ) {
 							$result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result['path'];
-						} elseif ( strlen( $result[ $search_data->field_index ] ) < 1 ) {
+						} elseif ( '' === $result[ $search_data->field_index ] ) {
 							$result[ $search_data->field_index ] = '(No Title)';
 						}
 
@@ -2370,7 +2370,9 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * @param array $options Field options
+	 * Check if field is autocomplete enabled.
+	 *
+	 * @param array $options Field options.
 	 *
 	 * @return bool
 	 */
@@ -2401,6 +2403,7 @@ class PodsField_Pick extends PodsField {
 		pods_session_start();
 
 		// Sanitize input.
+		// @codingStandardsIgnoreLine
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
@@ -2452,7 +2455,7 @@ class PodsField_Pick extends PodsField {
 			$page = (int) $params->page;
 		}
 
-		if ( ! isset( $params->query ) || strlen( trim( $params->query ) ) < 1 ) {
+		if ( ! isset( $params->query ) || '' === trim( $params->query ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
 		} elseif ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
 			pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
@@ -2465,21 +2468,21 @@ class PodsField_Pick extends PodsField {
 		}
 
 		$object_params = array(
-			'name'                        => $field['name'],
 			// The name of the field.
-							'value'       => null,
+			'name'        => $field['name'],
 			// The value of the field.
-							'options'     => array_merge( $field, $field['options'] ),
+			'value'       => null,
 			// Field options.
-							'pod'         => $pod,
+			'options'     => array_merge( $field, $field['options'] ),
 			// Pod data.
-							'id'          => $id,
+			'pod'         => $pod,
 			// Item ID.
-							'context'     => 'admin_ajax_relationship',
+			'id'          => $id,
 			// Data context.
-							'data_params' => $params,
-			'page'                        => $page,
-			'limit'                       => $limit,
+			'context'     => 'admin_ajax_relationship',
+			'data_params' => $params,
+			'page'        => $page,
+			'limit'       => $limit,
 		);
 
 		$pick_data = apply_filters( 'pods_field_pick_data_ajax', null, $field['name'], null, $field, $pod, $id );
@@ -2517,13 +2520,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for Post Stati
+	 * Data callback for Post Stati.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -2544,13 +2547,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for User Roles
+	 * Data callback for User Roles.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -2571,13 +2574,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for User Capabilities
+	 * Data callback for User Capabilities.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -2655,7 +2658,7 @@ class PodsField_Pick extends PodsField {
 
 		$capabilities = array_merge( $default_caps, $role_caps );
 
-		// To support Members filters
+		// To support Members filters.
 		$capabilities = apply_filters( 'members_get_capabilities', $capabilities );
 
 		$capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
@@ -2675,13 +2678,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for Image Sizes
+	 * Data callback for Image Sizes.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -2702,13 +2705,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for Countries
+	 * Data callback for Countries.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -2988,13 +2991,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States
+	 * Data callback for US States.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -3061,13 +3064,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for CA Provinces
+	 * Data callback for CA Provinces.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -3096,13 +3099,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States
+	 * Data callback for US States.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -3120,13 +3123,13 @@ class PodsField_Pick extends PodsField {
 	}
 
 	/**
-	 * Data callback for US States
+	 * Data callback for US States.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string|null       $name    The name of the field.
+	 * @param string|array|null $value   The value of the field.
+	 * @param array|null        $options Field options.
+	 * @param array|null        $pod     Pod data.
+	 * @param int|null          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -3159,9 +3162,9 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Bail to send new saved data back to our modal handler.
 	 *
-	 * @param int    $item_id
-	 * @param string $item_title
-	 * @param object $field_args
+	 * @param int    $item_id    Item ID.
+	 * @param string $item_title Item title.
+	 * @param object $field_args Field arguments.
 	 */
 	public function admin_modal_bail( $item_id, $item_title, $field_args ) {
 
@@ -3170,7 +3173,7 @@ class PodsField_Pick extends PodsField {
 			<script type="text/javascript">
 				window.parent.jQuery( window.parent ).trigger(
 					'dfv:modal:update',
-					<?php echo json_encode( $model_data, JSON_HEX_TAG ); ?>
+					<?php echo wp_json_encode( $model_data, JSON_HEX_TAG ); ?>
 				);
 			</script>
 		<?php
@@ -3182,14 +3185,14 @@ class PodsField_Pick extends PodsField {
 	/**
 	 * Bail to send new saved data back to our modal handler.
 	 *
-	 * @param int    $item_id
-	 * @param string $item_title
-	 * @param object $field_args
+	 * @param int    $item_id    Item ID.
+	 * @param string $item_title Item title.
+	 * @param object $field_args Field arguments.
 	 */
 	public function admin_modal_bail_JSON( $item_id, $item_title, $field_args ) {
 
 		$model_data = $this->build_dfv_field_item_data_recurse_item( $item_id, $item_title, $field_args );
-		echo json_encode( $model_data, JSON_HEX_TAG );
+		echo wp_json_encode( $model_data, JSON_HEX_TAG );
 
 		die();
 	}

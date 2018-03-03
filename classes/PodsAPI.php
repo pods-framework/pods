@@ -3744,11 +3744,11 @@ class PodsAPI {
 										/**
 										 * Filter for changing tag before adding new item.
 										 *
-										 * @param array $tag_data Fields for creating new item.
-										 * @param int $v Field ID of tag.
-										 * @param Pods $search_data Search object for tag.
-										 * @param string $field Table info for field.
-										 * @param array	$pieces Field array.
+										 * @param array  $tag_data    Fields for creating new item.
+										 * @param int    $v           Field ID of tag.
+										 * @param Pods   $search_data Search object for tag.
+										 * @param string $field       Table info for field.
+										 * @param array  $pieces      Field array.
 										 *
 										 * @since 2.3.19
 										 */
@@ -7812,13 +7812,13 @@ class PodsAPI {
 		     *
 		     * Use to change "default" post status from publish to any other status or statuses.
 		     *
-		     * @param  array $post_status List of post statuses. Default is 'publish' or field setting (if available)
-		     * @param  string $post_type Post type of current object
-		     * @param  array $info Array of information about the object.
-		     * @param  string $object	Type of object
-		     * @param  string $name Name of pod to load
-		     * @param  array $pod Array with Pod information. Result of PodsAPI::load_pod()
-		     * @param  array $field		Array with field information
+		     * @param  array  $post_status List of post statuses. Default is 'publish' or field setting (if available).
+		     * @param  string $post_type   Post type of current object.
+		     * @param  array  $info        Array of information about the object.
+		     * @param  string $object      Type of object.
+		     * @param  string $name        Name of pod to load.
+		     * @param  array  $pod         Array with Pod information. Result of PodsAPI::load_pod().
+		     * @param  array  $field       Array with field information.
 		     *
 		     * @since unknown
 		     */

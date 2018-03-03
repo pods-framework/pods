@@ -252,45 +252,4 @@ class PodsField_Paragraph extends PodsField {
 
 		return $value;
 	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function strip_html( $value, $options = null ) {
-
-		if ( is_array( $value ) ) {
-			$value = @implode( ' ', $value );
-		}
-
-		$value = trim( $value );
-
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		$options = (array) $options;
-
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options ) ) {
-			$allowed_html_tags = '';
-
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
-				$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
-				$allowed_tags = explode( ' ', $allowed_tags );
-				$allowed_tags = array_unique( array_filter( $allowed_tags ) );
-
-				if ( ! empty( $allowed_tags ) ) {
-					$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
-				}
-			}
-
-			if ( ! empty( $allowed_html_tags ) ) {
-				$value = strip_tags( $value, $allowed_html_tags );
-			}
-		} else {
-			$value = strip_tags( $value );
-		}
-
-		return $value;
-	}
 }

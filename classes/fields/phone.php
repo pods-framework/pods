@@ -159,7 +159,7 @@ class PodsField_Phone extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+			if ( 0 < strlen( $value ) && '' === $check ) {
 				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
 				} else {
@@ -182,9 +182,7 @@ class PodsField_Phone extends PodsField {
 
 		$options = (array) $options;
 
-		if ( 'international' === pods_v( static::$type . '_format', $options ) ) {
-			// no validation/changes
-		} else {
+		if ( 'international' !== pods_v( static::$type . '_format', $options ) ) {
 			// Clean input
 			$number = preg_replace( '/([^0-9ext])/', '', $value );
 

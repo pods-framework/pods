@@ -6,51 +6,38 @@
 class PodsWidgetSingle extends WP_Widget {
 
 	/**
-	 * Register the widget
-	 *
-	 * @since 2.5.4
-	 *
-	 * Note: params are totally ignored. Included for the sake of strict standards.
-	 *
-	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
-	 *                                a portion of the widget's class name will be used Has to be unique.
-	 * @param string $name            Name for the widget displayed on the configuration page.
-	 * @param array  $widget_options  Optional. Widget options. See {@see wp_register_sidebar_widget()} for
-	 *                                information on accepted arguments. Default empty array.
-	 * @param array  $control_options Optional. Widget control options. See {@see wp_register_widget_control()}
-	 *                                for information on accepted arguments. Default empty array.
+	 * {@inheritdoc}
 	 */
-	public function __construct( $id_base = 'pods_widget_single', $name = 'Pods - Single Item', $widget_options = array(), $control_options = array() ) {
+	public function __construct( $id_base, $name, $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct(
-			'pods_widget_single', 'Pods - Single Item', array(
-				'classname'   => 'pods_widget_single',
-				'description' => 'Display a Single Pod Item',
-			), array( 'width' => 200 )
-		);
+		parent::__construct( 'pods_widget_single', __( 'Pods - Single Item', 'pods' ), array(
+			'classname'   => 'pods_widget_single',
+			'description' => __( 'Display a Single Pod Item', 'pods' ),
+		), array( 'width' => 200 ) );
 	}
 
 	/**
-	 * Output of widget
-	 *
-	 * @param array $args
-	 * @param array $instance
+	 * {@inheritdoc}
 	 */
 	public function widget( $args, $instance ) {
 
-		extract( $args );
-
-		// Get widget field values
-		$title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+		// Setup basic widget parameters.
+		$before_widget  = pods_v( 'before_widget', $instance );
+		$after_widget   = pods_v( 'after_widget', $instance );
+		$before_title   = pods_v( 'before_title', $instance );
+		$title          = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+		$after_title    = pods_v( 'after_title', $instance );
+		$before_content = pods_v( 'before_content', $instance );
+		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'name'        => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-			'slug'        => trim( pods_var_raw( 'slug', $instance, '' ) ),
-			'use_current' => trim( pods_var_raw( 'use_current', $instance, '' ) ),
-			'template'    => trim( pods_var_raw( 'template', $instance, '' ) ),
+			'name'        => trim( pods_v( 'pod_type', $instance, '' ) ),
+			'slug'        => trim( pods_v( 'slug', $instance, '' ) ),
+			'use_current' => trim( pods_v( 'use_current', $instance, '' ) ),
+			'template'    => trim( pods_v( 'template', $instance, '' ) ),
 		);
 
-		$content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
+		$content = trim( pods_v( 'template_custom', $instance, '' ) );
 
 		if ( ( ( 0 < strlen( $args['name'] ) && 0 < strlen( $args['slug'] ) ) || 0 < strlen( $args['use_current'] ) ) && ( 0 < strlen( $args['template'] ) || 0 < strlen( $content ) ) ) {
 			require PODS_DIR . 'ui/front/widgets.php';
@@ -58,42 +45,33 @@ class PodsWidgetSingle extends WP_Widget {
 	}
 
 	/**
-	 * Updates the new instance of widget arguments
-	 *
-	 * @param array $new_instance
-	 * @param array $old_instance
-	 *
-	 * @return array $instance Updated instance
+	 * {@inheritdoc}
 	 */
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = $old_instance;
 
-		$instance['title']           = pods_var_raw( 'title', $new_instance, '' );
-		$instance['pod_type']        = pods_var_raw( 'pod_type', $new_instance, '' );
-		$instance['slug']            = pods_var_raw( 'slug', $new_instance, '' );
-		$instance['use_current']     = pods_var_raw( 'use_current', $new_instance, '' );
-		$instance['template']        = pods_var_raw( 'template', $new_instance, '' );
-		$instance['template_custom'] = pods_var_raw( 'template_custom', $new_instance, '' );
+		$instance['title']           = pods_v( 'title', $new_instance, '' );
+		$instance['pod_type']        = pods_v( 'pod_type', $new_instance, '' );
+		$instance['slug']            = pods_v( 'slug', $new_instance, '' );
+		$instance['use_current']     = pods_v( 'use_current', $new_instance, '' );
+		$instance['template']        = pods_v( 'template', $new_instance, '' );
+		$instance['template_custom'] = pods_v( 'template_custom', $new_instance, '' );
 
 		return $instance;
 	}
 
 	/**
-	 * Widget Form
-	 *
-	 * @param array $instance
-	 *
-	 * @return string|void
+	 * {@inheritdoc}
 	 */
 	public function form( $instance ) {
 
-		$title           = pods_var_raw( 'title', $instance, '' );
-		$slug            = pods_var_raw( 'slug', $instance, '' );
-		$use_current     = pods_var_raw( 'use_current', $instance, '' );
-		$pod_type        = pods_var_raw( 'pod_type', $instance, '' );
-		$template        = pods_var_raw( 'template', $instance, '' );
-		$template_custom = pods_var_raw( 'template_custom', $instance, '' );
+		$title           = pods_v( 'title', $instance, '' );
+		$slug            = pods_v( 'slug', $instance, '' );
+		$use_current     = pods_v( 'use_current', $instance, '' );
+		$pod_type        = pods_v( 'pod_type', $instance, '' );
+		$template        = pods_v( 'template', $instance, '' );
+		$template_custom = pods_v( 'template_custom', $instance, '' );
 
 		require PODS_DIR . 'ui/admin/widgets/single.php';
 	}

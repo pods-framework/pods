@@ -84,14 +84,21 @@ class PodsField_Time extends PodsField_DateTime {
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
-				'help'       => '<a href="http://php.net/manual/function.date.php" target="_blank">' . __( 'PHP date documentation', 'pods' ) . '</a>',
+				'help'       => sprintf(
+					'<a href="http://php.net/manual/function.date.php" target="_blank">%s</a>',
+					esc_html__( 'PHP date documentation', 'pods' )
+				),
 			),
 			static::$type . '_format_custom_js' => array(
 				'label'      => __( 'Time format for input', 'pods' ),
 				'depends-on' => array( static::$type . '_type' => 'custom' ),
 				'default'    => '',
 				'type'       => 'text',
-				'help'       => '<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">' . __( 'jQuery UI timepicker documentation', 'pods' ) . '</a>' . '<br>' . __( 'Leave empty to auto-generate from PHP format.', 'pods' ),
+				'help'       => sprintf(
+					'<a href="http://trentrichardson.com/examples/timepicker/#tp-formatting" target="_blank">%1$s</a><br />%2$s',
+					esc_html__( 'jQuery UI timepicker documentation', 'pods' ),
+					esc_html__( 'Leave empty to auto-generate from PHP format.', 'pods' )
+				),
 			),
 			static::$type . '_format'           => array(
 				'label'      => __( 'Time Format', 'pods' ),
@@ -164,12 +171,11 @@ class PodsField_Time extends PodsField_DateTime {
 	/**
 	 * Build time format string based on options
 	 *
-	 * @since  2.7
-	 *
-	 * @param  array $options
-	 * @param  bool  $js Return format for jQuery UI?
+	 * @param array $options Field options.
+	 * @param bool  $js      Return formatted from jQuery UI format? (only for custom formats).
 	 *
 	 * @return string
+	 * @since  2.7
 	 */
 	public function format_time( $options, $js = false ) {
 

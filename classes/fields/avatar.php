@@ -2,6 +2,8 @@
 require_once PODS_DIR . 'classes/fields/file.php';
 
 /**
+ * PodsField_Avatar class.
+ *
  * @package Pods\Fields
  */
 class PodsField_Avatar extends PodsField_File {

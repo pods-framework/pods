@@ -43,8 +43,6 @@ class PodsView {
 		 * @param bool|int|array $expires    (optional) Time in seconds for the cache to expire, if 0 no expiration.
 		 * @param string         $cache_mode (optional) Decides the caching method to use for the view.
 		 *
-		 * @returns The value of the first param.
-		 *
 		 * @since 2.4.1
 		 */
 		$filter_check = apply_filters( 'pods_view_alt_view', null, $view, $data, $expires, $cache_mode );

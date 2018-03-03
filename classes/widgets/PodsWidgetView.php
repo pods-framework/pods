@@ -6,48 +6,35 @@
 class PodsWidgetView extends WP_Widget {
 
 	/**
-	 * Register the widget
-	 *
-	 * @since 2.5.4
-	 *
-	 * Note: params are totally ignored. Included for the sake of strict standards.
-	 *
-	 * @param string $id_base         Optional Base ID for the widget, lowercase and unique. If left empty,
-	 *                                a portion of the widget's class name will be used Has to be unique.
-	 * @param string $name            Name for the widget displayed on the configuration page.
-	 * @param array  $widget_options  Optional. Widget options. See {@see wp_register_sidebar_widget()} for
-	 *                                information on accepted arguments. Default empty array.
-	 * @param array  $control_options Optional. Widget control options. See {@see wp_register_widget_control()}
-	 *                                for information on accepted arguments. Default empty array.
+	 * {@inheritdoc}
 	 */
-	public function __construct( $id_base = 'pods_widget_view', $name = 'Pods - View', $widget_options = array(), $control_options = array() ) {
+	public function __construct( $id_base, $name, $widget_options = array(), $control_options = array() ) {
 
-		parent::__construct(
-			'pods_widget_view', 'Pods - View', array(
-				'classname'   => 'pods_widget_view',
-				'description' => 'Include a file from a theme, with caching options',
-			), array( 'width' => 200 )
-		);
+		parent::__construct( 'pods_widget_view', __( 'Pods - View', 'pods' ), array(
+			'classname'   => 'pods_widget_view',
+			'description' => __( 'Include a file from a theme, with caching options', 'pods' ),
+		), array( 'width' => 200 ) );
 
 	}
 
 	/**
-	 * Output of widget
-	 *
-	 * @param array $args
-	 * @param array $instance
+	 * {@inheritdoc}
 	 */
 	public function widget( $args, $instance ) {
 
-		extract( $args );
-
-		// Get widget fields
-		$title = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+		// Setup basic widget parameters.
+		$before_widget  = pods_v( 'before_widget', $instance );
+		$after_widget   = pods_v( 'after_widget', $instance );
+		$before_title   = pods_v( 'before_title', $instance );
+		$title          = apply_filters( 'widget_title', pods_v( 'title', $instance ) );
+		$after_title    = pods_v( 'after_title', $instance );
+		$before_content = pods_v( 'before_content', $instance );
+		$after_content  = pods_v( 'after_content', $instance );
 
 		$args = array(
-			'view'       => trim( pods_var_raw( 'view', $instance, '' ) ),
-			'expires'    => (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) ),
-			'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) ),
+			'view'       => trim( pods_v( 'view', $instance, '' ) ),
+			'expires'    => (int) pods_v( 'expires', $instance, ( 60 * 5 ) ),
+			'cache_mode' => trim( pods_v( 'cache_mode', $instance, 'none', true ) ),
 		);
 
 		if ( 0 < strlen( $args['view'] ) ) {
@@ -56,37 +43,29 @@ class PodsWidgetView extends WP_Widget {
 	}
 
 	/**
-	 * Updates the new instance of widget arguments
-	 *
-	 * @param array $new_instance
-	 * @param array $old_instance
-	 *
-	 * @return array $instance Updated instance
+	 * {@inheritdoc}
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$instance               = $old_instance;
-		$instance['title']      = pods_var_raw( 'title', $new_instance, '' );
-		$instance['view']       = pods_var_raw( 'view', $new_instance, '' );
-		$instance['expires']    = (int) pods_var_raw( 'expires', $new_instance, ( 60 * 5 ) );
-		$instance['cache_mode'] = pods_var_raw( 'cache_mode', $new_instance, 'none', null, true );
+		$instance = $old_instance;
+
+		$instance['title']      = pods_v( 'title', $new_instance, '' );
+		$instance['view']       = pods_v( 'view', $new_instance, '' );
+		$instance['expires']    = (int) pods_v( 'expires', $new_instance, ( 60 * 5 ) );
+		$instance['cache_mode'] = pods_v( 'cache_mode', $new_instance, 'none', true );
 
 		return $instance;
 	}
 
 	/**
-	 * Widget Form
-	 *
-	 * @param array $instance
-	 *
-	 * @return string|void
+	 * {@inheritdoc}
 	 */
 	public function form( $instance ) {
 
-		$title      = pods_var_raw( 'title', $instance, '' );
-		$view       = pods_var_raw( 'view', $instance, '' );
-		$expires    = (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) );
-		$cache_mode = pods_var_raw( 'cache_mode', $instance, 'none', null, true );
+		$title      = pods_v( 'title', $instance, '' );
+		$view       = pods_v( 'view', $instance, '' );
+		$expires    = (int) pods_v( 'expires', $instance, ( 60 * 5 ) );
+		$cache_mode = pods_v( 'cache_mode', $instance, 'none', true );
 
 		require PODS_DIR . 'ui/admin/widgets/view.php';
 	}

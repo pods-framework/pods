@@ -194,9 +194,9 @@ class PodsField_Boolean extends PodsField {
 			$value = 1;
 		} elseif ( 'no' === strtolower( $value ) || '0' === (string) $value ) {
 			$value = 0;
-		} elseif ( $yes === strtolower( $value ) ) {
+		} elseif ( strtolower( $value ) === $yes ) {
 			$value = 1;
-		} elseif ( $no === strtolower( $value ) ) {
+		} elseif ( strtolower( $value ) === $no ) {
 			$value = 0;
 		} else {
 			$value = ( 0 === (int) $value ? 0 : 1 );

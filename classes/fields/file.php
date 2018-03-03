@@ -156,21 +156,6 @@ class PodsField_File extends PodsField {
 					)
 				),
 			),
-			/*
-            static::$type . '_image_size' => array(
-                'label' => __( 'Excluded Image Sizes', 'pods' ),
-                'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),
-                'depends-on' => array( static::$type . '_type' => 'images' ),
-                'default' => 'images',
-                'type' => 'pick',
-                'pick_format_type' => 'multi',
-                'pick_format_multi' => 'checkbox',
-                'data' => apply_filters(
-                    'pods_form_ui_field_' . static::$type . '_image_size_options',
-                    $image_sizes
-                )
-            ),
-			*/
 			static::$type . '_add_button'             => array(
 				'label'   => __( 'Add Button Text', 'pods' ),
 				'default' => __( 'Add File', 'pods' ),
@@ -325,26 +310,17 @@ class PodsField_File extends PodsField {
 
 		wp_enqueue_script( 'pods-dfv' );
 		wp_enqueue_media();
+
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
 
-		return;
-
 		// @todo: we're short-circuiting for prototyping above. The actions below will need to be woven in somehow.
-		if ( ! in_array(
-			pods_v( $form_field_type . '_uploader', $options ), array(
-				'attachment',
-				'plupload',
-				'media',
-			), true
-		) ) {
-			// Support custom File Uploader integration
-			do_action( 'pods_form_ui_field_' . static::$type . '_uploader_' . pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
-			do_action( 'pods_form_ui_field_' . static::$type . '_uploader', pods_v( static::$type . '_uploader', $options ), $name, $value, $options, $pod, $id );
-
-			return;
-		}
-
+		/**
+		 * $form_field_type . '_uploader' != attachment, plupload, media
+		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader_' . static::$type . '_uploader'
+		 * Run this action 'pods_form_ui_field_' . static::$type . '_uploader', static::$type . '_uploader'
+		 * Pass these args $name, $value, $options, $pod, $id
+		 */
 	}
 
 	/**
@@ -403,17 +379,20 @@ class PodsField_File extends PodsField {
 			$limit_types      = '';
 			$limit_extensions = '*';
 		} else {
-			$limit_types = $limit_extensions = pods_v( $args->type . '_allowed_extensions', $options, '', true );
+			$limit_types = pods_v( $args->type . '_allowed_extensions', $options, '', true );
+
+			$limit_extensions = $limit_types;
 		}
 
 		// Find and replace certain characters to properly split by commas.
-		$find    = array(
+		$find = array(
 			' ',
 			'.',
 			"\n",
 			"\t",
 			';',
 		);
+
 		$replace = array(
 			'',
 			',',
@@ -482,6 +461,7 @@ class PodsField_File extends PodsField {
 			if ( $is_user_logged_in ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
+				// @codingStandardsIgnoreLine
 				$uid = @session_id();
 			}
 
@@ -699,14 +679,14 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
-	 * Return image(s) markup
+	 * Return image(s) markup.
 	 *
-	 * @param int    $id
-	 * @param mixed  $value
-	 * @param string $name
-	 * @param array  $options
-	 * @param array  $pod
-	 * @param string $image_size
+	 * @param int    $id         Item ID.
+	 * @param mixed  $value      Field value.
+	 * @param string $name       Field name.
+	 * @param array  $options    Field options.
+	 * @param array  $pod        Pod options.
+	 * @param string $image_size Image size.
 	 *
 	 * @return string
 	 * @since 2.3
@@ -728,13 +708,13 @@ class PodsField_File extends PodsField {
 	}
 
 	/**
-	 * Data callback for Image Sizes
+	 * Data callback for Image Sizes.
 	 *
-	 * @param string       $name    The name of the field
-	 * @param string|array $value   The value of the field
-	 * @param array        $options Field options
-	 * @param array        $pod     Pod data
-	 * @param int          $id      Item ID
+	 * @param string       $name    The name of the field.
+	 * @param string|array $value   The value of the field.
+	 * @param array        $options Field options.
+	 * @param array        $pod     Pod data.
+	 * @param int          $id      Item ID.
 	 *
 	 * @return array
 	 *
@@ -759,8 +739,8 @@ class PodsField_File extends PodsField {
 	 *
 	 * @since  2.7
 	 *
-	 * @param  string|array $value   The value(s)
-	 * @param  array        $options The field options
+	 * @param  string|array $value   The value(s).
+	 * @param  array        $options The field options.
 	 *
 	 * @return string
 	 */
@@ -819,15 +799,14 @@ class PodsField_File extends PodsField {
 	/**
 	 * Handle file row output for uploaders
 	 *
-	 * @param array  $attributes
-	 * @param int    $limit
-	 * @param bool   $editable
-	 * @param int    $id
-	 * @param string $icon
-	 * @param string $name
-	 *
-	 * @param bool   $linked
-	 * @param null   $link
+	 * @param array           $attributes Field options.
+	 * @param int             $limit      List limit.
+	 * @param bool            $editable   Whether the items should be editable.
+	 * @param null|int|string $id         Item ID.
+	 * @param null|string     $icon       Icon URL.
+	 * @param null|string     $name       File name.
+	 * @param bool            $linked     Whether the items should be linked.
+	 * @param null|string     $link       Link URL.
 	 *
 	 * @return string
 	 * @since      2.0
@@ -863,7 +842,10 @@ class PodsField_File extends PodsField {
 		$linked   = (boolean) $linked;
 		?>
 		<li class="pods-file hidden" id="pods-file-<?php echo esc_attr( $id ); ?>">
-			<?php echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' ); ?>
+			<?php
+				// @codingStandardsIgnoreLine
+				echo PodsForm::field( $attributes['name'] . '[' . $id . '][id]', $id, 'hidden' );
+			?>
 
 			<ul class="pods-file-meta media-item">
 				<?php if ( 1 !== (int) $limit ) { ?>
@@ -877,6 +859,7 @@ class PodsField_File extends PodsField {
 				<li class="pods-file-col pods-file-name">
 					<?php
 					if ( $editable ) {
+						// @codingStandardsIgnoreLine
 						echo PodsForm::field( $attributes['name'] . '[' . $id . '][title]', $name, 'text' );
 					} else {
 						echo esc_html( $name );
@@ -915,7 +898,7 @@ class PodsField_File extends PodsField {
 
 		pods_session_start();
 
-		// Sanitize input
+		// Sanitize input @codingStandardsIgnoreLine
 		$params = pods_unslash( (array) $_POST );
 
 		foreach ( $params as $key => $value ) {
@@ -943,13 +926,19 @@ class PodsField_File extends PodsField {
 		}
 
 		// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
+		// @codingStandardsIgnoreLine
 		if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
+			// @codingStandardsIgnoreLine
 			$_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
+			// @codingStandardsIgnoreLine
 		} elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && ! empty( $_REQUEST['auth_cookie'] ) ) {
+			// @codingStandardsIgnoreLine
 			$_COOKIE[ AUTH_COOKIE ] = $_REQUEST['auth_cookie'];
 		}
 
+		// @codingStandardsIgnoreLine
 		if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && ! empty( $_REQUEST['logged_in_cookie'] ) ) {
+			// @codingStandardsIgnoreLine
 			$_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST['logged_in_cookie'];
 		}
 
@@ -964,10 +953,10 @@ class PodsField_File extends PodsField {
 
 		if ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) {
 			$upload_disabled = true;
-		} elseif ( ! $is_user_logged_in ) {
-			if ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && true === PODS_UPLOAD_REQUIRE_LOGIN ) {
+		} elseif ( ! $is_user_logged_in && defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) ) {
+			if ( true === PODS_UPLOAD_REQUIRE_LOGIN ) {
 				$upload_disabled = true;
-			} elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) {
+			} elseif ( is_string( PODS_UPLOAD_REQUIRE_LOGIN ) && ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) {
 				$upload_disabled = true;
 			}
 		}
@@ -1138,7 +1127,7 @@ class PodsField_File extends PodsField {
 
 					$pos = ( strlen( $file['name'] ) - strlen( $limit_type ) );
 
-					if ( $pos === stripos( $file['name'], $limit_type ) ) {
+					if ( stripos( $file['name'], $limit_type ) === $pos ) {
 						$ok = true;
 
 						break;

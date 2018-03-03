@@ -152,6 +152,7 @@ class PodsField_HTML extends PodsField {
 
 		$options = (array) $options;
 
+		// @codingStandardsIgnoreLine
 		echo $this->display( $value, $name, $options, $pod, $id );
 	}
 
@@ -163,35 +164,6 @@ class PodsField_HTML extends PodsField {
 		$value = $this->strip_html( $value, $options );
 
 		$value = wp_trim_words( $value );
-
-		return $value;
-	}
-
-	/**
-	 * Strip HTML based on options
-	 *
-	 * @param string $value
-	 * @param array  $options
-	 *
-	 * @return string
-	 */
-	public function strip_html( $value, $options = null ) {
-
-		if ( is_array( $value ) ) {
-			$value = @implode( ' ', $value );
-		}
-
-		$value = trim( $value );
-
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		$options = (array) $options;
-
-		if ( 1 !== (int) pods_v( static::$type . '_allow_html', $options ) ) {
-			$value = strip_tags( $value );
-		}
 
 		return $value;
 	}

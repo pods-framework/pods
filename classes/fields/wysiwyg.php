@@ -165,6 +165,7 @@ class PodsField_WYSIWYG extends PodsField {
 			if ( 'post_type' === pods_v( 'type', $pod ) && 0 < $id && ( ! isset( $GLOBALS['post'] ) || empty( $GLOBALS['post'] ) ) ) {
 				$post_temp = true;
 
+				// @codingStandardsIgnoreLine
 				$GLOBALS['post'] = get_post( $id );
 			}
 
@@ -177,6 +178,7 @@ class PodsField_WYSIWYG extends PodsField {
 
 			// Cleanup after ourselves
 			if ( $post_temp ) {
+				// @codingStandardsIgnoreLine
 				$GLOBALS['post'] = null;
 			}
 		}//end if
@@ -276,44 +278,15 @@ class PodsField_WYSIWYG extends PodsField {
 	}
 
 	/**
-	 * Strip HTML based on options
-	 *
-	 * @param string $value
-	 * @param array  $options
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
 	public function strip_html( $value, $options = null ) {
 
-		if ( is_array( $value ) ) {
-			$value = @implode( ' ', $value );
-		}
-
-		$value = trim( $value );
-
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
 		$options = (array) $options;
 
-		$allowed_html_tags = '';
+		// Allow HTML tags.
+		$options[ static::$type . '_allow_html' ] = 1;
 
-		if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
-			$allowed_tags = pods_v( static::$type . '_allowed_html_tags', $options );
-			$allowed_tags = trim( str_replace( array( '<', '>', ',' ), ' ', $allowed_tags ) );
-			$allowed_tags = explode( ' ', $allowed_tags );
-			$allowed_tags = array_unique( array_filter( $allowed_tags ) );
-
-			if ( ! empty( $allowed_tags ) ) {
-				$allowed_html_tags = '<' . implode( '><', $allowed_tags ) . '>';
-			}
-		}
-
-		if ( ! empty( $allowed_html_tags ) ) {
-			$value = strip_tags( $value, $allowed_html_tags );
-		}
-
-		return $value;
+		return parent::strip_html( $value, $options );
 	}
 }

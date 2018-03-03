@@ -158,7 +158,7 @@ class PodsField_Text extends PodsField {
 		if ( is_array( $check ) ) {
 			$errors = $check;
 		} else {
-			if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+			if ( 0 < strlen( $value ) && '' === $check ) {
 				if ( 1 === (int) pods_v( 'required', $options ) ) {
 					$errors[] = __( 'This field is required.', 'pods' );
 				}
@@ -197,46 +197,6 @@ class PodsField_Text extends PodsField {
 
 		if ( 0 === (int) pods_v( static::$type . '_allow_html', $options, 0, true ) ) {
 			$value = wp_trim_words( $value );
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Strip HTML based on options
-	 *
-	 * @param string $value
-	 * @param array  $options
-	 *
-	 * @return string
-	 */
-	public function strip_html( $value, $options = null ) {
-
-		if ( is_array( $value ) ) {
-			$value = @implode( ' ', $value );
-		}
-
-		$value = trim( $value );
-
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		$options = (array) $options;
-
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0, true ) ) {
-			$allowed_html_tags = '';
-
-			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
-				$allowed_html_tags = explode( ' ', trim( pods_v( static::$type . '_allowed_html_tags', $options ) ) );
-				$allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-			}
-
-			if ( ! empty( $allowed_html_tags ) && '<>' !== $allowed_html_tags ) {
-				$value = strip_tags( $value, $allowed_html_tags );
-			}
-		} else {
-			$value = strip_tags( $value );
 		}
 
 		return $value;

@@ -903,9 +903,9 @@ class PodsMeta {
 				 * @param obj|Pod $pod Current Pods Object
 				 * @param array $fields Array of fields that will go in the metabox
 				 * @param string $type The type of Pod
-				 * @params string $name Name of the Pod
+				 * @param string $name Name of the Pod
 				 *
-				 * @returns string The title for the metabox.
+				 * @return string The title for the metabox.
 				 *
 				 * @since unknown
 				 */
@@ -1038,7 +1038,7 @@ class PodsMeta {
 	 * @param array   $fields  Fields from the current Pod metabox group
 	 * @param int     $id      Post ID
 	 * @param WP_Post $post    Post object
-	 * @param array	  $metabox Metabox args from the current Pod metabox group
+	 * @param array   $metabox Metabox args from the current Pod metabox group
 	 * @param Pods    $pod     Pod object
 	 */
  	$fields = apply_filters( 'pods_meta_post_fields', $fields, $id,  $post, $metabox, $pod  );

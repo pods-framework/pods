@@ -756,7 +756,7 @@ class PodsField {
 		$options = (array) $options;
 
 		// Strip HTML
-		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0, true ) ) {
+		if ( 1 === (int) pods_v( static::$type . '_allow_html', $options, 0 ) ) {
 			$allowed_html_tags = '';
 
 			if ( 0 < strlen( pods_v( static::$type . '_allowed_html_tags', $options ) ) ) {
@@ -778,7 +778,9 @@ class PodsField {
 		}
 
 		// Strip shortcodes
-		$value = strip_shortcodes( $value );
+		if ( 0 === (int) pods_v( static::$type . '_allow_shortcode', $options ) ) {
+			$value = strip_shortcodes( $value );
+		}
 
 		return $value;
 	}
